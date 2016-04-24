@@ -51,4 +51,4 @@ Determines how many moves to look ahead based on the time left and how many move
 Specifies the importance or strength of each differet type of chess piece.
 
 ## Other details
-A barely functional implementation of CECP allows for play through xboard and similar programs (PyChess, etc.).
+A barely functional implementation of the [Chess Engine Communication Protocol](https://www.gnu.org/software/xboard/engine-intf.html) allows for play through xboard and similar programs (PyChess, etc.).
