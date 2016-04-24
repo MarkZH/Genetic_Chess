@@ -1,0 +1,57 @@
+#ifndef GENETIC_AI_H
+#define GENETIC_AI_H
+
+#include <vector>
+#include <iosfwd>
+
+#include "AI_Player.h"
+#include "Genes/Genome.h"
+
+class Board;
+class Clock;
+
+enum Color;
+
+class Genetic_AI : public AI_Player
+{
+    public:
+        Genetic_AI();
+        Genetic_AI(const Genetic_AI& other, bool is_clone = false);
+        explicit Genetic_AI(const std::string& file_name); // read genome from file
+        explicit Genetic_AI(std::istream& is); // read genome from file
+        explicit Genetic_AI(const Genetic_AI& gai_mother,
+                            const Genetic_AI& gai_father); // offspring with random recombination of genes
+
+        void mutate();
+        const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
+
+        std::string name() const override;
+        void print_genome(const std::string& file_name = "") const;
+        void print_genome(std::ostream& file) const;
+
+        int get_id() const;
+        std::vector<int> get_parents() const;
+
+        bool operator==(const Genetic_AI& other) const;
+        bool operator!=(const Genetic_AI& other) const;
+
+    private:
+        Genome genome;
+        static int next_id;
+        int id;
+        std::vector<int> parents;
+
+        void read_from(std::istream& is);
+
+        double evaluate_board(const Board& board,
+                              const Clock& clock,
+                              Color perspective,
+                              size_t look_ahead,
+                              double original_board_score) const;
+
+        const Complete_Move choose_move(const Board& board,
+                                        const Clock& clock,
+                                        int look_ahead) const;
+};
+
+#endif // GENETIC_AI_H

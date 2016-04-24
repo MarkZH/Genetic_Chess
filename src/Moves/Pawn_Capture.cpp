@@ -1,0 +1,49 @@
+#include <cassert>
+
+#include "Moves/Pawn_Capture.h"
+#include "Exceptions/Generic_Exception.h"
+#include "Pieces/Piece.h"
+#include "Game/Board.h"
+#include "Utility.h"
+
+Pawn_Capture::Pawn_Capture(Color color_in, char dir) : Pawn_Move(color_in)
+{
+    if(dir == 'r')
+    {
+        d_file = 1;
+    }
+    else if(dir == 'l')
+    {
+        d_file = -1;
+    }
+    else
+    {
+        throw Generic_Exception(std::string("Invalid direction specification for Pawn_Capture: ")
+                                + std::string().append(1, dir));
+    }
+}
+
+bool Pawn_Capture::is_legal(const Board& board, char file_start, int rank_start) const
+{
+    char file_end = file_start + file_change();
+    int  rank_end = rank_start + rank_change();
+
+    auto attacking_piece = board.view_square(file_start, rank_start).piece_on_square();
+    auto attacked_piece  = board.view_square(file_end,   rank_end).piece_on_square();
+    return rank_end != (rank_change() == 1 ? 8 : 1)
+           && attacked_piece != nullptr
+           && attacked_piece->color() != attacking_piece->color();
+}
+
+std::string Pawn_Capture::name() const
+{
+    return "Pawn Capture";
+}
+
+std::string Pawn_Capture::game_record_item(const Board&, char file_start, int rank_start) const
+{
+    return std::string(String::to_string(file_start))
+            + "x"
+            + std::string(String::to_string(char(file_start + file_change())))
+            + std::string(String::to_string(rank_start + rank_change()));
+}

@@ -1,0 +1,54 @@
+#include "Genes/Total_Force_Gene.h"
+
+#include "Game/Board.h"
+#include "Pieces/Piece.h"
+#include "Utility.h"
+#include "Genes/Gene.h"
+
+Total_Force_Gene::Total_Force_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_source_in) :
+    Gene(1.0),
+    piece_strength_source(piece_strength_source_in)
+{
+    reset_properties();
+}
+
+void Total_Force_Gene::reset_properties()
+{
+    reset_base_properties();
+}
+
+double Total_Force_Gene::score_board(const Board& board, Color color) const
+{
+    double score = 0.0;
+
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            auto piece = board.view_square(file, rank).piece_on_square();
+            if(piece && piece->color() == color)
+            {
+                score += piece_strength_source->piece_value(piece);
+            }
+        }
+    }
+
+    return score;
+}
+
+Total_Force_Gene* Total_Force_Gene::duplicate() const
+{
+    auto dupe = new Total_Force_Gene(*this);
+    dupe->reset_properties();
+    return dupe;
+}
+
+std::string Total_Force_Gene::name() const
+{
+    return "Total Force Gene";
+}
+
+void Total_Force_Gene::reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>& psg)
+{
+    piece_strength_source = psg;
+}

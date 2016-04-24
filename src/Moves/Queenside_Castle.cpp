@@ -1,0 +1,35 @@
+#include "Moves/Queenside_Castle.h"
+#include "Game/Board.h"
+#include "Pieces/Piece.h"
+
+Queenside_Castle::Queenside_Castle() : Move(-2, 0)
+{
+}
+
+bool Queenside_Castle::is_legal(const Board& board, char file_start, int rank_start) const
+{
+    return     ! board.view_square(file_start, rank_start).piece_has_moved()
+            && ! board.view_square('a', rank_start).empty()
+            && ! board.view_square('a', rank_start).piece_has_moved()
+            && ! board.king_is_in_check(board.whose_turn())
+            && ! board.square_attacked_by('c', rank_start, opposite(board.whose_turn()))
+            && ! board.square_attacked_by('d', rank_start, opposite(board.whose_turn()))
+            && board.view_square('b', rank_start).empty()
+            && board.view_square('c', rank_start).empty()
+            && board.view_square('d', rank_start).empty();
+}
+
+void Queenside_Castle::side_effects(Board& board, char /* file_start */, int rank_start) const
+{
+    board.make_move('a', rank_start, 'd', rank_start); // move Rook
+}
+
+std::string Queenside_Castle::name() const
+{
+    return "Queenside Castle";
+}
+
+std::string Queenside_Castle::game_record_item(const Board&, char, int) const
+{
+    return "O-O-O";
+}

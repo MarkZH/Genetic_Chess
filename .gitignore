@@ -1,0 +1,18 @@
+# Output files
+*.txt
+*.pgn
+
+# Reference material
+Reference/
+
+# Text editor backup files
+*~
+
+# Code::Blocks files
+genetic chess.cbp
+genetic chess.depend
+genetic chess.layout
+
+# Compiled output
+bin/
+obj/

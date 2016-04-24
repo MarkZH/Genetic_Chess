@@ -1,0 +1,94 @@
+#include "Game/Clock.h"
+
+#include <map>
+#include <chrono>
+
+#include "Exceptions/Out_Of_Time_Exception.h"
+#include "Exceptions/Generic_Exception.h"
+
+Clock::Clock(int seconds = 0, size_t moves_to_reset = 0) :
+    whose_turn(WHITE),
+    use_clock(seconds > 0),
+    use_reset(moves_to_reset > 0),
+    move_count_reset(moves_to_reset),
+    clocks_running(false)
+{
+    timers[WHITE] = std::chrono::seconds(seconds);
+    timers[BLACK] = std::chrono::seconds(seconds);
+
+    initial_time[WHITE] = std::chrono::seconds(seconds);
+    initial_time[BLACK] = std::chrono::seconds(seconds);
+}
+
+bool Clock::is_running() const
+{
+    return clocks_running;
+}
+
+void Clock::punch()
+{
+    auto time_this_punch = std::chrono::steady_clock::now();
+
+    if( ! use_clock)
+    {
+        return;
+    }
+
+    if( ! clocks_running)
+    {
+        throw Generic_Exception("Clock has not been started.");
+    }
+
+    timers[whose_turn] -= (time_this_punch - time_previous_punch);
+    if(timers[whose_turn] < std::chrono::seconds(0))
+    {
+        throw Out_Of_Time_Exception(whose_turn);
+    }
+
+    moves[whose_turn]++;
+    if(use_reset && (moves[whose_turn] % move_count_reset == 0))
+    {
+        timers[whose_turn] = initial_time[whose_turn];
+    }
+
+    whose_turn = opposite(whose_turn);
+    time_previous_punch = time_this_punch;
+}
+
+void Clock::stop()
+{
+    auto time_stop = std::chrono::steady_clock::now();
+    timers[whose_turn] -= (time_stop - time_previous_punch);
+    clocks_running = false;
+}
+
+void Clock::start()
+{
+    time_previous_punch = std::chrono::steady_clock::now();
+    clocks_running = true;
+}
+
+
+double Clock::time_left(Color color) const
+{
+    if( ! use_clock)
+    {
+        return 0.0;
+    }
+    if(whose_turn != color || ! clocks_running)
+    {
+        return std::chrono::duration_cast<std::chrono::duration<double>>
+            (timers.at(color)).count(); // msec -> sec
+    }
+    else
+    {
+        auto now = std::chrono::steady_clock::now();
+        return std::chrono::duration_cast<std::chrono::duration<double>>
+            (timers.at(color) - (now - time_previous_punch)).count();
+    }
+}
+
+Color Clock::running_for() const
+{
+    return whose_turn;
+}
