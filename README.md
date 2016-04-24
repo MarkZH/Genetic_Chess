@@ -1,6 +1,10 @@
 # Genetic Chess
 An amateur attempt at breeding a chess-playing AI.
 
+## To compile:
+`make`
+
+This will create executables in a newly created `bin/` directory.
 
 
 ## Genes currently active in Genetic AI instances
@@ -45,3 +49,6 @@ Determines how many moves to look ahead based on the time left and how many move
 
 #### Piece Strength Gene
 Specifies the importance or strength of each differet type of chess piece.
+
+## Other details
+A barely functional implementation of CECP allows for play through xboard and similar programs (PyChess, etc.).
