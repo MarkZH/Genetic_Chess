@@ -12,6 +12,7 @@ Reference/
 genetic chess.cbp
 genetic chess.depend
 genetic chess.layout
+genetic chess.cscope_file_list
 
 # Compiled output
 bin/
