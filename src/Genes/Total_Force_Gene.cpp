@@ -9,12 +9,16 @@ Total_Force_Gene::Total_Force_Gene(const std::shared_ptr<const Piece_Strength_Ge
     Gene(1.0),
     piece_strength_source(piece_strength_source_in)
 {
-    reset_properties();
 }
 
-void Total_Force_Gene::reset_properties()
+void Total_Force_Gene::reset_properties() const
 {
     reset_base_properties();
+}
+
+void Total_Force_Gene::load_properties()
+{
+    load_base_properties();
 }
 
 double Total_Force_Gene::score_board(const Board& board, Color color) const
@@ -38,9 +42,7 @@ double Total_Force_Gene::score_board(const Board& board, Color color) const
 
 Total_Force_Gene* Total_Force_Gene::duplicate() const
 {
-    auto dupe = new Total_Force_Gene(*this);
-    dupe->reset_properties();
-    return dupe;
+    return new Total_Force_Gene(*this);
 }
 
 std::string Total_Force_Gene::name() const

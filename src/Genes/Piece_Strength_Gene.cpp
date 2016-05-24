@@ -11,15 +11,21 @@ Piece_Strength_Gene::Piece_Strength_Gene() : Gene(0.0)
     {
         piece_strength[c] = 1.0;
     }
-
-    reset_properties();
 }
 
-void Piece_Strength_Gene::reset_properties()
+void Piece_Strength_Gene::reset_properties() const
 {
-    for(auto c : std::string("PRNBQK"))
+    for(const auto& piece_score : piece_strength)
     {
-        properties[String::to_string(c)] = &piece_strength[c];
+        properties[String::to_string(piece_score.first)] = piece_score.second;
+    }
+}
+
+void Piece_Strength_Gene::load_properties()
+{
+    for(const auto& piece_score : properties)
+    {
+        piece_strength[piece_score.first[0]] = piece_score.second;
     }
 }
 
@@ -47,9 +53,7 @@ double Piece_Strength_Gene::piece_value(const std::shared_ptr<const Piece>& piec
 
 Piece_Strength_Gene* Piece_Strength_Gene::duplicate() const
 {
-    auto dupe = new Piece_Strength_Gene(*this);
-    dupe->reset_properties();
-    return dupe;
+    return new Piece_Strength_Gene(*this);
 }
 
 std::string Piece_Strength_Gene::name() const

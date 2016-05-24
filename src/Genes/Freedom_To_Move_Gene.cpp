@@ -5,12 +5,16 @@
 
 Freedom_To_Move_Gene::Freedom_To_Move_Gene() : Gene(1.0)
 {
-    reset_properties();
 }
 
-void Freedom_To_Move_Gene::reset_properties()
+void Freedom_To_Move_Gene::reset_properties() const
 {
     reset_base_properties();
+}
+
+void Freedom_To_Move_Gene::load_properties()
+{
+    load_base_properties();
 }
 
 double Freedom_To_Move_Gene::score_board(const Board& board, Color color) const
@@ -22,9 +26,7 @@ double Freedom_To_Move_Gene::score_board(const Board& board, Color color) const
 
 Freedom_To_Move_Gene* Freedom_To_Move_Gene::duplicate() const
 {
-    auto dupe = new Freedom_To_Move_Gene(*this);
-    dupe->reset_properties();
-    return dupe;
+    return new Freedom_To_Move_Gene(*this);
 }
 
 std::string Freedom_To_Move_Gene::name() const

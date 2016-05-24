@@ -8,12 +8,16 @@
 
 King_Confinement_Gene::King_Confinement_Gene() : Gene(1.0)
 {
-    reset_properties();
 }
 
-void King_Confinement_Gene::reset_properties()
+void King_Confinement_Gene::reset_properties() const
 {
     reset_base_properties();
+}
+
+void King_Confinement_Gene::load_properties()
+{
+    load_base_properties();
 }
 
 King_Confinement_Gene::~King_Confinement_Gene()
@@ -22,9 +26,7 @@ King_Confinement_Gene::~King_Confinement_Gene()
 
 King_Confinement_Gene* King_Confinement_Gene::duplicate() const
 {
-    auto dupe = new King_Confinement_Gene(*this);
-    dupe->reset_properties();
-    return dupe;
+    return new King_Confinement_Gene(*this);
 }
 
 std::string King_Confinement_Gene::name() const

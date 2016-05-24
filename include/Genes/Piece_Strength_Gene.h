@@ -23,7 +23,8 @@ class Piece_Strength_Gene : public Gene
         std::map<char, double> piece_strength;
 
         double score_board(const Board& board, Color color) const override;
-        void reset_properties() override;
+        void reset_properties() const override;
+        void load_properties() override;
 };
 
 #endif // PIECE_STRENGTH_GENE_H

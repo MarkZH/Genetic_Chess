@@ -12,14 +12,20 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene(const std::shared_ptr<const P
     strength_factor(0.0),
     piece_strength_source(piece_strength_source_in)
 {
-    reset_properties();
 }
 
-void Sphere_of_Influence_Gene::reset_properties()
+void Sphere_of_Influence_Gene::reset_properties() const
 {
     reset_base_properties();
-    properties["Legal Bonus"] = &legal_bonus;
-    properties["Strength Factor"] = &strength_factor;
+    properties["Legal Bonus"] = legal_bonus;
+    properties["Strength Factor"] = strength_factor;
+}
+
+void Sphere_of_Influence_Gene::load_properties()
+{
+    load_base_properties();
+    legal_bonus = properties["Legal Bonus"];
+    strength_factor = properties["Strength Factor"];
 }
 
 Sphere_of_Influence_Gene::~Sphere_of_Influence_Gene()
@@ -28,9 +34,7 @@ Sphere_of_Influence_Gene::~Sphere_of_Influence_Gene()
 
 Sphere_of_Influence_Gene* Sphere_of_Influence_Gene::duplicate() const
 {
-    auto dupe = new Sphere_of_Influence_Gene(*this);
-    dupe->reset_properties();
-    return dupe;
+    return new Sphere_of_Influence_Gene(*this);
 }
 
 std::string Sphere_of_Influence_Gene::name() const
@@ -42,6 +46,7 @@ std::string Sphere_of_Influence_Gene::name() const
 // the opposing king were the only pieces on the board.
 double Sphere_of_Influence_Gene::score_board(const Board& board, Color color) const
 {
+    // Search for opponent's king
     static char king_file = 'a';
     static int  king_rank = 1;
 

@@ -29,13 +29,17 @@ class Gene
         virtual void reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>& psg);
 
     protected:
+        mutable std::map<std::string, double> properties; // used to simplify reading/writing from/to files
+        void reset_base_properties() const;
+        void load_base_properties();
+
+    private:
         virtual double score_board(const Board& board, Color color) const = 0;
         void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
-        virtual void reset_properties() = 0;
-        void reset_base_properties();
+        virtual void reset_properties() const = 0;
+        virtual void load_properties() = 0;
 
         double scalar;
-        std::map<std::string, double*> properties; // non-owning pointers to member variables
 };
 
 #endif // GENE_H

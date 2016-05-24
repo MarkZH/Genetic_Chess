@@ -16,10 +16,11 @@ class Freedom_To_Move_Gene : public Gene
 
         std::string name() const override;
 
-    protected:
+    private:
         double score_board(const Board& board, Color color) const override;
 
-        void reset_properties() override;
+        void reset_properties() const override;
+        void load_properties() override;
 };
 
 #endif // FREEDOM_TO_MOVE_GENE_H

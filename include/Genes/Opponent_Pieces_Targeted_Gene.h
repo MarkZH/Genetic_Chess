@@ -17,10 +17,10 @@ class Opponent_Pieces_Targeted_Gene : public Gene
 
         std::string name() const override;
 
-    protected:
-        void reset_properties() override;
-
     private:
+        void reset_properties() const override;
+        void load_properties() override;
+
         std::shared_ptr<const Piece_Strength_Gene> piece_strenth_source;
 
         double score_board(const Board& board, Color color) const override;

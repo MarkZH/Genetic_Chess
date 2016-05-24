@@ -8,12 +8,16 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const std::shared_p
     Gene(0.0),
     piece_strenth_source(piece_strength_gene)
 {
-    reset_properties();
 }
 
-void Opponent_Pieces_Targeted_Gene::reset_properties()
+void Opponent_Pieces_Targeted_Gene::reset_properties() const
 {
     reset_base_properties();
+}
+
+void Opponent_Pieces_Targeted_Gene::load_properties()
+{
+    load_base_properties();
 }
 
 Opponent_Pieces_Targeted_Gene::~Opponent_Pieces_Targeted_Gene()
@@ -56,9 +60,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color colo
 
 Opponent_Pieces_Targeted_Gene* Opponent_Pieces_Targeted_Gene::duplicate() const
 {
-    auto dupe = new Opponent_Pieces_Targeted_Gene(*this);
-    dupe->reset_properties();
-    return dupe;
+    return new Opponent_Pieces_Targeted_Gene(*this);
 }
 
 std::string Opponent_Pieces_Targeted_Gene::name() const

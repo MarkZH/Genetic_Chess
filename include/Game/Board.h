@@ -44,6 +44,7 @@ class Board
         const Square& view_square(char file, int rank) const;
 
         std::string fen_status() const; // current state of board in FEN
+        const std::vector<std::string>& get_game_record() const;
         void print_game_record(const std::string& white_name,
                                const std::string& black_name,
                                const std::string& file_name = "",

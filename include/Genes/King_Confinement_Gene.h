@@ -16,8 +16,9 @@ class King_Confinement_Gene : public Gene
 
         std::string name() const override;
 
-    protected:
-        void reset_properties() override;
+    private:
+        void reset_properties() const override;
+        void load_properties() override;
 };
 
 #endif // KING_CONFINEMENT_GENE_H

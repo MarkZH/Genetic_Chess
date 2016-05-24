@@ -22,7 +22,8 @@ class Branch_Pruning_Gene : public Gene
     private:
         double minimum_score_change_limit;
 
-        void reset_properties() override;
+        void reset_properties() const override;
+        void load_properties() override;
 };
 
 #endif // BRANCH_PRUNING_GENE_H

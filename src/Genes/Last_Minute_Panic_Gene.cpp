@@ -10,12 +10,16 @@ Last_Minute_Panic_Gene::Last_Minute_Panic_Gene() :
     Gene(0.0),
     minimum_time(0)
 {
-    reset_properties();
 }
 
-void Last_Minute_Panic_Gene::reset_properties()
+void Last_Minute_Panic_Gene::reset_properties() const
 {
-    properties["Minimum time required"] = &minimum_time;
+    properties["Minimum time required"] = minimum_time;
+}
+
+void Last_Minute_Panic_Gene::load_properties()
+{
+    minimum_time = properties["Minimum time required"];
 }
 
 Last_Minute_Panic_Gene::~Last_Minute_Panic_Gene()
@@ -34,9 +38,7 @@ std::string Last_Minute_Panic_Gene::name() const
 
 Last_Minute_Panic_Gene* Last_Minute_Panic_Gene::duplicate() const
 {
-    auto dupe = new Last_Minute_Panic_Gene(*this);
-    dupe->reset_properties();
-    return dupe;
+    return new Last_Minute_Panic_Gene(*this);
 }
 
 double Last_Minute_Panic_Gene::score_board(const Board&, Color) const

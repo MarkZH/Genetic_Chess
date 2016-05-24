@@ -10,9 +10,14 @@ Gene::Gene(double initial_scalar_value) : scalar(initial_scalar_value)
 {
 }
 
-void Gene::reset_base_properties()
+void Gene::reset_base_properties() const
 {
-    properties["Scalar"] = &scalar;
+    properties["Scalar"] = scalar;
+}
+
+void Gene::load_base_properties()
+{
+    scalar = properties["Scalar"];
 }
 
 void Gene::read_from(std::istream& is)
@@ -30,13 +35,15 @@ void Gene::read_from(std::istream& is)
         auto property_value = std::atof(split_line[1].c_str());
         try
         {
-            *properties.at(property_name) = property_value;
+            properties.at(property_name) = property_value;
         }
         catch(const std::out_of_range&)
         {
             throw_on_invalid_line(line, "Unrecognized parameter");
         }
     }
+
+    load_properties();
 }
 
 void Gene::throw_on_invalid_line(const std::string& line, const std::string& reason) const
@@ -61,10 +68,11 @@ double Gene::evaluate(const Board& board, Color color) const
 
 void Gene::print(std::ostream& os) const
 {
+    reset_properties();
     os << "\nName: " << name() << "\n";
     for(const auto& name_value : properties)
     {
-        os << name_value.first << ": " << *name_value.second << "\n";
+        os << name_value.first << ": " << name_value.second << "\n";
     }
 }
 

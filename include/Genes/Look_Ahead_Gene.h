@@ -21,10 +21,10 @@ class Look_Ahead_Gene : public Gene
 
         size_t look_ahead(double time, size_t choices_per_move) const;
 
-    protected:
-        void reset_properties()override;
-
     private:
+        void reset_properties() const override;
+        void load_properties() override;
+
         double look_ahead_constant;
 };
 

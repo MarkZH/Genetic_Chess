@@ -10,12 +10,16 @@ Look_Ahead_Gene::Look_Ahead_Gene() :
     Gene(0.0),
     look_ahead_constant(1)
 {
-    reset_properties();
 }
 
-void Look_Ahead_Gene::reset_properties()
+void Look_Ahead_Gene::reset_properties() const
 {
-    properties["Look Ahead Constant"] = &look_ahead_constant;
+    properties["Look Ahead Constant"] = look_ahead_constant;
+}
+
+void Look_Ahead_Gene::load_properties()
+{
+    look_ahead_constant = properties["Look Ahead Constant"];
 }
 
 Look_Ahead_Gene::~Look_Ahead_Gene()
@@ -35,9 +39,7 @@ void Look_Ahead_Gene::mutate()
 
 Look_Ahead_Gene* Look_Ahead_Gene::duplicate() const
 {
-    auto dupe = new Look_Ahead_Gene(*this);
-    dupe->reset_properties();
-    return dupe;
+    return new Look_Ahead_Gene(*this);
 }
 
 std::string Look_Ahead_Gene::name() const

@@ -672,6 +672,11 @@ bool Board::no_legal_moves() const
     return all_legal_moves().empty();
 }
 
+const std::vector<std::string>& Board::get_game_record() const
+{
+    return game_record;
+}
+
 void Board::print_game_record(const std::string& white_name,
                               const std::string& black_name,
                               const std::string& file_name,

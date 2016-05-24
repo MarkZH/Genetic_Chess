@@ -7,12 +7,16 @@ Branch_Pruning_Gene::Branch_Pruning_Gene() :
     Gene(0.0),
     minimum_score_change_limit(0)
 {
-    reset_properties();
 }
 
-void Branch_Pruning_Gene::reset_properties()
+void Branch_Pruning_Gene::reset_properties() const
 {
-    properties["Minimum Score Change"] = &minimum_score_change_limit;
+    properties["Minimum Score Change"] = minimum_score_change_limit;
+}
+
+void Branch_Pruning_Gene::load_properties()
+{
+    minimum_score_change_limit = properties.at("Minimum Score Change");
 }
 
 Branch_Pruning_Gene::~Branch_Pruning_Gene()
@@ -26,9 +30,7 @@ void Branch_Pruning_Gene::mutate()
 
 Branch_Pruning_Gene* Branch_Pruning_Gene::duplicate() const
 {
-    auto dupe = new Branch_Pruning_Gene(*this);
-    dupe->reset_properties();
-    return dupe;
+    return new Branch_Pruning_Gene(*this);
 }
 
 std::string Branch_Pruning_Gene::name() const

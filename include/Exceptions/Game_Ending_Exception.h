@@ -13,7 +13,7 @@ class Game_Ending_Exception : public std::exception
         virtual const char* what() const throw() override= 0;
         Color winner() const;
 
-    protected:
+    private:
         Color victor;
 };
 

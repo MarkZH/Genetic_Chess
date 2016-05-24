@@ -21,10 +21,10 @@ class Last_Minute_Panic_Gene : public Gene
 
         double time_required() const;
 
-    protected:
-        void reset_properties() override;
-
     private:
+        void reset_properties() const override;
+        void load_properties() override;
+
         double minimum_time;
 };
 

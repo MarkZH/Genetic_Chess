@@ -20,10 +20,10 @@ class Sphere_of_Influence_Gene : public Gene
 
         std::string name() const override;
 
-    protected:
-        void reset_properties() override;
-
     private:
+        void reset_properties() const override;
+        void load_properties() override;
+
         double score_board(const Board& board, Color color) const override;
 
         double legal_bonus;

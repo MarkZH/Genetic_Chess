@@ -6,7 +6,7 @@
 
 Out_Of_Time_Exception::Out_Of_Time_Exception(Color loser) :
     Game_Ending_Exception(opposite(loser)),
-    message((victor == WHITE ? std::string("1-0") : std::string("0-1")) + " Time Forfeiture")
+    message((loser == BLACK ? std::string("1-0") : std::string("0-1")) + " Time Forfeiture")
 {
 }
 
