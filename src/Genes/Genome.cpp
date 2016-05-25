@@ -167,7 +167,10 @@ void Genome::mutate()
 {
     for(auto& gene : genome)
     {
-        gene->mutate();
+        if(Random::random_integer(1, genome.size()) == 1)
+        {
+            gene->mutate();
+        }
     }
 }
 
