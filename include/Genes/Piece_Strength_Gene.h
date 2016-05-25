@@ -21,10 +21,12 @@ class Piece_Strength_Gene : public Gene
 
     private:
         std::map<char, double> piece_strength;
+        double normalizing_factor;
 
         double score_board(const Board& board, Color color) const override;
         void reset_properties() const override;
         void load_properties() override;
+        void renormalize();
 };
 
 #endif // PIECE_STRENGTH_GENE_H

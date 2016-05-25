@@ -11,6 +11,7 @@ Piece_Strength_Gene::Piece_Strength_Gene() : Gene(0.0)
     {
         piece_strength[c] = 1.0;
     }
+    renormalize();
 }
 
 void Piece_Strength_Gene::reset_properties() const
@@ -39,11 +40,12 @@ void Piece_Strength_Gene::mutate()
     {
         key_value.second = std::max(key_value.second + Random::random_normal(1.0), 0.0);
     }
+    renormalize();
 }
 
 double Piece_Strength_Gene::piece_value(char symbol) const
 {
-    return piece_strength.at(symbol);
+    return piece_strength.at(symbol)/normalizing_factor;
 }
 
 double Piece_Strength_Gene::piece_value(const std::shared_ptr<const Piece>& piece) const
@@ -64,4 +66,19 @@ std::string Piece_Strength_Gene::name() const
 double Piece_Strength_Gene::score_board(const Board&, Color) const
 {
     return 0.0;
+}
+
+void Piece_Strength_Gene::renormalize()
+{
+    normalizing_factor = 8*piece_strength['P'] +
+                         2*piece_strength['R'] +
+                         2*piece_strength['N'] +
+                         2*piece_strength['B'] +
+                           piece_strength['Q'] +
+                           piece_strength['K'];
+
+    if(normalizing_factor == 0)
+    {
+        normalizing_factor = 1;
+    }
 }
