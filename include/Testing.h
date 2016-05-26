@@ -2,9 +2,11 @@
 #define TESTING_H
 
 #include <memory>
+#include <cstdlib>
 
 #include "Game/Board.h"
 #include "Moves/Move.h"
+#include "Players/Genetic_AI.h"
 
 #include "Utility.h"
 
@@ -70,6 +72,49 @@ void run_tests()
         }
     }
 
+
+    // Test Genetic_AI file loading
+    auto ai1 = Genetic_AI();
+    for(int i = 0; i < 1000; ++i)
+    {
+        ai1.mutate();
+    }
+    auto file_name1 = "genome1.txt";
+    auto file_name2 = "genome2.txt";
+    remove(file_name1);
+    remove(file_name2);
+
+    ai1.print_genome(file_name1);
+
+    auto ai2 = Genetic_AI(file_name1);
+    ai2.print_genome(file_name2);
+
+    std::ifstream file1(file_name1);
+    std::ifstream file2(file_name2);
+    int line_count = 0;
+
+    while(true)
+    {
+        std::string line1, line2;
+        std::getline(file1, line1);
+        std::getline(file2, line2);
+        ++line_count;
+
+        if(line1 != line2)
+        {
+            std::cerr << "Mismatch at line " << line_count << ":\n";
+            std::cerr << line1 << " != " << line2 << "\n";
+            throw Generic_Exception("Test failed!");
+        }
+
+        if( ! file1 && ! file2)
+        {
+            break;
+        }
+    }
+
+    remove(file_name1);
+    remove(file_name2);
     std::cout << "All tests passed." << std::endl;
 }
 

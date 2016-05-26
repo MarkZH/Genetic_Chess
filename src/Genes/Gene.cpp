@@ -22,6 +22,8 @@ void Gene::load_base_properties()
 
 void Gene::read_from(std::istream& is)
 {
+    reset_properties();
+
     std::string line;
     while(std::getline(is, line))
     {

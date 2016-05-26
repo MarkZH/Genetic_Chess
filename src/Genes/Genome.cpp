@@ -141,6 +141,7 @@ void Genome::read_from(std::istream& is)
                 if(gene->name() == gene_name)
                 {
                     gene->read_from(is);
+                    break;
                 }
             }
         }
