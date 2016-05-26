@@ -17,7 +17,7 @@ Starts a local game played in the terminal with an ASCII art board. The first pa
  - `-genetic` - a Genetic AI player. If a file name follows, load the genes from that file.
  - `-random` - an AI player that chooses moves randomly from all legal moves.
 
-A barely functional implementation of the [Chess Engine Communication Protocol](https://www.gnu.org/software/xboard/engine-intf.html) allows for play through xboard and similar programs (PyChess, etc.). When used this way, arguments are ignored. Play against a file-defined Genetic AI is not implemented yet, so the game will be against a randomly mutated AI.
+A barely functional implementation of the [Chess Engine Communication Protocol](https://www.gnu.org/software/xboard/engine-intf.html) allows for play through xboard and similar programs (PyChess, etc.). When used this way, arguments are ignored.
 
 
 ## Genes currently active in Genetic AI instances
