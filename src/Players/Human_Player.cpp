@@ -33,8 +33,8 @@ const Complete_Move Human_Player::choose_move(const Board& board, const Clock& c
         {
             std::cout << " (" << name() << ")";
         }
-        std::cout << " to move.\n";
-        std::cout << "Last move: " << board.last_move() << std::endl;
+        std::cout << " to move   |   ";
+        std::cout << "Last move: " << board.last_move() << "   |   ";
         std::cout << "Time remaining: " << clock.time_left(board.whose_turn()) << std::endl;
         std::cout << "Enter move: ";
         std::getline(std::cin, move);
