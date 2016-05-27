@@ -55,24 +55,54 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-genetic")
                     {
+                        Genetic_AI *genetic_ptr = nullptr;
                         if(i + 1 < argc)
                         {
                             try
                             {
-                                latest.reset(new Genetic_AI(argv[i+1]));
-                                ++i;
+                                if(i + 2 < argc)
+                                {
+                                    try
+                                    {
+                                        // gene pool file with ID
+                                        auto id = std::stoi(argv[i+2]);
+                                        genetic_ptr = new Genetic_AI(argv[i+1], id);
+                                        i += 2;
+                                    }
+                                    catch(const std::exception&)
+                                    {
+                                    }
+
+                                    // file only
+                                    genetic_ptr = new Genetic_AI(argv[i+1]);
+                                    ++i;
+                                }
+                                else
+                                {
+                                    // file only
+                                    genetic_ptr = new Genetic_AI(argv[i+1]);
+                                    ++i;
+                                }
                             }
                             catch(const Generic_Exception&)
                             {
                                 std::cout << argv[i+1] << " not a file. Treating as next argument."
                                           << std::endl;
-                                latest.reset(new Genetic_AI);
+                                // Default constructed Genetic_AI
+                                genetic_ptr = new Genetic_AI;
                             }
                         }
                         else
                         {
-                            latest.reset(new Genetic_AI);
+                            genetic_ptr = new Genetic_AI;
                         }
+
+                        for(int i = 0; i < 100; ++i)
+                        {
+                            genetic_ptr->mutate();
+                        }
+
+                        latest.reset(genetic_ptr);
                     }
                     else
                     {
