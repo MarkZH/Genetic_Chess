@@ -99,7 +99,7 @@ void Genetic_AI::read_from(std::istream& is)
 
         if(String::starts_with(line, "ID:"))
         {
-            id = atoi(String::split(line)[1].c_str());
+            id = std::stoi(String::split(line)[1]);
             break;
         }
         else

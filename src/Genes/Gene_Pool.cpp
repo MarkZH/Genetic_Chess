@@ -99,7 +99,7 @@ std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file)
             continue;
         }
 
-        auto index = std::atoi(number_string.c_str());
+        auto index = std::stoi(number_string);
         for(const auto& player : all_players)
         {
             if(player.get_id() == index)
