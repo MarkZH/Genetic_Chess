@@ -59,6 +59,33 @@ Genetic_AI::Genetic_AI(std::istream& is)
     read_from(is);
 }
 
+Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
+{
+    std::ifstream ifs(file_name);
+    if( ! ifs)
+    {
+        throw Generic_Exception("Could not read: " + file_name);
+    }
+
+    std::string line;
+    while(std::getline(ifs, line))
+    {
+        if( ! String::starts_with(line, "ID:"))
+        {
+            continue;
+        }
+
+        auto param_value = String::split(line, ":", 1);
+        if(id_in == std::stoi(param_value[1]))
+        {
+            genome.read_from(ifs);
+            return;
+        }
+    }
+
+    throw Generic_Exception("Could not locate ID " + std::to_string(id_in) + " inside file " + file_name);
+}
+
 void Genetic_AI::read_from(std::istream& is)
 {
     std::string line;
