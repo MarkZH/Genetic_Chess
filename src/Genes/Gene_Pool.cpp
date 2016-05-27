@@ -125,7 +125,7 @@ void gene_pool(const std::string& load_file = "")
 
     // Oscillating game time
     const double minimum_game_time = 10; // seconds
-    const double maximum_game_time = 60; // seconds
+    const double maximum_game_time = 10; // seconds
     double game_time_increment = 0.5; // seconds
     double game_time = minimum_game_time;
 
@@ -219,11 +219,20 @@ void gene_pool(const std::string& load_file = "")
         std::cout << "play game " << white.get_id() << " " << black.get_id() << std::endl;
         auto winner = play_game(white, black, game_time, 0, game_record_file);
         std::cout << "\n";
+
         ++game_count;
         game_time += game_time_increment;
         if(game_time <= minimum_game_time || game_time >= maximum_game_time)
         {
             game_time_increment *= -1;
+            if(game_time <= minimum_game_time)
+            {
+                game_time = minimum_game_time;
+            }
+            else
+            {
+                game_time = maximum_game_time;
+            }
         }
 
         if(winner == WHITE)
