@@ -273,7 +273,7 @@ std::string Board::fen_status() const
             {
                 if(empty_count > 0)
                 {
-                    s.append(String::to_string(empty_count));
+                    s.append(std::to_string(empty_count));
                     empty_count = 0;
                 }
                 s.push_back(square.piece_on_square()->fen_symbol());
@@ -281,7 +281,7 @@ std::string Board::fen_status() const
         }
         if(empty_count > 0)
         {
-            s.append(String::to_string(empty_count));
+            s.append(std::to_string(empty_count));
             empty_count = 0;
         }
     }
@@ -323,7 +323,7 @@ std::string Board::fen_status() const
             if(view_square(file, rank).is_en_passant_targetable())
             {
                 s.push_back(file);
-                s.append(String::to_string(rank));
+                s.append(std::to_string(rank));
             }
         }
     }
@@ -345,7 +345,7 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
     {
         throw Illegal_Move_Exception("No piece on square " +
                                      std::string(1, file_start) +
-                                     String::to_string(rank_start));
+                                     std::to_string(rank_start));
     }
 
     auto move_list = piece->get_legal_moves(*this, file_start, rank_start,
@@ -355,11 +355,11 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
     {
         throw Illegal_Move_Exception("No legal move found for " +
                                      std::string(1, file_start) +
-                                     String::to_string(rank_start) +
+                                     std::to_string(rank_start) +
                                      "-" +
                                      std::string(1, file_end) +
-                                     String::to_string(rank_end) +
-                                     " (" + String::to_string(promote) + ")");
+                                     std::to_string(rank_end) +
+                                     " (" + std::string(1, promote) + ")");
     }
 
     if(move_list.size() == 1)
@@ -403,7 +403,7 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
     {
         throw Illegal_Move_Exception("Illegal move: ." +
                                      std::string(1, file_start) + "." +
-                                     String::to_string(rank_start) +
+                                     std::to_string(rank_start) +
                                      " " +
                                      move->name());
     }
@@ -742,15 +742,15 @@ std::string Board::board_status() const // for 3-fold rep count
             auto piece = view_square(file, rank).piece_on_square();
             if(piece)
             {
-                s.append(String::to_string(piece->fen_symbol()));
+                s.append(std::string(1, piece->fen_symbol()));
 
                 // write legal destination squares for this piece
                 for(auto move : piece->get_move_list())
                 {
                     if(is_legal(file, rank, move))
                     {
-                        s.append(String::to_string(move->file_change()));
-                        s.append(String::to_string(move->rank_change()));
+                        s.append(std::to_string(move->file_change()));
+                        s.append(std::to_string(move->rank_change()));
                     }
                 }
             }
@@ -758,7 +758,7 @@ std::string Board::board_status() const // for 3-fold rep count
             {
                 s.append(".");
             }
-            s.append(String::to_string(char(color_text(whose_turn())[0])));
+            s.append(color_text(whose_turn()));
         }
     }
 

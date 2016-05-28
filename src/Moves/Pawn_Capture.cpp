@@ -42,8 +42,8 @@ std::string Pawn_Capture::name() const
 
 std::string Pawn_Capture::game_record_item(const Board&, char file_start, int rank_start) const
 {
-    return std::string(String::to_string(file_start))
+    return std::string(std::string(1, file_start))
             + "x"
-            + std::string(String::to_string(char(file_start + file_change())))
-            + std::string(String::to_string(rank_start + rank_change()));
+            + std::string(std::string(1, char(file_start + file_change())))
+            + std::string(std::to_string(rank_start + rank_change()));
 }

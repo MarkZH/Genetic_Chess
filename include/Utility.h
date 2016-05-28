@@ -6,14 +6,6 @@
 
 namespace String
 {
-    template<class T>
-    std::string to_string(const T& x)
-    {
-        std::ostringstream oss;
-        oss << x;
-        return oss.str();
-    }
-
     std::vector<std::string> split(const std::string& s,
                                    const std::string& delim = "",
                                    size_t count = std::string::npos);

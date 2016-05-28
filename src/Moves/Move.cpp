@@ -86,11 +86,11 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
 
     if(record_file)
     {
-        move_record.append(String::to_string(file_start));
+        move_record.append(std::string(1, file_start));
     }
     if(record_rank)
     {
-        move_record.append(String::to_string(rank_start));
+        move_record.append(std::to_string(rank_start));
     }
 
     if( ! board.view_square(file_end, rank_end).empty())
@@ -98,8 +98,8 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
         move_record.append("x");
     }
 
-    move_record.append(String::to_string(file_end));
-    move_record.append(String::to_string(rank_end));
+    move_record.append(std::string(1, file_end));
+    move_record.append(std::to_string(rank_end));
 
     return move_record;
 }

@@ -48,8 +48,8 @@ void run_tests()
     {
         for(int rook_left_space = 0; rook_left_space < 8; ++rook_left_space)
         {
-            auto rook_left  = (rook_left_space > 0 ? String::to_string(rook_left_space) : std::string());
-            auto rook_right = (rook_left_space < 7 ? String::to_string(7 - rook_left_space) : std::string());
+            auto rook_left  = (rook_left_space > 0 ? std::to_string(rook_left_space) : std::string());
+            auto rook_right = (rook_left_space < 7 ? std::to_string(7 - rook_left_space) : std::string());
             Board board("1k6/" + rook_left + "r" + rook_right + "/8/8/8/8/8/R3K2R w KQ - 0 1");
 
             char final_file = (castle_side == 'K' ? 'g' : 'c');
@@ -76,7 +76,7 @@ void run_tests()
                 }
 
                 board.ascii_draw(WHITE);
-                std::cout << String::to_string(castle_side) + "-castle should be legal here." << std::endl;
+                std::cout << std::string(1, castle_side) + "-castle should be legal here." << std::endl;
                 throw Illegal_Move_Exception("test failed");
             }
 
@@ -96,7 +96,7 @@ void run_tests()
             }
 
             board.ascii_draw(WHITE);
-            std::cout << String::to_string(castle_side) + "-castle should be illegal here." << std::endl;
+            std::cout << std::string(1, castle_side) + "-castle should be illegal here." << std::endl;
             throw Illegal_Move_Exception("Test failed.");
         }
     }

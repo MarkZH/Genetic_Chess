@@ -112,7 +112,7 @@ void Genetic_AI::read_from(std::istream& is)
     {
         if(id > -1)
         {
-            throw Generic_Exception("Incomplete Genetic_AI spec in file for ID " + String::to_string(id));
+            throw Generic_Exception("Incomplete Genetic_AI spec in file for ID " + std::to_string(id));
         }
         else
         {

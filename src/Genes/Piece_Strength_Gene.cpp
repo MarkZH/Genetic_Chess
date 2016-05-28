@@ -18,7 +18,7 @@ void Piece_Strength_Gene::reset_properties() const
 {
     for(const auto& piece_score : piece_strength)
     {
-        properties[String::to_string(piece_score.first)] = piece_score.second;
+        properties[std::string(1, piece_score.first)] = piece_score.second;
     }
 }
 
