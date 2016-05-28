@@ -108,8 +108,8 @@ void run_tests()
     {
         ai1.mutate();
     }
-    auto file_name1 = "genome1.txt";
-    auto file_name2 = "genome2.txt";
+    auto file_name1 = "testing/genome1.txt";
+    auto file_name2 = "testing/genome2.txt";
     remove(file_name1);
     remove(file_name2);
 
@@ -127,9 +127,9 @@ void run_tests()
 
 
     // Load file from gene pool
-    auto gene_pool_file_name = "gene_pool_testing.txt";
-    auto gene_pool_expected_file_name = "gene_pool_42.txt";
-    auto gene_pool_result_file_name = "gene_pool_result.txt";
+    auto gene_pool_file_name = "testing/gene_pool_testing.txt";
+    auto gene_pool_expected_file_name = "testing/gene_pool_42.txt";
+    auto gene_pool_result_file_name = "testing/gene_pool_result.txt";
     int id = 42;
     auto gai42 = Genetic_AI(gene_pool_file_name, id);
     remove(gene_pool_result_file_name);
@@ -139,6 +139,7 @@ void run_tests()
     {
         throw Generic_Exception("Test failed!");
     }
+    remove(gene_pool_result_file_name);
     std::cout << "All tests passed." << std::endl;
 }
 
