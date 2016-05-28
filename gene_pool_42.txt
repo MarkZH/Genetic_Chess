@@ -1,0 +1,41 @@
+ID: 42
+
+Name: Piece Strength Gene
+B: 1.34945
+K: 11.8858
+N: 5.03914
+P: 0
+Q: 1.06442
+R: 6.55459
+
+Name: Look Ahead Gene
+Look Ahead Constant: 7.78378
+
+Name: Last Minute Panic Gene
+Minimum time required: 4.01198
+
+Name: Branch Pruning Gene
+Minimum Score Change: -23.2374
+
+Name: Total Force Gene
+Scalar: 47.9234
+
+Name: Freedom to Move Gene
+Scalar: 19.0176
+
+Name: Pawn Advancement Gene
+Promoted Pawn Bonus: 4.89147
+Scalar: 21.3672
+
+Name: Opponent Pieces Targeted
+Scalar: 5.62406
+
+Name: Sphere of Influence Gene
+Legal Bonus: 3.60035
+Scalar: 53.3549
+Strength Factor: 2.37961
+
+Name: King Confinement Gene
+Scalar: 52.2635
+
+END
