@@ -70,6 +70,8 @@ double Piece_Strength_Gene::score_board(const Board&, Color) const
 
 void Piece_Strength_Gene::renormalize()
 {
+    // Sum is equal to the total strength of a player's starting pieces
+    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen, 1 king).
     normalizing_factor = 8*piece_strength['P'] +
                          2*piece_strength['R'] +
                          2*piece_strength['N'] +
