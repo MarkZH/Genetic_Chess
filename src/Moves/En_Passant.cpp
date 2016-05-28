@@ -11,9 +11,9 @@ bool En_Passant::is_legal(const Board& board, char file_start, int rank_start) c
 {
     char file_end = file_start + file_change();
     int rank_end = rank_start + rank_change();
-    auto attacking_piece = board.view_square(file_start, rank_start).piece_on_square();
-    auto attacked_piece  = board.view_square(file_end,   rank_start).piece_on_square();
-    return board.view_square(file_end, rank_end).is_en_passant_targetable()
+    auto attacking_piece = board.piece_on_square(file_start, rank_start);
+    auto attacked_piece  = board.piece_on_square(file_end,   rank_start);
+    return board.is_en_passant_targetable(file_end, rank_end)
            && attacking_piece
            && attacked_piece
            && attacking_piece->color() != attacked_piece->color();

@@ -41,7 +41,7 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
     auto score = 0;
     for(const auto& cm : temp.all_legal_moves())
     {
-        auto piece = temp.view_square(cm.starting_file, cm.starting_rank).piece_on_square();
+        auto piece = temp.piece_on_square(cm.starting_file, cm.starting_rank);
         if(piece->pgn_symbol() == "K")
         {
             score += 1;

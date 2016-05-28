@@ -9,7 +9,7 @@ Pawn_Move::Pawn_Move(Color color_in) : Move(0, (color_in == WHITE ? 1 : -1))
 bool Pawn_Move::is_legal(const Board& board, char file_start, int rank_start) const
 {
     return rank_start != (rank_change() == 1 ? 7 : 2)
-        && board.view_square(file_start, rank_start + rank_change()).empty();
+        && ! board.piece_on_square(file_start, rank_start + rank_change());
 }
 
 void Pawn_Move::side_effects(Board& board, char /* file_start */, int /* rank_start */) const

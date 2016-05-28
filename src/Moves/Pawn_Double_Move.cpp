@@ -10,16 +10,16 @@ Pawn_Double_Move::Pawn_Double_Move(Color color) : Pawn_Move(color)
 
 void Pawn_Double_Move::side_effects(Board& board, char file_start, int rank_start) const
 {
-    board.get_square(file_start, rank_start + rank_change()/2).make_en_passant_targetable();
+    board.make_en_passant_targetable(file_start, rank_start + rank_change()/2);
     Pawn_Move::side_effects(board, file_start, rank_start);
 }
 
 bool Pawn_Double_Move::is_legal(const Board& board, char file_start, int rank_start) const
 {
-    auto color = board.view_square(file_start, rank_start).piece_on_square()->color();
+    auto color = board.piece_on_square(file_start, rank_start)->color();
     return rank_start == (color == WHITE ? 2 : 7)
-            && board.view_square(file_start, rank_start + rank_change()/2).empty()
-            && board.view_square(file_start, rank_start + rank_change()).empty();
+            && ! board.piece_on_square(file_start, rank_start + rank_change()/2)
+            && ! board.piece_on_square(file_start, rank_start + rank_change());
 }
 
 std::string Pawn_Double_Move::name() const

@@ -13,8 +13,8 @@ class Queenside_Castle;
 class En_Passant;
 class Pawn_Promotion;
 class Pawn_Double_Move;
+class Piece;
 
-#include "Square.h"
 #include "Color.h"
 
 enum algebraic_format {SHORT, LONG};
@@ -41,8 +41,6 @@ class Board
 
         void ascii_draw(Color color = WHITE) const;
 
-        const Square& view_square(char file, int rank) const;
-
         std::string fen_status() const; // current state of board in FEN
         const std::vector<std::string>& get_game_record() const;
         void print_game_record(const std::string& white_name,
@@ -60,17 +58,25 @@ class Board
         static bool inside_board(char file);
         static bool inside_board(int rank);
 
+        std::shared_ptr<const Piece>& piece_on_square(char file, int rank);
+        const std::shared_ptr<const Piece>& piece_on_square(char file, int rank) const;
+
         std::vector<Complete_Move> all_legal_moves() const;
         std::vector<Complete_Move> all_moves() const;
         bool square_attacked_by(char file, int rank, Color color) const;
+        bool is_en_passant_targetable(char file, int rank) const;
+        bool piece_has_moved(char file, int rank) const;
 
     private:
-        std::vector<Square> board;
+        std::vector<std::shared_ptr<const Piece>> board;
         std::map<std::string, int> repeat_count;
         Color turn_color;
         std::vector<std::string> game_record;
         Color winner;
         bool is_original;
+        std::map<std::shared_ptr<const Piece>, bool> piece_moved;
+        char en_passant_target_file;
+        int en_passant_target_rank;
 
         // Caches
         mutable std::vector<Complete_Move> all_moves_cache;
@@ -78,11 +84,13 @@ class Board
 
         void place_piece(const std::shared_ptr<const Piece>& p, char file, int rank);
         bool king_is_in_check(Color color) const;
-        Square& get_square(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
         bool no_legal_moves() const;
         void set_winner(Color color);
         void reset_fifty_move_count();
+        void make_en_passant_targetable(char file, int rank);
+        void clear_en_passant_target();
+        void all_pieces_unmoved();
 
         friend class Kingside_Castle;
         friend class Queenside_Castle;

@@ -12,8 +12,7 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion, cha
 
 bool Pawn_Promotion_by_Capture::is_legal(const Board& board, char file_start, int rank_start) const
 {
-    auto attacked_piece = board.view_square(file_start + file_change(),
-                                            rank_start + rank_change()).piece_on_square();
+    auto attacked_piece = board.piece_on_square(file_start + file_change(), rank_start + rank_change());
     return attacked_piece != nullptr
             && attacked_piece->color() != promote_to->color()
             && rank_start == (rank_change() == 1 ? 7 : 2);

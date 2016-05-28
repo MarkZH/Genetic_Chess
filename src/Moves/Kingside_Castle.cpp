@@ -8,14 +8,14 @@ Kingside_Castle::Kingside_Castle() : Move(2, 0)
 
 bool Kingside_Castle::is_legal(const Board& board, char file_start, int rank_start) const
 {
-    return     ! board.view_square(file_start, rank_start).piece_has_moved()
-            && ! board.view_square('h', rank_start).empty()
-            && ! board.view_square('h', rank_start).piece_has_moved()
+    return     ! board.piece_has_moved(file_start, rank_start)
+            &&   board.piece_on_square('h', rank_start)
+            && ! board.piece_has_moved('h', rank_start)
             && ! board.king_is_in_check(board.whose_turn())
             && ! board.square_attacked_by('f', rank_start, opposite(board.whose_turn()))
             && ! board.square_attacked_by('g', rank_start, opposite(board.whose_turn()))
-            && board.view_square('f', rank_start).empty()
-            && board.view_square('g', rank_start).empty();
+            && ! board.piece_on_square('f', rank_start)
+            && ! board.piece_on_square('g', rank_start);
 }
 
 void Kingside_Castle::side_effects(Board& board, char /* file_start */, int rank_start) const

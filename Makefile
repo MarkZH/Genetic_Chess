@@ -40,9 +40,9 @@ OBJDIR_RELEASE = obj/Release
 DEP_RELEASE = 
 OUT_RELEASE = bin/Release/genetic_chess
 
-OBJ_DEBUG = $(OBJDIR_DEBUG)/src/Game/Game.o $(OBJDIR_DEBUG)/src/Genes/Piece_Strength_Gene.o $(OBJDIR_DEBUG)/src/Genes/Pawn_Advancement_Gene.o $(OBJDIR_DEBUG)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(OBJDIR_DEBUG)/src/Genes/Look_Ahead_Gene.o $(OBJDIR_DEBUG)/src/Genes/Last_Minute_Panic_Gene.o $(OBJDIR_DEBUG)/src/Genes/King_Confinement_Gene.o $(OBJDIR_DEBUG)/src/Genes/Genome.o $(OBJDIR_DEBUG)/src/Genes/Gene_Pool.o $(OBJDIR_DEBUG)/src/Genes/Gene.o $(OBJDIR_DEBUG)/src/Genes/Freedom_To_Move_Gene.o $(OBJDIR_DEBUG)/src/Genes/Branch_Pruning_Gene.o $(OBJDIR_DEBUG)/src/Game/Square.o $(OBJDIR_DEBUG)/src/Genes/Sphere_of_Influence_Gene.o $(OBJDIR_DEBUG)/src/Game/Color.o $(OBJDIR_DEBUG)/src/Game/Clock.o $(OBJDIR_DEBUG)/src/Game/Board.o $(OBJDIR_DEBUG)/src/Exceptions/Stalemate_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Promotion_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Out_Of_Time_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Illegal_Move_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Generic_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Game_Ending_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/End_Of_File_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Checkmate_Exception.o $(OBJDIR_DEBUG)/src/Pieces/King.o $(OBJDIR_DEBUG)/src/Utility.o $(OBJDIR_DEBUG)/src/Players/Random_AI.o $(OBJDIR_DEBUG)/src/Players/Player.o $(OBJDIR_DEBUG)/src/Players/Outside_Player.o $(OBJDIR_DEBUG)/src/Players/Human_Player.o $(OBJDIR_DEBUG)/src/Players/Genetic_AI.o $(OBJDIR_DEBUG)/src/Players/AI_Player.o $(OBJDIR_DEBUG)/src/Pieces/Rook.o $(OBJDIR_DEBUG)/src/Pieces/Queen.o $(OBJDIR_DEBUG)/src/Pieces/Piece.o $(OBJDIR_DEBUG)/src/Pieces/Pawn.o $(OBJDIR_DEBUG)/src/Pieces/Knight.o $(OBJDIR_DEBUG)/main.o $(OBJDIR_DEBUG)/src/Pieces/Bishop.o $(OBJDIR_DEBUG)/src/Moves/Queenside_Castle.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Promotion_by_Capture.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Promotion.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Move.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Double_Move.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Capture.o $(OBJDIR_DEBUG)/src/Moves/Move.o $(OBJDIR_DEBUG)/src/Moves/Kingside_Castle.o $(OBJDIR_DEBUG)/src/Moves/En_Passant.o $(OBJDIR_DEBUG)/src/Genes/Total_Force_Gene.o
+OBJ_DEBUG = $(OBJDIR_DEBUG)/src/Game/Game.o $(OBJDIR_DEBUG)/src/Genes/Sphere_of_Influence_Gene.o $(OBJDIR_DEBUG)/src/Genes/Piece_Strength_Gene.o $(OBJDIR_DEBUG)/src/Genes/Pawn_Advancement_Gene.o $(OBJDIR_DEBUG)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(OBJDIR_DEBUG)/src/Genes/Look_Ahead_Gene.o $(OBJDIR_DEBUG)/src/Genes/Last_Minute_Panic_Gene.o $(OBJDIR_DEBUG)/src/Genes/King_Confinement_Gene.o $(OBJDIR_DEBUG)/src/Genes/Genome.o $(OBJDIR_DEBUG)/src/Genes/Gene_Pool.o $(OBJDIR_DEBUG)/src/Genes/Gene.o $(OBJDIR_DEBUG)/src/Genes/Freedom_To_Move_Gene.o $(OBJDIR_DEBUG)/src/Genes/Branch_Pruning_Gene.o $(OBJDIR_DEBUG)/src/Genes/Total_Force_Gene.o $(OBJDIR_DEBUG)/src/Game/Color.o $(OBJDIR_DEBUG)/src/Game/Clock.o $(OBJDIR_DEBUG)/src/Game/Board.o $(OBJDIR_DEBUG)/src/Exceptions/Stalemate_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Promotion_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Out_Of_Time_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Illegal_Move_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Generic_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Game_Ending_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/End_Of_File_Exception.o $(OBJDIR_DEBUG)/src/Exceptions/Checkmate_Exception.o $(OBJDIR_DEBUG)/src/Pieces/Knight.o $(OBJDIR_DEBUG)/src/Utility.o $(OBJDIR_DEBUG)/src/Players/Random_AI.o $(OBJDIR_DEBUG)/src/Players/Player.o $(OBJDIR_DEBUG)/src/Players/Outside_Player.o $(OBJDIR_DEBUG)/src/Players/Human_Player.o $(OBJDIR_DEBUG)/src/Players/Genetic_AI.o $(OBJDIR_DEBUG)/src/Players/AI_Player.o $(OBJDIR_DEBUG)/src/Pieces/Rook.o $(OBJDIR_DEBUG)/src/Pieces/Queen.o $(OBJDIR_DEBUG)/src/Pieces/Piece.o $(OBJDIR_DEBUG)/src/Pieces/Pawn.o $(OBJDIR_DEBUG)/main.o $(OBJDIR_DEBUG)/src/Pieces/King.o $(OBJDIR_DEBUG)/src/Pieces/Bishop.o $(OBJDIR_DEBUG)/src/Moves/Queenside_Castle.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Promotion_by_Capture.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Promotion.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Move.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Double_Move.o $(OBJDIR_DEBUG)/src/Moves/Pawn_Capture.o $(OBJDIR_DEBUG)/src/Moves/Move.o $(OBJDIR_DEBUG)/src/Moves/Kingside_Castle.o $(OBJDIR_DEBUG)/src/Moves/En_Passant.o
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/src/Game/Game.o $(OBJDIR_RELEASE)/src/Genes/Piece_Strength_Gene.o $(OBJDIR_RELEASE)/src/Genes/Pawn_Advancement_Gene.o $(OBJDIR_RELEASE)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(OBJDIR_RELEASE)/src/Genes/Look_Ahead_Gene.o $(OBJDIR_RELEASE)/src/Genes/Last_Minute_Panic_Gene.o $(OBJDIR_RELEASE)/src/Genes/King_Confinement_Gene.o $(OBJDIR_RELEASE)/src/Genes/Genome.o $(OBJDIR_RELEASE)/src/Genes/Gene_Pool.o $(OBJDIR_RELEASE)/src/Genes/Gene.o $(OBJDIR_RELEASE)/src/Genes/Freedom_To_Move_Gene.o $(OBJDIR_RELEASE)/src/Genes/Branch_Pruning_Gene.o $(OBJDIR_RELEASE)/src/Game/Square.o $(OBJDIR_RELEASE)/src/Genes/Sphere_of_Influence_Gene.o $(OBJDIR_RELEASE)/src/Game/Color.o $(OBJDIR_RELEASE)/src/Game/Clock.o $(OBJDIR_RELEASE)/src/Game/Board.o $(OBJDIR_RELEASE)/src/Exceptions/Stalemate_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Promotion_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Out_Of_Time_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Illegal_Move_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Generic_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Game_Ending_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/End_Of_File_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Checkmate_Exception.o $(OBJDIR_RELEASE)/src/Pieces/King.o $(OBJDIR_RELEASE)/src/Utility.o $(OBJDIR_RELEASE)/src/Players/Random_AI.o $(OBJDIR_RELEASE)/src/Players/Player.o $(OBJDIR_RELEASE)/src/Players/Outside_Player.o $(OBJDIR_RELEASE)/src/Players/Human_Player.o $(OBJDIR_RELEASE)/src/Players/Genetic_AI.o $(OBJDIR_RELEASE)/src/Players/AI_Player.o $(OBJDIR_RELEASE)/src/Pieces/Rook.o $(OBJDIR_RELEASE)/src/Pieces/Queen.o $(OBJDIR_RELEASE)/src/Pieces/Piece.o $(OBJDIR_RELEASE)/src/Pieces/Pawn.o $(OBJDIR_RELEASE)/src/Pieces/Knight.o $(OBJDIR_RELEASE)/main.o $(OBJDIR_RELEASE)/src/Pieces/Bishop.o $(OBJDIR_RELEASE)/src/Moves/Queenside_Castle.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Promotion_by_Capture.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Promotion.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Move.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Double_Move.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Capture.o $(OBJDIR_RELEASE)/src/Moves/Move.o $(OBJDIR_RELEASE)/src/Moves/Kingside_Castle.o $(OBJDIR_RELEASE)/src/Moves/En_Passant.o $(OBJDIR_RELEASE)/src/Genes/Total_Force_Gene.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/src/Game/Game.o $(OBJDIR_RELEASE)/src/Genes/Sphere_of_Influence_Gene.o $(OBJDIR_RELEASE)/src/Genes/Piece_Strength_Gene.o $(OBJDIR_RELEASE)/src/Genes/Pawn_Advancement_Gene.o $(OBJDIR_RELEASE)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(OBJDIR_RELEASE)/src/Genes/Look_Ahead_Gene.o $(OBJDIR_RELEASE)/src/Genes/Last_Minute_Panic_Gene.o $(OBJDIR_RELEASE)/src/Genes/King_Confinement_Gene.o $(OBJDIR_RELEASE)/src/Genes/Genome.o $(OBJDIR_RELEASE)/src/Genes/Gene_Pool.o $(OBJDIR_RELEASE)/src/Genes/Gene.o $(OBJDIR_RELEASE)/src/Genes/Freedom_To_Move_Gene.o $(OBJDIR_RELEASE)/src/Genes/Branch_Pruning_Gene.o $(OBJDIR_RELEASE)/src/Genes/Total_Force_Gene.o $(OBJDIR_RELEASE)/src/Game/Color.o $(OBJDIR_RELEASE)/src/Game/Clock.o $(OBJDIR_RELEASE)/src/Game/Board.o $(OBJDIR_RELEASE)/src/Exceptions/Stalemate_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Promotion_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Out_Of_Time_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Illegal_Move_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Generic_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Game_Ending_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/End_Of_File_Exception.o $(OBJDIR_RELEASE)/src/Exceptions/Checkmate_Exception.o $(OBJDIR_RELEASE)/src/Pieces/Knight.o $(OBJDIR_RELEASE)/src/Utility.o $(OBJDIR_RELEASE)/src/Players/Random_AI.o $(OBJDIR_RELEASE)/src/Players/Player.o $(OBJDIR_RELEASE)/src/Players/Outside_Player.o $(OBJDIR_RELEASE)/src/Players/Human_Player.o $(OBJDIR_RELEASE)/src/Players/Genetic_AI.o $(OBJDIR_RELEASE)/src/Players/AI_Player.o $(OBJDIR_RELEASE)/src/Pieces/Rook.o $(OBJDIR_RELEASE)/src/Pieces/Queen.o $(OBJDIR_RELEASE)/src/Pieces/Piece.o $(OBJDIR_RELEASE)/src/Pieces/Pawn.o $(OBJDIR_RELEASE)/main.o $(OBJDIR_RELEASE)/src/Pieces/King.o $(OBJDIR_RELEASE)/src/Pieces/Bishop.o $(OBJDIR_RELEASE)/src/Moves/Queenside_Castle.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Promotion_by_Capture.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Promotion.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Move.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Double_Move.o $(OBJDIR_RELEASE)/src/Moves/Pawn_Capture.o $(OBJDIR_RELEASE)/src/Moves/Move.o $(OBJDIR_RELEASE)/src/Moves/Kingside_Castle.o $(OBJDIR_RELEASE)/src/Moves/En_Passant.o
 
 all: debug release
 
@@ -68,6 +68,9 @@ out_debug: before_debug $(OBJ_DEBUG) $(DEP_DEBUG)
 
 $(OBJDIR_DEBUG)/src/Game/Game.o: src/Game/Game.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Game/Game.cpp -o $(OBJDIR_DEBUG)/src/Game/Game.o
+
+$(OBJDIR_DEBUG)/src/Genes/Sphere_of_Influence_Gene.o: src/Genes/Sphere_of_Influence_Gene.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(OBJDIR_DEBUG)/src/Genes/Sphere_of_Influence_Gene.o
 
 $(OBJDIR_DEBUG)/src/Genes/Piece_Strength_Gene.o: src/Genes/Piece_Strength_Gene.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Genes/Piece_Strength_Gene.cpp -o $(OBJDIR_DEBUG)/src/Genes/Piece_Strength_Gene.o
@@ -102,11 +105,8 @@ $(OBJDIR_DEBUG)/src/Genes/Freedom_To_Move_Gene.o: src/Genes/Freedom_To_Move_Gene
 $(OBJDIR_DEBUG)/src/Genes/Branch_Pruning_Gene.o: src/Genes/Branch_Pruning_Gene.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Genes/Branch_Pruning_Gene.cpp -o $(OBJDIR_DEBUG)/src/Genes/Branch_Pruning_Gene.o
 
-$(OBJDIR_DEBUG)/src/Game/Square.o: src/Game/Square.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Game/Square.cpp -o $(OBJDIR_DEBUG)/src/Game/Square.o
-
-$(OBJDIR_DEBUG)/src/Genes/Sphere_of_Influence_Gene.o: src/Genes/Sphere_of_Influence_Gene.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(OBJDIR_DEBUG)/src/Genes/Sphere_of_Influence_Gene.o
+$(OBJDIR_DEBUG)/src/Genes/Total_Force_Gene.o: src/Genes/Total_Force_Gene.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Genes/Total_Force_Gene.cpp -o $(OBJDIR_DEBUG)/src/Genes/Total_Force_Gene.o
 
 $(OBJDIR_DEBUG)/src/Game/Color.o: src/Game/Color.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Game/Color.cpp -o $(OBJDIR_DEBUG)/src/Game/Color.o
@@ -141,8 +141,8 @@ $(OBJDIR_DEBUG)/src/Exceptions/End_Of_File_Exception.o: src/Exceptions/End_Of_Fi
 $(OBJDIR_DEBUG)/src/Exceptions/Checkmate_Exception.o: src/Exceptions/Checkmate_Exception.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Exceptions/Checkmate_Exception.cpp -o $(OBJDIR_DEBUG)/src/Exceptions/Checkmate_Exception.o
 
-$(OBJDIR_DEBUG)/src/Pieces/King.o: src/Pieces/King.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Pieces/King.cpp -o $(OBJDIR_DEBUG)/src/Pieces/King.o
+$(OBJDIR_DEBUG)/src/Pieces/Knight.o: src/Pieces/Knight.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Pieces/Knight.cpp -o $(OBJDIR_DEBUG)/src/Pieces/Knight.o
 
 $(OBJDIR_DEBUG)/src/Utility.o: src/Utility.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Utility.cpp -o $(OBJDIR_DEBUG)/src/Utility.o
@@ -177,11 +177,11 @@ $(OBJDIR_DEBUG)/src/Pieces/Piece.o: src/Pieces/Piece.cpp
 $(OBJDIR_DEBUG)/src/Pieces/Pawn.o: src/Pieces/Pawn.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Pieces/Pawn.cpp -o $(OBJDIR_DEBUG)/src/Pieces/Pawn.o
 
-$(OBJDIR_DEBUG)/src/Pieces/Knight.o: src/Pieces/Knight.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Pieces/Knight.cpp -o $(OBJDIR_DEBUG)/src/Pieces/Knight.o
-
 $(OBJDIR_DEBUG)/main.o: main.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c main.cpp -o $(OBJDIR_DEBUG)/main.o
+
+$(OBJDIR_DEBUG)/src/Pieces/King.o: src/Pieces/King.cpp
+	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Pieces/King.cpp -o $(OBJDIR_DEBUG)/src/Pieces/King.o
 
 $(OBJDIR_DEBUG)/src/Pieces/Bishop.o: src/Pieces/Bishop.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Pieces/Bishop.cpp -o $(OBJDIR_DEBUG)/src/Pieces/Bishop.o
@@ -212,9 +212,6 @@ $(OBJDIR_DEBUG)/src/Moves/Kingside_Castle.o: src/Moves/Kingside_Castle.cpp
 
 $(OBJDIR_DEBUG)/src/Moves/En_Passant.o: src/Moves/En_Passant.cpp
 	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Moves/En_Passant.cpp -o $(OBJDIR_DEBUG)/src/Moves/En_Passant.o
-
-$(OBJDIR_DEBUG)/src/Genes/Total_Force_Gene.o: src/Genes/Total_Force_Gene.cpp
-	$(CXX) $(CFLAGS_DEBUG) $(INC_DEBUG) -c src/Genes/Total_Force_Gene.cpp -o $(OBJDIR_DEBUG)/src/Genes/Total_Force_Gene.o
 
 clean_debug: 
 	rm -f $(OBJ_DEBUG) $(OUT_DEBUG)
@@ -249,6 +246,9 @@ out_release: before_release $(OBJ_RELEASE) $(DEP_RELEASE)
 $(OBJDIR_RELEASE)/src/Game/Game.o: src/Game/Game.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Game/Game.cpp -o $(OBJDIR_RELEASE)/src/Game/Game.o
 
+$(OBJDIR_RELEASE)/src/Genes/Sphere_of_Influence_Gene.o: src/Genes/Sphere_of_Influence_Gene.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(OBJDIR_RELEASE)/src/Genes/Sphere_of_Influence_Gene.o
+
 $(OBJDIR_RELEASE)/src/Genes/Piece_Strength_Gene.o: src/Genes/Piece_Strength_Gene.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Genes/Piece_Strength_Gene.cpp -o $(OBJDIR_RELEASE)/src/Genes/Piece_Strength_Gene.o
 
@@ -282,11 +282,8 @@ $(OBJDIR_RELEASE)/src/Genes/Freedom_To_Move_Gene.o: src/Genes/Freedom_To_Move_Ge
 $(OBJDIR_RELEASE)/src/Genes/Branch_Pruning_Gene.o: src/Genes/Branch_Pruning_Gene.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Genes/Branch_Pruning_Gene.cpp -o $(OBJDIR_RELEASE)/src/Genes/Branch_Pruning_Gene.o
 
-$(OBJDIR_RELEASE)/src/Game/Square.o: src/Game/Square.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Game/Square.cpp -o $(OBJDIR_RELEASE)/src/Game/Square.o
-
-$(OBJDIR_RELEASE)/src/Genes/Sphere_of_Influence_Gene.o: src/Genes/Sphere_of_Influence_Gene.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(OBJDIR_RELEASE)/src/Genes/Sphere_of_Influence_Gene.o
+$(OBJDIR_RELEASE)/src/Genes/Total_Force_Gene.o: src/Genes/Total_Force_Gene.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Genes/Total_Force_Gene.cpp -o $(OBJDIR_RELEASE)/src/Genes/Total_Force_Gene.o
 
 $(OBJDIR_RELEASE)/src/Game/Color.o: src/Game/Color.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Game/Color.cpp -o $(OBJDIR_RELEASE)/src/Game/Color.o
@@ -321,8 +318,8 @@ $(OBJDIR_RELEASE)/src/Exceptions/End_Of_File_Exception.o: src/Exceptions/End_Of_
 $(OBJDIR_RELEASE)/src/Exceptions/Checkmate_Exception.o: src/Exceptions/Checkmate_Exception.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Exceptions/Checkmate_Exception.cpp -o $(OBJDIR_RELEASE)/src/Exceptions/Checkmate_Exception.o
 
-$(OBJDIR_RELEASE)/src/Pieces/King.o: src/Pieces/King.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Pieces/King.cpp -o $(OBJDIR_RELEASE)/src/Pieces/King.o
+$(OBJDIR_RELEASE)/src/Pieces/Knight.o: src/Pieces/Knight.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Pieces/Knight.cpp -o $(OBJDIR_RELEASE)/src/Pieces/Knight.o
 
 $(OBJDIR_RELEASE)/src/Utility.o: src/Utility.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Utility.cpp -o $(OBJDIR_RELEASE)/src/Utility.o
@@ -357,11 +354,11 @@ $(OBJDIR_RELEASE)/src/Pieces/Piece.o: src/Pieces/Piece.cpp
 $(OBJDIR_RELEASE)/src/Pieces/Pawn.o: src/Pieces/Pawn.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Pieces/Pawn.cpp -o $(OBJDIR_RELEASE)/src/Pieces/Pawn.o
 
-$(OBJDIR_RELEASE)/src/Pieces/Knight.o: src/Pieces/Knight.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Pieces/Knight.cpp -o $(OBJDIR_RELEASE)/src/Pieces/Knight.o
-
 $(OBJDIR_RELEASE)/main.o: main.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c main.cpp -o $(OBJDIR_RELEASE)/main.o
+
+$(OBJDIR_RELEASE)/src/Pieces/King.o: src/Pieces/King.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Pieces/King.cpp -o $(OBJDIR_RELEASE)/src/Pieces/King.o
 
 $(OBJDIR_RELEASE)/src/Pieces/Bishop.o: src/Pieces/Bishop.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Pieces/Bishop.cpp -o $(OBJDIR_RELEASE)/src/Pieces/Bishop.o
@@ -392,9 +389,6 @@ $(OBJDIR_RELEASE)/src/Moves/Kingside_Castle.o: src/Moves/Kingside_Castle.cpp
 
 $(OBJDIR_RELEASE)/src/Moves/En_Passant.o: src/Moves/En_Passant.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Moves/En_Passant.cpp -o $(OBJDIR_RELEASE)/src/Moves/En_Passant.o
-
-$(OBJDIR_RELEASE)/src/Genes/Total_Force_Gene.o: src/Genes/Total_Force_Gene.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c src/Genes/Total_Force_Gene.cpp -o $(OBJDIR_RELEASE)/src/Genes/Total_Force_Gene.o
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)

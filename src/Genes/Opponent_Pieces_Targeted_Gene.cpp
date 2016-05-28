@@ -37,18 +37,16 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color colo
         auto start_file = complete_move.starting_file;
         auto start_rank = complete_move.starting_rank;
         auto move = complete_move.move;
-        auto origin_square = hypothetical.view_square(start_file,
-                                                      start_rank);
-        auto attacking_piece = origin_square.piece_on_square();
-        auto target_square = hypothetical.view_square(start_file + move->file_change(),
-                                                      start_rank + move->rank_change());
-        auto target_piece = target_square.piece_on_square();
+        auto end_file = start_file + move->file_change();
+        auto end_rank = start_rank + move->rank_change();
+        auto attacking_piece = hypothetical.piece_on_square(start_file, start_rank);
+        auto target_piece = hypothetical.piece_on_square(end_file, end_rank);
         if(target_piece && ! already_counted[target_piece])
         {
             score += piece_strenth_source->piece_value(target_piece);
             already_counted[target_piece] = true;
         }
-        else if(target_square.is_en_passant_targetable() && attacking_piece->pgn_symbol().empty())
+        else if(board.is_en_passant_targetable(end_file, end_rank) && attacking_piece->pgn_symbol().empty())
         {
             // Pawn attacking another pawn en passant
             score += piece_strenth_source->piece_value('P');

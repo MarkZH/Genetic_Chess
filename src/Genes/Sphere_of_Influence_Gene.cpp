@@ -50,7 +50,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color color) co
     static char king_file = 'a';
     static int  king_rank = 1;
 
-    auto piece = board.view_square(king_file, king_rank).piece_on_square();
+    auto piece = board.piece_on_square(king_file, king_rank);
     while( ! piece || piece->pgn_symbol() != "K" || piece->color() == color)
     {
         ++king_file;
@@ -63,10 +63,10 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color color) co
         {
             king_rank = 1;
         }
-        piece = board.view_square(king_file, king_rank).piece_on_square();
+        piece = board.piece_on_square(king_file, king_rank);
     }
 
-    std::map<const Square*, double> square_score;
+    std::map<std::string, double> square_score;
     for(const auto& cm : board.all_moves())
     {
         char final_file = cm.starting_file + cm.move->file_change();
@@ -86,7 +86,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color color) co
             continue;
         }
 
-        auto piece_symbol = std::toupper(board.view_square(cm.starting_file, cm.starting_rank).piece_on_square()->fen_symbol());
+        auto piece_symbol = std::toupper(board.piece_on_square(cm.starting_file, cm.starting_rank)->fen_symbol());
         auto piece_strength = piece_strength_source->piece_value(piece_symbol);
 
         int distance = std::max(std::abs(final_file - king_file),
@@ -97,7 +97,9 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color color) co
         // use 1 + piece_strength in case piece_strength is 0
         auto move_score = (8 - distance)*legal_multiplier/(1 + strength_factor*piece_strength);
 
-        auto square_address = &board.view_square(final_file, final_rank);
+        std::string square_address;
+        square_address.push_back(final_file);
+        square_address += std::to_string(final_rank);
         if(move_score > square_score[square_address])
         {
             square_score[square_address] = move_score;

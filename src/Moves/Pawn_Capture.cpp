@@ -28,8 +28,8 @@ bool Pawn_Capture::is_legal(const Board& board, char file_start, int rank_start)
     char file_end = file_start + file_change();
     int  rank_end = rank_start + rank_change();
 
-    auto attacking_piece = board.view_square(file_start, rank_start).piece_on_square();
-    auto attacked_piece  = board.view_square(file_end,   rank_end).piece_on_square();
+    auto attacking_piece = board.piece_on_square(file_start, rank_start);
+    auto attacked_piece  = board.piece_on_square(file_end, rank_end);
     return rank_end != (rank_change() == 1 ? 8 : 1)
            && attacked_piece != nullptr
            && attacked_piece->color() != attacking_piece->color();

@@ -42,7 +42,7 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
     char file_end = file_start + file_change();
     int  rank_end = rank_start + rank_change();
 
-    auto original_piece = board.view_square(file_start, rank_start).piece_on_square();
+    auto original_piece = board.piece_on_square(file_start, rank_start);
     std::string move_record = original_piece->pgn_symbol();
 
     bool record_file = false;
@@ -51,7 +51,7 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
     {
         for(int rank_other = 1; rank_other <= 8; ++rank_other)
         {
-            if(board.view_square(file_other, rank_other).empty())
+            if( ! board.piece_on_square(file_other, rank_other))
             {
                 continue;
             }
@@ -63,7 +63,7 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
             {
                 continue;
             }
-            auto new_piece = board.view_square(file_other, rank_other).piece_on_square();
+            auto new_piece = board.piece_on_square(file_other, rank_other);
             if((*original_piece) != (*new_piece))
             {
                 continue;
@@ -93,7 +93,7 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
         move_record.append(std::to_string(rank_start));
     }
 
-    if( ! board.view_square(file_end, rank_end).empty())
+    if(board.piece_on_square(file_end, rank_end))
     {
         move_record.append("x");
     }
