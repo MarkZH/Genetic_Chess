@@ -26,7 +26,7 @@ class Genome
         double evaluate(const Board& board, Color color) const;
         void mutate();
 
-        size_t look_ahead(double time, size_t move_choices) const; // how many moves in future to evaluate board
+        size_t positions_to_examine(double time) const; // how many moves in future to evaluate board
         double time_required() const; // minimum time to continue analysis
         double minimum_score_change() const; // if the change in the a board's score is less than
                                              // this, stop looking ahead and abandon the move sequence

@@ -47,12 +47,12 @@ class Genetic_AI : public AI_Player
         double evaluate_board(const Board& board,
                               const Clock& clock,
                               Color perspective,
-                              size_t look_ahead,
+                              int positions_to_examine,
                               double original_board_score) const;
 
         const Complete_Move choose_move(const Board& board,
                                         const Clock& clock,
-                                        int look_ahead) const;
+                                        int positions_to_examine) const;
 };
 
 #endif // GENETIC_AI_H

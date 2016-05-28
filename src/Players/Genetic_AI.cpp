@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <cmath>
 
 #include "Utility.h"
 #include "Moves/Move.h"
@@ -133,7 +134,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     return choose_move(board, clock, -1);
 }
 
-const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clock, int look_ahead) const
+const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clock, int positions_to_examine) const
 {
     auto legal_moves = board.all_legal_moves();
     if(legal_moves.size() == 1)
@@ -142,15 +143,15 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     }
     double best_score = std::numeric_limits<double>::lowest();
     auto best_move = legal_moves.front();
-    if(look_ahead == -1)
+    if(positions_to_examine == -1)
     {
-        look_ahead = genome.look_ahead(clock.time_left(board.whose_turn()),
-                                       board.number_all_moves());
+        positions_to_examine = genome.positions_to_examine(clock.time_left(board.whose_turn()));
     }
+    int positions_per_move = std::ceil(positions_to_examine/legal_moves.size());
 
     for(const auto& move : legal_moves)
     {
-        if(clock.time_left(clock.running_for()) < 0)
+        if(clock.time_left(clock.running_for()) < std::min(0.0, genome.time_required()))
         {
             break;
         }
@@ -158,12 +159,18 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
         double score;
         try
         {
+            if(positions_per_move > positions_to_examine)
+            {
+                positions_per_move = positions_to_examine;
+            }
+            positions_to_examine -= positions_per_move;
+
             auto hypothetical = board.make_hypothetical();
             hypothetical.submit_move(move);
             score = evaluate_board(hypothetical,
                                    clock,
                                    board.whose_turn(),
-                                   look_ahead,
+                                   positions_per_move,
                                    genome.evaluate(board, board.whose_turn()));
         }
         catch(const Checkmate_Exception&)
@@ -188,20 +195,30 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 double Genetic_AI::evaluate_board(const Board& board,
                                   const Clock& clock,
                                   Color perspective,
-                                  size_t look_ahead,
+                                  int positions_to_examine,
                                   double original_board_score) const
 {
     auto board_score = genome.evaluate(board, perspective);
-    if(look_ahead > 0
-       && clock.time_left(clock.running_for()) > genome.time_required()
+    --positions_to_examine; // subtract one for examining this node of the game tree
+
+    if(positions_to_examine > 0
+       && clock.time_left(clock.running_for()) > std::max(genome.time_required(), 0.0)
        && board_score - original_board_score > genome.minimum_score_change())
     {
         try
         {
             auto next_board = board.make_hypothetical();
-            Complete_Move next_move = choose_move(next_board, clock, look_ahead - 1);
+
+            // use remaining position examinations to find opponent's next move
+            Complete_Move next_move = choose_move(next_board, clock, positions_to_examine);
             next_board.submit_move(next_move);
-            return evaluate_board(next_board, clock, perspective, look_ahead - 1, original_board_score);
+
+            // use same number of position examinations opponent's move (why it was chosen)
+            return evaluate_board(next_board,
+                                  clock,
+                                  perspective,
+                                  std::ceil(double(positions_to_examine)/board.all_legal_moves().size()),
+                                  original_board_score);
         }
         catch(const Game_Ending_Exception& gee)
         {

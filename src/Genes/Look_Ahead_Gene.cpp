@@ -8,7 +8,7 @@
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     Gene(0.0),
-    look_ahead_constant(1)
+    look_ahead_constant(0)
 {
 }
 
@@ -26,15 +26,14 @@ Look_Ahead_Gene::~Look_Ahead_Gene()
 {
 }
 
-size_t Look_Ahead_Gene::look_ahead(double time, size_t choices_per_move) const
+size_t Look_Ahead_Gene::positions_to_examine(double time_left) const
 {
-    auto result = (look_ahead_constant + std::log10(time))/std::log10(choices_per_move);
-    return std::max(result, 0.0);
+    return std::max(look_ahead_constant*time_left, 0.0);
 }
 
 void Look_Ahead_Gene::mutate()
 {
-    look_ahead_constant += 0.1 + Random::random_normal(1.0);
+    look_ahead_constant = std::max(0.0, look_ahead_constant + Random::random_normal(5.0));
 }
 
 Look_Ahead_Gene* Look_Ahead_Gene::duplicate() const

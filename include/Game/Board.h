@@ -62,7 +62,6 @@ class Board
 
         std::vector<Complete_Move> all_legal_moves() const;
         std::vector<Complete_Move> all_moves() const;
-        int number_all_moves() const;
         bool square_attacked_by(char file, int rank, Color color) const;
 
     private:

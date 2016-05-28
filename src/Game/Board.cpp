@@ -814,22 +814,6 @@ void Board::set_turn(Color color)
     turn_color = color;
 }
 
-int Board::number_all_moves() const
-{
-    int result = 0;
-
-    for(const auto& square : board)
-    {
-        auto piece = square.piece_on_square();
-        if(piece)
-        {
-            result += piece->get_move_list().size();
-        }
-    }
-
-    return result;
-}
-
 std::vector<Complete_Move> Board::all_moves() const
 {
     if( ! all_moves_cache.empty())
