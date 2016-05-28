@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
                             genetic_ptr = new Genetic_AI;
                         }
 
-                        for(int i = 0; i < 100; ++i)
+                        for(int j = 0; j < 100; ++j)
                         {
                             genetic_ptr->mutate();
                         }
