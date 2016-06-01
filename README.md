@@ -51,14 +51,14 @@ Sums the strength of all the player's pieces on the board.
 
 #### Branch Pruning Gene
 Specifies when to cut off analyzing a line of moves based on whether the
-current board evaluation is too low compared to the current board state.
+current board evaluation is too low compared to the real board state.
 
 #### Last Minute Panic Gene
 If the time left in the game is less than the amount specified here, then
 look-ahead on all lines is cut off.
 
 #### Look Ahead Gene
-Determines how many moves to look ahead based on the time left and how many move choices are available.
+Determines how many positions to examine based on the time left.
 
 #### Piece Strength Gene
 Specifies the importance or strength of each differet type of chess piece.
