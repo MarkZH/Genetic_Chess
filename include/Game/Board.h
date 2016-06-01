@@ -66,6 +66,7 @@ class Board
         bool square_attacked_by(char file, int rank, Color color) const;
         bool is_en_passant_targetable(char file, int rank) const;
         bool piece_has_moved(char file, int rank) const;
+        bool piece_has_moved(const std::shared_ptr<const Piece>& piece) const;
 
     private:
         std::vector<std::shared_ptr<const Piece>> board;
