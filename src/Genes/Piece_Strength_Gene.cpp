@@ -7,7 +7,7 @@
 
 Piece_Strength_Gene::Piece_Strength_Gene() : Gene(0.0)
 {
-    for(auto c : std::string("PRNBQK"))
+    for(auto c : std::string("PRNBQ"))
     {
         piece_strength[c] = 1.0;
     }
@@ -45,6 +45,11 @@ void Piece_Strength_Gene::mutate()
 
 double Piece_Strength_Gene::piece_value(char symbol) const
 {
+    if(symbol == 'K')
+    {
+        return 0;
+    }
+
     return piece_strength.at(symbol)/normalizing_factor;
 }
 
@@ -76,8 +81,7 @@ void Piece_Strength_Gene::renormalize()
                          2*piece_strength['R'] +
                          2*piece_strength['N'] +
                          2*piece_strength['B'] +
-                           piece_strength['Q'] +
-                           piece_strength['K'];
+                           piece_strength['Q'];
 
     if(normalizing_factor == 0)
     {
