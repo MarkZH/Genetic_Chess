@@ -9,7 +9,6 @@ Queenside_Castle::Queenside_Castle() : Move(-2, 0)
 bool Queenside_Castle::is_legal(const Board& board, char file_start, int rank_start) const
 {
     return     ! board.piece_has_moved(file_start, rank_start)
-            &&   board.piece_on_square('a', rank_start)
             && ! board.piece_has_moved('a', rank_start)
             && ! board.king_is_in_check(board.whose_turn())
             && ! board.square_attacked_by('c', rank_start, opposite(board.whose_turn()))

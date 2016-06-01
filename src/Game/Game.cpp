@@ -47,6 +47,13 @@ Color play_game(const Player& white,
         white.process_game_ending(end_game);
         black.process_game_ending(end_game);
     }
+    catch(const std::exception& error)
+    {
+        result = error.what();
+        board.ascii_draw(WHITE);
+        board.print_game_record(white.name(), black.name(), pgn_file_name, result);
+        throw;
+    }
 
     board.ascii_draw();
     board.print_game_record(white.name(), black.name(), "", result);

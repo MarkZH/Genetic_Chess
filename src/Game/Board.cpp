@@ -300,17 +300,15 @@ std::string Board::fen_status() const
     s.push_back(tolower(color_text(whose_turn())[0]));
     s.push_back(' ');
 
-    for(int base_rank = 1; base_rank <= 8; base_rank += 7)
+    for(int base_rank : {1, 8})
     {
-        auto king_piece = piece_on_square('e', base_rank);
-        if(king_piece && ! piece_moved.at(king_piece))
+        if( ! piece_has_moved('e', base_rank)) // has king moved?
         {
-            for(char castle_file = 'h'; castle_file >= 'a'; castle_file -= 7)
+            for(char rook_file : {'h', 'a'})
             {
-                auto castle_piece = piece_on_square(castle_file, base_rank);
-                if( castle_piece && ! piece_moved.at(castle_piece))
+                if( ! piece_has_moved(rook_file, base_rank)) // have rooks moved
                 {
-                    std::string mark = (castle_file == 'h' ? "K" : "Q");
+                    std::string mark = (rook_file == 'h' ? "K" : "Q");
                     if(base_rank == 8)
                     {
                         mark[0] = tolower(mark[0]);
@@ -521,9 +519,9 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
     {
         repeat_count.clear();
     }
-    place_piece(piece_on_square(file_start, rank_start), file_end, rank_end);
+    auto piece = piece_on_square(file_start, rank_start);
+    place_piece(piece, file_end, rank_end);
     place_piece(nullptr, file_start, rank_start);
-    piece_moved[piece_on_square(file_end, rank_end)] = true;
     clear_en_passant_target();
 }
 
@@ -629,6 +627,7 @@ void Board::ascii_draw(Color color) const
 void Board::place_piece(const std::shared_ptr<const Piece>& p, char file, int rank)
 {
     piece_on_square(file, rank) = p;
+    piece_moved[p] = true;
 }
 
 bool Board::king_is_in_check(Color king_color) const
@@ -862,8 +861,12 @@ void Board::clear_en_passant_target()
 
 bool Board::piece_has_moved(char file, int rank) const
 {
-    auto piece = piece_on_square(file, rank);
-    return piece && piece_moved.at(piece);
+    return piece_has_moved(piece_on_square(file, rank));
+}
+
+bool Board::piece_has_moved(const std::shared_ptr<const Piece>& piece) const
+{
+    return piece_moved.at(piece);
 }
 
 void Board::all_pieces_unmoved()
@@ -872,11 +875,11 @@ void Board::all_pieces_unmoved()
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = piece_on_square(file, rank);
-            if(piece)
-            {
-                piece_moved[piece] = false;
-            }
+            piece_moved[piece_on_square(file, rank)] = false;
         }
     }
+
+    // If a square is empty, whatever piece you were looking for
+    // must have moved away.
+    piece_moved[nullptr] = true;
 }
