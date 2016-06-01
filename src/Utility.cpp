@@ -88,7 +88,19 @@ double Random::random_normal(double standard_deviation)
     return std::normal_distribution<double>(0, standard_deviation)(generator);
 }
 
+double Random::random_real(double min, double max)
+{
+    static std::default_random_engine
+        generator(std::chrono::system_clock::now().time_since_epoch().count());
+    return std::uniform_real_distribution<double>(min, max)(generator);
+}
+
 bool Random::coin_flip()
 {
     return random_integer(0, 1) == 0;
+}
+
+bool Random::success_probability(double probability)
+{
+    return random_real(0, 1) < probability;
 }

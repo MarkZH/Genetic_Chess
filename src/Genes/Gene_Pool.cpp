@@ -277,6 +277,20 @@ void gene_pool(const std::string& load_file = "")
         else
         {
             std::cout << white.get_id() << " " << black.get_id() << " draw!" << std::endl;
+            if(Random::success_probability(0.05))
+            {
+                auto pseudo_winner_index = Random::coin_flip() ? white_index : black_index;
+                auto pseudo_loser_index = (pseudo_winner_index == white_index) ? black_index : white_index;
+                auto new_specimen = Genetic_AI();
+                for(int i = 0; i < 100; ++i)
+                {
+                    new_specimen.mutate();
+                }
+                std::cout << pool[pseudo_loser_index].get_id() << " dies" << std::endl;
+                std::cout << pool[pseudo_winner_index].get_id() << " RANDOM mates" << std::endl;
+                pool.erase(pool.begin() + pseudo_loser_index);
+                pool.emplace_back(pool[pseudo_winner_index], new_specimen);
+            }
         }
 
         // Interrupt gene pool to play against top AI

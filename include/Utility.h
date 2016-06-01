@@ -23,8 +23,10 @@ namespace String
 namespace Random
 {
     double random_normal(double standard_deviation);
+    double random_real(double min, double max);
     int random_integer(int min, int max);
     bool coin_flip();
+    bool success_probability(double probability);
 }
 
 #endif // UTILITY_H
