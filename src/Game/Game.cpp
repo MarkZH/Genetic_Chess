@@ -35,7 +35,8 @@ Color play_game(const Player& white,
         while(true)
         {
             move_count += (board.whose_turn() == WHITE ? 1 : 0);
-            auto move_chosen = (board.whose_turn() == WHITE ? white : black).choose_move(board, game_clock);
+			auto& player = board.whose_turn() == WHITE ? white : black;
+            auto move_chosen = player.choose_move(board, game_clock);
             game_clock.punch();
             board.submit_move(move_chosen);
         }
@@ -44,6 +45,8 @@ Color play_game(const Player& white,
     {
         result = end_game.what();
         winner = end_game.winner();
+
+		// for Outside_Players communicating with xboard and the like
         white.process_game_ending(end_game);
         black.process_game_ending(end_game);
     }
