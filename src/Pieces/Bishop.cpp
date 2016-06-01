@@ -7,9 +7,9 @@ Bishop::Bishop(Color color_in) : Piece(color_in)
     symbol = "B";
 
     // possible moves
-    for(int d_rank = -1; d_rank <= 1; d_rank += 2)
+    for(int d_rank : {-1, 1})
     {
-        for(int d_file = -1; d_file <= 1; d_file += 2)
+        for(int d_file : {-1, 1})
         {
             for(int move_size = 1; move_size <= 7; ++move_size)
             {

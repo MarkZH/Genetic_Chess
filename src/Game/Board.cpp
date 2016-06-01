@@ -125,8 +125,8 @@ Board::Board(const std::string& fen) :
             auto piece = piece_on_square(file, rank);
             if(piece)
             {
-                if((piece->fen_symbol() == 'P' && rank != 2) || // white pawn
-                   (piece->fen_symbol() == 'p' && rank != 7)) // black pawn
+                if((piece->color() == WHITE && rank != 2) ||
+                   (piece->color() == BLACK && rank != 7))
                 {
                     piece_moved[piece] = true;
                 }
@@ -326,7 +326,7 @@ std::string Board::fen_status() const
 
     for(char file = 'a'; file <= 'h'; file++)
     {
-        for(int rank = 3; rank <= 6; rank += 3) // en passant capture only possible on these ranks
+        for(int rank : {3, 6}) // en passant capture only possible on these ranks
         {
             if(is_en_passant_targetable(file, rank))
             {
@@ -850,7 +850,8 @@ void Board::make_en_passant_targetable(char file, int rank)
 
 bool Board::is_en_passant_targetable(char file, int rank) const
 {
-    return en_passant_target_file == file && en_passant_target_rank == rank;
+    return en_passant_target_file == file &&
+           en_passant_target_rank == rank;
 }
 
 void Board::clear_en_passant_target()
