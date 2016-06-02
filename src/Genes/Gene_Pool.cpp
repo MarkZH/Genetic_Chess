@@ -133,6 +133,7 @@ void gene_pool(const std::string& load_file = "")
     int white_wins = 0;
     int black_wins = 0;
     int draw_count = 0;
+    int new_blood_count = 0;
 
     int winning_streak = 0;
     int winning_streak_id = -1;
@@ -177,7 +178,8 @@ void gene_pool(const std::string& load_file = "")
         int id_digits = std::floor(std::log10(pool.back().get_id()) + 1);
         int parent_width = std::max(2*(id_digits + 1) + 1, 9);
 
-        std::cout << "\nGene pool size: " << pool.size() << "\n"
+        std::cout << "\nGene pool size: " << pool.size()
+                  << "  New blood introduced: " << new_blood_count << "\n"
                   << "Games: " << game_count
                   << "  White wins: " << white_wins
                   << "  Black wins: " << black_wins
@@ -288,8 +290,9 @@ void gene_pool(const std::string& load_file = "")
                 }
                 std::cout << pool[pseudo_loser_index].get_id() << " dies" << std::endl;
                 std::cout << pool[pseudo_winner_index].get_id() << " RANDOM mates" << std::endl;
-                pool.erase(pool.begin() + pseudo_loser_index);
                 pool.emplace_back(pool[pseudo_winner_index], new_specimen);
+                pool.erase(pool.begin() + pseudo_loser_index);
+                ++new_blood_count;
             }
         }
 
