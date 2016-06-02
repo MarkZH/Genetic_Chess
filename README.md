@@ -32,18 +32,22 @@ Counts the number of legal moves available in the current position.
 Counts the king's legal moves.
 
 #### Opponent Pieces Targeted Gene
-Totals the total strength (as determined by the Piece Strength Gene below) of
+Sums the total strength (as determined by the Piece Strength Gene below) of
 the opponent's pieces currently under attack.
 
 #### Pawn Advancement Gene
-Measures the progress of all pawns towards the opposite side of the board.
+Measures the progress of all pawns towards the opposite side of the board with
+bonuses for promotion.
 
 #### Sphere of Influence Gene
 Counts the number of squares attacked by all pieces, weighted by the square's
-proximity to the opponent's king.
+proximity to the opponent's king and inversely weighted by the attacking
+piece's strength. A weaker piece attacking a square is better since there's
+less motivation to retreat if it is threatened.
 
 #### Total Force Gene
-Sums the strength of all the player's pieces on the board.
+Sums the strength (according to the Piece Strength Gene) of all the player's
+pieces on the board.
 
 
 
