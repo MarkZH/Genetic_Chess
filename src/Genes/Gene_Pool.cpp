@@ -13,6 +13,7 @@
 #include "Players/Human_Player.h"
 
 #include "Game/Game.h"
+#include "Game/Board.h"
 
 #include "Exceptions/Generic_Exception.h"
 #include "Exceptions/End_Of_File_Exception.h"
@@ -22,8 +23,13 @@
 sig_atomic_t signal_activated = 0;
 void signal_handler(int)
 {
+    if(signal_activated == 1)
+    {
+        std::cout << "Exiting ..." << std::endl;
+        exit(1);
+    }
     signal_activated = 1;
-    std::cout << "   Waiting for game to end ..." << std::endl;
+    std::cout << "   Waiting for games to end ..." << std::endl;
 }
 
 void write_generation(const std::vector<Genetic_AI>& pool,
@@ -334,10 +340,6 @@ void gene_pool(const std::string& load_file = "")
                 std::cout << "You " << (human_color == winning_color ? "won" : "lost") << "!" << std::endl;
                 std::cin.get();
                 signal(SIGINT, signal_handler);
-            }
-            else
-            {
-                break;
             }
         }
     }
