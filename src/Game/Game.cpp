@@ -1,9 +1,9 @@
 #include "Game/Game.h"
 
-#include <iostream>
 #include <fstream>
 #include <string>
 #include <chrono>
+#include <mutex>
 
 #include "Players/Player.h"
 #include "Game/Board.h"
@@ -20,11 +20,9 @@ Color play_game(const Player& white,
                 int moves_to_reset,
                 const std::string& pgn_file_name)
 {
-    const std::string long_file_name = "longest_game.pgn";
-    static size_t longest_game = count_moves(long_file_name);
-    size_t move_count = 0;
     Color winner;
     std::string result;
+    static std::mutex write_lock;
 
     Board board;
     Clock game_clock(time_in_seconds, moves_to_reset);
@@ -34,7 +32,6 @@ Color play_game(const Player& white,
     {
         while(true)
         {
-            move_count += (board.whose_turn() == WHITE ? 1 : 0);
 			auto& player = board.whose_turn() == WHITE ? white : black;
             auto move_chosen = player.choose_move(board, game_clock);
             game_clock.punch();
@@ -49,6 +46,20 @@ Color play_game(const Player& white,
 		// for Outside_Players communicating with xboard and the like
         white.process_game_ending(end_game);
         black.process_game_ending(end_game);
+
+        std::lock_guard<std::mutex> write_lock_guard(write_lock);
+        board.print_game_record(white.name(), black.name(), pgn_file_name, result);
+        if(game_clock.is_running())
+        {
+            std::ofstream(pgn_file_name, std::ios::app)
+                << "; Initial time: " << time_in_seconds << "\n"
+                << "; Moves to reset clocks: " << moves_to_reset << "\n"
+                << "; Time left: White: " << game_clock.time_left(WHITE) << "\n"
+                << ";            Black: " << game_clock.time_left(BLACK) << "\n\n"
+                << std::endl;
+        }
+
+        return winner;
     }
     catch(const std::exception& error)
     {
@@ -57,28 +68,6 @@ Color play_game(const Player& white,
         board.print_game_record(white.name(), black.name(), pgn_file_name, result);
         throw;
     }
-
-    board.ascii_draw();
-    board.print_game_record(white.name(), black.name(), "", result);
-    if(move_count > longest_game)
-    {
-        board.print_game_record(white.name(), black.name(), long_file_name, result);
-        longest_game = move_count;
-    }
-
-    if( ! pgn_file_name.empty())
-    {
-        board.print_game_record(white.name(), black.name(), pgn_file_name, result);
-    }
-
-    if(game_clock.is_running())
-    {
-        std::cout << "Time left: White: " << game_clock.time_left(WHITE)
-                << "\n           Black: " << game_clock.time_left(BLACK) << std::endl;
-        std::cout << result << std::endl;
-    }
-
-    return winner;
 }
 
 size_t count_moves(const std::string& file_name)
