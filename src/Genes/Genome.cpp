@@ -153,6 +153,8 @@ double Genome::score_board(const Board& board, Color perspective) const
     double score = 0;
     for(const auto& gene : genome)
     {
+        // To parallelize, replace below with std::async() call
+        // like in gene pool game matchups
         score += gene->evaluate(board, perspective);
     }
 
@@ -168,6 +170,7 @@ void Genome::mutate()
 {
     for(auto& gene : genome)
     {
+        // On average, mutate 2 genes (if condition ends with <= 2)
         if(Random::random_integer(1, genome.size()) <= 2)
         {
             gene->mutate();
