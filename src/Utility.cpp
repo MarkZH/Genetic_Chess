@@ -76,21 +76,21 @@ bool String::starts_with(const std::string& s, char beginning)
 
 int Random::random_integer(int min, int max)
 {
-    static std::default_random_engine
+    static std::mt19937_64
         generator(std::chrono::system_clock::now().time_since_epoch().count());
     return std::uniform_int_distribution<int>(min, max)(generator);
 }
 
 double Random::random_normal(double standard_deviation)
 {
-    static std::default_random_engine
+    static std::mt19937_64
         generator(std::chrono::system_clock::now().time_since_epoch().count());
     return std::normal_distribution<double>(0, standard_deviation)(generator);
 }
 
 double Random::random_real(double min, double max)
 {
-    static std::default_random_engine
+    static std::mt19937_64
         generator(std::chrono::system_clock::now().time_since_epoch().count());
     return std::uniform_real_distribution<double>(min, max)(generator);
 }
