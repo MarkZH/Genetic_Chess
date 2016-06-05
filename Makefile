@@ -18,7 +18,7 @@ LIBDIR =
 LIB = 
 LDFLAGS = -pthread
 
-INC_DEBUG = $(INC) -Iinclude/Genes -Iinclude
+INC_DEBUG = $(INC)
 CFLAGS_DEBUG = $(CFLAGS) -g -DDEBUG
 RESINC_DEBUG = $(RESINC)
 RCFLAGS_DEBUG = $(RCFLAGS)
@@ -29,7 +29,7 @@ OBJDIR_DEBUG = obj/Debug
 DEP_DEBUG = 
 OUT_DEBUG = bin/Debug/genetic_chess
 
-INC_RELEASE = $(INC) -Iinclude/Genes -Iinclude
+INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -fexpensive-optimizations -O3
 RESINC_RELEASE = $(RESINC)
 RCFLAGS_RELEASE = $(RCFLAGS)

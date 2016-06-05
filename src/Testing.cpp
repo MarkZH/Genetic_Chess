@@ -1,5 +1,4 @@
-#ifndef TESTING_H
-#define TESTING_H
+#include "Testing.h"
 
 #include <memory>
 #include <cstdlib>
@@ -145,5 +144,3 @@ void run_tests()
     remove(gene_pool_result_file_name);
     std::cout << "All tests passed." << std::endl;
 }
-
-#endif // TESTING_H

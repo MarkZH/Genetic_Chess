@@ -1,4 +1,4 @@
-#include "Branch_Pruning_Gene.h"
+#include "Genes/Branch_Pruning_Gene.h"
 
 #include "Utility.h"
 

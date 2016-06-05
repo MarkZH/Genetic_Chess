@@ -3,7 +3,7 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Exceptions/Generic_Exception.h"
-#include "Piece_Strength_Gene.h"
+#include "Genes/Piece_Strength_Gene.h"
 #include "Utility.h"
 
 Sphere_of_Influence_Gene::Sphere_of_Influence_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_source_in) :

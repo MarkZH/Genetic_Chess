@@ -1,4 +1,4 @@
-#include "Last_Minute_Panic_Gene.h"
+#include "Genes/Last_Minute_Panic_Gene.h"
 
 #include <string>
 

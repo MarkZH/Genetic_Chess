@@ -69,19 +69,3 @@ Color play_game(const Player& white,
         throw;
     }
 }
-
-size_t count_moves(const std::string& file_name)
-{
-    std::ifstream ifs(file_name);
-    std::string line;
-    size_t count = 0;
-    while(std::getline(ifs, line))
-    {
-        if(isdigit(line.front()))
-        {
-            ++count;
-        }
-    }
-
-    return count;
-}
