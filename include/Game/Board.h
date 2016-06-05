@@ -49,7 +49,6 @@ class Board
                                const std::string& outside_result = "") const;
         std::string board_status() const; // for detecting threefold repetition
         Color get_winner() const;
-        unsigned int number_of_moves() const;
         std::string last_move() const;
 
         Board make_hypothetical() const;
