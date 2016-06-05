@@ -777,11 +777,6 @@ void Board::set_winner(Color color)
     winner = color;
 }
 
-unsigned int Board::number_of_moves() const
-{
-    return game_record.size();
-}
-
 std::string Board::last_move() const
 {
     if(game_record.size() > 0)

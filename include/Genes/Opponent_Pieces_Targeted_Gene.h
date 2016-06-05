@@ -9,7 +9,7 @@
 class Opponent_Pieces_Targeted_Gene : public Gene
 {
     public:
-        Opponent_Pieces_Targeted_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_gene);
+        explicit Opponent_Pieces_Targeted_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_gene);
         virtual ~Opponent_Pieces_Targeted_Gene();
 
         Opponent_Pieces_Targeted_Gene* duplicate() const override;

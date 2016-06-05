@@ -8,7 +8,7 @@
 class Sphere_of_Influence_Gene : public Gene
 {
     public:
-        Sphere_of_Influence_Gene(const std::shared_ptr<const Piece_Strength_Gene>& psg_in);
+        explicit Sphere_of_Influence_Gene(const std::shared_ptr<const Piece_Strength_Gene>& psg_in);
         virtual ~Sphere_of_Influence_Gene();
 
         void read_from(std::istream& is);

@@ -14,7 +14,7 @@ class Piece_Strength_Gene;
 class Gene
 {
     public:
-        Gene(double initial_scalar_value);
+        explicit Gene(double initial_scalar_value);
         virtual ~Gene();
 
         void read_from(std::istream& is);

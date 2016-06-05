@@ -20,16 +20,13 @@ Color play_game(const Player& white,
                 int moves_to_reset,
                 const std::string& pgn_file_name)
 {
-    Color winner;
-    std::string result;
-    static std::mutex write_lock;
-
     Board board;
     Clock game_clock(time_in_seconds, moves_to_reset);
-    game_clock.start();
 
     try
     {
+        game_clock.start();
+
         while(true)
         {
 			auto& player = board.whose_turn() == WHITE ? white : black;
@@ -40,15 +37,13 @@ Color play_game(const Player& white,
     }
     catch(const Game_Ending_Exception& end_game)
     {
-        result = end_game.what();
-        winner = end_game.winner();
-
 		// for Outside_Players communicating with xboard and the like
         white.process_game_ending(end_game);
         black.process_game_ending(end_game);
 
+        static std::mutex write_lock;
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
-        board.print_game_record(white.name(), black.name(), pgn_file_name, result);
+        board.print_game_record(white.name(), black.name(), pgn_file_name, end_game.what());
         if(game_clock.is_running())
         {
             std::ofstream(pgn_file_name, std::ios::app)
@@ -59,13 +54,12 @@ Color play_game(const Player& white,
                 << std::endl;
         }
 
-        return winner;
+        return end_game.winner();
     }
     catch(const std::exception& error)
     {
-        result = error.what();
         board.ascii_draw(WHITE);
-        board.print_game_record(white.name(), black.name(), pgn_file_name, result);
+        board.print_game_record(white.name(), black.name(), pgn_file_name, error.what());
         throw;
     }
 }

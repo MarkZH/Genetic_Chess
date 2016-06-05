@@ -147,10 +147,10 @@ void gene_pool(const std::string& load_file = "")
     int black_wins = 0;
     int draw_count = 0;
 
-    int winning_streak = 0;
-    int winning_streak_id = -1;
-    int survival_streak = 0;
-    int survival_streak_id = -1;
+    int most_wins = 0;
+    int most_wins_id = -1;
+    int most_games_survived = 0;
+    int most_games_survived_id = -1;
 
     std::map<int, int> wins;
     std::map<int, int> draws;
@@ -294,10 +294,10 @@ void gene_pool(const std::string& load_file = "")
             {
                 auto& winning_player = (winner == WHITE ? white : black);
                 wins[winning_player.get_id()]++;
-                if(wins[winning_player.get_id()] > winning_streak)
+                if(wins[winning_player.get_id()] > most_wins)
                 {
-                    winning_streak = wins[winning_player.get_id()];
-                    winning_streak_id = winning_player.get_id();
+                    most_wins = wins[winning_player.get_id()];
+                    most_wins_id = winning_player.get_id();
                 }
 
                 auto loser_index = (winner == WHITE ? black_index : white_index);
@@ -337,15 +337,15 @@ void gene_pool(const std::string& load_file = "")
         for(const auto& ai : pool)
         {
             auto games_survived = wins[ai.get_id()] + draws[ai.get_id()];
-            if(games_survived > survival_streak)
+            if(games_survived > most_games_survived)
             {
-                survival_streak = games_survived;
-                survival_streak_id = ai.get_id();
+                most_games_survived = games_survived;
+                most_games_survived_id = ai.get_id();
             }
         }
 
-        std::cout << "\nLongest winning streak:  " << winning_streak << " by ID " << winning_streak_id << std::endl;
-        std::cout <<   "Longest survival streak: " << survival_streak << " by ID " << survival_streak_id << std::endl;
+        std::cout << "\nMost wins:     " << most_wins           << " by ID " << most_wins_id << std::endl;
+        std::cout <<   "Longest lived: " << most_games_survived << " by ID " << most_games_survived_id << std::endl;
 
         game_count += results.size();
         if((game_time >= maximum_game_time && game_time_increment > 0) ||
