@@ -2,7 +2,6 @@ ID: 42
 
 Name: Piece Strength Gene
 B: 1.34945
-K: 11.8858
 N: 5.03914
 P: 0
 Q: 1.06442
