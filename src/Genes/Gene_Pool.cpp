@@ -8,6 +8,8 @@
 #include <fstream>
 #include <cmath>
 #include <algorithm>
+#include <future>
+#include <random>
 
 #include "Players/Genetic_AI.h"
 #include "Players/Human_Player.h"
@@ -125,15 +127,19 @@ void gene_pool(const std::string& load_file = "")
 {
     // Infrastructure and recording
     auto default_signal_handler = signal(SIGINT, signal_handler);
+    static auto urng = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
     std::vector<Genetic_AI> pool;
+    std::vector<size_t> pool_indices;
+    const size_t maximum_simultaneous_games = 8;
 
     // Environment variables
-    const size_t population = 20;
+    const size_t population_size = 16;
+    const double draw_kill_probability = 0.05;
 
     // Oscillating game time
     const double minimum_game_time = 10; // seconds
-    const double maximum_game_time = 10; // seconds
-    double game_time_increment = 0.5; // seconds
+    const double maximum_game_time = 600; // seconds
+    double game_time_increment = 0.1; // seconds
     double game_time = minimum_game_time;
 
     int game_count = 0;
@@ -143,6 +149,8 @@ void gene_pool(const std::string& load_file = "")
 
     int winning_streak = 0;
     int winning_streak_id = -1;
+    int survival_streak = 0;
+    int survival_streak_id = -1;
 
     std::map<int, int> wins;
     std::map<int, int> draws;
@@ -165,7 +173,7 @@ void gene_pool(const std::string& load_file = "")
 
     pool = load_gene_pool_file(genome_file_name);
     write_generation(pool, "");
-    while(pool.size() < population)
+    while(pool.size() < population_size)
     {
         pool.emplace_back();
 
@@ -177,11 +185,16 @@ void gene_pool(const std::string& load_file = "")
 
         write_generation(pool, genome_file_name);
     }
+    for(size_t i = 0; i < population_size; ++i)
+    {
+        pool_indices.push_back(i);
+    }
 
     std::string game_record_file = genome_file_name +  "_games.txt";
 
     while(true)
     {
+        // widths of columns for stats printout
         int id_digits = std::floor(std::log10(pool.back().get_id()) + 1);
         int parent_width = std::max(2*(id_digits + 1) + 1, 9);
 
@@ -216,95 +229,131 @@ void gene_pool(const std::string& load_file = "")
                                     ai.get_id()) != new_blood.end() ? " *" : "") << "\n";
         }
         std::cout << std::endl;
-        std::cout << "Longest winning streak: " << winning_streak << " by ID " << winning_streak_id << std::endl;
 
-        int white_index = Random::random_integer(0, pool.size() - 1);
-        int black_index = Random::random_integer(0, pool.size() - 1);
-        while(white_index == black_index)
+        // The pool_indices list determines the matchups. After shuffling the list
+        // of indices (0 to population_size - 1), adjacent indices in the pool are
+        // matched as opponents.
+        std::shuffle(pool_indices.begin(), pool_indices.end(), urng);
+        std::vector<std::future<Color>> results; // map from pool_indices index to winner
+        for(size_t index = 0; index < population_size; index += 2)
         {
-            black_index = Random::random_integer(0, pool.size() - 1);
+            auto white_index = pool_indices[index];
+            auto black_index = pool_indices[index + 1];
+
+            auto& white = pool[white_index];
+            auto& black = pool[black_index];
+
+            results.emplace_back(std::async(play_game, white, black, game_time, 0, game_record_file));
+
+            // Limit the number of simultaneous games by waiting for earlier games to finsih
+            // before starting a new one.
+            if(results.size() >= maximum_simultaneous_games)
+            {
+                auto in_progress_games = results.size();
+                for(const auto& game : results)
+                {
+                    game.wait();
+                    --in_progress_games;
+                    if(in_progress_games < maximum_simultaneous_games)
+                    {
+                        break;
+                    }
+                }
+            }
         }
 
-        auto& white = pool[white_index];
-        auto& black = pool[black_index];
-
-        std::cout << "play game " << white.get_id() << " " << black.get_id() << std::endl;
-        auto winner = play_game(white, black, game_time, 0, game_record_file);
-        std::cout << "\n";
-
-        ++game_count;
-        game_time += game_time_increment;
-        if(game_time <= minimum_game_time || game_time >= maximum_game_time)
+        // Get results as they come in
+        for(size_t index = 0; index < population_size; index += 2)
         {
-            game_time_increment *= -1;
-            if(game_time <= minimum_game_time)
+            auto white_index = pool_indices[index];
+            auto& white = pool[white_index];
+            auto black_index = pool_indices[index + 1];
+            auto black = pool[black_index];
+
+            std::cout << "Result of " << white.get_id() << " vs. " << black.get_id();
+
+            auto winner = results[index/2].get();
+            std::cout << ": " << color_text(winner) << "! ";
+
+            if(winner == WHITE)
             {
-                game_time = minimum_game_time;
+                ++white_wins;
+            }
+            else if(winner == BLACK)
+            {
+                ++black_wins;
+            }
+            else // DRAW
+            {
+                draws[white.get_id()]++;
+                draws[black.get_id()]++;
+                ++draw_count;
+            }
+
+            if(winner != NONE)
+            {
+                auto& winning_player = (winner == WHITE ? white : black);
+                wins[winning_player.get_id()]++;
+                if(wins[winning_player.get_id()] > winning_streak)
+                {
+                    winning_streak = wins[winning_player.get_id()];
+                    winning_streak_id = winning_player.get_id();
+                }
+
+                auto loser_index = (winner == WHITE ? black_index : white_index);
+                auto loser_id = pool[loser_index].get_id();
+
+                std::cout << "mating " << white.get_id() << " " << black.get_id();
+                pool[loser_index] = Genetic_AI(white, black);
+                pool[loser_index].mutate();
+                std::cout << " killing " << loser_id << std::endl;
+
+                wins.erase(loser_id);
+                draws.erase(loser_id);
+
+                write_generation(pool, genome_file_name);
             }
             else
             {
-                game_time = maximum_game_time;
-            }
-        }
-
-        if(winner == WHITE)
-        {
-            ++white_wins;
-        }
-        else if(winner == BLACK)
-        {
-            ++black_wins;
-        }
-        else // DRAW
-        {
-            draws[white.get_id()]++;
-            draws[black.get_id()]++;
-            ++draw_count;
-        }
-
-        if(winner != NONE)
-        {
-            std::cout << "mate " << white.get_id() << " " << black.get_id() << std::endl;
-            pool.emplace_back(white, black);
-            pool.back().mutate();
-
-            auto& winning_player = (winner == WHITE ? white : black);
-            std::cout << winning_player.get_id() << " wins" << std::endl;
-            wins[winning_player.get_id()]++;
-            if(wins[winning_player.get_id()] > winning_streak)
-            {
-                winning_streak = wins[winning_player.get_id()];
-                winning_streak_id = winning_player.get_id();
-            }
-
-            auto losing_index = (winner == WHITE ? black_index : white_index);
-            auto losing_id = pool[losing_index].get_id();
-            std::cout << losing_id << " dies" << std::endl;
-            pool.erase(pool.begin() + losing_index);
-            wins.erase(losing_id);
-            draws.erase(losing_id);
-
-            write_generation(pool, genome_file_name);
-        }
-        else
-        {
-            std::cout << white.get_id() << " " << black.get_id() << " draw!" << std::endl;
-            if(Random::success_probability(0.05))
-            {
-                auto pseudo_winner_index = Random::coin_flip() ? white_index : black_index;
-                auto pseudo_loser_index = (pseudo_winner_index == white_index) ? black_index : white_index;
-                auto new_specimen = Genetic_AI();
-                for(int i = 0; i < 100; ++i)
+                std::cout << " draw! ";
+                if(Random::success_probability(draw_kill_probability))
                 {
-                    new_specimen.mutate();
+                    auto pseudo_winner_index = (Random::coin_flip() ? white_index : black_index);
+                    auto pseudo_loser_index = (pseudo_winner_index == white_index) ? black_index : white_index;
+                    auto new_specimen = Genetic_AI();
+                    for(int i = 0; i < 100; ++i)
+                    {
+                        new_specimen.mutate();
+                    }
+                    std::cout << pool[pseudo_loser_index].get_id() << " dies ";
+                    std::cout << pool[pseudo_winner_index].get_id() << " mates with random";
+                    pool[pseudo_loser_index] = Genetic_AI(pool[pseudo_winner_index], new_specimen);
+                    new_blood.push_back(pool[pseudo_loser_index].get_id());
                 }
-                std::cout << pool[pseudo_loser_index].get_id() << " dies" << std::endl;
-                std::cout << pool[pseudo_winner_index].get_id() << " RANDOM mates" << std::endl;
-                pool.emplace_back(pool[pseudo_winner_index], new_specimen);
-                pool.erase(pool.begin() + pseudo_loser_index);
-                new_blood.push_back(pool.back().get_id());
+                std::cout << std::endl;
             }
         }
+
+        for(const auto& ai : pool)
+        {
+            auto games_survived = wins[ai.get_id()] + draws[ai.get_id()];
+            if(games_survived > survival_streak)
+            {
+                survival_streak = games_survived;
+                survival_streak_id = ai.get_id();
+            }
+        }
+
+        std::cout << "\nLongest winning streak:  " << winning_streak << " by ID " << winning_streak_id << std::endl;
+        std::cout <<   "Longest survival streak: " << survival_streak << " by ID " << survival_streak_id << std::endl;
+
+        game_count += results.size();
+        if((game_time >= maximum_game_time && game_time_increment > 0) ||
+           (game_time <= minimum_game_time && game_time_increment < 0))
+        {
+            game_time_increment *= -1;
+        }
+        game_time += game_time_increment;
 
         // Interrupt gene pool to play against top AI
         if(signal_activated == 1)
