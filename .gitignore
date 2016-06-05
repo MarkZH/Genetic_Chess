@@ -13,7 +13,12 @@ genetic chess.cbp
 genetic chess.depend
 genetic chess.layout
 genetic chess.cscope_file_list
+CppCheckResults.xml
 
 # Compiled output
 bin/
 obj/
+
+# Other files
+*.py
+*.m
