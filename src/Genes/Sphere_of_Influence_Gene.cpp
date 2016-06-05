@@ -47,23 +47,18 @@ std::string Sphere_of_Influence_Gene::name() const
 double Sphere_of_Influence_Gene::score_board(const Board& board, Color color) const
 {
     // Search for opponent's king
-    static char king_file = 'a';
-    static int  king_rank = 1;
-
-    auto piece = board.piece_on_square(king_file, king_rank);
-    while( ! piece || piece->pgn_symbol() != "K" || piece->color() == color)
+    char king_file = 'a';
+    int  king_rank = 1;
+    for( ; king_file <= 'h'; ++king_file)
     {
-        ++king_file;
-        if(king_file > 'h')
+        for( ; king_rank <= 8; ++king_rank)
         {
-            king_file = 'a';
-            ++king_rank;
+            auto piece = board.piece_on_square(king_file, king_rank);
+            if(piece && piece->pgn_symbol() == "K" && piece->color() == opposite(color))
+            {
+                break;
+            }
         }
-        if(king_rank > 8)
-        {
-            king_rank = 1;
-        }
-        piece = board.piece_on_square(king_file, king_rank);
     }
 
     std::map<std::string, double> square_score;
