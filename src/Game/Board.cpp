@@ -125,8 +125,8 @@ Board::Board(const std::string& fen) :
             auto piece = piece_on_square(file, rank);
             if(piece)
             {
-                if((piece->color() == WHITE && rank != 2) ||
-                   (piece->color() == BLACK && rank != 7))
+                if((piece->fen_symbol() == 'P' && rank != 2) ||
+                   (piece->fen_symbol() == 'p' && rank != 7))
                 {
                     piece_moved[piece] = true;
                 }
