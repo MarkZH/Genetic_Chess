@@ -128,8 +128,6 @@ void gene_pool(const std::string& load_file = "")
     // Infrastructure and recording
     signal(SIGINT, signal_handler);
     static auto urng = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
-    std::vector<Genetic_AI> pool;
-    std::vector<size_t> pool_indices;
     const size_t maximum_simultaneous_games = 8;
 
     // Environment variables
@@ -171,8 +169,9 @@ void gene_pool(const std::string& load_file = "")
         genome_file_name = load_file;
     }
 
-    pool = load_gene_pool_file(genome_file_name);
-    write_generation(pool, "");
+    // create gene pool
+    std::vector<Genetic_AI> pool = load_gene_pool_file(genome_file_name);
+    write_generation(pool, ""); // mark AIs from file as already written
     while(pool.size() < population_size)
     {
         pool.emplace_back();
@@ -182,9 +181,10 @@ void gene_pool(const std::string& load_file = "")
         {
             pool.back().mutate();
         }
-
-        write_generation(pool, genome_file_name);
     }
+
+    // Indices in gene pool to be shuffled for game matchups
+    std::vector<size_t> pool_indices;
     for(size_t i = 0; i < population_size; ++i)
     {
         pool_indices.push_back(i);
@@ -194,6 +194,8 @@ void gene_pool(const std::string& load_file = "")
 
     while(true)
     {
+        write_generation(pool, genome_file_name);
+
         // widths of columns for stats printout
         auto max_id = pool.front().get_id();
         for(const auto& ai : pool)
@@ -316,8 +318,6 @@ void gene_pool(const std::string& load_file = "")
 
                 wins.erase(loser_id);
                 draws.erase(loser_id);
-
-                write_generation(pool, genome_file_name);
             }
             else
             {
