@@ -195,7 +195,12 @@ void gene_pool(const std::string& load_file = "")
     while(true)
     {
         // widths of columns for stats printout
-        int id_digits = std::floor(std::log10(pool.back().get_id()) + 1);
+        auto max_id = pool.front().get_id();
+        for(const auto& ai : pool)
+        {
+            max_id = std::max(max_id, ai.get_id());
+        }
+        int id_digits = std::floor(std::log10(max_id) + 1);
         int parent_width = std::max(2*(id_digits + 1) + 1, 9);
 
         std::cout << "\nGene pool size: " << pool.size()
@@ -270,10 +275,11 @@ void gene_pool(const std::string& load_file = "")
             auto black_index = pool_indices[index + 1];
             auto black = pool[black_index];
 
-            std::cout << "Result of " << white.get_id() << " vs. " << black.get_id();
+            std::cout << "Result of " << white.get_id() << " vs. "
+                                      << black.get_id() << ": " << std::flush;
 
             auto winner = results[index/2].get();
-            std::cout << ": " << color_text(winner) << "! ";
+            std::cout << color_text(winner) << "! ";
 
             if(winner == WHITE)
             {
@@ -306,7 +312,7 @@ void gene_pool(const std::string& load_file = "")
                 std::cout << "mating " << white.get_id() << " " << black.get_id();
                 pool[loser_index] = Genetic_AI(white, black);
                 pool[loser_index].mutate();
-                std::cout << " killing " << loser_id << std::endl;
+                std::cout << " / killing " << loser_id << std::endl;
 
                 wins.erase(loser_id);
                 draws.erase(loser_id);
@@ -315,7 +321,6 @@ void gene_pool(const std::string& load_file = "")
             }
             else
             {
-                std::cout << " draw! ";
                 if(Random::success_probability(draw_kill_probability))
                 {
                     auto pseudo_winner_index = (Random::coin_flip() ? white_index : black_index);
@@ -326,7 +331,7 @@ void gene_pool(const std::string& load_file = "")
                         new_specimen.mutate();
                     }
                     std::cout << pool[pseudo_loser_index].get_id() << " dies ";
-                    std::cout << pool[pseudo_winner_index].get_id() << " mates with random";
+                    std::cout << pool[pseudo_winner_index].get_id() << " / mates with random";
                     pool[pseudo_loser_index] = Genetic_AI(pool[pseudo_winner_index], new_specimen);
                     new_blood.push_back(pool[pseudo_loser_index].get_id());
                 }
