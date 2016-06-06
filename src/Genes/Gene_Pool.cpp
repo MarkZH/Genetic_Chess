@@ -27,11 +27,11 @@ void signal_handler(int)
 {
     if(signal_activated == 1)
     {
-        std::cout << "Exiting ..." << std::endl;
+        std::cout << std::endl << "Exiting ..." << std::endl;
         exit(1);
     }
     signal_activated = 1;
-    std::cout << "   Waiting for games to end ..." << std::endl;
+    std::cout << std::endl << "Waiting for games to end ..." << std::endl;
 }
 
 void write_generation(const std::vector<Genetic_AI>& pool,
@@ -126,7 +126,7 @@ std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file)
 void gene_pool(const std::string& load_file = "")
 {
     // Infrastructure and recording
-    auto default_signal_handler = signal(SIGINT, signal_handler);
+    signal(SIGINT, signal_handler);
     static auto urng = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
     std::vector<Genetic_AI> pool;
     std::vector<size_t> pool_indices;
@@ -359,12 +359,10 @@ void gene_pool(const std::string& load_file = "")
         if(signal_activated == 1)
         {
             std::cout << "Do you want to play against the top AI? [yN] ";
-            auto yn = std::cin.get();
-            if(yn == 'y' || yn == 'Y')
+            std::string yn;
+            std::getline(std::cin, yn);
+            if(yn[0] == 'y' || yn[0] == 'Y')
             {
-                signal_activated = 0;
-                signal(SIGINT, default_signal_handler);
-
                 auto& top_player = pool.front();
                 for(const auto& player : pool)
                 {
@@ -388,8 +386,9 @@ void gene_pool(const std::string& load_file = "")
                 // Stalemate?
                 std::cout << "You " << (human_color == winning_color ? "won" : "lost") << "!" << std::endl;
                 std::cin.get();
-                signal(SIGINT, signal_handler);
             }
+
+            signal_activated = 0;
         }
     }
 }
