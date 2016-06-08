@@ -3,7 +3,7 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 
-Freedom_To_Move_Gene::Freedom_To_Move_Gene() : Gene(1.0)
+Freedom_To_Move_Gene::Freedom_To_Move_Gene() : Gene(0.0)
 {
 }
 

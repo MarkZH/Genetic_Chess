@@ -8,7 +8,7 @@
 #include "Utility.h"
 
 Pawn_Advancement_Gene::Pawn_Advancement_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_source_in) :
-    Gene(1.0),
+    Gene(0.0),
     piece_strength_source(piece_strength_source_in),
     promoted_pawn_bonus(0.0)
 {
