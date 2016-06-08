@@ -32,7 +32,6 @@ Scalar: 5.62406
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-Strength Factor: 2.37961
 
 Name: King Confinement Gene
 Scalar: 52.2635

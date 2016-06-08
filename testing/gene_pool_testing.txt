@@ -32,7 +32,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 2.75293
 Scalar: 8.3733
-Strength Factor: 6.03353
 
 Name: King Confinement Gene
 Scalar: 0
@@ -76,7 +75,6 @@ Scalar: 11.622
 Name: Sphere of Influence Gene
 Legal Bonus: 0.712439
 Scalar: 44.7281
-Strength Factor: 5.94541
 
 Name: King Confinement Gene
 Scalar: 10.4168
@@ -120,7 +118,6 @@ Scalar: 58.8613
 Name: Sphere of Influence Gene
 Legal Bonus: 3.93391
 Scalar: 43.8608
-Strength Factor: 0.6387
 
 Name: King Confinement Gene
 Scalar: 0
@@ -164,7 +161,6 @@ Scalar: 13.4136
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 32.6048
@@ -208,7 +204,6 @@ Scalar: 19.1769
 Name: Sphere of Influence Gene
 Legal Bonus: 1.93979
 Scalar: 2.23098
-Strength Factor: 5.31281
 
 Name: King Confinement Gene
 Scalar: 63.8332
@@ -252,7 +247,6 @@ Scalar: 21.4059
 Name: Sphere of Influence Gene
 Legal Bonus: 1.37552
 Scalar: 85.8732
-Strength Factor: 0.396905
 
 Name: King Confinement Gene
 Scalar: 32.3707
@@ -296,7 +290,6 @@ Scalar: 15.3162
 Name: Sphere of Influence Gene
 Legal Bonus: 1.73565
 Scalar: 0
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 16.5149
@@ -340,7 +333,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0.52711
 Scalar: 15.3161
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 28.096
@@ -384,7 +376,6 @@ Scalar: 49.8522
 Name: Sphere of Influence Gene
 Legal Bonus: 6.69076
 Scalar: 97.0981
-Strength Factor: 0.269128
 
 Name: King Confinement Gene
 Scalar: 16.7807
@@ -428,7 +419,6 @@ Scalar: 71.4769
 Name: Sphere of Influence Gene
 Legal Bonus: 3.33579
 Scalar: 56.9402
-Strength Factor: 2.66618
 
 Name: King Confinement Gene
 Scalar: 9.67879
@@ -472,7 +462,6 @@ Scalar: 81.3341
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 26.9023
-Strength Factor: 2.35536
 
 Name: King Confinement Gene
 Scalar: 8.90868
@@ -516,7 +505,6 @@ Scalar: 0
 Name: Sphere of Influence Gene
 Legal Bonus: 1.34398
 Scalar: 21.1654
-Strength Factor: 5.27744
 
 Name: King Confinement Gene
 Scalar: 43.1784
@@ -560,7 +548,6 @@ Scalar: 31.1081
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 78.4981
-Strength Factor: 4.80231
 
 Name: King Confinement Gene
 Scalar: 2.3044
@@ -604,7 +591,6 @@ Scalar: 17.9378
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-Strength Factor: 2.37961
 
 Name: King Confinement Gene
 Scalar: 18.5897
@@ -648,7 +634,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 46.721
@@ -692,7 +677,6 @@ Scalar: 47.9447
 Name: Sphere of Influence Gene
 Legal Bonus: 3.63479
 Scalar: 42.3182
-Strength Factor: 2.67134
 
 Name: King Confinement Gene
 Scalar: 113.456
@@ -736,7 +720,6 @@ Scalar: 5.62406
 Name: Sphere of Influence Gene
 Legal Bonus: 0.28968
 Scalar: 13.5079
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 52.2635
@@ -780,7 +763,6 @@ Scalar: 24.3482
 Name: Sphere of Influence Gene
 Legal Bonus: 3.82079
 Scalar: 51.5561
-Strength Factor: 1.44096
 
 Name: King Confinement Gene
 Scalar: 44.366
@@ -824,7 +806,6 @@ Scalar: 28.4981
 Name: Sphere of Influence Gene
 Legal Bonus: 1.0924
 Scalar: 0
-Strength Factor: 7.00629
 
 Name: King Confinement Gene
 Scalar: 0
@@ -868,7 +849,6 @@ Scalar: 0.948152
 Name: Sphere of Influence Gene
 Legal Bonus: 4.12301
 Scalar: 0
-Strength Factor: 4.02176
 
 Name: King Confinement Gene
 Scalar: 18.9213
@@ -912,7 +892,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 2.75293
 Scalar: 8.3733
-Strength Factor: 6.03353
 
 Name: King Confinement Gene
 Scalar: 0
@@ -956,7 +935,6 @@ Scalar: 23.7674
 Name: Sphere of Influence Gene
 Legal Bonus: 3.82079
 Scalar: 51.5561
-Strength Factor: 1.44096
 
 Name: King Confinement Gene
 Scalar: 54.6636
@@ -1000,7 +978,6 @@ Scalar: 17.9378
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-Strength Factor: 2.37961
 
 Name: King Confinement Gene
 Scalar: 0
@@ -1044,7 +1021,6 @@ Scalar: 24.3482
 Name: Sphere of Influence Gene
 Legal Bonus: 1.0924
 Scalar: 0
-Strength Factor: 7.00629
 
 Name: King Confinement Gene
 Scalar: 36.4318
@@ -1088,7 +1064,6 @@ Scalar: 38.8787
 Name: Sphere of Influence Gene
 Legal Bonus: 3.82079
 Scalar: 51.5561
-Strength Factor: 1.44096
 
 Name: King Confinement Gene
 Scalar: 36.4318
@@ -1132,7 +1107,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 36.4318
@@ -1176,7 +1150,6 @@ Scalar: 24.3482
 Name: Sphere of Influence Gene
 Legal Bonus: 1.0924
 Scalar: 0
-Strength Factor: 7.00629
 
 Name: King Confinement Gene
 Scalar: 12.8996
@@ -1220,7 +1193,6 @@ Scalar: 59.2182
 Name: Sphere of Influence Gene
 Legal Bonus: 4.92186
 Scalar: 36.705
-Strength Factor: 3.50367
 
 Name: King Confinement Gene
 Scalar: 0
@@ -1264,7 +1236,6 @@ Scalar: 5.62406
 Name: Sphere of Influence Gene
 Legal Bonus: 1.93979
 Scalar: 2.23098
-Strength Factor: 5.31281
 
 Name: King Confinement Gene
 Scalar: 52.2635
@@ -1308,7 +1279,6 @@ Scalar: 38.8787
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 36.4318
@@ -1352,7 +1322,6 @@ Scalar: 59.2295
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-Strength Factor: 2.37961
 
 Name: King Confinement Gene
 Scalar: 0
@@ -1396,7 +1365,6 @@ Scalar: 38.8787
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 36.4318
@@ -1440,7 +1408,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 32.3707
@@ -1484,7 +1451,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -1528,7 +1494,6 @@ Scalar: 17.9378
 Name: Sphere of Influence Gene
 Legal Bonus: 1.73565
 Scalar: 0
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 0
@@ -1572,7 +1537,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0.155234
 Scalar: 15.684
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 52.2635
@@ -1616,7 +1580,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0.155234
 Scalar: 15.684
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 18.5897
@@ -1660,7 +1623,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 4.92186
 Scalar: 36.705
-Strength Factor: 3.50367
 
 Name: King Confinement Gene
 Scalar: 0
@@ -1704,7 +1666,6 @@ Scalar: 0
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 43.4748
@@ -1748,7 +1709,6 @@ Scalar: 26.28
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 84.4423
-Strength Factor: 5.89953
 
 Name: King Confinement Gene
 Scalar: 52.2635
@@ -1792,7 +1752,6 @@ Scalar: 17.9378
 Name: Sphere of Influence Gene
 Legal Bonus: 0.52711
 Scalar: 15.3161
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 0
@@ -1836,7 +1795,6 @@ Scalar: 59.2295
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-Strength Factor: 2.37961
 
 Name: King Confinement Gene
 Scalar: 0
@@ -1880,7 +1838,6 @@ Scalar: 5.62406
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-Strength Factor: 2.37961
 
 Name: King Confinement Gene
 Scalar: 52.2635
@@ -1924,7 +1881,6 @@ Scalar: 71.4769
 Name: Sphere of Influence Gene
 Legal Bonus: 6.45893
 Scalar: 0
-Strength Factor: 2.40809
 
 Name: King Confinement Gene
 Scalar: 9.67879
@@ -1968,7 +1924,6 @@ Scalar: 33.2844
 Name: Sphere of Influence Gene
 Legal Bonus: 1.66827
 Scalar: 68.2148
-Strength Factor: 3.80033
 
 Name: King Confinement Gene
 Scalar: 0
@@ -2012,7 +1967,6 @@ Scalar: 25.4007
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 32.6048
@@ -2056,7 +2010,6 @@ Scalar: 21.4059
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 32.3707
@@ -2100,7 +2053,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 32.3707
@@ -2144,7 +2096,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 26.9023
-Strength Factor: 2.35536
 
 Name: King Confinement Gene
 Scalar: 8.90868
@@ -2188,7 +2139,6 @@ Scalar: 17.9378
 Name: Sphere of Influence Gene
 Legal Bonus: 4.1897
 Scalar: 0
-Strength Factor: 2.36343
 
 Name: King Confinement Gene
 Scalar: 32.3707
@@ -2232,7 +2182,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 32.3707
@@ -2276,7 +2225,6 @@ Scalar: 36.7357
 Name: Sphere of Influence Gene
 Legal Bonus: 4.38648
 Scalar: 48.2553
-Strength Factor: 4.47513
 
 Name: King Confinement Gene
 Scalar: 0
@@ -2320,7 +2268,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0.421326
 Scalar: 18.501
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 0
@@ -2364,7 +2311,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 12.8996
@@ -2408,7 +2354,6 @@ Scalar: 5.62406
 Name: Sphere of Influence Gene
 Legal Bonus: 1.93979
 Scalar: 2.23098
-Strength Factor: 5.31281
 
 Name: King Confinement Gene
 Scalar: 52.2635
@@ -2452,7 +2397,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 4.92186
 Scalar: 36.705
-Strength Factor: 3.50367
 
 Name: King Confinement Gene
 Scalar: 15.3914
@@ -2496,7 +2440,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 3.98701
 Scalar: 0
-Strength Factor: 3.43777
 
 Name: King Confinement Gene
 Scalar: 19.6172
@@ -2540,7 +2483,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0.421326
 Scalar: 18.501
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 0
@@ -2584,7 +2526,6 @@ Scalar: 24.3482
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 36.4318
@@ -2628,7 +2569,6 @@ Scalar: 17.9378
 Name: Sphere of Influence Gene
 Legal Bonus: 1.73565
 Scalar: 0
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 0
@@ -2672,7 +2612,6 @@ Scalar: 17.9378
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-Strength Factor: 2.37961
 
 Name: King Confinement Gene
 Scalar: 0
@@ -2716,7 +2655,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -2760,7 +2698,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 52.2635
@@ -2804,7 +2741,6 @@ Scalar: 25.4007
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 32.6048
@@ -2848,7 +2784,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 0
@@ -2892,7 +2827,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 14.4496
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 54.685
@@ -2936,7 +2870,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 0
@@ -2980,7 +2913,6 @@ Scalar: 25.4007
 Name: Sphere of Influence Gene
 Legal Bonus: 0.298338
 Scalar: 91.6137
-Strength Factor: 4.15234
 
 Name: King Confinement Gene
 Scalar: 32.6048
@@ -3024,7 +2956,6 @@ Scalar: 59.2182
 Name: Sphere of Influence Gene
 Legal Bonus: 4.92186
 Scalar: 36.705
-Strength Factor: 3.50367
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3068,7 +2999,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 43.4748
@@ -3112,7 +3042,6 @@ Scalar: 50.7971
 Name: Sphere of Influence Gene
 Legal Bonus: 0.155234
 Scalar: 15.684
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 32.6048
@@ -3156,7 +3085,6 @@ Scalar: 59.2182
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 14.4496
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 54.685
@@ -3200,7 +3128,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 43.4748
@@ -3244,7 +3171,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 54.685
@@ -3288,7 +3214,6 @@ Scalar: 9.68509
 Name: Sphere of Influence Gene
 Legal Bonus: 1.73565
 Scalar: 0
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3332,7 +3257,6 @@ Scalar: 28.4981
 Name: Sphere of Influence Gene
 Legal Bonus: 0.0911885
 Scalar: 0
-Strength Factor: 6.88283
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3376,7 +3300,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3420,7 +3343,6 @@ Scalar: 27.2938
 Name: Sphere of Influence Gene
 Legal Bonus: 1.73565
 Scalar: 0
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 7.89133
@@ -3464,7 +3386,6 @@ Scalar: 59.2182
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-Strength Factor: 2.37961
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3508,7 +3429,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 5.54295
@@ -3552,7 +3472,6 @@ Scalar: 59.2182
 Name: Sphere of Influence Gene
 Legal Bonus: 4.92186
 Scalar: 36.705
-Strength Factor: 3.50367
 
 Name: King Confinement Gene
 Scalar: 4.15009
@@ -3596,7 +3515,6 @@ Scalar: 59.2182
 Name: Sphere of Influence Gene
 Legal Bonus: 4.85794
 Scalar: 8.99667
-Strength Factor: 3.66508
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3640,7 +3558,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3684,7 +3601,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0.155234
 Scalar: 15.684
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3728,7 +3644,6 @@ Scalar: 24.3482
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 43.4748
@@ -3772,7 +3687,6 @@ Scalar: 59.2182
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 10.7103
-Strength Factor: 0.932533
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3816,7 +3730,6 @@ Scalar: 70.7361
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3860,7 +3773,6 @@ Scalar: 24.3482
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 43.4748
@@ -3904,7 +3816,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3948,7 +3859,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -3992,7 +3902,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4036,7 +3945,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 4.92186
 Scalar: 36.705
-Strength Factor: 3.50367
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4080,7 +3988,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 5.54295
@@ -4124,7 +4031,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-Strength Factor: 2.37961
 
 Name: King Confinement Gene
 Scalar: 5.54295
@@ -4168,7 +4074,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4212,7 +4117,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 43.4748
@@ -4256,7 +4160,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4300,7 +4203,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4344,7 +4246,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4388,7 +4289,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 4.27507
 Scalar: 31.0059
-Strength Factor: 4.17411
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4432,7 +4332,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 43.4748
@@ -4476,7 +4375,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4520,7 +4418,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 0.699839
 Scalar: 87.3562
-Strength Factor: 3.46493
 
 Name: King Confinement Gene
 Scalar: 5.54295
@@ -4564,7 +4461,6 @@ Scalar: 59.2182
 Name: Sphere of Influence Gene
 Legal Bonus: 4.92186
 Scalar: 36.705
-Strength Factor: 3.50367
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4608,7 +4504,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 0.155234
 Scalar: 15.684
-Strength Factor: 0
 
 Name: King Confinement Gene
 Scalar: 32.6048
@@ -4652,7 +4547,6 @@ Scalar: 55.8792
 Name: Sphere of Influence Gene
 Legal Bonus: 0.232437
 Scalar: 85.4393
-Strength Factor: 3.1475
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4696,7 +4590,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4740,7 +4633,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 0.232437
 Scalar: 85.4393
-Strength Factor: 3.1475
 
 Name: King Confinement Gene
 Scalar: 4.11546
@@ -4784,7 +4676,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4828,7 +4719,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 0.699839
 Scalar: 87.3562
-Strength Factor: 3.46493
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4872,7 +4762,6 @@ Scalar: 70.7361
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4916,7 +4805,6 @@ Scalar: 4.62335
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 83.4472
-Strength Factor: 3.56337
 
 Name: King Confinement Gene
 Scalar: 0
@@ -4960,7 +4848,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 0
-Strength Factor: 1.68569
 
 Name: King Confinement Gene
 Scalar: 32.6048
@@ -5004,7 +4891,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 14.1649
@@ -5048,7 +4934,6 @@ Scalar: 70.2561
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 0
@@ -5092,7 +4977,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 0
@@ -5136,7 +5020,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 0
@@ -5180,7 +5063,6 @@ Scalar: 17.8794
 Name: Sphere of Influence Gene
 Legal Bonus: 0.232437
 Scalar: 85.4393
-Strength Factor: 3.1475
 
 Name: King Confinement Gene
 Scalar: 4.11546
@@ -5224,7 +5106,6 @@ Scalar: 17.4324
 Name: Sphere of Influence Gene
 Legal Bonus: 2.38052
 Scalar: 46.3157
-Strength Factor: 1.15947
 
 Name: King Confinement Gene
 Scalar: 0
@@ -5268,7 +5149,6 @@ Scalar: 29.5963
 Name: Sphere of Influence Gene
 Legal Bonus: 4.92186
 Scalar: 36.705
-Strength Factor: 3.50367
 
 Name: King Confinement Gene
 Scalar: 0
@@ -5312,7 +5192,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 0
 Scalar: 103.123
-Strength Factor: 3.73121
 
 Name: King Confinement Gene
 Scalar: 4.11546
@@ -5356,7 +5235,6 @@ Scalar: 12.1839
 Name: Sphere of Influence Gene
 Legal Bonus: 0.095314
 Scalar: 91.9494
-Strength Factor: 4.19487
 
 Name: King Confinement Gene
 Scalar: 43.4748

@@ -1,16 +1,13 @@
 #include "Genes/Sphere_of_Influence_Gene.h"
 
 #include "Game/Board.h"
-#include "Pieces/Piece.h"
-#include "Exceptions/Generic_Exception.h"
-#include "Genes/Piece_Strength_Gene.h"
+#include "Moves/Move.h"
+
 #include "Utility.h"
 
-Sphere_of_Influence_Gene::Sphere_of_Influence_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_source_in) :
-    Gene(1.0),
-    legal_bonus(0.0),
-    strength_factor(0.0),
-    piece_strength_source(piece_strength_source_in)
+Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
+    Gene(0.0),
+    legal_bonus(0.0)
 {
 }
 
@@ -18,14 +15,12 @@ void Sphere_of_Influence_Gene::reset_properties() const
 {
     reset_base_properties();
     properties["Legal Bonus"] = legal_bonus;
-    properties["Strength Factor"] = strength_factor;
 }
 
 void Sphere_of_Influence_Gene::load_properties()
 {
     load_base_properties();
     legal_bonus = properties["Legal Bonus"];
-    strength_factor = properties["Strength Factor"];
 }
 
 Sphere_of_Influence_Gene::~Sphere_of_Influence_Gene()
@@ -42,25 +37,10 @@ std::string Sphere_of_Influence_Gene::name() const
     return "Sphere of Influence Gene";
 }
 
-// Count all potentially capturing moves as if a given piece and
-// the opposing king were the only pieces on the board.
+// Count all squares potentially attacked by all pieces with bonus points if
+// the attacking move is legal.
 double Sphere_of_Influence_Gene::score_board(const Board& board, Color color) const
 {
-    // Search for opponent's king
-    char king_file = 'a';
-    int  king_rank = 1;
-    for( ; king_file <= 'h'; ++king_file)
-    {
-        for( ; king_rank <= 8; ++king_rank)
-        {
-            auto piece = board.piece_on_square(king_file, king_rank);
-            if(piece && piece->pgn_symbol() == "K" && piece->color() == opposite(color))
-            {
-                break;
-            }
-        }
-    }
-
     std::map<std::string, double> square_score;
     for(const auto& cm : board.all_moves())
     {
@@ -81,17 +61,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color color) co
             continue;
         }
 
-        auto piece_symbol = std::toupper(board.piece_on_square(cm.starting_file, cm.starting_rank)->fen_symbol());
-        auto piece_strength = piece_strength_source->piece_value(piece_symbol);
-
-        int distance = std::max(std::abs(final_file - king_file),
-                                std::abs(final_rank - king_rank));
-
-        auto legal_multiplier = 1 + (board.is_legal(cm) ? legal_bonus : 0.0);
-
-        // use 1 + piece_strength in case piece_strength is 0
-        auto move_score = (8 - distance)*legal_multiplier/(1 + strength_factor*piece_strength);
-
+        auto move_score = 1 + (board.is_legal(cm) ? legal_bonus : 0.0);
         std::string square_address;
         square_address.push_back(final_file);
         square_address += std::to_string(final_rank);
@@ -106,17 +76,13 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color color) co
     {
         score += square_value.second;
     }
-    return score;
+
+    // maximum board_score is 1 (normalizing to make independent of scalar)
+    return score/(64*(1+legal_bonus));
 }
 
 void Sphere_of_Influence_Gene::mutate()
 {
     Gene::mutate();
     legal_bonus = std::max(legal_bonus + Random::random_normal(1.0), 0.0);
-    strength_factor = std::max(strength_factor + Random::random_normal(1.0), 0.0);
-}
-
-void Sphere_of_Influence_Gene::reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>& psg)
-{
-    piece_strength_source = psg;
 }
