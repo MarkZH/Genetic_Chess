@@ -43,13 +43,17 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color color) const
         }
     }
 
-    for(size_t i = (color == WHITE ? 0 : 1); i < board.get_game_record().size(); i += 2)
+    if(board.get_game_record().size() < 2)
     {
-        if(board.get_game_record()[i].find('=') != std::string::npos)
-        {
-            auto piece_symbol = toupper(String::split(board.get_game_record()[i], "=")[1][0]); // char
-            score += promoted_pawn_bonus*piece_strength_source->piece_value(piece_symbol);
-        }
+        return score;
+    }
+
+    auto last_move_index = board.get_game_record().size() - (color == board.whose_turn() ? 2 : 1);
+    auto last_move = board.get_game_record()[last_move_index];
+    if(last_move.find('=') != std::string::npos)
+    {
+        auto piece_symbol = String::split(last_move, "=")[1][0]; // char
+        score += promoted_pawn_bonus*piece_strength_source->piece_value(piece_symbol);
     }
 
     return score;
