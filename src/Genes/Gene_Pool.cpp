@@ -136,7 +136,7 @@ void gene_pool(const std::string& load_file = "")
 
     // Oscillating game time
     const double minimum_game_time = 10; // seconds
-    const double maximum_game_time = 600; // seconds
+    const double maximum_game_time = 120; // seconds
     double game_time_increment = 0.1; // seconds
     double game_time = minimum_game_time;
 
@@ -330,8 +330,8 @@ void gene_pool(const std::string& load_file = "")
                     {
                         new_specimen.mutate();
                     }
-                    std::cout << pool[pseudo_loser_index].get_id() << " dies ";
-                    std::cout << pool[pseudo_winner_index].get_id() << " / mates with random";
+                    std::cout << pool[pseudo_loser_index].get_id() << " dies / ";
+                    std::cout << pool[pseudo_winner_index].get_id() << " mates with random";
                     pool[pseudo_loser_index] = Genetic_AI(pool[pseudo_winner_index], new_specimen);
                     new_blood.push_back(pool[pseudo_loser_index].get_id());
                 }
