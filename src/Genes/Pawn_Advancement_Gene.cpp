@@ -26,19 +26,20 @@ void Pawn_Advancement_Gene::load_properties()
     promoted_pawn_bonus = properties["Promoted Pawn Bonus"];
 }
 
-double Pawn_Advancement_Gene::score_board(const Board& board, Color color) const
+double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;
+    int home_rank = (perspective == WHITE ? 2 : 7);
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto piece = board.piece_on_square(file, rank);
-            if(piece && piece->color() == color && toupper(piece->fen_symbol()) == 'P')
+            if(piece && piece->color() == perspective && toupper(piece->fen_symbol()) == 'P')
             {
                 // 1 point per pawn + 1 point per move towards promotion
-                score += std::abs((color == WHITE ? 1 : 8) - rank);
+                score += std::abs(home_rank - rank);
             }
         }
     }

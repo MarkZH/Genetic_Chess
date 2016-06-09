@@ -21,7 +21,7 @@ void Total_Force_Gene::load_properties()
     load_base_properties();
 }
 
-double Total_Force_Gene::score_board(const Board& board, Color color) const
+double Total_Force_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;
 
@@ -30,7 +30,7 @@ double Total_Force_Gene::score_board(const Board& board, Color color) const
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto piece = board.piece_on_square(file, rank);
-            if(piece && piece->color() == color)
+            if(piece && piece->color() == perspective)
             {
                 score += piece_strength_source->piece_value(piece);
             }

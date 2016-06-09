@@ -21,7 +21,7 @@ class Sphere_of_Influence_Gene : public Gene
         void reset_properties() const override;
         void load_properties() override;
 
-        double score_board(const Board& board, Color color) const override;
+        double score_board(const Board& board, Color perspective) const override;
 
         double legal_bonus;
 };

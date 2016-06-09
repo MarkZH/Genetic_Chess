@@ -15,7 +15,7 @@ class Look_Ahead_Gene : public Gene
         Look_Ahead_Gene* duplicate() const override;
         void mutate() override;
 
-        double score_board(const Board& board, Color color) const override;
+        double score_board(const Board& board, Color perspective) const override;
 
         std::string name() const override;
 

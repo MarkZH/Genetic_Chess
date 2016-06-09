@@ -20,7 +20,7 @@ class Gene
         void read_from(std::istream& is);
 
         virtual void mutate();
-        double evaluate(const Board& board, Color color) const;
+        double evaluate(const Board& board, Color perspective) const;
         virtual Gene* duplicate() const = 0;
 
         virtual std::string name() const = 0;
@@ -34,7 +34,7 @@ class Gene
         void load_base_properties();
 
     private:
-        virtual double score_board(const Board& board, Color color) const = 0;
+        virtual double score_board(const Board& board, Color perspective) const = 0;
         void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
         virtual void reset_properties() const = 0;
         virtual void load_properties() = 0;

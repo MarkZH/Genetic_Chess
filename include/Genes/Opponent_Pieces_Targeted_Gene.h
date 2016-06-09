@@ -23,7 +23,7 @@ class Opponent_Pieces_Targeted_Gene : public Gene
 
         std::shared_ptr<const Piece_Strength_Gene> piece_strenth_source;
 
-        double score_board(const Board& board, Color color) const override;
+        double score_board(const Board& board, Color perspective) const override;
 };
 
 #endif // OPPONENT_PIECES_TARGETED_GENE_H

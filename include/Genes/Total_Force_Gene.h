@@ -19,7 +19,7 @@ class Total_Force_Gene : public Gene
         std::string name() const override;
 
     private:
-        double score_board(const Board& board, Color color) const override;
+        double score_board(const Board& board, Color perspective) const override;
         std::shared_ptr<const Piece_Strength_Gene> piece_strength_source;
 
         void reset_properties() const override;

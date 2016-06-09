@@ -15,7 +15,7 @@ class Last_Minute_Panic_Gene : public Gene
         void mutate() override;
         Last_Minute_Panic_Gene* duplicate() const override;
 
-        double score_board(const Board& board, Color color) const override;
+        double score_board(const Board& board, Color perspective) const override;
 
         std::string name() const override;
 

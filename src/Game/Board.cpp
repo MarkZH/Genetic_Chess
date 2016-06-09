@@ -548,7 +548,7 @@ std::vector<Complete_Move> Board::all_legal_moves() const
     return all_legal_moves_cache;
 }
 
-void Board::ascii_draw(Color color) const
+void Board::ascii_draw(Color perspective) const
 {
     const int square_width = 7;
     const int square_height = 3;
@@ -570,12 +570,12 @@ void Board::ascii_draw(Color color) const
     horizontal_line.append(square_corner + "\n");
     const std::string left_spacer = "   ";
 
-    int rank_start = (color == WHITE ? 8 : 1);
-    int rank_end = (color == WHITE ? 1 : 8);
-    int d_rank = (color == WHITE ? -1 : 1);
-    char file_start = (color == WHITE ? 'a' : 'h');
-    char file_end = (color == WHITE ? 'h' : 'a');
-    int d_file = (color == WHITE ? 1 : -1);
+    int rank_start = (perspective == WHITE ? 8 : 1);
+    int rank_end = (perspective == WHITE ? 1 : 8);
+    int d_rank = (perspective == WHITE ? -1 : 1);
+    char file_start = (perspective == WHITE ? 'a' : 'h');
+    char file_end = (perspective == WHITE ? 'h' : 'a');
+    int d_file = (perspective == WHITE ? 1 : -1);
 
     for(int rank = rank_start; d_rank*(rank_end - rank) >= 0; rank += d_rank)
     {

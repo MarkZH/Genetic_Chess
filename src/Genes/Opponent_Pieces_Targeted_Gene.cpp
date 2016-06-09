@@ -24,13 +24,13 @@ Opponent_Pieces_Targeted_Gene::~Opponent_Pieces_Targeted_Gene()
 {
 }
 
-double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color color) const
+double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;
     std::map<std::shared_ptr<const Piece>, bool> already_counted;
 
     auto hypothetical = board.make_hypothetical();
-    hypothetical.set_turn(color);
+    hypothetical.set_turn(perspective);
 
     for(const auto& complete_move : hypothetical.all_legal_moves())
     {

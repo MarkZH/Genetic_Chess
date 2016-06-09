@@ -23,7 +23,7 @@ class Genome
 
         void read_from(std::istream& is);
 
-        double evaluate(const Board& board, Color color) const;
+        double evaluate(const Board& board, Color perspective) const;
         void mutate();
 
         size_t positions_to_examine(double time) const; // how many moves in future to evaluate board
@@ -42,7 +42,7 @@ class Genome
         size_t last_minute_panic_gene_index;
         size_t branch_pruning_gene_index;
 
-        double score_board(const Board& board, Color color) const;
+        double score_board(const Board& board, Color perspective) const;
         void reseat_piece_strength_gene();
 };
 

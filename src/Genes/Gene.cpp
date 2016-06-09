@@ -63,9 +63,9 @@ void Gene::mutate()
     scalar = std::max(scalar + Random::random_normal(10.0), 0.0);
 }
 
-double Gene::evaluate(const Board& board, Color color) const
+double Gene::evaluate(const Board& board, Color perspective) const
 {
-    return scalar*score_board(board, color);
+    return scalar*score_board(board, perspective);
 }
 
 void Gene::print(std::ostream& os) const
