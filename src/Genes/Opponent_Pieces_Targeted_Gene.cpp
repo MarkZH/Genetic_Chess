@@ -46,7 +46,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
             score += piece_strenth_source->piece_value(target_piece);
             already_counted[target_piece] = true;
         }
-        else if(board.is_en_passant_targetable(end_file, end_rank) && attacking_piece->pgn_symbol().empty())
+        else if(hypothetical.is_en_passant_targetable(end_file, end_rank) && attacking_piece->pgn_symbol().empty())
         {
             // Pawn attacking another pawn en passant
             score += piece_strenth_source->piece_value('P');

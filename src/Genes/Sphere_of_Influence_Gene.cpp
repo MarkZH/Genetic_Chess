@@ -64,7 +64,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
             continue;
         }
 
-        auto move_score = 1 + (board.is_legal(cm) ? legal_bonus : 0.0);
+        auto move_score = 1 + (temp.is_legal(cm) ? legal_bonus : 0.0);
         std::string square_address;
         square_address.push_back(final_file);
         square_address += std::to_string(final_rank);
