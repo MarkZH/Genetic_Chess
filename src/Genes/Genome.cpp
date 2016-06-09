@@ -140,13 +140,20 @@ void Genome::read_from(std::istream& is)
         if(String::starts_with(line, "Name:"))
         {
             auto gene_name = String::split(line, ": ")[1];
+            bool gene_found = false;
             for(auto& gene : genome)
             {
                 if(gene->name() == gene_name)
                 {
                     gene->read_from(is);
+                    gene_found = true;
                     break;
                 }
+            }
+
+            if( ! gene_found)
+            {
+                throw Generic_Exception("Unrecognized gene name: " + gene_name + "\nin line: " + line);
             }
         }
     }
