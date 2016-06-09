@@ -1842,6 +1842,9 @@ Scalar: 53.3549
 Name: King Confinement Gene
 Scalar: 52.2635
 
+Name: King Protection Gene
+Scalar: 42.4242
+
 END
 
 
