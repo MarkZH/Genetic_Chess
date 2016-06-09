@@ -57,7 +57,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective)
         score += promoted_pawn_bonus*piece_strength_source->piece_value(piece_symbol);
     }
 
-    return score;
+    return score/(8.*7.); // normalize to 8 pawns just before promotion
 }
 
 Pawn_Advancement_Gene* Pawn_Advancement_Gene::duplicate() const

@@ -3,7 +3,9 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 
-Freedom_To_Move_Gene::Freedom_To_Move_Gene() : Gene(0.0)
+Freedom_To_Move_Gene::Freedom_To_Move_Gene() :
+    Gene(0.0),
+    maximum_number_of_moves(Board().all_moves().size())
 {
 }
 

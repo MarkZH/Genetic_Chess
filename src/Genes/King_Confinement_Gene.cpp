@@ -53,5 +53,5 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
         }
     }
 
-    return score;
+    return double(score)/temp.piece_on_square(king_file, king_rank)->get_move_list().size();
 }
