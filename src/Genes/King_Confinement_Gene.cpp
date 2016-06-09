@@ -38,6 +38,11 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
 {
     auto temp = board.make_hypothetical();
     temp.set_turn(perspective);
+
+    auto king_location = temp.find_king(perspective);
+    char king_file = king_location.first;
+    int  king_rank = king_location.second;
+
     auto score = 0;
     for(const auto& cm : temp.all_legal_moves())
     {

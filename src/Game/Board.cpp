@@ -633,21 +633,10 @@ void Board::place_piece(const std::shared_ptr<const Piece>& p, char file, int ra
 bool Board::king_is_in_check(Color king_color) const
 {
     // find king of input color
-    for(int rank = 1; rank <= 8; ++rank)
-    {
-        for(char file = 'a'; file <= 'h'; ++file)
-        {
-            auto piece = piece_on_square(file, rank);
-            if(piece && piece->color() == king_color &&  piece->pgn_symbol() == "K")
-            {
-                return square_attacked_by(file, rank, opposite(king_color));
-            }
-        }
-    }
-    ascii_draw(WHITE);
-    print_game_record("", "");
-    throw Generic_Exception(std::string("Error in Board::king_is_in_check(): missing ")
-                            + color_text(king_color) + " King.");
+    auto king_location = find_king(king_color);
+    char file = king_location.first;
+    int  rank = king_location.second;
+    return square_attacked_by(file, rank, opposite(king_color));
 }
 
 bool Board::square_attacked_by(char file, int rank, Color color) const
@@ -878,4 +867,32 @@ void Board::all_pieces_unmoved()
     // If a square is empty, whatever piece you were looking for
     // must have moved away.
     piece_moved[nullptr] = true;
+}
+
+std::pair<char, int> Board::find_king(Color color) const
+{
+    char king_file;
+    int  king_rank;
+    bool king_found = false;
+    for(king_file = 'a'; king_file <= 'h'; ++king_file)
+    {
+        for(king_rank = 1; king_rank <= 8; ++king_rank)
+        {
+            auto piece = piece_on_square(king_file, king_rank);
+            if(piece && piece->color() == color && piece->pgn_symbol() == "K")
+            {
+                king_found = true;
+                break;
+            }
+        }
+        if(king_found) { break; }
+    }
+
+    if( ! king_found)
+    {
+        ascii_draw(WHITE);
+        throw Generic_Exception(color_text(color) + " king not found on board.");
+    }
+
+    return std::make_pair(king_file, king_rank);
 }

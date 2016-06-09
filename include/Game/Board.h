@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <utility>
 
 class Move;
 class Complete_Move;
@@ -66,6 +67,7 @@ class Board
         bool is_en_passant_targetable(char file, int rank) const;
         bool piece_has_moved(char file, int rank) const;
         bool piece_has_moved(const std::shared_ptr<const Piece>& piece) const;
+        std::pair<char, int> find_king(Color color) const;
 
     private:
         std::vector<std::shared_ptr<const Piece>> board;
