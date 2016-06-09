@@ -49,8 +49,8 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective)
         return score;
     }
 
-    auto last_move_index = board.get_game_record().size() - (color == board.whose_turn() ? 2 : 1);
-    auto last_move = board.get_game_record()[last_move_index];
+    auto last_move_index = int(board.get_game_record().size()) - (perspective == board.whose_turn() ? 2 : 1);
+    auto last_move = (last_move_index >= 0 ? board.get_game_record()[last_move_index] : std::string());
     if(last_move.find('=') != std::string::npos)
     {
         auto piece_symbol = String::split(last_move, "=")[1][0]; // char
