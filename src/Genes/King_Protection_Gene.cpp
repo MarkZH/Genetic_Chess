@@ -27,13 +27,14 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
     // Count the number of unguarded squares that a piece could attack the king from
     //
     // Start at the king, then go by rows, columns, and diagonals. The last square to include
-    // is either the edge of the board or a square containing a piece of either color. THe
+    // is either the edge of the board or a square containing a piece of either color. The
     // latter condition holds because that piece blocks squares beyond it. Finally, check knight
     // moves.
     //
     // A square counts as guarded if it is able to be attacked by a friendly piece.
     //
     // All squares count equally.
+
     auto temp = board.make_hypothetical();
     temp.set_turn(perspective);
 
