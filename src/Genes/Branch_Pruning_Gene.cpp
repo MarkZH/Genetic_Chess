@@ -25,7 +25,7 @@ Branch_Pruning_Gene::~Branch_Pruning_Gene()
 
 void Branch_Pruning_Gene::mutate()
 {
-    minimum_score_change_limit += -0.5 + Random::random_normal(5.0);
+    minimum_score_change_limit += Random::random_normal(5.0);
 }
 
 Branch_Pruning_Gene* Branch_Pruning_Gene::duplicate() const

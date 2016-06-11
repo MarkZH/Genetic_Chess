@@ -9,7 +9,7 @@ Piece_Strength_Gene::Piece_Strength_Gene() : Gene(0.0)
 {
     for(auto c : std::string("PRNBQ"))
     {
-        piece_strength[c] = 1.0;
+        piece_strength[c] = 0.0;
     }
     renormalize();
 }
@@ -38,7 +38,7 @@ void Piece_Strength_Gene::mutate()
 {
     for(auto& key_value : piece_strength)
     {
-        key_value.second = std::max(key_value.second + Random::random_normal(1.0), 0.0);
+        key_value.second += Random::random_normal(1.0);
     }
     renormalize();
 }
@@ -86,5 +86,13 @@ void Piece_Strength_Gene::renormalize()
     if(normalizing_factor == 0)
     {
         normalizing_factor = 1;
+    }
+    else if(normalizing_factor < 0)
+    {
+        for(auto& piece_score : piece_strength)
+        {
+            piece_score.second *= -1;
+        }
+        normalizing_factor *= -1;
     }
 }

@@ -60,7 +60,7 @@ Gene::~Gene()
 
 void Gene::mutate()
 {
-    scalar = std::max(scalar + Random::random_normal(10.0), 0.0);
+    scalar += Random::random_normal(10.0);
 }
 
 double Gene::evaluate(const Board& board, Color perspective) const
