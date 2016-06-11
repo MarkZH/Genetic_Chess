@@ -20,10 +20,6 @@ void Opponent_Pieces_Targeted_Gene::load_properties()
     load_base_properties();
 }
 
-Opponent_Pieces_Targeted_Gene::~Opponent_Pieces_Targeted_Gene()
-{
-}
-
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;
