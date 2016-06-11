@@ -30,10 +30,6 @@ void Piece_Strength_Gene::load_properties()
     }
 }
 
-Piece_Strength_Gene::~Piece_Strength_Gene()
-{
-}
-
 void Piece_Strength_Gene::mutate()
 {
     for(auto& key_value : piece_strength)
