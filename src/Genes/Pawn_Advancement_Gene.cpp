@@ -4,26 +4,20 @@
 
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
-#include "Genes/Piece_Strength_Gene.h"
 #include "Utility.h"
 
-Pawn_Advancement_Gene::Pawn_Advancement_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_source_in) :
-    Gene(0.0),
-    piece_strength_source(piece_strength_source_in),
-    promoted_pawn_bonus(0.0)
+Pawn_Advancement_Gene::Pawn_Advancement_Gene() : Gene(0.0)
 {
 }
 
 void Pawn_Advancement_Gene::reset_properties() const
 {
     reset_base_properties();
-    properties["Promoted Pawn Bonus"] = promoted_pawn_bonus;
 }
 
 void Pawn_Advancement_Gene::load_properties()
 {
     load_base_properties();
-    promoted_pawn_bonus = properties["Promoted Pawn Bonus"];
 }
 
 double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective) const
@@ -55,16 +49,4 @@ Pawn_Advancement_Gene* Pawn_Advancement_Gene::duplicate() const
 std::string Pawn_Advancement_Gene::name() const
 {
     return "Pawn Advancement Gene";
-}
-
-void Pawn_Advancement_Gene::mutate()
-{
-    Gene::mutate();
-    promoted_pawn_bonus += Random::random_normal(1.0);
-    promoted_pawn_bonus = std::max(promoted_pawn_bonus, 0.0);
-}
-
-void Pawn_Advancement_Gene::reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>& psg)
-{
-    piece_strength_source = psg;
 }
