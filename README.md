@@ -36,14 +36,11 @@ Sums the total strength (as determined by the Piece Strength Gene below) of
 the opponent's pieces currently under attack.
 
 #### Pawn Advancement Gene
-Measures the progress of all pawns towards the opposite side of the board with
-bonuses for promotion.
+Measures the progress of all pawns towards the opposite side of the board.
 
 #### Sphere of Influence Gene
-Counts the number of squares attacked by all pieces, weighted by the square's
-proximity to the opponent's king and inversely weighted by the attacking
-piece's strength. A weaker piece attacking a square is better since there's
-less motivation to retreat if it is threatened.
+Counts the number of squares attacked by all pieces. Bonus points are awarded
+if the square can be attacked with a legal move.
 
 #### Total Force Gene
 Sums the strength (according to the Piece Strength Gene) of all the player's
@@ -62,7 +59,10 @@ If the time left in the game is less than the amount specified here, then
 look-ahead on all lines is cut off.
 
 #### Look Ahead Gene
-Determines how many positions to examine based on the time left.
+Determines how many positions to examine based on the time left. When looking
+ahead to future moves, the number of positions to examine is divided equally
+amongst every legal move. This naturally limits the depth of search while
+allowing deeper searches for positions with fewer legal moves.
 
 #### Piece Strength Gene
 Specifies the importance or strength of each differet type of chess piece.
