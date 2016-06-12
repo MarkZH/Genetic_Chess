@@ -23,7 +23,6 @@ Name: Freedom to Move Gene
 Scalar: 19.0176
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.89147
 Scalar: 21.3672
 
 Name: Opponent Pieces Targeted

@@ -23,7 +23,6 @@ Name: Freedom to Move Gene
 Scalar: 39.1746
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 5.43459
 Scalar: 68.0972
 
 Name: Opponent Pieces Targeted
@@ -66,7 +65,6 @@ Name: Freedom to Move Gene
 Scalar: 93.8147
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 6.77672
 Scalar: 0
 
 Name: Opponent Pieces Targeted
@@ -109,7 +107,6 @@ Name: Freedom to Move Gene
 Scalar: 12.7948
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -152,7 +149,6 @@ Name: Freedom to Move Gene
 Scalar: 55.0374
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 8.08159
 Scalar: 79.0504
 
 Name: Opponent Pieces Targeted
@@ -195,7 +191,6 @@ Name: Freedom to Move Gene
 Scalar: 27.0164
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 0
 
 Name: Opponent Pieces Targeted
@@ -238,7 +233,6 @@ Name: Freedom to Move Gene
 Scalar: 27.1872
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 6.35858
 Scalar: 13.4603
 
 Name: Opponent Pieces Targeted
@@ -281,7 +275,6 @@ Name: Freedom to Move Gene
 Scalar: 26.2513
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 7.12006
 Scalar: 47.1613
 
 Name: Opponent Pieces Targeted
@@ -324,7 +317,6 @@ Name: Freedom to Move Gene
 Scalar: 44.3606
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.23253
 Scalar: 52.4026
 
 Name: Opponent Pieces Targeted
@@ -367,7 +359,6 @@ Name: Freedom to Move Gene
 Scalar: 15.5476
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0.0228605
 Scalar: 90.3642
 
 Name: Opponent Pieces Targeted
@@ -410,7 +401,6 @@ Name: Freedom to Move Gene
 Scalar: 70.1111
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 8.66027
 Scalar: 75.6375
 
 Name: Opponent Pieces Targeted
@@ -453,7 +443,6 @@ Name: Freedom to Move Gene
 Scalar: 83.6618
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 2.80469
 Scalar: 18.061
 
 Name: Opponent Pieces Targeted
@@ -496,7 +485,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0.0766217
 Scalar: 33.3757
 
 Name: Opponent Pieces Targeted
@@ -539,7 +527,6 @@ Name: Freedom to Move Gene
 Scalar: 22.977
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0.184784
 Scalar: 0
 
 Name: Opponent Pieces Targeted
@@ -582,7 +569,6 @@ Name: Freedom to Move Gene
 Scalar: 6.45607
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -625,7 +611,6 @@ Name: Freedom to Move Gene
 Scalar: 34.1606
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 6.28558
 Scalar: 97.2425
 
 Name: Opponent Pieces Targeted
@@ -668,7 +653,6 @@ Name: Freedom to Move Gene
 Scalar: 2.18622
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.00647
 Scalar: 21.3035
 
 Name: Opponent Pieces Targeted
@@ -711,7 +695,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.89147
 Scalar: 21.3672
 
 Name: Opponent Pieces Targeted
@@ -754,7 +737,6 @@ Name: Freedom to Move Gene
 Scalar: 2.69696
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.89688
 Scalar: 18.9351
 
 Name: Opponent Pieces Targeted
@@ -797,7 +779,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.67904
 Scalar: 33.4399
 
 Name: Opponent Pieces Targeted
@@ -840,7 +821,6 @@ Name: Freedom to Move Gene
 Scalar: 72.9782
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -883,7 +863,6 @@ Name: Freedom to Move Gene
 Scalar: 39.1746
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 8.08159
 Scalar: 79.0504
 
 Name: Opponent Pieces Targeted
@@ -926,7 +905,6 @@ Name: Freedom to Move Gene
 Scalar: 93.8147
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 6.77672
 Scalar: 0
 
 Name: Opponent Pieces Targeted
@@ -969,7 +947,6 @@ Name: Freedom to Move Gene
 Scalar: 6.45607
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -1012,7 +989,6 @@ Name: Freedom to Move Gene
 Scalar: 2.69696
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.66069
 Scalar: 20.3203
 
 Name: Opponent Pieces Targeted
@@ -1055,7 +1031,6 @@ Name: Freedom to Move Gene
 Scalar: 93.8147
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.66069
 Scalar: 20.3203
 
 Name: Opponent Pieces Targeted
@@ -1098,7 +1073,6 @@ Name: Freedom to Move Gene
 Scalar: 50.993
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 6.0629
 Scalar: 97.9435
 
 Name: Opponent Pieces Targeted
@@ -1141,7 +1115,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -1184,7 +1157,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.00647
 Scalar: 21.3035
 
 Name: Opponent Pieces Targeted
@@ -1227,7 +1199,6 @@ Name: Freedom to Move Gene
 Scalar: 40.579
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.89147
 Scalar: 21.3672
 
 Name: Opponent Pieces Targeted
@@ -1270,7 +1241,6 @@ Name: Freedom to Move Gene
 Scalar: 55.0374
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.47134
 Scalar: 20.8828
 
 Name: Opponent Pieces Targeted
@@ -1313,7 +1283,6 @@ Name: Freedom to Move Gene
 Scalar: 15.5476
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.52868
 Scalar: 34.6293
 
 Name: Opponent Pieces Targeted
@@ -1356,7 +1325,6 @@ Name: Freedom to Move Gene
 Scalar: 55.0374
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.47134
 Scalar: 20.8828
 
 Name: Opponent Pieces Targeted
@@ -1399,7 +1367,6 @@ Name: Freedom to Move Gene
 Scalar: 50.993
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 6.35858
 Scalar: 13.4603
 
 Name: Opponent Pieces Targeted
@@ -1442,7 +1409,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.47134
 Scalar: 20.8828
 
 Name: Opponent Pieces Targeted
@@ -1485,7 +1451,6 @@ Name: Freedom to Move Gene
 Scalar: 6.45607
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -1528,7 +1493,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.23253
 Scalar: 52.4026
 
 Name: Opponent Pieces Targeted
@@ -1571,7 +1535,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -1614,7 +1577,6 @@ Name: Freedom to Move Gene
 Scalar: 49.6563
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.00647
 Scalar: 21.3035
 
 Name: Opponent Pieces Targeted
@@ -1657,7 +1619,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0.0766217
 Scalar: 33.3757
 
 Name: Opponent Pieces Targeted
@@ -1700,7 +1661,6 @@ Name: Freedom to Move Gene
 Scalar: 22.977
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0.184784
 Scalar: 0
 
 Name: Opponent Pieces Targeted
@@ -1743,7 +1703,6 @@ Name: Freedom to Move Gene
 Scalar: 51.0622
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.23253
 Scalar: 52.4026
 
 Name: Opponent Pieces Targeted
@@ -1786,7 +1745,6 @@ Name: Freedom to Move Gene
 Scalar: 15.5476
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.52868
 Scalar: 34.6293
 
 Name: Opponent Pieces Targeted
@@ -1829,7 +1787,6 @@ Name: Freedom to Move Gene
 Scalar: 19.0176
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.89147
 Scalar: 21.3672
 
 Name: Opponent Pieces Targeted
@@ -1875,7 +1832,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 8.66027
 Scalar: 75.6375
 
 Name: Opponent Pieces Targeted
@@ -1918,7 +1874,6 @@ Name: Freedom to Move Gene
 Scalar: 6.45607
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -1961,7 +1916,6 @@ Name: Freedom to Move Gene
 Scalar: 60.8271
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 8.08159
 Scalar: 79.0504
 
 Name: Opponent Pieces Targeted
@@ -2004,7 +1958,6 @@ Name: Freedom to Move Gene
 Scalar: 22.4025
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 6.35858
 Scalar: 13.4603
 
 Name: Opponent Pieces Targeted
@@ -2047,7 +2000,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -2090,7 +2042,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -2133,7 +2084,6 @@ Name: Freedom to Move Gene
 Scalar: 51.0622
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -2176,7 +2126,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -2219,7 +2168,6 @@ Name: Freedom to Move Gene
 Scalar: 49.6563
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -2262,7 +2210,6 @@ Name: Freedom to Move Gene
 Scalar: 49.6563
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -2305,7 +2252,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -2348,7 +2294,6 @@ Name: Freedom to Move Gene
 Scalar: 41.6244
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -2391,7 +2336,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0.158413
 Scalar: 16.2652
 
 Name: Opponent Pieces Targeted
@@ -2434,7 +2378,6 @@ Name: Freedom to Move Gene
 Scalar: 51.0622
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.23253
 Scalar: 52.4026
 
 Name: Opponent Pieces Targeted
@@ -2477,7 +2420,6 @@ Name: Freedom to Move Gene
 Scalar: 51.0622
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.23253
 Scalar: 52.4026
 
 Name: Opponent Pieces Targeted
@@ -2520,7 +2462,6 @@ Name: Freedom to Move Gene
 Scalar: 48.2689
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.66069
 Scalar: 20.3203
 
 Name: Opponent Pieces Targeted
@@ -2563,7 +2504,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -2606,7 +2546,6 @@ Name: Freedom to Move Gene
 Scalar: 19.0176
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -2649,7 +2588,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -2692,7 +2630,6 @@ Name: Freedom to Move Gene
 Scalar: 39.0231
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 6.35858
 Scalar: 13.4603
 
 Name: Opponent Pieces Targeted
@@ -2735,7 +2672,6 @@ Name: Freedom to Move Gene
 Scalar: 60.8271
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -2778,7 +2714,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 44.1291
 
 Name: Opponent Pieces Targeted
@@ -2821,7 +2756,6 @@ Name: Freedom to Move Gene
 Scalar: 41.6244
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 44.1406
 
 Name: Opponent Pieces Targeted
@@ -2864,7 +2798,6 @@ Name: Freedom to Move Gene
 Scalar: 39.0231
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 44.1291
 
 Name: Opponent Pieces Targeted
@@ -2907,7 +2840,6 @@ Name: Freedom to Move Gene
 Scalar: 60.8271
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -2950,7 +2882,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.66069
 Scalar: 20.3203
 
 Name: Opponent Pieces Targeted
@@ -2993,7 +2924,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -3036,7 +2966,6 @@ Name: Freedom to Move Gene
 Scalar: 81.836
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.85508
 Scalar: 47.5594
 
 Name: Opponent Pieces Targeted
@@ -3079,7 +3008,6 @@ Name: Freedom to Move Gene
 Scalar: 41.6244
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 44.1406
 
 Name: Opponent Pieces Targeted
@@ -3122,7 +3050,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -3165,7 +3092,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -3208,7 +3134,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -3251,7 +3176,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.67904
 Scalar: 33.4399
 
 Name: Opponent Pieces Targeted
@@ -3294,7 +3218,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -3337,7 +3260,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.33404
 Scalar: 18.3948
 
 Name: Opponent Pieces Targeted
@@ -3380,7 +3302,6 @@ Name: Freedom to Move Gene
 Scalar: 19.0176
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -3423,7 +3344,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -3466,7 +3386,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.92147
 Scalar: 33.7434
 
 Name: Opponent Pieces Targeted
@@ -3509,7 +3428,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 44.1291
 
 Name: Opponent Pieces Targeted
@@ -3552,7 +3470,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0.158413
 Scalar: 16.2652
 
 Name: Opponent Pieces Targeted
@@ -3595,7 +3512,6 @@ Name: Freedom to Move Gene
 Scalar: 6.01728
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.47034
 Scalar: 56.5705
 
 Name: Opponent Pieces Targeted
@@ -3638,7 +3554,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -3681,7 +3596,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.72599
 Scalar: 31.648
 
 Name: Opponent Pieces Targeted
@@ -3724,7 +3638,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.72599
 Scalar: 31.648
 
 Name: Opponent Pieces Targeted
@@ -3767,7 +3680,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.07923
 Scalar: 10.8006
 
 Name: Opponent Pieces Targeted
@@ -3810,7 +3722,6 @@ Name: Freedom to Move Gene
 Scalar: 39.0231
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 44.1291
 
 Name: Opponent Pieces Targeted
@@ -3853,7 +3764,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.01714
 Scalar: 35.4796
 
 Name: Opponent Pieces Targeted
@@ -3896,7 +3806,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 8.66027
 Scalar: 75.6375
 
 Name: Opponent Pieces Targeted
@@ -3939,7 +3848,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.00647
 Scalar: 21.3035
 
 Name: Opponent Pieces Targeted
@@ -3982,7 +3890,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -4025,7 +3932,6 @@ Name: Freedom to Move Gene
 Scalar: 15.5476
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.52868
 Scalar: 34.6293
 
 Name: Opponent Pieces Targeted
@@ -4068,7 +3974,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 5.43525
 Scalar: 2.73584
 
 Name: Opponent Pieces Targeted
@@ -4111,7 +4016,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.47034
 Scalar: 56.5705
 
 Name: Opponent Pieces Targeted
@@ -4154,7 +4058,6 @@ Name: Freedom to Move Gene
 Scalar: 46.1647
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -4197,7 +4100,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -4240,7 +4142,6 @@ Name: Freedom to Move Gene
 Scalar: 46.1647
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -4283,7 +4184,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.18639
 Scalar: 53.5015
 
 Name: Opponent Pieces Targeted
@@ -4326,7 +4226,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.09718
 Scalar: 20.6103
 
 Name: Opponent Pieces Targeted
@@ -4369,7 +4268,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.01714
 Scalar: 35.4796
 
 Name: Opponent Pieces Targeted
@@ -4412,7 +4310,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -4455,7 +4352,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 44.1291
 
 Name: Opponent Pieces Targeted
@@ -4498,7 +4394,6 @@ Name: Freedom to Move Gene
 Scalar: 7.48031
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.01714
 Scalar: 35.4796
 
 Name: Opponent Pieces Targeted
@@ -4541,7 +4436,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.72599
 Scalar: 31.648
 
 Name: Opponent Pieces Targeted
@@ -4584,7 +4478,6 @@ Name: Freedom to Move Gene
 Scalar: 59.6766
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.66069
 Scalar: 20.3203
 
 Name: Opponent Pieces Targeted
@@ -4627,7 +4520,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.72599
 Scalar: 31.648
 
 Name: Opponent Pieces Targeted
@@ -4670,7 +4562,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.67904
 Scalar: 33.4399
 
 Name: Opponent Pieces Targeted
@@ -4713,7 +4604,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -4756,7 +4646,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
@@ -4799,7 +4688,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0.0815014
 Scalar: 31.4392
 
 Name: Opponent Pieces Targeted
@@ -4842,7 +4730,6 @@ Name: Freedom to Move Gene
 Scalar: 7.48031
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.01714
 Scalar: 35.4796
 
 Name: Opponent Pieces Targeted
@@ -4885,7 +4772,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 3.89216
 Scalar: 17.3564
 
 Name: Opponent Pieces Targeted
@@ -4928,7 +4814,6 @@ Name: Freedom to Move Gene
 Scalar: 59.6766
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.66069
 Scalar: 20.3203
 
 Name: Opponent Pieces Targeted
@@ -4971,7 +4856,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.19117
 Scalar: 11.3371
 
 Name: Opponent Pieces Targeted
@@ -5014,7 +4898,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 1.66069
 Scalar: 20.3203
 
 Name: Opponent Pieces Targeted
@@ -5057,7 +4940,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.47034
 Scalar: 56.5705
 
 Name: Opponent Pieces Targeted
@@ -5100,7 +4982,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 2.90856
 Scalar: 21.8739
 
 Name: Opponent Pieces Targeted
@@ -5143,7 +5024,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.47034
 Scalar: 56.5705
 
 Name: Opponent Pieces Targeted
@@ -5186,7 +5066,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 4.67054
 Scalar: 76.2553
 
 Name: Opponent Pieces Targeted
@@ -5229,7 +5108,6 @@ Name: Freedom to Move Gene
 Scalar: 0
 
 Name: Pawn Advancement Gene
-Promoted Pawn Bonus: 0
 Scalar: 46.7884
 
 Name: Opponent Pieces Targeted
