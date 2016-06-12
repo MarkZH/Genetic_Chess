@@ -12,6 +12,7 @@ class Total_Force_Gene : public Gene
 {
     public:
         explicit Total_Force_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_source);
+        virtual ~Total_Force_Gene() override;
 
         Total_Force_Gene* duplicate() const;
         void reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>& psg) override;

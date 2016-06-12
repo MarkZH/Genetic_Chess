@@ -23,6 +23,10 @@ Pawn_Capture::Pawn_Capture(Color color_in, char dir) : Pawn_Move(color_in)
     }
 }
 
+Pawn_Capture::~Pawn_Capture()
+{
+}
+
 bool Pawn_Capture::is_legal(const Board& board, char file_start, int rank_start) const
 {
     char file_end = file_start + file_change();

@@ -8,7 +8,8 @@ class Piece;
 class Piece_Strength_Gene : public Gene
 {
     public:
-        explicit Piece_Strength_Gene();
+        Piece_Strength_Gene();
+        virtual ~Piece_Strength_Gene() override;
 
         void mutate() override;
         Piece_Strength_Gene* duplicate() const override;

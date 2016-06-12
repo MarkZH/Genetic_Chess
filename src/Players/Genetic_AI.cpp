@@ -44,6 +44,10 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
 {
 }
 
+Genetic_AI::~Genetic_AI()
+{
+}
+
 Genetic_AI::Genetic_AI(const std::string& file_name)
 {
     std::ifstream ifs(file_name);

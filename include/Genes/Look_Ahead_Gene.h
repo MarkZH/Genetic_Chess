@@ -10,7 +10,7 @@ class Look_Ahead_Gene : public Gene
 {
     public:
         Look_Ahead_Gene();
-        ~Look_Ahead_Gene();
+        virtual ~Look_Ahead_Gene() override;
 
         Look_Ahead_Gene* duplicate() const override;
         void mutate() override;

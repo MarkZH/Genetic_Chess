@@ -10,6 +10,8 @@ class Stalemate_Exception : public Game_Ending_Exception
 {
     public:
         explicit Stalemate_Exception(std::string message);
+        virtual ~Stalemate_Exception() override;
+
         virtual const char* what() const throw() override;
 
     private:

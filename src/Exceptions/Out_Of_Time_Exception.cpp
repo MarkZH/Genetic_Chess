@@ -10,6 +10,10 @@ Out_Of_Time_Exception::Out_Of_Time_Exception(Color loser) :
 {
 }
 
+Out_Of_Time_Exception::~Out_Of_Time_Exception()
+{
+}
+
 const char* Out_Of_Time_Exception::what() const throw()
 {
     return message.c_str();

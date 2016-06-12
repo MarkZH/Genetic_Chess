@@ -8,7 +8,7 @@ class King_Confinement_Gene : public Gene
 {
     public:
         King_Confinement_Gene();
-        virtual ~King_Confinement_Gene();
+        virtual ~King_Confinement_Gene() override;
 
         double score_board(const Board& board, Color perspective) const override;
 

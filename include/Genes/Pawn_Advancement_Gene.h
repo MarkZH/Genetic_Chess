@@ -7,7 +7,8 @@
 class Pawn_Advancement_Gene : public Gene
 {
     public:
-        explicit Pawn_Advancement_Gene();
+        Pawn_Advancement_Gene();
+        virtual ~Pawn_Advancement_Gene() override;
 
         Pawn_Advancement_Gene* duplicate() const override;
 

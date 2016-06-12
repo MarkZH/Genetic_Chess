@@ -7,6 +7,10 @@ En_Passant::En_Passant(Color color, char dir) : Pawn_Capture(color, dir)
 {
 }
 
+En_Passant::~En_Passant()
+{
+}
+
 bool En_Passant::is_legal(const Board& board, char file_start, int rank_start) const
 {
     char file_end = file_start + file_change();

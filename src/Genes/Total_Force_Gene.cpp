@@ -11,6 +11,10 @@ Total_Force_Gene::Total_Force_Gene(const std::shared_ptr<const Piece_Strength_Ge
 {
 }
 
+Total_Force_Gene::~Total_Force_Gene()
+{
+}
+
 void Total_Force_Gene::reset_properties() const
 {
     reset_base_properties();

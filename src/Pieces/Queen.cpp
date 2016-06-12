@@ -30,3 +30,7 @@ Queen::Queen(Color color_in) : Piece(color_in)
         ascii_art_lines[2].replace(1, 3, "###");
     }
 }
+
+Queen::~Queen()
+{
+}

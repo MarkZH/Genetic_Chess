@@ -12,6 +12,7 @@ class Pawn_Move : public Move
         explicit Pawn_Move(Color color_in);
         Pawn_Move(const Pawn_Move&) = delete;
         Pawn_Move& operator=(const Pawn_Move&) = delete;
+        virtual ~Pawn_Move() override;
 
         virtual void side_effects(Board& board, char file_start, int rank_end) const;
         virtual bool is_legal(const Board& board, char file_start, int rank_end) const;

@@ -9,7 +9,7 @@ class Illegal_Move_Exception : public std::exception
 {
     public:
         explicit Illegal_Move_Exception(const std::string& reason);
-        ~Illegal_Move_Exception();
+        virtual ~Illegal_Move_Exception() override;
 
         const char * what() const noexcept override;
 

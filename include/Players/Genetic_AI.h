@@ -22,6 +22,7 @@ class Genetic_AI : public Player
         explicit Genetic_AI(std::istream& is); // read genome from file
         explicit Genetic_AI(const Genetic_AI& gai_mother,
                             const Genetic_AI& gai_father); // offspring with random recombination of genes
+        virtual ~Genetic_AI() override;
 
         void mutate();
         const Complete_Move choose_move(const Board& board, const Clock& clock) const override;

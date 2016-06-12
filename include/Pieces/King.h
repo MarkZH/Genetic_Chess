@@ -10,6 +10,7 @@ class King : public Piece
         explicit King(Color color_in);
         King(const King&) = delete;
         King& operator=(const King&) = delete;
+        virtual ~King() override;
 };
 
 #endif // KING_H

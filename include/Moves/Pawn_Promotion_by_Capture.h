@@ -9,6 +9,7 @@ class Pawn_Promotion_by_Capture : public Pawn_Promotion
         explicit Pawn_Promotion_by_Capture(const Piece* promotion, char dir);
         Pawn_Promotion_by_Capture(const Pawn_Promotion_by_Capture&) = delete;
         Pawn_Promotion_by_Capture& operator=(const Pawn_Promotion_by_Capture&) = delete;
+        virtual ~Pawn_Promotion_by_Capture() override;
 
         bool is_legal(const Board& board, char file_start, int rank_start) const override;
         std::string name() const override;

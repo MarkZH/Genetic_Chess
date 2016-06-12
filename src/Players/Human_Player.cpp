@@ -16,6 +16,10 @@ Human_Player::Human_Player()
     getline(std::cin, player_name);
 }
 
+Human_Player::~Human_Player()
+{
+}
+
 const Complete_Move Human_Player::choose_move(const Board& board, const Clock& clock) const
 {
     auto last_move_illegal = false;

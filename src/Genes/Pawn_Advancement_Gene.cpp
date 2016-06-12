@@ -10,6 +10,10 @@ Pawn_Advancement_Gene::Pawn_Advancement_Gene() : Gene(0.0)
 {
 }
 
+Pawn_Advancement_Gene::~Pawn_Advancement_Gene()
+{
+}
+
 void Pawn_Advancement_Gene::reset_properties() const
 {
     reset_base_properties();

@@ -11,6 +11,8 @@ class Out_Of_Time_Exception : public Game_Ending_Exception
 {
     public:
         explicit Out_Of_Time_Exception(Color loser);
+        virtual ~Out_Of_Time_Exception() override;
+
         const char* what() const throw() override;
     private:
         std::string message;

@@ -9,6 +9,8 @@ class Generic_Exception : public std::exception
 {
     public:
         explicit Generic_Exception(std::string message);
+        virtual ~Generic_Exception() override;
+
         const char* what() const throw() override;
 
     private:

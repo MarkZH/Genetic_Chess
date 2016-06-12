@@ -14,6 +14,10 @@ Piece_Strength_Gene::Piece_Strength_Gene() : Gene(0.0)
     renormalize();
 }
 
+Piece_Strength_Gene::~Piece_Strength_Gene()
+{
+}
+
 void Piece_Strength_Gene::reset_properties() const
 {
     for(const auto& piece_score : piece_strength)

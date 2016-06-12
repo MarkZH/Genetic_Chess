@@ -11,6 +11,7 @@ class Queen : public Piece
         explicit Queen(Color color);
         Queen(const Queen&) = delete;
         Queen& operator=(const Queen&) = delete;
+        virtual ~Queen() override;
 };
 
 #endif // QUEEN_H

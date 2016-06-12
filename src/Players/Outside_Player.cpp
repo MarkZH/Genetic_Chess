@@ -41,6 +41,10 @@ Outside_Player::Outside_Player() : log_file_name("chess_log.txt")
     }
 }
 
+Outside_Player::~Outside_Player()
+{
+}
+
 Color Outside_Player::get_ai_color() const
 {
     while(true)

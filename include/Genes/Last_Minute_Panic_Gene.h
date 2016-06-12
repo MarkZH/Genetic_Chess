@@ -10,7 +10,7 @@ class Last_Minute_Panic_Gene : public Gene
 {
     public:
         Last_Minute_Panic_Gene();
-        virtual ~Last_Minute_Panic_Gene();
+        virtual ~Last_Minute_Panic_Gene() override;
 
         void mutate() override;
         Last_Minute_Panic_Gene* duplicate() const override;

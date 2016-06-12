@@ -8,7 +8,7 @@ class Sphere_of_Influence_Gene : public Gene
 {
     public:
         Sphere_of_Influence_Gene();
-        virtual ~Sphere_of_Influence_Gene();
+        virtual ~Sphere_of_Influence_Gene() override;
 
         void read_from(std::istream& is);
 

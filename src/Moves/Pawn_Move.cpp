@@ -6,6 +6,10 @@ Pawn_Move::Pawn_Move(Color color_in) : Move(0, (color_in == WHITE ? 1 : -1))
 {
 }
 
+Pawn_Move::~Pawn_Move()
+{
+}
+
 bool Pawn_Move::is_legal(const Board& board, char file_start, int rank_start) const
 {
     return rank_start != (rank_change() == 1 ? 7 : 2)

@@ -6,6 +6,10 @@ Checkmate_Exception::Checkmate_Exception(Color victory) :
 {
 }
 
+Checkmate_Exception::~Checkmate_Exception()
+{
+}
+
 const char* Checkmate_Exception::what() const throw()
 {
     return message.c_str();

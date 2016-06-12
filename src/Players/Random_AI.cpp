@@ -16,6 +16,10 @@ const Complete_Move Random_AI::choose_move(const Board& board, const Clock& /*cl
     return moves[Random::random_integer(0, moves.size() - 1)];
 }
 
+Random_AI::~Random_AI()
+{
+}
+
 std::string Random_AI::name() const
 {
     return "Random AI";

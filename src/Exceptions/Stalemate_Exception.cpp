@@ -5,6 +5,10 @@ Stalemate_Exception::Stalemate_Exception(std::string message) : Game_Ending_Exce
 {
 }
 
+Stalemate_Exception::~Stalemate_Exception()
+{
+}
+
 const char* Stalemate_Exception::what() const throw()
 {
     return reason.c_str();

@@ -10,6 +10,10 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const std::shared_p
 {
 }
 
+Opponent_Pieces_Targeted_Gene::~Opponent_Pieces_Targeted_Gene()
+{
+}
+
 void Opponent_Pieces_Targeted_Gene::reset_properties() const
 {
     reset_base_properties();

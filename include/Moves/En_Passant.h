@@ -13,6 +13,7 @@ class En_Passant : public Pawn_Capture
         explicit En_Passant(Color color, char dir);
         En_Passant(const En_Passant&) = delete;
         En_Passant& operator=(const En_Passant&) = delete;
+        virtual ~En_Passant() override;
 
         void side_effects(Board& board, char file_start, int rank_start) const;
         bool is_legal(const Board& board, char file_start, int rank_start) const;
