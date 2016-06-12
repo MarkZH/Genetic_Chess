@@ -3,9 +3,6 @@
 
 #include <exception>
 
-
-class End_Of_File_Exception : public std::exception
-{
-};
+typedef std::exception End_Of_File_Exception;
 
 #endif // END_OF_FILE_EXCEPTION_H
