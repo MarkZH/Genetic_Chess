@@ -4,7 +4,7 @@
 #include <vector>
 #include <iosfwd>
 
-#include "AI_Player.h"
+#include "Player.h"
 #include "Genes/Genome.h"
 
 class Board;
@@ -12,7 +12,7 @@ class Clock;
 
 enum Color;
 
-class Genetic_AI : public AI_Player
+class Genetic_AI : public Player
 {
     public:
         Genetic_AI();

@@ -1,9 +1,9 @@
 #ifndef RANDOM_AI_H
 #define RANDOM_AI_H
 
-#include "AI_Player.h"
+#include "Player.h"
 
-class Random_AI : public AI_Player
+class Random_AI : public Player
 {
     public:
         const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
