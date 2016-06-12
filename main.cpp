@@ -145,7 +145,6 @@ int main(int argc, char *argv[])
     }
     catch(const std::exception& e)
     {
-        std::ofstream("error_log.txt", std::ios::app) << "\n\nERROR: " << e.what() << std::endl;
         std::cerr << "\n\nERROR: " << e.what() << std::endl;
         return 1;
     }
