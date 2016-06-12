@@ -1,5 +1,6 @@
 clear;
 close all;
+ graphics_toolkit("gnuplot");
 
 [filename, directory, ~] = uigetfile();
 gene_pool_filename = fullfile(directory, filename);
@@ -24,13 +25,15 @@ for index = 1 : length(id_list_sorted)
 end
 
 for yi = 2 : length(data.colheaders)
-  figure;
+  figure('Position', [0, 0, 1200, 1000]);
   hold all;
   high = max(data.data(:, yi));
   scatter(id_list, data.data(:, yi));
   if length(missing_ids) > 0
     plot(missing_ids, high*1.1*ones(size(missing_ids)), 'kx');
   end
-  xlabel(data.colheaders(1){1});
-  ylabel(data.colheaders(yi){1})
+  xlabel(data.colheaders(1){1}, 'FontSize', 18);
+  title(data.colheaders(yi){1}, 'FontSize', 22);
+  set(gca, 'FontSize', 14);
+  print([gene_pool_filename '_' data.colheaders(yi){1} '.png']);
 end
