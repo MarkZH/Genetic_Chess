@@ -10,7 +10,7 @@ class Board;
 class En_Passant : public Pawn_Capture
 {
     public:
-        explicit En_Passant(Color color, char dir);
+        En_Passant(Color color, char dir);
         En_Passant(const En_Passant&) = delete;
         En_Passant& operator=(const En_Passant&) = delete;
         virtual ~En_Passant() override;
