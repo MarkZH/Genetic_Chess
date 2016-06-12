@@ -13,9 +13,9 @@ This will start up a gene pool with Genetic_AIs playing against each other--mati
 
 `genetic_chess (-human|-genetic|-random) (-human|-genetic|-random)`
 Starts a local game played in the terminal with an ASCII art board. The first parameter is the white player, the second is black.
- - `-human` - a human player. Moves are specified in algebraic notation indicated the starting and ending square.
- - `-genetic` - a Genetic AI player. If a file name follows, load the genes from that file.
- - `-random` - an AI player that chooses moves randomly from all legal moves.
+ - `-human`   - a human player. Moves are specified in algebraic notation indicated the starting and ending square.
+ - `-genetic` - a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID.
+ - `-random`  - an AI player that chooses moves randomly from all legal moves.
 
 A barely functional implementation of the [Chess Engine Communication Protocol](https://www.gnu.org/software/xboard/engine-intf.html) allows for play through xboard and similar programs (PyChess, etc.). When used this way, arguments are ignored.
 
