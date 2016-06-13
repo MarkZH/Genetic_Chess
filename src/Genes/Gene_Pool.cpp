@@ -22,6 +22,13 @@
 
 #include "Utility.h"
 
+// Declarations to silence warnings
+void signal_handler(int);
+void write_generation(const std::vector<Genetic_AI>& pool,
+                      const std::string& genome_file_name);
+std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file);
+
+
 sig_atomic_t signal_activated = 0;
 void signal_handler(int)
 {

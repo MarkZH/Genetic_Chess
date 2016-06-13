@@ -14,6 +14,9 @@
 
 #include "Exceptions/Illegal_Move_Exception.h"
 
+// Declaration to silence warnings
+bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
+
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2)
 {
     std::ifstream file1(file_name1);

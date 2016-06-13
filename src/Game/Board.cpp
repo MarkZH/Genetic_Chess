@@ -714,7 +714,7 @@ void Board::print_game_record(const std::string& white_name,
 
     if(file_name.empty())
     {
-        std::cout << oss.str();
+        std::cout << oss.str() << std::endl;
     }
     else
     {

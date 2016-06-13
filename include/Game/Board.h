@@ -7,14 +7,14 @@
 #include <memory>
 #include <utility>
 
-class Move;
-class Complete_Move;
 class Kingside_Castle;
 class Queenside_Castle;
 class En_Passant;
 class Pawn_Promotion;
 class Pawn_Double_Move;
 class Piece;
+
+#include "Moves/Move.h"
 
 #include "Color.h"
 
