@@ -44,6 +44,15 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
 {
 }
 
+Genetic_AI& Genetic_AI::operator=(const Genetic_AI& other)
+{
+	genome = other.genome;
+	id = other.id;
+	parents = other.parents;
+
+    return *this;
+}
+
 Genetic_AI::~Genetic_AI()
 {
 }
