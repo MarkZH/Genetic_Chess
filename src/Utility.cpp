@@ -167,7 +167,7 @@ double Configuration_File::get_number(const std::string& parameter) const
 {
     try
     {
-        return std::stoi(get_text(parameter));
+        return std::stod(get_text(parameter));
     }
     catch(const std::invalid_argument&)
     {
