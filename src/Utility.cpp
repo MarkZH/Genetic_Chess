@@ -3,6 +3,9 @@
 #include <vector>
 #include <random>
 #include <chrono>
+#include <fstream>
+
+#include "Exceptions/Generic_Exception.h"
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, size_t count)
 {
@@ -74,6 +77,28 @@ bool String::starts_with(const std::string& s, char beginning)
     return s[0] == beginning;
 }
 
+std::string String::trim_outer_whitespace(const std::string& str)
+{
+    size_t start = 0;
+    while(start < str.size() && isspace(str[start]))
+    {
+        ++start;
+    }
+
+    size_t end = std::max(str.size() - 1, start);
+    while(end > start && isspace(str[end]))
+    {
+        --end;
+    }
+
+    return str.substr(start, end - start + 1);
+}
+
+std::string String::strip_comments(const std::string& str, char comment)
+{
+    return trim_outer_whitespace(str.substr(0, str.find(comment)));
+}
+
 int Random::random_integer(int min, int max)
 {
     static std::mt19937_64
@@ -103,4 +128,49 @@ bool Random::coin_flip()
 bool Random::success_probability(double probability)
 {
     return random_real(0, 1) < probability;
+}
+
+
+Configuration_File::Configuration_File(const std::string& file_name)
+{
+    std::ifstream ifs(file_name);
+    std::string line;
+    while(getline(ifs, line))
+    {
+        line = String::strip_comments(line, '#');
+        if(line.empty())
+        {
+            continue;
+        }
+        if( ! String::contains(line, '='))
+        {
+            throw Generic_Exception("Configuration file lines must be of form \"Name = Value\"\n" + line);
+        }
+        auto line_split = String::split(line, "=", 1);
+        parameters[String::trim_outer_whitespace(line_split[0])] = line_split[1];
+    }
+}
+
+std::string Configuration_File::get_text(const std::string& parameter) const
+{
+    try
+    {
+        return String::trim_outer_whitespace(parameters.at(parameter));
+    }
+    catch(const std::out_of_range&)
+    {
+        return "";
+    }
+}
+
+double Configuration_File::get_number(const std::string& parameter) const
+{
+    try
+    {
+        return std::stoi(get_text(parameter));
+    }
+    catch(const std::invalid_argument&)
+    {
+        return 0.0;
+    }
 }

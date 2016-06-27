@@ -30,23 +30,25 @@ void write_generation(const Gene_Pool& pool, const std::string& genome_file_name
 Gene_Pool load_gene_pool_file(const std::string& load_file);
 
 
-void gene_pool(const std::string& load_file = "")
+void gene_pool(const std::string& config_file = "")
 {
+    auto config = Configuration_File(config_file);
+
     // Infrastructure and recording
     signal(SIGINT, signal_handler);
     static auto urng = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
-    const size_t maximum_simultaneous_games = 8;
+    const size_t maximum_simultaneous_games = config.get_number("maximum simultaneous games");
 
     // Environment variables
-    const size_t gene_pool_population = 16;
-    const size_t gene_pool_count = 2;
-    const double draw_kill_probability = 0.05;
-    const int pool_swap_interval = 1000;
+    const size_t gene_pool_population = config.get_number("gene pool population");
+    const size_t gene_pool_count = config.get_number("gene pool count");
+    const double draw_kill_probability = config.get_number("draw kill probability");
+    const int pool_swap_interval = config.get_number("pool swap interval");
 
     // Oscillating game time
-    const double minimum_game_time = 30; // seconds
-    const double maximum_game_time = 120; // seconds
-    double game_time_increment = 0; // seconds
+    const double minimum_game_time = config.get_number("minimum game time"); // seconds
+    const double maximum_game_time = config.get_number("maximum game time"); // seconds
+    double game_time_increment = config.get_number("game time increment"); // seconds
     double game_time = minimum_game_time;
 
     // Stats (map: Pool ID --> counts)
@@ -64,8 +66,8 @@ void gene_pool(const std::string& load_file = "")
     std::vector<int> new_blood; // IDs of ex nihilo players
     std::map<int, size_t> original_pool; // ID --> original pool ID
 
-    std::string genome_file_name;
-    if(load_file.empty())
+    std::string genome_file_name = config.get_text("gene pool file");
+    if(genome_file_name.empty())
     {
         genome_file_name = "gene_pool_record_";
         for(int i = 0; i < 10; ++i)
@@ -73,10 +75,6 @@ void gene_pool(const std::string& load_file = "")
             genome_file_name += char('a' + Random::random_integer(0, 25));
         }
         genome_file_name += ".txt";
-    }
-    else
-    {
-        genome_file_name = load_file;
     }
 
     std::vector<Gene_Pool> pools;

@@ -1,0 +1,16 @@
+# <-- for comments
+
+maximum simultaneous games = 8
+
+# Environment variables
+gene pool population = 16
+gene pool count = 3
+draw kill probability = 0.05
+pool swap interval = 1000
+
+# Oscillating game time
+minimum game time = 30 # seconds
+maximum game time = 120 # seconds
+game time increment = 0 # seconds
+
+# gene pool file = a.txt

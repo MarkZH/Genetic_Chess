@@ -145,5 +145,17 @@ void run_tests()
         throw Generic_Exception("Test failed!");
     }
     remove(gene_pool_result_file_name);
+
+    // String utilities
+    std::string original = "   a    #     b";
+    std::string expected = "a";
+    std::string result = String::strip_comments(original, '#');
+    if(expected != result)
+    {
+        std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
+        throw Generic_Exception("Test failed!");
+    }
+
+
     std::cout << "All tests passed." << std::endl;
 }

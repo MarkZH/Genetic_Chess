@@ -29,13 +29,13 @@ int main(int argc, char *argv[])
         {
             if(std::string(argv[1]) == "-genepool")
             {
-                std::string gene_pool_file_name;
+                std::string gene_pool_config_file_name;
                 if(argc > 2)
                 {
-                    gene_pool_file_name = argv[2];
+                    gene_pool_config_file_name = argv[2];
                 }
 
-                gene_pool(gene_pool_file_name);
+                gene_pool(gene_pool_config_file_name);
             }
             else
             {

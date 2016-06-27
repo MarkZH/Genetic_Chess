@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <vector>
+#include <map>
 
 namespace String
 {
@@ -18,6 +19,9 @@ namespace String
 
     bool starts_with(const std::string& s, const std::string& beginning);
     bool starts_with(const std::string& s, char beginning);
+
+    std::string trim_outer_whitespace(const std::string& str);
+    std::string strip_comments(const std::string& str, char comment);
 }
 
 namespace Random
@@ -28,5 +32,17 @@ namespace Random
     bool coin_flip();
     bool success_probability(double probability);
 }
+
+class Configuration_File
+{
+    public:
+        Configuration_File(const std::string& file_name);
+
+        std::string get_text(const std::string& parameter) const;
+        double get_number(const std::string& parameter) const;
+
+    private:
+        std::map<std::string, std::string> parameters;
+};
 
 #endif // UTILITY_H
