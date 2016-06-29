@@ -26,6 +26,13 @@ scalar_suffix = "Scalar";
 scalar_legend_entries = {};
 title('Gene Scalar Evolution', 'FontSize', 22);
 
+for index = 1 : length(data.colheaders)
+    if strcmp(data.colheaders(index){1}, 'Total Force Gene - Scalar')
+        total_force_scalar_sign = sign(data.data(:, index));
+        break;
+    end
+end
+
 for yi = 2 : length(data.colheaders)
   this_data = data.data(:, yi);
   name = data.colheaders(yi){1};
@@ -41,7 +48,7 @@ for yi = 2 : length(data.colheaders)
   if name(1:length(piece_strength_prefix)) == piece_strength_prefix
     figure(piece_strength_figure);
     hold all;
-    plot(conv(this_data, ones(conv_window, 1), 'valid')/conv_window, 'LineWidth', 3);
+    plot(conv(this_data.*total_force_scalar_sign, ones(conv_window, 1), 'valid')/conv_window, 'LineWidth', 3);
     piece_strength_legend_entries{length(piece_strength_legend_entries) + 1} = name;
   end
   
