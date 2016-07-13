@@ -17,7 +17,6 @@
 #include "Exceptions/Illegal_Move_Exception.h"
 #include "Exceptions/Checkmate_Exception.h"
 #include "Exceptions/Stalemate_Exception.h"
-#include "Exceptions/Generic_Exception.h"
 #include "Exceptions/Promotion_Exception.h"
 
 #include "Utility.h"
@@ -109,7 +108,7 @@ Board::Board(const std::string& fen) :
                         place_piece(std::make_shared<King>(color), file, rank);
                         break;
                     default:
-                        throw Generic_Exception(std::string("Invalid  symbol in FEN string: ") + symbol);
+                        throw std::runtime_error(std::string("Invalid  symbol in FEN string: ") + symbol);
                 }
                 ++file;
             }
@@ -789,7 +788,7 @@ void Board::set_turn(Color color)
 {
     if(is_original)
     {
-        throw Generic_Exception("Cannot call set_turn() on original board.");
+        throw std::runtime_error("Cannot call set_turn() on original board.");
     }
 
     if(turn_color != color)
@@ -891,7 +890,7 @@ std::pair<char, int> Board::find_king(Color color) const
     if( ! king_found)
     {
         ascii_draw(WHITE);
-        throw Generic_Exception(color_text(color) + " king not found on board.");
+        throw std::runtime_error(color_text(color) + " king not found on board.");
     }
 
     return std::make_pair(king_file, king_rank);

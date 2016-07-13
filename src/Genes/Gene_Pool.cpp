@@ -17,7 +17,6 @@
 #include "Game/Game.h"
 #include "Game/Board.h"
 
-#include "Exceptions/Generic_Exception.h"
 #include "Exceptions/End_Of_File_Exception.h"
 
 #include "Utility.h"
@@ -443,7 +442,7 @@ Gene_Pool load_gene_pool_file(const std::string& load_file)
         {
             all_players.emplace_back(ifs);
         }
-        catch(const Generic_Exception& ge)
+        catch(const std::runtime_error& ge)
         {
             std::string line = ge.what();
             if(String::contains(line, "Still Alive: "))

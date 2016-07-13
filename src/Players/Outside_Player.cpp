@@ -9,7 +9,6 @@
 #include "Game/Color.h"
 
 #include "Exceptions/Game_Ending_Exception.h"
-#include "Exceptions/Generic_Exception.h"
 
 #include "Utility.h"
 
@@ -88,7 +87,7 @@ std::string Outside_Player::receive_command() const
     log("RECEIVING: " + result);
     if(result == "quit")
     {
-        throw Generic_Exception("Told to quit by XBoard");
+        throw std::runtime_error("Told to quit by XBoard");
     }
 
     return result;

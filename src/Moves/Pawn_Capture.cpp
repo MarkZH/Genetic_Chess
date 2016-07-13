@@ -1,7 +1,6 @@
 #include <cassert>
 
 #include "Moves/Pawn_Capture.h"
-#include "Exceptions/Generic_Exception.h"
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
 #include "Utility.h"
@@ -18,7 +17,7 @@ Pawn_Capture::Pawn_Capture(Color color_in, char dir) : Pawn_Move(color_in)
     }
     else
     {
-        throw Generic_Exception(std::string("Invalid direction specification for Pawn_Capture: ")
+        throw std::runtime_error(std::string("Invalid direction specification for Pawn_Capture: ")
                                 + std::string().append(1, dir));
     }
 }

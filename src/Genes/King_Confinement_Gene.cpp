@@ -4,8 +4,6 @@
 #include "Game/Color.h"
 #include "Pieces/Piece.h"
 
-#include "Exceptions/Generic_Exception.h"
-
 King_Confinement_Gene::King_Confinement_Gene() : Gene(0.0)
 {
 }

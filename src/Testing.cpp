@@ -8,7 +8,6 @@
 #include "Game/Board.h"
 #include "Moves/Move.h"
 #include "Players/Genetic_AI.h"
-#include "Exceptions/Generic_Exception.h"
 
 #include "Utility.h"
 
@@ -125,7 +124,7 @@ void run_tests()
 
     if( ! files_are_identical(file_name1, file_name2))
     {
-        throw Generic_Exception("Test failed!");
+        throw std::runtime_error("Test failed!");
     }
     remove(file_name1);
     remove(file_name2);
@@ -142,7 +141,7 @@ void run_tests()
 
     if( ! files_are_identical(gene_pool_result_file_name, gene_pool_expected_file_name))
     {
-        throw Generic_Exception("Test failed!");
+        throw std::runtime_error("Test failed!");
     }
     remove(gene_pool_result_file_name);
 
@@ -153,7 +152,7 @@ void run_tests()
     if(expected != result)
     {
         std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
-        throw Generic_Exception("Test failed!");
+        throw std::runtime_error("Test failed!");
     }
 
 

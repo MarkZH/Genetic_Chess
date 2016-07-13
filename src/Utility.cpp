@@ -5,8 +5,6 @@
 #include <chrono>
 #include <fstream>
 
-#include "Exceptions/Generic_Exception.h"
-
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, size_t count)
 {
     std::vector<std::string> result;
@@ -144,7 +142,7 @@ Configuration_File::Configuration_File(const std::string& file_name)
         }
         if( ! String::contains(line, '='))
         {
-            throw Generic_Exception("Configuration file lines must be of form \"Name = Value\"\n" + line);
+            throw std::runtime_error("Configuration file lines must be of form \"Name = Value\"\n" + line);
         }
         auto line_split = String::split(line, "=", 1);
         parameters[String::trim_outer_whitespace(line_split[0])] = line_split[1];

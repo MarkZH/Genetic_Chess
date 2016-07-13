@@ -16,7 +16,6 @@
 
 #include "Exceptions/Checkmate_Exception.h"
 #include "Exceptions/Game_Ending_Exception.h"
-#include "Exceptions/Generic_Exception.h"
 #include "Exceptions/End_Of_File_Exception.h"
 
 int Genetic_AI::next_id = 0;
@@ -69,7 +68,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name)
     std::ifstream ifs(file_name);
     if( ! ifs)
     {
-        throw Generic_Exception("Could not read: " + file_name);
+        throw std::runtime_error("Could not read: " + file_name);
     }
 
     read_from(ifs);
@@ -85,7 +84,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
     std::ifstream ifs(file_name);
     if( ! ifs)
     {
-        throw Generic_Exception("Could not read: " + file_name);
+        throw std::runtime_error("Could not read: " + file_name);
     }
 
     std::string line;
@@ -104,7 +103,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
         }
     }
 
-    throw Generic_Exception("Could not locate ID " + std::to_string(id_in) + " inside file " + file_name);
+    throw std::runtime_error("Could not locate ID " + std::to_string(id_in) + " inside file " + file_name);
 }
 
 void Genetic_AI::read_from(std::istream& is)
@@ -125,7 +124,7 @@ void Genetic_AI::read_from(std::istream& is)
         }
         else
         {
-            throw Generic_Exception("Invalid Genetic_AI line: " + line);
+            throw std::runtime_error("Invalid Genetic_AI line: " + line);
         }
     }
 
@@ -133,7 +132,7 @@ void Genetic_AI::read_from(std::istream& is)
     {
         if(id > -1)
         {
-            throw Generic_Exception("Incomplete Genetic_AI spec in file for ID " + std::to_string(id));
+            throw std::runtime_error("Incomplete Genetic_AI spec in file for ID " + std::to_string(id));
         }
         else
         {

@@ -4,7 +4,6 @@
 #include <chrono>
 
 #include "Exceptions/Out_Of_Time_Exception.h"
-#include "Exceptions/Generic_Exception.h"
 
 Clock::Clock(int seconds = 0, size_t moves_to_reset = 0) :
     whose_turn(WHITE),
@@ -36,7 +35,7 @@ void Clock::punch()
 
     if( ! clocks_running)
     {
-        throw Generic_Exception("Clock has not been started.");
+        throw std::runtime_error("Clock has not been started.");
     }
 
     timers[whose_turn] -= (time_this_punch - time_previous_punch);

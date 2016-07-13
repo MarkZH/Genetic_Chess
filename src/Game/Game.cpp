@@ -11,7 +11,6 @@
 #include "Moves/Move.h"
 #include "Exceptions/Game_Ending_Exception.h"
 #include "Exceptions/Out_Of_Time_Exception.h"
-#include "Exceptions/Generic_Exception.h"
 
 // Play single game, return color of winner
 Color play_game(const Player& white,

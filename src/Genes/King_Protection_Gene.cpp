@@ -2,7 +2,6 @@
 
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
-#include "Exceptions/Generic_Exception.h"
 
 King_Protection_Gene::King_Protection_Gene() : Gene(0.0)
 {

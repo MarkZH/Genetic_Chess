@@ -18,7 +18,6 @@
 #include "Genes/Branch_Pruning_Gene.h"
 #include "Genes/King_Protection_Gene.h"
 
-#include "Exceptions/Generic_Exception.h"
 
 // Creation ex nihilo
 Genome::Genome() :
@@ -153,7 +152,7 @@ void Genome::read_from(std::istream& is)
 
             if( ! gene_found)
             {
-                throw Generic_Exception("Unrecognized gene name: " + gene_name + "\nin line: " + line);
+                throw std::runtime_error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
             }
         }
     }

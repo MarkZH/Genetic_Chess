@@ -4,7 +4,6 @@
 
 #include "Utility.h"
 
-#include "Exceptions/Generic_Exception.h"
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     Gene(0.0),

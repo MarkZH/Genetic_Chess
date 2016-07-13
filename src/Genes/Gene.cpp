@@ -4,7 +4,6 @@
 
 #include "Game/Color.h"
 #include "Utility.h"
-#include "Exceptions/Generic_Exception.h"
 
 Gene::Gene(double initial_scalar_value) : scalar(initial_scalar_value)
 {
@@ -50,7 +49,7 @@ void Gene::read_from(std::istream& is)
 
 void Gene::throw_on_invalid_line(const std::string& line, const std::string& reason) const
 {
-    throw Generic_Exception("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
+    throw std::runtime_error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
 }
 
 
