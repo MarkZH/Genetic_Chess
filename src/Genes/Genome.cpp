@@ -44,14 +44,14 @@ Genome::Genome() :
     {
         genome.emplace_back(new Total_Force_Gene(std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index])));
     }
-    genome.emplace_back(new Freedom_To_Move_Gene);
+//    genome.emplace_back(new Freedom_To_Move_Gene);
     genome.emplace_back(new Pawn_Advancement_Gene);
-    if(piece_strength_gene_index < genome.size())
-    {
-        genome.emplace_back(new Opponent_Pieces_Targeted_Gene(std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index])));
-        genome.emplace_back(new Sphere_of_Influence_Gene);
-    }
-    genome.emplace_back(new King_Confinement_Gene);
+//    if(piece_strength_gene_index < genome.size())
+//    {
+//        genome.emplace_back(new Opponent_Pieces_Targeted_Gene(std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index])));
+//    }
+    genome.emplace_back(new Sphere_of_Influence_Gene);
+//    genome.emplace_back(new King_Confinement_Gene);
     genome.emplace_back(new King_Protection_Gene);
 }
 

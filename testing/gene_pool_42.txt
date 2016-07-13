@@ -19,21 +19,12 @@ Minimum Score Change: -23.2374
 Name: Total Force Gene
 Scalar: 47.9234
 
-Name: Freedom to Move Gene
-Scalar: 19.0176
-
 Name: Pawn Advancement Gene
 Scalar: 21.3672
-
-Name: Opponent Pieces Targeted
-Scalar: 5.62406
 
 Name: Sphere of Influence Gene
 Legal Bonus: 3.60035
 Scalar: 53.3549
-
-Name: King Confinement Gene
-Scalar: 52.2635
 
 Name: King Protection Gene
 Scalar: 42.4242
