@@ -54,7 +54,10 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
 
 Genetic_AI& Genetic_AI::operator=(Genetic_AI other)
 {
-	std::swap(*this, other);
+    genome = other.genome;
+    id = other.id;
+    parents = other.parents;
+    ancestors = other.ancestors;
 
     return *this;
 }
