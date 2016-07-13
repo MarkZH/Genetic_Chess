@@ -11,8 +11,6 @@
 
 #include "Genes/Gene_Pool.h"
 
-#include "Exceptions/Generic_Exception.h"
-
 #ifdef DEBUG
     #include "Testing.h"
 #endif // DEBUG
@@ -57,57 +55,55 @@ int main(int argc, char *argv[])
                     else if(opt == "-genetic")
                     {
                         Genetic_AI *genetic_ptr = nullptr;
+                        std::string filename;
+                        int id = -1;
                         if(i + 1 < argc)
+                        {
+                            filename = argv[i+1];
+                            if(filename.front() == '-')
+                            {
+                                filename.clear();
+                            }
+                        }
+
+                        if(i + 2 < argc)
                         {
                             try
                             {
-                                if(i + 2 < argc)
-                                {
-                                    try
-                                    {
-                                        // gene pool file with ID
-                                        auto id = std::stoi(argv[i+2]);
-                                        genetic_ptr = new Genetic_AI(argv[i+1], id);
-                                        i += 2;
-                                    }
-                                    catch(const std::exception&)
-                                    {
-                                    }
-
-                                    // file only
-                                    genetic_ptr = new Genetic_AI(argv[i+1]);
-                                    ++i;
-                                }
-                                else
-                                {
-                                    // file only
-                                    genetic_ptr = new Genetic_AI(argv[i+1]);
-                                    ++i;
-                                }
+                                id = std::stoi(argv[i+2]);
                             }
-                            catch(const Generic_Exception&)
+                            catch(const std::exception&)
                             {
-                                std::cout << argv[i+1] << " not a file. Treating as next argument."
-                                          << std::endl;
-                                // Default constructed Genetic_AI
-                                genetic_ptr = new Genetic_AI;
+                            }
+                        }
+
+                        if(filename.empty())
+                        {
+                            genetic_ptr = new Genetic_AI;
+                            for(int j = 0; j < 100; ++j)
+                            {
+                                genetic_ptr->mutate();
                             }
                         }
                         else
                         {
-                            genetic_ptr = new Genetic_AI;
-                        }
-
-                        for(int j = 0; j < 100; ++j)
-                        {
-                            genetic_ptr->mutate();
+                            if(id < 0)
+                            {
+                                genetic_ptr = new Genetic_AI(filename);
+                                i += 1;
+                            }
+                            else
+                            {
+                                genetic_ptr = new Genetic_AI(filename, id);
+                                i += 2;
+                            }
                         }
 
                         latest.reset(genetic_ptr);
                     }
                     else
                     {
-                        throw Generic_Exception("Invalid player option: " + opt);
+                        throw std::runtime_error("Invalid player option: " + opt);
                     }
 
                     if(white)
