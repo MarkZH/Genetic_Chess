@@ -6,6 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <cmath>
+#include <set>
 
 #include "Utility.h"
 #include "Moves/Move.h"
@@ -23,32 +24,38 @@ int Genetic_AI::next_id = 0;
 Genetic_AI::Genetic_AI() :
     genome(),
     id(next_id++),
-    parents()
+    parents(),
+    ancestors{}
 {
 }
 
 Genetic_AI::Genetic_AI(const Genetic_AI& other, bool is_clone) :
     genome(other.genome),
-    id(is_clone ? next_id++ : other.id)
+    id(is_clone ? next_id++ : other.id),
+    parents(is_clone ? std::vector<int>{other.id} : other.parents),
+    ancestors(other.ancestors)
 {
     if(is_clone)
     {
-        parents = {other.id};
+        ancestors.insert(other.id);
     }
 }
 
 Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     genome(A.genome, B.genome),
     id(next_id++),
-    parents({A.id, B.id})
+    parents({A.id, B.id}),
+    ancestors()
 {
+    ancestors.insert(A.ancestors.begin(), A.ancestors.end());
+    ancestors.insert(B.ancestors.begin(), B.ancestors.end());
+    ancestors.insert(A.id);
+    ancestors.insert(B.id);
 }
 
-Genetic_AI& Genetic_AI::operator=(const Genetic_AI& other)
+Genetic_AI& Genetic_AI::operator=(Genetic_AI other)
 {
-	genome = other.genome;
-	id = other.id;
-	parents = other.parents;
+	std::swap(*this, other);
 
     return *this;
 }

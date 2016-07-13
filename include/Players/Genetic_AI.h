@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iosfwd>
+#include <set>
 
 #include "Player.h"
 #include "Genes/Genome.h"
@@ -22,7 +23,7 @@ class Genetic_AI : public Player
         explicit Genetic_AI(std::istream& is); // read genome from file
         explicit Genetic_AI(const Genetic_AI& gai_mother,
                             const Genetic_AI& gai_father); // offspring with random recombination of genes
-		Genetic_AI& operator=(const Genetic_AI& other); // replace with clone by assignment
+		Genetic_AI& operator=(Genetic_AI other);
         virtual ~Genetic_AI() override;
 
         void mutate();
@@ -43,6 +44,7 @@ class Genetic_AI : public Player
         static int next_id;
         int id;
         std::vector<int> parents;
+        std::set<int> ancestors;
 
         void read_from(std::istream& is);
 
