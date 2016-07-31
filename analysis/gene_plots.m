@@ -9,11 +9,17 @@ if length(gene_pool_filename) == 0
   return
 end
 
+disp('Parsing genes with python script ...');
+fflush(stdout); % Octave only; comment out for Matlab use
 python('gene_pool_analyze.py', gene_pool_filename);
 filename = [gene_pool_filename '_parsed.txt'];
+disp('Importing parsed data ...');
+fflush(stdout); % Octave only; comment out for Matlab use
 data = importdata(filename, ',');
 id_list = data.data(:, 1);
 
+disp('Plotting ...');
+fflush(stdout); % Octave only; comment out for Matlab use
 xaxis = data.colheaders(1){1};
 
 piece_strength_prefix = "Piece Strength Gene";
@@ -77,3 +83,4 @@ print([gene_pool_filename '_piece_strength.png']);
 figure(scalar_figure);
 legend(scalar_legend_entries, 'Location', 'northwest');
 print([gene_pool_filename '_gene_scalars.png']);
+disp('Done.');
