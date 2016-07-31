@@ -19,7 +19,8 @@ void Gene::load_base_properties()
     scalar = properties["Scalar"];
 }
 
-void Gene::read_from(std::istream& is)
+// returns if gene is active
+bool Gene::read_from(std::istream& is)
 {
     reset_properties();
 
@@ -27,6 +28,11 @@ void Gene::read_from(std::istream& is)
     while(std::getline(is, line))
     {
         if(line.empty())
+        {
+            break;
+        }
+
+        if(line.find("ACTIVE") != std::string::npos)
         {
             break;
         }
@@ -45,6 +51,7 @@ void Gene::read_from(std::istream& is)
     }
 
     load_properties();
+    return line == "ACTIVE";
 }
 
 void Gene::throw_on_invalid_line(const std::string& line, const std::string& reason) const

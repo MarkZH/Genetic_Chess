@@ -44,20 +44,26 @@ Genome::Genome() :
     {
         genome.emplace_back(new Total_Force_Gene(std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index])));
     }
-//    genome.emplace_back(new Freedom_To_Move_Gene);
+    genome.emplace_back(new Freedom_To_Move_Gene);
     genome.emplace_back(new Pawn_Advancement_Gene);
-//    if(piece_strength_gene_index < genome.size())
-//    {
-//        genome.emplace_back(new Opponent_Pieces_Targeted_Gene(std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index])));
-//    }
+    if(piece_strength_gene_index < genome.size())
+    {
+        genome.emplace_back(new Opponent_Pieces_Targeted_Gene(std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index])));
+    }
     genome.emplace_back(new Sphere_of_Influence_Gene);
-//    genome.emplace_back(new King_Confinement_Gene);
+    genome.emplace_back(new King_Confinement_Gene);
     genome.emplace_back(new King_Protection_Gene);
+
+    for(const auto& gene : genome)
+    {
+        gene_active[gene->name()] = true;
+    }
 }
 
 // Cloning
 Genome::Genome(const Genome& other) :
     genome(),
+    gene_active(other.gene_active),
     piece_strength_gene_index(other.piece_strength_gene_index),
     look_ahead_gene_index(other.look_ahead_gene_index),
     last_minute_panic_gene_index(other.last_minute_panic_gene_index),
@@ -76,9 +82,14 @@ void Genome::reseat_piece_strength_gene()
 {
     if(piece_strength_gene_index < genome.size())
     {
+        auto piece_strength_gene = std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index]);
+        if( ! gene_active[piece_strength_gene->name()])
+        {
+            piece_strength_gene = std::make_shared<Piece_Strength_Gene>(); // contains all-zero values
+        }
         for(auto& gene : genome)
         {
-            gene->reset_piece_strength_gene(std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index]));
+            gene->reset_piece_strength_gene(piece_strength_gene);
         }
     }
 }
@@ -96,6 +107,7 @@ Genome& Genome::operator=(const Genome& other)
     {
         genome.emplace_back(gene->duplicate());
     }
+    gene_active = other.gene_active;
 
     reseat_piece_strength_gene();
 
@@ -116,6 +128,9 @@ Genome::Genome(const Genome& A, const Genome& B) :
         genome.emplace_back(Random::coin_flip() ?
                             A.genome[i]->duplicate() :
                             B.genome[i]->duplicate());
+        gene_active[genome[i]->name()] = Random::coin_flip() ?
+                                         A.gene_active.at(genome[i]->name()) :
+                                         B.gene_active.at(genome[i]->name());
     }
 
     reseat_piece_strength_gene();
@@ -144,7 +159,7 @@ void Genome::read_from(std::istream& is)
             {
                 if(gene->name() == gene_name)
                 {
-                    gene->read_from(is);
+                    gene_active[gene->name()] = gene->read_from(is);
                     gene_found = true;
                     break;
                 }
@@ -165,7 +180,10 @@ double Genome::score_board(const Board& board, Color perspective) const
     {
         // To parallelize, replace below with std::async() call
         // like in gene pool game matchups
-        score += gene->evaluate(board, perspective);
+        if(gene_active.at(gene->name()))
+        {
+            score += gene->evaluate(board, perspective);
+        }
     }
 
     return score;
@@ -183,9 +201,17 @@ void Genome::mutate()
         // On average, mutate 2 genes (if condition ends with <= 2)
         if(Random::random_integer(1, genome.size()) <= 2)
         {
-            gene->mutate();
+            if(Random::success_probability(0.95))
+            {
+                gene->mutate();
+            }
+            else
+            {
+                gene_active[gene->name()] = ! gene_active[gene->name()];
+            }
         }
     }
+    reseat_piece_strength_gene();
 }
 
 void Genome::print(std::ostream& os) const
@@ -193,13 +219,14 @@ void Genome::print(std::ostream& os) const
     for(const auto& gene : genome)
     {
         gene->print(os);
+        os << (gene_active.at(gene->name()) ? "" : "IN") << "ACTIVE\n";
     }
     os << "\n";
 }
 
 size_t Genome::positions_to_examine(double time) const
 {
-    if(look_ahead_gene_index < genome.size())
+    if(look_ahead_gene_index < genome.size() && gene_active.at(genome[look_ahead_gene_index]->name()))
     {
         return std::static_pointer_cast<Look_Ahead_Gene>(genome[look_ahead_gene_index])->positions_to_examine(time);
     }
@@ -211,7 +238,7 @@ size_t Genome::positions_to_examine(double time) const
 
 double Genome::time_required() const
 {
-    if(last_minute_panic_gene_index < genome.size())
+    if(last_minute_panic_gene_index < genome.size() && gene_active.at(genome[last_minute_panic_gene_index]->name()))
     {
         return std::static_pointer_cast<Last_Minute_Panic_Gene>(genome[last_minute_panic_gene_index])->time_required();
     }
@@ -223,7 +250,7 @@ double Genome::time_required() const
 
 double Genome::minimum_score_change() const
 {
-    if(branch_pruning_gene_index < genome.size())
+    if(branch_pruning_gene_index < genome.size() && gene_active.at(genome[branch_pruning_gene_index]->name()))
     {
         return std::static_pointer_cast<Branch_Pruning_Gene>(genome[branch_pruning_gene_index])->minimum_score_change();
     }

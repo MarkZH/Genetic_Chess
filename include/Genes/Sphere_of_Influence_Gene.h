@@ -10,8 +10,6 @@ class Sphere_of_Influence_Gene : public Gene
         Sphere_of_Influence_Gene();
         virtual ~Sphere_of_Influence_Gene() override;
 
-        void read_from(std::istream& is);
-
         Sphere_of_Influence_Gene* duplicate() const override;
         void mutate() override;
 

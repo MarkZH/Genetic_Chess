@@ -17,7 +17,7 @@ class Gene
         explicit Gene(double initial_scalar_value);
         virtual ~Gene();
 
-        void read_from(std::istream& is);
+        bool read_from(std::istream& is);
 
         virtual void mutate();
         double evaluate(const Board& board, Color perspective) const;
