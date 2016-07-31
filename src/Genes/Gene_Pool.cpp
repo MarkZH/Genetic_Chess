@@ -182,7 +182,7 @@ void gene_pool(const std::string& config_file = "")
 
             results.emplace_back(std::async(play_game, white, black, game_time, 0, game_record_file));
 
-            // Limit the number of simultaneous games by waiting for earlier games to finsih
+            // Limit the number of simultaneous games by waiting for earlier games to finish
             // before starting a new one.
             if(results.size() >= maximum_simultaneous_games)
             {
