@@ -11,17 +11,13 @@
 
 #include "Genes/Gene_Pool.h"
 
-#ifdef DEBUG
-    #include "Testing.h"
-#endif // DEBUG
+#include "Testing.h"
 
 int main(int argc, char *argv[])
 {
     try
     {
-        #ifdef DEBUG
-            run_tests();
-        #endif // DEBUG
+        run_tests();
 
         if(argc > 1)
         {

@@ -1,5 +1,6 @@
 #include "Testing.h"
 
+#ifdef DEBUG
 #include <memory>
 #include <cstdlib>
 #include <fstream>
@@ -158,3 +159,6 @@ void run_tests()
 
     std::cout << "All tests passed." << std::endl;
 }
+#else
+void run_tests() {}
+#endif
