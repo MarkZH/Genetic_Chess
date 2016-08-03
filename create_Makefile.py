@@ -34,9 +34,12 @@ for target in final_targets:
     depends['clean_' + target] = []
     operations['clean_' + target] = ["rm " + all_objects + " " + out_variable]
 
+depends['.PHONY'] = []
 for target in depends.keys():
     if target not in operations:
         operations[target] = []
+    if target != '.PHONY' and not target.startswith('$'):
+        depends['.PHONY'].append(target)
 
 obj_dir_written = []
 for target in final_targets:
