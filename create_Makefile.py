@@ -65,7 +65,7 @@ for target in final_targets:
 
 compiler = 'g++'
 
-base_options = ["-c", 
+base_options = [
 	"-Wnon-virtual-dtor", 
 	"-Wshadow", 
 	"-Winit-self", 
