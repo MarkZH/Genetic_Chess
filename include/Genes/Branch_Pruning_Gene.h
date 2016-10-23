@@ -3,8 +3,6 @@
 
 #include "Genes/Gene.h"
 
-#include <iosfwd>
-
 class Branch_Pruning_Gene : public Gene
 {
     public:
