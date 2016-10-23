@@ -23,3 +23,5 @@ obj/
 *.py
 *.m
 *.png
+octave-workspace
+*.out
