@@ -147,7 +147,7 @@ with open("Makefile", 'w') as make_file:
         make_file.write("OUT_" + target.upper() + " = " + bins[target] + '\n')
         make_file.write(target.upper() + '_OBJ_DIR = obj/' + target + '\n')
         make_file.write('OBJ_' + target.upper() + ' = ')
-        for obj in [x for x in depends.keys() if x.endswith('.o') and target.upper() in x]:
+        for obj in [x for x in sorted(depends.keys()) if x.endswith('.o') and target.upper() in x]:
             make_file.write(obj + ' ')
         make_file.write('\n')
         make_file.write('CFLAGS_' + target.upper() + ' = ' + ' '.join(options_list[target]) + '\n')
