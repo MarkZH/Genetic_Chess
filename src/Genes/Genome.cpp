@@ -36,8 +36,8 @@ Genome::Genome() :
     genome.emplace_back(new Last_Minute_Panic_Gene);
     last_minute_panic_gene_index = genome.size() - 1;
 
-    genome.emplace_back(new Branch_Pruning_Gene);
-    branch_pruning_gene_index = genome.size() - 1;
+    //genome.emplace_back(new Branch_Pruning_Gene);
+    //branch_pruning_gene_index = genome.size() - 1;
 
     // Normal genes
     if(piece_strength_gene_index < genome.size())
