@@ -1,52 +1,49 @@
 ID: 0
 
 Name: Piece Strength Gene
-B: -2.0537
-N: -3.37166
-P: 2.48537
-Q: 0.829084
-R: 7.25892
-INACTIVE
+B: 4.21625
+N: -0.209446
+P: -3.62162
+Q: 5.70806
+R: -1.62903
+ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 3.25615
+Mean Game Length: 0.27995
+Positions Per Second: 41.706
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 3.45926
+Minimum time required: 0.200611
 ACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: -4.21509
-INACTIVE
-
 Name: Total Force Gene
-Scalar: 26.7802
+Scalar: 14.1271
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -25.9035
-ACTIVE
+Scalar: 54.3655
+INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -70.7494
+Scalar: -103.095
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 23.6453
+Scalar: 1.38342
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -6.69038
-Scalar: 37.5229
+Legal Bonus: -11.8609
+Scalar: -2.23344
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: -23.1631
-INACTIVE
+Scalar: -63.9866
+ACTIVE
 
 Name: King Protection Gene
-Scalar: 30.563
+Scalar: -49.163
 ACTIVE
 
 END
@@ -54,52 +51,49 @@ END
 ID: 1
 
 Name: Piece Strength Gene
-B: 0.504503
-N: -2.24562
-P: -3.51649
-Q: 4.30337
-R: 1.58762
-INACTIVE
+B: 6.51039
+N: 4.4509
+P: -0.0503311
+Q: -1.20822
+R: -8.10468
+ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 17.3541
-INACTIVE
+Mean Game Length: 3.22396
+Positions Per Second: 62.8858
+ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.26479
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.97102
+Minimum time required: 0.0753622
 ACTIVE
 
 Name: Total Force Gene
-Scalar: -1.11132
-INACTIVE
+Scalar: -23.2288
+ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -49.7046
+Scalar: 88.2525
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 26.8273
-ACTIVE
+Scalar: -13.4438
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -43.2163
+Scalar: -0.554647
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 3.38966
-Scalar: -4.46469
+Legal Bonus: 0.771183
+Scalar: 5.18943
 INACTIVE
 
 Name: King Confinement Gene
-Scalar: -46.7254
-ACTIVE
+Scalar: 72.0178
+INACTIVE
 
 Name: King Protection Gene
-Scalar: 3.82031
+Scalar: 21.4425
 ACTIVE
 
 END
@@ -107,105 +101,99 @@ END
 ID: 2
 
 Name: Piece Strength Gene
-B: 6.67616
-N: -1.089
-P: -0.640511
-Q: 5.95548
-R: -4.08879
+B: -0.89597
+N: -1.66136
+P: -5.26801
+Q: -2.85584
+R: -4.73924
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 14.3598
+Mean Game Length: 1.25852
+Positions Per Second: 13.8366
 INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.09501
+Minimum time required: 1.62006
 ACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: -4.9754
-INACTIVE
-
 Name: Total Force Gene
-Scalar: 84.9847
+Scalar: -27.3961
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 2.02821
+Scalar: 25.8644
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 13.4472
-INACTIVE
+Scalar: 65.3738
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 18.859
+Scalar: -19.0616
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 3.85184
-Scalar: 22.7006
-INACTIVE
+Legal Bonus: -2.09931
+Scalar: 1.28356
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 9.12521
-ACTIVE
+Scalar: -67.5646
+INACTIVE
 
 Name: King Protection Gene
-Scalar: 36.7332
-ACTIVE
+Scalar: 4.34042
+INACTIVE
 
 END
 
 ID: 3
 
 Name: Piece Strength Gene
-B: 2.01852
-N: 1.92184
-P: -7.65616
-Q: -0.222997
-R: -3.98366
-INACTIVE
+B: 2.29124
+N: -7.20357
+P: 4.52881
+Q: 5.42118
+R: 3.42722
+ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 29.8691
+Mean Game Length: 0
+Positions Per Second: 42.0092
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 6.53452
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -24.951
-ACTIVE
+Minimum time required: 4.17839
+INACTIVE
 
 Name: Total Force Gene
-Scalar: -107.741
+Scalar: -16.6386
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -33.6637
-INACTIVE
+Scalar: -49.4345
+ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -14.6685
+Scalar: 18.3115
 INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 49.5798
-INACTIVE
+Scalar: -23.5312
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 7.46551
-Scalar: -9.18453
+Legal Bonus: 3.3921
+Scalar: 5.77623
 INACTIVE
 
 Name: King Confinement Gene
-Scalar: 72.7992
-INACTIVE
+Scalar: 50.3679
+ACTIVE
 
 Name: King Protection Gene
-Scalar: -19.0735
+Scalar: 52.6247
 ACTIVE
 
 END
@@ -213,158 +201,149 @@ END
 ID: 4
 
 Name: Piece Strength Gene
-B: 0.660513
-N: -1.60749
-P: 0.496445
-Q: -5.47639
-R: -0.102873
+B: 2.02978
+N: 1.04461
+P: 0.530135
+Q: -3.10543
+R: 2.56236
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 21.5138
-INACTIVE
+Mean Game Length: 2.38683
+Positions Per Second: 13.0741
+ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.83104
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -19.2255
-ACTIVE
+Minimum time required: 1.53152
+INACTIVE
 
 Name: Total Force Gene
-Scalar: 19.0869
+Scalar: 50.7151
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 6.39337
+Scalar: 37.4553
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -102.252
-INACTIVE
+Scalar: -33.1917
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -55.4512
+Scalar: 48.0619
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -0.302226
-Scalar: -37.8386
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 96.6459
+Legal Bonus: 1.92567
+Scalar: -17.5337
 INACTIVE
 
-Name: King Protection Gene
-Scalar: -10.4962
+Name: King Confinement Gene
+Scalar: 1.66712
 ACTIVE
+
+Name: King Protection Gene
+Scalar: 43.7378
+INACTIVE
 
 END
 
 ID: 5
 
 Name: Piece Strength Gene
-B: 3.59741
-N: -5.8131
-P: 2.43339
-Q: 3.96947
-R: 3.15117
+B: -7.56681
+N: 3.40957
+P: -1.67602
+Q: 3.37406
+R: 0.500476
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 25.4601
+Mean Game Length: 1.8435
+Positions Per Second: 39.8108
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 5.21181
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.94806
+Minimum time required: 6.56127
 INACTIVE
 
 Name: Total Force Gene
-Scalar: -13.8925
+Scalar: -44.2173
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -15.4974
-ACTIVE
+Scalar: 15.2856
+INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 48.0705
+Scalar: 57.4821
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 17.7639
+Scalar: 7.98902
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 4.59728
-Scalar: 75.3821
+Legal Bonus: -1.55437
+Scalar: 33.321
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: 3.31385
+Scalar: -36.9696
 ACTIVE
 
 Name: King Protection Gene
-Scalar: 24.2364
-INACTIVE
+Scalar: -8.17233
+ACTIVE
 
 END
 
 ID: 6
 
 Name: Piece Strength Gene
-B: 2.32505
-N: -2.83276
-P: 8.12775
-Q: 3.66064
-R: 0.941472
+B: 5.68848
+N: 0.375005
+P: 2.52152
+Q: 5.62241
+R: 2.73029
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 42.4192
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.11516
+Mean Game Length: 4.47693
+Positions Per Second: 5.22474
 ACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: 14.3296
+Name: Last Minute Panic Gene
+Minimum time required: 4.11055
 ACTIVE
 
 Name: Total Force Gene
-Scalar: -56.2792
+Scalar: 27.7721
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 117.323
+Scalar: -8.39517
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -38.2089
+Scalar: -96.5924
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 7.79789
+Scalar: 75.4647
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 6.56874
-Scalar: 29.9828
-INACTIVE
+Legal Bonus: -2.42217
+Scalar: -4.57555
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: -16.629
+Scalar: 5.58464
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -65.047
+Scalar: 10.2315
 INACTIVE
 
 END
@@ -372,105 +351,99 @@ END
 ID: 7
 
 Name: Piece Strength Gene
-B: 4.09055
-N: -2.72615
-P: -2.95245
-Q: 3.59312
-R: -4.80372
-INACTIVE
+B: -0.074403
+N: 3.15089
+P: 2.49483
+Q: -2.78669
+R: -5.11431
+ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 7.13849
-ACTIVE
+Mean Game Length: 0
+Positions Per Second: 57.2884
+INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 2.676
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -8.7952
+Minimum time required: 6.44777
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 23.8421
-INACTIVE
+Scalar: -6.32023
+ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -27.3254
+Scalar: 27.6739
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -87.9874
+Scalar: 39.6446
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -46.1022
-INACTIVE
+Scalar: 6.40657
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -2.04535
-Scalar: -10.3074
-ACTIVE
+Legal Bonus: 1.66799
+Scalar: 68.1278
+INACTIVE
 
 Name: King Confinement Gene
-Scalar: -22.2851
-ACTIVE
+Scalar: -10.298
+INACTIVE
 
 Name: King Protection Gene
-Scalar: 33.5677
-ACTIVE
+Scalar: -35.6565
+INACTIVE
 
 END
 
 ID: 8
 
 Name: Piece Strength Gene
-B: 2.23141
-N: -0.820592
-P: -1.79108
-Q: -0.11892
-R: 5.10757
-INACTIVE
+B: 2.55144
+N: -3.78687
+P: 3.05523
+Q: -2.59099
+R: 3.28355
+ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 15.8755
+Mean Game Length: 3.62843
+Positions Per Second: 65.379
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 3.7895
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 5.38698
+Minimum time required: 5.58178
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 16.343
+Scalar: 34.6676
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -24.297
+Scalar: -26.93
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -54.9764
-ACTIVE
+Scalar: -3.66182
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 4.10038
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.88073
-Scalar: -7.05386
+Scalar: 109.774
 ACTIVE
 
-Name: King Confinement Gene
-Scalar: 57.0619
+Name: Sphere of Influence Gene
+Legal Bonus: 6.79122
+Scalar: 64.0479
 INACTIVE
 
+Name: King Confinement Gene
+Scalar: -6.09143
+ACTIVE
+
 Name: King Protection Gene
-Scalar: 61.8613
+Scalar: 14.6178
 INACTIVE
 
 END
@@ -478,52 +451,49 @@ END
 ID: 9
 
 Name: Piece Strength Gene
-B: 2.41511
-N: 0.112913
-P: -2.7395
-Q: 1.21929
-R: -2.0384
+B: -5.71007
+N: 4.05524
+P: 3.80944
+Q: 7.18798
+R: -5.23139
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 12.7346
+Mean Game Length: 0.803848
+Positions Per Second: 28.6373
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 4.04334
+Minimum time required: 2.716
 ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -1.77233
-INACTIVE
 
 Name: Total Force Gene
-Scalar: -49.0552
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -19.0226
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -25.4043
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -13.3832
+Scalar: 17.6087
 ACTIVE
 
+Name: Freedom to Move Gene
+Scalar: -10.5482
+ACTIVE
+
+Name: Pawn Advancement Gene
+Scalar: -38.2292
+ACTIVE
+
+Name: Opponent Pieces Targeted
+Scalar: -55.5093
+INACTIVE
+
 Name: Sphere of Influence Gene
-Legal Bonus: -2.59731
-Scalar: -24.4179
+Legal Bonus: -2.57617
+Scalar: -3.1485
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: 34.4581
+Scalar: 113.689
 INACTIVE
 
 Name: King Protection Gene
-Scalar: -30.051
+Scalar: 3.63331
 ACTIVE
 
 END
@@ -531,105 +501,99 @@ END
 ID: 10
 
 Name: Piece Strength Gene
-B: 0.195232
-N: -3.44906
-P: 3.83385
-Q: -0.60247
-R: -5.01499
-ACTIVE
+B: 3.6061
+N: -2.56351
+P: 0.870442
+Q: -2.83428
+R: 1.31776
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 16.5161
+Mean Game Length: 2.0996
+Positions Per Second: 30.0311
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.14452
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 20.0858
-ACTIVE
+Minimum time required: 0.996062
+INACTIVE
 
 Name: Total Force Gene
-Scalar: -1.636
-ACTIVE
+Scalar: -2.9948
+INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 3.65801
-ACTIVE
+Scalar: 27.4661
+INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -35.8726
-INACTIVE
+Scalar: 22.1956
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -9.37025
-INACTIVE
+Scalar: -59.2113
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 0.146846
-Scalar: 108.035
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 8.13484
+Legal Bonus: 2.29572
+Scalar: -53.4875
 INACTIVE
 
-Name: King Protection Gene
-Scalar: 3.98311
+Name: King Confinement Gene
+Scalar: 17.032
 ACTIVE
+
+Name: King Protection Gene
+Scalar: -23.8451
+INACTIVE
 
 END
 
 ID: 11
 
 Name: Piece Strength Gene
-B: 1.83225
-N: 4.99606
-P: -4.45094
-Q: 5.97648
-R: 8.1788
+B: -3.63226
+N: -0.433315
+P: -2.35757
+Q: 1.88641
+R: 9.08261
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 4.15132
+Mean Game Length: 2.67388
+Positions Per Second: 32.8278
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.97548
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 14.3367
+Minimum time required: 4.29225
 INACTIVE
 
 Name: Total Force Gene
-Scalar: -48.8297
-ACTIVE
+Scalar: 88.2419
+INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -35.9261
+Scalar: -52.5967
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -5.41136
-INACTIVE
+Scalar: -54.0712
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -36.8811
+Scalar: -9.56873
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -2.26949
-Scalar: -55.2828
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -6.65003
+Legal Bonus: 1.87421
+Scalar: 40.7262
 ACTIVE
 
+Name: King Confinement Gene
+Scalar: 25.1749
+INACTIVE
+
 Name: King Protection Gene
-Scalar: -56.2581
+Scalar: -23.2554
 ACTIVE
 
 END
@@ -637,158 +601,149 @@ END
 ID: 12
 
 Name: Piece Strength Gene
-B: 4.61458
-N: -3.31651
-P: 5.06026
-Q: -2.98857
-R: -5.50628
-ACTIVE
+B: -3.05146
+N: 2.11323
+P: -0.188348
+Q: 0.37859
+R: 0.339612
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
-INACTIVE
+Mean Game Length: 10.1927
+Positions Per Second: 69.718
+ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 5.36894
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.13548
+Minimum time required: 0
 INACTIVE
 
 Name: Total Force Gene
-Scalar: 16.0515
+Scalar: -25.0967
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -1.87181
+Scalar: -10.5246
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -48.4212
-ACTIVE
+Scalar: -11.6949
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 27.9891
-ACTIVE
+Scalar: 21.5658
+INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 2.7634
-Scalar: -7.00369
-INACTIVE
+Legal Bonus: 9.59202
+Scalar: 57.7599
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 71.0922
-INACTIVE
+Scalar: 13.4641
+ACTIVE
 
 Name: King Protection Gene
-Scalar: 42.3376
-INACTIVE
+Scalar: 37.8207
+ACTIVE
 
 END
 
 ID: 13
 
 Name: Piece Strength Gene
-B: 5.63083
-N: -5.94524
-P: 2.63321
-Q: -6.1279
-R: 4.56088
+B: -2.75571
+N: -0.942296
+P: 5.64489
+Q: 0.00897558
+R: -3.93933
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 16.4436
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.08032
+Mean Game Length: 0
+Positions Per Second: 0
 INACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: 10.1817
+Name: Last Minute Panic Gene
+Minimum time required: 2.82797
 ACTIVE
 
 Name: Total Force Gene
-Scalar: -35.0081
+Scalar: -10.0789
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 15.718
-ACTIVE
+Scalar: 38.3828
+INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -41.8599
-ACTIVE
+Scalar: -6.51177
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -39.9766
-ACTIVE
+Scalar: -24.4791
+INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -0.183823
-Scalar: 55.428
+Legal Bonus: 3.17918
+Scalar: -24.3327
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: 17.8218
+Scalar: -19.0752
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -27.7531
-ACTIVE
+Scalar: 54.2158
+INACTIVE
 
 END
 
 ID: 14
 
 Name: Piece Strength Gene
-B: 0.765862
-N: 3.93049
-P: 7.67476
-Q: 7.43413
-R: 5.83138
+B: 3.37041
+N: 0.164833
+P: -1.21556
+Q: -1.84411
+R: -6.02101
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 22.9531
-INACTIVE
+Mean Game Length: 0
+Positions Per Second: 33.5109
+ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 4.80473
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.35569
-ACTIVE
+Minimum time required: 1.87902
+INACTIVE
 
 Name: Total Force Gene
-Scalar: 47.9893
-ACTIVE
+Scalar: -12.6818
+INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 1.80081
-ACTIVE
+Scalar: 9.02137
+INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -17.2618
+Scalar: -31.214
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 20.882
+Scalar: -2.9961
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 3.74923
-Scalar: 74.3246
-INACTIVE
+Legal Bonus: -0.361478
+Scalar: -20.2943
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: -10.1157
+Scalar: -40.0865
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -31.2961
+Scalar: 49.1661
 ACTIVE
 
 END
@@ -796,52 +751,49 @@ END
 ID: 15
 
 Name: Piece Strength Gene
-B: 6.13356
-N: 0.287439
-P: -3.95835
-Q: -7.17773
-R: -1.23543
+B: 8.53346
+N: 0.391216
+P: -5.28972
+Q: 3.40127
+R: 6.958
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 10.3547
+Mean Game Length: 5.8019
+Positions Per Second: 20.0707
 INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 4.528
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.33131
+Minimum time required: 5.02158
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 58.256
-INACTIVE
+Scalar: 5.6678
+ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 72.9284
+Scalar: -52.8532
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 19.8445
-INACTIVE
+Scalar: -35.8896
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -38.1841
-INACTIVE
+Scalar: 5.41682
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 2.48065
-Scalar: 7.3845
+Legal Bonus: -4.28369
+Scalar: 86.4736
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: 37.8322
+Scalar: 37.5759
 ACTIVE
 
 Name: King Protection Gene
-Scalar: 27.2243
+Scalar: 83.432
 INACTIVE
 
 END
@@ -852,158 +804,149 @@ Still Alive: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
 ID: 16
 
 Name: Piece Strength Gene
-B: 3.57218
-N: -6.044
-P: 3.91854
-Q: 3.5817
-R: 13.8383
-ACTIVE
+B: -8.15507
+N: 5.33635
+P: -6.27896
+Q: -4.07856
+R: 5.95115
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
-INACTIVE
+Mean Game Length: 3.55735
+Positions Per Second: 57.4657
+ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 0.649628
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -2.36912
-INACTIVE
+Minimum time required: 1.86114
+ACTIVE
 
 Name: Total Force Gene
-Scalar: -34.6757
+Scalar: 6.65791
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 24.411
-ACTIVE
+Scalar: -9.67881
+INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -29.9126
+Scalar: 55.522
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -10.5841
+Scalar: -20.6593
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -4.91399
-Scalar: -13.1821
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -3.37128
+Legal Bonus: -7.204
+Scalar: -98.3877
 INACTIVE
 
-Name: King Protection Gene
-Scalar: -0.750459
+Name: King Confinement Gene
+Scalar: -52.857
 ACTIVE
+
+Name: King Protection Gene
+Scalar: -43.9397
+INACTIVE
 
 END
 
 ID: 17
 
 Name: Piece Strength Gene
-B: 3.63233
-N: -4.25733
-P: -0.860875
-Q: -5.96504
-R: 5.2333
+B: -2.52309
+N: 2.56561
+P: 3.29282
+Q: -0.146807
+R: -5.20327
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 24.9391
+Mean Game Length: 3.59105
+Positions Per Second: 64.7529
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 2.02552
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -20.4814
-INACTIVE
-
-Name: Total Force Gene
-Scalar: -6.35879
+Minimum time required: 1.22323
 ACTIVE
 
+Name: Total Force Gene
+Scalar: 10.7151
+INACTIVE
+
 Name: Freedom to Move Gene
-Scalar: 29.2604
+Scalar: -42.2793
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -20.6138
+Scalar: 43.4114
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -29.1593
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.40961
-Scalar: -11.303
+Scalar: 0.132494
 ACTIVE
 
+Name: Sphere of Influence Gene
+Legal Bonus: 0.302778
+Scalar: -34.896
+INACTIVE
+
 Name: King Confinement Gene
-Scalar: 26.5486
+Scalar: -78.9547
 INACTIVE
 
 Name: King Protection Gene
-Scalar: -23.7857
-INACTIVE
+Scalar: -10.0848
+ACTIVE
 
 END
 
 ID: 18
 
 Name: Piece Strength Gene
-B: 2.18368
-N: 1.32018
-P: 7.47684
-Q: 1.06796
-R: -0.685347
-ACTIVE
+B: -0.812988
+N: -3.51252
+P: 0.507096
+Q: 2.39828
+R: -2.77335
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 6.62372
-ACTIVE
+Mean Game Length: 2.05973
+Positions Per Second: 70.4308
+INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 4.10118
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.57315
-ACTIVE
+Minimum time required: 6.0031
+INACTIVE
 
 Name: Total Force Gene
-Scalar: -14.3548
+Scalar: 78.9859
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -73.6945
+Scalar: -52.2125
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 37.9791
-INACTIVE
+Scalar: 41.14
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -96.0383
+Scalar: 39.5978
 INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -6.60402
-Scalar: -16.3386
-INACTIVE
+Legal Bonus: 0.504172
+Scalar: -50.2635
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: -55.4643
-INACTIVE
+Scalar: -45.14
+ACTIVE
 
 Name: King Protection Gene
-Scalar: -46.6426
+Scalar: -6.60323
 ACTIVE
 
 END
@@ -1011,158 +954,149 @@ END
 ID: 19
 
 Name: Piece Strength Gene
-B: -10.0202
-N: -5.74355
-P: 2.51966
-Q: 1.76217
-R: 1.07461
-ACTIVE
+B: -5.99322
+N: 2.34575
+P: -6.3263
+Q: -0.550812
+R: 3.57755
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 21.2827
-ACTIVE
+Mean Game Length: 1.76146
+Positions Per Second: 5.537
+INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 0.0338911
+Minimum time required: 4.37241
 ACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: -36.1906
-INACTIVE
-
 Name: Total Force Gene
-Scalar: -52.3489
-INACTIVE
+Scalar: 21.6558
+ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 93.347
-INACTIVE
+Scalar: 33.7207
+ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 6.4736
+Scalar: 24.089
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 55.2239
-ACTIVE
+Scalar: -12.6473
+INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -1.38117
-Scalar: -25.123
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 47.5381
+Legal Bonus: -1.18683
+Scalar: 43.5331
 ACTIVE
 
-Name: King Protection Gene
-Scalar: -49.4426
+Name: King Confinement Gene
+Scalar: 27.6217
 INACTIVE
+
+Name: King Protection Gene
+Scalar: 13.2001
+ACTIVE
 
 END
 
 ID: 20
 
 Name: Piece Strength Gene
-B: 7.54748
-N: 0.886858
-P: -2.60562
-Q: -4.67382
-R: -3.97035
+B: 0.0516325
+N: 3.30948
+P: -1.45102
+Q: 0.0861363
+R: -4.16886
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 18.1851
-ACTIVE
+Mean Game Length: 0.0704975
+Positions Per Second: 57.2602
+INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 0.697571
+Minimum time required: 2.37965
 ACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: 16.5706
-INACTIVE
-
 Name: Total Force Gene
-Scalar: 20.2308
-INACTIVE
+Scalar: 11.5775
+ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 8.10946
+Scalar: -62.5684
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -27.2508
-ACTIVE
+Scalar: 13.8021
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 26.5614
-INACTIVE
+Scalar: 65.6315
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 0.435714
-Scalar: -10.397
-INACTIVE
+Legal Bonus: 3.18391
+Scalar: 39.4853
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 30.2556
-INACTIVE
+Scalar: 17.7242
+ACTIVE
 
 Name: King Protection Gene
-Scalar: -30.805
-INACTIVE
+Scalar: 31.5599
+ACTIVE
 
 END
 
 ID: 21
 
 Name: Piece Strength Gene
-B: 0.852454
-N: -0.40806
-P: -3.76717
-Q: -0.141506
-R: 2.35056
-ACTIVE
+B: -3.01465
+N: 1.14864
+P: 1.15679
+Q: 1.32931
+R: 1.20457
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0.452387
+Mean Game Length: 1.64969
+Positions Per Second: 19.7566
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 0.756816
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -11.5571
+Minimum time required: 7.73312
 INACTIVE
 
 Name: Total Force Gene
-Scalar: 21.113
+Scalar: 49.6834
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 41.0029
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -19.8764
+Scalar: -82.5212
 ACTIVE
 
+Name: Pawn Advancement Gene
+Scalar: -12.2841
+INACTIVE
+
 Name: Opponent Pieces Targeted
-Scalar: 20.9712
+Scalar: -15.7602
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -1.23309
-Scalar: -12.4047
+Legal Bonus: 5.54532
+Scalar: -49.2804
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: -17.6083
+Scalar: 43.411
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -37.2493
+Scalar: 61.7839
 INACTIVE
 
 END
@@ -1170,105 +1104,99 @@ END
 ID: 22
 
 Name: Piece Strength Gene
-B: 2.35034
-N: 0.238388
-P: 3.72449
-Q: -3.18009
-R: -4.54814
+B: -6.4369
+N: 3.72962
+P: 0.309449
+Q: -4.40631
+R: -1.07468
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 3.21503
+Mean Game Length: 6.71072
+Positions Per Second: 0
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.44841
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.3023
+Minimum time required: 2.80911
 ACTIVE
 
 Name: Total Force Gene
-Scalar: -15.7293
+Scalar: 3.39565
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -9.59552
+Scalar: 1.63639
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 2.80124
-ACTIVE
+Scalar: -6.27721
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 5.05527
-INACTIVE
+Scalar: -64.0881
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -0.236828
-Scalar: 67.592
-INACTIVE
+Legal Bonus: -6.38522
+Scalar: 15.8664
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 36.2096
+Scalar: -5.48583
 INACTIVE
 
 Name: King Protection Gene
-Scalar: -2.20608
-INACTIVE
+Scalar: -37.2914
+ACTIVE
 
 END
 
 ID: 23
 
 Name: Piece Strength Gene
-B: 3.27399
-N: -1.92515
-P: 5.5031
-Q: 2.79958
-R: -1.00926
+B: -4.40491
+N: 0.723754
+P: -0.658843
+Q: -0.0606189
+R: 4.25904
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
+Mean Game Length: 6.10526
+Positions Per Second: 5.83584
 INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.53739
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.75442
-INACTIVE
+Minimum time required: 3.73106
+ACTIVE
 
 Name: Total Force Gene
-Scalar: -42.4501
+Scalar: 32.3704
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -8.46552
-INACTIVE
+Scalar: -64.3035
+ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -35.8377
+Scalar: 40.7216
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -29.0204
-ACTIVE
+Scalar: -33.409
+INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 1.36175
-Scalar: -18.6382
+Legal Bonus: 10.1204
+Scalar: 20.4905
 INACTIVE
 
 Name: King Confinement Gene
-Scalar: -23.4994
-ACTIVE
+Scalar: -39.66
+INACTIVE
 
 Name: King Protection Gene
-Scalar: -14.1022
+Scalar: 33.0982
 INACTIVE
 
 END
@@ -1276,52 +1204,49 @@ END
 ID: 24
 
 Name: Piece Strength Gene
-B: 7.6821
-N: 2.4127
-P: -1.13988
-Q: 3.41721
-R: -2.96653
+B: 3.33453
+N: 0.671184
+P: -4.88216
+Q: -0.64213
+R: 9.16037
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0.600611
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 2.36447
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -12.8755
+Mean Game Length: 1.16336
+Positions Per Second: 13.9899
 INACTIVE
 
-Name: Total Force Gene
-Scalar: 67.744
+Name: Last Minute Panic Gene
+Minimum time required: 0
 ACTIVE
 
+Name: Total Force Gene
+Scalar: -29.5214
+INACTIVE
+
 Name: Freedom to Move Gene
-Scalar: 10.3178
+Scalar: -13.0228
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 7.92522
+Scalar: -15.0501
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 35.8708
-ACTIVE
+Scalar: 3.63232
+INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -1.30925
-Scalar: -28.28
-ACTIVE
+Legal Bonus: 9.0369
+Scalar: -4.42458
+INACTIVE
 
 Name: King Confinement Gene
-Scalar: -3.57678
+Scalar: 3.75659
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -0.174019
+Scalar: 53.8452
 ACTIVE
 
 END
@@ -1329,105 +1254,99 @@ END
 ID: 25
 
 Name: Piece Strength Gene
-B: 6.6653
-N: -2.26172
-P: 1.56527
-Q: -0.0619675
-R: -2.61841
+B: -0.441473
+N: -1.80077
+P: -1.49928
+Q: 9.19443
+R: -5.79866
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.26932
+Mean Game Length: 1.17769
+Positions Per Second: 5.28752
 INACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: -33.8692
+Name: Last Minute Panic Gene
+Minimum time required: 7.52089
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 21.8552
-INACTIVE
+Scalar: -58.47
+ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 9.50925
+Scalar: 4.0805
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 20.2596
+Scalar: 15.917
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -68.4762
+Scalar: -14.5323
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 2.46876
-Scalar: 17.7571
+Legal Bonus: 0.262901
+Scalar: 21.2682
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: 36.3637
+Scalar: 16.8054
 ACTIVE
 
 Name: King Protection Gene
-Scalar: 73.6606
-INACTIVE
+Scalar: 66.4842
+ACTIVE
 
 END
 
 ID: 26
 
 Name: Piece Strength Gene
-B: 4.24596
-N: -0.814361
-P: -3.78796
-Q: -0.916923
-R: -2.84769
+B: 1.51054
+N: -5.66592
+P: -6.3583
+Q: 4.33894
+R: 1.0833
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 9.76703
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.0939
+Mean Game Length: 9.80054
+Positions Per Second: 20.562
 INACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: -16.111
-ACTIVE
+Name: Last Minute Panic Gene
+Minimum time required: 3.29501
+INACTIVE
 
 Name: Total Force Gene
-Scalar: 29.0788
+Scalar: 3.18566
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -24.9071
+Scalar: 2.09225
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 0.200706
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 120.885
+Scalar: 23.9774
 ACTIVE
 
+Name: Opponent Pieces Targeted
+Scalar: 3.56414
+INACTIVE
+
 Name: Sphere of Influence Gene
-Legal Bonus: -6.71994
-Scalar: -39.5686
+Legal Bonus: 2.39601
+Scalar: 85.4683
 INACTIVE
 
 Name: King Confinement Gene
-Scalar: -61.2342
+Scalar: 1.30411
 INACTIVE
 
 Name: King Protection Gene
-Scalar: 34.7446
+Scalar: -25.9564
 ACTIVE
 
 END
@@ -1435,52 +1354,49 @@ END
 ID: 27
 
 Name: Piece Strength Gene
-B: -4.55085
-N: -3.34826
-P: -7.0513
-Q: 0.684079
-R: -0.743221
-INACTIVE
+B: -3.31218
+N: -3.61305
+P: -0.510899
+Q: -4.50028
+R: 1.89592
+ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 32.7527
+Mean Game Length: 0
+Positions Per Second: 0
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.14626
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -43.3991
+Minimum time required: 3.09575
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 29.7809
-INACTIVE
+Scalar: 10.5748
+ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -49.976
-INACTIVE
+Scalar: -7.53139
+ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 80.6135
-INACTIVE
+Scalar: -65.5734
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -15.7244
-INACTIVE
+Scalar: -9.85752
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 0.627502
-Scalar: 1.77105
-INACTIVE
+Legal Bonus: 4.70166
+Scalar: -28.5056
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: -9.35356
+Scalar: -7.5787
 INACTIVE
 
 Name: King Protection Gene
-Scalar: -16.3416
+Scalar: 23.8581
 ACTIVE
 
 END
@@ -1488,105 +1404,99 @@ END
 ID: 28
 
 Name: Piece Strength Gene
-B: -3.47158
-N: 0.295973
-P: -2.13275
-Q: 0.474211
-R: 11.1395
-ACTIVE
+B: 8.30004
+N: 4.58688
+P: -0.470542
+Q: -6.17092
+R: 6.75831
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 14.3442
-INACTIVE
+Mean Game Length: 3.60829
+Positions Per Second: 15.4745
+ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 0.00659955
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 11.9788
-INACTIVE
+Minimum time required: 2.55089
+ACTIVE
 
 Name: Total Force Gene
-Scalar: -0.336896
+Scalar: -2.92246
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 36.9646
+Scalar: 41.139
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 50.0419
+Scalar: 53.4201
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -24.4193
+Scalar: 31.2921
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -4.44397
-Scalar: -24.1056
-INACTIVE
+Legal Bonus: -0.496443
+Scalar: 12.7338
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 127.434
-INACTIVE
+Scalar: 6.06461
+ACTIVE
 
 Name: King Protection Gene
-Scalar: 3.47638
-ACTIVE
+Scalar: 62.2282
+INACTIVE
 
 END
 
 ID: 29
 
 Name: Piece Strength Gene
-B: -4.05207
-N: -0.907889
-P: 0.257213
-Q: -3.4369
-R: 5.95866
+B: 3.61335
+N: -3.18971
+P: -2.90622
+Q: -2.0508
+R: -2.95766
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0.157103
+Mean Game Length: 0.819165
+Positions Per Second: 28.6731
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 3.19806
+Minimum time required: 4.3301
 ACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: -19.8717
-INACTIVE
-
 Name: Total Force Gene
-Scalar: 13.7494
+Scalar: -33.829
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -23.4359
-INACTIVE
+Scalar: 59.9742
+ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 1.66545
-INACTIVE
+Scalar: -28.018
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 19.1547
-INACTIVE
+Scalar: -32.2748
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 0.169957
-Scalar: -88.891
+Legal Bonus: 6.06033
+Scalar: -52.2116
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: -1.08727
+Scalar: 31.9067
 INACTIVE
 
 Name: King Protection Gene
-Scalar: 9.53238
+Scalar: 30.8248
 INACTIVE
 
 END
@@ -1594,52 +1504,49 @@ END
 ID: 30
 
 Name: Piece Strength Gene
-B: -4.19196
-N: -0.18579
-P: -6.45696
-Q: -3.8758
-R: 3.88011
+B: 3.69091
+N: -6.48889
+P: -0.493293
+Q: 2.61495
+R: -4.04585
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 30.1349
+Mean Game Length: 1.70455
+Positions Per Second: 10.3928
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 0
+Minimum time required: 5.93193
 ACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: 14.1244
-INACTIVE
-
 Name: Total Force Gene
-Scalar: -43.0461
+Scalar: 67.2496
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 44.8134
+Scalar: 5.04534
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -14.8751
+Scalar: -36.1109
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -13.7501
-ACTIVE
+Scalar: -9.42558
+INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -4.53684
-Scalar: -10.6566
+Legal Bonus: 0.129648
+Scalar: 35.901
 INACTIVE
 
 Name: King Confinement Gene
-Scalar: -45.7814
+Scalar: -67.9442
 INACTIVE
 
 Name: King Protection Gene
-Scalar: -111.4
+Scalar: -0.486256
 ACTIVE
 
 END
@@ -1647,53 +1554,50 @@ END
 ID: 31
 
 Name: Piece Strength Gene
-B: -6.2346
-N: 1.3818
-P: -1.3093
-Q: -0.937587
-R: 0.389517
-INACTIVE
+B: 0.674303
+N: 0.685251
+P: 6.66019
+Q: 5.3208
+R: 0.244872
+ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
+Mean Game Length: 1.63904
+Positions Per Second: 30.8315
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 3.15608
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 15.6898
+Minimum time required: 3.51641
 INACTIVE
 
 Name: Total Force Gene
-Scalar: -46.7411
+Scalar: -36.6955
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 26.4788
+Scalar: -38.2943
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 17.0796
-INACTIVE
+Scalar: -53.8535
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 3.57035
-INACTIVE
+Scalar: 54.0629
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 9.77398
-Scalar: 1.86862
-INACTIVE
+Legal Bonus: 1.83269
+Scalar: -62.4911
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: -53.2821
+Scalar: -18.3405
 INACTIVE
 
 Name: King Protection Gene
-Scalar: -37.1679
-ACTIVE
+Scalar: -8.03235
+INACTIVE
 
 END
 
@@ -1703,52 +1607,49 @@ Still Alive: 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
 ID: 32
 
 Name: Piece Strength Gene
-B: 10.0883
-N: 3.45225
-P: 0.15004
-Q: -5.55251
-R: 1.41891
+B: 0.182806
+N: 2.06201
+P: 0.0238039
+Q: -0.176848
+R: 3.81158
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 20.0098
+Mean Game Length: 4.95591
+Positions Per Second: 6.523
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.80336
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -5.34014
-ACTIVE
+Minimum time required: 1.56127
+INACTIVE
 
 Name: Total Force Gene
-Scalar: -2.14581
+Scalar: 71.5471
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -51.3281
+Scalar: -42.1332
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 21.7142
-ACTIVE
+Scalar: 6.98415
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -30.6497
+Scalar: 30.4108
 INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -11.7191
-Scalar: 34.244
-INACTIVE
+Legal Bonus: 5.27918
+Scalar: 12.5319
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 34.2282
-INACTIVE
+Scalar: -2.42133
+ACTIVE
 
 Name: King Protection Gene
-Scalar: -15.2848
+Scalar: -5.62338
 ACTIVE
 
 END
@@ -1756,264 +1657,249 @@ END
 ID: 33
 
 Name: Piece Strength Gene
-B: -1.23151
-N: 0.642441
-P: -2.17545
-Q: 1.23759
-R: -12.022
-ACTIVE
+B: -1.68967
+N: -7.25387
+P: -4.98037
+Q: -12.7828
+R: -6.07755
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
+Mean Game Length: 6.28383
+Positions Per Second: 8.41282
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 2.52242
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.5992
+Minimum time required: 3.78017
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 37.9381
-ACTIVE
+Scalar: -127.737
+INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -32.6317
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 11.9747
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 1.98508
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.85158
-Scalar: 64.7402
+Scalar: 6.13818
 ACTIVE
 
-Name: King Confinement Gene
-Scalar: 18.3376
+Name: Pawn Advancement Gene
+Scalar: 46.9747
+ACTIVE
+
+Name: Opponent Pieces Targeted
+Scalar: 38.4076
+ACTIVE
+
+Name: Sphere of Influence Gene
+Legal Bonus: 7.02987
+Scalar: -37.8854
 INACTIVE
 
+Name: King Confinement Gene
+Scalar: 62.029
+ACTIVE
+
 Name: King Protection Gene
-Scalar: 24.0858
-INACTIVE
+Scalar: -76.8271
+ACTIVE
 
 END
 
 ID: 34
 
 Name: Piece Strength Gene
-B: -0.22577
-N: -0.0182957
-P: -4.28809
-Q: -0.885899
-R: -1.06643
+B: 3.51485
+N: -12.1395
+P: 4.96741
+Q: -2.13116
+R: -9.62862
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 25.9714
-INACTIVE
+Mean Game Length: 5.82924
+Positions Per Second: 75.0249
+ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 4.2672
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -11.06
-ACTIVE
+Minimum time required: 0.134669
+INACTIVE
 
 Name: Total Force Gene
-Scalar: -44.9486
+Scalar: 54.6141
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 25.4523
+Scalar: -11.9348
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 122.497
-ACTIVE
+Scalar: -59.9172
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 4.32346
+Scalar: -11.3918
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -2.45621
-Scalar: 32.6749
+Legal Bonus: 0.309186
+Scalar: 23.3694
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: -155.405
-INACTIVE
+Scalar: 23.1016
+ACTIVE
 
 Name: King Protection Gene
-Scalar: -51.9058
-INACTIVE
+Scalar: 39.8231
+ACTIVE
 
 END
 
 ID: 35
 
 Name: Piece Strength Gene
-B: 0.412752
-N: 1.68109
-P: 0.0132874
-Q: 2.72252
-R: -1.58623
+B: 2.14315
+N: -6.43578
+P: 2.19502
+Q: 0.438468
+R: -1.39018
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 8.48909
+Mean Game Length: 7.14501
+Positions Per Second: 41.3082
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 10.7466
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -2.09305
+Minimum time required: 3.80629
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 30.2984
-ACTIVE
+Scalar: 7.5329
+INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -3.97182
-INACTIVE
+Scalar: -13.9567
+ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -21.779
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 15.7375
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -0.728634
-Scalar: 8.25272
+Scalar: 29.4647
 INACTIVE
 
+Name: Opponent Pieces Targeted
+Scalar: 36.3034
+INACTIVE
+
+Name: Sphere of Influence Gene
+Legal Bonus: 2.02987
+Scalar: 1.81836
+ACTIVE
+
 Name: King Confinement Gene
-Scalar: -1.84471
+Scalar: -17.7854
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -99.8177
-ACTIVE
+Scalar: -8.07784
+INACTIVE
 
 END
 
 ID: 36
 
 Name: Piece Strength Gene
-B: -6.10063
-N: -5.00464
-P: -9.71568
-Q: -1.44637
-R: -5.37914
+B: -5.21093
+N: -1.83504
+P: 4.01372
+Q: -2.08933
+R: -0.686044
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 9.36862
-ACTIVE
+Mean Game Length: 1.3715
+Positions Per Second: 13.193
+INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.50394
+Minimum time required: 0
 ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -13.1523
-INACTIVE
 
 Name: Total Force Gene
-Scalar: -79.4876
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -83.8785
+Scalar: -51.9495
 ACTIVE
 
-Name: Pawn Advancement Gene
-Scalar: 6.12729
+Name: Freedom to Move Gene
+Scalar: -28.5449
 INACTIVE
 
+Name: Pawn Advancement Gene
+Scalar: -32.0286
+ACTIVE
+
 Name: Opponent Pieces Targeted
-Scalar: 30.989
+Scalar: 17.3881
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 5.79736
-Scalar: -32.9697
-ACTIVE
+Legal Bonus: -6.52634
+Scalar: -26.2405
+INACTIVE
 
 Name: King Confinement Gene
-Scalar: -46.7257
+Scalar: 7.33683
 INACTIVE
 
 Name: King Protection Gene
-Scalar: 26.5414
-ACTIVE
+Scalar: -12.4457
+INACTIVE
 
 END
 
 ID: 37
 
 Name: Piece Strength Gene
-B: 3.27364
-N: -3.53463
-P: -8.13768
-Q: -4.55391
-R: 9.46688
+B: 3.19481
+N: 2.23525
+P: 1.6528
+Q: -5.82969
+R: 3.44284
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 8.96484
+Mean Game Length: 2.42936
+Positions Per Second: 3.26675
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.92469
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -8.29013
+Minimum time required: 1.80081
 INACTIVE
 
 Name: Total Force Gene
-Scalar: -27.1724
-INACTIVE
+Scalar: 35.3599
+ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 22.2592
+Scalar: -15.727
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 17.3248
-INACTIVE
+Scalar: 14.9766
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -67.013
+Scalar: 2.48615
 INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 1.17833
-Scalar: -40.0124
+Legal Bonus: -2.84544
+Scalar: 13.8096
 INACTIVE
 
 Name: King Confinement Gene
-Scalar: -35.6911
+Scalar: 10.967
 INACTIVE
 
 Name: King Protection Gene
-Scalar: 2.12316
+Scalar: -3.37308
 ACTIVE
 
 END
@@ -2021,52 +1907,49 @@ END
 ID: 38
 
 Name: Piece Strength Gene
-B: -6.64467
-N: -1.26885
-P: 3.45816
-Q: -4.51224
-R: 1.30853
+B: -3.06429
+N: -1.28662
+P: 2.13809
+Q: 3.75585
+R: -3.81599
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 37.8875
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.0874173
+Mean Game Length: 2.76092
+Positions Per Second: 23.7239
 INACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: 9.67037
+Name: Last Minute Panic Gene
+Minimum time required: 4.55458
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 6.53652
+Scalar: 75.4416
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -15.6537
+Scalar: -5.69733
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -9.04306
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 20.6447
+Scalar: 96.6436
 ACTIVE
 
+Name: Opponent Pieces Targeted
+Scalar: -46.8814
+INACTIVE
+
 Name: Sphere of Influence Gene
-Legal Bonus: -1.6402
-Scalar: 6.86096
+Legal Bonus: 7.48276
+Scalar: -28.9722
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: 58.3674
-INACTIVE
+Scalar: -110.401
+ACTIVE
 
 Name: King Protection Gene
-Scalar: 15.9281
+Scalar: -18.9969
 ACTIVE
 
 END
@@ -2074,52 +1957,49 @@ END
 ID: 39
 
 Name: Piece Strength Gene
-B: -0.472155
-N: -1.24342
-P: 0.662267
-Q: 2.00356
-R: -1.3486
-ACTIVE
+B: 4.21094
+N: -3.63728
+P: 1.29715
+Q: -2.54243
+R: -3.32247
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 31.0928
+Mean Game Length: 3.94015
+Positions Per Second: 37.2236
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.99005
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.576
+Minimum time required: 4.54484
 INACTIVE
 
 Name: Total Force Gene
-Scalar: -20.8291
+Scalar: 14.8786
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -81.1456
-ACTIVE
+Scalar: -5.80868
+INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -4.14524
-INACTIVE
+Scalar: 12.1428
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -4.59315
-INACTIVE
+Scalar: -23.1015
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -8.63208
-Scalar: 21.0304
-INACTIVE
+Legal Bonus: -6.29144
+Scalar: 27.8818
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: -10.6453
+Scalar: 20.2458
 ACTIVE
 
 Name: King Protection Gene
-Scalar: 18.4749
+Scalar: 35.3201
 INACTIVE
 
 END
@@ -2127,52 +2007,49 @@ END
 ID: 40
 
 Name: Piece Strength Gene
-B: -1.11848
-N: -3.52473
-P: -2.68739
-Q: -0.280335
-R: -0.994823
+B: -5.25822
+N: -0.867237
+P: 6.38807
+Q: -4.41896
+R: 3.21955
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
+Mean Game Length: 1.8318
+Positions Per Second: 0
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.98459
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 17.1745
-INACTIVE
+Minimum time required: 5.58652
+ACTIVE
 
 Name: Total Force Gene
-Scalar: 8.74748
+Scalar: -26.4573
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -6.25831
-INACTIVE
+Scalar: -25.6386
+ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 26.8367
+Scalar: -0.253158
 INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 44.2432
+Scalar: 4.44903
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -0.167325
-Scalar: -97.1679
+Legal Bonus: 0.878612
+Scalar: -63.3892
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: -56.7101
+Scalar: 20.3652
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -18.2447
+Scalar: 11.6503
 ACTIVE
 
 END
@@ -2180,52 +2057,49 @@ END
 ID: 41
 
 Name: Piece Strength Gene
-B: -1.13976
-N: -1.19008
-P: -5.89449
-Q: -2.49733
-R: 1.48436
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 0
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.77513
+B: 4.29694
+N: -4.38612
+P: -2.96554
+Q: 0.309668
+R: -0.553561
 ACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: 6.23191
+Name: Look Ahead Gene
+Mean Game Length: 3.58052
+Positions Per Second: 23.3324
+ACTIVE
+
+Name: Last Minute Panic Gene
+Minimum time required: 5.29913
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 83.4447
+Scalar: -39.0553
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 0.258576
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 24.1733
+Scalar: -77.8036
 ACTIVE
 
-Name: Opponent Pieces Targeted
-Scalar: -50.0614
+Name: Pawn Advancement Gene
+Scalar: 12.2295
 INACTIVE
 
+Name: Opponent Pieces Targeted
+Scalar: 4.95683
+ACTIVE
+
 Name: Sphere of Influence Gene
-Legal Bonus: 2.28843
-Scalar: -4.45761
+Legal Bonus: 3.66056
+Scalar: 32.7034
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: -124.015
-ACTIVE
+Scalar: 36.7458
+INACTIVE
 
 Name: King Protection Gene
-Scalar: -30.88
+Scalar: 11.6127
 ACTIVE
 
 END
@@ -2233,52 +2107,49 @@ END
 ID: 42
 
 Name: Piece Strength Gene
-B: -2.4014
-N: 5.32371
-P: -1.70345
-Q: -1.7902
-R: 2.85872
-ACTIVE
+B: -4.05939
+N: -1.62811
+P: -0.603194
+Q: 1.55133
+R: -1.70261
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 31.7862
+Mean Game Length: 2.52529
+Positions Per Second: 64.5044
 INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 3.24104
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -29.2406
+Minimum time required: 3.65885
 ACTIVE
 
 Name: Total Force Gene
-Scalar: 5.5453
+Scalar: -31.9586
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -16.7145
+Scalar: 17.17
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 4.79667
-ACTIVE
+Scalar: 63.8126
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 19.3892
-ACTIVE
+Scalar: 52.123
+INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 2.57565
-Scalar: 35.5523
+Legal Bonus: -2.0161
+Scalar: 51.2249
 INACTIVE
 
 Name: King Confinement Gene
-Scalar: -2.84773
+Scalar: 70.8962
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -16.9411
+Scalar: 4.46387
 ACTIVE
 
 END
@@ -2286,211 +2157,199 @@ END
 ID: 43
 
 Name: Piece Strength Gene
-B: 1.80968
-N: -5.47896
-P: 3.98804
-Q: 2.86
-R: 0.445294
+B: -3.23042
+N: 4.17099
+P: -0.0625026
+Q: 7.43529
+R: -7.38187
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 73.2828
-ACTIVE
+Mean Game Length: 3.24206
+Positions Per Second: 63.8338
+INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 6.93979
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 17.3054
-ACTIVE
+Minimum time required: 1.93511
+INACTIVE
 
 Name: Total Force Gene
-Scalar: -33.1928
+Scalar: 13.8351
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 17.9592
-ACTIVE
+Scalar: 10.7079
+INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -18.0522
+Scalar: 4.57356
 INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -66.3503
+Scalar: -1.14573
 INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 1.9105
-Scalar: -51.0135
+Legal Bonus: -0.984507
+Scalar: -6.6253
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: 28.2205
-INACTIVE
+Scalar: -32.4392
+ACTIVE
 
 Name: King Protection Gene
-Scalar: 2.19167
-INACTIVE
+Scalar: -4.08723
+ACTIVE
 
 END
 
 ID: 44
 
 Name: Piece Strength Gene
-B: -0.465477
-N: -2.58387
-P: -4.48429
-Q: 1.79367
-R: -1.21958
+B: 9.22397
+N: -3.7618
+P: -1.01995
+Q: -3.32847
+R: -3.19591
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 29.459
+Mean Game Length: 0.0753783
+Positions Per Second: 120.725
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 5.7036
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 1.30539
-INACTIVE
+Minimum time required: 0.516031
+ACTIVE
 
 Name: Total Force Gene
-Scalar: 3.31093
+Scalar: -55.0464
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -0.00559929
+Scalar: 38.7038
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -46.6787
+Scalar: 15.974
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 13.7825
-ACTIVE
+Scalar: 54.486
+INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -1.46661
-Scalar: -29.9967
+Legal Bonus: -7.17179
+Scalar: -28.1717
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: -29.4047
-ACTIVE
+Scalar: 79.7163
+INACTIVE
 
 Name: King Protection Gene
-Scalar: 35.5564
-INACTIVE
+Scalar: 60.018
+ACTIVE
 
 END
 
 ID: 45
 
 Name: Piece Strength Gene
-B: 3.10959
-N: 4.23673
-P: 3.00301
-Q: 5.72086
-R: -7.21699
+B: -4.11334
+N: 0.237385
+P: 1.08138
+Q: 0.246193
+R: 0.643803
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 20.0967
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 4.32597
+Mean Game Length: 2.61702
+Positions Per Second: 19.8604
 ACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: -8.72704
+Name: Last Minute Panic Gene
+Minimum time required: 0
 ACTIVE
 
 Name: Total Force Gene
-Scalar: -2.78783
+Scalar: 37.1238
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 36.8796
+Scalar: -45.5764
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 2.76918
+Scalar: -1.33072
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 17.7145
+Scalar: -24.3117
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 6.42511
-Scalar: 49.9338
-INACTIVE
+Legal Bonus: 2.64515
+Scalar: 0.725198
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 24.4273
-INACTIVE
+Scalar: 11.4746
+ACTIVE
 
 Name: King Protection Gene
-Scalar: -60.2807
-ACTIVE
+Scalar: 9.85593
+INACTIVE
 
 END
 
 ID: 46
 
 Name: Piece Strength Gene
-B: -5.70855
-N: 3.59352
-P: 0.335098
-Q: 8.8094
-R: -1.04105
+B: -2.75805
+N: -5.23567
+P: 0.690053
+Q: -1.99718
+R: 0.434798
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 49.9186
+Mean Game Length: 3.27505
+Positions Per Second: 59.9478
 INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 3.33984
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -21.0818
-ACTIVE
+Minimum time required: 6.14686
+INACTIVE
 
 Name: Total Force Gene
-Scalar: -38.7581
+Scalar: 11.18
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -34.2191
+Scalar: 45.1491
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 37.4001
+Scalar: 11.2401
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 10.9437
-INACTIVE
+Scalar: 27.9926
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 2.90349
-Scalar: 28.0483
-INACTIVE
+Legal Bonus: 4.231
+Scalar: 35.5439
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 27.9953
-INACTIVE
+Scalar: -6.89896
+ACTIVE
 
 Name: King Protection Gene
-Scalar: -33.8102
+Scalar: 40.6067
 INACTIVE
 
 END
@@ -2498,52 +2357,49 @@ END
 ID: 47
 
 Name: Piece Strength Gene
-B: 2.27914
-N: -1.67367
-P: -1.1928
-Q: 5.91498
-R: -4.15587
-INACTIVE
+B: 2.02685
+N: 0.367503
+P: -0.176793
+Q: 6.33814
+R: -2.59885
+ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 34.3047
+Mean Game Length: 0.752894
+Positions Per Second: 12.2945
 INACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 6.49137
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.3472
-ACTIVE
+Minimum time required: 3.40551
+INACTIVE
 
 Name: Total Force Gene
-Scalar: -48.5233
+Scalar: 40.7628
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -25.6848
-ACTIVE
+Scalar: 9.70241
+INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 11.3323
+Scalar: 9.35401
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -52.0246
-ACTIVE
+Scalar: -78.8247
+INACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 2.25353
-Scalar: 32.847
+Legal Bonus: 1.84007
+Scalar: 78.1286
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: 51.2609
-INACTIVE
+Scalar: 43.3558
+ACTIVE
 
 Name: King Protection Gene
-Scalar: 14.8895
+Scalar: -43.7181
 ACTIVE
 
 END
@@ -2551,373 +2407,52 @@ END
 
 Still Alive: 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 
 
-ID: 49
-
-Name: Piece Strength Gene
-B: -2.0537
-N: -3.37166
-P: 2.48537
-Q: 0.829084
-R: 7.25892
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 6.43296
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 2.24904
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -4.21509
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 26.7802
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 11.2972
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -82.8803
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 23.6453
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -6.69038
-Scalar: 37.5229
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -23.1631
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 36.7332
-ACTIVE
-
-END
-
 ID: 53
 
 Name: Piece Strength Gene
-B: 0.504503
-N: -2.24562
-P: -3.51649
-Q: 4.30337
-R: 1.58762
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 10.3547
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 2.36568
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.33131
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -1.11132
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 72.9284
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 19.8445
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -43.2163
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 3.38966
-Scalar: -4.46469
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -46.7254
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 27.2243
-INACTIVE
-
-END
-
-ID: 50
-
-Name: Piece Strength Gene
-B: 2.01852
-N: 1.92184
-P: -7.65616
-Q: -0.222997
-R: -3.98366
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 29.8691
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 6.53452
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -19.2255
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -107.741
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 6.39337
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -102.252
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -55.4512
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 7.46551
-Scalar: -9.18453
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 96.6459
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -19.0735
-ACTIVE
-
-END
-
-ID: 52
-
-Name: Piece Strength Gene
-B: 2.29242
-N: -0.108273
-P: -3.57501
-Q: -1.00328
-R: 4.91562
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 25.4601
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.7895
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.94806
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 16.343
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -15.4974
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 48.0705
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 17.7639
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -2.30144
-Scalar: -11.9692
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 3.31385
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 24.2364
-INACTIVE
-
-END
-
-ID: 51
-
-Name: Piece Strength Gene
-B: 1.26683
-N: -3.19394
-P: 4.81909
-Q: -0.868751
-R: -5.99661
+B: 4.21625
+N: -0.209446
+P: -3.62162
+Q: 5.70806
+R: -1.62903
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 42.4192
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.14452
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 14.3296
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -56.2792
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 3.65801
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -26.8678
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 7.79789
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 5.10862
-Scalar: 32.7709
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -16.629
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -79.9894
-INACTIVE
-
-END
-
-ID: 55
-
-Name: Piece Strength Gene
-B: 4.61458
-N: -3.31651
-P: 5.06026
-Q: -2.98857
-R: -5.50628
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 7.13849
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 5.36894
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.13548
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 23.8421
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -1.87181
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -48.4212
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -46.1022
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.7634
-Scalar: -7.00369
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -22.2851
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 42.3376
-INACTIVE
-
-END
-
-ID: 48
-
-Name: Piece Strength Gene
-B: 1.81126
-N: 3.50125
-P: 6.45942
-Q: 6.93898
-R: 5.14542
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 12.7346
+Mean Game Length: 0
+Positions Per Second: 33.5109
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 4.80473
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.35569
+Minimum time required: 0.200611
 ACTIVE
 
 Name: Total Force Gene
-Scalar: -49.0552
+Scalar: 14.1271
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -19.0226
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -25.4043
+Scalar: 54.3655
 INACTIVE
 
+Name: Pawn Advancement Gene
+Scalar: -103.095
+ACTIVE
+
 Name: Opponent Pieces Targeted
-Scalar: 20.882
+Scalar: -2.9961
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -2.59731
-Scalar: -24.4179
-INACTIVE
+Legal Bonus: -0.361478
+Scalar: -20.2943
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 38.4472
-INACTIVE
+Scalar: -40.0865
+ACTIVE
 
 Name: King Protection Gene
-Scalar: -31.2961
+Scalar: -49.163
 ACTIVE
 
 END
@@ -2925,3416 +2460,303 @@ END
 ID: 54
 
 Name: Piece Strength Gene
-B: 1.83225
-N: 4.99606
-P: -4.45094
-Q: 5.97648
-R: 8.1788
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 4.15132
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.08032
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 0.99605
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -55.9125
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 25.3524
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -41.8599
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -35.4769
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -2.26949
-Scalar: -55.2828
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -18.1378
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -56.2581
-ACTIVE
-
-END
-
-
-Still Alive: 49 53 2 50 4 52 51 55 8 48 10 54 12 13 14 15 
-
-ID: 56
-
-Name: Piece Strength Gene
-B: 2.64079
-N: -1.18223
-P: 6.56845
-Q: 2.33268
-R: -1.55847
+B: 6.51039
+N: 4.4509
+P: -0.0503311
+Q: -1.20822
+R: -8.10468
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.649628
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.75442
-INACTIVE
-
-Name: Total Force Gene
-Scalar: -42.4501
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 24.411
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -14.3531
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -10.5841
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -3.10693
-Scalar: -13.8116
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -3.37128
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -0.750459
-ACTIVE
-
-END
-
-ID: 57
-
-Name: Piece Strength Gene
-B: 4.20093
-N: -3.42779
-P: -0.726638
-Q: -5.4046
-R: 5.75514
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 24.9391
+Mean Game Length: 2.0996
+Positions Per Second: 30.0311
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 2.02552
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -20.4814
+Minimum time required: 0.996062
 INACTIVE
 
 Name: Total Force Gene
-Scalar: 67.744
+Scalar: -23.2288
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 10.3178
+Scalar: 76.7755
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 7.92522
-ACTIVE
+Scalar: 22.1956
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 35.8708
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.40961
-Scalar: -11.303
+Scalar: -0.554647
 ACTIVE
 
-Name: King Confinement Gene
-Scalar: 26.5486
+Name: Sphere of Influence Gene
+Legal Bonus: 2.29572
+Scalar: -53.4875
 INACTIVE
 
+Name: King Confinement Gene
+Scalar: 17.032
+ACTIVE
+
 Name: King Protection Gene
-Scalar: -23.7857
+Scalar: 21.4425
 INACTIVE
 
 END
 
-ID: 59
+ID: 49
 
 Name: Piece Strength Gene
-B: 6.6653
-N: -2.26172
-P: 1.56527
-Q: -0.0619675
-R: -2.61841
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 0.452387
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.756816
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -33.8692
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 21.113
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 41.0029
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 20.2596
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -68.4762
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.23309
-Scalar: -12.4047
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -17.6083
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -37.2493
-INACTIVE
-
-END
-
-ID: 62
-
-Name: Piece Strength Gene
-B: 2.35034
-N: 0.238388
-P: 3.72449
-Q: -3.18009
-R: -4.54814
+B: -3.35785
+N: -0.366701
+P: 6.68146
+Q: -1.20111
+R: -4.23061
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.44841
+Mean Game Length: 0
+Positions Per Second: 0
 INACTIVE
 
-Name: Branch Pruning Gene
-Minimum Score Change: 13.3023
+Name: Last Minute Panic Gene
+Minimum time required: 4.17839
 ACTIVE
 
 Name: Total Force Gene
-Scalar: -38.6382
+Scalar: -10.0789
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -9.59552
+Scalar: 38.3828
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 15.3499
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 5.05527
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 9.77398
-Scalar: 1.86862
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -46.3645
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -37.1679
-INACTIVE
-
-END
-
-ID: 60
-
-Name: Piece Strength Gene
-B: -4.55085
-N: -3.34826
-P: -7.0513
-Q: 0.684079
-R: -0.743221
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 32.7527
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.0939
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -43.3991
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 29.7809
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -49.976
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 80.6135
+Scalar: -15.4651
 INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 120.885
+Scalar: -24.4791
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 0.627502
-Scalar: 1.77105
-INACTIVE
+Legal Bonus: 3.17918
+Scalar: -24.3327
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: -9.35356
-INACTIVE
+Scalar: 50.3679
+ACTIVE
 
 Name: King Protection Gene
-Scalar: 51.762
+Scalar: 54.2158
 ACTIVE
 
 END
 
-ID: 61
+ID: 48
 
 Name: Piece Strength Gene
-B: -4.05207
-N: -0.907889
-P: 0.257213
-Q: -3.4369
-R: 5.95866
-ACTIVE
+B: -7.56681
+N: 3.40957
+P: -1.67602
+Q: 3.37406
+R: 0.500476
+INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 18.1851
+Mean Game Length: 1.8435
+Positions Per Second: 39.8108
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 3.19806
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 16.5706
+Minimum time required: 6.56127
 INACTIVE
 
 Name: Total Force Gene
-Scalar: 20.2308
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -23.4359
+Scalar: -44.2173
 INACTIVE
 
+Name: Freedom to Move Gene
+Scalar: -26.93
+ACTIVE
+
 Name: Pawn Advancement Gene
-Scalar: 1.66545
+Scalar: -3.66182
 ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 26.5614
-INACTIVE
+Scalar: 9.05825
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 0.169957
-Scalar: -88.891
+Legal Bonus: -1.55437
+Scalar: 33.321
 INACTIVE
 
 Name: King Confinement Gene
-Scalar: 8.01762
-INACTIVE
+Scalar: -36.9696
+ACTIVE
 
 Name: King Protection Gene
-Scalar: -30.805
+Scalar: -8.17233
 INACTIVE
 
 END
 
-ID: 58
+ID: 52
 
 Name: Piece Strength Gene
-B: -10.0202
-N: -5.74355
-P: 2.51966
-Q: 1.76217
-R: 1.07461
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 17.9979
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.0338911
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -36.1906
-INACTIVE
-
-Name: Total Force Gene
-Scalar: -43.0461
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 93.347
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -14.8751
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 55.2239
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.38117
-Scalar: -25.123
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 47.5381
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -96.7787
-ACTIVE
-
-END
-
-
-Still Alive: 56 57 18 19 20 59 62 23 24 25 26 60 28 61 58 31 
-
-ID: 69
-
-Name: Piece Strength Gene
-B: 3.10959
-N: 4.23673
-P: 3.00301
-Q: 5.72086
-R: -7.21699
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 20.0098
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.56952
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -8.7216
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -2.78783
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 36.8796
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 21.7142
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 17.7145
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -11.7191
-Scalar: 34.244
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 24.4273
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -60.2807
-ACTIVE
-
-END
-
-ID: 70
-
-Name: Piece Strength Gene
-B: 0.924149
-N: 1.06603
-P: 0.390107
-Q: 1.40723
-R: -2.88503
+B: 5.68848
+N: 0.375005
+P: 2.52152
+Q: 5.62241
+R: 2.73029
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 8.48909
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 10.7466
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -2.09305
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 30.2984
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 0.258576
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -21.779
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 15.7375
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -0.728634
-Scalar: 8.25272
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -124.015
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -30.88
-ACTIVE
-
-END
-
-ID: 66
-
-Name: Piece Strength Gene
-B: -6.10063
-N: -5.00464
-P: -9.71568
-Q: -1.44637
-R: -5.37914
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 9.36862
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.50394
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -13.1523
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -54.9498
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -83.8785
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 122.497
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 4.32346
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 5.79736
-Scalar: -32.9697
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -46.7257
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -51.9058
-ACTIVE
-
-END
-
-ID: 63
-
-Name: Piece Strength Gene
-B: -6.64467
-N: -1.26885
-P: 3.45816
-Q: -4.51224
-R: 1.30853
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 37.8875
+Mean Game Length: 4.47693
+Positions Per Second: 5.22474
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 0.0874173
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -8.29013
-INACTIVE
+Minimum time required: 4.11055
+ACTIVE
 
 Name: Total Force Gene
-Scalar: -45.4758
+Scalar: 17.6087
 INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -15.6537
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 17.3248
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 20.0426
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.17833
-Scalar: -40.0124
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 58.3674
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 15.9281
-ACTIVE
-
-END
-
-ID: 67
-
-Name: Piece Strength Gene
-B: 1.80968
-N: -5.47896
-P: 3.98804
-Q: 2.86
-R: 0.445294
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 80.7689
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 4.76125
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 17.3054
-INACTIVE
-
-Name: Total Force Gene
-Scalar: -33.1928
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -85.0205
+Scalar: -10.5482
 ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: -14.2072
-INACTIVE
+Scalar: -92.8367
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -66.3503
-INACTIVE
+Scalar: -55.5093
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 3.48805
-Scalar: -67.3191
-INACTIVE
+Legal Bonus: -2.57617
+Scalar: -3.1485
+ACTIVE
 
 Name: King Confinement Gene
-Scalar: 38.4482
-INACTIVE
+Scalar: 5.58464
+ACTIVE
 
 Name: King Protection Gene
-Scalar: 2.19167
+Scalar: 10.2315
 INACTIVE
 
 END
 
-ID: 65
+ID: 50
 
 Name: Piece Strength Gene
-B: -1.23151
-N: 0.642441
-P: -2.17545
-Q: 1.23759
-R: -12.022
+B: 8.53346
+N: 0.391216
+P: -5.28972
+Q: 3.40127
+R: 6.958
 ACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 0
+Mean Game Length: 5.8019
+Positions Per Second: 20.0707
 ACTIVE
 
 Name: Last Minute Panic Gene
-Minimum time required: 1.98459
+Minimum time required: 4.29225
 INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.5992
-ACTIVE
 
 Name: Total Force Gene
-Scalar: 8.74748
-ACTIVE
+Scalar: 88.2419
+INACTIVE
 
 Name: Freedom to Move Gene
-Scalar: -32.6317
-INACTIVE
+Scalar: -42.9004
+ACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 11.9747
-INACTIVE
+Scalar: -52.0659
+ACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: 1.98508
+Scalar: -9.56873
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 1.85158
-Scalar: 64.7402
+Legal Bonus: -4.28369
+Scalar: 86.4736
 ACTIVE
 
 Name: King Confinement Gene
-Scalar: -56.7101
+Scalar: 35.8191
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -18.2447
+Scalar: -23.2554
 ACTIVE
 
 END
 
-ID: 64
+ID: 51
 
 Name: Piece Strength Gene
-B: -0.465477
-N: -2.58387
-P: -4.48429
-Q: 1.79367
-R: -1.21958
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 29.459
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 5.7036
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -21.0818
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 3.31093
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -34.2191
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 37.4001
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 13.7825
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.46661
-Scalar: -29.9967
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -34.6492
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 35.5564
-INACTIVE
-
-END
-
-ID: 68
-
-Name: Piece Strength Gene
-B: 3.0627
-N: -2.06127
-P: -1.68106
-Q: 5.96055
-R: -4.32901
+B: 2.02978
+N: 1.04461
+P: 0.530135
+Q: -3.10543
+R: 2.56236
 INACTIVE
 
 Name: Look Ahead Gene
-Look Ahead Constant: 31.7862
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.24104
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.3472
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -48.5233
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -16.7145
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 11.3323
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 19.3892
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.57565
-Scalar: 35.5523
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 57.2006
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -16.9411
-ACTIVE
-
-END
-
-
-Still Alive: 69 33 34 70 66 63 38 67 65 41 42 43 64 45 46 68 
-
-ID: 77
-
-Name: Piece Strength Gene
-B: -2.0537
-N: -3.37166
-P: 2.48537
-Q: 0.829084
-R: 7.25892
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 6.43296
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.7895
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -4.21509
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 26.7802
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 11.2972
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -82.8803
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 23.6453
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -0.421775
-Scalar: -8.26156
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -21.7599
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 61.8613
-ACTIVE
-
-END
-
-ID: 78
-
-Name: Piece Strength Gene
-B: 0.504503
-N: -2.24562
-P: -3.51649
-Q: 4.30337
-R: 1.58762
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 0
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 5.36894
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.13548
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 16.0515
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 72.9284
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 21.5022
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 27.9891
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.7634
-Scalar: -7.00369
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 71.0922
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 42.3376
-INACTIVE
-
-END
-
-ID: 71
-
-Name: Piece Strength Gene
-B: 0.660513
-N: -1.60749
-P: 0.496445
-Q: -5.47639
-R: -0.102873
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 29.8691
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.83104
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -19.2255
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 19.0869
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 6.39337
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -102.252
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -55.4512
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 7.46551
-Scalar: -9.18453
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 96.6459
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -10.4962
-ACTIVE
-
-END
-
-ID: 72
-
-Name: Piece Strength Gene
-B: 7.20948
-N: 1.39608
-P: -3.02533
-Q: -6.79517
-R: -1.94513
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 10.3547
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.7895
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -0.23475
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 16.343
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -15.4974
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 69.7101
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -38.1841
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.48065
-Scalar: 7.3845
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 37.8322
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 27.2243
-INACTIVE
-
-END
-
-ID: 73
-
-Name: Piece Strength Gene
-B: 1.26683
-N: -3.19394
-P: 4.81909
-Q: -0.868751
-R: -5.99661
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 42.4192
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 4.80473
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 14.3296
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -56.2792
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -19.0226
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -25.4043
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 7.79789
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -2.59731
-Scalar: -24.4179
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 38.4472
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -79.9894
-INACTIVE
-
-END
-
-ID: 76
-
-Name: Piece Strength Gene
-B: 0.195232
-N: -3.44906
-P: 3.83385
-Q: -0.60247
-R: -5.01499
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 16.5161
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.14452
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 0.99605
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -15.3821
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 25.3524
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -35.8726
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -35.4769
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -2.26949
-Scalar: -55.2828
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 8.13484
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 3.98311
-ACTIVE
-
-END
-
-ID: 74
-
-Name: Piece Strength Gene
-B: 4.61458
-N: -3.31651
-P: 5.06026
-Q: -2.98857
-R: -5.50628
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 7.13849
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 5.36894
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 10.1817
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -35.0081
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 15.718
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -41.8599
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -39.9766
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.5862
-Scalar: 56.8016
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 17.8218
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 42.3376
-INACTIVE
-
-END
-
-ID: 75
-
-Name: Piece Strength Gene
-B: 6.67616
-N: -1.089
-P: -0.640511
-Q: 5.95548
-R: -4.08879
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 22.9531
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.09501
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.35569
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 47.9893
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 1.80081
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 13.4472
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 18.859
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 4.40169
-Scalar: 35.0187
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 9.12521
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 36.7332
-ACTIVE
-
-END
-
-
-Still Alive: 77 78 2 71 4 72 73 55 8 48 10 76 12 74 75 15 
-
-ID: 82
-
-Name: Piece Strength Gene
-B: -10.4478
-N: -7.50482
-P: 2.06012
-Q: 3.85836
-R: -0.256826
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 0
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.0338911
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -36.1906
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -36.1786
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -7.39764
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 6.4736
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 55.2239
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -2.58354
-Scalar: -33.7786
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -46.3645
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -49.4426
-INACTIVE
-
-END
-
-ID: 84
-
-Name: Piece Strength Gene
-B: 5.3399
-N: 2.87995
-P: -0.231325
-Q: 1.85085
-R: -4.47231
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 0.600611
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 2.36447
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -33.8692
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 67.744
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 41.0029
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 20.2596
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 35.8708
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.30925
-Scalar: -28.28
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -17.6083
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -26.8756
-ACTIVE
-
-END
-
-ID: 79
-
-Name: Piece Strength Gene
-B: 3.27399
-N: -1.92515
-P: 5.5031
-Q: 2.79958
-R: -1.00926
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 9.55088
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.53739
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.57315
-INACTIVE
-
-Name: Total Force Gene
-Scalar: -42.4501
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -73.6945
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -51.9755
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -29.0204
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.36175
-Scalar: -18.6382
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -55.4643
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -46.6426
-INACTIVE
-
-END
-
-ID: 86
-
-Name: Piece Strength Gene
-B: 7.54748
-N: 0.886858
-P: -2.60562
-Q: -4.67382
-R: -3.97035
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 9.76703
+Mean Game Length: 2.37483
+Positions Per Second: 14.6746
 ACTIVE
 
 Name: Last Minute Panic Gene
 Minimum time required: 0
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 16.5706
 INACTIVE
 
 Name: Total Force Gene
-Scalar: 29.0788
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 8.10946
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -27.2508
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 120.885
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -6.71994
-Scalar: -39.5686
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -61.2342
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -29.4614
-INACTIVE
-
-END
-
-ID: 85
-
-Name: Piece Strength Gene
-B: 2.64079
-N: -1.18223
-P: 6.56845
-Q: 2.33268
-R: -1.55847
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 32.7527
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.649628
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.75442
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 29.7809
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -49.976
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 80.6135
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -10.5841
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 0.627502
-Scalar: 1.77105
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -3.37128
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 50.2092
-ACTIVE
-
-END
-
-ID: 83
-
-Name: Piece Strength Gene
-B: -4.05207
-N: -0.907889
-P: 0.257213
-Q: -3.4369
-R: 5.95866
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 14.3442
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.00659955
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 16.5706
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 20.2308
+Scalar: 50.7151
 ACTIVE
 
 Name: Freedom to Move Gene
-Scalar: 36.9646
+Scalar: 45.1852
 INACTIVE
 
 Name: Pawn Advancement Gene
-Scalar: 1.66545
-ACTIVE
+Scalar: -11.6949
+INACTIVE
 
 Name: Opponent Pieces Targeted
-Scalar: -24.4193
+Scalar: 21.5658
 ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: -4.44397
-Scalar: -24.1056
+Legal Bonus: 9.59202
+Scalar: 57.7599
 INACTIVE
 
 Name: King Confinement Gene
-Scalar: 8.01762
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -30.805
-INACTIVE
-
-END
-
-ID: 81
-
-Name: Piece Strength Gene
-B: 4.94734
-N: -5.297
-P: -0.640426
-Q: -6.58401
-R: 5.73664
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 24.9391
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 2.02552
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -36.1906
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 67.744
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 93.347
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 7.92522
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 55.2239
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.03074
-Scalar: -11.9216
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 47.5381
+Scalar: -7.70303
 ACTIVE
 
 Name: King Protection Gene
-Scalar: -96.7787
-ACTIVE
-
-END
-
-ID: 80
-
-Name: Piece Strength Gene
-B: 6.6653
-N: -2.26172
-P: 1.56527
-Q: -0.0619675
-R: -2.61841
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 0
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.15608
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -33.8692
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -58.2578
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 26.4788
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 17.0796
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -74.6924
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.46876
-Scalar: 17.7571
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -53.2821
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -37.1679
+Scalar: 43.7378
 INACTIVE
 
 END
 
 
-Still Alive: 56 57 18 82 20 84 62 79 24 25 86 85 28 83 81 80 
-
-ID: 89
-
-Name: Piece Strength Gene
-B: 0.924149
-N: 1.06603
-P: 0.390107
-Q: 1.40723
-R: -2.88503
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 3.50383
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 10.7466
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.5992
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 30.2984
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 2.39788
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -21.779
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 1.98508
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.85158
-Scalar: 64.7402
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -116.219
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 24.0858
-INACTIVE
-
-END
-
-ID: 94
-
-Name: Piece Strength Gene
-B: 3.10959
-N: 4.23673
-P: 3.00301
-Q: 5.72086
-R: -7.21699
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 9.36862
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 4.32597
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -8.72704
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -2.78783
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -95.7586
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 113.733
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 17.7145
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 6.42511
-Scalar: 49.9338
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -46.7257
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -60.2807
-ACTIVE
-
-END
-
-ID: 92
-
-Name: Piece Strength Gene
-B: -6.64467
-N: -1.26885
-P: 3.45816
-Q: -4.51224
-R: 1.30853
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 37.8875
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.24104
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.3472
-INACTIVE
-
-Name: Total Force Gene
-Scalar: -45.4758
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -15.6537
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 17.3248
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 20.0426
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.17833
-Scalar: -40.0124
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 57.2006
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -16.9411
-ACTIVE
-
-END
-
-ID: 90
-
-Name: Piece Strength Gene
-B: -0.22577
-N: -0.0182957
-P: -4.28809
-Q: -0.885899
-R: -1.06643
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 37.8875
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.0874173
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 9.67037
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -34.7162
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -15.6537
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -9.04306
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -6.45556
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.6402
-Scalar: 6.86096
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -155.405
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 39.2401
-INACTIVE
-
-END
-
-ID: 91
-
-Name: Piece Strength Gene
-B: -5.70855
-N: 3.59352
-P: 0.335098
-Q: 8.8094
-R: -1.04105
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 0
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.33984
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -21.0818
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 8.74748
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -45.7609
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 16.6851
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 1.98508
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.90349
-Scalar: 28.0483
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 15.5428
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -27.2679
-INACTIVE
-
-END
-
-ID: 93
-
-Name: Piece Strength Gene
-B: -2.4014
-N: 5.32371
-P: -1.70345
-Q: -1.7902
-R: 2.85872
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 31.7862
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.24104
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -29.2406
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 0.979573
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 0.258576
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 41.2163
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 19.3892
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.57565
-Scalar: 35.5523
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -124.015
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -16.9411
-ACTIVE
-
-END
-
-ID: 87
-
-Name: Piece Strength Gene
-B: 1.80968
-N: -5.47896
-P: 3.98804
-Q: 2.86
-R: 0.445294
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 20.0098
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 6.93979
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 17.3054
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -2.78783
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 36.8796
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 21.7142
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 17.7145
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.9105
-Scalar: -51.0135
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 24.4273
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 2.19167
-ACTIVE
-
-END
-
-ID: 88
-
-Name: Piece Strength Gene
-B: -0.465477
-N: -2.58387
-P: -4.48429
-Q: 1.79367
-R: -1.21958
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 29.459
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 6.2706
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 19.2217
-INACTIVE
-
-Name: Total Force Gene
-Scalar: -49.7873
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -43.3105
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -14.2072
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 13.7825
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.46661
-Scalar: -29.9967
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -34.6492
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 2.19167
-INACTIVE
-
-END
-
-
-Still Alive: 69 33 34 89 94 92 90 67 91 41 93 87 88 45 46 68 
-
-ID: 98
-
-Name: Piece Strength Gene
-B: 7.20948
-N: 1.39608
-P: -3.02533
-Q: -6.79517
-R: -1.94513
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 10.3547
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.63259
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -0.23475
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 16.343
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 11.2972
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 69.7101
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 23.6453
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -0.421775
-Scalar: -8.26156
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -21.7599
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 35.0212
-ACTIVE
-
-END
-
-ID: 100
-
-Name: Piece Strength Gene
-B: 4.61458
-N: -3.31651
-P: 5.06026
-Q: -2.98857
-R: -5.50628
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 13.1424
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 5.36894
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.13548
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 23.8421
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 2.02821
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 13.4472
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 18.859
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.7634
-Scalar: -7.00369
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 9.12521
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 42.3376
-ACTIVE
-
-END
-
-ID: 97
-
-Name: Piece Strength Gene
-B: 1.26683
-N: -3.19394
-P: 4.81909
-Q: -0.868751
-R: -5.99661
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 15.8755
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.7895
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 14.3296
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -56.2792
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -24.297
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -54.9764
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 4.10038
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -2.18097
-Scalar: -22.9537
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 57.0619
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 61.8613
-INACTIVE
-
-END
-
-ID: 99
-
-Name: Piece Strength Gene
-B: 1.81126
-N: 3.50125
-P: 6.45942
-Q: 6.93898
-R: 5.14542
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 12.7346
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 6.7601
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.35569
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 47.9893
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -19.0226
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 13.4472
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 18.859
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -2.59731
-Scalar: -24.4179
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 38.4472
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -31.2961
-ACTIVE
-
-END
-
-ID: 101
-
-Name: Piece Strength Gene
-B: 0.504503
-N: -2.24562
-P: -3.51649
-Q: 4.30337
-R: 1.58762
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 16.5161
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.14452
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -9.13548
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -1.636
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 15.1158
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 21.5022
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 27.9891
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.7634
-Scalar: -7.00369
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 71.0922
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 7.77643
-ACTIVE
-
-END
-
-ID: 102
-
-Name: Piece Strength Gene
-B: 6.13356
-N: 0.287439
-P: -3.95835
-Q: -7.17773
-R: -1.23543
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 16.5161
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.21662
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 3.33131
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -15.3821
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 25.3524
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 19.8445
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -35.4769
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -2.26949
-Scalar: -55.2828
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 16.2732
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 27.2243
-ACTIVE
-
-END
-
-ID: 96
-
-Name: Piece Strength Gene
-B: 3.99377
-N: -2.76675
-P: 6.12174
-Q: -3.27124
-R: -6.22672
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 0
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.83104
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -19.2255
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 20.317
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 6.39337
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -48.4212
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 35.7135
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.7634
-Scalar: -7.00369
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 71.0922
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -10.4962
-ACTIVE
-
-END
-
-ID: 95
-
-Name: Piece Strength Gene
-B: 0.660513
-N: -1.60749
-P: 0.496445
-Q: -5.47639
-R: -0.102873
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 2.89351
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.83104
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -19.2255
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 19.0869
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 6.39337
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -41.8599
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -55.4512
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -0.302226
-Scalar: -37.8386
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 17.8218
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -10.4962
-ACTIVE
-
-END
-
-
-Still Alive: 98 78 100 71 4 72 73 55 97 99 101 102 96 95 75 15 
-
-ID: 110
-
-Name: Piece Strength Gene
-B: 3.27399
-N: -1.92515
-P: 5.5031
-Q: 2.79958
-R: -1.00926
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 10.7395
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.649628
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -13.9054
-INACTIVE
-
-Name: Total Force Gene
-Scalar: -42.4501
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 25.532
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -51.9755
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -29.0204
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.36175
-Scalar: -18.6382
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -3.37128
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -0.750459
-INACTIVE
-
-END
-
-ID: 108
-
-Name: Piece Strength Gene
-B: 6.6653
-N: -2.26172
-P: 1.56527
-Q: -0.0619675
-R: -2.61841
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 26.0409
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.15608
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -20.4814
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 67.744
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 10.3178
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -9.14125
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -74.6924
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.2157
-Scalar: -11.6413
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 26.5486
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -23.7857
-INACTIVE
-
-END
-
-ID: 103
-
-Name: Piece Strength Gene
-B: 0.448652
-N: 0.28055
-P: 7.67511
-Q: 1.86743
-R: -1.58184
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 6.62372
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 4.10118
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -33.8692
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 21.8552
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 9.50925
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 20.2596
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -68.4762
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -6.60402
-Scalar: -16.3386
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -67.1357
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 73.6606
-ACTIVE
-
-END
-
-ID: 105
-
-Name: Piece Strength Gene
-B: -10.4478
-N: -7.50482
-P: 2.06012
-Q: 3.85836
-R: -0.256826
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 14.3442
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.00659955
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 16.5706
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 20.2308
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 36.9646
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 8.75922
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 55.2239
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -4.44397
-Scalar: -24.1056
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 8.01762
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -49.4426
-INACTIVE
-
-END
-
-ID: 106
-
-Name: Piece Strength Gene
-B: 7.6821
-N: 2.4127
-P: -1.13988
-Q: 3.41721
-R: -2.96653
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 1.00917
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 16.5706
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 69.2347
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 10.3178
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -19.7486
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 35.8708
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -6.71994
-Scalar: -39.5686
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -61.2342
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -0.174019
-INACTIVE
-
-END
-
-ID: 104
-
-Name: Piece Strength Gene
-B: 2.64079
-N: -1.18223
-P: 6.56845
-Q: 2.33268
-R: -1.55847
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 32.7527
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.697571
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 16.5706
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 20.2308
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 8.10946
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -27.2508
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 26.5614
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 0.627502
-Scalar: 1.77105
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -3.37128
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 50.2092
-INACTIVE
-
-END
-
-ID: 107
-
-Name: Piece Strength Gene
-B: 1.8664
-N: 0.441217
-P: 3.3488
-Q: -3.29882
-R: -4.73713
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 0
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.44841
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 14.1439
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -0.336896
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 36.9646
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 50.0419
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 5.05527
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -4.44397
-Scalar: -24.1056
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -46.3645
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -37.1679
-ACTIVE
-
-END
-
-ID: 109
-
-Name: Piece Strength Gene
-B: 5.3399
-N: 2.87995
-P: -0.231325
-Q: 1.85085
-R: -4.47231
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 24.9391
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 1.81273
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -33.8692
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 67.744
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 41.0029
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 46.975
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 55.2239
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.30925
-Scalar: -28.28
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 47.5381
-ACTIVE
-
-Name: King Protection Gene
-Scalar: -96.7787
-ACTIVE
-
-END
-
-
-Still Alive: 110 108 103 105 20 84 62 79 24 25 106 104 107 83 109 80 
-
-ID: 111
-
-Name: Piece Strength Gene
-B: -1.23151
-N: 0.642441
-P: -2.17545
-Q: 1.23759
-R: -12.022
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 2.74877
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.33984
-INACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.5992
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 37.9381
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -45.7609
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 11.9747
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 1.98508
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.73203
-Scalar: 56.5923
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 15.5428
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 24.0858
-INACTIVE
-
-END
-
-ID: 115
-
-Name: Piece Strength Gene
-B: 2.24819
-N: 1.08238
-P: -0.144695
-Q: 2.06984
-R: -2.05954
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 79.959
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 10.7466
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.5992
-INACTIVE
-
-Name: Total Force Gene
-Scalar: 30.2984
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 2.39788
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -14.2072
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 1.98508
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 4.12882
-Scalar: -54.9264
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -116.219
-ACTIVE
-
-Name: King Protection Gene
-Scalar: 28.9517
-INACTIVE
-
-END
-
-ID: 113
-
-Name: Piece Strength Gene
-B: 2.56756
-N: 4.56254
-P: 2.9788
-Q: 6.62722
-R: -9.11956
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 9.36862
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.24104
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -8.72704
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -2.78783
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -16.7145
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 11.3323
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 28.5385
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 2.57565
-Scalar: 35.5523
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: 57.2006
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -16.9411
-ACTIVE
-
-END
-
-ID: 114
-
-Name: Piece Strength Gene
-B: -6.64467
-N: -1.26885
-P: 3.45816
-Q: -4.51224
-R: 1.30853
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 49.9186
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 3.24104
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -21.0818
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -26.1885
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -15.6537
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 17.3248
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 20.0426
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.17833
-Scalar: -40.0124
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 57.2006
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -54.1116
-ACTIVE
-
-END
-
-ID: 112
-
-Name: Piece Strength Gene
-B: -0.22577
-N: -0.0182957
-P: -4.28809
-Q: -0.885899
-R: -1.06643
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 25.9714
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 0.0874173
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 13.2527
-ACTIVE
-
-Name: Total Force Gene
-Scalar: -48.2363
-INACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 25.4523
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 122.497
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 4.32346
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.6402
-Scalar: 6.86096
-ACTIVE
-
-Name: King Confinement Gene
-Scalar: -155.405
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -51.9058
-INACTIVE
-
-END
-
-ID: 117
-
-Name: Piece Strength Gene
-B: 3.10959
-N: 4.23673
-P: 3.00301
-Q: 5.72086
-R: -7.21699
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 20.0967
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 4.12624
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -8.72704
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 83.4447
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 0.258576
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 24.1733
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: -50.0614
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 6.42511
-Scalar: 49.9338
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: 24.4273
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -30.88
-ACTIVE
-
-END
-
-ID: 116
-
-Name: Piece Strength Gene
-B: -2.4014
-N: 5.32371
-P: -1.70345
-Q: -1.7902
-R: 2.85872
-INACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 20.0098
-INACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 6.93979
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 17.3054
-ACTIVE
-
-Name: Total Force Gene
-Scalar: 0.979573
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: 36.8796
-ACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: 37.0454
-INACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 19.3892
-INACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: 1.9105
-Scalar: -51.0135
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -127.508
-INACTIVE
-
-Name: King Protection Gene
-Scalar: 2.19167
-ACTIVE
-
-END
-
-ID: 118
-
-Name: Piece Strength Gene
-B: -0.465477
-N: -2.58387
-P: -4.48429
-Q: 1.79367
-R: -1.21958
-ACTIVE
-
-Name: Look Ahead Gene
-Look Ahead Constant: 20.0098
-ACTIVE
-
-Name: Last Minute Panic Gene
-Minimum time required: 6.2706
-ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: 19.2217
-INACTIVE
-
-Name: Total Force Gene
-Scalar: -2.78783
-ACTIVE
-
-Name: Freedom to Move Gene
-Scalar: -43.3105
-INACTIVE
-
-Name: Pawn Advancement Gene
-Scalar: -14.2072
-ACTIVE
-
-Name: Opponent Pieces Targeted
-Scalar: 17.7145
-ACTIVE
-
-Name: Sphere of Influence Gene
-Legal Bonus: -1.46661
-Scalar: -29.9967
-INACTIVE
-
-Name: King Confinement Gene
-Scalar: -34.6492
-INACTIVE
-
-Name: King Protection Gene
-Scalar: -60.2807
-ACTIVE
-
-END
+Still Alive: 53 54 2 49 4 48 6 7 8 52 10 50 51 13 14 15 
 

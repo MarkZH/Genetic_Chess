@@ -120,12 +120,39 @@ double Random::random_real(double min, double max)
 
 bool Random::coin_flip()
 {
-    return random_integer(0, 1) == 0;
+    return success_probability(0.5);
 }
 
 bool Random::success_probability(double probability)
 {
     return random_real(0, 1) < probability;
+}
+
+// Mean moves left in game given that a number of moves have been made already.
+double Math::average_moves_left(double mean_moves, size_t moves_so_far)
+{
+    double A = 0;
+    double B = 0;
+    for(size_t N = 0; N <= moves_so_far; ++N)
+    {
+        auto p = poisson_probability(mean_moves, N);
+        A += p;
+        B += N*p;
+    }
+
+    return (mean_moves - B)/(1 - A) - moves_so_far;
+}
+
+
+double Math::poisson_probability(double mean, size_t value)
+{
+    auto p = std::exp(-mean);
+    for(size_t i = 1; i <= value; ++i)
+    {
+        p *= (mean/i);
+    }
+
+    return p;
 }
 
 

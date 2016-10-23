@@ -48,6 +48,8 @@ bool files_are_identical(const std::string& file_name1, const std::string& file_
 
 void run_tests()
 {
+    bool tests_passed = true;
+
     // Castling with attacking piece
     for(auto castle_side : std::string("KQ"))
     {
@@ -82,7 +84,7 @@ void run_tests()
 
                 board.ascii_draw(WHITE);
                 std::cout << std::string(1, castle_side) + "-castle should be legal here." << std::endl;
-                throw Illegal_Move_Exception("test failed");
+                tests_passed = false;
             }
 
             if(castle_side == 'K')
@@ -102,7 +104,7 @@ void run_tests()
 
             board.ascii_draw(WHITE);
             std::cout << std::string(1, castle_side) + "-castle should be illegal here." << std::endl;
-            throw Illegal_Move_Exception("Test failed.");
+            tests_passed = false;
         }
     }
 
@@ -125,7 +127,7 @@ void run_tests()
 
     if( ! files_are_identical(file_name1, file_name2))
     {
-        throw std::runtime_error("Test failed!");
+        tests_passed = false;
     }
     remove(file_name1);
     remove(file_name2);
@@ -136,15 +138,25 @@ void run_tests()
     auto gene_pool_expected_file_name = "testing/gene_pool_42.txt";
     auto gene_pool_result_file_name = "testing/gene_pool_result.txt";
     int id = 42;
-    auto gai42 = Genetic_AI(gene_pool_file_name, id);
-    remove(gene_pool_result_file_name);
-    gai42.print_genome(gene_pool_result_file_name);
-
-    if( ! files_are_identical(gene_pool_result_file_name, gene_pool_expected_file_name))
+    try
     {
-        throw std::runtime_error("Test failed!");
+        auto gai42 = Genetic_AI(gene_pool_file_name, id);
+        remove(gene_pool_result_file_name);
+        gai42.print_genome(gene_pool_result_file_name);
+
+        if( ! files_are_identical(gene_pool_result_file_name, gene_pool_expected_file_name))
+        {
+            std::cerr << "Genome loaded from gene pool file not preserved." << std::endl;
+            tests_passed = false;
+        }
+        remove(gene_pool_result_file_name);
     }
-    remove(gene_pool_result_file_name);
+    catch(const std::runtime_error& e)
+    {
+        std::cerr << "Error reading " << gene_pool_file_name << std::endl;
+        std::cerr << e.what() << std::endl;
+        tests_passed = false;
+    }
 
     // String utilities
     std::string original = "   a    #     b";
@@ -153,11 +165,34 @@ void run_tests()
     if(expected != result)
     {
         std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
-        throw std::runtime_error("Test failed!");
+        tests_passed = false;
     }
 
 
-    std::cout << "All tests passed." << std::endl;
+    // Poisson distribution check
+    std::ofstream ofs("poisson.txt");
+    double mean = 5.0;
+    for(int v = 0; v <= 3*mean; ++v)
+    {
+        ofs << v << '\t' << Math::poisson_probability(mean, v) << std::endl;
+    }
+
+    std::ofstream ofs2("game_moves.txt");
+    double avg_moves_per_game = 40;
+    for(int m = 0; m <= 3*avg_moves_per_game; ++m)
+    {
+        ofs2 << m << '\t' << Math::average_moves_left(avg_moves_per_game, m) << std::endl;
+    }
+
+
+    if(tests_passed)
+    {
+        std::cout << "All tests passed." << std::endl;
+    }
+    else
+    {
+        std::cout << "Tests failed." << std::endl;
+    }
 }
 #else
 void run_tests() {}

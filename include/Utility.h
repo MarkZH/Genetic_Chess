@@ -33,6 +33,12 @@ namespace Random
     bool success_probability(double probability);
 }
 
+namespace Math
+{
+    double average_moves_left(double mean_moves, size_t moves_so_far);
+    double poisson_probability(double mean, size_t value);
+}
+
 class Configuration_File
 {
     public:

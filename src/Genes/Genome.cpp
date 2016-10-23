@@ -224,11 +224,11 @@ void Genome::print(std::ostream& os) const
     os << "\n";
 }
 
-size_t Genome::positions_to_examine(double time) const
+size_t Genome::positions_to_examine(const Board& board, const Clock& clock) const
 {
     if(look_ahead_gene_index < genome.size() && gene_active.at(genome[look_ahead_gene_index]->name()))
     {
-        return std::static_pointer_cast<Look_Ahead_Gene>(genome[look_ahead_gene_index])->positions_to_examine(time);
+        return std::static_pointer_cast<Look_Ahead_Gene>(genome[look_ahead_gene_index])->positions_to_examine(board, clock);
     }
     else
     {
