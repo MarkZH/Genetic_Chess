@@ -140,7 +140,7 @@ $(DEBUG_OBJ_DIR)/src/Moves/En_Passant.o : src/Moves/En_Passant.cpp include/Moves
 $(DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o : src/Moves/Kingside_Castle.cpp include/Moves/Kingside_Castle.h include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/Kingside_Castle.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o
 
-$(DEBUG_OBJ_DIR)/src/Moves/Move.o : src/Moves/Move.cpp include/Moves/Move.h include/Game/Board.h include/Pieces/Piece.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Moves/Move.o : src/Moves/Move.cpp include/Moves/Move.h include/Game/Board.h include/Pieces/Piece.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/Move.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Move.o
 
 $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o : src/Moves/Pawn_Capture.cpp include/Moves/Pawn_Capture.h include/Pieces/Piece.h include/Game/Board.h include/Utility.h
@@ -299,7 +299,7 @@ $(RELEASE_OBJ_DIR)/src/Moves/En_Passant.o : src/Moves/En_Passant.cpp include/Mov
 $(RELEASE_OBJ_DIR)/src/Moves/Kingside_Castle.o : src/Moves/Kingside_Castle.cpp include/Moves/Kingside_Castle.h include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/Kingside_Castle.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Kingside_Castle.o
 
-$(RELEASE_OBJ_DIR)/src/Moves/Move.o : src/Moves/Move.cpp include/Moves/Move.h include/Game/Board.h include/Pieces/Piece.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Moves/Move.o : src/Moves/Move.cpp include/Moves/Move.h include/Game/Board.h include/Pieces/Piece.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/Move.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Move.o
 
 $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Capture.o : src/Moves/Pawn_Capture.cpp include/Moves/Pawn_Capture.h include/Pieces/Piece.h include/Game/Board.h include/Utility.h
@@ -374,6 +374,6 @@ $(RELEASE_OBJ_DIR)/src/Testing.o : src/Testing.cpp include/Testing.h include/Gam
 $(RELEASE_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Utility.cpp -o $(RELEASE_OBJ_DIR)/src/Utility.o
 
-.PHONY : clean_debug clean_release before_release release after_debug all after_release clean debug before_debug
+.PHONY : release clean before_release before_debug after_release clean_debug after_debug debug all clean_release
 
 

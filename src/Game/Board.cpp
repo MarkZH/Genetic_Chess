@@ -212,6 +212,7 @@ bool Board::is_legal(char file_start, int rank_start, const std::shared_ptr<cons
     }
 
     // Check that there are no intervening pieces for straight-line moves
+    // if(...) conditional excludes checking knight moves
     if(move->file_change() == 0
             || move->rank_change() == 0
             || abs(move->file_change()) == abs(move->rank_change()))

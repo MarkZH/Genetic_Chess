@@ -3,10 +3,20 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Utility.h"
+#include "Exceptions/Illegal_Move_Exception.h"
 
 
 Move::Move(int d_file_in, int d_rank_in) : d_file(d_file_in), d_rank(d_rank_in)
 {
+    if(std::abs(d_file) >= 8 ||
+       std::abs(d_rank) >= 8 ||
+       (d_file == 0 && d_rank == 0))
+    {
+        throw Illegal_Move_Exception("Badly constructed move: " +
+                                     std::to_string(d_file) +
+                                     " - "
+                                     + std::to_string(d_rank));
+    }
 }
 
 Move::~Move()
@@ -19,7 +29,7 @@ void Move::side_effects(Board&, char /* file_start */, int /* rank_start */) con
 
 bool Move::is_legal(const Board& /* board */, char /* file_start */, int /* rank_start*/) const
 {
-    return d_rank != 0 || d_file != 0;
+    return true;
 }
 
 int Move::file_change() const
