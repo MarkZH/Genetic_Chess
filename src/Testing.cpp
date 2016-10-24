@@ -179,7 +179,7 @@ void run_tests()
 
     std::ofstream ofs2("game_moves.txt");
     double avg_moves_per_game = 40;
-    for(int m = 0; m <= 3*avg_moves_per_game; ++m)
+    for(int m = 0; m <= 5*avg_moves_per_game; ++m)
     {
         ofs2 << m << '\t' << Math::average_moves_left(avg_moves_per_game, m) << std::endl;
     }

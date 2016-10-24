@@ -132,15 +132,20 @@ bool Random::success_probability(double probability)
 double Math::average_moves_left(double mean_moves, size_t moves_so_far)
 {
     double A = 0;
+    double A_prev = -1;
     double B = 0;
-    for(size_t N = 0; N <= moves_so_far; ++N)
+    double B_prev = -1;
+    for(size_t N = moves_so_far + 1; A != A_prev && B != B_prev; ++N)
     {
+        A_prev = A;
+        B_prev = B;
+
         auto p = poisson_probability(mean_moves, N);
         A += p;
         B += N*p;
     }
 
-    return (mean_moves - B)/(1 - A) - moves_so_far;
+    return B/A - moves_so_far;
 }
 
 
