@@ -2,6 +2,48 @@
 
 import os, functools
 
+def make_sort(a, b):
+    if a == b:
+        return 0
+
+    # all target is first
+    if a == 'all':
+        return -1
+    if b == 'all':
+        return 1
+
+    # .PHONY is last
+    if a == '.PHONY':
+        return 1
+    if b == '.PHONY':
+        return -1
+
+    # include files are next to last
+    if a.startswith('include'):
+        if not b.startswith('include'):
+            return 1
+    elif b.startswith('include'):
+        return -1
+
+    # Blank lines go at end
+    if not a:
+        return 1
+    if not b:
+        return -1
+
+   # Sort cpp files before object files
+    if a[0] == '$':
+        if b[0] != '$':
+            return 1
+    elif b[0] == '$':
+        return -1
+
+    if a < b:
+        return -1
+    if a > b:
+        return 1
+
+
 program_name = 'genetic_chess'
 final_targets = ["release", "debug"]
 depends = dict()
@@ -35,7 +77,7 @@ for target in final_targets:
     operations['clean_' + target] = ["rm " + all_objects + " " + out_variable]
 
 depends['.PHONY'] = []
-for target in depends.keys():
+for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
     if target not in operations:
         operations[target] = []
     if target != '.PHONY' and not target.startswith('$'):
@@ -94,47 +136,6 @@ options_list = dict()
 options_list['debug'] = ["-g", "-DDEBUG"]
 options_list['release'] = ["-s", "-fexpensive-optimizations", "-O3"]
 
-def make_sort(a, b):
-    if a == b:
-        return 0
-
-    # all target is first
-    if a == 'all':
-        return -1
-    if b == 'all':
-        return 1
-
-    # .PHONY is last
-    if a == '.PHONY':
-        return 1
-    if b == '.PHONY':
-        return -1
-
-    # include files are next to last
-    if a.startswith('include'):
-        if not b.startswith('include'):
-            return 1
-    elif b.startswith('include'):
-        return -1
-
-    # Blank lines go at end
-    if not a:
-        return 1
-    if not b:
-        return -1
-
-   # Sort cpp files before object files
-    if a[0] == '$':
-        if b[0] != '$':
-            return 1
-    elif b[0] == '$':
-        return -1
-
-    if a < b:
-        return -1
-    if a > b:
-        return 1
-
 with open("Makefile", 'w') as make_file:
     # Variables
     make_file.write("CXX = " + compiler + "\n")
@@ -147,7 +148,7 @@ with open("Makefile", 'w') as make_file:
         make_file.write("OUT_" + target.upper() + " = " + bins[target] + '\n')
         make_file.write(target.upper() + '_OBJ_DIR = obj/' + target + '\n')
         make_file.write('OBJ_' + target.upper() + ' = ')
-        for obj in [x for x in sorted(depends.keys()) if x.endswith('.o') and target.upper() in x]:
+        for obj in [x for x in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)) if x.endswith('.o') and target.upper() in x]:
             make_file.write(obj + ' ')
         make_file.write('\n')
         make_file.write('CFLAGS_' + target.upper() + ' = ' + ' '.join(options_list[target]) + '\n')

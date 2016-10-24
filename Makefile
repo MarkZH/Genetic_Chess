@@ -374,6 +374,6 @@ $(RELEASE_OBJ_DIR)/src/Testing.o : src/Testing.cpp include/Testing.h include/Gam
 $(RELEASE_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Utility.cpp -o $(RELEASE_OBJ_DIR)/src/Utility.o
 
-.PHONY : all release clean_release after_debug before_release debug clean clean_debug before_debug after_release
+.PHONY : all after_debug after_release before_debug before_release clean clean_debug clean_release debug release
 
 
