@@ -142,7 +142,6 @@ void gene_pool(const std::string& config_file = "")
                   << "\nTime: " << int(game_time) << " sec"
                   << "   Gene pool file name: " << genome_file_name << "\n"
                   << std::setw(id_digits + 1)  << "ID"
-                  << std::setw(parent_width) << "Parents"
                   << std::setw(5)  << "W"
                   << std::setw(6)  << "D\n";
 
@@ -152,13 +151,7 @@ void gene_pool(const std::string& config_file = "")
             std::cout << std::setw(id_digits + 1) << ai.get_id();
             std::cout.unsetf(std::ios_base::floatfield);
             std::cout << std::setprecision(12);
-            std::ostringstream oss;
-            for(int id : ai.get_parents())
-            {
-                oss << " " << id;
-            }
-            std::cout << std::setw(parent_width) << oss.str()
-                      << std::setw(5)    << wins[ai.get_id()]
+            std::cout << std::setw(5)    << wins[ai.get_id()]
                       << std::setw(5)    << draws[ai.get_id()]
                       << (std::find(new_blood.begin(),
                                     new_blood.end(),

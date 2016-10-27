@@ -34,7 +34,6 @@ class Genetic_AI : public Player
         void print_genome(std::ostream& file) const;
 
         int get_id() const;
-        std::vector<int> get_parents() const;
 
         bool operator==(const Genetic_AI& other) const;
         bool operator!=(const Genetic_AI& other) const;
@@ -43,8 +42,8 @@ class Genetic_AI : public Player
         Genome genome;
         static int next_id;
         int id;
-        std::vector<int> parents;
-        std::set<int> ancestors;
+        mutable int maximum_recursion_depth;
+        mutable int current_recursion_depth;
 
         void read_from(std::istream& is);
 
