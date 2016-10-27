@@ -234,9 +234,18 @@ double Genetic_AI::evaluate_board(const Board& board,
         }
         catch(const Game_Ending_Exception& gee)
         {
-            return gee.winner() == perspective ?
-                                        std::numeric_limits<double>::max() :
-                                        std::numeric_limits<double>::lowest();
+            if(gee.winner() == perspective)
+            {
+                return std::numeric_limits<double>::max();
+            }
+            else if(gee.winner() == opposite(perspective))
+            {
+                return std::numeric_limits<double>::lowest();
+            }
+            else
+            {
+                return std::nexttoward(std::numeric_limits<double>::lowest(), 0);
+            }
         }
     }
 
