@@ -59,10 +59,10 @@ void gene_pool(const std::string& config_file = "")
     std::map<size_t, int> most_wins_id;
     std::map<size_t, int> most_games_survived;
     std::map<size_t, int> most_games_survived_id;
+    std::map<size_t, std::vector<int>> new_blood; // IDs of ex nihilo players
 
     std::map<int, int> wins; // ID --> win count
     std::map<int, int> draws; // ID --> draw count
-    std::vector<int> new_blood; // IDs of ex nihilo players
     std::map<int, size_t> original_pool; // ID --> original pool ID
 
     std::string genome_file_name = config.get_text("gene pool file");
@@ -129,12 +129,11 @@ void gene_pool(const std::string& config_file = "")
             max_id = std::max(max_id, ai.get_id());
         }
         int id_digits = std::floor(std::log10(max_id) + 1);
-        int parent_width = std::max(2*(id_digits + 1) + 1, 9);
 
         // Write overall stats
         std::cout << "\nGene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
-                  << "  New blood introduced: " << new_blood.size() << " (*)\n"
+                  << "  New blood introduced: " << new_blood[pool_index].size() << " (*)\n"
                   << "Games: " << game_count[pool_index]
                   << "  White wins: " << white_wins[pool_index]
                   << "  Black wins: " << black_wins[pool_index]
@@ -153,9 +152,9 @@ void gene_pool(const std::string& config_file = "")
             std::cout << std::setprecision(12);
             std::cout << std::setw(5)    << wins[ai.get_id()]
                       << std::setw(5)    << draws[ai.get_id()]
-                      << (std::find(new_blood.begin(),
-                                    new_blood.end(),
-                                    ai.get_id()) != new_blood.end() ? " *" : "")
+                      << (std::find(new_blood[pool_index].begin(),
+                                    new_blood[pool_index].end(),
+                                    ai.get_id()) != new_blood[pool_index].end() ? " *" : "")
                       << (original_pool[ai.get_id()] != pool_index ? " T" : "") << "\n";
         }
         std::cout << std::endl;
@@ -254,7 +253,7 @@ void gene_pool(const std::string& config_file = "")
                     std::cout << pool[pseudo_loser_index].get_id() << " dies / ";
                     std::cout << pool[pseudo_winner_index].get_id() << " mates with random";
                     pool[pseudo_loser_index] = Genetic_AI(pool[pseudo_winner_index], new_specimen);
-                    new_blood.push_back(pool[pseudo_loser_index].get_id());
+                    new_blood[pool_index].push_back(pool[pseudo_loser_index].get_id());
                     original_pool[pool[pseudo_loser_index].get_id()] = pool_index;
                 }
                 std::cout << std::endl;
