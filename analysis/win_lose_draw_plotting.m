@@ -5,7 +5,7 @@ graphics_toolkit("gnuplot");
 
 [filename, directory, ~] = uigetfile();
 raw_data = fullfile(directory, filename);
-python('win_lose_draw_plots.py', ['"' raw_data '"']);
+python('analysis/win_lose_draw_plots.py', ['"' raw_data '"']);
 
 data = importdata([raw_data, '_plots.txt'], '\t');
 

@@ -11,7 +11,7 @@ end
 
 disp('Parsing genes with python script ...');
 fflush(stdout); % Octave only; comment out for Matlab use
-python('gene_pool_analyze.py', gene_pool_filename);
+python('analysis/gene_pool_analyze.py', gene_pool_filename);
 filename = [gene_pool_filename '_parsed.txt'];
 disp('Importing parsed data ...');
 fflush(stdout); % Octave only; comment out for Matlab use
