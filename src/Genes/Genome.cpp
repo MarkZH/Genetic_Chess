@@ -15,7 +15,6 @@
 #include "Genes/Look_Ahead_Gene.h"
 #include "Genes/Last_Minute_Panic_Gene.h"
 #include "Genes/King_Confinement_Gene.h"
-#include "Genes/Branch_Pruning_Gene.h"
 #include "Genes/King_Protection_Gene.h"
 
 
@@ -35,9 +34,6 @@ Genome::Genome() :
 
     genome.emplace_back(new Last_Minute_Panic_Gene);
     last_minute_panic_gene_index = genome.size() - 1;
-
-    //genome.emplace_back(new Branch_Pruning_Gene);
-    //branch_pruning_gene_index = genome.size() - 1;
 
     // Normal genes
     if(piece_strength_gene_index < genome.size())
@@ -245,17 +241,5 @@ double Genome::time_required() const
     else
     {
         return 0;
-    }
-}
-
-double Genome::minimum_score_change() const
-{
-    if(branch_pruning_gene_index < genome.size() && gene_active.at(genome[branch_pruning_gene_index]->name()))
-    {
-        return std::static_pointer_cast<Branch_Pruning_Gene>(genome[branch_pruning_gene_index])->minimum_score_change();
-    }
-    else
-    {
-        return std::numeric_limits<double>::lowest();
     }
 }

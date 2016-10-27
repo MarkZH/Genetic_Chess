@@ -29,8 +29,6 @@ class Genome
 
         size_t positions_to_examine(const Board& board, const Clock& clock) const; // how many moves in future to evaluate board
         double time_required() const; // minimum time to continue analysis
-        double minimum_score_change() const; // if the change in the a board's score is less than
-                                             // this, stop looking ahead and abandon the move sequence
 
         void print(std::ostream& os) const;
 
