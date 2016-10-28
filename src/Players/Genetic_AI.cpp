@@ -22,22 +22,19 @@ int Genetic_AI::next_id = 0;
 
 Genetic_AI::Genetic_AI() :
     genome(),
-    id(next_id++),
-    maximum_recursion_depth(0)
+    id(next_id++)
 {
 }
 
 Genetic_AI::Genetic_AI(const Genetic_AI& other, bool is_clone) :
     genome(other.genome),
-    id(is_clone ? next_id++ : other.id),
-    maximum_recursion_depth(is_clone ? 0 : other.maximum_recursion_depth)
+    id(is_clone ? next_id++ : other.id)
 {
 }
 
 Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     genome(A.genome, B.genome),
-    id(next_id++),
-    maximum_recursion_depth(0)
+    id(next_id++)
 {
 }
 
@@ -45,17 +42,15 @@ Genetic_AI& Genetic_AI::operator=(Genetic_AI other)
 {
     genome = other.genome;
     id = other.id;
-    maximum_recursion_depth = other.maximum_recursion_depth;
 
     return *this;
 }
 
 Genetic_AI::~Genetic_AI()
 {
-    std::ofstream("AI_recursion_look_ahead.txt", std::ios::app) << get_id() << '\t' << maximum_recursion_depth << std::endl;
 }
 
-Genetic_AI::Genetic_AI(const std::string& file_name) : maximum_recursion_depth(0)
+Genetic_AI::Genetic_AI(const std::string& file_name)
 {
     std::ifstream ifs(file_name);
     if( ! ifs)
@@ -66,12 +61,12 @@ Genetic_AI::Genetic_AI(const std::string& file_name) : maximum_recursion_depth(0
     read_from(ifs);
 }
 
-Genetic_AI::Genetic_AI(std::istream& is) : maximum_recursion_depth(0)
+Genetic_AI::Genetic_AI(std::istream& is)
 {
     read_from(is);
 }
 
-Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in), maximum_recursion_depth(0)
+Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
 {
     std::ifstream ifs(file_name);
     if( ! ifs)
@@ -157,9 +152,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     if(positions_to_examine == -1)
     {
         positions_to_examine = genome.positions_to_examine(board, clock);
-        current_recursion_depth = -1;
     }
-    maximum_recursion_depth = std::max(++current_recursion_depth, maximum_recursion_depth);
     int positions_per_move = std::ceil(double(positions_to_examine)/legal_moves.size());
 
     for(const auto& move : legal_moves)

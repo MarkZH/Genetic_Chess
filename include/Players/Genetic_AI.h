@@ -42,8 +42,6 @@ class Genetic_AI : public Player
         Genome genome;
         static int next_id;
         int id;
-        mutable int maximum_recursion_depth;
-        mutable int current_recursion_depth;
 
         void read_from(std::istream& is);
 
