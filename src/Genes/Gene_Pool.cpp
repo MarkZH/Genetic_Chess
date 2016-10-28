@@ -358,14 +358,25 @@ void gene_pool(const std::string& config_file = "")
                     auto destination_pool_index = (source_pool_index + 1) % pools.size();
                     auto& destination_pool = pools[destination_pool_index];
 
-                    for(auto& ai : destination_pool)
+                    auto min_wins = 0;
+                    while(true)
                     {
-                        if(wins[ai.get_id()] + draws[ai.get_id()] == 0)
+                        bool replaced = false;
+                        for(auto& ai : destination_pool)
                         {
-                            ai = clone;
-                            std::cout << "Sending ID " << ai.get_id() << " to pool " << destination_pool_index << std::endl;
+                            if(wins[ai.get_id()] == min_wins)
+                            {
+                                ai = clone;
+                                std::cout << "Sending ID " << ai.get_id() << " to pool " << destination_pool_index << std::endl;
+                                replaced = true;
+                                break;
+                            }
+                        }
+                        if(replaced)
+                        {
                             break;
                         }
+                        ++min_wins;
                     }
                 }
             }
