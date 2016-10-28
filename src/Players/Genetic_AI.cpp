@@ -207,8 +207,7 @@ double Genetic_AI::evaluate_board(const Board& board,
     auto board_score = genome.evaluate(board, perspective);
     --positions_to_examine; // subtract one for examining this node of the game tree
 
-    if(positions_to_examine > 0
-       && clock.time_left(clock.running_for()) > std::max(genome.time_required(), 0.0))
+    if(positions_to_examine > 0 && clock.time_left(clock.running_for()) > genome.time_required())
     {
         try
         {
