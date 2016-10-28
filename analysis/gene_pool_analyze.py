@@ -14,7 +14,7 @@ def main(argv):
                     break
 
                 if ':' in line:
-                    parameter, value = line.split(':')
+                    parameter, value = line.split(':', 1)
                     if parameter == 'ID':
                         header_line.append(parameter)
                     elif parameter == 'Name':
@@ -37,7 +37,7 @@ def main(argv):
                     continue
 
                 if ':' in line:
-                    parameter, value = line.split(':')
+                    parameter, value = line.split(':', 1)
                     if parameter not in ['Name', 'Still Alive']:
                         data_line.append(value.strip())
                         parameter_count += 1

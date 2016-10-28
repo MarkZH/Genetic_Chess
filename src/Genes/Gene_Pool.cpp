@@ -25,8 +25,8 @@ typedef std::vector<Genetic_AI> Gene_Pool;
 
 static sig_atomic_t signal_activated = 0;
 void signal_handler(int);
-void write_generation(const Gene_Pool& pool, const std::string& genome_file_name);
-Gene_Pool load_gene_pool_file(const std::string& load_file);
+void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
+std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
 
 
 void gene_pool(const std::string& config_file = "")
@@ -76,19 +76,19 @@ void gene_pool(const std::string& config_file = "")
         genome_file_name += ".txt";
     }
 
-    std::vector<Gene_Pool> pools;
+    std::vector<Gene_Pool> pools = load_gene_pool_file(genome_file_name);
+    for(size_t i = 0; i < pools.size(); ++i)
+    {
+        write_generation(pools, i, ""); // mark AIs from file as already written
+        for(const auto& ai : pools[i])
+        {
+            original_pool[ai.get_id()] = i;
+        }
+    }
     while(pools.size() < gene_pool_count)
     {
         // create gene pool
-        if(pools.empty())
-        {
-            pools.push_back(load_gene_pool_file(genome_file_name));
-            write_generation(pools.front(), ""); // mark AIs from file as already written
-        }
-        else
-        {
-            pools.push_back({}); // empty gene pool
-        }
+        pools.push_back({}); // empty gene pool
 
         while(pools.back().size() < gene_pool_population)
         {
@@ -120,7 +120,7 @@ void gene_pool(const std::string& config_file = "")
     {
         static auto previous_mod = 0;
         auto& pool = pools[pool_index];
-        write_generation(pool, genome_file_name);
+        write_generation(pools, pool_index, genome_file_name);
 
         // widths of columns for stats printout
         auto max_id = pool.front().get_id();
@@ -387,7 +387,7 @@ void signal_handler(int)
     std::cout << std::endl << "Waiting for games to end ..." << std::endl;
 }
 
-void write_generation(const Gene_Pool& pool, const std::string& genome_file_name)
+void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
 {
     static std::map<int, bool> written_before;
     static std::string last_file_name;
@@ -399,6 +399,7 @@ void write_generation(const Gene_Pool& pool, const std::string& genome_file_name
         last_file_name = genome_file_name;
     }
 
+    auto pool = pools.at(pool_index);
     for(const auto& ai : pool)
     {
         int id = ai.get_id();
@@ -409,7 +410,7 @@ void write_generation(const Gene_Pool& pool, const std::string& genome_file_name
         }
     }
 
-    ofs << "\nStill Alive: ";
+    ofs << "\nStill Alive: " << pool_index << " : ";
     for(const auto& ai : pool)
     {
         ofs << ai.get_id() << " ";
@@ -417,29 +418,30 @@ void write_generation(const Gene_Pool& pool, const std::string& genome_file_name
     ofs << "\n\n";
 }
 
-Gene_Pool load_gene_pool_file(const std::string& load_file)
+std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
 {
-    Gene_Pool all_players;
-
     std::ifstream ifs(load_file);
     if( ! ifs)
     {
-        return all_players;
+        return std::vector<Gene_Pool>();
     }
 
-    std::string still_alive;
+    std::map<int, Genetic_AI> all_players;
+    std::map<int, std::string> still_alive;
     while(true)
     {
         try
         {
-            all_players.emplace_back(ifs);
+            auto player = Genetic_AI(ifs);
+            all_players[player.get_id()] = player;
         }
         catch(const std::runtime_error& ge)
         {
             std::string line = ge.what();
             if(String::contains(line, "Still Alive: "))
             {
-                still_alive = String::split(line, "Still Alive: ")[1];
+                auto parse = String::split(line, ":");
+                still_alive[std::stoi(parse[2])] = parse[3];
             }
             else
             {
@@ -452,22 +454,18 @@ Gene_Pool load_gene_pool_file(const std::string& load_file)
         }
     }
 
-    Gene_Pool result;
-    for(const auto& number_string : String::split(still_alive, " "))
+    std::vector<Gene_Pool> result(still_alive.size());
+    for(const auto& index_list : still_alive)
     {
-        if(number_string.empty())
+        for(const auto& number_string : String::split(index_list.second, " "))
         {
-            continue;
-        }
-
-        auto index = std::stoi(number_string);
-        for(const auto& player : all_players)
-        {
-            if(player.get_id() == index)
+            if(number_string.empty())
             {
-                result.push_back(player);
-                break;
+                continue;
             }
+
+            auto index = std::stoi(number_string);
+            result[index_list.first].push_back(all_players[index]);
         }
     }
 
