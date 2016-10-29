@@ -4,12 +4,14 @@ An amateur attempt at breeding a chess-playing AI.
 ## To compile
 `make`
 
-This will create executables in a newly created `bin/` directory.
+This will create release and debug executables in a newly created `bin/` directory.
+
+Other usual commands: `make debug`, `make release`, and `make clean`.
 
 ## To run
 
 `genetic_chess -genepool [file_name]`
-This will start up a gene pool with Genetic_AIs playing against each other--mating, killing, mutating--all that good Darwinian stuff. The optional file name parameter will cause the program to load a gene pool from a previous run. Every genome will be written to a file.
+This will start up a gene pool with Genetic_AIs playing against each other--mating, killing, mutating--all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. Every genome and game played will be written to a files.
 
 `genetic_chess (-human|-genetic|-random) (-human|-genetic|-random)`
 Starts a local game played in the terminal with an ASCII art board. The first parameter is the white player, the second is black.
@@ -17,7 +19,7 @@ Starts a local game played in the terminal with an ASCII art board. The first pa
  - `-genetic` - a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID.
  - `-random`  - an AI player that chooses moves randomly from all legal moves.
 
-A barely functional implementation of the [Chess Engine Communication Protocol](https://www.gnu.org/software/xboard/engine-intf.html) allows for play through xboard and similar programs (PyChess, etc.). When used this way, arguments are ignored.
+A barely functional implementation of the [Chess Engine Communication Protocol](https://www.gnu.org/software/xboard/engine-intf.html) allows for play through xboard and similar programs (PyChess, etc.). When used this way, arguments are ignored. Future feature: specify a specific AI to use like -genetic or -random.
 
 
 ## Genes currently active in Genetic AI instances
@@ -30,6 +32,9 @@ Counts the number of legal moves available in the current position.
 
 #### King Confinement Gene
 Counts the king's legal moves.
+
+#### King Protection Gene
+Counts the squares that have access to the king by any valid piece movement that are unguarded by that king's other pieces.
 
 #### Opponent Pieces Targeted Gene
 Sums the total strength (as determined by the Piece Strength Gene below) of
@@ -47,12 +52,7 @@ Sums the strength (according to the Piece Strength Gene) of all the player's
 pieces on the board.
 
 
-
 ### Regulatory Genes
-
-#### Branch Pruning Gene
-Specifies when to cut off analyzing a line of moves based on whether the
-current board evaluation is too low compared to the real board state.
 
 #### Last Minute Panic Gene
 If the time left in the game is less than the amount specified here, then
@@ -62,7 +62,7 @@ look-ahead on all lines is cut off.
 Determines how many positions to examine based on the time left. When looking
 ahead to future moves, the number of positions to examine is divided equally
 amongst every legal move. This naturally limits the depth of search while
-allowing deeper searches for positions with fewer legal moves.
+allowing deeper searches for positions with fewer legal moves. The amount of time to use in examing moves is determined by genetic factors indicating an average number of moves per game and the number of positions than can be examined per second. The distribution of moves per game is modeled with a Poisson distribution.
 
 #### Piece Strength Gene
 Specifies the importance or strength of each differet type of chess piece.
