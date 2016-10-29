@@ -141,15 +141,13 @@ void gene_pool(const std::string& config_file = "")
                   << "\nTime: " << int(game_time) << " sec"
                   << "   Gene pool file name: " << genome_file_name << "\n"
                   << std::setw(id_digits + 1)  << "ID"
-                  << std::setw(5)  << "W"
-                  << std::setw(6)  << "D\n";
+                  << std::setw(5)  << "Wins"
+                  << std::setw(6)  << "Draws\n";
 
         // Write stats for each specimen
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_digits + 1) << ai.get_id();
-            std::cout.unsetf(std::ios_base::floatfield);
-            std::cout << std::setprecision(12);
             std::cout << std::setw(5)    << wins[ai.get_id()]
                       << std::setw(5)    << draws[ai.get_id()]
                       << (std::find(new_blood[pool_index].begin(),
@@ -349,7 +347,7 @@ void gene_pool(const std::string& config_file = "")
                     winning_indices.push_back(best_index);
                 }
 
-                // Replace player with 0 wins in each pool with clone of winner from pool to left
+                // Replace player with least wins in each pool with clone of winner from pool to left
                 std::cout << std::endl;
                 for(size_t source_pool_index = 0; source_pool_index < pools.size(); ++source_pool_index)
                 {
@@ -359,9 +357,9 @@ void gene_pool(const std::string& config_file = "")
                     auto& destination_pool = pools[destination_pool_index];
 
                     auto min_wins = 0;
-                    while(true)
+                    bool replaced = false;
+                    while( ! replaced)
                     {
-                        bool replaced = false;
                         for(auto& ai : destination_pool)
                         {
                             if(wins[ai.get_id()] == min_wins)
@@ -371,10 +369,6 @@ void gene_pool(const std::string& config_file = "")
                                 replaced = true;
                                 break;
                             }
-                        }
-                        if(replaced)
-                        {
-                            break;
                         }
                         ++min_wins;
                     }

@@ -455,15 +455,14 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
         else
         {
             game_record.back().append("\t1/2-1/2");
-            throw Stalemate_Exception(color_text(whose_turn()) +
-                                      " has no legal moves but is not in check. Game is stalemated.");
+            throw Stalemate_Exception("Stalemate");
         }
     }
 
     if(++repeat_count[board_status()] >= 3)
     {
         game_record.back().append("\t1/2-1/2");
-        throw Stalemate_Exception("Threefold repitition");
+        throw Stalemate_Exception("Threefold repetition");
     }
 
     int fifty_move_count = 0;
