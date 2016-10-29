@@ -40,6 +40,7 @@ checkmates = zeros(size(game));
 fifty_moves = zeros(size(game));
 threefold = zeros(size(game));
 time_out = zeros(size(game));
+no_legal = zeros(size(game));
 for index = 1 : length(game)
   if result_type(index) == 0
     checkmates(index) = 1;
@@ -49,6 +50,8 @@ for index = 1 : length(game)
     threefold(index) = 1;
   elseif result_type(index) == 3
     time_out(index) = 1;
+  elseif result_type(index) == 4
+    no_legal(index) = 1;
   else
     disp(['Unknown result type' num2str(result_type(index))]);
   end
@@ -62,10 +65,12 @@ plot(game, cumsum(checkmates), ...
      game, cumsum(fifty_moves), ...
    'LineWidth', 3,
      game, cumsum(threefold), ...
+   'LineWidth', 3, ...
+     game, cumsum(no_legal), ...
    'LineWidth', 3);
 xlabel('Game number');
 ylabel('Count');
-legend('Checkmate', 'Time', '50-move', '3-fold', ...
+legend('Checkmate', 'Time', '50-move', '3-fold', 'No legal move', ...
        'location', 'northwest');
 title('Type of endgame counts');
 print([raw_data '_game_result_type_frequencies.png']);

@@ -19,6 +19,7 @@ def main(files):
             #   1 = 50-move
             #   2 = 3-fold repitition
             #   3 = Time forfeit
+            #   4 = No legal moves
             for line in f:
                 if line.startswith('[Result'):
                     game += 1
@@ -33,12 +34,14 @@ def main(files):
                         result_type = 0
                 if line.startswith('[Termination'):
                     result_text = line.split('"')[1]
-                    if result_text.lower() == 'threefold repitition':
+                    if result_text.lower() in ['threefold repitition', 'threefold repetition']:
                         result_type = 2
                     elif result_text.lower() == '50-move limit':
                         result_type = 1
                     elif result_text.lower() == 'time forfeiture':
                         result_type = 3
+                    else:
+                        result_type = 4
 
                 if 'Initial time' in line:
                     time = int(line.split(':')[1].strip())
