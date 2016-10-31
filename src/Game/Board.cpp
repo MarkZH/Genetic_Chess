@@ -440,7 +440,7 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
     {
         if(king_is_in_check(whose_turn()))
         {
-            game_record.back().append("+");
+            game_record.back().back() = '#';
             set_winner(opposite(whose_turn()));
             if(get_winner() == WHITE)
             {
