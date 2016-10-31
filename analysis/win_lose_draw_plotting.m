@@ -1,11 +1,18 @@
 clear;
 close all;
 
-graphics_toolkit("gnuplot");
+isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
+
+if isOctave
+  graphics_toolkit("gnuplot");
+end
 
 [filename, directory, ~] = uigetfile();
 raw_data = fullfile(directory, filename);
-python('analysis/win_lose_draw_plots.py', ['"' raw_data '"']);
+
+if isOctave
+  python('analysis/win_lose_draw_plots.py', ['"' raw_data '"']);
+end
 
 data = importdata([raw_data, '_plots.txt'], '\t');
 

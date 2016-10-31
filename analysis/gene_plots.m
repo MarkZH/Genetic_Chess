@@ -1,6 +1,11 @@
 clear;
 close all;
-graphics_toolkit("gnuplot");
+
+isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
+
+if isOctave
+  graphics_toolkit('gnuplot'); % Octave only
+end
 
 [filename, directory, ~] = uigetfile();
 gene_pool_filename = fullfile(directory, filename);
@@ -10,31 +15,44 @@ if length(gene_pool_filename) == 0
 end
 
 disp('Parsing genes with python script ...');
-fflush(stdout); % Octave only; comment out for Matlab use
-python('analysis/gene_pool_analyze.py', gene_pool_filename);
+
+if isOctave
+  fflush(stdout); % Octave only
+  python('analysis/gene_pool_analyze.py', gene_pool_filename);
+end
+
 filename = [gene_pool_filename '_parsed.txt'];
 disp('Importing parsed data ...');
-fflush(stdout); % Octave only; comment out for Matlab use
+if isOctave
+  fflush(stdout); % Octave only
+end
+
 data = importdata(filename, ',');
 id_list = data.data(:, 1);
 
 disp('Plotting ...');
-fflush(stdout); % Octave only; comment out for Matlab use
-xaxis = data.colheaders(1){1};
 
-piece_strength_prefix = "Piece Strength Gene";
+if isOctave
+  fflush(stdout); % Octave only; comment out for Matlab use
+end
+
+xaxis_list = data.colheaders(1);
+xaxis = xaxis_list{1};
+
+piece_strength_prefix = 'Piece Strength Gene';
 piece_strength_figure = figure('Position', [0, 0, 1200, 1000]);
 piece_strength_legend_entries = {};
 title('Piece Strength Evolution', 'FontSize', 22);
 
 scalar_figure = figure('Position', [0, 0, 1200, 1000]);
-scalar_suffix = "Scalar";
+scalar_suffix = 'Scalar';
 scalar_legend_entries = {};
 title('Gene Scalar Evolution', 'FontSize', 22);
 
 for yi = 2 : length(data.colheaders)
   this_data = data.data(:, yi);
-  name = data.colheaders(yi){1};
+  name_list = data.colheaders(yi);
+  name = name_list{1};
 
   figure('Position', [0, 0, 1200, 1000]);
   scatter(id_list, this_data);
