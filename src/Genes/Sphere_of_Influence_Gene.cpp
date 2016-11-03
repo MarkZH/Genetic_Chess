@@ -87,5 +87,5 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
 void Sphere_of_Influence_Gene::mutate()
 {
     Gene::mutate();
-    legal_bonus += Random::random_normal(1.0);
+    legal_bonus = std::max(legal_bonus + Random::random_normal(1.0), 0.0);
 }
