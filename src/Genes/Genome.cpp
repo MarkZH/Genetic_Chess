@@ -13,7 +13,6 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 #include "Genes/Sphere_of_Influence_Gene.h"
 #include "Genes/Look_Ahead_Gene.h"
-#include "Genes/Last_Minute_Panic_Gene.h"
 #include "Genes/King_Confinement_Gene.h"
 #include "Genes/King_Protection_Gene.h"
 
@@ -21,9 +20,7 @@
 // Creation ex nihilo
 Genome::Genome() :
     piece_strength_gene_index(-1),
-    look_ahead_gene_index(-1),
-    last_minute_panic_gene_index(-1),
-    branch_pruning_gene_index(-1)
+    look_ahead_gene_index(-1)
 {
     // Regulator genes
     genome.emplace_back(new Piece_Strength_Gene);
@@ -31,9 +28,6 @@ Genome::Genome() :
 
     genome.emplace_back(new Look_Ahead_Gene);
     look_ahead_gene_index = genome.size() - 1;
-
-    genome.emplace_back(new Last_Minute_Panic_Gene);
-    last_minute_panic_gene_index = genome.size() - 1;
 
     // Normal genes
     if(piece_strength_gene_index < genome.size())
@@ -61,9 +55,7 @@ Genome::Genome(const Genome& other) :
     genome(),
     gene_active(other.gene_active),
     piece_strength_gene_index(other.piece_strength_gene_index),
-    look_ahead_gene_index(other.look_ahead_gene_index),
-    last_minute_panic_gene_index(other.last_minute_panic_gene_index),
-    branch_pruning_gene_index(other.branch_pruning_gene_index)
+    look_ahead_gene_index(other.look_ahead_gene_index)
 {
     // Copy all other genes
     for(const auto& gene : other.genome)
@@ -95,8 +87,6 @@ Genome& Genome::operator=(const Genome& other)
 {
     piece_strength_gene_index = other.piece_strength_gene_index;
     look_ahead_gene_index = other.look_ahead_gene_index;
-    last_minute_panic_gene_index = other.last_minute_panic_gene_index;
-    branch_pruning_gene_index = other.branch_pruning_gene_index;
 
     genome.clear();
     for(const auto& gene : other.genome)
@@ -114,9 +104,7 @@ Genome& Genome::operator=(const Genome& other)
 Genome::Genome(const Genome& A, const Genome& B) :
     genome(),
     piece_strength_gene_index(A.piece_strength_gene_index),
-    look_ahead_gene_index(A.look_ahead_gene_index),
-    last_minute_panic_gene_index(A.last_minute_panic_gene_index),
-    branch_pruning_gene_index(A.branch_pruning_gene_index)
+    look_ahead_gene_index(A.look_ahead_gene_index)
 {
     // Copy all other genes
     for(size_t i = 0; i < A.genome.size(); ++i)
@@ -225,18 +213,6 @@ size_t Genome::positions_to_examine(const Board& board, const Clock& clock) cons
     if(look_ahead_gene_index < genome.size() && gene_active.at(genome[look_ahead_gene_index]->name()))
     {
         return std::static_pointer_cast<Look_Ahead_Gene>(genome[look_ahead_gene_index])->positions_to_examine(board, clock);
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-double Genome::time_required() const
-{
-    if(last_minute_panic_gene_index < genome.size() && gene_active.at(genome[last_minute_panic_gene_index]->name()))
-    {
-        return std::static_pointer_cast<Last_Minute_Panic_Gene>(genome[last_minute_panic_gene_index])->time_required();
     }
     else
     {

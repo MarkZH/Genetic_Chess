@@ -28,7 +28,6 @@ class Genome
         void mutate();
 
         size_t positions_to_examine(const Board& board, const Clock& clock) const; // how many moves in future to evaluate board
-        double time_required() const; // minimum time to continue analysis
 
         void print(std::ostream& os) const;
 
@@ -39,8 +38,6 @@ class Genome
         // Regulatory gene locations
         size_t piece_strength_gene_index;
         size_t look_ahead_gene_index;
-        size_t last_minute_panic_gene_index;
-        size_t branch_pruning_gene_index;
 
         double score_board(const Board& board, Color perspective) const;
         void reseat_piece_strength_gene();

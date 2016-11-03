@@ -101,7 +101,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/Gene.o : src/Genes/Gene.cpp include/Genes/Gene.h incl
 $(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o : src/Genes/Gene_Pool.cpp include/Genes/Gene_Pool.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Game/Game.h include/Game/Board.h include/Exceptions/End_Of_File_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Gene_Pool.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/Genome.o : src/Genes/Genome.cpp include/Genes/Genome.h include/Game/Color.h include/Utility.h include/Genes/Gene.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/Last_Minute_Panic_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h
+$(DEBUG_OBJ_DIR)/src/Genes/Genome.o : src/Genes/Genome.cpp include/Genes/Genome.h include/Game/Color.h include/Utility.h include/Genes/Gene.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Genome.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Genome.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : src/Genes/King_Confinement_Gene.cpp include/Genes/King_Confinement_Gene.h include/Game/Board.h include/Game/Color.h include/Pieces/Piece.h
@@ -257,7 +257,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/Gene.o : src/Genes/Gene.cpp include/Genes/Gene.h in
 $(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o : src/Genes/Gene_Pool.cpp include/Genes/Gene_Pool.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Game/Game.h include/Game/Board.h include/Exceptions/End_Of_File_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Gene_Pool.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/Genome.o : src/Genes/Genome.cpp include/Genes/Genome.h include/Game/Color.h include/Utility.h include/Genes/Gene.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/Last_Minute_Panic_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h
+$(RELEASE_OBJ_DIR)/src/Genes/Genome.o : src/Genes/Genome.cpp include/Genes/Genome.h include/Game/Color.h include/Utility.h include/Genes/Gene.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Genome.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Genome.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : src/Genes/King_Confinement_Gene.cpp include/Genes/King_Confinement_Gene.h include/Game/Board.h include/Game/Color.h include/Pieces/Piece.h

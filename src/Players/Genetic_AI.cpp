@@ -157,7 +157,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
     for(const auto& move : legal_moves)
     {
-        if(clock.time_left(clock.running_for()) < std::min(0.0, genome.time_required()))
+        if(clock.time_left(clock.running_for()) < 0)
         {
             break;
         }
@@ -207,7 +207,7 @@ double Genetic_AI::evaluate_board(const Board& board,
     auto board_score = genome.evaluate(board, perspective);
     --positions_to_examine; // subtract one for examining this node of the game tree
 
-    if(positions_to_examine > 0 && clock.time_left(clock.running_for()) > genome.time_required())
+    if(positions_to_examine > 0 && clock.time_left(clock.running_for()) > 0)
     {
         try
         {
