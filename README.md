@@ -54,15 +54,15 @@ pieces on the board.
 
 ### Regulatory Genes
 
-#### Last Minute Panic Gene
-If the time left in the game is less than the amount specified here, then
-look-ahead on all lines is cut off.
-
 #### Look Ahead Gene
 Determines how many positions to examine based on the time left. When looking
 ahead to future moves, the number of positions to examine is divided equally
 amongst every legal move. This naturally limits the depth of search while
-allowing deeper searches for positions with fewer legal moves. The amount of time to use in examing moves is determined by genetic factors indicating an average number of moves per game and the number of positions than can be examined per second. The distribution of moves per game is modeled with a Poisson distribution.
+allowing deeper searches for positions with fewer legal moves. The amount of
+time to use in examing moves is determined by genetic factors indicating an
+average number of moves per game and the number of positions than can be
+examined per second. The distribution of moves per game is modeled with a
+Poisson distribution.
 
 #### Piece Strength Gene
 Specifies the importance or strength of each differet type of chess piece.
