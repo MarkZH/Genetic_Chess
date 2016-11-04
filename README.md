@@ -11,7 +11,7 @@ Other usual commands: `make debug`, `make release`, and `make clean`.
 ## To run
 
 `genetic_chess -genepool [file_name]`
-This will start up a gene pool with Genetic_AIs playing against each other--mating, killing, mutating--all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. Every genome and game played will be written to a files.
+This will start up a gene pool with Genetic_AIs playing against each other--mating, killing, mutating--all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
 
 `genetic_chess (-human|-genetic|-random) (-human|-genetic|-random)`
 Starts a local game played in the terminal with an ASCII art board. The first parameter is the white player, the second is black.
