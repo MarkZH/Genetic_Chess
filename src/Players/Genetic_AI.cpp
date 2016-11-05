@@ -159,7 +159,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
 Board Genetic_AI::get_final_board_state(const Board& board, const Complete_Move& next_move, double positions_to_examine, const Clock& clock) const
 {
-    auto next_board = board.make_hypothetical();
+    auto next_board = board;
     try
     {
         next_board.submit_move(next_move);
@@ -194,6 +194,7 @@ Board Genetic_AI::get_final_board_state(const Board& board, const Complete_Move&
         }
         if(score >= best_score)
         {
+            best_score = score;
             best_board = last_board;
         }
     }
