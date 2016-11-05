@@ -19,7 +19,7 @@ class Look_Ahead_Gene : public Gene
 
         std::string name() const override;
 
-        size_t positions_to_examine(const Board& board, const Clock& clock) const;
+        double positions_to_examine(const Board& board, const Clock& clock) const;
 
     private:
         void reset_properties() const override;

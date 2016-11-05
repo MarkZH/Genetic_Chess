@@ -69,6 +69,8 @@ class Board
         bool piece_has_moved(const std::shared_ptr<const Piece>& piece) const;
         std::pair<char, int> find_king(Color color) const;
 
+        bool game_has_ended() const;
+
     private:
         std::vector<std::shared_ptr<const Piece>> board;
         std::map<std::string, int> repeat_count;

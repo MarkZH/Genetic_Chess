@@ -895,3 +895,8 @@ std::pair<char, int> Board::find_king(Color color) const
 
     return std::make_pair(king_file, king_rank);
 }
+
+bool Board::game_has_ended() const
+{
+    return no_legal_moves();
+}

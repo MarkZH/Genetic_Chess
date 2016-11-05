@@ -2,6 +2,7 @@
 
 #include <limits>
 
+#include "Game/Board.h"
 #include "Game/Color.h"
 #include "Utility.h"
 
@@ -175,6 +176,21 @@ double Genome::score_board(const Board& board, Color perspective) const
 
 double Genome::evaluate(const Board& board, Color perspective) const
 {
+    if(board.game_has_ended())
+    {
+        if(board.get_winner() == perspective) // checkmate win
+        {
+            return std::numeric_limits<double>::infinity();
+        }
+        else if(board.get_winner() == opposite(perspective)) // checkmate loss
+        {
+            return -std::numeric_limits<double>::infinity();
+        }
+        else // stalemate
+        {
+            return std::numeric_limits<double>::lowest();
+        }
+    }
     return score_board(board, perspective) - score_board(board, opposite(perspective));
 }
 
@@ -208,7 +224,7 @@ void Genome::print(std::ostream& os) const
     os << "\n";
 }
 
-size_t Genome::positions_to_examine(const Board& board, const Clock& clock) const
+double Genome::positions_to_examine(const Board& board, const Clock& clock) const
 {
     if(look_ahead_gene_index < genome.size() && gene_active.at(genome[look_ahead_gene_index]->name()))
     {

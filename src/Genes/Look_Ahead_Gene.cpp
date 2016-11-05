@@ -30,7 +30,7 @@ Look_Ahead_Gene::~Look_Ahead_Gene()
 {
 }
 
-size_t Look_Ahead_Gene::positions_to_examine(const Board& board, const Clock& clock) const
+double Look_Ahead_Gene::positions_to_examine(const Board& board, const Clock& clock) const
 {
     auto time_left = clock.time_left(board.whose_turn());
     auto moves_so_far = board.get_game_record().size()/2; // only count moves by this player

@@ -42,15 +42,10 @@ class Genetic_AI : public Player
 
         void read_from(std::istream& is);
 
-        double evaluate_board(const Board& board,
-                              const Clock& clock,
-                              Color perspective,
-                              int positions_to_examine,
-                              double original_board_score) const;
-
-        const Complete_Move choose_move(const Board& board,
-                                        const Clock& clock,
-                                        int positions_to_examine) const;
+        Board get_final_board_state(const Board& board,
+                                    const Complete_Move& next_move,
+                                    double positions_to_examine,
+                                    const Clock& clock) const;
 };
 
 #endif // GENETIC_AI_H
