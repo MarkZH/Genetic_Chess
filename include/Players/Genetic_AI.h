@@ -35,9 +35,6 @@ class Genetic_AI : public Player
 
         int get_id() const;
 
-        bool operator==(const Genetic_AI& other) const;
-        bool operator!=(const Genetic_AI& other) const;
-
     private:
         Genome genome;
         static int next_id;
