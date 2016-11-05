@@ -37,6 +37,9 @@ int main(int argc, char *argv[])
                 std::unique_ptr<Player> black;
                 std::unique_ptr<Player> latest;
 
+                double game_time = 0;
+                double moves_per_reset = 0;
+
                 for(int i = 1; i < argc; ++i)
                 {
                     std::string opt = argv[i];
@@ -97,19 +100,31 @@ int main(int argc, char *argv[])
 
                         latest.reset(genetic_ptr);
                     }
+                    else if(opt == "-time")
+                    {
+                        game_time = std::stod(argv[++i]);
+                    }
+                    else if(opt == "-reset_moves")
+                    {
+                        moves_per_reset = std::stod(argv[++i]);
+                    }
                     else
                     {
                         throw std::runtime_error("Invalid player option: " + opt);
                     }
 
-                    if(white)
+                    if(latest)
                     {
-                        black = std::move(latest);
-                        break;
-                    }
-                    else
-                    {
-                        white = std::move(latest);
+                        if( ! white)
+                        {
+                            white = std::move(latest);
+                            continue;
+                        }
+                        if( ! black)
+                        {
+                            black = std::move(latest);
+                            continue;
+                        }
                     }
                 }
 
@@ -118,7 +133,7 @@ int main(int argc, char *argv[])
                     std::cerr << "Choose two players.\n";
                     return 1;
                 }
-                play_game(*white, *black, 0, 0, "game.pgn");
+                play_game(*white, *black, game_time, moves_per_reset, "game.pgn");
             }
         }
         else
