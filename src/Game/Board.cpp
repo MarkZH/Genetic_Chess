@@ -767,14 +767,7 @@ void Board::set_winner(Color color)
 
 std::string Board::last_move() const
 {
-    if(game_record.size() > 0)
-    {
-        return game_record.back();
-    }
-    else
-    {
-        return "";
-    }
+    return game_record.empty() ? std::string() : game_record.back();
 }
 
 Board Board::make_hypothetical() const
