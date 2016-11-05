@@ -17,13 +17,11 @@ class Genetic_AI : public Player
 {
     public:
         Genetic_AI();
-        Genetic_AI(const Genetic_AI& other, bool is_clone = false);
         explicit Genetic_AI(const std::string& file_name); // read genome from file
         Genetic_AI(const std::string& file_name, int id); // read genome from gene pool file with ID
         explicit Genetic_AI(std::istream& is); // read genome from file
         explicit Genetic_AI(const Genetic_AI& gai_mother,
                             const Genetic_AI& gai_father); // offspring with random recombination of genes
-		Genetic_AI& operator=(Genetic_AI other);
         virtual ~Genetic_AI() override;
 
         void mutate();

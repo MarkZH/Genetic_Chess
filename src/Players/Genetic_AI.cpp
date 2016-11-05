@@ -26,24 +26,10 @@ Genetic_AI::Genetic_AI() :
 {
 }
 
-Genetic_AI::Genetic_AI(const Genetic_AI& other, bool is_clone) :
-    genome(other.genome),
-    id(is_clone ? next_id++ : other.id)
-{
-}
-
 Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     genome(A.genome, B.genome),
     id(next_id++)
 {
-}
-
-Genetic_AI& Genetic_AI::operator=(Genetic_AI other)
-{
-    genome = other.genome;
-    id = other.id;
-
-    return *this;
 }
 
 Genetic_AI::~Genetic_AI()
