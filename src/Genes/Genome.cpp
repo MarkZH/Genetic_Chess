@@ -178,19 +178,20 @@ double Genome::evaluate(const Board& board, Color perspective) const
 {
     if(board.game_has_ended())
     {
-        if(board.get_winner() == perspective) // checkmate win
-        {
-            return std::numeric_limits<double>::infinity();
-        }
-        else if(board.get_winner() == opposite(perspective)) // checkmate loss
-        {
-            return -std::numeric_limits<double>::infinity();
-        }
-        else // stalemate
+        if(board.get_winner() == NONE) // stalemate
         {
             return std::numeric_limits<double>::lowest();
         }
+        else if(board.get_winner() == perspective) // checkmate win
+        {
+            return std::numeric_limits<double>::infinity();
+        }
+        else // checkmate loss
+        {
+            return -std::numeric_limits<double>::infinity();
+        }
     }
+
     return score_board(board, perspective) - score_board(board, opposite(perspective));
 }
 
