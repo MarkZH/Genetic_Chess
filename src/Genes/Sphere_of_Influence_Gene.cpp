@@ -1,5 +1,7 @@
 #include "Genes/Sphere_of_Influence_Gene.h"
 
+#include <algorithm>
+
 #include "Game/Board.h"
 #include "Moves/Move.h"
 

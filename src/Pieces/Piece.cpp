@@ -1,4 +1,7 @@
 #include "Pieces/Piece.h"
+
+#include <cctype>
+
 #include "Utility.h"
 #include "Game/Board.h"
 #include "Exceptions/Illegal_Move_Exception.h"
