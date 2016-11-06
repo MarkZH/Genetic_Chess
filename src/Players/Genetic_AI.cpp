@@ -186,7 +186,7 @@ Board Genetic_AI::get_final_board_state(const Board& board, const Complete_Move&
     for(const auto& move : legal_moves)
     {
         Board last_board = get_final_board_state(next_board, move, positions_per_move, clock);
-        double score = genome.evaluate(last_board, board.whose_turn());
+        double score = genome.evaluate(last_board, next_board.whose_turn());
 
         if(score == std::numeric_limits<double>::infinity()) // checkmate lies this way
         {
