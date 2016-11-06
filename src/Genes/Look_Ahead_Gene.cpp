@@ -10,7 +10,7 @@
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     Gene(0.0),
-    mean_game_length(0),
+    mean_game_length(1),
     positions_per_second(0)
 {
 }
@@ -42,7 +42,7 @@ double Look_Ahead_Gene::positions_to_examine(const Board& board, const Clock& cl
 
 void Look_Ahead_Gene::mutate()
 {
-    mean_game_length = std::max(0.0, mean_game_length + Random::random_normal(1.0));
+    mean_game_length = std::max(1.0, mean_game_length + Random::random_normal(1.0));
     positions_per_second = std::max(0.0, positions_per_second + Random::random_normal(10.0));
 }
 
