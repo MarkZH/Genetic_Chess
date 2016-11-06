@@ -892,5 +892,6 @@ std::pair<char, int> Board::find_king(Color color) const
 
 bool Board::game_has_ended() const
 {
-    return no_legal_moves();
+	// A tab character separates the last move from the results (1-0, 0-1, 1/2-1/2)
+    return String::contains(game_record.back(), '\t');
 }
