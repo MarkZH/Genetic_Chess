@@ -132,7 +132,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     double best_score = -std::numeric_limits<double>::infinity();
     auto best_move = legal_moves.front();
     auto positions_to_examine = genome.positions_to_examine(board, clock);
-    int positions_per_move = std::ceil(double(positions_to_examine)/legal_moves.size());
+    double positions_per_move = positions_to_examine/legal_moves.size();
     for(const auto& move : legal_moves)
     {
         if(clock.time_left(clock.running_for()) < 0)
