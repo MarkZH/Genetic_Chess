@@ -81,6 +81,7 @@ class Board
         std::map<std::shared_ptr<const Piece>, bool> piece_moved;
         char en_passant_target_file;
         int en_passant_target_rank;
+        bool game_ended;
 
         // Caches
         mutable std::vector<Complete_Move> all_moves_cache;

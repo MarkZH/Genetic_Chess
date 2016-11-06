@@ -28,7 +28,8 @@ Board::Board() :
     winner(NONE),
     is_original(true),
     en_passant_target_file('\0'),
-    en_passant_target_rank(0)
+    en_passant_target_rank(0),
+    game_ended(false)
 {
     Color color = WHITE;
     while(true)
@@ -64,7 +65,8 @@ Board::Board(const std::string& fen) :
     winner(NONE),
     is_original(true),
     en_passant_target_file('\0'),
-    en_passant_target_rank(0)
+    en_passant_target_rank(0),
+    game_ended(false)
 {
     auto fen_parse = String::split(fen);
     auto board_parse = String::split(fen_parse.at(0), "/");
@@ -451,11 +453,13 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
             {
                 game_record.back().append("\t0-1");
             }
+            game_ended = true;
             throw Checkmate_Exception(opposite(whose_turn()));
         }
         else
         {
             game_record.back().append("\t1/2-1/2");
+            game_ended = true;
             throw Stalemate_Exception("Stalemate");
         }
     }
@@ -463,6 +467,7 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
     if(++repeat_count[board_status()] >= 3)
     {
         game_record.back().append("\t1/2-1/2");
+        game_ended = true;
         throw Stalemate_Exception("Threefold repetition");
     }
 
@@ -474,6 +479,7 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
     if(fifty_move_count >= 100) // "Move" means both players move.
     {
         game_record.back().append("\t1/2-1/2");
+        game_ended = true;
         throw Stalemate_Exception("50-move limit");
     }
 }
@@ -892,6 +898,5 @@ std::pair<char, int> Board::find_king(Color color) const
 
 bool Board::game_has_ended() const
 {
-	// A tab character separates the last move from the results (1-0, 0-1, 1/2-1/2)
-    return String::contains(game_record.back(), '\t');
+    return game_ended;
 }
