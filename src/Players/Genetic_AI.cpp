@@ -157,27 +157,26 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     return best_move;
 }
 
-Board Genetic_AI::get_final_board_state(const Board& board, const Complete_Move& next_move, double positions_to_examine, const Clock& clock) const
+Board Genetic_AI::get_final_board_state(Board board, const Complete_Move& next_move, double positions_to_examine, const Clock& clock) const
 {
-    auto next_board = board;
     try
     {
-        next_board.submit_move(next_move);
+        board.submit_move(next_move);
     }
     catch(const Game_Ending_Exception&)
     {
-        return next_board; // game ended, no future moves
+        return board; // game ended, no future moves
     }
 
-    auto legal_moves = next_board.all_legal_moves();
+    auto legal_moves = board.all_legal_moves();
     if(legal_moves.size() == 1)
     {
-        return get_final_board_state(next_board, legal_moves.front(), positions_to_examine, clock); // only one move, no analysis of this state required
+        return get_final_board_state(board, legal_moves.front(), positions_to_examine, clock); // only one move, no analysis of this state required
     }
 
     if(positions_to_examine < 1 || clock.time_left(clock.running_for()) < 0.0)
     {
-        return next_board; // reached maximum look-ahead
+        return board; // reached maximum look-ahead
     }
 
     double best_score = -std::numeric_limits<double>::infinity();
@@ -185,8 +184,8 @@ Board Genetic_AI::get_final_board_state(const Board& board, const Complete_Move&
     auto positions_per_move = positions_to_examine/legal_moves.size();
     for(const auto& move : legal_moves)
     {
-        Board last_board = get_final_board_state(next_board, move, positions_per_move, clock);
-        double score = genome.evaluate(last_board, next_board.whose_turn());
+        Board last_board = get_final_board_state(board, move, positions_per_move, clock);
+        double score = genome.evaluate(last_board, board.whose_turn());
 
         if(score == std::numeric_limits<double>::infinity()) // checkmate lies this way
         {

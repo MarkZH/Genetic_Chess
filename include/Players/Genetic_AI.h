@@ -40,7 +40,7 @@ class Genetic_AI : public Player
 
         void read_from(std::istream& is);
 
-        Board get_final_board_state(const Board& board,
+        Board get_final_board_state(Board board,
                                     const Complete_Move& next_move,
                                     double positions_to_examine,
                                     const Clock& clock) const;
