@@ -68,6 +68,7 @@ class Board
         bool piece_has_moved(char file, int rank) const;
         bool piece_has_moved(const std::shared_ptr<const Piece>& piece) const;
         std::pair<char, int> find_king(Color color) const;
+        bool king_is_in_check(Color color) const;
 
         bool game_has_ended() const;
 
@@ -88,7 +89,6 @@ class Board
         mutable std::vector<Complete_Move> all_legal_moves_cache;
 
         void place_piece(const std::shared_ptr<const Piece>& p, char file, int rank);
-        bool king_is_in_check(Color color) const;
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
         bool no_legal_moves() const;
         void set_winner(Color color);

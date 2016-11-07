@@ -3,9 +3,11 @@
 #include "Genes/Piece_Strength_Gene.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
+#include "Utility.h"
 
 Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_gene) :
     Gene(0.0),
+    check_bonus(0.0),
     piece_strenth_source(piece_strength_gene)
 {
 }
@@ -17,11 +19,13 @@ Opponent_Pieces_Targeted_Gene::~Opponent_Pieces_Targeted_Gene()
 void Opponent_Pieces_Targeted_Gene::reset_properties() const
 {
     reset_base_properties();
+    properties["Check Bonus"] = check_bonus;
 }
 
 void Opponent_Pieces_Targeted_Gene::load_properties()
 {
     load_base_properties();
+    check_bonus = properties["Check Bonus"];
 }
 
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective) const
@@ -53,12 +57,18 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
         }
     }
 
-    return score;
+    return score + (board.king_is_in_check(opposite(perspective)) ? check_bonus : 0);
 }
 
 Opponent_Pieces_Targeted_Gene* Opponent_Pieces_Targeted_Gene::duplicate() const
 {
     return new Opponent_Pieces_Targeted_Gene(*this);
+}
+
+void Opponent_Pieces_Targeted_Gene::mutate()
+{
+    Gene::mutate();
+    check_bonus += Random::random_normal(1.0);
 }
 
 std::string Opponent_Pieces_Targeted_Gene::name() const
