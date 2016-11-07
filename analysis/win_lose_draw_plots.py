@@ -13,13 +13,16 @@ def main(files):
                                'White Wins', \
                                'Black Wins', \
                                'Draws', \
-                               'Time']) + '\n')
+                               'Time',
+                               'White Time Left',
+                               'Black Time Left']) + '\n')
             # result_type key:
             #   0 = Checkmate
             #   1 = 50-move
             #   2 = 3-fold repitition
             #   3 = Time forfeit
             #   4 = No legal moves
+            time_section = False
             for line in f:
                 if line.startswith('[Result'):
                     game += 1
@@ -32,7 +35,7 @@ def main(files):
                     else:
                         black_wins += 1
                         result_type = 0
-                if line.startswith('[Termination'):
+                elif line.startswith('[Termination'):
                     result_text = line.split('"')[1]
                     if result_text.lower() in ['threefold repitition', 'threefold repetition']:
                         result_type = 2
@@ -42,10 +45,16 @@ def main(files):
                         result_type = 3
                     else:
                         result_type = 4
-
-                if 'Initial time' in line:
+                elif 'Initial time' in line:
+                    time_section = True
                     time = int(line.split(':')[1].strip())
-                    w.write('\t'.join(str(x) for x in [game, white_wins, black_wins, draws, time, result_type]) + '\n')
+                elif time_section and 'White' in line:
+                    white_time_left = line.split()[-1]
+                elif time_section and 'Black' in line:
+                    black_time_left = line.split()[-1]
+                elif time_section and not line.strip():
+                    w.write('\t'.join(str(x) for x in [game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left]) + '\n')
+                    time_section = False
 
 if __name__ == '__main__':
     main(sys.argv[1:])

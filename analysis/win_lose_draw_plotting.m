@@ -20,8 +20,10 @@ game = data.data(:, 1);
 white_wins = data.data(:, 2);
 black_wins = data.data(:, 3);
 draws = data.data(:, 4);
-time_left = data.data(:, 5);
+game_time = data.data(:, 5);
 result_type = data.data(:, 6);
+white_time_left = data.data(:, 7);
+black_time_left = data.data(:, 8);
 
 
 figure('Position', [0, 0, 1200, 1000]);
@@ -81,3 +83,14 @@ legend('Checkmate', 'Time', '50-move', '3-fold', 'No legal move', ...
        'location', 'northwest');
 title('Type of endgame counts');
 print([raw_data '_game_result_type_frequencies.png']);
+
+figure('Position', [0, 0, 1200, 1000]);
+hold all;
+white_time_left(white_time_left < 0) = 0;
+black_time_left(black_time_left < 0) = 0;
+scatter(game, white_time_left);
+scatter(game, black_time_left);
+xlabel('Game number');
+ylabel('Time left on clock');
+title('Time left on clock at end of game')
+print([raw_data '_game_time_left.png']);
