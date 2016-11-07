@@ -1,6 +1,7 @@
 #include "Genes/Piece_Strength_Gene.h"
 
 #include <cmath>
+#include <limits>
 
 #include "Utility.h"
 #include "Pieces/Piece.h"
@@ -47,7 +48,7 @@ double Piece_Strength_Gene::piece_value(char symbol) const
 {
     if(symbol == 'K')
     {
-        return 0;
+        return 0.0;
     }
 
     return piece_strength.at(symbol)/normalizing_factor;
@@ -86,8 +87,8 @@ void Piece_Strength_Gene::renormalize()
                                   2*piece_strength['B'] +
                                     piece_strength['Q']);
 
-    if(normalizing_factor == 0)
+    if(normalizing_factor < std::numeric_limits<double>::epsilon())
     {
-        normalizing_factor = 1;
+        normalizing_factor = 1.0;
     }
 }
