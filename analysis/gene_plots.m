@@ -14,9 +14,8 @@ if length(gene_pool_filename) == 0
   return
 end
 
-disp('Parsing genes with python script ...');
-
 if isOctave
+  disp('Parsing genes with python script ...');
   fflush(stdout); % Octave only
   python('analysis/gene_pool_analyze.py', gene_pool_filename);
 end
