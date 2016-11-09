@@ -8,11 +8,10 @@ if isOctave
 end
 
 [filename, directory, ~] = uigetfile();
-gene_pool_filename = fullfile(directory, filename);
-
-if length(gene_pool_filename) == 0
+if filename == 0
   return
 end
+gene_pool_filename = fullfile(directory, filename);
 
 if isOctave
   disp('Parsing genes with python script ...');

@@ -8,6 +8,9 @@ if isOctave
 end
 
 [filename, directory, ~] = uigetfile();
+if filename == 0
+  return
+end
 raw_data = fullfile(directory, filename);
 
 if isOctave
