@@ -10,7 +10,7 @@
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     Gene(0.0),
-    mean_game_length(1),
+    mean_game_length(100),
     positions_per_second(0)
 {
 }
