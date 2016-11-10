@@ -27,6 +27,7 @@ game_time = data.data(:, 5);
 result_type = data.data(:, 6);
 white_time_left = data.data(:, 7);
 black_time_left = data.data(:, 8);
+moves_in_game = data.data(:, 9);
 
 
 figure('Position', [0, 0, 1200, 1000]);
@@ -83,9 +84,17 @@ figure('Position', [0, 0, 1200, 1000]);
 hold all;
 white_time_left(white_time_left < 0) = 0;
 black_time_left(black_time_left < 0) = 0;
-scatter(game, white_time_left);
-scatter(game, black_time_left);
+scatter(game, white_time_left, 'k');
+scatter(game, black_time_left, 'k');
 xlabel('Game number');
 ylabel('Time left on clock');
 title('Time left on clock at end of game')
 print([raw_data '_game_time_left.png']);
+
+figure('Position', [0, 0, 1200, 1000]);
+hold all;
+scatter(game, moves_in_game);
+xlabel('Game number');
+ylabel('Moves in Game');
+title('Number of moves in game')
+print([raw_data '_moves_in_game.png']);

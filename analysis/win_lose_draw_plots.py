@@ -8,6 +8,7 @@ def main(files):
         white_wins = 0
         black_wins = 0
         draws = 0
+        number_of_moves = 0
         with open(file_name) as f, open(file_name + '_plots.txt', 'w') as w:
             w.write('\t'.join(['Game', \
                                'White Wins', \
@@ -15,7 +16,8 @@ def main(files):
                                'Draws', \
                                'Time',
                                'White Time Left',
-                               'Black Time Left']) + '\n')
+                               'Black Time Left',
+                               'Number of Moves']) + '\n')
             # result_type key:
             #   0 = Checkmate
             #   1 = 50-move
@@ -45,6 +47,8 @@ def main(files):
                         result_type = 3
                     else:
                         result_type = 4
+                elif '. ' in line:
+                    number_of_moves = line.split('. ')[0]
                 elif 'Initial time' in line:
                     time_section = True
                     time = int(line.split(':')[1].strip())
@@ -53,8 +57,17 @@ def main(files):
                 elif time_section and 'Black' in line:
                     black_time_left = line.split()[-1]
                 elif time_section and not line.strip():
-                    w.write('\t'.join(str(x) for x in [game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left]) + '\n')
+                    w.write('\t'.join(str(x) for x in [game,
+                                                       white_wins,
+                                                       black_wins,
+                                                       draws,
+                                                       time,
+                                                       result_type,
+                                                       white_time_left,
+                                                       black_time_left,
+                                                       number_of_moves]) + '\n')
                     time_section = False
+                    number_of_moves = 0
 
 if __name__ == '__main__':
     main(sys.argv[1:])
