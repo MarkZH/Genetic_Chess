@@ -8,16 +8,6 @@ King_Confinement_Gene::King_Confinement_Gene() : Gene(0.0)
 {
 }
 
-void King_Confinement_Gene::reset_properties() const
-{
-    reset_base_properties();
-}
-
-void King_Confinement_Gene::load_properties()
-{
-    load_base_properties();
-}
-
 King_Confinement_Gene::~King_Confinement_Gene()
 {
 }

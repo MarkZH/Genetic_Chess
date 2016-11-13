@@ -9,12 +9,12 @@ Gene::Gene(double initial_scalar_value) : scalar(initial_scalar_value)
 {
 }
 
-void Gene::reset_base_properties() const
+void Gene::reset_properties() const
 {
     properties["Scalar"] = scalar;
 }
 
-void Gene::load_base_properties()
+void Gene::load_properties()
 {
     scalar = properties["Scalar"];
 }

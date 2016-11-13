@@ -125,7 +125,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o : src/Genes/Piece_Strength_Gene
 $(DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o : src/Genes/Sphere_of_Influence_Gene.cpp include/Genes/Sphere_of_Influence_Gene.h include/Game/Board.h include/Moves/Move.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o : src/Genes/Total_Force_Gene.cpp include/Genes/Total_Force_Gene.h include/Game/Board.h include/Pieces/Piece.h include/Utility.h include/Genes/Gene.h
+$(DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o : src/Genes/Total_Force_Gene.cpp include/Genes/Total_Force_Gene.h include/Game/Board.h include/Pieces/Piece.h include/Genes/Gene.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Total_Force_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o
 
 $(DEBUG_OBJ_DIR)/src/Moves/En_Passant.o : src/Moves/En_Passant.cpp include/Moves/En_Passant.h include/Moves/Pawn_Capture.h include/Pieces/Piece.h include/Game/Board.h
@@ -278,7 +278,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o : src/Genes/Piece_Strength_Ge
 $(RELEASE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o : src/Genes/Sphere_of_Influence_Gene.cpp include/Genes/Sphere_of_Influence_Gene.h include/Game/Board.h include/Moves/Move.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/Total_Force_Gene.o : src/Genes/Total_Force_Gene.cpp include/Genes/Total_Force_Gene.h include/Game/Board.h include/Pieces/Piece.h include/Utility.h include/Genes/Gene.h
+$(RELEASE_OBJ_DIR)/src/Genes/Total_Force_Gene.o : src/Genes/Total_Force_Gene.cpp include/Genes/Total_Force_Gene.h include/Game/Board.h include/Pieces/Piece.h include/Genes/Gene.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Total_Force_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Total_Force_Gene.o
 
 $(RELEASE_OBJ_DIR)/src/Moves/En_Passant.o : src/Moves/En_Passant.cpp include/Moves/En_Passant.h include/Moves/Pawn_Capture.h include/Pieces/Piece.h include/Game/Board.h

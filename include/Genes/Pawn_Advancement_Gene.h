@@ -16,8 +16,6 @@ class Pawn_Advancement_Gene : public Gene
 
     private:
         double score_board(const Board& board, Color perspective) const override;
-        void reset_properties() const override;
-        void load_properties() override;
 };
 
 #endif // GENES_PAWN_ADVANCEMENT_GENE_H

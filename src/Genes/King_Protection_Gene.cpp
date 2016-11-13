@@ -11,16 +11,6 @@ King_Protection_Gene::~King_Protection_Gene()
 {
 }
 
-void King_Protection_Gene::reset_properties() const
-{
-    reset_base_properties();
-}
-
-void King_Protection_Gene::load_properties()
-{
-    load_base_properties();
-}
-
 double King_Protection_Gene::score_board(const Board& board, Color perspective) const
 {
     // Count the number of unguarded squares that a piece could attack the king from

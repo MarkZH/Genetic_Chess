@@ -13,15 +13,11 @@ class Opponent_Pieces_Targeted_Gene : public Gene
         virtual ~Opponent_Pieces_Targeted_Gene() override;
 
         Opponent_Pieces_Targeted_Gene* duplicate() const override;
-        void mutate() override;
         void reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>& psg) override;
 
         std::string name() const override;
 
     private:
-        void reset_properties() const override;
-        void load_properties() override;
-
         std::shared_ptr<const Piece_Strength_Gene> piece_strenth_source;
 
         double score_board(const Board& board, Color perspective) const override;

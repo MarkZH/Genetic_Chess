@@ -15,13 +15,13 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
 
 void Sphere_of_Influence_Gene::reset_properties() const
 {
-    reset_base_properties();
+    Gene::reset_properties();
     properties["Legal Bonus"] = legal_bonus;
 }
 
 void Sphere_of_Influence_Gene::load_properties()
 {
-    load_base_properties();
+    Gene::load_properties();
     legal_bonus = properties["Legal Bonus"];
 }
 

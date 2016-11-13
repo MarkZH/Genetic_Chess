@@ -15,13 +15,14 @@ class Sphere_of_Influence_Gene : public Gene
 
         std::string name() const override;
 
-    private:
+    protected:
         void reset_properties() const override;
         void load_properties() override;
 
-        double score_board(const Board& board, Color perspective) const override;
-
+    private:
         double legal_bonus;
+
+        double score_board(const Board& board, Color perspective) const override;
 };
 
 #endif // SPHERE_OF_INFLUENCE_GENE_H

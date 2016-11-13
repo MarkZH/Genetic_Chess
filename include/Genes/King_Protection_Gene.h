@@ -15,9 +15,6 @@ class King_Protection_Gene : public Gene
         std::string name() const override;
 
     private:
-        void reset_properties() const override;
-        void load_properties() override;
-
         double score_board(const Board& board, Color perspective) const override;
 };
 

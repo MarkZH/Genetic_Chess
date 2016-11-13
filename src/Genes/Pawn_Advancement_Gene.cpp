@@ -14,16 +14,6 @@ Pawn_Advancement_Gene::~Pawn_Advancement_Gene()
 {
 }
 
-void Pawn_Advancement_Gene::reset_properties() const
-{
-    reset_base_properties();
-}
-
-void Pawn_Advancement_Gene::load_properties()
-{
-    load_base_properties();
-}
-
 double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;

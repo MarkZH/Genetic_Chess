@@ -21,9 +21,6 @@ class Freedom_To_Move_Gene : public Gene
         size_t maximum_number_of_moves;
 
         double score_board(const Board& board, Color perspective) const override;
-
-        void reset_properties() const override;
-        void load_properties() override;
 };
 
 #endif // FREEDOM_TO_MOVE_GENE_H

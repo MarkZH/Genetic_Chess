@@ -15,16 +15,6 @@ Opponent_Pieces_Targeted_Gene::~Opponent_Pieces_Targeted_Gene()
 {
 }
 
-void Opponent_Pieces_Targeted_Gene::reset_properties() const
-{
-    reset_base_properties();
-}
-
-void Opponent_Pieces_Targeted_Gene::load_properties()
-{
-    load_base_properties();
-}
-
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;
@@ -60,11 +50,6 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
 Opponent_Pieces_Targeted_Gene* Opponent_Pieces_Targeted_Gene::duplicate() const
 {
     return new Opponent_Pieces_Targeted_Gene(*this);
-}
-
-void Opponent_Pieces_Targeted_Gene::mutate()
-{
-    Gene::mutate();
 }
 
 std::string Opponent_Pieces_Targeted_Gene::name() const

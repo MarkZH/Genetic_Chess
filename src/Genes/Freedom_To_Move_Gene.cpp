@@ -13,16 +13,6 @@ Freedom_To_Move_Gene::~Freedom_To_Move_Gene()
 {
 }
 
-void Freedom_To_Move_Gene::reset_properties() const
-{
-    reset_base_properties();
-}
-
-void Freedom_To_Move_Gene::load_properties()
-{
-    load_base_properties();
-}
-
 double Freedom_To_Move_Gene::score_board(const Board& board, Color perspective) const
 {
     auto temp = board.make_hypothetical();
