@@ -82,8 +82,8 @@ print([raw_data '_game_result_type_frequencies.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
 hold all;
-white_time_left(white_time_left < 0) = 0;
-black_time_left(black_time_left < 0) = 0;
+white_time_left(white_time_left < 0) = -1;
+black_time_left(black_time_left < 0) = -1;
 scatter(game, white_time_left, 'k');
 scatter(game, black_time_left, 'k');
 xlabel('Game number');
@@ -92,9 +92,23 @@ title('Time left on clock at end of game')
 print([raw_data '_game_time_left.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
-hold all;
+hist([black_time_left; white_time_left], 300);
+xlabel('Time left on clock');
+ylabel('Counts');
+title('Time left on clock at end of game')
+print([raw_data '_game_time_left_histogram.png']);
+
+
+figure('Position', [0, 0, 1200, 1000]);
 scatter(game, moves_in_game);
 xlabel('Game number');
 ylabel('Moves in Game');
 title('Number of moves in game')
 print([raw_data '_moves_in_game.png']);
+
+figure('Position', [0, 0, 1200, 1000]);
+hist(moves_in_game, (0 : max(moves_in_game)) + 0.5);
+xlabel('Moves in Game');
+ylabel('Counts');
+title('Number of moves in game')
+print([raw_data '_moves_in_game_histogram.png']);
