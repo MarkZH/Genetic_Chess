@@ -24,21 +24,71 @@ std::string King_Confinement_Gene::name() const
 
 double King_Confinement_Gene::score_board(const Board& board, Color perspective) const
 {
-    auto temp = board.make_hypothetical();
-    temp.set_turn(perspective);
+    // A flood-fill-like algorithm to count the squares that are reachable by the
+    // king from its current positions with unlimited consecutive moves. The
+    // boundaries of this area area squares attacked by the other color or occupied
+    // by pieces of the same color.
 
-    auto king_location = temp.find_king(perspective);
-    char king_file = king_location.first;
-    int  king_rank = king_location.second;
+    auto king_location = board.find_king(perspective);
 
-    auto score = 0;
-    for(const auto& move : temp.piece_on_square(king_file, king_rank)->get_move_list())
+    std::vector<std::pair<char, int>> square_queue;
+    square_queue.emplace_back(king_location.first, king_location.second);
+
+    // map below substitutes for is_target_color() in flood-fill algorithm
+    std::map<std::pair<char, int>, bool> visited;
+
+    int safe_square_count = 0;
+
+    for(size_t i = 0; i < square_queue.size(); ++i)
     {
-        if(temp.is_legal(king_file, king_rank, move))
+        if(visited[square_queue[i]])
         {
-            score += 1;
+            continue;
+        }
+        visited[square_queue[i]] = true;
+
+        auto file = square_queue[i].first;
+        auto rank = square_queue[i].second;
+
+        bool attacked_by_other = board.square_attacked_by(file, rank, opposite(perspective));
+
+        auto piece = board.piece_on_square(file, rank);
+        bool occupied_by_same = piece &&
+                                piece->color() == perspective &&
+                                piece->pgn_symbol() != "K";
+
+        auto is_safe = ! attacked_by_other && ! occupied_by_same;
+        if(is_safe)
+        {
+            ++safe_square_count;
+        }
+
+        // always check the squares surrounding the king's current positions, even if
+        // it is not safe (i.e., the king is in check)
+        if(is_safe || square_queue.size() == 1)
+        {
+            for(char new_file = file - 1; new_file <= file + 1; ++new_file)
+            {
+                if( ! board.inside_board(new_file))
+                {
+                    continue;
+                }
+
+                for(int new_rank = rank - 1; new_rank <= rank + 1; ++new_rank)
+                {
+                    if( ! board.inside_board(new_rank))
+                    {
+                        continue;
+                    }
+
+                    if( ! visited[std::make_pair(new_file, new_rank)])
+                    {
+                        square_queue.emplace_back(new_file, new_rank);
+                    }
+                }
+            }
         }
     }
 
-    return double(score)/temp.piece_on_square(king_file, king_rank)->get_move_list().size();
+    return safe_square_count/64.0; // normalized so max is 1
 }
