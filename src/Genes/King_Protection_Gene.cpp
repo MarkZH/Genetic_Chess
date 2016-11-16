@@ -13,7 +13,7 @@ King_Protection_Gene::~King_Protection_Gene()
 
 double King_Protection_Gene::score_board(const Board& board, Color perspective) const
 {
-    // Count the number of unguarded squares that a piece could attack the king from
+    // Count the number of unguarded squares from which a piece could attack the king.
     //
     // Start at the king, then go by rows, columns, and diagonals. The last square to include
     // is either the edge of the board or a square containing a piece of either color. The
@@ -92,7 +92,7 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
 
     const int max_square_count =  8      // knight
                                 + 7 + 7  // rooks/queen
-                                + 7 + 6; // bishop/queen
+                                + 7 + 6; // bishop/queen/pawn
     return double(max_square_count - square_count)/max_square_count; // return score [0, 1]
 }
 
