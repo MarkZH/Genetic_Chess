@@ -140,8 +140,8 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
             break;
         }
 
-        auto last_board = get_final_board_state(board, move, positions_per_move, clock);
-        double score = genome.evaluate(last_board, board.whose_turn());
+        auto persepective_score = get_leaf_score(board, move, positions_per_move, clock);
+        auto score = persepective_score.second*(persepective_score.first == board.whose_turn() ? 1 : -1);
 
         if(score == std::numeric_limits<double>::infinity()) // checkmate lies this way
         {
@@ -157,48 +157,56 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     return best_move;
 }
 
-Board Genetic_AI::get_final_board_state(Board board, const Complete_Move& next_move, double positions_to_examine, const Clock& clock) const
+std::pair<Color, double> Genetic_AI::get_leaf_score(Board board, const Complete_Move& next_move, double positions_to_examine, const Clock& clock) const
 {
+    if(clock.time_left(clock.running_for()) < 0.0)
+    {
+        return std::make_pair(board.whose_turn(), 0.0);
+    }
+
     try
     {
         board.submit_move(next_move);
     }
     catch(const Game_Ending_Exception&)
     {
-        return board; // game ended, no future moves
+        // game ended, no future moves
+        auto move_maker = opposite(board.whose_turn());
+        return std::make_pair(move_maker, genome.evaluate(board, move_maker));
     }
 
     auto legal_moves = board.all_legal_moves();
     if(legal_moves.size() == 1)
     {
-        return get_final_board_state(board, legal_moves.front(), positions_to_examine, clock); // only one move, no analysis of this state required
+        // only one move, no analysis of this state required
+        return get_leaf_score(board, legal_moves.front(), positions_to_examine, clock);
     }
 
-    if(positions_to_examine < 1 || clock.time_left(clock.running_for()) < 0.0)
+    auto perspective = board.whose_turn();
+    if(positions_to_examine < 1)
     {
-        return board; // reached maximum look-ahead
+        return std::make_pair(perspective, genome.evaluate(board, perspective)); // reached maximum look-ahead
     }
 
     double best_score = -std::numeric_limits<double>::infinity();
-    Board best_board;
     auto positions_per_move = positions_to_examine/legal_moves.size();
     for(const auto& move : legal_moves)
     {
-        Board last_board = get_final_board_state(board, move, positions_per_move, clock);
-        double score = genome.evaluate(last_board, board.whose_turn());
+        auto perspective_score = get_leaf_score(board, move, positions_per_move, clock);
+        double score = perspective_score.second*(perspective_score.first == perspective ? 1 : -1);
 
         if(score == std::numeric_limits<double>::infinity()) // checkmate lies this way
         {
-            return last_board;
+            return perspective_score;
         }
+
         if(score >= best_score)
         {
             best_score = score;
-            best_board = last_board;
         }
     }
 
-    return best_board;
+    return std::make_pair(perspective, best_score);
 }
 
 void Genetic_AI::mutate()

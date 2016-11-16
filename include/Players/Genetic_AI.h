@@ -40,10 +40,13 @@ class Genetic_AI : public Player
 
         void read_from(std::istream& is);
 
-        Board get_final_board_state(Board board,
-                                    const Complete_Move& next_move,
-                                    double positions_to_examine,
-                                    const Clock& clock) const;
+        // Looks ahead to the furthest game state (pseudo-leaf on game tree)
+        // and returns the color of the perspective of the final game state score
+        // and the score
+        std::pair<Color, double> get_leaf_score(Board board,
+                                                const Complete_Move& next_move,
+                                                double positions_to_examine,
+                                                const Clock& clock) const;
 };
 
 #endif // GENETIC_AI_H
