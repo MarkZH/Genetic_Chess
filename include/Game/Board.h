@@ -97,12 +97,13 @@ class Board
         void clear_en_passant_target();
         void all_pieces_unmoved();
 
-        friend class Kingside_Castle;
-        friend class Queenside_Castle;
-        friend class En_Passant;
-        friend class Pawn_Promotion;
-        friend class Pawn_Double_Move;
-        friend class Pawn_Move;
+        // Moves with side effects
+        friend class Kingside_Castle; // moves second piece
+        friend class Queenside_Castle; // moves second piece
+        friend class En_Passant; // capture piece on another square
+        friend class Pawn_Promotion; // replace piece
+        friend class Pawn_Double_Move; // mark square as En Passant target
+        friend class Pawn_Move; // reset three-fold and 50-move counts
 };
 
 #endif // BOARD_H
