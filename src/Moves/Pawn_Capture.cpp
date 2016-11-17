@@ -33,8 +33,8 @@ bool Pawn_Capture::is_legal(const Board& board, char file_start, int rank_start)
 
     auto attacking_piece = board.piece_on_square(file_start, rank_start);
     auto attacked_piece  = board.piece_on_square(file_end, rank_end);
-    return rank_end != (rank_change() == 1 ? 8 : 1)
-           && attacked_piece != nullptr
+    return rank_end != (rank_change() == 1 ? 8 : 1) // not promoting (see Pawn_Promotion_by_Capture)
+           && attacked_piece != nullptr // must be capturing a piece
            && attacked_piece->color() != attacking_piece->color();
 }
 
