@@ -15,10 +15,7 @@ class Pawn_Double_Move;
 class Piece;
 
 #include "Moves/Move.h"
-
 #include "Color.h"
-
-enum algebraic_format {SHORT, LONG};
 
 class Board
 {
