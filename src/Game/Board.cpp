@@ -650,16 +650,13 @@ bool Board::square_attacked_by(char file, int rank, Color color) const
     auto temp = make_hypothetical();
     temp.set_turn(color);
 
+    // make sure only attacking moves count (e.g., not normal pawn moves)
+    temp.place_piece(std::make_shared<Piece>(opposite(color)), file, rank);
+
     for(char file_start = 'a'; file_start <= 'h'; ++file_start)
     {
         for(int rank_start = 1; rank_start <= 8; ++rank_start)
         {
-            // make sure only attacking moves count (e.g., not normal pawn moves)
-            if( ! temp.piece_on_square(file, rank))
-            {
-                temp.place_piece(std::make_shared<Piece>(opposite(color)), file, rank);
-            }
-
             if(temp.is_legal(file_start, rank_start, file, rank, false))
             {
                 return true;
