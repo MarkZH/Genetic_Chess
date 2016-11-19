@@ -43,7 +43,23 @@ legend(data.colheaders{2}, ...
 xlabel('Game number');
 ylabel('Count');
 title('Count of winning sides');
-print([raw_data '_game_outcomes.png']);
+print([raw_data '_game_outcomes_log.png']);
+
+figure('Position', [0, 0, 1200, 1000]);
+plot(game, white_wins, 'LineWidth', 3, ...
+	 game, black_wins, 'LineWidth', 3, ...
+	 game, draws,      'LineWidth', 3);
+xlabel(data.colheaders{1});
+ylabel('Count');
+legend(data.colheaders{2}, ...
+       data.colheaders{3}, ...
+       data.colheaders{4}, ...
+       'location', 'northwest');
+xlabel('Game number');
+ylabel('Count');
+title('Count of winning sides');
+print([raw_data '_game_outcomes_lin.png']);
+
 
 
 checkmates = zeros(size(game));
@@ -78,7 +94,21 @@ ylabel('Count');
 legend('Checkmate', 'Time', '50-move', '3-fold', 'Stalemate', ...
        'location', 'northwest');
 title('Type of endgame counts');
-print([raw_data '_game_result_type_frequencies.png']);
+print([raw_data '_game_result_type_frequencies_log.png']);
+
+figure('Position', [0, 0, 1200, 1000]);
+plot(game, cumsum(checkmates),  'LineWidth', 3, ...
+     game, cumsum(time_out),    'LineWidth', 3, ...
+     game, cumsum(fifty_moves), 'LineWidth', 3,
+     game, cumsum(threefold),   'LineWidth', 3, ...
+     game, cumsum(no_legal),    'LineWidth', 3);
+xlabel('Game number');
+ylabel('Count');
+legend('Checkmate', 'Time', '50-move', '3-fold', 'Stalemate', ...
+       'location', 'northwest');
+title('Type of endgame counts');
+print([raw_data '_game_result_type_frequencies_lin.png']);
+
 
 figure('Position', [0, 0, 1200, 1000]);
 hold all;

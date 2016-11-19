@@ -62,7 +62,7 @@ for yi = 2 : length(data.colheaders)
   % Fill in nan gaps in data
   this_data(~isfinite(this_data)) = 0;
 
-  conv_window = 500;
+  conv_window = 100;
   plot_figure = nan;
   if name(1:length(piece_strength_prefix)) == piece_strength_prefix
     plot_figure = piece_strength_figure;
