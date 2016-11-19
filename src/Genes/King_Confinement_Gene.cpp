@@ -29,12 +29,9 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
     // boundaries of this area area squares attacked by the other color or occupied
     // by pieces of the same color.
 
-    auto king_location = board.find_king(perspective);
-
     std::vector<std::pair<char, int>> square_queue;
-    square_queue.emplace_back(king_location.first, king_location.second);
+    square_queue.emplace_back(board.find_king(perspective));
 
-    // map below substitutes for is_target_color() in flood-fill algorithm
     std::map<std::pair<char, int>, bool> visited;
 
     int safe_square_count = 0;
