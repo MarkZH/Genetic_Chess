@@ -431,6 +431,7 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
         return std::vector<Gene_Pool>();
     }
 
+    std::cout << "Loading gene pool file: " << load_file << " ..." << std::endl;
     std::map<int, Genetic_AI> all_players;
     std::map<int, std::string> still_alive;
     while(true)
