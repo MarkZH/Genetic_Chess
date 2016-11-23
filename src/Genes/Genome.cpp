@@ -199,8 +199,8 @@ void Genome::mutate()
 {
     for(auto& gene : genome)
     {
-        // On average, mutate 2 genes (if condition ends with <= 2)
-        if(Random::random_integer(1, genome.size()) <= 2)
+        const int mean_number_of_mutations = 2;
+        if(Random::random_integer(1, genome.size()) <= mean_number_of_mutations)
         {
             if(Random::success_probability(0.95))
             {

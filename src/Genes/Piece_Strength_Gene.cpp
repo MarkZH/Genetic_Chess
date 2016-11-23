@@ -39,7 +39,11 @@ void Piece_Strength_Gene::mutate()
 {
     for(auto& key_value : piece_strength)
     {
-        key_value.second += Random::random_normal(1.0);
+        const double mean_number_of_mutations = 2.0;
+        if(Random::success_probability(mean_number_of_mutations/piece_strength.size()))
+        {
+            key_value.second += Random::random_normal(1.0);
+        }
     }
     renormalize();
 }
