@@ -112,10 +112,12 @@ print([raw_data '_game_result_type_frequencies_lin.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
 hold all;
-white_time_left(white_time_left < 0) = -1;
-black_time_left(black_time_left < 0) = -1;
+white_time_left(white_time_left < 0) = -0.05*max(white_time_left);
+black_time_left(black_time_left < 0) = -0.05*max(white_time_left);
 scatter(game, white_time_left, 'k');
 scatter(game, black_time_left, 'k');
+plot(time_extend_game*[1 1], max(white_time_left)*[-0.05, 1.05]);
+ylim(max(white_time_left)*[-0.10, 1.05]);
 xlabel('Game number');
 ylabel('Time left on clock');
 title('Time left on clock at end of game')
