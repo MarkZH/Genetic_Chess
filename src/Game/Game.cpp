@@ -63,10 +63,10 @@ Color play_game(const Player& white,
         if(game_clock.is_running())
         {
             std::ofstream(pgn_file_name, std::ios::app)
-                << "; Initial time: " << time_in_seconds << "\n"
-                << "; Moves to reset clocks: " << moves_to_reset << "\n"
-                << "; Time left: White: " << game_clock.time_left(WHITE) << "\n"
-                << ";            Black: " << game_clock.time_left(BLACK) << "\n\n"
+                << "{ Initial time: " << time_in_seconds << " }\n"
+                << "{ Moves to reset clocks: " << moves_to_reset << " }\n"
+                << "{ Time left: White: " << game_clock.time_left(WHITE) << " }\n"
+                << "{            Black: " << game_clock.time_left(BLACK) << " }\n\n"
                 << std::endl;
         }
 
