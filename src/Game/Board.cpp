@@ -680,7 +680,8 @@ const std::vector<std::string>& Board::get_game_record() const
 void Board::print_game_record(const std::string& white_name,
                               const std::string& black_name,
                               const std::string& file_name,
-                              const std::string& outside_result) const
+                              const std::string& outside_result,
+                              unsigned int game_number) const
 {
     std::string result;
     std::string termination;
@@ -705,6 +706,10 @@ void Board::print_game_record(const std::string& white_name,
     std::ostringstream oss;
     oss << "[White \"" << white_name << "\"]\n";
     oss << "[Black \"" << black_name << "\"]\n";
+    if(game_number > 0)
+    {
+        oss << "[Round \"" << game_number << "\"]\n";
+    }
     oss << "[Result \"" << result << "\"]\n";
     if( ! termination.empty())
     {

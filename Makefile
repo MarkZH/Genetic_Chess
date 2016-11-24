@@ -89,7 +89,7 @@ $(DEBUG_OBJ_DIR)/src/Game/Clock.o : src/Game/Clock.cpp include/Game/Clock.h incl
 $(DEBUG_OBJ_DIR)/src/Game/Color.o : src/Game/Color.cpp include/Game/Color.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Game/Color.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Color.o
 
-$(DEBUG_OBJ_DIR)/src/Game/Game.o : src/Game/Game.cpp include/Game/Game.h include/Players/Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/Out_Of_Time_Exception.h
+$(DEBUG_OBJ_DIR)/src/Game/Game.o : src/Game/Game.cpp include/Game/Game.h include/Players/Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/Out_Of_Time_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Game/Game.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Game.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : src/Genes/Freedom_To_Move_Gene.cpp include/Genes/Freedom_To_Move_Gene.h include/Game/Board.h include/Pieces/Piece.h
@@ -242,7 +242,7 @@ $(RELEASE_OBJ_DIR)/src/Game/Clock.o : src/Game/Clock.cpp include/Game/Clock.h in
 $(RELEASE_OBJ_DIR)/src/Game/Color.o : src/Game/Color.cpp include/Game/Color.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Game/Color.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Color.o
 
-$(RELEASE_OBJ_DIR)/src/Game/Game.o : src/Game/Game.cpp include/Game/Game.h include/Players/Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/Out_Of_Time_Exception.h
+$(RELEASE_OBJ_DIR)/src/Game/Game.o : src/Game/Game.cpp include/Game/Game.h include/Players/Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/Out_Of_Time_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Game/Game.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Game.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : src/Genes/Freedom_To_Move_Gene.cpp include/Genes/Freedom_To_Move_Gene.h include/Game/Board.h include/Pieces/Piece.h

@@ -12,6 +12,8 @@
 #include "Exceptions/Game_Ending_Exception.h"
 #include "Exceptions/Out_Of_Time_Exception.h"
 
+#include "Utility.h"
+
 // Play single game, return color of winner
 Color play_game(const Player& white,
                 const Player& black,
@@ -19,6 +21,21 @@ Color play_game(const Player& white,
                 int moves_to_reset,
                 const std::string& pgn_file_name)
 {
+    static unsigned int game_number = 0;
+    static std::string last_game_file;
+    if(last_game_file != pgn_file_name)
+    {
+        last_game_file = pgn_file_name;
+        std::ifstream ifs(pgn_file_name);
+        std::string line;
+        while(std::getline(ifs, line))
+        {
+            if(String::starts_with(line, "[Round"))
+            {
+                game_number = std::stoi(String::split(line, "\"")[1]);
+            }
+        }
+    }
     Board board;
     Clock game_clock(time_in_seconds, moves_to_reset);
 
@@ -42,7 +59,7 @@ Color play_game(const Player& white,
 
         static std::mutex write_lock;
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
-        board.print_game_record(white.name(), black.name(), pgn_file_name, end_game.what());
+        board.print_game_record(white.name(), black.name(), pgn_file_name, end_game.what(), ++game_number);
         if(game_clock.is_running())
         {
             std::ofstream(pgn_file_name, std::ios::app)

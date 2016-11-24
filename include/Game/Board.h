@@ -44,7 +44,8 @@ class Board
         void print_game_record(const std::string& white_name,
                                const std::string& black_name,
                                const std::string& file_name = "",
-                               const std::string& outside_result = "") const;
+                               const std::string& outside_result = "",
+                               unsigned int game_number = 0) const;
         std::string board_status() const; // for detecting threefold repetition
         Color get_winner() const;
         std::string last_move() const;
