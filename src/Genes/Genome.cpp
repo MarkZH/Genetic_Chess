@@ -101,7 +101,7 @@ Genome& Genome::operator=(const Genome& other)
     return *this;
 }
 
-// Sexual reproduction0
+// Sexual reproduction
 Genome::Genome(const Genome& A, const Genome& B) :
     genome(),
     piece_strength_gene_index(A.piece_strength_gene_index),
