@@ -76,7 +76,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
         }
     }
 
-    int score = 0;
+    double score = 0;
     for(const auto& square_value : square_score)
     {
         score += square_value.second;
