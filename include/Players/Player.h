@@ -5,7 +5,7 @@
 
 class Board;
 class Clock;
-class Complete_Move;
+struct Complete_Move;
 class Game_Ending_Exception;
 
 class Player
