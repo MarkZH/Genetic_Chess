@@ -26,6 +26,7 @@ Genetic_AI::Genetic_AI() :
 {
 }
 
+// Sexual reproduction
 Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     genome(A.genome, B.genome),
     id(next_id++)
@@ -147,10 +148,18 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
         {
             return move;
         }
-        if(score >= best_score)
+        
+        if(score >= best_score) // score is -inf to maximum finite score
         {
             best_score = score;
             best_move = move;
+            continue;
+        }
+        
+        if(std::isnan(score) && best_score == -std::numeric_limits<double>::infinity())
+        {
+            best_move = move; // Prefer stalemate only to loss.
+                              // Don't change best_score since comparisons with NaN are always false.
         }
     }
 
@@ -189,9 +198,15 @@ std::pair<Color, double> Genetic_AI::get_leaf_score(Board board, const Complete_
     }
 
     double best_score = -std::numeric_limits<double>::infinity();
+    auto best_result = std::make_pair(perspective, best_score);
     auto positions_per_move = positions_to_examine/legal_moves.size();
     for(const auto& move : legal_moves)
     {
+        if(clock.time_left(clock.running_for()) < 0.0)
+        {
+            break;
+        }
+
         auto perspective_score = get_leaf_score(board, move, positions_per_move, clock);
         double score = perspective_score.second*(perspective_score.first == perspective ? 1 : -1);
 
@@ -200,13 +215,21 @@ std::pair<Color, double> Genetic_AI::get_leaf_score(Board board, const Complete_
             return perspective_score;
         }
 
-        if(score >= best_score)
+        if(score >= best_score) // score is a number (-inf to max)
         {
             best_score = score;
+            best_result = perspective_score;
+            continue;
+        }
+
+        if(std::isnan(score) && best_score == -std::numeric_limits<double>::infinity())
+        {
+            best_result = perspective_score; // stalemate is preferable only to a loss
+                                             // Don't change best_score since comparisons with NaN are always false.
         }
     }
 
-    return std::make_pair(perspective, best_score);
+    return best_result;
 }
 
 void Genetic_AI::mutate()

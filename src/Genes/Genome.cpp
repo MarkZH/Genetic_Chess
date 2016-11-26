@@ -180,7 +180,7 @@ double Genome::evaluate(const Board& board, Color perspective) const
     {
         if(board.get_winner() == NONE) // stalemate
         {
-            return std::numeric_limits<double>::lowest();
+            return std::numeric_limits<double>::quiet_NaN();
         }
         else if(board.get_winner() == perspective) // checkmate win
         {
