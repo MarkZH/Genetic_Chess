@@ -41,3 +41,4 @@ octave-workspace
 *.idb
 *.exe
 *.opendb
+*.cd
