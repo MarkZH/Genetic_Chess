@@ -170,18 +170,22 @@ void run_tests()
 
 
     // Poisson distribution check
-    std::ofstream ofs("poisson.txt");
-    double mean = 5.0;
-    for(int v = 0; v <= 3*mean; ++v)
+    const double mean_moves = 35.0;
+    double mean_moves_calc = 0.0;
+    double mean_moves_calc_prev = -1.0;
+
+    int i = 1;
+    while(mean_moves_calc != mean_moves_calc_prev)
     {
-        ofs << v << '\t' << Math::poisson_probability(mean, v) << std::endl;
+        mean_moves_calc_prev = mean_moves_calc;
+        mean_moves_calc += Math::poisson_probability(mean_moves, i)*i;
+        ++i;
     }
 
-    std::ofstream ofs2("game_moves.txt");
-    double avg_moves_per_game = 40;
-    for(int m = 0; m <= 5*avg_moves_per_game; ++m)
+    if(std::abs(mean_moves - mean_moves_calc) > 1e-6)
     {
-        ofs2 << m << '\t' << Math::average_moves_left(avg_moves_per_game, m) << std::endl;
+        std::cerr << "Poisson distribution test failed. Expected: " << mean_moves << " Result: " << mean_moves_calc << std::endl;
+        tests_passed = false;
     }
 
 
