@@ -6,7 +6,7 @@
 #include <sstream>
 #include <vector>
 #include <cmath>
-#include <set>
+#include <tuple>
 
 #include "Utility.h"
 #include "Moves/Move.h"
@@ -127,79 +127,22 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     auto legal_moves = board.all_legal_moves();
     if(legal_moves.size() == 1)
     {
-        return legal_moves.front();
+        return legal_moves.front(); // If there's only one legal move, take it.
     }
 
-    double best_score = -std::numeric_limits<double>::infinity();
-    auto best_move = legal_moves.front();
-    auto positions_to_examine = genome.positions_to_examine(board, clock);
-    double positions_per_move = positions_to_examine/legal_moves.size();
-    for(const auto& move : legal_moves)
-    {
-        if(clock.time_left(clock.running_for()) < 0)
-        {
-            break;
-        }
-
-        auto persepective_score = get_leaf_score(board, move, positions_per_move, clock);
-        auto score = persepective_score.second*(persepective_score.first == board.whose_turn() ? 1 : -1);
-
-        if(score == std::numeric_limits<double>::infinity()) // checkmate lies this way
-        {
-            return move;
-        }
-        
-        if(score >= best_score) // score is -inf to maximum finite score
-        {
-            best_score = score;
-            best_move = move;
-            continue;
-        }
-        
-        if(std::isnan(score) && best_score == -std::numeric_limits<double>::infinity())
-        {
-            best_move = move; // Prefer stalemate only to loss.
-                              // Don't change best_score since comparisons with NaN are always false.
-        }
-    }
-
-    return best_move;
+    return std::get<Complete_Move>(search_game_tree(board,
+                                                    genome.positions_to_examine(board, clock),
+                                                    clock));
 }
 
-std::pair<Color, double> Genetic_AI::get_leaf_score(Board board, const Complete_Move& next_move, double positions_to_examine, const Clock& clock) const
+std::tuple<Complete_Move, Color, double> Genetic_AI::search_game_tree(const Board& board, double positions_to_examine, const Clock& clock) const
 {
-    if(clock.time_left(clock.running_for()) < 0.0)
-    {
-        return std::make_pair(board.whose_turn(), 0.0);
-    }
-
-    try
-    {
-        board.submit_move(next_move);
-    }
-    catch(const Game_Ending_Exception&)
-    {
-        // game ended, no future moves
-        auto move_maker = opposite(board.whose_turn());
-        return std::make_pair(move_maker, genome.evaluate(board, move_maker));
-    }
-
+    auto perspective = board.whose_turn();    
     auto legal_moves = board.all_legal_moves();
-    if(legal_moves.size() == 1)
-    {
-        // only one move, no analysis of this state required
-        return get_leaf_score(board, legal_moves.front(), positions_to_examine, clock);
-    }
-
-    auto perspective = board.whose_turn();
-    if(positions_to_examine < 1)
-    {
-        return std::make_pair(perspective, genome.evaluate(board, perspective)); // reached maximum look-ahead
-    }
-
-    double best_score = -std::numeric_limits<double>::infinity();
-    auto best_result = std::make_pair(perspective, best_score);
+    auto best_score = -std::numeric_limits<double>::infinity();
+    auto best_result = std::make_tuple(legal_moves.front(), perspective, best_score);
     auto positions_per_move = positions_to_examine/legal_moves.size();
+
     for(const auto& move : legal_moves)
     {
         if(clock.time_left(clock.running_for()) < 0.0)
@@ -207,25 +150,43 @@ std::pair<Color, double> Genetic_AI::get_leaf_score(Board board, const Complete_
             break;
         }
 
-        auto perspective_score = get_leaf_score(board, move, positions_per_move, clock);
-        double score = perspective_score.second*(perspective_score.first == perspective ? 1 : -1);
-
+        auto next_board = board;
+        double score;
+        try
+        {
+            next_board.submit_move(move);
+            if(positions_per_move < 1)
+            {
+                score = genome.evaluate(next_board, perspective);
+            }
+            else
+            {
+                auto move_perspective_score = search_game_tree(next_board, positions_per_move, clock);
+                score = std::get<double>(move_perspective_score)*(std::get<Color>(move_perspective_score) == perspective ? 1 : -1);
+            }
+        }
+        catch(const Game_Ending_Exception&)
+        {
+            score = genome.evaluate(next_board, perspective);
+        }
+        
+        
         if(score == std::numeric_limits<double>::infinity()) // checkmate lies this way
         {
-            return perspective_score;
+            return std::make_tuple(move, perspective, score);
         }
 
         if(score >= best_score) // score is a number (-inf to max)
         {
             best_score = score;
-            best_result = perspective_score;
+            best_result = std::make_tuple(move, perspective, score);
             continue;
         }
 
         if(std::isnan(score) && best_score == -std::numeric_limits<double>::infinity())
         {
-            best_result = perspective_score; // stalemate is preferable only to a loss
-                                             // Don't change best_score since comparisons with NaN are always false.
+            best_result = std::make_tuple(move, perspective, best_score); // Stalemate is preferable only to a loss.
+                                                                          // Don't change best_score since comparisons with NaN are always false.
         }
     }
 

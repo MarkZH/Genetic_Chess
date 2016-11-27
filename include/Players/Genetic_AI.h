@@ -43,10 +43,9 @@ class Genetic_AI : public Player
         // Looks ahead to the furthest game state (pseudo-leaf on game tree)
         // and returns the color of the perspective of the final game state score
         // and the score
-        std::pair<Color, double> get_leaf_score(Board board,
-                                                const Complete_Move& next_move,
-                                                double positions_to_examine,
-                                                const Clock& clock) const;
+        std::tuple<Complete_Move, Color, double> search_game_tree(const Board& board,
+                                                                  double positions_to_examine,
+                                                                  const Clock& clock) const;
 };
 
 #endif // GENETIC_AI_H
