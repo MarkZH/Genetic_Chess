@@ -5,7 +5,7 @@
 
 #include "Exceptions/Out_Of_Time_Exception.h"
 
-Clock::Clock(int seconds = 0, size_t moves_to_reset = 0) :
+Clock::Clock(int seconds, size_t moves_to_reset) :
     whose_turn(WHITE),
     use_clock(seconds > 0),
     use_reset(moves_to_reset > 0),

@@ -9,7 +9,7 @@
 class Clock
 {
     public:
-        Clock(int seconds, size_t moves); // number of seconds per number of moves
+        Clock(int seconds = 0, size_t moves = 0); // number of seconds per number of moves
         void punch(); // start/stop both clocks
         void stop(); // stop both clocks
         void start(); // resume after stop()

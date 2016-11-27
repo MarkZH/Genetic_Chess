@@ -8,8 +8,8 @@
 class Player;
 class Board;
 
-Color play_game(const Player& white_in,
-                const Player& black_in,
+Color play_game(const Player& white,
+                const Player& black,
                 int time_in_seconds,
                 int moves_to_reset_clock,
                 const std::string& pgn_file_name);
