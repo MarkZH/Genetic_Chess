@@ -137,7 +137,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
 std::tuple<Complete_Move, Color, double> Genetic_AI::search_game_tree(const Board& board, double positions_to_examine, const Clock& clock) const
 {
-    auto perspective = board.whose_turn();    
+    auto perspective = board.whose_turn();
     auto legal_moves = board.all_legal_moves();
     auto best_score = -std::numeric_limits<double>::infinity();
     auto best_result = std::make_tuple(legal_moves.front(), perspective, best_score);
@@ -169,8 +169,7 @@ std::tuple<Complete_Move, Color, double> Genetic_AI::search_game_tree(const Boar
         {
             score = genome.evaluate(next_board, perspective);
         }
-        
-        
+
         if(score == std::numeric_limits<double>::infinity()) // checkmate lies this way
         {
             return std::make_tuple(move, perspective, score);
