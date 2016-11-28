@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <cmath>
 
 #include "Game/Board.h"
 #include "Moves/Move.h"
