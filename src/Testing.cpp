@@ -111,53 +111,34 @@ void run_tests()
 
 
     // Test Genetic_AI file loading
-    auto ai1 = Genetic_AI();
-    for(int i = 0; i < 1000; ++i)
+    auto pool_file_name = "test_gene_pool.txt";
+    auto write_file_name = "test_genome_write.txt";
+    auto rewrite_file_name = "test_genome_rewrite.txt";
+    remove(pool_file_name);
+    remove(write_file_name);
+    remove(rewrite_file_name);
+
+    std::vector<Genetic_AI> test_pool(100);
+    for(auto& ai : test_pool)
     {
-        ai1.mutate();
-    }
-    auto file_name1 = "testing/genome1.txt";
-    auto file_name2 = "testing/genome2.txt";
-    remove(file_name1);
-    remove(file_name2);
-
-    ai1.print_genome(file_name1);
-
-    auto ai2 = Genetic_AI(file_name1);
-    ai2.print_genome(file_name2);
-
-    if( ! files_are_identical(file_name1, file_name2))
-    {
-        tests_passed = false;
-    }
-    remove(file_name1);
-    remove(file_name2);
-
-
-    // Load file from gene pool
-    auto gene_pool_file_name = "testing/gene_pool_testing.txt";
-    auto gene_pool_expected_file_name = "testing/gene_pool_42.txt";
-    auto gene_pool_result_file_name = "testing/gene_pool_result.txt";
-    int id = 42;
-    try
-    {
-        auto gai42 = Genetic_AI(gene_pool_file_name, id);
-        remove(gene_pool_result_file_name);
-        gai42.print_genome(gene_pool_result_file_name);
-
-        if( ! files_are_identical(gene_pool_result_file_name, gene_pool_expected_file_name))
+        for(int i = 0; i < 1000; ++i)
         {
-            std::cerr << "Genome loaded from gene pool file not preserved." << std::endl;
-            tests_passed = false;
+            ai.mutate();
         }
-        remove(gene_pool_result_file_name);
+        ai.print_genome(pool_file_name);
     }
-    catch(const std::runtime_error& e)
+
+    auto index = Random::random_integer(0, test_pool.size() - 1);
+    test_pool[index].print_genome(write_file_name);
+    auto read_ai = Genetic_AI(pool_file_name, index);
+    read_ai.print_genome(rewrite_file_name);
+
+    if( ! files_are_identical(write_file_name, rewrite_file_name))
     {
-        std::cerr << "Error reading " << gene_pool_file_name << std::endl;
-        std::cerr << e.what() << std::endl;
+        std::cerr << "Genome loaded from gene pool file not preserved." << std::endl;
         tests_passed = false;
     }
+
 
     // String utilities
     std::string original = "   a    #     b";
