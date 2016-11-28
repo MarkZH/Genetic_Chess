@@ -1,7 +1,7 @@
 CXX = g++
 LD = g++
 
-CFLAGS = -Wnon-virtual-dtor -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equal -Wunreachable-code -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Wzero-as-null-pointer-constant -Wmain -pedantic -Wextra -Wall -std=c++11 -fexceptions -Iinclude
+CFLAGS = -Wnon-virtual-dtor -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equal -Wunreachable-code -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Wzero-as-null-pointer-constant -Wmain -pedantic -Wextra -Wall -fexceptions -Iinclude
 LDFLAGS = -pthread
 
 OUT_RELEASE = bin/release/genetic_chess

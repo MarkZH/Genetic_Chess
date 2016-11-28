@@ -128,7 +128,6 @@ base_options = [
 	"-pedantic", 
 	"-Wextra", 
 	"-Wall", 
-	"-std=c++11", 
 	"-fexceptions", 
 	"-Iinclude"]
 linker_options = ["-pthread"]
