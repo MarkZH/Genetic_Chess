@@ -16,7 +16,7 @@ gene_pool_filename = fullfile(directory, filename);
 if isOctave
   disp('Parsing genes with python script ...');
   fflush(stdout); % Octave only
-  python('analysis/gene_pool_analyze.py', gene_pool_filename);
+  python('analysis/gene_pool_analyze.py', ['"' gene_pool_filename '"']);
 end
 
 filename = [gene_pool_filename '_parsed.txt'];
