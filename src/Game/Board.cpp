@@ -1,7 +1,6 @@
 #include <cctype>
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <algorithm>
 
 #include "Game/Board.h"
@@ -701,39 +700,32 @@ void Board::print_game_record(const std::string& white_name,
         }
     }
 
-    Color c = WHITE;
-    int step = 0;
-    std::ostringstream oss;
-    oss << "[White \"" << white_name << "\"]\n";
-    oss << "[Black \"" << black_name << "\"]\n";
+    std::ofstream ofs(file_name, std::ios::app);
+    std::ostream& out_stream = (ofs ? ofs : std::cout);
+    out_stream << "[White \"" << white_name << "\"]\n";
+    out_stream << "[Black \"" << black_name << "\"]\n";
     if(game_number > 0)
     {
-        oss << "[Round \"" << game_number << "\"]\n";
+        out_stream << "[Round \"" << game_number << "\"]\n";
     }
-    oss << "[Result \"" << result << "\"]\n";
+    out_stream << "[Result \"" << result << "\"]\n";
     if( ! termination.empty())
     {
-        oss << "[Termination \"" << termination << "\"]\n";
+        out_stream << "[Termination \"" << termination << "\"]\n";
     }
+
+    Color c = WHITE;
+    int step = 0;
     for(const auto& record : game_record)
     {
         if(c == WHITE)
         {
-            oss << "\n" << ++step << ".";
+            out_stream << '\n' << ++step << ".";
         }
-        oss << " " << record;
+        out_stream << " " << record;
         c = opposite(c);
     }
-    oss << '\n';
-
-    if(file_name.empty())
-    {
-        std::cout << oss.str() << std::endl;
-    }
-    else
-    {
-        std::ofstream(file_name, std::ios::app) << oss.str() << std::endl << std::endl;
-    }
+    out_stream << '\n';
 }
 
 std::string Board::board_status() const // for 3-fold rep count

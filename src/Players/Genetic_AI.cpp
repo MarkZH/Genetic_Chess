@@ -3,7 +3,6 @@
 #include <limits>
 #include <iostream>
 #include <fstream>
-#include <sstream>
 #include <vector>
 #include <cmath>
 #include <tuple>
@@ -219,9 +218,7 @@ void Genetic_AI::print_genome(std::ostream& os) const
 
 std::string Genetic_AI::name() const
 {
-    std::ostringstream oss;
-    oss << "Genetic AI " << get_id();
-    return oss.str();
+    return "Genetic AI " + std::to_string(get_id());
 }
 
 int Genetic_AI::get_id() const

@@ -1,7 +1,6 @@
 #include "Players/Outside_Player.h"
 
 #include <iostream>
-#include <sstream>
 #include <fstream>
 
 #include "Moves/Move.h"
@@ -120,21 +119,21 @@ void Outside_Player::send_command(const std::string& cmd) const
 
 void Outside_Player::process_game_ending(const Game_Ending_Exception& gee) const
 {
-    std::ostringstream result;
+    std::string result;
     if(gee.winner() == WHITE)
     {
-        result << "1-0";
+        result += "1-0";
     }
     else if(gee.winner() == BLACK)
     {
-        result << "0-1";
+        result += "0-1";
     }
     else
     {
-        result << "1/2-1/2";
+        result += "1/2-1/2";
     }
 
-    result << " {" << gee.what() << "}";
+    result += " {" + std::string(gee.what()) + "}";
 
-    send_command(result.str());
+    send_command(result);
 }
