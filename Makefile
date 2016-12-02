@@ -62,7 +62,7 @@ debug : before_debug $(OUT_DEBUG) after_debug
 release : before_release $(OUT_RELEASE) after_release
 
 
-$(DEBUG_OBJ_DIR)/main.o : main.cpp include/Game/Game.h include/Game/Board.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Random_AI.h include/Players/Outside_Player.h include/Genes/Gene_Pool.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h include/Testing.h
+$(DEBUG_OBJ_DIR)/main.o : main.cpp include/Game/Game.h include/Game/Board.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Random_AI.h include/Players/Outside_Player.h include/Genes/Gene_Pool.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h include/Testing.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c main.cpp -o $(DEBUG_OBJ_DIR)/main.o
 
 $(DEBUG_OBJ_DIR)/src/Exceptions/Checkmate_Exception.o : src/Exceptions/Checkmate_Exception.cpp include/Exceptions/Checkmate_Exception.h include/Game/Color.h
@@ -215,7 +215,7 @@ $(OUT_DEBUG) : before_debug $(OBJ_DEBUG)
 $(OUT_RELEASE) : before_release $(OBJ_RELEASE)
 	$(LD) -o $(OUT_RELEASE) $(OBJ_RELEASE) $(LDFLAGS)
 
-$(RELEASE_OBJ_DIR)/main.o : main.cpp include/Game/Game.h include/Game/Board.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Random_AI.h include/Players/Outside_Player.h include/Genes/Gene_Pool.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h include/Testing.h
+$(RELEASE_OBJ_DIR)/main.o : main.cpp include/Game/Game.h include/Game/Board.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Random_AI.h include/Players/Outside_Player.h include/Genes/Gene_Pool.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h include/Testing.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c main.cpp -o $(RELEASE_OBJ_DIR)/main.o
 
 $(RELEASE_OBJ_DIR)/src/Exceptions/Checkmate_Exception.o : src/Exceptions/Checkmate_Exception.cpp include/Exceptions/Checkmate_Exception.h include/Game/Color.h
