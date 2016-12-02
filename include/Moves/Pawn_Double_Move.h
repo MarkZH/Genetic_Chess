@@ -16,9 +16,9 @@ class Pawn_Double_Move : public Pawn_Move
         Pawn_Double_Move& operator=(const Pawn_Double_Move&) = delete;
         virtual ~Pawn_Double_Move() override;
 
-        void side_effects(Board& board, char file_start, int rank_start) const;
-        bool is_legal(const Board& board, char file_start, int rank_start) const;
-        std::string name() const;
+        void side_effects(Board& board, char file_start, int rank_start) const override;
+        bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const override;
+        std::string name() const override;
 };
 
 #endif // PAWN_DOUBLE_MOVE_H

@@ -7,14 +7,10 @@
 #include <memory>
 #include <utility>
 
-class Kingside_Castle;
-class Queenside_Castle;
-class En_Passant;
-class Pawn_Promotion;
-class Pawn_Double_Move;
 class Piece;
+class Move;
+class Complete_Move;
 
-#include "Moves/Move.h"
 #include "Color.h"
 
 class Board
@@ -102,6 +98,8 @@ class Board
         friend class Pawn_Promotion; // replace piece
         friend class Pawn_Double_Move; // mark square as En Passant target
         friend class Pawn_Move; // reset three-fold and 50-move counts
+
+        friend class Move; // needs access to check if King is in check after a move
 };
 
 #endif // BOARD_H

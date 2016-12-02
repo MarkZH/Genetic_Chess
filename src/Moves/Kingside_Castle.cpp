@@ -10,7 +10,7 @@ Kingside_Castle::~Kingside_Castle()
 {
 }
 
-bool Kingside_Castle::is_legal(const Board& board, char file_start, int rank_start) const
+bool Kingside_Castle::is_legal(const Board& board, char file_start, int rank_start, bool king_check) const
 {
     return     ! board.piece_has_moved(file_start, rank_start)
             && ! board.piece_has_moved('h', rank_start)
@@ -18,7 +18,8 @@ bool Kingside_Castle::is_legal(const Board& board, char file_start, int rank_sta
             && ! board.square_attacked_by('f', rank_start, opposite(board.whose_turn()))
             && ! board.square_attacked_by('g', rank_start, opposite(board.whose_turn()))
             && ! board.piece_on_square('f', rank_start)
-            && ! board.piece_on_square('g', rank_start);
+            && ! board.piece_on_square('g', rank_start)
+            && Move::is_legal(board, file_start, rank_start, king_check);
 }
 
 void Kingside_Castle::side_effects(Board& board, char /* file_start */, int rank_start) const

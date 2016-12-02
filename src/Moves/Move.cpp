@@ -27,8 +27,63 @@ void Move::side_effects(Board&, char /* file_start */, int /* rank_start */) con
 {
 }
 
-bool Move::is_legal(const Board& /* board */, char /* file_start */, int /* rank_start*/) const
+bool Move::is_legal(const Board& board, char file_start, int rank_start, bool king_check) const
 {
+    char file_end = file_start + file_change();
+    int rank_end = rank_start + rank_change();
+
+    // starting or ending square is outside board
+    if( ! (board.inside_board(file_start) && board.inside_board(rank_start)
+            && board.inside_board(file_end)   && board.inside_board(rank_end)))
+    {
+        return false;
+    }
+    // Piece-move compatibility
+    auto moving_piece = board.piece_on_square(file_start, rank_start);
+    if( ! moving_piece
+            || moving_piece->color() != board.whose_turn()
+            || ! moving_piece->can_move(this))
+    {
+        return false;
+    }
+
+    // Check that there are no intervening pieces for straight-line moves
+    // if(...) conditional excludes checking knight moves
+    if(file_change() == 0
+            || rank_change() == 0
+            || abs(file_change()) == abs(rank_change()))
+    {
+        int max_move = std::max(abs(file_change()), abs(rank_change()));
+        int file_step = file_change()/max_move;
+        int rank_step = rank_change()/max_move;
+
+        for(int step = 1; step < max_move; ++step)
+        {
+            if(board.piece_on_square(file_start + file_step*step,
+                                     rank_start + rank_step*step))
+            {
+                return false;
+            }
+        }
+    }
+
+    // Cannot capture piece of same color
+    auto attacked_piece = board.piece_on_square(file_end, rank_end);
+    if(attacked_piece && moving_piece->color() == attacked_piece->color())
+    {
+        return false;
+    }
+
+    // King should not be in check after move
+    if(king_check)
+    {
+        Board trial(board);
+        trial.make_move(file_start,                 rank_start,
+                        file_start + file_change(), rank_start + rank_change());
+        side_effects(trial, file_start, rank_start);
+        return ! trial.king_is_in_check(board.whose_turn());
+    }
+
     return true;
 }
 

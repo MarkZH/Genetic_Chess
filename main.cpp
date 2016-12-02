@@ -5,6 +5,8 @@
 #include "Game/Game.h"
 #include "Game/Board.h"
 
+#include "Moves/Move.h"
+
 #include "Players/Genetic_AI.h"
 #include "Players/Human_Player.h"
 #include "Players/Random_AI.h"

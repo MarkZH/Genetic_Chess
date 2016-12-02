@@ -15,10 +15,10 @@ class Queenside_Castle : public Move
         Queenside_Castle& operator=(const Queenside_Castle&) = delete;
         virtual ~Queenside_Castle() override;
 
-        void side_effects(Board& board, char file_start, int rank_start) const;
-        bool is_legal(const Board& board, char file_start, int rank_start) const;
-        virtual std::string name() const;
-        std::string game_record_item(const Board&, char, int) const;
+        void side_effects(Board& board, char file_start, int rank_start) const override;
+        bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const override;
+        virtual std::string name() const override;
+        std::string game_record_item(const Board&, char, int) const override;
 };
 
 #endif // QUEENSIDE_CASTLE_H

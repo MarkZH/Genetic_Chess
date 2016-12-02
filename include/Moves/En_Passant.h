@@ -15,9 +15,9 @@ class En_Passant : public Pawn_Capture
         En_Passant& operator=(const En_Passant&) = delete;
         virtual ~En_Passant() override;
 
-        void side_effects(Board& board, char file_start, int rank_start) const;
-        bool is_legal(const Board& board, char file_start, int rank_start) const;
-        std::string name() const;
+        void side_effects(Board& board, char file_start, int rank_start) const override;
+        bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const override;
+        std::string name() const override;
 };
 
 #endif // EN_PASSANT_H

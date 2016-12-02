@@ -14,12 +14,13 @@ Pawn_Promotion_by_Capture::~Pawn_Promotion_by_Capture()
 {
 }
 
-bool Pawn_Promotion_by_Capture::is_legal(const Board& board, char file_start, int rank_start) const
+bool Pawn_Promotion_by_Capture::is_legal(const Board& board, char file_start, int rank_start, bool king_check) const
 {
     auto attacked_piece = board.piece_on_square(file_start + file_change(), rank_start + rank_change());
-    return attacked_piece != nullptr
+    return attacked_piece
             && attacked_piece->color() != promote_to->color()
-            && rank_start == (rank_change() == 1 ? 7 : 2);
+            && rank_start == (rank_change() == 1 ? 7 : 2) // promoting
+            && Move::is_legal(board, file_start, rank_start, king_check);
 }
 
 std::string Pawn_Promotion_by_Capture::name() const

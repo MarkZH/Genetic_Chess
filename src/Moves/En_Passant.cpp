@@ -11,7 +11,7 @@ En_Passant::~En_Passant()
 {
 }
 
-bool En_Passant::is_legal(const Board& board, char file_start, int rank_start) const
+bool En_Passant::is_legal(const Board& board, char file_start, int rank_start, bool king_check) const
 {
     char file_end = file_start + file_change();
     int rank_end = rank_start + rank_change();
@@ -20,7 +20,8 @@ bool En_Passant::is_legal(const Board& board, char file_start, int rank_start) c
     return board.is_en_passant_targetable(file_end, rank_end)
            && attacking_piece
            && attacked_piece
-           && attacking_piece->color() != attacked_piece->color();
+           && attacking_piece->color() != attacked_piece->color()
+           && Move::is_legal(board, file_start, rank_start, king_check);
 }
 
 void En_Passant::side_effects(Board& board, char file_start, int rank_start) const

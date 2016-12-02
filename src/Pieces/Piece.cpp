@@ -74,11 +74,11 @@ char Piece::fen_symbol() const
     return (my_color == WHITE ? std::toupper(symbol[0]) : std::tolower(symbol[0]));
 }
 
-bool Piece::can_move(const std::shared_ptr<const Move>& move) const
+bool Piece::can_move(const Move* move) const
 {
     for(const auto& possible_move : possible_moves)
     {
-        if(possible_move == move)
+        if(possible_move.get() == move)
         {
             return true;
         }

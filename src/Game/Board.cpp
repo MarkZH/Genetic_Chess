@@ -1,7 +1,5 @@
-#include <cctype>
 #include <iostream>
 #include <fstream>
-#include <algorithm>
 
 #include "Game/Board.h"
 
@@ -184,73 +182,7 @@ bool Board::is_legal(const Complete_Move& move, bool king_check) const
 
 bool Board::is_legal(char file_start, int rank_start, const std::shared_ptr<const Move>& move, bool king_check) const
 {
-    if( ! move)
-    {
-        return false;
-    }
-
-    char file_end = file_start + move->file_change();
-    int rank_end = rank_start + move->rank_change();
-
-    // starting or ending square is outside board
-    if( ! (inside_board(file_start) && inside_board(rank_start)
-            && inside_board(file_end)   && inside_board(rank_end)))
-    {
-        return false;
-    }
-    // Piece-move compatibility
-    auto moving_piece = piece_on_square(file_start, rank_start);
-    if( ! moving_piece
-            || moving_piece->color() != whose_turn()
-            || ! moving_piece->can_move(move))
-    {
-        return false;
-    }
-
-    // Move-specific legality
-    if( ! move->is_legal(*this, file_start, rank_start))
-    {
-        return false;
-    }
-
-    // Check that there are no intervening pieces for straight-line moves
-    // if(...) conditional excludes checking knight moves
-    if(move->file_change() == 0
-            || move->rank_change() == 0
-            || abs(move->file_change()) == abs(move->rank_change()))
-    {
-        int max_move = std::max(abs(move->file_change()), abs(move->rank_change()));
-        int file_step = move->file_change()/max_move;
-        int rank_step = move->rank_change()/max_move;
-
-        for(int step = 1; step < max_move; ++step)
-        {
-            if(piece_on_square(file_start + file_step*step,
-                               rank_start + rank_step*step))
-            {
-                return false;
-            }
-        }
-    }
-
-    // Cannot capture piece of same color
-    auto attacked_piece = piece_on_square(file_end, rank_end);
-    if(attacked_piece && moving_piece->color() == attacked_piece->color())
-    {
-        return false;
-    }
-
-    // King should not be in check after move
-    if(king_check)
-    {
-        Board trial(*this);
-        trial.make_move(file_start,                       rank_start,
-                        file_start + move->file_change(), rank_start + move->rank_change());
-        move->side_effects(trial, file_start, rank_start);
-        return ! trial.king_is_in_check(whose_turn());
-    }
-
-    return true;
+    return move && move->is_legal(*this, file_start, rank_start, king_check);
 }
 
 bool Board::is_legal(char file_start, int rank_start,
@@ -492,7 +424,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
     const std::string valid_characters = pieces + valid_files + valid_rows + castling;
 
     std::string validated;
-    char promoted_piece;
+    char promoted_piece = 0;
     if(String::contains(move, '='))
     {
         for(size_t i = move.find('=') + 1; i < move.size(); ++i)

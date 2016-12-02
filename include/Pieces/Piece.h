@@ -27,7 +27,7 @@ class Piece
                                                                  bool king_check,
                                                                  char promote = '\0') const;
 
-        bool can_move(const std::shared_ptr<const Move>& move) const;
+        bool can_move(const Move* move) const;
 
         const std::vector<std::shared_ptr<const Move>> get_move_list() const;
 
