@@ -3,6 +3,7 @@
 #include <fstream>
 
 #include "Game/Game.h"
+#include "Game/Board.h"
 
 #include "Players/Genetic_AI.h"
 #include "Players/Human_Player.h"
@@ -11,6 +12,9 @@
 
 #include "Genes/Gene_Pool.h"
 
+#include "Exceptions/Illegal_Move_Exception.h"
+
+#include "Utility.h"
 #include "Testing.h"
 
 int main(int argc, char *argv[])
@@ -30,6 +34,70 @@ int main(int argc, char *argv[])
                 }
 
                 gene_pool(gene_pool_config_file_name);
+            }
+            else if(std::string(argv[1]) == "-replay")
+            {
+                if(argc > 2)
+                {
+                    Board board;
+                    std::string file_name = argv[2];
+                    std::ifstream ifs(file_name);
+                    std::string line;
+                    bool game_started = false;
+                    while(std::getline(ifs, line))
+                    {
+                        line = String::strip_comments(line, ';');
+                        line = String::strip_comments(line, '{');
+                        line = String::strip_comments(line, '[');
+                        if(line.empty())
+                        {
+                            if(game_started)
+                            {
+                                break;
+                            }
+                            else
+                            {
+                                continue;
+                            }
+                        }
+
+                        for(const auto& s : String::split(line))
+                        {
+                            try
+                            {
+                                board.submit_move(board.get_complete_move(s));
+                                board.ascii_draw(WHITE);
+                                game_started = true;
+                                std::cout << "Last move: ";
+                                std::cout << (board.get_game_record().size() + 1)/2 << ". ";
+                                std::cout << (board.get_game_record().size() % 2 == 0 ? "... " : "");
+                                std::cout << board.get_game_record().back() << std::endl;
+                                std::cout << "Enter \"y\" to play game from here: " << std::endl;
+                                char response = std::cin.get();
+                                if(std::tolower(response) == 'y')
+                                {
+                                    play_game_with_board(Human_Player(),
+                                                         Human_Player(),
+                                                         0,
+                                                         0,
+                                                         file_name + "_continued.pgn",
+                                                         board);
+                                    ifs.close();
+                                    break;
+                                }
+                            }
+                            catch(const Illegal_Move_Exception&)
+                            {
+                                std::cout << "Ignoring: " << s << std::endl;
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    std::cerr << "-replay must be followed by a file name." << std::endl;
+                    return 1;
+                }
             }
             else
             {
