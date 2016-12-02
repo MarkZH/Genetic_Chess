@@ -45,6 +45,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
             }
             else
             {
+                (*it) = String::trim_outer_whitespace(*it);
                 ++it;
             }
         }
