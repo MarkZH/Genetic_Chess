@@ -485,37 +485,139 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
 
 Complete_Move Board::get_complete_move(const std::string& move, char promote) const
 {
+    const std::string pieces = "RNBQK";
     const std::string valid_files = "abcdefgh";
     const std::string valid_rows = "12345678";
-    const std::string promotions = "qbnr";
-    const std::string valid_characters = valid_files + valid_rows + promotions;
+    const std::string castling = "O";
+    const std::string valid_characters = pieces + valid_files + valid_rows + castling;
 
     std::string validated;
+    char promoted_piece;
+    if(String::contains(move, '='))
+    {
+        for(size_t i = move.find('=') + 1; i < move.size(); ++i)
+        {
+            if(String::contains(pieces, move[i]) && move[i] != 'K')
+            {
+                promoted_piece = move[i];
+                break;
+            }
+        }
+    }
+    else
+    {
+        promoted_piece = promote;
+    }
+
     for(char c : move)
     {
-        c = tolower(c);
+        if(c == '=')
+        {
+            break;
+        }
+
         if(String::contains(valid_characters, c))
         {
             validated.push_back(c);
         }
     }
 
-    if(validated.size() < 4 || validated.size() > 5)
+    if(validated.empty())
+    {
+        throw Illegal_Move_Exception(move + " does not specify a valid move.");
+    }
+
+    // Castling
+    if(validated == "OO")
+    {
+        return get_complete_move('e', whose_turn() == WHITE ? 1 : 8,
+                                 'g', whose_turn() == WHITE ? 1 : 8);
+    }
+    if(validated == "OOO")
+    {
+        return get_complete_move('e', whose_turn() == WHITE ? 1 : 8,
+                                 'c', whose_turn() == WHITE ? 1 : 8);
+    }
+
+    // Normal PGN move
+    std::string piece_symbol = (String::contains(pieces, validated[0]) ? validated.substr(0, 1) : "");
+
+    char starting_file = 0;
+    int  starting_rank = 0;
+
+    char ending_file = validated[validated.size() - 2];
+    int  ending_rank = validated[validated.size() - 1] - '0';
+
+    if(validated.size() == 5) // Bb2c3
+    {
+        starting_file = validated[1];
+        starting_rank = validated[2] - '0';
+    }
+
+    if(validated.size() == 4) // Raa5 or R5c5
+    {
+        if(std::isdigit(validated[1]))
+        {
+            starting_rank = validated[1] - '0';
+        }
+        else
+        {
+            starting_file = validated[1];
+        }
+    }
+
+    if(validated.size() == 3 && piece_symbol.empty()) // Pawn capture de5 (dxe5)
+    {
+        starting_file = validated.front();
+    }
+
+    char file_search_start = (starting_file == 0 ? 'a' : starting_file);
+    char file_search_end   = (starting_file == 0 ? 'h' : starting_file);
+
+    int rank_search_start = (starting_rank == 0 ? 1 : starting_rank);
+    int rank_search_end   = (starting_rank == 0 ? 8 : starting_rank);
+
+    for(char file = file_search_start; file <= file_search_end; ++file)
+    {
+        for(int rank = rank_search_start; rank <= rank_search_end; ++rank)
+        {
+            auto piece = piece_on_square(file, rank);
+            if(piece &&
+               piece->pgn_symbol() == piece_symbol &&
+               is_legal(file, rank, ending_file, ending_rank, true))
+            {
+                if(starting_file == 0 || starting_rank == 0)
+                {
+                    starting_file = file;
+                    starting_rank = rank;
+                }
+                else
+                {
+                    throw Illegal_Move_Exception("Ambiguous move: " + move);
+                }
+            }
+        }
+    }
+
+    if(starting_file != 0 && starting_rank != 0)
+    {
+        return get_complete_move(starting_file, starting_rank,
+                                 ending_file,   ending_rank,
+                                 promoted_piece);
+    }
+
+    // No PGN-style move works, try coordinate move (e.g., e2e4)
+    if(validated.size() != 4)
     {
         throw Illegal_Move_Exception("Illegal text move: " + move);
     }
-
 
     char start_file = validated[0];
     int  start_rank = validated[1] - '0';
     char end_file   = validated[2];
     int  end_rank   = validated[3] - '0';
-    if(validated.size() == 5)
-    {
-        promote = validated[4];
-    }
 
-    return get_complete_move(start_file, start_rank, end_file, end_rank, promote);
+    return get_complete_move(start_file, start_rank, end_file, end_rank, promoted_piece);
 }
 
 void Board::make_move(char file_start, int rank_start, char file_end, int rank_end)
