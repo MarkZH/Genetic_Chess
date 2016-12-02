@@ -21,6 +21,17 @@ Color play_game(const Player& white,
                 int moves_to_reset,
                 const std::string& pgn_file_name)
 {
+    Board board;
+    return play_game_with_board(white, black, time_in_seconds, moves_to_reset, pgn_file_name, board);
+}
+
+Color play_game_with_board(const Player& white,
+                           const Player& black,
+                           int time_in_seconds,
+                           int moves_to_reset,
+                           const std::string& pgn_file_name,
+                           Board& board)
+{
     static unsigned int game_number = 0;
     static std::string last_game_file;
     if(last_game_file != pgn_file_name)
@@ -36,7 +47,6 @@ Color play_game(const Player& white,
             }
         }
     }
-    Board board;
     Clock game_clock(time_in_seconds, moves_to_reset);
 
     try
