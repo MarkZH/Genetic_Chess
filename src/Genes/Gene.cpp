@@ -1,6 +1,7 @@
 #include "Genes/Gene.h"
 
 #include <cmath>
+#include <iostream>
 
 #include "Game/Color.h"
 #include "Utility.h"
