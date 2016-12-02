@@ -13,6 +13,7 @@
 #include "Genes/Gene_Pool.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
+#include "Exceptions/Game_Ending_Exception.h"
 
 #include "Utility.h"
 #include "Testing.h"
@@ -44,7 +45,7 @@ int main(int argc, char *argv[])
                     std::ifstream ifs(file_name);
                     std::string line;
                     bool game_started = false;
-                    while(std::getline(ifs, line))
+                    while( ! board.game_has_ended() && std::getline(ifs, line))
                     {
                         line = String::strip_comments(line, ';');
                         line = String::strip_comments(line, '{');
@@ -66,29 +67,38 @@ int main(int argc, char *argv[])
                             try
                             {
                                 board.submit_move(board.get_complete_move(s));
-                                board.ascii_draw(WHITE);
-                                game_started = true;
-                                std::cout << "Last move: ";
-                                std::cout << (board.get_game_record().size() + 1)/2 << ". ";
-                                std::cout << (board.get_game_record().size() % 2 == 0 ? "... " : "");
-                                std::cout << board.get_game_record().back() << std::endl;
-                                std::cout << "Enter \"y\" to play game from here: " << std::endl;
-                                char response = std::cin.get();
-                                if(std::tolower(response) == 'y')
-                                {
-                                    play_game_with_board(Human_Player(),
-                                                         Human_Player(),
-                                                         0,
-                                                         0,
-                                                         file_name + "_continued.pgn",
-                                                         board);
-                                    ifs.close();
-                                    break;
-                                }
                             }
                             catch(const Illegal_Move_Exception&)
                             {
                                 std::cout << "Ignoring: " << s << std::endl;
+                                continue;
+                            }
+                            catch(const Game_Ending_Exception& e)
+                            {
+                                std::cout << e.what() << std::endl;
+                            }
+                            board.ascii_draw(WHITE);
+                            game_started = true;
+                            std::cout << "Last move: ";
+                            std::cout << (board.get_game_record().size() + 1)/2 << ". ";
+                            std::cout << (board.whose_turn() == WHITE ? "... " : "");
+                            std::cout << board.get_game_record().back() << std::endl;
+                            if(board.game_has_ended())
+                            {
+                                break;
+                            }
+
+                            std::cout << "Enter \"y\" to play game from here: " << std::endl;
+                            char response = std::cin.get();
+                            if(std::tolower(response) == 'y')
+                            {
+                                play_game_with_board(Human_Player(),
+                                                     Human_Player(),
+                                                     0,
+                                                     0,
+                                                     file_name + "_continued.pgn",
+                                                     board);
+                                 break;
                             }
                         }
                     }
