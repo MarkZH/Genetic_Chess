@@ -23,6 +23,7 @@ Human_Player::~Human_Player()
 const Complete_Move Human_Player::choose_move(const Board& board, const Clock& clock) const
 {
     auto last_move_illegal = false;
+    std::string why_illegal;
     std::string move;
 
     while(true)
@@ -30,7 +31,7 @@ const Complete_Move Human_Player::choose_move(const Board& board, const Clock& c
         board.ascii_draw(board.whose_turn());
         if(last_move_illegal)
         {
-            std::cout << "Illegal move: " << move << std::endl;
+            std::cout << "Illegal move: " << move << " (" << why_illegal << ")" << std::endl;
         }
         std::cout << color_text(board.whose_turn());
         if( ! name().empty())
@@ -47,9 +48,10 @@ const Complete_Move Human_Player::choose_move(const Board& board, const Clock& c
             board.ascii_draw(opposite(board.whose_turn()));
             return board.get_complete_move(move);
         }
-        catch(const Illegal_Move_Exception&)
+        catch(const Illegal_Move_Exception& e)
         {
             last_move_illegal = true;
+            why_illegal = e.what();
             continue;
         }
         catch(const Promotion_Exception&)
@@ -63,9 +65,10 @@ const Complete_Move Human_Player::choose_move(const Board& board, const Clock& c
                 board.ascii_draw(opposite(board.whose_turn()));
                 return board.get_complete_move(move, promote);
             }
-            catch(const Illegal_Move_Exception&)
+            catch(const Illegal_Move_Exception& e)
             {
                 last_move_illegal = true;
+                why_illegal = e.what();
                 continue;
             }
         }
