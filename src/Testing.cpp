@@ -138,6 +138,12 @@ void run_tests()
         std::cerr << "Genome loaded from gene pool file not preserved." << std::endl;
         tests_passed = false;
     }
+    else
+    {
+        remove(pool_file_name);
+        remove(write_file_name);
+        remove(rewrite_file_name);
+    }
 
 
     // String utilities

@@ -9,7 +9,7 @@
 
 class Piece;
 class Move;
-class Complete_Move;
+struct Complete_Move;
 
 #include "Color.h"
 
@@ -49,6 +49,7 @@ class Board
         Board make_hypothetical() const;
         void set_turn(Color color);
 
+        static bool inside_board(char file, int rank);
         static bool inside_board(char file);
         static bool inside_board(int rank);
 

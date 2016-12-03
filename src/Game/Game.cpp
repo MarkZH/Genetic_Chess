@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <string>
-#include <chrono>
 #include <mutex>
 
 #include "Players/Player.h"
@@ -33,6 +32,7 @@ Color play_game_with_board(const Player& white,
                            Board& board)
 {
     static unsigned int game_number = 0;
+    static std::mutex write_lock;
     static std::string last_game_file;
     if(last_game_file != pgn_file_name)
     {
@@ -67,7 +67,6 @@ Color play_game_with_board(const Player& white,
         white.process_game_ending(end_game);
         black.process_game_ending(end_game);
 
-        static std::mutex write_lock;
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
         board.print_game_record(white.name(), black.name(), pgn_file_name, end_game.what(), ++game_number);
         if(game_clock.is_running())
@@ -84,6 +83,7 @@ Color play_game_with_board(const Player& white,
     }
     catch(const std::exception& error)
     {
+        std::lock_guard<std::mutex> write_lock_guard(write_lock);
         board.ascii_draw(WHITE);
         board.print_game_record(white.name(), black.name(), pgn_file_name, error.what());
         throw;

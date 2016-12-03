@@ -28,8 +28,7 @@ Board::Board() :
     en_passant_target_rank(0),
     game_ended(false)
 {
-    Color color = WHITE;
-    while(true)
+    for(auto color : {WHITE, BLACK})
     {
         int base_rank = (color == WHITE ? 1 : 8);
         place_piece(std::make_shared<Rook>(color), 'a', base_rank);
@@ -44,13 +43,6 @@ Board::Board() :
         {
             place_piece(std::make_shared<Pawn>(color), file, (base_rank == 1) ? 2 : 7);
         }
-
-        if(color == BLACK)
-        {
-            break;
-        }
-
-        color = BLACK;
     }
 
     all_pieces_unmoved();
@@ -163,6 +155,11 @@ std::shared_ptr<const Piece>& Board::piece_on_square(char file, int rank)
 const std::shared_ptr<const Piece>& Board::piece_on_square(char file, int rank) const
 {
     return board.at((file - 'a') + 8*(rank - 1));
+}
+
+bool Board::inside_board(char file, int rank)
+{
+    return inside_board(file) && inside_board(rank);
 }
 
 bool Board::inside_board(char file)
@@ -889,12 +886,9 @@ bool Board::piece_has_moved(const std::shared_ptr<const Piece>& piece) const
 
 void Board::all_pieces_unmoved()
 {
-    for(char file = 'a'; file <= 'h'; ++file)
+    for(const auto& piece : board)
     {
-        for(int rank = 1; rank <= 8; ++rank)
-        {
-            piece_moved[piece_on_square(file, rank)] = false;
-        }
+        piece_moved[piece] = false;
     }
 
     // If a square is empty, whatever piece you were looking for
@@ -904,30 +898,20 @@ void Board::all_pieces_unmoved()
 
 std::pair<char, int> Board::find_king(Color color) const
 {
-    char king_file;
-    int  king_rank;
-    bool king_found = false;
-    for(king_file = 'a'; king_file <= 'h'; ++king_file)
+    for(char king_file = 'a'; king_file <= 'h'; ++king_file)
     {
-        for(king_rank = 1; king_rank <= 8; ++king_rank)
+        for(int king_rank = 1; king_rank <= 8; ++king_rank)
         {
             auto piece = piece_on_square(king_file, king_rank);
             if(piece && piece->color() == color && piece->pgn_symbol() == "K")
             {
-                king_found = true;
-                break;
+                return std::make_pair(king_file, king_rank);
             }
         }
-        if(king_found) { break; }
     }
 
-    if( ! king_found)
-    {
-        ascii_draw(WHITE);
-        throw std::runtime_error(color_text(color) + " king not found on board.");
-    }
-
-    return std::make_pair(king_file, king_rank);
+    ascii_draw(WHITE);
+    throw std::runtime_error(color_text(color) + " king not found on board.");
 }
 
 bool Board::game_has_ended() const
