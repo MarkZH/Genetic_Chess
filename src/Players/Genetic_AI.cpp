@@ -14,6 +14,7 @@
 #include "Pieces/Piece.h"
 
 #include "Exceptions/Checkmate_Exception.h"
+#include "Exceptions/Game_Ending_Exception.h"
 #include "Exceptions/End_Of_File_Exception.h"
 
 int Genetic_AI::next_id = 0;
@@ -165,21 +166,19 @@ std::tuple<Complete_Move, Color, double> Genetic_AI::search_game_tree(const Boar
         }
         catch(const Checkmate_Exception&)
         {
-            // Mate in one
-            return std::make_tuple(move, perspective, std::numeric_limits<double>::infinity());
+            // Mate in one (try to pick the shortest path to checkmate)
+            return std::make_tuple(move, perspective, genome.evaluate(next_board, perspective));
+        }
+        catch(const Game_Ending_Exception&)
+        {
+            // Draw
+            score = genome.evaluate(next_board, perspective);
         }
 
-        if(score >= best_score) // score is a number (-inf to max)
+        if(score >= best_score)
         {
             best_score = score;
             best_move = move;
-            continue;
-        }
-
-        if(std::isnan(score) && best_score == -std::numeric_limits<double>::infinity())
-        {
-            best_move = move; // Stalemate is preferable only to a loss.
-                              // Don't change best_score since comparisons with NaN are always false.
         }
     }
 
