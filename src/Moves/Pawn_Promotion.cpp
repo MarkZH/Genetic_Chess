@@ -28,11 +28,10 @@ std::string Pawn_Promotion::name() const
     return std::string("Pawn Promotion ") + promote_to->pgn_symbol();
 }
 
-bool Pawn_Promotion::is_legal(const Board& board, char file_start, int rank_start, bool king_check) const
+bool Pawn_Promotion::move_specific_legal(const Board& board, char file_start, int rank_start) const
 {
     return (rank_start == (rank_change() == 1 ? 7 : 2)) // promoting
-        && ! board.piece_on_square(file_start, rank_start + rank_change()) // not blocked
-        && Move::is_legal(board, file_start, rank_start, king_check);
+        && ! board.piece_on_square(file_start, rank_start + rank_change()); // not blocked
 }
 
 std::string Pawn_Promotion::game_record_item(const Board& board, char file_start, int rank_start) const

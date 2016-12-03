@@ -15,7 +15,7 @@ class Pawn_Move : public Move
         virtual ~Pawn_Move() override;
 
         virtual void side_effects(Board& board, char file_start, int rank_end) const override;
-        virtual bool is_legal(const Board& board, char file_start, int rank_end, bool king_check) const override;
+        virtual bool move_specific_legal(const Board& board, char file_start, int rank_end) const override;
         virtual std::string name() const override;
         virtual std::string game_record_item(const Board& board, char file_start, int rank_start) const override;
 };

@@ -21,7 +21,7 @@ class Move
         virtual void side_effects(Board& board, char file_start, int rank_start) const;
 
         // Contains extra rules for special moves (first move for double pawn move, etc.)
-        virtual bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const;
+        bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const;
 
         int file_change() const;
         int rank_change() const;
@@ -33,6 +33,9 @@ class Move
     protected:
         int d_file;
         int d_rank;
+
+    private:
+        virtual bool move_specific_legal(const Board& board, char file_start, int rank_start) const;
 };
 
 struct Complete_Move

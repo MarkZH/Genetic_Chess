@@ -19,7 +19,7 @@ class Pawn_Promotion : public Pawn_Move
 
         void side_effects(Board& board, char file_start, int rank_start) const override;
         virtual std::string name() const override;
-        virtual bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const override;
+        virtual bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
         virtual std::string game_record_item(const Board& board, char file_start, int rank_start) const override;
 
     protected:

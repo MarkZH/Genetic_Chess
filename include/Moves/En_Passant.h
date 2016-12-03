@@ -16,7 +16,7 @@ class En_Passant : public Pawn_Capture
         virtual ~En_Passant() override;
 
         void side_effects(Board& board, char file_start, int rank_start) const override;
-        bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const override;
+        bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
         std::string name() const override;
 };
 

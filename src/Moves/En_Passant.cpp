@@ -11,17 +11,15 @@ En_Passant::~En_Passant()
 {
 }
 
-bool En_Passant::is_legal(const Board& board, char file_start, int rank_start, bool king_check) const
+bool En_Passant::move_specific_legal(const Board& board, char file_start, int rank_start) const
 {
     char file_end = file_start + file_change();
     int rank_end = rank_start + rank_change();
     auto attacking_piece = board.piece_on_square(file_start, rank_start);
     auto attacked_piece  = board.piece_on_square(file_end,   rank_start);
     return board.is_en_passant_targetable(file_end, rank_end)
-           && attacking_piece
            && attacked_piece
-           && attacking_piece->color() != attacked_piece->color()
-           && Move::is_legal(board, file_start, rank_start, king_check);
+           && attacking_piece->color() != attacked_piece->color();
 }
 
 void En_Passant::side_effects(Board& board, char file_start, int rank_start) const

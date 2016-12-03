@@ -33,11 +33,12 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start, bool ki
     int rank_end = rank_start + rank_change();
 
     // starting or ending square is outside board
-    if( ! (board.inside_board(file_start) && board.inside_board(rank_start)
-            && board.inside_board(file_end)   && board.inside_board(rank_end)))
+    if( ! (Board::inside_board(file_start, rank_start)
+           && Board::inside_board(file_end, rank_end)))
     {
         return false;
     }
+
     // Piece-move compatibility
     auto moving_piece = board.piece_on_square(file_start, rank_start);
     if( ! moving_piece
@@ -74,16 +75,25 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start, bool ki
         return false;
     }
 
+    if( ! move_specific_legal(board, file_start, rank_start))
+    {
+        return false;
+    }
+
     // King should not be in check after move
     if(king_check)
     {
         Board trial(board);
-        trial.make_move(file_start,                 rank_start,
-                        file_start + file_change(), rank_start + rank_change());
+        trial.make_move(file_start, rank_start, file_end, rank_end);
         side_effects(trial, file_start, rank_start);
         return ! trial.king_is_in_check(board.whose_turn());
     }
 
+    return true;
+}
+
+bool Move::move_specific_legal(const Board& /* board */, char /* file_start */, int /* rank_start */) const
+{
     return true;
 }
 
