@@ -195,7 +195,7 @@ void gene_pool(const std::string& config_file = "")
             auto white_index = pool_indices[index];
             auto& white = pool[white_index];
             auto black_index = pool_indices[index + 1];
-            auto black = pool[black_index];
+            auto& black = pool[black_index];
 
             std::cout << "Result of " << white.get_id() << " vs. "
                                       << black.get_id() << ": " << std::flush;
