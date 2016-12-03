@@ -4,14 +4,12 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <cmath>
 #include <tuple>
 
 #include "Utility.h"
 #include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
-#include "Pieces/Piece.h"
 
 #include "Exceptions/Checkmate_Exception.h"
 #include "Exceptions/Game_Ending_Exception.h"
