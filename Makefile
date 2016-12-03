@@ -185,7 +185,7 @@ $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : src/Players/Claude_Shannon_AI
 $(DEBUG_OBJ_DIR)/src/Players/Communication_Mediator.o : src/Players/Communication_Mediator.cpp include/Players/Communication_Mediator.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Communication_Mediator.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Communication_Mediator.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Players/Genetic_AI.h include/Utility.h include/Moves/Move.h include/Game/Board.h include/Game/Clock.h include/Pieces/Piece.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/End_Of_File_Exception.h
+$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Players/Genetic_AI.h include/Utility.h include/Moves/Move.h include/Game/Board.h include/Game/Clock.h include/Pieces/Piece.h include/Exceptions/Checkmate_Exception.h include/Exceptions/End_Of_File_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Genetic_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o : src/Players/Human_Player.cpp include/Players/Human_Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h
@@ -338,7 +338,7 @@ $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : src/Players/Claude_Shannon_
 $(RELEASE_OBJ_DIR)/src/Players/Communication_Mediator.o : src/Players/Communication_Mediator.cpp include/Players/Communication_Mediator.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Communication_Mediator.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Communication_Mediator.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Players/Genetic_AI.h include/Utility.h include/Moves/Move.h include/Game/Board.h include/Game/Clock.h include/Pieces/Piece.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/End_Of_File_Exception.h
+$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Players/Genetic_AI.h include/Utility.h include/Moves/Move.h include/Game/Board.h include/Game/Clock.h include/Pieces/Piece.h include/Exceptions/Checkmate_Exception.h include/Exceptions/End_Of_File_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Genetic_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o : src/Players/Human_Player.cpp include/Players/Human_Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h

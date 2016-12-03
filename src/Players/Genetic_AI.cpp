@@ -14,7 +14,6 @@
 #include "Pieces/Piece.h"
 
 #include "Exceptions/Checkmate_Exception.h"
-#include "Exceptions/Game_Ending_Exception.h"
 #include "Exceptions/End_Of_File_Exception.h"
 
 int Genetic_AI::next_id = 0;
@@ -139,7 +138,7 @@ std::tuple<Complete_Move, Color, double> Genetic_AI::search_game_tree(const Boar
     auto perspective = board.whose_turn();
     auto legal_moves = board.all_legal_moves();
     auto best_score = -std::numeric_limits<double>::infinity();
-    auto best_result = std::make_tuple(legal_moves.front(), perspective, best_score);
+    auto best_move = legal_moves.front();
     auto positions_per_move = positions_to_examine/legal_moves.size();
 
     for(const auto& move : legal_moves)
@@ -164,31 +163,27 @@ std::tuple<Complete_Move, Color, double> Genetic_AI::search_game_tree(const Boar
                 score = std::get<double>(move_perspective_score)*(std::get<Color>(move_perspective_score) == perspective ? 1 : -1);
             }
         }
-        catch(const Game_Ending_Exception&)
+        catch(const Checkmate_Exception&)
         {
-            score = genome.evaluate(next_board, perspective);
-        }
-
-        if(score == std::numeric_limits<double>::infinity()) // checkmate lies this way
-        {
-            return std::make_tuple(move, perspective, score);
+            // Mate in one
+            return std::make_tuple(move, perspective, std::numeric_limits<double>::infinity());
         }
 
         if(score >= best_score) // score is a number (-inf to max)
         {
             best_score = score;
-            best_result = std::make_tuple(move, perspective, score);
+            best_move = move;
             continue;
         }
 
         if(std::isnan(score) && best_score == -std::numeric_limits<double>::infinity())
         {
-            best_result = std::make_tuple(move, perspective, best_score); // Stalemate is preferable only to a loss.
-                                                                          // Don't change best_score since comparisons with NaN are always false.
+            best_move = move; // Stalemate is preferable only to a loss.
+                              // Don't change best_score since comparisons with NaN are always false.
         }
     }
 
-    return best_result;
+    return std::make_tuple(best_move, perspective, best_score);
 }
 
 void Genetic_AI::mutate()
