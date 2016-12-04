@@ -125,7 +125,7 @@ print([raw_data '_game_time_left.png']);
 figure('Position', [0, 0, 1200, 1000]);
 hist([black_time_left; white_time_left], 300);
 xlabel('Time left on clock');
-ylabel('Counts');
+ylabel(['Counts (total = ' num2str(length(game)) ')']);
 title('Time left on clock at end of game')
 print([raw_data '_game_time_left_histogram.png']);
 
@@ -140,6 +140,6 @@ print([raw_data '_moves_in_game.png']);
 figure('Position', [0, 0, 1200, 1000]);
 hist(moves_in_game, (0 : max(moves_in_game)) + 0.5);
 xlabel('Moves in Game');
-ylabel('Counts');
+ylabel(['Counts (total = ' num2str(length(game)) ')']);
 title('Number of moves in game')
 print([raw_data '_moves_in_game_histogram.png']);

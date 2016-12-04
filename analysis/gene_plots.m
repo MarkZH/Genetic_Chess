@@ -27,6 +27,7 @@ end
 
 data = importdata(filename, ',');
 id_list = data.data(:, 1);
+still_alive = logical(data.data(:, end));
 
 disp('Plotting ...');
 
@@ -53,7 +54,9 @@ for yi = 2 : length(data.colheaders)
   name = name_list{1};
 
   figure('Position', [0, 0, 1200, 1000]);
-  scatter(id_list, this_data);
+  hold all;
+  scatter(id_list, this_data, 3, 'b', 'filled');
+  scatter(id_list(still_alive), this_data(still_alive), 15, 'r');
   xlabel(xaxis, 'FontSize', 18);
   title(name, 'FontSize', 22);
   set(gca, 'FontSize', 14);

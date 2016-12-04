@@ -5,13 +5,15 @@ import sys
 def main(argv):
     current_gene = ''
     header_line = []
+    still_alive = dict()
+    header_written = False
     with open(argv[1] + '_parsed.txt', 'w') as w:
         with open(argv[1]) as f:
             for line in f:
                 line = line.strip()
-                if line == 'END':
+                if line == 'END' and not header_written:
                     w.write(','.join(header_line) + '\n')
-                    break
+                    header_written = True
 
                 if ':' in line:
                     parameter, value = line.split(':', 1)
@@ -20,7 +22,8 @@ def main(argv):
                     elif parameter == 'Name':
                         current_gene = value.strip()
                     elif parameter == 'Still Alive':
-                        continue
+                        pool_id, ids = value.split(' : ')
+                        still_alive[pool_id.strip()] = ids.split()
                     else:
                         header_line.append(current_gene + ' - ' + parameter)
 
@@ -31,6 +34,7 @@ def main(argv):
             for line in f:
                 line = line.strip()
                 if line == 'END':
+                    data_line.append(str(int(any([data_line[0] in ids for ids in still_alive.values()]))))
                     w.write(','.join(data_line) + '\n')
                     data_line = []
                     parameter_count = 0
