@@ -120,6 +120,7 @@ void gene_pool(const std::string& config_file = "")
     {
         static auto previous_mod = 0;
         auto& pool = pools[pool_index];
+        std::sort(pool.begin(), pool.end(), [](auto x, auto y){return x.get_id() < y.get_id();});
         write_generation(pools, pool_index, genome_file_name);
 
         // widths of columns for stats printout
