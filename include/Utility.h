@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <map>
+#include <limits>
 
 namespace String
 {
@@ -34,6 +35,8 @@ namespace Random
 
 namespace Math
 {
+    const auto infinity = std::numeric_limits<double>::infinity();
+
     double average_moves_left(double mean_moves, size_t moves_so_far);
     double poisson_probability(double mean, size_t value);
 }
