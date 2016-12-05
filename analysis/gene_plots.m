@@ -54,31 +54,35 @@ for yi = 2 : length(data.colheaders) - 2
   % Fill in nan gaps in data
   this_data(~isfinite(this_data)) = 0;
 
-  conv_window = 100;
   plot_figure = nan;
   if name(1:length(piece_strength_prefix)) == piece_strength_prefix
     plot_figure = piece_strength_figure;
-    piece_strength_legend_entries{length(piece_strength_legend_entries) + 1} = name(end);
+    legend_entries = piece_strength_legend_entries;
   end
   
   if name(length(name) - length(scalar_suffix) + 1:end) == scalar_suffix
     plot_figure = scalar_figure;
-    scalar_legend_entries{length(scalar_legend_entries) + 1} = name;
+    legend_entries = scalar_legend_entries;
   end
 
-  if ~isnan(plot_figure)
+  conv_window = 100;
+  if ~isnan(plot_figure) && length(this_data) > conv_window
     figure(plot_figure);
     hold all;
     smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
     plot(smooth_data, 'LineWidth', 3);
+    legend_entries{length(legend_entries) + 1} = name(end);
   end
 end
 
-figure(piece_strength_figure);
-legend(piece_strength_legend_entries, 'Location', 'northwest');
-print([gene_pool_filename '_piece_strength.png']);
+if length(piece_strength_legend_entries) > 0
+  figure(piece_strength_figure);
+  legend(piece_strength_legend_entries, 'Location', 'northwest');
+  print([gene_pool_filename '_piece_strength.png']);
+end
 
-figure(scalar_figure);
-legend(scalar_legend_entries, 'Location', 'northwest');
-print([gene_pool_filename '_gene_scalars.png']);
-disp('Done.');
+if length(scalar_legend_entries) > 0
+  figure(scalar_figure);
+  legend(scalar_legend_entries, 'Location', 'northwest');
+  print([gene_pool_filename '_gene_scalars.png']);
+end
