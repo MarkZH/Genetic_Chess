@@ -26,13 +26,13 @@ xaxis = xaxis_list{1};
 
 piece_strength_prefix = 'Piece Strength Gene';
 piece_strength_figure = figure('Position', [0, 0, 1200, 1000]);
-piece_strength_legend_entries = {};
 title('Piece Strength Evolution', 'FontSize', 22);
 
 scalar_figure = figure('Position', [0, 0, 1200, 1000]);
-scalar_suffix = 'Scalar';
-scalar_legend_entries = {};
+scalar_suffix = ' Gene - Scalar';
 title('Gene Scalar Evolution', 'FontSize', 22);
+
+piece_scalar_plots = [false, false];
 
 for yi = 2 : length(data.colheaders) - 2
   this_data = data.data(:, yi);
@@ -57,12 +57,12 @@ for yi = 2 : length(data.colheaders) - 2
   plot_figure = nan;
   if name(1:length(piece_strength_prefix)) == piece_strength_prefix
     plot_figure = piece_strength_figure;
-    legend_entries = piece_strength_legend_entries;
+    piece_scalar_index = 1;
   end
   
   if name(length(name) - length(scalar_suffix) + 1:end) == scalar_suffix
     plot_figure = scalar_figure;
-    legend_entries = scalar_legend_entries;
+    piece_scalar_index = 2;
   end
 
   conv_window = 100;
@@ -70,19 +70,24 @@ for yi = 2 : length(data.colheaders) - 2
     figure(plot_figure);
     hold all;
     smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
-    plot(smooth_data, 'LineWidth', 3);
-    legend_entries{length(legend_entries) + 1} = name(end);
+    if piece_scalar_index == 1
+      name = name(end);
+    else
+      name = name(1 : end - length(scalar_suffix));
+    end
+    plot(smooth_data, 'LineWidth', 3, 'displayname', name);
+    piece_scalar_plots(piece_scalar_index) = true;
   end
 end
 
-if length(piece_strength_legend_entries) > 0
+if piece_scalar_plots(1)
   figure(piece_strength_figure);
-  legend(piece_strength_legend_entries, 'Location', 'northwest');
+  legend('show');
   print([gene_pool_filename '_piece_strength.png']);
 end
 
-if length(scalar_legend_entries) > 0
+if piece_scalar_plots(2)
   figure(scalar_figure);
-  legend(scalar_legend_entries, 'Location', 'northwest');
+  legend('show');
   print([gene_pool_filename '_gene_scalars.png']);
 end

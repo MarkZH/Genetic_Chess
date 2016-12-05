@@ -54,7 +54,7 @@ Opponent_Pieces_Targeted_Gene* Opponent_Pieces_Targeted_Gene::duplicate() const
 
 std::string Opponent_Pieces_Targeted_Gene::name() const
 {
-    return "Opponent Pieces Targeted";
+    return "Opponent Pieces Targeted Gene";
 }
 
 void Opponent_Pieces_Targeted_Gene::reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>& psg)
