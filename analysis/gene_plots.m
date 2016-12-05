@@ -1,6 +1,3 @@
-clear;
-close all;
-
 isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
 
 if isOctave
@@ -14,27 +11,15 @@ end
 gene_pool_filename = fullfile(directory, filename);
 
 if isOctave
-  disp('Parsing genes with python script ...');
-  fflush(stdout); % Octave only
   python('analysis/gene_pool_analyze.py', ['"' gene_pool_filename '"']);
 end
 
 filename = [gene_pool_filename '_parsed.txt'];
-disp('Importing parsed data ...');
-if isOctave
-  fflush(stdout); % Octave only
-end
 
 data = importdata(filename, ',');
 id_list = data.data(:, 1);
 still_alive = logical(data.data(:, end - 1));
 pool_ids = data.data(:, end);
-
-disp('Plotting ...');
-
-if isOctave
-  fflush(stdout); % Octave only; comment out for Matlab use
-end
 
 xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
