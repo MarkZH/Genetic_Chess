@@ -29,10 +29,10 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
     // boundaries of this area area squares attacked by the other color or occupied
     // by pieces of the same color.
 
-    std::vector<std::pair<char, int>> square_queue;
+    std::vector<Square> square_queue;
     square_queue.emplace_back(board.find_king(perspective));
 
-    std::map<std::pair<char, int>, bool> visited;
+    std::map<Square, bool> visited;
 
     int safe_square_count = 0;
 
@@ -44,12 +44,11 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
         }
         visited[square_queue[i]] = true;
 
-        auto file = square_queue[i].first;
-        auto rank = square_queue[i].second;
+        bool attacked_by_other = board.square_attacked_by(square_queue[i].file,
+                                                          square_queue[i].rank,
+                                                          opposite(perspective));
 
-        bool attacked_by_other = board.square_attacked_by(file, rank, opposite(perspective));
-
-        auto piece = board.piece_on_square(file, rank);
+        auto piece = board.piece_on_square(square_queue[i].file, square_queue[i].rank);
         bool occupied_by_same = piece &&
                                 piece->color() == perspective &&
                                 piece->pgn_symbol() != "K";
@@ -64,23 +63,23 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
         // it is not safe (i.e., the king is in check)
         if(is_safe || square_queue.size() == 1)
         {
-            for(char new_file = file - 1; new_file <= file + 1; ++new_file)
+            for(char new_file = square_queue[i].file - 1; new_file <= square_queue[i].file + 1; ++new_file)
             {
                 if( ! board.inside_board(new_file))
                 {
                     continue;
                 }
 
-                for(int new_rank = rank - 1; new_rank <= rank + 1; ++new_rank)
+                for(int new_rank = square_queue[i].rank - 1; new_rank <= square_queue[i].rank + 1; ++new_rank)
                 {
                     if( ! board.inside_board(new_rank))
                     {
                         continue;
                     }
 
-                    if( ! visited[std::make_pair(new_file, new_rank)])
+                    if( ! visited[{new_file, new_rank}])
                     {
-                        square_queue.emplace_back(new_file, new_rank);
+                        square_queue.push_back({new_file, new_rank});
                     }
                 }
             }

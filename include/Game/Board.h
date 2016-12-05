@@ -5,11 +5,25 @@
 #include <map>
 #include <string>
 #include <memory>
-#include <utility>
 
 class Piece;
 class Move;
 struct Complete_Move;
+
+struct Square
+{
+    char file;
+    int rank;
+
+    bool operator<(const Square& other) const
+    {
+        if(file == other.file)
+        {
+            return rank < other.rank;
+        }
+        return file < other.file;
+    }
+};
 
 #include "Color.h"
 
@@ -62,7 +76,7 @@ class Board
         bool is_en_passant_targetable(char file, int rank) const;
         bool piece_has_moved(char file, int rank) const;
         bool piece_has_moved(const std::shared_ptr<const Piece>& piece) const;
-        std::pair<char, int> find_king(Color color) const;
+        Square find_king(Color color) const;
         bool king_is_in_check(Color color) const;
 
         bool game_has_ended() const;

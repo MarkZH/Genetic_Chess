@@ -27,9 +27,7 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
     auto temp = board.make_hypothetical();
     temp.set_turn(perspective);
 
-    auto king_location = temp.find_king(perspective);
-    char king_file = king_location.first;
-    int  king_rank = king_location.second;
+    auto king_square = temp.find_king(perspective);
 
     auto square_count = 0;
 
@@ -45,8 +43,8 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
 
             for(int steps = 1; steps <= 7; ++steps)
             {
-                char file = king_file + steps*file_step;
-                int  rank = king_rank + steps*rank_step;
+                char file = king_square.file + steps*file_step;
+                int  rank = king_square.rank + steps*rank_step;
                 if(! temp.inside_board(file) || ! temp.inside_board(rank))
                 {
                     break;
@@ -74,8 +72,8 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
         {
             for(auto rank_direction : {-1, 1})
             {
-                char file = king_file + file_direction*file_step;
-                int  rank = king_rank + rank_direction*rank_step;
+                char file = king_square.file + file_direction*file_step;
+                int  rank = king_square.rank + rank_direction*rank_step;
 
                 if( ! temp.inside_board(file) || ! temp.inside_board(rank))
                 {

@@ -669,10 +669,8 @@ void Board::place_piece(const std::shared_ptr<const Piece>& p, char file, int ra
 bool Board::king_is_in_check(Color king_color) const
 {
     // find king of input color
-    auto king_location = find_king(king_color);
-    char file = king_location.first;
-    int  rank = king_location.second;
-    return square_attacked_by(file, rank, opposite(king_color));
+    auto king_square = find_king(king_color);
+    return square_attacked_by(king_square.file, king_square.rank, opposite(king_color));
 }
 
 bool Board::square_attacked_by(char file, int rank, Color color) const
@@ -896,7 +894,7 @@ void Board::all_pieces_unmoved()
     piece_moved[nullptr] = true;
 }
 
-std::pair<char, int> Board::find_king(Color color) const
+Square Board::find_king(Color color) const
 {
     for(char king_file = 'a'; king_file <= 'h'; ++king_file)
     {
@@ -905,7 +903,7 @@ std::pair<char, int> Board::find_king(Color color) const
             auto piece = piece_on_square(king_file, king_rank);
             if(piece && piece->color() == color && piece->pgn_symbol() == "K")
             {
-                return std::make_pair(king_file, king_rank);
+                return {king_file, king_rank};
             }
         }
     }
