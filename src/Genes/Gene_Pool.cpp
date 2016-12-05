@@ -331,48 +331,28 @@ void gene_pool(const std::string& config_file = "")
             auto this_mod = game_count[pool_index] % pool_swap_interval;
             if(this_mod < previous_mod)
             {
-                // Get indices of winningest player in each pool
-                std::vector<size_t> winning_indices;
-                for(const auto& source_pool : pools)
-                {
-                    size_t best_index = 0;
-                    int best_wins = 0;
-                    for(size_t index = 0; index < source_pool.size(); ++ index)
-                    {
-                        if(wins[source_pool[index].get_id()] > best_wins)
-                        {
-                            best_wins = wins[source_pool[index].get_id()];
-                            best_index = index;
-                        }
-                    }
-                    winning_indices.push_back(best_index);
-                }
+                auto comp = [&wins, &draws](const auto& x, const auto& y)
+                            {
+                                if(wins.at(x.get_id()) == wins.at(y.get_id()))
+                                {
+                                    return draws.at(x.get_id()) < draws.at(y.get_id());
+                                }
+                                return wins.at(x.get_id()) < wins.at(y.get_id());
+                            };
 
                 // Replace player with least wins in each pool with clone of winner from pool to left
                 std::cout << std::endl;
                 for(size_t source_pool_index = 0; source_pool_index < pools.size(); ++source_pool_index)
                 {
-                    const auto& source_pool = pools[source_pool_index];
-                    const auto& clone = source_pool[winning_indices[source_pool_index]];
-                    auto destination_pool_index = (source_pool_index + 1) % pools.size();
-                    auto& destination_pool = pools[destination_pool_index];
+                    auto& source_pool = pools[source_pool_index];
+                    auto winner_iter = std::max_element(source_pool.begin(), source_pool.end(), comp);
 
-                    auto min_wins = 0;
-                    bool replaced = false;
-                    while( ! replaced)
-                    {
-                        for(auto& ai : destination_pool)
-                        {
-                            if(wins[ai.get_id()] == min_wins)
-                            {
-                                ai = clone;
-                                std::cout << "Sending ID " << ai.get_id() << " to pool " << destination_pool_index << std::endl;
-                                replaced = true;
-                                break;
-                            }
-                        }
-                        ++min_wins;
-                    }
+                    auto dest_pool_index = (source_pool_index + 1) % pools.size();
+                    auto& dest_pool = pools[dest_pool_index];
+                    auto loser_iter = std::min_element(dest_pool.begin(), dest_pool.end(), comp);
+
+                    *loser_iter = *winner_iter;
+                    std::cout << "Sending ID " << (*winner_iter).get_id() << " to pool " << dest_pool_index << std::endl;
                 }
             }
 
