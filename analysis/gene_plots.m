@@ -27,7 +27,8 @@ end
 
 data = importdata(filename, ',');
 id_list = data.data(:, 1);
-still_alive = logical(data.data(:, end));
+still_alive = logical(data.data(:, end - 1));
+pool_ids = data.data(:, end);
 
 disp('Plotting ...');
 
@@ -48,15 +49,18 @@ scalar_suffix = 'Scalar';
 scalar_legend_entries = {};
 title('Gene Scalar Evolution', 'FontSize', 22);
 
-for yi = 2 : length(data.colheaders)
+for yi = 2 : length(data.colheaders) - 2
   this_data = data.data(:, yi);
   name_list = data.colheaders(yi);
   name = name_list{1};
 
   figure('Position', [0, 0, 1200, 1000]);
   hold all;
-  scatter(id_list, this_data, 3, 'b', 'filled');
-  scatter(id_list(still_alive), this_data(still_alive), 15, 'r');
+  for pool_id = 0 : max(pool_ids)
+    scatter(id_list(pool_ids == pool_id), this_data(pool_ids == pool_id), 8, 'filled');
+    h = scatter(id_list(still_alive & pool_ids == pool_id), this_data(still_alive & pool_ids == pool_id), 15, 'k');
+    set(h, 'linewidth', 1)
+  end
   xlabel(xaxis, 'FontSize', 18);
   title(name, 'FontSize', 22);
   set(gca, 'FontSize', 14);
