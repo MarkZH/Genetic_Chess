@@ -1,12 +1,9 @@
 #include "Players/Genetic_AI.h"
 
-#include <limits>
 #include <iostream>
 #include <fstream>
 #include <vector>
-#include <tuple>
 
-#include "Utility.h"
 #include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -14,6 +11,8 @@
 #include "Exceptions/Checkmate_Exception.h"
 #include "Exceptions/Game_Ending_Exception.h"
 #include "Exceptions/End_Of_File_Exception.h"
+
+#include "Utility.h"
 
 int Genetic_AI::next_id = 0;
 
@@ -127,18 +126,22 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
         return legal_moves.front(); // If there's only one legal move, take it.
     }
 
-    return std::get<Complete_Move>(search_game_tree(board,
-                                                    genome.positions_to_examine(board, clock),
-                                                    clock));
+    auto result = search_game_tree(board, genome.positions_to_examine(board, clock), clock, 0);
+    return result.move;
 }
 
-std::tuple<Complete_Move, Color, double> Genetic_AI::search_game_tree(const Board& board, double positions_to_examine, const Clock& clock) const
+Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
+                                                   double positions_to_examine,
+                                                   const Clock& clock,
+                                                   int depth) const
 {
     auto perspective = board.whose_turn();
     auto legal_moves = board.all_legal_moves();
-    auto best_score = -std::numeric_limits<double>::infinity();
-    auto best_move = legal_moves.front();
     auto positions_per_move = positions_to_examine/legal_moves.size();
+
+    auto best_score = -Math::infinity;
+    auto best_move = legal_moves.front();
+    auto best_depth = 0;
 
     for(const auto& move : legal_moves)
     {
@@ -158,14 +161,22 @@ std::tuple<Complete_Move, Color, double> Genetic_AI::search_game_tree(const Boar
             }
             else
             {
-                auto move_perspective_score = search_game_tree(next_board, positions_per_move, clock);
-                score = std::get<double>(move_perspective_score)*(std::get<Color>(move_perspective_score) == perspective ? 1 : -1);
+                auto result = search_game_tree(next_board, positions_per_move, clock, depth + 1);
+                score = result.score;
+                if(result.perspective != perspective)
+                {
+                    score = -score;
+                }
+                depth = result.depth;
             }
         }
         catch(const Checkmate_Exception&)
         {
             // Mate in one (try to pick the shortest path to checkmate)
-            return std::make_tuple(move, perspective, genome.evaluate(next_board, perspective));
+            return {move,
+                    genome.evaluate(next_board, perspective),
+                    perspective,
+                    depth};
         }
         catch(const Game_Ending_Exception&)
         {
@@ -173,14 +184,21 @@ std::tuple<Complete_Move, Color, double> Genetic_AI::search_game_tree(const Boar
             score = genome.evaluate(next_board, perspective);
         }
 
-        if(score >= best_score)
+        // Prefer ...
+        if(score > best_score // ... better score
+           || (score ==  Math::infinity && depth < best_depth) // shortest path to victory
+           || (score == -Math::infinity && depth > best_depth)) // longest path to defeat
         {
             best_score = score;
             best_move = move;
+            best_depth = depth;
         }
     }
 
-    return std::make_tuple(best_move, perspective, best_score);
+    return {best_move,
+            best_score,
+            perspective,
+            depth};
 }
 
 void Genetic_AI::mutate()

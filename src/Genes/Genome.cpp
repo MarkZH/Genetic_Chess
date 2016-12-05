@@ -1,7 +1,5 @@
 #include "Genes/Genome.h"
 
-#include <limits>
-
 #include "Game/Board.h"
 #include "Game/Color.h"
 #include "Utility.h"
@@ -184,11 +182,11 @@ double Genome::evaluate(const Board& board, Color perspective) const
         }
         else if(board.get_winner() == perspective) // checkmate win
         {
-            return std::numeric_limits<double>::infinity();
+            return Math::infinity;
         }
         else // checkmate loss
         {
-            return -std::numeric_limits<double>::infinity();
+            return -Math::infinity;
         }
     }
 

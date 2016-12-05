@@ -1,17 +1,25 @@
 #ifndef GENETIC_AI_H
 #define GENETIC_AI_H
 
-#include <vector>
 #include <iosfwd>
-#include <set>
 
 #include "Player.h"
+
+#include "Moves/Move.h"
+#include "Game/Color.h"
+
 #include "Genes/Genome.h"
 
 class Board;
 class Clock;
 
-enum Color;
+struct Game_Tree_Node_Result
+{
+    Complete_Move move;
+    double score;
+    Color perspective;
+    int depth;
+};
 
 class Genetic_AI : public Player
 {
@@ -40,12 +48,10 @@ class Genetic_AI : public Player
 
         void read_from(std::istream& is);
 
-        // Looks ahead to the furthest game state (pseudo-leaf on game tree)
-        // and returns the color of the perspective of the final game state score
-        // and the score
-        std::tuple<Complete_Move, Color, double> search_game_tree(const Board& board,
-                                                                  double positions_to_examine,
-                                                                  const Clock& clock) const;
+        Game_Tree_Node_Result search_game_tree(const Board& board,
+                                               double positions_to_examine,
+                                               const Clock& clock,
+                                               int depth) const;
 };
 
 #endif // GENETIC_AI_H
