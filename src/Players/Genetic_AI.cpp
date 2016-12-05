@@ -235,3 +235,8 @@ int Genetic_AI::get_id() const
 {
     return id;
 }
+
+bool Genetic_AI::operator<(const Genetic_AI& other) const
+{
+    return get_id() < other.get_id();
+}

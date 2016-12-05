@@ -40,6 +40,7 @@ class Genetic_AI : public Player
         void print_genome(std::ostream& file) const;
 
         int get_id() const;
+        bool operator<(const Genetic_AI& other) const;
 
     private:
         Genome genome;
