@@ -371,7 +371,7 @@ void signal_handler(int)
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
 {
-    static std::map<int, bool> written_before;
+    static std::map<Genetic_AI, bool> written_before;
     static std::string last_file_name;
     static std::ofstream ofs;
     if(last_file_name != genome_file_name)
@@ -384,11 +384,10 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
     auto pool = pools.at(pool_index);
     for(const auto& ai : pool)
     {
-        int id = ai.get_id();
-        if( ! written_before[id])
+        if( ! written_before[ai])
         {
             ai.print_genome(ofs);
-            written_before[id] = true;
+            written_before[ai] = true;
         }
     }
 
