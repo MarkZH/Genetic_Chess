@@ -123,6 +123,14 @@ void gene_pool(const std::string& config_file = "")
         std::sort(pool.begin(), pool.end());
         write_generation(pools, pool_index, genome_file_name);
 
+        // Pause gene pool
+        if(signal_activated == 1)
+        {
+            std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
+            std::cin.get();
+            signal_activated = 0;
+        }
+
         // widths of columns for stats printout
         auto max_id = pool.back().get_id();
         int id_digits = std::floor(std::log10(max_id) + 1);
@@ -284,42 +292,6 @@ void gene_pool(const std::string& config_file = "")
                                        return wins.at(x) < wins.at(y);
                                    };
 
-        // Interrupt gene pool to play against top AI
-        if(signal_activated == 1)
-        {
-            std::cout << "Do you want to play against the top AI? [yN] ";
-            std::string yn;
-            std::getline(std::cin, yn);
-            if(yn[0] == 'y' || yn[0] == 'Y')
-            {
-                auto& top_player = *std::max_element(pool.begin(), pool.end(), win_compare);
-                auto human_color = NONE;
-                auto winning_color = NONE;
-                if(Random::coin_flip())
-                {
-                    human_color = WHITE;
-                    winning_color = play_game(Human_Player(), top_player, 60*20, 40, "human_challenge.pgn");
-                }
-                else
-                {
-                    human_color = BLACK;
-                    winning_color = play_game(top_player, Human_Player(), 60*20, 40, "human_challenge.pgn");
-                }
-
-                if(winning_color == NONE)
-                {
-                    std::cout << "Game was a draw." << std::endl;
-                }
-                else
-                {
-                    std::cout << "You " << (human_color == winning_color ? "won" : "lost") << "!" << std::endl;
-                }
-                std::cin.get();
-            }
-
-            signal_activated = 0;
-        }
-
         // Transfer best players between gene pools to keep pools
         // from stagnating or amplifying pathological behavior
         if(pool_index == pools.size() - 1) // all pools have equal number of games
@@ -357,7 +329,7 @@ void signal_handler(int)
         exit(1);
     }
     signal_activated = 1;
-    std::cout << std::endl << "Waiting for games to end ..." << std::endl;
+    std::cout << std::endl << "Waiting for games to end and be recorded ..." << std::endl;
 }
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
