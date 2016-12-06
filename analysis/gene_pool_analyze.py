@@ -5,6 +5,7 @@ import sys
 def main(argv):
     current_gene = ''
     header_line = []
+    ids_at_end = []
     still_alive = dict()
     pool = dict()
     header_written = False
@@ -20,16 +21,19 @@ def main(argv):
                 if ':' in line:
                     parameter, value = line.split(':', 1)
                     if parameter == 'ID':
-                        header_line.append(parameter)
+                        if not header_written:
+                            header_line.append(parameter)
+                        ids_at_end.append(value.strip())
                     elif parameter == 'Name':
                         current_gene = value.strip()
                     elif parameter == 'Still Alive':
+                        ids_at_end = []
                         pool_id, ids = value.split(' : ')
                         pool_id = pool_id.strip()
                         if int(pool_id) > largest_pool_id:
                             largest_pool_id = int(pool_id)
                         last_pool_id = pool_id
-                        ids = [x.strip() for x in ids.split()]
+                        ids = ids.split()
                         still_alive[pool_id] = ids
                         for ident in ids:
                             pool[ident] = pool_id
@@ -37,11 +41,17 @@ def main(argv):
                         header_line.append(current_gene + ' - ' + parameter)
 
 
+        # Record AIs written after last Still Alive: ...
+        missing_pool_id = str((int(last_pool_id) + 1) % (largest_pool_id + 1))
+        still_alive[missing_pool_id] += ids_at_end
+        for ident in ids_at_end:
+            pool[ident] = missing_pool_id
+
         data_line = []
         still_alive_ids = []
         for ids in still_alive.values():
             still_alive_ids += ids
-        missing_pool_id = str((int(last_pool_id) + 1) % (largest_pool_id + 1))
+
         with open(argv[1]) as f:
             parameter_count = 0
             for line in f:
@@ -49,10 +59,10 @@ def main(argv):
                 if line == 'END':
                     is_still_alive = str(int(data_line[0] in still_alive_ids))
                     data_line.append(is_still_alive)
-                    try:
-                        data_line.append(pool[data_line[0]])
-                    except KeyError:
-                        data_line.append(missing_pool_id)
+
+                    pool_id = pool[data_line[0]]
+                    data_line.append(pool_id)
+
                     w.write(','.join(data_line) + '\n')
                     data_line = []
                     parameter_count = 0

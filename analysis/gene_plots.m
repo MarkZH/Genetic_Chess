@@ -42,10 +42,23 @@ for yi = 2 : length(data.colheaders) - 2
   figure('Position', [0, 0, 1200, 1000]);
   hold all;
   for pool_id = 0 : max(pool_ids)
-    scatter(id_list(pool_ids == pool_id), this_data(pool_ids == pool_id), 8, 'filled');
-    h = scatter(id_list(still_alive & pool_ids == pool_id), this_data(still_alive & pool_ids == pool_id), 15, 'k');
-    set(h, 'linewidth', 1)
+    id_right = (pool_ids == pool_id);
+    plot(id_list(id_right), this_data(id_right), ...
+         '.', ...
+         'markersize', 10, ...
+         'displayname', ['Pool ' num2str(pool_id)]);
+    h = plot(id_list(still_alive & id_right), this_data(still_alive & id_right), ...
+         'ok', ...
+         'markersize', 10, ...
+         'linewidth', 1);
+    if pool_id == max(pool_ids)
+      set(h, 'displayname', 'Still Alive');
+    end
   end
+  leg = legend('show');
+  set(leg, 'location', 'southoutside');
+  set(leg, 'orientation', 'horizontal');
+  legend left;
   xlabel(xaxis, 'FontSize', 18);
   title(name, 'FontSize', 22);
   set(gca, 'FontSize', 14);
@@ -82,12 +95,18 @@ end
 
 if piece_scalar_plots(1)
   figure(piece_strength_figure);
-  legend('show');
+  leg = legend('show');
+  set(leg, 'orientation', 'horizontal');
+  set(leg, 'location', 'southoutside');
+  legend left;
   print([gene_pool_filename '_piece_strength.png']);
 end
 
 if piece_scalar_plots(2)
   figure(scalar_figure);
-  legend('show');
+  leg = legend('show');
+  set(leg, 'orientation', 'horizontal');
+  set(leg, 'location', 'southoutside');
+  legend left;
   print([gene_pool_filename '_gene_scalars.png']);
 end
