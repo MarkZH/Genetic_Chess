@@ -26,7 +26,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective)
             auto piece = board.piece_on_square(file, rank);
             if(piece && piece->color() == perspective && toupper(piece->fen_symbol()) == 'P')
             {
-                // 1 point per pawn + 1 point per move towards promotion
+                // 1 point per move towards promotion
                 score += std::abs(home_rank - rank);
             }
         }
