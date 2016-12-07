@@ -744,14 +744,19 @@ void Board::print_game_record(const std::string& white_name,
     }
 
     Color c = WHITE;
-    int step = 0;
-    for(const auto& record : game_record)
+    for(size_t i = 0; i < game_record.size(); ++i)
     {
+        auto step = (i + 2)/2;
         if(c == WHITE)
         {
             out_stream << '\n' << ++step << ".";
         }
-        out_stream << " " << record;
+        out_stream << " " << game_record.at(i);
+
+        if( ! game_commentary.at(i).empty())
+        {
+            out_stream << " { " << game_commentary.at(i) << " }";
+        }
         c = opposite(c);
     }
     out_stream << '\n';
@@ -915,4 +920,13 @@ Square Board::find_king(Color color) const
 bool Board::game_has_ended() const
 {
     return game_ended;
+}
+
+void Board::add_commentary_to_next_move(const std::string& comment) const
+{
+    while(game_commentary.size() <= game_record.size())
+    {
+        game_commentary.push_back("");
+    }
+    game_commentary.back().append(comment);
 }

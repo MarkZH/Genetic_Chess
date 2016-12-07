@@ -81,11 +81,14 @@ class Board
 
         bool game_has_ended() const;
 
+        void add_commentary_to_next_move(const std::string& comment) const;
+
     private:
         std::vector<std::shared_ptr<const Piece>> board;
         std::map<std::string, int> repeat_count;
         Color turn_color;
         std::vector<std::string> game_record;
+        mutable std::vector<std::string> game_commentary;
         Color winner;
         bool is_original;
         std::map<std::shared_ptr<const Piece>, bool> piece_moved;
