@@ -156,6 +156,15 @@ void run_tests()
         tests_passed = false;
     }
 
+    original = "   a    {    b    }    c   {   d  }   ";
+    expected = "a c";
+    result = String::strip_block_comment(original, '{', '}');
+    if(expected != result)
+    {
+        std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
+        tests_passed = false;
+    }
+
 
     // Poisson distribution check
     const double mean_moves = 35.0;

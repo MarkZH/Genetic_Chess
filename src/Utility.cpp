@@ -104,6 +104,20 @@ std::string String::strip_comments(const std::string& str, char comment)
     return trim_outer_whitespace(str.substr(0, str.find(comment)));
 }
 
+std::string String::strip_block_comment(const std::string& str, char start, char end)
+{
+    auto start_comment_index = str.find(start);
+    auto end_comment_index = str.find(end);
+    if(start_comment_index == std::string::npos || end_comment_index == std::string::npos)
+    {
+        return String::trim_outer_whitespace(str);
+    }
+
+    auto first_part = trim_outer_whitespace(str.substr(0, start_comment_index));
+    auto last_part = trim_outer_whitespace(str.substr(end_comment_index + 1));
+    return strip_block_comment(first_part + " " + last_part, start, end);
+}
+
 int Random::random_integer(int min, int max)
 {
     static std::mt19937_64

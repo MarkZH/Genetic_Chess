@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
                     while( ! board.game_has_ended() && std::getline(ifs, line))
                     {
                         line = String::strip_comments(line, ';');
-                        line = String::strip_comments(line, '{');
+                        line = String::strip_block_comment(line, '{', '}');
                         line = String::strip_comments(line, '[');
                         if(line.empty())
                         {

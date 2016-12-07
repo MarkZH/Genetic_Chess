@@ -22,6 +22,7 @@ namespace String
 
     std::string trim_outer_whitespace(const std::string& str);
     std::string strip_comments(const std::string& str, char comment);
+    std::string strip_block_comment(const std::string& str, char start, char end);
 }
 
 namespace Random
