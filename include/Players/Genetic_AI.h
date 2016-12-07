@@ -2,6 +2,7 @@
 #define GENETIC_AI_H
 
 #include <iosfwd>
+#include <string>
 
 #include "Player.h"
 
@@ -19,6 +20,7 @@ struct Game_Tree_Node_Result
     double score;
     Color perspective;
     int depth;
+    std::string commentary;
 };
 
 class Genetic_AI : public Player
@@ -53,7 +55,8 @@ class Genetic_AI : public Player
         Game_Tree_Node_Result search_game_tree(const Board& board,
                                                double positions_to_examine,
                                                const Clock& clock,
-                                               int depth) const;
+                                               int depth,
+                                               std::string commentary) const;
 };
 
 #endif // GENETIC_AI_H

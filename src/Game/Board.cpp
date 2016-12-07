@@ -749,13 +749,13 @@ void Board::print_game_record(const std::string& white_name,
         auto step = (i + 2)/2;
         if(c == WHITE)
         {
-            out_stream << '\n' << ++step << ".";
+            out_stream << '\n' << step << ".";
         }
         out_stream << " " << game_record.at(i);
 
-        if( ! game_commentary.at(i).empty())
+        if(game_commentary.size() > i && ! game_commentary.at(i).empty())
         {
-            out_stream << " { " << game_commentary.at(i) << " }";
+            out_stream << " { " << String::trim_outer_whitespace(game_commentary.at(i)) << " }";
         }
         c = opposite(c);
     }

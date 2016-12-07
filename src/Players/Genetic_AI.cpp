@@ -126,14 +126,20 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
         return legal_moves.front(); // If there's only one legal move, take it.
     }
 
-    auto result = search_game_tree(board, genome.positions_to_examine(board, clock), clock, 0);
+    auto result = search_game_tree(board,
+                                   genome.positions_to_examine(board, clock),
+                                   clock,
+                                   0,
+                                   "");
+    board.add_commentary_to_next_move(result.commentary);
     return result.move;
 }
 
 Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    double positions_to_examine,
                                                    const Clock& clock,
-                                                   int depth) const
+                                                   int depth,
+                                                   std::string commentary) const
 {
     auto perspective = board.whose_turn();
     auto legal_moves = board.all_legal_moves();
@@ -142,6 +148,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     auto best_score = -Math::infinity;
     auto best_move = legal_moves.front();
     auto best_depth = 0;
+    std::string comments_on_best_line;
 
     for(const auto& move : legal_moves)
     {
@@ -152,22 +159,29 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
         auto next_board = board;
         double score;
+        std::string comments_on_this_line;
         try
         {
             next_board.submit_move(move);
             if(positions_per_move < 1)
             {
                 score = genome.evaluate(next_board, perspective);
+                comments_on_this_line = commentary + " " + next_board.get_game_record().back();
             }
             else
             {
-                auto result = search_game_tree(next_board, positions_per_move, clock, depth + 1);
+                auto result = search_game_tree(next_board,
+                                               positions_per_move,
+                                               clock,
+                                               depth + 1,
+                                               commentary + " " + next_board.get_game_record().back());
                 score = result.score;
                 if(result.perspective != perspective)
                 {
                     score = -score;
                 }
                 depth = result.depth;
+                comments_on_this_line = result.commentary;
             }
         }
         catch(const Checkmate_Exception&)
@@ -176,12 +190,14 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             return {move,
                     genome.evaluate(next_board, perspective),
                     perspective,
-                    depth};
+                    depth,
+                    commentary + " " + next_board.get_game_record().back()};
         }
         catch(const Game_Ending_Exception&)
         {
             // Draw
             score = genome.evaluate(next_board, perspective);
+            comments_on_this_line = commentary + " " + next_board.get_game_record().back();
         }
 
         // Prefer ...
@@ -192,13 +208,15 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             best_score = score;
             best_move = move;
             best_depth = depth;
+            comments_on_best_line = comments_on_this_line;
         }
     }
 
     return {best_move,
             best_score,
             perspective,
-            depth};
+            depth,
+            comments_on_best_line};
 }
 
 void Genetic_AI::mutate()
