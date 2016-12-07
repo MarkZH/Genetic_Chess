@@ -291,11 +291,11 @@ void gene_pool(const std::string& config_file = "")
 
         auto win_compare = [&wins, &draws](const auto& x, const auto& y)
                            {
-                               if(wins.at(x) == wins.at(y))
+                               if(wins[x] == wins[y])
                                {
-                                   return draws.at(x) < draws.at(y);
+                                   return draws[x] < draws[y];
                                }
-                               return wins.at(x) < wins.at(y);
+                               return wins[x] < wins[y];
                            };
 
         // Transfer best players between gene pools to keep pools
