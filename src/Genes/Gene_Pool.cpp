@@ -24,21 +24,20 @@
 typedef std::vector<Genetic_AI> Gene_Pool;
 
 static sig_atomic_t signal_activated = 0;
-void signal_handler(int);
+void pause_gene_pool(int);
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
 std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
 
 
 void gene_pool(const std::string& config_file = "")
 {
+    // Ctrl-C to pause gene pool
+    signal(SIGINT, pause_gene_pool);
+
     auto config = Configuration_File(config_file);
 
-    // Infrastructure and recording
-    signal(SIGINT, signal_handler);
-    static auto urng = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
-    const size_t maximum_simultaneous_games = config.get_number("maximum simultaneous games");
-
     // Environment variables
+    const size_t maximum_simultaneous_games = config.get_number("maximum simultaneous games");
     const size_t gene_pool_population = config.get_number("gene pool population");
     const size_t gene_pool_count = config.get_number("gene pool count");
     const double draw_kill_probability = config.get_number("draw kill probability");
@@ -56,10 +55,12 @@ void gene_pool(const std::string& config_file = "")
     std::map<size_t, int> black_wins;
     std::map<size_t, int> draw_count;
     std::map<size_t, int> most_wins;
-    std::map<size_t, int> most_wins_id;
+    std::map<size_t, Genetic_AI> most_wins_player;
+
     std::map<size_t, int> most_games_survived;
-    std::map<size_t, int> most_games_survived_id;
-    std::map<size_t, std::vector<int>> new_blood; // IDs of ex nihilo players
+    std::map<size_t, Genetic_AI> most_games_survived_player;
+
+    std::map<size_t, std::vector<Genetic_AI>> new_blood; // ex nihilo players
 
     std::map<Genetic_AI, int> wins;
     std::map<Genetic_AI, int> draws;
@@ -118,7 +119,6 @@ void gene_pool(const std::string& config_file = "")
 
     for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % gene_pool_count) // run forever
     {
-        static auto previous_mod = 0;
         auto& pool = pools[pool_index];
         std::sort(pool.begin(), pool.end());
         write_generation(pools, pool_index, genome_file_name);
@@ -155,17 +155,19 @@ void gene_pool(const std::string& config_file = "")
             std::cout << std::setw(id_digits + 1) << ai.get_id();
             std::cout << std::setw(7)    << wins[ai]
                       << std::setw(7)    << draws[ai]
-                      << (std::find(new_blood[pool_index].begin(),
-                                    new_blood[pool_index].end(),
-                                    ai.get_id()) != new_blood[pool_index].end() ? " *" : "")
+                      << (std::binary_search(new_blood[pool_index].begin(),
+                                             new_blood[pool_index].end(),
+                                             ai) ? " *" : "")
                       << (original_pool[ai] != pool_index ? " T" : "") << "\n";
         }
         std::cout << std::endl;
 
-        // The pool_indices list determines the matchups. After shuffling the list
+        // The pool_indices list determines the match-ups. After shuffling the list
         // of indices (0 to gene_pool_population - 1), adjacent indices in the pool are
         // matched as opponents.
+        static auto urng = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
         std::shuffle(pool_indices.begin(), pool_indices.end(), urng);
+
         std::vector<std::future<Color>> results; // map from pool_indices index to winner
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
@@ -224,20 +226,21 @@ void gene_pool(const std::string& config_file = "")
             if(winner != NONE)
             {
                 auto& winning_player = (winner == WHITE ? white : black);
-                auto& losing_player  = (winner == WHITE ? black : white);
                 wins[winning_player]++;
                 if(wins[winning_player] > most_wins[pool_index])
                 {
                     most_wins[pool_index] = wins[winning_player];
-                    most_wins_id[pool_index] = winning_player.get_id();
+                    most_wins_player[pool_index] = winning_player;
                 }
 
                 std::cout << "mating " << white.get_id() << " " << black.get_id();
-                auto offspring = Genetic_AI(white, black);
-                offspring.mutate();
-                original_pool[offspring] = pool_index;
+                pool.emplace_back(white, black);
+                pool.back().mutate();
+                original_pool[pool.back()] = pool_index;
+
+                auto& losing_player  = (winner == WHITE ? black : white);
                 std::cout << " / killing " << losing_player.get_id() << std::endl;
-                losing_player = offspring; // losing player replaced by offspring
+                pool.erase(std::find(pool.begin(), pool.end(), losing_player));
             }
             else
             {
@@ -245,16 +248,19 @@ void gene_pool(const std::string& config_file = "")
                 {
                     auto& pseudo_winner = (Random::coin_flip() ? white : black);
                     auto& pseudo_loser = (pseudo_winner == white ? black : white);
+
+                    std::cout << pseudo_loser.get_id() << " dies / ";
+                    pool.erase(std::find(pool.begin(), pool.end(), pseudo_loser));
+
+                    std::cout << pseudo_winner.get_id() << " mates with random";
                     auto new_specimen = Genetic_AI();
                     for(int i = 0; i < 100; ++i)
                     {
                         new_specimen.mutate();
                     }
-                    std::cout << pseudo_loser.get_id() << " dies / ";
-                    std::cout << pseudo_winner.get_id() << " mates with random";
-                    pseudo_loser = Genetic_AI(pseudo_winner, new_specimen);
-                    new_blood[pool_index].push_back(pseudo_loser.get_id());
-                    original_pool[pseudo_loser] = pool_index;
+                    pool.emplace_back(pseudo_winner, new_specimen);
+                    new_blood[pool_index].push_back(pool.back());
+                    original_pool[pool.back()] = pool_index;
                 }
                 std::cout << std::endl;
             }
@@ -266,14 +272,14 @@ void gene_pool(const std::string& config_file = "")
             if(games_survived > most_games_survived[pool_index])
             {
                 most_games_survived[pool_index] = games_survived;
-                most_games_survived_id[pool_index] = ai.get_id();
+                most_games_survived_player[pool_index] = ai;
             }
         }
 
         std::cout << "\nMost wins:     " << most_wins[pool_index]
-                  << " by ID " << most_wins_id[pool_index] << std::endl;
+                  << " by ID " << most_wins_player[pool_index].get_id() << std::endl;
         std::cout <<   "Longest lived: " << most_games_survived[pool_index]
-                  << " by ID " << most_games_survived_id[pool_index] << std::endl;
+                  << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
 
         game_count[pool_index] += results.size();
         if((game_time >= maximum_game_time && game_time_increment > 0) ||
@@ -284,34 +290,42 @@ void gene_pool(const std::string& config_file = "")
         game_time += game_time_increment;
 
         auto win_compare = [&wins, &draws](const auto& x, const auto& y)
-                                   {
-                                       if(wins.at(x) == wins.at(y))
-                                       {
-                                           return draws.at(x) < draws.at(y);
-                                       }
-                                       return wins.at(x) < wins.at(y);
-                                   };
+                           {
+                               if(wins.at(x) == wins.at(y))
+                               {
+                                   return draws.at(x) < draws.at(y);
+                               }
+                               return wins.at(x) < wins.at(y);
+                           };
 
         // Transfer best players between gene pools to keep pools
         // from stagnating or amplifying pathological behavior
         if(pool_index == pools.size() - 1) // all pools have equal number of games
         {
+            static auto previous_mod = 0;
             auto this_mod = game_count[pool_index] % pool_swap_interval;
             if(this_mod < previous_mod)
             {
                 // Replace player with least wins in each pool with clone of winner from pool to left
                 std::cout << std::endl;
+                std::vector<Genetic_AI> winners;
+                for(const auto& source_pool : pools)
+                {
+                    winners.push_back(*std::max_element(source_pool.begin(),
+                                                        source_pool.end(),
+                                                        win_compare));
+                }
+
                 for(size_t source_pool_index = 0; source_pool_index < pools.size(); ++source_pool_index)
                 {
-                    auto& source_pool = pools[source_pool_index];
-                    auto winner_iter = std::max_element(source_pool.begin(), source_pool.end(), win_compare);
-
                     auto dest_pool_index = (source_pool_index + 1) % pools.size();
                     auto& dest_pool = pools[dest_pool_index];
-                    auto loser_iter = std::min_element(dest_pool.begin(), dest_pool.end(), win_compare);
-
-                    *loser_iter = *winner_iter;
-                    std::cout << "Sending ID " << (*winner_iter).get_id() << " to pool " << dest_pool_index << std::endl;
+                    auto& loser = *std::min_element(dest_pool.begin(), dest_pool.end(), win_compare);
+                    std::cout << "Sending ID "
+                              << winners[source_pool_index].get_id()
+                              << " to pool "
+                              << dest_pool_index << std::endl;
+                    loser = winners[source_pool_index]; // winner replaces loser in destination pool
                 }
             }
 
@@ -321,7 +335,7 @@ void gene_pool(const std::string& config_file = "")
 }
 
 
-void signal_handler(int)
+void pause_gene_pool(int)
 {
     if(signal_activated == 1)
     {
@@ -402,7 +416,7 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
     std::vector<Gene_Pool> result(still_alive.size());
     for(const auto& index_list : still_alive)
     {
-        for(const auto& number_string : String::split(index_list.second, " "))
+        for(const auto& number_string : String::split(index_list.second))
         {
             if(number_string.empty())
             {
