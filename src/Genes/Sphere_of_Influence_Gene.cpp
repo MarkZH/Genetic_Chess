@@ -50,9 +50,9 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
     for(const auto& cm : temp.all_moves())
     {
         char final_file = cm.starting_file + cm.move->file_change();
-        char final_rank = cm.starting_rank + cm.move->rank_change();
+        int  final_rank = cm.starting_rank + cm.move->rank_change();
 
-        if( ! Board::inside_board(final_file) || ! Board::inside_board(final_rank))
+        if( ! Board::inside_board(final_file, final_rank))
         {
             continue;
         }
