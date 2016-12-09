@@ -167,7 +167,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             if(positions_per_move < 1)
             {
                 score = genome.evaluate(next_board, perspective);
-                comments_on_this_move = next_board.get_game_record().back() + " (" + std::to_string(score) + ")";
+                comments_on_this_move = next_board.get_game_record().back();
             }
             else
             {
@@ -188,10 +188,10 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         {
             // Mate in one (try to pick the shortest path to checkmate)
             score = genome.evaluate(next_board, perspective);
-            std::string comment = next_board.get_game_record().back() + " (" + std::to_string(score) + ")";
+            std::string comment = next_board.get_game_record().back();
             if(depth == 0)
             {
-                comment = comments_on_all_moves + " " + comment;
+                comment = comments_on_all_moves + " " + comment + " (" + std::to_string(score) + ")";
             }
             return {move,
                     score,
@@ -203,7 +203,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         {
             // Draw
             score = genome.evaluate(next_board, perspective);
-            comments_on_this_move =  next_board.get_game_record().back() + " (" + std::to_string(score) + ")";
+            comments_on_this_move =  next_board.get_game_record().back();
         }
 
         // Prefer ...
@@ -219,7 +219,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
         if(depth == 0)
         {
-            comments_on_all_moves += " " + comments_on_this_move;
+            comments_on_all_moves += " " + comments_on_this_move + " (" + std::to_string(score) + ")";
             if(comments_on_all_moves.size() > 1e6)
             {
                 throw std::runtime_error("Move commentary too large: " + std::to_string(comments_on_all_moves.size()));
