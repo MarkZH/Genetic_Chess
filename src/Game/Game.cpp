@@ -34,6 +34,7 @@ Color play_game_with_board(const Player& white,
     static unsigned int game_number = 0;
     static std::mutex write_lock;
     static std::string last_game_file;
+    auto clean_pgn = pgn_file_name + "_clean.txt";
     if(last_game_file != pgn_file_name)
     {
         last_game_file = pgn_file_name;
@@ -68,15 +69,21 @@ Color play_game_with_board(const Player& white,
         black.process_game_ending(end_game);
 
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
+
         board.print_game_record(white.name(), black.name(), pgn_file_name, end_game.what(), ++game_number);
+        board.print_clean_game_record(white.name(), black.name(), clean_pgn,     end_game.what(),   game_number);
+
         if(game_clock.is_running())
         {
-            std::ofstream(pgn_file_name, std::ios::app)
-                << "{ Initial time: " << time_in_seconds << " }\n"
-                << "{ Moves to reset clocks: " << moves_to_reset << " }\n"
-                << "{ Time left: White: " << game_clock.time_left(WHITE) << " }\n"
-                << "{            Black: " << game_clock.time_left(BLACK) << " }\n\n"
-                << std::endl;
+            for(auto file_name : {pgn_file_name, clean_pgn})
+            {
+                std::ofstream(file_name, std::ios::app)
+                    << "{ Initial time: " << time_in_seconds << " }\n"
+                    << "{ Moves to reset clocks: " << moves_to_reset << " }\n"
+                    << "{ Time left: White: " << game_clock.time_left(WHITE) << " }\n"
+                    << "{            Black: " << game_clock.time_left(BLACK) << " }\n\n"
+                    << std::endl;
+            }
         }
 
         return end_game.winner();
@@ -86,6 +93,7 @@ Color play_game_with_board(const Player& white,
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
         board.ascii_draw(WHITE);
         board.print_game_record(white.name(), black.name(), pgn_file_name, error.what());
+        board.print_clean_game_record(white.name(), black.name(), clean_pgn, error.what());
         throw;
     }
 }
