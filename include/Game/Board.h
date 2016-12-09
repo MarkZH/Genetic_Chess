@@ -51,11 +51,19 @@ class Board
 
         std::string fen_status() const; // current state of board in FEN
         const std::vector<std::string>& get_game_record() const;
+
+        // With commentary
         void print_game_record(const std::string& white_name,
                                const std::string& black_name,
                                const std::string& file_name = "",
                                const std::string& outside_result = "",
                                unsigned int game_number = 0) const;
+        // No commentary
+        void print_clean_game_record(const std::string& white_name,
+                                     const std::string& black_name,
+                                     const std::string& file_name = "",
+                                     const std::string& outside_result = "",
+                                     unsigned int game_number = 0) const;
         std::string board_status() const; // for detecting threefold repetition
         Color get_winner() const;
         std::string last_move() const;
@@ -108,6 +116,12 @@ class Board
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();
         void all_pieces_unmoved();
+        void print_game_record_general(const std::string& white_name,
+                                       const std::string& black_name,
+                                       const std::string& file_name,
+                                       const std::string& outside_result,
+                                       unsigned int game_number,
+                                       bool print_commentary) const;
 
         // Moves with side effects
         friend class Kingside_Castle; // moves second piece
