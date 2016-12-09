@@ -259,7 +259,7 @@ void gene_pool(const std::string& config_file = "")
                     original_pool[offspring] = pool_index;
 
                     auto& pseudo_loser = (pseudo_winner == white ? black : white);
-                    std::cout << pseudo_loser.get_id() << " dies / ";
+                    std::cout << " / " << pseudo_loser.get_id() << " dies";
                     pseudo_loser = offspring; // offspring replaces loser
                 }
                 std::cout << std::endl;
