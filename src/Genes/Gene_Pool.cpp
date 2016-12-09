@@ -108,7 +108,7 @@ void gene_pool(const std::string& config_file = "")
         }
     }
 
-    // Indices in gene pool to be shuffled for game matchups
+    // Indices in gene pool to be shuffled for game match-ups
     std::vector<size_t> pool_indices;
     for(size_t i = 0; i < gene_pool_population; ++i)
     {
