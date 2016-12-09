@@ -924,9 +924,9 @@ bool Board::game_has_ended() const
 
 void Board::add_commentary_to_next_move(const std::string& comment) const
 {
-    while(game_commentary.size() <= game_record.size())
+    while(game_commentary.size() < game_record.size())
     {
         game_commentary.push_back("");
     }
-    game_commentary.back().append(comment);
+    game_commentary.push_back(comment);
 }
