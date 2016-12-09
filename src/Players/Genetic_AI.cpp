@@ -129,8 +129,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     auto result = search_game_tree(board,
                                    genome.positions_to_examine(board, clock),
                                    clock,
-                                   0,
-                                   "");
+                                   0);
     board.add_commentary_to_next_move(result.commentary);
     return result.move;
 }
@@ -138,8 +137,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    double positions_to_examine,
                                                    const Clock& clock,
-                                                   int depth,
-                                                   std::string commentary) const
+                                                   const int depth) const
 {
     auto perspective = board.whose_turn();
     auto legal_moves = board.all_legal_moves();
@@ -148,7 +146,9 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     auto best_score = -Math::infinity;
     auto best_move = legal_moves.front();
     auto best_depth = 0;
-    std::string comments_on_best_line;
+    std::string comments_on_best_move;
+
+    std::string comments_on_all_moves; // only use when depth == 0
 
     for(const auto& move : legal_moves)
     {
@@ -159,45 +159,51 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
         auto next_board = board;
         double score;
-        std::string comments_on_this_line;
+        std::string comments_on_this_move;
+        auto local_depth = depth;
         try
         {
             next_board.submit_move(move);
             if(positions_per_move < 1)
             {
                 score = genome.evaluate(next_board, perspective);
-                comments_on_this_line = commentary + " " + next_board.get_game_record().back();
+                comments_on_this_move = next_board.get_game_record().back() + " (" + std::to_string(score) + ")";
             }
             else
             {
                 auto result = search_game_tree(next_board,
                                                positions_per_move,
                                                clock,
-                                               depth + 1,
-                                               commentary + " " + next_board.get_game_record().back());
+                                               depth + 1);
                 score = result.score;
                 if(result.perspective != perspective)
                 {
                     score = -score;
                 }
-                depth = result.depth;
-                comments_on_this_line = result.commentary;
+                local_depth = result.depth;
+                comments_on_this_move = next_board.get_game_record().back() + " " + result.commentary;
             }
         }
         catch(const Checkmate_Exception&)
         {
             // Mate in one (try to pick the shortest path to checkmate)
+            score = genome.evaluate(next_board, perspective);
+            std::string comment = next_board.get_game_record().back() + " (" + std::to_string(score) + ")";
+            if(depth == 0)
+            {
+                comment = comments_on_all_moves + " " + comment;
+            }
             return {move,
-                    genome.evaluate(next_board, perspective),
+                    score,
                     perspective,
                     depth,
-                    commentary + " " + next_board.get_game_record().back()};
+                    comment};
         }
         catch(const Game_Ending_Exception&)
         {
             // Draw
             score = genome.evaluate(next_board, perspective);
-            comments_on_this_line = commentary + " " + next_board.get_game_record().back();
+            comments_on_this_move =  next_board.get_game_record().back() + " (" + std::to_string(score) + ")";
         }
 
         // Prefer ...
@@ -207,8 +213,17 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         {
             best_score = score;
             best_move = move;
-            best_depth = depth;
-            comments_on_best_line = comments_on_this_line;
+            best_depth = local_depth;
+            comments_on_best_move = comments_on_this_move;
+        }
+
+        if(depth == 0)
+        {
+            comments_on_all_moves += " " + comments_on_this_move;
+            if(comments_on_all_moves.size() > 1e6)
+            {
+                throw std::runtime_error("Move commentary too large: " + std::to_string(comments_on_all_moves.size()));
+            }
         }
     }
 
@@ -216,7 +231,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             best_score,
             perspective,
             depth,
-            comments_on_best_line};
+            (depth == 0 ? comments_on_all_moves : comments_on_best_move)};
 }
 
 void Genetic_AI::mutate()
