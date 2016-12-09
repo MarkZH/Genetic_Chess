@@ -234,33 +234,32 @@ void gene_pool(const std::string& config_file = "")
                 }
 
                 std::cout << "mating " << white.get_id() << " " << black.get_id();
-                pool.emplace_back(white, black);
-                pool.back().mutate();
-                original_pool[pool.back()] = pool_index;
+                auto offspring = Genetic_AI(white, black);
+                offspring.mutate();
+                original_pool[offspring] = pool_index;
 
                 auto& losing_player  = (winner == WHITE ? black : white);
                 std::cout << " / killing " << losing_player.get_id() << std::endl;
-                pool.erase(std::find(pool.begin(), pool.end(), losing_player));
+                losing_player = offspring; // offspring replaces loser
             }
             else
             {
                 if(Random::success_probability(draw_kill_probability))
                 {
                     auto& pseudo_winner = (Random::coin_flip() ? white : black);
-                    auto& pseudo_loser = (pseudo_winner == white ? black : white);
-
-                    std::cout << pseudo_loser.get_id() << " dies / ";
-                    pool.erase(std::find(pool.begin(), pool.end(), pseudo_loser));
-
                     std::cout << pseudo_winner.get_id() << " mates with random";
                     auto new_specimen = Genetic_AI();
                     for(int i = 0; i < 100; ++i)
                     {
                         new_specimen.mutate();
                     }
-                    pool.emplace_back(pseudo_winner, new_specimen);
-                    new_blood[pool_index].push_back(pool.back());
-                    original_pool[pool.back()] = pool_index;
+                    auto offspring = Genetic_AI(pseudo_winner, new_specimen);
+                    new_blood[pool_index].push_back(offspring);
+                    original_pool[offspring] = pool_index;
+
+                    auto& pseudo_loser = (pseudo_winner == white ? black : white);
+                    std::cout << pseudo_loser.get_id() << " dies / ";
+                    pseudo_loser = offspring; // offspring replaces loser
                 }
                 std::cout << std::endl;
             }
