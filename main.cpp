@@ -49,9 +49,9 @@ int main(int argc, char *argv[])
                     bool game_started = false;
                     while( ! board.game_has_ended() && std::getline(ifs, line))
                     {
-                        line = String::strip_comments(line, ';');
+                        line = String::trim_outer_whitespace(line);
                         line = String::strip_block_comment(line, '{', '}');
-                        line = String::strip_comments(line, '[');
+                        line = String::strip_comments(line, ';');
                         if(line.empty())
                         {
                             if(game_started)
@@ -62,6 +62,11 @@ int main(int argc, char *argv[])
                             {
                                 continue;
                             }
+                        }
+                        if(line[0] == '[')
+                        {
+                            std::cout << line << std::endl;
+                            continue;
                         }
 
                         for(const auto& s : String::split(line))
