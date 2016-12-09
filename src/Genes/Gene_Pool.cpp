@@ -254,6 +254,7 @@ void gene_pool(const std::string& config_file = "")
                         new_specimen.mutate();
                     }
                     auto offspring = Genetic_AI(pseudo_winner, new_specimen);
+                    offspring.mutate();
                     new_blood[pool_index].push_back(offspring);
                     original_pool[offspring] = pool_index;
 
