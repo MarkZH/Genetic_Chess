@@ -108,12 +108,9 @@ Genome::Genome(const Genome& A, const Genome& B) :
     // Copy all other genes
     for(size_t i = 0; i < A.genome.size(); ++i)
     {
-        genome.emplace_back(Random::coin_flip() ?
-                            A.genome[i]->duplicate() :
-                            B.genome[i]->duplicate());
-        gene_active[genome[i]->name()] = Random::coin_flip() ?
-                                         A.gene_active.at(genome[i]->name()) :
-                                         B.gene_active.at(genome[i]->name());
+        auto& donor = (Random::coin_flip() ? A : B);
+        genome.emplace_back(donor.genome[i]->duplicate());
+        gene_active[genome[i]->name()] = donor.gene_active.at(genome[i]->name());
     }
 
     reseat_piece_strength_gene();
