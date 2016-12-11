@@ -235,12 +235,23 @@ int main(int argc, char *argv[])
                     }
                 }
 
-                if( ! white || ! black)
+                if(black)
                 {
-                    std::cerr << "Choose two players.\n";
-                    return 1;
+                    play_game(*white, *black, game_time, moves_per_reset, "game.pgn");
                 }
-                play_game(*white, *black, game_time, moves_per_reset, "game.pgn");
+                else
+                {
+                    auto outside = Outside_Player();
+
+                    if(outside.get_ai_color() == WHITE)
+                    {
+                        play_game(*white, outside, 0, 0, "");
+                    }
+                    else
+                    {
+                        play_game(outside, *white, 0, 0, "");
+                    }
+                }
             }
         }
         else
