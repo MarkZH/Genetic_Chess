@@ -773,16 +773,19 @@ void Board::print_game_record_general(const std::string& white_name,
     }
 
     Color c = WHITE;
-    for(size_t i = 0; i < game_record.size(); ++i)
+    for(size_t i = 0; i < std::max(game_record.size(), game_commentary.size()); ++i)
     {
-        auto step = (i + 2)/2;
-        if(c == WHITE)
+        if(i < game_record.size())
         {
-            out_stream << '\n' << step << ".";
+            auto step = (i + 2)/2;
+            if(c == WHITE)
+            {
+                out_stream << '\n' << step << ".";
+            }
+            out_stream << " " << game_record.at(i);
         }
-        out_stream << " " << game_record.at(i);
 
-        if(print_commentary && game_commentary.size() > i && ! game_commentary.at(i).empty())
+        if(print_commentary && i < game_commentary.size() && ! game_commentary.at(i).empty())
         {
             out_stream << " { " << String::trim_outer_whitespace(game_commentary.at(i)) << " }";
         }
