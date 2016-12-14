@@ -31,13 +31,16 @@ Look_Ahead_Gene::~Look_Ahead_Gene()
 {
 }
 
-double Look_Ahead_Gene::positions_to_examine(const Board& board, const Clock& clock) const
+int Look_Ahead_Gene::positions_to_examine(const Board& board, const Clock& clock) const
 {
     auto time_left = clock.time_left(board.whose_turn());
+    auto moves_to_reset = clock.moves_to_reset(board.whose_turn());
+
     auto moves_so_far = board.get_game_record().size()/2; // only count moves by this player
     auto moves_left = Math::average_moves_left(mean_game_length, moves_so_far);
-    auto time_per_move = time_left/moves_left;
-    return positions_per_second*time_per_move; // positions to examine for one move
+
+    auto time_per_move = time_left/std::min(moves_left, double(moves_to_reset));
+    return int(positions_per_second*time_per_move); // positions to examine for one move
 }
 
 void Look_Ahead_Gene::mutate()

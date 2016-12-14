@@ -27,7 +27,7 @@ class Genome
         double evaluate(const Board& board, Color perspective) const;
         void mutate();
 
-        double positions_to_examine(const Board& board, const Clock& clock) const; // how many moves in future to evaluate board
+        int positions_to_examine(const Board& board, const Clock& clock) const; // how many moves in future to evaluate board
 
         void print(std::ostream& os) const;
 

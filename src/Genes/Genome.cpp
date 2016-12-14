@@ -220,7 +220,7 @@ void Genome::print(std::ostream& os) const
     os << "\n";
 }
 
-double Genome::positions_to_examine(const Board& board, const Clock& clock) const
+int Genome::positions_to_examine(const Board& board, const Clock& clock) const
 {
     if(look_ahead_gene_index < genome.size() && gene_active.at(genome[look_ahead_gene_index]->name()))
     {
