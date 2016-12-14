@@ -9,7 +9,6 @@
 #include <cmath>
 #include <algorithm>
 #include <future>
-#include <random>
 
 #include "Players/Genetic_AI.h"
 #include "Players/Human_Player.h"
@@ -168,8 +167,7 @@ void gene_pool(const std::string& config_file = "")
         // The pool_indices list determines the match-ups. After shuffling the list
         // of indices (0 to gene_pool_population - 1), adjacent indices in the pool are
         // matched as opponents.
-        static auto urng = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
-        std::shuffle(pool_indices.begin(), pool_indices.end(), urng);
+        pool_indices = Random::shuffle(pool_indices);
 
         std::vector<std::future<Color>> results; // map from pool_indices index to winner
         for(size_t index = 0; index < gene_pool_population; index += 2)

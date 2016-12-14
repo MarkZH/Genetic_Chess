@@ -4,6 +4,9 @@
 #include <vector>
 #include <map>
 #include <limits>
+#include <random>
+#include <chrono>
+#include <algorithm>
 
 namespace String
 {
@@ -32,6 +35,14 @@ namespace Random
     int random_integer(int min, int max);
     bool coin_flip();
     bool success_probability(double probability);
+
+    template<class List>
+    List shuffle(List list)
+    {
+        static auto engine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
+        std::shuffle(list.begin(), list.end(), engine);
+        return list;
+    }
 }
 
 namespace Math
