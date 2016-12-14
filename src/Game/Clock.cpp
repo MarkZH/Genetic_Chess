@@ -87,6 +87,18 @@ double Clock::time_left(Color color) const
     }
 }
 
+int Clock::moves_to_reset(Color color) const
+{
+    if(use_reset)
+    {
+        return move_count_reset - (moves.at(color) % move_count_reset);
+    }
+    else
+    {
+        return std::numeric_limits<int>::max();
+    }
+}
+
 Color Clock::running_for() const
 {
     return whose_turn;

@@ -14,6 +14,7 @@ class Clock
         void stop(); // stop both clocks
         void start(); // resume after stop()
         double time_left(Color color) const;
+        int moves_to_reset(Color color) const;
         bool is_running() const;
         Color running_for() const;
 
