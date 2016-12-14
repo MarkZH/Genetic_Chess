@@ -126,22 +126,32 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
         return legal_moves.front(); // If there's only one legal move, take it.
     }
 
+    auto positions_to_examine = genome.positions_to_examine(board, clock);
+    std::string look_ahead_comment = "[" + std::to_string(positions_to_examine) + ",";
     auto result = search_game_tree(board,
-                                   genome.positions_to_examine(board, clock),
+                                   positions_to_examine,
                                    clock,
                                    0);
-    board.add_commentary_to_next_move(result.commentary);
+    look_ahead_comment += std::to_string(positions_to_examine) + "] ";
+    board.add_commentary_to_next_move(look_ahead_comment + result.commentary);
     return result.move;
 }
 
 Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
-                                                   double positions_to_examine,
+                                                   int& positions_to_examine,
                                                    const Clock& clock,
                                                    const int depth) const
 {
+    // Every call to search_game_tree() after the first
+    // costs a position_to_examine.
+    if(depth > 0)
+    {
+        --positions_to_examine;
+    }
+
     auto perspective = board.whose_turn();
-    auto legal_moves = board.all_legal_moves();
-    auto positions_per_move = positions_to_examine/legal_moves.size();
+    auto legal_moves = Random::shuffle(board.all_legal_moves());
+    auto moves_left = legal_moves.size();
 
     auto best_score = -Math::infinity;
     auto best_move = legal_moves.front();
@@ -161,10 +171,16 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         double score;
         std::string comments_on_this_move;
         auto local_depth = depth;
+
+        int positions_for_this_move = positions_to_examine/moves_left;
+
+        positions_to_examine -= positions_for_this_move;
+        --moves_left;
+
         try
         {
             next_board.submit_move(move);
-            if(positions_per_move < 1)
+            if(positions_for_this_move == 0)
             {
                 score = genome.evaluate(next_board, perspective);
                 comments_on_this_move = next_board.get_game_record().back();
@@ -172,7 +188,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             else
             {
                 auto result = search_game_tree(next_board,
-                                               positions_per_move,
+                                               positions_for_this_move,
                                                clock,
                                                depth + 1);
                 score = result.score;
@@ -193,6 +209,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             {
                 comment = comments_on_all_moves + " " + comment + " (" + std::to_string(score) + ")";
             }
+            positions_to_examine += positions_for_this_move;
             return {move,
                     score,
                     perspective,
@@ -219,12 +236,15 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
         if(depth == 0)
         {
+            // build comment on all current move possibilities
             comments_on_all_moves += " " + comments_on_this_move + " (" + std::to_string(score) + ")";
             if(comments_on_all_moves.size() > 1e6)
             {
                 throw std::runtime_error("Move commentary too large: " + std::to_string(comments_on_all_moves.size()));
             }
         }
+
+        positions_to_examine += positions_for_this_move;
     }
 
     return {best_move,

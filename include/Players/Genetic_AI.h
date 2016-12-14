@@ -53,7 +53,7 @@ class Genetic_AI : public Player
         void read_from(std::istream& is);
 
         Game_Tree_Node_Result search_game_tree(const Board& board,
-                                               double positions_to_examine,
+                                               int& positions_to_examine,
                                                const Clock& clock,
                                                int depth) const;
 };
