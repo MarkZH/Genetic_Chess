@@ -64,6 +64,7 @@ void gene_pool(const std::string& config_file = "")
 
     std::map<Genetic_AI, int> wins;
     std::map<Genetic_AI, int> draws;
+    std::map<Genetic_AI, int> games_since_last_win;
     std::map<Genetic_AI, size_t> original_pool;
 
     std::string genome_file_name = config.get_text("gene pool file");
@@ -147,7 +148,8 @@ void gene_pool(const std::string& config_file = "")
                   << "   Gene pool file name: " << genome_file_name << "\n"
                   << std::setw(id_digits + 1)  << "ID"
                   << std::setw(7)  << "Wins"
-                  << std::setw(8)  << "Draws\n";
+                  << std::setw(7)  << "Draws"
+                  << std::setw(13)  << "(in a row)\n";
 
         // Write stats for each specimen
         for(const auto& ai : pool)
@@ -155,6 +157,7 @@ void gene_pool(const std::string& config_file = "")
             std::cout << std::setw(id_digits + 1) << ai.get_id();
             std::cout << std::setw(7)    << wins[ai]
                       << std::setw(7)    << draws[ai]
+                      << std::setw(12)   << games_since_last_win[ai]
                       << (std::binary_search(new_blood[pool_index].begin(),
                                              new_blood[pool_index].end(),
                                              ai) ? " *" : "")
@@ -220,6 +223,8 @@ void gene_pool(const std::string& config_file = "")
             {
                 draws[white]++;
                 draws[black]++;
+                games_since_last_win[white]++;
+                games_since_last_win[black]++;
                 ++draw_count[pool_index];
             }
 
@@ -227,6 +232,7 @@ void gene_pool(const std::string& config_file = "")
             {
                 auto& winning_player = (winner == WHITE ? white : black);
                 wins[winning_player]++;
+                games_since_last_win[winning_player] = 0;
                 if(wins[winning_player] > most_wins[pool_index])
                 {
                     most_wins[pool_index] = wins[winning_player];
