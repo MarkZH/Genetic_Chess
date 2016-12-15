@@ -171,8 +171,6 @@ double Genome::score_board(const Board& board, Color perspective) const
     double score = 0;
     for(const auto& gene : genome)
     {
-        // To parallelize, replace below with std::async() call
-        // like in gene pool game matchups
         if(gene_active.at(gene->name()))
         {
             score += gene->evaluate(board, perspective);
