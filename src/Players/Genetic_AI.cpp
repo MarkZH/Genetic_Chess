@@ -238,10 +238,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         {
             // build comment on all current move possibilities
             comments_on_all_moves += " " + comments_on_this_move + " (" + std::to_string(score) + ")";
-            if(comments_on_all_moves.size() > 1e6)
-            {
-                throw std::runtime_error("Move commentary too large: " + std::to_string(comments_on_all_moves.size()));
-            }
         }
 
         positions_to_examine += positions_for_this_move;
