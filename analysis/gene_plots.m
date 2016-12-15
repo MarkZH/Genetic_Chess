@@ -41,6 +41,7 @@ for yi = 2 : length(data.colheaders) - 2
 
   figure('Position', [0, 0, 1200, 1000]);
   hold all;
+  still_alive_gene = 0;
   for pool_id = 0 : max(pool_ids)
     id_right = (pool_ids == pool_id);
     plot(id_list(id_right), this_data(id_right), ...
@@ -51,8 +52,10 @@ for yi = 2 : length(data.colheaders) - 2
          'ok', ...
          'markersize', 10, ...
          'linewidth', 1);
+    still_alive_gene = still_alive_gene + sum(isfinite(this_data(still_alive & id_right)));
     if pool_id == max(pool_ids)
-      set(h, 'displayname', 'Still Alive');
+      number_alive = num2str(still_alive_gene);
+      set(h, 'displayname', ['Still Alive (' number_alive ')']);
     end
   end
   leg = legend('show');
