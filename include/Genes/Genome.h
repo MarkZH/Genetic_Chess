@@ -28,6 +28,7 @@ class Genome
         void mutate();
 
         int positions_to_examine(const Board& board, const Clock& clock) const; // how many moves in future to evaluate board
+        bool good_enough_to_examine(const Board& before, const Board& after, Color perspective) const;
 
         void print(std::ostream& os) const;
 
@@ -38,6 +39,7 @@ class Genome
         // Regulatory gene locations
         size_t piece_strength_gene_index;
         size_t look_ahead_gene_index;
+        size_t branch_pruning_gene_index;
 
         double score_board(const Board& board, Color perspective) const;
         void reseat_piece_strength_gene();

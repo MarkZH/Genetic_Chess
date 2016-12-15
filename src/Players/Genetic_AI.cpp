@@ -144,23 +144,23 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 {
     // Every call to search_game_tree() after the first
     // costs a position_to_examine.
-    if(depth > 0)
+    if(depth > 0 && positions_to_examine > 0)
     {
         --positions_to_examine;
     }
 
     auto perspective = board.whose_turn();
-    auto legal_moves = Random::shuffle(board.all_legal_moves());
-    auto moves_left = legal_moves.size();
-
-    auto best_score = -Math::infinity;
-    auto best_move = legal_moves.front();
-    auto best_depth = 0;
-    std::string comments_on_best_move;
 
     std::string comments_on_all_moves; // only use when depth == 0
 
-    for(const auto& move : legal_moves)
+    std::vector<Game_Tree_Node_Result> results;
+
+    // Moves worth examining further
+    std::vector<Complete_Move> moves_to_examine;
+    std::vector<Board> boards_to_examine;
+
+    // Find moves worth examining
+    for(const auto& move : board.all_legal_moves())
     {
         if(clock.time_left(clock.running_for()) < 0.0)
         {
@@ -168,48 +168,35 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
 
         auto next_board = board;
-        double score;
-        std::string comments_on_this_move;
-        auto local_depth = depth;
-
-        int positions_for_this_move = positions_to_examine/moves_left;
-
-        positions_to_examine -= positions_for_this_move;
-        --moves_left;
 
         try
         {
             next_board.submit_move(move);
-            if(positions_for_this_move == 0)
+
+            if(positions_to_examine <= 0 || ! genome.good_enough_to_examine(board, next_board, perspective))
             {
-                score = genome.evaluate(next_board, perspective);
-                comments_on_this_move = next_board.get_game_record().back();
+                // Record immediate result without looking ahead further
+                results.push_back({move,
+                                   genome.evaluate(next_board, perspective),
+                                   perspective,
+                                   depth,
+                                   next_board.get_game_record().back()});
             }
             else
             {
-                auto result = search_game_tree(next_board,
-                                               positions_for_this_move,
-                                               clock,
-                                               depth + 1);
-                score = result.score;
-                if(result.perspective != perspective)
-                {
-                    score = -score;
-                }
-                local_depth = result.depth;
-                comments_on_this_move = next_board.get_game_record().back() + " " + result.commentary;
+                moves_to_examine.push_back(move);
+                boards_to_examine.push_back(next_board);
             }
         }
         catch(const Checkmate_Exception&)
         {
             // Mate in one (try to pick the shortest path to checkmate)
-            score = genome.evaluate(next_board, perspective);
-            std::string comment = next_board.get_game_record().back();
+            auto score = genome.evaluate(next_board, perspective);
+            auto comment = next_board.get_game_record().back();
             if(depth == 0)
             {
                 comment = comments_on_all_moves + " " + comment + " (" + std::to_string(score) + ")";
             }
-            positions_to_examine += positions_for_this_move;
             return {move,
                     score,
                     perspective,
@@ -219,34 +206,71 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         catch(const Game_Ending_Exception&)
         {
             // Draw
-            score = genome.evaluate(next_board, perspective);
-            comments_on_this_move =  next_board.get_game_record().back();
+            results.push_back({move,
+                               genome.evaluate(next_board, perspective),
+                               perspective,
+                               depth,
+                               next_board.get_game_record().back()});
+        }
+    }
+
+    // Look ahead through moves found above
+    for(size_t i = 0; i < moves_to_examine.size(); ++i)
+    {
+        int moves_left = moves_to_examine.size() - i;
+        int positions_for_this_move = positions_to_examine/moves_left;
+        positions_to_examine -= positions_for_this_move;
+
+        results.push_back(search_game_tree(boards_to_examine[i],
+                                           positions_for_this_move,
+                                           clock,
+                                           depth + 1));
+
+        // Update last result with this node's data
+        results.back().move = moves_to_examine[i];
+        results.back().commentary = boards_to_examine[i].get_game_record().back()
+                                    + " "
+                                    + results.back().commentary;
+
+        positions_to_examine += positions_for_this_move;
+    }
+
+    // Consider all results and return best
+    auto best_score = -Math::infinity;
+    auto best_move = board.all_legal_moves().front();
+    auto best_depth = 0;
+    std::string comments_on_best_move;
+
+    for(const auto& result : results)
+    {
+        auto score = result.score;
+        if(result.perspective != perspective)
+        {
+            score = -score;
         }
 
         // Prefer ...
         if(score > best_score // ... better score
-           || (score ==  Math::infinity && depth < best_depth) // shortest path to victory
-           || (score == -Math::infinity && depth > best_depth)) // longest path to defeat
+           || (score ==  Math::infinity && result.depth < best_depth) // shortest path to victory
+           || (score == -Math::infinity && result.depth > best_depth)) // longest path to defeat
         {
             best_score = score;
-            best_move = move;
-            best_depth = local_depth;
-            comments_on_best_move = comments_on_this_move;
+            best_move = result.move;
+            best_depth = result.depth;
+            comments_on_best_move = result.commentary;
         }
 
         if(depth == 0)
         {
             // build comment on all current move possibilities
-            comments_on_all_moves += " " + comments_on_this_move + " (" + std::to_string(score) + ")";
+            comments_on_all_moves += " " + result.commentary + " (" + std::to_string(score) + ")";
         }
-
-        positions_to_examine += positions_for_this_move;
     }
 
     return {best_move,
             best_score,
             perspective,
-            depth,
+            best_depth,
             (depth == 0 ? comments_on_all_moves : comments_on_best_move)};
 }
 

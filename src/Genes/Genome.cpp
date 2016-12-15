@@ -14,12 +14,14 @@
 #include "Genes/Look_Ahead_Gene.h"
 #include "Genes/King_Confinement_Gene.h"
 #include "Genes/King_Protection_Gene.h"
+#include "Genes/Branch_Pruning_Gene.h"
 
 
 // Creation ex nihilo
 Genome::Genome() :
     piece_strength_gene_index(-1),
-    look_ahead_gene_index(-1)
+    look_ahead_gene_index(-1),
+    branch_pruning_gene_index(-1)
 {
     // Regulator genes
     genome.emplace_back(new Piece_Strength_Gene);
@@ -27,6 +29,9 @@ Genome::Genome() :
 
     genome.emplace_back(new Look_Ahead_Gene);
     look_ahead_gene_index = genome.size() - 1;
+
+    genome.emplace_back(new Branch_Pruning_Gene);
+    branch_pruning_gene_index = genome.size() - 1;
 
     // Normal genes
     if(piece_strength_gene_index < genome.size())
@@ -54,7 +59,8 @@ Genome::Genome(const Genome& other) :
     genome(),
     gene_active(other.gene_active),
     piece_strength_gene_index(other.piece_strength_gene_index),
-    look_ahead_gene_index(other.look_ahead_gene_index)
+    look_ahead_gene_index(other.look_ahead_gene_index),
+    branch_pruning_gene_index(other.branch_pruning_gene_index)
 {
     // Copy all other genes
     for(const auto& gene : other.genome)
@@ -91,6 +97,7 @@ Genome& Genome::operator=(const Genome& other)
 
     piece_strength_gene_index = other.piece_strength_gene_index;
     look_ahead_gene_index = other.look_ahead_gene_index;
+    branch_pruning_gene_index = other.branch_pruning_gene_index;
 
     genome.clear();
     for(const auto& gene : other.genome)
@@ -108,7 +115,8 @@ Genome& Genome::operator=(const Genome& other)
 Genome::Genome(const Genome& A, const Genome& B) :
     genome(),
     piece_strength_gene_index(A.piece_strength_gene_index),
-    look_ahead_gene_index(A.look_ahead_gene_index)
+    look_ahead_gene_index(A.look_ahead_gene_index),
+    branch_pruning_gene_index(A.branch_pruning_gene_index)
 {
     // Copy all other genes
     for(size_t i = 0; i < A.genome.size(); ++i)
@@ -234,5 +242,18 @@ int Genome::positions_to_examine(const Board& board, const Clock& clock) const
     else
     {
         return 0;
+    }
+}
+
+bool Genome::good_enough_to_examine(const Board& before, const Board& after, Color perspective) const
+{
+    if(branch_pruning_gene_index < genome.size() && gene_active.at(genome[branch_pruning_gene_index]->name()))
+    {
+        auto score_difference = evaluate(after, perspective) - evaluate(before, perspective);
+        return std::static_pointer_cast<Branch_Pruning_Gene>(genome[branch_pruning_gene_index])->good_enough_to_examine(score_difference);
+    }
+    else
+    {
+        return true;
     }
 }
