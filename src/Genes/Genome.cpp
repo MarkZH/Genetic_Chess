@@ -84,6 +84,11 @@ void Genome::reseat_piece_strength_gene()
 // Injection
 Genome& Genome::operator=(const Genome& other)
 {
+    if(this == &other)
+    {
+        return *this;
+    }
+
     piece_strength_gene_index = other.piece_strength_gene_index;
     look_ahead_gene_index = other.look_ahead_gene_index;
 
