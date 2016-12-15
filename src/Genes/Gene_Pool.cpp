@@ -310,7 +310,7 @@ void gene_pool(const std::string& config_file = "")
 
         // Transfer best players between gene pools to keep pools
         // from stagnating or amplifying pathological behavior
-        if(pool_index == pools.size() - 1) // all pools have equal number of games
+        if(pools.size() > 1 && pool_index == pools.size() - 1) // all pools have equal number of games
         {
             static auto previous_mod = 0;
             auto this_mod = game_count[pool_index] % pool_swap_interval;
