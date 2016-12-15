@@ -156,8 +156,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     std::vector<Game_Tree_Node_Result> results;
 
     // Moves worth examining further
-    std::vector<Complete_Move> moves_to_examine;
-    std::vector<Board> boards_to_examine;
+    std::vector<std::tuple<Complete_Move, Board, double>> further_examine; // move, resulting board, score
 
     // Find moves worth examining
     for(const auto& move : board.all_legal_moves())
@@ -184,8 +183,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             }
             else
             {
-                moves_to_examine.push_back(move);
-                boards_to_examine.push_back(next_board);
+                further_examine.push_back({move, next_board, genome.evaluate(next_board, perspective)});
             }
         }
         catch(const Checkmate_Exception&)
@@ -214,25 +212,45 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
     }
 
+
+    // Sort moves by score so higher scores get more moves for examination
+    std::sort(further_examine.begin(),
+              further_examine.end(),
+              [](const auto& x, const auto& y)
+              {
+                  return std::get<double>(x) < std::get<double>(y);
+              });
+
     // Look ahead through moves found above
-    for(size_t i = 0; i < moves_to_examine.size(); ++i)
+    for(size_t i = 0; i < further_examine.size(); ++i)
     {
-        int moves_left = moves_to_examine.size() - i;
+        int moves_left = further_examine.size() - i;
         int positions_for_this_move = positions_to_examine/moves_left;
-        positions_to_examine -= positions_for_this_move;
 
-        results.push_back(search_game_tree(boards_to_examine[i],
-                                           positions_for_this_move,
-                                           clock,
-                                           depth + 1));
+        if(positions_for_this_move > 0)
+        {
+            positions_to_examine -= positions_for_this_move;
 
-        // Update last result with this node's data
-        results.back().move = moves_to_examine[i];
-        results.back().commentary = boards_to_examine[i].get_game_record().back()
-                                    + " "
-                                    + results.back().commentary;
+            results.push_back(search_game_tree(std::get<Board>(further_examine[i]),
+                                               positions_for_this_move,
+                                               clock,
+                                               depth + 1));
+            // Update last result with this node's data
+            results.back().move = std::get<Complete_Move>(further_examine[i]);
+            results.back().commentary = std::get<Board>(further_examine[i]).get_game_record().back()
+                                        + " "
+                                        + results.back().commentary;
 
-        positions_to_examine += positions_for_this_move;
+            positions_to_examine += positions_for_this_move;
+        }
+        else
+        {
+            results.push_back({std::get<Complete_Move>(further_examine[i]),
+                               std::get<double>(further_examine[i]),
+                               perspective,
+                               depth,
+                               std::get<Board>(further_examine[i]).get_game_record().back()});
+        }
     }
 
     // Consider all results and return best
