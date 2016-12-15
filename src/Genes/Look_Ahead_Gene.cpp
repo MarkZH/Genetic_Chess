@@ -1,7 +1,6 @@
 #include "Genes/Look_Ahead_Gene.h"
 
 #include <cmath>
-#include <algorithm>
 
 #include "Utility.h"
 #include "Game/Board.h"
