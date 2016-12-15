@@ -62,7 +62,7 @@ for yi = 2 : length(data.colheaders) - 2
   xlabel(xaxis, 'FontSize', 18);
   title(name, 'FontSize', 22);
   set(gca, 'FontSize', 14);
-  print([gene_pool_filename '_' name '.png']);
+  print([gene_pool_filename '_gene_' name '.png']);
   
   % Fill in nan gaps in data
   this_data(~isfinite(this_data)) = 0;
