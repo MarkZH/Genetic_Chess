@@ -190,6 +190,7 @@ int main(int argc, char *argv[])
                             {
                                 genetic_ptr->mutate();
                             }
+                            genetic_ptr->print_genome("single_game_player.txt");
                         }
                         else
                         {
