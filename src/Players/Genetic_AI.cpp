@@ -169,7 +169,11 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     {
         if(clock.time_left(clock.running_for()) < 0.0)
         {
-            break;
+            return {board.all_legal_moves().front(),
+                    0.0,
+                    perspective,
+                    depth,
+                    "Out of time"};
         }
 
         auto next_board = board;
