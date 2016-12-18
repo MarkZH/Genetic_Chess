@@ -48,6 +48,12 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
 
     for(const auto& cm : temp.all_moves())
     {
+        // Only potentially capturing moves are counted
+        if( ! cm.move->can_capture())
+        {
+            continue;
+        }
+
         char final_file = cm.starting_file + cm.move->file_change();
         int  final_rank = cm.starting_rank + cm.move->rank_change();
 
@@ -57,10 +63,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
         }
 
         // Only potentially capturing moves are counted
-        if(cm.move->name() == "Pawn Move" ||
-           cm.move->name() == "Pawn Double Move" ||
-           (String::starts_with(cm.move->name(), "Pawn Promotion") && ! String::contains(cm.move->name(), "Capture")) ||
-           String::contains(cm.move->name(), "Castle"))
+        if( ! cm.move->can_capture())
         {
             continue;
         }
