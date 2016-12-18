@@ -157,8 +157,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
     auto perspective = board.whose_turn();
 
-    std::string comments_on_all_moves; // only use when depth == 0
-
     std::vector<Game_Tree_Node_Result> results;
 
     // Moves worth examining further
@@ -205,7 +203,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             auto comment = next_board.get_game_record().back();
             if(depth == 0)
             {
-                comment = comments_on_all_moves + " " + comment + " (" + std::to_string(score) + ")";
+                comment += " (" + std::to_string(score) + ")";
             }
             return {move,
                     score,
@@ -270,6 +268,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     auto best_move = board.all_legal_moves().front();
     auto best_depth = 0;
     std::string comments_on_best_move;
+    std::string comments_on_all_moves; // only use when depth == 0
 
     for(const auto& result : results)
     {
