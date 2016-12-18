@@ -237,7 +237,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         int moves_left = further_examine.size() - i;
         int positions_for_this_move = positions_to_examine/moves_left;
 
-        if(positions_for_this_move > 0)
+        if(positions_for_this_move > 0 || std::get<Board>(further_examine[i]).all_legal_moves().size() == 1)
         {
             positions_to_examine -= positions_for_this_move;
 
