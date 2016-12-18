@@ -560,7 +560,7 @@ Color Board::whose_turn() const
     return turn_color;
 }
 
-std::vector<Complete_Move> Board::all_legal_moves() const
+const std::vector<Complete_Move>& Board::all_legal_moves() const
 {
     if( ! all_legal_moves_cache.empty())
     {
@@ -849,7 +849,7 @@ void Board::set_turn(Color color)
     turn_color = color;
 }
 
-std::vector<Complete_Move> Board::all_moves() const
+const std::vector<Complete_Move>& Board::all_moves() const
 {
     if( ! all_moves_cache.empty())
     {
