@@ -90,11 +90,20 @@ for target in final_targets:
     operations['before_' + target].append('test -d ' + bin_dir + ' || mkdir -p ' + bin_dir)
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
         dirpath = dirpath[len(os.getcwd()) + 1 :]
-        for source_file in [fn for fn in filenames if fn.endswith('.cpp')]:
-            source_file = os.path.join(dirpath, source_file)
-            obj_file = os.path.join(obj_dest[target], source_file[:-4] + ".o")
-            depends[obj_file] = [source_file]
-            operations[obj_file] = [' '.join(['$(CXX)', "$(CFLAGS)", options[target], "-c", source_file, "-o", obj_file])]
+        for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp') or fn.endswith('.h')]:
+            ext_length = len(source_file.split('.')[-1])
+            obj_file = os.path.join(obj_dest[target], source_file[:-ext_length] + "o")
+            if 'include' in obj_file:
+                inc_ind = obj_file.find('include')
+                inc_len = len('include')
+                obj_file = obj_file[:inc_ind] + 'src' + obj_file[inc_ind + inc_len:]
+            try:
+                if source_file not in depends[obj_file]:
+                    depends[obj_file].append(source_file)
+            except KeyError:
+                depends[obj_file] = [source_file]
+            if source_file.endswith('.cpp'):
+                operations[obj_file] = [' '.join(['$(CXX)', "$(CFLAGS)", options[target], "-c", source_file, "-o", obj_file])]
             obj_dest_dir = os.path.dirname(obj_file)
             if obj_dest_dir not in obj_dir_written:
                 operations['before_' + target].append('test -d ' + obj_dest_dir + ' || mkdir -p ' + obj_dest_dir)
@@ -102,11 +111,20 @@ for target in final_targets:
             with open(source_file) as src:
                 for line in src:
                     if line.find('#include "') != -1:
-                        include_file_name = os.path.join('include', line.split('"')[1])
-                        depends[obj_file].append(include_file_name)
+                        file_name = line.split('"')[1]
+                        include_file_name = os.path.join('include', file_name)
+                        if not os.path.isfile(include_file_name):
+                            include_file_name = os.path.join(os.path.dirname(source_file), file_name)
+                        if include_file_name not in depends[obj_file]:
+                            depends[obj_file].append(include_file_name)
 
+to_delete = []
+for obj_file in depends:
+    if obj_file.endswith('.o') and obj_file not in operations:
+        to_delete.append(obj_file)
 
-
+for thing in to_delete:
+    del depends[thing]
 
 compiler = 'g++'
 
