@@ -297,11 +297,7 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
 
     if(move_list.size() == 1)
     {
-        Complete_Move result;
-        result.move = move_list.front();
-        result.starting_file = file_start;
-        result.starting_rank = rank_start;
-        return result;
+        return {move_list.front(), file_start, rank_start};
     }
     else if(promote)
     {
@@ -309,11 +305,7 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
         {
             if(tolower(move->name().back()) == tolower(promote))
             {
-                Complete_Move result;
-                result.move = move;
-                result.starting_file = file_start;
-                result.starting_rank = rank_start;
-                return result;
+                return {move, file_start, rank_start};
             }
         }
 
@@ -865,8 +857,7 @@ const std::vector<Complete_Move>& Board::all_moves() const
             {
                 for(const auto& move : piece->get_move_list())
                 {
-                    Complete_Move cm{move, file, rank};
-                    all_moves_cache.emplace_back(cm);
+                    all_moves_cache.emplace_back(move, file, rank);
                 }
             }
         }

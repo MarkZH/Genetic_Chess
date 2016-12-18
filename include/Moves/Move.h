@@ -43,6 +43,13 @@ class Move
 
 struct Complete_Move
 {
+    Complete_Move(std::shared_ptr<const Move> move_in, char file, int rank) :
+        move(move_in),
+        starting_file(file),
+        starting_rank(rank)
+    {
+    }
+
     std::shared_ptr<const Move> move;
     char starting_file;
     int  starting_rank;
