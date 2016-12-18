@@ -156,6 +156,9 @@ double Math::average_moves_left(double mean_moves, size_t moves_so_far)
     double A_prev = -1;
     double B = 0;
     double B_prev = -1;
+
+    // Calculate $$\textrm{moves left}=\sum_{n=n_0}^\infty \frac{nP(n)}{P(n)}$$
+    // Here, P(n) is the Poisson distribution
     for(size_t N = moves_so_far + 1; A != A_prev && B != B_prev; ++N)
     {
         A_prev = A;
