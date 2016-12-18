@@ -12,7 +12,7 @@ class Clock;
 
 const Complete_Move Random_AI::choose_move(const Board& board, const Clock& /*clock*/) const
 {
-    auto moves = board.all_legal_moves();
+    const auto& moves = board.all_legal_moves();
     return moves[Random::random_integer(0, moves.size() - 1)];
 }
 

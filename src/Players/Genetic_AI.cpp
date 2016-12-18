@@ -120,7 +120,7 @@ void Genetic_AI::read_from(std::istream& is)
 
 const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clock) const
 {
-    auto legal_moves = board.all_legal_moves();
+    const auto& legal_moves = board.all_legal_moves();
     if(legal_moves.size() == 1)
     {
         return legal_moves.front(); // If there's only one legal move, take it.
