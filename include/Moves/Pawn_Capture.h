@@ -12,11 +12,11 @@ class Pawn_Capture : public Pawn_Move
         Pawn_Capture(Color C, char dir); // dir = 'l' (left) or 'r' (right)
         Pawn_Capture(const Pawn_Capture&) = delete;
         Pawn_Capture& operator=(const Pawn_Capture&) = delete;
-        virtual ~Pawn_Capture() override;
+        ~Pawn_Capture() override;
 
-        virtual bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
-        virtual std::string name() const override;
-        virtual std::string game_record_item(const Board&, char file_start, int rank_start) const override;
+        bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
+        std::string name() const override;
+        std::string game_record_item(const Board&, char file_start, int rank_start) const override;
 };
 
 #endif // PAWN_CAPTURE_H

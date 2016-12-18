@@ -9,7 +9,7 @@ class Rook : public Piece
         explicit Rook(Color color_in);
         Rook(const Rook&) = delete;
         Rook& operator=(const Rook&) = delete;
-        virtual ~Rook() override;
+        ~Rook() override;
 };
 
 #endif // ROOK_H

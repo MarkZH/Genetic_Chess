@@ -12,9 +12,9 @@ class Checkmate_Exception : public Game_Ending_Exception
 {
     public:
         explicit Checkmate_Exception(Color victor);
-        virtual ~Checkmate_Exception() override;
+        ~Checkmate_Exception() override;
 
-        virtual const char* what() const throw() override;
+        const char* what() const throw() override;
 
     private:
         std::string message;

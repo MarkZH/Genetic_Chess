@@ -6,10 +6,6 @@
 #include "Pieces/Piece.h"
 #include "Utility.h"
 
-Pawn_Advancement_Gene::Pawn_Advancement_Gene() : Gene(0.0)
-{
-}
-
 Pawn_Advancement_Gene::~Pawn_Advancement_Gene()
 {
 }

@@ -25,6 +25,11 @@ bool Pawn_Double_Move::move_specific_legal(const Board& board, char file_start, 
             && ! board.piece_on_square(file_start, rank_start + rank_change());
 }
 
+bool Pawn_Double_Move::can_capture() const
+{
+    return false;
+}
+
 std::string Pawn_Double_Move::name() const
 {
     return "Pawn Double Move";

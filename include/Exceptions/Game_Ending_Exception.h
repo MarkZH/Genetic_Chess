@@ -9,9 +9,9 @@ class Game_Ending_Exception : public std::exception
 {
     public:
         explicit Game_Ending_Exception(Color winner_in);
-        virtual ~Game_Ending_Exception() override;
+        ~Game_Ending_Exception() override;
 
-        virtual const char* what() const throw() override= 0;
+        const char* what() const throw() override = 0;
         Color winner() const;
 
     private:

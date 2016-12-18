@@ -5,7 +5,6 @@
 #include "Genes/Gene.h"
 
 Total_Force_Gene::Total_Force_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_source_in) :
-    Gene(0.0),
     piece_strength_source(piece_strength_source_in)
 {
 }

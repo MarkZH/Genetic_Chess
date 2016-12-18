@@ -16,6 +16,11 @@ bool Pawn_Move::move_specific_legal(const Board& board, char file_start, int ran
         && ! board.piece_on_square(file_start, rank_start + rank_change()); // not blocked
 }
 
+bool Pawn_Move::can_capture() const
+{
+    return false;
+}
+
 void Pawn_Move::side_effects(Board& board, char /* file_start */, int /* rank_start */) const
 {
     board.repeat_count.clear();

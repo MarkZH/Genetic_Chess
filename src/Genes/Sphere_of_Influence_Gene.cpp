@@ -8,8 +8,11 @@
 #include "Utility.h"
 
 Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
-    Gene(0.0),
     legal_bonus(0.0)
+{
+}
+
+Sphere_of_Influence_Gene::~Sphere_of_Influence_Gene()
 {
 }
 
@@ -23,10 +26,6 @@ void Sphere_of_Influence_Gene::load_properties()
 {
     Gene::load_properties();
     legal_bonus = properties["Legal Bonus"];
-}
-
-Sphere_of_Influence_Gene::~Sphere_of_Influence_Gene()
-{
 }
 
 Sphere_of_Influence_Gene* Sphere_of_Influence_Gene::duplicate() const

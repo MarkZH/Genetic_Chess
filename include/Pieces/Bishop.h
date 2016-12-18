@@ -11,7 +11,7 @@ class Bishop : public Piece
         explicit Bishop(Color color);
         Bishop(const Bishop&) = delete;
         Bishop& operator=(const Bishop&) = delete;
-        virtual ~Bishop() override;
+        ~Bishop() override;
 };
 
 #endif // BISHOP_H

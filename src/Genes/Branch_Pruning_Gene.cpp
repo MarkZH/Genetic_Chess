@@ -2,7 +2,8 @@
 
 #include "Utility.h"
 
-Branch_Pruning_Gene::Branch_Pruning_Gene() : Gene(0.0), minimum_score_change(0.0)
+Branch_Pruning_Gene::Branch_Pruning_Gene() :
+    minimum_score_change(0.0)
 {
 }
 

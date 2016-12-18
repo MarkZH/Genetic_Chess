@@ -4,10 +4,6 @@
 #include "Game/Color.h"
 #include "Pieces/Piece.h"
 
-King_Confinement_Gene::King_Confinement_Gene() : Gene(0.0)
-{
-}
-
 King_Confinement_Gene::~King_Confinement_Gene()
 {
 }

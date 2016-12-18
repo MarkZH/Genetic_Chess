@@ -23,6 +23,9 @@ class Move
         // Contains extra rules for special moves (first move for double pawn move, etc.)
         bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const;
 
+        // Can this move capture a piece?
+        virtual bool can_capture() const;
+
         int file_change() const;
         int rank_change() const;
 

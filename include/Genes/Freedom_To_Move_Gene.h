@@ -11,7 +11,7 @@ class Freedom_To_Move_Gene : public Gene
     public:
         Freedom_To_Move_Gene();
         explicit Freedom_To_Move_Gene(std::ifstream& ifs);
-        virtual ~Freedom_To_Move_Gene() override;
+        ~Freedom_To_Move_Gene() override;
 
         Freedom_To_Move_Gene* duplicate() const override;
 

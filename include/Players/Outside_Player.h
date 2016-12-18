@@ -12,7 +12,7 @@ class Outside_Player : public Player
 {
     public:
         Outside_Player();
-        virtual ~Outside_Player() override;
+        ~Outside_Player() override;
 
         const Complete_Move choose_move(const Board& b, const Clock& clock) const override;
         void process_game_ending(const Game_Ending_Exception& gee) const;

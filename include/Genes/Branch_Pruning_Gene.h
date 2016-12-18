@@ -9,7 +9,7 @@ class Branch_Pruning_Gene : public Gene
 {
     public:
         Branch_Pruning_Gene();
-        virtual ~Branch_Pruning_Gene();
+        ~Branch_Pruning_Gene() override;
 
         Branch_Pruning_Gene* duplicate() const override;
         void mutate() override;

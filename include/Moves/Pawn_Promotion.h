@@ -15,12 +15,13 @@ class Pawn_Promotion : public Pawn_Move
         explicit Pawn_Promotion(const Piece* promotion);
         Pawn_Promotion(const Pawn_Promotion&) = delete;
         Pawn_Promotion& operator=(const Pawn_Promotion&) = delete;
-        virtual ~Pawn_Promotion() override;
+        ~Pawn_Promotion() override;
 
         void side_effects(Board& board, char file_start, int rank_start) const override;
-        virtual std::string name() const override;
-        virtual bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
-        virtual std::string game_record_item(const Board& board, char file_start, int rank_start) const override;
+        std::string name() const override;
+        bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
+        bool can_capture() const override;
+        std::string game_record_item(const Board& board, char file_start, int rank_start) const override;
 
     protected:
         mutable std::shared_ptr<const Piece> promote_to;

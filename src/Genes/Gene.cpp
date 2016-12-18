@@ -6,7 +6,7 @@
 #include "Game/Color.h"
 #include "Utility.h"
 
-Gene::Gene(double initial_scalar_value) : scalar(initial_scalar_value)
+Gene::Gene() : scalar(0.0)
 {
 }
 

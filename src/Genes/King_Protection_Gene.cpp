@@ -3,10 +3,6 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 
-King_Protection_Gene::King_Protection_Gene() : Gene(0.0)
-{
-}
-
 King_Protection_Gene::~King_Protection_Gene()
 {
 }

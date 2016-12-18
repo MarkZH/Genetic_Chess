@@ -21,6 +21,11 @@ bool Kingside_Castle::move_specific_legal(const Board& board, char file_start, i
             && ! board.piece_on_square('g', rank_start);
 }
 
+bool Kingside_Castle::can_capture() const
+{
+    return false;
+}
+
 void Kingside_Castle::side_effects(Board& board, char /* file_start */, int rank_start) const
 {
     board.make_move('h', rank_start, 'f', rank_start); // move Rook

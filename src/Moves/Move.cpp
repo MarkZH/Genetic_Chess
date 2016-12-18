@@ -97,6 +97,11 @@ bool Move::move_specific_legal(const Board& /* board */, char /* file_start */, 
     return true;
 }
 
+bool Move::can_capture() const
+{
+    return true;
+}
+
 int Move::file_change() const
 {
     return d_file;

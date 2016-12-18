@@ -34,6 +34,11 @@ bool Pawn_Promotion::move_specific_legal(const Board& board, char file_start, in
         && ! board.piece_on_square(file_start, rank_start + rank_change()); // not blocked
 }
 
+bool Pawn_Promotion::can_capture() const
+{
+    return false;
+}
+
 std::string Pawn_Promotion::game_record_item(const Board& board, char file_start, int rank_start) const
 {
     return Pawn_Move::game_record_item(board, file_start, rank_start) + "=" + promote_to->pgn_symbol();

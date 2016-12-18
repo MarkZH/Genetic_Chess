@@ -10,9 +10,9 @@ class Stalemate_Exception : public Game_Ending_Exception
 {
     public:
         explicit Stalemate_Exception(std::string message);
-        virtual ~Stalemate_Exception() override;
+        ~Stalemate_Exception() override;
 
-        virtual const char* what() const throw() override;
+        const char* what() const throw() override;
 
     private:
         std::string reason; // 50 moves, 3-fold repeat, pieces, etc.
