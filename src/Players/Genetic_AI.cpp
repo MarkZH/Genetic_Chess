@@ -245,9 +245,8 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                positions_for_this_move,
                                                clock,
                                                depth + 1));
-            // Update last result with this node's data
+            // Update last result with this game tree node's data
             results.back().move = std::get<Complete_Move>(further_examine[i]);
-            results.back().score *= (results.back().perspective == perspective ? 1 : -1);
             results.back().commentary = std::get<Board>(further_examine[i]).get_game_record().back()
                                         + " "
                                         + results.back().commentary;
