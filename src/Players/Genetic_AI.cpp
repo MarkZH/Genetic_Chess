@@ -128,12 +128,18 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
     auto positions_to_examine = genome.positions_to_examine(board, clock);
     std::string look_ahead_comment = "[" + std::to_string(positions_to_examine) + ",";
+    auto time_at_start = clock.time_left(board.whose_turn());
     auto result = search_game_tree(board,
                                    positions_to_examine,
                                    clock,
                                    0);
     look_ahead_comment += std::to_string(positions_to_examine) + "] ";
-    board.add_commentary_to_next_move(look_ahead_comment + result.commentary);
+    auto time_used = time_at_start - clock.time_left(board.whose_turn());
+    board.add_commentary_to_next_move(look_ahead_comment
+                                      + " "
+                                      + std::to_string(time_used)
+                                      + " "
+                                      + result.commentary);
     return result.move;
 }
 
