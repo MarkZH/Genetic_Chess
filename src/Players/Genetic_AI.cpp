@@ -182,7 +182,9 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         {
             next_board.submit_move(move);
 
-            if(positions_to_examine <= 0 || ! genome.good_enough_to_examine(board, next_board, perspective))
+            if(next_board.all_legal_moves().size() > 1 &&
+               (positions_to_examine <= 0
+               || ! genome.good_enough_to_examine(board, next_board, perspective)))
             {
                 // Record immediate result without looking ahead further
                 results.push_back({move,
