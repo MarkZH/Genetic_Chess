@@ -228,3 +228,25 @@ double Configuration_File::get_number(const std::string& parameter) const
         return 0.0;
     }
 }
+
+std::ofstream Scoped_Stopwatch::out_file;
+
+Scoped_Stopwatch::Scoped_Stopwatch(const std::string& name) :
+    place_name(name),
+    start_time(std::chrono::steady_clock::now())
+{
+}
+
+Scoped_Stopwatch::~Scoped_Stopwatch()
+{
+    if( ! out_file)
+    {
+        out_file.open("timings.txt");
+    }
+
+    auto end_time = std::chrono::steady_clock::now();
+    out_file << place_name << "|"
+             << std::chrono::duration_cast<std::chrono::duration<double>>
+                (end_time - start_time).count()
+             << '\n';
+}

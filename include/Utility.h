@@ -7,6 +7,7 @@
 #include <random>
 #include <chrono>
 #include <algorithm>
+#include <fstream>
 
 namespace String
 {
@@ -63,6 +64,18 @@ class Configuration_File
 
     private:
         std::map<std::string, std::string> parameters;
+};
+
+class Scoped_Stopwatch
+{
+    public:
+        Scoped_Stopwatch(const std::string& name);
+        ~Scoped_Stopwatch();
+
+    private:
+        static std::ofstream out_file;
+        std::string place_name;
+        std::chrono::steady_clock::time_point start_time;
 };
 
 #endif // UTILITY_H
