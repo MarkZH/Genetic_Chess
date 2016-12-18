@@ -255,18 +255,12 @@ std::string Board::fen_status() const
     }
     s.push_back(' ');
 
-    for(char file = 'a'; file <= 'h'; file++)
+    if(en_passant_target_file != '\0' && en_passant_target_rank != 0)
     {
-        for(int rank : {3, 6}) // en passant capture only possible on these ranks
-        {
-            if(is_en_passant_targetable(file, rank))
-            {
-                s.push_back(file);
-                s.append(std::to_string(rank));
-            }
-        }
+        s.push_back(en_passant_target_file);
+        s.push_back(en_passant_target_rank + '0');
     }
-    if(s.back() == ' ')
+    else
     {
         s.push_back('-');
     }
@@ -796,36 +790,26 @@ void Board::print_game_record_general(const std::string& white_name,
 
 std::string Board::board_status() const // for 3-fold rep count
 {
-    std::string s;
-    for(int rank = 1; rank <= 8; ++rank)
+    auto status = fen_status();
+    if(en_passant_target_file == '\0' && en_passant_target_rank == 0)
     {
-        for(char file = 'a'; file <= 'h'; ++file)
-        {
-            // append name of piece on square
-            auto piece = piece_on_square(file, rank);
-            if(piece)
-            {
-                s.append(std::string(1, piece->fen_symbol()));
+        return status;
+    }
 
-                // write legal destination squares for this piece
-                for(auto move : piece->get_move_list())
-                {
-                    if(is_legal(file, rank, move))
-                    {
-                        s.append(std::to_string(move->file_change()));
-                        s.append(std::to_string(move->rank_change()));
-                    }
-                }
-            }
-            else
-            {
-                s.append(".");
-            }
-            s.append(color_text(whose_turn()));
+    auto capturing_pawn_rank = (whose_turn() == WHITE ? 6 : 4);
+    for(char file : {en_passant_target_file - 1, en_passant_target_file + 1})
+    {
+        auto possible_pawn = piece_on_square(file, capturing_pawn_rank);
+        if(possible_pawn
+           && possible_pawn->color() == whose_turn()
+           && std::toupper(possible_pawn->fen_symbol()) == 'P')
+        {
+            return status;
         }
     }
 
-    return s;
+    auto status_split = String::split(status);
+    return status_split[0] + " " + status_split[1] + " " + status_split[2] + " -";
 }
 
 Color Board::get_winner() const

@@ -31,9 +31,7 @@ class Board
 {
     public:
         Board();
-        explicit Board(const std::string& fen); // reproduce board from FEN
-                                                // if KQkq are missing, Rook relevant rook->player_moved()
-                                                // make_en_passant_targetable()
+        explicit Board(const std::string& fen); // reproduce board from Forsythe-Edwards Notation string
 
         bool is_legal(char file_start, int rank_start, const std::shared_ptr<const Move>& move, bool king_check = true) const;
         bool is_legal(const Complete_Move& move, bool king_check = true) const;
@@ -64,7 +62,7 @@ class Board
                                      const std::string& file_name = "",
                                      const std::string& outside_result = "",
                                      unsigned int game_number = 0) const;
-        std::string board_status() const; // for detecting threefold repetition
+
         Color get_winner() const;
         std::string last_move() const;
 
@@ -113,6 +111,7 @@ class Board
         bool no_legal_moves() const;
         void set_winner(Color color);
         void reset_fifty_move_count();
+        std::string board_status() const; // for detecting threefold repetition
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();
         void all_pieces_unmoved();
