@@ -6,7 +6,7 @@
 #include "Utility.h"
 #include "Pieces/Piece.h"
 
-Piece_Strength_Gene::Piece_Strength_Gene() : Gene(0.0)
+Piece_Strength_Gene::Piece_Strength_Gene()
 {
     for(auto c : std::string("PRNBQ"))
     {
