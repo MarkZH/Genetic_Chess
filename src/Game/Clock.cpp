@@ -44,10 +44,10 @@ void Clock::punch()
         throw Out_Of_Time_Exception(whose_turn);
     }
 
-    moves[whose_turn]++;
-    if(use_reset && (moves[whose_turn] % move_count_reset == 0))
+    if(use_reset && (++moves[whose_turn] == move_count_reset))
     {
         timers[whose_turn] = initial_time[whose_turn];
+        moves[whose_turn] = 0;
     }
 
     whose_turn = opposite(whose_turn);
