@@ -42,7 +42,7 @@ std::string Sphere_of_Influence_Gene::name() const
 // the attacking move is legal.
 double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspective) const
 {
-    std::map<std::string, double> square_score;
+    std::map<Square, double> square_score;
     auto temp = board.make_hypothetical();
     temp.set_turn(perspective);
 
@@ -62,20 +62,23 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
             continue;
         }
 
+        Square square_address{final_file, final_rank};
+        square_score[square_address] = 1;
+    }
+
+    for(const auto& cm : temp.all_legal_moves())
+    {
         // Only potentially capturing moves are counted
         if( ! cm.move->can_capture())
         {
             continue;
         }
 
-        auto move_score = 1 + (temp.is_legal(cm) ? legal_bonus : 0.0);
-        std::string square_address;
-        square_address.push_back(final_file);
-        square_address += std::to_string(final_rank);
-        if(move_score > square_score[square_address])
-        {
-            square_score[square_address] = move_score;
-        }
+        char final_file = cm.starting_file + cm.move->file_change();
+        int  final_rank = cm.starting_rank + cm.move->rank_change();
+
+        Square square_address{final_file, final_rank};
+        square_score[square_address] = legal_bonus;
     }
 
     double score = 0;
@@ -85,8 +88,9 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
     }
 
     // maximum board_score is 1 (normalizing to make independent of scalar)
-    return score/(64*(1 + legal_bonus));
+    return score/(64.0*legal_bonus);
 }
+
 
 void Sphere_of_Influence_Gene::mutate()
 {
