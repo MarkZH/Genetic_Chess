@@ -54,8 +54,8 @@ std::vector<std::shared_ptr<const Move>> Piece::get_legal_moves(const Board& boa
     {
         if(move->file_change() == (file_end - file_start) &&
            move->rank_change() == (rank_end - rank_start) &&
-           board.is_legal(file_start, rank_start, move, king_check)
-           && (( ! promote) || move->name().back() == promote))
+           board.is_legal(file_start, rank_start, move, king_check) &&
+           (( ! promote) || move->name().back() == promote))
         {
             legal_moves.push_back(move);
         }

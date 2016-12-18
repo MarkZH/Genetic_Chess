@@ -282,7 +282,7 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
     }
 
     auto move_list = piece->get_legal_moves(*this, file_start, rank_start,
-                                      file_end,   rank_end, true, promote);
+                                                   file_end,   rank_end, true, promote);
 
     if(move_list.empty())
     {
