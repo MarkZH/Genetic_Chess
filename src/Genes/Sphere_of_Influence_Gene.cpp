@@ -7,8 +7,7 @@
 
 #include "Utility.h"
 
-Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
-    legal_bonus(0.0)
+Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() : legal_bonus(1.0)
 {
 }
 
@@ -95,5 +94,5 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
 void Sphere_of_Influence_Gene::mutate()
 {
     Gene::mutate();
-    legal_bonus = std::max(legal_bonus + Random::random_normal(1.0), 0.0);
+    legal_bonus = std::max(legal_bonus + Random::random_normal(1.0), 1.0);
 }
