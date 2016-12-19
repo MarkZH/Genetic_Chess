@@ -91,7 +91,9 @@ for yi = 2 : length(data.colheaders) - 2
     else
       name = name(1 : end - length(scalar_suffix));
     end
-    plot(smooth_data, 'LineWidth', 3, 'displayname', name);
+    conv_margin = floor(conv_window/2);
+    x_axis = conv_margin : length(smooth_data) + conv_margin - 1;
+    plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
     piece_scalar_plots(piece_scalar_index) = true;
   end
 end
