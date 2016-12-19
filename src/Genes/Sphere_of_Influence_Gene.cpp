@@ -87,12 +87,12 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
     }
 
     // maximum board_score is 1 (normalizing to make independent of scalar)
-    return score/(64.0*legal_bonus);
+    return score/(64.0*std::max(legal_bonus, 1.0));
 }
 
 
 void Sphere_of_Influence_Gene::mutate()
 {
     Gene::mutate();
-    legal_bonus = std::max(legal_bonus + Random::random_normal(1.0), 1.0);
+    legal_bonus += Random::random_normal(0.2);
 }
