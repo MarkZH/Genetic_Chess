@@ -41,7 +41,7 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
             {
                 char file = king_square.file + steps*file_step;
                 int  rank = king_square.rank + steps*rank_step;
-                if(! temp.inside_board(file) || ! temp.inside_board(rank))
+                if(! temp.inside_board(file, rank))
                 {
                     break;
                 }
@@ -71,7 +71,7 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
                 char file = king_square.file + file_direction*file_step;
                 int  rank = king_square.rank + rank_direction*rank_step;
 
-                if( ! temp.inside_board(file) || ! temp.inside_board(rank))
+                if( ! temp.inside_board(file, rank))
                 {
                     continue;
                 }
