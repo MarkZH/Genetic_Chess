@@ -54,7 +54,11 @@ def main(argv):
                     is_still_alive = str(int(data_line[0] in still_alive_ids))
                     data_line.append(is_still_alive)
 
-                    pool_id = pool[data_line[0]]
+                    try:
+                        pool_id = pool[data_line[0]]
+                    except KeyError:
+                        break # passed last Still Alive
+
                     data_line.append(pool_id)
 
                     w.write(','.join(data_line) + '\n')
