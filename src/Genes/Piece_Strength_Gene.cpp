@@ -37,6 +37,8 @@ void Piece_Strength_Gene::load_properties()
 
 void Piece_Strength_Gene::mutate()
 {
+    Gene::mutate();
+
     for(auto& key_value : piece_strength)
     {
         const double mean_number_of_mutations = 2.0;
@@ -50,12 +52,14 @@ void Piece_Strength_Gene::mutate()
 
 double Piece_Strength_Gene::piece_value(char symbol) const
 {
-    if(symbol == 'K')
+    if(is_active())
+    {
+        return piece_strength.at(symbol)/normalizing_factor;
+    }
+    else
     {
         return 0.0;
     }
-
-    return piece_strength.at(symbol)/normalizing_factor;
 }
 
 double Piece_Strength_Gene::piece_value(const std::shared_ptr<const Piece>& piece) const

@@ -17,7 +17,7 @@ class Gene
         Gene();
         virtual ~Gene();
 
-        bool read_from(std::istream& is);
+        void read_from(std::istream& is);
 
         virtual void mutate();
         double evaluate(const Board& board, Color perspective) const;
@@ -32,12 +32,14 @@ class Gene
         mutable std::map<std::string, double> properties; // used to simplify reading/writing from/to files
         virtual void reset_properties() const;
         virtual void load_properties();
+        bool is_active() const;
 
     private:
         virtual double score_board(const Board& board, Color perspective) const = 0;
         void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
 
         double scalar;
+        bool active;
 };
 
 #endif // GENE_H

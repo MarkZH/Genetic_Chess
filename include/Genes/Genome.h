@@ -34,7 +34,6 @@ class Genome
 
     private:
         std::vector<std::shared_ptr<Gene>> genome;
-        std::map<std::string, bool> gene_active;
 
         // Regulatory gene locations
         size_t piece_strength_gene_index;

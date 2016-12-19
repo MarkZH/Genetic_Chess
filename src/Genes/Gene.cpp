@@ -6,7 +6,7 @@
 #include "Game/Color.h"
 #include "Utility.h"
 
-Gene::Gene() : scalar(0.0)
+Gene::Gene() : scalar(0.0), active(true)
 {
 }
 
@@ -20,8 +20,7 @@ void Gene::load_properties()
     scalar = properties["Scalar"];
 }
 
-// returns if gene is active
-bool Gene::read_from(std::istream& is)
+void Gene::read_from(std::istream& is)
 {
     reset_properties();
 
@@ -35,6 +34,7 @@ bool Gene::read_from(std::istream& is)
 
         if(line.find("ACTIVE") != std::string::npos)
         {
+            active = (line == "ACTIVE");
             break;
         }
 
@@ -52,7 +52,6 @@ bool Gene::read_from(std::istream& is)
     }
 
     load_properties();
-    return line == "ACTIVE";
 }
 
 void Gene::throw_on_invalid_line(const std::string& line, const std::string& reason) const
@@ -67,12 +66,26 @@ Gene::~Gene()
 
 void Gene::mutate()
 {
-    scalar += Random::random_normal(10.0);
+    if(Random::success_probability(0.95))
+    {
+        scalar += Random::random_normal(10.0);
+    }
+    else
+    {
+        active = ! active;
+    }
 }
 
 double Gene::evaluate(const Board& board, Color perspective) const
 {
-    return scalar*score_board(board, perspective);
+    if(is_active())
+    {
+        return scalar*score_board(board, perspective);
+    }
+    else
+    {
+        return 0.0;
+    }
 }
 
 void Gene::print(std::ostream& os) const
@@ -83,8 +96,14 @@ void Gene::print(std::ostream& os) const
     {
         os << name_value.first << ": " << name_value.second << "\n";
     }
+    os << (is_active() ? "" : "IN") << "ACTIVE\n";
 }
 
 void Gene::reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>&)
 {
+}
+
+bool Gene::is_active() const
+{
+    return active;
 }

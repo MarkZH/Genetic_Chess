@@ -23,6 +23,7 @@ void Branch_Pruning_Gene::load_properties()
 
 void Branch_Pruning_Gene::mutate()
 {
+    Gene::mutate();
     minimum_score_change += Random::random_normal(5.0);
 }
 
@@ -43,5 +44,12 @@ double Branch_Pruning_Gene::score_board(const Board&, Color) const
 
 bool Branch_Pruning_Gene::good_enough_to_examine(double score_difference) const
 {
-    return score_difference > minimum_score_change;
+    if(is_active())
+    {
+        return score_difference > minimum_score_change;
+    }
+    else
+    {
+        return true;
+    }
 }
