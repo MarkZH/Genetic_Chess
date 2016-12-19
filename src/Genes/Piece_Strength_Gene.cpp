@@ -8,7 +8,7 @@
 
 Piece_Strength_Gene::Piece_Strength_Gene()
 {
-    for(auto c : std::string("PRNBQ"))
+    for(auto c : std::string("PRNBQK"))
     {
         piece_strength[c] = 0.0;
     }
@@ -85,7 +85,10 @@ double Piece_Strength_Gene::score_board(const Board&, Color) const
 void Piece_Strength_Gene::renormalize()
 {
     // Sum is equal to the total strength of a player's starting pieces
-    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen).
+    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen). The king is not
+    // included because it is always on the board and would skew the Total
+    // Force Gene. That gene subtract the value of the king from its
+    // calculations.
     //
     // Use absolute value so there aren't discontinuous jumps in the
     // returned piece values when they suddenly switch sign.

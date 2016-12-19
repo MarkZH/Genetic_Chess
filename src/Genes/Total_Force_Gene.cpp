@@ -29,7 +29,8 @@ double Total_Force_Gene::score_board(const Board& board, Color perspective) cons
         }
     }
 
-    return score;
+    // King does not count towards score since it is always on the board.
+    return score - piece_strength_source->piece_value('K');
 }
 
 Total_Force_Gene* Total_Force_Gene::duplicate() const
