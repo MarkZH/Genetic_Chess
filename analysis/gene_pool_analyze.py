@@ -41,12 +41,6 @@ def main(argv):
                         header_line.append(current_gene + ' - ' + parameter)
 
 
-        # Record AIs written after last Still Alive: ...
-        missing_pool_id = str((int(last_pool_id) + 1) % (largest_pool_id + 1))
-        still_alive[missing_pool_id] += ids_at_end
-        for ident in ids_at_end:
-            pool[ident] = missing_pool_id
-
         data_line = []
         still_alive_ids = []
         for ids in still_alive.values():
