@@ -14,7 +14,7 @@ class Piece_Strength_Gene;
 class Gene
 {
     public:
-        explicit Gene();
+        Gene();
         virtual ~Gene();
 
         bool read_from(std::istream& is);
