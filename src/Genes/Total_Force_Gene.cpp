@@ -24,13 +24,13 @@ double Total_Force_Gene::score_board(const Board& board, Color perspective) cons
             auto piece = board.piece_on_square(file, rank);
             if(piece && piece->color() == perspective)
             {
-                score += piece_strength_source->piece_value(piece);
+                // King does not count towards score since it is always on the board.
+                score += piece_strength_source->piece_value_no_king(piece);
             }
         }
     }
 
-    // King does not count towards score since it is always on the board.
-    return score - piece_strength_source->piece_value('K');
+    return score;
 }
 
 Total_Force_Gene* Total_Force_Gene::duplicate() const

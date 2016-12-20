@@ -17,7 +17,7 @@ class Piece_Strength_Gene : public Gene
         std::string name() const override;
 
         double piece_value(const std::shared_ptr<const Piece>& piece) const;
-        double piece_value(char symbol) const;
+        double piece_value_no_king(const std::shared_ptr<const Piece>& piece) const;
 
     protected:
         void reset_properties() const override;
@@ -26,9 +26,11 @@ class Piece_Strength_Gene : public Gene
     private:
         std::map<char, double> piece_strength;
         double normalizing_factor;
+        double normalizing_factor_no_king;
 
         double score_board(const Board& board, Color perspective) const override;
         void renormalize();
+        double piece_value(char symbol) const;
 };
 
 #endif // PIECE_STRENGTH_GENE_H

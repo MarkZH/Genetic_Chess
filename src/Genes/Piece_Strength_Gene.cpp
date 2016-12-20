@@ -54,7 +54,7 @@ double Piece_Strength_Gene::piece_value(char symbol) const
 {
     if(is_active())
     {
-        return piece_strength.at(symbol)/normalizing_factor;
+        return piece_strength.at(symbol);
     }
     else
     {
@@ -64,7 +64,20 @@ double Piece_Strength_Gene::piece_value(char symbol) const
 
 double Piece_Strength_Gene::piece_value(const std::shared_ptr<const Piece>& piece) const
 {
-    return piece_value(toupper(piece->fen_symbol()));
+    return piece_value(toupper(piece->fen_symbol()))/normalizing_factor;
+}
+
+double Piece_Strength_Gene::piece_value_no_king(const std::shared_ptr<const Piece>& piece) const
+{
+    char symbol = toupper(piece->fen_symbol());
+    if(symbol == 'K')
+    {
+        return 0.0;
+    }
+    else
+    {
+        return piece_value(symbol)/normalizing_factor_no_king;
+    }
 }
 
 Piece_Strength_Gene* Piece_Strength_Gene::duplicate() const
@@ -85,21 +98,26 @@ double Piece_Strength_Gene::score_board(const Board&, Color) const
 void Piece_Strength_Gene::renormalize()
 {
     // Sum is equal to the total strength of a player's starting pieces
-    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen). The king is not
-    // included because it is always on the board and would skew the Total
-    // Force Gene. That gene subtract the value of the king from its
-    // calculations.
-    //
-    // Use absolute value so there aren't discontinuous jumps in the
-    // returned piece values when they suddenly switch sign.
-    normalizing_factor = std::abs(8*piece_strength['P'] +
-                                  2*piece_strength['R'] +
-                                  2*piece_strength['N'] +
-                                  2*piece_strength['B'] +
-                                    piece_strength['Q']);
+    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen, 1 king).
+    auto total = 8*piece_strength['P'] +
+                 2*piece_strength['R'] +
+                 2*piece_strength['N'] +
+                 2*piece_strength['B'] +
+                   piece_strength['Q'] +
+                   piece_strength['K'];
 
+    // Use absolute value so there aren't discontinuous jumps due to small mutations.
+    normalizing_factor = std::abs(total);
     if(normalizing_factor < std::numeric_limits<double>::epsilon())
     {
+        // Prevent absurdly large strength return values due to near-zero sum of pieces.
         normalizing_factor = 1.0;
+    }
+
+    // Some genes don't care about the king, so provide a separate normalization.
+    normalizing_factor_no_king = std::abs(total - piece_strength['K']);
+    if(normalizing_factor_no_king < std::numeric_limits<double>::epsilon())
+    {
+        normalizing_factor_no_king = 1.0;
     }
 }
