@@ -33,6 +33,7 @@ void Piece_Strength_Gene::load_properties()
     {
         piece_strength[piece_score.first[0]] = piece_score.second;
     }
+    renormalize();
 }
 
 void Piece_Strength_Gene::mutate()
