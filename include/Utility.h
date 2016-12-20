@@ -8,6 +8,7 @@
 #include <chrono>
 #include <algorithm>
 #include <fstream>
+#include <mutex>
 
 namespace String
 {
@@ -74,6 +75,7 @@ class Scoped_Stopwatch
 
     private:
         static std::ofstream out_file;
+        static std::mutex write_lock;
         std::string place_name;
         std::chrono::steady_clock::time_point start_time;
 };
