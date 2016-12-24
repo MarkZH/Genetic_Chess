@@ -39,7 +39,9 @@ void print_help()
               << "\t-time [number]" << std::endl
               << "\t\tSpecify the time each player has to play the game or to make\n\t\ta set number of moves (see -reset_moves option)." << std::endl << std::endl
               << "\t-reset_moves [number]" << std::endl
-              << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock resets to the initial time every time this\n\t\tnumber of moves is made." << std::endl << std::endl;
+              << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock resets to the initial time every time this\n\t\tnumber of moves is made." << std::endl << std::endl
+              << "\t-increment_time [number]" << std::endl
+              << "\t\tSpecify seconds to add to time after each move." << std::endl << std::endl;
 }
 
 int main(int argc, char *argv[])
@@ -125,6 +127,7 @@ int main(int argc, char *argv[])
                                                      Human_Player(),
                                                      0,
                                                      0,
+                                                     0,
                                                      file_name + "_continued.pgn",
                                                      board);
                                  break;
@@ -146,6 +149,7 @@ int main(int argc, char *argv[])
 
                 int game_time = 0;
                 int moves_per_reset = 0;
+                int increment_time = 0;
 
                 for(int i = 1; i < argc; ++i)
                 {
@@ -216,6 +220,10 @@ int main(int argc, char *argv[])
                     {
                         moves_per_reset = std::stoi(argv[++i]);
                     }
+                    else if(opt == "-increment_time")
+                    {
+                        increment_time = std::stoi(argv[++i]);
+                    }
                     else
                     {
                         throw std::runtime_error("Invalid option: " + opt);
@@ -238,7 +246,7 @@ int main(int argc, char *argv[])
 
                 if(black)
                 {
-                    play_game(*white, *black, game_time, moves_per_reset, "game.pgn");
+                    play_game(*white, *black, game_time, moves_per_reset, increment_time, "game.pgn");
                 }
                 else
                 {
@@ -246,11 +254,11 @@ int main(int argc, char *argv[])
 
                     if(outside.get_ai_color() == WHITE)
                     {
-                        play_game(*white, outside, 0, 0, "");
+                        play_game(*white, outside, 0, 0, 0, "");
                     }
                     else
                     {
-                        play_game(outside, *white, 0, 0, "");
+                        play_game(outside, *white, 0, 0, 0, "");
                     }
                 }
             }

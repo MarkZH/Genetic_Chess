@@ -6,10 +6,12 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include <thread>
 
 #include "Game/Board.h"
 #include "Moves/Move.h"
 #include "Players/Genetic_AI.h"
+#include "Game/Clock.h"
 
 #include "Utility.h"
 
@@ -182,6 +184,44 @@ void run_tests()
     if(std::abs(mean_moves - mean_moves_calc) > 1e-6)
     {
         std::cerr << "Poisson distribution test failed. Expected: " << mean_moves << " Result: " << mean_moves_calc << std::endl;
+        tests_passed = false;
+    }
+
+    // Clock time reset test
+    auto time = 30;
+    auto moves_to_reset = 40;
+    auto clock = Clock(time, moves_to_reset);
+    clock.start();
+    for(int i = 0; i < 2*moves_to_reset; ++i)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        clock.punch();
+    }
+    clock.stop();
+    if(clock.time_left(BLACK) != time)
+    {
+        std::cerr << "Clock incorrect: time left for black is " << clock.time_left(BLACK) << " sec. Should be " << time << "sec." << std::endl;
+        tests_passed = false;
+    }
+
+    // Clock time increment test
+    auto increment = 5;
+    auto clock2 = Clock(time, 0, increment);
+    clock2.start();
+    double expected_time = time;
+    for(int i = 0; i < 2*moves_to_reset; ++i)
+    {
+        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        clock2.punch();
+        if(i % 2 == 1) // only on black moves
+        {
+            expected_time += increment - 0.005;
+        }
+    }
+    clock2.stop();
+    if(std::abs(clock2.time_left(BLACK) - expected_time) > 0.01)
+    {
+        std::cerr << "Clock incorrect: time left for black is " << clock2.time_left(BLACK) << " sec. Should be " << expected_time << "sec." << std::endl;
         tests_passed = false;
     }
 

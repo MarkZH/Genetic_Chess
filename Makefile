@@ -206,7 +206,7 @@ $(DEBUG_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include/P
 $(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Communication_Mediator.h src/Players/UCI_Mediator.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/UCI_Mediator.cpp -o $(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o
 
-$(DEBUG_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp include/Game/Board.h include/Moves/Move.h include/Players/Genetic_AI.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
+$(DEBUG_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp include/Game/Board.h include/Moves/Move.h include/Players/Genetic_AI.h include/Game/Clock.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Testing.cpp -o $(DEBUG_OBJ_DIR)/src/Testing.o
 
 $(DEBUG_OBJ_DIR)/src/Utility.o : include/Utility.h src/Utility.cpp
@@ -362,7 +362,7 @@ $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include
 $(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Communication_Mediator.h src/Players/UCI_Mediator.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/UCI_Mediator.cpp -o $(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o
 
-$(RELEASE_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp include/Game/Board.h include/Moves/Move.h include/Players/Genetic_AI.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
+$(RELEASE_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp include/Game/Board.h include/Moves/Move.h include/Players/Genetic_AI.h include/Game/Clock.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Testing.cpp -o $(RELEASE_OBJ_DIR)/src/Testing.o
 
 $(RELEASE_OBJ_DIR)/src/Utility.o : include/Utility.h src/Utility.cpp

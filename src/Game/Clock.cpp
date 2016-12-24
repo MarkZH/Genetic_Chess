@@ -5,7 +5,7 @@
 
 #include "Exceptions/Out_Of_Time_Exception.h"
 
-Clock::Clock(int seconds, size_t moves_to_reset) :
+Clock::Clock(int seconds, size_t moves_to_reset, int increment_seconds) :
     whose_turn(WHITE),
     use_clock(seconds > 0),
     use_reset(moves_to_reset > 0),
@@ -17,6 +17,9 @@ Clock::Clock(int seconds, size_t moves_to_reset) :
 
     initial_time[WHITE] = std::chrono::seconds(seconds);
     initial_time[BLACK] = std::chrono::seconds(seconds);
+
+    increment[WHITE] = std::chrono::seconds(increment_seconds);
+    increment[BLACK] = std::chrono::seconds(increment_seconds);
 }
 
 bool Clock::is_running() const
@@ -52,6 +55,7 @@ void Clock::punch()
 
     whose_turn = opposite(whose_turn);
     time_previous_punch = time_this_punch;
+    timers[whose_turn] += increment[whose_turn];
 }
 
 void Clock::stop()

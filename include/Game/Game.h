@@ -13,6 +13,7 @@ Color play_game(const Player& white,
                 const Player& black,
                 int time_in_seconds,
                 int moves_to_reset_clock,
+                int increment_seconds,
                 const std::string& pgn_file_name);
 
 // Play a game with a supplied board. Board's state may be modified.
@@ -20,6 +21,7 @@ Color play_game_with_board(const Player& white,
                            const Player& black,
                            int time_in_seconds,
                            int moves_to_reset_clock,
+                           int increment_seconds,
                            const std::string& pgn_file_name,
                            Board& board);
 #endif // GAME_H
