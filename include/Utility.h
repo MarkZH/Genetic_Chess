@@ -73,11 +73,15 @@ class Scoped_Stopwatch
         Scoped_Stopwatch(const std::string& name);
         ~Scoped_Stopwatch();
 
+        void stop();
+        void add_info(const std::string& info);
+
     private:
         static std::ofstream out_file;
         static std::mutex write_lock;
         std::string place_name;
         std::chrono::steady_clock::time_point start_time;
+        bool stopped;
 };
 
 #endif // UTILITY_H
