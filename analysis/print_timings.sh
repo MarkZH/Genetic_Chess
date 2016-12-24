@@ -1,3 +1,3 @@
 #!/usr/bin/bash
 
-python timing_calcs.py timings.txt | sort -g | column -s \| -t
+python $(dirname "$0")/timing_calcs.py "$1" | sort -g | column -s \| -t
