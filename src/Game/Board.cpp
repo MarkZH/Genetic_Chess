@@ -463,13 +463,12 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
     char ending_file = validated[validated.size() - 2];
     int  ending_rank = validated[validated.size() - 1] - '0';
 
-    if(validated.size() == 5) // Bb2c3
+    if(validated.size() == 5 && ! piece_symbol.empty()) // Bb2c3
     {
         starting_file = validated[1];
         starting_rank = validated[2] - '0';
     }
-
-    if(validated.size() == 4) // Raa5 or R5c5
+    else if(validated.size() == 4 && ! piece_symbol.empty()) // Raa5 or R5c5
     {
         if(std::isdigit(validated[1]))
         {
@@ -480,10 +479,28 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
             starting_file = validated[1];
         }
     }
-
-    if(validated.size() == 3 && piece_symbol.empty()) // Pawn capture de5 (dxe5)
+    else if(validated.size() == 3 && piece_symbol.empty()) // Pawn capture de5 (dxe5)
     {
         starting_file = validated.front();
+    }
+    else
+    {
+        // No PGN-style move works, try coordinate move (e.g., e7e8q)
+        if(move.size() < 4 || move.size() > 5)
+        {
+            throw Illegal_Move_Exception("Illegal text move: " + move);
+        }
+
+        char start_file = move[0];
+        int  start_rank = move[1] - '0';
+        char end_file   = move[2];
+        int  end_rank   = move[3] - '0';
+        if(move.size() == 5)
+        {
+            promoted_piece = move[4];
+        }
+
+        return get_complete_move(start_file, start_rank, end_file, end_rank, promoted_piece);
     }
 
     char file_search_start = (starting_file == 0 ? 'a' : starting_file);
@@ -521,18 +538,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
                                  promoted_piece);
     }
 
-    // No PGN-style move works, try coordinate move (e.g., e2e4)
-    if(validated.size() != 4)
-    {
-        throw Illegal_Move_Exception("Illegal text move: " + move);
-    }
-
-    char start_file = validated[0];
-    int  start_rank = validated[1] - '0';
-    char end_file   = validated[2];
-    int  end_rank   = validated[3] - '0';
-
-    return get_complete_move(start_file, start_rank, end_file, end_rank, promoted_piece);
+    throw Illegal_Move_Exception("Malformed move: " + move);
 }
 
 void Board::make_move(char file_start, int rank_start, char file_end, int rank_end)
