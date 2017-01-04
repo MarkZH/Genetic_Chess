@@ -18,13 +18,20 @@ Pawn::Pawn(Color color_in) : Piece(color_in)
     // Normal move
     possible_moves.emplace_back(new Pawn_Move(my_color));
 
-    // Capture
-    possible_moves.emplace_back(new Pawn_Capture(my_color, 'r'));
-    possible_moves.emplace_back(new Pawn_Capture(my_color, 'l'));
+    for(auto dir : {'r', 'l'})
+    {
+        // Capture
+        possible_moves.emplace_back(new Pawn_Capture(my_color, dir));
 
-    // En Passant Capture
-    possible_moves.emplace_back(new En_Passant(my_color, 'r'));
-    possible_moves.emplace_back(new En_Passant(my_color, 'l'));
+        // En Passant Capture
+        possible_moves.emplace_back(new En_Passant(my_color, dir));
+
+        // Promotion by capture
+        possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Rook(my_color), dir));
+        possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Knight(my_color), dir));
+        possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Bishop(my_color), dir));
+        possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Queen(my_color), dir));
+    }
 
     // Double first move
     possible_moves.emplace_back(new Pawn_Double_Move(my_color));
@@ -35,15 +42,6 @@ Pawn::Pawn(Color color_in) : Piece(color_in)
     possible_moves.emplace_back(new Pawn_Promotion(new Bishop(my_color)));
     possible_moves.emplace_back(new Pawn_Promotion(new Queen(my_color)));
 
-    // Promotion by capture
-    possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Rook(my_color), 'r'));
-    possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Rook(my_color), 'l'));
-    possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Knight(my_color), 'r'));
-    possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Knight(my_color), 'l'));
-    possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Bishop(my_color), 'r'));
-    possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Bishop(my_color), 'l'));
-    possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Queen(my_color), 'r'));
-    possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Queen(my_color), 'l'));
 
     // ASCII Art http://ascii.co.uk/art/chess (VK)
     ascii_art_lines.push_back("  _  ");
