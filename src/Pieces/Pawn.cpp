@@ -21,28 +21,19 @@ Pawn::Pawn(Color color_in) : Piece(color_in)
     possible_promotions.emplace_back(new Bishop(my_color));
     possible_promotions.emplace_back(new Queen(my_color));
 
-    // Normal move
     possible_moves.emplace_back(new Pawn_Move(my_color));
 
     for(auto dir : {'r', 'l'})
     {
-        // Capture
         possible_moves.emplace_back(new Pawn_Capture(my_color, dir));
-
-        // En Passant Capture
         possible_moves.emplace_back(new En_Passant(my_color, dir));
-
-        // Promotion by capture
         for(auto promote : possible_promotions)
         {
             possible_moves.emplace_back(new Pawn_Promotion_by_Capture(promote, dir));
         }
     }
 
-    // Double first move
     possible_moves.emplace_back(new Pawn_Double_Move(my_color));
-
-    // Promotion
     for(auto promote : possible_promotions)
     {
         possible_moves.emplace_back(new Pawn_Promotion(promote));
