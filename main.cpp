@@ -228,15 +228,15 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    auto outside = Outside_Player();
+                    auto outside = connect_to_outside();
 
-                    if(outside.get_ai_color() == WHITE)
+                    if(outside->get_ai_color() == WHITE)
                     {
-                        play_game(*white, outside, 0, 0, 0, "");
+                        play_game(*white, *outside, 0, 0, 0, "");
                     }
                     else
                     {
-                        play_game(outside, *white, 0, 0, 0, "");
+                        play_game(*outside, *white, 0, 0, 0, "");
                     }
                 }
             }
