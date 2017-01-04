@@ -24,7 +24,7 @@ class Pawn_Promotion : public Pawn_Move
         std::string game_record_item(const Board& board, char file_start, int rank_start) const override;
 
     protected:
-        mutable std::shared_ptr<const Piece> promote_to;
+        std::shared_ptr<const Piece> promote_to;
 };
 
 #endif // PAWN_PROMOTION_H
