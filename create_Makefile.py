@@ -115,7 +115,7 @@ for target in final_targets:
                         include_file_name = os.path.join('include', file_name)
                         if not os.path.isfile(include_file_name):
                             include_file_name = os.path.join(os.path.dirname(source_file), file_name)
-                        if include_file_name not in depends[obj_file]:
+                        if os.path.isfile(include_file_name) and include_file_name not in depends[obj_file]:
                             depends[obj_file].append(include_file_name)
 
 to_delete = []
