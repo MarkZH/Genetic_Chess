@@ -9,13 +9,8 @@
 class Stalemate_Exception : public Game_Ending_Exception
 {
     public:
-        explicit Stalemate_Exception(std::string message);
+        explicit Stalemate_Exception(const std::string& message_in);
         ~Stalemate_Exception() override;
-
-        const char* what() const throw() override;
-
-    private:
-        std::string reason; // 50 moves, 3-fold repeat, pieces, etc.
 };
 
 #endif // STALEMATE_EXCEPTION_H

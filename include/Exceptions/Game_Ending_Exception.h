@@ -8,14 +8,15 @@
 class Game_Ending_Exception : public std::exception
 {
     public:
-        explicit Game_Ending_Exception(Color winner_in);
+        explicit Game_Ending_Exception(Color winner_in, const std::string& message_in);
         ~Game_Ending_Exception() override;
 
-        const char* what() const throw() override = 0;
+        const char* what() const throw() override;
         Color winner() const;
 
     private:
         Color victor;
+        std::string message;
 };
 
 #endif // GAME_ENDING_EXCEPTION_H
