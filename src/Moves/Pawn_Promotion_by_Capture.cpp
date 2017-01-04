@@ -4,7 +4,10 @@
 #include "Game/Board.h"
 #include "Moves/Pawn_Capture.h"
 
-Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion, char dir) :
+#include <memory>
+
+Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(std::shared_ptr<const Piece> promotion,
+                                                     char dir) :
     Pawn_Promotion(promotion)
 {
     d_file = (dir == 'r' ? 1 : -1);

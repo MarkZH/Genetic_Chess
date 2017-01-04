@@ -15,6 +15,12 @@ Pawn::Pawn(Color color_in) : Piece(color_in)
 {
     symbol = "P";
 
+    std::vector<std::shared_ptr<const Piece>> possible_promotions;
+    possible_promotions.emplace_back(new Rook(my_color));
+    possible_promotions.emplace_back(new Knight(my_color));
+    possible_promotions.emplace_back(new Bishop(my_color));
+    possible_promotions.emplace_back(new Queen(my_color));
+
     // Normal move
     possible_moves.emplace_back(new Pawn_Move(my_color));
 
@@ -27,21 +33,20 @@ Pawn::Pawn(Color color_in) : Piece(color_in)
         possible_moves.emplace_back(new En_Passant(my_color, dir));
 
         // Promotion by capture
-        possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Rook(my_color), dir));
-        possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Knight(my_color), dir));
-        possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Bishop(my_color), dir));
-        possible_moves.emplace_back(new Pawn_Promotion_by_Capture(new Queen(my_color), dir));
+        for(auto promote : possible_promotions)
+        {
+            possible_moves.emplace_back(new Pawn_Promotion_by_Capture(promote, dir));
+        }
     }
 
     // Double first move
     possible_moves.emplace_back(new Pawn_Double_Move(my_color));
 
     // Promotion
-    possible_moves.emplace_back(new Pawn_Promotion(new Rook(my_color)));
-    possible_moves.emplace_back(new Pawn_Promotion(new Knight(my_color)));
-    possible_moves.emplace_back(new Pawn_Promotion(new Bishop(my_color)));
-    possible_moves.emplace_back(new Pawn_Promotion(new Queen(my_color)));
-
+    for(auto promote : possible_promotions)
+    {
+        possible_moves.emplace_back(new Pawn_Promotion(promote));
+    }
 
     // ASCII Art http://ascii.co.uk/art/chess (VK)
     ascii_art_lines.push_back("  _  ");

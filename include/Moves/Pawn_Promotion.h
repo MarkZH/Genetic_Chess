@@ -12,7 +12,7 @@ class Piece;
 class Pawn_Promotion : public Pawn_Move
 {
     public:
-        explicit Pawn_Promotion(const Piece* promotion);
+        explicit Pawn_Promotion(std::shared_ptr<const Piece> promotion);
         Pawn_Promotion(const Pawn_Promotion&) = delete;
         Pawn_Promotion& operator=(const Pawn_Promotion&) = delete;
         ~Pawn_Promotion() override;
