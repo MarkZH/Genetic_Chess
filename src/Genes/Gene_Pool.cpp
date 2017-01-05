@@ -131,6 +131,10 @@ void gene_pool(const std::string& config_file = "")
             std::cin.get();
             signal_activated = 0;
         }
+        else if(signal_activated == 2)
+        {
+            return;
+        }
 
         // widths of columns for stats printout
         auto max_id = pool.back().get_id();
@@ -347,13 +351,20 @@ void gene_pool(const std::string& config_file = "")
 
 void pause_gene_pool(int)
 {
+    ++signal_activated;
     if(signal_activated == 1)
+    {
+        std::cout << std::endl << "Waiting for games to end and be recorded before pausing..." << std::endl;
+    }
+    else if(signal_activated == 2)
+    {
+        std::cout << std::endl << "Waiting for games to end and be recorded before exiting ..." << std::endl;
+    }
+    else
     {
         std::cout << std::endl << "Exiting ..." << std::endl;
         exit(1);
     }
-    signal_activated = 1;
-    std::cout << std::endl << "Waiting for games to end and be recorded ..." << std::endl;
 }
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
