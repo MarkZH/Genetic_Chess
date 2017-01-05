@@ -229,7 +229,7 @@ double Configuration_File::get_number(const std::string& parameter) const
     }
 }
 
-std::ofstream Scoped_Stopwatch::out_file;
+std::ofstream Scoped_Stopwatch::out_file("timings.txt");
 std::mutex Scoped_Stopwatch::write_lock;
 
 Scoped_Stopwatch::Scoped_Stopwatch(const std::string& name) :
@@ -254,11 +254,6 @@ void Scoped_Stopwatch::stop()
     }
 
     std::lock_guard<std::mutex> write_lock_guard(write_lock);
-
-    if( ! out_file)
-    {
-        out_file.open("timings.txt");
-    }
 
     out_file << place_name << "|"
              << std::chrono::duration_cast<std::chrono::duration<double>>
