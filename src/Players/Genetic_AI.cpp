@@ -127,19 +127,14 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     }
 
     auto positions_to_examine = genome.positions_to_examine(board, clock);
-    std::string look_ahead_comment = "[" + std::to_string(positions_to_examine) + ",";
-    auto time_at_start = clock.time_left(board.whose_turn());
     auto result = search_game_tree(board,
                                    positions_to_examine,
                                    clock,
                                    0);
-    look_ahead_comment += std::to_string(positions_to_examine) + "] ";
-    auto time_used = time_at_start - clock.time_left(board.whose_turn());
-    board.add_commentary_to_next_move(look_ahead_comment
-                                      + " "
-                                      + std::to_string(time_used)
-                                      + " "
-                                      + result.commentary);
+    if(result.depth > 0)
+    {
+        board.add_commentary_to_next_move(result.commentary);
+    }
     return result.move;
 }
 
@@ -201,10 +196,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             // Mate in one (try to pick the shortest path to checkmate)
             auto score = genome.evaluate(next_board, perspective);
             auto comment = next_board.get_game_record().back();
-            if(depth == 0)
-            {
-                comment += " (" + std::to_string(score) + ")";
-            }
+
             return {move,
                     score,
                     perspective,
@@ -221,7 +213,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                next_board.get_game_record().back()});
         }
     }
-
 
     // Sort moves by score so higher scores get more moves for examination
     std::sort(further_examine.begin(),
@@ -268,7 +259,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     auto best_move = board.all_legal_moves().front();
     auto best_depth = 0;
     std::string comments_on_best_move;
-    std::string comments_on_all_moves; // only use when depth == 0
 
     for(const auto& result : results)
     {
@@ -288,19 +278,13 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             best_depth = result.depth;
             comments_on_best_move = result.commentary;
         }
-
-        if(depth == 0)
-        {
-            // build comment on all current move possibilities
-            comments_on_all_moves += " " + result.commentary + " (" + std::to_string(score) + ")";
-        }
     }
 
     return {best_move,
             best_score,
             perspective,
             best_depth,
-            (depth == 0 ? comments_on_all_moves : comments_on_best_move)};
+            comments_on_best_move};
 }
 
 void Genetic_AI::mutate()

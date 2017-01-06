@@ -703,35 +703,6 @@ void Board::print_game_record(const std::string& white_name,
                               const std::string& outside_result,
                               unsigned int game_number) const
 {
-    print_game_record_general(white_name,
-                              black_name,
-                              file_name,
-                              outside_result,
-                              game_number,
-                              true); // print commentary
-}
-
-void Board::print_clean_game_record(const std::string& white_name,
-                                    const std::string& black_name,
-                                    const std::string& file_name,
-                                    const std::string& outside_result,
-                                    unsigned int game_number) const
-{
-    print_game_record_general(white_name,
-                              black_name,
-                              file_name,
-                              outside_result,
-                              game_number,
-                              false); // do not print commentary
-}
-
-void Board::print_game_record_general(const std::string& white_name,
-                                      const std::string& black_name,
-                                      const std::string& file_name,
-                                      const std::string& outside_result,
-                                      unsigned int game_number,
-                                      bool print_commentary) const
-{
     std::string result;
     std::string termination;
     if( ! outside_result.empty())
@@ -777,7 +748,7 @@ void Board::print_game_record_general(const std::string& white_name,
             out_stream << " " << game_record.at(i);
         }
 
-        if(print_commentary && i < game_commentary.size() && ! game_commentary.at(i).empty())
+        if(i < game_commentary.size() && ! game_commentary.at(i).empty())
         {
             out_stream << " { " << String::trim_outer_whitespace(game_commentary.at(i)) << " }";
         }
