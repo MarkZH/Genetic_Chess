@@ -343,8 +343,7 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
               file_start + move->file_change(), rank_start + move->rank_change());
     move->side_effects(*this, file_start, rank_start);
 
-    all_moves_cache.clear();
-    all_legal_moves_cache.clear();
+    clear_caches();
 
     if(king_is_in_check(opposite(turn_color)))
     {
@@ -812,8 +811,7 @@ void Board::set_turn(Color color)
 
     if(turn_color != color)
     {
-        all_legal_moves_cache.clear();
-        all_moves_cache.clear();
+        clear_caches();
     }
     turn_color = color;
 }
@@ -913,4 +911,10 @@ void Board::add_commentary_to_next_move(const std::string& comment) const
         game_commentary.push_back("");
     }
     game_commentary.push_back(comment);
+}
+
+void Board::clear_caches() const
+{
+    all_moves_cache.clear();
+    all_legal_moves_cache.clear();
 }

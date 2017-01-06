@@ -99,6 +99,7 @@ class Board
         // Caches
         mutable std::vector<Complete_Move> all_moves_cache;
         mutable std::vector<Complete_Move> all_legal_moves_cache;
+        void clear_caches() const;
 
         void place_piece(const std::shared_ptr<const Piece>& p, char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
