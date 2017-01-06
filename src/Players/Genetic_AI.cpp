@@ -269,7 +269,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
 
         // Prefer ...
-        if(score > best_score // ... better score
+        if(score > best_score // better score
            || (score ==  Math::infinity && result.depth < best_depth) // shortest path to victory
            || (best_score == -Math::infinity && result.depth > best_depth)) // longest path to defeat
         {
