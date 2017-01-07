@@ -478,11 +478,11 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
             starting_file = validated[1];
         }
     }
-    else if(validated.size() == 3 && piece_symbol.empty()) // Pawn capture de5 (dxe5)
+    else if((validated.size() == 3 || validated.size() == 2) && piece_symbol.empty()) // Pawn move/capture de5 (dxe5)
     {
         starting_file = validated.front();
     }
-    else
+    else if(piece_symbol.empty())
     {
         // No PGN-style move works, try coordinate move (e.g., e7e8q)
         if(move.size() < 4 || move.size() > 5)
@@ -501,6 +501,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
 
         return get_complete_move(start_file, start_rank, end_file, end_rank, promoted_piece);
     }
+    // else normal PGN-style piece movement
 
     char file_search_start = (starting_file == 0 ? 'a' : starting_file);
     char file_search_end   = (starting_file == 0 ? 'h' : starting_file);
