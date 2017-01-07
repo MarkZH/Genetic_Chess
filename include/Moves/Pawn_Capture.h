@@ -15,6 +15,8 @@ class Pawn_Capture : public Pawn_Move
         ~Pawn_Capture() override;
 
         bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
+        bool can_capture() const override;
+
         std::string name() const override;
         std::string game_record_item(const Board&, char file_start, int rank_start) const override;
 };

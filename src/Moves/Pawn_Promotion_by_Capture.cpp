@@ -25,6 +25,11 @@ bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board, char fil
             && rank_start == (rank_change() == 1 ? 7 : 2); // promoting
 }
 
+bool Pawn_Promotion_by_Capture::can_capture() const
+{
+    return true;
+}
+
 std::string Pawn_Promotion_by_Capture::name() const
 {
     return "Pawn Promotion by Capture " + promote_to->pgn_symbol();

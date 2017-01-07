@@ -38,6 +38,11 @@ bool Pawn_Capture::move_specific_legal(const Board& board, char file_start, int 
            && attacked_piece->color() != attacking_piece->color();
 }
 
+bool Pawn_Capture::can_capture() const
+{
+    return true;
+}
+
 std::string Pawn_Capture::name() const
 {
     return "Pawn Capture";
