@@ -42,7 +42,7 @@ std::string Sphere_of_Influence_Gene::name() const
 double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspective) const
 {
     std::map<Square, double> square_score;
-    auto temp = board.make_hypothetical();
+    auto temp = board;
     temp.set_turn(perspective);
 
     for(const auto& cm : temp.all_moves())

@@ -30,7 +30,7 @@ const Complete_Move Claude_Shannon_AI::choose_move(const Board& board, int look_
     {
         try
         {
-            auto next_board = board.make_hypothetical();
+            auto next_board = board;
             next_board.submit_move(move);
             auto score = evalutate_position(next_board, board.whose_turn(), look_ahead);
             if(score > best_score)

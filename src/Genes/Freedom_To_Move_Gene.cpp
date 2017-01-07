@@ -14,7 +14,7 @@ Freedom_To_Move_Gene::~Freedom_To_Move_Gene()
 
 double Freedom_To_Move_Gene::score_board(const Board& board, Color perspective) const
 {
-    auto temp = board.make_hypothetical();
+    auto temp = board;
     temp.set_turn(perspective);
     return double(temp.all_legal_moves().size())/maximum_number_of_moves;
 }

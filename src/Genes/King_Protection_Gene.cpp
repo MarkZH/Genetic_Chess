@@ -20,7 +20,7 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
     //
     // All squares count equally.
 
-    auto temp = board.make_hypothetical();
+    auto temp = board;
     temp.set_turn(perspective);
 
     auto king_square = temp.find_king(perspective);

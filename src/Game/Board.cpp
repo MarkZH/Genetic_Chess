@@ -23,7 +23,6 @@ Board::Board() :
     board(64, nullptr),
     turn_color(WHITE),
     winner(NONE),
-    is_original(true),
     en_passant_target_file('\0'),
     en_passant_target_rank(0),
     game_ended(false)
@@ -52,7 +51,6 @@ Board::Board(const std::string& fen) :
     board(64, nullptr),
     turn_color(WHITE),
     winner(NONE),
-    is_original(true),
     en_passant_target_file('\0'),
     en_passant_target_rank(0),
     game_ended(false)
@@ -667,7 +665,7 @@ bool Board::king_is_in_check(Color king_color) const
 
 bool Board::square_attacked_by(char file, int rank, Color color) const
 {
-    auto temp = make_hypothetical();
+    auto temp = *this;
     temp.set_turn(color);
 
     for(const auto& move : temp.all_moves())
@@ -816,20 +814,8 @@ std::string Board::last_move() const
     return game_record.empty() ? std::string() : game_record.back();
 }
 
-Board Board::make_hypothetical() const
-{
-    Board new_board(*this);
-    new_board.is_original = false;
-    return new_board;
-}
-
 void Board::set_turn(Color color)
 {
-    if(is_original)
-    {
-        throw std::runtime_error("Cannot call set_turn() on original board.");
-    }
-
     if(turn_color != color)
     {
         clear_caches();

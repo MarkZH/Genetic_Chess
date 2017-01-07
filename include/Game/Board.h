@@ -60,7 +60,6 @@ class Board
         Color get_winner() const;
         std::string last_move() const;
 
-        Board make_hypothetical() const;
         void set_turn(Color color);
 
         static bool inside_board(char file, int rank);
@@ -90,7 +89,6 @@ class Board
         std::vector<std::string> game_record;
         mutable std::vector<std::string> game_commentary;
         Color winner;
-        bool is_original;
         std::map<std::shared_ptr<const Piece>, bool> piece_moved;
         char en_passant_target_file;
         int en_passant_target_rank;

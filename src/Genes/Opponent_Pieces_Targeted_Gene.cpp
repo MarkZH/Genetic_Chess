@@ -19,7 +19,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
     double score = 0.0;
     std::map<std::shared_ptr<const Piece>, bool> already_counted;
 
-    auto hypothetical = board.make_hypothetical();
+    auto hypothetical = board;
     hypothetical.set_turn(perspective);
 
     for(const auto& complete_move : hypothetical.all_legal_moves())
