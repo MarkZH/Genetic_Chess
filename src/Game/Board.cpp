@@ -670,17 +670,37 @@ bool Board::square_attacked_by(char file, int rank, Color color) const
     auto temp = make_hypothetical();
     temp.set_turn(color);
 
-    // make sure only attacking moves count (e.g., not normal pawn moves)
-    temp.place_piece(std::make_shared<Piece>(opposite(color)), file, rank);
-
-    for(char file_start = 'a'; file_start <= 'h'; ++file_start)
+    for(const auto& move : temp.all_moves())
     {
-        for(int rank_start = 1; rank_start <= 8; ++rank_start)
+        if( ! move.move->can_capture())
         {
-            if(temp.is_legal(file_start, rank_start, file, rank, false))
+            continue;
+        }
+
+        if(file != move.starting_file + move.move->file_change())
+        {
+            continue;
+        }
+
+        if(rank != move.starting_rank + move.move->rank_change())
+        {
+            if(move.move->name().front() == 'E')
             {
-                return true;
+                // En passant
+                if(rank != move.starting_rank)
+                {
+                    continue;
+                }
             }
+            else
+            {
+                continue;
+            }
+        }
+
+        if(move.move->is_legal(temp, move.starting_file, move.starting_rank, false))
+        {
+            return true;
         }
     }
 
@@ -829,7 +849,7 @@ const std::vector<Complete_Move>& Board::all_moves() const
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto piece = piece_on_square(file, rank);
-            if(piece)
+            if(piece && piece->color() == whose_turn())
             {
                 for(const auto& move : piece->get_move_list())
                 {
