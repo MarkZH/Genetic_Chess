@@ -73,11 +73,6 @@ int main(int argc, char *argv[])
 
                         for(const auto& s : String::split(line))
                         {
-                            if(s.back() == '.')
-                            {
-                                continue; // skip numbering
-                            }
-
                             try
                             {
                                 board.submit_move(board.get_complete_move(s));

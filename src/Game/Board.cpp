@@ -459,6 +459,10 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
 
     char ending_file = validated[validated.size() - 2];
     int  ending_rank = validated[validated.size() - 1] - '0';
+    if( ! inside_board(ending_file, ending_rank))
+    {
+        throw Illegal_Move_Exception("Illegal text move: " + move);
+    }
 
     if(validated.size() == 5 && ! piece_symbol.empty()) // Bb2c3
     {
