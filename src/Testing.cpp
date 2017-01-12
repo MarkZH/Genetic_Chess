@@ -172,13 +172,10 @@ void run_tests()
     const double mean_moves = 35.0;
     double mean_moves_calc = 0.0;
     double mean_moves_calc_prev = -1.0;
-
-    int i = 1;
-    while(mean_moves_calc != mean_moves_calc_prev)
+    for(int i = 1; mean_moves_calc != mean_moves_calc_prev; ++i)
     {
         mean_moves_calc_prev = mean_moves_calc;
         mean_moves_calc += Math::poisson_probability(mean_moves, i)*i;
-        ++i;
     }
 
     if(std::abs(mean_moves - mean_moves_calc) > 1e-6)
