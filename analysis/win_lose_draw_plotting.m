@@ -1,10 +1,19 @@
 isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
 
+filename = 0;
+directory = '';
 if isOctave
   graphics_toolkit("gnuplot");
+  args = argv();
+  if length(args) > 0
+    filename = args{1};
+  end
 end
 
-[filename, directory, ~] = uigetfile();
+if filename == 0
+  [filename, directory, ~] = uigetfile();
+end
+
 if filename == 0
   return
 end
