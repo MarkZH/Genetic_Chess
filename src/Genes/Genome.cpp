@@ -15,6 +15,7 @@
 #include "Genes/King_Confinement_Gene.h"
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Branch_Pruning_Gene.h"
+#include "Genes/Castling_Possible_Gene.h"
 
 
 // Creation ex nihilo
@@ -41,6 +42,7 @@ Genome::Genome() :
     genome.emplace_back(new Sphere_of_Influence_Gene);
     genome.emplace_back(new King_Confinement_Gene);
     genome.emplace_back(new King_Protection_Gene);
+    genome.emplace_back(new Castling_Possible_Gene);
 }
 
 // Cloning
