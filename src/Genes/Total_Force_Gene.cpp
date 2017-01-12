@@ -25,7 +25,7 @@ double Total_Force_Gene::score_board(const Board& board, Color perspective) cons
             if(piece && piece->color() == perspective)
             {
                 // King does not count towards score since it is always on the board.
-                score += piece_strength_source->piece_value_no_king(piece);
+                score += piece_strength_source->piece_value(piece);
             }
         }
     }

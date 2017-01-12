@@ -8,7 +8,7 @@
 
 Piece_Strength_Gene::Piece_Strength_Gene()
 {
-    for(auto c : std::string("PRNBQK"))
+    for(auto c : std::string("PRNBQ"))
     {
         piece_strength[c] = 0.0;
     }
@@ -65,11 +65,6 @@ double Piece_Strength_Gene::piece_value(char symbol) const
 
 double Piece_Strength_Gene::piece_value(const std::shared_ptr<const Piece>& piece) const
 {
-    return piece_value(toupper(piece->fen_symbol()))/normalizing_factor;
-}
-
-double Piece_Strength_Gene::piece_value_no_king(const std::shared_ptr<const Piece>& piece) const
-{
     char symbol = toupper(piece->fen_symbol());
     if(symbol == 'K')
     {
@@ -77,7 +72,7 @@ double Piece_Strength_Gene::piece_value_no_king(const std::shared_ptr<const Piec
     }
     else
     {
-        return piece_value(symbol)/normalizing_factor_no_king;
+        return piece_value(symbol)/normalizing_factor;
     }
 }
 
@@ -99,13 +94,12 @@ double Piece_Strength_Gene::score_board(const Board&, Color) const
 void Piece_Strength_Gene::renormalize()
 {
     // Sum is equal to the total strength of a player's starting pieces
-    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen, 1 king).
+    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen).
     auto total = 8*piece_strength['P'] +
                  2*piece_strength['R'] +
                  2*piece_strength['N'] +
                  2*piece_strength['B'] +
-                   piece_strength['Q'] +
-                   piece_strength['K'];
+                   piece_strength['Q'];
 
     // Use absolute value so there aren't discontinuous jumps due to small mutations.
     normalizing_factor = std::abs(total);
@@ -113,12 +107,5 @@ void Piece_Strength_Gene::renormalize()
     {
         // Prevent absurdly large strength return values due to near-zero sum of pieces.
         normalizing_factor = 1.0;
-    }
-
-    // Some genes don't care about the king, so provide a separate normalization.
-    normalizing_factor_no_king = std::abs(total - piece_strength['K']);
-    if(normalizing_factor_no_king < std::numeric_limits<double>::epsilon())
-    {
-        normalizing_factor_no_king = 1.0;
     }
 }
