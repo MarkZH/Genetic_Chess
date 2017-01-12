@@ -7,6 +7,7 @@
 class King_Confinement_Gene : public Gene
 {
     public:
+        King_Confinement_Gene();
         ~King_Confinement_Gene() override;
 
         King_Confinement_Gene* duplicate() const override;
@@ -14,6 +15,8 @@ class King_Confinement_Gene : public Gene
         std::string name() const override;
 
     private:
+        double maximum_score;
+
         double score_board(const Board& board, Color perspective) const override;
 };
 
