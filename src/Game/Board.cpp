@@ -924,7 +924,7 @@ void Board::add_commentary_to_next_move(const std::string& comment) const
     game_commentary.push_back(comment);
 }
 
-void Board::clear_caches() const
+void Board::clear_caches()
 {
     all_moves_cache.clear();
     all_legal_moves_cache.clear();
