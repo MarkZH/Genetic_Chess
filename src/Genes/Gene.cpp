@@ -6,7 +6,7 @@
 #include "Game/Color.h"
 #include "Utility.h"
 
-Gene::Gene() : scalar(0.0), active(true)
+Gene::Gene() : scalar(0.0), scalar_non_negative(false), active(true)
 {
 }
 
@@ -69,6 +69,10 @@ void Gene::mutate()
     if(Random::success_probability(0.95))
     {
         scalar += Random::random_normal(10.0);
+        if(scalar_non_negative)
+        {
+            scalar = std::abs(scalar);
+        }
     }
     else
     {
@@ -106,4 +110,9 @@ void Gene::reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_
 bool Gene::is_active() const
 {
     return active;
+}
+
+void Gene::make_scalar_non_negative()
+{
+    scalar_non_negative = true;
 }
