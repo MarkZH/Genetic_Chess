@@ -782,11 +782,14 @@ void Board::print_game_record(const std::string& white_name,
 std::string Board::board_status() const // for 3-fold rep count
 {
     auto status = fen_status();
-    if(en_passant_target_file == '\0' && en_passant_target_rank == 0)
+
+    // No en passant target
+    if(status.back() == '-')
     {
         return status;
     }
 
+    // Check if en passant is legal
     auto capturing_pawn_rank = (whose_turn() == WHITE ? 6 : 4);
     for(char file : {en_passant_target_file - 1, en_passant_target_file + 1})
     {
@@ -799,8 +802,10 @@ std::string Board::board_status() const // for 3-fold rep count
         }
     }
 
-    auto status_split = String::split(status);
-    return status_split[0] + " " + status_split[1] + " " + status_split[2] + " -";
+    // Remove en passant target
+    status.pop_back();
+    status.back() = '-';
+    return status;
 }
 
 Color Board::get_winner() const
