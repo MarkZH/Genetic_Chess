@@ -114,8 +114,8 @@ Board::Board(const std::string& fen) :
             auto piece = piece_on_square(file, rank);
             if(piece)
             {
-                if((piece->fen_symbol() == 'P' && rank != 2) ||
-                   (piece->fen_symbol() == 'p' && rank != 7))
+                if(piece->is_pawn() && ((piece->color() == WHITE && rank != 2) ||
+                                        (piece->color() == BLACK && rank != 7)))
                 {
                     piece_moved[piece] = true;
                 }
@@ -792,8 +792,8 @@ std::string Board::board_status() const // for 3-fold rep count
     {
         auto possible_pawn = piece_on_square(file, capturing_pawn_rank);
         if(possible_pawn
-           && possible_pawn->color() == whose_turn()
-           && std::toupper(possible_pawn->fen_symbol()) == 'P')
+           && possible_pawn->is_pawn()
+           && possible_pawn->color() == whose_turn())
         {
             return status;
         }
@@ -899,7 +899,7 @@ Square Board::find_king(Color color) const
         for(int king_rank = 1; king_rank <= 8; ++king_rank)
         {
             auto piece = piece_on_square(king_file, king_rank);
-            if(piece && piece->color() == color && piece->pgn_symbol() == "K")
+            if(piece && piece->color() == color && piece->is_king())
             {
                 return {king_file, king_rank};
             }

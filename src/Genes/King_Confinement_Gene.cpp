@@ -72,7 +72,7 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
         auto piece = board.piece_on_square(square.file, square.rank);
         bool occupied_by_same = piece &&
                                 piece->color() == perspective &&
-                                piece->pgn_symbol() != "K";
+                                ! piece->is_king();
 
         auto is_safe = ! attacked_by_other && ! occupied_by_same;
         if(is_safe)

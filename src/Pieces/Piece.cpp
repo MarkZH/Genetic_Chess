@@ -91,3 +91,13 @@ const std::vector<std::shared_ptr<const Move>> Piece::get_move_list() const
 {
     return possible_moves;
 }
+
+bool Piece::is_pawn() const
+{
+    return false;
+}
+
+bool Piece::is_king() const
+{
+    return false;
+}

@@ -35,3 +35,8 @@ King::King(Color color_in) : Piece(color_in)
 King::~King()
 {
 }
+
+bool King::is_king() const
+{
+    return true;
+}

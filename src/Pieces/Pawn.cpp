@@ -58,3 +58,8 @@ std::string Pawn::pgn_symbol() const
 {
     return "";
 }
+
+bool Pawn::is_pawn() const
+{
+    return true;
+}

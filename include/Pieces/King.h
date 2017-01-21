@@ -11,6 +11,8 @@ class King : public Piece
         King(const King&) = delete;
         King& operator=(const King&) = delete;
         ~King() override;
+
+        bool is_king() const override;
 };
 
 #endif // KING_H

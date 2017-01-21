@@ -65,14 +65,13 @@ double Piece_Strength_Gene::piece_value(char symbol) const
 
 double Piece_Strength_Gene::piece_value(const std::shared_ptr<const Piece>& piece) const
 {
-    char symbol = toupper(piece->fen_symbol());
-    if(symbol == 'K')
+    if(piece->is_king())
     {
         return 0.0;
     }
     else
     {
-        return piece_value(symbol)/normalizing_factor;
+        return piece_value(std::toupper(piece->fen_symbol()))/normalizing_factor;
     }
 }
 

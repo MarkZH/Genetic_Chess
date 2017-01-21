@@ -14,6 +14,8 @@ class Pawn : public Piece
         Pawn& operator=(const Pawn&) = delete;
         std::string pgn_symbol() const override;
         ~Pawn() override;
+
+        bool is_pawn() const override;
 };
 
 #endif // PAWN_H

@@ -34,6 +34,9 @@ class Piece
         bool operator==(const Piece& other) const;
         bool operator!=(const Piece& other) const;
 
+        virtual bool is_pawn() const;
+        virtual bool is_king() const;
+
     protected:
         Color my_color;
         std::string symbol;
