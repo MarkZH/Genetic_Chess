@@ -10,7 +10,7 @@ Pawn_Move::~Pawn_Move()
 {
 }
 
-bool Pawn_Move::move_specific_legal(const Board& board, char file_start, int rank_start) const
+bool Pawn_Move::move_specific_legal(const Board& /* board */, char /* file_start */, int rank_start) const
 {
     return rank_start != (rank_change() == 1 ? 7 : 2); // not promoting
 }
