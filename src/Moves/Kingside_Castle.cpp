@@ -16,9 +16,7 @@ bool Kingside_Castle::move_specific_legal(const Board& board, char file_start, i
             && ! board.piece_has_moved('h', rank_start)
             && ! board.king_is_in_check(board.whose_turn())
             && ! board.square_attacked_by('f', rank_start, opposite(board.whose_turn()))
-            && ! board.square_attacked_by('g', rank_start, opposite(board.whose_turn()))
-            && ! board.piece_on_square('f', rank_start)
-            && ! board.piece_on_square('g', rank_start);
+            && ! board.square_attacked_by('g', rank_start, opposite(board.whose_turn()));
 }
 
 bool Kingside_Castle::can_capture() const

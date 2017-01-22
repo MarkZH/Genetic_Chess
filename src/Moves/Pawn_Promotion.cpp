@@ -32,8 +32,7 @@ std::string Pawn_Promotion::name() const
 
 bool Pawn_Promotion::move_specific_legal(const Board& board, char file_start, int rank_start) const
 {
-    return (rank_start == (rank_change() == 1 ? 7 : 2)) // promoting
-        && ! board.piece_on_square(file_start, rank_start + rank_change()); // not blocked
+    return (rank_start == (rank_change() == 1 ? 7 : 2)); // promoting
 }
 
 bool Pawn_Promotion::can_capture() const

@@ -20,9 +20,7 @@ void Pawn_Double_Move::side_effects(Board& board, char file_start, int rank_star
 
 bool Pawn_Double_Move::move_specific_legal(const Board& board, char file_start, int rank_start) const
 {
-    return     ! board.piece_has_moved(file_start, rank_start)
-            && ! board.piece_on_square(file_start, rank_start + rank_change()/2)
-            && ! board.piece_on_square(file_start, rank_start + rank_change());
+    return ! board.piece_has_moved(file_start, rank_start);
 }
 
 bool Pawn_Double_Move::can_capture() const

@@ -75,6 +75,12 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start, bool ki
         return false;
     }
 
+    // Enforce non-capturing moves
+    if(attacked_piece && ! can_capture())
+    {
+        return false;
+    }
+
     if( ! move_specific_legal(board, file_start, rank_start))
     {
         return false;
