@@ -45,39 +45,36 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
     auto temp = board;
     temp.set_turn(perspective);
 
-    for(const auto& cm : temp.all_moves())
+    bool on_legal_move_list = false;
+    for(const auto& move_list : {temp.all_moves(), temp.all_legal_moves()})
     {
-        // Only potentially capturing moves are counted
-        if( ! cm.move->can_capture())
+        for(const auto& cm : move_list)
         {
-            continue;
+            // Only potentially capturing moves are counted
+            if( ! cm.move->can_capture())
+            {
+                continue;
+            }
+
+            char final_file = cm.starting_file + cm.move->file_change();
+            int  final_rank = cm.starting_rank + cm.move->rank_change();
+
+            if(cm.move->name()[0] == 'E')
+            {
+                if(temp.is_en_passant_targetable(final_file, final_rank))
+                {
+                    final_rank += (temp.whose_turn() == WHITE ? -1 : 1);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+
+            square_score[{final_file, final_rank}] = (on_legal_move_list ? legal_bonus : 1.0);
         }
 
-        char final_file = cm.starting_file + cm.move->file_change();
-        int  final_rank = cm.starting_rank + cm.move->rank_change();
-
-        if( ! Board::inside_board(final_file, final_rank))
-        {
-            continue;
-        }
-
-        Square square_address{final_file, final_rank};
-        square_score[square_address] = 1;
-    }
-
-    for(const auto& cm : temp.all_legal_moves())
-    {
-        // Only potentially capturing moves are counted
-        if( ! cm.move->can_capture())
-        {
-            continue;
-        }
-
-        char final_file = cm.starting_file + cm.move->file_change();
-        int  final_rank = cm.starting_rank + cm.move->rank_change();
-
-        Square square_address{final_file, final_rank};
-        square_score[square_address] = legal_bonus;
+        on_legal_move_list = true;
     }
 
     double score = 0;
