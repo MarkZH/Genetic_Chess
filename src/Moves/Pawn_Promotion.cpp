@@ -21,8 +21,8 @@ void Pawn_Promotion::side_effects(Board& board, char file_start, int rank_start)
     char file_end = file_start + file_change();
     int  rank_end = rank_start + rank_change();
 
-    board.place_piece(promote_to, file_end, rank_end);
     Pawn_Move::side_effects(board, file_start, rank_start);
+    board.place_piece(promote_to, file_end, rank_end); // will call dtor on this
 }
 
 std::string Pawn_Promotion::name() const
