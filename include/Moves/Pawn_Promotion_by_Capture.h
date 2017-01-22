@@ -8,7 +8,7 @@
 class Pawn_Promotion_by_Capture : public Pawn_Promotion
 {
     public:
-        Pawn_Promotion_by_Capture(std::shared_ptr<const Piece> promotion, char dir);
+        Pawn_Promotion_by_Capture(const std::shared_ptr<const Piece>& promotion, char dir);
         Pawn_Promotion_by_Capture(const Pawn_Promotion_by_Capture&) = delete;
         Pawn_Promotion_by_Capture& operator=(const Pawn_Promotion_by_Capture&) = delete;
         ~Pawn_Promotion_by_Capture() override;

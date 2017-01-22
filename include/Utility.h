@@ -58,7 +58,7 @@ namespace Math
 class Configuration_File
 {
     public:
-        Configuration_File(const std::string& file_name);
+        explicit Configuration_File(const std::string& file_name);
 
         std::string get_text(const std::string& parameter) const;
         double get_number(const std::string& parameter) const;
@@ -70,7 +70,7 @@ class Configuration_File
 class Scoped_Stopwatch
 {
     public:
-        Scoped_Stopwatch(const std::string& name);
+        explicit Scoped_Stopwatch(const std::string& name);
         ~Scoped_Stopwatch();
 
         void stop();

@@ -6,7 +6,7 @@
 
 #include <memory>
 
-Pawn_Promotion::Pawn_Promotion(std::shared_ptr<const Piece> promotion_piece) :
+Pawn_Promotion::Pawn_Promotion(const std::shared_ptr<const Piece>& promotion_piece) :
     Pawn_Move(promotion_piece->color()),
     promote_to(promotion_piece)
 {
