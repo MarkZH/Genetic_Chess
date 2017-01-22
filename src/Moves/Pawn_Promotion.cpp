@@ -30,7 +30,7 @@ std::string Pawn_Promotion::name() const
     return std::string("Pawn Promotion ") + promote_to->pgn_symbol();
 }
 
-bool Pawn_Promotion::move_specific_legal(const Board& board, char file_start, int rank_start) const
+bool Pawn_Promotion::move_specific_legal(const Board& /* board */, char /* file_start */, int rank_start) const
 {
     return (rank_start == (rank_change() == 1 ? 7 : 2)); // promoting
 }
