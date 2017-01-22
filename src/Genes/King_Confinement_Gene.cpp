@@ -65,9 +65,9 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
         }
         visited[square] = true;
 
-        bool attacked_by_other = board.square_attacked_by(square.file,
-                                                          square.rank,
-                                                          opposite(perspective));
+        bool attacked_by_other = ! board.safe_for_king(square.file,
+                                                       square.rank,
+                                                       perspective);
 
         auto piece = board.piece_on_square(square.file, square.rank);
         bool occupied_by_same = piece &&

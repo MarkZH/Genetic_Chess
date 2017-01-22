@@ -71,7 +71,7 @@ class Board
 
         const std::vector<Complete_Move>& all_legal_moves() const;
         const std::vector<Complete_Move>& all_moves() const;
-        bool square_attacked_by(char file, int rank, Color color) const;
+        bool safe_for_king(char file, int rank, Color color) const;
         bool is_en_passant_targetable(char file, int rank) const;
         bool piece_has_moved(char file, int rank) const;
         bool piece_has_moved(const std::shared_ptr<const Piece>& piece) const;

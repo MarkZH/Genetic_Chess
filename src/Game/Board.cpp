@@ -664,13 +664,13 @@ bool Board::king_is_in_check(Color king_color) const
 {
     // find king of input color
     auto king_square = find_king(king_color);
-    return square_attacked_by(king_square.file, king_square.rank, opposite(king_color));
+    return ! safe_for_king(king_square.file, king_square.rank, king_color);
 }
 
-bool Board::square_attacked_by(char file, int rank, Color color) const
+bool Board::safe_for_king(char file, int rank, Color color) const
 {
     auto temp = *this;
-    temp.set_turn(color);
+    temp.set_turn(opposite(color));
 
     for(const auto& move : temp.all_moves())
     {
@@ -686,27 +686,22 @@ bool Board::square_attacked_by(char file, int rank, Color color) const
 
         if(rank != move.starting_rank + move.move->rank_change())
         {
-            if(move.move->name().front() == 'E')
-            {
-                // En passant
-                if(rank != move.starting_rank)
-                {
-                    continue;
-                }
-            }
-            else
-            {
-                continue;
-            }
+            continue;
         }
 
+        auto original_piece = temp.piece_on_square(file, rank);
+        if( ! original_piece || original_piece->color() != color)
+        {
+            temp.place_piece(std::make_shared<Piece>(color), file, rank);
+        }
         if(move.move->is_legal(temp, move.starting_file, move.starting_rank, false))
         {
-            return true;
+            return false;
         }
+        temp.place_piece(original_piece, file, rank);
     }
 
-    return false;
+    return true;
 }
 
 bool Board::no_legal_moves() const
