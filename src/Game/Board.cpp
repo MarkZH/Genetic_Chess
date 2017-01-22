@@ -498,7 +498,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
         int  end_rank   = move[3] - '0';
         if(move.size() == 5)
         {
-            promoted_piece = move[4];
+            promoted_piece = std::toupper(move[4]);
         }
 
         return get_complete_move(start_file, start_rank, end_file, end_rank, promoted_piece);

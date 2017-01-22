@@ -19,14 +19,27 @@ std::string Outside_Player::log_file_name = "chess_comm_log.txt";
 std::unique_ptr<Outside_Player> connect_to_outside()
 {
     Outside_Player::log("==================");
-    if(Outside_Player::receive_command() == "xboard")
+    auto protocol_type = Outside_Player::receive_command();
+    if(protocol_type == "xboard")
     {
         return std::unique_ptr<Outside_Player>(new CECP_Mediator);
     }
+    else if(protocol_type == "uci")
+    {
+        throw std::runtime_error("UCI protocol not implemented");
+    }
     else
     {
-        throw std::runtime_error("Only CECP protocol implemented.");
+        throw std::runtime_error("Unrecognized protocol: " + protocol_type);
     }
+}
+
+Outside_Player::Outside_Player() :
+    starting_game_time(0),
+    moves_to_reset_clock(0),
+    time_increment(0),
+    got_clock(false)
+{
 }
 
 Outside_Player::~Outside_Player()
@@ -40,7 +53,7 @@ std::string Outside_Player::receive_command()
     log("RECEIVING: " + result);
     if(result == "quit")
     {
-        throw std::runtime_error("Told to quit.");
+        throw std::runtime_error("Quit.");
     }
 
     return result;
@@ -55,4 +68,49 @@ void Outside_Player::send_command(const std::string& cmd)
 {
     log("SENDING: " + cmd);
     std::cout << cmd << std::endl;
+}
+
+int Outside_Player::get_game_time()
+{
+    if( ! got_clock)
+    {
+        get_clock_specs();
+        got_clock = true;
+    }
+    return starting_game_time;
+}
+
+int Outside_Player::get_reset_moves()
+{
+    if( ! got_clock)
+    {
+        get_clock_specs();
+        got_clock = true;
+    }
+    return moves_to_reset_clock;
+}
+
+int Outside_Player::get_increment()
+{
+    if( ! got_clock)
+    {
+        get_clock_specs();
+        got_clock = true;
+    }
+    return time_increment;
+}
+
+void Outside_Player::set_game_time(int time)
+{
+    starting_game_time = time;
+}
+
+void Outside_Player::set_reset_moves(int moves)
+{
+    moves_to_reset_clock = moves;
+}
+
+void Outside_Player::set_increment(int increment)
+{
+    time_increment = increment;
 }

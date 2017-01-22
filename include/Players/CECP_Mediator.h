@@ -24,6 +24,8 @@ class CECP_Mediator : public Outside_Player
 
     private:
         mutable std::string first_move;
+
+        void get_clock_specs() override;
 };
 
 #endif // CECP_MEDIATOR_H

@@ -76,6 +76,19 @@ std::string CECP_Mediator::receive_move() const
             log("returning " + String::split(move, " ")[1]);
             return String::split(move, " ")[1];
         }
+        else if(String::starts_with(move, "result"))
+        {
+            auto winner = NONE;
+            if(String::contains(move, "1-0"))
+            {
+                winner = WHITE;
+            }
+            else if(String::contains(move, "0-1"))
+            {
+                winner = BLACK;
+            }
+            throw Game_Ending_Exception(winner, String::split(move, " ", 1)[1]);
+        }
     }
 }
 
@@ -103,4 +116,45 @@ void CECP_Mediator::process_game_ending(const Game_Ending_Exception& gee) const
     result += " {" + std::string(gee.what()) + "}";
 
     send_command(result);
+}
+
+void CECP_Mediator::get_clock_specs()
+{
+    while(true)
+    {
+        auto response = receive_command();
+        if(String::starts_with(response, "level"))
+        {
+            log("got time specs: " + response);
+            auto split = String::split(response);
+            set_reset_moves(std::stoi(split[1]));
+
+            auto time_split = String::split(split[2], ":");
+            auto game_time = 0;
+            if(time_split.size() == 1)
+            {
+                log("game time = " + time_split[0] + " minutes");
+                game_time = 60*std::stoi(time_split[0]);
+            }
+            else
+            {
+                log("game time = " + time_split[0] + " minutes and " + time_split[1] + " seconds");
+                game_time = 60*std::stoi(time_split[0]) + std::stoi(time_split[1]);
+            }
+            set_game_time(game_time);
+
+            set_increment(std::stof(split[3]));
+            break;
+        }
+        else if(String::starts_with(response, "st"))
+        {
+            log("got time specs: " + response);
+            auto split = String::split(response);
+            auto time_per_move = std::stoi(split[1]);
+            set_reset_moves(1);
+            set_increment(0);
+            set_game_time(time_per_move);
+            break;
+        }
+    }
 }

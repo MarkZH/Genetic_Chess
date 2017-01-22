@@ -222,21 +222,29 @@ int main(int argc, char *argv[])
                     }
                 }
 
+                std::string game_file_name = "game.pgn";
+
                 if(black)
                 {
-                    play_game(*white, *black, game_time, moves_per_reset, increment_time, "game.pgn");
+                    play_game(*white, *black, game_time, moves_per_reset, increment_time, game_file_name);
                 }
                 else
                 {
                     auto outside = connect_to_outside();
+                    game_time = outside->get_game_time();
+                    moves_per_reset = outside->get_reset_moves();
+                    increment_time = outside->get_increment();
+                    std::ofstream("testing.txt") << "game time " << game_time << std::endl
+                                                 << "moves to reset " << moves_per_reset << std::endl
+                                                 << "increment " << increment_time << std::endl;
 
                     if(outside->get_ai_color() == WHITE)
                     {
-                        play_game(*white, *outside, 0, 0, 0, "");
+                        play_game(*white, *outside, game_time, moves_per_reset, increment_time, game_file_name);
                     }
                     else
                     {
-                        play_game(*outside, *white, 0, 0, 0, "");
+                        play_game(*outside, *white, game_time, moves_per_reset, increment_time, game_file_name);
                     }
                 }
             }
