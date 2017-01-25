@@ -50,6 +50,13 @@ struct Complete_Move
     {
     }
 
+    Complete_Move() :
+        move(nullptr),
+        starting_file('\0'),
+        starting_rank(0)
+    {
+    }
+
     std::shared_ptr<const Move> move;
     char starting_file;
     int  starting_rank;

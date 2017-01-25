@@ -52,10 +52,13 @@ class Genetic_AI : public Player
 
         void read_from(std::istream& is);
 
+        // Minimax (actually negamax) with alpha-beta pruning
         Game_Tree_Node_Result search_game_tree(const Board& board,
                                                int& positions_to_examine,
                                                const Clock& clock,
-                                               int depth) const;
+                                               int depth,
+                                               double alpha,
+                                               double beta) const;
 };
 
 #endif // GENETIC_AI_H
