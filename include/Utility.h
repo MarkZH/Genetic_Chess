@@ -50,6 +50,8 @@ namespace Random
 namespace Math
 {
     const auto infinity = std::numeric_limits<double>::infinity();
+    const auto win_score = std::numeric_limits<double>::max();
+    const auto lose_score = -win_score;
 
     double average_moves_left(double mean_moves, size_t moves_so_far);
     double poisson_probability(double mean, size_t value);

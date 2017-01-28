@@ -169,11 +169,11 @@ double Genome::evaluate(const Board& board, Color perspective) const
         }
         else if(board.get_winner() == perspective) // checkmate win
         {
-            return Math::infinity;
+            return Math::win_score;
         }
         else // checkmate loss
         {
-            return -Math::infinity;
+            return Math::lose_score;
         }
     }
 

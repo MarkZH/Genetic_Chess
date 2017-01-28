@@ -21,7 +21,26 @@ struct Game_Tree_Node_Result
     Color perspective;
     int depth;
     std::string commentary;
+
+    double corrected_score(Color query) const
+    {
+        if(query == perspective)
+        {
+            return score;
+        }
+        else
+        {
+            return -score;
+        }
+    }
 };
+
+// Is "a" a better result than "b" from "perspective" color
+bool better_than(const Game_Tree_Node_Result& a,
+                 const Game_Tree_Node_Result& b,
+                 Color perspective);
+
+bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b);
 
 class Genetic_AI : public Player
 {
@@ -57,8 +76,8 @@ class Genetic_AI : public Player
                                                int& positions_to_examine,
                                                const Clock& clock,
                                                int depth,
-                                               double alpha,
-                                               double beta) const;
+                                               Game_Tree_Node_Result alpha,
+                                               Game_Tree_Node_Result beta) const;
 };
 
 #endif // GENETIC_AI_H

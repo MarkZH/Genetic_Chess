@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <cmath>
 
 #include "Moves/Move.h"
 #include "Game/Board.h"
@@ -127,12 +127,24 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     }
 
     auto positions_to_examine = genome.positions_to_examine(board, clock);
+
+    Game_Tree_Node_Result alpha_start = {Complete_Move(),
+                                         -Math::infinity,
+                                         board.whose_turn(),
+                                         0,
+                                         ""};
+    Game_Tree_Node_Result beta_start = {Complete_Move(),
+                                        Math::infinity,
+                                        board.whose_turn(),
+                                        0,
+                                        ""};
+
     auto result = search_game_tree(board,
                                    positions_to_examine,
                                    clock,
                                    0,
-                                   -Math::infinity,
-                                   Math::infinity);
+                                   alpha_start,
+                                   beta_start);
     if(result.depth > 0)
     {
         board.add_commentary_to_next_move(result.commentary);
@@ -140,12 +152,64 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     return result.move;
 }
 
+bool better_than(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b, Color perspective)
+{
+    auto scoreA = a.corrected_score(perspective);
+    auto scoreB = b.corrected_score(perspective);
+
+    if(scoreA > scoreB)
+    {
+        return true;
+    }
+
+    if(scoreA < scoreB)
+    {
+        return false;
+    }
+
+    // scoreA == scoreB
+
+    // Shorter path to winning is better
+    if(scoreA == Math::win_score)
+    {
+        return a.depth < b.depth;
+    }
+
+    // Longer path to losing is better
+    if(scoreA == Math::lose_score)
+    {
+        return a.depth > b.depth;
+    }
+
+    return false;
+}
+
+bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b)
+{
+    auto scoreA = a.corrected_score(WHITE);
+    auto scoreB = b.corrected_score(WHITE);
+
+    if(scoreA != scoreB)
+    {
+        return false;
+    }
+
+    // scoreA == scoreB
+
+    if(std::abs(scoreA) == Math::win_score)
+    {
+        return a.depth == b.depth;
+    }
+
+    return true;
+}
+
 Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    int& positions_to_examine,
                                                    const Clock& clock,
                                                    const int depth,
-                                                   double alpha,
-                                                   double beta) const
+                                                   Game_Tree_Node_Result alpha,
+                                                   Game_Tree_Node_Result beta) const
 {
     // Every call to search_game_tree() after the first
     // costs a position_to_examine.
@@ -156,24 +220,18 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
     auto perspective = board.whose_turn();
 
-    // Moves worth examining further
-    std::vector<std::tuple<Complete_Move, Board, double>> further_examine; // move, resulting board, score
-
-    // Find moves worth examining
-    auto best_score = -Math::infinity;
-    auto best_move = board.all_legal_moves().front();
-    auto best_depth = 0;
-    std::string comments_on_best_move;
+    Game_Tree_Node_Result best_result = {board.all_legal_moves().front(),
+                                         -Math::infinity,
+                                         perspective,
+                                         depth,
+                                         ""};
+    size_t moves_examined = 0;
 
     for(const auto& move : board.all_legal_moves())
     {
         if(clock.time_left(clock.running_for()) < 0.0)
         {
-            return {board.all_legal_moves().front(),
-                    0.0,
-                    perspective,
-                    depth,
-                    "Out of time"};
+            return best_result;
         }
 
         auto next_board = board;
@@ -181,31 +239,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         try
         {
             next_board.submit_move(move);
-
-            if(next_board.all_legal_moves().size() > 1 &&
-               (positions_to_examine <= 0
-               || ! genome.good_enough_to_examine(board, next_board, perspective)))
-            {
-                // Record immediate result without looking ahead further
-                auto score = genome.evaluate(next_board, perspective);
-                if(score > best_score)
-                {
-                    best_score = score;
-                    best_depth = depth;
-                    best_move = move;
-                    comments_on_best_move = next_board.get_game_record().back();
-                    alpha = std::max(alpha, score);
-                    if(alpha >= beta)
-                    {
-                        further_examine.clear();
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                further_examine.push_back({move, next_board, genome.evaluate(next_board, perspective)});
-            }
         }
         catch(const Checkmate_Exception&)
         {
@@ -221,94 +254,74 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
         catch(const Game_Ending_Exception&)
         {
-            // Draw
+            // Draws get scored like any other board position
+        }
+
+        Game_Tree_Node_Result result;
+
+        if(next_board.game_has_ended()
+           || ( next_board.all_legal_moves().size() > 1
+                && (positions_to_examine <= 0
+                    || ! genome.good_enough_to_examine(board, next_board, perspective))))
+        {
+            // Record immediate result without looking ahead further
             auto score = genome.evaluate(next_board, perspective);
-            if(score > best_score)
+            result = {move,
+                      score,
+                      perspective,
+                      depth,
+                      next_board.get_game_record().back()};
+        }
+        else
+        {
+            int moves_left = board.all_legal_moves().size() - moves_examined;
+            int positions_for_this_move = positions_to_examine/moves_left;
+
+            if(positions_for_this_move > 0 || next_board.all_legal_moves().size() == 1)
             {
-                best_score = score;
-                best_depth = depth;
-                best_move = move;
-                comments_on_best_move = next_board.get_game_record().back();
-                alpha = std::max(alpha, score);
-                if(alpha >= beta)
+                positions_to_examine -= positions_for_this_move;
+
+                result = search_game_tree(next_board,
+                                          positions_for_this_move,
+                                          clock,
+                                          depth + 1,
+                                          beta,
+                                          alpha);
+                // Update last result with this game tree node's data
+                result.move = move;
+                result.commentary = next_board.get_game_record().back()
+                                            + " "
+                                            + result.commentary;
+
+                positions_to_examine += positions_for_this_move;
+            }
+            else
+            {
+                result = {move,
+                          genome.evaluate(next_board, perspective),
+                          perspective,
+                          depth,
+                          next_board.get_game_record().back()};
+            }
+        }
+
+        if(better_than(result, best_result, perspective))
+        {
+            best_result = result;
+            if(better_than(result, alpha, perspective))
+            {
+                alpha = result;
+                if(better_than(alpha, beta, perspective) || alpha == beta)
                 {
-                    further_examine.clear();
                     break;
                 }
             }
         }
+
+        ++moves_examined;
     }
 
-    // Sort moves by score so higher scores go first for quick alpha-beta pruning
-    std::sort(further_examine.begin(),
-              further_examine.end(),
-              [](const auto& x, const auto& y)
-              {
-                  return std::get<double>(x) > std::get<double>(y);
-              });
-
-    // Look ahead through moves found above
-    for(size_t i = 0; i < further_examine.size(); ++i)
-    {
-        int moves_left = further_examine.size() - i;
-        int positions_for_this_move = positions_to_examine/moves_left;
-
-        Game_Tree_Node_Result result;
-        if(positions_for_this_move > 0 || std::get<Board>(further_examine[i]).all_legal_moves().size() == 1)
-        {
-            positions_to_examine -= positions_for_this_move;
-
-            result = search_game_tree(std::get<Board>(further_examine[i]),
-                                      positions_for_this_move,
-                                      clock,
-                                      depth + 1,
-                                      -beta,
-                                      -alpha);
-            // Update last result with this game tree node's data
-            result.move = std::get<Complete_Move>(further_examine[i]);
-            result.commentary = std::get<Board>(further_examine[i]).get_game_record().back()
-                                        + " "
-                                        + result.commentary;
-
-            positions_to_examine += positions_for_this_move;
-        }
-        else
-        {
-            result = {std::get<Complete_Move>(further_examine[i]),
-                      std::get<double>(further_examine[i]),
-                      perspective,
-                      depth,
-                      std::get<Board>(further_examine[i]).get_game_record().back()};
-        }
-
-        auto score = result.score;
-        if(result.perspective != perspective)
-        {
-            score = -score;
-        }
-
-        // Prefer ...
-        if(score > best_score // better score
-           || (score ==  Math::infinity && result.depth < best_depth) // shortest path to victory
-           || (best_score == -Math::infinity && result.depth > best_depth)) // longest path to defeat
-        {
-            best_score = score;
-            best_move = result.move;
-            best_depth = result.depth;
-            comments_on_best_move = result.commentary;
-            alpha = std::max(alpha, score);
-            if(alpha >= beta)
-            {
-                break;
-            }
-        }
-    }
-
-    return {best_move,
-            best_score,
-            perspective,
-            best_depth,
-            comments_on_best_move};
+    return best_result;
 }
 
 void Genetic_AI::mutate()
