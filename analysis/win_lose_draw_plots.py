@@ -19,11 +19,13 @@ def main(files):
                                'Black Time Left',
                                'Number of Moves']) + '\n')
             # result_type key:
-            #   0 = Checkmate
-            #   1 = 50-move
-            #   2 = 3-fold repitition
-            #   3 = Time forfeit
-            #   4 = No legal moves
+            #   0 = Checkmate (white win)
+            #   1 = Checkmate (black win)
+            #   2 = 50-move
+            #   3 = 3-fold repitition
+            #   4 = Time forfeit (white win)
+            #   5 = Time forfeit (black win)
+            #   6 = No legal moves
             time_section = False
             for line in f:
                 if line.startswith('[Result'):
@@ -36,17 +38,17 @@ def main(files):
                         result_type = 0
                     else:
                         black_wins += 1
-                        result_type = 0
+                        result_type = 1
                 elif line.startswith('[Termination'):
                     result_text = line.split('"')[1]
                     if result_text.lower() in ['threefold repitition', 'threefold repetition']:
-                        result_type = 2
-                    elif result_text.lower() == '50-move limit':
-                        result_type = 1
-                    elif result_text.lower() == 'time forfeiture':
                         result_type = 3
-                    else:
-                        result_type = 4
+                    elif result_text.lower() == '50-move limit':
+                        result_type = 2
+                    elif result_text.lower() == 'time forfeiture':
+                        result_type += 4
+                    else: # Stalemate
+                        result_type = 6
                 elif '. ' in line:
                     number_of_moves = line.split('. ')[0]
                 elif 'Initial time' in line:
