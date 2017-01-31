@@ -3,6 +3,6 @@
 
 #include <exception>
 
-typedef std::exception Promotion_Exception;
+class Promotion_Exception : public std::exception {};
 
 #endif // PROMOTION_EXCEPTION_H
