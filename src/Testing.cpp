@@ -303,6 +303,31 @@ void run_tests()
     }
 
 
+    // Move ambiguity check
+    Board board;
+    bool ambiguous_move_caught = false;
+    try
+    {
+        for(auto move : {"Nc3", "a1",
+                         "Nf3", "b1",
+                         "Ne4", "c1",
+                         "Ng5"})
+        {
+            board.submit_move(board.get_complete_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        ambiguous_move_caught = true;
+    }
+
+    if( ! ambiguous_move_caught)
+    {
+        std::cerr << "Last move should have been an error:" << std::endl;
+        board.print_game_record();
+        tests_passed = false;
+    }
+
     if(tests_passed)
     {
         std::cout << "All tests passed." << std::endl;

@@ -51,8 +51,8 @@ class Board
         const std::vector<std::string>& get_game_record() const;
 
         // With commentary
-        void print_game_record(const std::string& white_name,
-                               const std::string& black_name,
+        void print_game_record(const std::string& white_name = "",
+                               const std::string& black_name = "",
                                const std::string& file_name = "",
                                const std::string& outside_result = "",
                                unsigned int game_number = 0) const;

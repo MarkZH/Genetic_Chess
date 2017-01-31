@@ -740,8 +740,14 @@ void Board::print_game_record(const std::string& white_name,
 
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
-    out_stream << "[White \"" << white_name << "\"]\n";
-    out_stream << "[Black \"" << black_name << "\"]\n";
+    if( ! white_name.empty())
+    {
+        out_stream << "[White \"" << white_name << "\"]\n";
+    }
+    if( ! black_name.empty())
+    {
+        out_stream << "[Black \"" << black_name << "\"]\n";
+    }
     if(game_number > 0)
     {
         out_stream << "[Round \"" << game_number << "\"]\n";
