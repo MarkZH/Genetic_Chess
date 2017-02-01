@@ -21,6 +21,14 @@ std::string Castling_Possible_Gene::name() const
 
 double Castling_Possible_Gene::score_board(const Board& board, Color perspective) const
 {
+    for(size_t i = (perspective == WHITE ? 0 : 1); i < board.get_game_record().size(); i += 2)
+    {
+        if(board.get_game_record().at(i).front() == 'O') // already castled
+        {
+            return 1.0;
+        }
+    }
+
     auto base_rank = perspective == WHITE ? 1 : 8;
     auto score = 0.0;
 
