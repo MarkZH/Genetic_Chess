@@ -328,6 +328,8 @@ void run_tests()
         tests_passed = false;
     }
 
+    Board().ascii_draw(WHITE);
+
     if(tests_passed)
     {
         std::cout << "All tests passed." << std::endl;

@@ -170,6 +170,11 @@ bool Board::inside_board(int rank)
     return rank >= 1 && rank <= 8;
 }
 
+Color Board::square_color(char file, int rank)
+{
+    return (file - 'a') % 2 == (rank - 1) % 2 ? BLACK : WHITE;
+}
+
 bool Board::is_legal(const Complete_Move& move, bool king_check) const
 {
     return is_legal(move.starting_file, move.starting_rank, move.move, king_check);
@@ -392,6 +397,13 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
         game_record.back().append("\t1/2-1/2");
         game_ended = true;
         throw Stalemate_Exception("50-move limit");
+    }
+
+    if( ! enough_material_to_checkmate())
+    {
+        game_record.back().append("\t1/2-1/2");
+        game_ended = true;
+        throw Stalemate_Exception("Insufficient material");
     }
 }
 
@@ -626,7 +638,7 @@ void Board::ascii_draw(Color perspective) const
                 std::string piece_symbol;
                 auto piece = piece_on_square(file, rank);
                 char dark_square_fill = ':';
-                char filler = (((file + rank)%2 == (file_start + rank_start)%2) ? ' ' : dark_square_fill);
+                char filler = (square_color(file, rank) == WHITE ? ' ' : dark_square_fill);
                 if(piece)
                 {
                     auto piece_row = piece->ascii_art(square_row);
@@ -936,3 +948,89 @@ void Board::clear_caches()
     all_moves_cache.clear();
     all_legal_moves_cache.clear();
 }
+
+bool Board::enough_material_to_checkmate() const
+{
+    std::map<Color, bool> knight_found;
+    std::map<std::tuple<Color, Color>, bool> bishop_found; // <Piece, Square> color -> bishop found
+
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            auto piece = piece_on_square(file, rank);
+            if(piece)
+            {
+                if(piece->is_king())
+                {
+                    continue;
+                }
+
+                if(piece->is_pawn())
+                {
+                    return true; // can promote to make checkmate possible
+                }
+
+                if(String::contains("QR", piece->pgn_symbol()))
+                {
+                    return true; // king and queen or rook can checkmate
+                }
+
+                if(piece->pgn_symbol() == "N")
+                {
+                    if(knight_found[piece->color()])
+                    {
+                        return true; // checkmate with two knights possible
+                    }
+                    else
+                    {
+                        if(bishop_found[{piece->color(), WHITE}] || bishop_found[{piece->color(), BLACK}])
+                        {
+                            return true; // checkmate with knight and bishop possible
+                        }
+                        knight_found[piece->color()] = true;
+                    }
+                }
+
+                if(piece->pgn_symbol() == "B")
+                {
+                    if(knight_found[piece->color()])
+                    {
+                        return true; // knight and bishop checkmate
+                    }
+
+                    auto bishop_square_color = square_color(file, rank);
+                    if(bishop_found[{piece->color(), opposite(bishop_square_color)}])
+                    {
+                        return true; // checkmate with opposite colored bishops
+                    }
+                    bishop_found[{piece->color(), bishop_square_color}] = true;
+                }
+
+                // Checkmates when minor pieces block own king
+                bool white_has_minor_pieces = (knight_found[WHITE] || bishop_found[{WHITE,WHITE}] || bishop_found[{WHITE,BLACK}]);
+                bool black_has_minor_pieces = (knight_found[BLACK] || bishop_found[{BLACK,WHITE}] || bishop_found[{BLACK,BLACK}]);
+                if(white_has_minor_pieces && black_has_minor_pieces)
+                {
+                    if(knight_found[WHITE] || knight_found[BLACK])
+                    {
+                        return true;
+                    }
+
+                    if(bishop_found[{WHITE,WHITE}] && bishop_found[{BLACK, BLACK}])
+                    {
+                        return true;
+                    }
+
+                    if(bishop_found[{WHITE,BLACK}] && bishop_found[{BLACK, WHITE}])
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+    }
+
+    return false;
+}
+

@@ -25,7 +25,8 @@ def main(files):
             #   3 = 3-fold repitition
             #   4 = Time forfeit (white win)
             #   5 = Time forfeit (black win)
-            #   6 = No legal moves
+            #   6 = Insufficient material
+            #   7 = No legal moves
             time_section = False
             for line in f:
                 if line.startswith('[Result'):
@@ -47,8 +48,10 @@ def main(files):
                         result_type = 2
                     elif result_text.lower() == 'time forfeiture':
                         result_type += 4
-                    else: # Stalemate
+                    elif result_text.lower() == 'insufficient material':
                         result_type = 6
+                    else: # Stalemate
+                        result_type = 7
                 elif '. ' in line:
                     number_of_moves = line.split('. ')[0]
                 elif 'Initial time' in line:

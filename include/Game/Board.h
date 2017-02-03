@@ -108,6 +108,8 @@ class Board
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();
         void all_pieces_unmoved();
+        bool enough_material_to_checkmate() const;
+        static Color square_color(char file, int rank);
 
         // Moves with side effects
         friend class Kingside_Castle; // moves second piece
