@@ -12,6 +12,8 @@ class Knight : public Piece
         Knight(const Knight&) = delete;
         Knight& operator=(const Knight&) = delete;
         ~Knight() override;
+
+        bool is_knight() const override;
 };
 
 #endif // KNIGHT_H

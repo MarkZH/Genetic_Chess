@@ -34,3 +34,8 @@ Queen::Queen(Color color_in) : Piece(color_in)
 Queen::~Queen()
 {
 }
+
+bool Queen::is_queen() const
+{
+    return true;
+}

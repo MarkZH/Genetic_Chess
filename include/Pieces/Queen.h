@@ -12,6 +12,8 @@ class Queen : public Piece
         Queen(const Queen&) = delete;
         Queen& operator=(const Queen&) = delete;
         ~Queen() override;
+
+        bool is_queen() const override;
 };
 
 #endif // QUEEN_H

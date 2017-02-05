@@ -10,6 +10,8 @@ class Rook : public Piece
         Rook(const Rook&) = delete;
         Rook& operator=(const Rook&) = delete;
         ~Rook() override;
+
+        bool is_rook() const override;
 };
 
 #endif // ROOK_H

@@ -32,3 +32,8 @@ Rook::Rook(Color color_in) : Piece(color_in)
 Rook::~Rook()
 {
 }
+
+bool Rook::is_rook() const
+{
+    return true;
+}

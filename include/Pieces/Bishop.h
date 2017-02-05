@@ -12,6 +12,8 @@ class Bishop : public Piece
         Bishop(const Bishop&) = delete;
         Bishop& operator=(const Bishop&) = delete;
         ~Bishop() override;
+
+        bool is_bishop() const override;
 };
 
 #endif // BISHOP_H

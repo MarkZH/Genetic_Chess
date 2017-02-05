@@ -32,3 +32,8 @@ Bishop::Bishop(Color color_in) : Piece(color_in)
 Bishop::~Bishop()
 {
 }
+
+bool Bishop::is_bishop() const
+{
+    return true;
+}

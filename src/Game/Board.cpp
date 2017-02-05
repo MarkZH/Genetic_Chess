@@ -679,38 +679,134 @@ bool Board::king_is_in_check(Color king_color) const
     return ! safe_for_king(king_square.file, king_square.rank, king_color);
 }
 
-bool Board::safe_for_king(char file, int rank, Color color) const
+bool Board::safe_for_king(char file, int rank, Color king_color) const
 {
-    auto temp = *this;
-    temp.set_turn(opposite(color));
-
-    for(const auto& move : temp.all_moves())
+    // Check for attacks along diagonals
+    auto attacking_color = opposite(king_color);
+    int pawn_rank = rank - (attacking_color == WHITE ? 1 : -1); // which direction pawns attack
+    for(auto rank_step : {-1, 1})
     {
-        if( ! move.move->can_capture())
+        for(auto file_step : {-1, 1})
         {
-            continue;
-        }
+            for(int steps = 1; steps <= 7; ++steps)
+            {
+                char attacking_file = file + file_step*steps;
+                int  attacking_rank = rank + rank_step*steps;
 
-        if(file != move.starting_file + move.move->file_change())
-        {
-            continue;
-        }
+                if( ! inside_board(attacking_file, attacking_rank))
+                {
+                    break;
+                }
 
-        if(rank != move.starting_rank + move.move->rank_change())
-        {
-            continue;
-        }
+                auto piece = piece_on_square(attacking_file, attacking_rank);
+                if( ! piece)
+                {
+                    continue;
+                }
 
-        auto original_piece = temp.piece_on_square(file, rank);
-        if( ! original_piece || original_piece->color() != color)
-        {
-            temp.place_piece(std::make_shared<Piece>(color), file, rank);
+                if(piece->color() != attacking_color)
+                {
+                    break; // piece on square is blocking anything behind it
+                }
+
+                if(attacking_rank == pawn_rank && piece->is_pawn())
+                {
+                    return false; // attacked by pawn
+                }
+
+                if(steps == 1 && piece->is_king())
+                {
+                    return false;
+                }
+
+                if(piece->is_bishop() || piece->is_queen())
+                {
+                    return false;
+                }
+                else
+                {
+                    break; // piece on square is blocking anything behind it
+                }
+            }
         }
-        if(move.move->is_legal(temp, move.starting_file, move.starting_rank, false))
+    }
+
+    // Check for attacks along rows and columns
+    for(auto file_step : {-1, 0, 1})
+    {
+        for(auto rank_step : {-1, 0, 1})
         {
-            return false;
+            if(file_step != 0 && rank_step != 0)
+            {
+                continue;
+            }
+
+            if(file_step == 0 && rank_step == 0)
+            {
+                continue;
+            }
+
+            for(int steps = 1; steps <= 7; ++steps)
+            {
+                char attacking_file = file + steps*file_step;
+                int  attacking_rank = rank + steps*rank_step;
+
+                if( ! inside_board(attacking_file, attacking_rank))
+                {
+                    break;
+                }
+
+                auto piece = piece_on_square(attacking_file, attacking_rank);
+                if( ! piece)
+                {
+                    continue;
+                }
+
+                if(piece->color() != attacking_color)
+                {
+                    break; // piece on square is blocking anything behind it
+                }
+
+                if(steps == 1 && piece->is_king())
+                {
+                    return false;
+                }
+
+                if(piece->is_rook() || piece->is_queen())
+                {
+                    return false;
+                }
+                else
+                {
+                    break; // piece on square is blocking anything behind it
+                }
+            }
         }
-        temp.place_piece(original_piece, file, rank);
+    }
+
+    // Check for knight attacks
+    for(auto file_step : {1, 2})
+    {
+        auto rank_step = 3 - file_step;
+        for(auto file_step_direction : {-1, 1})
+        {
+            for(auto rank_step_direction : {-1, 1})
+            {
+                char attacking_file = file + file_step*file_step_direction;
+                char attacking_rank = rank + rank_step*rank_step_direction;
+
+                if( ! inside_board(attacking_file, attacking_rank))
+                {
+                    continue;
+                }
+
+                auto piece = piece_on_square(attacking_file, attacking_rank);
+                if(piece && piece->is_knight() && piece->color() == attacking_color)
+                {
+                    return false;
+                }
+            }
+        }
     }
 
     return true;
@@ -959,73 +1055,67 @@ bool Board::enough_material_to_checkmate() const
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto piece = piece_on_square(file, rank);
-            if(piece)
+            if( ! piece || piece->is_king())
             {
-                if(piece->is_king())
+                continue;
+            }
+            else if(piece->is_queen() || piece->is_rook() || piece->is_pawn())
+            {
+                return true; // checkmate possible with just queen or rook; pawn can promote
+            }
+            else if(piece->is_knight())
+            {
+                if(knight_found[piece->color()])
                 {
-                    continue;
+                    return true; // checkmate with two knights possible
+                }
+                else if(bishop_found[{piece->color(), WHITE}] || bishop_found[{piece->color(), BLACK}])
+                {
+                    return true; // checkmate with knight and bishop possible
+                }
+                knight_found[piece->color()] = true;
+            }
+            else if(piece->is_bishop())
+            {
+                if(knight_found[piece->color()])
+                {
+                    return true; // knight and bishop checkmate possible
                 }
 
-                if(piece->is_pawn())
+                auto bishop_square_color = square_color(file, rank);
+                if(bishop_found[{piece->color(), opposite(bishop_square_color)}])
                 {
-                    return true; // can promote to make checkmate possible
+                    return true; // checkmate with opposite colored bishops possible
+                }
+                bishop_found[{piece->color(), bishop_square_color}] = true;
+            }
+
+            // Checkmates when minor pieces block own king
+            // KB......
+            // ........ White king checkmated in corner
+            // kn......
+            // ........
+            // ........
+            // ........
+            // ........
+            // ........
+            bool white_has_minor_pieces = (knight_found[WHITE] || bishop_found[{WHITE,WHITE}] || bishop_found[{WHITE,BLACK}]);
+            bool black_has_minor_pieces = (knight_found[BLACK] || bishop_found[{BLACK,WHITE}] || bishop_found[{BLACK,BLACK}]);
+            if(white_has_minor_pieces && black_has_minor_pieces)
+            {
+                if(knight_found[WHITE] || knight_found[BLACK])
+                {
+                    return true;
                 }
 
-                if(String::contains("QR", piece->pgn_symbol()))
+                if(bishop_found[{WHITE,WHITE}] && bishop_found[{BLACK, BLACK}])
                 {
-                    return true; // king and queen or rook can checkmate
+                    return true;
                 }
 
-                if(piece->pgn_symbol() == "N")
+                if(bishop_found[{WHITE,BLACK}] && bishop_found[{BLACK, WHITE}])
                 {
-                    if(knight_found[piece->color()])
-                    {
-                        return true; // checkmate with two knights possible
-                    }
-                    else
-                    {
-                        if(bishop_found[{piece->color(), WHITE}] || bishop_found[{piece->color(), BLACK}])
-                        {
-                            return true; // checkmate with knight and bishop possible
-                        }
-                        knight_found[piece->color()] = true;
-                    }
-                }
-
-                if(piece->pgn_symbol() == "B")
-                {
-                    if(knight_found[piece->color()])
-                    {
-                        return true; // knight and bishop checkmate
-                    }
-
-                    auto bishop_square_color = square_color(file, rank);
-                    if(bishop_found[{piece->color(), opposite(bishop_square_color)}])
-                    {
-                        return true; // checkmate with opposite colored bishops
-                    }
-                    bishop_found[{piece->color(), bishop_square_color}] = true;
-                }
-
-                // Checkmates when minor pieces block own king
-                bool white_has_minor_pieces = (knight_found[WHITE] || bishop_found[{WHITE,WHITE}] || bishop_found[{WHITE,BLACK}]);
-                bool black_has_minor_pieces = (knight_found[BLACK] || bishop_found[{BLACK,WHITE}] || bishop_found[{BLACK,BLACK}]);
-                if(white_has_minor_pieces && black_has_minor_pieces)
-                {
-                    if(knight_found[WHITE] || knight_found[BLACK])
-                    {
-                        return true;
-                    }
-
-                    if(bishop_found[{WHITE,WHITE}] && bishop_found[{BLACK, BLACK}])
-                    {
-                        return true;
-                    }
-
-                    if(bishop_found[{WHITE,BLACK}] && bishop_found[{BLACK, WHITE}])
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
         }

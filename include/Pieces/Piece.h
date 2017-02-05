@@ -36,6 +36,10 @@ class Piece
 
         virtual bool is_pawn() const;
         virtual bool is_king() const;
+        virtual bool is_queen() const;
+        virtual bool is_rook() const;
+        virtual bool is_bishop() const;
+        virtual bool is_knight() const;
 
     protected:
         Color my_color;

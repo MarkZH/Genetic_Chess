@@ -101,3 +101,23 @@ bool Piece::is_king() const
 {
     return false;
 }
+
+bool Piece::is_queen() const
+{
+    return false;
+}
+
+bool Piece::is_rook() const
+{
+    return false;
+}
+
+bool Piece::is_bishop() const
+{
+    return false;
+}
+
+bool Piece::is_knight() const
+{
+    return false;
+}
