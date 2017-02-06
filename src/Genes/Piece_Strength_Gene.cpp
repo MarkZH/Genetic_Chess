@@ -53,19 +53,12 @@ void Piece_Strength_Gene::mutate()
 
 double Piece_Strength_Gene::piece_value(char symbol) const
 {
-    if(is_active())
-    {
-        return piece_strength.at(symbol);
-    }
-    else
-    {
-        return 0.0;
-    }
+    return piece_strength.at(symbol);
 }
 
 double Piece_Strength_Gene::piece_value(const std::shared_ptr<const Piece>& piece) const
 {
-    if(piece->is_king())
+    if( ! is_active() || piece->is_king())
     {
         return 0.0;
     }
