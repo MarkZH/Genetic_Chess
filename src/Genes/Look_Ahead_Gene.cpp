@@ -31,6 +31,11 @@ Look_Ahead_Gene::~Look_Ahead_Gene()
 
 int Look_Ahead_Gene::positions_to_examine(const Board& board, const Clock& clock) const
 {
+    if( ! is_active())
+    {
+        return 0;
+    }
+
     auto time_left = clock.time_left(board.whose_turn());
     auto moves_to_reset = clock.moves_to_reset(board.whose_turn());
 
