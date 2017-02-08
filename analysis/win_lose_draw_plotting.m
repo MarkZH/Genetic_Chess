@@ -1,3 +1,6 @@
+warning('off'); % Disable warnings about non-positive data
+                % in loglog plots (turn back on for debugging)
+
 isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
 
 filename = 0;
