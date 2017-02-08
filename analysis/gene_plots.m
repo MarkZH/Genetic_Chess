@@ -88,13 +88,13 @@ for yi = 2 : length(data.colheaders) - 2
   this_data(~isfinite(this_data)) = 0;
 
   plot_figure = nan;
-  if name(1:length(piece_strength_prefix)) == piece_strength_prefix
+  if strncmp(name, piece_strength_prefix, length(piece_strength_prefix))
     plot_figure = piece_strength_figure;
     piece_scalar_index = 1;
     piece_strength_index = yi;
   end
   
-  if name(length(name) - length(scalar_suffix) + 1:end) == scalar_suffix
+  if strncmp(fliplr(name), fliplr(scalar_suffix), length(scalar_suffix))
     plot_figure = scalar_figure;
     piece_scalar_index = 2;
   end
