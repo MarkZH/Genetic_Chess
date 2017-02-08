@@ -40,6 +40,7 @@ title('Piece Strength Evolution', 'FontSize', 22);
 
 scalar_figure = figure('Position', [0, 0, 1200, 1000]);
 scalar_suffix = ' Gene - Scalar';
+scalar_count = 0;
 title('Gene Scalar Evolution', 'FontSize', 22);
 
 piece_scalar_plots = [false, false];
@@ -98,12 +99,18 @@ for yi = 2 : length(data.colheaders) - 2
     smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
     if piece_scalar_index == 1
       name = name(end);
+      make_dashed = false;
     else
       name = name(1 : end - length(scalar_suffix));
+      scalar_count = scalar_count + 1;
+      make_dashed = (scalar_count > 7);
     end
     conv_margin = floor(conv_window/2);
     x_axis = conv_margin : length(smooth_data) + conv_margin - 1;
-    plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
+    p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
+    if make_dashed
+      set(p, 'LineStyle', ':');
+    end
     piece_scalar_plots(piece_scalar_index) = true;
   end
 end
