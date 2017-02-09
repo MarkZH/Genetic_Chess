@@ -23,6 +23,11 @@ struct Square
         }
         return file < other.file;
     }
+
+    bool operator==(const Square& other)
+    {
+        return file == other.file && rank == other.rank;
+    }
 };
 
 #include "Color.h"

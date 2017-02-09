@@ -6,7 +6,7 @@
 #include "Game/Color.h"
 #include "Pieces/Piece.h"
 
-King_Confinement_Gene::King_Confinement_Gene() : maximum_score(0)
+King_Confinement_Gene::King_Confinement_Gene() : maximum_score(0.0)
 {
     // Maximum score comes from a king in the middle of an empty board
     auto king_file = 'e';
@@ -20,6 +20,8 @@ King_Confinement_Gene::King_Confinement_Gene() : maximum_score(0)
             maximum_score += 1.0/(distance + 1.0);
         }
     }
+
+    square_queue.reserve(64);
 }
 
 King_Confinement_Gene::~King_Confinement_Gene()
@@ -43,13 +45,12 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
     // boundaries of this area area squares attacked by the other color or occupied
     // by pieces of the same color.
     //
-    // The moves it takes to reach a square, the less it adds to the score.
+    // The more moves it takes to reach a square, the less it adds to the score.
 
-    std::vector<Square> square_queue;
+    square_queue.clear();
     auto king_square = board.find_king(perspective);
     square_queue.push_back(king_square);
 
-    std::map<Square, bool> visited;
     std::map<Square, int> distance;
     distance[king_square] = 0;
 
@@ -58,12 +59,6 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
     for(size_t i = 0; i < square_queue.size(); ++i)
     {
         auto square = square_queue[i];
-
-        if(visited[square])
-        {
-            continue;
-        }
-        visited[square] = true;
 
         bool attacked_by_other = ! board.safe_for_king(square.file,
                                                        square.rank,
@@ -80,8 +75,9 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
             score += 1.0/(distance[square] + 1.0);
         }
 
+        // Add surrounding squares to square_queue.
         // always check the squares surrounding the king's current positions, even if
-        // it is not safe (i.e., the king is in check)
+        // it is not safe (i.e., the king is in check).
         if(is_safe || square_queue.size() == 1)
         {
             for(char new_file = square.file - 1; new_file <= square.file + 1; ++new_file)
@@ -99,7 +95,12 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
                     }
 
                     auto new_square = Square{new_file, new_rank};
-                    if( ! visited[new_square])
+                    if(new_square == king_square || new_square == square)
+                    {
+                        continue;
+                    }
+
+                    if(distance[new_square] == 0) // never checked
                     {
                         square_queue.push_back(new_square);
                         distance[new_square] = distance[square] + 1;
