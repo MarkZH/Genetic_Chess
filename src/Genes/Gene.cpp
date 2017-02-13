@@ -6,18 +6,18 @@
 #include "Game/Color.h"
 #include "Utility.h"
 
-Gene::Gene() : scalar(0.0), scalar_non_negative(false), active(true)
+Gene::Gene() : priority(0.0), priority_non_negative(false), active(true)
 {
 }
 
 void Gene::reset_properties() const
 {
-    properties["Scalar"] = scalar;
+    properties["Priority"] = priority;
 }
 
 void Gene::load_properties()
 {
-    scalar = properties["Scalar"];
+    priority = properties["Priority"];
 }
 
 void Gene::read_from(std::istream& is)
@@ -68,10 +68,10 @@ void Gene::mutate()
 {
     if(Random::success_probability(0.95))
     {
-        scalar += Random::random_normal(10.0);
-        if(scalar_non_negative)
+        priority += Random::random_normal(10.0);
+        if(priority_non_negative)
         {
-            scalar = std::abs(scalar);
+            priority = std::abs(priority);
         }
         gene_specific_mutation();
     }
@@ -89,7 +89,7 @@ double Gene::evaluate(const Board& board, Color perspective) const
 {
     if(is_active())
     {
-        return scalar*score_board(board, perspective);
+        return priority*score_board(board, perspective);
     }
     else
     {
@@ -117,7 +117,7 @@ bool Gene::is_active() const
     return active;
 }
 
-void Gene::make_scalar_non_negative()
+void Gene::make_priority_non_negative()
 {
-    scalar_non_negative = true;
+    priority_non_negative = true;
 }

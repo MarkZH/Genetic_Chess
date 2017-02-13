@@ -7,7 +7,7 @@
 Total_Force_Gene::Total_Force_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_source_in) :
     piece_strength_source(piece_strength_source_in)
 {
-    make_scalar_non_negative();
+    make_priority_non_negative();
 }
 
 Total_Force_Gene::~Total_Force_Gene()

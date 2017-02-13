@@ -33,15 +33,15 @@ class Gene
         virtual void reset_properties() const;
         virtual void load_properties();
         bool is_active() const;
-        void make_scalar_non_negative();
+        void make_priority_non_negative();
 
     private:
         virtual double score_board(const Board& board, Color perspective) const = 0;
         void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
         virtual void gene_specific_mutation();
 
-        double scalar;
-        bool scalar_non_negative;
+        double priority;
+        bool priority_non_negative;
         bool active;
 };
 
