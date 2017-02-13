@@ -20,8 +20,6 @@ King_Confinement_Gene::King_Confinement_Gene() : maximum_score(0.0)
             maximum_score += 1.0/(distance + 1.0);
         }
     }
-
-    square_queue.reserve(64);
 }
 
 King_Confinement_Gene::~King_Confinement_Gene()
@@ -47,12 +45,13 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
     //
     // The more moves it takes to reach a square, the less it adds to the score.
 
-    square_queue.clear();
+    std::vector<Square> square_queue;
+    square_queue.reserve(64);
     auto king_square = board.find_king(perspective);
     square_queue.push_back(king_square);
 
     std::map<Square, int> distance;
-    distance[king_square] = 0;
+    distance[king_square] = 1;
 
     double score = 0.0;
 
@@ -72,7 +71,7 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
         auto is_safe = ! attacked_by_other && ! occupied_by_same;
         if(is_safe)
         {
-            score += 1.0/(distance[square] + 1.0);
+            score += 1.0/distance[square];
         }
 
         // Add surrounding squares to square_queue.
@@ -95,11 +94,6 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
                     }
 
                     auto new_square = Square{new_file, new_rank};
-                    if(new_square == king_square || new_square == square)
-                    {
-                        continue;
-                    }
-
                     if(distance[new_square] == 0) // never checked
                     {
                         square_queue.push_back(new_square);

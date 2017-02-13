@@ -110,7 +110,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h src/Genes/Gen
 $(DEBUG_OBJ_DIR)/src/Genes/Genome.o : include/Genes/Genome.h include/Game/Color.h include/Genes/Piece_Strength_Gene.h src/Genes/Genome.cpp include/Game/Board.h include/Utility.h include/Genes/Gene.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Branch_Pruning_Gene.h include/Genes/Castling_Possible_Gene.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Genome.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Genome.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confinement_Gene.h include/Genes/Gene.h include/Game/Board.h src/Genes/King_Confinement_Gene.cpp include/Game/Color.h include/Pieces/Piece.h
+$(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confinement_Gene.h include/Genes/Gene.h src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Game/Color.h include/Pieces/Piece.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/King_Confinement_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o : include/Genes/King_Protection_Gene.h include/Genes/Gene.h src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Pieces/Piece.h
@@ -266,7 +266,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h src/Genes/G
 $(RELEASE_OBJ_DIR)/src/Genes/Genome.o : include/Genes/Genome.h include/Game/Color.h include/Genes/Piece_Strength_Gene.h src/Genes/Genome.cpp include/Game/Board.h include/Utility.h include/Genes/Gene.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Branch_Pruning_Gene.h include/Genes/Castling_Possible_Gene.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Genome.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Genome.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confinement_Gene.h include/Genes/Gene.h include/Game/Board.h src/Genes/King_Confinement_Gene.cpp include/Game/Color.h include/Pieces/Piece.h
+$(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confinement_Gene.h include/Genes/Gene.h src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Game/Color.h include/Pieces/Piece.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/King_Confinement_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o : include/Genes/King_Protection_Gene.h include/Genes/Gene.h src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Pieces/Piece.h

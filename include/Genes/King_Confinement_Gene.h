@@ -2,7 +2,9 @@
 #define KING_CONFINEMENT_GENE_H
 
 #include "Genes/Gene.h"
-#include "Game/Board.h"
+
+class Board;
+enum Color;
 
 class King_Confinement_Gene : public Gene
 {
@@ -16,7 +18,6 @@ class King_Confinement_Gene : public Gene
 
     private:
         double maximum_score;
-        mutable std::vector<Square> square_queue;
 
         double score_board(const Board& board, Color perspective) const override;
 };
