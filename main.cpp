@@ -234,9 +234,6 @@ int main(int argc, char *argv[])
                     game_time = outside->get_game_time();
                     moves_per_reset = outside->get_reset_moves();
                     increment_time = outside->get_increment();
-                    std::ofstream("testing.txt") << "game time " << game_time << std::endl
-                                                 << "moves to reset " << moves_per_reset << std::endl
-                                                 << "increment " << increment_time << std::endl;
 
                     if(outside->get_ai_color() == WHITE)
                     {
