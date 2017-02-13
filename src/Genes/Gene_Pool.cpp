@@ -205,6 +205,7 @@ void gene_pool(const std::string& config_file = "")
         }
 
         // Get results as they come in
+        std::vector<Genetic_AI> to_delete;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
             auto& white = pool[pool_indices[index]];
@@ -253,6 +254,7 @@ void gene_pool(const std::string& config_file = "")
                 original_pool[offspring] = pool_index;
 
                 auto& losing_player  = (winner == WHITE ? black : white);
+                to_delete.push_back(losing_player);
                 std::cout << " / killing " << losing_player.get_id() << std::endl;
                 losing_player = offspring; // offspring replaces loser
             }
@@ -273,11 +275,21 @@ void gene_pool(const std::string& config_file = "")
                     original_pool[offspring] = pool_index;
 
                     auto& pseudo_loser = (pseudo_winner == white ? black : white);
+                    to_delete.push_back(pseudo_loser);
                     std::cout << " / " << pseudo_loser.get_id() << " dies";
                     pseudo_loser = offspring; // offspring replaces loser
                 }
                 std::cout << std::endl;
             }
+        }
+
+        for(const auto& ai : to_delete)
+        {
+            wins.erase(ai);
+            draws.erase(ai);
+            games_since_last_win.erase(ai);
+            consecutive_wins.erase(ai);
+            original_pool.erase(ai);
         }
 
         for(const auto& ai : pool)
