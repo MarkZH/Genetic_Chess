@@ -21,6 +21,7 @@
 #include "Testing.h"
 
 void print_help();
+int find_last_id(const std::string& filename);
 
 int main(int argc, char *argv[])
 {
@@ -178,7 +179,7 @@ int main(int argc, char *argv[])
                         {
                             if(id < 0)
                             {
-                                genetic_ptr = new Genetic_AI(filename);
+                                genetic_ptr = new Genetic_AI(filename, find_last_id(filename));
                                 i += 1;
                             }
                             else
@@ -282,4 +283,27 @@ void print_help()
               << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock resets to the initial time every time this\n\t\tnumber of moves is made." << std::endl << std::endl
               << "\t-increment_time [number]" << std::endl
               << "\t\tSpecify seconds to add to time after each move." << std::endl << std::endl;
+}
+
+int find_last_id(const std::string& filename)
+{
+    std::ifstream ifs(filename);
+    std::string line;
+    std::string id_line;
+    while(std::getline(ifs, line))
+    {
+        if(String::starts_with(line, "ID:"))
+        {
+            id_line = line;
+        }
+    }
+
+    if(id_line.empty())
+    {
+        throw std::runtime_error("No Genetic AIs found in " + filename);
+    }
+    else
+    {
+        return std::stoi(String::split(id_line)[1]);
+    }
 }
