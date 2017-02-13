@@ -45,3 +45,4 @@ octave-workspace
 *.cd
 *.swp
 *.zip
+*.old
