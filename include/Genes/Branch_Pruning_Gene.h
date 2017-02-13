@@ -12,7 +12,6 @@ class Branch_Pruning_Gene : public Gene
         ~Branch_Pruning_Gene() override;
 
         Branch_Pruning_Gene* duplicate() const override;
-        void mutate() override;
 
         std::string name() const override;
 
@@ -27,6 +26,7 @@ class Branch_Pruning_Gene : public Gene
         double minimum_score_change;
 
         double score_board(const Board& board, Color perspective) const override;
+        void gene_specific_mutation() override;
 };
 
 #endif // GENES_BRANCH_PRUNING_GENE_H

@@ -11,7 +11,6 @@ class Piece_Strength_Gene : public Gene
         Piece_Strength_Gene();
         ~Piece_Strength_Gene() override;
 
-        void mutate() override;
         Piece_Strength_Gene* duplicate() const override;
 
         std::string name() const override;
@@ -29,6 +28,7 @@ class Piece_Strength_Gene : public Gene
         double score_board(const Board& board, Color perspective) const override;
         void renormalize();
         double piece_value(char symbol) const;
+        void gene_specific_mutation() override;
 };
 
 #endif // PIECE_STRENGTH_GENE_H

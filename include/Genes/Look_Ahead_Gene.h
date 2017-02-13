@@ -13,7 +13,6 @@ class Look_Ahead_Gene : public Gene
         ~Look_Ahead_Gene() override;
 
         Look_Ahead_Gene* duplicate() const override;
-        void mutate() override;
 
         std::string name() const override;
 
@@ -28,6 +27,7 @@ class Look_Ahead_Gene : public Gene
         double positions_per_second; // number of positions examined per second
 
         double score_board(const Board& board, Color perspective) const override;
+        void gene_specific_mutation() override;
 };
 
 #endif // LOOK_AHEAD_GENE_H

@@ -46,10 +46,8 @@ int Look_Ahead_Gene::positions_to_examine(const Board& board, const Clock& clock
     return int(positions_per_second*time_per_move); // positions to examine for one move
 }
 
-void Look_Ahead_Gene::mutate()
+void Look_Ahead_Gene::gene_specific_mutation()
 {
-    Gene::mutate();
-
     if(Random::coin_flip())
     {
         mean_game_length = std::max(1.0, mean_game_length + Random::random_normal(1.0));

@@ -73,11 +73,16 @@ void Gene::mutate()
         {
             scalar = std::abs(scalar);
         }
+        gene_specific_mutation();
     }
     else
     {
         active = ! active;
     }
+}
+
+void Gene::gene_specific_mutation()
+{
 }
 
 double Gene::evaluate(const Board& board, Color perspective) const

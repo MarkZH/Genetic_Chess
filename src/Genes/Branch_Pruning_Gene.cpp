@@ -21,9 +21,8 @@ void Branch_Pruning_Gene::load_properties()
     minimum_score_change = properties["Minimum Score Change"];
 }
 
-void Branch_Pruning_Gene::mutate()
+void Branch_Pruning_Gene::gene_specific_mutation()
 {
-    Gene::mutate();
     minimum_score_change += Random::random_normal(5.0);
 }
 

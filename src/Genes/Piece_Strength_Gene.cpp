@@ -36,10 +36,8 @@ void Piece_Strength_Gene::load_properties()
     renormalize();
 }
 
-void Piece_Strength_Gene::mutate()
+void Piece_Strength_Gene::gene_specific_mutation()
 {
-    Gene::mutate();
-
     for(auto& key_value : piece_strength)
     {
         const double mean_number_of_mutations = 2.0;

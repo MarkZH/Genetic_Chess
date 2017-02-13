@@ -11,7 +11,6 @@ class Sphere_of_Influence_Gene : public Gene
         ~Sphere_of_Influence_Gene() override;
 
         Sphere_of_Influence_Gene* duplicate() const override;
-        void mutate() override;
 
         std::string name() const override;
 
@@ -23,6 +22,7 @@ class Sphere_of_Influence_Gene : public Gene
         double legal_bonus;
 
         double score_board(const Board& board, Color perspective) const override;
+        void gene_specific_mutation() override;
 };
 
 #endif // SPHERE_OF_INFLUENCE_GENE_H
