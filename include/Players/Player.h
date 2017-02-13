@@ -16,7 +16,7 @@ class Player
         virtual const Complete_Move choose_move(const Board& board, const Clock& clock) const = 0;
         virtual std::string name() const = 0;
 
-        virtual void process_game_ending(const Game_Ending_Exception& gee) const;
+        virtual void process_game_ending(const Game_Ending_Exception& gee, const Board& board) const;
 };
 
 #endif // PLAYER_H

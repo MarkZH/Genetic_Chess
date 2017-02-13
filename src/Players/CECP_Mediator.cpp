@@ -8,7 +8,7 @@
 
 #include "Utility.h"
 
-CECP_Mediator::CECP_Mediator() : Outside_Player()
+CECP_Mediator::CECP_Mediator()
 {
     if(receive_command() == "protover 2")
     {
@@ -69,12 +69,13 @@ std::string CECP_Mediator::receive_move() const
 {
     while(true)
     {
-        std::string move = receive_command();
+        auto move = receive_command();
         if(String::starts_with(move, "usermove"))
         {
+            auto data = String::split(move, " ")[1];
             log("got move " + move);
-            log("returning " + String::split(move, " ")[1]);
-            return String::split(move, " ")[1];
+            log("returning " + data);
+            return data;
         }
         else if(String::starts_with(move, "result"))
         {
@@ -87,7 +88,8 @@ std::string CECP_Mediator::receive_move() const
             {
                 winner = BLACK;
             }
-            throw Game_Ending_Exception(winner, String::split(move, " ", 1)[1]);
+            auto data = String::split(move, " ")[1];
+            throw Game_Ending_Exception(winner, data);
         }
     }
 }
@@ -97,9 +99,10 @@ std::string CECP_Mediator::name() const
     return "CECP Interface Player";
 }
 
-void CECP_Mediator::process_game_ending(const Game_Ending_Exception& gee) const
+void CECP_Mediator::process_game_ending(const Game_Ending_Exception& gee, const Board& board) const
 {
-    std::string result;
+    send_command("move " + board.last_move());
+    std::string result = "result ";
     if(gee.winner() == WHITE)
     {
         result += "1-0";

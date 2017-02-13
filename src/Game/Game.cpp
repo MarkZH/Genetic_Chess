@@ -71,8 +71,8 @@ Color play_game_with_board(const Player& white,
     catch(const Game_Ending_Exception& end_game)
     {
 		// for Outside_Players communicating with xboard and the like
-        white.process_game_ending(end_game);
-        black.process_game_ending(end_game);
+        white.process_game_ending(end_game, board);
+        black.process_game_ending(end_game, board);
 
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
 
