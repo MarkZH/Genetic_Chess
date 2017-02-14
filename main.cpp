@@ -214,12 +214,14 @@ int main(int argc, char *argv[])
                         if( ! white)
                         {
                             white = std::move(latest);
-                            continue;
                         }
-                        if( ! black)
+                        else if( ! black)
                         {
                             black = std::move(latest);
-                            continue;
+                        }
+                        else
+                        {
+                            throw std::runtime_error("More than two players specified.");
                         }
                     }
                 }
