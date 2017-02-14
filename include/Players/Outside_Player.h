@@ -34,7 +34,6 @@ class Outside_Player : public Player
         void set_reset_moves(int moves);
         void set_increment(int increment);
 
-
     private:
         static std::string log_file_name;
 
