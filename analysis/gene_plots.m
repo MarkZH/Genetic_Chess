@@ -39,9 +39,9 @@ piece_strength_figure = figure('Position', [0, 0, 1200, 1000]);
 title('Piece Strength Evolution', 'FontSize', 22);
 
 scalar_figure = figure('Position', [0, 0, 1200, 1000]);
-scalar_suffix = ' Gene - Scalar';
+scalar_suffix = ' Gene - Priority';
 scalar_count = 0;
-title('Gene Scalar Evolution', 'FontSize', 22);
+title('Gene Priority Evolution', 'FontSize', 22);
 
 piece_scalar_plots = [false, false];
 
