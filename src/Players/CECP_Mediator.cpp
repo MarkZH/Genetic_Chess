@@ -8,12 +8,19 @@
 
 #include "Utility.h"
 
-CECP_Mediator::CECP_Mediator()
+CECP_Mediator::CECP_Mediator(const std::string& name)
 {
-    if(receive_command() == "protover 2")
+    if(receive_cecp_command() == "protover 2")
     {
         log("as expected, setting options");
-        send_command("feature usermove=1 sigint=0 sigterm=0 reuse=0 done=1");
+        send_command("feature "
+                     "usermove=1 "
+                     "sigint=0 "
+                     "sigterm=0 "
+                     "reuse=0 "
+                     "myname=\"" + name + "\" "
+                     "name=1 "
+                     "done=1");
     }
     else
     {
@@ -52,7 +59,7 @@ Color CECP_Mediator::get_ai_color() const
 {
     while(true)
     {
-        auto cmd = receive_command();
+        auto cmd = receive_cecp_command();
         if(cmd == "white" || cmd == "go")
         {
             return WHITE;
@@ -69,7 +76,7 @@ std::string CECP_Mediator::receive_move() const
 {
     while(true)
     {
-        auto move = receive_command();
+        auto move = receive_cecp_command();
         if(String::starts_with(move, "usermove"))
         {
             auto data = String::split(move, " ")[1];
@@ -96,7 +103,14 @@ std::string CECP_Mediator::receive_move() const
 
 std::string CECP_Mediator::name() const
 {
-    return "CECP Interface Player";
+    if(received_name.empty())
+    {
+        return "CECP Interface Player";
+    }
+    else
+    {
+        return received_name;
+    }
 }
 
 void CECP_Mediator::process_game_ending(const Game_Ending_Exception& gee, const Board& board) const
@@ -125,7 +139,7 @@ void CECP_Mediator::get_clock_specs()
 {
     while(true)
     {
-        auto response = receive_command();
+        auto response = receive_cecp_command();
         if(String::starts_with(response, "level"))
         {
             log("got time specs: " + response);
@@ -158,6 +172,22 @@ void CECP_Mediator::get_clock_specs()
             set_increment(0);
             set_game_time(time_per_move);
             break;
+        }
+    }
+}
+
+std::string CECP_Mediator::receive_cecp_command() const
+{
+    while(true)
+    {
+        auto command = receive_command();
+        if(String::starts_with(command, "name"))
+        {
+            received_name = String::split(command, " ", 1)[0];
+        }
+        else
+        {
+            return command;
         }
     }
 }

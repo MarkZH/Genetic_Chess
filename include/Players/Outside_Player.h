@@ -45,9 +45,9 @@ class Outside_Player : public Player
 
         virtual void get_clock_specs() = 0;
 
-        friend std::unique_ptr<Outside_Player> connect_to_outside();
+        friend std::unique_ptr<Outside_Player> connect_to_outside(const Player& player);
 };
 
-std::unique_ptr<Outside_Player> connect_to_outside();
+std::unique_ptr<Outside_Player> connect_to_outside(const Player& player);
 
 #endif // OUTSIDE_PLAYER_H

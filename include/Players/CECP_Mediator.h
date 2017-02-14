@@ -12,7 +12,7 @@ class Clock;
 class CECP_Mediator : public Outside_Player
 {
     public:
-        CECP_Mediator();
+        CECP_Mediator(const std::string& name);
 
         const Complete_Move choose_move(const Board& b, const Clock& clock) const override;
         std::string receive_move() const override;
@@ -24,8 +24,10 @@ class CECP_Mediator : public Outside_Player
 
     private:
         mutable std::string first_move;
+        mutable std::string received_name;
 
         void get_clock_specs() override;
+        std::string receive_cecp_command() const;
 };
 
 #endif // CECP_MEDIATOR_H

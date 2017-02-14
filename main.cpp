@@ -231,7 +231,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    auto outside = connect_to_outside();
+                    auto outside = connect_to_outside(*white);
                     game_time = outside->get_game_time();
                     moves_per_reset = outside->get_reset_moves();
                     increment_time = outside->get_increment();

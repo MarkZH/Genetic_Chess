@@ -16,13 +16,13 @@
 
 std::string Outside_Player::log_file_name = "chess_comm_log.txt";
 
-std::unique_ptr<Outside_Player> connect_to_outside()
+std::unique_ptr<Outside_Player> connect_to_outside(const Player& player)
 {
     Outside_Player::log("==================");
     auto protocol_type = Outside_Player::receive_command();
     if(protocol_type == "xboard")
     {
-        return std::unique_ptr<Outside_Player>(new CECP_Mediator);
+        return std::unique_ptr<Outside_Player>(new CECP_Mediator(player.name()));
     }
     else if(protocol_type == "uci")
     {
