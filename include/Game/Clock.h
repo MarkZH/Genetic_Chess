@@ -6,10 +6,13 @@
 
 #include "Color.h"
 
+using fractional_seconds = std::chrono::duration<double>;
+
 class Clock
 {
     public:
-        Clock(int seconds = 0, size_t moves = 0, int increment_seconds = 0); // number of seconds per number of moves
+        // Game clock settings: total time, moves to reset clock, time increment per move
+        Clock(double duration_seconds = 0.0, size_t moves = 0, double increment_seconds = 0.0);
         void punch(); // start/stop both clocks
         void stop(); // stop both clocks
         void start(); // resume after stop()
@@ -19,13 +22,13 @@ class Clock
         Color running_for() const;
 
     private:
-        std::map<Color, std::chrono::steady_clock::duration> timers; // in clock ticks
-        std::map<Color, int> moves; // move count
-        std::map<Color, std::chrono::steady_clock::duration> initial_time; // for resetting after moves
-        std::map<Color, std::chrono::steady_clock::duration> increment;
-        Color whose_turn; // black pushes clock to start game
-        bool use_clock; // = false for default constructor
-        bool use_reset; // = false for simple timed game, true if, e.g., game is 40 moves per hour
+        std::map<Color, fractional_seconds> timers;
+        std::map<Color, int> moves;
+        std::map<Color, fractional_seconds> initial_time;
+        std::map<Color, fractional_seconds> increment;
+        Color whose_turn;
+        bool use_clock;
+        bool use_reset;
         int move_count_reset;
         bool clocks_running;
         std::chrono::steady_clock::time_point time_previous_punch;

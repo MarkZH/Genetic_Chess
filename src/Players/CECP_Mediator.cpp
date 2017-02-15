@@ -160,7 +160,7 @@ void CECP_Mediator::get_clock_specs()
             }
             set_game_time(game_time);
 
-            set_increment(std::stof(split[3]));
+            set_increment(std::stod(split[3]));
             break;
         }
         else if(String::starts_with(response, "st"))

@@ -5,21 +5,21 @@
 
 #include "Exceptions/Out_Of_Time_Exception.h"
 
-Clock::Clock(int seconds, size_t moves_to_reset, int increment_seconds) :
+Clock::Clock(double duration_seconds, size_t moves_to_reset, double increment_seconds) :
     whose_turn(WHITE),
-    use_clock(seconds > 0),
+    use_clock(duration_seconds > 0),
     use_reset(moves_to_reset > 0),
     move_count_reset(moves_to_reset),
     clocks_running(false)
 {
-    timers[WHITE] = std::chrono::seconds(seconds);
-    timers[BLACK] = std::chrono::seconds(seconds);
+    timers[WHITE] = fractional_seconds(duration_seconds);
+    timers[BLACK] = fractional_seconds(duration_seconds);
 
-    initial_time[WHITE] = std::chrono::seconds(seconds);
-    initial_time[BLACK] = std::chrono::seconds(seconds);
+    initial_time[WHITE] = fractional_seconds(duration_seconds);
+    initial_time[BLACK] = fractional_seconds(duration_seconds);
 
-    increment[WHITE] = std::chrono::seconds(increment_seconds);
-    increment[BLACK] = std::chrono::seconds(increment_seconds);
+    increment[WHITE] = fractional_seconds(increment_seconds);
+    increment[BLACK] = fractional_seconds(increment_seconds);
 }
 
 bool Clock::is_running() const
@@ -80,14 +80,12 @@ double Clock::time_left(Color color) const
     }
     if(whose_turn != color || ! clocks_running)
     {
-        return std::chrono::duration_cast<std::chrono::duration<double>>
-            (timers.at(color)).count(); // msec -> sec
+        return fractional_seconds(timers.at(color)).count();
     }
     else
     {
         auto now = std::chrono::steady_clock::now();
-        return std::chrono::duration_cast<std::chrono::duration<double>>
-            (timers.at(color) - (now - time_previous_punch)).count();
+        return fractional_seconds(timers.at(color) - (now - time_previous_punch)).count();
     }
 }
 
