@@ -45,6 +45,7 @@ Board::Board() :
     }
 
     all_pieces_unmoved();
+    ++repeat_count[board_status()]; // Count initial position
 }
 
 Board::Board(const std::string& fen) :
@@ -139,6 +140,8 @@ Board::Board(const std::string& fen) :
     {
         piece_moved[piece_on_square('a', 8)] = true;
     }
+
+    ++repeat_count[board_status()]; // Count initial position
 }
 
 std::shared_ptr<const Piece>& Board::piece_on_square(char file, int rank)
