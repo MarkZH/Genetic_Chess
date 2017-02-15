@@ -56,15 +56,17 @@ def main(argv):
 
                     try:
                         pool_id = pool[data_line[0]]
+                        data_line.append(pool_id)
+                        w.write(','.join(data_line) + '\n')
                     except KeyError:
-                        break # passed last Still Alive
+                        # passed last Still Alive or somehow Pool ID wasn't recorded
+                        pass
 
-                    data_line.append(pool_id)
-
-                    w.write(','.join(data_line) + '\n')
-                    data_line = []
                     parameter_count = 0
+                    data_line = []
                     continue
+
+
 
                 if ':' in line:
                     parameter, value = line.split(':', 1)
