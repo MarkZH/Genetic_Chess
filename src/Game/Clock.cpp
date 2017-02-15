@@ -80,7 +80,7 @@ double Clock::time_left(Color color) const
     }
     if(whose_turn != color || ! clocks_running)
     {
-        return fractional_seconds(timers.at(color)).count();
+        return timers.at(color).count();
     }
     else
     {
