@@ -105,3 +105,8 @@ Color Clock::running_for() const
 {
     return whose_turn;
 }
+
+void Clock::set_time(Color player, double new_time_seconds) const
+{
+    timers[player] = fractional_seconds(new_time_seconds);
+}

@@ -182,7 +182,7 @@ $(DEBUG_OBJ_DIR)/src/Pieces/Queen.o : include/Pieces/Queen.h include/Pieces/Piec
 $(DEBUG_OBJ_DIR)/src/Pieces/Rook.o : include/Pieces/Rook.h include/Pieces/Piece.h src/Pieces/Rook.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Pieces/Rook.cpp -o $(DEBUG_OBJ_DIR)/src/Pieces/Rook.o
 
-$(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h src/Players/CECP_Mediator.cpp include/Moves/Move.h include/Game/Board.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h src/Players/CECP_Mediator.cpp include/Moves/Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/CECP_Mediator.cpp -o $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Move.h include/Game/Board.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h
@@ -338,7 +338,7 @@ $(RELEASE_OBJ_DIR)/src/Pieces/Queen.o : include/Pieces/Queen.h include/Pieces/Pi
 $(RELEASE_OBJ_DIR)/src/Pieces/Rook.o : include/Pieces/Rook.h include/Pieces/Piece.h src/Pieces/Rook.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Pieces/Rook.cpp -o $(RELEASE_OBJ_DIR)/src/Pieces/Rook.o
 
-$(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h src/Players/CECP_Mediator.cpp include/Moves/Move.h include/Game/Board.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h src/Players/CECP_Mediator.cpp include/Moves/Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/CECP_Mediator.cpp -o $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Move.h include/Game/Board.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h

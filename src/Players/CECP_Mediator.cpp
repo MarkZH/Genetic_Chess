@@ -2,6 +2,7 @@
 
 #include "Moves/Move.h"
 #include "Game/Board.h"
+#include "Game/Clock.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
 #include "Exceptions/Game_Ending_Exception.h"
@@ -28,7 +29,7 @@ CECP_Mediator::CECP_Mediator(const std::string& name)
     }
 }
 
-const Complete_Move CECP_Mediator::choose_move(const Board& board, const Clock& /*clock*/) const
+const Complete_Move CECP_Mediator::choose_move(const Board& board, const Clock& clock) const
 {
     while(true)
     {
@@ -38,7 +39,7 @@ const Complete_Move CECP_Mediator::choose_move(const Board& board, const Clock& 
             if(first_move.empty())
             {
                 send_command("move " + board.last_move());
-                move_text = receive_move();
+                move_text = receive_move(clock);
             }
             else
             {
@@ -72,7 +73,7 @@ Color CECP_Mediator::get_ai_color() const
     }
 }
 
-std::string CECP_Mediator::receive_move() const
+std::string CECP_Mediator::receive_move(const Clock& clock) const
 {
     while(true)
     {
@@ -86,6 +87,7 @@ std::string CECP_Mediator::receive_move() const
         }
         else if(String::starts_with(move, "result"))
         {
+            log("got result " + move);
             auto winner = NONE;
             if(String::contains(move, "1-0"))
             {
@@ -97,6 +99,21 @@ std::string CECP_Mediator::receive_move() const
             }
             auto data = String::split(move, " ")[1];
             throw Game_Ending_Exception(winner, data);
+        }
+        else if(String::starts_with(move, "time") || String::starts_with(move, "otim"))
+        {
+            auto time = std::stod(String::split(move, " ")[1])/100; // time specified in centiseconds
+
+            // Waiting for non-local move, so the non-local clock is running
+            // for the local AI. The local clock has not been punched yet, so
+            // it is still running for the non-local player. Therefore, the
+            // "opponent time" ("otim") refers to the local AI's clock.
+            auto player = String::starts_with(move, 'o') ?
+                                            clock.running_for() :
+                                            opposite(clock.running_for());
+
+            clock.set_time(player, time);
+            log("setting " + color_text(player) + "'s time to " + std::to_string(time) + " seconds.");
         }
     }
 }

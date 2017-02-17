@@ -15,7 +15,7 @@ class CECP_Mediator : public Outside_Player
         CECP_Mediator(const std::string& name);
 
         const Complete_Move choose_move(const Board& b, const Clock& clock) const override;
-        std::string receive_move() const override;
+        std::string receive_move(const Clock& clock) const override;
 
         Color get_ai_color() const override;
         void process_game_ending(const Game_Ending_Exception& gee, const Board& board) const override;

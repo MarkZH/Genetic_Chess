@@ -8,6 +8,8 @@
 
 #include "Game/Color.h"
 
+class Clock;
+
 // For interfacing with outside programs
 class Outside_Player : public Player
 {
@@ -26,7 +28,7 @@ class Outside_Player : public Player
         static void send_command(const std::string& cmd);
         static std::string receive_command();
 
-        virtual std::string receive_move() const = 0;
+        virtual std::string receive_move(const Clock& clock) const = 0;
 
         static void log(const std::string& data);
 

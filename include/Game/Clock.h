@@ -6,6 +6,8 @@
 
 #include "Color.h"
 
+class CECP_Mediator;
+
 using fractional_seconds = std::chrono::duration<double>;
 
 class Clock
@@ -22,16 +24,23 @@ class Clock
         Color running_for() const;
 
     private:
-        std::map<Color, fractional_seconds> timers;
+        // timers are mutable so they can be adjusted by external interfaces (xboard, UCI, etc.)
+        mutable std::map<Color, fractional_seconds> timers;
+
         std::map<Color, int> moves;
         std::map<Color, fractional_seconds> initial_time;
         std::map<Color, fractional_seconds> increment;
+
         Color whose_turn;
         bool use_clock;
         bool use_reset;
         int move_count_reset;
         bool clocks_running;
         std::chrono::steady_clock::time_point time_previous_punch;
+
+        // When playing with the CECP interface, use the external clock
+        friend class CECP_Mediator;
+        void set_time(Color player, double new_time_seconds) const;
 };
 
 #endif // Clock_H
