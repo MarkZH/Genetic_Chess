@@ -11,7 +11,8 @@
 
 CECP_Mediator::CECP_Mediator(const std::string& name)
 {
-    if(receive_cecp_command() == "protover 2")
+    std::string expected = "protover 2";
+    if(receive_cecp_command() == expected)
     {
         log("as expected, setting options");
         send_command("feature "
@@ -25,7 +26,8 @@ CECP_Mediator::CECP_Mediator(const std::string& name)
     }
     else
     {
-        log("?????????");
+        log("ERROR: Expected \"" + expected + "\"");
+        throw std::runtime_error("Error in communicating with CECP program.");
     }
 }
 
