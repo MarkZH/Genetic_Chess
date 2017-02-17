@@ -157,7 +157,7 @@ if total_force_index > 0 && opponent_pieces_targeted_index > 0 && piece_strength
   piece_strength_active = isfinite(data.data(:, piece_strength_index));
   activity = (total_force_active | opponent_targeted_active) & piece_strength_active;
   smooth_activity = conv(activity, ones(conv_window, 1), 'valid')/conv_window;
-  plot(100*smooth_activity, 'LineWidth', 3, 'displayname', 'Piece Strength Gene active');
+  plot(100*smooth_activity, 'LineWidth', 3, 'displayname', 'Piece Strength');
   title('Piece Strength Gene in use', 'FontSize', 22);
   xlabel('Approximate ID', 'FontSize', 18);
   ylabel('Percentage with activity', 'FontSize', 18);
@@ -166,13 +166,14 @@ if total_force_index > 0 && opponent_pieces_targeted_index > 0 && piece_strength
 
   total_force_gene_functional = total_force_active & piece_strength_active;
   smooth_force = conv(total_force_gene_functional, ones(conv_window, 1), 'valid')/conv_window;
-  plot(100*smooth_force, 'LineWidth', 3, 'displayname', 'Total Force Gene functional');
+  plot(100*smooth_force, 'LineWidth', 3, 'displayname', 'Total Force');
 
   opponent_gene_functional = opponent_targeted_active & piece_strength_active;
   smooth_opponent = conv(opponent_gene_functional, ones(conv_window, 1), 'valid')/conv_window;
-  plot(100*smooth_opponent, 'LineWidth', 3, 'displayname', 'Opponent Pieces Targeted functional');
+  plot(100*smooth_opponent, 'LineWidth', 3, 'displayname', 'Opponent Pieces Targeted');
 
   leg = legend('show');
-  set(leg, 'FontSize', 12);
+  set(leg, 'location', 'northwest');
+  set(leg, 'FontSize', 11);
   print([gene_pool_filename '_piece_strength_gene_active.png']);
 end
