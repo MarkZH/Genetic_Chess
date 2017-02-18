@@ -1,10 +1,12 @@
 #include "Moves/Pawn_Promotion.h"
 
+#include <memory>
+#include <cstdlib>
+#include <string>
+
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Utility.h"
-
-#include <memory>
 
 Pawn_Promotion::Pawn_Promotion(const std::shared_ptr<const Piece>& promotion_piece) :
     Pawn_Move(promotion_piece->color()),
@@ -43,4 +45,9 @@ bool Pawn_Promotion::can_capture() const
 std::string Pawn_Promotion::game_record_item(const Board& board, char file_start, int rank_start) const
 {
     return Pawn_Move::game_record_item(board, file_start, rank_start) + "=" + promote_to->pgn_symbol();
+}
+
+std::string Pawn_Promotion::coordinate_move(char file_start, int rank_start) const
+{
+    return Move::coordinate_move(file_start, rank_start) + char(std::tolower(promote_to->fen_symbol()));
 }

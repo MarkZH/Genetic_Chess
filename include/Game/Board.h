@@ -58,7 +58,7 @@ class Board
                                unsigned int game_number = 0) const;
 
         Color get_winner() const;
-        std::string last_move() const;
+        std::string last_move_coordinates() const;
 
         void set_turn(Color color);
 
@@ -93,6 +93,7 @@ class Board
         char en_passant_target_file;
         int en_passant_target_rank;
         bool game_ended;
+        std::string last_move_in_coordinates;
 
         // Caches
         mutable std::vector<Complete_Move> all_moves_cache;

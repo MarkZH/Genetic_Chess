@@ -184,8 +184,16 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
         move_record.append("x");
     }
 
-    move_record.append(std::string(1, file_end));
+    move_record.push_back(file_end);
     move_record.append(std::to_string(rank_end));
 
     return move_record;
+}
+
+std::string Move::coordinate_move(char file_start, int rank_start) const
+{
+    return file_start
+           + std::to_string(rank_start)
+           + char(file_start + file_change())
+           + std::to_string(rank_start + rank_change());
 }

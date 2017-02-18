@@ -344,6 +344,7 @@ void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<c
         game_record.push_back("...");
     }
     game_record.push_back(move->game_record_item(*this, file_start, rank_start));
+    last_move_in_coordinates = move->coordinate_move(file_start, rank_start);
 
     make_move(file_start,                       rank_start,
               file_start + move->file_change(), rank_start + move->rank_change());
@@ -930,9 +931,9 @@ void Board::set_winner(Color color)
     winner = color;
 }
 
-std::string Board::last_move() const
+std::string Board::last_move_coordinates() const
 {
-    return game_record.empty() ? std::string() : game_record.back();
+    return last_move_in_coordinates;
 }
 
 void Board::set_turn(Color color)

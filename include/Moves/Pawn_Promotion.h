@@ -22,6 +22,7 @@ class Pawn_Promotion : public Pawn_Move
         bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
         bool can_capture() const override;
         std::string game_record_item(const Board& board, char file_start, int rank_start) const override;
+        std::string coordinate_move(char file_start, int rank_start) const override;
 
     protected:
         std::shared_ptr<const Piece> promote_to;

@@ -40,7 +40,7 @@ const Complete_Move CECP_Mediator::choose_move(const Board& board, const Clock& 
         {
             if(first_move.empty())
             {
-                send_command("move " + board.last_move());
+                send_command("move " + board.last_move_coordinates());
                 move_text = receive_move(clock);
             }
             else
@@ -84,7 +84,6 @@ std::string CECP_Mediator::receive_move(const Clock& clock) const
         {
             auto data = String::split(move, " ")[1];
             log("got move " + move);
-            log("returning " + data);
             return data;
         }
         else if(String::starts_with(move, "result"))
@@ -134,7 +133,7 @@ std::string CECP_Mediator::name() const
 
 void CECP_Mediator::process_game_ending(const Game_Ending_Exception& gee, const Board& board) const
 {
-    send_command("move " + board.last_move());
+    send_command("move " + board.last_move_coordinates());
     std::string result = "result ";
     if(gee.winner() == WHITE)
     {

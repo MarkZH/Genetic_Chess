@@ -32,6 +32,7 @@ class Move
         virtual std::string name() const;
 
         virtual std::string game_record_item(const Board& board, char file_start, int rank_start) const;
+        virtual std::string coordinate_move(char file_stat, int rank_start) const;
 
     protected:
         int d_file;
