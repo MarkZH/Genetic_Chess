@@ -1,7 +1,8 @@
 #include "Players/Player.h"
 
-#include "Game/Color.h"
-#include "Exceptions/Game_Ending_Exception.h"
+#include <string>
+
+class Game_Ending_Exception;
 
 Player::~Player()
 {
