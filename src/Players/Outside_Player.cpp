@@ -9,6 +9,7 @@
 #include "Game/Color.h"
 
 #include "Players/CECP_Mediator.h"
+#include "Players/UCI_Mediator.h"
 
 #include "Exceptions/Game_Ending_Exception.h"
 
@@ -22,11 +23,11 @@ std::unique_ptr<Outside_Player> connect_to_outside(const Player& player)
     auto protocol_type = Outside_Player::receive_command();
     if(protocol_type == "xboard")
     {
-        return std::unique_ptr<Outside_Player>(new CECP_Mediator(player.name()));
+        return std::unique_ptr<Outside_Player>(new CECP_Mediator(player));
     }
     else if(protocol_type == "uci")
     {
-        throw std::runtime_error("UCI protocol not implemented");
+        return std::unique_ptr<Outside_Player>(new UCI_Mediator(player));
     }
     else
     {

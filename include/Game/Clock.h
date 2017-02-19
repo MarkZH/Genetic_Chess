@@ -7,6 +7,7 @@
 #include "Color.h"
 
 class CECP_Mediator;
+class UCI_Mediator;
 
 using fractional_seconds = std::chrono::duration<double>;
 
@@ -38,8 +39,9 @@ class Clock
         bool clocks_running;
         std::chrono::steady_clock::time_point time_previous_punch;
 
-        // When playing with the CECP interface, use the external clock
+        // When playing with outside interfaces, use the external clock
         friend class CECP_Mediator;
+        friend class UCI_Mediator;
         void set_time(Color player, double new_time_seconds) const;
 };
 

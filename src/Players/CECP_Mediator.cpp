@@ -9,7 +9,7 @@
 
 #include "Utility.h"
 
-CECP_Mediator::CECP_Mediator(const std::string& name)
+CECP_Mediator::CECP_Mediator(const Player& local_player)
 {
     std::string expected = "protover 2";
     if(receive_cecp_command() == expected)
@@ -20,7 +20,7 @@ CECP_Mediator::CECP_Mediator(const std::string& name)
                      "sigint=0 "
                      "sigterm=0 "
                      "reuse=0 "
-                     "myname=\"" + name + "\" "
+                     "myname=\"" + local_player.name() + "\" "
                      "name=1 "
                      "done=1");
     }
@@ -29,6 +29,10 @@ CECP_Mediator::CECP_Mediator(const std::string& name)
         log("ERROR: Expected \"" + expected + "\"");
         throw std::runtime_error("Error in communicating with CECP program.");
     }
+}
+
+CECP_Mediator::~CECP_Mediator()
+{
 }
 
 const Complete_Move CECP_Mediator::choose_move(const Board& board, const Clock& clock) const

@@ -197,16 +197,16 @@ $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include
 $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Human_Player.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Outside_Player.o : include/Players/Outside_Player.h include/Players/Player.h include/Game/Color.h src/Players/Outside_Player.cpp include/Moves/Move.h include/Game/Board.h include/Players/CECP_Mediator.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/Outside_Player.o : include/Players/Outside_Player.h include/Players/Player.h include/Game/Color.h src/Players/Outside_Player.cpp include/Moves/Move.h include/Game/Board.h include/Players/CECP_Mediator.h include/Players/UCI_Mediator.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Outside_Player.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Outside_Player.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Player.o : include/Players/Player.h src/Players/Player.cpp include/Game/Color.h include/Exceptions/Game_Ending_Exception.h
+$(DEBUG_OBJ_DIR)/src/Players/Player.o : include/Players/Player.h src/Players/Player.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Player.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Player.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include/Players/Player.h src/Players/Random_AI.cpp include/Game/Board.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Random_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Random_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h src/Players/UCI_Mediator.cpp
+$(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h include/Players/Player.h src/Players/UCI_Mediator.cpp include/Moves/Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/UCI_Mediator.cpp -o $(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o
 
 $(DEBUG_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp include/Game/Board.h include/Moves/Move.h include/Players/Genetic_AI.h include/Game/Clock.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
@@ -356,16 +356,16 @@ $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h inclu
 $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Human_Player.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Outside_Player.o : include/Players/Outside_Player.h include/Players/Player.h include/Game/Color.h src/Players/Outside_Player.cpp include/Moves/Move.h include/Game/Board.h include/Players/CECP_Mediator.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/Outside_Player.o : include/Players/Outside_Player.h include/Players/Player.h include/Game/Color.h src/Players/Outside_Player.cpp include/Moves/Move.h include/Game/Board.h include/Players/CECP_Mediator.h include/Players/UCI_Mediator.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Outside_Player.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Outside_Player.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Player.o : include/Players/Player.h src/Players/Player.cpp include/Game/Color.h include/Exceptions/Game_Ending_Exception.h
+$(RELEASE_OBJ_DIR)/src/Players/Player.o : include/Players/Player.h src/Players/Player.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Player.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Player.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include/Players/Player.h src/Players/Random_AI.cpp include/Game/Board.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Random_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h src/Players/UCI_Mediator.cpp
+$(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h include/Players/Player.h src/Players/UCI_Mediator.cpp include/Moves/Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/UCI_Mediator.cpp -o $(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o
 
 $(RELEASE_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp include/Game/Board.h include/Moves/Move.h include/Players/Genetic_AI.h include/Game/Clock.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
