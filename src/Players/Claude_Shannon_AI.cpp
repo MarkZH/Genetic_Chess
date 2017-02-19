@@ -17,6 +17,16 @@ Claude_Shannon_AI::~Claude_Shannon_AI()
 {
 }
 
+std::string Claude_Shannon_AI::name() const
+{
+    return "Shannon's Chess Automaton";
+}
+
+std::string Claude_Shannon_AI::author() const
+{
+    return "Claude Shannon";
+}
+
 const Complete_Move Claude_Shannon_AI::choose_move(const Board& board, const Clock&) const
 {
     return choose_move(board, recursion_depth);

@@ -354,6 +354,11 @@ std::string Genetic_AI::name() const
     return "Genetic AI " + std::to_string(get_id());
 }
 
+std::string Genetic_AI::author() const
+{
+    return "Mark Harrison";
+}
+
 int Genetic_AI::get_id() const
 {
     return id;

@@ -57,6 +57,8 @@ class Genetic_AI : public Player
         const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
 
         std::string name() const override;
+        std::string author() const override;
+
         void print_genome(const std::string& file_name = "") const;
         void print_genome(std::ostream& file) const;
 

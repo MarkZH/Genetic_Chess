@@ -29,6 +29,9 @@ class Claude_Shannon_AI : public Player
 
         const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
 
+        std::string name() const override;
+        std::string author() const override;
+
     private:
         int recursion_depth;
 
