@@ -285,11 +285,24 @@ void gene_pool(const std::string& config_file = "")
 
         for(const auto& ai : to_delete)
         {
-            wins.erase(ai);
-            draws.erase(ai);
-            games_since_last_win.erase(ai);
-            consecutive_wins.erase(ai);
-            original_pool.erase(ai);
+            bool ai_found = false;
+            for(const auto& pool : pools)
+            {
+                if(std::find(pool.begin(), pool.end(), ai) != pool.end())
+                {
+                    ai_found = true;
+                    break;
+                }
+            }
+
+            if( ! ai_found)
+            {
+                wins.erase(ai);
+                draws.erase(ai);
+                games_since_last_win.erase(ai);
+                consecutive_wins.erase(ai);
+                original_pool.erase(ai);
+            }
         }
 
         for(const auto& ai : pool)
