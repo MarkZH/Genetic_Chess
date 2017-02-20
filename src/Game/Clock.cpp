@@ -20,6 +20,9 @@ Clock::Clock(double duration_seconds, size_t moves_to_reset, double increment_se
 
     increment[WHITE] = fractional_seconds(increment_seconds);
     increment[BLACK] = fractional_seconds(increment_seconds);
+
+    moves[WHITE] = 0;
+    moves[BLACK] = 0;
 }
 
 bool Clock::is_running() const
