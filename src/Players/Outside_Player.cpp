@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+#include <string>
 
 #include "Moves/Move.h"
 #include "Game/Board.h"
@@ -15,7 +16,9 @@
 
 #include "Utility.h"
 
-std::string Outside_Player::log_file_name = "chess_comm_log.txt";
+std::string Outside_Player::log_file_name = "chess_comm_log_"
+                                            + std::to_string(Random::random_integer(0, 10000))
+                                            + ".txt";
 
 std::unique_ptr<Outside_Player> connect_to_outside(const Player& player)
 {
