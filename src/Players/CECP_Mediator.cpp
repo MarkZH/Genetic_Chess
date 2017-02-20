@@ -205,7 +205,8 @@ std::string CECP_Mediator::receive_cecp_command() const
         auto command = receive_command();
         if(String::starts_with(command, "name"))
         {
-            received_name = String::split(command, " ", 1)[0];
+            received_name = String::split(command, " ", 1)[1];
+            log("got name " + received_name);
         }
         else
         {
