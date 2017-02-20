@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iostream>
+#include <cmath>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -39,7 +40,13 @@ const Complete_Move Human_Player::choose_move(const Board& board, const Clock& c
             std::cout << " (" << name() << ")";
         }
         std::cout << " to move  |  ";
-        std::cout << "Last move: " << board.get_game_record().size()/2 << ". " << (board.whose_turn() == WHITE ? "" : "... ") << board.get_game_record().back() << "  |  ";
+        if( ! board.get_game_record().empty())
+        {
+            std::cout << "Last move: "
+                      << int(std::ceil(board.get_game_record().size()/2.0)) << ". "
+                      << (board.whose_turn() == WHITE ? "... " : "")
+                      << board.get_game_record().back() << "  |  ";
+        }
         std::cout << "Time: " << clock.time_left(board.whose_turn()) << std::endl;
         std::cout << "Enter move: ";
         std::getline(std::cin, move);
