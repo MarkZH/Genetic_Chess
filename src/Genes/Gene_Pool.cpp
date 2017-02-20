@@ -27,6 +27,9 @@ void pause_gene_pool(int);
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
 std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
 
+template<typename Stat>
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats);
+
 
 void gene_pool(const std::string& config_file = "")
 {
@@ -121,20 +124,6 @@ void gene_pool(const std::string& config_file = "")
     for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % gene_pool_count) // run forever
     {
         auto& pool = pools[pool_index];
-        std::sort(pool.begin(), pool.end());
-        write_generation(pools, pool_index, genome_file_name);
-
-        // Pause gene pool
-        if(signal_activated == 1)
-        {
-            std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
-            std::cin.get();
-            signal_activated = 0;
-        }
-        else if(signal_activated == 2)
-        {
-            return;
-        }
 
         // widths of columns for stats printout
         auto max_id = pool.back().get_id();
@@ -205,7 +194,6 @@ void gene_pool(const std::string& config_file = "")
         }
 
         // Get results as they come in
-        std::vector<Genetic_AI> to_delete;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
             auto& white = pool[pool_indices[index]];
@@ -254,7 +242,6 @@ void gene_pool(const std::string& config_file = "")
                 original_pool[offspring] = pool_index;
 
                 auto& losing_player  = (winner == WHITE ? black : white);
-                to_delete.push_back(losing_player);
                 std::cout << " / killing " << losing_player.get_id() << std::endl;
                 losing_player = offspring; // offspring replaces loser
             }
@@ -275,7 +262,6 @@ void gene_pool(const std::string& config_file = "")
                     original_pool[offspring] = pool_index;
 
                     auto& pseudo_loser = (pseudo_winner == white ? black : white);
-                    to_delete.push_back(pseudo_loser);
                     std::cout << " / " << pseudo_loser.get_id() << " dies";
                     pseudo_loser = offspring; // offspring replaces loser
                 }
@@ -283,27 +269,32 @@ void gene_pool(const std::string& config_file = "")
             }
         }
 
-        for(const auto& ai : to_delete)
-        {
-            bool ai_found = false;
-            for(const auto& pool : pools)
-            {
-                if(std::find(pool.begin(), pool.end(), ai) != pool.end())
-                {
-                    ai_found = true;
-                    break;
-                }
-            }
+        std::cout << "\nMost wins:     " << most_wins[pool_index]
+                  << " by ID " << most_wins_player[pool_index].get_id() << std::endl;
+        std::cout <<   "Longest lived: " << most_games_survived[pool_index]
+                  << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
 
-            if( ! ai_found)
-            {
-                wins.erase(ai);
-                draws.erase(ai);
-                games_since_last_win.erase(ai);
-                consecutive_wins.erase(ai);
-                original_pool.erase(ai);
-            }
+
+        std::sort(pool.begin(), pool.end());
+        write_generation(pools, pool_index, genome_file_name);
+
+        // Pause gene pool
+        if(signal_activated == 1)
+        {
+            std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
+            std::cin.get();
+            signal_activated = 0;
         }
+        if(signal_activated >= 2)
+        {
+            return;
+        }
+
+        purge_dead_from_map(pools, wins);
+        purge_dead_from_map(pools, draws);
+        purge_dead_from_map(pools, games_since_last_win);
+        purge_dead_from_map(pools, consecutive_wins);
+        purge_dead_from_map(pools, original_pool);
 
         for(const auto& ai : pool)
         {
@@ -314,11 +305,6 @@ void gene_pool(const std::string& config_file = "")
                 most_games_survived_player[pool_index] = ai;
             }
         }
-
-        std::cout << "\nMost wins:     " << most_wins[pool_index]
-                  << " by ID " << most_wins_player[pool_index].get_id() << std::endl;
-        std::cout <<   "Longest lived: " << most_games_survived[pool_index]
-                  << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
 
         game_count[pool_index] += results.size();
         if((game_time >= maximum_game_time && game_time_increment > 0) ||
@@ -420,6 +406,8 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
         ofs << ai.get_id() << " ";
     }
     ofs << "\n\n";
+
+    purge_dead_from_map(pools, written_before);
 }
 
 std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
@@ -475,4 +463,31 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
     }
 
     return result;
+}
+
+template<typename Stat>
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats)
+{
+    auto stat_iter = stats.begin();
+    while(stat_iter != stats.end())
+    {
+        bool ai_found = false;
+        for(const auto& pool : pools)
+        {
+            if(std::find(pool.begin(), pool.end(), stat_iter->first) != pool.end())
+            {
+                ai_found = true;
+                break;
+            }
+        }
+
+        if( ! ai_found)
+        {
+            stat_iter = stats.erase(stat_iter);
+        }
+        else
+        {
+            ++stat_iter;
+        }
+    }
 }
