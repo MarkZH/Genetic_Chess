@@ -283,11 +283,15 @@ void gene_pool(const std::string& config_file = "")
         {
             std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
             std::cin.get();
-            signal_activated = 0;
         }
+
         if(signal_activated >= 2)
         {
             return;
+        }
+        else
+        {
+            signal_activated = 0;
         }
 
         purge_dead_from_map(pools, wins);
