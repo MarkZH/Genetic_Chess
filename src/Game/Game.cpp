@@ -7,6 +7,7 @@
 #include "Players/Player.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Game/Color.h"
 #include "Moves/Move.h"
 #include "Exceptions/Game_Ending_Exception.h"
 #include "Exceptions/Out_Of_Time_Exception.h"
@@ -16,9 +17,9 @@
 // Play single game, return color of winner
 Color play_game(const Player& white,
                 const Player& black,
-                int time_in_seconds,
-                int moves_to_reset,
-                int increment_seconds,
+                double time_in_seconds,
+                size_t moves_to_reset,
+                double increment_seconds,
                 const std::string& pgn_file_name)
 {
     Board board;
@@ -32,9 +33,9 @@ Color play_game(const Player& white,
 
 Color play_game_with_board(const Player& white,
                            const Player& black,
-                           int time_in_seconds,
-                           int moves_to_reset,
-                           int increment_seconds,
+                           double time_in_seconds,
+                           size_t moves_to_reset,
+                           double increment_seconds,
                            const std::string& pgn_file_name,
                            Board& board)
 {

@@ -137,7 +137,7 @@ void gene_pool(const std::string& config_file = "")
                   << "  White wins: " << white_wins[pool_index]
                   << "  Black wins: " << black_wins[pool_index]
                   << "  Draws: " << draw_count[pool_index]
-                  << "\nTime: " << int(game_time) << " sec"
+                  << "\nTime: " << game_time << " sec"
                   << "   Gene pool file name: " << genome_file_name << "\n"
                   << std::setw(id_digits + 1)  << "ID"
                   << std::setw(7)  << "Wins"
