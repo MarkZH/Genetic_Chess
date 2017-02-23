@@ -104,7 +104,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : include/Genes/Freedom_To_Mov
 $(DEBUG_OBJ_DIR)/src/Genes/Gene.o : include/Genes/Gene.h include/Game/Color.h src/Genes/Gene.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Gene.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h src/Genes/Gene_Pool.cpp include/Players/Genetic_AI.h include/Players/Human_Player.h include/Game/Game.h include/Game/Board.h include/Exceptions/End_Of_File_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h src/Genes/Gene_Pool.cpp include/Players/Genetic_AI.h include/Players/Human_Player.h include/Game/Game.h include/Game/Board.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Gene_Pool.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Genome.o : include/Genes/Genome.h include/Game/Color.h include/Genes/Piece_Strength_Gene.h src/Genes/Genome.cpp include/Game/Board.h include/Utility.h include/Genes/Gene.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Branch_Pruning_Gene.h include/Genes/Castling_Possible_Gene.h
@@ -191,7 +191,7 @@ $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h i
 $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Move.h include/Game/Board.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Claude_Shannon_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/End_Of_File_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Genetic_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h
@@ -263,7 +263,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : include/Genes/Freedom_To_M
 $(RELEASE_OBJ_DIR)/src/Genes/Gene.o : include/Genes/Gene.h include/Game/Color.h src/Genes/Gene.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Gene.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h src/Genes/Gene_Pool.cpp include/Players/Genetic_AI.h include/Players/Human_Player.h include/Game/Game.h include/Game/Board.h include/Exceptions/End_Of_File_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h src/Genes/Gene_Pool.cpp include/Players/Genetic_AI.h include/Players/Human_Player.h include/Game/Game.h include/Game/Board.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Gene_Pool.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Genome.o : include/Genes/Genome.h include/Game/Color.h include/Genes/Piece_Strength_Gene.h src/Genes/Genome.cpp include/Game/Board.h include/Utility.h include/Genes/Gene.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Branch_Pruning_Gene.h include/Genes/Castling_Possible_Gene.h
@@ -350,7 +350,7 @@ $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h
 $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Move.h include/Game/Board.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Claude_Shannon_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/End_Of_File_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Genetic_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h

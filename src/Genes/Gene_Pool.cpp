@@ -16,8 +16,6 @@
 #include "Game/Game.h"
 #include "Game/Board.h"
 
-#include "Exceptions/End_Of_File_Exception.h"
-
 #include "Utility.h"
 
 typedef std::vector<Genetic_AI> Gene_Pool;
@@ -419,37 +417,23 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
     std::ifstream ifs(load_file);
     if( ! ifs)
     {
+        std::cout << "Could not open file: " << load_file << std::endl;
+        std::cout << "Starting with empty gene pool." << std::endl;
         return std::vector<Gene_Pool>();
     }
 
     std::cout << "Loading gene pool file: " << load_file << " ..." << std::endl;
-    std::map<int, Genetic_AI> all_players;
     std::map<int, std::string> still_alive;
-    while(true)
+    std::string line;
+    while(std::getline(ifs, line))
     {
-        try
+        if(String::contains(line, "Still Alive: "))
         {
-            auto player = Genetic_AI(ifs);
-            all_players[player.get_id()] = player;
-        }
-        catch(const std::runtime_error& ge)
-        {
-            std::string line = ge.what();
-            if(String::contains(line, "Still Alive: "))
-            {
-                auto parse = String::split(line, ":");
-                still_alive[std::stoi(parse[2])] = parse[3];
-            }
-            else
-            {
-                throw;
-            }
-        }
-        catch(const End_Of_File_Exception&)
-        {
-            break;
+            auto parse = String::split(line, ":");
+            still_alive[std::stoi(parse[1])] = parse[2];
         }
     }
+    ifs.close();
 
     std::vector<Gene_Pool> result(still_alive.size());
     for(const auto& index_list : still_alive)
@@ -462,7 +446,7 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
             }
 
             auto index = std::stoi(number_string);
-            result[index_list.first].push_back(all_players[index]);
+            result[index_list.first].push_back(Genetic_AI(load_file, index));
         }
     }
 

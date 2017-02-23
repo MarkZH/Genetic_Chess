@@ -10,7 +10,6 @@
 
 #include "Exceptions/Checkmate_Exception.h"
 #include "Exceptions/Game_Ending_Exception.h"
-#include "Exceptions/End_Of_File_Exception.h"
 
 #include "Utility.h"
 
@@ -51,6 +50,11 @@ Genetic_AI::Genetic_AI(std::istream& is)
 
 Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
 {
+    if(id >= next_id)
+    {
+        next_id = id + 1;
+    }
+
     std::ifstream ifs(file_name);
     if( ! ifs)
     {
@@ -100,14 +104,7 @@ void Genetic_AI::read_from(std::istream& is)
 
     if( ! is)
     {
-        if(id > -1)
-        {
-            throw std::runtime_error("Incomplete Genetic_AI spec in file for ID " + std::to_string(id));
-        }
-        else
-        {
-            throw End_Of_File_Exception();
-        }
+        throw std::runtime_error("Incomplete Genetic_AI spec in file for ID " + std::to_string(id));
     }
 
     if(id >= next_id)
