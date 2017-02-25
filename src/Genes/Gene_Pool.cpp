@@ -11,11 +11,7 @@
 #include <future>
 
 #include "Players/Genetic_AI.h"
-#include "Players/Human_Player.h"
-
 #include "Game/Game.h"
-#include "Game/Board.h"
-
 #include "Utility.h"
 
 typedef std::vector<Genetic_AI> Gene_Pool;
