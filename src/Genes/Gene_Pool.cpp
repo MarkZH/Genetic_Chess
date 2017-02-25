@@ -24,6 +24,8 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
 template<typename Stat>
 void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats);
 
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<size_t, std::vector<Genetic_AI>>& ai_lists);
+
 
 void gene_pool(const std::string& config_file = "")
 {
@@ -293,6 +295,7 @@ void gene_pool(const std::string& config_file = "")
         purge_dead_from_map(pools, games_since_last_win);
         purge_dead_from_map(pools, consecutive_wins);
         purge_dead_from_map(pools, original_pool);
+        purge_dead_from_map(pools, new_blood);
 
         for(const auto& ai : pool)
         {
@@ -473,5 +476,22 @@ void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_A
         {
             ++stat_iter;
         }
+    }
+}
+
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<size_t, std::vector<Genetic_AI>>& ai_lists)
+{
+    for(size_t i = 0; i < pools.size(); ++i)
+    {
+        const auto& pool = pools[i];
+        auto& ai_list = ai_lists[i];
+
+        ai_list.erase(std::remove_if(ai_list.begin(),
+                                     ai_list.end(),
+                                     [&pool](const Genetic_AI& g)
+                                     {
+                                         return std::find(pool.begin(), pool.end(), g) == pool.end();
+                                     }),
+                      ai_list.end());
     }
 }
