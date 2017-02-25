@@ -21,6 +21,7 @@
 #include "Testing.h"
 
 void print_help();
+void replay_game(const std::string& file_name, int game_number);
 int find_last_id(const std::string& filename);
 
 int main(int argc, char *argv[])
@@ -45,78 +46,17 @@ int main(int argc, char *argv[])
             {
                 if(argc > 2)
                 {
-                    Board board;
                     std::string file_name = argv[2];
-                    std::ifstream ifs(file_name);
-                    std::string line;
-                    bool game_started = false;
-                    while( ! board.game_has_ended() && std::getline(ifs, line))
+                    int game_number = -1;
+                    if(argc > 3)
                     {
-                        line = String::trim_outer_whitespace(line);
-                        line = String::strip_block_comment(line, '{', '}');
-                        line = String::strip_comments(line, ';');
-                        if(line.empty())
-                        {
-                            if(game_started)
-                            {
-                                break;
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                        }
-                        if(line[0] == '[')
-                        {
-                            std::cout << line << std::endl;
-                            continue;
-                        }
-
-                        for(const auto& s : String::split(line))
-                        {
-                            try
-                            {
-                                board.submit_move(board.get_complete_move(s));
-                            }
-                            catch(const Illegal_Move_Exception&)
-                            {
-                                std::cout << "Ignoring: " << s << std::endl;
-                                continue;
-                            }
-                            catch(const Game_Ending_Exception& e)
-                            {
-                                std::cout << e.what() << std::endl;
-                            }
-                            board.ascii_draw(WHITE);
-                            game_started = true;
-                            std::cout << "Last move: ";
-                            std::cout << (board.get_game_record().size() + 1)/2 << ". ";
-                            std::cout << (board.whose_turn() == WHITE ? "... " : "");
-                            std::cout << board.get_game_record().back() << std::endl;
-                            if(board.game_has_ended())
-                            {
-                                break;
-                            }
-
-                            std::cout << "Enter \"y\" to play game from here: " << std::endl;
-                            char response = std::cin.get();
-                            if(std::tolower(response) == 'y')
-                            {
-                                play_game_with_board(Human_Player(),
-                                                     Human_Player(),
-                                                     0,
-                                                     0,
-                                                     0,
-                                                     file_name + "_continued.pgn",
-                                                     board);
-                                 break;
-                            }
-                        }
+                        game_number = std::stoi(argv[3]);
                     }
+                    replay_game(file_name, game_number);
                 }
                 else
                 {
-                    std::cerr << "-replay must be followed by a file name." << std::endl;
+                    std::cout << "Provide a file containing a game to replay." << std::endl;
                     return 1;
                 }
             }
@@ -308,5 +248,113 @@ int find_last_id(const std::string& filename)
     else
     {
         return std::stoi(String::split(id_line)[1]);
+    }
+}
+
+void replay_game(const std::string& file_name, int game_number)
+{
+    std::ifstream ifs(file_name);
+    std::vector<std::string> game_headers;
+    std::string line;
+    if(game_number >= 0)
+    {
+        // fast forward to indicated game
+        while(std::getline(ifs, line))
+        {
+            line = String::trim_outer_whitespace(line);
+            if(String::starts_with(line, '['))
+            {
+                game_headers.push_back(line);
+            }
+            else
+            {
+                game_headers.clear();
+            }
+
+            if(String::starts_with(line, "[Round"))
+            {
+                auto number = std::stoi(String::split(line, "\"")[1]);
+                if(number == game_number)
+                {
+                    break;
+                }
+            }
+        }
+
+        if( ! ifs)
+        {
+            std::cout << "No game with ID number " << game_number << " found." << std::endl;
+        }
+
+        for(const auto& header : game_headers)
+        {
+            std::cout << header << std::endl;
+        }
+    }
+
+    Board board;
+    bool game_started = false;
+    while( ! board.game_has_ended() && std::getline(ifs, line))
+    {
+        line = String::trim_outer_whitespace(line);
+        line = String::strip_block_comment(line, '{', '}');
+        line = String::strip_comments(line, ';');
+        if(line.empty())
+        {
+            if(game_started)
+            {
+                break;
+            }
+            else
+            {
+                continue;
+            }
+        }
+        if(line[0] == '[')
+        {
+            std::cout << line << std::endl;
+            continue;
+        }
+
+        for(const auto& s : String::split(line))
+        {
+            try
+            {
+                board.submit_move(board.get_complete_move(s));
+            }
+            catch(const Illegal_Move_Exception&)
+            {
+                std::cout << "Ignoring: " << s << std::endl;
+                continue;
+            }
+            catch(const Game_Ending_Exception& e)
+            {
+                std::cout << e.what() << std::endl;
+            }
+            board.ascii_draw(WHITE);
+            game_started = true;
+            std::cout << "Last move: ";
+            std::cout << (board.get_game_record().size() + 1)/2 << ". ";
+            std::cout << (board.whose_turn() == WHITE ? "... " : "");
+            std::cout << board.get_game_record().back() << std::endl;
+            if(board.game_has_ended())
+            {
+                break;
+            }
+
+            std::cout << "Enter \"y\" to play game from here: " << std::endl;
+            char response = std::cin.get();
+            if(std::tolower(response) == 'y')
+            {
+                play_game_with_board(Human_Player(),
+                                     Human_Player(),
+                                     0,
+                                     0,
+                                     0,
+                                     file_name + "_continued.pgn",
+                                     board);
+                 break;
+            }
+        }
     }
 }
