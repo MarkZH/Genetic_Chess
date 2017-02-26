@@ -5,6 +5,7 @@
 #include "Utility.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Moves/Move.h"
 
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
@@ -29,11 +30,11 @@ Look_Ahead_Gene::~Look_Ahead_Gene()
 {
 }
 
-int Look_Ahead_Gene::positions_to_examine(const Board& board, const Clock& clock) const
+double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const
 {
     if( ! is_active())
     {
-        return 0;
+        return 0.0;
     }
 
     auto time_left = clock.time_left(board.whose_turn());
@@ -42,8 +43,7 @@ int Look_Ahead_Gene::positions_to_examine(const Board& board, const Clock& clock
     auto moves_so_far = board.get_game_record().size()/2; // only count moves by this player
     auto moves_left = Math::average_moves_left(mean_game_length, moves_so_far);
 
-    auto time_per_move = time_left/std::min(moves_left, double(moves_to_reset));
-    return int(positions_per_second*time_per_move); // positions to examine for one move
+    return time_left/std::min(moves_left, double(moves_to_reset));
 }
 
 void Look_Ahead_Gene::gene_specific_mutation()
@@ -71,4 +71,16 @@ std::string Look_Ahead_Gene::name() const
 double Look_Ahead_Gene::score_board(const Board&, Color) const
 {
     return 0.0;
+}
+
+double Look_Ahead_Gene::minimum_time_to_recurse(const Board& board) const
+{
+    if(is_active())
+    {
+        return board.all_legal_moves().size()/positions_per_second;
+    }
+    else
+    {
+        return Math::infinity;
+    }
 }

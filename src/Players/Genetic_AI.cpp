@@ -123,7 +123,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
         return legal_moves.front(); // If there's only one legal move, take it.
     }
 
-    auto positions_to_examine = genome.positions_to_examine(board, clock);
+    auto time_to_use = genome.time_to_examine(board, clock);
 
     Game_Tree_Node_Result alpha_start = {Complete_Move(),
                                          -Math::infinity,
@@ -137,7 +137,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
                                         ""};
 
     auto result = search_game_tree(board,
-                                   positions_to_examine,
+                                   time_to_use,
                                    clock,
                                    0,
                                    alpha_start,
@@ -202,31 +202,26 @@ bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b)
 }
 
 Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
-                                                   int& positions_to_examine,
+                                                   const double time_to_examine,
                                                    const Clock& clock,
                                                    const int depth,
                                                    Game_Tree_Node_Result alpha,
                                                    Game_Tree_Node_Result beta) const
 {
-    // Every call to search_game_tree() after the first
-    // costs a position_to_examine.
-    if(depth > 0 && positions_to_examine > 0)
-    {
-        --positions_to_examine;
-    }
-
     auto perspective = board.whose_turn();
+    auto time_start = clock.time_left(clock.running_for());
+    int moves_examined = 0;
 
     Game_Tree_Node_Result best_result = {board.all_legal_moves().front(),
                                          -Math::infinity,
                                          perspective,
                                          depth,
                                          ""};
-    size_t moves_examined = 0;
 
     for(const auto& move : board.all_legal_moves())
     {
-        if(clock.time_left(clock.running_for()) < 0.0)
+        int moves_left = board.all_legal_moves().size() - moves_examined;
+        if(depth > 0 && clock.time_left(clock.running_for()) < time_to_examine/moves_left)
         {
             return best_result;
         }
@@ -258,8 +253,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
         if(next_board.game_has_ended()
            || ( next_board.all_legal_moves().size() > 1
-                && (positions_to_examine <= 0
-                    || ! genome.good_enough_to_examine(board, next_board, perspective))))
+                && ! genome.good_enough_to_examine(board, next_board, perspective)))
         {
             // Record immediate result without looking ahead further
             auto score = genome.evaluate(next_board, perspective);
@@ -271,26 +265,24 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
         else
         {
-            int moves_left = board.all_legal_moves().size() - moves_examined;
-            int positions_for_this_move = positions_to_examine/moves_left;
+            double time_left = time_to_examine - (time_start - clock.time_left(clock.running_for()));
+            double time_for_this_move = time_left/moves_left;
+            auto minimum_time_to_recurse = genome.minimum_time_to_recurse(next_board);
 
-            if(positions_for_this_move > 0 || next_board.all_legal_moves().size() == 1)
+            if(time_for_this_move > minimum_time_to_recurse)
             {
-                positions_to_examine -= positions_for_this_move;
-
                 result = search_game_tree(next_board,
-                                          positions_for_this_move,
+                                          time_for_this_move,
                                           clock,
                                           depth + 1,
                                           beta,
                                           alpha);
+
                 // Update last result with this game tree node's data
                 result.move = move;
                 result.commentary = next_board.get_game_record().back()
                                             + " "
                                             + result.commentary;
-
-                positions_to_examine += positions_for_this_move;
             }
             else
             {

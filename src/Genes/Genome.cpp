@@ -201,10 +201,10 @@ void Genome::print(std::ostream& os) const
     os << "\n";
 }
 
-int Genome::positions_to_examine(const Board& board, const Clock& clock) const
+double Genome::time_to_examine(const Board& board, const Clock& clock) const
 {
     return std::static_pointer_cast<Look_Ahead_Gene>
-        (genome[look_ahead_gene_index])->positions_to_examine(board, clock);
+        (genome[look_ahead_gene_index])->time_to_examine(board, clock);
 }
 
 bool Genome::good_enough_to_examine(const Board& before, const Board& after, Color perspective) const
@@ -212,4 +212,10 @@ bool Genome::good_enough_to_examine(const Board& before, const Board& after, Col
     auto score_difference = evaluate(after, perspective) - evaluate(before, perspective);
     return std::static_pointer_cast<Branch_Pruning_Gene>
         (genome[branch_pruning_gene_index])->good_enough_to_examine(score_difference);
+}
+
+double Genome::minimum_time_to_recurse(const Board& board) const
+{
+    return std::static_pointer_cast<Look_Ahead_Gene>
+        (genome[look_ahead_gene_index])->minimum_time_to_recurse(board);
 }

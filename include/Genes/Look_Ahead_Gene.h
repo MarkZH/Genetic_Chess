@@ -16,7 +16,8 @@ class Look_Ahead_Gene : public Gene
 
         std::string name() const override;
 
-        int positions_to_examine(const Board& board, const Clock& clock) const;
+        double time_to_examine(const Board& board, const Clock& clock) const;
+        double minimum_time_to_recurse(const Board& board) const;
 
     protected:
         void reset_properties() const override;

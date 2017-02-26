@@ -116,7 +116,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confinem
 $(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o : include/Genes/King_Protection_Gene.h include/Genes/Gene.h src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Pieces/Piece.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/King_Protection_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : include/Genes/Look_Ahead_Gene.h include/Genes/Gene.h src/Genes/Look_Ahead_Gene.cpp include/Utility.h include/Game/Board.h include/Game/Clock.h
+$(DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : include/Genes/Look_Ahead_Gene.h include/Genes/Gene.h src/Genes/Look_Ahead_Gene.cpp include/Utility.h include/Game/Board.h include/Game/Clock.h include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Look_Ahead_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o : include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Gene.h include/Genes/Piece_Strength_Gene.h src/Genes/Opponent_Pieces_Targeted_Gene.cpp include/Game/Board.h include/Pieces/Piece.h include/Utility.h
@@ -275,7 +275,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confin
 $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o : include/Genes/King_Protection_Gene.h include/Genes/Gene.h src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Pieces/Piece.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/King_Protection_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : include/Genes/Look_Ahead_Gene.h include/Genes/Gene.h src/Genes/Look_Ahead_Gene.cpp include/Utility.h include/Game/Board.h include/Game/Clock.h
+$(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : include/Genes/Look_Ahead_Gene.h include/Genes/Gene.h src/Genes/Look_Ahead_Gene.cpp include/Utility.h include/Game/Board.h include/Game/Clock.h include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Look_Ahead_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o : include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Gene.h include/Genes/Piece_Strength_Gene.h src/Genes/Opponent_Pieces_Targeted_Gene.cpp include/Game/Board.h include/Pieces/Piece.h include/Utility.h
