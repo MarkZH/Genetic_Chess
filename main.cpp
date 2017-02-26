@@ -228,26 +228,65 @@ void print_help()
               << "\t\tSpecify seconds to add to time after each move." << std::endl << std::endl;
 }
 
-int find_last_id(const std::string& filename)
+int find_last_id(const std::string& players_file_name)
 {
-    std::ifstream ifs(filename);
+    std::ifstream player_input(players_file_name);
     std::string line;
-    std::string id_line;
-    while(std::getline(ifs, line))
+    std::vector<int> all_players;
+    while(std::getline(player_input, line))
     {
         if(String::starts_with(line, "ID:"))
         {
-            id_line = line;
+            all_players.push_back(std::stoi(String::split(line).back()));
         }
     }
 
-    if(id_line.empty())
+    // Filter out players with zero wins
+    auto games_file = players_file_name + "_games.txt";
+    std::ifstream games_input(games_file);
+    std::map<int, int> games_won;
+    std::map<Color, int> player_colors;
+    while(std::getline(games_input, line))
     {
-        throw std::runtime_error("No Genetic AIs found in " + filename);
+        if(String::starts_with(line, "[White"))
+        {
+            player_colors[WHITE] = std::stoi(String::split(String::split(line, "\"")[1])[2]);
+        }
+        else if(String::starts_with(line, "[Black"))
+        {
+            player_colors[BLACK] = std::stoi(String::split(String::split(line, "\"")[1])[2]);
+        }
+        else if(String::starts_with(line, "[Result"))
+        {
+            auto result_string = String::split(line, "\"")[1];
+            if(result_string == "1-0")
+            {
+                ++games_won[player_colors[WHITE]];
+            }
+            else if(result_string == "0-1")
+            {
+                ++games_won[player_colors[BLACK]];
+            }
+            player_colors.clear();
+        }
+    }
+
+    int best_id = -1;
+    for(auto id_won : games_won)
+    {
+        if(id_won.second >= 3) // require at least 3 wins
+        {
+            best_id = id_won.first;
+        }
+    }
+
+    if(best_id == -1)
+    {
+        return all_players.back();
     }
     else
     {
-        return std::stoi(String::split(id_line)[1]);
+        return best_id;
     }
 }
 
