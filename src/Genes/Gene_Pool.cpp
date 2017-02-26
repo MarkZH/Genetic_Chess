@@ -59,6 +59,7 @@ void gene_pool(const std::string& config_file = "")
     std::map<size_t, Genetic_AI> most_games_survived_player;
 
     std::map<size_t, std::vector<Genetic_AI>> new_blood; // ex nihilo players
+    std::map<size_t, int> new_blood_count;
 
     std::map<Genetic_AI, int> wins;
     std::map<Genetic_AI, int> draws;
@@ -128,7 +129,7 @@ void gene_pool(const std::string& config_file = "")
         // Write overall stats
         std::cout << "\nGene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
-                  << "  New blood introduced: " << new_blood[pool_index].size() << " (*)\n"
+                  << "  New blood introduced: " << new_blood_count[pool_index] << " (*)\n"
                   << "Games: " << game_count[pool_index]
                   << "  White wins: " << white_wins[pool_index]
                   << "  Black wins: " << black_wins[pool_index]
@@ -255,6 +256,7 @@ void gene_pool(const std::string& config_file = "")
                     auto offspring = Genetic_AI(pseudo_winner, new_specimen);
                     offspring.mutate();
                     new_blood[pool_index].push_back(offspring);
+                    ++new_blood_count[pool_index];
                     original_pool[offspring] = pool_index;
 
                     auto& pseudo_loser = (pseudo_winner == white ? black : white);
