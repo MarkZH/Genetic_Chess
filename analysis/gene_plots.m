@@ -173,7 +173,8 @@ if total_force_index > 0 && opponent_pieces_targeted_index > 0 && piece_strength
   plot(100*smooth_opponent, 'LineWidth', 3, 'displayname', 'Opponent Pieces Targeted');
 
   leg = legend('show');
-  set(leg, 'location', 'northwest');
-  set(leg, 'FontSize', 11);
+  set(leg, 'location', 'southoutside');
+  set(leg, 'orientation', 'horizontal');
+  set(leg, 'FontSize', 10);
   print([gene_pool_filename '_piece_strength_gene_active.png']);
 end
