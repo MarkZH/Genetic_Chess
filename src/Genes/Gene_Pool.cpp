@@ -108,6 +108,10 @@ void gene_pool(const std::string& config_file = "")
             original_pool[ai] = pools.size() - 1;
         }
     }
+    for(size_t pool_index = 0; pool_index < pools.size(); ++pool_index)
+    {
+        write_generation(pools, pool_index, genome_file_name);
+    }
 
     // Indices in gene pool to be shuffled for game match-ups
     std::vector<size_t> pool_indices;
