@@ -58,6 +58,11 @@ struct Complete_Move
     {
     }
 
+    std::string game_record_item(const Board& board) const
+    {
+        return move->game_record_item(board, starting_file, starting_rank);
+    }
+
     std::shared_ptr<const Move> move;
     char starting_file;
     int  starting_rank;

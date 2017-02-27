@@ -3,6 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <algorithm>
 
 #include "Moves/Move.h"
 #include "Game/Board.h"
@@ -142,10 +143,23 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
                                    0,
                                    alpha_start,
                                    beta_start);
+
     if(result.depth > 0)
     {
         board.add_commentary_to_next_move(result.commentary);
+        principle_variation = String::split(result.commentary);
+        for(auto& move : principle_variation)
+        {
+            // remove non-move notation
+            move = String::strip_comments(move, '+');
+            move = String::strip_comments(move, '#');
+        }
     }
+    else
+    {
+        principle_variation.clear();
+    }
+
     return result.move;
 }
 
@@ -204,7 +218,7 @@ bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b)
 Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    const double time_to_examine,
                                                    const Clock& clock,
-                                                   const int depth,
+                                                   const size_t depth,
                                                    Game_Tree_Node_Result alpha,
                                                    Game_Tree_Node_Result beta) const
 {
@@ -218,8 +232,40 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                          depth,
                                          ""};
 
-    const auto current_legal_moves_count = board.all_legal_moves().size();
-    for(const auto& move : board.all_legal_moves())
+    auto all_legal_moves = board.all_legal_moves();
+    const auto current_legal_moves_count = all_legal_moves.size();
+
+    // The first item in the principle variation is the last move that
+    // this player made. Since then, the opponent has also made a move,
+    // so the first item in the principle variation corresponds to the
+    // game record item at game_record.size() - 2. The depth of the game
+    // tree search increments both the game_record index and the principle
+    // variation index in step.
+    bool still_on_principle_variation = false;
+    if(principle_variation.size() > depth + 2)
+    {
+        auto principle_variation_start_index = board.get_game_record().size() - depth - 2;
+        still_on_principle_variation = std::equal(board.get_game_record().begin() + principle_variation_start_index,
+                                                  board.get_game_record().end(),
+                                                  principle_variation.begin());
+
+        if(still_on_principle_variation)
+        {
+            auto next_principle_variation_move = principle_variation[depth + 2];
+            auto move_iter = std::find_if(all_legal_moves.begin(),
+                                          all_legal_moves.end(),
+                                          [&next_principle_variation_move, &board](const auto& cm)
+                                          {
+                                              return cm.game_record_item(board) == next_principle_variation_move;
+                                          });
+
+            // Put principle variation move at start of list to allow
+            // the most pruning later.
+            std::iter_swap(all_legal_moves.begin(), move_iter);
+        }
+    }
+
+    for(const auto& move : all_legal_moves)
     {
         auto next_board = board;
 
@@ -255,6 +301,10 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             recurse = false;
         }
         else if(next_board.all_legal_moves().size() == 1)
+        {
+            recurse = true;
+        }
+        else if(still_on_principle_variation)
         {
             recurse = true;
         }
@@ -306,6 +356,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
 
         ++moves_examined;
+        still_on_principle_variation = false; // only the first move is part of the principle variation
     }
 
     return best_result;

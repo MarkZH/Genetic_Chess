@@ -19,7 +19,7 @@ struct Game_Tree_Node_Result
     Complete_Move move;
     double score;
     Color perspective;
-    int depth;
+    size_t depth;
     std::string commentary;
 
     double corrected_score(Color query) const
@@ -70,6 +70,7 @@ class Genetic_AI : public Player
         Genome genome;
         static int next_id;
         int id;
+        mutable std::vector<std::string> principle_variation;
 
         void read_from(std::istream& is);
 
@@ -77,7 +78,7 @@ class Genetic_AI : public Player
         Game_Tree_Node_Result search_game_tree(const Board& board,
                                                double time_to_examine,
                                                const Clock& clock,
-                                               int depth,
+                                               size_t depth,
                                                Game_Tree_Node_Result alpha,
                                                Game_Tree_Node_Result beta) const;
 };
