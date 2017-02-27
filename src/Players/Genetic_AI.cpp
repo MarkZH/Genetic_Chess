@@ -250,56 +250,59 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
 
         Game_Tree_Node_Result result;
+        double time_left = time_to_examine - (time_start - clock.time_left(clock.running_for()));
+        double time_alloted_for_this_move = time_left/moves_left;
+        auto minimum_time_to_recurse = genome.minimum_time_to_recurse(next_board);
 
-        if(next_board.game_has_ended()
-           || ( next_board.all_legal_moves().size() > 1
-                && ! genome.good_enough_to_examine(board, next_board, perspective)))
+        bool recurse;
+        if(next_board.game_has_ended())
         {
-            // Record immediate result without looking ahead further
-            auto score = genome.evaluate(next_board, perspective);
-            result = {move,
-                      score,
-                      perspective,
-                      depth,
-                      next_board.get_game_record().back()};
+            recurse = false;
+        }
+        else if(next_board.all_legal_moves().size() == 1)
+        {
+            recurse = true;
+        }
+        else if(time_alloted_for_this_move < minimum_time_to_recurse)
+        {
+            recurse = false;
         }
         else
         {
-            double time_left = time_to_examine - (time_start - clock.time_left(clock.running_for()));
-            double time_for_this_move = time_left/moves_left;
-            auto minimum_time_to_recurse = genome.minimum_time_to_recurse(next_board);
+            recurse = genome.good_enough_to_examine(board, next_board, perspective);
+        }
 
-            if(time_for_this_move > minimum_time_to_recurse)
-            {
-                result = search_game_tree(next_board,
-                                          time_for_this_move,
-                                          clock,
-                                          depth + 1,
-                                          beta,
-                                          alpha);
+        if(recurse)
+        {
+            result = search_game_tree(next_board,
+                                      time_alloted_for_this_move,
+                                      clock,
+                                      depth + 1,
+                                      beta,
+                                      alpha);
 
-                // Update last result with this game tree node's data
-                result.move = move;
-                result.commentary = next_board.get_game_record().back()
-                                            + " "
-                                            + result.commentary;
-            }
-            else
-            {
-                result = {move,
-                          genome.evaluate(next_board, perspective),
-                          perspective,
-                          depth,
-                          next_board.get_game_record().back()};
-            }
+            // Update last result with this game tree node's data
+            result.move = move;
+            result.commentary = next_board.get_game_record().back()
+                                        + " "
+                                        + result.commentary;
+        }
+        else
+        {
+            // Record immediate result without looking ahead further
+            result = {move,
+                      genome.evaluate(next_board, perspective),
+                      perspective,
+                      depth,
+                      next_board.get_game_record().back()};
         }
 
         if(better_than(result, best_result, perspective))
         {
             best_result = result;
-            if(better_than(result, alpha, perspective))
+            if(better_than(best_result, alpha, perspective))
             {
-                alpha = result;
+                alpha = best_result;
                 if(better_than(alpha, beta, perspective) || alpha == beta)
                 {
                     break;
