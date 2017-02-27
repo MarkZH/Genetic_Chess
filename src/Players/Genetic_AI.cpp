@@ -126,12 +126,12 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     auto time_to_use = genome.time_to_examine(board, clock);
 
     Game_Tree_Node_Result alpha_start = {Complete_Move(),
-                                         -Math::infinity,
+                                         Math::lose_score,
                                          board.whose_turn(),
                                          0,
                                          ""};
     Game_Tree_Node_Result beta_start = {Complete_Move(),
-                                        Math::infinity,
+                                        Math::win_score,
                                         board.whose_turn(),
                                         0,
                                         ""};
@@ -213,7 +213,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     int moves_examined = 0;
 
     Game_Tree_Node_Result best_result = {board.all_legal_moves().front(),
-                                         -Math::infinity,
+                                         Math::lose_score,
                                          perspective,
                                          depth,
                                          ""};
