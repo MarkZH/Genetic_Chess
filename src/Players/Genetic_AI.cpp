@@ -218,14 +218,9 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                          depth,
                                          ""};
 
+    const auto current_legal_moves_count = board.all_legal_moves().size();
     for(const auto& move : board.all_legal_moves())
     {
-        int moves_left = board.all_legal_moves().size() - moves_examined;
-        if(depth > 0 && clock.time_left(clock.running_for()) < time_to_examine/moves_left)
-        {
-            return best_result;
-        }
-
         auto next_board = board;
 
         try
@@ -250,9 +245,9 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
 
         Game_Tree_Node_Result result;
+        int moves_left = current_legal_moves_count - moves_examined;
         double time_left = time_to_examine - (time_start - clock.time_left(clock.running_for()));
         double time_alloted_for_this_move = time_left/moves_left;
-        auto minimum_time_to_recurse = genome.minimum_time_to_recurse(next_board);
 
         bool recurse;
         if(next_board.game_has_ended())
@@ -263,7 +258,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         {
             recurse = true;
         }
-        else if(time_alloted_for_this_move < minimum_time_to_recurse)
+        else if(time_alloted_for_this_move < genome.minimum_time_to_recurse(next_board))
         {
             recurse = false;
         }
