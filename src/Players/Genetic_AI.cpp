@@ -121,6 +121,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     const auto& legal_moves = board.all_legal_moves();
     if(legal_moves.size() == 1)
     {
+        principal_variation.clear();
         return legal_moves.front(); // If there's only one legal move, take it.
     }
 
