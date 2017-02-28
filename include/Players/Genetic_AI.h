@@ -70,7 +70,7 @@ class Genetic_AI : public Player
         Genome genome;
         static int next_id;
         int id;
-        mutable std::vector<std::string> principle_variation;
+        mutable std::vector<std::string> principal_variation;
 
         void read_from(std::istream& is);
 
