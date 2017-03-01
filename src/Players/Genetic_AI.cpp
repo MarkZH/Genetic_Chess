@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cmath>
 #include <algorithm>
+#include <stdexcept>
 
 #include "Moves/Move.h"
 #include "Game/Board.h"
