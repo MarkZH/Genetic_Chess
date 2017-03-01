@@ -121,7 +121,20 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     const auto& legal_moves = board.all_legal_moves();
     if(legal_moves.size() == 1)
     {
-        principal_variation.clear();
+        if(principal_variation.size() >= 2)
+        {
+            // search_game_tree assumes the principal variation starts
+            // with the previous move of this player. If a move was forced,
+            // then the principal variation needs to be updated to start with
+            // the next move of this side.
+            principal_variation.erase(principal_variation.begin(),
+                                      principal_variation.begin() + 2);
+        }
+        else
+        {
+            principal_variation.clear();
+        }
+
         return legal_moves.front(); // If there's only one legal move, take it.
     }
 
@@ -149,12 +162,6 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     {
         board.add_commentary_to_next_move(result.commentary);
         principal_variation = String::split(result.commentary);
-        for(auto& move : principal_variation)
-        {
-            // remove non-move notation
-            move = String::strip_comments(move, '+');
-            move = String::strip_comments(move, '#');
-        }
     }
     else
     {
@@ -253,6 +260,10 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         if(still_on_principal_variation)
         {
             auto next_principal_variation_move = principal_variation[depth + 2];
+            // remove non-move notation
+            next_principal_variation_move = String::strip_comments(next_principal_variation_move, '+');
+            next_principal_variation_move = String::strip_comments(next_principal_variation_move, '#');
+
             auto move_iter = std::find_if(all_legal_moves.begin(),
                                           all_legal_moves.end(),
                                           [&next_principal_variation_move, &board](const auto& cm)
