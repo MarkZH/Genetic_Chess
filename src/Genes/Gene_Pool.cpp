@@ -82,7 +82,18 @@ void gene_pool(const std::string& config_file = "")
     std::vector<Gene_Pool> pools = load_gene_pool_file(genome_file_name);
     for(size_t i = 0; i < pools.size(); ++i)
     {
-        write_generation(pools, i, ""); // mark AIs from file as already written
+        while(pools[i].size() < gene_pool_population)
+        {
+            pools[i].push_back(Genetic_AI());
+            for(int m = 0; m < 100; ++m)
+            {
+                pools[i].back().mutate();
+            }
+        }
+        while(pools[i].size() > gene_pool_population)
+        {
+            pools[i].pop_back();
+        }
         for(const auto& ai : pools[i])
         {
             original_pool[ai] = i;
@@ -451,6 +462,7 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
             auto index = std::stoi(number_string);
             result[index_list.first].push_back(Genetic_AI(load_file, index));
         }
+        write_generation(result, result.size() - 1, ""); // mark AIs from file as already written
     }
 
     return result;
