@@ -10,7 +10,7 @@
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
-    positions_per_second(0)
+    positions_per_second(0.01)
 {
 }
 
@@ -54,7 +54,7 @@ void Look_Ahead_Gene::gene_specific_mutation()
     }
     else
     {
-        positions_per_second = std::max(0.0, positions_per_second + Random::random_normal(10.0));
+        positions_per_second = std::max(0.01, positions_per_second + Random::random_normal(10.0));
     }
 }
 
