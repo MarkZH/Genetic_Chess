@@ -462,7 +462,7 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
             auto index = std::stoi(number_string);
             result[index_list.first].push_back(Genetic_AI(load_file, index));
         }
-        write_generation(result, result.size() - 1, ""); // mark AIs from file as already written
+        write_generation(result, index_list.first, ""); // mark AIs from file as already written
     }
 
     return result;
