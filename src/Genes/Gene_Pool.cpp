@@ -9,6 +9,7 @@
 #include <cmath>
 #include <algorithm>
 #include <future>
+#include <numeric>
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
@@ -114,11 +115,8 @@ void gene_pool(const std::string& config_file = "")
     }
 
     // Indices in gene pool to be shuffled for game match-ups
-    std::vector<size_t> pool_indices;
-    for(size_t i = 0; i < gene_pool_population; ++i)
-    {
-        pool_indices.push_back(i);
-    }
+    std::vector<size_t> pool_indices(gene_pool_population);
+    std::iota(pool_indices.begin(), pool_indices.end(), 0);
 
     std::string game_record_file = genome_file_name +  "_games.txt";
 
