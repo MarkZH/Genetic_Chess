@@ -122,12 +122,13 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     const auto& legal_moves = board.all_legal_moves();
     if(legal_moves.size() == 1)
     {
-        if(principal_variation.size() >= 2)
+        if(principal_variation.size() > 2 && principal_variation[1] == board.get_game_record().back())
         {
-            // search_game_tree assumes the principal variation starts
+            // search_game_tree() assumes the principal variation starts
             // with the previous move of this player. If a move was forced,
             // then the principal variation needs to be updated to start with
-            // the next move of this side.
+            // the next move of this side after checking that the immediately
+            // preceding move was the expected one.
             principal_variation.erase(principal_variation.begin(),
                                       principal_variation.begin() + 2);
         }
@@ -267,10 +268,27 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
             auto move_iter = std::find_if(all_legal_moves.begin(),
                                           all_legal_moves.end(),
-                                          [&next_principal_variation_move, &board](const auto& cm)
+                                          [&next_principal_variation_move, &board](const auto& legal_move)
                                           {
-                                              return cm.game_record_item(board) == next_principal_variation_move;
+                                              return legal_move.game_record_item(board) == next_principal_variation_move;
                                           });
+
+            // Make sure that the principal variation is actually a legal move.
+            // This is purely for debugging as special circumstances (i.e., once
+            // per several thousand games) cause the principal variation to be
+            // invalidated without it being cleared.
+            if(move_iter == all_legal_moves.end())
+            {
+                board.ascii_draw(WHITE);
+                board.print_game_record("","","","Principal Variation error", 0);
+                for(const auto& item : principal_variation)
+                {
+                    std::cout << item << " ";
+                }
+                std::cout << '\n' << "Depth: " << depth << '\n'
+                          << "Next move in variation: " << next_principal_variation_move << std::endl;
+                throw std::runtime_error("ERROR: bad variation code");
+            }
 
             // Put principal variation move at start of list to allow
             // the most pruning later.
