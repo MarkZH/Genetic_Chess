@@ -232,6 +232,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    Game_Tree_Node_Result alpha,
                                                    Game_Tree_Node_Result beta) const
 {
+    auto time_start = clock.time_left(clock.running_for());
     auto all_legal_moves = board.all_legal_moves();
 
     // The first item in the principal variation is the last move that
@@ -286,7 +287,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     }
 
     auto perspective = board.whose_turn();
-    auto time_start = clock.time_left(clock.running_for());
     int moves_examined = 0;
     const auto current_legal_moves_count = all_legal_moves.size();
 
