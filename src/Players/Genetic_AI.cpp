@@ -142,11 +142,13 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
     auto time_to_use = genome.time_to_examine(board, clock);
 
+    // alpha = highest score found that opponent will allow
     Game_Tree_Node_Result alpha_start = {Complete_Move(),
                                          Math::lose_score,
                                          board.whose_turn(),
                                          0,
                                          ""};
+    // beta = score that will cause opponent to choose a different prior move
     Game_Tree_Node_Result beta_start = {Complete_Move(),
                                         Math::win_score,
                                         board.whose_turn(),
