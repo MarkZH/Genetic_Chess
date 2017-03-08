@@ -15,8 +15,7 @@ bool Kingside_Castle::move_specific_legal(const Board& board, char file_start, i
     return     ! board.piece_has_moved(file_start, rank_start)
             && ! board.piece_has_moved('h', rank_start)
             && ! board.king_is_in_check(board.whose_turn())
-            && board.safe_for_king('f', rank_start, board.whose_turn())
-            && board.safe_for_king('g', rank_start, board.whose_turn());
+            && board.safe_for_king('f', rank_start, board.whose_turn());
 }
 
 bool Kingside_Castle::can_capture() const

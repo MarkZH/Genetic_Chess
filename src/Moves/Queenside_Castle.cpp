@@ -15,7 +15,6 @@ bool Queenside_Castle::move_specific_legal(const Board& board, char file_start, 
     return     ! board.piece_has_moved(file_start, rank_start)
             && ! board.piece_has_moved('a', rank_start)
             && ! board.king_is_in_check(board.whose_turn())
-            && board.safe_for_king('c', rank_start, board.whose_turn())
             && board.safe_for_king('d', rank_start, board.whose_turn())
             && ! board.piece_on_square('b', rank_start);
 }
