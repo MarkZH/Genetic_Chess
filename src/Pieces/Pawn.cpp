@@ -16,10 +16,10 @@ Pawn::Pawn(Color color_in) : Piece(color_in)
     symbol = "P";
 
     std::vector<std::shared_ptr<const Piece>> possible_promotions;
-    possible_promotions.emplace_back(new Rook(my_color));
-    possible_promotions.emplace_back(new Knight(my_color));
-    possible_promotions.emplace_back(new Bishop(my_color));
     possible_promotions.emplace_back(new Queen(my_color));
+    possible_promotions.emplace_back(new Knight(my_color));
+    possible_promotions.emplace_back(new Rook(my_color));
+    possible_promotions.emplace_back(new Bishop(my_color));
 
     possible_moves.emplace_back(new Pawn_Move(my_color));
 
