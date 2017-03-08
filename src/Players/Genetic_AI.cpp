@@ -319,6 +319,18 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             // Draws get scored like any other board position
         }
 
+        if(alpha.corrected_score(perspective) == Math::win_score
+           && alpha.depth <= depth + 2)
+        {
+            // This move will take a longer path to victory
+            // than one already found. Use "depth + 2" since,
+            // if this move isn't winning (and it isn't, since
+            // we're here), then the earliest move that can
+            // win is the next one, which is two away (after
+            // opponent's move).
+            continue;
+        }
+
         int moves_left = current_legal_moves_count - moves_examined;
         double time_left = time_to_examine - (time_start - clock.time_left(clock.running_for()));
         double time_alloted_for_this_move = time_left/moves_left;
