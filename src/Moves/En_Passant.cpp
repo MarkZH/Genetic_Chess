@@ -24,7 +24,7 @@ bool En_Passant::move_specific_legal(const Board& board, char file_start, int ra
 
 void En_Passant::side_effects(Board& board, char file_start, int rank_start) const
 {
-    board.place_piece(nullptr, file_start + d_file, rank_start);
+    board.place_piece(nullptr, file_start + file_change(), rank_start);
     Pawn_Move::side_effects(board, file_start, rank_start);
 }
 
