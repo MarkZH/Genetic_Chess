@@ -246,8 +246,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     bool still_on_principal_variation = false;
     if(principal_variation.size() > depth + 2)
     {
-        auto principal_variation_start_index = board.get_game_record().size() - depth - 2;
-        still_on_principal_variation = std::equal(board.get_game_record().begin() + principal_variation_start_index,
+        still_on_principal_variation = std::equal(board.get_game_record().end() - 2 - depth,
                                                   board.get_game_record().end(),
                                                   principal_variation.begin());
 
