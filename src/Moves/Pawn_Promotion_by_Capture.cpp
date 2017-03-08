@@ -20,9 +20,7 @@ Pawn_Promotion_by_Capture::~Pawn_Promotion_by_Capture()
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board, char file_start, int rank_start) const
 {
     auto attacked_piece = board.piece_on_square(file_start + file_change(), rank_start + rank_change());
-    return attacked_piece
-            && attacked_piece->color() != promote_to->color()
-            && rank_start == (rank_change() == 1 ? 7 : 2); // promoting
+    return attacked_piece && rank_start == (rank_change() == 1 ? 7 : 2); // promoting
 }
 
 bool Pawn_Promotion_by_Capture::can_capture() const
