@@ -29,8 +29,3 @@ std::string Pawn_Move::name() const
 {
     return "Pawn Move";
 }
-
-std::string Pawn_Move::game_record_item(const Board& board, char file_start, int rank_start) const
-{
-    return Move::game_record_item(board, file_start, rank_start);
-}

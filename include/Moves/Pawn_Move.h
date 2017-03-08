@@ -18,7 +18,6 @@ class Pawn_Move : public Move
         bool move_specific_legal(const Board& board, char file_start, int rank_end) const override;
         bool can_capture() const override;
         std::string name() const override;
-        std::string game_record_item(const Board& board, char file_start, int rank_start) const override;
 };
 
 #endif // PAWN_MOVE_H
