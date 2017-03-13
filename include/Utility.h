@@ -32,18 +32,28 @@ namespace String
 
 namespace Random
 {
+    // Random number with normal distribution and mean of zero
     double random_normal(double standard_deviation);
+
+    // Random number with inclusive range
     double random_real(double min, double max);
     int random_integer(int min, int max);
+
+    // Return true with probability 50%
     bool coin_flip();
+
+    // Return true with given probability
     bool success_probability(double probability);
 
-    template<class List>
-    List shuffle(List list)
+    namespace
     {
-        static auto engine = std::mt19937_64(std::chrono::system_clock::now().time_since_epoch().count());
-        std::shuffle(list.begin(), list.end(), engine);
-        return list;
+        std::mt19937_64 generator(std::chrono::system_clock::now().time_since_epoch().count());
+    }
+
+    template<class List>
+    void shuffle(List& list)
+    {
+        std::shuffle(list.begin(), list.end(), generator);
     }
 }
 

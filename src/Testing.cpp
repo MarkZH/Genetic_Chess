@@ -7,6 +7,7 @@
 #include <iostream>
 #include <cmath>
 #include <thread>
+#include <iomanip>
 
 #include "Game/Board.h"
 #include "Moves/Move.h"
@@ -329,6 +330,13 @@ void run_tests()
     }
 
     Board().ascii_draw(WHITE);
+
+    for(int i = 0; i < 10; ++i)
+    {
+        std::cout << std::setw(7) << Random::random_integer(-1000, 1000) << '\t'
+                  << std::setw(10) << Random::random_real(0, 2) << '\t'
+                  << std::setw(10) << Random::random_normal(3) << '\n';
+    }
 
     if(tests_passed)
     {

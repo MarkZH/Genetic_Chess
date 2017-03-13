@@ -173,7 +173,7 @@ void gene_pool(const std::string& config_file = "")
         // The pool_indices list determines the match-ups. After shuffling the list
         // of indices (0 to gene_pool_population - 1), adjacent indices in the pool are
         // matched as opponents.
-        pool_indices = Random::shuffle(pool_indices);
+        Random::shuffle(pool_indices);
 
         std::vector<std::future<Color>> results; // map from pool_indices index to winner
         for(size_t index = 0; index < gene_pool_population; index += 2)

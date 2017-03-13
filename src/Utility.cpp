@@ -120,23 +120,23 @@ std::string String::strip_block_comment(const std::string& str, char start, char
 
 int Random::random_integer(int min, int max)
 {
-    static std::mt19937_64
-        generator(std::chrono::system_clock::now().time_since_epoch().count());
-    return std::uniform_int_distribution<int>(min, max)(generator);
+    using uid = std::uniform_int_distribution<int>;
+    static auto dist = uid{};
+    return dist(generator, uid::param_type{min, max});
 }
 
 double Random::random_normal(double standard_deviation)
 {
-    static std::mt19937_64
-        generator(std::chrono::system_clock::now().time_since_epoch().count());
-    return std::normal_distribution<double>(0, standard_deviation)(generator);
+    using nd = std::normal_distribution<double>;
+    static auto dist = nd{};
+    return dist(generator, nd::param_type{0.0, standard_deviation});
 }
 
 double Random::random_real(double min, double max)
 {
-    static std::mt19937_64
-        generator(std::chrono::system_clock::now().time_since_epoch().count());
-    return std::uniform_real_distribution<double>(min, max)(generator);
+    using urd = std::uniform_real_distribution<double>;
+    static auto dist = urd{};
+    return dist(generator, urd::param_type{min, max});
 }
 
 bool Random::coin_flip()
@@ -146,8 +146,9 @@ bool Random::coin_flip()
 
 bool Random::success_probability(double probability)
 {
-    return random_real(0, 1) < probability;
+    return random_real(0.0, 1.0) < probability;
 }
+
 
 // Mean moves left in game given that a number of moves have been made already.
 double Math::average_moves_left(double mean_moves, size_t moves_so_far)
