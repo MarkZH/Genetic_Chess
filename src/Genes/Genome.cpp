@@ -214,8 +214,8 @@ bool Genome::good_enough_to_examine(const Board& before, const Board& after, Col
         (genome[branch_pruning_gene_index])->good_enough_to_examine(score_difference);
 }
 
-double Genome::minimum_time_to_recurse(const Board& board) const
+bool Genome::enough_time_to_recurse(double time_allotted, const Board& board) const
 {
     return std::static_pointer_cast<Look_Ahead_Gene>
-        (genome[look_ahead_gene_index])->minimum_time_to_recurse(board);
+        (genome[look_ahead_gene_index])->enough_time_to_recurse(time_allotted, board);
 }

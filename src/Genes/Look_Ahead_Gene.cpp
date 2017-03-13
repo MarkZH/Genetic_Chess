@@ -10,20 +10,25 @@
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
-    positions_per_second(0.01)
+    positions_per_second(0.01),
+    speculation_constant(0.0)
 {
+    recalculate_speculation_exponent();
 }
 
 void Look_Ahead_Gene::reset_properties() const
 {
     properties["Mean Game Length"] = mean_game_length;
     properties["Positions Per Second"] = positions_per_second;
+    properties["Speculation Constant"] = speculation_constant;
 }
 
 void Look_Ahead_Gene::load_properties()
 {
     mean_game_length = properties["Mean Game Length"];
     positions_per_second = properties["Positions Per Second"];
+    speculation_constant = properties["Speculation Constant"];
+    recalculate_speculation_exponent();
 }
 
 Look_Ahead_Gene::~Look_Ahead_Gene()
@@ -45,16 +50,25 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
 
     return time_left/std::min(moves_left, double(moves_to_reset));
 }
-
 void Look_Ahead_Gene::gene_specific_mutation()
 {
-    if(Random::coin_flip())
+    auto choice = Random::random_integer(1, 3);
+    switch(choice)
     {
-        mean_game_length = std::max(1.0, mean_game_length + Random::random_normal(1.0));
-    }
-    else
-    {
-        positions_per_second = std::max(0.01, positions_per_second + Random::random_normal(10.0));
+        case 1:
+            mean_game_length = std::max(1.0, mean_game_length + Random::random_normal(1.0));
+            break;
+        case 2:
+            positions_per_second = std::max(0.01, positions_per_second + Random::random_normal(10.0));
+            break;
+        case 3:
+            speculation_constant += Random::random_normal(0.1);
+            speculation_constant = std::max(speculation_constant, 0.0);
+            speculation_constant = std::min(speculation_constant, 1.0);
+            recalculate_speculation_exponent();
+            break;
+        default:
+            throw std::runtime_error("Bad Look_Ahead_Gene mutation: " + std::to_string(choice));
     }
 }
 
@@ -82,5 +96,51 @@ double Look_Ahead_Gene::minimum_time_to_recurse(const Board& board) const
     else
     {
         return Math::infinity;
+    }
+}
+
+bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& board) const
+{
+    // The idea is that, if the time allotted to a move is less than the time
+    // this gene thinks it takes to examine every move of the resulting board state
+    // without recursion, then it should still recurse with a probability that is a
+    // function of the ratio of the time allotted to time needed. The speculation_constant
+    // specifies how often this should happen, with 0 being never and 1 being always
+    // (see the recalculate_speculation_exponent() function for the math).
+
+    auto base = time_allotted/minimum_time_to_recurse(board);
+
+    if(base <= 0.0)
+    {
+        return false;
+    }
+
+    if(base >= 1.0)
+    {
+        return true;
+    }
+
+    return Random::success_probability(std::pow(base, speculation_exponent));
+}
+
+void Look_Ahead_Gene::recalculate_speculation_exponent()
+{
+    // constant = 0.0 ==> exponent = infinity
+    // constant = 0.5 ==> exponent = 1
+    // constant = 1.0 ==> exponent = 0
+    //
+    // This results in a value of the std::pow() expression in enough_time_to_recurse()
+    //
+    //    value = (0 < base < 1)^exponent
+    //
+    // Large exponents result in values near zero, which means recursion with little time
+    // has little probability.
+    if(speculation_constant > 0.0)
+    {
+        speculation_exponent = (1 - speculation_constant)/speculation_constant;
+    }
+    else
+    {
+        speculation_exponent = std::numeric_limits<double>::infinity();
     }
 }

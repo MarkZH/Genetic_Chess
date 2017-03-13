@@ -29,7 +29,7 @@ class Genome
 
         double time_to_examine(const Board& board, const Clock& clock) const; // how much time to use for this move
         bool good_enough_to_examine(const Board& before, const Board& after, Color perspective) const;
-        double minimum_time_to_recurse(const Board& board) const;
+        bool enough_time_to_recurse(double time_allotted, const Board& board) const;
 
         void print(std::ostream& os) const;
 
