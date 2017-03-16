@@ -83,7 +83,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
         score += square_value.second;
     }
 
-    // normalizing to make independent of priority
+    // normalizing to make maximum score near 1
     return score/64.0;
 }
 
