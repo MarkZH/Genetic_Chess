@@ -13,7 +13,6 @@ Look_Ahead_Gene::Look_Ahead_Gene() :
     positions_per_second(0.01),
     speculation_constant(0.0)
 {
-    recalculate_speculation_exponent();
 }
 
 void Look_Ahead_Gene::reset_properties() const
@@ -28,7 +27,6 @@ void Look_Ahead_Gene::load_properties()
     mean_game_length = properties["Mean Game Length"];
     positions_per_second = properties["Positions Per Second"];
     speculation_constant = properties["Speculation Constant"];
-    recalculate_speculation_exponent();
 }
 
 Look_Ahead_Gene::~Look_Ahead_Gene()
@@ -65,7 +63,6 @@ void Look_Ahead_Gene::gene_specific_mutation()
             speculation_constant += Random::random_normal(0.1);
             speculation_constant = std::max(speculation_constant, 0.0);
             speculation_constant = std::min(speculation_constant, 1.0);
-            recalculate_speculation_exponent();
             break;
         default:
             throw std::runtime_error("Bad Look_Ahead_Gene mutation: " + std::to_string(choice));
@@ -120,11 +117,7 @@ bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& 
         return true;
     }
 
-    return Random::success_probability(std::pow(base, speculation_exponent));
-}
 
-void Look_Ahead_Gene::recalculate_speculation_exponent()
-{
     // constant = 0.0 ==> exponent = infinity
     // constant = 0.5 ==> exponent = 1
     // constant = 1.0 ==> exponent = 0
@@ -135,6 +128,7 @@ void Look_Ahead_Gene::recalculate_speculation_exponent()
     //
     // Large exponents result in values near zero, which means recursion with little time
     // has little probability.
+    double speculation_exponent;
     if(speculation_constant > 0.0)
     {
         speculation_exponent = (1 - speculation_constant)/speculation_constant;
@@ -143,4 +137,5 @@ void Look_Ahead_Gene::recalculate_speculation_exponent()
     {
         speculation_exponent = std::numeric_limits<double>::infinity();
     }
+    return Random::success_probability(std::pow(base, speculation_exponent));
 }
