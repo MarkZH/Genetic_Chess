@@ -56,7 +56,7 @@ double Piece_Strength_Gene::piece_value(char symbol) const
 
 double Piece_Strength_Gene::piece_value(const std::shared_ptr<const Piece>& piece) const
 {
-    if( ! is_active() || piece->is_king())
+    if( ! is_active() || ! piece || piece->is_king())
     {
         return 0.0;
     }

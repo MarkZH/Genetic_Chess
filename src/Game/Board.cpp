@@ -20,7 +20,7 @@
 #include "Utility.h"
 
 Board::Board() :
-    board(64, nullptr),
+    board(64),
     turn_color(WHITE),
     winner(NONE),
     en_passant_target_file('\0'),
@@ -49,7 +49,7 @@ Board::Board() :
 }
 
 Board::Board(const std::string& fen) :
-    board(64, nullptr),
+    board(64),
     turn_color(WHITE),
     winner(NONE),
     en_passant_target_file('\0'),
@@ -280,7 +280,7 @@ std::string Board::fen_status() const
 Complete_Move Board::get_complete_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
 {
     auto piece = piece_on_square(file_start, rank_start);
-    if(piece == nullptr)
+    if( ! piece)
     {
         throw Illegal_Move_Exception("No piece on square " +
                                      std::string(1, file_start) +
@@ -565,9 +565,8 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
     {
         repeat_count.clear();
     }
-    auto piece = piece_on_square(file_start, rank_start);
-    place_piece(piece, file_end, rank_end);
-    place_piece(nullptr, file_start, rank_start);
+    piece_on_square(file_end, rank_end) = std::move(piece_on_square(file_start, rank_start));
+    piece_moved[piece_on_square(file_end, rank_end)] = true;
     clear_en_passant_target();
 }
 
@@ -674,6 +673,11 @@ void Board::place_piece(const std::shared_ptr<const Piece>& p, char file, int ra
 {
     piece_on_square(file, rank) = p;
     piece_moved[p] = true;
+}
+
+void Board::remove_piece(char file, int rank)
+{
+    piece_on_square(file, rank).reset();
 }
 
 bool Board::king_is_in_check(Color king_color) const
@@ -996,7 +1000,9 @@ bool Board::piece_has_moved(char file, int rank) const
 
 bool Board::piece_has_moved(const std::shared_ptr<const Piece>& piece) const
 {
-    return piece_moved.at(piece);
+    // If a square is empty, whatever piece you were looking for
+    // must have moved away.
+    return ( ! piece) || piece_moved.at(piece);
 }
 
 void Board::all_pieces_unmoved()
@@ -1005,10 +1011,6 @@ void Board::all_pieces_unmoved()
     {
         piece_moved[piece] = false;
     }
-
-    // If a square is empty, whatever piece you were looking for
-    // must have moved away.
-    piece_moved[nullptr] = true;
 }
 
 Square Board::find_king(Color color) const

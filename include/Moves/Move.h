@@ -52,7 +52,7 @@ struct Complete_Move
     }
 
     Complete_Move() :
-        move(nullptr),
+        move(),
         starting_file('\0'),
         starting_rank(0)
     {

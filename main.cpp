@@ -84,7 +84,6 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-genetic")
                     {
-                        Genetic_AI *genetic_ptr = nullptr;
                         std::string filename;
                         int id = -1;
                         if(i + 1 < argc)
@@ -109,28 +108,27 @@ int main(int argc, char *argv[])
 
                         if(filename.empty())
                         {
-                            genetic_ptr = new Genetic_AI;
+                            auto genetic_ptr = new Genetic_AI;
                             for(int j = 0; j < 100; ++j)
                             {
                                 genetic_ptr->mutate();
                             }
                             genetic_ptr->print_genome("single_game_player.txt");
+                            latest.reset(genetic_ptr);
                         }
                         else
                         {
                             if(id < 0)
                             {
-                                genetic_ptr = new Genetic_AI(filename, find_last_id(filename));
+                                latest.reset(new Genetic_AI(filename, find_last_id(filename)));
                                 i += 1;
                             }
                             else
                             {
-                                genetic_ptr = new Genetic_AI(filename, id);
+                                latest.reset(new Genetic_AI(filename, id));
                                 i += 2;
                             }
                         }
-
-                        latest.reset(genetic_ptr);
                     }
                     else if(opt == "-time")
                     {

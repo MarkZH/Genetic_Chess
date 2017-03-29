@@ -101,6 +101,7 @@ class Board
         void clear_caches();
 
         void place_piece(const std::shared_ptr<const Piece>& p, char file, int rank);
+        void remove_piece(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
         bool no_legal_moves() const;
         void set_winner(Color color);
