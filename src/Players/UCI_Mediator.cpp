@@ -19,7 +19,7 @@ UCI_Mediator::UCI_Mediator(const Player& local_player)
     auto response = receive_uci_command();
     if(response == "isready")
     {
-        send_command("readok");
+        send_command("readyok");
     }
     response = receive_uci_command();
     if(response == "ucinewgame")
