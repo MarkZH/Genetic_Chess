@@ -130,6 +130,24 @@ void gene_pool(const std::string& config_file = "")
     std::iota(pool_indices.begin(), pool_indices.end(), 0);
 
     std::string game_record_file = genome_file_name +  "_games.txt";
+    {
+        // Use game time from last run of this gene pool
+        std::ifstream ifs(game_record_file);
+        std::string line;
+        std::string time_line;
+        while(std::getline(ifs, line))
+        {
+            if(String::contains(line, "Initial time:"))
+            {
+                time_line = line;
+            }
+        }
+
+        if( ! time_line.empty())
+        {
+            game_time = std::stod(String::split(time_line, " ").at(3));
+        }
+    }
 
     for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % gene_pool_count) // run forever
     {
