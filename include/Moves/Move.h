@@ -2,7 +2,6 @@
 #define MOVE_H
 
 #include <string>
-#include <memory>
 
 class Board;
 
@@ -44,7 +43,7 @@ class Move
 
 struct Complete_Move
 {
-    Complete_Move(const std::shared_ptr<const Move>& move_in, char file, int rank) :
+    Complete_Move(const Move* move_in, char file, int rank) :
         move(move_in),
         starting_file(file),
         starting_rank(rank)
@@ -63,7 +62,7 @@ struct Complete_Move
         return move->game_record_item(board, starting_file, starting_rank);
     }
 
-    std::shared_ptr<const Move> move;
+    const Move* move;
     char starting_file;
     int  starting_rank;
 };

@@ -19,7 +19,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective)
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = board.piece_on_square(file, rank);
+            auto piece = board.view_piece_on_square(file, rank);
             if(piece && piece->color() == perspective && piece->is_pawn())
             {
                 // 1 point per move towards promotion

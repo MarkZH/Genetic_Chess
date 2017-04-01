@@ -26,11 +26,11 @@ std::unique_ptr<Outside_Player> connect_to_outside(const Player& player)
     auto protocol_type = Outside_Player::receive_command();
     if(protocol_type == "xboard")
     {
-        return std::unique_ptr<Outside_Player>(new CECP_Mediator(player));
+        return std::make_unique<CECP_Mediator>(player);
     }
     else if(protocol_type == "uci")
     {
-        return std::unique_ptr<Outside_Player>(new UCI_Mediator(player));
+        return std::make_unique<UCI_Mediator>(player);
     }
     else
     {

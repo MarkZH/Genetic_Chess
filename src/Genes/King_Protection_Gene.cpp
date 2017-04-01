@@ -36,7 +36,7 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
                     break;
                 }
 
-                if(board.piece_on_square(file, rank))
+                if(board.view_piece_on_square(file, rank))
                 {
                     break;
                 }
@@ -65,7 +65,7 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective) 
                     continue;
                 }
 
-                if( ! board.piece_on_square(file, rank))
+                if( ! board.view_piece_on_square(file, rank))
                 {
                     ++square_count;
                 }

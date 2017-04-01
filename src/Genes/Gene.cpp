@@ -108,7 +108,7 @@ void Gene::print(std::ostream& os) const
     os << (is_active() ? "" : "IN") << "ACTIVE\n";
 }
 
-void Gene::reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>&)
+void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 {
 }
 

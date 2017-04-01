@@ -18,7 +18,7 @@ Knight::Knight(Color color_in) : Piece(color_in)
         {
             if(d_rank == 0 || abs(d_rank) == abs(d_file)) { continue; }
 
-            possible_moves.emplace_back(new Move(d_file, d_rank));
+            possible_moves.emplace_back(std::make_unique<Move>(d_file, d_rank));
         }
     }
 

@@ -40,7 +40,7 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start, bool ki
     }
 
     // Piece-move compatibility
-    auto moving_piece = board.piece_on_square(file_start, rank_start);
+    auto moving_piece = board.view_piece_on_square(file_start, rank_start);
     if( ! moving_piece
             || moving_piece->color() != board.whose_turn()
             || ! moving_piece->can_move(this))
@@ -60,8 +60,8 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start, bool ki
 
         for(int step = 1; step < max_move; ++step)
         {
-            if(board.piece_on_square(file_start + file_step*step,
-                                     rank_start + rank_step*step))
+            if(board.view_piece_on_square(file_start + file_step*step,
+                                          rank_start + rank_step*step))
             {
                 return false;
             }
@@ -69,7 +69,7 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start, bool ki
     }
 
     // Cannot capture piece of same color
-    auto attacked_piece = board.piece_on_square(file_end, rank_end);
+    auto attacked_piece = board.view_piece_on_square(file_end, rank_end);
     if(attacked_piece && moving_piece->color() == attacked_piece->color())
     {
         return false;
@@ -128,7 +128,7 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
     char file_end = file_start + file_change();
     int  rank_end = rank_start + rank_change();
 
-    auto original_piece = board.piece_on_square(file_start, rank_start);
+    auto original_piece = board.view_piece_on_square(file_start, rank_start);
     std::string move_record = original_piece->pgn_symbol();
 
     bool record_file = false;
@@ -137,7 +137,7 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
     {
         for(int rank_other = 1; rank_other <= 8; ++rank_other)
         {
-            if( ! board.piece_on_square(file_other, rank_other))
+            if( ! board.view_piece_on_square(file_other, rank_other))
             {
                 continue;
             }
@@ -149,7 +149,7 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
             {
                 continue;
             }
-            auto new_piece = board.piece_on_square(file_other, rank_other);
+            auto new_piece = board.view_piece_on_square(file_other, rank_other);
             if((*original_piece) != (*new_piece))
             {
                 continue;
@@ -179,7 +179,7 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
         move_record.append(std::to_string(rank_start));
     }
 
-    if(board.piece_on_square(file_end, rank_end))
+    if(board.view_piece_on_square(file_end, rank_end))
     {
         move_record.append("x");
     }

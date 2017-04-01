@@ -1,7 +1,6 @@
 #include "Testing.h"
 
 #ifdef DEBUG
-#include <memory>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>

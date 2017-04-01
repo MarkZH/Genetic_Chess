@@ -14,12 +14,12 @@ King::King(Color color_in) : Piece(color_in)
         {
             if(d_rank == 0 && d_file == 0) { continue; }
 
-            possible_moves.emplace_back(new Move(d_file, d_rank));
+            possible_moves.emplace_back(std::make_unique<Move>(d_file, d_rank));
         }
     }
 
-    possible_moves.emplace_back(new Kingside_Castle());
-    possible_moves.emplace_back(new Queenside_Castle());
+    possible_moves.emplace_back(std::make_unique<Kingside_Castle>());
+    possible_moves.emplace_back(std::make_unique<Queenside_Castle>());
 
     // ASCII Art http://ascii.co.uk/art/chess (VK)
     ascii_art_lines.push_back(" \\+/ ");

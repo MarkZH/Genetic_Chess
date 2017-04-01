@@ -31,7 +31,7 @@ bool Pawn_Capture::move_specific_legal(const Board& board, char file_start, int 
     char file_end = file_start + file_change();
     int  rank_end = rank_start + rank_change();
 
-    auto attacked_piece  = board.piece_on_square(file_end, rank_end);
+    auto attacked_piece  = board.view_piece_on_square(file_end, rank_end);
     return rank_end != (rank_change() == 1 ? 8 : 1) // not promoting (see Pawn_Promotion_by_Capture)
            && attacked_piece; // must be capturing a piece
 }

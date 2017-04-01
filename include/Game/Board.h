@@ -33,11 +33,11 @@ class Board
         Board();
         explicit Board(const std::string& fen); // reproduce board from Forsythe-Edwards Notation string
 
-        bool is_legal(char file_start, int rank_start, const std::shared_ptr<const Move>& move, bool king_check = true) const;
+        bool is_legal(char file_start, int rank_start, const Move* move, bool king_check = true) const;
         bool is_legal(const Complete_Move& move, bool king_check = true) const;
         bool is_legal(char file_start, int rank_start, char file_end, int rank_end, bool king_check = true) const;
 
-        void submit_move(char file_start, int rank_start, const std::shared_ptr<const Move>& move);
+        void submit_move(char file_start, int rank_start, const Move* move);
         void submit_move(const Complete_Move& cm);
 
         Complete_Move get_complete_move(const std::string& move, char promote = 0) const;
@@ -66,15 +66,14 @@ class Board
         static bool inside_board(char file);
         static bool inside_board(int rank);
 
-        std::shared_ptr<const Piece>& piece_on_square(char file, int rank);
-        const std::shared_ptr<const Piece>& piece_on_square(char file, int rank) const;
+        const Piece* view_piece_on_square(char file, int rank) const;
 
         const std::vector<Complete_Move>& all_legal_moves() const;
         const std::vector<Complete_Move>& all_moves() const;
         bool safe_for_king(char file, int rank, Color king_color) const;
         bool is_en_passant_targetable(char file, int rank) const;
         bool piece_has_moved(char file, int rank) const;
-        bool piece_has_moved(const std::shared_ptr<const Piece>& piece) const;
+        bool piece_has_moved(const Piece* piece) const;
         Square find_king(Color color) const;
         bool king_is_in_check(Color color) const;
 
@@ -89,7 +88,7 @@ class Board
         std::vector<std::string> game_record;
         mutable std::vector<std::string> game_commentary;
         Color winner;
-        std::map<std::shared_ptr<const Piece>, bool> piece_moved;
+        std::map<const Piece*, bool> piece_moved;
         char en_passant_target_file;
         int en_passant_target_rank;
         bool game_ended;
@@ -100,7 +99,7 @@ class Board
         mutable std::vector<Complete_Move> all_legal_moves_cache;
         void clear_caches();
 
-        void place_piece(const std::shared_ptr<const Piece>& p, char file, int rank);
+        std::shared_ptr<const Piece>& piece_on_square(char file, int rank);
         void remove_piece(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
         bool no_legal_moves() const;
@@ -112,6 +111,7 @@ class Board
         void all_pieces_unmoved();
         bool enough_material_to_checkmate() const;
         static Color square_color(char file, int rank);
+        static size_t board_index(char file, int rank);
 
         // Moves with side effects
         friend class Kingside_Castle; // moves second piece

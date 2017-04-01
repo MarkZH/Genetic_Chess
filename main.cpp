@@ -76,11 +76,11 @@ int main(int argc, char *argv[])
                     std::string opt = argv[i];
                     if(opt == "-human")
                     {
-                        latest.reset(new Human_Player());
+                        latest = std::make_unique<Human_Player>();
                     }
                     else if(opt == "-random")
                     {
-                        latest.reset(new Random_AI());
+                        latest = std::make_unique<Random_AI>();
                     }
                     else if(opt == "-genetic")
                     {
@@ -108,24 +108,23 @@ int main(int argc, char *argv[])
 
                         if(filename.empty())
                         {
-                            auto genetic_ptr = new Genetic_AI;
+                            latest = std::make_unique<Genetic_AI>();
                             for(int j = 0; j < 100; ++j)
                             {
-                                genetic_ptr->mutate();
+                                static_cast<Genetic_AI*>(latest.get())->mutate();
                             }
-                            genetic_ptr->print_genome("single_game_player.txt");
-                            latest.reset(genetic_ptr);
+                            static_cast<Genetic_AI*>(latest.get())->print_genome("single_game_player.txt");
                         }
                         else
                         {
                             if(id < 0)
                             {
-                                latest.reset(new Genetic_AI(filename, find_last_id(filename)));
+                                latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
                                 i += 1;
                             }
                             else
                             {
-                                latest.reset(new Genetic_AI(filename, id));
+                                latest = std::make_unique<Genetic_AI>(filename, id);
                                 i += 2;
                             }
                         }

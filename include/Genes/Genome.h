@@ -34,7 +34,7 @@ class Genome
         void print(std::ostream& os) const;
 
     private:
-        std::vector<std::shared_ptr<Gene>> genome;
+        std::vector<std::unique_ptr<Gene>> genome;
 
         // Regulatory gene locations
         size_t piece_strength_gene_index;

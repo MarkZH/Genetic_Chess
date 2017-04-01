@@ -8,9 +8,9 @@
 #include "Pieces/Piece.h"
 #include "Utility.h"
 
-Pawn_Promotion::Pawn_Promotion(const std::shared_ptr<const Piece>& promotion_piece) :
+Pawn_Promotion::Pawn_Promotion(std::shared_ptr<const Piece> promotion_piece) :
     Pawn_Move(promotion_piece->color()),
-    promote_to(promotion_piece)
+    promote_to(std::move(promotion_piece))
 {
 }
 
@@ -24,7 +24,8 @@ void Pawn_Promotion::side_effects(Board& board, char file_start, int rank_start)
     int  rank_end = rank_start + rank_change();
 
     Pawn_Move::side_effects(board, file_start, rank_start);
-    board.place_piece(promote_to, file_end, rank_end); // will call dtor on this
+    board.piece_moved[promote_to.get()] = true;
+    board.piece_on_square(file_end, rank_end) = promote_to; // will call dtor on this if on original board
 }
 
 std::string Pawn_Promotion::name() const

@@ -5,7 +5,7 @@
 #include "Pieces/Piece.h"
 #include "Utility.h"
 
-Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const std::shared_ptr<const Piece_Strength_Gene>& piece_strength_gene) :
+Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene) :
     piece_strenth_source(piece_strength_gene)
 {
 }
@@ -17,7 +17,7 @@ Opponent_Pieces_Targeted_Gene::~Opponent_Pieces_Targeted_Gene()
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;
-    std::map<std::shared_ptr<const Piece>, bool> already_counted;
+    std::map<const Piece*, bool> already_counted;
 
     auto hypothetical = board;
     hypothetical.set_turn(perspective);
@@ -37,7 +37,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
         {
             end_rank += (hypothetical.whose_turn() == WHITE ? -1 : 1);
         }
-        auto target_piece = hypothetical.piece_on_square(end_file, end_rank);
+        auto target_piece = hypothetical.view_piece_on_square(end_file, end_rank);
         if(target_piece && ! already_counted[target_piece])
         {
             score += piece_strenth_source->piece_value(target_piece);
@@ -58,7 +58,7 @@ std::string Opponent_Pieces_Targeted_Gene::name() const
     return "Opponent Pieces Targeted Gene";
 }
 
-void Opponent_Pieces_Targeted_Gene::reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>& psg)
+void Opponent_Pieces_Targeted_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* psg)
 {
     piece_strenth_source = psg;
 }

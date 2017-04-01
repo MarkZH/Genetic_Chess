@@ -16,7 +16,7 @@ bool Queenside_Castle::move_specific_legal(const Board& board, char file_start, 
             && ! board.piece_has_moved('a', rank_start)
             && ! board.king_is_in_check(board.whose_turn())
             && board.safe_for_king('d', rank_start, board.whose_turn())
-            && ! board.piece_on_square('b', rank_start);
+            && ! board.view_piece_on_square('b', rank_start);
 }
 
 bool Queenside_Castle::can_capture() const

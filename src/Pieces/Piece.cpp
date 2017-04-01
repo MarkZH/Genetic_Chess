@@ -38,13 +38,13 @@ bool Piece::operator!=(const Piece& other) const
     return ! (*this == other);
 }
 
-std::vector<std::shared_ptr<const Move>> Piece::get_legal_moves(const Board& board,
-                                                                char file_start, int rank_start,
-                                                                char file_end, int rank_end,
-                                                                bool king_check,
-                                                                char promote) const
+std::vector<const Move*> Piece::get_legal_moves(const Board& board,
+                                                char file_start, int rank_start,
+                                                char file_end, int rank_end,
+                                                bool king_check,
+                                                char promote) const
 {
-    std::vector<std::shared_ptr<const Move>> legal_moves;
+    std::vector<const Move*> legal_moves;
     if(board.whose_turn() != color())
     {
         return legal_moves;
@@ -54,10 +54,10 @@ std::vector<std::shared_ptr<const Move>> Piece::get_legal_moves(const Board& boa
     {
         if(move->file_change() == (file_end - file_start) &&
            move->rank_change() == (rank_end - rank_start) &&
-           board.is_legal(file_start, rank_start, move, king_check) &&
+           board.is_legal(file_start, rank_start, move.get(), king_check) &&
            (( ! promote) || move->name().back() == std::toupper(promote)))
         {
-            legal_moves.push_back(move);
+            legal_moves.push_back(move.get());
         }
     }
 
@@ -87,7 +87,7 @@ bool Piece::can_move(const Move* move) const
     return false;
 }
 
-const std::vector<std::shared_ptr<const Move>> Piece::get_move_list() const
+const std::vector<std::unique_ptr<const Move>>& Piece::get_move_list() const
 {
     return possible_moves;
 }

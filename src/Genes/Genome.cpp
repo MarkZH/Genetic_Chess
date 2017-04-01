@@ -25,24 +25,24 @@ Genome::Genome() :
     branch_pruning_gene_index(-1)
 {
     // Regulator genes
-    genome.emplace_back(new Piece_Strength_Gene);
+    genome.emplace_back(std::make_unique<Piece_Strength_Gene>());
     piece_strength_gene_index = genome.size() - 1;
 
-    genome.emplace_back(new Look_Ahead_Gene);
+    genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
     look_ahead_gene_index = genome.size() - 1;
 
-    genome.emplace_back(new Branch_Pruning_Gene);
+    genome.emplace_back(std::make_unique<Branch_Pruning_Gene>());
     branch_pruning_gene_index = genome.size() - 1;
 
     // Normal genes
-    genome.emplace_back(new Total_Force_Gene(std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index])));
-    genome.emplace_back(new Freedom_To_Move_Gene);
-    genome.emplace_back(new Pawn_Advancement_Gene);
-    genome.emplace_back(new Opponent_Pieces_Targeted_Gene(std::static_pointer_cast<Piece_Strength_Gene>(genome[piece_strength_gene_index])));
-    genome.emplace_back(new Sphere_of_Influence_Gene);
-    genome.emplace_back(new King_Confinement_Gene);
-    genome.emplace_back(new King_Protection_Gene);
-    genome.emplace_back(new Castling_Possible_Gene);
+    genome.emplace_back(std::make_unique<Total_Force_Gene>(static_cast<Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())));
+    genome.emplace_back(std::make_unique<Freedom_To_Move_Gene>());
+    genome.emplace_back(std::make_unique<Pawn_Advancement_Gene>());
+    genome.emplace_back(std::make_unique<Opponent_Pieces_Targeted_Gene>(static_cast<Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())));
+    genome.emplace_back(std::make_unique<Sphere_of_Influence_Gene>());
+    genome.emplace_back(std::make_unique<King_Confinement_Gene>());
+    genome.emplace_back(std::make_unique<King_Protection_Gene>());
+    genome.emplace_back(std::make_unique<Castling_Possible_Gene>());
 }
 
 // Cloning
@@ -63,8 +63,7 @@ Genome::Genome(const Genome& other) :
 
 void Genome::reseat_piece_strength_gene()
 {
-    auto piece_strength_gene = std::static_pointer_cast<Piece_Strength_Gene>
-        (genome[piece_strength_gene_index]);
+    auto piece_strength_gene = static_cast<Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
     for(auto& gene : genome)
     {
         gene->reset_piece_strength_gene(piece_strength_gene);
@@ -203,19 +202,16 @@ void Genome::print(std::ostream& os) const
 
 double Genome::time_to_examine(const Board& board, const Clock& clock) const
 {
-    return std::static_pointer_cast<Look_Ahead_Gene>
-        (genome[look_ahead_gene_index])->time_to_examine(board, clock);
+    return static_cast<Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
 }
 
 bool Genome::good_enough_to_examine(const Board& before, const Board& after, Color perspective) const
 {
     auto score_difference = evaluate(after, perspective) - evaluate(before, perspective);
-    return std::static_pointer_cast<Branch_Pruning_Gene>
-        (genome[branch_pruning_gene_index])->good_enough_to_examine(score_difference);
+    return static_cast<Branch_Pruning_Gene*>(genome[branch_pruning_gene_index].get())->good_enough_to_examine(score_difference);
 }
 
 bool Genome::enough_time_to_recurse(double time_allotted, const Board& board) const
 {
-    return std::static_pointer_cast<Look_Ahead_Gene>
-        (genome[look_ahead_gene_index])->enough_time_to_recurse(time_allotted, board);
+    return static_cast<Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->enough_time_to_recurse(time_allotted, board);
 }

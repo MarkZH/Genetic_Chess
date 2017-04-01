@@ -30,17 +30,18 @@ Board::Board() :
     for(auto color : {WHITE, BLACK})
     {
         int base_rank = (color == WHITE ? 1 : 8);
-        place_piece(std::make_shared<Rook>(color), 'a', base_rank);
-        place_piece(std::make_shared<Knight>(color), 'b', base_rank);
-        place_piece(std::make_shared<Bishop>(color), 'c', base_rank);
-        place_piece(std::make_shared<Queen>(color), 'd', base_rank);
-        place_piece(std::make_shared<King>(color), 'e', base_rank);
-        place_piece(std::make_shared<Bishop>(color), 'f', base_rank);
-        place_piece(std::make_shared<Knight>(color), 'g', base_rank);
-        place_piece(std::make_shared<Rook>(color), 'h', base_rank);
+        piece_on_square('a', base_rank) = std::make_shared<Rook>(color);
+        piece_on_square('b', base_rank) = std::make_shared<Knight>(color);
+        piece_on_square('c', base_rank) = std::make_shared<Bishop>(color);
+        piece_on_square('d', base_rank) = std::make_shared<Queen>(color);
+        piece_on_square('e', base_rank) = std::make_shared<King>(color);
+        piece_on_square('f', base_rank) = std::make_shared<Bishop>(color);
+        piece_on_square('g', base_rank) = std::make_shared<Knight>(color);
+        piece_on_square('h', base_rank) = std::make_shared<Rook>(color);
+
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            place_piece(std::make_shared<Pawn>(color), file, (base_rank == 1) ? 2 : 7);
+            piece_on_square(file, (base_rank == 1) ? 2 : 7) = std::make_shared<Pawn>(color);
         }
     }
 
@@ -81,22 +82,22 @@ Board::Board(const std::string& fen) :
                 switch(toupper(symbol))
                 {
                     case 'P':
-                        place_piece(std::make_shared<Pawn>(color), file, rank);
+                        piece_on_square(file, rank) = std::make_shared<Pawn>(color);
                         break;
                     case 'R':
-                        place_piece(std::make_shared<Rook>(color), file, rank);
+                        piece_on_square(file, rank) = std::make_shared<Rook>(color);
                         break;
                     case 'N':
-                        place_piece(std::make_shared<Knight>(color), file, rank);
+                        piece_on_square(file, rank) = std::make_shared<Knight>(color);
                         break;
                     case 'B':
-                        place_piece(std::make_shared<Bishop>(color), file, rank);
+                        piece_on_square(file, rank) = std::make_shared<Bishop>(color);
                         break;
                     case 'Q':
-                        place_piece(std::make_shared<Queen>(color), file, rank);
+                        piece_on_square(file, rank) = std::make_shared<Queen>(color);
                         break;
                     case 'K':
-                        place_piece(std::make_shared<King>(color), file, rank);
+                        piece_on_square(file, rank) = std::make_shared<King>(color);
                         break;
                     default:
                         throw std::runtime_error(std::string("Invalid  symbol in FEN string: ") + symbol);
@@ -112,7 +113,7 @@ Board::Board(const std::string& fen) :
     {
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            auto piece = piece_on_square(file, rank);
+            auto piece = view_piece_on_square(file, rank);
             if(piece)
             {
                 if(piece->is_pawn() && ((piece->color() == WHITE && rank != 2) ||
@@ -126,36 +127,41 @@ Board::Board(const std::string& fen) :
 
     if( ! String::contains(castling_parse, 'K'))
     {
-        piece_moved[piece_on_square('h', 1)] = true;
+        piece_moved[view_piece_on_square('h', 1)] = true;
     }
     if( ! String::contains(castling_parse, 'Q'))
     {
-        piece_moved[piece_on_square('a', 1)] = true;
+        piece_moved[view_piece_on_square('a', 1)] = true;
     }
     if( ! String::contains(castling_parse, 'k'))
     {
-        piece_moved[piece_on_square('h', 8)] = true;
+        piece_moved[view_piece_on_square('h', 8)] = true;
     }
     if( ! String::contains(castling_parse, 'q'))
     {
-        piece_moved[piece_on_square('a', 8)] = true;
+        piece_moved[view_piece_on_square('a', 8)] = true;
     }
 
     ++repeat_count[board_status()]; // Count initial position
 }
 
-std::shared_ptr<const Piece>& Board::piece_on_square(char file, int rank)
+size_t Board::board_index(char file, int rank)
 {
     // Square A1 = Board::board[0]
     // Square H1 = Board::board[7]
     // Square A8 = Board::board[56]
     // Square H8 = Board::board[63]
-    return board[(file - 'a') + 8*(rank - 1)];
+    return (file - 'a') + 8*(rank - 1);
 }
 
-const std::shared_ptr<const Piece>& Board::piece_on_square(char file, int rank) const
+std::shared_ptr<const Piece>& Board::piece_on_square(char file, int rank)
 {
-    return board.at((file - 'a') + 8*(rank - 1));
+    return board[board_index(file, rank)];
+}
+
+const Piece* Board::view_piece_on_square(char file, int rank) const
+{
+    return board.at(board_index(file, rank)).get();
 }
 
 bool Board::inside_board(char file, int rank)
@@ -183,7 +189,7 @@ bool Board::is_legal(const Complete_Move& move, bool king_check) const
     return is_legal(move.starting_file, move.starting_rank, move.move, king_check);
 }
 
-bool Board::is_legal(char file_start, int rank_start, const std::shared_ptr<const Move>& move, bool king_check) const
+bool Board::is_legal(char file_start, int rank_start, const Move* move, bool king_check) const
 {
     return move && move->is_legal(*this, file_start, rank_start, king_check);
 }
@@ -192,7 +198,7 @@ bool Board::is_legal(char file_start, int rank_start,
                      char file_end,   int rank_end, bool king_check) const
 {
     // Find move that moves piece from start square to end square
-    auto piece = piece_on_square(file_start, rank_start);
+    auto piece = view_piece_on_square(file_start, rank_start);
     return piece && piece->get_legal_moves(*this, file_start, rank_start,
                                                   file_end,   rank_end,
                                                   king_check).size() > 0;
@@ -211,7 +217,7 @@ std::string Board::fen_status() const
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            auto piece = piece_on_square(file, rank);
+            auto piece = view_piece_on_square(file, rank);
             if( ! piece)
             {
                 ++empty_count;
@@ -279,7 +285,7 @@ std::string Board::fen_status() const
 
 Complete_Move Board::get_complete_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
 {
-    auto piece = piece_on_square(file_start, rank_start);
+    auto piece = view_piece_on_square(file_start, rank_start);
     if( ! piece)
     {
         throw Illegal_Move_Exception("No piece on square " +
@@ -328,7 +334,7 @@ void Board::submit_move(const Complete_Move& cm)
     submit_move(cm.starting_file, cm.starting_rank, cm.move);
 }
 
-void Board::submit_move(char file_start, int rank_start, const std::shared_ptr<const Move>& move)
+void Board::submit_move(char file_start, int rank_start, const Move* move)
 {
     if( ! is_legal(file_start, rank_start, move, true))
     {
@@ -531,7 +537,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
     {
         for(int rank = rank_search_start; rank <= rank_search_end; ++rank)
         {
-            auto piece = piece_on_square(file, rank);
+            auto piece = view_piece_on_square(file, rank);
             if(piece &&
                piece->pgn_symbol() == piece_symbol &&
                is_legal(file, rank, ending_file, ending_rank, true))
@@ -561,12 +567,12 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
 
 void Board::make_move(char file_start, int rank_start, char file_end, int rank_end)
 {
-    if(piece_on_square(file_end, rank_end)) // capture
+    if(view_piece_on_square(file_end, rank_end)) // capture
     {
         repeat_count.clear();
     }
     piece_on_square(file_end, rank_end) = std::move(piece_on_square(file_start, rank_start));
-    piece_moved[piece_on_square(file_end, rank_end)] = true;
+    piece_moved[view_piece_on_square(file_end, rank_end)] = true;
     clear_en_passant_target();
 }
 
@@ -639,7 +645,7 @@ void Board::ascii_draw(Color perspective) const
             for(char file = file_start; d_file*(file_end - file) >= 0; file += d_file)
             {
                 std::string piece_symbol;
-                auto piece = piece_on_square(file, rank);
+                auto piece = view_piece_on_square(file, rank);
                 char dark_square_fill = ':';
                 char filler = (square_color(file, rank) == WHITE ? ' ' : dark_square_fill);
                 if(piece)
@@ -667,12 +673,6 @@ void Board::ascii_draw(Color perspective) const
                   << std::string(square_width/2, ' ');
     }
     std::cout << std::endl << std::endl;
-}
-
-void Board::place_piece(const std::shared_ptr<const Piece>& p, char file, int rank)
-{
-    piece_on_square(file, rank) = p;
-    piece_moved[p] = true;
 }
 
 void Board::remove_piece(char file, int rank)
@@ -706,7 +706,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
                     break;
                 }
 
-                auto piece = piece_on_square(attacking_file, attacking_rank);
+                auto piece = view_piece_on_square(attacking_file, attacking_rank);
                 if( ! piece)
                 {
                     continue;
@@ -764,7 +764,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
                     break;
                 }
 
-                auto piece = piece_on_square(attacking_file, attacking_rank);
+                auto piece = view_piece_on_square(attacking_file, attacking_rank);
                 if( ! piece)
                 {
                     continue;
@@ -808,7 +808,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
                     continue;
                 }
 
-                auto piece = piece_on_square(attacking_file, attacking_rank);
+                auto piece = view_piece_on_square(attacking_file, attacking_rank);
                 if(piece && piece->is_knight() && piece->color() == attacking_color)
                 {
                     return false;
@@ -910,7 +910,7 @@ std::string Board::board_status() const // for 3-fold rep count
     auto capturing_pawn_rank = (whose_turn() == WHITE ? 6 : 4);
     for(char file : {en_passant_target_file - 1, en_passant_target_file + 1})
     {
-        auto possible_pawn = piece_on_square(file, capturing_pawn_rank);
+        auto possible_pawn = view_piece_on_square(file, capturing_pawn_rank);
         if(possible_pawn
            && possible_pawn->is_pawn()
            && possible_pawn->color() == whose_turn())
@@ -961,12 +961,12 @@ const std::vector<Complete_Move>& Board::all_moves() const
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = piece_on_square(file, rank);
+            auto piece = view_piece_on_square(file, rank);
             if(piece && piece->color() == whose_turn())
             {
                 for(const auto& move : piece->get_move_list())
                 {
-                    all_moves_cache.emplace_back(move, file, rank);
+                    all_moves_cache.emplace_back(move.get(), file, rank);
                 }
             }
         }
@@ -995,10 +995,10 @@ void Board::clear_en_passant_target()
 
 bool Board::piece_has_moved(char file, int rank) const
 {
-    return piece_has_moved(piece_on_square(file, rank));
+    return piece_has_moved(view_piece_on_square(file, rank));
 }
 
-bool Board::piece_has_moved(const std::shared_ptr<const Piece>& piece) const
+bool Board::piece_has_moved(const Piece* piece) const
 {
     // If a square is empty, whatever piece you were looking for
     // must have moved away.
@@ -1009,7 +1009,7 @@ void Board::all_pieces_unmoved()
 {
     for(const auto& piece : board)
     {
-        piece_moved[piece] = false;
+        piece_moved[piece.get()] = false;
     }
 }
 
@@ -1019,7 +1019,7 @@ Square Board::find_king(Color color) const
     {
         for(int king_rank = 1; king_rank <= 8; ++king_rank)
         {
-            auto piece = piece_on_square(king_file, king_rank);
+            auto piece = view_piece_on_square(king_file, king_rank);
             if(piece && piece->color() == color && piece->is_king())
             {
                 return {king_file, king_rank};
@@ -1060,7 +1060,7 @@ bool Board::enough_material_to_checkmate() const
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = piece_on_square(file, rank);
+            auto piece = view_piece_on_square(file, rank);
             if( ! piece || piece->is_king())
             {
                 continue;

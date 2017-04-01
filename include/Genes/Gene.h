@@ -3,7 +3,6 @@
 
 #include <map>
 #include <string>
-#include <memory>
 #include <iosfwd>
 
 #include "Game/Color.h"
@@ -26,7 +25,7 @@ class Gene
         virtual std::string name() const = 0;
         void print(std::ostream& os) const;
 
-        virtual void reset_piece_strength_gene(const std::shared_ptr<const Piece_Strength_Gene>& psg);
+        virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg);
 
     protected:
         mutable std::map<std::string, double> properties; // used to simplify reading/writing from/to files
