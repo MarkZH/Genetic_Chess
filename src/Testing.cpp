@@ -330,11 +330,17 @@ void run_tests()
 
     Board().ascii_draw(WHITE);
 
+    int int_width = 10;
+    int real_width = 15;
+    int norm_width = 15;
+    std::cout << std::setw(int_width) << "Integers"
+              << std::setw(real_width) << "Reals"
+              << std::setw(norm_width) << "Normals" << '\n';
     for(int i = 0; i < 10; ++i)
     {
-        std::cout << std::setw(7) << Random::random_integer(-1000, 1000) << '\t'
-                  << std::setw(10) << Random::random_real(0, 2) << '\t'
-                  << std::setw(10) << Random::random_normal(3) << '\n';
+        std::cout << std::setw(int_width) << Random::random_integer(-1000, 1000)
+                  << std::setw(real_width) << Random::random_real(0, 2)
+                  << std::setw(norm_width) << Random::random_normal(3) << '\n';
     }
 
     if(tests_passed)
