@@ -83,21 +83,28 @@ for yi = 2 : length(data.colheaders) - 2
   xlabel(xaxis, 'FontSize', 18);
   title(name, 'FontSize', 22);
   set(gca, 'FontSize', 14);
-  print([gene_pool_filename '_gene_' name '.png']);
-  
+
   % Fill in nan gaps in data
   this_data(~isfinite(this_data)) = 0;
+  conv_window = 100;
+  smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
+  conv_margin = floor(conv_window/2);
+  x_axis = conv_margin : length(smooth_data) + conv_margin - 1;
+  plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
+  print([gene_pool_filename '_gene_' name '.png']);
 
-  plot_figure = nan;
+  special_plot = false;
   if strncmp(name, piece_strength_prefix, length(piece_strength_prefix))
     plot_figure = piece_strength_figure;
     piece_scalar_index = 1;
     piece_strength_index = yi;
+    special_plot = true;
   end
   
   if strncmp(fliplr(name), fliplr(scalar_suffix), length(scalar_suffix))
     plot_figure = scalar_figure;
     piece_scalar_index = 2;
+    special_plot = true;
   end
 
   if strncmp(name, total_force_prefix, length(total_force_prefix))
@@ -108,11 +115,10 @@ for yi = 2 : length(data.colheaders) - 2
     opponent_pieces_targeted_index = yi;
   end
 
-  conv_window = 100;
-  if ~isnan(plot_figure) && length(this_data) > conv_window
+  if special_plot && length(this_data) > conv_window;
     figure(plot_figure);
     hold all;
-    smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
+
     if piece_scalar_index == 1
       name = name(end);
       make_dashed = false;
@@ -121,8 +127,7 @@ for yi = 2 : length(data.colheaders) - 2
       scalar_count = scalar_count + 1;
       make_dashed = (scalar_count > 7);
     end
-    conv_margin = floor(conv_window/2);
-    x_axis = conv_margin : length(smooth_data) + conv_margin - 1;
+
     p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
     if make_dashed
       set(p, 'LineStyle', ':');
