@@ -19,10 +19,7 @@
 
 
 // Creation ex nihilo
-Genome::Genome() :
-    piece_strength_gene_index(-1),
-    look_ahead_gene_index(-1),
-    branch_pruning_gene_index(-1)
+Genome::Genome()
 {
     // Regulator genes
     genome.emplace_back(std::make_unique<Piece_Strength_Gene>());
@@ -52,7 +49,6 @@ Genome::Genome(const Genome& other) :
     look_ahead_gene_index(other.look_ahead_gene_index),
     branch_pruning_gene_index(other.branch_pruning_gene_index)
 {
-    // Copy all other genes
     for(const auto& gene : other.genome)
     {
         genome.emplace_back(gene->duplicate());
@@ -100,7 +96,6 @@ Genome::Genome(const Genome& A, const Genome& B) :
     look_ahead_gene_index(A.look_ahead_gene_index),
     branch_pruning_gene_index(A.branch_pruning_gene_index)
 {
-    // Copy all other genes
     for(size_t i = 0; i < A.genome.size(); ++i)
     {
         auto& donor = (Random::coin_flip() ? A : B);
