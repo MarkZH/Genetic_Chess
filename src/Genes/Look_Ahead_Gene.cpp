@@ -13,6 +13,7 @@ Look_Ahead_Gene::Look_Ahead_Gene() :
     positions_per_second(0.01),
     speculation_constant(0.0)
 {
+    recalculate_exponent();
 }
 
 void Look_Ahead_Gene::reset_properties() const
@@ -27,6 +28,7 @@ void Look_Ahead_Gene::load_properties()
     mean_game_length = properties["Mean Game Length"];
     positions_per_second = properties["Positions Per Second"];
     speculation_constant = properties["Speculation Constant"];
+    recalculate_exponent();
 }
 
 Look_Ahead_Gene::~Look_Ahead_Gene()
@@ -63,6 +65,7 @@ void Look_Ahead_Gene::gene_specific_mutation()
             speculation_constant += Random::random_normal(0.1);
             speculation_constant = std::max(speculation_constant, 0.0);
             speculation_constant = std::min(speculation_constant, 1.0);
+            recalculate_exponent();
             break;
         default:
             throw std::runtime_error("Bad Look_Ahead_Gene mutation: " + std::to_string(choice));
@@ -103,7 +106,7 @@ bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& 
     // without recursion, then it should still recurse with a probability that is a
     // function of the ratio of the time allotted to time needed. The speculation_constant
     // specifies how often this should happen, with 0 being never and 1 being always
-    // (see the recalculate_speculation_exponent() function for the math).
+    // (see the recalculate_exponent() function for the math).
 
     auto base = time_allotted/minimum_time_to_recurse(board);
 
@@ -117,25 +120,32 @@ bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& 
         return true;
     }
 
+    return Random::success_probability(std::pow(base, speculation_exponent));
+}
+
+void Look_Ahead_Gene::recalculate_exponent()
+{
+    if(speculation_constant > 0.0)
+    {
+        speculation_exponent = (1.0 - speculation_constant)/speculation_constant;
+    }
+    else
+    {
+        speculation_exponent = Math::infinity;
+    }
 
     // constant = 0.0 ==> exponent = infinity
     // constant = 0.5 ==> exponent = 1
     // constant = 1.0 ==> exponent = 0
+    //
+    // Additionally, the function is symmetric about constant = 0.5:
+    //    constant --> 1 - constant ==> exponent --> 1/exponent
     //
     // This results in a value of the std::pow() expression in enough_time_to_recurse()
     //
     //    value = (0 < base < 1)^exponent
     //
     // Large exponents result in values near zero, which means recursion with little time
-    // has little probability.
-    double speculation_exponent;
-    if(speculation_constant > 0.0)
-    {
-        speculation_exponent = (1 - speculation_constant)/speculation_constant;
-    }
-    else
-    {
-        speculation_exponent = std::numeric_limits<double>::infinity();
-    }
-    return Random::success_probability(std::pow(base, speculation_exponent));
+    // has little probability. Small exponents result in values near 1, so recursion with
+    // little time is more likely.
 }
