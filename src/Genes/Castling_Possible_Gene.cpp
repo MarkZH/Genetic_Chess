@@ -5,8 +5,26 @@
 #include "Game/Board.h"
 #include "Game/Color.h"
 
+#include "Utility.h"
+
+Castling_Possible_Gene::Castling_Possible_Gene() : kingside_preference(0.5)
+{
+}
+
 Castling_Possible_Gene::~Castling_Possible_Gene()
 {
+}
+
+void Castling_Possible_Gene::reset_properties() const
+{
+    Gene::reset_properties();
+    properties["Kingside Preference"] = kingside_preference;
+}
+
+void Castling_Possible_Gene::load_properties()
+{
+    Gene::load_properties();
+    kingside_preference = properties["Kingside Preference"];
 }
 
 Castling_Possible_Gene* Castling_Possible_Gene::duplicate() const
@@ -37,14 +55,19 @@ double Castling_Possible_Gene::score_board(const Board& board, Color perspective
         return score;
     }
 
-    if( ! board.piece_has_moved('a', base_rank)) // queenside rook
+    if( ! board.piece_has_moved('h', base_rank)) // kingside rook
     {
-        score += 0.5;
+        score += kingside_preference;
     }
 
-    if( ! board.piece_has_moved('h', base_rank))  // kingside rook
+    if( ! board.piece_has_moved('a', base_rank))  // queenside rook
     {
-        score += 0.5;
+        score += (1.0 - kingside_preference);
     }
     return score;
+}
+
+void Castling_Possible_Gene::gene_specific_mutation()
+{
+    kingside_preference += Random::random_normal(0.05);
 }

@@ -95,7 +95,7 @@ $(DEBUG_OBJ_DIR)/src/Game/Game.o : include/Game/Game.h include/Game/Color.h src/
 $(DEBUG_OBJ_DIR)/src/Genes/Branch_Pruning_Gene.o : include/Genes/Branch_Pruning_Gene.h include/Genes/Gene.h src/Genes/Branch_Pruning_Gene.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Branch_Pruning_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Branch_Pruning_Gene.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h
+$(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Castling_Possible_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : include/Genes/Freedom_To_Move_Gene.h include/Genes/Gene.h src/Genes/Freedom_To_Move_Gene.cpp include/Game/Board.h include/Pieces/Piece.h
@@ -254,7 +254,7 @@ $(RELEASE_OBJ_DIR)/src/Game/Game.o : include/Game/Game.h include/Game/Color.h sr
 $(RELEASE_OBJ_DIR)/src/Genes/Branch_Pruning_Gene.o : include/Genes/Branch_Pruning_Gene.h include/Genes/Gene.h src/Genes/Branch_Pruning_Gene.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Branch_Pruning_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Branch_Pruning_Gene.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h
+$(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Castling_Possible_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : include/Genes/Freedom_To_Move_Gene.h include/Genes/Gene.h src/Genes/Freedom_To_Move_Gene.cpp include/Game/Board.h include/Pieces/Piece.h
