@@ -71,7 +71,7 @@ void Gene::mutate()
         priority += Random::random_normal(10.0);
         if(priority_non_negative)
         {
-            priority = std::abs(priority);
+            priority = std::max(priority, 0.0);
         }
         gene_specific_mutation();
     }
