@@ -15,7 +15,7 @@ class Piece
         explicit Piece(Color color_in);
         Piece(const Piece&) = delete;
         Piece& operator=(const Piece&) = delete;
-        virtual ~Piece();
+        virtual ~Piece() = 0;
 
         virtual std::string pgn_symbol() const;
         char fen_symbol() const;
