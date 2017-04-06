@@ -336,6 +336,9 @@ void run_tests()
     std::cout << std::setw(int_width) << "Integers"
               << std::setw(real_width) << "Reals"
               << std::setw(norm_width) << "Normals" << '\n';
+    std::cout << std::setw(int_width) << "+/-1000"
+              << std::setw(real_width) << "[0-2]"
+              << std::setw(norm_width) << "sig = 3" << '\n';
     for(int i = 0; i < 10; ++i)
     {
         std::cout << std::setw(int_width) << Random::random_integer(-1000, 1000)
