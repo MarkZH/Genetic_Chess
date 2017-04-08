@@ -278,12 +278,35 @@ void gene_pool(const std::string& config_file = "")
                 if(Random::success_probability(draw_kill_probability))
                 {
                     auto& pseudo_winner = (Random::coin_flip() ? white : black);
-                    std::cout << pseudo_winner.get_id() << " mates with random";
+                    std::cout << pseudo_winner.get_id() << " mates with ";
                     auto new_specimen = Genetic_AI();
-                    for(int i = 0; i < 100; ++i)
+
+                    if(Random::coin_flip() && pseudo_winner.get_id() > 0)
                     {
-                        new_specimen.mutate();
+                        while(true)
+                        {
+                            try
+                            {
+                                new_specimen = Genetic_AI(genome_file_name,
+                                                          Random::random_integer(0, pseudo_winner.get_id() - 1));
+                                break;
+                            }
+                            catch(const std::runtime_error&)
+                            {
+                                continue;
+                            }
+                        }
+                        std::cout << new_specimen.get_id();
                     }
+                    else
+                    {
+                        for(int i = 0; i < 100; ++i)
+                        {
+                            new_specimen.mutate();
+                        }
+                        std::cout << "random";
+                    }
+
                     auto offspring = Genetic_AI(pseudo_winner, new_specimen);
                     offspring.mutate();
                     new_blood[pool_index].push_back(offspring);
