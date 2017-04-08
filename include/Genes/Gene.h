@@ -14,7 +14,7 @@ class Gene
 {
     public:
         Gene();
-        virtual ~Gene();
+        virtual ~Gene() = 0;
 
         void read_from(std::istream& is);
 
