@@ -11,10 +11,8 @@
 #include "Pieces/Bishop.h"
 #include "Pieces/Queen.h"
 
-Pawn::Pawn(Color color_in) : Piece(color_in)
+Pawn::Pawn(Color color_in) : Piece(color_in, "P")
 {
-    symbol = "P";
-
     possible_moves.emplace_back(std::make_unique<Pawn_Move>(my_color));
     possible_moves.emplace_back(std::make_unique<Pawn_Double_Move>(my_color));
 

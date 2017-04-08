@@ -5,11 +5,8 @@
 #include "Moves/Move.h"
 
 
-Knight::Knight(Color color_in) : Piece(color_in)
+Knight::Knight(Color color_in) : Piece(color_in, "N")
 {
-    symbol = "N";
-
-    // possible moves
     for(int d_file = -2; d_file <= 2; ++d_file)
     {
         if(d_file == 0) { continue; }

@@ -1,9 +1,7 @@
 #include "Pieces/Rook.h"
 
-Rook::Rook(Color color_in) : Piece(color_in)
+Rook::Rook(Color color_in) : Piece(color_in, "R")
 {
-    symbol = "R";
-    // possible moves
     for(int d_file = -1; d_file <= 1; ++d_file)
     {
         for(int d_rank = -1; d_rank <= 1; ++d_rank)

@@ -2,11 +2,8 @@
 #include "Pieces/Piece.h"
 #include "Game/Color.h"
 
-Bishop::Bishop(Color color_in) : Piece(color_in)
+Bishop::Bishop(Color color_in) : Piece(color_in, "B")
 {
-    symbol = "B";
-
-    // possible moves
     for(int d_rank : {-1, 1})
     {
         for(int d_file : {-1, 1})

@@ -3,11 +3,8 @@
 #include "Moves/Kingside_Castle.h"
 #include "Moves/Queenside_Castle.h"
 
-King::King(Color color_in) : Piece(color_in)
+King::King(Color color_in) : Piece(color_in, "K")
 {
-    symbol = "K";
-
-    // possible mvoes
     for(int d_rank = -1; d_rank <= 1; ++d_rank)
     {
         for(int d_file = -1; d_file <= 1; ++d_file)

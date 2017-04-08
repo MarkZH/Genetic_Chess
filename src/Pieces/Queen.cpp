@@ -3,10 +3,8 @@
 #include "Pieces/Piece.h"
 #include "Moves/Move.h"
 
-Queen::Queen(Color color_in) : Piece(color_in)
+Queen::Queen(Color color_in) : Piece(color_in, "Q")
 {
-    symbol = "Q";
-
     for(int d_file = -1; d_file <= 1; ++d_file)
     {
         for(int d_rank = -1; d_rank <= 1; ++d_rank)

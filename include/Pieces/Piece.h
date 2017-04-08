@@ -12,7 +12,7 @@
 class Piece
 {
     public:
-        explicit Piece(Color color_in);
+        Piece(Color color_in, const std::string& symbol);
         Piece(const Piece&) = delete;
         Piece& operator=(const Piece&) = delete;
         virtual ~Piece() = 0;
