@@ -6,9 +6,9 @@
 #include "Game/Board.h"
 #include "Exceptions/Illegal_Move_Exception.h"
 
-Piece::Piece(Color color_in, const std::string& symbol) :
+Piece::Piece(Color color_in, const std::string& symbol_in) :
     my_color(color_in),
-    symbol(symbol)
+    symbol(symbol_in)
 {
 }
 
