@@ -13,6 +13,7 @@
 #include "Players/Outside_Player.h"
 
 #include "Genes/Gene_Pool.h"
+#include "Stalemate_Search.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
 #include "Exceptions/Game_Ending_Exception.h"
@@ -59,6 +60,10 @@ int main(int argc, char *argv[])
                     std::cout << "Provide a file containing a game to replay." << std::endl;
                     return 1;
                 }
+            }
+            else if(std::string(argv[1]) == "-stalemate")
+            {
+                stalemate_search_start();
             }
             else
             {
