@@ -215,6 +215,8 @@ void print_help()
               << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name." << std::endl << std::endl
               << "\t-replay [filename]" << std::endl
               << "\t\tStep through a PGN game file, drawing the board after each\n\t\tmove with an option to begin playing at any time." << std::endl << std::endl
+              << "\t-stalemate" << std::endl
+              << "\t\tBegin a search for the shortest possible stalemate--i.e., where\n\t\tthe player to move has no legal moves. Estimated time to\n\t\tcompletion: months." << std::endl << std::endl
               << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying." << std::endl << std::endl
               << "\t-human" << std::endl
               << "\t\tSpecify a human player for a game." << std::endl << std::endl
@@ -222,8 +224,9 @@ void print_help()
               << "\t\tSpecify a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file." << std::endl << std::endl
               << "\t-random" << std::endl
               << "\t\tSpecify a player that makes random moves for a game." << std::endl << std::endl
+              << "Other game options:" << std::endl << std::endl
               << "\t-time [number]" << std::endl
-              << "\t\tSpecify the time each player has to play the game or to make\n\t\ta set number of moves (see -reset_moves option)." << std::endl << std::endl
+              << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option)." << std::endl << std::endl
               << "\t-reset_moves [number]" << std::endl
               << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock resets to the initial time every time this\n\t\tnumber of moves is made." << std::endl << std::endl
               << "\t-increment_time [number]" << std::endl
