@@ -227,7 +227,7 @@ void gene_pool(const std::string& config_file = "")
             auto& white = pool[pool_indices[index]];
             auto& black = pool[pool_indices[index + 1]];
 
-            std::cout << "Result of " << white.get_id() << " vs. "
+            std::cout << "Result of " << white.get_id() << " vs "
                                       << black.get_id() << ": " << std::flush;
 
             auto winner = results[index/2].get();
