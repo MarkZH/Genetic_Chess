@@ -1,6 +1,12 @@
 #include "Pieces/Bishop.h"
+
+#include <vector>
+#include <string>
+#include <memory>
+
 #include "Pieces/Piece.h"
 #include "Game/Color.h"
+#include "Moves/Move.h"
 
 Bishop::Bishop(Color color_in) : Piece(color_in, "B")
 {

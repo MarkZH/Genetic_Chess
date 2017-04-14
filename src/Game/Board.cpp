@@ -11,6 +11,7 @@
 #include "Pieces/Queen.h"
 
 #include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
 #include "Exceptions/Checkmate_Exception.h"
@@ -184,24 +185,21 @@ Color Board::square_color(char file, int rank)
     return (file - 'a') % 2 == (rank - 1) % 2 ? BLACK : WHITE;
 }
 
-bool Board::is_legal(const Complete_Move& move, bool king_check) const
-{
-    return is_legal(move.starting_file, move.starting_rank, move.move, king_check);
-}
-
-bool Board::is_legal(char file_start, int rank_start, const Move* move, bool king_check) const
-{
-    return move && move->is_legal(*this, file_start, rank_start, king_check);
-}
-
 bool Board::is_legal(char file_start, int rank_start,
-                     char file_end,   int rank_end, bool king_check) const
+                     char file_end,   int rank_end) const
 {
-    // Find move that moves piece from start square to end square
-    auto piece = view_piece_on_square(file_start, rank_start);
-    return piece && piece->get_legal_moves(*this, file_start, rank_start,
-                                                  file_end,   rank_end,
-                                                  king_check).size() > 0;
+    for(const auto& move : all_legal_moves())
+    {
+        if(move.start_file() == file_start &&
+           move.start_rank() == rank_start &&
+           move.end_file() == file_end &&
+           move.end_rank() == rank_end)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 std::string Board::fen_status() const
@@ -285,16 +283,27 @@ std::string Board::fen_status() const
 
 Complete_Move Board::get_complete_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
 {
-    auto piece = view_piece_on_square(file_start, rank_start);
-    if( ! piece)
+    std::vector<Complete_Move> move_list;
+    for(const auto& move : all_legal_moves())
     {
-        throw Illegal_Move_Exception("No piece on square " +
-                                     std::string(1, file_start) +
-                                     std::to_string(rank_start));
+        if(move.start_file() == file_start &&
+           move.start_rank() == rank_start &&
+           move.end_file() == file_end &&
+           move.end_rank() == rank_end)
+        {
+            if(promote)
+            {
+                if(move.name().back() == promote)
+                {
+                    return move;
+                }
+            }
+            else
+            {
+                move_list.push_back(move);
+            }
+        }
     }
-
-    auto move_list = piece->get_legal_moves(*this, file_start, rank_start,
-                                                   file_end,   rank_end, true, promote);
 
     if(move_list.empty())
     {
@@ -309,19 +318,7 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
 
     if(move_list.size() == 1)
     {
-        return {move_list.front(), file_start, rank_start};
-    }
-    else if(promote)
-    {
-        for(const auto& move : move_list)
-        {
-            if(tolower(move->name().back()) == tolower(promote))
-            {
-                return {move, file_start, rank_start};
-            }
-        }
-
-        throw Illegal_Move_Exception("No suitable promotion to " + std::string(1, promote));
+        return move_list.front();
     }
     else
     {
@@ -331,60 +328,38 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
 
 void Board::submit_move(const Complete_Move& cm)
 {
-    submit_move(cm.starting_file, cm.starting_rank, cm.move);
-}
-
-void Board::submit_move(char file_start, int rank_start, const Move* move)
-{
-    if( ! is_legal(file_start, rank_start, move, true))
+    Scoped_Stopwatch watch("submit_move");
+    if(std::find(all_legal_moves().begin(),
+                 all_legal_moves().end(),
+                 cm) == all_legal_moves().end()) // submitted move not found in legal list
     {
-        throw Illegal_Move_Exception("Illegal move: ." +
-                                     std::string(1, file_start) + "." +
-                                     std::to_string(rank_start) +
-                                     " " +
-                                     move->name());
+        throw Illegal_Move_Exception("Illegal move: ." + cm.game_record_item(*this));
     }
 
     if(game_record.empty() && whose_turn() == BLACK)
     {
-        game_record.push_back("...");
+        game_record.push_back({});
     }
-    game_record.push_back(move->game_record_item(*this, file_start, rank_start));
-    last_move_in_coordinates = move->coordinate_move(file_start, rank_start);
+    game_record.push_back(cm.coordinate_move());
 
-    make_move(file_start,                       rank_start,
-              file_start + move->file_change(), rank_start + move->rank_change());
-    move->side_effects(*this, file_start, rank_start);
+    make_move(cm.start_file(), cm.start_rank(),
+              cm.end_file(),   cm.end_rank());
+    cm.side_effects(*this);
 
     clear_caches();
-
-    if(king_is_in_check(opposite(turn_color)))
-    {
-        game_record.back().append("+");
-    }
 
     turn_color = opposite(turn_color);
 
     if(no_legal_moves())
     {
-        if(game_record.back().back() == '+') // king in check
+        if(king_is_in_check(whose_turn())) // king in check
         {
-            game_record.back().back() = '#';
             set_winner(opposite(whose_turn()));
-            if(get_winner() == WHITE)
-            {
-                game_record.back().append("\t1-0");
-            }
-            else
-            {
-                game_record.back().append("\t0-1");
-            }
             game_ended = true;
             throw Checkmate_Exception(opposite(whose_turn()));
         }
         else
         {
-            game_record.back().append("\t1/2-1/2");
             game_ended = true;
             throw Stalemate_Exception("Stalemate");
         }
@@ -392,7 +367,6 @@ void Board::submit_move(char file_start, int rank_start, const Move* move)
 
     if(++repeat_count[board_status()] >= 3)
     {
-        game_record.back().append("\t1/2-1/2");
         game_ended = true;
         throw Stalemate_Exception("Threefold repetition");
     }
@@ -404,14 +378,12 @@ void Board::submit_move(char file_start, int rank_start, const Move* move)
     }
     if(fifty_move_count >= 100) // "Move" means both players move.
     {
-        game_record.back().append("\t1/2-1/2");
         game_ended = true;
         throw Stalemate_Exception("50-move limit");
     }
 
     if( ! enough_material_to_checkmate())
     {
-        game_record.back().append("\t1/2-1/2");
         game_ended = true;
         throw Stalemate_Exception("Insufficient material");
     }
@@ -456,7 +428,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
         }
     }
 
-    if(validated.empty())
+    if(validated.size() < 2)
     {
         throw Illegal_Move_Exception(move + " does not specify a valid move.");
     }
@@ -479,13 +451,6 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
     char starting_file = 0;
     int  starting_rank = 0;
 
-    char ending_file = validated[validated.size() - 2];
-    int  ending_rank = validated[validated.size() - 1] - '0';
-    if( ! inside_board(ending_file, ending_rank))
-    {
-        throw Illegal_Move_Exception("Illegal text move: " + move);
-    }
-
     if(validated.size() == 5 && ! piece_symbol.empty()) // Bb2c3
     {
         starting_file = validated[1];
@@ -502,7 +467,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
             starting_file = validated[1];
         }
     }
-    else if((validated.size() == 3 || validated.size() == 2) && piece_symbol.empty()) // Pawn move/capture de5 (dxe5)
+    else if(validated.size() <= 3 && piece_symbol.empty()) // Pawn move/capture de5 (dxe5)
     {
         starting_file = validated.front();
     }
@@ -511,7 +476,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
         // No PGN-style move works, try coordinate move (e.g., e7e8q)
         if(move.size() < 4 || move.size() > 5)
         {
-            throw Illegal_Move_Exception("Illegal text move: " + move);
+            throw Illegal_Move_Exception("Illegal text move (wrong length): " + move);
         }
 
         char start_file = move[0];
@@ -525,7 +490,14 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
 
         return get_complete_move(start_file, start_rank, end_file, end_rank, promoted_piece);
     }
+
     // else normal PGN-style piece movement
+    char ending_file = validated[validated.size() - 2];
+    int  ending_rank = validated[validated.size() - 1] - '0';
+    if( ! inside_board(ending_file, ending_rank))
+    {
+        throw Illegal_Move_Exception("Illegal text move (out of board): " + move);
+    }
 
     char file_search_start = (starting_file == 0 ? 'a' : starting_file);
     char file_search_end   = (starting_file == 0 ? 'h' : starting_file);
@@ -540,7 +512,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
             auto piece = view_piece_on_square(file, rank);
             if(piece &&
                piece->pgn_symbol() == piece_symbol &&
-               is_legal(file, rank, ending_file, ending_rank, true))
+               is_legal(file, rank, ending_file, ending_rank))
             {
                 if(starting_file == 0 || starting_rank == 0)
                 {
@@ -590,7 +562,7 @@ const std::vector<Complete_Move>& Board::all_legal_moves() const
 
     for(const auto& complete_move : all_moves())
     {
-        if(is_legal(complete_move))
+        if(complete_move.is_legal(*this))
         {
             all_legal_moves_cache.push_back(complete_move);
         }
@@ -838,20 +810,29 @@ void Board::print_game_record(const std::string& white_name,
 {
     std::string result;
     std::string termination;
-    if( ! outside_result.empty())
+    if(outside_result.empty())
+    {
+        if(game_has_ended())
+        {
+            if(get_winner() == WHITE)
+            {
+                result = "1-0";
+            }
+            else if(get_winner() == BLACK)
+            {
+                result = "0-1";
+            }
+            else
+            {
+                result = "1/2-1/2";
+            }
+        }
+    }
+    else
     {
         auto split = String::split(outside_result, " ", 1);
         result = split[0];
         termination = split[1];
-    }
-
-    if( ! game_record.empty())
-    {
-        auto tab_split = String::split(game_record.back(), "\t", 1);
-        if(tab_split.size() > 1)
-        {
-            result = tab_split[1];
-        }
     }
 
     std::ofstream ofs(file_name, std::ios::app);
@@ -868,30 +849,51 @@ void Board::print_game_record(const std::string& white_name,
     {
         out_stream << "[Round \"" << game_number << "\"]\n";
     }
-    out_stream << "[Result \"" << result << "\"]\n";
+    if( ! result.empty())
+    {
+        out_stream << "[Result \"" << result << "\"]\n";
+    }
     if( ! termination.empty())
     {
         out_stream << "[Termination \"" << termination << "\"]\n";
     }
 
-    Color c = WHITE;
+    Board temp;
     for(size_t i = 0; i < std::max(game_record.size(), game_commentary.size()); ++i)
     {
         if(i < game_record.size())
         {
-            auto step = (i + 2)/2;
-            if(c == WHITE)
+            if(temp.whose_turn() == WHITE)
             {
+                auto step = (i + 2)/2;
                 out_stream << '\n' << step << ".";
             }
-            out_stream << " " << game_record.at(i);
+            out_stream << " " << temp.get_complete_move(game_record.at(i)).game_record_item(temp);
         }
 
         if(i < game_commentary.size() && ! game_commentary.at(i).empty())
         {
-            out_stream << " { " << String::trim_outer_whitespace(game_commentary.at(i)) << " }";
+            auto comment_board = temp;
+            out_stream << " { ";
+            for(const auto& variation : game_commentary.at(i))
+            {
+                auto cm = comment_board.get_complete_move(variation);
+                out_stream << cm.game_record_item(comment_board) << " ";
+                comment_board.submit_move(cm);
+            }
+            out_stream << "}";
         }
-        c = opposite(c);
+
+        if(i < game_record.size() - 1)
+        {
+            try
+            {
+                temp.submit_move(temp.get_complete_move(game_record.at(i)));
+            }
+            catch(const Game_Ending_Exception& gee)
+            {
+            }
+        }
     }
     out_stream << '\n';
 }
@@ -937,7 +939,7 @@ void Board::set_winner(Color color)
 
 std::string Board::last_move_coordinates() const
 {
-    return last_move_in_coordinates;
+    return game_record.back();
 }
 
 void Board::set_turn(Color color)
@@ -1036,11 +1038,11 @@ bool Board::game_has_ended() const
     return game_ended;
 }
 
-void Board::add_commentary_to_next_move(const std::string& comment) const
+void Board::add_commentary_to_next_move(const std::vector<std::string>& comment) const
 {
     while(game_commentary.size() < game_record.size())
     {
-        game_commentary.push_back("");
+        game_commentary.push_back({});
     }
     game_commentary.push_back(comment);
 }
@@ -1130,3 +1132,16 @@ bool Board::enough_material_to_checkmate() const
     return false;
 }
 
+std::string Board::get_last_move_record() const
+{
+    Board b;
+    std::string result;
+    for(const auto& move : get_game_record())
+    {
+        auto cm = b.get_complete_move(move);
+        result = cm.game_record_item(b);
+        b.submit_move(cm);
+    }
+
+    return result;
+}

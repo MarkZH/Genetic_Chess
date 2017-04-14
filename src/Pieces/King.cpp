@@ -1,5 +1,12 @@
 #include "Pieces/King.h"
 
+#include <vector>
+#include <string>
+#include <memory>
+
+#include "Pieces/Piece.h"
+#include "Game/Color.h"
+#include "Moves/Move.h"
 #include "Moves/Kingside_Castle.h"
 #include "Moves/Queenside_Castle.h"
 

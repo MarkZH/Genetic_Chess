@@ -1,4 +1,13 @@
 #include "Pieces/Pawn.h"
+
+#include <vector>
+#include <string>
+#include <memory>
+
+#include "Pieces/Piece.h"
+#include "Game/Color.h"
+
+#include "Moves/Move.h"
 #include "Moves/Pawn_Move.h"
 #include "Moves/Pawn_Capture.h"
 #include "Moves/Pawn_Double_Move.h"

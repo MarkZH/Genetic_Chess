@@ -5,7 +5,7 @@
 #include "Utility.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 
 
 Look_Ahead_Gene::Look_Ahead_Gene() :

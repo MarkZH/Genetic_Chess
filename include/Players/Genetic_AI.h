@@ -6,13 +6,14 @@
 
 #include "Player.h"
 
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 #include "Game/Color.h"
 
 #include "Genes/Genome.h"
 
 class Board;
 class Clock;
+class Complete_Move;
 
 struct Game_Tree_Node_Result
 {
@@ -20,7 +21,7 @@ struct Game_Tree_Node_Result
     double score;
     Color perspective;
     size_t depth;
-    std::string commentary;
+    std::vector<std::string> commentary;
 
     double corrected_score(Color query) const
     {

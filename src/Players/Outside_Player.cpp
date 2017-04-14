@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
 

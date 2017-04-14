@@ -21,11 +21,6 @@ class Piece
         char fen_symbol() const;
         std::string ascii_art(unsigned int row) const;
         Color color() const;
-        std::vector<const Move*> get_legal_moves(const Board& board,
-                                                 char file_start, int rank_start,
-                                                 char file_end,   int rank_end,
-                                                 bool king_check,
-                                                 char promote = '\0') const;
 
         bool can_move(const Move* move) const;
 

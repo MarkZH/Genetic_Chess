@@ -6,9 +6,9 @@
 #include <string>
 #include <memory>
 
+#include "Moves/Complete_Move.h"
+
 class Piece;
-class Move;
-struct Complete_Move;
 
 struct Square
 {
@@ -33,11 +33,6 @@ class Board
         Board();
         explicit Board(const std::string& fen); // reproduce board from Forsythe-Edwards Notation string
 
-        bool is_legal(char file_start, int rank_start, const Move* move, bool king_check = true) const;
-        bool is_legal(const Complete_Move& move, bool king_check = true) const;
-        bool is_legal(char file_start, int rank_start, char file_end, int rank_end, bool king_check = true) const;
-
-        void submit_move(char file_start, int rank_start, const Move* move);
         void submit_move(const Complete_Move& cm);
 
         Complete_Move get_complete_move(const std::string& move, char promote = 0) const;
@@ -49,6 +44,7 @@ class Board
 
         std::string fen_status() const; // current state of board in FEN
         const std::vector<std::string>& get_game_record() const;
+        std::string get_last_move_record() const;
 
         // With commentary
         void print_game_record(const std::string& white_name = "",
@@ -79,20 +75,19 @@ class Board
 
         bool game_has_ended() const;
 
-        void add_commentary_to_next_move(const std::string& comment) const;
+        void add_commentary_to_next_move(const std::vector<std::string>& comment) const;
 
     private:
         std::vector<std::shared_ptr<const Piece>> board;
         std::map<std::string, int> repeat_count;
         Color turn_color;
         std::vector<std::string> game_record;
-        mutable std::vector<std::string> game_commentary;
+        mutable std::vector<std::vector<std::string>> game_commentary;
         Color winner;
         std::map<const Piece*, bool> piece_moved;
         char en_passant_target_file;
         int en_passant_target_rank;
         bool game_ended;
-        std::string last_move_in_coordinates;
 
         // Caches
         mutable std::vector<Complete_Move> all_moves_cache;
@@ -112,6 +107,8 @@ class Board
         bool enough_material_to_checkmate() const;
         static Color square_color(char file, int rank);
         static size_t board_index(char file, int rank);
+        bool is_legal(char file_start, int rank_start,
+                      char file_end,   int rank_end) const;
 
         // Moves with side effects
         friend class Kingside_Castle; // moves second piece

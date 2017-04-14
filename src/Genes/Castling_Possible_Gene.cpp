@@ -39,15 +39,24 @@ std::string Castling_Possible_Gene::name() const
 
 double Castling_Possible_Gene::score_board(const Board& board, Color perspective) const
 {
-    for(size_t i = (perspective == WHITE ? 0 : 1); i < board.get_game_record().size(); i += 2)
+    auto base_rank = (perspective == WHITE ? 1 : 8);
+    auto starting_king_square = 'e' + std::to_string(base_rank);
+    auto kingside_move = starting_king_square + 'g' + starting_king_square.back();
+    auto queenside_move = starting_king_square + 'c' + starting_king_square.back();
+    const auto& game_record = board.get_game_record();
+    for(size_t i = (perspective == WHITE ? 0 : 1); i < game_record.size(); i += 2)
     {
-        if(board.get_game_record().at(i).front() == 'O') // already castled
+        if(game_record[i] == kingside_move || game_record[i] == queenside_move)
         {
             return 1.0;
         }
+
+        if(String::starts_with(game_record[i], starting_king_square))
+        {
+            break;
+        }
     }
 
-    auto base_rank = perspective == WHITE ? 1 : 8;
     auto score = 0.0;
 
     if(board.piece_has_moved('e', base_rank)) // king

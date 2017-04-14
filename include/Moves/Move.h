@@ -19,7 +19,7 @@ class Move
         // pawn move, etc.)
         virtual void side_effects(Board& board, char file_start, int rank_start) const;
 
-        // Contains extra rules for special moves (first move for double pawn move, etc.)
+        // Contains rules for move
         bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const;
 
         // Can this move capture a piece?
@@ -33,38 +33,14 @@ class Move
         virtual std::string game_record_item(const Board& board, char file_start, int rank_start) const;
         virtual std::string coordinate_move(char file_stat, int rank_start) const;
 
+        bool operator==(const Move& other) const;
+
     protected:
         int d_file;
         int d_rank;
 
     private:
         virtual bool move_specific_legal(const Board& board, char file_start, int rank_start) const;
-};
-
-struct Complete_Move
-{
-    Complete_Move(const Move* move_in, char file, int rank) :
-        move(move_in),
-        starting_file(file),
-        starting_rank(rank)
-    {
-    }
-
-    Complete_Move() :
-        move(),
-        starting_file('\0'),
-        starting_rank(0)
-    {
-    }
-
-    std::string game_record_item(const Board& board) const
-    {
-        return move->game_record_item(board, starting_file, starting_rank);
-    }
-
-    const Move* move;
-    char starting_file;
-    int  starting_rank;
 };
 
 #endif // MOVE_H

@@ -8,7 +8,7 @@
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Color.h"
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 #include "Exceptions/Game_Ending_Exception.h"
 #include "Exceptions/Out_Of_Time_Exception.h"
 

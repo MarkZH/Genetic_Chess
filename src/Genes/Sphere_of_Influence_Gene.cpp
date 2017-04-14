@@ -3,7 +3,7 @@
 #include <algorithm>
 
 #include "Game/Board.h"
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 
 #include "Utility.h"
 
@@ -51,15 +51,15 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
         for(const auto& cm : move_list)
         {
             // Only potentially capturing moves are counted
-            if( ! cm.move->can_capture())
+            if( ! cm.can_capture())
             {
                 continue;
             }
 
-            char final_file = cm.starting_file + cm.move->file_change();
-            int  final_rank = cm.starting_rank + cm.move->rank_change();
+            char final_file = cm.end_file();
+            int  final_rank = cm.end_rank();
 
-            if(cm.move->name()[0] == 'E')
+            if(cm.name()[0] == 'E')
             {
                 if(temp.is_en_passant_targetable(final_file, final_rank))
                 {

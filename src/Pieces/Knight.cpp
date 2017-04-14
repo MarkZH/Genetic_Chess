@@ -1,7 +1,12 @@
 #include "Pieces/Knight.h"
 
 #include <cmath>
+#include <vector>
+#include <string>
+#include <memory>
 
+#include "Pieces/Piece.h"
+#include "Game/Color.h"
 #include "Moves/Move.h"
 
 

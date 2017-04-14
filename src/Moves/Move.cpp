@@ -172,20 +172,20 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
 
     if(record_file)
     {
-        move_record.append(std::string(1, file_start));
+        move_record += file_start;
     }
     if(record_rank)
     {
-        move_record.append(std::to_string(rank_start));
+        move_record += std::to_string(rank_start);
     }
 
     if(board.view_piece_on_square(file_end, rank_end))
     {
-        move_record.append("x");
+        move_record += 'x';
     }
 
-    move_record.push_back(file_end);
-    move_record.append(std::to_string(rank_end));
+    move_record += file_end;
+    move_record += std::to_string(rank_end);
 
     return move_record;
 }
@@ -196,4 +196,11 @@ std::string Move::coordinate_move(char file_start, int rank_start) const
            + std::to_string(rank_start)
            + char(file_start + file_change())
            + std::to_string(rank_start + rank_change());
+}
+
+bool Move::operator==(const Move& other) const
+{
+    return file_change() == other.file_change() &&
+           rank_change() == other.rank_change() &&
+           name() == other.name();
 }

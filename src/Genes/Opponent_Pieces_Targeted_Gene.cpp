@@ -3,6 +3,7 @@
 #include "Genes/Piece_Strength_Gene.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
+#include "Moves/Complete_Move.h"
 #include "Utility.h"
 
 Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene) :
@@ -24,16 +25,13 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
 
     for(const auto& complete_move : hypothetical.all_legal_moves())
     {
-        if( ! complete_move.move->can_capture())
+        if( ! complete_move.can_capture())
         {
             continue;
         }
-        auto start_file = complete_move.starting_file;
-        auto start_rank = complete_move.starting_rank;
-        auto move = complete_move.move;
-        auto end_file = start_file + move->file_change();
-        auto end_rank = start_rank + move->rank_change();
-        if(move->name().front() == 'E') // En passant capture
+        auto end_file = complete_move.end_file();
+        auto end_rank = complete_move.end_rank();
+        if(complete_move.name().front() == 'E') // En passant capture
         {
             end_rank += (hypothetical.whose_turn() == WHITE ? -1 : 1);
         }

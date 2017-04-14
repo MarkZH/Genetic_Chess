@@ -10,7 +10,7 @@
 #include <chrono>
 
 #include "Game/Board.h"
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 #include "Exceptions/Game_Ending_Exception.h"
 
 std::vector<std::string> search_stalemate(const Board& board, int max_depth);
@@ -28,9 +28,12 @@ void stalemate_search_start()
                   << " seconds." << std::endl;
         if( ! result.empty())
         {
+            Board b;
             for(const auto& item : result)
             {
-                std::cout << item << " ";
+                auto move = b.get_complete_move(item);
+                std::cout << move.game_record_item(b) << " ";
+                b.submit_move(move);
             }
             std::cout << std::endl;
             break;

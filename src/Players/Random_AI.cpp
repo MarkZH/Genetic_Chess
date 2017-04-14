@@ -3,7 +3,8 @@
 #include <vector>
 
 #include "Game/Board.h"
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
+
 class Clock;
 
 #include "Exceptions/Illegal_Move_Exception.h"

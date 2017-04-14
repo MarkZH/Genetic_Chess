@@ -6,7 +6,7 @@
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
 #include "Exceptions/Promotion_Exception.h"
@@ -45,7 +45,7 @@ const Complete_Move Human_Player::choose_move(const Board& board, const Clock& c
             std::cout << "Last move: "
                       << int(std::ceil(board.get_game_record().size()/2.0)) << ". "
                       << (board.whose_turn() == WHITE ? "... " : "")
-                      << board.get_game_record().back() << "  |  ";
+                      << board.get_last_move_record() << "  |  ";
         }
         std::cout << "Time: " << clock.time_left(board.whose_turn()) << std::endl;
         std::cout << "Enter move: ";

@@ -9,7 +9,7 @@
 #include <iomanip>
 
 #include "Game/Board.h"
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 #include "Players/Genetic_AI.h"
 #include "Game/Clock.h"
 
@@ -226,12 +226,12 @@ void run_tests()
                                 10,
                                 WHITE,
                                 2,
-                                ""};
+                                {}};
     Game_Tree_Node_Result r2 = {Complete_Move(),
                                 10,
                                 BLACK,
                                 2,
-                                ""};
+                                {}};
 
     if(better_than(r2, r1, WHITE))
     {
@@ -249,13 +249,13 @@ void run_tests()
                                          -Math::infinity,
                                          WHITE,
                                          0,
-                                         ""};
+                                         {}};
 
     Game_Tree_Node_Result beta_start = {Complete_Move(),
                                         Math::infinity,
                                         WHITE,
                                         0,
-                                        ""};
+                                        {}};
     if(better_than(alpha_start, beta_start, WHITE))
     {
         std::cerr << "3. Error in comparing Game Tree Node Results." << std::endl;
@@ -273,12 +273,12 @@ void run_tests()
                                         Math::win_score,
                                         WHITE,
                                         4,
-                                        ""};
+                                        {}};
     Game_Tree_Node_Result white_win6 = {Complete_Move(),
                                         Math::win_score,
                                         WHITE,
                                         6,
-                                        ""};
+                                        {}};
     if(better_than(white_win6, white_win4, WHITE))
     {
         std::cerr << "Later win preferred over earlier win." << std::endl;
@@ -295,7 +295,7 @@ void run_tests()
                                          -Math::win_score,
                                          BLACK,
                                          6,
-                                         ""};
+                                         {}};
     if( ! (white_win6 == black_loss6))
     {
         std::cerr << "White win in 6 not equal to black loss in 6." << std::endl;

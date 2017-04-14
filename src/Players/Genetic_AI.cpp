@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <stdexcept>
 
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 
@@ -147,13 +147,13 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
                                          Math::lose_score,
                                          board.whose_turn(),
                                          0,
-                                         ""};
+                                         {}};
     // beta = score that will cause opponent to choose a different prior move
     Game_Tree_Node_Result beta_start = {Complete_Move(),
                                         Math::win_score,
                                         board.whose_turn(),
                                         0,
-                                        ""};
+                                        {}};
 
     auto result = search_game_tree(board,
                                    time_to_use,
@@ -165,7 +165,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     if(result.depth > 0)
     {
         board.add_commentary_to_next_move(result.commentary);
-        principal_variation = String::split(result.commentary);
+        principal_variation = result.commentary;
     }
     else
     {
@@ -252,17 +252,10 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
         if(still_on_principal_variation)
         {
-            auto next_principal_variation_move = principal_variation[depth + 2];
-            // remove non-move notation
-            next_principal_variation_move = String::strip_comments(next_principal_variation_move, '+');
-            next_principal_variation_move = String::strip_comments(next_principal_variation_move, '#');
-
-            auto move_iter = std::find_if(all_legal_moves.begin(),
-                                          all_legal_moves.end(),
-                                          [&next_principal_variation_move, &board](const auto& legal_move)
-                                          {
-                                              return legal_move.game_record_item(board) == next_principal_variation_move;
-                                          });
+            auto next_principal_variation_move = board.get_complete_move(principal_variation[depth + 2]);
+            auto move_iter = std::find(all_legal_moves.begin(),
+                                       all_legal_moves.end(),
+                                       next_principal_variation_move);
 
             // Make sure that the principal variation is actually a legal move.
             // This is purely for debugging as special circumstances (i.e., once
@@ -272,12 +265,17 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             {
                 board.ascii_draw(WHITE);
                 board.print_game_record("","","","Principal Variation error", 0);
+                auto board_copy = board;
                 for(const auto& item : principal_variation)
                 {
-                    std::cout << item << " ";
+                    auto move = board_copy.get_complete_move(item);
+                    std::cout << move.game_record_item(board_copy) << " ";
+                    board_copy.submit_move(move);
                 }
                 std::cout << '\n' << "Depth: " << depth << '\n'
-                          << "Next move in variation: " << next_principal_variation_move << std::endl;
+                          << "Next move in variation: "
+                          << next_principal_variation_move.game_record_item(board)
+                          << std::endl;
                 throw std::runtime_error("ERROR: bad variation code");
             }
 
@@ -295,7 +293,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                          Math::lose_score,
                                          perspective,
                                          depth,
-                                         ""};
+                                         {}};
 
     for(const auto& move : all_legal_moves)
     {
@@ -312,7 +310,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                     genome.evaluate(next_board, perspective),
                     perspective,
                     depth,
-                    next_board.get_game_record().back()};
+                    {next_board.get_game_record().back()}};
         }
         catch(const Game_Ending_Exception&)
         {
@@ -369,9 +367,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
             // Update last result with this game tree node's data
             result.move = move;
-            result.commentary = next_board.get_game_record().back()
-                                        + " "
-                                        + result.commentary;
+            result.commentary.insert(result.commentary.begin(), next_board.get_game_record().back());
         }
         else
         {
@@ -380,7 +376,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                       genome.evaluate(next_board, perspective),
                       perspective,
                       depth,
-                      next_board.get_game_record().back()};
+                      {next_board.get_game_record().back()}};
         }
 
         if(better_than(result, best_result, perspective))

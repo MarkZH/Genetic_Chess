@@ -1,6 +1,6 @@
 #include "Players/CECP_Mediator.h"
 
-#include "Moves/Move.h"
+#include "Moves/Complete_Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 
