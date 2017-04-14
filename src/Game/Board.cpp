@@ -328,7 +328,6 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
 
 void Board::submit_move(const Complete_Move& cm)
 {
-    Scoped_Stopwatch watch("submit_move");
     if(std::find(all_legal_moves().begin(),
                  all_legal_moves().end(),
                  cm) == all_legal_moves().end()) // submitted move not found in legal list
