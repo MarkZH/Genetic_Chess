@@ -58,6 +58,10 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
 
             char final_file = cm.end_file();
             int  final_rank = cm.end_rank();
+            if( ! board.inside_board(final_file, final_rank))
+            {
+                continue;
+            }
 
             if(cm.name()[0] == 'E')
             {
