@@ -27,7 +27,7 @@ void Move::side_effects(Board&, char /* file_start */, int /* rank_start */) con
 {
 }
 
-bool Move::is_legal(const Board& board, char file_start, int rank_start, bool king_check) const
+bool Move::is_legal(const Board& board, char file_start, int rank_start) const
 {
     char file_end = file_start + file_change();
     int rank_end = rank_start + rank_change();
@@ -87,15 +87,10 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start, bool ki
     }
 
     // King should not be in check after move
-    if(king_check)
-    {
-        Board trial(board);
-        trial.make_move(file_start, rank_start, file_end, rank_end);
-        side_effects(trial, file_start, rank_start);
-        return ! trial.king_is_in_check(board.whose_turn());
-    }
-
-    return true;
+    Board trial(board);
+    trial.make_move(file_start, rank_start, file_end, rank_end);
+    side_effects(trial, file_start, rank_start);
+    return ! trial.king_is_in_check(board.whose_turn());
 }
 
 bool Move::move_specific_legal(const Board& /* board */, char /* file_start */, int /* rank_start */) const

@@ -20,7 +20,7 @@ class Move
         virtual void side_effects(Board& board, char file_start, int rank_start) const;
 
         // Contains rules for move
-        bool is_legal(const Board& board, char file_start, int rank_start, bool king_check) const;
+        bool is_legal(const Board& board, char file_start, int rank_start) const;
 
         // Can this move capture a piece?
         virtual bool can_capture() const;

@@ -58,9 +58,9 @@ std::string Complete_Move::game_record_item(const Board& board) const
     }
 }
 
-bool Complete_Move::is_legal(const Board& board, bool king_check) const
+bool Complete_Move::is_legal(const Board& board) const
 {
-    return move->is_legal(board, starting_file, starting_rank, king_check);
+    return move->is_legal(board, starting_file, starting_rank);
 }
 
 std::string Complete_Move::coordinate_move() const

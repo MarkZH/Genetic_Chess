@@ -14,7 +14,7 @@ class Complete_Move
 
         std::string name() const;
         std::string game_record_item(const Board& board) const;
-        bool is_legal(const Board& board, bool king_check = true) const;
+        bool is_legal(const Board& board) const;
         std::string coordinate_move() const;
         bool can_capture() const;
 
