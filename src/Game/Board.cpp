@@ -660,13 +660,19 @@ bool Board::king_is_in_check(Color king_color) const
 
 bool Board::safe_for_king(char file, int rank, Color king_color) const
 {
-    // Check for attacks along diagonals
     auto attacking_color = opposite(king_color);
     int pawn_rank = rank - (attacking_color == WHITE ? 1 : -1); // which direction pawns attack
-    for(auto rank_step : {-1, 1})
+
+    // Straight-line moves
+    for(auto rank_step : {-1, 0, 1})
     {
-        for(auto file_step : {-1, 1})
+        for(auto file_step : {-1, 0, 1})
         {
+            if(file_step == 0 && rank_step == 0)
+            {
+                continue;
+            }
+
             for(int steps = 1; steps <= 7; ++steps)
             {
                 char attacking_file = file + file_step*steps;
@@ -688,77 +694,37 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
                     break; // piece on square is blocking anything behind it
                 }
 
-                if(attacking_rank == pawn_rank && piece->is_pawn())
-                {
-                    return false; // attacked by pawn
-                }
-
                 if(steps == 1 && piece->is_king())
                 {
                     return false;
                 }
 
-                if(piece->is_bishop() || piece->is_queen())
+                if(piece->is_queen())
                 {
                     return false;
+                }
+
+                if(file_step == 0 || rank_step == 0)
+                {
+                    if(piece->is_rook())
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
-                    break; // piece on square is blocking anything behind it
-                }
-            }
-        }
-    }
+                    if(attacking_rank == pawn_rank && piece->is_pawn())
+                    {
+                        return false;
+                    }
 
-    // Check for attacks along rows and columns
-    for(auto file_step : {-1, 0, 1})
-    {
-        for(auto rank_step : {-1, 0, 1})
-        {
-            if(file_step != 0 && rank_step != 0)
-            {
-                continue;
-            }
-
-            if(file_step == 0 && rank_step == 0)
-            {
-                continue;
-            }
-
-            for(int steps = 1; steps <= 7; ++steps)
-            {
-                char attacking_file = file + steps*file_step;
-                int  attacking_rank = rank + steps*rank_step;
-
-                if( ! inside_board(attacking_file, attacking_rank))
-                {
-                    break;
+                    if(piece->is_bishop())
+                    {
+                        return false;
+                    }
                 }
 
-                auto piece = view_piece_on_square(attacking_file, attacking_rank);
-                if( ! piece)
-                {
-                    continue;
-                }
-
-                if(piece->color() != attacking_color)
-                {
-                    break; // piece on square is blocking anything behind it
-                }
-
-                if(steps == 1 && piece->is_king())
-                {
-                    return false;
-                }
-
-                if(piece->is_rook() || piece->is_queen())
-                {
-                    return false;
-                }
-                else
-                {
-                    break; // piece on square is blocking anything behind it
-                }
+                break; // piece on square is blocking anything behind it
             }
         }
     }
