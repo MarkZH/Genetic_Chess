@@ -844,7 +844,13 @@ void Board::print_game_record(const std::string& white_name,
             {
                 auto cm = comment_board.get_complete_move(variation);
                 out_stream << cm.game_record_item(comment_board) << " ";
-                comment_board.submit_move(cm);
+                try
+                {
+                    comment_board.submit_move(cm);
+                }
+                catch(const Game_Ending_Exception&)
+                {
+                }
             }
             out_stream << "}";
         }
