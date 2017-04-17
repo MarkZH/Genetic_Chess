@@ -313,7 +313,7 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
                                      "-" +
                                      std::string(1, file_end) +
                                      std::to_string(rank_end) +
-                                     " (" + std::string(1, promote) + ")");
+                                     " (" + std::string(1, promote ? promote : ' ') + ")");
     }
 
     if(move_list.size() == 1)
