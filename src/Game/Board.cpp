@@ -824,17 +824,15 @@ void Board::print_game_record(const std::string& white_name,
     }
 
     Board temp;
-    for(size_t i = 0; i < std::max(game_record.size(), game_commentary.size()); ++i)
+    for(size_t i = 0; i < game_record.size(); ++i)
     {
-        if(i < game_record.size())
+        if(temp.whose_turn() == WHITE)
         {
-            if(temp.whose_turn() == WHITE)
-            {
-                auto step = (i + 2)/2;
-                out_stream << '\n' << step << ".";
-            }
-            out_stream << " " << temp.get_complete_move(game_record.at(i)).game_record_item(temp);
+            auto step = (i + 2)/2;
+            out_stream << '\n' << step << ".";
         }
+        auto next_move = temp.get_complete_move(game_record.at(i));
+        out_stream << " " << next_move.game_record_item(temp);
 
         if(i < game_commentary.size() && ! game_commentary.at(i).empty())
         {
@@ -855,15 +853,12 @@ void Board::print_game_record(const std::string& white_name,
             out_stream << "}";
         }
 
-        if(i < game_record.size() - 1)
+        try
         {
-            try
-            {
-                temp.submit_move(temp.get_complete_move(game_record.at(i)));
-            }
-            catch(const Game_Ending_Exception& gee)
-            {
-            }
+            temp.submit_move(next_move);
+        }
+        catch(const Game_Ending_Exception& gee)
+        {
         }
     }
     out_stream << '\n';
