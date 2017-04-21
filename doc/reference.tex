@@ -1,0 +1,183 @@
+\documentclass[letter]{article}
+\usepackage[T1]{fontenc}
+\usepackage{hyperref}
+
+\newcommand{\cpp}{C{\nobreak +}{\nobreak +}}
+\newcommand{\code}[1]{{\texttt #1}}
+\renewcommand\_{\textunderscore\allowbreak}
+
+
+\title{Genetic Chess}
+\author{Mark Harrison}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This work is a program for evolving chess-playing AIs written in \cpp.  Through putting a population of AIs into chess matches, killing off the losers, and breeding the winners, it is hoped that one specimen will be able to stand up against a more traditionally developed engine (if only on the easiest difficulty setting).
+\end{abstract}
+
+\tableofcontents{}
+
+
+\section{Building}
+Run \code{make} to create release and debug executables in the \code{bin/} subfolder. If new files are created or the \code{\#include} files are changed within a file, run \code{python create\_Makefile.py} to regenerate the Makefile.
+
+
+\section{Running}
+\begin{description}
+	\item[\code{genetic\_chess -genepool [file\_name]}]
+This will start up a gene pool with Genetic\_AIs playing against each other--mating, killing, mutating--all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
+
+	\item[\code{genetic\_chess (-human|-genetic|-random) (-human|-genetic|-random)}]
+Starts a local game played in the terminal with an ASCII art board. The first parameter is the white player, the second is black.
+	\begin{description}
+		\item[\code{-human}] a human player. Moves are specified in algebraic notation indicated the starting and ending square.
+		\item[\code{-genetic}] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID.
+		\item[\code{-random}] an AI player that chooses moves randomly from all legal moves.
+	\end{description}
+\end{description}
+A barely functional implementation of the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol} allows for play through xboard and similar programs (PyChess, etc.). When used this way, arguments are ignored. Future feature: specify a specific AI to use like -genetic or -random.
+
+
+
+
+\section{High-Level Overview}
+
+
+
+
+\section{Non-evolutionary aspects}
+
+\subsection{Endgame Scoring}
+
+Winning gives an infinite score score.
+Losing gives a negative infinite score.
+Draw gives zero.
+
+Why not evolve these numbers? While the priorities of various genes can be varied to yield different playstyles, the only reasonable score to assign to a win is one that is larger than any other score. It can only be a disadvantage to prefer anything to a winning move. While this would result in upward evolutionary pressure on the 
+
+\subsection{Minimaxing}
+
+Also mention the decision process for whether or not to recurse further down a certain play variation.
+
+\subsection{Alpha-Beta Pruning}
+
+With additional optimization to cutoff search if alpha represents a win at a shallower depth than is possible in the current branch.
+
+
+
+
+\section{The Genome}
+
+\subsection{Regulatory Genes}
+\subsubsection{Piece Strength Gene}
+Specifies the importance or strength of each different type of chess piece.
+
+\subsubsection{Look Ahead Gene}
+Determines how many positions to examine based on the time left. When looking ahead to future moves, the number of positions to examine is divided equally among every legal move. This naturally limits the depth of search while allowing deeper searches for positions with fewer legal moves. The amount of time to use in examining moves is determined by genetic factors indicating an average number of moves per game and the number of positions than can be examined per second. The distribution of moves per game is modeled with a Poisson distribution.
+
+\subsubsection{Branch Pruning Gene}
+Cutoff searching to greater depths if the current move lowers the score of a board state to less than the amount specified within the gene.
+
+\subsection{Board-Scoring Genes}
+\subsubsection{Total Force Gene}
+Sums the strength (according to the Piece Strength Gene) of all the player's pieces on the board.
+
+\subsubsection{Freedom to Move Gene}
+Counts the number of legal moves available in the current position.
+
+\subsubsection{Pawn Advancement Gene}
+Measures the progress of all pawns towards the opposite side of the board.
+
+\subsubsection{Opponent Pieces Targeted Gene}
+Sums the total strength (as determined by the Piece Strength Gene below) of the opponent's pieces currently under attack.
+
+\subsubsection{Sphere of Influence Gene}
+Counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move.
+
+\subsubsection{King Confinement Gene}
+Counts the squares the king can reach given unlimited legal moves.
+
+\subsubsection{King Protection Gene}
+Counts the squares that have access to the king by any valid piece movement that are unguarded by that king's other pieces.
+
+\subsubsection{Castling Possible Gene}
+Returns a positive non-zero score to indicate that castling is possible or has already happened. Score can vary based on the preference for kingside or queenside castling.
+
+
+
+
+\section{The Gene Pool: On the care and feeding of chess AIs}
+
+Multiple pools.
+
+What happens to winners, losers, and games ending in a draw.
+
+Typical output during a gene pool run:
+\begin{verbatim}
+Gene pool ID: 0  Gene pool size: 16  New blood introduced: 126 (*)
+Games: 22026  White wins: 10469  Black wins: 9562  Draws: 2737
+Time: 38.538 sec   Gene pool file name: pool.txt
+    ID   Wins  Streak  Draws  Streak
+ 59014      9       9      0       0 T
+ 59031      3       3      0       0
+ 59054      2       2      0       0
+ 59055      2       2      0       0
+ 59074      1       1      0       0
+ 59077      1       1      0       0
+ 59078      1       1      0       0
+ 59081      1       1      0       0
+ 59095      0       0      0       0
+ 59096      0       0      0       0
+ 59097      0       0      0       0
+ 59098      0       0      0       0
+ 59099      0       0      0       0
+ 59100      0       0      0       0 *
+ 59101      0       0      0       0
+ 59102      0       0      0       0
+
+Result of 59055 vs. 59097: White! mating 59055 59097 / killing 59097
+Result of 59074 vs. 59101: Black! mating 59074 59101 / killing 59074
+Result of 59102 vs. 59100: White! mating 59102 59100 / killing 59100
+Result of 59096 vs. 59014: None! 59014 mates with random / 59096 dies
+Result of 59031 vs. 59078: None! 59031 mates with 4653 / killing 59078
+Result of 59054 vs. 59095: Black! mating 59054 59095 / killing 59054
+Result of 59098 vs. 59099: Black! mating 59098 59099 / killing 59098
+Result of 59081 vs. 59077: White! mating 59081 59077 / killing 59077
+
+Most wins:     18 by ID 20968
+Longest lived: 27 by ID 45394
+
+\end{verbatim}
+The asterisk indicates an offspring of the result of a drawn match, in which one of the players in that match is replaced by the result of mating the other player with a randomly generated Genetic\_AI. This happens with low probability because it destroys genetic information. However, it is necessary to keep a pool from stagnating due to neverending drawn games.
+
+The \verb|T| indicates that it is the best AI from another gene pool. One measure of a pool's strength is how fast its best gets killed off when it enters a new pool.
+
+
+\section{Public Methods of Classes - Programmer's API}
+
+\subsection{Piece}
+
+\subsection{Move}
+
+\subsection{Complete\_Move}
+
+\subsection{Board}
+\subsubsection*{Important Notes}
+The \code{Complete\_Move}s returned by \code{Board::get\_complete\_move()} and \code{Board::all\_legal\_moves()}, as well as the \code{const Piece*} returned by \code{Board::view\_piece\_on\_square()}, should be handled carefully as these structures are rended invalid by the following two operations:
+\begin{enumerate}
+	\item The originating \code{Board} is modified via \code{Board::submit\_move()}.
+	\item The originating \code{Board} is destructed.
+\end{enumerate}
+Furthermore, a \code{Complete\_Move} generated by one \code{Board} is invalid for any other \code{Board}, even an unmodified copy of the originating \code{Board}.
+
+When calling \code{Board::view\_piece\_on\_square()}, an empty square is represented by a \code{nullptr}.
+
+\subsection{Player}
+
+\subsection{Clock}
+
+
+\end{document}

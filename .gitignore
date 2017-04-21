@@ -46,3 +46,7 @@ octave-workspace
 *.swp
 *.zip
 *.old
+*.aux
+*.fls
+*.fdb_latexmk
+*.toc
