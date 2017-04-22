@@ -148,6 +148,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
                                          board.whose_turn(),
                                          0,
                                          {}};
+
     // beta = score that will cause opponent to choose a different prior move
     Game_Tree_Node_Result beta_start = {Complete_Move(),
                                         Math::win_score,
