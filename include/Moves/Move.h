@@ -33,8 +33,6 @@ class Move
         virtual std::string game_record_item(const Board& board, char file_start, int rank_start) const;
         virtual std::string coordinate_move(char file_stat, int rank_start) const;
 
-        bool operator==(const Move& other) const;
-
     protected:
         int d_file;
         int d_rank;

@@ -192,10 +192,3 @@ std::string Move::coordinate_move(char file_start, int rank_start) const
            + char(file_start + file_change())
            + std::to_string(rank_start + rank_change());
 }
-
-bool Move::operator==(const Move& other) const
-{
-    return file_change() == other.file_change() &&
-           rank_change() == other.rank_change() &&
-           name() == other.name();
-}
