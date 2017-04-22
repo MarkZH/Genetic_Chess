@@ -45,8 +45,8 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
     auto temp = board;
     temp.set_turn(perspective);
 
-    bool on_legal_move_list = false;
-    for(const auto& move_list : {temp.all_moves(), temp.all_legal_moves()})
+    double score_to_add = 1.0;
+    for(const auto& move_list : {temp.all_other_moves(), temp.all_legal_moves()})
     {
         for(const auto& cm : move_list)
         {
@@ -58,12 +58,8 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
 
             char final_file = cm.end_file();
             int  final_rank = cm.end_rank();
-            if( ! board.inside_board(final_file, final_rank))
-            {
-                continue;
-            }
 
-            if(cm.name()[0] == 'E')
+            if(cm.name().front() == 'E')
             {
                 if(temp.is_en_passant_targetable(final_file, final_rank))
                 {
@@ -75,10 +71,10 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
                 }
             }
 
-            square_score[{final_file, final_rank}] = (on_legal_move_list ? legal_bonus : 1.0);
+            square_score[{final_file, final_rank}] = score_to_add;
         }
 
-        on_legal_move_list = true;
+        score_to_add = legal_bonus; // now on legal move list
     }
 
     double score = 0;

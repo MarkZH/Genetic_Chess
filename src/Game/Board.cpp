@@ -48,6 +48,7 @@ Board::Board() :
 
     all_pieces_unmoved();
     ++repeat_count[board_status()]; // Count initial position
+    no_legal_moves(); // make sure move caches are filled
 }
 
 Board::Board(const std::string& fen) :
@@ -144,6 +145,7 @@ Board::Board(const std::string& fen) :
     }
 
     ++repeat_count[board_status()]; // Count initial position
+    no_legal_moves(); // make sure move caches are filled
 }
 
 size_t Board::board_index(char file, int rank)
@@ -559,15 +561,35 @@ const std::vector<Complete_Move>& Board::all_legal_moves() const
         return all_legal_moves_cache;
     }
 
-    for(const auto& complete_move : all_moves())
+    for(char file = 'a'; file <= 'h'; ++file)
     {
-        if(complete_move.is_legal(*this))
+        for(int rank = 1; rank <= 8; ++rank)
         {
-            all_legal_moves_cache.push_back(complete_move);
+            auto piece = view_piece_on_square(file, rank);
+            if(piece && piece->color() == whose_turn())
+            {
+                for(const auto& move : piece->get_move_list())
+                {
+                    auto cm = Complete_Move(move.get(), file, rank);
+                    if(cm.is_legal(*this))
+                    {
+                        all_legal_moves_cache.push_back(cm);
+                    }
+                    else if(inside_board(cm.end_file(), cm.end_rank()))
+                    {
+                        all_other_moves_cache.push_back(cm);
+                    }
+                }
+            }
         }
     }
 
     return all_legal_moves_cache;
+}
+
+const std::vector<Complete_Move>& Board::all_other_moves() const
+{
+    return all_other_moves_cache;
 }
 
 void Board::ascii_draw(Color perspective) const
@@ -918,31 +940,6 @@ void Board::set_turn(Color color)
     turn_color = color;
 }
 
-const std::vector<Complete_Move>& Board::all_moves() const
-{
-    if( ! all_moves_cache.empty())
-    {
-        return all_moves_cache;
-    }
-
-    for(char file = 'a'; file <= 'h'; ++file)
-    {
-        for(int rank = 1; rank <= 8; ++rank)
-        {
-            auto piece = view_piece_on_square(file, rank);
-            if(piece && piece->color() == whose_turn())
-            {
-                for(const auto& move : piece->get_move_list())
-                {
-                    all_moves_cache.emplace_back(move.get(), file, rank);
-                }
-            }
-        }
-    }
-
-    return all_moves_cache;
-}
-
 void Board::make_en_passant_targetable(char file, int rank)
 {
     en_passant_target_file = file;
@@ -1015,7 +1012,7 @@ void Board::add_commentary_to_next_move(const std::vector<std::string>& comment)
 
 void Board::clear_caches()
 {
-    all_moves_cache.clear();
+    all_other_moves_cache.clear();
     all_legal_moves_cache.clear();
 }
 
