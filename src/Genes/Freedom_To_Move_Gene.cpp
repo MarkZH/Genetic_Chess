@@ -5,7 +5,7 @@
 #include "Moves/Complete_Move.h"
 
 Freedom_To_Move_Gene::Freedom_To_Move_Gene() :
-    maximum_number_of_moves(Board().all_moves().size())
+    initial_number_of_moves(Board().all_legal_moves().size())
 {
 }
 
@@ -17,7 +17,7 @@ double Freedom_To_Move_Gene::score_board(const Board& board, Color perspective) 
 {
     auto temp = board;
     temp.set_turn(perspective);
-    return double(temp.all_legal_moves().size())/maximum_number_of_moves;
+    return double(temp.all_legal_moves().size())/initial_number_of_moves;
 }
 
 Freedom_To_Move_Gene* Freedom_To_Move_Gene::duplicate() const

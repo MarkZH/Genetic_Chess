@@ -17,7 +17,7 @@ class Freedom_To_Move_Gene : public Gene
         std::string name() const override;
 
     private:
-        size_t maximum_number_of_moves;
+        size_t initial_number_of_moves;
 
         double score_board(const Board& board, Color perspective) const override;
 };
