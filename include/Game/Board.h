@@ -69,7 +69,6 @@ class Board
         bool safe_for_king(char file, int rank, Color king_color) const;
         bool is_en_passant_targetable(char file, int rank) const;
         bool piece_has_moved(char file, int rank) const;
-        bool piece_has_moved(const Piece* piece) const;
         Square find_king(Color color) const;
         bool king_is_in_check(Color color) const;
 
@@ -97,6 +96,7 @@ class Board
         std::shared_ptr<const Piece>& piece_on_square(char file, int rank);
         void remove_piece(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
+        bool piece_has_moved(const Piece* piece) const;
         bool no_legal_moves() const;
         void set_winner(Color color);
         void reset_fifty_move_count();
