@@ -61,21 +61,8 @@ Board::Board(const std::string& fen) :
     starting_fen(fen)
 {
     auto fen_parse = String::split(fen);
+
     auto board_parse = String::split(fen_parse.at(0), "/");
-    turn_color = (fen_parse[1] == "w" ? WHITE : BLACK);
-    if(whose_turn() == BLACK)
-    {
-        game_record.push_back("...");
-    }
-    auto castling_parse = fen_parse.at(2);
-    auto en_passant_parse = fen_parse.at(3);
-    auto fifty_move_count = std::stoul(fen_parse.at(4));
-
-    if(en_passant_parse != "-")
-    {
-        make_en_passant_targetable(en_passant_parse[0], en_passant_parse[1] - '0');
-    }
-
     for(int rank = 8; rank >= 1; --rank)
     {
         char file = 'a';
@@ -134,6 +121,13 @@ Board::Board(const std::string& fen) :
         }
     }
 
+    turn_color = (fen_parse[1] == "w" ? WHITE : BLACK);
+    if(whose_turn() == BLACK)
+    {
+        game_record.push_back("...");
+    }
+
+    auto castling_parse = fen_parse.at(2);
     if( ! String::contains(castling_parse, 'K'))
     {
         piece_moved[view_piece_on_square('h', 1)] = true;
@@ -151,8 +145,15 @@ Board::Board(const std::string& fen) :
         piece_moved[view_piece_on_square('a', 8)] = true;
     }
 
+    auto en_passant_parse = fen_parse.at(3);
+    if(en_passant_parse != "-")
+    {
+        make_en_passant_targetable(en_passant_parse[0], en_passant_parse[1] - '0');
+    }
+
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
+    auto fifty_move_count = std::stoul(fen_parse.at(4));
     while(repeat_count.size() < fifty_move_count)
     {
         repeat_count[std::to_string(repeat_count.size())] = 1;
