@@ -190,7 +190,7 @@ Color Board::square_color(char file, int rank)
 bool Board::is_legal(char file_start, int rank_start,
                      char file_end,   int rank_end) const
 {
-    for(const auto& move : all_legal_moves())
+    for(const auto& move : legal_moves())
     {
         if(move.start_file() == file_start &&
            move.start_rank() == rank_start &&
@@ -286,7 +286,7 @@ std::string Board::fen_status() const
 Complete_Move Board::get_complete_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
 {
     std::vector<Complete_Move> move_list;
-    for(const auto& move : all_legal_moves())
+    for(const auto& move : legal_moves())
     {
         if(move.start_file() == file_start &&
            move.start_rank() == rank_start &&
@@ -330,9 +330,9 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
 
 void Board::submit_move(const Complete_Move& cm)
 {
-    if(std::find(all_legal_moves().begin(),
-                 all_legal_moves().end(),
-                 cm) == all_legal_moves().end()) // submitted move not found in legal list
+    if(std::find(legal_moves().begin(),
+                 legal_moves().end(),
+                 cm) == legal_moves().end()) // submitted move not found in legal list
     {
         throw Illegal_Move_Exception("Illegal move: ." + cm.game_record_item(*this));
     }
@@ -554,11 +554,11 @@ Color Board::whose_turn() const
     return turn_color;
 }
 
-const std::vector<Complete_Move>& Board::all_legal_moves() const
+const std::vector<Complete_Move>& Board::legal_moves() const
 {
-    if( ! all_legal_moves_cache.empty())
+    if( ! legal_moves_cache.empty())
     {
-        return all_legal_moves_cache;
+        return legal_moves_cache;
     }
 
     for(char file = 'a'; file <= 'h'; ++file)
@@ -573,23 +573,23 @@ const std::vector<Complete_Move>& Board::all_legal_moves() const
                     auto cm = Complete_Move(move.get(), file, rank);
                     if(cm.is_legal(*this))
                     {
-                        all_legal_moves_cache.push_back(cm);
+                        legal_moves_cache.push_back(cm);
                     }
                     else if(inside_board(cm.end_file(), cm.end_rank()))
                     {
-                        all_other_moves_cache.push_back(cm);
+                        other_moves_cache.push_back(cm);
                     }
                 }
             }
         }
     }
 
-    return all_legal_moves_cache;
+    return legal_moves_cache;
 }
 
-const std::vector<Complete_Move>& Board::all_other_moves() const
+const std::vector<Complete_Move>& Board::other_moves() const
 {
-    return all_other_moves_cache;
+    return other_moves_cache;
 }
 
 void Board::ascii_draw(Color perspective) const
@@ -781,7 +781,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
 
 bool Board::no_legal_moves() const
 {
-    return all_legal_moves().empty();
+    return legal_moves().empty();
 }
 
 const std::vector<std::string>& Board::get_game_record() const
@@ -1012,8 +1012,8 @@ void Board::add_commentary_to_next_move(const std::vector<std::string>& comment)
 
 void Board::clear_caches()
 {
-    all_other_moves_cache.clear();
-    all_legal_moves_cache.clear();
+    other_moves_cache.clear();
+    legal_moves_cache.clear();
 }
 
 bool Board::enough_material_to_checkmate() const

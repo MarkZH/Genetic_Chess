@@ -64,8 +64,8 @@ class Board
 
         const Piece* view_piece_on_square(char file, int rank) const;
 
-        const std::vector<Complete_Move>& all_legal_moves() const;
-        const std::vector<Complete_Move>& all_other_moves() const;
+        const std::vector<Complete_Move>& legal_moves() const;
+        const std::vector<Complete_Move>& other_moves() const;
 
         bool safe_for_king(char file, int rank, Color king_color) const;
         bool is_en_passant_targetable(char file, int rank) const;
@@ -90,8 +90,8 @@ class Board
         bool game_ended;
 
         // Caches
-        mutable std::vector<Complete_Move> all_other_moves_cache;
-        mutable std::vector<Complete_Move> all_legal_moves_cache;
+        mutable std::vector<Complete_Move> other_moves_cache;
+        mutable std::vector<Complete_Move> legal_moves_cache;
         void clear_caches();
 
         std::shared_ptr<const Piece>& piece_on_square(char file, int rank);

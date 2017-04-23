@@ -52,7 +52,7 @@ std::vector<std::string> search_stalemate(const Board& board, const int max_dept
         return {}; // too deep
     }
 
-    for(const auto& move : board.all_legal_moves())
+    for(const auto& move : board.legal_moves())
     {
         auto next_board = board;
         try

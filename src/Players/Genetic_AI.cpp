@@ -119,7 +119,7 @@ void Genetic_AI::read_from(std::istream& is)
 
 const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clock) const
 {
-    const auto& legal_moves = board.all_legal_moves();
+    const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
     {
         if(principal_variation.size() > 2 && principal_variation[1] == board.get_game_record().back())
@@ -236,7 +236,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    Game_Tree_Node_Result beta) const
 {
     auto time_start = clock.time_left(clock.running_for());
-    auto all_legal_moves = board.all_legal_moves();
+    auto all_legal_moves = board.legal_moves();
 
     // The first item in the principal variation is the last move that
     // this player made. Since then, the opponent has also made a move,
@@ -290,7 +290,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     int moves_examined = 0;
     const auto current_legal_moves_count = all_legal_moves.size();
 
-    Game_Tree_Node_Result best_result = {board.all_legal_moves().front(),
+    Game_Tree_Node_Result best_result = {board.legal_moves().front(),
                                          Math::lose_score,
                                          perspective,
                                          depth,
@@ -339,7 +339,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         {
             recurse = false;
         }
-        else if(next_board.all_legal_moves().size() == 1)
+        else if(next_board.legal_moves().size() == 1)
         {
             recurse = true;
         }

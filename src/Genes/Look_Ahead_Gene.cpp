@@ -91,7 +91,7 @@ double Look_Ahead_Gene::minimum_time_to_recurse(const Board& board) const
 {
     if(is_active())
     {
-        return board.all_legal_moves().size()/positions_per_second;
+        return board.legal_moves().size()/positions_per_second;
     }
     else
     {

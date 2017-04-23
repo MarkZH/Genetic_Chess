@@ -46,7 +46,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
     temp.set_turn(perspective);
 
     double score_to_add = 1.0;
-    for(const auto& move_list : {temp.all_other_moves(), temp.all_legal_moves()})
+    for(const auto& move_list : {temp.other_moves(), temp.legal_moves()})
     {
         for(const auto& cm : move_list)
         {

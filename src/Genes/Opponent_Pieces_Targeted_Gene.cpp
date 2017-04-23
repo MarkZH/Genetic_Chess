@@ -23,7 +23,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
     auto hypothetical = board;
     hypothetical.set_turn(perspective);
 
-    for(const auto& complete_move : hypothetical.all_legal_moves())
+    for(const auto& complete_move : hypothetical.legal_moves())
     {
         if( ! complete_move.can_capture())
         {
