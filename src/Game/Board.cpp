@@ -57,13 +57,20 @@ Board::Board(const std::string& fen) :
     winner(NONE),
     en_passant_target_file('\0'),
     en_passant_target_rank(0),
-    game_ended(false)
+    game_ended(false),
+    starting_fen(fen)
 {
     auto fen_parse = String::split(fen);
     auto board_parse = String::split(fen_parse.at(0), "/");
     turn_color = (fen_parse[1] == "w" ? WHITE : BLACK);
+    if(whose_turn() == BLACK)
+    {
+        game_record.push_back("...");
+    }
     auto castling_parse = fen_parse.at(2);
     auto en_passant_parse = fen_parse.at(3);
+    auto fifty_move_count = std::stoul(fen_parse.at(4));
+
     if(en_passant_parse != "-")
     {
         make_en_passant_targetable(en_passant_parse[0], en_passant_parse[1] - '0');
@@ -144,6 +151,12 @@ Board::Board(const std::string& fen) :
         piece_moved[view_piece_on_square('a', 8)] = true;
     }
 
+    // Fill repeat counter to indicate moves since last
+    // pawn move or capture.
+    while(repeat_count.size() < fifty_move_count)
+    {
+        repeat_count[std::to_string(repeat_count.size())] = 1;
+    }
     ++repeat_count[board_status()]; // Count initial position
     no_legal_moves(); // make sure move caches are filled
 }
@@ -251,12 +264,12 @@ std::string Board::fen_status() const
             {
                 if( ! piece_has_moved(rook_file, base_rank)) // have rooks moved
                 {
-                    std::string mark = (rook_file == 'h' ? "K" : "Q");
+                    char mark = (rook_file == 'h' ? 'K' : 'Q');
                     if(base_rank == 8)
                     {
-                        mark[0] = tolower(mark[0]);
+                        mark = tolower(mark);
                     }
-                    s.append(mark);
+                    s.push_back(mark);
                 }
             }
         }
@@ -277,7 +290,24 @@ std::string Board::fen_status() const
         s.push_back('-');
     }
 
-    // ignoring move count since this is kept by the board itself
+    s.push_back(' ');
+    int moves_since_pawn_or_capture = -1; // -1 to not count current state of board
+    for(const auto& board_count : repeat_count)
+    {
+        moves_since_pawn_or_capture += board_count.second;
+    }
+    s.append(std::to_string(moves_since_pawn_or_capture));
+    s.push_back(' ');
+    if(starting_fen.empty())
+    {
+        s.append(std::to_string(1 + game_record.size()/2));
+    }
+    else
+    {
+        auto move_number = std::stoul(String::split(starting_fen).back());
+        move_number += game_record.size()/2;
+        s.append(std::to_string(move_number));
+    }
 
     return s;
 }
@@ -337,10 +367,6 @@ void Board::submit_move(const Complete_Move& cm)
         throw Illegal_Move_Exception("Illegal move: ." + cm.game_record_item(*this));
     }
 
-    if(game_record.empty() && whose_turn() == BLACK)
-    {
-        game_record.push_back({});
-    }
     game_record.push_back(cm.coordinate_move());
 
     make_move(cm.start_file(), cm.start_rank(),
@@ -845,13 +871,22 @@ void Board::print_game_record(const std::string& white_name,
         out_stream << "[Termination \"" << termination << "\"]\n";
     }
 
-    Board temp;
+    auto temp = Board();
+    auto move_count_start = 0;
+    if( ! starting_fen.empty())
+    {
+        out_stream << "[SetUp 1]\n";
+        out_stream << "[FEN \"" << starting_fen << "\"]\n";
+        temp = Board(starting_fen);
+        move_count_start = std::stoi(String::split(starting_fen).back()) - 1;
+    }
+
     for(size_t i = 0; i < game_record.size(); ++i)
     {
         if(temp.whose_turn() == WHITE)
         {
             auto step = (i + 2)/2;
-            out_stream << '\n' << step << ".";
+            out_stream << '\n' << move_count_start + step << ".";
         }
         auto next_move = temp.get_complete_move(game_record.at(i));
         out_stream << " " << next_move.game_record_item(temp);
@@ -889,6 +924,20 @@ void Board::print_game_record(const std::string& white_name,
 std::string Board::board_status() const // for 3-fold rep count
 {
     auto status = fen_status();
+    size_t space_before_move_counts_index = 0;
+    int space_count = 0;
+    for( ; space_before_move_counts_index < status.size(); ++space_before_move_counts_index)
+    {
+        if(std::isspace(status[space_before_move_counts_index]))
+        {
+            if(++space_count == 4)
+            {
+                break;
+            }
+        }
+    }
+
+    status = status.substr(0, space_before_move_counts_index);
 
     // No en passant target
     if(status.back() == '-')

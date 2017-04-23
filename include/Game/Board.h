@@ -88,6 +88,7 @@ class Board
         char en_passant_target_file;
         int en_passant_target_rank;
         bool game_ended;
+        std::string starting_fen;
 
         // Caches
         mutable std::vector<Complete_Move> other_moves_cache;
