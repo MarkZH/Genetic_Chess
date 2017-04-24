@@ -213,11 +213,11 @@ void gene_pool(const std::string& config_file = "")
             auto& white = pool[pool_indices[index]];
             auto& black = pool[pool_indices[index + 1]];
 
-            std::cout << "Result of " << white.get_id() << " vs "
-                                      << black.get_id() << ": " << std::flush;
+            std::cout << white.get_id() << " vs "
+                      << black.get_id() << ": " << std::flush;
 
             auto winner = results[index/2].get();
-            std::cout << color_text(winner) << "! ";
+            std::cout << color_text(winner) << "!";
 
             if(winner == WHITE)
             {
@@ -250,13 +250,11 @@ void gene_pool(const std::string& config_file = "")
                     most_wins_player[pool_index] = winning_player;
                 }
 
-                std::cout << "mating " << white.get_id() << " " << black.get_id();
                 auto offspring = Genetic_AI(white, black);
                 offspring.mutate();
                 original_pool[offspring] = pool_index;
 
                 auto& losing_player  = (winner == WHITE ? black : white);
-                std::cout << " / killing " << losing_player.get_id() << std::endl;
                 losing_player = offspring; // offspring replaces loser
             }
             else
@@ -303,8 +301,8 @@ void gene_pool(const std::string& config_file = "")
                     std::cout << " / " << pseudo_loser.get_id() << " dies";
                     pseudo_loser = offspring; // offspring replaces loser
                 }
-                std::cout << std::endl;
             }
+            std::cout << std::endl;
         }
 
         std::cout << "\nMost wins:     " << most_wins[pool_index]
