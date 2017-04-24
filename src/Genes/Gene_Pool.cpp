@@ -81,7 +81,12 @@ void gene_pool(const std::string& config_file = "")
         genome_file_name += ".txt";
     }
 
-    std::vector<Gene_Pool> pools = load_gene_pool_file(genome_file_name);
+    auto pools = load_gene_pool_file(genome_file_name);
+    while(pools.size() < gene_pool_count)
+    {
+        pools.push_back({});
+    }
+
     for(size_t i = 0; i < pools.size(); ++i)
     {
         while(pools[i].size() < gene_pool_population)
@@ -92,39 +97,18 @@ void gene_pool(const std::string& config_file = "")
                 pools[i].back().mutate();
             }
         }
+
         while(pools[i].size() > gene_pool_population)
         {
             pools[i].pop_back();
         }
+
         for(const auto& ai : pools[i])
         {
             original_pool[ai] = i;
         }
-    }
-    while(pools.size() < gene_pool_count)
-    {
-        // create gene pool
-        pools.push_back({}); // empty gene pool
 
-        while(pools.back().size() < gene_pool_population)
-        {
-            pools.back().emplace_back();
-
-            // Scramble up genome for random initial population
-            for(int i = 0; i < scramble_mutations; ++i)
-            {
-                pools.back().back().mutate();
-            }
-        }
-
-        for(const auto& ai : pools.back())
-        {
-            original_pool[ai] = pools.size() - 1;
-        }
-    }
-    for(size_t pool_index = 0; pool_index < pools.size(); ++pool_index)
-    {
-        write_generation(pools, pool_index, genome_file_name);
+        write_generation(pools, i, genome_file_name);
     }
 
     // Indices in gene pool to be shuffled for game match-ups
@@ -151,7 +135,7 @@ void gene_pool(const std::string& config_file = "")
         }
     }
 
-    for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % gene_pool_count) // run forever
+    for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % pools.size()) // run forever
     {
         auto& pool = pools[pool_index];
 
