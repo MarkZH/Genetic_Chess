@@ -277,6 +277,8 @@ void gene_pool(const std::string& config_file = "")
                             }
                             catch(const std::runtime_error&)
                             {
+                                // In case invalid ID was chosen.
+                                // (New IDs are not always consecutively chosen.)
                                 continue;
                             }
                         }
