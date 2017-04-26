@@ -156,6 +156,42 @@ The asterisk indicates an offspring of the result of a drawn match, in which one
 The \verb|T| indicates that it is the best AI from another gene pool. One measure of a pool's strength is how fast its best gets killed off when it enters a new pool.
 
 
+\section{Some Consistent Results}
+
+Here are a few results that are reliably reproduced in multiple simulations.
+
+\subsection*{Piece values are rated in near-standard order}
+In descending order:
+\begin{enumerate}
+	\item Queen
+	\item Rook
+	\item Bishop and Knight nearly equal
+	\item Pawn
+\end{enumerate}
+
+\subsection*{White has a slight advantage}
+
+Of the games ending in checkmate, white wins about 10\% more often than black. Wins by time are shared by black and white equally.
+
+\subsection*{The Total Force gene and the Pawn Advancement gene typically dominate.}
+
+The Pawn Advancement gene usually gains higher priority first, probably because it is the simplest gene that makes an immediate difference in the game. Push the pawns forward both threatens the opponent's pieces with low-risk attacks and increases the chances of promotion.
+
+\subsection*{The Queen is the most popular piece for promotion.}
+
+Even when the Piece Strength gene has not been tuned at all, the queen is the overwhelming favorite, followed by the rook, then bishop, and finally the knight. In human games, only the queen and knight are chosen since they have different move patterns. If you need at least a rook or bishop, you might as well take a queen since that piece provides both. Only the knight provides a viable alternative. 
+
+
+\subsection*{Threefold repetition is the most common stalemate}
+
+Just like real games.
+
+
+\subsection*{The Sphere of Influence gene typically counts legal moves as just as valuable as any other move.}
+
+This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game.
+
+
 \section{Public Methods of Classes - Programmer's API}
 
 \subsection{Piece}
@@ -165,7 +201,7 @@ The \verb|T| indicates that it is the best AI from another gene pool. One measur
 \subsection{Complete\_Move}
 
 \subsection{Board}
-\subsubsection*{Important Notes}
+\subsubsection{Important Notes}
 The \code{Complete\_Move}s returned by \code{Board::get\_complete\_move()} and \code{Board::all\_legal\_moves()}, as well as the \code{const Piece*} returned by \code{Board::view\_piece\_on\_square()}, should be handled carefully as these structures are rended invalid by the following two operations:
 \begin{enumerate}
 	\item The originating \code{Board} is modified via \code{Board::submit\_move()}.

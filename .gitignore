@@ -50,3 +50,4 @@ octave-workspace
 *.fls
 *.fdb_latexmk
 *.toc
+*.gz
