@@ -141,16 +141,30 @@ title('Time left on clock at end of game')
 print([raw_data '_game_time_left_histogram.png']);
 
 
+% Don't plot top 1% of longest games to make trends easier to see
+[counts, bins] = hist(moves_in_game, max(moves_in_game) + 1);
+total_count = 0;
+max_game_count = floor(0.99*length(moves_in_game));
+for index = 1 : length(counts)
+  total_counts = total_counts + counts(index);
+  if total_counts > max_game_count
+    max_game_length_display = bins(index);
+    break;
+  end
+end
+
 figure('Position', [0, 0, 1200, 1000]);
 scatter(game, moves_in_game);
 xlabel('Game number');
 ylabel('Moves in Game');
 title('Number of moves in game')
+ylim([0, max_game_length_display]);
 print([raw_data '_moves_in_game.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
-hist(moves_in_game, (0 : max(moves_in_game)) + 0.5);
+bar(bins, counts);
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(length(game)) ')']);
 title('Number of moves in game')
+xlim([0, max_game_length_display]);
 print([raw_data '_moves_in_game_histogram.png']);
