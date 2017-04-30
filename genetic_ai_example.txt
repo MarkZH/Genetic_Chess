@@ -1,55 +1,55 @@
-ID: 124195
+ID: 247323
 
 Name: Piece Strength Gene
-B: 6.06723
-N: 4.07914
-P: 1.59412
-Q: 19.2462
-R: 8.15092
+B: 7.00313
+N: 3.89355
+P: 0.729863
+Q: 21.6958
+R: 10.2495
 ACTIVE
 
 Name: Look Ahead Gene
-Mean Game Length: 14.5352
-Positions Per Second: 282.545
-Speculation Constant: 0.494672
+Mean Game Length: 50.6126
+Positions Per Second: 143.753
+Speculation Constant: 0.655904
 ACTIVE
 
 Name: Branch Pruning Gene
-Minimum Score Change: -56.0958
-ACTIVE
+Minimum Score Change: -58.1287
+INACTIVE
 
 Name: Total Force Gene
-Priority: 520.562
+Priority: 390.622
 ACTIVE
 
 Name: Freedom to Move Gene
-Priority: 115.128
+Priority: -36.3533
 INACTIVE
 
 Name: Pawn Advancement Gene
-Priority: 19.3051
+Priority: 279.271
 ACTIVE
 
 Name: Opponent Pieces Targeted Gene
-Priority: 127.233
-INACTIVE
+Priority: 82.1025
+ACTIVE
 
 Name: Sphere of Influence Gene
-Legal Bonus: 1.98127
-Priority: 2.78465
-INACTIVE
+Legal Bonus: 1.38975
+Priority: 80.0711
+ACTIVE
 
 Name: King Confinement Gene
-Priority: -42.081
-INACTIVE
+Priority: -49.0376
+ACTIVE
 
 Name: King Protection Gene
-Priority: 48.1805
-INACTIVE
+Priority: 31.6205
+ACTIVE
 
 Name: Castling Possible Gene
-Priority: 53.1311
-INACTIVE
+Kingside Preference: -0.297317
+Priority: 32.2315
+ACTIVE
 
 END
-
