@@ -28,7 +28,7 @@ end
 
 data = importdata([raw_data, '_plots.txt'], '\t');
 
-game = data.data(:, 1);
+game_number = data.data(:, 1);
 white_wins = data.data(:, 2);
 black_wins = data.data(:, 3);
 draws = data.data(:, 4);
@@ -40,9 +40,9 @@ moves_in_game = data.data(:, 9);
 
 
 figure('Position', [0, 0, 1200, 1000]);
-plot(game, white_wins, 'LineWidth', 3, ...
-	 game, black_wins, 'LineWidth', 3, ...
-	 game, draws,      'LineWidth', 3);
+plot(game_number, white_wins, 'LineWidth', 3, ...
+	 game_number, black_wins, 'LineWidth', 3, ...
+	 game_number, draws,      'LineWidth', 3);
 xlabel(data.colheaders{1});
 ylabel('Total Counts');
 legend(data.colheaders{2}, ...
@@ -54,15 +54,15 @@ print([raw_data '_game_outcomes_lin.png']);
 
 
 
-white_checkmates = zeros(size(game));
-black_checkmates = zeros(size(game));
-fifty_moves = zeros(size(game));
-threefold = zeros(size(game));
-white_time_win = zeros(size(game));
-black_time_win = zeros(size(game));
-material = zeros(size(game));
-no_legal = zeros(size(game));
-for index = 1 : length(game)
+white_checkmates = zeros(size(game_number));
+black_checkmates = zeros(size(game_number));
+fifty_moves = zeros(size(game_number));
+threefold = zeros(size(game_number));
+white_time_win = zeros(size(game_number));
+black_time_win = zeros(size(game_number));
+material = zeros(size(game_number));
+no_legal = zeros(size(game_number));
+for index = 1 : length(game_number)
   if result_type(index) == 0
     white_checkmates(index) = 1;
   elseif result_type(index) == 1;
@@ -85,14 +85,14 @@ for index = 1 : length(game)
 end
 
 figure('Position', [0, 0, 1200, 1000]);
-loglog(game, cumsum(white_checkmates),  'LineWidth', 3, ...
-     game, cumsum(black_checkmates),  'LineWidth', 3, ...
-     game, cumsum(white_time_win),    'LineWidth', 3, ...
-     game, cumsum(black_time_win),    'LineWidth', 3, ...
-     game, cumsum(fifty_moves), 'LineWidth', 3, ...
-     game, cumsum(threefold),   'LineWidth', 3, ...
-     game, cumsum(material),    'LineWidth', 3, ...
-     game, cumsum(no_legal),    'LineWidth', 3);
+loglog(game_number, cumsum(white_checkmates),  'LineWidth', 3, ...
+       game_number, cumsum(black_checkmates),  'LineWidth', 3, ...
+       game_number, cumsum(white_time_win),    'LineWidth', 3, ...
+       game_number, cumsum(black_time_win),    'LineWidth', 3, ...
+       game_number, cumsum(fifty_moves), 'LineWidth', 3, ...
+       game_number, cumsum(threefold),   'LineWidth', 3, ...
+       game_number, cumsum(material),    'LineWidth', 3, ...
+       game_number, cumsum(no_legal),    'LineWidth', 3);
 xlabel('Games played');
 ylabel('Count');
 legend('White checkmate', 'Black checkmate', ...
@@ -103,14 +103,14 @@ title('Type of endgame counts');
 print([raw_data '_game_result_type_frequencies_log.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
-plot(game, cumsum(white_checkmates),  'LineWidth', 3, ...
-     game, cumsum(black_checkmates),  'LineWidth', 3, ...
-     game, cumsum(white_time_win),    'LineWidth', 3, ...
-     game, cumsum(black_time_win),    'LineWidth', 3, ...
-     game, cumsum(fifty_moves), 'LineWidth', 3, ...
-     game, cumsum(threefold),   'LineWidth', 3, ...
-     game, cumsum(material),    'LineWidth', 3, ...
-     game, cumsum(no_legal),    'LineWidth', 3);
+plot(game_number, cumsum(white_checkmates),  'LineWidth', 3, ...
+     game_number, cumsum(black_checkmates),  'LineWidth', 3, ...
+     game_number, cumsum(white_time_win),    'LineWidth', 3, ...
+     game_number, cumsum(black_time_win),    'LineWidth', 3, ...
+     game_number, cumsum(fifty_moves), 'LineWidth', 3, ...
+     game_number, cumsum(threefold),   'LineWidth', 3, ...
+     game_number, cumsum(material),    'LineWidth', 3, ...
+     game_number, cumsum(no_legal),    'LineWidth', 3);
 xlabel('Games played');
 ylabel('Total Count');
 legend('White checkmate', 'Black checkmate', ...
@@ -125,8 +125,8 @@ figure('Position', [0, 0, 1200, 1000]);
 hold all;
 white_time_left(white_time_left < 0) = -0.05*max(white_time_left);
 black_time_left(black_time_left < 0) = -0.05*max(white_time_left);
-scatter(game, white_time_left, 'k');
-scatter(game, black_time_left, 'k');
+scatter(game_number, white_time_left, 'k');
+scatter(game_number, black_time_left, 'k');
 ylim(max(white_time_left)*[-0.10, 1.05]);
 xlabel('Game number');
 ylabel('Time left on clock');
@@ -136,7 +136,7 @@ print([raw_data '_game_time_left.png']);
 figure('Position', [0, 0, 1200, 1000]);
 hist([black_time_left; white_time_left], 300);
 xlabel('Time left on clock');
-ylabel(['Counts (total = ' num2str(length(game)) ')']);
+ylabel(['Counts (total = ' num2str(length(game_number)) ')']);
 title('Time left on clock at end of game')
 print([raw_data '_game_time_left_histogram.png']);
 
@@ -154,7 +154,7 @@ for index = 1 : length(counts)
 end
 
 figure('Position', [0, 0, 1200, 1000]);
-scatter(game, moves_in_game);
+scatter(game_number, moves_in_game);
 xlabel('Game number');
 ylabel('Moves in Game');
 title('Number of moves in game')
@@ -164,7 +164,7 @@ print([raw_data '_moves_in_game.png']);
 figure('Position', [0, 0, 1200, 1000]);
 bar(bins, counts);
 xlabel('Moves in Game');
-ylabel(['Counts (total = ' num2str(length(game)) ')']);
+ylabel(['Counts (total = ' num2str(length(game_number)) ')']);
 title('Number of moves in game')
 xlim([0, max_game_length_display]);
 print([raw_data '_moves_in_game_histogram.png']);
