@@ -1,6 +1,6 @@
 \documentclass[letter]{article}
 \usepackage[T1]{fontenc}
-\usepackage{hyperref}
+\usepackage[colorlinks]{hyperref}
 
 \newcommand{\cpp}{C{\nobreak +}{\nobreak +}}
 \newcommand{\code}[1]{{\texttt #1}}
@@ -33,12 +33,12 @@ This will start up a gene pool with Genetic\_AIs playing against each other--mat
 	\item[\code{genetic\_chess (-human|-genetic|-random) (-human|-genetic|-random)}]
 Starts a local game played in the terminal with an ASCII art board. The first parameter is the white player, the second is black.
 	\begin{description}
-		\item[\code{-human}] a human player. Moves are specified in algebraic notation indicated the starting and ending square.
-		\item[\code{-genetic}] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID.
-		\item[\code{-random}] an AI player that chooses moves randomly from all legal moves.
+		\item[\code{-human}:] a human player entering moves on the command line and seeing the results on a text-based drawing of the board. Moves are specified in standard algebraic notation (SAN) or in coordinates that indicate the starting and ending square. 
+		\item[\code{-genetic}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID. If no number is specified, the last genome in the file is loaded (presumably this one is the most evolved). If there is another file containing records of games played during a gene pool run that has the same name as the genome file name with an extra suffix ``\_games.txt'', then the last genome with at least 3 wins will be selected.
+		\item[\code{-random}:] an AI player that chooses moves randomly from all legal moves.
 	\end{description}
 \end{description}
-A barely functional implementation of the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol} allows for play through xboard and similar programs (PyChess, etc.). When used this way, arguments are ignored. Future feature: specify a specific AI to use like -genetic or -random.
+Genetic Chess can communicate with GUI chess programs through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol}, including xboard, PyChess, Cute Chess, and others. When using Genetic Chess this way, only specify the arguments for a single player (\code{-genetic} or \code{-random}). The program will then wait for communication from the GUI.
 
 
 
@@ -52,15 +52,17 @@ A barely functional implementation of the \href{https://www.gnu.org/software/xbo
 
 \subsection{Endgame Scoring}
 
-Winning gives an infinite score score.
+Winning gives an infinite score.
 Losing gives a negative infinite score.
 Draw gives zero.
 
-Why not evolve these numbers? While the priorities of various genes can be varied to yield different playstyles, the only reasonable score to assign to a win is one that is larger than any other score. It can only be a disadvantage to prefer anything to a winning move. While this would result in upward evolutionary pressure on the 
+Why not evolve these numbers? While the priorities of various genes can be varied to yield different playing styles, the only reasonable score to assign to a win is one that is larger than any other score. It can only be a disadvantage to prefer anything to a winning move. While this would result in upward evolutionary pressure on the score assigned to winning, it would stall the evolution of all other genes while the score assigned to winning was pushed high enough to always be preferred.
 
 \subsection{Minimaxing}
 
 Also mention the decision process for whether or not to recurse further down a certain play variation.
+
+Since chess is a zero-sum game, the score assigned to one side of the board is equal to the negative value assigned from the other side. The variation of Minimax is known as Negamax.
 
 \subsection{Alpha-Beta Pruning}
 
@@ -111,19 +113,21 @@ Returns a positive non-zero score to indicate that castling is possible or has a
 
 \section{The Gene Pool: On the care and feeding of chess AIs}
 
-Multiple pools.
+In each generation, the players in a gene pool are randomly matched up with each other to play a single game of chess. If the game ends with a winner, whether through checkmate or time violation, then the two players produce an offspring by recombination of their genomes (each of the offspring's genes is picked randomly from either parent with equal probability) plus a single extra mutation. This offspring replaces the loser in the gene pool. This way, the genes of losing players are only slowly weeded out since a single game does not provide much information about the fitness of each gene.
 
-What happens to winners, losers, and games ending in a draw.
+If the game ends in  a draw, then one of two things happens. With high probability--currently 95\%--the players are left as they are and will participate in the next round. The other possibility is that one of the players is randomly picked to be replaced by the result of mating the other player with either a randomly generated Genetic\_AI, or any past Genetic\_AI, even long dead ones. This happens with low probability because it destroys genetic information. However, it is necessary to keep a pool from stagnating due to never-ending drawn games. Bringing in a randomly generated AI injects new genetic information into the pool (though with low probability of high-quality information). Bringing back dead Genetic\_AIs injects good information from the past and should help to keep a gene pool from becoming trapped in a self-reinforcing, aberrant playing style that only works against similar players. In effect, both of these strategies are meant to kick a gene pool off of a local maximum of genetic fitness.
 
-Typical output during a gene pool run:
+One final means of preventing gene pool stagnation and preserving genetic diversity is the use of multiple gene pools. Each gene pool evolves separately for a long time, allowing each to genetically diverge. Then, every once in a long while (the time being user-specified), the best player from each pool is transferred to the next pool over. Thus, the best genes are further spread afield so that they can be tested against a wide range of opponents. A useful measure of a pool's strength is how long its best player survives when it enters a new pool.
+
+An example of typical output during a gene pool run is shown below:
 \begin{verbatim}
 Gene pool ID: 0  Gene pool size: 16  New blood introduced: 126 (*)
-Games: 22026  White wins: 10469  Black wins: 9562  Draws: 2737
+Games: 22024  White wins: 10469  Black wins: 9562  Draws: 2737
 Time: 38.538 sec   Gene pool file name: pool.txt
     ID   Wins  Streak  Draws  Streak
- 59014      9       9      0       0 T
+ 59014      9       7      1       0 T
  59031      3       3      0       0
- 59054      2       2      0       0
+ 59054      1       0      2       2
  59055      2       2      0       0
  59074      1       1      0       0
  59077      1       1      0       0
@@ -138,22 +142,22 @@ Time: 38.538 sec   Gene pool file name: pool.txt
  59101      0       0      0       0
  59102      0       0      0       0
 
-Result of 59055 vs. 59097: White! mating 59055 59097 / killing 59097
-Result of 59074 vs. 59101: Black! mating 59074 59101 / killing 59074
-Result of 59102 vs. 59100: White! mating 59102 59100 / killing 59100
-Result of 59096 vs. 59014: None! 59014 mates with random / 59096 dies
-Result of 59031 vs. 59078: None! 59031 mates with 4653 / killing 59078
-Result of 59054 vs. 59095: Black! mating 59054 59095 / killing 59054
-Result of 59098 vs. 59099: Black! mating 59098 59099 / killing 59098
-Result of 59081 vs. 59077: White! mating 59081 59077 / killing 59077
+59055 vs 59097: White!
+59074 vs 59101: Black!
+59102 vs 59100: White!
+59096 vs 59014: None! 59014 mates with random / 59096 dies
+59031 vs 59078: None!
+59054 vs 59095: Black!
+59098 vs 59099: Black!
+59081 vs 59077: White!
 
 Most wins:     18 by ID 20968
 Longest lived: 27 by ID 45394
 
 \end{verbatim}
-The asterisk indicates an offspring of the result of a drawn match, in which one of the players in that match is replaced by the result of mating the other player with a randomly generated Genetic\_AI. This happens with low probability because it destroys genetic information. However, it is necessary to keep a pool from stagnating due to neverending drawn games.
+The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, player 59014 is on a seven-game winning streak following its last draw. Player 59054 has drawn its last two games.
 
-The \verb|T| indicates that it is the best AI from another gene pool. One measure of a pool's strength is how fast its best gets killed off when it enters a new pool.
+The asterisk (\verb|*|) indicates an offspring of the result of a drawn match. Note that the outcome of the game between 59096 and 59014 means that another such offspring will be brought into this pool for the next round. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
 
 
 \section{Some Consistent Results}
@@ -161,7 +165,7 @@ The \verb|T| indicates that it is the best AI from another gene pool. One measur
 Here are a few results that are reliably reproduced in multiple simulations.
 
 \subsection*{Piece values are rated in near-standard order}
-In descending order:
+In descending order of valuation by a Genetic\_AI:
 \begin{enumerate}
 	\item Queen
 	\item Rook
