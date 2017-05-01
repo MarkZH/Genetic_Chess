@@ -15,14 +15,14 @@
 \maketitle
 
 \begin{abstract}
-This work is a program for evolving chess-playing AIs written in \cpp.  Through putting a population of AIs into chess matches, killing off the losers, and breeding the winners, it is hoped that one specimen will be able to stand up against a more traditionally developed engine (if only on the easiest difficulty setting).
+This work is a program for evolving chess-playing AIs.  Through putting a population of AIs into chess matches, killing off the losers, and breeding the winners, it is hoped that one specimen will be able to stand up against a more traditionally developed engine (if only on the easiest difficulty setting). Though it is written in \cpp{}, it is the hope of the author that the style and architecture are comprehensible.
 \end{abstract}
 
 \tableofcontents{}
 
 
 \section{Building}
-Run \code{make} to create release and debug executables in the \code{bin/} subfolder. If new files are created or the \code{\#include} files are changed within a file, run \code{python create\_Makefile.py} to regenerate the Makefile.
+Run \code{make} to create release and debug executables in a \code{bin/} subfolder that will be created if it does not already exist. If, in the course of working on this project, new files are created or the \code{\#include} files are changed within a file, run \code{python create\_Makefile.py} to regenerate the Makefile. This python script assumes all \code{*.cpp} and \code{*.h} files in the current directory and all subfolders are part of the project and need compiling.
 
 
 \section{Running}
@@ -35,20 +35,23 @@ Starts a local game played in the terminal with an ASCII art board. The first pa
 	\begin{description}
 		\item[\code{-human}:] a human player entering moves on the command line and seeing the results on a text-based drawing of the board. Moves are specified in standard algebraic notation (SAN) or in coordinates that indicate the starting and ending square. 
 		\item[\code{-genetic}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID. If no number is specified, the last genome in the file is loaded (presumably this one is the most evolved). If there is another file containing records of games played during a gene pool run that has the same name as the genome file name with an extra suffix ``\_games.txt'', then the last genome with at least 3 wins will be selected.
-		\item[\code{-random}:] an AI player that chooses moves randomly from all legal moves.
+		\item[\code{-random}:] an AI player that chooses a random legal move at each turn.
 	\end{description}
 \end{description}
 Genetic Chess can communicate with GUI chess programs through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol}, including xboard, PyChess, Cute Chess, and others. When using Genetic Chess this way, only specify the arguments for a single player (\code{-genetic} or \code{-random}). The program will then wait for communication from the GUI.
 
 
-
-
-\section{High-Level Overview}
-
-
-
-
 \section{Non-evolutionary aspects}
+
+These sections describe the aspects of the chess AI that are not genetically modifiable, usually because of at least one of the following reasons:
+\begin{itemize}
+	\item There is no sense in which the aspect of play is improvable. Any modification would be detrimental to the chess playing;
+	\item It would take far too much time to evolve that aspect of play from a random starting configuration, or it would interfere too much with the evolution of other aspects;
+	\item I cannot conceive of how to represent the state space of that particular play strategy so that it may be genetically encoded.
+\end{itemize}
+On the last point, it has been suggested to me that, instead of the specific genes listed in Section~\ref{gene-section}, the genes should encode more abstract and generic strategies and heuristics for evaluating a board state. While this would probably better mimic biological evolution (wherein adenosine and thymine are rather neutral as to their teleolgy), I have no idea how to program such an abstract representation and how to translate the actional of such genes into chess moves. So, what results from all this programming is a glorified tuning algorithm for parameters in pre-defined genes with hard-coded meanings.
+
+On the other hand, so is every other genetic algorithm (see \cite{evolved-antenna}, \cite{evolved-stellarator}, and others). Plus, these genes can be deactivated through mutation, so these AIs are perfectly capable of telling me exactly what they think of my painstakingly crafted genes.\footnote{The little ingrates!}
 
 \subsection{Endgame Scoring}
 
@@ -58,55 +61,66 @@ Draw gives zero.
 
 Why not evolve these numbers? While the priorities of various genes can be varied to yield different playing styles, the only reasonable score to assign to a win is one that is larger than any other score. It can only be a disadvantage to prefer anything to a winning move. While this would result in upward evolutionary pressure on the score assigned to winning, it would stall the evolution of all other genes while the score assigned to winning was pushed high enough to always be preferred.
 
-\subsection{Minimaxing}
+The specific values were chosen to make the scoring symmetrical between the two players, in that the score for one side is the negative of the score as seen from the other side (assuming the same player does the scoring). What is good for one player is bad for the other player by the same amount.
 
-Also mention the decision process for whether or not to recurse further down a certain play variation.
+\subsection{Mini-maxing}
 
-Since chess is a zero-sum game, the score assigned to one side of the board is equal to the negative value assigned from the other side. The variation of Minimax is known as Negamax.
+The principle behind the minimax algorithm is that the quality of a move is measured by the quality of moves it allows the opponent to make. Of course, the quality of those moves is measured by the quality of the moves that follow. Ideally, the only required board evaluation scores would be $\infty$ for a win, 0 for a draw, and $-\infty$ for a loss. Unfortunately, the number of positions to examine in a typical game is far too large to examine in a few minutes, so the search has to be cut off at some point and a heuristic evaluation employed to estimate the probability of winning from that stopping point. In this program, the decision to stop and the heuristic is genetically determined and evolved over many games.
 
 \subsection{Alpha-Beta Pruning}
 
-With additional optimization to cutoff search if alpha represents a win at a shallower depth than is possible in the current branch.
+Alpha-beta pruning is based upon keeping a record of two game state evaluations:
+\begin{itemize}
+	\item[\em{Alpha}:] is the highest score that cannot be avoided by the opponent making different moves. That is, the player whose turn it is can force the game into a state with at least this score.
+	\item[\em{Beta}:] is the lowest score that the opponent can limit the current player to. If the current player finds a move with a higher score, then the opponent can make an earlier move that makes this game state impossible to reach (refuting it). Once such a move is found, the examination of moves from the current game state is abandoned, as the opponent will not allow this state to be reached.
+\end{itemize}
+Each time a move examination reaches a greater depth in the game tree, these values switch roles to represent the view of the board from the opponent's perspective.
 
+There is one additional optimization implemented here in which the search is cut off if alpha represents a win at a shallower depth than is possible in the current game tree branch. If a checkmate can be forced in fewer moves, there's no point in looking for a win in more moves.
 
+\subsection{Principal Variation Recall}
+
+If the best move is chosen base upon the probable resulting future board state, and if the opponent makes the predicted move in that variation, then the moves leading to that board state are examined first during the next move. This high-scoring board state should lead to early cutoffs from alpha-beta pruning, especially if that board state was a game-ending state. If that board state is actually avoidable by the opponent, then the shallower depth of that state during the next turn should lead to a faster refutation, leaving time to examine alternate variations.
 
 
 \section{The Genome}
 
 \subsection{Regulatory Genes}
 \subsubsection{Piece Strength Gene}
-Specifies the importance or strength of each different type of chess piece.
+This gene specifies the importance or strength of each different type of chess piece. It does not provide any direct action, but other genes reference this one for their own evaluation purposes--the Total Force Gene, for example.
 
 \subsubsection{Look Ahead Gene}
-Determines how many positions to examine based on the time left. When looking ahead to future moves, the number of positions to examine is divided equally among every legal move. This naturally limits the depth of search while allowing deeper searches for positions with fewer legal moves. The amount of time to use in examining moves is determined by genetic factors indicating an average number of moves per game and the number of positions than can be examined per second. The distribution of moves per game is modeled with a Poisson distribution.
+This gene determines all aspects of time control. It does this by determining how much time to spend choosing a move, including how much time to spend on future moves. When choosing a move from the current board, the amount of time to examine each move and its consequences is divided equally among every legal move. This naturally limits the depth of search while allowing deeper searches for positions with fewer legal moves. If a move examination is cut off early for whatever reason (e.g., a game-ending move is found), then the remaining time for that move is available for as yet unexamined moves.
+
+The amount of time to use in examining moves is determined by genetic factors indicating an average number of moves per game. The decision to look at future moves is determined by a genetically estimated rate at which positions can be examined and the amount of time left for this move. The distribution of moves per game is modeled with a Poisson distribution with a genetically variable mean parameter.
 
 \subsubsection{Branch Pruning Gene}
-Cutoff searching to greater depths if the current move lowers the score of a board state to less than the amount specified within the gene.
+This gene cuts off searching the game tree to greater depths if the current move lowers the score of a board state to less than the amount specified within the gene. If a move is sufficiently bad in the immediate state, then there's probably not going to be a dramatic recovery.
 
 \subsection{Board-Scoring Genes}
 \subsubsection{Total Force Gene}
-Sums the strength (according to the Piece Strength Gene) of all the player's pieces on the board.
+This gene sums the strength (according to the Piece Strength Gene) of all the player's pieces on the board.
 
 \subsubsection{Freedom to Move Gene}
-Counts the number of legal moves available in the current position.
+This gene counts the number of legal moves available in the current position.
 
 \subsubsection{Pawn Advancement Gene}
-Measures the progress of all pawns towards the opposite side of the board.
+This gene measures the progress of all pawns towards the opposite side of the board.
 
 \subsubsection{Opponent Pieces Targeted Gene}
-Sums the total strength (as determined by the Piece Strength Gene below) of the opponent's pieces currently under attack.
+This gene sums the total strength (as determined by the Piece Strength Gene) of the opponent's pieces currently under attack.
 
 \subsubsection{Sphere of Influence Gene}
-Counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move.
+This gene counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move. That is, if a piece cannot reach a square in one move (perhaps because such a move is blocked by another piece), then that square is still counted as falling under the influence of the side owning that piece.
 
 \subsubsection{King Confinement Gene}
-Counts the squares the king can reach given unlimited legal moves.
+This gene counts the squares the king can reach given unlimited legal moves. This is a measure of how much room the king has to maneuver and escape. It is somewhat in opposition to the King Protection Gene.
 
 \subsubsection{King Protection Gene}
-Counts the squares that have access to the king by any valid piece movement that are unguarded by that king's other pieces.
+This gene counts the squares that have access to the king by any valid piece movement that are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a more exposed king.
 
 \subsubsection{Castling Possible Gene}
-Returns a positive non-zero score to indicate that castling is possible or has already happened. Score can vary based on the preference for kingside or queenside castling.
+This gene returns a positive score to indicate that castling is possible or has already happened. Score can vary based on the preference for kingside or queenside castling.
 
 
 
@@ -115,7 +129,7 @@ Returns a positive non-zero score to indicate that castling is possible or has a
 
 In each generation, the players in a gene pool are randomly matched up with each other to play a single game of chess. If the game ends with a winner, whether through checkmate or time violation, then the two players produce an offspring by recombination of their genomes (each of the offspring's genes is picked randomly from either parent with equal probability) plus a single extra mutation. This offspring replaces the loser in the gene pool. This way, the genes of losing players are only slowly weeded out since a single game does not provide much information about the fitness of each gene.
 
-If the game ends in  a draw, then one of two things happens. With high probability--currently 95\%--the players are left as they are and will participate in the next round. The other possibility is that one of the players is randomly picked to be replaced by the result of mating the other player with either a randomly generated Genetic\_AI, or any past Genetic\_AI, even long dead ones. This happens with low probability because it destroys genetic information. However, it is necessary to keep a pool from stagnating due to never-ending drawn games. Bringing in a randomly generated AI injects new genetic information into the pool (though with low probability of high-quality information). Bringing back dead Genetic\_AIs injects good information from the past and should help to keep a gene pool from becoming trapped in a self-reinforcing, aberrant playing style that only works against similar players. In effect, both of these strategies are meant to kick a gene pool off of a local maximum of genetic fitness.
+If the game ends in  a draw, then one of two things happens. With high probability--currently 95\%--the players are left as they are and will participate in the next round. The other possibility is that one of the players is randomly picked to be replaced by the result of mating the other player with either a randomly generated Genetic\_AI, or any past Genetic\_AI, even long dead ones. This happens with low probability because it destroys genetic information. However, it is necessary to keep a pool from stagnating due to never-ending drawn games. Bringing in a randomly generated AI injects new genetic information into the pool (though with low probability of high-quality information). Bringing back dead Genetic\_AIs injects good information from the past and should help to keep a gene pool from becoming trapped in a self-reinforcing, pathological playing style that only works against similar players. In effect, both of these strategies are meant to kick a gene pool off of a local maximum of genetic fitness.
 
 One final means of preventing gene pool stagnation and preserving genetic diversity is the use of multiple gene pools. Each gene pool evolves separately for a long time, allowing each to genetically diverge. Then, every once in a long while (the time being user-specified), the best player from each pool is transferred to the next pool over. Thus, the best genes are further spread afield so that they can be tested against a wide range of opponents. A useful measure of a pool's strength is how long its best player survives when it enters a new pool.
 
@@ -219,5 +233,16 @@ When calling \code{Board::view\_piece\_on\_square()}, an empty square is represe
 
 \subsection{Clock}
 
+
+
+\begin{thebibliography}{9}
+
+\bibitem{evolved-antenna}
+G.S. Hornby, A. Globus, D.S. Linden, J.D. Lohn, ``Automated Antenna Design with Evolutionary Algorithms.'' AIAA
+
+\bibitem{evolved-stellarator}
+W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a genetic algorithm for compact stellarator coil design.'' IAEA Nuclear Fusion, Vol. 41, No. 9. 1185-1195
+
+\end{thebibliography}
 
 \end{document}
