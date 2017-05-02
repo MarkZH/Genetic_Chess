@@ -117,7 +117,7 @@ This gene counts the number of squares attacked by all pieces. Bonus points are 
 This gene counts the squares the king can reach given unlimited legal moves. This is a measure of how much room the king has to maneuver and escape. It is somewhat in opposition to the King Protection Gene.
 
 \subsubsection{King Protection Gene}
-This gene counts the squares that have access to the king by any valid piece movement that are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a more exposed king.
+This gene counts the squares that have access to the king by any valid piece movement that are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a less exposed king.
 
 \subsubsection{Castling Possible Gene}
 This gene returns a positive score to indicate that castling is possible or has already happened. Score can vary based on the preference for kingside or queenside castling.
@@ -127,7 +127,7 @@ This gene returns a positive score to indicate that castling is possible or has 
 
 \section{The Gene Pool: On the care and feeding of chess AIs}
 
-In each generation, the players in a gene pool are randomly matched up with each other to play a single game of chess. If the game ends with a winner, whether through checkmate or time violation, then the two players produce an offspring by recombination of their genomes (each of the offspring's genes is picked randomly from either parent with equal probability) plus a single extra mutation. This offspring replaces the loser in the gene pool. This way, the genes of losing players are only slowly weeded out since a single game does not provide much information about the fitness of each gene.
+In each generation, the players in a gene pool are randomly matched up with each other to play a single game of chess. If the game ends with a winner, whether through checkmate or time violation, then the two players mate to produce an offspring by picking each gene randomly from either parent with equal probability. The offspring is then subject to a a single extra mutation procedure wherein two genes on average are individually mutated. Finally, the offspring replaces the loser in the gene pool. This way, some the genes of losing players are passed on and only slowly weeded out since a single game does not actually provide much information about the fitness of any gene.
 
 If the game ends in  a draw, then one of two things happens. With high probability--currently 95\%--the players are left as they are and will participate in the next round. The other possibility is that one of the players is randomly picked to be replaced by the result of mating the other player with either a randomly generated Genetic\_AI, or any past Genetic\_AI, even long dead ones. This happens with low probability because it destroys genetic information. However, it is necessary to keep a pool from stagnating due to never-ending drawn games. Bringing in a randomly generated AI injects new genetic information into the pool (though with low probability of high-quality information). Bringing back dead Genetic\_AIs injects good information from the past and should help to keep a gene pool from becoming trapped in a self-reinforcing, pathological playing style that only works against similar players. In effect, both of these strategies are meant to kick a gene pool off of a local maximum of genetic fitness.
 
@@ -197,7 +197,19 @@ The Pawn Advancement gene usually gains higher priority first, probably because 
 
 \subsection*{The Queen is the most popular piece for promotion.}
 
-Even when the Piece Strength gene has not been tuned at all, the queen is the overwhelming favorite, followed by the rook, then bishop, and finally the knight. In human games, only the queen and knight are chosen since they have different move patterns. If you need at least a rook or bishop, you might as well take a queen since that piece provides both. Only the knight provides a viable alternative. 
+Even when the Piece Strength gene has not been tuned at all, the queen is the overwhelming favorite, followed by the rook, then bishop, and finally the knight. In human games, only the queen and knight are chosen since they have different move patterns. If you need at least a rook or bishop, you might as well take a queen since that piece provides both. Only the knight provides a viable alternative.
+
+As an example, the following is a count of all promotions in a gene pool run after more than 300,000 gaes.
+\begin{center}
+\begin{tabular}{l|r}
+	Piece & Promotions \\
+\hline
+	Bishop & 2232  \\
+	Knight  &  1648 \\
+	Rook    &  7215 \\
+	Queen  & 146664 \\
+\end{tabular}
+\end{center}
 
 
 \subsection*{Threefold repetition is the most common stalemate}
@@ -220,12 +232,12 @@ This was unexpected. I thought that the legal moves would count more since they 
 
 \subsection{Board}
 \subsubsection{Important Notes}
-The \code{Complete\_Move}s returned by \code{Board::get\_complete\_move()} and \code{Board::all\_legal\_moves()}, as well as the \code{const Piece*} returned by \code{Board::view\_piece\_on\_square()}, should be handled carefully as these structures are rended invalid by the following two operations:
+The \code{Complete\_Move}s returned by \code{Board::get\_complete\_move()} and \code{Board::all\_legal\_moves()}, as well as the \code{const Piece*} returned by \code{Board::view\_piece\_on\_square()}, should be handled carefully as these structures are rendered invalid by the following two operations:
 \begin{enumerate}
 	\item The originating \code{Board} is modified via \code{Board::submit\_move()}.
 	\item The originating \code{Board} is destructed.
 \end{enumerate}
-Furthermore, a \code{Complete\_Move} generated by one \code{Board} is invalid for any other \code{Board}, even an unmodified copy of the originating \code{Board}.
+Furthermore, a \code{Complete\_Move} generated by one \code{Board} is only valid for another \code{Board} if it is an unmodified copy of the originating \code{Board}.
 
 When calling \code{Board::view\_piece\_on\_square()}, an empty square is represented by a \code{nullptr}.
 
