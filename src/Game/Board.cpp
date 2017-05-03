@@ -819,8 +819,7 @@ const std::vector<std::string>& Board::get_game_record() const
 void Board::print_game_record(const std::string& white_name,
                               const std::string& black_name,
                               const std::string& file_name,
-                              const std::string& outside_result,
-                              unsigned int game_number) const
+                              const std::string& outside_result) const
 {
     std::string result;
     std::string termination;
@@ -849,6 +848,19 @@ void Board::print_game_record(const std::string& white_name,
         termination = split[1];
     }
 
+    static int game_number = 0;
+    if(game_number == 0)
+    {
+        std::ifstream ifs(file_name);
+        std::string line;
+        while(std::getline(ifs, line))
+        {
+            if(String::starts_with(line, "[Round"))
+            {
+                ++game_number;
+            }
+        }
+    }
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
     if( ! white_name.empty())

@@ -39,22 +39,7 @@ Color play_game_with_board(const Player& white,
                            const std::string& pgn_file_name,
                            Board& board)
 {
-    static unsigned int game_number = 0;
     static std::mutex write_lock;
-    static std::string last_game_file;
-    if(last_game_file != pgn_file_name)
-    {
-        last_game_file = pgn_file_name;
-        std::ifstream ifs(pgn_file_name);
-        std::string line;
-        while(std::getline(ifs, line))
-        {
-            if(String::starts_with(line, "[Round"))
-            {
-                game_number = std::stoi(String::split(line, "\"")[1]);
-            }
-        }
-    }
     Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds);
 
     try
@@ -80,8 +65,7 @@ Color play_game_with_board(const Player& white,
         board.print_game_record(white.name(),
                                 black.name(),
                                 pgn_file_name,
-                                end_game.what(),
-                                ++game_number);
+                                end_game.what());
 
         if(game_clock.is_running())
         {

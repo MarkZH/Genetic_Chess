@@ -265,7 +265,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             if(move_iter == all_legal_moves.end())
             {
                 board.ascii_draw(WHITE);
-                board.print_game_record("","","","Principal Variation error", 0);
+                board.print_game_record("","","","Principal Variation error");
                 auto board_copy = board;
                 for(const auto& item : principal_variation)
                 {
