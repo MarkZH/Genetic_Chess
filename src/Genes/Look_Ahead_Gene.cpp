@@ -11,7 +11,8 @@
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
     positions_per_second(0.01),
-    speculation_constant(0.0)
+    speculation_constant(0.0),
+    minimum_moves_left(0)
 {
     recalculate_exponent();
 }
@@ -21,6 +22,7 @@ void Look_Ahead_Gene::reset_properties() const
     properties["Mean Game Length"] = mean_game_length;
     properties["Positions Per Second"] = positions_per_second;
     properties["Speculation Constant"] = speculation_constant;
+    properties["Minimum Moves Left"] = minimum_moves_left;
 }
 
 void Look_Ahead_Gene::load_properties()
@@ -28,6 +30,7 @@ void Look_Ahead_Gene::load_properties()
     mean_game_length = properties["Mean Game Length"];
     positions_per_second = properties["Positions Per Second"];
     speculation_constant = properties["Speculation Constant"];
+    minimum_moves_left = properties["Minimum Moves Left"];
     recalculate_exponent();
 }
 
@@ -47,12 +50,14 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
 
     auto moves_so_far = board.get_game_record().size()/2; // only count moves by this player
     auto moves_left = Math::average_moves_left(mean_game_length, moves_so_far);
+    moves_left = std::max(moves_left, minimum_moves_left);
 
     return time_left/std::min(moves_left, double(moves_to_reset));
 }
+
 void Look_Ahead_Gene::gene_specific_mutation()
 {
-    auto choice = Random::random_integer(1, 3);
+    auto choice = Random::random_integer(1, 4);
     switch(choice)
     {
         case 1:
@@ -66,6 +71,9 @@ void Look_Ahead_Gene::gene_specific_mutation()
             speculation_constant = std::max(speculation_constant, 0.0);
             speculation_constant = std::min(speculation_constant, 1.0);
             recalculate_exponent();
+            break;
+        case 4:
+            minimum_moves_left = std::max(0.0, minimum_moves_left + Random::random_normal(1.0));
             break;
         default:
             throw std::runtime_error("Bad Look_Ahead_Gene mutation: " + std::to_string(choice));

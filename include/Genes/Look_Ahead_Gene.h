@@ -28,6 +28,8 @@ class Look_Ahead_Gene : public Gene
         double positions_per_second; // number of positions examined per second
         double speculation_constant; // how often to look ahead even with little time
         double speculation_exponent;
+        double minimum_moves_left; // never assume there are less than this many moves left
+                                   // (prevent using all time on move that's not the last)
 
         double score_board(const Board& board, Color perspective) const override;
         void gene_specific_mutation() override;
