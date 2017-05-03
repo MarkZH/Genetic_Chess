@@ -90,5 +90,5 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
 
 void Sphere_of_Influence_Gene::gene_specific_mutation()
 {
-    legal_bonus += Random::random_normal(0.2);
+    legal_bonus += Random::random_normal(0.05);
 }
