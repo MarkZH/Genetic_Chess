@@ -84,21 +84,34 @@ If the best move is chosen base upon the probable resulting future board state, 
 
 
 \section{The Genome}
+The genome is the repository for genetic information in the Genetic AIs and controls all aspects of game play not mentioned in the previous section. All are subject to mutation, which can change the behavior and influence of a given gene, or even deactivate it entirely. Gene deactivation is a strategy for exiting local maxima in fitness since a gene can still mutate when deactivated. Since it feels no evolutionary pressure, the deactivated gene is free to random walk somewhere else, perhaps to a more advantageous state that will be discovered upon reactivation.
 
 \subsection{Regulatory Genes}
+A regulator gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
+
 \subsubsection{Piece Strength Gene}
-This gene specifies the importance or strength of each different type of chess piece. It does not provide any direct action, but other genes reference this one for their own evaluation purposes--the Total Force Gene, for example.
+This gene specifies the importance or strength of each different type of chess piece. Other genes like the Total Force Gene (Section~\ref{total-force}) reference this one for their own evaluation purposes.
+
+The number associated with each piece is not scaled to any other piece, but before a piece strength is returned, it is scaled so that that total value of all the pieces at the start of the game (8~pawns, 2~rooks, 2~knights, 2~bishops, 1~queen, and 1~king) equals~1. This prevents mutations in this gene from changing the priorities of other genes that reference this one. In other words, if a series of mutations increase the strength of all pieces, the Total Force gene will not subsequently return higher scores for the same board state. Only mutations that change piece strengths with respect to other pieces are effective.
 
 \subsubsection{Look Ahead Gene}
 This gene determines all aspects of time control. It does this by determining how much time to spend choosing a move, including how much time to spend on future moves. When choosing a move from the current board, the amount of time to examine each move and its consequences is divided equally among every legal move. This naturally limits the depth of search while allowing deeper searches for positions with fewer legal moves. If a move examination is cut off early for whatever reason (e.g., a game-ending move is found), then the remaining time for that move is available for as yet unexamined moves.
 
-The amount of time to use in examining moves is determined by genetic factors indicating an average number of moves per game. The decision to look at future moves is determined by a genetically estimated rate at which positions can be examined and the amount of time left for this move. The distribution of moves per game is modeled with a Poisson distribution with a genetically variable mean parameter.
+The amount of time to use in examining moves is determined by genetic factors indicating an average number of moves per game. The decision to look at future moves is determined by a genetically estimated rate at which positions can be examined and the amount of time left for this move. The distribution of moves per game is modeled with a Poisson distribution with a genetically variable mean parameter. An equal amount of time is allocated for every move left in the game. For example, if 10 moves are estimated to remain, then 1/10 the time is allocated for the current move. For a game that runs long, a genetically determined minimum number of moves is used instead.
 
 \subsubsection{Branch Pruning Gene}
 This gene cuts off searching the game tree to greater depths if the current move lowers the score of a board state to less than the amount specified within the gene. If a move is sufficiently bad in the immediate state, then there's probably not going to be a dramatic recovery.
 
 \subsection{Board-Scoring Genes}
+These genes are used to give a score to a board state. The higher the score, the more desirable the moves that lead to this board. The score is calculated by
+$$Score = \sum_g Priority(g) \times Score(g,B)$$
+where $g$ represents each gene, $Priority(g)$ is a genetically determined scalar multiplicative factor that determines how much the gene's score of the board influences the final score, and $Score(g,B)$ is the result of the scoring procedure of that gene on a given board $B$. In general, the scores are scaled so that a typical board state gets a score of 1 from any gene. For example, the Freedom to Move gene divides the number of legal moves by the number of legal moves at the start of the game (20 for standard chess). The Total Force gene returns 1 for the pieces at the start of the game, so promoting a pawn can result in a score of more than one.
+
+Since it is not only important to find position that are advantageous to the player, but also disadvantageous to the opponent, the final heuristic score for a board position is
+$$Heuristic\ Score = Score(Player) - Score(Opponent).$$
+
 \subsubsection{Total Force Gene}
+\label{total-force}
 This gene sums the strength (according to the Piece Strength Gene) of all the player's pieces on the board.
 
 \subsubsection{Freedom to Move Gene}
@@ -167,11 +180,47 @@ Time: 38.538 sec   Gene pool file name: pool.txt
 
 Most wins:     18 by ID 20968
 Longest lived: 27 by ID 45394
-
 \end{verbatim}
 The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, player 59014 is on a seven-game winning streak following its last draw. Player 59054 has drawn its last two games.
 
 The asterisk (\verb|*|) indicates an offspring of the result of a drawn match. Note that the outcome of the game between 59096 and 59014 means that another such offspring will be brought into this pool for the next round. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
+
+A gene pool is configured with a text file that is reference in the program starting arguments (see Section~\ref{running}). An example gene pool configuration file is presented below.
+\begin{verbatim}
+# Gene Pool Configuration (# indicate comments)
+
+# The number of processors used will be the minimum
+# of this number and half the gene pool population.
+maximum simultaneous games = 8
+
+# How many players in each pool
+gene pool population = 16
+
+# How many gene pools
+gene pool count = 3
+
+# Probability of killing a player after a draw
+draw kill probability = 0.05
+
+# Games in between swapping players between pools
+pool swap interval = 1000
+
+# Oscillating game time
+#
+# The time for each game starts at the minimum, then goes up
+# by the increment after each round of games. When it reaches
+# the maximum, the increment is reversed and the time for each
+# game goes down until it reaches the minimum. Then, the cycle
+# starts again.
+minimum game time = 30 # seconds
+maximum game time = 120 # seconds
+game time increment = 0 # seconds
+
+# The name of the file where the genomes will be recorded.
+# Games will be recorded in a file with "\_games.txt" appended
+# to the name.
+gene pool file = pool.txt
+\end{verbatim}
 
 
 \section{Some Consistent Results}
