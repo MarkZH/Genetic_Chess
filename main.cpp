@@ -235,57 +235,56 @@ int find_last_id(const std::string& players_file_name)
 {
     std::ifstream player_input(players_file_name);
     std::string line;
-    std::vector<int> all_players;
+    int last_player = -1;
     while(std::getline(player_input, line))
     {
         if(String::starts_with(line, "ID:"))
         {
-            all_players.push_back(std::stoi(String::split(line).back()));
+            last_player = std::stoi(String::split(line).back());
         }
     }
 
     // Filter out players with zero wins
     auto games_file = players_file_name + "_games.txt";
     std::ifstream games_input(games_file);
-    std::map<int, int> games_won;
-    std::map<Color, int> player_colors;
+    std::map<int, int> win_count;
+    int best_id = -1;
     while(std::getline(games_input, line))
     {
+        int white_id = -1;
+        int black_id = -1;
         if(String::starts_with(line, "[White"))
         {
-            player_colors[WHITE] = std::stoi(String::split(String::split(line, "\"")[1])[2]);
+            white_id = std::stoi(String::split(String::split(line, "\"")[1])[2]);
         }
         else if(String::starts_with(line, "[Black"))
         {
-            player_colors[BLACK] = std::stoi(String::split(String::split(line, "\"")[1])[2]);
+            black_id = std::stoi(String::split(String::split(line, "\"")[1])[2]);
         }
         else if(String::starts_with(line, "[Result"))
         {
             auto result_string = String::split(line, "\"")[1];
+            auto winning_id = -1;
             if(result_string == "1-0")
             {
-                ++games_won[player_colors[WHITE]];
+                winning_id = white_id;
             }
             else if(result_string == "0-1")
             {
-                ++games_won[player_colors[BLACK]];
+                winning_id = black_id;
             }
-            player_colors.clear();
-        }
-    }
 
-    int best_id = -1;
-    for(auto id_won : games_won)
-    {
-        if(id_won.second >= 3) // require at least 3 wins
-        {
-            best_id = id_won.first;
+            int wins_so_far = ++win_count[winning_id];
+            if(wins_so_far >= 3 && winning_id > best_id)
+            {
+                best_id = winning_id;
+            }
         }
     }
 
     if(best_id == -1)
     {
-        return all_players.back();
+        return last_player;
     }
     else
     {
