@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "Moves/Complete_Move.h"
+#include "Color.h"
 
 class Piece;
 
@@ -15,17 +16,12 @@ struct Square
     char file;
     int rank;
 
-    bool operator<(const Square& other) const
-    {
-        if(file == other.file)
-        {
-            return rank < other.rank;
-        }
-        return file < other.file;
-    }
+    bool operator<(const Square& other) const;
 };
 
-#include "Color.h"
+// The distance between two squares in king moves
+int king_distance(const Square& a, const Square& b);
+
 
 class Board
 {

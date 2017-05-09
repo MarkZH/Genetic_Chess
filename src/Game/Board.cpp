@@ -1170,3 +1170,18 @@ std::string Board::get_last_move_record() const
 
     return result;
 }
+
+bool Square::operator<(const Square& other) const
+{
+    if(file == other.file)
+    {
+        return rank < other.rank;
+    }
+    return file < other.file;
+}
+
+int king_distance(const Square& a, const Square& b)
+{
+    return std::max(std::abs(a.file - b.file),
+                    std::abs(a.rank - b.rank));
+}
