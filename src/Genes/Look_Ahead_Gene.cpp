@@ -67,7 +67,7 @@ void Look_Ahead_Gene::gene_specific_mutation()
             positions_per_second = std::max(0.01, positions_per_second + Random::random_normal(10.0));
             break;
         case 3:
-            speculation_constant += Random::random_normal(0.1);
+            speculation_constant += Random::random_normal(0.01);
             speculation_constant = std::max(speculation_constant, 0.0);
             speculation_constant = std::min(speculation_constant, 1.0);
             recalculate_exponent();

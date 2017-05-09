@@ -78,5 +78,5 @@ double Castling_Possible_Gene::score_board(const Board& board, Color perspective
 
 void Castling_Possible_Gene::gene_specific_mutation()
 {
-    kingside_preference += Random::random_normal(0.05);
+    kingside_preference += Random::random_normal(0.01);
 }
