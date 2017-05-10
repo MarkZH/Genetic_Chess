@@ -160,6 +160,7 @@ void gene_pool(const std::string& config_file = "")
                   << std::setw(9)  << "Streak\n";
 
         // Write stats for each specimen
+        std::sort(pool.begin(), pool.end());
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_digits + 1) << ai.get_id();
@@ -313,7 +314,6 @@ void gene_pool(const std::string& config_file = "")
                   << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
 
 
-        std::sort(pool.begin(), pool.end());
         write_generation(pools, pool_index, genome_file_name);
 
         // Pause gene pool
