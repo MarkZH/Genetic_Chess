@@ -6,7 +6,10 @@
 #include "Game/Color.h"
 #include "Utility.h"
 
-Gene::Gene() : priority(0.0), priority_non_negative(false), active(true)
+Gene::Gene() :
+    priority(0.0),
+    priority_non_negative(false),
+    active(true)
 {
 }
 
