@@ -218,7 +218,7 @@ void gene_pool(const std::string& config_file = "")
                       << black.get_id() << ": " << std::flush;
 
             auto winner = results[index/2].get();
-            std::cout << color_text(winner) << "!";
+            std::cout << color_text(winner) << "! ";
 
             if(winner == WHITE)
             {
