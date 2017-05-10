@@ -30,9 +30,10 @@ void Gene::read_from(std::istream& is)
     std::string line;
     while(std::getline(is, line))
     {
+        line = String::strip_comments(line, '#');
         if(line.empty())
         {
-            break;
+            continue;
         }
 
         if(line.find("ACTIVE") != std::string::npos)
@@ -41,16 +42,20 @@ void Gene::read_from(std::istream& is)
             break;
         }
 
-        auto split_line = String::split(line, ": ");
+        auto split_line = String::split(line, ":");
+        if(split_line.size() != 2)
+        {
+            throw_on_invalid_line(line, "There should be exactly one colon per gene property line.");
+        }
         auto property_name = split_line[0];
-        auto property_value = std::atof(split_line[1].c_str());
+        auto property_value = std::stod(split_line[1]);
         try
         {
             properties.at(property_name) = property_value;
         }
         catch(const std::out_of_range&)
         {
-            throw_on_invalid_line(line, "Unrecognized parameter");
+            throw_on_invalid_line(line, "Unrecognized parameter.");
         }
     }
 
