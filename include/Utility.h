@@ -50,6 +50,7 @@ namespace Random
         std::mt19937_64 generator(std::chrono::system_clock::now().time_since_epoch().count());
     }
 
+    // Shuffles the order of the list
     template<class List>
     void shuffle(List& list)
     {
