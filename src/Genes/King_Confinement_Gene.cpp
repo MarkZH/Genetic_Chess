@@ -9,14 +9,13 @@
 King_Confinement_Gene::King_Confinement_Gene() : maximum_score(0.0)
 {
     // Maximum score comes from a king in the middle of an empty board
-    auto king_file = 'e';
-    auto king_rank = 4;
+    auto king_square = Square{'e', 4};
 
     for(auto file = 'a'; file <= 'h'; ++file)
     {
         for(auto rank = 1; rank <= 8; ++rank)
         {
-            auto distance = std::max(std::abs(king_file - file), std::abs(king_rank - rank));
+            auto distance = king_distance(king_square, {file, rank});
             maximum_score += 1.0/(distance + 1.0);
         }
     }
