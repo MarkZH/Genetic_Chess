@@ -311,7 +311,8 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                     genome.evaluate(next_board, perspective),
                     perspective,
                     depth,
-                    {next_board.get_game_record().back()}};
+                    {next_board.get_game_record().end() - (depth + 1),
+                     next_board.get_game_record().end()}};
         }
         catch(const Game_Ending_Exception&)
         {
@@ -368,7 +369,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
             // Update last result with this game tree node's data
             result.move = move;
-            result.commentary.insert(result.commentary.begin(), next_board.get_game_record().back());
         }
         else
         {
@@ -377,7 +377,8 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                       genome.evaluate(next_board, perspective),
                       perspective,
                       depth,
-                      {next_board.get_game_record().back()}};
+                      {next_board.get_game_record().end() - (depth + 1),
+                       next_board.get_game_record().end()}};
         }
 
         if(better_than(result, best_result, perspective))
