@@ -121,10 +121,6 @@ Board::Board(const std::string& fen) :
     }
 
     turn_color = (fen_parse[1] == "w" ? WHITE : BLACK);
-    if(whose_turn() == BLACK)
-    {
-        game_record.push_back("...");
-    }
 
     auto castling_parse = fen_parse.at(2);
     if( ! String::contains(castling_parse, 'K'))
@@ -894,10 +890,14 @@ void Board::print_game_record(const std::string& white_name,
 
     for(size_t i = 0; i < game_record.size(); ++i)
     {
-        if(temp.whose_turn() == WHITE)
+        if(temp.whose_turn() == WHITE || i == 0)
         {
             auto step = (i + 2)/2;
             out_stream << '\n' << move_count_start + step << ".";
+            if(i == 0 && temp.whose_turn() == BLACK)
+            {
+                out_stream << " ...";
+            }
         }
         auto next_move = temp.get_complete_move(game_record.at(i));
         out_stream << " " << next_move.game_record_item(temp);
