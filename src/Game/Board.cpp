@@ -48,7 +48,6 @@ Board::Board() :
 
     all_pieces_unmoved();
     ++repeat_count[board_status()]; // Count initial position
-    no_legal_moves(); // make sure move caches are filled
 }
 
 Board::Board(const std::string& fen) :
@@ -159,7 +158,6 @@ Board::Board(const std::string& fen) :
         repeat_count[std::to_string(repeat_count.size())] = 1;
     }
     ++repeat_count[board_status()]; // Count initial position
-    no_legal_moves(); // make sure move caches are filled
 }
 
 size_t Board::board_index(char file, int rank)
