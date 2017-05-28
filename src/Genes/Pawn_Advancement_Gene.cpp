@@ -28,7 +28,19 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective)
         }
     }
 
-    return score/(8.*5.); // normalize to 8 pawns 5 ranks from home (just before promotion)
+    // Count pawn promotions
+    const auto& move_list = board.get_game_record();
+    for(size_t i = (perspective == WHITE ? 0 : 1);
+        i < move_list.size();
+        i += 2)
+    {
+        if(move_list[i].size() == 5) // promotion move in coordinate notation
+        {
+            score += 6; // pawn made it to last rank
+        }
+    }
+
+    return score/(8*6); // normalize to 8 pawns 6 ranks from home (promotion rank)
 }
 
 Pawn_Advancement_Gene* Pawn_Advancement_Gene::duplicate() const
