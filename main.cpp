@@ -233,6 +233,28 @@ void print_help()
 
 int find_last_id(const std::string& players_file_name)
 {
+    auto pools = load_gene_pool_file(players_file_name);
+    int smallest_id = -1;
+    if( ! pools.empty())
+    {
+        smallest_id = pools.front().front().get_id();
+        for(const auto& pool : pools)
+        {
+            for(const auto& player : pool)
+            {
+                if(player.get_id() < smallest_id)
+                {
+                    smallest_id = player.get_id();
+                }
+            }
+        }
+    }
+
+    if(smallest_id != -1)
+    {
+        return smallest_id;
+    }
+
     std::ifstream player_input(players_file_name);
     std::string line;
     int last_player = -1;

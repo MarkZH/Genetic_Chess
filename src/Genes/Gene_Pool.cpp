@@ -15,12 +15,9 @@
 #include "Game/Game.h"
 #include "Utility.h"
 
-typedef std::vector<Genetic_AI> Gene_Pool;
-
 static sig_atomic_t signal_activated = 0;
 void pause_gene_pool(int);
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
-std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
 
 template<typename Stat>
 void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats);
