@@ -348,13 +348,9 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         {
             recurse = true;
         }
-        else if( ! genome.enough_time_to_recurse(time_allotted_for_this_move, next_board))
-        {
-            recurse = false;
-        }
         else
         {
-            recurse = genome.good_enough_to_examine(board, next_board, perspective);
+            recurse = genome.enough_time_to_recurse(time_allotted_for_this_move, next_board);
         }
 
         Game_Tree_Node_Result result;

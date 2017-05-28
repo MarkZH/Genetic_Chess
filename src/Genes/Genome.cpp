@@ -14,7 +14,6 @@
 #include "Genes/Look_Ahead_Gene.h"
 #include "Genes/King_Confinement_Gene.h"
 #include "Genes/King_Protection_Gene.h"
-#include "Genes/Branch_Pruning_Gene.h"
 #include "Genes/Castling_Possible_Gene.h"
 
 
@@ -27,9 +26,6 @@ Genome::Genome()
 
     genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
     look_ahead_gene_index = genome.size() - 1;
-
-    genome.emplace_back(std::make_unique<Branch_Pruning_Gene>());
-    branch_pruning_gene_index = genome.size() - 1;
 
     // Normal genes
     genome.emplace_back(std::make_unique<Total_Force_Gene>(static_cast<Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())));
@@ -46,8 +42,7 @@ Genome::Genome()
 Genome::Genome(const Genome& other) :
     genome(),
     piece_strength_gene_index(other.piece_strength_gene_index),
-    look_ahead_gene_index(other.look_ahead_gene_index),
-    branch_pruning_gene_index(other.branch_pruning_gene_index)
+    look_ahead_gene_index(other.look_ahead_gene_index)
 {
     for(const auto& gene : other.genome)
     {
@@ -76,7 +71,6 @@ Genome& Genome::operator=(const Genome& other)
 
     piece_strength_gene_index = other.piece_strength_gene_index;
     look_ahead_gene_index = other.look_ahead_gene_index;
-    branch_pruning_gene_index = other.branch_pruning_gene_index;
 
     genome.clear();
     for(const auto& gene : other.genome)
@@ -93,8 +87,7 @@ Genome& Genome::operator=(const Genome& other)
 Genome::Genome(const Genome& A, const Genome& B) :
     genome(),
     piece_strength_gene_index(A.piece_strength_gene_index),
-    look_ahead_gene_index(A.look_ahead_gene_index),
-    branch_pruning_gene_index(A.branch_pruning_gene_index)
+    look_ahead_gene_index(A.look_ahead_gene_index)
 {
     for(size_t i = 0; i < A.genome.size(); ++i)
     {
@@ -198,12 +191,6 @@ void Genome::print(std::ostream& os) const
 double Genome::time_to_examine(const Board& board, const Clock& clock) const
 {
     return static_cast<Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
-}
-
-bool Genome::good_enough_to_examine(const Board& before, const Board& after, Color perspective) const
-{
-    auto score_difference = evaluate(after, perspective) - evaluate(before, perspective);
-    return static_cast<Branch_Pruning_Gene*>(genome[branch_pruning_gene_index].get())->good_enough_to_examine(score_difference);
 }
 
 bool Genome::enough_time_to_recurse(double time_allotted, const Board& board) const
