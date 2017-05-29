@@ -78,7 +78,7 @@ double Castling_Possible_Gene::score_board(const Board& board, Color perspective
                 if( ! board.view_piece_on_square(file, base_rank))
                 {
                     auto preference = (rook_file == 'h' ? kingside_preference : 1.0 - kingside_preference);
-                    int files_to_clear = std::abs(rook_file - 'e') - 1;
+                    int files_to_clear = std::abs(rook_file - king_file) - 1;
                     score += preference/(files_to_clear + 1);
                 }
             }
