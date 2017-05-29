@@ -39,8 +39,10 @@ std::string Castling_Possible_Gene::name() const
 
 double Castling_Possible_Gene::score_board(const Board& board, Color perspective) const
 {
+    // Check game record to see if player already castled
     auto base_rank = (perspective == WHITE ? 1 : 8);
-    auto starting_king_square = 'e' + std::to_string(base_rank);
+    auto king_file = 'e';
+    auto starting_king_square = king_file + std::to_string(base_rank);
     auto kingside_move = starting_king_square + 'g' + starting_king_square.back();
     auto queenside_move = starting_king_square + 'c' + starting_king_square.back();
     const auto& game_record = board.get_game_record();
@@ -59,20 +61,30 @@ double Castling_Possible_Gene::score_board(const Board& board, Color perspective
 
     auto score = 0.0;
 
-    if(board.piece_has_moved('e', base_rank)) // king
+    if(board.piece_has_moved(king_file, base_rank)) // king moved before castling
     {
         return score;
     }
 
-    if( ! board.piece_has_moved('h', base_rank)) // kingside rook
+    // Add score for clearing pieces between king and rook
+    for(auto rook_file : {'a', 'h'})
     {
-        score += kingside_preference;
+        if( ! board.piece_has_moved(rook_file, base_rank))
+        {
+            for(char file = std::min(king_file, rook_file) + 1;
+                file < std::max(king_file, rook_file);
+                ++file)
+            {
+                if( ! board.view_piece_on_square(file, base_rank))
+                {
+                    auto preference = (rook_file == 'h' ? kingside_preference : 1.0 - kingside_preference);
+                    int files_to_clear = std::abs(rook_file - 'e') - 1;
+                    score += preference/(files_to_clear + 1);
+                }
+            }
+        }
     }
 
-    if( ! board.piece_has_moved('a', base_rank))  // queenside rook
-    {
-        score += (1.0 - kingside_preference);
-    }
     return score;
 }
 
