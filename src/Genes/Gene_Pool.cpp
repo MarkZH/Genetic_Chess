@@ -186,23 +186,20 @@ void gene_pool(const std::string& config_file = "")
             auto& white = pool[white_index];
             auto& black = pool[black_index];
 
-            results.emplace_back(std::async(play_game, white, black, game_time, 0, 0, game_record_file));
-
             // Limit the number of simultaneous games by waiting for earlier games to finish
             // before starting a new one.
-            if(results.size() >= maximum_simultaneous_games)
+            auto in_progress_games = results.size();
+            for(const auto& game : results)
             {
-                auto in_progress_games = results.size();
-                for(const auto& game : results)
+                if(in_progress_games < maximum_simultaneous_games)
                 {
-                    game.wait();
-                    --in_progress_games;
-                    if(in_progress_games < maximum_simultaneous_games)
-                    {
-                        break;
-                    }
+                    break;
                 }
+                game.wait();
+                --in_progress_games;
             }
+
+            results.emplace_back(std::async(play_game, white, black, game_time, 0, 0, game_record_file));
         }
 
         // Get results as they come in
