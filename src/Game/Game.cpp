@@ -62,8 +62,8 @@ Color play_game_with_board(const Player& white,
 
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
 
-        board.print_game_record(white.name(),
-                                black.name(),
+        board.print_game_record(&white,
+                                &black,
                                 pgn_file_name,
                                 end_game.what());
 
@@ -84,7 +84,7 @@ Color play_game_with_board(const Player& white,
     {
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
         board.ascii_draw(WHITE);
-        board.print_game_record(white.name(), black.name(), pgn_file_name, error.what());
+        board.print_game_record(&white, &black, pgn_file_name, error.what());
         throw;
     }
 }

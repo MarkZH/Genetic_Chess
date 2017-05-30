@@ -60,6 +60,8 @@ class Genetic_AI : public Player
         std::string name() const override;
         std::string author() const override;
 
+        std::string get_commentary_for_move(size_t move_number) const override;
+
         void print_genome(const std::string& file_name = "") const;
         void print_genome(std::ostream& file) const;
 
@@ -72,6 +74,7 @@ class Genetic_AI : public Player
         static int next_id;
         int id;
         mutable std::vector<std::string> principal_variation;
+        mutable std::vector<std::vector<std::string>> commentary;
 
         void read_from(std::istream& is);
 

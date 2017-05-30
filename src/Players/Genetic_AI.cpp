@@ -137,6 +137,8 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
             principal_variation.clear();
         }
 
+        commentary.push_back(principal_variation);
+
         return legal_moves.front(); // If there's only one legal move, take it.
     }
 
@@ -165,13 +167,13 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
     if(result.depth > 0)
     {
-        board.add_commentary_to_next_move(result.commentary);
         principal_variation = result.commentary;
     }
     else
     {
         principal_variation.clear();
     }
+    commentary.push_back(principal_variation);
 
     return result.move;
 }
@@ -265,7 +267,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             if(move_iter == all_legal_moves.end())
             {
                 board.ascii_draw(WHITE);
-                board.print_game_record("","","","Principal Variation error");
+                board.print_game_record(nullptr, nullptr, "", "Principal Variation error");
                 auto board_copy = board;
                 for(const auto& item : principal_variation)
                 {
@@ -450,4 +452,19 @@ bool Genetic_AI::operator<(const Genetic_AI& other) const
 bool Genetic_AI::operator==(const Genetic_AI& other) const
 {
     return get_id() == other.get_id();
+}
+
+std::string Genetic_AI::get_commentary_for_move(size_t move_number) const
+{
+    std::string result;
+    if(move_number < commentary.size() && ! commentary.at(move_number).empty())
+    {
+        result = commentary.at(move_number).front();
+        for(size_t i = 1; i < commentary.at(move_number).size(); ++i)
+        {
+            result += " " + commentary.at(move_number).at(i);
+        }
+    }
+
+    return result;
 }

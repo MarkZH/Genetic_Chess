@@ -18,6 +18,7 @@ class Player
         virtual std::string author() const;
 
         virtual void process_game_ending(const Game_Ending_Exception& gee, const Board& board) const;
+        virtual std::string get_commentary_for_move(size_t move_number) const;
 };
 
 #endif // PLAYER_H

@@ -810,8 +810,8 @@ const std::vector<std::string>& Board::get_game_record() const
     return game_record;
 }
 
-void Board::print_game_record(const std::string& white_name,
-                              const std::string& black_name,
+void Board::print_game_record(const Player* white,
+                              const Player* black,
                               const std::string& file_name,
                               const std::string& outside_result) const
 {
@@ -857,13 +857,13 @@ void Board::print_game_record(const std::string& white_name,
     }
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
-    if( ! white_name.empty())
+    if(white && ! white->name().empty())
     {
-        out_stream << "[White \"" << white_name << "\"]\n";
+        out_stream << "[White \"" << white->name() << "\"]\n";
     }
-    if( ! black_name.empty())
+    if(black && ! black->name().empty())
     {
-        out_stream << "[Black \"" << black_name << "\"]\n";
+        out_stream << "[Black \"" << black->name() << "\"]\n";
     }
     if(game_number > 0)
     {
@@ -902,20 +902,34 @@ void Board::print_game_record(const std::string& white_name,
         auto next_move = temp.get_complete_move(game_record.at(i));
         out_stream << " " << next_move.game_record_item(temp);
 
-        if(i < game_commentary.size() && ! game_commentary.at(i).empty())
+        std::string commentary;
+        auto current_player = (temp.whose_turn() == WHITE ? white : black);
+        if(current_player)
+        {
+            commentary = current_player->get_commentary_for_move(i/2);
+        }
+
+        if( ! commentary.empty())
         {
             auto comment_board = temp;
             out_stream << " { ";
-            for(const auto& variation : game_commentary.at(i))
+            for(const auto& variation : String::split(commentary))
             {
-                auto cm = comment_board.get_complete_move(variation);
-                out_stream << cm.game_record_item(comment_board) << " ";
                 try
                 {
-                    comment_board.submit_move(cm);
+                    auto cm = comment_board.get_complete_move(variation);
+                    out_stream << cm.game_record_item(comment_board) << " ";
+                    try
+                    {
+                        comment_board.submit_move(cm);
+                    }
+                    catch(const Game_Ending_Exception&)
+                    {
+                    }
                 }
-                catch(const Game_Ending_Exception&)
+                catch(const Illegal_Move_Exception&)
                 {
+                    out_stream << variation << " ";
                 }
             }
             out_stream << "}";
@@ -1059,15 +1073,6 @@ Square Board::find_king(Color color) const
 bool Board::game_has_ended() const
 {
     return game_ended;
-}
-
-void Board::add_commentary_to_next_move(const std::vector<std::string>& comment) const
-{
-    while(game_commentary.size() < game_record.size())
-    {
-        game_commentary.push_back({});
-    }
-    game_commentary.push_back(comment);
 }
 
 void Board::clear_caches()

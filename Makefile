@@ -80,7 +80,7 @@ $(DEBUG_OBJ_DIR)/src/Exceptions/Out_Of_Time_Exception.o : include/Exceptions/Out
 $(DEBUG_OBJ_DIR)/src/Exceptions/Stalemate_Exception.o : include/Exceptions/Stalemate_Exception.h include/Exceptions/Game_Ending_Exception.h src/Exceptions/Stalemate_Exception.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Exceptions/Stalemate_Exception.cpp -o $(DEBUG_OBJ_DIR)/src/Exceptions/Stalemate_Exception.o
 
-$(DEBUG_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h src/Game/Board.cpp include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Stalemate_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Players/Player.h src/Game/Board.cpp include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Stalemate_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Game/Board.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Board.o
 
 $(DEBUG_OBJ_DIR)/src/Game/Clock.o : include/Game/Clock.h include/Game/Color.h src/Game/Clock.cpp include/Exceptions/Out_Of_Time_Exception.h
@@ -242,7 +242,7 @@ $(RELEASE_OBJ_DIR)/src/Exceptions/Out_Of_Time_Exception.o : include/Exceptions/O
 $(RELEASE_OBJ_DIR)/src/Exceptions/Stalemate_Exception.o : include/Exceptions/Stalemate_Exception.h include/Exceptions/Game_Ending_Exception.h src/Exceptions/Stalemate_Exception.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Exceptions/Stalemate_Exception.cpp -o $(RELEASE_OBJ_DIR)/src/Exceptions/Stalemate_Exception.o
 
-$(RELEASE_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h src/Game/Board.cpp include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Stalemate_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Players/Player.h src/Game/Board.cpp include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Stalemate_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Game/Board.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Board.o
 
 $(RELEASE_OBJ_DIR)/src/Game/Clock.o : include/Game/Clock.h include/Game/Color.h src/Game/Clock.cpp include/Exceptions/Out_Of_Time_Exception.h

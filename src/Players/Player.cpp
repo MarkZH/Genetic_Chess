@@ -16,3 +16,8 @@ std::string Player::author() const
 {
     return "";
 }
+
+std::string Player::get_commentary_for_move(size_t) const
+{
+    return "";
+}

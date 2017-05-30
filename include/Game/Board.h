@@ -8,6 +8,7 @@
 
 #include "Moves/Complete_Move.h"
 #include "Color.h"
+#include "Players/Player.h"
 
 class Piece;
 
@@ -43,8 +44,8 @@ class Board
         std::string get_last_move_record() const;
 
         // With commentary
-        void print_game_record(const std::string& white_name = "",
-                               const std::string& black_name = "",
+        void print_game_record(const Player* white = nullptr,
+                               const Player* black = nullptr,
                                const std::string& file_name = "",
                                const std::string& outside_result = "") const;
 
@@ -70,14 +71,11 @@ class Board
 
         bool game_has_ended() const;
 
-        void add_commentary_to_next_move(const std::vector<std::string>& comment) const;
-
     private:
         std::vector<std::shared_ptr<const Piece>> board;
         std::map<std::string, int> repeat_count;
         Color turn_color;
         std::vector<std::string> game_record;
-        mutable std::vector<std::vector<std::string>> game_commentary;
         Color winner;
         std::map<const Piece*, bool> piece_moved;
         char en_passant_target_file;
