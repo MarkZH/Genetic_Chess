@@ -919,17 +919,14 @@ void Board::print_game_record(const Player* white,
                 {
                     auto cm = comment_board.get_complete_move(variation);
                     out_stream << cm.game_record_item(comment_board) << " ";
-                    try
-                    {
-                        comment_board.submit_move(cm);
-                    }
-                    catch(const Game_Ending_Exception&)
-                    {
-                    }
+                    comment_board.submit_move(cm);
                 }
                 catch(const Illegal_Move_Exception&)
                 {
                     out_stream << variation << " ";
+                }
+                catch(const Game_Ending_Exception&)
+                {
                 }
             }
             out_stream << "}";

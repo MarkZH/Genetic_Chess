@@ -22,40 +22,33 @@ Complete_Move::Complete_Move() :
 
 std::string Complete_Move::game_record_item(const Board& board) const
 {
-    if(move)
+    auto item = move->game_record_item(board, starting_file, starting_rank);
+    auto temp = board;
+    try
     {
-        auto item = move->game_record_item(board, starting_file, starting_rank);
-        auto temp = board;
-        try
+        temp.submit_move(*this);
+        if(temp.king_is_in_check(temp.whose_turn()))
         {
-            temp.submit_move(*this);
-            if(temp.king_is_in_check(temp.whose_turn()))
-            {
-                item += '+';
-            }
+            item += '+';
         }
-        catch(const Game_Ending_Exception& gee)
+    }
+    catch(const Game_Ending_Exception& gee)
+    {
+        if(gee.winner() == WHITE)
         {
-            if(gee.winner() == WHITE)
-            {
-                item += "#\t1-0";
-            }
-            else if(gee.winner() == BLACK)
-            {
-                item += "#\t0-1";
-            }
-            else
-            {
-                item += "\t1/2-1/2";
-            }
+            item += "#\t1-0";
         }
+        else if(gee.winner() == BLACK)
+        {
+            item += "#\t0-1";
+        }
+        else
+        {
+            item += "\t1/2-1/2";
+        }
+    }
 
-        return item;
-    }
-    else
-    {
-        return "...";
-    }
+    return item;
 }
 
 bool Complete_Move::is_legal(const Board& board) const
