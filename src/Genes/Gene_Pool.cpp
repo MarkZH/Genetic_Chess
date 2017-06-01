@@ -484,6 +484,7 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
         }
         write_generation(result, index_list.first, ""); // mark AIs from file as already written
     }
+    std::cout << "Done." << std::endl;
 
     return result;
 }

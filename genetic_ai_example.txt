@@ -10,13 +10,10 @@ ACTIVE
 
 Name: Look Ahead Gene
 Mean Game Length: 50.6126
+Minimum Moves Left: 0.128784
 Positions Per Second: 143.753
 Speculation Constant: 0.655904
 ACTIVE
-
-Name: Branch Pruning Gene
-Minimum Score Change: -58.1287
-INACTIVE
 
 Name: Total Force Gene
 Priority: 390.622
@@ -35,6 +32,7 @@ Priority: 82.1025
 ACTIVE
 
 Name: Sphere of Influence Gene
+King Target Factor: 0.56345
 Legal Bonus: 1.38975
 Priority: 80.0711
 ACTIVE
