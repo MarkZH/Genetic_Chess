@@ -816,7 +816,10 @@ void Board::print_game_record(const Player* white,
                               const Player* black,
                               const std::string& file_name,
                               Color outside_winner,
-                              const std::string& termination) const
+                              const std::string& termination,
+                              double initial_time,
+                              size_t moves_to_reset,
+                              double increment) const
 {
     Color victor = NONE;
     if(game_has_ended())
@@ -868,6 +871,20 @@ void Board::print_game_record(const Player* white,
     if(game_number > 0)
     {
         out_stream << "[Round \"" << game_number << "\"]\n";
+    }
+    if(initial_time > 0)
+    {
+        out_stream << "[TimeControl \"";
+        if(moves_to_reset > 0)
+        {
+            out_stream << moves_to_reset << '/';
+        }
+        out_stream << initial_time;
+        if(increment > 0)
+        {
+            out_stream << '+' << increment;
+        }
+        out_stream << "\"]\n";
     }
     if( ! result.empty())
     {

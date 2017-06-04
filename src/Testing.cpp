@@ -324,7 +324,9 @@ void run_tests()
     if( ! ambiguous_move_caught)
     {
         std::cerr << "Last move should have been an error:" << std::endl;
-        board.print_game_record();
+        board.print_game_record(nullptr, nullptr,
+                                "", NONE, "", 0, 0, 0);
+
         tests_passed = false;
     }
 

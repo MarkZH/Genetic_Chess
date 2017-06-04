@@ -53,7 +53,10 @@ class Board
                                const Player* black,
                                const std::string& file_name,
                                Color outside_winner,
-                               const std::string& outside_result) const;
+                               const std::string& outside_result,
+                               double initial_time,
+                               size_t moves_to_reset,
+                               double increment) const;
 
         Color get_winner() const;
         std::string last_move_coordinates() const;

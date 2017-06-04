@@ -78,14 +78,14 @@ Color play_game_with_board(const Player& white,
                                 &black,
                                 pgn_file_name,
                                 end_game.winner(),
-                                end_game.what());
+                                end_game.what(),
+                                time_in_seconds,
+                                moves_to_reset,
+                                increment_seconds);
 
         if(game_clock.is_running())
         {
             std::ofstream(pgn_file_name, std::ios::app)
-                << "{ Initial time: " << time_in_seconds << " }\n"
-                << "{ Moves to reset clocks: " << moves_to_reset << " }\n"
-                << "{ Time increment: " << increment_seconds << " }\n"
                 << "{ Time left: White: " << game_clock.time_left(WHITE) << " }\n"
                 << "{            Black: " << game_clock.time_left(BLACK) << " }\n\n"
                 << std::endl;
@@ -97,7 +97,14 @@ Color play_game_with_board(const Player& white,
     {
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
         board.ascii_draw(WHITE);
-        board.print_game_record(&white, &black, pgn_file_name, NONE, error.what());
+        board.print_game_record(&white,
+                                &black,
+                                pgn_file_name,
+                                NONE,
+                                error.what(),
+                                time_in_seconds,
+                                moves_to_reset,
+                                increment_seconds);
         throw;
     }
 }
