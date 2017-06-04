@@ -16,9 +16,8 @@
 
 #include "Utility.h"
 
-std::string Outside_Player::log_file_name = "chess_comm_log_"
-                                            + std::to_string(Random::random_integer(0, 10000))
-                                            + ".txt";
+std::string Outside_Player::log_file_name = "chess_comm_log.txt";
+std::string Outside_Player::indent = "";
 
 std::unique_ptr<Outside_Player> connect_to_outside(const Player& player)
 {
@@ -65,7 +64,7 @@ std::string Outside_Player::receive_command()
 
 void Outside_Player::log(const std::string& data)
 {
-    std::ofstream(log_file_name, std::ios::app) << data << std::endl;
+    std::ofstream(log_file_name, std::ios::app) << indent << data << std::endl;
 }
 
 void Outside_Player::send_command(const std::string& cmd)

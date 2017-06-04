@@ -25,6 +25,8 @@ class Outside_Player : public Player
     protected:
         Outside_Player();
 
+        static std::string indent;
+
         static void send_command(const std::string& cmd);
         static std::string receive_command();
 

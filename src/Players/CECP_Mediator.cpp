@@ -71,11 +71,13 @@ Color CECP_Mediator::get_ai_color() const
         auto cmd = receive_cecp_command();
         if(cmd == "white" || cmd == "go")
         {
+            indent = "\t";
             return WHITE;
         }
         else if(String::starts_with(cmd, "usermove"))
         {
             first_move = String::split(cmd, " ")[1];
+            indent = "\t\t\t";
             return BLACK;
         }
     }
@@ -168,6 +170,8 @@ void CECP_Mediator::get_clock_specs()
         {
             log("got time specs: " + response);
             auto split = String::split(response);
+
+            log("moves to reset clock = " + split[1]);
             set_reset_moves(std::stoi(split[1]));
 
             auto time_split = String::split(split[2], ":");
@@ -184,6 +188,7 @@ void CECP_Mediator::get_clock_specs()
             }
             set_game_time(game_time);
 
+            log("increment = " + split[3]);
             set_increment(std::stod(split[3]));
             break;
         }
@@ -198,6 +203,8 @@ void CECP_Mediator::get_clock_specs()
             break;
         }
     }
+
+    log("done with time specs");
 }
 
 std::string CECP_Mediator::receive_cecp_command() const
