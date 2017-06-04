@@ -9,6 +9,7 @@
 #include "Moves/Complete_Move.h"
 #include "Color.h"
 #include "Players/Player.h"
+#include "Players/Thinking.h"
 
 class Piece;
 
@@ -42,6 +43,10 @@ class Board
         std::string fen_status() const; // current state of board in FEN
         const std::vector<std::string>& get_game_record() const;
         std::string get_last_move_record() const;
+
+        // Communication between players
+        void set_thinking_mode(Thinking_Output_Type) const;
+        Thinking_Output_Type get_thinking_mode() const;
 
         // With commentary
         void print_game_record(const Player* white = nullptr,
@@ -87,6 +92,9 @@ class Board
         mutable std::vector<Complete_Move> other_moves_cache;
         mutable std::vector<Complete_Move> legal_moves_cache;
         void clear_caches();
+
+        // Communication channels
+        mutable Thinking_Output_Type thinking_indicator;
 
         std::shared_ptr<const Piece>& piece_on_square(char file, int rank);
         void remove_piece(char file, int rank);

@@ -12,6 +12,8 @@
 #include "Exceptions/Game_Ending_Exception.h"
 #include "Exceptions/Out_Of_Time_Exception.h"
 
+#include "Players/Thinking.h"
+
 #include "Utility.h"
 
 // Play single game, return color of winner
@@ -23,6 +25,10 @@ Color play_game(const Player& white,
                 const std::string& pgn_file_name)
 {
     Board board;
+
+    white.initial_board_setup(board);
+    black.initial_board_setup(board);
+
     return play_game_with_board(white,
                                 black,
                                 time_in_seconds,
@@ -57,14 +63,21 @@ Color play_game_with_board(const Player& white,
     catch(const Game_Ending_Exception& end_game)
     {
 		// for Outside_Players communicating with xboard and the like
-        white.process_game_ending(end_game, board);
-        black.process_game_ending(end_game, board);
+        if(board.whose_turn() == WHITE)
+        {
+            white.process_game_ending(end_game, board);
+        }
+        else
+        {
+            black.process_game_ending(end_game, board);
+        }
 
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
 
         board.print_game_record(&white,
                                 &black,
                                 pgn_file_name,
+                                end_game.winner(),
                                 end_game.what());
 
         if(game_clock.is_running())

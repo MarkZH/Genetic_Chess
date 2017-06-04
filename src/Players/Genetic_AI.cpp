@@ -9,6 +9,7 @@
 #include "Moves/Complete_Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Players/Thinking.h"
 
 #include "Exceptions/Checkmate_Exception.h"
 #include "Exceptions/Game_Ending_Exception.h"
@@ -119,6 +120,9 @@ void Genetic_AI::read_from(std::istream& is)
 
 const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clock) const
 {
+    nodes_searched = 0;
+    clock_start_time = clock.time_left(clock.running_for());
+
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
     {
@@ -164,6 +168,11 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
                                    0,
                                    alpha_start,
                                    beta_start);
+
+    if(board.get_thinking_mode() == CECP)
+    {
+        std::cout << std::flush;
+    }
 
     if(result.depth > 0)
     {
@@ -300,6 +309,8 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
     for(const auto& move : all_legal_moves)
     {
+        ++nodes_searched;
+
         auto next_board = board;
 
         try
@@ -389,6 +400,10 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
+                else if(depth % 2 == 0 && board.get_thinking_mode() == CECP)
+                {
+                    output_thinking_cecp(alpha, clock, perspective);
+                }
             }
         }
 
@@ -467,4 +482,35 @@ std::string Genetic_AI::get_commentary_for_move(size_t move_number) const
     }
 
     return result;
+}
+
+void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
+                                      const Clock& clock,
+                                      Color perspective) const
+{
+    auto score = thought.corrected_score(perspective);
+    if(score == Math::win_score)
+    {
+        score = 100000 + thought.depth;
+    }
+    else if(score == Math::lose_score)
+    {
+        score = -100000 - thought.depth;
+    }
+
+    std::cout << thought.depth // ply
+              << " "
+              << int(score) // score in what should be centipawns
+              << " "
+              << int((clock_start_time - clock.time_left(clock.running_for()))*100) // search time in centiseconds
+              << " "
+              << nodes_searched; // number of nodes searched
+
+    // Principal variation
+    for(const auto& move : thought.commentary)
+    {
+        std::cout << " " << move;
+    }
+
+    std::cout << '\n';
 }

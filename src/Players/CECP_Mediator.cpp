@@ -9,7 +9,7 @@
 
 #include "Utility.h"
 
-CECP_Mediator::CECP_Mediator(const Player& local_player)
+CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THINKING)
 {
     std::string expected = "protover 2";
     if(receive_cecp_command() == expected)
@@ -52,6 +52,8 @@ const Complete_Move CECP_Mediator::choose_move(const Board& board, const Clock& 
                 move_text = first_move;
                 first_move.clear();
             }
+
+            board.set_thinking_mode(thinking_mode);
             return board.get_complete_move(move_text);
         }
         catch(const Illegal_Move_Exception& e)
@@ -208,9 +210,24 @@ std::string CECP_Mediator::receive_cecp_command() const
             received_name = String::split(command, " ", 1)[1];
             log("got name " + received_name);
         }
+        else if(command == "post")
+        {
+            thinking_mode = CECP;
+            log("turning on thinking output for CECP");
+        }
+        else if(command == "nopost")
+        {
+            thinking_mode = NO_THINKING;
+            log("turning off thinking output for CECP");
+        }
         else
         {
             return command;
         }
     }
+}
+
+void CECP_Mediator::initial_board_setup(Board& board) const
+{
+    board.set_thinking_mode(thinking_mode);
 }

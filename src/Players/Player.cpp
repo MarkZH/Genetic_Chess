@@ -21,3 +21,7 @@ std::string Player::get_commentary_for_move(size_t) const
 {
     return "";
 }
+
+void Player::initial_board_setup(Board&) const
+{
+}

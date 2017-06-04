@@ -75,6 +75,8 @@ class Genetic_AI : public Player
         int id;
         mutable std::vector<std::string> principal_variation;
         mutable std::vector<std::vector<std::string>> commentary;
+        mutable int nodes_searched;
+        mutable double clock_start_time;
 
         void read_from(std::istream& is);
 
@@ -85,6 +87,11 @@ class Genetic_AI : public Player
                                                size_t depth,
                                                Game_Tree_Node_Result alpha,
                                                Game_Tree_Node_Result beta) const;
+
+        // Output thinking to stdout
+        void output_thinking_cecp(const Game_Tree_Node_Result& thought,
+                                  const Clock& clock,
+                                  Color perspective) const;
 };
 
 #endif // GENETIC_AI_H

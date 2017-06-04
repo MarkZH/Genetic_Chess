@@ -3,6 +3,7 @@
 
 #include "Outside_Player.h"
 #include "Game/Color.h"
+#include "Thinking.h"
 
 #include <string>
 
@@ -23,9 +24,12 @@ class CECP_Mediator : public Outside_Player
 
         std::string name() const override;
 
+        void initial_board_setup(Board& board) const override;
+
     private:
         mutable std::string first_move;
         mutable std::string received_name;
+        mutable Thinking_Output_Type thinking_mode;
 
         void get_clock_specs() override;
         std::string receive_cecp_command() const;

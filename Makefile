@@ -80,7 +80,7 @@ $(DEBUG_OBJ_DIR)/src/Exceptions/Out_Of_Time_Exception.o : include/Exceptions/Out
 $(DEBUG_OBJ_DIR)/src/Exceptions/Stalemate_Exception.o : include/Exceptions/Stalemate_Exception.h include/Exceptions/Game_Ending_Exception.h src/Exceptions/Stalemate_Exception.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Exceptions/Stalemate_Exception.cpp -o $(DEBUG_OBJ_DIR)/src/Exceptions/Stalemate_Exception.o
 
-$(DEBUG_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Players/Player.h src/Game/Board.cpp include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Stalemate_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Players/Player.h include/Players/Thinking.h src/Game/Board.cpp include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Stalemate_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Game/Board.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Board.o
 
 $(DEBUG_OBJ_DIR)/src/Game/Clock.o : include/Game/Clock.h include/Game/Color.h src/Game/Clock.cpp include/Exceptions/Out_Of_Time_Exception.h
@@ -89,7 +89,7 @@ $(DEBUG_OBJ_DIR)/src/Game/Clock.o : include/Game/Clock.h include/Game/Color.h sr
 $(DEBUG_OBJ_DIR)/src/Game/Color.o : include/Game/Color.h src/Game/Color.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Game/Color.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Color.o
 
-$(DEBUG_OBJ_DIR)/src/Game/Game.o : include/Game/Game.h include/Game/Color.h src/Game/Game.cpp include/Players/Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/Out_Of_Time_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Game/Game.o : include/Game/Game.h include/Game/Color.h src/Game/Game.cpp include/Players/Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/Out_Of_Time_Exception.h include/Players/Thinking.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Game/Game.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Game.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h include/Utility.h
@@ -185,13 +185,13 @@ $(DEBUG_OBJ_DIR)/src/Pieces/Rook.o : include/Pieces/Rook.h include/Pieces/Piece.
 $(DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o : include/Players/Alan_Turing_AI.h include/Players/Player.h src/Players/Alan_Turing_AI.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Alan_Turing_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h src/Players/CECP_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h include/Players/Thinking.h src/Players/CECP_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/CECP_Mediator.cpp -o $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Claude_Shannon_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Complete_Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Complete_Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Players/Thinking.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Genetic_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h
@@ -242,7 +242,7 @@ $(RELEASE_OBJ_DIR)/src/Exceptions/Out_Of_Time_Exception.o : include/Exceptions/O
 $(RELEASE_OBJ_DIR)/src/Exceptions/Stalemate_Exception.o : include/Exceptions/Stalemate_Exception.h include/Exceptions/Game_Ending_Exception.h src/Exceptions/Stalemate_Exception.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Exceptions/Stalemate_Exception.cpp -o $(RELEASE_OBJ_DIR)/src/Exceptions/Stalemate_Exception.o
 
-$(RELEASE_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Players/Player.h src/Game/Board.cpp include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Stalemate_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Players/Player.h include/Players/Thinking.h src/Game/Board.cpp include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Stalemate_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Game/Board.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Board.o
 
 $(RELEASE_OBJ_DIR)/src/Game/Clock.o : include/Game/Clock.h include/Game/Color.h src/Game/Clock.cpp include/Exceptions/Out_Of_Time_Exception.h
@@ -251,7 +251,7 @@ $(RELEASE_OBJ_DIR)/src/Game/Clock.o : include/Game/Clock.h include/Game/Color.h 
 $(RELEASE_OBJ_DIR)/src/Game/Color.o : include/Game/Color.h src/Game/Color.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Game/Color.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Color.o
 
-$(RELEASE_OBJ_DIR)/src/Game/Game.o : include/Game/Game.h include/Game/Color.h src/Game/Game.cpp include/Players/Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/Out_Of_Time_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Game/Game.o : include/Game/Game.h include/Game/Color.h src/Game/Game.cpp include/Players/Player.h include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Game_Ending_Exception.h include/Exceptions/Out_Of_Time_Exception.h include/Players/Thinking.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Game/Game.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Game.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h include/Utility.h
@@ -347,13 +347,13 @@ $(RELEASE_OBJ_DIR)/src/Pieces/Rook.o : include/Pieces/Rook.h include/Pieces/Piec
 $(RELEASE_OBJ_DIR)/src/Players/Alan_Turing_AI.o : include/Players/Alan_Turing_AI.h include/Players/Player.h src/Players/Alan_Turing_AI.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Alan_Turing_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Alan_Turing_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h src/Players/CECP_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h include/Players/Thinking.h src/Players/CECP_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/CECP_Mediator.cpp -o $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Claude_Shannon_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Complete_Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Complete_Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Players/Thinking.h include/Exceptions/Checkmate_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Genetic_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h

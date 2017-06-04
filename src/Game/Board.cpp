@@ -26,7 +26,8 @@ Board::Board() :
     winner(NONE),
     en_passant_target_file('\0'),
     en_passant_target_rank(0),
-    game_ended(false)
+    game_ended(false),
+    thinking_indicator(NO_THINKING)
 {
     for(auto color : {WHITE, BLACK})
     {
@@ -57,7 +58,8 @@ Board::Board(const std::string& fen) :
     en_passant_target_file('\0'),
     en_passant_target_rank(0),
     game_ended(false),
-    starting_fen(fen)
+    starting_fen(fen),
+    thinking_indicator(NO_THINKING)
 {
     auto fen_parse = String::split(fen);
 
@@ -1169,6 +1171,16 @@ std::string Board::get_last_move_record() const
     }
 
     return result;
+}
+
+void Board::set_thinking_mode(Thinking_Output_Type mode) const
+{
+    thinking_indicator = mode;
+}
+
+Thinking_Output_Type Board::get_thinking_mode() const
+{
+    return thinking_indicator;
 }
 
 bool Square::operator<(const Square& other) const
