@@ -899,7 +899,7 @@ void Board::print_game_record(const Player* white,
     auto move_count_start = 0;
     if( ! starting_fen.empty())
     {
-        out_stream << "[SetUp 1]\n";
+        out_stream << "[SetUp \"1\"]\n";
         out_stream << "[FEN \"" << starting_fen << "\"]\n";
         temp = Board(starting_fen);
         move_count_start = std::stoi(String::split(starting_fen).back()) - 1;
