@@ -79,10 +79,10 @@ bool String::starts_with(const std::string& s, char beginning)
 
 std::string String::trim_outer_whitespace(const std::string& str)
 {
-	if (str.empty())
-	{
-		return str;
-	}
+    if (str.empty())
+    {
+        return str;
+    }
 
     size_t start = 0;
     while(start < str.size() && isspace(str[start]))
