@@ -49,10 +49,11 @@ class Board
         Thinking_Output_Type get_thinking_mode() const;
 
         // With commentary
-        void print_game_record(const Player* white = nullptr,
-                               const Player* black = nullptr,
-                               const std::string& file_name = "",
-                               const std::string& outside_result = "") const;
+        void print_game_record(const Player* white,
+                               const Player* black,
+                               const std::string& file_name,
+                               Color outside_winner,
+                               const std::string& outside_result) const;
 
         Color get_winner() const;
         std::string last_move_coordinates() const;

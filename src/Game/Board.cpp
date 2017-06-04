@@ -815,33 +815,31 @@ const std::vector<std::string>& Board::get_game_record() const
 void Board::print_game_record(const Player* white,
                               const Player* black,
                               const std::string& file_name,
-                              const std::string& outside_result) const
+                              Color outside_winner,
+                              const std::string& termination) const
 {
-    std::string result;
-    std::string termination;
-    if(outside_result.empty())
+    Color victor = NONE;
+    if(game_has_ended())
     {
-        if(game_has_ended())
-        {
-            if(get_winner() == WHITE)
-            {
-                result = "1-0";
-            }
-            else if(get_winner() == BLACK)
-            {
-                result = "0-1";
-            }
-            else
-            {
-                result = "1/2-1/2";
-            }
-        }
+        victor = get_winner();
     }
     else
     {
-        auto split = String::split(outside_result, " ", 1);
-        result = split[0];
-        termination = split[1];
+        victor = outside_winner;
+    }
+
+    std::string result;
+    if(victor == WHITE)
+    {
+        result = "1-0";
+    }
+    else if(victor == BLACK)
+    {
+        result = "0-1";
+    }
+    else
+    {
+        result = "1/2-1/2";
     }
 
     static int game_number = 0;
@@ -875,7 +873,7 @@ void Board::print_game_record(const Player* white,
     {
         out_stream << "[Result \"" << result << "\"]\n";
     }
-    if( ! termination.empty())
+    if( ! termination.empty() && ! String::contains(termination, "mates"))
     {
         out_stream << "[Termination \"" << termination << "\"]\n";
     }
