@@ -281,10 +281,15 @@ As an example, the following is a count of all promotions in a gene pool run aft
 
 Most games with human players end in a draw when neither side can force an advantage. This happens when one side can block a crucial move (e.g., a pawn promotion) and the other side cannot remove this block. Since the blocking player does not have a reason to move, he can just repeat moves to maintain the block. This would lead to threefold repetition if most players did not verbally draw the game beforehand. Since these Genetic AI players don't offer or accept draws, they play out all the repetitions.
 
+\subsection*{The Look Ahead Gene is a late bloomer}
+
+It seems that the Look Ahead Gene does not experience significant evolutionary pressure until the board-scoring genes have been tuned to a semi-decent state. My hypothesis is that if the board-scoring function is not able to tell a good position from bad, then looking ahead only increases the risk of losing by time forfeiture with no benefit. However, when the board-scoring genes are in a decent state, the increase in look ahead is very quick. This leads to a rapid increase in the rate of deaths by running out of time, but apparently this is worth the risk as those who are more conservative with their time lose to those who see farther ahead.
 
 \subsection*{The Sphere of Influence Gene typically counts legal moves as just as valuable as any other move.}
 
 This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game.
+
+Update after deleting the Branch Pruning Gene: The Sphere of Influence Gene now counts legal moves as 50\% more valuable than illegal moves.
 
 
 \section{Public Methods of Classes - Programmer's API Reference}
