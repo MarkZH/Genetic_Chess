@@ -38,12 +38,12 @@ piece_strength_prefix = 'Piece Strength Gene';
 piece_strength_figure = figure('Position', [0, 0, 1200, 1000]);
 title('Piece Strength Evolution', 'FontSize', 22);
 
-scalar_figure = figure('Position', [0, 0, 1200, 1000]);
-scalar_suffix = ' Gene - Priority';
-scalar_count = 0;
+priority_figure = figure('Position', [0, 0, 1200, 1000]);
+priority_suffix = ' Gene - Priority';
+priority_count = 0;
 title('Gene Priority Evolution', 'FontSize', 22);
 
-piece_scalar_plots = [false, false];
+piece_priority_plots = [false, false];
 
 total_force_index = 0;
 total_force_prefix = "Total Force Gene";
@@ -96,14 +96,14 @@ for yi = 2 : length(data.colheaders) - 2
   special_plot = false;
   if strncmp(name, piece_strength_prefix, length(piece_strength_prefix))
     plot_figure = piece_strength_figure;
-    piece_scalar_index = 1;
+    piece_priority_index = 1;
     piece_strength_index = yi;
     special_plot = true;
   end
   
-  if strncmp(fliplr(name), fliplr(scalar_suffix), length(scalar_suffix))
-    plot_figure = scalar_figure;
-    piece_scalar_index = 2;
+  if strncmp(fliplr(name), fliplr(priority_suffix), length(priority_suffix))
+    plot_figure = priority_figure;
+    piece_priority_index = 2;
     special_plot = true;
   end
 
@@ -119,25 +119,26 @@ for yi = 2 : length(data.colheaders) - 2
     figure(plot_figure);
     hold all;
 
-    if piece_scalar_index == 1
+    if piece_priority_index == 1
       name = name(end);
       make_dashed = false;
     else
-      name = name(1 : end - length(scalar_suffix));
-      scalar_count = scalar_count + 1;
-      make_dashed = (scalar_count > 7);
+      name = name(1 : end - length(priority_suffix));
+      priority_count = priority_count + 1;
+      make_dashed = (priority_count > 7);
     end
 
     p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
     if make_dashed
       set(p, 'LineStyle', ':');
     end
-    piece_scalar_plots(piece_scalar_index) = true;
+    piece_priority_plots(piece_priority_index) = true;
   end
 end
 
-if piece_scalar_plots(1)
+if piece_priority_plots(1)
   figure(piece_strength_figure);
+  xlabel('ID');
   leg = legend('show');
   set(leg, 'orientation', 'horizontal');
   set(leg, 'location', 'southoutside');
@@ -145,13 +146,13 @@ if piece_scalar_plots(1)
   print([gene_pool_filename '_piece_strength.png']);
 end
 
-if piece_scalar_plots(2)
-  figure(scalar_figure);
+if piece_priority_plots(2)
+  figure(priority_figure);
   leg = legend('show');
   set(leg, 'orientation', 'horizontal');
   set(leg, 'location', 'southoutside');
   legend left;
-  print([gene_pool_filename '_gene_scalars.png']);
+  print([gene_pool_filename '_gene_priorities.png']);
 end
 
 if total_force_index > 0 && opponent_pieces_targeted_index > 0 && piece_strength_index > 0
@@ -164,7 +165,7 @@ if total_force_index > 0 && opponent_pieces_targeted_index > 0 && piece_strength
   smooth_activity = conv(activity, ones(conv_window, 1), 'valid')/conv_window;
   plot(100*smooth_activity, 'LineWidth', 3, 'displayname', 'Piece Strength');
   title('Piece Strength Gene in use', 'FontSize', 22);
-  xlabel('Approximate ID', 'FontSize', 18);
+  xlabel('ID', 'FontSize', 18);
   ylabel('Percentage with activity', 'FontSize', 18);
   ylim([0 100]);
   set(gca, 'FontSize', 14);
