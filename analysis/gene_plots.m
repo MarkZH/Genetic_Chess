@@ -37,11 +37,13 @@ xaxis = xaxis_list{1};
 piece_strength_prefix = 'Piece Strength Gene';
 piece_strength_figure = figure('Position', [0, 0, 1200, 1000]);
 title('Piece Strength Evolution', 'FontSize', 22);
+xlabel('ID');
 
 priority_figure = figure('Position', [0, 0, 1200, 1000]);
 priority_suffix = ' Gene - Priority';
 priority_count = 0;
 title('Gene Priority Evolution', 'FontSize', 22);
+xlabel('ID');
 
 piece_priority_plots = [false, false];
 
@@ -138,7 +140,6 @@ end
 
 if piece_priority_plots(1)
   figure(piece_strength_figure);
-  xlabel('ID');
   leg = legend('show');
   set(leg, 'orientation', 'horizontal');
   set(leg, 'location', 'southoutside');
