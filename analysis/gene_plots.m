@@ -91,7 +91,7 @@ for yi = 2 : length(data.colheaders) - 2
   conv_window = 100;
   smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
   conv_margin = floor(conv_window/2);
-  x_axis = conv_margin : length(smooth_data) + conv_margin - 1;
+  x_axis = id_list(conv_margin : end - conv_margin);
   plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
   print([gene_pool_filename '_gene_' name '.png']);
 
