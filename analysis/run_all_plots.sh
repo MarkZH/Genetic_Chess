@@ -16,4 +16,3 @@ octave analysis/win_lose_draw_plotting.m "$game_file" &
 wait
 ./analysis/promotions.sh "$game_file"
 ./analysis/castling.sh "$game_file"
-eog $(dirname "$1")
