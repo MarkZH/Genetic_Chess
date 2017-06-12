@@ -2,10 +2,16 @@
 
 An amateur attempt at breeding a chess-playing AI.
 
-As a short summary, this program attempts to create a chess-playing AI by
-playing prospective AIs against each and letting the winners produce mutated
-copies. As evidence that this has a chance of working, here's a plot from a
-recent run of the value that the AIs place on each type of piece.
+This program attempts to create a chess-playing AI by playing prospective AIs
+against each and letting the winners produce mutated copies. As evidence that
+this has a chance of working, here's a plot from a recent run of the value that
+the AIs place on each type of piece.
+
+![An example of the evolution of piece values](piece_strengths_example.png)
+
+It took awhile (tens of thousands of generations), but it did figure out that
+the queen was an important piece. The vertical axis has arbitrary units that
+indicate the relative value of each piece type.
 
 See the `doc/` folder for an in-depth description of the running and working of
 this project.
@@ -29,10 +35,3 @@ this project.
 5. About once a day, pause the gene pool with `Ctrl-C` and run
    `analysis/run_all_plots.sh pool.txt` to generate plots and other data
    showing the evolution and behavior of the specimens.
-
-
-![An example of the evolution of piece values](piece_strengths_example.png)
-
-It took awhile (tens of thousands of generations), but it did figure out that
-the queen was an important piece. The vertical axis has arbitrary units that
-indicate the relative value of each piece type.
