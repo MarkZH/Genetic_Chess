@@ -22,19 +22,19 @@
 
 Pawn::Pawn(Color color_in) : Piece(color_in, "P")
 {
-    possible_moves.emplace_back(std::make_unique<Pawn_Move>(my_color));
-    possible_moves.emplace_back(std::make_unique<Pawn_Double_Move>(my_color));
+    possible_moves.emplace_back(std::make_unique<Pawn_Move>(color_in));
+    possible_moves.emplace_back(std::make_unique<Pawn_Double_Move>(color_in));
 
     std::vector<std::shared_ptr<const Piece>> possible_promotions;
-    possible_promotions.emplace_back(std::make_shared<Queen>(my_color));
-    possible_promotions.emplace_back(std::make_shared<Knight>(my_color));
-    possible_promotions.emplace_back(std::make_shared<Rook>(my_color));
-    possible_promotions.emplace_back(std::make_shared<Bishop>(my_color));
+    possible_promotions.emplace_back(std::make_shared<Queen>(color_in));
+    possible_promotions.emplace_back(std::make_shared<Knight>(color_in));
+    possible_promotions.emplace_back(std::make_shared<Rook>(color_in));
+    possible_promotions.emplace_back(std::make_shared<Bishop>(color_in));
 
     for(auto dir : {'r', 'l'})
     {
-        possible_moves.emplace_back(std::make_unique<Pawn_Capture>(my_color, dir));
-        possible_moves.emplace_back(std::make_unique<En_Passant>(my_color, dir));
+        possible_moves.emplace_back(std::make_unique<Pawn_Capture>(color_in, dir));
+        possible_moves.emplace_back(std::make_unique<En_Passant>(color_in, dir));
         for(auto promote : possible_promotions)
         {
             possible_moves.emplace_back(std::make_unique<Pawn_Promotion_by_Capture>(promote, dir));

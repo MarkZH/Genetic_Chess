@@ -34,11 +34,12 @@ class Piece
         virtual bool is_knight() const;
 
     protected:
+        std::vector<std::string> ascii_art_lines;
+        std::vector<std::unique_ptr<const Move>> possible_moves;
+
+    private:
         Color my_color;
         std::string symbol;
-
-        std::vector<std::unique_ptr<const Move>> possible_moves;
-        std::vector<std::string> ascii_art_lines;
 };
 
 #endif // PIECE_H
