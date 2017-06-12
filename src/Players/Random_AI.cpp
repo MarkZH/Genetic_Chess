@@ -4,12 +4,9 @@
 
 #include "Game/Board.h"
 #include "Moves/Complete_Move.h"
+#include "Utility.h"
 
 class Clock;
-
-#include "Exceptions/Illegal_Move_Exception.h"
-
-#include "Utility.h"
 
 const Complete_Move Random_AI::choose_move(const Board& board, const Clock& /*clock*/) const
 {

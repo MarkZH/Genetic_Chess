@@ -203,7 +203,7 @@ $(DEBUG_OBJ_DIR)/src/Players/Outside_Player.o : include/Players/Outside_Player.h
 $(DEBUG_OBJ_DIR)/src/Players/Player.o : include/Players/Player.h src/Players/Player.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Player.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Player.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include/Players/Player.h src/Players/Random_AI.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include/Players/Player.h src/Players/Random_AI.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Random_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Random_AI.o
 
 $(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h include/Players/Player.h src/Players/UCI_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
@@ -365,7 +365,7 @@ $(RELEASE_OBJ_DIR)/src/Players/Outside_Player.o : include/Players/Outside_Player
 $(RELEASE_OBJ_DIR)/src/Players/Player.o : include/Players/Player.h src/Players/Player.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Player.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Player.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include/Players/Player.h src/Players/Random_AI.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include/Players/Player.h src/Players/Random_AI.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Random_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o
 
 $(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h include/Players/Player.h src/Players/UCI_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
