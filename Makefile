@@ -374,7 +374,7 @@ $(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h i
 $(RELEASE_OBJ_DIR)/src/Stalemate_Search.o : include/Stalemate_Search.h src/Stalemate_Search.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Exceptions/Game_Ending_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Stalemate_Search.cpp -o $(RELEASE_OBJ_DIR)/src/Stalemate_Search.o
 
-$(RELEASE_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Players/Genetic_AI.h include/Game/Clock.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
+$(RELEASE_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Testing.cpp -o $(RELEASE_OBJ_DIR)/src/Testing.o
 
 $(RELEASE_OBJ_DIR)/src/Utility.o : include/Utility.h src/Utility.cpp

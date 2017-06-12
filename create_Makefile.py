@@ -61,15 +61,15 @@ for target in final_targets:
 
     obj_dest[target]= "$(" + target.upper() + "_OBJ_DIR)"
 
-    depends[target] = []
-    for sub in ['before_', 'after_']:
-        depends[sub + target] = []
-        depends[target].append(sub + target)
-
     out_variable = "$(OUT_" + target.upper() + ")"
     all_objects = "$(OBJ_" + target.upper() + ")"
     operations[out_variable] = [' '.join(["$(LD)", "-o", out_variable, all_objects, "$(LDFLAGS)"])]
     bins[target] = os.path.join('bin', target, program_name)
+    depends[target] = []
+    for sub in ['before_', 'after_']:
+        depends[sub + target] = []
+        depends[target].append(sub + target)
+    depends[target].insert(1, out_variable)
 
     depends[out_variable] = ['before_' + target, all_objects]
     depends['clean'].append('clean_' + target)
@@ -85,7 +85,6 @@ for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
 
 obj_dir_written = []
 for target in final_targets:
-    depends[target] = ['before_' + target, "$(OUT_" + target.upper() + ')', 'after_' + target]
     bin_dir = os.path.dirname(bins[target])
     operations['before_' + target].append('test -d ' + bin_dir + ' || mkdir -p ' + bin_dir)
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
@@ -109,8 +108,15 @@ for target in final_targets:
                 operations['before_' + target].append('test -d ' + obj_dest_dir + ' || mkdir -p ' + obj_dest_dir)
                 obj_dir_written.append(obj_dest_dir)
             with open(source_file) as src:
+                skip = False
                 for line in src:
-                    if line.find('#include "') != -1:
+                    if line.find('#ifdef') != -1:
+                        skip = (line.split()[1] != target.upper())
+                    elif line.find("#else") != -1:
+                        skip = not skip
+                    elif line.find("#endif") != -1:
+                        skip = False
+                    elif not skip and line.find('#include "') != -1:
                         file_name = line.split('"')[1]
                         include_file_name = os.path.join('include', file_name)
                         if not os.path.isfile(include_file_name):
