@@ -27,9 +27,6 @@ void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<size_t, s
 
 void gene_pool(const std::string& config_file = "")
 {
-    // Ctrl-C to pause gene pool
-    signal(SIGINT, pause_gene_pool);
-
     auto config = Configuration_File(config_file);
 
     // Environment variables
@@ -131,6 +128,9 @@ void gene_pool(const std::string& config_file = "")
             game_time = std::stod(String::split(time_line, " ").at(3));
         }
     }
+
+    // Ctrl-C to pause gene pool
+    signal(SIGINT, pause_gene_pool);
 
     for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % pools.size()) // run forever
     {
