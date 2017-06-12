@@ -9,8 +9,6 @@ class Move
 {
     public:
         explicit Move(int d_file_in, int d_rank_in);
-        Move(const Move&) = delete;
-        Move& operator=(const Move&) = delete;
         virtual ~Move() = default;
 
         // side effects are changes to the state of the board beyond the change

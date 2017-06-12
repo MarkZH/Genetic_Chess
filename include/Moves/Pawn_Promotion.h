@@ -13,8 +13,6 @@ class Pawn_Promotion : public Pawn_Move
 {
     public:
         explicit Pawn_Promotion(std::shared_ptr<const Piece> promotion);
-        Pawn_Promotion(const Pawn_Promotion&) = delete;
-        Pawn_Promotion& operator=(const Pawn_Promotion&) = delete;
 
         void side_effects(Board& board, char file_start, int rank_start) const override;
         std::string name() const override;

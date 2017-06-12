@@ -8,13 +8,10 @@
 #include "Moves/Move.h"
 #include "Game/Color.h"
 
-
 class Piece
 {
     public:
         Piece(Color color_in, const std::string& symbol_in);
-        Piece(const Piece&) = delete;
-        Piece& operator=(const Piece&) = delete;
         virtual ~Piece() = 0;
 
         virtual std::string pgn_symbol() const;

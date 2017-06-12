@@ -9,8 +9,6 @@ class Queen : public Piece
 {
     public:
         explicit Queen(Color color);
-        Queen(const Queen&) = delete;
-        Queen& operator=(const Queen&) = delete;
 
         bool is_queen() const override;
 };
