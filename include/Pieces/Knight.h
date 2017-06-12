@@ -11,7 +11,6 @@ class Knight : public Piece
         explicit Knight(Color color);
         Knight(const Knight&) = delete;
         Knight& operator=(const Knight&) = delete;
-        ~Knight() override;
 
         bool is_knight() const override;
 };

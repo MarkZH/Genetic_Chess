@@ -8,7 +8,6 @@ class Human_Player : public Player
 {
     public:
         Human_Player();
-        ~Human_Player() override;
 
         const Complete_Move choose_move(const Board& b, const Clock& clock) const override;
         std::string name() const override;

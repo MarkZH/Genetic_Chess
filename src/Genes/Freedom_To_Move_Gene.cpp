@@ -9,10 +9,6 @@ Freedom_To_Move_Gene::Freedom_To_Move_Gene() :
 {
 }
 
-Freedom_To_Move_Gene::~Freedom_To_Move_Gene()
-{
-}
-
 double Freedom_To_Move_Gene::score_board(const Board& board, Color perspective) const
 {
     auto temp = board;

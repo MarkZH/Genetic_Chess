@@ -4,10 +4,6 @@ Alan_Turing_AI::Alan_Turing_AI()
 {
 }
 
-Alan_Turing_AI::~Alan_Turing_AI()
-{
-}
-
 std::string Alan_Turing_AI::name() const
 {
     return "Turbocomp";

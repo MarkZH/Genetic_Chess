@@ -10,7 +10,6 @@ class Stalemate_Exception : public Game_Ending_Exception
 {
     public:
         explicit Stalemate_Exception(const std::string& message_in);
-        ~Stalemate_Exception() override;
 };
 
 #endif // STALEMATE_EXCEPTION_H

@@ -32,10 +32,6 @@ Bishop::Bishop(Color color_in) : Piece(color_in, "B")
     }
 }
 
-Bishop::~Bishop()
-{
-}
-
 bool Bishop::is_bishop() const
 {
     return true;

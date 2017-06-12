@@ -10,7 +10,6 @@ class Freedom_To_Move_Gene : public Gene
 {
     public:
         Freedom_To_Move_Gene();
-        ~Freedom_To_Move_Gene() override;
 
         Freedom_To_Move_Gene* duplicate() const override;
 

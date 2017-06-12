@@ -35,10 +35,6 @@ Knight::Knight(Color color_in) : Piece(color_in, "N")
     }
 }
 
-Knight::~Knight()
-{
-}
-
 bool Knight::is_knight() const
 {
     return true;

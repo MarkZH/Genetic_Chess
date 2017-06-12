@@ -14,8 +14,6 @@ class Clock;
 class Outside_Player : public Player
 {
     public:
-        ~Outside_Player() override;
-
         virtual Color get_ai_color() const = 0;
 
         int get_game_time();

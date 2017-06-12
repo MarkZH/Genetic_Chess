@@ -9,7 +9,6 @@ class Total_Force_Gene : public Gene
 {
     public:
         explicit Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source);
-        ~Total_Force_Gene() override;
 
         Total_Force_Gene* duplicate() const;
         void reset_piece_strength_gene(const Piece_Strength_Gene* psg) override;

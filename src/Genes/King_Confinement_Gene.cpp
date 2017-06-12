@@ -21,10 +21,6 @@ King_Confinement_Gene::King_Confinement_Gene() : maximum_score(0.0)
     }
 }
 
-King_Confinement_Gene::~King_Confinement_Gene()
-{
-}
-
 King_Confinement_Gene* King_Confinement_Gene::duplicate() const
 {
     return new King_Confinement_Gene(*this);

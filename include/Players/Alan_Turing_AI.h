@@ -8,7 +8,6 @@ class Alan_Turing_AI : public Player
 {
     public:
         Alan_Turing_AI();
-        ~Alan_Turing_AI();
 
         std::string name() const override;
         std::string author() const override;

@@ -6,10 +6,6 @@
 #include "Pieces/Piece.h"
 #include "Utility.h"
 
-Pawn_Advancement_Gene::~Pawn_Advancement_Gene()
-{
-}
-
 double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;

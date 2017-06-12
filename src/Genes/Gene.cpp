@@ -67,11 +67,6 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
     throw std::runtime_error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
 }
 
-
-Gene::~Gene()
-{
-}
-
 void Gene::mutate()
 {
     if(Random::success_probability(0.95))

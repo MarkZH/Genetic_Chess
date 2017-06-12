@@ -13,10 +13,6 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
 {
 }
 
-Sphere_of_Influence_Gene::~Sphere_of_Influence_Gene()
-{
-}
-
 void Sphere_of_Influence_Gene::reset_properties() const
 {
     Gene::reset_properties();

@@ -11,10 +11,6 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strengt
 {
 }
 
-Opponent_Pieces_Targeted_Gene::~Opponent_Pieces_Targeted_Gene()
-{
-}
-
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;

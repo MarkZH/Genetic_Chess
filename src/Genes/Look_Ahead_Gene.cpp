@@ -34,10 +34,6 @@ void Look_Ahead_Gene::load_properties()
     recalculate_exponent();
 }
 
-Look_Ahead_Gene::~Look_Ahead_Gene()
-{
-}
-
 double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const
 {
     if( ! is_active())

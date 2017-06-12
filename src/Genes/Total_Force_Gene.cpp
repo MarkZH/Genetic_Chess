@@ -10,10 +10,6 @@ Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_sou
     make_priority_non_negative();
 }
 
-Total_Force_Gene::~Total_Force_Gene()
-{
-}
-
 double Total_Force_Gene::score_board(const Board& board, Color perspective) const
 {
     double score = 0.0;

@@ -13,10 +13,6 @@ Claude_Shannon_AI::Claude_Shannon_AI() : recursion_depth(3)
 {
 }
 
-Claude_Shannon_AI::~Claude_Shannon_AI()
-{
-}
-
 std::string Claude_Shannon_AI::name() const
 {
     return "Shannon's Chess Automaton";

@@ -11,7 +11,6 @@ class Bishop : public Piece
         explicit Bishop(Color color);
         Bishop(const Bishop&) = delete;
         Bishop& operator=(const Bishop&) = delete;
-        ~Bishop() override;
 
         bool is_bishop() const override;
 };

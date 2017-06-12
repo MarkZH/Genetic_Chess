@@ -3,10 +3,6 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 
-King_Protection_Gene::~King_Protection_Gene()
-{
-}
-
 double King_Protection_Gene::score_board(const Board& board, Color perspective) const
 {
     // Count the number of empty squares from which a piece could attack the king. This

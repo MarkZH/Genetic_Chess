@@ -19,10 +19,6 @@ Move::Move(int d_file_in, int d_rank_in) : d_file(d_file_in), d_rank(d_rank_in)
     }
 }
 
-Move::~Move()
-{
-}
-
 void Move::side_effects(Board&, char /* file_start */, int /* rank_start */) const
 {
 }

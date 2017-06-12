@@ -8,10 +8,6 @@ Pawn_Double_Move::Pawn_Double_Move(Color color) : Pawn_Move(color)
     d_rank = d_rank*2;
 }
 
-Pawn_Double_Move::~Pawn_Double_Move()
-{
-}
-
 void Pawn_Double_Move::side_effects(Board& board, char file_start, int rank_start) const
 {
     board.make_en_passant_targetable(file_start, rank_start + rank_change()/2);

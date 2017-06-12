@@ -8,7 +8,6 @@ class Sphere_of_Influence_Gene : public Gene
 {
     public:
         Sphere_of_Influence_Gene();
-        ~Sphere_of_Influence_Gene() override;
 
         Sphere_of_Influence_Gene* duplicate() const override;
 

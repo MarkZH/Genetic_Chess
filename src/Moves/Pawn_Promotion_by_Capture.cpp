@@ -13,10 +13,6 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(std::shared_ptr<const Piece
     d_file = (dir == 'r' ? 1 : -1);
 }
 
-Pawn_Promotion_by_Capture::~Pawn_Promotion_by_Capture()
-{
-}
-
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board, char file_start, int rank_start) const
 {
     auto attacked_piece = board.view_piece_on_square(file_start + file_change(),

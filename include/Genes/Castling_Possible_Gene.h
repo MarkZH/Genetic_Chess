@@ -10,7 +10,6 @@ class Castling_Possible_Gene : public Gene
 {
     public:
         Castling_Possible_Gene();
-        ~Castling_Possible_Gene() override;
 
         std::string name() const override;
         Castling_Possible_Gene* duplicate() const override;

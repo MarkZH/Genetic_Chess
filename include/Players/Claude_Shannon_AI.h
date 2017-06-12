@@ -25,7 +25,6 @@ class Claude_Shannon_AI : public Player
 {
     public:
         Claude_Shannon_AI();
-        virtual ~Claude_Shannon_AI() override;
 
         const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
 

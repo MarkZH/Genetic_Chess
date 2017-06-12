@@ -45,10 +45,6 @@ Outside_Player::Outside_Player() :
 {
 }
 
-Outside_Player::~Outside_Player()
-{
-}
-
 std::string Outside_Player::receive_command()
 {
     std::string result;

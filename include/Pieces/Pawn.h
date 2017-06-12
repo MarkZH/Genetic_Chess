@@ -13,7 +13,6 @@ class Pawn : public Piece
         Pawn(const Pawn&) = delete;
         Pawn& operator=(const Pawn&) = delete;
         std::string pgn_symbol() const override;
-        ~Pawn() override;
 
         bool is_pawn() const override;
 };

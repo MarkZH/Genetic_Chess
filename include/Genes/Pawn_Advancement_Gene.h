@@ -7,8 +7,6 @@
 class Pawn_Advancement_Gene : public Gene
 {
     public:
-        ~Pawn_Advancement_Gene() override;
-
         Pawn_Advancement_Gene* duplicate() const override;
 
         std::string name() const override;

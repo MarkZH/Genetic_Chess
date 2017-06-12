@@ -6,10 +6,6 @@ Queenside_Castle::Queenside_Castle() : Move(-2, 0)
 {
 }
 
-Queenside_Castle::~Queenside_Castle()
-{
-}
-
 bool Queenside_Castle::move_specific_legal(const Board& board, char file_start, int rank_start) const
 {
     return     ! board.piece_has_moved(file_start, rank_start)

@@ -13,7 +13,6 @@ class Kingside_Castle : public Move
         Kingside_Castle();
         Kingside_Castle(const Kingside_Castle&) = delete;
         Kingside_Castle& operator=(const Kingside_Castle&) = delete;
-        ~Kingside_Castle() override;
 
         bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
         bool can_capture() const override;

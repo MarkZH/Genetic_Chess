@@ -57,10 +57,6 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P")
     }
 }
 
-Pawn::~Pawn()
-{
-}
-
 std::string Pawn::pgn_symbol() const
 {
     return "";

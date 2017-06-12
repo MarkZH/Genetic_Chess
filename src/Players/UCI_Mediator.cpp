@@ -32,10 +32,6 @@ UCI_Mediator::UCI_Mediator(const Player& local_player)
     }
 }
 
-UCI_Mediator::~UCI_Mediator()
-{
-}
-
 const Complete_Move UCI_Mediator::choose_move(const Board& board, const Clock& clock) const
 {
     while(true)

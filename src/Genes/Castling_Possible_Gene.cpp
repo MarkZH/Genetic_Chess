@@ -11,10 +11,6 @@ Castling_Possible_Gene::Castling_Possible_Gene() : kingside_preference(0.5)
 {
 }
 
-Castling_Possible_Gene::~Castling_Possible_Gene()
-{
-}
-
 void Castling_Possible_Gene::reset_properties() const
 {
     Gene::reset_properties();

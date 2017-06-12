@@ -14,10 +14,6 @@ Pawn_Promotion::Pawn_Promotion(std::shared_ptr<const Piece> promotion_piece) :
 {
 }
 
-Pawn_Promotion::~Pawn_Promotion()
-{
-}
-
 void Pawn_Promotion::side_effects(Board& board, char file_start, int rank_start) const
 {
     char file_end = file_start + file_change();

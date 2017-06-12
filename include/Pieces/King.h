@@ -10,7 +10,6 @@ class King : public Piece
         explicit King(Color color_in);
         King(const King&) = delete;
         King& operator=(const King&) = delete;
-        ~King() override;
 
         bool is_king() const override;
 };
