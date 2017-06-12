@@ -47,7 +47,7 @@ namespace Random
 
     namespace
     {
-        std::mt19937_64 generator(std::chrono::system_clock::now().time_since_epoch().count());
+        thread_local std::mt19937_64 generator(std::random_device{}());
     }
 
     // Shuffles the order of the list

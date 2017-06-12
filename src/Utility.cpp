@@ -121,21 +121,21 @@ std::string String::strip_block_comment(const std::string& str, char start, char
 int Random::random_integer(int min, int max)
 {
     using uid = std::uniform_int_distribution<int>;
-    static auto dist = uid{};
+    thread_local static auto dist = uid{};
     return dist(generator, uid::param_type{min, max});
 }
 
 double Random::random_normal(double standard_deviation)
 {
     using nd = std::normal_distribution<double>;
-    static auto dist = nd{};
+    thread_local static auto dist = nd{};
     return dist(generator, nd::param_type{0.0, standard_deviation});
 }
 
 double Random::random_real(double min, double max)
 {
     using urd = std::uniform_real_distribution<double>;
-    static auto dist = urd{};
+    thread_local static auto dist = urd{};
     return dist(generator, urd::param_type{min, max});
 }
 
