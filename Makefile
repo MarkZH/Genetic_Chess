@@ -167,7 +167,7 @@ $(DEBUG_OBJ_DIR)/src/Pieces/Bishop.o : include/Pieces/Bishop.h include/Pieces/Pi
 $(DEBUG_OBJ_DIR)/src/Pieces/King.o : include/Pieces/King.h include/Pieces/Piece.h src/Pieces/King.cpp include/Game/Color.h include/Moves/Move.h include/Moves/Kingside_Castle.h include/Moves/Queenside_Castle.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Pieces/King.cpp -o $(DEBUG_OBJ_DIR)/src/Pieces/King.o
 
-$(DEBUG_OBJ_DIR)/src/Pieces/Knight.o : include/Pieces/Knight.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Knight.cpp include/Moves/Move.h
+$(DEBUG_OBJ_DIR)/src/Pieces/Knight.o : include/Pieces/Knight.h include/Pieces/Piece.h src/Pieces/Knight.cpp include/Game/Color.h include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Pieces/Knight.cpp -o $(DEBUG_OBJ_DIR)/src/Pieces/Knight.o
 
 $(DEBUG_OBJ_DIR)/src/Pieces/Pawn.o : include/Pieces/Pawn.h include/Pieces/Piece.h src/Pieces/Pawn.cpp include/Game/Color.h include/Moves/Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Moves/En_Passant.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/Queen.h
@@ -329,7 +329,7 @@ $(RELEASE_OBJ_DIR)/src/Pieces/Bishop.o : include/Pieces/Bishop.h include/Pieces/
 $(RELEASE_OBJ_DIR)/src/Pieces/King.o : include/Pieces/King.h include/Pieces/Piece.h src/Pieces/King.cpp include/Game/Color.h include/Moves/Move.h include/Moves/Kingside_Castle.h include/Moves/Queenside_Castle.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Pieces/King.cpp -o $(RELEASE_OBJ_DIR)/src/Pieces/King.o
 
-$(RELEASE_OBJ_DIR)/src/Pieces/Knight.o : include/Pieces/Knight.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Knight.cpp include/Moves/Move.h
+$(RELEASE_OBJ_DIR)/src/Pieces/Knight.o : include/Pieces/Knight.h include/Pieces/Piece.h src/Pieces/Knight.cpp include/Game/Color.h include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Pieces/Knight.cpp -o $(RELEASE_OBJ_DIR)/src/Pieces/Knight.o
 
 $(RELEASE_OBJ_DIR)/src/Pieces/Pawn.o : include/Pieces/Pawn.h include/Pieces/Piece.h src/Pieces/Pawn.cpp include/Game/Color.h include/Moves/Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Moves/En_Passant.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/Queen.h

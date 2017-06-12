@@ -2,8 +2,8 @@
 #define KNIGHT_H
 
 #include "Piece.h"
-#include "Game/Color.h"
 
+enum Color;
 
 class Knight : public Piece
 {

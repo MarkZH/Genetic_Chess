@@ -3,6 +3,8 @@
 
 #include "Piece.h"
 
+enum Color;
+
 class Rook : public Piece
 {
     public:
