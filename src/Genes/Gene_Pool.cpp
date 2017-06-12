@@ -311,7 +311,7 @@ void gene_pool(const std::string& config_file = "")
 
         // Record best AI from all pools.
         // Best is defined as the still living AI with the lowest ID (the oldest living AI).
-        auto best_ai = Genetic_AI();
+        auto best_ai = pool.front();
         for(const auto& search_pool : pools)
         {
             best_ai = std::min(best_ai, *std::min_element(search_pool.begin(), search_pool.end()));

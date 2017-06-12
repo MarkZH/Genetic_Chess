@@ -167,6 +167,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
     if(board.get_thinking_mode() == CECP)
     {
+        output_thinking_cecp(result, clock, board.whose_turn());
         std::cout << std::flush;
     }
 
