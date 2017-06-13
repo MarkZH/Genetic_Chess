@@ -1,6 +1,7 @@
-\documentclass[letter]{article}
+\documentclass[letterpage]{article}
 \usepackage[T1]{fontenc}
 \usepackage[colorlinks]{hyperref}
+\usepackage[pdftex]{graphicx}
 
 \newcommand{\cpp}{C{\nobreak +}{\nobreak +}}
 \newcommand{\code}[1]{#1}
@@ -243,11 +244,11 @@ The \verb|Streak| column indicates the current number of consecutive wins or dra
 The asterisk (\verb|*|) indicates an offspring of the result of a drawn match. Note that the outcome of the game between 59096 and 59014 means that another such offspring will be brought into this pool for the next round. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
 
 
-\section{Some Consistent Results}
+\section{Some Consistent Results (in rough order of discovery)}
 
 Here are a few results that are reliably reproduced in multiple simulations.
 
-\subsection*{Piece values are rated in near-standard order}
+\subsection{Piece values are rated in near-standard order.}
 In descending order of valuation by a Genetic\_AI:
 \begin{enumerate}
 	\item Queen
@@ -256,15 +257,35 @@ In descending order of valuation by a Genetic\_AI:
 	\item Pawn
 \end{enumerate}
 
-\subsection*{White has an advantage}
+\subsection{White has an advantage.}
 
 Of the games ending in checkmate, white wins about 10\% more often than black. Wins by time are shared by black and white equally.
 
-\subsection*{The Total Force Gene and the Pawn Advancement Gene typically dominate.}
+\subsection{The Total Force Gene and the Pawn Advancement Gene typically dominate.}
 
 The Pawn Advancement Gene usually gains higher priority first, probably because it is the simplest gene that makes an immediate difference in the game. Push the pawns forward both threatens the opponent's pieces with low-risk attacks and increases the chances of promotion.
 
-\subsection*{The Queen is the most popular piece for promotion.}
+\subsubsection{Late-Breaking News: The Pawn Advancement Gene is a temporary substitute for a valid value of the pawn in the Piece Strength Gene.}
+
+Near the birth of the Genetic AI with ID~\#120,000, the Pawn Advancement Gene suddenly died off, with nearly all AIs in the gene pool deactivating the gene simultaneously (see Figure~\ref{pawn-crash}).
+\begin{figure}[tbh]
+	\centering
+	\includegraphics[width=\textwidth]{pawn-advancement-crash}
+	\caption{The sudden crash of the Pawn Advancement Gene}
+	\label{pawn-crash}
+\end{figure}
+
+The only correlation with another gene near that time is in the Piece Strength Gene. The change is small, but in the comparison plot shown in Figure~\ref{piece-strength-pawn-crash}, one can see that the pawn strength has a small jump in value near ID~\#120,000. This is the first time that all of the AIs in the gene pools have strictly positive values for the pawn. Prior to this, the value of a pawn was zero on average. When mutations would push the pawn value higher, it would be weighted too much compared to other pieces, leading to losses and a lower value for the remaining population. It was only when the other pieces reached a large enough value that the pawn value could be properly weighted and sustained. Until this happened, the Pawn Advancement Gene evolved a large value in step with the Total Force Gene since pawns are not actually valueless in real games. Until the Piece Strength Gene transition occurred, the Pawn Advanment Gene served as a proxy for the value of a pawn that was more easily tuned in comparison with the Total Force Gene and Piece Strength Gene.
+\begin{figure}
+	\centering
+	\includegraphics[width=\textwidth]{pawn-crash-strength-plot}
+	\caption{The small bump near ID~\#120,000 in the strength of a pawn that caused the Pawn Advancement Gene crash seen in Figure~\ref{pawn-crash}.}
+	\label{piece-strength-pawn-crash}
+\end{figure}
+
+This pattern, in which a gene with a lower proper value or priority needs to wait for properly higher-priority genes to evolve high enough priorities before tuning their own priorities, is common and is discussed more the Section~\ref{lower-priority-waits}.
+
+\subsection{The Queen is the most popular piece for promotion.}
 
 Even when the Piece Strength Gene has not been tuned at all, the queen is the overwhelming favorite, followed by the rook, then bishop, and finally the knight. In human games, only the queen and knight are chosen since they have different move patterns. If you need at least a rook or bishop, you might as well take a queen since that piece provides both. Only the knight provides a viable alternative (usually to avoid a stalemate if the queen was chosen).
 
@@ -281,20 +302,25 @@ As an example, the following is a count of all promotions in a gene pool run aft
 \end{center}
 
 
-\subsection*{Threefold repetition is the most common stalemate}
+\subsection{Threefold repetition is the most common stalemate.}
 
 Most games with human players end in a draw when neither side can force an advantage. This happens when one side can block a crucial move (e.g., a pawn promotion) and the other side cannot remove this block. Since the blocking player does not have a reason to move, he can just repeat moves to maintain the block. This would lead to threefold repetition if most players did not verbally draw the game beforehand. Since these Genetic AI players don't offer or accept draws, they play out all the repetitions.
 
-\subsection*{The Look Ahead Gene is a late bloomer}
+\subsection{The Look Ahead Gene is a late bloomer.}
 
 It seems that the Look Ahead Gene does not experience significant evolutionary pressure until the board-scoring genes have been tuned to a semi-decent state. My hypothesis is that if the board-scoring function is not able to tell a good position from bad, then looking ahead only increases the risk of losing by time forfeiture with no benefit. However, when the board-scoring genes are in a decent state, the increase in look ahead is very quick. This leads to a rapid increase in the rate of deaths by running out of time, but apparently this is worth the risk as those who are more conservative with their time lose to those who see farther ahead.
 
-\subsection*{The Sphere of Influence Gene typically counts legal moves as just as valuable as any other move.}
+\subsection{The Sphere of Influence Gene typically counts legal moves as just as valuable as any other move.}
 
 This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game.
 
-Update after deleting the Branch Pruning Gene: The Sphere of Influence Gene now counts legal moves as 50\% more valuable than illegal moves.
+\subsubsection{Late-Breaking News: Update after deleting the Branch Pruning Gene}
+The Sphere of Influence Gene now counts legal moves as 50\% more valuable than illegal moves.
 
+\subsection{Genes with properly lower priorities have to wait for higher priority genes to evolve their higher priority before evolving themselves.}
+\label{lower-priority-waits}
+
+Some genes are more important than others. The Total Force Gene dominates because it is nearly always more difficult to win when behind in pieces. So, if another gene evolves too high a priority, it hinders game play and will soon be killed off. This means that, because the rate of evolution is the same for all gene priorities, that genes with a lower proper priority\footnote{By proper priority, I mean the as yet unknown relative priority compared with other genes that leads to winning game play. The proper priorities are what this program should be evolving towards.} need to wait for those genes with higher proper priority to evolve a large enough value. Before then, it is too likely for a random mutation to push a lower priority too high and get a gene killed off.
 
 \section{Public Methods of Classes - Programmer's API Reference}
 
