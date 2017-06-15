@@ -120,6 +120,7 @@ std::string String::strip_block_comment(const std::string& str, char start, char
 
 int Random::random_integer(int min, int max)
 {
+    thread_local static std::mt19937_64 generator(std::random_device{}());
     using uid = std::uniform_int_distribution<int>;
     thread_local static auto dist = uid{};
     return dist(generator, uid::param_type{min, max});
@@ -127,6 +128,7 @@ int Random::random_integer(int min, int max)
 
 double Random::random_normal(double standard_deviation)
 {
+    thread_local static std::mt19937_64 generator(std::random_device{}());
     using nd = std::normal_distribution<double>;
     thread_local static auto dist = nd{};
     return dist(generator, nd::param_type{0.0, standard_deviation});
@@ -134,6 +136,7 @@ double Random::random_normal(double standard_deviation)
 
 double Random::random_real(double min, double max)
 {
+    thread_local static std::mt19937_64 generator(std::random_device{}());
     using urd = std::uniform_real_distribution<double>;
     thread_local static auto dist = urd{};
     return dist(generator, urd::param_type{min, max});

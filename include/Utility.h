@@ -45,15 +45,11 @@ namespace Random
     // Return true with given probability
     bool success_probability(double probability);
 
-    namespace
-    {
-        thread_local std::mt19937_64 generator(std::random_device{}());
-    }
-
     // Shuffles the order of the list
     template<class List>
     void shuffle(List& list)
     {
+        thread_local static std::mt19937_64 generator(std::random_device{}());
         std::shuffle(list.begin(), list.end(), generator);
     }
 }
