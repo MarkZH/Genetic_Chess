@@ -55,12 +55,15 @@ def main(files):
                 elif '. ' in line:
                     number_of_moves = line.split('. ')[0]
                 elif 'Initial time' in line:
-                    time_section = True
-                    time = line.split(':')[1].split()[0].strip()
-                elif time_section and 'White' in line:
+                    time = line.split()[-2]
+                elif 'TimeControl' in line:
+                    time = line.split('"')[1]
+                elif 'White:' in line:
                     white_time_left = line.split()[-2]
-                elif time_section and 'Black' in line:
+                    time_section = True
+                elif 'Black:' in line:
                     black_time_left = line.split()[-2]
+                    time_section = True
                 elif time_section and not line.strip():
                     w.write('\t'.join(str(x) for x in [game,
                                                        white_wins,
