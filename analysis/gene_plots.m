@@ -45,7 +45,7 @@ priority_count = 0;
 title('Gene Priority Evolution', 'FontSize', 22);
 xlabel('ID');
 
-piece_priority_plots = [false, false];
+piece_priority_plots = [0, 0];
 
 total_force_index = 0;
 total_force_prefix = "Total Force Gene";
@@ -85,6 +85,7 @@ for yi = 2 : length(data.colheaders) - 2
   xlabel(xaxis, 'FontSize', 18);
   title(name, 'FontSize', 22);
   set(gca, 'FontSize', 14);
+  plot(xlim, [0 0], 'k'); % X-axis
 
   % Fill in nan gaps in data
   this_data(~isfinite(this_data)) = 0;
@@ -134,26 +135,23 @@ for yi = 2 : length(data.colheaders) - 2
     if make_dashed
       set(p, 'LineStyle', ':');
     end
-    piece_priority_plots(piece_priority_index) = true;
+    piece_priority_plots(piece_priority_index) = plot_figure;
   end
 end
 
-if piece_priority_plots(1)
-  figure(piece_strength_figure);
-  leg = legend('show');
-  set(leg, 'orientation', 'horizontal');
-  set(leg, 'location', 'southoutside');
-  legend left;
-  print([gene_pool_filename '_piece_strength.png']);
-end
+file_name_suffixes = {'_piece_strength.png', '_gene_priorities.png'};
+for index = 1 : 2
+  if ~piece_priority_plots(index)
+    continue;
+  end
 
-if piece_priority_plots(2)
-  figure(priority_figure);
+  figure(piece_priority_plots(index));
   leg = legend('show');
   set(leg, 'orientation', 'horizontal');
   set(leg, 'location', 'southoutside');
   legend left;
-  print([gene_pool_filename '_gene_priorities.png']);
+  plot(xlim, [0 0], 'k'); % X-axis
+  print([gene_pool_filename file_name_suffixes{index}]);
 end
 
 if total_force_index > 0 && opponent_pieces_targeted_index > 0 && piece_strength_index > 0
