@@ -8,11 +8,11 @@
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Color.h"
+#include "Game/Game_Result.h"
 #include "Moves/Complete_Move.h"
-#include "Exceptions/Game_Ending_Exception.h"
-#include "Exceptions/Out_Of_Time_Exception.h"
 
 #include "Players/Thinking.h"
+#include "Exceptions/Game_Ending_Exception.h"
 
 #include "Utility.h"
 
@@ -46,30 +46,47 @@ Color play_game_with_board(const Player& white,
                            Board& board)
 {
     static std::mutex write_lock;
+
     Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds);
 
     try
     {
         game_clock.start();
+        Game_Result result;
 
-        while(true)
+        try
         {
-            auto& player = board.whose_turn() == WHITE ? white : black;
-            auto move_chosen = player.choose_move(board, game_clock);
-            game_clock.punch();
-            board.submit_move(move_chosen);
+            while(true)
+            {
+                auto& player = board.whose_turn() == WHITE ? white : black;
+                auto move_chosen = player.choose_move(board, game_clock);
+                result = game_clock.punch();
+                if(result.game_has_ended())
+                {
+                    break;
+                }
+
+                result = board.submit_move(move_chosen);
+                if(result.game_has_ended())
+                {
+                    break;
+                }
+            }
         }
-    }
-    catch(const Game_Ending_Exception& end_game)
-    {
+        catch(const Game_Ending_Exception& gee)
+        {
+            // Only occurs for GUI communication errors
+            result = {gee.winner(), gee.what(), false};
+        }
+
         // for Outside_Players communicating with xboard and the like
         if(board.whose_turn() == WHITE)
         {
-            white.process_game_ending(end_game, board);
+            white.process_game_ending(result, board);
         }
         else
         {
-            black.process_game_ending(end_game, board);
+            black.process_game_ending(result, board);
         }
 
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
@@ -77,21 +94,13 @@ Color play_game_with_board(const Player& white,
         board.print_game_record(&white,
                                 &black,
                                 pgn_file_name,
-                                end_game.winner(),
-                                end_game.what(),
+                                result,
                                 time_in_seconds,
                                 moves_to_reset,
-                                increment_seconds);
+                                increment_seconds,
+                                game_clock);
 
-        if(game_clock.is_running())
-        {
-            std::ofstream(pgn_file_name, std::ios::app)
-                << "{ Time left: White: " << game_clock.time_left(WHITE) << " }\n"
-                << "{            Black: " << game_clock.time_left(BLACK) << " }\n\n"
-                << std::endl;
-        }
-
-        return end_game.winner();
+        return result.get_winner();
     }
     catch(const std::exception& error)
     {
@@ -100,11 +109,11 @@ Color play_game_with_board(const Player& white,
         board.print_game_record(&white,
                                 &black,
                                 pgn_file_name,
-                                NONE,
-                                error.what(),
+                                Game_Result(NONE, error.what(), false),
                                 time_in_seconds,
                                 moves_to_reset,
-                                increment_seconds);
+                                increment_seconds,
+                                game_clock);
         throw;
     }
 }

@@ -11,7 +11,6 @@
 
 #include "Game/Board.h"
 #include "Moves/Complete_Move.h"
-#include "Exceptions/Game_Ending_Exception.h"
 
 std::vector<std::string> search_stalemate(const Board& board, int max_depth);
 
@@ -55,21 +54,23 @@ std::vector<std::string> search_stalemate(const Board& board, const int max_dept
     for(const auto& move : board.legal_moves())
     {
         auto next_board = board;
-        try
+        auto move_result = next_board.submit_move(move);
+        if(move_result.game_has_ended())
         {
-            next_board.submit_move(move);
-            auto result = search_stalemate(next_board, max_depth - 1);
-            if( ! result.empty())
-            {
-                return result; // pass up result from below
-            }
-        }
-        catch(const Game_Ending_Exception& gee)
-        {
-            if(gee.what() == std::string("Stalemate"))
+            if(move_result.get_ending_reason() == "Stalemate")
             {
                 return next_board.get_game_record(); // found stalemate
             }
+            else
+            {
+                continue;
+            }
+        }
+
+        auto result = search_stalemate(next_board, max_depth - 1);
+        if( ! result.empty())
+        {
+            return result; // pass up result from below
         }
     }
 

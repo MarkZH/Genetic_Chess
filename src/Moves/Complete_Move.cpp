@@ -4,7 +4,6 @@
 
 #include "Moves/Move.h"
 #include "Game/Board.h"
-#include "Exceptions/Game_Ending_Exception.h"
 
 Complete_Move::Complete_Move(const Move* move_in, char file, int rank) :
     move(move_in),
@@ -24,28 +23,15 @@ std::string Complete_Move::game_record_item(const Board& board) const
 {
     auto item = move->game_record_item(board, starting_file, starting_rank);
     auto temp = board;
-    try
+    auto result = temp.submit_move(*this);
+    if(result.game_has_ended())
     {
-        temp.submit_move(*this);
-        if(temp.king_is_in_check(temp.whose_turn()))
-        {
-            item += '+';
-        }
+        return item + result.get_game_record_annotation();
     }
-    catch(const Game_Ending_Exception& gee)
+
+    if(temp.king_is_in_check(temp.whose_turn()))
     {
-        if(gee.winner() == WHITE)
-        {
-            item += "#\t1-0";
-        }
-        else if(gee.winner() == BLACK)
-        {
-            item += "#\t0-1";
-        }
-        else
-        {
-            item += "\t1/2-1/2";
-        }
+        item += '+';
     }
 
     return item;

@@ -8,10 +8,12 @@
 
 #include "Moves/Complete_Move.h"
 #include "Color.h"
+#include "Game_Result.h"
 #include "Players/Player.h"
 #include "Players/Thinking.h"
 
 class Piece;
+class Clock;
 
 struct Square
 {
@@ -31,7 +33,7 @@ class Board
         Board();
         explicit Board(const std::string& fen); // reproduce board from Forsythe-Edwards Notation string
 
-        void submit_move(const Complete_Move& cm);
+        Game_Result submit_move(const Complete_Move& cm);
 
         Complete_Move get_complete_move(const std::string& move, char promote = 0) const;
         Complete_Move get_complete_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
@@ -52,13 +54,12 @@ class Board
         void print_game_record(const Player* white,
                                const Player* black,
                                const std::string& file_name,
-                               Color outside_winner,
-                               const std::string& outside_result,
+                               Game_Result result,
                                double initial_time,
                                size_t moves_to_reset,
-                               double increment) const;
+                               double increment,
+                               const Clock& game_clock) const;
 
-        Color get_winner() const;
         std::string last_move_coordinates() const;
 
         void set_turn(Color color);
@@ -78,18 +79,14 @@ class Board
         Square find_king(Color color) const;
         bool king_is_in_check(Color color) const;
 
-        bool game_has_ended() const;
-
     private:
         std::vector<std::shared_ptr<const Piece>> board;
         std::map<std::string, int> repeat_count;
         Color turn_color;
         std::vector<std::string> game_record;
-        Color winner;
         std::map<const Piece*, bool> piece_moved;
         char en_passant_target_file;
         int en_passant_target_rank;
-        bool game_ended;
         std::string starting_fen;
 
         // Caches
@@ -105,7 +102,6 @@ class Board
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
         bool piece_has_moved(const Piece* piece) const;
         bool no_legal_moves() const;
-        void set_winner(Color color);
         void reset_fifty_move_count();
         std::string board_status() const; // for detecting threefold repetition
         void make_en_passant_targetable(char file, int rank);

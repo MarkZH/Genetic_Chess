@@ -5,9 +5,9 @@
 #include "Moves/Complete_Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Game/Game_Result.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
-#include "Exceptions/Game_Ending_Exception.h"
 
 #include "Utility.h"
 
@@ -66,7 +66,7 @@ std::string UCI_Mediator::name() const
     return "UCI Interface Player";
 }
 
-void UCI_Mediator::process_game_ending(const Game_Ending_Exception&, const Board& board) const
+void UCI_Mediator::process_game_ending(const Game_Result&, const Board& board) const
 {
     send_command("bestmove " + board.last_move_coordinates());
 }

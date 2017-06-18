@@ -2,6 +2,7 @@
 
 #include "Game/Board.h"
 #include "Game/Color.h"
+#include "Game/Game_Result.h"
 #include "Utility.h"
 
 #include "Genes/Gene.h"
@@ -146,15 +147,15 @@ double Genome::score_board(const Board& board, Color perspective) const
     return score;
 }
 
-double Genome::evaluate(const Board& board, Color perspective) const
+double Genome::evaluate(const Board& board, Game_Result result, Color perspective) const
 {
-    if(board.game_has_ended())
+    if(result.game_has_ended())
     {
-        if(board.get_winner() == NONE) // stalemate
+        if(result.get_winner() == NONE) // stalemate
         {
             return 0;
         }
-        else if(board.get_winner() == perspective) // checkmate win
+        else if(result.get_winner() == perspective) // checkmate win
         {
             return Math::win_score;
         }

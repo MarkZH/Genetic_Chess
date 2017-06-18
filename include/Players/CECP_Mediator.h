@@ -8,6 +8,7 @@
 #include <string>
 
 class Board;
+class Game_Result;
 class Clock;
 
 class CECP_Mediator : public Outside_Player
@@ -19,7 +20,7 @@ class CECP_Mediator : public Outside_Player
         std::string receive_move(const Clock& clock) const override;
 
         Color get_ai_color() const override;
-        void process_game_ending(const Game_Ending_Exception& gee, const Board& board) const override;
+        void process_game_ending(const Game_Result& gee, const Board& board) const override;
 
         std::string name() const override;
 

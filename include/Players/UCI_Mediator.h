@@ -5,6 +5,8 @@
 
 #include "Player.h"
 
+class Game_Result;
+
 class UCI_Mediator : public Outside_Player
 {
     public:
@@ -13,7 +15,7 @@ class UCI_Mediator : public Outside_Player
         const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
         Color get_ai_color() const override;
         std::string name() const override;
-        void process_game_ending(const Game_Ending_Exception& gee, const Board& board) const override;
+        void process_game_ending(const Game_Result& gee, const Board& board) const override;
 
     protected:
         std::string receive_move(const Clock& clock) const override;

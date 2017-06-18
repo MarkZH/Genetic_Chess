@@ -6,7 +6,7 @@
 class Board;
 class Clock;
 struct Complete_Move;
-class Game_Ending_Exception;
+class Game_Result;
 
 class Player
 {
@@ -17,7 +17,7 @@ class Player
         virtual std::string name() const = 0;
         virtual std::string author() const;
 
-        virtual void process_game_ending(const Game_Ending_Exception& gee, const Board& board) const;
+        virtual void process_game_ending(const Game_Result& gee, const Board& board) const;
         virtual std::string get_commentary_for_move(size_t move_number) const;
 
         virtual void initial_board_setup(Board& board) const;

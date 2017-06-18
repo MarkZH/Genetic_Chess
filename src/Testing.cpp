@@ -325,7 +325,7 @@ void run_tests()
     {
         std::cerr << "Last move should have been an error:" << std::endl;
         board.print_game_record(nullptr, nullptr,
-                                "", NONE, "", 0, 0, 0);
+                                "", Game_Result(NONE, "", false), 0, 0, 0, Clock());
 
         tests_passed = false;
     }

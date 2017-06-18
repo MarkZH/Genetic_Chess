@@ -10,6 +10,7 @@
 #include "Piece_Strength_Gene.h"
 
 class Board;
+class Game_Result;
 class Gene;
 class Player;
 class Clock;
@@ -24,7 +25,7 @@ class Genome
 
         void read_from(std::istream& is);
 
-        double evaluate(const Board& board, Color perspective) const;
+        double evaluate(const Board& board, Game_Result result, Color perspective) const;
         void mutate();
 
         double time_to_examine(const Board& board, const Clock& clock) const; // how much time to use for this move

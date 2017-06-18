@@ -12,8 +12,6 @@
 #include "Players/CECP_Mediator.h"
 #include "Players/UCI_Mediator.h"
 
-#include "Exceptions/Game_Ending_Exception.h"
-
 #include "Utility.h"
 
 std::string Outside_Player::log_file_name = "chess_comm_log.txt";

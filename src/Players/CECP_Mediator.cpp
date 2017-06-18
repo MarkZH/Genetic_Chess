@@ -135,15 +135,15 @@ std::string CECP_Mediator::name() const
     }
 }
 
-void CECP_Mediator::process_game_ending(const Game_Ending_Exception& gee, const Board& board) const
+void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board) const
 {
     send_command("move " + board.last_move_coordinates());
     std::string result = "result ";
-    if(gee.winner() == WHITE)
+    if(ending.get_winner() == WHITE)
     {
         result += "1-0";
     }
-    else if(gee.winner() == BLACK)
+    else if(ending.get_winner() == BLACK)
     {
         result += "0-1";
     }
@@ -152,7 +152,7 @@ void CECP_Mediator::process_game_ending(const Game_Ending_Exception& gee, const 
         result += "1/2-1/2";
     }
 
-    result += " {" + std::string(gee.what()) + "}";
+    result += " {" + ending.get_ending_reason() + "}";
 
     send_command(result);
 }

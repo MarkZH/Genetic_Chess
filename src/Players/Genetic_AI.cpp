@@ -9,10 +9,8 @@
 #include "Moves/Complete_Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Game/Game_Result.h"
 #include "Players/Thinking.h"
-
-#include "Exceptions/Checkmate_Exception.h"
-#include "Exceptions/Game_Ending_Exception.h"
 
 #include "Utility.h"
 
@@ -276,9 +274,9 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                 board.print_game_record(nullptr,
                                         nullptr,
                                         "",
-                                        NONE,
-                                        "Principal Variation error",
-                                        0, 0, 0);
+                                        Game_Result(NONE, "Principal Variation error", false),
+                                        0, 0, 0,
+                                        Clock());
                 auto board_copy = board;
                 for(const auto& item : principal_variation)
                 {
@@ -315,27 +313,19 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
         auto next_board = board;
 
-        try
-        {
-            next_board.submit_move(move);
-        }
-        catch(const Checkmate_Exception&)
+        auto move_result = next_board.submit_move(move);
+        if(move_result.get_winner() != NONE)
         {
             // Mate in one (try to pick the shortest path to checkmate)
             return {move,
-                    genome.evaluate(next_board, perspective),
+                    genome.evaluate(next_board, move_result, perspective),
                     perspective,
                     depth,
                     {next_board.get_game_record().end() - (depth + 1),
                      next_board.get_game_record().end()}};
         }
-        catch(const Game_Ending_Exception&)
-        {
-            // Draws get scored like any other board position
-        }
 
-        if(alpha.corrected_score(perspective) == Math::win_score
-           && alpha.depth <= depth + 2)
+        if(alpha.depth <= depth + 2 && alpha.corrected_score(perspective) == Math::win_score)
         {
             // This move will take a longer path to victory
             // than one already found. Use "depth + 2" since,
@@ -351,7 +341,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         double time_allotted_for_this_move = time_left/moves_left;
 
         bool recurse;
-        if(next_board.game_has_ended())
+        if(move_result.game_has_ended())
         {
             recurse = false;
         }
@@ -385,7 +375,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         {
             // Record immediate result without looking ahead further
             result = {move,
-                      genome.evaluate(next_board, perspective),
+                      genome.evaluate(next_board, move_result, perspective),
                       perspective,
                       depth,
                       {next_board.get_game_record().end() - (depth + 1),

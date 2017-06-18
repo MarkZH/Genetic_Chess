@@ -4,6 +4,7 @@
 
 #include "Game/Game.h"
 #include "Game/Board.h"
+#include "Game/Game_Result.h"
 
 #include "Players/Genetic_AI.h"
 #include "Players/Human_Player.h"
@@ -14,7 +15,6 @@
 #include "Stalemate_Search.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
-#include "Exceptions/Game_Ending_Exception.h"
 
 #include "Utility.h"
 #include "Testing.h"
@@ -356,8 +356,9 @@ void replay_game(const std::string& file_name, int game_number)
     }
 
     Board board;
+    Game_Result result;
     bool game_started = false;
-    while( ! board.game_has_ended() && std::getline(ifs, line))
+    while( ! result.game_has_ended() && std::getline(ifs, line))
     {
         line = String::trim_outer_whitespace(line);
         line = String::strip_block_comment(line, '{', '}');
@@ -383,40 +384,38 @@ void replay_game(const std::string& file_name, int game_number)
         {
             try
             {
-                board.submit_move(board.get_complete_move(s));
+                result = board.submit_move(board.get_complete_move(s));
+
+                board.ascii_draw(WHITE);
+                game_started = true;
+                std::cout << "Last move: ";
+                std::cout << (board.get_game_record().size() + 1)/2 << ". ";
+                std::cout << (board.whose_turn() == WHITE ? "... " : "");
+                std::cout << board.get_game_record().back() << std::endl;
+                if(result.game_has_ended())
+                {
+                    std::cout << result.get_ending_reason() << std::endl;
+                    break;
+                }
+
+                std::cout << "Enter \"y\" to play game from here: " << std::endl;
+                char response = std::cin.get();
+                if(std::tolower(response) == 'y')
+                {
+                    play_game_with_board(Human_Player(),
+                                         Human_Player(),
+                                         0,
+                                         0,
+                                         0,
+                                         file_name + "_continued.pgn",
+                                         board);
+                     break;
+                }
             }
             catch(const Illegal_Move_Exception&)
             {
                 std::cout << "Ignoring: " << s << std::endl;
                 continue;
-            }
-            catch(const Game_Ending_Exception& e)
-            {
-                std::cout << e.what() << std::endl;
-            }
-            board.ascii_draw(WHITE);
-            game_started = true;
-            std::cout << "Last move: ";
-            std::cout << (board.get_game_record().size() + 1)/2 << ". ";
-            std::cout << (board.whose_turn() == WHITE ? "... " : "");
-            std::cout << board.get_game_record().back() << std::endl;
-            if(board.game_has_ended())
-            {
-                break;
-            }
-
-            std::cout << "Enter \"y\" to play game from here: " << std::endl;
-            char response = std::cin.get();
-            if(std::tolower(response) == 'y')
-            {
-                play_game_with_board(Human_Player(),
-                                     Human_Player(),
-                                     0,
-                                     0,
-                                     0,
-                                     file_name + "_continued.pgn",
-                                     board);
-                 break;
             }
         }
     }

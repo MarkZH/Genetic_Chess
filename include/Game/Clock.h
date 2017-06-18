@@ -5,6 +5,7 @@
 #include <chrono>
 
 #include "Color.h"
+#include "Game_Result.h"
 
 class CECP_Mediator;
 class UCI_Mediator;
@@ -16,7 +17,7 @@ class Clock
     public:
         // Game clock settings: total time, moves to reset clock, time increment per move
         Clock(double duration_seconds = 0.0, size_t moves = 0, double increment_seconds = 0.0);
-        void punch(); // start/stop both clocks
+        Game_Result punch(); // start/stop both clocks
         void stop(); // stop both clocks
         void start(); // resume after stop()
         double time_left(Color color) const;

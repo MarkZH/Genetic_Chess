@@ -3,7 +3,7 @@
 #include <map>
 #include <chrono>
 
-#include "Exceptions/Out_Of_Time_Exception.h"
+#include "Game/Game_Result.h"
 
 Clock::Clock(double duration_seconds, size_t moves_to_reset, double increment_seconds) :
     whose_turn(WHITE),
@@ -30,13 +30,13 @@ bool Clock::is_running() const
     return clocks_running;
 }
 
-void Clock::punch()
+Game_Result Clock::punch()
 {
     auto time_this_punch = std::chrono::steady_clock::now();
 
     if( ! use_clock)
     {
-        return;
+        return {};
     }
 
     if( ! clocks_running)
@@ -47,7 +47,8 @@ void Clock::punch()
     timers[whose_turn] -= (time_this_punch - time_previous_punch);
     if(timers[whose_turn] < std::chrono::seconds(0))
     {
-        throw Out_Of_Time_Exception(whose_turn);
+        stop();
+        return Game_Result(opposite(whose_turn), "Time Forfeiture", true);
     }
 
     if(use_reset && (++moves[whose_turn] == move_count_reset))
@@ -59,6 +60,8 @@ void Clock::punch()
     whose_turn = opposite(whose_turn);
     time_previous_punch = time_this_punch;
     timers[whose_turn] += increment[whose_turn];
+
+    return {};
 }
 
 void Clock::stop()

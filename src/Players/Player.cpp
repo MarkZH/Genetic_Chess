@@ -2,9 +2,9 @@
 
 #include <string>
 
-class Game_Ending_Exception;
+class Game_Result;
 
-void Player::process_game_ending(const Game_Ending_Exception&, const Board&) const
+void Player::process_game_ending(const Game_Result&, const Board&) const
 {
 }
 

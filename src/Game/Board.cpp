@@ -2,6 +2,7 @@
 #include <fstream>
 
 #include "Game/Board.h"
+#include "Game/Clock.h"
 
 #include "Pieces/Pawn.h"
 #include "Pieces/Rook.h"
@@ -14,8 +15,6 @@
 #include "Moves/Complete_Move.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
-#include "Exceptions/Checkmate_Exception.h"
-#include "Exceptions/Stalemate_Exception.h"
 #include "Exceptions/Promotion_Exception.h"
 
 #include "Utility.h"
@@ -23,10 +22,8 @@
 Board::Board() :
     board(64),
     turn_color(WHITE),
-    winner(NONE),
     en_passant_target_file('\0'),
     en_passant_target_rank(0),
-    game_ended(false),
     thinking_indicator(NO_THINKING)
 {
     for(auto color : {WHITE, BLACK})
@@ -54,10 +51,8 @@ Board::Board() :
 Board::Board(const std::string& fen) :
     board(64),
     turn_color(WHITE),
-    winner(NONE),
     en_passant_target_file('\0'),
     en_passant_target_rank(0),
-    game_ended(false),
     starting_fen(fen),
     thinking_indicator(NO_THINKING)
 {
@@ -355,7 +350,7 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
     }
 }
 
-void Board::submit_move(const Complete_Move& cm)
+Game_Result Board::submit_move(const Complete_Move& cm)
 {
     if(std::find(legal_moves().begin(),
                  legal_moves().end(),
@@ -378,21 +373,18 @@ void Board::submit_move(const Complete_Move& cm)
     {
         if(king_is_in_check(whose_turn())) // king in check
         {
-            set_winner(opposite(whose_turn()));
-            game_ended = true;
-            throw Checkmate_Exception(opposite(whose_turn()));
+            auto winner = opposite(whose_turn());
+            return Game_Result(winner, color_text(winner) + " mates", false);
         }
         else
         {
-            game_ended = true;
-            throw Stalemate_Exception("Stalemate");
+            return Game_Result(NONE, "Stalemate", false);
         }
     }
 
     if(++repeat_count[board_status()] >= 3)
     {
-        game_ended = true;
-        throw Stalemate_Exception("Threefold repetition");
+        return Game_Result(NONE, "Threefold repetition", false);
     }
 
     int fifty_move_count = 0;
@@ -402,15 +394,15 @@ void Board::submit_move(const Complete_Move& cm)
     }
     if(fifty_move_count >= 100) // "Move" means both players move.
     {
-        game_ended = true;
-        throw Stalemate_Exception("50-move limit");
+        return Game_Result(NONE, "50-move limit", false);
     }
 
     if( ! enough_material_to_checkmate())
     {
-        game_ended = true;
-        throw Stalemate_Exception("Insufficient material");
+        return Game_Result(NONE, "Insufficient material", false);
     }
+
+    return {};
 }
 
 Complete_Move Board::get_complete_move(const std::string& move, char promote) const
@@ -815,36 +807,12 @@ const std::vector<std::string>& Board::get_game_record() const
 void Board::print_game_record(const Player* white,
                               const Player* black,
                               const std::string& file_name,
-                              Color outside_winner,
-                              const std::string& termination,
+                              Game_Result result,
                               double initial_time,
                               size_t moves_to_reset,
-                              double increment) const
+                              double increment,
+                              const Clock& game_clock) const
 {
-    Color victor = NONE;
-    if(game_has_ended())
-    {
-        victor = get_winner();
-    }
-    else
-    {
-        victor = outside_winner;
-    }
-
-    std::string result;
-    if(victor == WHITE)
-    {
-        result = "1-0";
-    }
-    else if(victor == BLACK)
-    {
-        result = "0-1";
-    }
-    else
-    {
-        result = "1/2-1/2";
-    }
-
     static int game_number = 0;
     if(game_number == 0)
     {
@@ -886,13 +854,15 @@ void Board::print_game_record(const Player* white,
         }
         out_stream << "\"]\n";
     }
-    if( ! result.empty())
+
+    if( ! result.get_game_ending_annotation().empty())
     {
-        out_stream << "[Result \"" << result << "\"]\n";
+        out_stream << "[Result \"" << result.get_game_ending_annotation() << "\"]\n";
     }
-    if( ! termination.empty() && ! String::contains(termination, "mates"))
+
+    if( ! String::contains(result.get_ending_reason(), "mates"))
     {
-        out_stream << "[Termination \"" << termination << "\"]\n";
+        out_stream << "[Termination \"" << result.get_ending_reason() << "\"]\n";
     }
 
     auto temp = Board();
@@ -942,22 +912,20 @@ void Board::print_game_record(const Player* white,
                 {
                     out_stream << variation << " ";
                 }
-                catch(const Game_Ending_Exception&)
-                {
-                }
             }
             out_stream << "}";
         }
 
-        try
-        {
-            temp.submit_move(next_move);
-        }
-        catch(const Game_Ending_Exception& gee)
-        {
-        }
+        temp.submit_move(next_move);
     }
     out_stream << '\n';
+
+    if(initial_time > 0)
+    {
+        out_stream << "{ Time left: White: " << game_clock.time_left(WHITE) << " }\n"
+                   << "{            Black: " << game_clock.time_left(BLACK) << " }\n\n";
+    }
+    out_stream << std::endl;
 }
 
 std::string Board::board_status() const // for 3-fold rep count
@@ -1001,16 +969,6 @@ std::string Board::board_status() const // for 3-fold rep count
     status.pop_back();
     status.back() = '-';
     return status;
-}
-
-Color Board::get_winner() const
-{
-    return winner;
-}
-
-void Board::set_winner(Color color)
-{
-    winner = color;
 }
 
 std::string Board::last_move_coordinates() const
@@ -1082,11 +1040,6 @@ Square Board::find_king(Color color) const
 
     ascii_draw(WHITE);
     throw std::runtime_error(color_text(color) + " king not found on board.");
-}
-
-bool Board::game_has_ended() const
-{
-    return game_ended;
 }
 
 void Board::clear_caches()

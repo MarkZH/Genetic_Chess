@@ -5,9 +5,7 @@
 #include "Moves/Complete_Move.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
-
-#include "Exceptions/Checkmate_Exception.h"
-#include "Exceptions/Game_Ending_Exception.h"
+#include "Game/Game_Result.h"
 
 Claude_Shannon_AI::Claude_Shannon_AI() : recursion_depth(3)
 {
@@ -34,24 +32,23 @@ const Complete_Move Claude_Shannon_AI::choose_move(const Board& board, int look_
     auto best_score = std::numeric_limits<int>::lowest();
     for(const auto& move : board.legal_moves())
     {
-        try
-        {
-            auto next_board = board;
-            next_board.submit_move(move);
-            auto score = evalutate_position(next_board, board.whose_turn(), look_ahead);
-            if(score > best_score)
-            {
-                best_score = score;
-                best_move = move;
-            }
-        }
-        catch(const Checkmate_Exception&)
+        auto next_board = board;
+        auto result = next_board.submit_move(move);
+        if(result.get_winner() != NONE) // checkmate
         {
             return move;
         }
-        catch(const Game_Ending_Exception&)
+
+        double score = 0;
+        if( ! result.game_has_ended()) // not stalemate
         {
-            continue;
+            score = evalutate_position(next_board, board.whose_turn(), look_ahead);
+        }
+
+        if(score > best_score)
+        {
+            best_score = score;
+            best_move = move;
         }
     }
 
