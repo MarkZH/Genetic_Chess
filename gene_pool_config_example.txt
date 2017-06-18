@@ -13,4 +13,6 @@ minimum game time = 30 # seconds
 maximum game time = 120 # seconds
 game time increment = 0 # seconds (if zero, then stay at minimum time)
 
-# gene pool file = pool.txt
+# Where genomes will be recorded
+# Games recorded in file with "_games.txt" suffix
+gene pool file = pool.txt
