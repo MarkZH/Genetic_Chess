@@ -483,11 +483,11 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     auto score = thought.corrected_score(perspective);
     if(score == Math::win_score)
     {
-        score = 100000 + thought.depth;
+        score = 10000 - thought.depth;
     }
     else if(score == Math::lose_score)
     {
-        score = -100000 - thought.depth;
+        score = -(10000 - thought.depth);
     }
 
     std::cout << thought.depth // ply
