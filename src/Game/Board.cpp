@@ -826,20 +826,24 @@ void Board::print_game_record(const Player* white,
             }
         }
     }
+
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
     if(white && ! white->name().empty())
     {
         out_stream << "[White \"" << white->name() << "\"]\n";
     }
+
     if(black && ! black->name().empty())
     {
         out_stream << "[Black \"" << black->name() << "\"]\n";
     }
+
     if(game_number > 0)
     {
         out_stream << "[Round \"" << game_number << "\"]\n";
     }
+
     if(initial_time > 0)
     {
         out_stream << "[TimeControl \"";
@@ -886,6 +890,7 @@ void Board::print_game_record(const Player* white,
                 out_stream << " ...";
             }
         }
+
         auto next_move = temp.get_complete_move(game_record.at(i));
         out_stream << " " << next_move.game_record_item(temp);
 

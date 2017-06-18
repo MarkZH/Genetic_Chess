@@ -374,7 +374,7 @@ void replay_game(const std::string& file_name, int game_number)
                 continue;
             }
         }
-        if(line[0] == '[')
+        if(line[0] == '[') // header lines
         {
             std::cout << line << std::endl;
             continue;
