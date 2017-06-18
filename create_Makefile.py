@@ -153,7 +153,8 @@ base_options = [
 	"-Wextra", 
 	"-Wall", 
 	"-fexceptions", 
-	"-Iinclude"]
+	"-Iinclude",
+        "-pthread"]
 linker_options = ["-pthread"]
 options_list = dict()
 options_list['debug'] = ["-g", "-DDEBUG"]
