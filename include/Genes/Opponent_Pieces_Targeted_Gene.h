@@ -2,8 +2,15 @@
 #define OPPONENT_PIECES_TARGETED_GENE_H
 
 #include "Gene.h"
-#include "Piece_Strength_Gene.h"
 
+#include <string>
+
+#include "Game/Color.h"
+
+class Piece_Strength_Gene;
+class Board;
+
+// Weighted count of how many opponent's pieces are threatened
 class Opponent_Pieces_Targeted_Gene : public Gene
 {
     public:

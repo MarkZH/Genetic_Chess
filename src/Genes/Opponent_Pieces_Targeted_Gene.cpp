@@ -1,10 +1,11 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 
-#include "Genes/Piece_Strength_Gene.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Moves/Complete_Move.h"
 #include "Utility.h"
+#include "Genes/Gene.h"
+#include "Genes/Piece_Strength_Gene.h"
 
 Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene) :
     piece_strenth_source(piece_strength_gene)

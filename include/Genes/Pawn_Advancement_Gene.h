@@ -3,7 +3,13 @@
 
 #include "Gene.h"
 
+#include <string>
 
+#include "Game/Color.h"
+
+class Board;
+
+// How close are pawns to promotion?
 class Pawn_Advancement_Gene : public Gene
 {
     public:

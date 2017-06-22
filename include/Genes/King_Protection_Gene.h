@@ -3,7 +3,13 @@
 
 #include "Genes/Gene.h"
 
+#include <string>
 
+#include "Game/Color.h"
+
+class Board;
+
+// Counts lines of attack to king
 class King_Protection_Gene : public Gene
 {
     public:

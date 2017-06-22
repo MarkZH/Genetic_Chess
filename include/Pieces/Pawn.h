@@ -5,7 +5,7 @@
 
 #include "Piece.h"
 
-enum Color;
+#include "Game/Color.h"
 
 class Pawn : public Piece
 {

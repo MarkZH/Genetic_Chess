@@ -3,7 +3,7 @@
 
 #include "Piece.h"
 
-enum Color;
+#include "Game/Color.h"
 
 class Rook : public Piece
 {

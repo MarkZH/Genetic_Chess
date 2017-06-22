@@ -3,9 +3,13 @@
 
 #include "Genes/Gene.h"
 
-class Board;
-enum Color;
+#include <string>
 
+#include "Game/Color.h"
+
+class Board;
+
+// Counts squares accessible to king (escape routes)
 class King_Confinement_Gene : public Gene
 {
     public:

@@ -16,6 +16,7 @@
 #include "Genes/King_Confinement_Gene.h"
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Castling_Possible_Gene.h"
+#include "Genes/Piece_Strength_Gene.h"
 
 
 // Creation ex nihilo

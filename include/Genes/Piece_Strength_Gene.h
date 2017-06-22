@@ -2,9 +2,16 @@
 #define PIECE_STRENGTH_GENE_H
 
 #include "Gene.h"
+
+#include <string>
+#include <map>
+
+#include "Game/Color.h"
+
 class Piece;
+class Board;
 
-
+// Database of the value of piece types
 class Piece_Strength_Gene : public Gene
 {
     public:

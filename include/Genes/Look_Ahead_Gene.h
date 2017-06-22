@@ -1,11 +1,16 @@
 #ifndef LOOK_AHEAD_GENE_H
 #define LOOK_AHEAD_GENE_H
 
-#include "Genes/Gene.h"
+#include "Gene.h"
+
+#include <string>
+
+#include "Game/Color.h"
 
 class Board;
 class Clock;
 
+// All aspects of time control
 class Look_Ahead_Gene : public Gene
 {
     public:

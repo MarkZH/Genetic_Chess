@@ -7,11 +7,10 @@
 #include <iosfwd>
 
 #include "Game/Color.h"
-#include "Piece_Strength_Gene.h"
+#include "Gene.h"
 
 class Board;
 class Game_Result;
-class Gene;
 class Player;
 class Clock;
 

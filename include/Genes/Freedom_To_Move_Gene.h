@@ -1,9 +1,13 @@
 #ifndef FREEDOM_TO_MOVE_GENE_H
 #define FREEDOM_TO_MOVE_GENE_H
 
-#include <fstream>
-
 #include "Gene.h"
+
+#include <string>
+
+#include "Game/Color.h"
+
+class Board;
 
 // Total number of legal moves
 class Freedom_To_Move_Gene : public Gene

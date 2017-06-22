@@ -3,6 +3,7 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Genes/Gene.h"
+#include "Genes/Piece_Strength_Gene.h"
 
 Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source_in) :
     piece_strength_source(piece_strength_source_in)

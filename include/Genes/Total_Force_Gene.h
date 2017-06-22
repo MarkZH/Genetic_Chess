@@ -2,7 +2,13 @@
 #define TOTAL_FORCE_GENE_H
 
 #include "Gene.h"
-#include "Piece_Strength_Gene.h"
+
+#include <string>
+
+#include "Game/Color.h"
+
+class Board;
+class Piece_Strength_Gene;
 
 // Weighted sum of all pieces of a certain color
 class Total_Force_Gene : public Gene

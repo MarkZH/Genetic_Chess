@@ -3,7 +3,14 @@
 
 #include "Gene.h"
 
+#include <string>
+
+#include "Game/Color.h"
+
+class Board;
+
 // Number of squares attacked by color with bonus points for legal moves
+// and moves close to king
 class Sphere_of_Influence_Gene : public Gene
 {
     public:

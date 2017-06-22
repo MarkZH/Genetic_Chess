@@ -3,9 +3,13 @@
 
 #include "Gene.h"
 
-class Board;
-enum Color;
+#include <string>
 
+#include "Game/Color.h"
+
+class Board;
+
+// Adds points to board if castling is possible or already happened
 class Castling_Possible_Gene : public Gene
 {
     public:
