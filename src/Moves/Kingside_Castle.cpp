@@ -1,5 +1,6 @@
 #include "Moves/Kingside_Castle.h"
 
+#include "Moves/Move.h"
 #include "Game/Board.h"
 
 Kingside_Castle::Kingside_Castle() : Move(2, 0)

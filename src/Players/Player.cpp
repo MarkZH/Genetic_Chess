@@ -3,6 +3,7 @@
 #include <string>
 
 class Game_Result;
+class Board;
 
 void Player::process_game_ending(const Game_Result&, const Board&) const
 {

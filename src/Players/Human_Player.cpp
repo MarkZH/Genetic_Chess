@@ -4,6 +4,7 @@
 #include <iostream>
 #include <cmath>
 
+#include "Players/Player.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Moves/Complete_Move.h"

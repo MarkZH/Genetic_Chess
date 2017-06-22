@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Moves/Complete_Move.h"
 

@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include "Players/Player.h"
 #include "Game/Board.h"
 #include "Moves/Complete_Move.h"
 #include "Utility.h"

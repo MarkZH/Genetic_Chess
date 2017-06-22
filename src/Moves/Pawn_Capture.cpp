@@ -1,6 +1,6 @@
-#include <cassert>
-
 #include "Moves/Pawn_Capture.h"
+
+#include "Moves/Move.h"
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
 #include "Utility.h"

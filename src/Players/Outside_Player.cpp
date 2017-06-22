@@ -9,6 +9,7 @@
 #include "Game/Board.h"
 #include "Game/Color.h"
 
+#include "Players/Player.h"
 #include "Players/CECP_Mediator.h"
 #include "Players/UCI_Mediator.h"
 

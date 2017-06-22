@@ -1,5 +1,6 @@
 #include "Genes/Freedom_To_Move_Gene.h"
 
+#include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Moves/Complete_Move.h"

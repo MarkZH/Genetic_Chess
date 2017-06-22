@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
 

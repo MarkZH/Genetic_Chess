@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <stdexcept>
 
+#include "Players/Player.h"
 #include "Moves/Complete_Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"

@@ -3,6 +3,7 @@
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
 #include "Moves/Pawn_Capture.h"
+#include "Moves/Move.h"
 
 #include <memory>
 

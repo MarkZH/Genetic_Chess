@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+#include "Genes/Gene.h"
 #include "Utility.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"

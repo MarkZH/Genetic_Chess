@@ -1,9 +1,10 @@
 #include "Moves/Pawn_Promotion.h"
 
 #include <memory>
-#include <cstdlib>
+#include <cctype>
 #include <string>
 
+#include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Utility.h"

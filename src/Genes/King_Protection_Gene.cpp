@@ -1,5 +1,6 @@
 #include "Genes/King_Protection_Gene.h"
 
+#include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 

@@ -1,5 +1,8 @@
 #include "Pieces/Rook.h"
 
+#include "Pieces/Piece.h"
+#include "Moves/Move.h"
+
 Rook::Rook(Color color_in) : Piece(color_in, "R")
 {
     for(int d_file = -1; d_file <= 1; ++d_file)

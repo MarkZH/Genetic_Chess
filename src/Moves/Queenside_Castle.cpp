@@ -1,4 +1,6 @@
 #include "Moves/Queenside_Castle.h"
+
+#include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 

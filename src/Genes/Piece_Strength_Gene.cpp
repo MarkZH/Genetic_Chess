@@ -3,6 +3,7 @@
 #include <cmath>
 #include <limits>
 
+#include "Genes/Gene.h"
 #include "Utility.h"
 #include "Pieces/Piece.h"
 

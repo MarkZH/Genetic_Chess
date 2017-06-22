@@ -1,4 +1,6 @@
 #include "Moves/Pawn_Double_Move.h"
+
+#include "Moves/Move.h"
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
 

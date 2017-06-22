@@ -128,7 +128,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o : include/Genes/Total_Force_Gene.h
 $(DEBUG_OBJ_DIR)/src/Moves/Complete_Move.o : include/Moves/Complete_Move.h src/Moves/Complete_Move.cpp include/Moves/Move.h include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/Complete_Move.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Complete_Move.o
 
-$(DEBUG_OBJ_DIR)/src/Moves/En_Passant.o : include/Moves/En_Passant.h include/Moves/Pawn_Capture.h src/Moves/En_Passant.cpp include/Pieces/Piece.h include/Game/Board.h
+$(DEBUG_OBJ_DIR)/src/Moves/En_Passant.o : include/Moves/En_Passant.h include/Moves/Pawn_Capture.h src/Moves/En_Passant.cpp include/Moves/Move.h include/Pieces/Piece.h include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/En_Passant.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/En_Passant.o
 
 $(DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o : include/Moves/Kingside_Castle.h include/Moves/Move.h src/Moves/Kingside_Castle.cpp include/Game/Board.h
@@ -137,19 +137,19 @@ $(DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o : include/Moves/Kingside_Castle.h i
 $(DEBUG_OBJ_DIR)/src/Moves/Move.o : include/Moves/Move.h src/Moves/Move.cpp include/Game/Board.h include/Pieces/Piece.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/Move.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Move.o
 
-$(DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o : include/Moves/Pawn_Capture.h include/Moves/Pawn_Move.h include/Game/Color.h src/Moves/Pawn_Capture.cpp include/Pieces/Piece.h include/Game/Board.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o : include/Moves/Pawn_Capture.h include/Moves/Pawn_Move.h include/Game/Color.h src/Moves/Pawn_Capture.cpp include/Moves/Move.h include/Pieces/Piece.h include/Game/Board.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/Pawn_Capture.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o
 
-$(DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o : include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Game/Color.h src/Moves/Pawn_Double_Move.cpp include/Pieces/Piece.h include/Game/Board.h
+$(DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o : include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Game/Color.h src/Moves/Pawn_Double_Move.cpp include/Moves/Move.h include/Pieces/Piece.h include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/Pawn_Double_Move.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o
 
 $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Move.o : include/Moves/Pawn_Move.h include/Moves/Move.h include/Game/Color.h src/Moves/Pawn_Move.cpp include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/Pawn_Move.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Move.o
 
-$(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o : include/Moves/Pawn_Promotion.h include/Moves/Pawn_Move.h src/Moves/Pawn_Promotion.cpp include/Game/Board.h include/Pieces/Piece.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o : include/Moves/Pawn_Promotion.h include/Moves/Pawn_Move.h src/Moves/Pawn_Promotion.cpp include/Moves/Move.h include/Game/Board.h include/Pieces/Piece.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/Pawn_Promotion.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o
 
-$(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o : include/Moves/Pawn_Promotion_by_Capture.h include/Moves/Pawn_Promotion.h src/Moves/Pawn_Promotion_by_Capture.cpp include/Pieces/Piece.h include/Game/Board.h include/Moves/Pawn_Capture.h
+$(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o : include/Moves/Pawn_Promotion_by_Capture.h include/Moves/Pawn_Promotion.h src/Moves/Pawn_Promotion_by_Capture.cpp include/Pieces/Piece.h include/Game/Board.h include/Moves/Pawn_Capture.h include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Moves/Pawn_Promotion_by_Capture.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o
 
 $(DEBUG_OBJ_DIR)/src/Moves/Queenside_Castle.o : include/Moves/Queenside_Castle.h include/Moves/Move.h src/Moves/Queenside_Castle.cpp include/Game/Board.h include/Pieces/Piece.h
@@ -173,13 +173,13 @@ $(DEBUG_OBJ_DIR)/src/Pieces/Piece.o : include/Pieces/Piece.h include/Moves/Move.
 $(DEBUG_OBJ_DIR)/src/Pieces/Queen.o : include/Pieces/Queen.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Queen.cpp include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Pieces/Queen.cpp -o $(DEBUG_OBJ_DIR)/src/Pieces/Queen.o
 
-$(DEBUG_OBJ_DIR)/src/Pieces/Rook.o : include/Pieces/Rook.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Rook.cpp
+$(DEBUG_OBJ_DIR)/src/Pieces/Rook.o : include/Pieces/Rook.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Rook.cpp include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Pieces/Rook.cpp -o $(DEBUG_OBJ_DIR)/src/Pieces/Rook.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o : include/Players/Alan_Turing_AI.h include/Players/Player.h src/Players/Alan_Turing_AI.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Alan_Turing_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h include/Players/Thinking.h src/Players/CECP_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h include/Players/Thinking.h src/Players/CECP_Mediator.cpp include/Players/Player.h include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/CECP_Mediator.cpp -o $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Game_Result.h
@@ -284,7 +284,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/Total_Force_Gene.o : include/Genes/Total_Force_Gene
 $(RELEASE_OBJ_DIR)/src/Moves/Complete_Move.o : include/Moves/Complete_Move.h src/Moves/Complete_Move.cpp include/Moves/Move.h include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/Complete_Move.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Complete_Move.o
 
-$(RELEASE_OBJ_DIR)/src/Moves/En_Passant.o : include/Moves/En_Passant.h include/Moves/Pawn_Capture.h src/Moves/En_Passant.cpp include/Pieces/Piece.h include/Game/Board.h
+$(RELEASE_OBJ_DIR)/src/Moves/En_Passant.o : include/Moves/En_Passant.h include/Moves/Pawn_Capture.h src/Moves/En_Passant.cpp include/Moves/Move.h include/Pieces/Piece.h include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/En_Passant.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/En_Passant.o
 
 $(RELEASE_OBJ_DIR)/src/Moves/Kingside_Castle.o : include/Moves/Kingside_Castle.h include/Moves/Move.h src/Moves/Kingside_Castle.cpp include/Game/Board.h
@@ -293,19 +293,19 @@ $(RELEASE_OBJ_DIR)/src/Moves/Kingside_Castle.o : include/Moves/Kingside_Castle.h
 $(RELEASE_OBJ_DIR)/src/Moves/Move.o : include/Moves/Move.h src/Moves/Move.cpp include/Game/Board.h include/Pieces/Piece.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/Move.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Move.o
 
-$(RELEASE_OBJ_DIR)/src/Moves/Pawn_Capture.o : include/Moves/Pawn_Capture.h include/Moves/Pawn_Move.h include/Game/Color.h src/Moves/Pawn_Capture.cpp include/Pieces/Piece.h include/Game/Board.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Moves/Pawn_Capture.o : include/Moves/Pawn_Capture.h include/Moves/Pawn_Move.h include/Game/Color.h src/Moves/Pawn_Capture.cpp include/Moves/Move.h include/Pieces/Piece.h include/Game/Board.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/Pawn_Capture.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Capture.o
 
-$(RELEASE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o : include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Game/Color.h src/Moves/Pawn_Double_Move.cpp include/Pieces/Piece.h include/Game/Board.h
+$(RELEASE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o : include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Game/Color.h src/Moves/Pawn_Double_Move.cpp include/Moves/Move.h include/Pieces/Piece.h include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/Pawn_Double_Move.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o
 
 $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Move.o : include/Moves/Pawn_Move.h include/Moves/Move.h include/Game/Color.h src/Moves/Pawn_Move.cpp include/Game/Board.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/Pawn_Move.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Move.o
 
-$(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion.o : include/Moves/Pawn_Promotion.h include/Moves/Pawn_Move.h src/Moves/Pawn_Promotion.cpp include/Game/Board.h include/Pieces/Piece.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion.o : include/Moves/Pawn_Promotion.h include/Moves/Pawn_Move.h src/Moves/Pawn_Promotion.cpp include/Moves/Move.h include/Game/Board.h include/Pieces/Piece.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/Pawn_Promotion.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion.o
 
-$(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o : include/Moves/Pawn_Promotion_by_Capture.h include/Moves/Pawn_Promotion.h src/Moves/Pawn_Promotion_by_Capture.cpp include/Pieces/Piece.h include/Game/Board.h include/Moves/Pawn_Capture.h
+$(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o : include/Moves/Pawn_Promotion_by_Capture.h include/Moves/Pawn_Promotion.h src/Moves/Pawn_Promotion_by_Capture.cpp include/Pieces/Piece.h include/Game/Board.h include/Moves/Pawn_Capture.h include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Moves/Pawn_Promotion_by_Capture.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o
 
 $(RELEASE_OBJ_DIR)/src/Moves/Queenside_Castle.o : include/Moves/Queenside_Castle.h include/Moves/Move.h src/Moves/Queenside_Castle.cpp include/Game/Board.h include/Pieces/Piece.h
@@ -329,13 +329,13 @@ $(RELEASE_OBJ_DIR)/src/Pieces/Piece.o : include/Pieces/Piece.h include/Moves/Mov
 $(RELEASE_OBJ_DIR)/src/Pieces/Queen.o : include/Pieces/Queen.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Queen.cpp include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Pieces/Queen.cpp -o $(RELEASE_OBJ_DIR)/src/Pieces/Queen.o
 
-$(RELEASE_OBJ_DIR)/src/Pieces/Rook.o : include/Pieces/Rook.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Rook.cpp
+$(RELEASE_OBJ_DIR)/src/Pieces/Rook.o : include/Pieces/Rook.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Rook.cpp include/Moves/Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Pieces/Rook.cpp -o $(RELEASE_OBJ_DIR)/src/Pieces/Rook.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Alan_Turing_AI.o : include/Players/Alan_Turing_AI.h include/Players/Player.h src/Players/Alan_Turing_AI.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Alan_Turing_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Alan_Turing_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h include/Players/Thinking.h src/Players/CECP_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Game/Color.h include/Players/Thinking.h src/Players/CECP_Mediator.cpp include/Players/Player.h include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Game_Ending_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/CECP_Mediator.cpp -o $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Game_Result.h

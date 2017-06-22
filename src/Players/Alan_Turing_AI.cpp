@@ -1,5 +1,7 @@
 #include "Players/Alan_Turing_AI.h"
 
+#include "Players/Player.h"
+
 Alan_Turing_AI::Alan_Turing_AI()
 {
 }
