@@ -55,7 +55,7 @@ hold all;
 for n = game_number_marks
   plot(n*[1 1], ylim);
 end
-print([raw_data '_game_outcomes_lin.png']);
+print([raw_data '_game_outcomes.png']);
 
 
 
@@ -109,7 +109,7 @@ hold all;
 for n = game_number_marks
   plot(n*[1 1], ylim);
 end
-print([raw_data '_game_result_type_frequencies_log.png']);
+print([raw_data '_game_result_type_frequencies.png']);
 
 
 figure('Position', [0, 0, 1200, 1000]);
