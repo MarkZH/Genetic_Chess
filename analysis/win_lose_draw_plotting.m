@@ -10,6 +10,7 @@ if isOctave
   args = argv();
   if length(args) > 0
     filename = args{1};
+    game_number_marks = str2double(args(2:end));
   end
 end
 
@@ -40,16 +41,20 @@ moves_in_game = data.data(:, 9);
 
 
 figure('Position', [0, 0, 1200, 1000]);
-plot(game_number, white_wins, 'LineWidth', 3, ...
-	 game_number, black_wins, 'LineWidth', 3, ...
-	 game_number, draws,      'LineWidth', 3);
+semilogx(game_number, 100*white_wins./game_number, 'LineWidth', 3, ...
+         game_number, 100*black_wins./game_number, 'LineWidth', 3, ...
+         game_number, 100*draws./game_number, 'LineWidth', 3);
 xlabel(data.colheaders{1});
-ylabel('Total Counts');
+ylabel('Percentage');
 legend(data.colheaders{2}, ...
        data.colheaders{3}, ...
        data.colheaders{4}, ...
        'location', 'northwest');
-title('Count of winning sides');
+title('Winning Sides');
+hold all;
+for n = game_number_marks
+  plot(n*[1 1], ylim);
+end
 print([raw_data '_game_outcomes_lin.png']);
 
 
@@ -85,21 +90,25 @@ for index = 1 : length(game_number)
 end
 
 figure('Position', [0, 0, 1200, 1000]);
-loglog(game_number, cumsum(white_checkmates),  'LineWidth', 3, ...
-       game_number, cumsum(black_checkmates),  'LineWidth', 3, ...
-       game_number, cumsum(white_time_win),    'LineWidth', 3, ...
-       game_number, cumsum(black_time_win),    'LineWidth', 3, ...
-       game_number, cumsum(fifty_moves), 'LineWidth', 3, ...
-       game_number, cumsum(threefold),   'LineWidth', 3, ...
-       game_number, cumsum(material),    'LineWidth', 3, ...
-       game_number, cumsum(no_legal),    'LineWidth', 3);
+loglog(game_number, 100*cumsum(white_checkmates)./game_number, 'LineWidth', 3, ...
+       game_number, 100*cumsum(black_checkmates)./game_number, 'LineWidth', 3, ...
+       game_number, 100*cumsum(white_time_win)./game_number, 'LineWidth', 3, ...
+       game_number, 100*cumsum(black_time_win)./game_number, 'LineWidth', 3, ...
+       game_number, 100*cumsum(fifty_moves)./game_number, 'LineWidth', 3, ...
+       game_number, 100*cumsum(threefold)./game_number, 'LineWidth', 3, ...
+       game_number, 100*cumsum(material)./game_number, 'LineWidth', 3, ...
+       game_number, 100*cumsum(no_legal)./game_number, 'LineWidth', 3);
 xlabel('Games played');
-ylabel('Count');
+ylabel('Percentage');
 legend('White checkmate', 'Black checkmate', ...
        'White wins on time', 'Black wins on time', ...
        '50-move', '3-fold', 'Insufficient material', 'Stalemate', ...
-       'location', 'northwest');
-title('Type of endgame counts');
+       'location', 'southwest');
+title('Type of Endgame');
+hold all;
+for n = game_number_marks
+  plot(n*[1 1], ylim);
+end
 print([raw_data '_game_result_type_frequencies_log.png']);
 
 
@@ -113,6 +122,9 @@ ylim(max(white_time_left)*[-0.10, 1.05]);
 xlabel('Game number');
 ylabel('Time left on clock');
 title('Time left on clock at end of game')
+for n = game_number_marks
+  plot(n*[1 1], ylim);
+end
 print([raw_data '_game_time_left.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
@@ -136,11 +148,15 @@ for index = 1 : length(counts)
 end
 
 figure('Position', [0, 0, 1200, 1000]);
-scatter(game_number, moves_in_game);
+scatter(game_number, moves_in_game, 'k');
 xlabel('Game number');
 ylabel('Moves in Game');
 title('Number of moves in game')
 ylim([0, max_game_length_display]);
+hold all;
+for n = game_number_marks
+  plot(n*[1 1], ylim);
+end
 print([raw_data '_moves_in_game.png']);
 
 figure('Position', [0, 0, 1200, 1000]);

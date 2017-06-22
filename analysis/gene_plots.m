@@ -7,6 +7,7 @@ if isOctave
   args = argv();
   if length(args) > 0
     filename = args{1};
+    id_marks = str2double(args(2:end));
   end
 end
 
@@ -69,9 +70,9 @@ for yi = 2 : length(data.colheaders) - 2
          'markersize', 10, ...
          'displayname', ['Pool ' num2str(pool_id)]);
     h = plot(id_list(good), this_data(good), ...
-         'ok', ...
-         'markersize', 10, ...
-         'linewidth', 1);
+             'ok', ...
+             'markersize', 10, ...
+             'linewidth', 1);
     still_alive_gene = still_alive_gene + sum(isfinite(this_data(good)));
     if pool_id == max(pool_ids)
       number_alive = num2str(still_alive_gene);
@@ -94,6 +95,9 @@ for yi = 2 : length(data.colheaders) - 2
   conv_margin = floor(conv_window/2);
   x_axis = id_list(conv_margin : end - conv_margin);
   plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
+  for n = id_marks
+    plot(n*[1 1], ylim);
+  end
   print([gene_pool_filename '_gene_' name '.png']);
 
   special_plot = false;
@@ -103,7 +107,7 @@ for yi = 2 : length(data.colheaders) - 2
     piece_strength_index = yi;
     special_plot = true;
   end
-  
+
   if strncmp(fliplr(name), fliplr(priority_suffix), length(priority_suffix))
     plot_figure = priority_figure;
     piece_priority_index = 2;
@@ -151,6 +155,9 @@ for index = 1 : 2
   set(leg, 'location', 'southoutside');
   legend left;
   plot(xlim, [0 0], 'k'); % X-axis
+  for n = id_marks
+    plot(n*[1 1], ylim);
+  end
   print([gene_pool_filename file_name_suffixes{index}]);
 end
 
@@ -181,5 +188,8 @@ if total_force_index > 0 && opponent_pieces_targeted_index > 0 && piece_strength
   set(leg, 'location', 'southoutside');
   set(leg, 'orientation', 'horizontal');
   set(leg, 'FontSize', 10);
+  for n = id_marks
+    plot(n*[1 1], ylim);
+  end
   print([gene_pool_filename '_piece_strength_gene_active.png']);
 end
