@@ -16,9 +16,9 @@ class Outside_Player : public Player
     public:
         virtual Color get_ai_color() const = 0;
 
-        int get_game_time();
-        int get_reset_moves();
-        int get_increment();
+        double get_game_time();
+        size_t get_reset_moves();
+        double get_increment();
 
     protected:
         Outside_Player();
@@ -32,16 +32,16 @@ class Outside_Player : public Player
 
         static void log(const std::string& data);
 
-        void set_game_time(int time);
-        void set_reset_moves(int moves);
-        void set_increment(int increment);
+        void set_game_time(double time);
+        void set_reset_moves(size_t moves);
+        void set_increment(double increment);
 
     private:
         static std::string log_file_name;
 
-        int starting_game_time;
-        int moves_to_reset_clock;
-        int time_increment;
+        double starting_game_time;
+        size_t moves_to_reset_clock;
+        double time_increment;
         bool got_clock;
 
         virtual void get_clock_specs() = 0;

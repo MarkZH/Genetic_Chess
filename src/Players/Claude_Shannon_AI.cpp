@@ -30,7 +30,7 @@ const Complete_Move Claude_Shannon_AI::choose_move(const Board& board, const Clo
 const Complete_Move Claude_Shannon_AI::choose_move(const Board& board, int look_ahead) const
 {
     auto best_move = board.legal_moves().front();
-    auto best_score = std::numeric_limits<int>::lowest();
+    auto best_score = std::numeric_limits<double>::lowest();
     for(const auto& move : board.legal_moves())
     {
         auto next_board = board;
