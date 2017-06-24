@@ -17,7 +17,7 @@ http://vision.unipv.it/IA1/aa2009-2010/ProgrammingaComputerforPlayingChess.pdf
 
 #include "Game/Color.h"
 
-struct Complete_Move;
+class Complete_Move;
 class Board;
 class Clock;
 

@@ -5,6 +5,7 @@
 #include <chrono>
 #include <fstream>
 #include <algorithm>
+#include <string>
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, size_t count)
 {

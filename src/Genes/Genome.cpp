@@ -1,3 +1,6 @@
+#include <string>
+#include <vector>
+
 #include "Genes/Genome.h"
 
 #include "Game/Board.h"

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <cctype>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"

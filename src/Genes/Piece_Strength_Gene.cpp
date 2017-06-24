@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <limits>
+#include <cctype>
 
 #include "Genes/Gene.h"
 #include "Utility.h"
