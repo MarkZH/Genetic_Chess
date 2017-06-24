@@ -47,7 +47,7 @@ Outside_Player::Outside_Player() :
 std::string Outside_Player::receive_command()
 {
     std::string result;
-    getline(std::cin, result);
+    std::getline(std::cin, result);
     log("RECEIVING: " + result);
     if(result == "quit")
     {
@@ -68,7 +68,7 @@ void Outside_Player::send_command(const std::string& cmd)
     std::cout << cmd << std::endl;
 }
 
-int Outside_Player::get_game_time()
+double Outside_Player::get_game_time()
 {
     if( ! got_clock)
     {
@@ -78,7 +78,7 @@ int Outside_Player::get_game_time()
     return starting_game_time;
 }
 
-int Outside_Player::get_reset_moves()
+size_t Outside_Player::get_reset_moves()
 {
     if( ! got_clock)
     {
@@ -88,7 +88,7 @@ int Outside_Player::get_reset_moves()
     return moves_to_reset_clock;
 }
 
-int Outside_Player::get_increment()
+double Outside_Player::get_increment()
 {
     if( ! got_clock)
     {
@@ -98,17 +98,17 @@ int Outside_Player::get_increment()
     return time_increment;
 }
 
-void Outside_Player::set_game_time(int time)
+void Outside_Player::set_game_time(double time)
 {
     starting_game_time = time;
 }
 
-void Outside_Player::set_reset_moves(int moves)
+void Outside_Player::set_reset_moves(size_t moves)
 {
     moves_to_reset_clock = moves;
 }
 
-void Outside_Player::set_increment(int increment)
+void Outside_Player::set_increment(double increment)
 {
     time_increment = increment;
 }

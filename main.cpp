@@ -1,6 +1,7 @@
 #include <iostream>
 #include <memory>
 #include <fstream>
+#include <cctype>
 
 #include "Game/Game.h"
 #include "Game/Board.h"

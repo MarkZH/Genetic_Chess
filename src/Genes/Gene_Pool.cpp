@@ -30,11 +30,11 @@ void gene_pool(const std::string& config_file = "")
     auto config = Configuration_File(config_file);
 
     // Environment variables
-    const size_t maximum_simultaneous_games = config.get_number("maximum simultaneous games");
-    const size_t gene_pool_population = config.get_number("gene pool population");
-    const size_t gene_pool_count = config.get_number("gene pool count");
-    const double draw_kill_probability = config.get_number("draw kill probability");
-    const int pool_swap_interval = config.get_number("pool swap interval");
+    const auto maximum_simultaneous_games = size_t(config.get_number("maximum simultaneous games"));
+    const auto gene_pool_population = size_t(config.get_number("gene pool population"));
+    const auto gene_pool_count = size_t(config.get_number("gene pool count"));
+    const auto draw_kill_probability = double(config.get_number("draw kill probability"));
+    const auto pool_swap_interval = size_t(config.get_number("pool swap interval"));
 
     // Oscillating game time
     const double minimum_game_time = config.get_number("minimum game time"); // seconds
@@ -138,7 +138,7 @@ void gene_pool(const std::string& config_file = "")
 
         // widths of columns for stats printout
         auto max_id = pool.back().get_id();
-        int id_digits = std::floor(std::log10(max_id) + 1);
+        auto id_digits = int(std::floor(std::log10(max_id) + 1));
 
         // Write overall stats
         std::cout << "\nGene pool ID: " << pool_index
@@ -374,7 +374,7 @@ void gene_pool(const std::string& config_file = "")
         // from stagnating or amplifying pathological behavior
         if(pools.size() > 1 && pool_index == pools.size() - 1) // all pools have equal number of games
         {
-            static auto previous_mod = 0;
+            static size_t previous_mod = 0;
             auto this_mod = game_count[pool_index] % pool_swap_interval;
             if(this_mod < previous_mod)
             {

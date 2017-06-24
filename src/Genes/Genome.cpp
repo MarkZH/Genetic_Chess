@@ -1,3 +1,6 @@
+#include <string>
+#include <vector>
+
 #include "Genes/Genome.h"
 
 #include "Game/Board.h"
@@ -30,10 +33,12 @@ Genome::Genome()
     look_ahead_gene_index = genome.size() - 1;
 
     // Normal genes
-    genome.emplace_back(std::make_unique<Total_Force_Gene>(static_cast<Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())));
+    auto psg = static_cast<Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
+
+    genome.emplace_back(std::make_unique<Total_Force_Gene>(psg));
     genome.emplace_back(std::make_unique<Freedom_To_Move_Gene>());
     genome.emplace_back(std::make_unique<Pawn_Advancement_Gene>());
-    genome.emplace_back(std::make_unique<Opponent_Pieces_Targeted_Gene>(static_cast<Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())));
+    genome.emplace_back(std::make_unique<Opponent_Pieces_Targeted_Gene>(psg));
     genome.emplace_back(std::make_unique<Sphere_of_Influence_Gene>());
     genome.emplace_back(std::make_unique<King_Confinement_Gene>());
     genome.emplace_back(std::make_unique<King_Protection_Gene>());
@@ -103,7 +108,7 @@ Genome::Genome(const Genome& A, const Genome& B) :
 void Genome::read_from(std::istream& is)
 {
     std::string line;
-    while(getline(is, line))
+    while(std::getline(is, line))
     {
         if(line.empty())
         {
