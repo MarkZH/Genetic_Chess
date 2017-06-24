@@ -62,15 +62,7 @@ bool String::starts_with(const std::string& s, const std::string& beginning)
         return false;
     }
 
-    for(size_t i = 0; i < beginning.size(); ++i)
-    {
-        if(beginning[i] != s[i])
-        {
-            return false;
-        }
-    }
-
-    return true;
+    return std::equal(beginning.begin(), beginning.end(), s.begin());
 }
 
 bool String::starts_with(const std::string& s, char beginning)

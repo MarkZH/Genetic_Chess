@@ -167,6 +167,21 @@ void run_tests()
         tests_passed = false;
     }
 
+    std::string search_string = "abcdefg";
+    std::string target = "abc";
+    if( ! String::starts_with(search_string, target))
+    {
+        std::cerr << "\"" << target << "\" not found at beginning of " << search_string << std::endl;
+        tests_passed = false;
+    }
+
+    std::string wrong_target = "abd";
+    if(String::starts_with(search_string, wrong_target))
+    {
+        std::cerr << "\"" << wrong_target << "\" erroneously found at beginning of " << search_string << std::endl;
+        tests_passed = false;
+    }
+
 
     // Poisson distribution check
     const double mean_moves = 35.0;
