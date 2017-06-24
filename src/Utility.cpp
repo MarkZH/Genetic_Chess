@@ -46,7 +46,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
             }
             else
             {
-                (*it) = String::trim_outer_whitespace(*it);
+                (*it) = String::remove_extra_whitespace(*it);
                 ++it;
             }
         }
@@ -70,31 +70,45 @@ bool String::starts_with(const std::string& s, char beginning)
     return s[0] == beginning;
 }
 
-std::string String::trim_outer_whitespace(const std::string& str)
+std::string String::remove_extra_whitespace(const std::string& str)
 {
-    if (str.empty())
-    {
-        return str;
-    }
-
     size_t start = 0;
-    while(start < str.size() && isspace(str[start]))
+    size_t end = 0;
+    std::string result;
+
+    while(true)
     {
-        ++start;
+        while(start < str.size() && std::isspace(str[start]))
+        {
+            ++start;
+        }
+
+        end = start;
+        while(end < str.size() && ! isspace(str[end]))
+        {
+            ++end;
+        }
+
+        if(start == end)
+        {
+            break; // start and end are past end of string
+        }
+
+        // [start, end) is all non-whitespace
+        if( ! result.empty())
+        {
+            result += " ";
+        }
+        result += str.substr(start, end - start);
+        start = end;
     }
 
-    size_t end = std::max(str.size() - 1, start);
-    while(end > start && isspace(str[end]))
-    {
-        --end;
-    }
-
-    return str.substr(start, end - start + 1);
+    return result;
 }
 
 std::string String::strip_comments(const std::string& str, char comment)
 {
-    return trim_outer_whitespace(str.substr(0, str.find(comment)));
+    return remove_extra_whitespace(str.substr(0, str.find(comment)));
 }
 
 std::string String::strip_block_comment(const std::string& str, char start, char end)
@@ -103,11 +117,11 @@ std::string String::strip_block_comment(const std::string& str, char start, char
     auto end_comment_index = str.find(end);
     if(start_comment_index == std::string::npos || end_comment_index == std::string::npos)
     {
-        return String::trim_outer_whitespace(str);
+        return String::remove_extra_whitespace(str);
     }
 
-    auto first_part = trim_outer_whitespace(str.substr(0, start_comment_index));
-    auto last_part = trim_outer_whitespace(str.substr(end_comment_index + 1));
+    auto first_part = remove_extra_whitespace(str.substr(0, start_comment_index));
+    auto last_part = remove_extra_whitespace(str.substr(end_comment_index + 1));
     return strip_block_comment(first_part + " " + last_part, start, end);
 }
 
@@ -198,7 +212,7 @@ Configuration_File::Configuration_File(const std::string& file_name)
             throw std::runtime_error("Configuration file lines must be of form \"Name = Value\"\n" + line);
         }
         auto line_split = String::split(line, "=", 1);
-        parameters[String::trim_outer_whitespace(line_split[0])] = line_split[1];
+        parameters[String::remove_extra_whitespace(line_split[0])] = line_split[1];
     }
 }
 
@@ -206,11 +220,11 @@ std::string Configuration_File::get_text(const std::string& parameter) const
 {
     try
     {
-        return String::trim_outer_whitespace(parameters.at(parameter));
+        return String::remove_extra_whitespace(parameters.at(parameter));
     }
     catch(const std::out_of_range&)
     {
-        return "";
+        throw std::runtime_error("Configuration paramter not found: " + parameter);
     }
 }
 
@@ -222,7 +236,7 @@ double Configuration_File::get_number(const std::string& parameter) const
     }
     catch(const std::invalid_argument&)
     {
-        return 0.0;
+        throw std::runtime_error("Invalid number for \"" + parameter + "\" : " + get_text(parameter));
     }
 }
 
