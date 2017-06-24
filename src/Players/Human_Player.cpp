@@ -15,7 +15,7 @@
 Human_Player::Human_Player()
 {
     std::cout << "Enter name: ";
-    getline(std::cin, player_name);
+    std::getline(std::cin, player_name);
 }
 
 const Complete_Move Human_Player::choose_move(const Board& board, const Clock& clock) const

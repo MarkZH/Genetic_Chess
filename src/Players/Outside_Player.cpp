@@ -47,7 +47,7 @@ Outside_Player::Outside_Player() :
 std::string Outside_Player::receive_command()
 {
     std::string result;
-    getline(std::cin, result);
+    std::getline(std::cin, result);
     log("RECEIVING: " + result);
     if(result == "quit")
     {

@@ -106,7 +106,7 @@ Genome::Genome(const Genome& A, const Genome& B) :
 void Genome::read_from(std::istream& is)
 {
     std::string line;
-    while(getline(is, line))
+    while(std::getline(is, line))
     {
         if(line.empty())
         {

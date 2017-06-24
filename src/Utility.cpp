@@ -194,7 +194,7 @@ Configuration_File::Configuration_File(const std::string& file_name)
 {
     std::ifstream ifs(file_name);
     std::string line;
-    while(getline(ifs, line))
+    while(std::getline(ifs, line))
     {
         line = String::strip_comments(line, '#');
         if(line.empty())
