@@ -10,7 +10,13 @@ if isOctave
   args = argv();
   if length(args) > 0
     filename = args{1};
-    game_number_marks = str2double(args(2:end))';
+    game_number_marks = [];
+    if length(args) > 1
+      marks_file_name = args{2};
+      if ~isempty(marks_file_name)
+        game_number_marks = importdata(marks_file_name)';
+      end
+    end
   end
 end
 
