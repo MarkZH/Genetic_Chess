@@ -10,7 +10,7 @@ if isOctave
   args = argv();
   if length(args) > 0
     filename = args{1};
-    game_number_marks = str2double(args(2:end));
+    game_number_marks = str2double(args(2:end))';
   end
 end
 
@@ -41,6 +41,7 @@ moves_in_game = data.data(:, 9);
 
 
 figure('Position', [0, 0, 1200, 1000]);
+hold all;
 semilogx(game_number, 100*white_wins./game_number, 'LineWidth', 3, ...
          game_number, 100*black_wins./game_number, 'LineWidth', 3, ...
          game_number, 100*draws./game_number, 'LineWidth', 3);
@@ -51,10 +52,11 @@ legend(data.colheaders{2}, ...
        data.colheaders{4}, ...
        'location', 'northeast');
 title('Winning Sides');
-hold all;
+
 for n = game_number_marks
   plot(n*[1 1], ylim);
 end
+
 print([raw_data '_game_outcomes.png']);
 
 
@@ -91,6 +93,7 @@ for index = 1 : number_of_games
 end
 
 figure('Position', [0, 0, 1200, 1000]);
+hold all;
 loglog(game_number, 100*cumsum(white_checkmates)./game_number, 'LineWidth', 3, ...
        game_number, 100*cumsum(black_checkmates)./game_number, 'LineWidth', 3, ...
        game_number, 100*cumsum(white_time_win)./game_number, 'LineWidth', 3, ...
@@ -106,10 +109,11 @@ legend('White checkmate', 'Black checkmate', ...
        '50-move', '3-fold', 'Insufficient material', 'Stalemate', ...
        'location', 'southwest');
 title('Type of Endgame');
-hold all;
+
 for n = game_number_marks
   plot(n*[1 1], ylim);
 end
+
 print([raw_data '_game_result_type_frequencies.png']);
 
 
@@ -123,9 +127,11 @@ ylim(max(white_time_left)*[-0.10, 1.05]);
 xlabel('Game number');
 ylabel('Time left on clock');
 title('Time left on clock at end of game')
+
 for n = game_number_marks
   plot(n*[1 1], ylim);
 end
+
 print([raw_data '_game_time_left.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
@@ -152,15 +158,17 @@ for index = 1 : length(counts)
 end
 
 figure('Position', [0, 0, 1200, 1000]);
+hold all;
 scatter(game_number, moves_in_game, 'k');
 xlabel('Game number');
 ylabel('Moves in Game');
 title('Number of moves in game')
 ylim([0, max_game_length_display]);
-hold all;
+
 for n = game_number_marks
   plot(n*[1 1], ylim);
 end
+
 print([raw_data '_moves_in_game.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
