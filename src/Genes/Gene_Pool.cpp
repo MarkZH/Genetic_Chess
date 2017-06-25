@@ -112,21 +112,27 @@ void gene_pool(const std::string& config_file = "")
     std::string game_record_file = genome_file_name +  "_games.txt";
     {
         // Use game time from last run of this gene pool
+        std::cout << "Searching " << game_record_file << " for last game time ..." << std::endl;
         std::ifstream ifs(game_record_file);
         std::string line;
         std::string time_line;
         while(std::getline(ifs, line))
         {
-            if(String::contains(line, "Initial time:"))
+            if(String::contains(line, "Initial time:") || String::contains(line, "TimeControl"))
             {
                 time_line = line;
             }
         }
 
-        if( ! time_line.empty())
+        if(String::contains(time_line, "Initial Time"))
         {
             game_time = std::stod(String::split(time_line, " ").at(3));
         }
+        else if(String::contains(time_line, "TimeControl"))
+        {
+            game_time = std::stod(String::split(time_line, "\"").at(1));
+        }
+        std::cout << "Done." << std::endl;
     }
 
     // Ctrl-C to pause gene pool
