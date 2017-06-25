@@ -67,7 +67,8 @@ white_time_win = zeros(size(game_number));
 black_time_win = zeros(size(game_number));
 material = zeros(size(game_number));
 no_legal = zeros(size(game_number));
-for index = 1 : length(game_number)
+number_of_games = length(game_number);
+for index = 1 : number_of_games
   if result_type(index) == 0
     white_checkmates(index) = 1;
   elseif result_type(index) == 1;
@@ -130,13 +131,16 @@ print([raw_data '_game_time_left.png']);
 figure('Position', [0, 0, 1200, 1000]);
 hist([black_time_left; white_time_left], 300);
 xlabel('Time left on clock');
-ylabel(['Counts (total = ' num2str(length(game_number)) ')']);
+ylabel(['Counts (total = ' num2str(number_of_games) ')']);
 title('Time left on clock at end of game')
 print([raw_data '_game_time_left_histogram.png']);
 
 
 % Don't plot top 0.1% of longest games to make trends easier to see
 [counts, bins] = hist(moves_in_game, (0 : max(moves_in_game)));
+f = fopen('game_length_distribution.txt', 'w');
+fprintf(f, '%u\t%u\n', [bins; counts]);
+fclose(f);
 total_counts = 0;
 max_game_count = floor(0.999*length(moves_in_game));
 for index = 1 : length(counts)
@@ -160,19 +164,61 @@ end
 print([raw_data '_moves_in_game.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
-bar(bins, counts, 'barwidth', 1);
+hold all;
+bar(bins, counts, 'k', 'barwidth', 1);
 xlabel('Moves in Game');
-ylabel(['Counts (total = ' num2str(length(game_number)) ')']);
+ylabel(['Counts (total = ' num2str(number_of_games) ')']);
 title('Number of moves in game')
 xlim([0, max_game_length_display]);
 set(gca, 'xtick', 0 : 10 : max_game_length_display);
-stats = {['Mean = ' num2str(mean(moves_in_game))], ...
+mean_moves = mean(moves_in_game);
+mode_moves = mode(moves_in_game);
+std_dev = std(moves_in_game);
+
+probability = zeros(size(counts));
+for index = 1 : length(bins)
+  n = bins(index);
+  p = exp(-mean_moves)*number_of_games;
+  for j = 1 : n
+    p = p*mean_moves/j;
+  end
+  probability(index) = p;
+end
+plot(bins, probability, 'linewidth', 3);
+
+probability = zeros(size(counts));
+for index = 1 : length(bins)
+  n = bins(index);
+  p = exp(-mode_moves)*number_of_games;
+  for j = 1 : n
+    p = p*mode_moves/j;
+  end
+  probability(index) = p;
+end
+plot(bins, probability, 'linewidth', 3);
+
+probability = (1/(sqrt(2*pi)*std_dev))*exp(-0.5*((bins - mean_moves)/std_dev).^2);
+probability = (number_of_games/sum(probability))*probability; % normalize
+plot(bins, probability, 'linewidth', 3);
+
+probability = (1/(sqrt(2*pi)*std_dev))*exp(-0.5*((bins - mode_moves)/std_dev).^2);
+probability = (number_of_games/sum(probability))*probability; % normalize
+plot(bins, probability, 'linewidth', 3);
+
+legend('Histogram',
+       'Poisson distribution (mean)',
+       'Poisson distribution (mode)',
+       'Normal distribution (mean)',
+       'Normal distribution (mode)');
+
+stats = {['Mean = ' num2str(mean_moves)], ...
          ['Median = ' num2str(median(moves_in_game))], ...
-         ['Mode = ' num2str(mode(moves_in_game))], ...
-         ['\sigma = ' num2str(std(moves_in_game))], ...
+         ['Mode = ' num2str(mode_moves)], ...
+         ['\sigma = ' num2str(std_dev)], ...
          ['Min = ' num2str(min(moves_in_game))], ...
          ['Max = ' num2str(max(moves_in_game))]};
 xl = xlim;
 yl = ylim;
-text(0.7*xl(2), 0.8*yl(2), stats, 'fontsize', 14);
+text(0.7*xl(2), 0.3*yl(2), stats, 'fontsize', 14);
+
 print([raw_data '_moves_in_game_histogram.png']);
