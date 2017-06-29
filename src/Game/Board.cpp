@@ -1,6 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <cctype>
+#include <chrono>
+#include <ctime>
+#include <iomanip>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -830,6 +833,11 @@ void Board::print_game_record(const Player* white,
 
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
+
+    auto now = std::chrono::system_clock::now();
+    auto now_c = std::chrono::system_clock::to_time_t(now);
+    out_stream << "[Date \"" << std::put_time(std::localtime(&now_c), "%Y.%m.%d") << "\"]\n";
+
     if(white && ! white->name().empty())
     {
         out_stream << "[White \"" << white->name() << "\"]\n";
