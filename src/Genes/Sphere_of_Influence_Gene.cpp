@@ -82,8 +82,8 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
     double score = 0;
     for(const auto& square_value : square_score)
     {
-        score += square_value.second +
-                 king_target_factor/(1 + king_distance(opponent_king_square, square_value.first));
+        auto king_bonus = king_target_factor/(1 + king_distance(opponent_king_square, square_value.first));
+        score += square_value.second*(1 + king_bonus);
     }
 
     // normalizing to make maximum score near 1
