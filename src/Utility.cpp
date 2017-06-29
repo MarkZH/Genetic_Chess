@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <string>
 #include <cctype>
+#include <iostream>
 
 namespace String
 {
@@ -261,7 +262,11 @@ std::string Configuration_File::get_text(const std::string& parameter) const
     }
     catch(const std::out_of_range&)
     {
-        throw std::runtime_error("Configuration paramter not found: " + parameter);
+        for(const auto& key_value : parameters)
+        {
+            std::cerr << "\"" << key_value.first << "\" --> \"" << key_value.second << "\"" << std::endl;
+        }
+        throw std::runtime_error("Configuration parameter not found: " + parameter);
     }
 }
 
