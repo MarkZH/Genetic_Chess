@@ -6,6 +6,15 @@
 #include <fstream>
 #include <algorithm>
 #include <string>
+#include <cctype>
+
+namespace String
+{
+    namespace
+    {
+        const auto whitespace = " \t\n";
+    }
+}
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, size_t count)
 {
@@ -46,7 +55,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
             }
             else
             {
-                (*it) = String::remove_extra_whitespace(*it);
+                (*it) = String::trim_outer_whitespace(*it);
                 ++it;
             }
         }
@@ -70,45 +79,61 @@ bool String::starts_with(const std::string& s, char beginning)
     return s[0] == beginning;
 }
 
-std::string String::remove_extra_whitespace(const std::string& str)
+std::string String::consolidate_inner_whitespace(const std::string& s)
 {
-    size_t start = 0;
-    size_t end = 0;
+    size_t start = s.find_first_not_of(whitespace);
+    auto initial_whitespace = s.substr(0, start);
+
+    size_t last_non_whitespace = s.find_last_not_of(whitespace);
+    std::string final_whitespace;
+    if(last_non_whitespace != std::string::npos)
+    {
+        final_whitespace = s.substr(last_non_whitespace + 1);
+    }
+
     std::string result;
 
     while(true)
     {
-        while(start < str.size() && std::isspace(str[start]))
-        {
-            ++start;
-        }
-
-        end = start;
-        while(end < str.size() && ! isspace(str[end]))
-        {
-            ++end;
-        }
-
-        if(start == end)
-        {
-            break; // start and end are past end of string
-        }
+        auto end = s.find_first_of(whitespace, start);
 
         // [start, end) is all non-whitespace
         if( ! result.empty())
         {
             result += " ";
         }
-        result += str.substr(start, end - start);
-        start = end;
+        result += s.substr(start, end - start);
+        start = s.find_first_not_of(whitespace, end);
+        if(start == std::string::npos)
+        {
+            start = end; // only whitespace left
+            break;
+        }
     }
 
-    return result;
+    return initial_whitespace + result + final_whitespace;
+}
+
+std::string String::trim_outer_whitespace(const std::string& s)
+{
+    auto text_start = s.find_first_not_of(whitespace);
+    if(text_start == std::string::npos)
+    {
+        return std::string{};
+    }
+
+    auto text_end = s.find_last_not_of(whitespace);
+    if(text_end == std::string::npos)
+    {
+        return s.substr(text_start);
+    }
+
+    return s.substr(text_start, text_end - text_start + 1);
 }
 
 std::string String::strip_comments(const std::string& str, char comment)
 {
-    return remove_extra_whitespace(str.substr(0, str.find(comment)));
+    return trim_outer_whitespace(str.substr(0, str.find(comment)));
 }
 
 std::string String::strip_block_comment(const std::string& str, char start, char end)
@@ -117,12 +142,18 @@ std::string String::strip_block_comment(const std::string& str, char start, char
     auto end_comment_index = str.find(end);
     if(start_comment_index == std::string::npos || end_comment_index == std::string::npos)
     {
-        return String::remove_extra_whitespace(str);
+        return consolidate_inner_whitespace(trim_outer_whitespace(str));
     }
 
-    auto first_part = remove_extra_whitespace(str.substr(0, start_comment_index));
-    auto last_part = remove_extra_whitespace(str.substr(end_comment_index + 1));
+    auto first_part = str.substr(0, start_comment_index);
+    auto last_part = str.substr(end_comment_index + 1);
     return strip_block_comment(first_part + " " + last_part, start, end);
+}
+
+std::string String::lowercase(std::string s)
+{
+    std::transform(s.begin(), s.end(), s.begin(), [](char c) -> char { return std::tolower(c); });
+    return s;
 }
 
 int Random::random_integer(int min, int max)
@@ -212,7 +243,8 @@ Configuration_File::Configuration_File(const std::string& file_name)
             throw std::runtime_error("Configuration file lines must be of form \"Name = Value\"\n" + line);
         }
         auto line_split = String::split(line, "=", 1);
-        parameters[String::remove_extra_whitespace(line_split[0])] = line_split[1];
+        auto parameter = String::lowercase(String::consolidate_inner_whitespace(line_split[0]));
+        parameters[parameter] = line_split[1];
     }
 }
 
@@ -220,7 +252,7 @@ std::string Configuration_File::get_text(const std::string& parameter) const
 {
     try
     {
-        return String::remove_extra_whitespace(parameters.at(parameter));
+        return parameters.at(parameter);
     }
     catch(const std::out_of_range&)
     {

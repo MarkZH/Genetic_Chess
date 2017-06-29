@@ -155,6 +155,7 @@ void run_tests()
     if(expected != result)
     {
         std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
+        std::cerr << "Expected result: \"" << expected << "\"" << std::endl;
         tests_passed = false;
     }
 
@@ -164,6 +165,7 @@ void run_tests()
     if(expected != result)
     {
         std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
+        std::cerr << "Expected result: \"" << expected << "\"" << std::endl;
         tests_passed = false;
     }
 

@@ -325,7 +325,7 @@ void replay_game(const std::string& file_name, int game_number)
         // fast forward to indicated game
         while(std::getline(ifs, line))
         {
-            line = String::remove_extra_whitespace(line);
+            line = String::trim_outer_whitespace(line);
             if(String::starts_with(line, '['))
             {
                 game_headers.push_back(line);
@@ -361,7 +361,6 @@ void replay_game(const std::string& file_name, int game_number)
     bool game_started = false;
     while( ! result.game_has_ended() && std::getline(ifs, line))
     {
-        line = String::remove_extra_whitespace(line);
         line = String::strip_block_comment(line, '{', '}');
         line = String::strip_comments(line, ';');
         if(line.empty())

@@ -25,12 +25,13 @@ namespace String
     bool starts_with(const std::string& s, const std::string& beginning);
     bool starts_with(const std::string& s, char beginning);
 
-    // Deletes whitespace at beginning and end of string and replaces
-    // multiple consecutive whitespace characters with a single space.
-    std::string remove_extra_whitespace(const std::string& str);
+    std::string trim_outer_whitespace(const std::string& s);
+    std::string consolidate_inner_whitespace(const std::string& s);
 
     std::string strip_comments(const std::string& str, char comment);
     std::string strip_block_comment(const std::string& str, char start, char end);
+
+    std::string lowercase(std::string s);
 }
 
 namespace Random
