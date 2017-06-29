@@ -820,6 +820,7 @@ void Board::print_game_record(const Player* white,
     static int game_number = 0;
     if(game_number == 0)
     {
+        game_number = 1;
         std::ifstream ifs(file_name);
         std::string line;
         while(std::getline(ifs, line))
