@@ -851,7 +851,7 @@ void Board::print_game_record(const Player* white,
 
     if(game_number > 0)
     {
-        out_stream << "[Round \"" << game_number << "\"]\n";
+        out_stream << "[Round \"" << game_number++ << "\"]\n";
     }
 
     if(initial_time > 0)
