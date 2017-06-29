@@ -27,6 +27,7 @@ namespace String
 
     std::string trim_outer_whitespace(const std::string& s);
     std::string consolidate_inner_whitespace(const std::string& s);
+    std::string remove_extra_whitespace(const std::string& s);
 
     std::string strip_comments(const std::string& str, char comment);
     std::string strip_block_comment(const std::string& str, char start, char end);

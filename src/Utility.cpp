@@ -131,6 +131,11 @@ std::string String::trim_outer_whitespace(const std::string& s)
     return s.substr(text_start, text_end - text_start + 1);
 }
 
+std::string String::remove_extra_whitespace(const std::string& s)
+{
+    return trim_outer_whitespace(consolidate_inner_whitespace(s));
+}
+
 std::string String::strip_comments(const std::string& str, char comment)
 {
     return trim_outer_whitespace(str.substr(0, str.find(comment)));
@@ -243,8 +248,8 @@ Configuration_File::Configuration_File(const std::string& file_name)
             throw std::runtime_error("Configuration file lines must be of form \"Name = Value\"\n" + line);
         }
         auto line_split = String::split(line, "=", 1);
-        auto parameter = String::lowercase(String::consolidate_inner_whitespace(line_split[0]));
-        parameters[parameter] = line_split[1];
+        auto parameter = String::lowercase(String::remove_extra_whitespace(line_split[0]));
+        parameters[parameter] = String::trim_outer_whitespace(line_split[1]);
     }
 }
 
