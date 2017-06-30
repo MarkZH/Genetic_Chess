@@ -251,7 +251,7 @@ std::string Board::fen_status() const
                     char mark = (rook_file == 'h' ? 'K' : 'Q');
                     if(base_rank == 8)
                     {
-                        mark = tolower(mark);
+                        mark = std::tolower(mark);
                     }
                     s.push_back(mark);
                 }
