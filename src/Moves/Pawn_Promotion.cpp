@@ -21,8 +21,9 @@ void Pawn_Promotion::side_effects(Board& board, char file_start, int rank_start)
     int  rank_end = rank_start + rank_change();
 
     Pawn_Move::side_effects(board, file_start, rank_start);
-    board.piece_moved[promote_to.get()] = true;
-    board.piece_on_square(file_end, rank_end) = promote_to; // will call dtor on this if on original board
+
+    // This line will call dtor on this if on original board, so it must be last.
+    board.piece_on_square(file_end, rank_end) = promote_to;
 }
 
 std::string Pawn_Promotion::name() const

@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <set>
 
 #include "Moves/Complete_Move.h"
 #include "Color.h"
@@ -21,6 +22,7 @@ struct Square
     int rank;
 
     bool operator<(const Square& other) const;
+    operator bool() const;
 };
 
 // The distance between two squares in king moves
@@ -84,9 +86,8 @@ class Board
         std::map<std::string, int> repeat_count;
         Color turn_color;
         std::vector<std::string> game_record;
-        std::map<const Piece*, bool> piece_moved;
-        char en_passant_target_file;
-        int en_passant_target_rank;
+        std::set<Square> unmoved_positions;
+        Square en_passant_target;
         std::string starting_fen;
 
         // Caches
@@ -100,13 +101,11 @@ class Board
         std::shared_ptr<const Piece>& piece_on_square(char file, int rank);
         void remove_piece(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
-        bool piece_has_moved(const Piece* piece) const;
         bool no_legal_moves() const;
         void reset_fifty_move_count();
         std::string board_status() const; // for detecting threefold repetition
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();
-        void all_pieces_unmoved();
         bool enough_material_to_checkmate() const;
         static Color square_color(char file, int rank);
         static size_t board_index(char file, int rank);

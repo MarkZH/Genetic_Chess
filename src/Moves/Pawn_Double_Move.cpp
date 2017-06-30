@@ -16,9 +16,16 @@ void Pawn_Double_Move::side_effects(Board& board, char file_start, int rank_star
     Pawn_Move::side_effects(board, file_start, rank_start);
 }
 
-bool Pawn_Double_Move::move_specific_legal(const Board& board, char file_start, int rank_start) const
+bool Pawn_Double_Move::move_specific_legal(const Board&, char /* file_start */, int rank_start) const
 {
-    return ! board.piece_has_moved(file_start, rank_start);
+    if(rank_change() == 2)
+    {
+        return rank_start == 2; // White pawn
+    }
+    else
+    {
+        return rank_start == 7; // Black pawn
+    }
 }
 
 bool Pawn_Double_Move::can_capture() const

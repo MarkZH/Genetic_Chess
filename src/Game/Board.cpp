@@ -26,21 +26,25 @@
 Board::Board() :
     board(64),
     turn_color(WHITE),
-    en_passant_target_file('\0'),
-    en_passant_target_rank(0),
+    en_passant_target({'\0', 0}),
     thinking_indicator(NO_THINKING)
 {
     for(auto color : {WHITE, BLACK})
     {
         int base_rank = (color == WHITE ? 1 : 8);
         piece_on_square('a', base_rank) = std::make_shared<Rook>(color);
+        unmoved_positions.insert({'a', base_rank});
+
         piece_on_square('b', base_rank) = std::make_shared<Knight>(color);
         piece_on_square('c', base_rank) = std::make_shared<Bishop>(color);
         piece_on_square('d', base_rank) = std::make_shared<Queen>(color);
         piece_on_square('e', base_rank) = std::make_shared<King>(color);
+        unmoved_positions.insert({'e', base_rank});
+
         piece_on_square('f', base_rank) = std::make_shared<Bishop>(color);
         piece_on_square('g', base_rank) = std::make_shared<Knight>(color);
         piece_on_square('h', base_rank) = std::make_shared<Rook>(color);
+        unmoved_positions.insert({'h', base_rank});
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
@@ -48,15 +52,13 @@ Board::Board() :
         }
     }
 
-    all_pieces_unmoved();
     ++repeat_count[board_status()]; // Count initial position
 }
 
 Board::Board(const std::string& fen) :
     board(64),
     turn_color(WHITE),
-    en_passant_target_file('\0'),
-    en_passant_target_rank(0),
+    en_passant_target({'\0', 0}),
     starting_fen(fen),
     thinking_indicator(NO_THINKING)
 {
@@ -102,43 +104,29 @@ Board::Board(const std::string& fen) :
             }
         }
     }
-    all_pieces_unmoved();
-
-    // mark pawns not on starting squares as moved
-    for(int rank = 1; rank <= 8; ++rank)
-    {
-        for(char file = 'a'; file <= 'h'; ++file)
-        {
-            auto piece = view_piece_on_square(file, rank);
-            if(piece)
-            {
-                if(piece->is_pawn() && ((piece->color() == WHITE && rank != 2) ||
-                                        (piece->color() == BLACK && rank != 7)))
-                {
-                    piece_moved[piece] = true;
-                }
-            }
-        }
-    }
 
     turn_color = (fen_parse[1] == "w" ? WHITE : BLACK);
 
     auto castling_parse = fen_parse.at(2);
-    if( ! String::contains(castling_parse, 'K'))
+    if(String::contains(castling_parse, 'K'))
     {
-        piece_moved[view_piece_on_square('h', 1)] = true;
+        unmoved_positions.insert({'h', 1});
+        unmoved_positions.insert({'e', 1});
     }
-    if( ! String::contains(castling_parse, 'Q'))
+    if(String::contains(castling_parse, 'Q'))
     {
-        piece_moved[view_piece_on_square('a', 1)] = true;
+        unmoved_positions.insert({'a', 1});
+        unmoved_positions.insert({'e', 1});
     }
-    if( ! String::contains(castling_parse, 'k'))
+    if(String::contains(castling_parse, 'k'))
     {
-        piece_moved[view_piece_on_square('h', 8)] = true;
+        unmoved_positions.insert({'h', 8});
+        unmoved_positions.insert({'e', 8});
     }
-    if( ! String::contains(castling_parse, 'q'))
+    if(String::contains(castling_parse, 'q'))
     {
-        piece_moved[view_piece_on_square('a', 8)] = true;
+        unmoved_positions.insert({'a', 8});
+        unmoved_positions.insert({'e', 8});
     }
 
     auto en_passant_parse = fen_parse.at(3);
@@ -276,10 +264,10 @@ std::string Board::fen_status() const
     }
     s.push_back(' ');
 
-    if(en_passant_target_file != '\0' && en_passant_target_rank != 0)
+    if(en_passant_target)
     {
-        s.push_back(en_passant_target_file);
-        s.push_back(en_passant_target_rank + '0');
+        s.push_back(en_passant_target.file);
+        s.push_back(en_passant_target.rank + '0');
     }
     else
     {
@@ -383,6 +371,30 @@ Game_Result Board::submit_move(const Complete_Move& cm)
         else
         {
             return Game_Result(NONE, "Stalemate", false);
+        }
+    }
+
+    // Check if en passant is actually legal
+    if(en_passant_target)
+    {
+        auto en_passant_legal = false;
+        auto rank_origin = (en_passant_target.rank == 3 ? 4 : 5);
+        for(auto file_origin : {en_passant_target.file - 1, en_passant_target.file + 1})
+        {
+            auto piece = view_piece_on_square(file_origin, rank_origin);
+            if(piece &&
+               piece->color() == whose_turn() &&
+               piece->is_pawn() &&
+               is_legal(file_origin, rank_origin, en_passant_target.file, en_passant_target.rank))
+            {
+                en_passant_legal = true;
+                break;
+            }
+        }
+
+        if( ! en_passant_legal)
+        {
+            clear_en_passant_target();
         }
     }
 
@@ -563,8 +575,12 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
     {
         repeat_count.clear();
     }
+
     piece_on_square(file_end, rank_end) = std::move(piece_on_square(file_start, rank_start));
-    piece_moved[view_piece_on_square(file_end, rank_end)] = true;
+
+    unmoved_positions.erase({file_start, rank_start});
+    unmoved_positions.erase({file_end, rank_end});
+
     clear_en_passant_target();
 }
 
@@ -947,43 +963,19 @@ std::string Board::board_status() const // for 3-fold rep count
 {
     auto status = fen_status();
     size_t space_before_move_counts_index = 0;
-    int space_count = 0;
-    for( ; space_before_move_counts_index < status.size(); ++space_before_move_counts_index)
+    for(size_t i = 0, space_count = 0; i < status.size(); ++i)
     {
-        if(std::isspace(status[space_before_move_counts_index]))
+        if(std::isspace(status[i]))
         {
             if(++space_count == 4)
             {
+                space_before_move_counts_index = i;
                 break;
             }
         }
     }
 
-    status = status.substr(0, space_before_move_counts_index);
-
-    // No en passant target
-    if(status.back() == '-')
-    {
-        return status;
-    }
-
-    // Check if en passant is legal
-    auto capturing_pawn_rank = (whose_turn() == WHITE ? 6 : 4);
-    for(char file : {en_passant_target_file - 1, en_passant_target_file + 1})
-    {
-        auto possible_pawn = view_piece_on_square(file, capturing_pawn_rank);
-        if(possible_pawn
-           && possible_pawn->is_pawn()
-           && possible_pawn->color() == whose_turn())
-        {
-            return status;
-        }
-    }
-
-    // Remove en passant target
-    status.pop_back();
-    status.back() = '-';
-    return status;
+    return status.substr(0, space_before_move_counts_index);
 }
 
 std::string Board::last_move_coordinates() const
@@ -1003,40 +995,23 @@ void Board::set_turn(Color color)
 
 void Board::make_en_passant_targetable(char file, int rank)
 {
-    en_passant_target_file = file;
-    en_passant_target_rank = rank;
+    en_passant_target = {file, rank};
 }
 
 bool Board::is_en_passant_targetable(char file, int rank) const
 {
-    return en_passant_target_file == file &&
-           en_passant_target_rank == rank;
+    return en_passant_target.file == file &&
+           en_passant_target.rank == rank;
 }
 
 void Board::clear_en_passant_target()
 {
-    en_passant_target_file = '\0';
-    en_passant_target_rank = 0;
+    en_passant_target = {'\0', 0};
 }
 
 bool Board::piece_has_moved(char file, int rank) const
 {
-    return piece_has_moved(view_piece_on_square(file, rank));
-}
-
-bool Board::piece_has_moved(const Piece* piece) const
-{
-    // If a square is empty, whatever piece you were looking for
-    // must have moved away.
-    return ( ! piece) || piece_moved.at(piece);
-}
-
-void Board::all_pieces_unmoved()
-{
-    for(const auto& piece : board)
-    {
-        piece_moved[piece.get()] = false;
-    }
+    return unmoved_positions.count({file, rank}) == 0;
 }
 
 Square Board::find_king(Color color) const
@@ -1173,6 +1148,11 @@ bool Square::operator<(const Square& other) const
         return rank < other.rank;
     }
     return file < other.file;
+}
+
+Square::operator bool() const
+{
+    return file != '\0' && rank != 0;
 }
 
 int king_distance(const Square& a, const Square& b)
