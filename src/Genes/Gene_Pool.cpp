@@ -163,7 +163,6 @@ void gene_pool(const std::string& config_file = "")
                   << std::setw(9)  << "Streak\n";
 
         // Write stats for each specimen
-        std::sort(pool.begin(), pool.end());
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_digits + 1) << ai.get_id();
@@ -312,7 +311,7 @@ void gene_pool(const std::string& config_file = "")
         std::cout <<   "Longest lived: " << most_games_survived[pool_index]
                   << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
 
-
+        std::sort(pool.begin(), pool.end());
         write_generation(pools, pool_index, genome_file_name);
 
         // Record best AI from all pools.
@@ -404,6 +403,7 @@ void gene_pool(const std::string& config_file = "")
                               << " to pool "
                               << dest_pool_index << std::endl;
                     loser = winners[source_pool_index]; // winner replaces loser in destination pool
+                    std::sort(dest_pool.begin(), dest_pool.end());
                 }
             }
 
