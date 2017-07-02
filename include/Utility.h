@@ -65,8 +65,7 @@ namespace Math
     const auto win_score = infinity;
     const auto lose_score = -win_score;
 
-    double average_moves_left(double mean_moves, size_t moves_so_far);
-    double poisson_probability(double mean, size_t value);
+    double average_moves_left(double mean_moves, double width, size_t moves_so_far);
 }
 
 class Configuration_File

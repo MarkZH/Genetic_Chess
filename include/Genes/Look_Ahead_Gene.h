@@ -29,11 +29,10 @@ class Look_Ahead_Gene : public Gene
 
     private:
         double mean_game_length; // in moves by one player
+        double game_length_uncertainty; // approximately as a fraction of the mean
         double positions_per_second; // number of positions examined per second
         double speculation_constant; // how often to look ahead even with little time
         double speculation_exponent;
-        double minimum_moves_left; // never assume there are less than this many moves left
-                                   // (prevent using all time on move that's not the last)
 
         double score_board(const Board& board, Color perspective) const override;
         void gene_specific_mutation() override;

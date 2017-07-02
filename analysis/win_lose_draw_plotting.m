@@ -179,7 +179,7 @@ print([raw_data '_moves_in_game.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
 hold all;
-bar(bins, counts, 'k', 'barwidth', 1);
+bar(bins, counts, 'barwidth', 1);
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(number_of_games) ')']);
 title('Number of moves in game')
@@ -189,46 +189,22 @@ mean_moves = mean(moves_in_game);
 mode_moves = mode(moves_in_game);
 std_dev = std(moves_in_game);
 
-probability = zeros(size(counts));
-for index = 1 : length(bins)
-  n = bins(index);
-  p = exp(-mean_moves)*number_of_games;
-  for j = 1 : n
-    p = p*mean_moves/j;
-  end
-  probability(index) = p;
-end
-plot(bins, probability, 'linewidth', 3);
+% Log-normal fit
+valid = (bins > 15);
+mean_log = sum(log(bins(valid)).*counts(valid))/sum(counts(valid));
+std_log = sqrt(sum(((log(bins(valid)) - mean_log).^2).*counts(valid))/sum(counts(valid)));
 
-probability = zeros(size(counts));
-for index = 1 : length(bins)
-  n = bins(index);
-  p = exp(-mode_moves)*number_of_games;
-  for j = 1 : n
-    p = p*mode_moves/j;
-  end
-  probability(index) = p;
-end
-plot(bins, probability, 'linewidth', 3);
+fit = sum(counts)*exp(-.5*((log(bins) - mean_log)/std_log).^2)./(bins*std_log*sqrt(2*pi));
+plot(bins, fit, 'linewidth', 3);
 
-probability = (1/(sqrt(2*pi)*std_dev))*exp(-0.5*((bins - mean_moves)/std_dev).^2);
-probability = (number_of_games/sum(probability))*probability; % normalize
-plot(bins, probability, 'linewidth', 3);
-
-probability = (1/(sqrt(2*pi)*std_dev))*exp(-0.5*((bins - mode_moves)/std_dev).^2);
-probability = (number_of_games/sum(probability))*probability; % normalize
-plot(bins, probability, 'linewidth', 3);
-
-legend('Histogram',
-       'Poisson distribution (mean)',
-       'Poisson distribution (mode)',
-       'Normal distribution (mean)',
-       'Normal distribution (mode)');
+legend('Histogram', 'Log-Normal distribution');
 
 stats = {['Mean = ' num2str(mean_moves)], ...
          ['Median = ' num2str(median(moves_in_game))], ...
          ['Mode = ' num2str(mode_moves)], ...
          ['\sigma = ' num2str(std_dev)], ...
+         ['Log-Norm Peak = ' num2str(exp(mean_log))] ...
+         ['Log-Norm Width = ' num2str(std_log)] ...
          ['Min = ' num2str(min(moves_in_game))], ...
          ['Max = ' num2str(max(moves_in_game))]};
 xl = xlim;

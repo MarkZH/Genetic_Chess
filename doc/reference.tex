@@ -117,7 +117,7 @@ This gene determines all aspects of the Genetic AIs time management. There are f
 \end{enumerate}
 When it starts the algorithm to choose a move, it allocates a fraction of the time left on the clock so that all subsequent moves get equal time. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a Poisson distribution with a mean given by the first parameter listed above:
 \[N = \frac{\sum_{i = n + 1}^\infty P(i)\times{}i}{\sum_{i = n + 1}^\infty P(i)} = \frac{\sum_{i = n + 1}^\infty \frac{N_g^{\phantom{g}i}}{i!}\times{}i}{\sum_{i = n + 1}^\infty \frac{N_g^{\phantom{g}i}}{i!}}\]
-where \(N\) is the estimated number of moves left in the game, \(n\) is the number of moves so far, \(N_g\) is the genetically determined average moves per game (the first parameter in the list above). The Poisson probability distribution is given by
+where \(N\) is the estimated total number of moves in the game, given that \(n\) moves have already ben made, \(N_g\) is the genetically determined average moves per game (the first parameter in the list above). The Poisson probability distribution is given by
 \[P(i) = e^{-N_g}\frac{N_g^{\phantom{g}i}}{i!}.\]
 Despite the summation going to infinity, the computation does halt because the probability drops off exponentially for \(i > N_g\) and the summands fall below floating point resolution
 
@@ -127,6 +127,16 @@ Unfortunately, it turns out that the Poisson distribution is not a good fit for 
 	\includegraphics[width=\textwidth]{game_length_distribution.png}
 	\caption{The distribution of the number of moves in a game (with one move consisting of both a black and white play). The (mean) and (mode) designations in the legend indicate which statistic was used as the mean parameter of the distribution. The spike at 9~moves was created just after a change to the program that resulted in much faster changes in board state (see Section~\ref{board-submit-move-section} for details).}
 	\label{game-length-plot}
+\end{figure}
+
+Further research has shown that the log-normal distribution~\cite{log-norm-wiki} is a much better fit to the data, as pointed out on Stack Exchange~\cite{log-norm-chess-se}. The probability of a game taking $i$ moves to complete is given by
+\[P(i) = \frac{1}{iS\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{\ln{i} - M}{S}\right)},\]
+where \(S\) and \(M\) are the standard deviation and mean of \(\ln{N}\), respectively. A plot of the number of moves in a long gene pool run can be seen in Figure~\ref{log-norm-plot}. This probability function can be directly substituted into the above equation for the number of moves left. The other advantage of this distribution is that the expected number of moves has an analytic solution (when the \(\textrm{erf}()\) function is included).
+\begin{figure}[tbh]
+	\centering
+	\includegraphics[width=\textwidth]{game_length_log_norm_distribution.png}
+	\caption{The distribution of the number of moves in a game with a log-normal fit. The Log-Norm parameters listed are \(M\) for the Peak parameter and \(S\) for the Width parameter. To obtain a better fit, only games longer than 15~moves were considered, as shorter games were primarily by ill-adapted AIs, especially at the beginning of the gene pool run.}
+	\label{log-norm-plot}
 \end{figure}
 
 If the expected number of moves left is less than the minimum number of moves to allocate time for (the second parameter in the above list), then that minimum is used instead. Finally, if the result of that comparison is greater than the number of moves that will result in a clock reset, then the latter will be used to determine how much time will be used. In a game with 40/5~time control, where five minutes are added to the clock every 40~moves, the 40th move can use all the remaining time since an extra five minutes will be added after the move. Whatever the final number of moves left in the game is determined to be, the time on the clock is divided by that number to determine how much time to take to choose a move.
@@ -412,6 +422,12 @@ G.S. Hornby, A. Globus, D.S. Linden, J.D. Lohn, ``Automated Antenna Design with 
 
 \bibitem{evolved-stellarator}
 W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a genetic algorithm for compact stellarator coil design.'' IAEA Nuclear Fusion, Vol. 41, No. 9. 1185-1195
+
+\bibitem{log-norm-wiki}
+\url{https://en.wikipedia.org/wiki/Log-normal\_distribution}
+
+\bibitem{log-norm-chess-se}
+\url{https://chess.stackexchange.com/a/4899/5819}
 
 \end{thebibliography}
 

@@ -198,38 +198,28 @@ bool Random::success_probability(double probability)
 
 
 // Mean moves left in game given that a number of moves have been made already.
-double Math::average_moves_left(double mean_moves, size_t moves_so_far)
+double Math::average_moves_left(double mean_moves, double width, size_t moves_so_far)
 {
-    double A = 0;
-    double A_prev = -1;
-    double B = 0;
-    double B_prev = -1;
+    // Assumes the number of moves in a game has a log-normal distribution.
+    //
+    // A = Sum(x = moves_so_far + 1 to infinity) P(x)*x = average number of moves
+    //                                                    given game has already progressed
+    //                                                    moves_so_far
+    //
+    // B = Sum(x = moves_so_far + 1 to infinity) P(x) = renormalization of P(x) for a
+    //                                                  truncated range
 
-    // Calculate $$\textrm{moves left}=\frac{\sum_{n=n_0+1}^\infty nP(n)}}{\sum_{n=n_0+1}^\infty P(n)}$$
-    // Here, P(n) is the Poisson distribution
-    for(size_t N = moves_so_far + 1; A != A_prev && B != B_prev; ++N)
-    {
-        A_prev = A;
-        B_prev = B;
+    auto M = std::log(mean_moves);
+    auto S = width;
+    auto S2 = std::pow(S, 2);
+    auto Sr2 = S*std::sqrt(2);
+    auto ln_x = std::log(moves_so_far);
 
-        auto p = poisson_probability(mean_moves, N);
-        A += p;
-        B += N*p;
-    }
+    auto A = 0.5*std::exp(M + S2/2)*(1 + std::erf((M + S2 - ln_x)/Sr2));
+    auto B = 0.5*(1 + std::erf((M-ln_x)/Sr2));
 
-    return B/A - moves_so_far;
-}
-
-
-double Math::poisson_probability(double mean, size_t value)
-{
-    auto p = std::exp(-mean);
-    for(size_t i = 1; i <= value; ++i)
-    {
-        p *= (mean/i);
-    }
-
-    return p;
+    auto expected_mean = A/B;
+    return expected_mean - moves_so_far;
 }
 
 

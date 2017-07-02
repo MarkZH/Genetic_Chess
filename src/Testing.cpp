@@ -185,21 +185,19 @@ void run_tests()
     }
 
 
-    // Poisson distribution check
-    const double mean_moves = 35.0;
-    double mean_moves_calc = 0.0;
-    double mean_moves_calc_prev = -1.0;
-    for(int i = 1; mean_moves_calc != mean_moves_calc_prev; ++i)
+    // Log-Norm distribution check
+    const double mean_moves = 26.0;
+    const double width = .5;
+    const size_t moves_so_far = 22;
+    auto moves_left = Math::average_moves_left(mean_moves, width, moves_so_far);
+    auto expected_moves_left = 15.2629;
+    if(std::abs(moves_left - expected_moves_left) > 1e-4)
     {
-        mean_moves_calc_prev = mean_moves_calc;
-        mean_moves_calc += Math::poisson_probability(mean_moves, i)*i;
-    }
-
-    if(std::abs(mean_moves - mean_moves_calc) > 1e-6)
-    {
-        std::cerr << "Poisson distribution test failed. Expected: " << mean_moves << " Result: " << mean_moves_calc << std::endl;
+        std::cout << "Log-Norm failed: Expected: " << expected_moves_left
+                  << " --- Got: " << moves_left << std::endl;
         tests_passed = false;
     }
+
 
     // Clock time reset test
     auto time = 30;

@@ -11,9 +11,9 @@
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
+    game_length_uncertainty(0.5),
     positions_per_second(0.01),
-    speculation_constant(0.0),
-    minimum_moves_left(0)
+    speculation_constant(0.0)
 {
     recalculate_exponent();
 }
@@ -21,17 +21,17 @@ Look_Ahead_Gene::Look_Ahead_Gene() :
 void Look_Ahead_Gene::reset_properties() const
 {
     properties["Mean Game Length"] = mean_game_length;
+    properties["Game Length Uncertainty"] = game_length_uncertainty;
     properties["Positions Per Second"] = positions_per_second;
     properties["Speculation Constant"] = speculation_constant;
-    properties["Minimum Moves Left"] = minimum_moves_left;
 }
 
 void Look_Ahead_Gene::load_properties()
 {
     mean_game_length = properties["Mean Game Length"];
+    game_length_uncertainty = properties["Game Length Uncertainty"];
     positions_per_second = properties["Positions Per Second"];
     speculation_constant = properties["Speculation Constant"];
-    minimum_moves_left = properties["Minimum Moves Left"];
     recalculate_exponent();
 }
 
@@ -46,8 +46,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
     auto moves_to_reset = clock.moves_to_reset(board.whose_turn());
 
     auto moves_so_far = board.get_game_record().size()/2; // only count moves by this player
-    auto moves_left = Math::average_moves_left(mean_game_length, moves_so_far);
-    moves_left = std::max(moves_left, minimum_moves_left);
+    auto moves_left = Math::average_moves_left(mean_game_length, game_length_uncertainty, moves_so_far);
 
     return time_left/std::min(moves_left, double(moves_to_reset));
 }
@@ -61,16 +60,16 @@ void Look_Ahead_Gene::gene_specific_mutation()
             mean_game_length = std::max(1.0, mean_game_length + Random::random_normal(1.0));
             break;
         case 2:
-            positions_per_second = std::max(0.01, positions_per_second + Random::random_normal(10.0));
+            game_length_uncertainty = std::abs(game_length_uncertainty + Random::random_normal(0.01));
             break;
         case 3:
+            positions_per_second = std::max(0.01, positions_per_second + Random::random_normal(10.0));
+            break;
+        case 4:
             speculation_constant += Random::random_normal(0.01);
             speculation_constant = std::max(speculation_constant, 0.0);
             speculation_constant = std::min(speculation_constant, 1.0);
             recalculate_exponent();
-            break;
-        case 4:
-            minimum_moves_left = std::max(0.0, minimum_moves_left + Random::random_normal(1.0));
             break;
         default:
             throw std::runtime_error("Bad Look_Ahead_Gene mutation: " + std::to_string(choice));
