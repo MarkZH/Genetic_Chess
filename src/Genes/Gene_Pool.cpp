@@ -306,11 +306,6 @@ void gene_pool(const std::string& config_file = "")
             std::cout << std::endl;
         }
 
-        std::cout << "\nMost wins:     " << most_wins[pool_index]
-                  << " by ID " << most_wins_player[pool_index].get_id() << std::endl;
-        std::cout <<   "Longest lived: " << most_games_survived[pool_index]
-                  << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
-
         std::sort(pool.begin(), pool.end());
         write_generation(pools, pool_index, genome_file_name);
 
@@ -323,23 +318,6 @@ void gene_pool(const std::string& config_file = "")
         }
         std::ofstream best_file(genome_file_name + "_best_genome.txt");
         best_ai.print_genome(best_file);
-
-
-        // Pause gene pool
-        if(signal_activated == 1)
-        {
-            std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
-            std::cin.get();
-        }
-
-        if(signal_activated >= 2)
-        {
-            return;
-        }
-        else
-        {
-            signal_activated = 0;
-        }
 
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
@@ -356,6 +334,27 @@ void gene_pool(const std::string& config_file = "")
                 most_games_survived[pool_index] = games_survived;
                 most_games_survived_player[pool_index] = ai;
             }
+        }
+
+        std::cout << "\nMost wins:     " << most_wins[pool_index]
+                  << " by ID " << most_wins_player[pool_index].get_id() << std::endl;
+        std::cout <<   "Longest lived: " << most_games_survived[pool_index]
+                  << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
+
+        // Pause gene pool
+        if(signal_activated == 1)
+        {
+            std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
+            std::cin.get();
+        }
+
+        if(signal_activated >= 2)
+        {
+            return;
+        }
+        else
+        {
+            signal_activated = 0;
         }
 
         game_count[pool_index] += results.size();
