@@ -21,6 +21,7 @@ Genetic_AI::Genetic_AI() :
     genome(),
     id(next_id++)
 {
+    calibrate_thinking_speed();
 }
 
 // Sexual reproduction
@@ -28,6 +29,7 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     genome(A.genome, B.genome),
     id(next_id++)
 {
+    calibrate_thinking_speed();
 }
 
 Genetic_AI::Genetic_AI(const std::string& file_name)
@@ -39,11 +41,15 @@ Genetic_AI::Genetic_AI(const std::string& file_name)
     }
 
     read_from(ifs);
+
+    calibrate_thinking_speed();
 }
 
 Genetic_AI::Genetic_AI(std::istream& is)
 {
     read_from(is);
+
+    calibrate_thinking_speed();
 }
 
 Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
@@ -71,6 +77,9 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
         if(id_in == std::stoi(param_value[1]))
         {
             genome.read_from(ifs);
+
+            calibrate_thinking_speed();
+
             return;
         }
     }
@@ -115,6 +124,13 @@ void Genetic_AI::read_from(std::istream& is)
 
 const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clock) const
 {
+    // Erase data from previous board when starting new game
+    if(board.get_game_record().size() <= 1)
+    {
+        principal_variation.clear();
+        commentary.clear();
+    }
+
     nodes_searched = 0;
     clock_start_time = clock.time_left(clock.running_for());
 
@@ -179,6 +195,8 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
         principal_variation.clear();
     }
     commentary.push_back(principal_variation);
+
+    positions_per_second = nodes_searched/(clock_start_time - clock.time_left(clock.running_for()));
 
     return result.move;
 }
@@ -356,7 +374,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
         else
         {
-            recurse = genome.enough_time_to_recurse(time_allotted_for_this_move, next_board);
+            recurse = genome.enough_time_to_recurse(time_allotted_for_this_move, next_board, positions_per_second);
         }
 
         Game_Tree_Node_Result result;
@@ -507,3 +525,17 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
 
     std::cout << '\n';
 }
+
+void Genetic_AI::calibrate_thinking_speed()
+{
+    positions_per_second = 100; // very conservative initial guess
+    auto calibration_time = 1.0; // seconds
+    Board board;
+    Clock clock(calibration_time, 1, 0.0);
+    clock.start();
+    choose_move(board, clock);
+    // choose_move() keeps track of the time it takes and the number of positions
+    // it sees, so this practice move will update the positions_per_second to a
+    // more reasonable value.
+}
+

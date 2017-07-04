@@ -74,8 +74,12 @@ class Genetic_AI : public Player
         int id;
         mutable std::vector<std::string> principal_variation;
         mutable std::vector<std::vector<std::string>> commentary;
+
+        // Monitor search speed to adapt to different computers/competing workloads
         mutable int nodes_searched;
         mutable double clock_start_time;
+        mutable double positions_per_second;
+
 
         void read_from(std::istream& is);
 
@@ -91,6 +95,8 @@ class Genetic_AI : public Player
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                   const Clock& clock,
                                   Color perspective) const;
+
+        void calibrate_thinking_speed();
 };
 
 #endif // GENETIC_AI_H

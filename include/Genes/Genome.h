@@ -28,7 +28,9 @@ class Genome
         void mutate();
 
         double time_to_examine(const Board& board, const Clock& clock) const; // how much time to use for this move
-        bool enough_time_to_recurse(double time_allotted, const Board& board) const;
+        bool enough_time_to_recurse(double time_allotted,
+                                    const Board& board,
+                                    double positions_per_second) const;
 
         void print(std::ostream& os) const;
 

@@ -200,7 +200,7 @@ double Genome::time_to_examine(const Board& board, const Clock& clock) const
     return static_cast<Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
 }
 
-bool Genome::enough_time_to_recurse(double time_allotted, const Board& board) const
+bool Genome::enough_time_to_recurse(double time_allotted, const Board& board, double positions_per_second) const
 {
-    return static_cast<Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->enough_time_to_recurse(time_allotted, board);
+    return static_cast<Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->enough_time_to_recurse(time_allotted, board, positions_per_second);
 }

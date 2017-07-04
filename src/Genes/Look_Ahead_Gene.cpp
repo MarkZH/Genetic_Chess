@@ -12,7 +12,6 @@
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
     game_length_uncertainty(0.5),
-    positions_per_second(0.01),
     speculation_constant(0.0)
 {
     recalculate_exponent();
@@ -22,7 +21,6 @@ void Look_Ahead_Gene::reset_properties() const
 {
     properties["Mean Game Length"] = mean_game_length;
     properties["Game Length Uncertainty"] = game_length_uncertainty;
-    properties["Positions Per Second"] = positions_per_second;
     properties["Speculation Constant"] = speculation_constant;
 }
 
@@ -30,7 +28,6 @@ void Look_Ahead_Gene::load_properties()
 {
     mean_game_length = properties["Mean Game Length"];
     game_length_uncertainty = properties["Game Length Uncertainty"];
-    positions_per_second = properties["Positions Per Second"];
     speculation_constant = properties["Speculation Constant"];
     recalculate_exponent();
 }
@@ -53,7 +50,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
 
 void Look_Ahead_Gene::gene_specific_mutation()
 {
-    auto choice = Random::random_integer(1, 4);
+    auto choice = Random::random_integer(1, 3);
     switch(choice)
     {
         case 1:
@@ -63,9 +60,6 @@ void Look_Ahead_Gene::gene_specific_mutation()
             game_length_uncertainty = std::abs(game_length_uncertainty + Random::random_normal(0.01));
             break;
         case 3:
-            positions_per_second = std::max(0.01, positions_per_second + Random::random_normal(10.0));
-            break;
-        case 4:
             speculation_constant += Random::random_normal(0.01);
             speculation_constant = std::max(speculation_constant, 0.0);
             speculation_constant = std::min(speculation_constant, 1.0);
@@ -91,19 +85,7 @@ double Look_Ahead_Gene::score_board(const Board&, Color) const
     return 0.0;
 }
 
-double Look_Ahead_Gene::minimum_time_to_recurse(const Board& board) const
-{
-    if(is_active())
-    {
-        return board.legal_moves().size()/positions_per_second;
-    }
-    else
-    {
-        return Math::infinity;
-    }
-}
-
-bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& board) const
+bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& board, double positions_per_second) const
 {
     // The idea is that, if the time allotted to a move is less than the time
     // this gene thinks it takes to examine every move of the resulting board state
@@ -112,7 +94,8 @@ bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& 
     // specifies how often this should happen, with 0 being never and 1 being always
     // (see the recalculate_exponent() function for the math).
 
-    auto base = time_allotted/minimum_time_to_recurse(board);
+    auto minimum_time_to_recurse = board.legal_moves().size()/positions_per_second;
+    auto base = time_allotted/minimum_time_to_recurse;
 
     if(base <= 0.0)
     {
