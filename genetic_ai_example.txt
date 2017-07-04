@@ -1,53 +1,52 @@
-ID: 135099
+ID: 7025
 
 Name: Piece Strength Gene
-B: 5.53978
-N: 3.22025
-P: -1.01076
-Q: 25.3545
-R: 11.8576
+B: 1.76023
+N: 2.61114
+P: 1.06377
+Q: 8.25702
+R: 3.06281
 ACTIVE
 
 Name: Look Ahead Gene
-Game Length Uncertainty: 0.452455
-Mean Game Length: 58.6669
-Positions Per Second: 387.915
-Speculation Constant: 0.235753
+Game Length Uncertainty: 0.495403
+Mean Game Length: 49.9006
+Speculation Constant: 0.0557063
 ACTIVE
 
 Name: Total Force Gene
-Priority: 292.881
+Priority: 45.4606
 ACTIVE
 
 Name: Freedom to Move Gene
-Priority: 150.861
+Priority: 17.0748
 INACTIVE
 
 Name: Pawn Advancement Gene
-Priority: 300.961
-ACTIVE
+Priority: -5.51362
+INACTIVE
 
 Name: Opponent Pieces Targeted Gene
-Priority: 89.0997
-ACTIVE
+Priority: 18.6658
+INACTIVE
 
 Name: Sphere of Influence Gene
-King Target Factor: 0.0580572
-Legal Bonus: 0.729135
-Priority: 103.366
+King Target Factor: 0.199738
+Legal Bonus: 0.787769
+Priority: 8.16341
 ACTIVE
 
 Name: King Confinement Gene
-Priority: 62.3087
-ACTIVE
+Priority: 70.4341
+INACTIVE
 
 Name: King Protection Gene
-Priority: -191.092
+Priority: -84.2657
 INACTIVE
 
 Name: Castling Possible Gene
-Kingside Preference: 0.370806
-Priority: 132.137
+Kingside Preference: 0.469095
+Priority: 3.77016
 INACTIVE
 
 END
