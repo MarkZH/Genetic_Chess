@@ -141,8 +141,10 @@ end
 print([raw_data '_game_time_left.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
-hist([black_time_left; white_time_left], 300);
-xlabel('Time left on clock');
+all_time_left = [black_time_left; white_time_left]./[game_time; game_time];
+all_time_left(all_time_left < 0) = -.05;
+hist(all_time_left, 100);
+xlabel('Fraction of time left on clock');
 ylabel(['Counts (total = ' num2str(number_of_games) ')']);
 title('Time left on clock at end of game')
 print([raw_data '_game_time_left_histogram.png']);
