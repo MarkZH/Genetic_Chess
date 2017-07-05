@@ -215,8 +215,8 @@ double Math::average_moves_left(double mean_moves, double width, size_t moves_so
     auto Sr2 = S*std::sqrt(2);
     auto ln_x = std::log(moves_so_far);
 
-    auto A = 0.5*std::exp(M + S2/2)*(1 + std::erf((M + S2 - ln_x)/Sr2));
-    auto B = 0.5*(1 + std::erf((M-ln_x)/Sr2));
+    auto A = std::exp(M + S2/2)*(1 + std::erf((M + S2 - ln_x)/Sr2));
+    auto B = 1 + std::erf((M-ln_x)/Sr2);
 
     auto expected_mean = A/B;
     return expected_mean - moves_so_far;
