@@ -10,8 +10,6 @@
 class CECP_Mediator;
 class UCI_Mediator;
 
-using fractional_seconds = std::chrono::duration<double>;
-
 class Clock
 {
     public:
@@ -26,6 +24,8 @@ class Clock
         Color running_for() const;
 
     private:
+        using fractional_seconds = std::chrono::duration<double>;
+
         // timers are mutable so they can be adjusted by external interfaces (xboard, UCI, etc.)
         mutable std::map<Color, fractional_seconds> timers;
 

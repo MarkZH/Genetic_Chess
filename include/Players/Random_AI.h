@@ -1,7 +1,12 @@
 #ifndef RANDOM_AI_H
 #define RANDOM_AI_H
 
+#include <string>
+
 #include "Player.h"
+
+class Board;
+class Clock;
 
 class Random_AI : public Player
 {

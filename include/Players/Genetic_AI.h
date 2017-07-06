@@ -40,8 +40,10 @@ class Genetic_AI : public Player
 
     private:
         Genome genome;
+
         static int next_id;
         int id;
+
         mutable std::vector<std::string> principal_variation;
         mutable std::vector<std::vector<std::string>> commentary;
 

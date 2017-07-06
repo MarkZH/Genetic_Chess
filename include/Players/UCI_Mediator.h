@@ -1,11 +1,14 @@
 #ifndef UCI_MEDIATOR_H
 #define UCI_MEDIATOR_H
 
+#include <string>
+
 #include "Outside_Player.h"
+#include "Game/Color.h"
 
-#include "Player.h"
-
-class Game_Result;
+class Board;
+class Clock;
+struct Game_Result;
 
 class UCI_Mediator : public Outside_Player
 {
