@@ -6,13 +6,13 @@ LDFLAGS = -pthread
 
 OUT_RELEASE = bin/release/genetic_chess
 RELEASE_OBJ_DIR = obj/release
-OBJ_RELEASE = $(RELEASE_OBJ_DIR)/main.o $(RELEASE_OBJ_DIR)/src/Exceptions/Game_Ending_Exception.o $(RELEASE_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o $(RELEASE_OBJ_DIR)/src/Game/Board.o $(RELEASE_OBJ_DIR)/src/Game/Clock.o $(RELEASE_OBJ_DIR)/src/Game/Color.o $(RELEASE_OBJ_DIR)/src/Game/Game.o $(RELEASE_OBJ_DIR)/src/Game/Game_Result.o $(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o $(RELEASE_OBJ_DIR)/src/Genes/Genome.o $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(RELEASE_OBJ_DIR)/src/Moves/Complete_Move.o $(RELEASE_OBJ_DIR)/src/Moves/En_Passant.o $(RELEASE_OBJ_DIR)/src/Moves/Kingside_Castle.o $(RELEASE_OBJ_DIR)/src/Moves/Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Capture.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(RELEASE_OBJ_DIR)/src/Moves/Queenside_Castle.o $(RELEASE_OBJ_DIR)/src/Pieces/Bishop.o $(RELEASE_OBJ_DIR)/src/Pieces/King.o $(RELEASE_OBJ_DIR)/src/Pieces/Knight.o $(RELEASE_OBJ_DIR)/src/Pieces/Pawn.o $(RELEASE_OBJ_DIR)/src/Pieces/Piece.o $(RELEASE_OBJ_DIR)/src/Pieces/Queen.o $(RELEASE_OBJ_DIR)/src/Pieces/Rook.o $(RELEASE_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o $(RELEASE_OBJ_DIR)/src/Players/Outside_Player.o $(RELEASE_OBJ_DIR)/src/Players/Player.o $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o $(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o $(RELEASE_OBJ_DIR)/src/Stalemate_Search.o $(RELEASE_OBJ_DIR)/src/Testing.o $(RELEASE_OBJ_DIR)/src/Utility.o 
+OBJ_RELEASE = $(RELEASE_OBJ_DIR)/main.o $(RELEASE_OBJ_DIR)/src/Exceptions/Game_Ending_Exception.o $(RELEASE_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o $(RELEASE_OBJ_DIR)/src/Game/Board.o $(RELEASE_OBJ_DIR)/src/Game/Clock.o $(RELEASE_OBJ_DIR)/src/Game/Color.o $(RELEASE_OBJ_DIR)/src/Game/Game.o $(RELEASE_OBJ_DIR)/src/Game/Game_Result.o $(RELEASE_OBJ_DIR)/src/Game/Square.o $(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o $(RELEASE_OBJ_DIR)/src/Genes/Genome.o $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(RELEASE_OBJ_DIR)/src/Moves/Complete_Move.o $(RELEASE_OBJ_DIR)/src/Moves/En_Passant.o $(RELEASE_OBJ_DIR)/src/Moves/Kingside_Castle.o $(RELEASE_OBJ_DIR)/src/Moves/Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Capture.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(RELEASE_OBJ_DIR)/src/Moves/Queenside_Castle.o $(RELEASE_OBJ_DIR)/src/Pieces/Bishop.o $(RELEASE_OBJ_DIR)/src/Pieces/King.o $(RELEASE_OBJ_DIR)/src/Pieces/Knight.o $(RELEASE_OBJ_DIR)/src/Pieces/Pawn.o $(RELEASE_OBJ_DIR)/src/Pieces/Piece.o $(RELEASE_OBJ_DIR)/src/Pieces/Queen.o $(RELEASE_OBJ_DIR)/src/Pieces/Rook.o $(RELEASE_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o $(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o $(RELEASE_OBJ_DIR)/src/Players/Outside_Player.o $(RELEASE_OBJ_DIR)/src/Players/Player.o $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o $(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o $(RELEASE_OBJ_DIR)/src/Stalemate_Search.o $(RELEASE_OBJ_DIR)/src/Testing.o $(RELEASE_OBJ_DIR)/src/Utility.o 
 CFLAGS_RELEASE = -s -O2 -DNDEBUG
 
 
 OUT_DEBUG = bin/debug/genetic_chess
 DEBUG_OBJ_DIR = obj/debug
-OBJ_DEBUG = $(DEBUG_OBJ_DIR)/main.o $(DEBUG_OBJ_DIR)/src/Exceptions/Game_Ending_Exception.o $(DEBUG_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o $(DEBUG_OBJ_DIR)/src/Game/Board.o $(DEBUG_OBJ_DIR)/src/Game/Clock.o $(DEBUG_OBJ_DIR)/src/Game/Color.o $(DEBUG_OBJ_DIR)/src/Game/Game.o $(DEBUG_OBJ_DIR)/src/Game/Game_Result.o $(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o $(DEBUG_OBJ_DIR)/src/Genes/Genome.o $(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(DEBUG_OBJ_DIR)/src/Moves/Complete_Move.o $(DEBUG_OBJ_DIR)/src/Moves/En_Passant.o $(DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o $(DEBUG_OBJ_DIR)/src/Moves/Move.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Move.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(DEBUG_OBJ_DIR)/src/Moves/Queenside_Castle.o $(DEBUG_OBJ_DIR)/src/Pieces/Bishop.o $(DEBUG_OBJ_DIR)/src/Pieces/King.o $(DEBUG_OBJ_DIR)/src/Pieces/Knight.o $(DEBUG_OBJ_DIR)/src/Pieces/Pawn.o $(DEBUG_OBJ_DIR)/src/Pieces/Piece.o $(DEBUG_OBJ_DIR)/src/Pieces/Queen.o $(DEBUG_OBJ_DIR)/src/Pieces/Rook.o $(DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o $(DEBUG_OBJ_DIR)/src/Players/Outside_Player.o $(DEBUG_OBJ_DIR)/src/Players/Player.o $(DEBUG_OBJ_DIR)/src/Players/Random_AI.o $(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o $(DEBUG_OBJ_DIR)/src/Stalemate_Search.o $(DEBUG_OBJ_DIR)/src/Testing.o $(DEBUG_OBJ_DIR)/src/Utility.o 
+OBJ_DEBUG = $(DEBUG_OBJ_DIR)/main.o $(DEBUG_OBJ_DIR)/src/Exceptions/Game_Ending_Exception.o $(DEBUG_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o $(DEBUG_OBJ_DIR)/src/Game/Board.o $(DEBUG_OBJ_DIR)/src/Game/Clock.o $(DEBUG_OBJ_DIR)/src/Game/Color.o $(DEBUG_OBJ_DIR)/src/Game/Game.o $(DEBUG_OBJ_DIR)/src/Game/Game_Result.o $(DEBUG_OBJ_DIR)/src/Game/Square.o $(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o $(DEBUG_OBJ_DIR)/src/Genes/Genome.o $(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(DEBUG_OBJ_DIR)/src/Moves/Complete_Move.o $(DEBUG_OBJ_DIR)/src/Moves/En_Passant.o $(DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o $(DEBUG_OBJ_DIR)/src/Moves/Move.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Move.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(DEBUG_OBJ_DIR)/src/Moves/Queenside_Castle.o $(DEBUG_OBJ_DIR)/src/Pieces/Bishop.o $(DEBUG_OBJ_DIR)/src/Pieces/King.o $(DEBUG_OBJ_DIR)/src/Pieces/Knight.o $(DEBUG_OBJ_DIR)/src/Pieces/Pawn.o $(DEBUG_OBJ_DIR)/src/Pieces/Piece.o $(DEBUG_OBJ_DIR)/src/Pieces/Queen.o $(DEBUG_OBJ_DIR)/src/Pieces/Rook.o $(DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o $(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o $(DEBUG_OBJ_DIR)/src/Players/Outside_Player.o $(DEBUG_OBJ_DIR)/src/Players/Player.o $(DEBUG_OBJ_DIR)/src/Players/Random_AI.o $(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o $(DEBUG_OBJ_DIR)/src/Stalemate_Search.o $(DEBUG_OBJ_DIR)/src/Testing.o $(DEBUG_OBJ_DIR)/src/Utility.o 
 CFLAGS_DEBUG = -g -DDEBUG
 
 
@@ -71,7 +71,7 @@ $(DEBUG_OBJ_DIR)/src/Exceptions/Game_Ending_Exception.o : include/Exceptions/Gam
 $(DEBUG_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o : include/Exceptions/Illegal_Move_Exception.h src/Exceptions/Illegal_Move_Exception.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Exceptions/Illegal_Move_Exception.cpp -o $(DEBUG_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o
 
-$(DEBUG_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Game/Game_Result.h include/Players/Player.h include/Players/Thinking.h src/Game/Board.cpp include/Game/Clock.h include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Game/Square.h include/Game/Game_Result.h include/Players/Player.h include/Players/Thinking.h src/Game/Board.cpp include/Game/Clock.h include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Game/Board.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Board.o
 
 $(DEBUG_OBJ_DIR)/src/Game/Clock.o : include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h src/Game/Clock.cpp
@@ -85,6 +85,9 @@ $(DEBUG_OBJ_DIR)/src/Game/Game.o : include/Game/Game.h include/Game/Color.h src/
 
 $(DEBUG_OBJ_DIR)/src/Game/Game_Result.o : include/Game/Game_Result.h include/Game/Color.h src/Game/Game_Result.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Game/Game_Result.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Game_Result.o
+
+$(DEBUG_OBJ_DIR)/src/Game/Square.o : include/Game/Square.h src/Game/Square.cpp
+	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Game/Square.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Square.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Castling_Possible_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o
@@ -101,7 +104,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h include/Playe
 $(DEBUG_OBJ_DIR)/src/Genes/Genome.o : include/Genes/Genome.h include/Game/Color.h include/Genes/Gene.h src/Genes/Genome.cpp include/Game/Board.h include/Game/Game_Result.h include/Utility.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Castling_Possible_Gene.h include/Genes/Piece_Strength_Gene.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Genome.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Genome.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confinement_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Pieces/Piece.h
+$(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confinement_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Game/Square.h include/Pieces/Piece.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/King_Confinement_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o : include/Genes/King_Protection_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Pieces/Piece.h
@@ -119,7 +122,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o : include/Genes/Pawn_Advancem
 $(DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o : include/Genes/Piece_Strength_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Piece_Strength_Gene.cpp include/Utility.h include/Pieces/Piece.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Piece_Strength_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o : include/Genes/Sphere_of_Influence_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Sphere_of_Influence_Gene.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o : include/Genes/Sphere_of_Influence_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Sphere_of_Influence_Gene.cpp include/Game/Board.h include/Game/Square.h include/Moves/Complete_Move.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o : include/Genes/Total_Force_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Total_Force_Gene.cpp include/Game/Board.h include/Pieces/Piece.h include/Genes/Piece_Strength_Gene.h
@@ -185,7 +188,10 @@ $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h i
 $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Game_Result.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Claude_Shannon_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Complete_Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Players/Thinking.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : include/Players/Game_Tree_Node_Result.h include/Moves/Complete_Move.h include/Game/Color.h src/Players/Game_Tree_Node_Result.cpp include/Utility.h
+	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Game_Tree_Node_Result.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
+
+$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Players/Thinking.h include/Players/Game_Tree_Node_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Genetic_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h
@@ -200,13 +206,13 @@ $(DEBUG_OBJ_DIR)/src/Players/Player.o : include/Players/Player.h src/Players/Pla
 $(DEBUG_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include/Players/Player.h src/Players/Random_AI.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/Random_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Random_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h include/Players/Player.h src/Players/UCI_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h include/Game/Color.h src/Players/UCI_Mediator.cpp include/Players/Player.h include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Players/UCI_Mediator.cpp -o $(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o
 
 $(DEBUG_OBJ_DIR)/src/Stalemate_Search.o : include/Stalemate_Search.h src/Stalemate_Search.cpp include/Game/Board.h include/Moves/Complete_Move.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Stalemate_Search.cpp -o $(DEBUG_OBJ_DIR)/src/Stalemate_Search.o
 
-$(DEBUG_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Players/Genetic_AI.h include/Game/Clock.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
+$(DEBUG_OBJ_DIR)/src/Testing.o : include/Testing.h src/Testing.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Players/Genetic_AI.h include/Players/Game_Tree_Node_Result.h include/Utility.h include/Exceptions/Illegal_Move_Exception.h
 	$(CXX) $(CFLAGS) $(CFLAGS_DEBUG) -c src/Testing.cpp -o $(DEBUG_OBJ_DIR)/src/Testing.o
 
 $(DEBUG_OBJ_DIR)/src/Utility.o : include/Utility.h src/Utility.cpp
@@ -227,7 +233,7 @@ $(RELEASE_OBJ_DIR)/src/Exceptions/Game_Ending_Exception.o : include/Exceptions/G
 $(RELEASE_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o : include/Exceptions/Illegal_Move_Exception.h src/Exceptions/Illegal_Move_Exception.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Exceptions/Illegal_Move_Exception.cpp -o $(RELEASE_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o
 
-$(RELEASE_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Game/Game_Result.h include/Players/Player.h include/Players/Thinking.h src/Game/Board.cpp include/Game/Clock.h include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Game/Board.o : include/Game/Board.h include/Moves/Complete_Move.h include/Game/Color.h include/Game/Square.h include/Game/Game_Result.h include/Players/Player.h include/Players/Thinking.h src/Game/Board.cpp include/Game/Clock.h include/Pieces/Pawn.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Queen.h include/Moves/Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Game/Board.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Board.o
 
 $(RELEASE_OBJ_DIR)/src/Game/Clock.o : include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h src/Game/Clock.cpp
@@ -241,6 +247,9 @@ $(RELEASE_OBJ_DIR)/src/Game/Game.o : include/Game/Game.h include/Game/Color.h sr
 
 $(RELEASE_OBJ_DIR)/src/Game/Game_Result.o : include/Game/Game_Result.h include/Game/Color.h src/Game/Game_Result.cpp
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Game/Game_Result.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Game_Result.o
+
+$(RELEASE_OBJ_DIR)/src/Game/Square.o : include/Game/Square.h src/Game/Square.cpp
+	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Game/Square.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Square.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Castling_Possible_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o
@@ -257,7 +266,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h include/Pla
 $(RELEASE_OBJ_DIR)/src/Genes/Genome.o : include/Genes/Genome.h include/Game/Color.h include/Genes/Gene.h src/Genes/Genome.cpp include/Game/Board.h include/Game/Game_Result.h include/Utility.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Castling_Possible_Gene.h include/Genes/Piece_Strength_Gene.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Genome.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Genome.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confinement_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Pieces/Piece.h
+$(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : include/Genes/King_Confinement_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Game/Square.h include/Pieces/Piece.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/King_Confinement_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o : include/Genes/King_Protection_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Pieces/Piece.h
@@ -275,7 +284,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o : include/Genes/Pawn_Advanc
 $(RELEASE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o : include/Genes/Piece_Strength_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Piece_Strength_Gene.cpp include/Utility.h include/Pieces/Piece.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Piece_Strength_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o : include/Genes/Sphere_of_Influence_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Sphere_of_Influence_Gene.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o : include/Genes/Sphere_of_Influence_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Sphere_of_Influence_Gene.cpp include/Game/Board.h include/Game/Square.h include/Moves/Complete_Move.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Total_Force_Gene.o : include/Genes/Total_Force_Gene.h include/Genes/Gene.h include/Game/Color.h src/Genes/Total_Force_Gene.cpp include/Game/Board.h include/Pieces/Piece.h include/Genes/Piece_Strength_Gene.h
@@ -341,7 +350,10 @@ $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : include/Players/CECP_Mediator.h
 $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Game/Color.h src/Players/Claude_Shannon_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Game_Result.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Claude_Shannon_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Moves/Complete_Move.h include/Game/Color.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Players/Thinking.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : include/Players/Game_Tree_Node_Result.h include/Moves/Complete_Move.h include/Game/Color.h src/Players/Game_Tree_Node_Result.cpp include/Utility.h
+	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Game_Tree_Node_Result.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
+
+$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Players/Thinking.h include/Players/Game_Tree_Node_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Genetic_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h
@@ -356,7 +368,7 @@ $(RELEASE_OBJ_DIR)/src/Players/Player.o : include/Players/Player.h src/Players/P
 $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o : include/Players/Random_AI.h include/Players/Player.h src/Players/Random_AI.cpp include/Game/Board.h include/Moves/Complete_Move.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/Random_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h include/Players/Player.h src/Players/UCI_Mediator.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o : include/Players/UCI_Mediator.h include/Players/Outside_Player.h include/Game/Color.h src/Players/UCI_Mediator.cpp include/Players/Player.h include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Exceptions/Illegal_Move_Exception.h include/Utility.h
 	$(CXX) $(CFLAGS) $(CFLAGS_RELEASE) -c src/Players/UCI_Mediator.cpp -o $(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o
 
 $(RELEASE_OBJ_DIR)/src/Stalemate_Search.o : include/Stalemate_Search.h src/Stalemate_Search.cpp include/Game/Board.h include/Moves/Complete_Move.h

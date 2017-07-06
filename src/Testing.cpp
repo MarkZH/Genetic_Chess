@@ -9,9 +9,10 @@
 #include <iomanip>
 
 #include "Game/Board.h"
+#include "Game/Clock.h"
 #include "Moves/Complete_Move.h"
 #include "Players/Genetic_AI.h"
-#include "Game/Clock.h"
+#include "Players/Game_Tree_Node_Result.h"
 
 #include "Utility.h"
 

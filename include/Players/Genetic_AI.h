@@ -6,42 +6,12 @@
 
 #include "Player.h"
 
-#include "Moves/Complete_Move.h"
-#include "Game/Color.h"
-
 #include "Genes/Genome.h"
 
 class Board;
 class Clock;
 class Complete_Move;
-
-struct Game_Tree_Node_Result
-{
-    Complete_Move move;
-    double score;
-    Color perspective;
-    size_t depth;
-    std::vector<std::string> commentary;
-
-    double corrected_score(Color query) const
-    {
-        if(query == perspective)
-        {
-            return score;
-        }
-        else
-        {
-            return -score;
-        }
-    }
-};
-
-// Is "a" a better result than "b" from "perspective" color
-bool better_than(const Game_Tree_Node_Result& a,
-                 const Game_Tree_Node_Result& b,
-                 Color perspective);
-
-bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b);
+struct Game_Tree_Node_Result;
 
 class Genetic_AI : public Player
 {

@@ -4,6 +4,7 @@
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
+#include "Game/Square.h"
 #include "Moves/Complete_Move.h"
 
 #include "Utility.h"

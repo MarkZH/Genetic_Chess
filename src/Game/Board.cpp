@@ -9,6 +9,7 @@
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Game/Square.h"
 
 #include "Pieces/Pawn.h"
 #include "Pieces/Rook.h"
@@ -1137,24 +1138,4 @@ void Board::set_thinking_mode(Thinking_Output_Type mode) const
 Thinking_Output_Type Board::get_thinking_mode() const
 {
     return thinking_indicator;
-}
-
-bool Square::operator<(const Square& other) const
-{
-    if(file == other.file)
-    {
-        return rank < other.rank;
-    }
-    return file < other.file;
-}
-
-Square::operator bool() const
-{
-    return file != '\0' && rank != 0;
-}
-
-int king_distance(const Square& a, const Square& b)
-{
-    return std::max(std::abs(a.file - b.file),
-                    std::abs(a.rank - b.rank));
 }

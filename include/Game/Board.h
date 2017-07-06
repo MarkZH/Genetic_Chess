@@ -9,25 +9,13 @@
 
 #include "Moves/Complete_Move.h"
 #include "Color.h"
+#include "Square.h"
 #include "Game_Result.h"
 #include "Players/Player.h"
 #include "Players/Thinking.h"
 
 class Piece;
 class Clock;
-
-struct Square
-{
-    char file;
-    int rank;
-
-    bool operator<(const Square& other) const;
-    operator bool() const;
-};
-
-// The distance between two squares in king moves
-int king_distance(const Square& a, const Square& b);
-
 
 class Board
 {

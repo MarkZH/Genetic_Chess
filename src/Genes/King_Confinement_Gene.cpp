@@ -5,6 +5,7 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
+#include "Game/Square.h"
 #include "Pieces/Piece.h"
 
 King_Confinement_Gene::King_Confinement_Gene() : maximum_score(0.0)

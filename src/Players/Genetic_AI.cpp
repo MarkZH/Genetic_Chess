@@ -13,6 +13,7 @@
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 #include "Players/Thinking.h"
+#include "Players/Game_Tree_Node_Result.h"
 
 #include "Utility.h"
 
@@ -200,58 +201,6 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
     positions_per_second = nodes_searched/(clock_start_time - clock.time_left(clock.running_for()));
 
     return result.move;
-}
-
-bool better_than(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b, Color perspective)
-{
-    auto scoreA = a.corrected_score(perspective);
-    auto scoreB = b.corrected_score(perspective);
-
-    if(scoreA > scoreB)
-    {
-        return true;
-    }
-
-    if(scoreA < scoreB)
-    {
-        return false;
-    }
-
-    // scoreA == scoreB
-
-    // Shorter path to winning is better
-    if(scoreA == Math::win_score)
-    {
-        return a.depth < b.depth;
-    }
-
-    // Longer path to losing is better
-    if(scoreA == Math::lose_score)
-    {
-        return a.depth > b.depth;
-    }
-
-    return false;
-}
-
-bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b)
-{
-    auto scoreA = a.corrected_score(WHITE);
-    auto scoreB = b.corrected_score(WHITE);
-
-    if(scoreA != scoreB)
-    {
-        return false;
-    }
-
-    // scoreA == scoreB
-
-    if(std::abs(scoreA) == Math::win_score)
-    {
-        return a.depth == b.depth;
-    }
-
-    return true;
 }
 
 Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
