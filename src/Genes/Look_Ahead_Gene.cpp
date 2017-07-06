@@ -1,6 +1,7 @@
 #include "Genes/Look_Ahead_Gene.h"
 
 #include <cmath>
+#include <cassert>
 
 #include "Genes/Gene.h"
 #include "Utility.h"
@@ -50,8 +51,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
 
 void Look_Ahead_Gene::gene_specific_mutation()
 {
-    auto choice = Random::random_integer(1, 3);
-    switch(choice)
+    switch(Random::random_integer(1, 3))
     {
         case 1:
             mean_game_length = std::max(1.0, mean_game_length + Random::random_normal(1.0));
@@ -66,7 +66,8 @@ void Look_Ahead_Gene::gene_specific_mutation()
             recalculate_exponent();
             break;
         default:
-            throw std::runtime_error("Bad Look_Ahead_Gene mutation: " + std::to_string(choice));
+            assert(false); // If here, random_integer() called with wrong parameters
+            break;
     }
 }
 

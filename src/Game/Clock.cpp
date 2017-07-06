@@ -2,6 +2,7 @@
 
 #include <map>
 #include <chrono>
+#include <cassert>
 
 #include "Game/Game_Result.h"
 
@@ -32,16 +33,13 @@ bool Clock::is_running() const
 
 Game_Result Clock::punch()
 {
+    assert(clocks_running);
+
     auto time_this_punch = std::chrono::steady_clock::now();
 
     if( ! use_clock)
     {
         return {};
-    }
-
-    if( ! clocks_running)
-    {
-        throw std::runtime_error("Clock has not been started.");
     }
 
     timers[whose_turn] -= (time_this_punch - time_previous_punch);

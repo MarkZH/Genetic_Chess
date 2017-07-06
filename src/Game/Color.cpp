@@ -1,13 +1,11 @@
 #include <stdexcept>
+#include <cassert>
 
 #include "Game/Color.h"
 
 Color opposite(Color color)
 {
-    if(color == NONE)
-    {
-        throw std::runtime_error("No opposite of NONE color.");
-    }
+    assert(color != NONE);
     return (color == WHITE ? BLACK : WHITE);
 }
 

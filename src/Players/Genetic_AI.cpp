@@ -5,6 +5,7 @@
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
+#include <cassert>
 
 #include "Players/Player.h"
 #include "Moves/Complete_Move.h"
@@ -283,32 +284,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                        all_legal_moves.end(),
                                        next_principal_variation_move);
 
-            // Make sure that the principal variation is actually a legal move.
-            // This is purely for debugging as special circumstances (i.e., once
-            // per several thousand games) cause the principal variation to be
-            // invalidated without it being cleared.
-            if(move_iter == all_legal_moves.end())
-            {
-                board.ascii_draw(WHITE);
-                board.print_game_record(nullptr,
-                                        nullptr,
-                                        "",
-                                        Game_Result(NONE, "Principal Variation error", false),
-                                        0, 0, 0,
-                                        Clock());
-                auto board_copy = board;
-                for(const auto& item : principal_variation)
-                {
-                    auto move = board_copy.get_complete_move(item);
-                    std::cout << move.game_record_item(board_copy) << " ";
-                    board_copy.submit_move(move);
-                }
-                std::cout << '\n' << "Depth: " << depth << '\n'
-                          << "Next move in variation: "
-                          << next_principal_variation_move.game_record_item(board)
-                          << std::endl;
-                throw std::runtime_error("ERROR: bad variation code");
-            }
+            assert(move_iter != all_legal_moves.end());
 
             // Put principal variation move at start of list to allow
             // the most pruning later.

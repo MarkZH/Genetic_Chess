@@ -4,6 +4,8 @@
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include <cassert>
+#include <stdexcept>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -344,12 +346,8 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
 
 Game_Result Board::submit_move(const Complete_Move& cm)
 {
-    if(std::find(legal_moves().begin(),
-                 legal_moves().end(),
-                 cm) == legal_moves().end()) // submitted move not found in legal list
-    {
-        throw Illegal_Move_Exception("Illegal move: ." + cm.game_record_item(*this));
-    }
+    // submitted move not found in legal list
+    assert(std::find(legal_moves().begin(), legal_moves().end(), cm) != legal_moves().end());
 
     game_record.push_back(cm.coordinate_move());
 

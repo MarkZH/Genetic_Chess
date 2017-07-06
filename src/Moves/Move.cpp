@@ -1,5 +1,7 @@
 #include "Moves/Move.h"
 
+#include <cassert>
+
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Utility.h"
@@ -8,15 +10,9 @@
 
 Move::Move(int d_file_in, int d_rank_in) : d_file(d_file_in), d_rank(d_rank_in)
 {
-    if(std::abs(d_file) >= 8 ||
-       std::abs(d_rank) >= 8 ||
-       (d_file == 0 && d_rank == 0))
-    {
-        throw Illegal_Move_Exception("Badly constructed move: " +
-                                     std::to_string(d_file) +
-                                     " - "
-                                     + std::to_string(d_rank));
-    }
+    assert(std::abs(d_file) < 8);
+    assert(std::abs(d_rank) < 8);
+    assert(d_file != 0 || d_rank != 0);
 }
 
 void Move::side_effects(Board&, char /* file_start */, int /* rank_start */) const

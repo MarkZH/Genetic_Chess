@@ -158,7 +158,7 @@ base_options = [
 linker_options = ["-pthread"]
 options_list = dict()
 options_list['debug'] = ["-g", "-DDEBUG"]
-options_list['release'] = ["-s", "-O2", "-DRELEASE"]
+options_list['release'] = ["-s", "-O2", "-DNDEBUG"]
 
 with open("Makefile", 'w') as make_file:
     # Variables
