@@ -53,6 +53,24 @@ void run_tests()
 {
     bool tests_passed = true;
 
+    // Basic chess rules check
+    Board starting_board;
+    auto starting_move_count = starting_board.legal_moves().size();
+    auto correct_move_count = 20;
+    if(starting_move_count != correct_move_count)
+    {
+        std::cerr << "Wrong number of legal moves at beginning of game. Got " << starting_move_count
+                  << ", should be " << correct_move_count << std::endl;
+        std::cerr << "Legal moves found:" << std::endl;
+        auto move_count = 0;
+        for(const auto& move : starting_board.legal_moves())
+        {
+            std::cerr << ++move_count << ". " << move.game_record_item(starting_board) << std::endl;
+        }
+
+        tests_passed = false;
+    }
+
     // Castling with attacking piece
     for(auto castle_side : std::string("KQ"))
     {
