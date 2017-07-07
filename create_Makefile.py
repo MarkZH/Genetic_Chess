@@ -56,14 +56,14 @@ operations = dict()
 bins = dict()
 
 for target in final_targets:
-    options[target] = "$(CFLAGS_" + target.upper() + ")"
+    options[target] = "$(CFLAGS_" + target.upper() + ") $(LDFLAGS_" + target.upper() + ")"
     operations[target] = []
 
     obj_dest[target]= "$(" + target.upper() + "_OBJ_DIR)"
 
     out_variable = "$(OUT_" + target.upper() + ")"
     all_objects = "$(OBJ_" + target.upper() + ")"
-    operations[out_variable] = [' '.join(["$(LD)", "-o", out_variable, all_objects, "$(LDFLAGS)"])]
+    operations[out_variable] = [' '.join(["$(LD)", "-o", out_variable, all_objects, "$(LDFLAGS)", "$(LDFLAGS_" + target.upper() + ")"])]
     bins[target] = os.path.join('bin', target, program_name)
     depends[target] = []
     for sub in ['before_', 'after_']:
@@ -102,7 +102,7 @@ for target in final_targets:
             except KeyError:
                 depends[obj_file] = [source_file]
             if source_file.endswith('.cpp'):
-                operations[obj_file] = [' '.join(['$(CXX)', "$(CFLAGS)", options[target], "-c", source_file, "-o", obj_file])]
+                operations[obj_file] = [' '.join(['$(CXX)', "$(CFLAGS)", "$(LDFLAGS)", options[target], "-c", source_file, "-o", obj_file])]
             obj_dest_dir = os.path.dirname(obj_file)
             if obj_dest_dir not in obj_dir_written:
                 operations['before_' + target].append('test -d ' + obj_dest_dir + ' || mkdir -p ' + obj_dest_dir)
@@ -152,13 +152,16 @@ base_options = [
 	"-pedantic", 
 	"-Wextra", 
 	"-Wall", 
-	"-fexceptions", 
-	"-Iinclude",
-        "-pthread"]
-linker_options = ["-pthread"]
+	"-Iinclude"]
+base_linker_options = ["-pthread", "-fexceptions"]
+
 options_list = dict()
 options_list['debug'] = ["-g", "-DDEBUG"]
 options_list['release'] = ["-s", "-O2", "-DNDEBUG"]
+
+linker_options = dict()
+linker_options['debug'] = []
+linker_options['release'] = ['-flto', '-fuse-linker-plugin']
 
 with open("Makefile", 'w') as make_file:
     # Variables
@@ -166,7 +169,7 @@ with open("Makefile", 'w') as make_file:
     make_file.write("LD = " + compiler + "\n")
     make_file.write("\n")
     make_file.write("CFLAGS = " + " ".join(base_options) + "\n")
-    make_file.write("LDFLAGS = " + " ".join(linker_options) + "\n")
+    make_file.write("LDFLAGS = " + " ".join(base_linker_options) + "\n")
     make_file.write("\n")
     for target in final_targets:
         make_file.write("OUT_" + target.upper() + " = " + bins[target] + '\n')
@@ -176,6 +179,7 @@ with open("Makefile", 'w') as make_file:
             make_file.write(obj + ' ')
         make_file.write('\n')
         make_file.write('CFLAGS_' + target.upper() + ' = ' + ' '.join(options_list[target]) + '\n')
+        make_file.write('LDFLAGS_' + target.upper() + ' = ' + ' '.join(linker_options[target]) + '\n')
         make_file.write('\n\n')
 
     for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
