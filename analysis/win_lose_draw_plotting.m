@@ -152,9 +152,6 @@ print([raw_data '_game_time_left_histogram.png']);
 
 % Don't plot top 0.1% of longest games to make trends easier to see
 [counts, bins] = hist(moves_in_game, (0 : max(moves_in_game)));
-f = fopen('game_length_distribution.txt', 'w');
-fprintf(f, '%u\t%u\n', [bins; counts]);
-fclose(f);
 total_counts = 0;
 max_game_count = floor(0.999*length(moves_in_game));
 for index = 1 : length(counts)
