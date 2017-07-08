@@ -57,7 +57,7 @@ void run_tests()
     // Basic chess rules check
     Board starting_board;
     auto starting_move_count = starting_board.legal_moves().size();
-    auto correct_move_count = 20;
+    size_t correct_move_count = 20;
     if(starting_move_count != correct_move_count)
     {
         std::cerr << "Wrong number of legal moves at beginning of game. Got " << starting_move_count
