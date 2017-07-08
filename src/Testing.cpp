@@ -220,18 +220,20 @@ void run_tests()
 
     // Clock time reset test
     auto time = 30;
+    double expected_time_after_reset;
     auto moves_to_reset = 40;
     auto clock = Clock(time, moves_to_reset);
     clock.start();
     for(int i = 0; i < 2*moves_to_reset; ++i)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        expected_time_after_reset = clock.time_left(BLACK) + time;
         clock.punch();
     }
     clock.stop();
-    if(clock.time_left(BLACK) != time)
+    if(std::abs(clock.time_left(BLACK) - expected_time_after_reset) > 1e-3)
     {
-        std::cerr << "Clock incorrect: time left for black is " << clock.time_left(BLACK) << " sec. Should be " << time << "sec." << std::endl;
+        std::cerr << "Clock incorrect: time left for black is " << clock.time_left(BLACK) << " sec. Should be " << expected_time_after_reset << "sec." << std::endl;
         tests_passed = false;
     }
 

@@ -51,7 +51,7 @@ Game_Result Clock::punch()
 
     if(use_reset && (++moves[whose_turn] == move_count_reset))
     {
-        timers[whose_turn] = initial_time[whose_turn];
+        timers[whose_turn] += initial_time[whose_turn];
         moves[whose_turn] = 0;
     }
 
@@ -97,7 +97,7 @@ int Clock::moves_to_reset(Color color) const
 {
     if(use_reset)
     {
-        return move_count_reset - (moves.at(color) % move_count_reset);
+        return move_count_reset - moves.at(color);
     }
     else
     {
