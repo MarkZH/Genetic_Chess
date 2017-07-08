@@ -58,6 +58,8 @@ class Board
         static bool inside_board(char file);
         static bool inside_board(int rank);
 
+        static size_t board_index(char file, int rank);
+
         const Piece* view_piece_on_square(char file, int rank) const;
 
         const std::vector<Complete_Move>& legal_moves() const;
@@ -96,7 +98,6 @@ class Board
         void clear_en_passant_target();
         bool enough_material_to_checkmate() const;
         static Color square_color(char file, int rank);
-        static size_t board_index(char file, int rank);
         bool is_legal(char file_start, int rank_start,
                       char file_end,   int rank_end) const;
 

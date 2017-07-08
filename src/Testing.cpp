@@ -68,6 +68,39 @@ void run_tests()
         {
             std::cerr << ++move_count << ". " << move.game_record_item(starting_board) << std::endl;
         }
+        starting_board.ascii_draw(WHITE);
+
+        tests_passed = false;
+    }
+
+    // Moves that are currently illegal but would land on board
+    size_t correct_other_move_count = 86;
+    if(starting_board.other_moves().size() != correct_other_move_count)
+    {
+        std::cerr << "Expected other move count = " << correct_other_move_count << std::endl;
+        starting_board.ascii_draw(WHITE);
+        auto num = 1;
+        for(const auto& move : starting_board.other_moves())
+        {
+            std::cout << num++ << ". " << move.coordinate_move() << " ";
+        }
+        std::cout << std::endl;
+        tests_passed = false;
+    }
+
+    starting_board.submit_move(starting_board.get_complete_move("e4"));
+    starting_move_count = starting_board.legal_moves().size();
+    if(starting_move_count != correct_move_count)
+    {
+        std::cerr << "Wrong number of legal moves at beginning of game. Got " << starting_move_count
+                  << ", should be " << correct_move_count << std::endl;
+        std::cerr << "Legal moves found:" << std::endl;
+        auto move_count = 0;
+        for(const auto& move : starting_board.legal_moves())
+        {
+            std::cerr << ++move_count << ". " << move.game_record_item(starting_board) << std::endl;
+        }
+        starting_board.ascii_draw(WHITE);
 
         tests_passed = false;
     }
@@ -128,6 +161,36 @@ void run_tests()
             std::cout << std::string(1, castle_side) + "-castle should be illegal here." << std::endl;
             tests_passed = false;
         }
+    }
+
+
+    // Test pawn captures
+    Board white_pawn_board("k7/8/8/4p3/3P4/8/8/K7 w - - 0 1");
+    try
+    {
+        white_pawn_board.ascii_draw(WHITE);
+        std::cout << "Number of legal moves = " << white_pawn_board.legal_moves().size() << std::endl;
+        auto move = white_pawn_board.get_complete_move('d', 4, 'e', 5);
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        white_pawn_board.ascii_draw(WHITE);
+        std::cerr << "Pawn capture by white should be legal." << std::endl;
+        tests_passed = false;
+    }
+
+    Board black_pawn_board("k7/8/8/4p3/3P4/8/8/K7 b - - 0 1");
+    try
+    {
+        black_pawn_board.ascii_draw(WHITE);
+        std::cout << "Number of legal moves = " << black_pawn_board.legal_moves().size() << std::endl;
+        auto move = black_pawn_board.get_complete_move('e', 5, 'd', 4);
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        black_pawn_board.ascii_draw(WHITE);
+        std::cerr << "Pawn capture by white should be legal." << std::endl;
+        tests_passed = false;
     }
 
 

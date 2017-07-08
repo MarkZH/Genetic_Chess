@@ -602,16 +602,15 @@ const std::vector<Complete_Move>& Board::legal_moves() const
             auto piece = view_piece_on_square(file, rank);
             if(piece && piece->color() == whose_turn())
             {
-                for(const auto& move : piece->get_move_list())
+                for(const auto& move : piece->get_move_list(file, rank))
                 {
-                    auto cm = Complete_Move(move.get(), file, rank);
-                    if(cm.is_legal(*this))
+                    if(move.is_legal(*this))
                     {
-                        legal_moves_cache.push_back(cm);
+                        legal_moves_cache.push_back(move);
                     }
-                    else if(inside_board(cm.end_file(), cm.end_rank()))
+                    else
                     {
-                        other_moves_cache.push_back(cm);
+                        other_moves_cache.push_back(move);
                     }
                 }
             }

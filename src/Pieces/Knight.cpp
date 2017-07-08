@@ -3,7 +3,6 @@
 #include <cmath>
 #include <vector>
 #include <string>
-#include <memory>
 
 #include "Pieces/Piece.h"
 #include "Game/Color.h"
@@ -12,15 +11,16 @@
 
 Knight::Knight(Color color_in) : Piece(color_in, "N")
 {
-    for(int d_file = -2; d_file <= 2; ++d_file)
+    for(auto d_file : {1, 2})
     {
-        if(d_file == 0) { continue; }
-
-        for(int d_rank = -2; d_rank <= 2; ++d_rank)
+        auto d_rank = 3 - d_file;
+        for(auto file_direction : {-1, 1})
         {
-            if(d_rank == 0 || abs(d_rank) == abs(d_file)) { continue; }
-
-            possible_moves.emplace_back(std::make_unique<Move>(d_file, d_rank));
+            for(auto rank_direction : {-1, 1})
+            {
+                add_standard_legal_move<Move>(d_file*file_direction,
+                                              d_rank*rank_direction);
+            }
         }
     }
 

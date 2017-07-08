@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 
 #include "Pieces/Piece.h"
 #include "Game/Color.h"
@@ -22,8 +21,23 @@
 
 Pawn::Pawn(Color color_in) : Piece(color_in, "P")
 {
-    possible_moves.emplace_back(std::make_unique<Pawn_Move>(color_in));
-    possible_moves.emplace_back(std::make_unique<Pawn_Double_Move>(color_in));
+    // Ranks where pawns can exist
+    auto base_rank = (color_in == WHITE ? 2 : 7);
+
+    auto no_normal_move_rank = (color_in == WHITE ? 7 : 2);
+    auto direction = (color_in == WHITE ? 1 : -1);
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
+        {
+            add_special_legal_move<Pawn_Move>(file, rank, color_in);
+        }
+    }
+
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        add_special_legal_move<Pawn_Double_Move>(file, base_rank, color_in);
+    }
 
     std::vector<std::shared_ptr<const Piece>> possible_promotions;
     possible_promotions.emplace_back(std::make_shared<Queen>(color_in));
@@ -34,17 +48,37 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P")
     // 'r' and 'l' refer to the direction of the capture from white's perspective
     for(auto dir : {'r', 'l'})
     {
-        possible_moves.emplace_back(std::make_unique<Pawn_Capture>(color_in, dir));
-        possible_moves.emplace_back(std::make_unique<En_Passant>(color_in, dir));
+        auto first_file = (dir == 'r' ? 'a' : 'b');
+        auto last_file = (dir == 'r' ? 'g' : 'h');
+        for(char file = first_file; file <= last_file; ++file)
+        {
+            for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
+            {
+                add_special_legal_move<Pawn_Capture>(file, rank, color_in, dir);
+            }
+        }
+
+        auto en_passant_rank = (color_in == WHITE ? 5 : 4);
+        for(char file = first_file; file <= last_file; ++file)
+        {
+            add_special_legal_move<En_Passant>(file, en_passant_rank, color_in, dir);
+        }
+
         for(auto promote : possible_promotions)
         {
-            possible_moves.emplace_back(std::make_unique<Pawn_Promotion_by_Capture>(promote, dir));
+            for(auto file = first_file; file <= last_file; ++file)
+            {
+                add_special_legal_move<Pawn_Promotion_by_Capture>(file, no_normal_move_rank, promote, dir);
+            }
         }
     }
 
     for(auto promote : possible_promotions)
     {
-        possible_moves.emplace_back(std::make_unique<Pawn_Promotion>(promote));
+        for(auto file = 'a'; file <= 'h'; ++file)
+        {
+            add_special_legal_move<Pawn_Promotion>(file, no_normal_move_rank, promote);
+        }
     }
 
     // ASCII Art http://ascii.co.uk/art/chess (VK)

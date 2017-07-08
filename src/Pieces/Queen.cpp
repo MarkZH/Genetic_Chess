@@ -13,7 +13,7 @@ Queen::Queen(Color color_in) : Piece(color_in, "Q")
 
             for(int move_size = 1; move_size <= 7; ++move_size)
             {
-                possible_moves.emplace_back(std::make_unique<Move>(move_size*d_file, move_size*d_rank));
+                add_standard_legal_move<Move>(move_size*d_file, move_size*d_rank);
             }
         }
     }

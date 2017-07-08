@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <memory>
 
 #include "Pieces/Piece.h"
 #include "Game/Color.h"
@@ -16,7 +15,7 @@ Bishop::Bishop(Color color_in) : Piece(color_in, "B")
         {
             for(int move_size = 1; move_size <= 7; ++move_size)
             {
-                possible_moves.emplace_back(std::make_unique<Move>(move_size*d_file, move_size*d_rank));
+                add_standard_legal_move<Move>(move_size*d_file, move_size*d_rank);
             }
         }
     }

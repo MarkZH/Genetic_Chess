@@ -1,14 +1,14 @@
 #include "Pieces/Piece.h"
 
 #include <cctype>
+#include <vector>
 
-#include "Utility.h"
 #include "Game/Board.h"
-#include "Exceptions/Illegal_Move_Exception.h"
 
 Piece::Piece(Color color_in, const std::string& symbol_in) :
     my_color(color_in),
-    symbol(symbol_in)
+    symbol(symbol_in),
+    legal_moves(64)
 {
 }
 
@@ -63,9 +63,9 @@ bool Piece::can_move(const Move* move) const
     return false;
 }
 
-const std::vector<std::unique_ptr<const Move>>& Piece::get_move_list() const
+const std::vector<Complete_Move>& Piece::get_move_list(char file, int rank) const
 {
-    return possible_moves;
+    return legal_moves.at(Board::board_index(file, rank));
 }
 
 bool Piece::is_pawn() const
@@ -96,4 +96,12 @@ bool Piece::is_bishop() const
 bool Piece::is_knight() const
 {
     return false;
+}
+
+void Piece::add_legal_move(const Move* move, char file, int rank)
+{
+    if(Board::inside_board(file + move->file_change(), rank + move->rank_change()))
+    {
+        legal_moves[Board::board_index(file, rank)].emplace_back(move, file, rank);
+    }
 }

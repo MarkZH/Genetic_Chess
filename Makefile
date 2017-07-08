@@ -172,7 +172,7 @@ $(DEBUG_OBJ_DIR)/src/Pieces/Knight.o : include/Pieces/Knight.h include/Pieces/Pi
 $(DEBUG_OBJ_DIR)/src/Pieces/Pawn.o : include/Pieces/Pawn.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Pawn.cpp include/Moves/Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Moves/En_Passant.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/Queen.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Pieces/Pawn.cpp -o $(DEBUG_OBJ_DIR)/src/Pieces/Pawn.o
 
-$(DEBUG_OBJ_DIR)/src/Pieces/Piece.o : include/Pieces/Piece.h include/Moves/Move.h include/Game/Color.h src/Pieces/Piece.cpp include/Utility.h include/Game/Board.h include/Exceptions/Illegal_Move_Exception.h
+$(DEBUG_OBJ_DIR)/src/Pieces/Piece.o : include/Pieces/Piece.h include/Moves/Move.h include/Moves/Complete_Move.h include/Game/Color.h src/Pieces/Piece.cpp include/Game/Board.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Pieces/Piece.cpp -o $(DEBUG_OBJ_DIR)/src/Pieces/Piece.o
 
 $(DEBUG_OBJ_DIR)/src/Pieces/Queen.o : include/Pieces/Queen.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Queen.cpp include/Moves/Move.h
@@ -334,7 +334,7 @@ $(RELEASE_OBJ_DIR)/src/Pieces/Knight.o : include/Pieces/Knight.h include/Pieces/
 $(RELEASE_OBJ_DIR)/src/Pieces/Pawn.o : include/Pieces/Pawn.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Pawn.cpp include/Moves/Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Moves/En_Passant.h include/Pieces/Rook.h include/Pieces/Knight.h include/Pieces/Bishop.h include/Pieces/Queen.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Pieces/Pawn.cpp -o $(RELEASE_OBJ_DIR)/src/Pieces/Pawn.o
 
-$(RELEASE_OBJ_DIR)/src/Pieces/Piece.o : include/Pieces/Piece.h include/Moves/Move.h include/Game/Color.h src/Pieces/Piece.cpp include/Utility.h include/Game/Board.h include/Exceptions/Illegal_Move_Exception.h
+$(RELEASE_OBJ_DIR)/src/Pieces/Piece.o : include/Pieces/Piece.h include/Moves/Move.h include/Moves/Complete_Move.h include/Game/Color.h src/Pieces/Piece.cpp include/Game/Board.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Pieces/Piece.cpp -o $(RELEASE_OBJ_DIR)/src/Pieces/Piece.o
 
 $(RELEASE_OBJ_DIR)/src/Pieces/Queen.o : include/Pieces/Queen.h include/Pieces/Piece.h include/Game/Color.h src/Pieces/Queen.cpp include/Moves/Move.h
