@@ -7,6 +7,7 @@
 
 Pawn_Capture::Pawn_Capture(Color color_in, char dir) : Pawn_Move(color_in)
 {
+    // 'r' and 'l' signify left and right from white's perspective
     if(dir == 'r')
     {
         d_file = 1;

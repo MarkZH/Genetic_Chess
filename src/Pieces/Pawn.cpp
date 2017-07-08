@@ -31,6 +31,7 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P")
     possible_promotions.emplace_back(std::make_shared<Rook>(color_in));
     possible_promotions.emplace_back(std::make_shared<Bishop>(color_in));
 
+    // 'r' and 'l' refer to the direction of the capture from white's perspective
     for(auto dir : {'r', 'l'})
     {
         possible_moves.emplace_back(std::make_unique<Pawn_Capture>(color_in, dir));

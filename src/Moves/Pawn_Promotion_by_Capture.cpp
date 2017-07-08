@@ -11,6 +11,7 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(std::shared_ptr<const Piece
                                                      char dir) :
     Pawn_Promotion(std::move(promotion))
 {
+    // 'r' and 'l' refer to the direction of the capture from white's perspective
     d_file = (dir == 'r' ? 1 : -1);
 }
 
