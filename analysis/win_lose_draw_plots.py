@@ -54,8 +54,6 @@ def main(files):
                         result_type = 7
                 elif '. ' in line:
                     number_of_moves = line.split('. ')[0]
-                elif 'Initial time' in line:
-                    time = line.split()[-2]
                 elif 'TimeControl' in line:
                     time = line.split('"')[1]
                 elif 'White:' in line:

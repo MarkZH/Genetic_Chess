@@ -119,7 +119,7 @@ void gene_pool(const std::string& config_file = "")
         std::string previous_time_line;
         while(std::getline(ifs, line))
         {
-            if(String::contains(line, "Initial time:") || String::contains(line, "TimeControl"))
+            if(String::contains(line, "TimeControl"))
             {
                 if(line != time_line)
                 {
@@ -129,21 +129,13 @@ void gene_pool(const std::string& config_file = "")
             }
         }
 
-        if(String::contains(time_line, "Initial Time"))
-        {
-            game_time = std::stod(String::split(time_line, " ").at(3));
-        }
-        else if(String::contains(time_line, "TimeControl"))
+        if( ! time_line.empty())
         {
             game_time = std::stod(String::split(time_line, "\"").at(1));
         }
 
         double previous_game_time = game_time;
-        if(String::contains(previous_time_line, "Initial Time"))
-        {
-            previous_game_time = std::stod(String::split(previous_time_line, " ").at(3));
-        }
-        else if(String::contains(previous_time_line, "TimeControl"))
+        if( ! previous_time_line.empty())
         {
             previous_game_time = std::stod(String::split(previous_time_line, "\"").at(1));
         }
