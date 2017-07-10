@@ -38,7 +38,7 @@ class Piece
         std::vector<std::string> ascii_art_lines;
 
         // Add a move to the list that is only legal when starting from a certain square
-        // (e.g., castline, pawn double move, promotion, etc.)
+        // (e.g., castling, pawn double move, promotion, etc.)
         template<typename Move_Type, typename ...Move_Args>
         void add_special_legal_move(char file, int rank, Move_Args... args)
         {
