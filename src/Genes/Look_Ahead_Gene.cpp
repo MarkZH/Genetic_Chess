@@ -12,7 +12,7 @@
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
-    game_length_uncertainty(0.5),
+    game_length_uncertainty(0.0),
     speculation_constant(0.5)
 {
     recalculate_exponent();
