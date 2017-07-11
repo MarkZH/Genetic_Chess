@@ -18,7 +18,7 @@ class King_Protection_Gene : public Gene
         std::string name() const override;
 
     private:
-        double score_board(const Board& board, Color perspective) const override;
+        double score_board(const Board& board) const override;
 };
 
 #endif // KING_PROTECTION_GENE_H

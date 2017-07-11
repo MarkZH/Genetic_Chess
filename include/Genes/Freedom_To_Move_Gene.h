@@ -22,7 +22,7 @@ class Freedom_To_Move_Gene : public Gene
     private:
         size_t initial_number_of_moves;
 
-        double score_board(const Board& board, Color perspective) const override;
+        double score_board(const Board& board) const override;
 };
 
 #endif // FREEDOM_TO_MOVE_GENE_H

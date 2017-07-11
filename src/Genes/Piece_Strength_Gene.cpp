@@ -74,7 +74,7 @@ std::string Piece_Strength_Gene::name() const
     return "Piece Strength Gene";
 }
 
-double Piece_Strength_Gene::score_board(const Board&, Color) const
+double Piece_Strength_Gene::score_board(const Board&) const
 {
     return 0.0;
 }

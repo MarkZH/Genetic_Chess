@@ -33,7 +33,7 @@ std::string King_Confinement_Gene::name() const
     return "King Confinement Gene";
 }
 
-double King_Confinement_Gene::score_board(const Board& board, Color perspective) const
+double King_Confinement_Gene::score_board(const Board& board) const
 {
     // A flood-fill-like algorithm to count the squares that are reachable by the
     // king from its current positions with unlimited consecutive moves. The
@@ -44,6 +44,7 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective)
 
     std::vector<Square> square_queue;
     square_queue.reserve(64);
+    auto perspective = board.whose_turn();
     auto king_square = board.find_king(perspective);
     square_queue.push_back(king_square);
 

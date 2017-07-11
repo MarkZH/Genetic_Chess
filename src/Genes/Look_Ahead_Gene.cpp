@@ -81,7 +81,7 @@ std::string Look_Ahead_Gene::name() const
     return "Look Ahead Gene";
 }
 
-double Look_Ahead_Gene::score_board(const Board&, Color) const
+double Look_Ahead_Gene::score_board(const Board&) const
 {
     return 0.0;
 }

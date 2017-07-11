@@ -88,11 +88,11 @@ void Gene::gene_specific_mutation()
 {
 }
 
-double Gene::evaluate(const Board& board, Color perspective) const
+double Gene::evaluate(const Board& board) const
 {
     if(is_active())
     {
-        return priority*score_board(board, perspective);
+        return priority*score_board(board);
     }
     else
     {

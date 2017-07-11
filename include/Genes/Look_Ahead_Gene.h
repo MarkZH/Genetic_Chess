@@ -35,7 +35,7 @@ class Look_Ahead_Gene : public Gene
         double speculation_constant; // how often to look ahead even with little time
         double speculation_exponent;
 
-        double score_board(const Board& board, Color perspective) const override;
+        double score_board(const Board& board) const override;
         void gene_specific_mutation() override;
         void recalculate_exponent();
 };

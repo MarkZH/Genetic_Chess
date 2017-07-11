@@ -34,9 +34,10 @@ std::string Castling_Possible_Gene::name() const
     return "Castling Possible Gene";
 }
 
-double Castling_Possible_Gene::score_board(const Board& board, Color perspective) const
+double Castling_Possible_Gene::score_board(const Board& board) const
 {
     // Check game record to see if player already castled
+    auto perspective = board.whose_turn();
     auto base_rank = (perspective == WHITE ? 1 : 8);
     auto king_file = 'e';
     auto starting_king_square = king_file + std::to_string(base_rank);

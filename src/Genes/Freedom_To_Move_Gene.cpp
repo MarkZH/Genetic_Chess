@@ -10,11 +10,9 @@ Freedom_To_Move_Gene::Freedom_To_Move_Gene() :
 {
 }
 
-double Freedom_To_Move_Gene::score_board(const Board& board, Color perspective) const
+double Freedom_To_Move_Gene::score_board(const Board& board) const
 {
-    auto temp = board;
-    temp.set_turn(perspective);
-    return double(temp.legal_moves().size())/initial_number_of_moves;
+    return double(board.legal_moves().size())/initial_number_of_moves;
 }
 
 Freedom_To_Move_Gene* Freedom_To_Move_Gene::duplicate() const

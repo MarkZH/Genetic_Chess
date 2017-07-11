@@ -41,7 +41,7 @@ class Genome
         size_t piece_strength_gene_index;
         size_t look_ahead_gene_index;
 
-        double score_board(const Board& board, Color perspective) const;
+        double score_board(const Board& board) const;
         void reseat_piece_strength_gene();
 };
 

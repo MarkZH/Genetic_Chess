@@ -990,8 +990,8 @@ void Board::set_turn(Color color)
     {
         clear_caches();
         clear_en_passant_target();
+        turn_color = color;
     }
-    turn_color = color;
 }
 
 void Board::make_en_passant_targetable(char file, int rank)

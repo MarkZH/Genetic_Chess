@@ -142,12 +142,12 @@ void Genome::read_from(std::istream& is)
     }
 }
 
-double Genome::score_board(const Board& board, Color perspective) const
+double Genome::score_board(const Board& board) const
 {
     double score = 0;
     for(const auto& gene : genome)
     {
-        score += gene->evaluate(board, perspective);
+        score += gene->evaluate(board);
     }
 
     return score;
@@ -171,7 +171,13 @@ double Genome::evaluate(const Board& board, Game_Result result, Color perspectiv
         }
     }
 
-    return score_board(board, perspective) - score_board(board, opposite(perspective));
+    auto my_board = board;
+    my_board.set_turn(perspective);
+
+    auto opponent_board = board;
+    opponent_board.set_turn(opposite(perspective));
+
+    return score_board(my_board) - score_board(opponent_board);
 }
 
 void Genome::mutate()

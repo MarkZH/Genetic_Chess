@@ -31,7 +31,7 @@ class Piece_Strength_Gene : public Gene
         std::map<char, double> piece_strength;
         double normalizing_factor;
 
-        double score_board(const Board& board, Color perspective) const override;
+        double score_board(const Board& board) const override;
         void renormalize();
         double piece_value(char symbol) const;
         void gene_specific_mutation() override;

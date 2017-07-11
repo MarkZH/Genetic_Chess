@@ -19,7 +19,7 @@ class Gene
         void read_from(std::istream& is);
 
         void mutate();
-        double evaluate(const Board& board, Color perspective) const;
+        double evaluate(const Board& board) const;
         virtual Gene* duplicate() const = 0;
 
         virtual std::string name() const = 0;
@@ -35,7 +35,7 @@ class Gene
         void make_priority_non_negative();
 
     private:
-        virtual double score_board(const Board& board, Color perspective) const = 0;
+        virtual double score_board(const Board& board) const = 0;
         void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
         virtual void gene_specific_mutation();
 

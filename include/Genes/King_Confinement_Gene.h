@@ -22,7 +22,7 @@ class King_Confinement_Gene : public Gene
     private:
         double maximum_score;
 
-        double score_board(const Board& board, Color perspective) const override;
+        double score_board(const Board& board) const override;
 };
 
 #endif // KING_CONFINEMENT_GENE_H

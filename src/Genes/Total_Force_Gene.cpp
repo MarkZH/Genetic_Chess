@@ -11,7 +11,7 @@ Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_sou
     make_priority_non_negative();
 }
 
-double Total_Force_Gene::score_board(const Board& board, Color perspective) const
+double Total_Force_Gene::score_board(const Board& board) const
 {
     double score = 0.0;
 
@@ -20,7 +20,7 @@ double Total_Force_Gene::score_board(const Board& board, Color perspective) cons
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto piece = board.view_piece_on_square(file, rank);
-            if(piece && piece->color() == perspective)
+            if(piece && piece->color() == board.whose_turn())
             {
                 // King does not count towards score since it is always on the board.
                 score += piece_strength_source->piece_value(piece);

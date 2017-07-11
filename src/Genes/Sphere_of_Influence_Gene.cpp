@@ -41,15 +41,13 @@ std::string Sphere_of_Influence_Gene::name() const
 
 // Count all squares potentially attacked by all pieces with bonus points if
 // the attacking move is legal.
-double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspective) const
+double Sphere_of_Influence_Gene::score_board(const Board& board) const
 {
     std::map<Square, double> square_score;
-    auto temp = board;
-    temp.set_turn(perspective);
-    auto opponent_king_square = board.find_king(opposite(perspective));
+    auto opponent_king_square = board.find_king(opposite(board.whose_turn()));
 
     double score_to_add = 1.0;
-    for(const auto& move_list : {temp.other_moves(), temp.legal_moves()})
+    for(const auto& move_list : {board.other_moves(), board.legal_moves()})
     {
         for(const auto& cm : move_list)
         {
@@ -64,9 +62,9 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
 
             if(cm.name().front() == 'E')
             {
-                if(temp.is_en_passant_targetable(final_file, final_rank))
+                if(board.is_en_passant_targetable(final_file, final_rank))
                 {
-                    final_rank += (temp.whose_turn() == WHITE ? -1 : 1);
+                    final_rank += (board.whose_turn() == WHITE ? -1 : 1);
                 }
                 else
                 {
