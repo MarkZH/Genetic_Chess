@@ -309,9 +309,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                       depth + 1,
                                       beta,
                                       alpha);
-
-            // Update last result with this game tree node's data
-            result.move = move;
         }
         else
         {
@@ -327,6 +324,13 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         if(better_than(result, best_result, perspective))
         {
             best_result = result;
+
+            // Update result with actual next move
+            if(recurse && depth == 0)
+            {
+                best_result.move = move;
+            }
+
             if(better_than(best_result, alpha, perspective))
             {
                 alpha = best_result;
