@@ -31,7 +31,7 @@ UCI_Mediator::UCI_Mediator(const Player& local_player)
     }
 }
 
-const Complete_Move UCI_Mediator::choose_move(const Board& board, const Clock& clock) const
+const Complete_Move UCI_Mediator::choose_move(const Board& /*board*/, const Clock& /*clock*/) const
 {
     while(true)
     {
@@ -52,7 +52,7 @@ Color UCI_Mediator::get_ai_color() const
     }
 }
 
-std::string UCI_Mediator::receive_move(const Clock& clock) const
+std::string UCI_Mediator::receive_move(const Clock& /*clock*/) const
 {
     while(true)
     {
