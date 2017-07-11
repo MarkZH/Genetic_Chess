@@ -204,6 +204,11 @@ bool Board::is_legal(char file_start, int rank_start,
     return false;
 }
 
+bool Board::is_in_legal_moves_list(const Complete_Move& move) const
+{
+    return std::find(legal_moves().begin(), legal_moves().end(), move) != legal_moves().end();
+}
+
 std::string Board::fen_status() const
 {
     std::string s;
@@ -345,16 +350,14 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
     }
 }
 
-Game_Result Board::submit_move(const Complete_Move& cm)
+Game_Result Board::submit_move(const Complete_Move& move)
 {
-    // submitted move not found in legal list
-    assert(std::find(legal_moves().begin(), legal_moves().end(), cm) != legal_moves().end());
+    assert(is_in_legal_moves_list(move));
+    game_record.push_back(move.coordinate_move());
 
-    game_record.push_back(cm.coordinate_move());
-
-    make_move(cm.start_file(), cm.start_rank(),
-              cm.end_file(),   cm.end_rank());
-    cm.side_effects(*this);
+    make_move(move.start_file(), move.start_rank(),
+              move.end_file(),   move.end_rank());
+    move.side_effects(*this);
 
     clear_caches();
 

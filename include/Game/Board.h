@@ -100,6 +100,7 @@ class Board
         static Color square_color(char file, int rank);
         bool is_legal(char file_start, int rank_start,
                       char file_end,   int rank_end) const;
+        bool is_in_legal_moves_list(const Complete_Move& move) const;
 
         // Moves with side effects
         friend class Kingside_Castle; // moves second piece
