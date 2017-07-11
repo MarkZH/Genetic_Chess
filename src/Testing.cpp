@@ -429,6 +429,7 @@ void run_tests()
         tests_passed = false;
     }
 
+    // check square colors are correct
     Board().ascii_draw(WHITE);
 
     int int_width = 10;

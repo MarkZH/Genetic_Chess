@@ -427,6 +427,8 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                       Color perspective) const
 {
     auto score = thought.corrected_score(perspective);
+
+    // Indicate "mate in N moves" where N == thought.depth
     if(score == Math::win_score)
     {
         score = 10000.0 - thought.depth;
