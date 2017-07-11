@@ -242,8 +242,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     }
 
     auto perspective = board.whose_turn();
-    int moves_examined = 0;
-    const auto current_legal_moves_count = all_legal_moves.size();
+    auto moves_left = all_legal_moves.size();
 
     Game_Tree_Node_Result best_result = {board.legal_moves().front(),
                                          Math::lose_score,
@@ -280,7 +279,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             continue;
         }
 
-        int moves_left = current_legal_moves_count - moves_examined;
         double time_left = time_to_examine - (time_start - clock.time_left(clock.running_for()));
         double time_allotted_for_this_move = time_left/moves_left;
 
@@ -343,7 +341,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             }
         }
 
-        ++moves_examined;
+        --moves_left;
         still_on_principal_variation = false; // only the first move is part of the principal variation
 
         if(clock.time_left(clock.running_for()) < 0)
