@@ -168,13 +168,12 @@ void run_tests()
     Board white_pawn_board("k7/8/8/4p3/3P4/8/8/K7 w - - 0 1");
     try
     {
-        white_pawn_board.ascii_draw(WHITE);
-        std::cout << "Number of legal moves = " << white_pawn_board.legal_moves().size() << std::endl;
-        auto move = white_pawn_board.get_complete_move('d', 4, 'e', 5);
+        white_pawn_board.get_complete_move('d', 4, 'e', 5);
     }
     catch(const Illegal_Move_Exception&)
     {
         white_pawn_board.ascii_draw(WHITE);
+        std::cerr << "Number of legal moves = " << white_pawn_board.legal_moves().size() << std::endl;
         std::cerr << "Pawn capture by white should be legal." << std::endl;
         tests_passed = false;
     }
@@ -182,13 +181,12 @@ void run_tests()
     Board black_pawn_board("k7/8/8/4p3/3P4/8/8/K7 b - - 0 1");
     try
     {
-        black_pawn_board.ascii_draw(WHITE);
-        std::cout << "Number of legal moves = " << black_pawn_board.legal_moves().size() << std::endl;
-        auto move = black_pawn_board.get_complete_move('e', 5, 'd', 4);
+        black_pawn_board.get_complete_move('e', 5, 'd', 4);
     }
     catch(const Illegal_Move_Exception&)
     {
         black_pawn_board.ascii_draw(WHITE);
+        std::cerr << "Number of legal moves = " << black_pawn_board.legal_moves().size() << std::endl;
         std::cerr << "Pawn capture by white should be legal." << std::endl;
         tests_passed = false;
     }
