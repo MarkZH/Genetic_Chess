@@ -423,7 +423,6 @@ void gene_pool(const std::string& config_file = "")
                               << " to pool "
                               << dest_pool_index << std::endl;
                     loser = winners[source_pool_index]; // winner replaces loser in destination pool
-                    std::sort(dest_pool.begin(), dest_pool.end());
                 }
             }
 
