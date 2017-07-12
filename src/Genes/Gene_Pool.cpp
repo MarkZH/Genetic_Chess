@@ -155,10 +155,6 @@ void gene_pool(const std::string& config_file = "")
     {
         auto& pool = pools[pool_index];
 
-        // widths of columns for stats printout
-        auto max_id = pool.back().get_id();
-        auto id_digits = int(std::floor(std::log10(max_id) + 1));
-
         // Write overall stats
         std::cout << "\nGene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
@@ -168,27 +164,7 @@ void gene_pool(const std::string& config_file = "")
                   << "  Black wins: " << black_wins[pool_index]
                   << "  Draws: " << draw_count[pool_index]
                   << "\nTime: " << game_time << " sec"
-                  << "   Gene pool file name: " << genome_file_name << "\n"
-                  << std::setw(id_digits + 1)  << "ID"
-                  << std::setw(7)  << "Wins"
-                  << std::setw(8) << "Streak"
-                  << std::setw(7)  << "Draws"
-                  << std::setw(9)  << "Streak\n";
-
-        // Write stats for each specimen
-        for(const auto& ai : pool)
-        {
-            std::cout << std::setw(id_digits + 1) << ai.get_id();
-            std::cout << std::setw(7)    << wins[ai]
-                      << std::setw(8)   << consecutive_wins[ai]
-                      << std::setw(7)    << draws[ai]
-                      << std::setw(8)   << games_since_last_win[ai]
-                      << (std::binary_search(new_blood[pool_index].begin(),
-                                             new_blood[pool_index].end(),
-                                             ai) ? " *" : "")
-                      << (original_pool[ai] != pool_index ? " T" : "") << "\n";
-        }
-        std::cout << std::endl;
+                  << "   Gene pool file name: " << genome_file_name << "\n\n";
 
         // The pool_indices list determines the match-ups. After shuffling the list
         // of indices (0 to gene_pool_population - 1), adjacent indices in the pool are
@@ -349,7 +325,33 @@ void gene_pool(const std::string& config_file = "")
             }
         }
 
-        std::cout << "\nMost wins:     " << most_wins[pool_index]
+        // widths of columns for stats printout
+        auto max_id = pool.back().get_id();
+        auto id_digits = int(std::floor(std::log10(max_id) + 1));
+
+        // Write results
+        std::cout << '\n' << std::setw(id_digits + 1)  << "ID"
+                  << std::setw(7)  << "Wins"
+                  << std::setw(8) << "Streak"
+                  << std::setw(7)  << "Draws"
+                  << std::setw(9)  << "Streak\n";
+
+        // Write stats for each specimen
+        for(const auto& ai : pool)
+        {
+            std::cout << std::setw(id_digits + 1) << ai.get_id();
+            std::cout << std::setw(7)    << wins[ai]
+                      << std::setw(8)   << consecutive_wins[ai]
+                      << std::setw(7)    << draws[ai]
+                      << std::setw(8)   << games_since_last_win[ai]
+                      << (std::binary_search(new_blood[pool_index].begin(),
+                                             new_blood[pool_index].end(),
+                                             ai) ? " *" : "")
+                      << (original_pool[ai] != pool_index ? " T" : "") << "\n";
+        }
+        std::cout << std::endl;
+
+        std::cout << "Most wins:     " << most_wins[pool_index]
                   << " by ID " << most_wins_player[pool_index].get_id() << std::endl;
         std::cout <<   "Longest lived: " << most_games_survived[pool_index]
                   << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
