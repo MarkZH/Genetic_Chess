@@ -105,10 +105,6 @@ void gene_pool(const std::string& config_file = "")
         write_generation(pools, i, genome_file_name);
     }
 
-    // Indices in gene pool to be shuffled for game match-ups
-    std::vector<size_t> pool_indices(gene_pool_population);
-    std::iota(pool_indices.begin(), pool_indices.end(), 0);
-
     std::string game_record_file = genome_file_name +  "_games.txt";
     {
         // Use game time from last run of this gene pool
@@ -150,6 +146,10 @@ void gene_pool(const std::string& config_file = "")
 
     // Ctrl-C to pause gene pool
     signal(SIGINT, pause_gene_pool);
+
+    // Indices in gene pool to be shuffled for game match-ups
+    std::vector<size_t> pool_indices(gene_pool_population);
+    std::iota(pool_indices.begin(), pool_indices.end(), 0);
 
     for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % pools.size()) // run forever
     {
