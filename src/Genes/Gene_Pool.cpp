@@ -298,16 +298,6 @@ void gene_pool(const std::string& config_file = "")
         std::sort(pool.begin(), pool.end());
         write_generation(pools, pool_index, genome_file_name);
 
-        // Record best AI from all pools.
-        // Best is defined as the still living AI with the lowest ID (the oldest living AI).
-        auto best_ai = pool.front();
-        for(const auto& search_pool : pools)
-        {
-            best_ai = std::min(best_ai, *std::min_element(search_pool.begin(), search_pool.end()));
-        }
-        std::ofstream best_file(genome_file_name + "_best_genome.txt");
-        best_ai.print_genome(best_file);
-
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
         purge_dead_from_map(pools, games_since_last_win);
@@ -355,6 +345,22 @@ void gene_pool(const std::string& config_file = "")
                   << " by ID " << most_wins_player[pool_index].get_id() << std::endl;
         std::cout <<   "Longest lived: " << most_games_survived[pool_index]
                   << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
+
+        // Record best AI from all pools.
+        auto best_ai = pool.front();
+        auto best_compare = [&wins, &draws](const auto& x, const auto& y)
+                            {
+                                return wins[x] - draws[x] < wins[y] - draws[y];
+                            };
+        for(const auto& search_pool : pools)
+        {
+            best_ai = std::max(best_ai,
+                               *std::max_element(search_pool.begin(),
+                                                 search_pool.end(),
+                                                 best_compare), best_compare);
+        }
+        std::ofstream best_file(genome_file_name + "_best_genome.txt");
+        best_ai.print_genome(best_file);
 
         // Pause gene pool
         if(signal_activated == 1)
