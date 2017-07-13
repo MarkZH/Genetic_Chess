@@ -100,7 +100,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : include/Genes/Freedom_To_Mov
 $(DEBUG_OBJ_DIR)/src/Genes/Gene.o : include/Genes/Gene.h include/Game/Color.h src/Genes/Gene.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Genes/Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Gene.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h include/Players/Genetic_AI.h src/Genes/Gene_Pool.cpp include/Game/Game.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h include/Players/Genetic_AI.h src/Genes/Gene_Pool.cpp include/Game/Game.h include/Game/Game_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Genes/Gene_Pool.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Genome.o : include/Genes/Genome.h include/Game/Color.h include/Genes/Gene.h src/Genes/Genome.cpp include/Game/Board.h include/Game/Game_Result.h include/Utility.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Castling_Possible_Gene.h include/Genes/Piece_Strength_Gene.h
@@ -262,7 +262,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : include/Genes/Freedom_To_M
 $(RELEASE_OBJ_DIR)/src/Genes/Gene.o : include/Genes/Gene.h include/Game/Color.h src/Genes/Gene.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Genes/Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Gene.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h include/Players/Genetic_AI.h src/Genes/Gene_Pool.cpp include/Game/Game.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o : include/Genes/Gene_Pool.h include/Players/Genetic_AI.h src/Genes/Gene_Pool.cpp include/Game/Game.h include/Game/Game_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Genes/Gene_Pool.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Genome.o : include/Genes/Genome.h include/Game/Color.h include/Genes/Gene.h src/Genes/Genome.cpp include/Game/Board.h include/Game/Game_Result.h include/Utility.h include/Genes/Total_Force_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Castling_Possible_Gene.h include/Genes/Piece_Strength_Gene.h

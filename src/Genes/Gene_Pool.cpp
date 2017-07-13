@@ -13,6 +13,7 @@
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
+#include "Game/Game_Result.h"
 #include "Utility.h"
 
 static sig_atomic_t signal_activated = 0;
@@ -171,7 +172,7 @@ void gene_pool(const std::string& config_file = "")
         // matched as opponents.
         Random::shuffle(pool_indices);
 
-        std::vector<std::future<Color>> results; // map from pool_indices index to winner
+        std::vector<std::future<Game_Result>> results; // map from pool_indices index to winner
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
             auto white_index = pool_indices[index];
@@ -205,8 +206,9 @@ void gene_pool(const std::string& config_file = "")
             std::cout << white.get_id() << " vs "
                       << black.get_id() << ": " << std::flush;
 
-            auto winner = results[index/2].get();
-            std::cout << color_text(winner) << "! ";
+            auto result = results[index/2].get();
+            auto winner = result.get_winner();
+            std::cout << color_text(winner) << " (" << result.get_ending_reason() << ") ";
 
             if(winner == WHITE)
             {

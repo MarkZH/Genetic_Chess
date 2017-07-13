@@ -17,12 +17,12 @@
 #include "Utility.h"
 
 // Play single game, return color of winner
-Color play_game(const Player& white,
-                const Player& black,
-                double time_in_seconds,
-                size_t moves_to_reset,
-                double increment_seconds,
-                const std::string& pgn_file_name)
+Game_Result play_game(const Player& white,
+                      const Player& black,
+                      double time_in_seconds,
+                      size_t moves_to_reset,
+                      double increment_seconds,
+                      const std::string& pgn_file_name)
 {
     Board board;
 
@@ -37,13 +37,13 @@ Color play_game(const Player& white,
                                 pgn_file_name, board);
 }
 
-Color play_game_with_board(const Player& white,
-                           const Player& black,
-                           double time_in_seconds,
-                           size_t moves_to_reset,
-                           double increment_seconds,
-                           const std::string& pgn_file_name,
-                           Board& board)
+Game_Result play_game_with_board(const Player& white,
+                                 const Player& black,
+                                 double time_in_seconds,
+                                 size_t moves_to_reset,
+                                 double increment_seconds,
+                                 const std::string& pgn_file_name,
+                                 Board& board)
 {
     static std::mutex write_lock;
 
@@ -94,7 +94,7 @@ Color play_game_with_board(const Player& white,
                                 increment_seconds,
                                 game_clock);
 
-        return result.get_winner();
+        return result;
     }
     catch(const std::exception& error)
     {
