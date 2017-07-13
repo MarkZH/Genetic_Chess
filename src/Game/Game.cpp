@@ -80,14 +80,8 @@ Color play_game_with_board(const Player& white,
         }
 
         // for Outside_Players communicating with xboard and the like
-        if(board.whose_turn() == WHITE)
-        {
-            white.process_game_ending(result, board);
-        }
-        else
-        {
-            black.process_game_ending(result, board);
-        }
+        white.process_game_ending(result, board);
+        black.process_game_ending(result, board);
 
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
 

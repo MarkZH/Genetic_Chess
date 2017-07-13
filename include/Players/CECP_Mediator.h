@@ -30,9 +30,11 @@ class CECP_Mediator : public Outside_Player
         mutable std::string first_move;
         mutable std::string received_name;
         mutable Thinking_Output_Type thinking_mode;
+        mutable std::string move_text;
 
         void get_clock_specs() override;
         std::string receive_cecp_command() const;
+        void wait_for_quit() const;
 };
 
 #endif // CECP_MEDIATOR_H

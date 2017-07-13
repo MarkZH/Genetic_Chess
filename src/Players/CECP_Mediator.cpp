@@ -36,7 +36,6 @@ const Complete_Move CECP_Mediator::choose_move(const Board& board, const Clock& 
 {
     while(true)
     {
-        std::string move_text;
         try
         {
             if(first_move.empty())
@@ -138,24 +137,30 @@ std::string CECP_Mediator::name() const
 
 void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board) const
 {
-    send_command("move " + board.last_move_coordinates());
-    std::string result = "result ";
-    if(ending.get_winner() == WHITE)
+    if(move_text != board.last_move_coordinates())
     {
-        result += "1-0";
-    }
-    else if(ending.get_winner() == BLACK)
-    {
-        result += "0-1";
-    }
-    else
-    {
-        result += "1/2-1/2";
+        // Last move from local opponent --> send last move to CECP intermediary
+        send_command("move " + board.last_move_coordinates());
+        std::string result = "result ";
+        if(ending.get_winner() == WHITE)
+        {
+            result += "1-0";
+        }
+        else if(ending.get_winner() == BLACK)
+        {
+            result += "0-1";
+        }
+        else
+        {
+            result += "1/2-1/2";
+        }
+
+        result += " {" + ending.get_ending_reason() + "}";
+
+        send_command(result);
     }
 
-    result += " {" + ending.get_ending_reason() + "}";
-
-    send_command(result);
+    wait_for_quit();
 }
 
 void CECP_Mediator::get_clock_specs()
@@ -234,4 +239,18 @@ std::string CECP_Mediator::receive_cecp_command() const
 void CECP_Mediator::initial_board_setup(Board& board) const
 {
     board.set_thinking_mode(thinking_mode);
+}
+
+void CECP_Mediator::wait_for_quit() const
+{
+    try
+    {
+        while(true)
+        {
+            receive_cecp_command();
+        }
+    }
+    catch(const std::runtime_error&)
+    {
+    }
 }
