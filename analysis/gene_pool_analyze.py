@@ -5,6 +5,8 @@ import sys
 def main(gene_pool_file_name):
     still_alive = dict()
     pool = dict()
+
+    # Read file for gene names
     with open(gene_pool_file_name) as f:
         for line in f:
             line = line.strip()
@@ -24,6 +26,7 @@ def main(gene_pool_file_name):
                 else:
                     header_line.append(current_gene + ' - ' + parameter)
 
+        # Read gene pool file for data
         output_file_name = gene_pool_file_name + '_parsed.txt'
         with open(gene_pool_file_name) as f, open(output_file_name, 'w') as w:
             data_line = []
