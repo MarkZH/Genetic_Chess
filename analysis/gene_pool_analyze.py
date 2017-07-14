@@ -61,10 +61,6 @@ def main(gene_pool_file_name):
                         while not header_line[len(data_line)] == title:
                             data_line.append('0')
                         data_line.append(value)
-                elif line == 'INACTIVE':
-                    for index in range(len(header_line)):
-                        if header_line[index].startswith(current_gene):
-                            data_line[index] = 'nan'
 
 
 if __name__ == '__main__':

@@ -54,12 +54,6 @@ xlabel('ID');
 
 piece_priority_plots = [0, 0];
 
-total_force_index = 0;
-total_force_prefix = "Total Force Gene";
-opponent_pieces_targeted_index = 0;
-opponent_pieces_prefix = "Opponent Pieces Targeted Gene";
-piece_strength_index = 0;
-
 for yi = 2 : length(data.colheaders) - 2
   this_data = data.data(:, yi);
   name_list = data.colheaders(yi);
@@ -67,7 +61,6 @@ for yi = 2 : length(data.colheaders) - 2
 
   figure('Position', [0, 0, 1200, 1000]);
   hold all;
-  still_alive_gene = 0;
   for pool_id = 0 : max(pool_ids)
     id_right = (pool_ids == pool_id);
     good = (still_alive & id_right);
@@ -79,11 +72,6 @@ for yi = 2 : length(data.colheaders) - 2
              'ok', ...
              'markersize', 10, ...
              'linewidth', 1);
-    still_alive_gene = still_alive_gene + sum(isfinite(this_data(good)));
-    if pool_id == max(pool_ids)
-      number_alive = num2str(still_alive_gene);
-      set(h, 'displayname', ['Still Alive (' number_alive ')']);
-    end
   end
   leg = legend('show');
   set(leg, 'location', 'southoutside');
@@ -95,7 +83,6 @@ for yi = 2 : length(data.colheaders) - 2
   plot(xlim, [0 0], 'k'); % X-axis
 
   % Fill in nan gaps in data
-  this_data(~isfinite(this_data)) = 0;
   conv_window = 100;
   smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
   conv_margin = floor(conv_window/2);
@@ -112,7 +99,6 @@ for yi = 2 : length(data.colheaders) - 2
   if strncmp(name, piece_strength_prefix, length(piece_strength_prefix))
     plot_figure = piece_strength_figure;
     piece_priority_index = 1;
-    piece_strength_index = yi;
     special_plot = true;
   end
 
@@ -120,14 +106,6 @@ for yi = 2 : length(data.colheaders) - 2
     plot_figure = priority_figure;
     piece_priority_index = 2;
     special_plot = true;
-  end
-
-  if strncmp(name, total_force_prefix, length(total_force_prefix))
-    total_force_index = yi;
-  end
-
-  if strncmp(name, opponent_pieces_prefix, length(opponent_pieces_prefix))
-    opponent_pieces_targeted_index = yi;
   end
 
   if special_plot && length(this_data) > conv_window;
@@ -169,39 +147,4 @@ for index = 1 : 2
   end
 
   print([gene_pool_filename file_name_suffixes{index}]);
-end
-
-if total_force_index > 0 && opponent_pieces_targeted_index > 0 && piece_strength_index > 0
-  figure('Position', [0, 0, 1200, 1000]);
-  hold all;
-  total_force_active = isfinite(data.data(:, total_force_index));
-  opponent_targeted_active = isfinite(data.data(:, opponent_pieces_targeted_index));
-  piece_strength_active = isfinite(data.data(:, piece_strength_index));
-  activity = (total_force_active | opponent_targeted_active) & piece_strength_active;
-  smooth_activity = conv(activity, ones(conv_window, 1), 'valid')/conv_window;
-  plot(100*smooth_activity, 'LineWidth', 3, 'displayname', 'Piece Strength');
-  title('Piece Strength Gene in use', 'FontSize', 22);
-  xlabel('ID', 'FontSize', 18);
-  ylabel('Percentage with activity', 'FontSize', 18);
-  ylim([0 100]);
-  set(gca, 'FontSize', 14);
-
-  total_force_gene_functional = total_force_active & piece_strength_active;
-  smooth_force = conv(total_force_gene_functional, ones(conv_window, 1), 'valid')/conv_window;
-  plot(100*smooth_force, 'LineWidth', 3, 'displayname', 'Total Force');
-
-  opponent_gene_functional = opponent_targeted_active & piece_strength_active;
-  smooth_opponent = conv(opponent_gene_functional, ones(conv_window, 1), 'valid')/conv_window;
-  plot(100*smooth_opponent, 'LineWidth', 3, 'displayname', 'Opponent Pieces Targeted');
-
-  leg = legend('show');
-  set(leg, 'location', 'southoutside');
-  set(leg, 'orientation', 'horizontal');
-  set(leg, 'FontSize', 10);
-
-  for n = id_marks
-    plot(n*[1 1], ylim);
-  end
-
-  print([gene_pool_filename '_piece_strength_gene_active.png']);
 end

@@ -31,7 +31,6 @@ class Gene
         mutable std::map<std::string, double> properties; // used to simplify reading/writing from/to files
         virtual void reset_properties() const;
         virtual void load_properties();
-        bool is_active() const;
         void make_priority_non_negative();
 
     private:
@@ -41,7 +40,6 @@ class Gene
 
         double priority;
         bool priority_non_negative;
-        bool active;
 };
 
 #endif // GENE_H

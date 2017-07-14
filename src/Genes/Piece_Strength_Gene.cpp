@@ -54,7 +54,7 @@ double Piece_Strength_Gene::piece_value(char symbol) const
 
 double Piece_Strength_Gene::piece_value(const Piece* piece) const
 {
-    if( ! is_active() || ! piece || piece->is_king())
+    if( ! piece || piece->is_king())
     {
         return 0.0;
     }

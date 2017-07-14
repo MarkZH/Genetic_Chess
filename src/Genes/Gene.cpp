@@ -8,8 +8,7 @@
 
 Gene::Gene() :
     priority(0.0),
-    priority_non_negative(false),
-    active(true)
+    priority_non_negative(false)
 {
 }
 
@@ -33,12 +32,6 @@ void Gene::read_from(std::istream& is)
         line = String::strip_comments(line, '#');
         if(line.empty())
         {
-            continue;
-        }
-
-        if(line.find("ACTIVE") != std::string::npos)
-        {
-            active = (line == "ACTIVE");
             break;
         }
 
@@ -69,19 +62,12 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 
 void Gene::mutate()
 {
-    if(Random::success_probability(0.95))
+    priority += Random::random_normal(10.0);
+    if(priority_non_negative)
     {
-        priority += Random::random_normal(10.0);
-        if(priority_non_negative)
-        {
-            priority = std::max(priority, 0.0);
-        }
-        gene_specific_mutation();
+        priority = std::max(priority, 0.0);
     }
-    else
-    {
-        active = ! active;
-    }
+    gene_specific_mutation();
 }
 
 void Gene::gene_specific_mutation()
@@ -90,14 +76,7 @@ void Gene::gene_specific_mutation()
 
 double Gene::evaluate(const Board& board) const
 {
-    if(is_active())
-    {
-        return priority*score_board(board);
-    }
-    else
-    {
-        return 0.0;
-    }
+    return priority*score_board(board);
 }
 
 void Gene::print(std::ostream& os) const
@@ -108,16 +87,10 @@ void Gene::print(std::ostream& os) const
     {
         os << name_value.first << ": " << name_value.second << "\n";
     }
-    os << (is_active() ? "" : "IN") << "ACTIVE\n";
 }
 
 void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 {
-}
-
-bool Gene::is_active() const
-{
-    return active;
 }
 
 void Gene::make_priority_non_negative()
