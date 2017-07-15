@@ -208,6 +208,6 @@ stats = {['Mean = ' num2str(mean_moves)], ...
          ['Max = ' num2str(max(moves_in_game))]};
 xl = xlim;
 yl = ylim;
-text(0.7*xl(2), 0.3*yl(2), stats, 'fontsize', 14);
+text(0.7*xl(2), 0.6*yl(2), stats, 'fontsize', 14);
 
 print([raw_data '_moves_in_game_histogram.png']);
