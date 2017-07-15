@@ -141,25 +141,9 @@ void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& 
     {
         // Last move from local opponent --> send last move to CECP intermediary
         send_command("move " + board.last_move_coordinates());
-        std::string result = "result ";
-        if(ending.get_winner() == WHITE)
-        {
-            result += "1-0";
-        }
-        else if(ending.get_winner() == BLACK)
-        {
-            result += "0-1";
-        }
-        else
-        {
-            result += "1/2-1/2";
-        }
-
-        result += " {" + ending.get_ending_reason() + "}";
-
-        send_command(result);
     }
 
+    send_command("result " + ending.get_game_ending_annotation() + " {" + ending.get_ending_reason() + "}");
     wait_for_quit();
 }
 
