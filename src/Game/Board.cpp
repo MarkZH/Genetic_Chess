@@ -353,7 +353,7 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
 Game_Result Board::submit_move(const Complete_Move& move)
 {
     assert(is_in_legal_moves_list(move));
-    game_record.push_back(move.coordinate_move());
+    game_record.push_back(move);
 
     make_move(move.start_file(), move.start_rank(),
               move.end_file(),   move.end_rank());
@@ -820,7 +820,7 @@ bool Board::no_legal_moves() const
     return legal_moves().empty();
 }
 
-const std::vector<std::string>& Board::get_game_record() const
+const std::vector<Complete_Move>& Board::get_game_record() const
 {
     return game_record;
 }
@@ -918,7 +918,7 @@ void Board::print_game_record(const Player* white,
             }
         }
 
-        auto next_move = temp.get_complete_move(game_record.at(i));
+        auto next_move = game_record.at(i);
         out_stream << " " << next_move.game_record_item(temp);
 
         std::string commentary;
@@ -981,7 +981,7 @@ std::string Board::board_status() const // for 3-fold rep count
 
 std::string Board::last_move_coordinates() const
 {
-    return game_record.back();
+    return game_record.back().coordinate_move();
 }
 
 void Board::set_turn(Color color)
@@ -1124,9 +1124,8 @@ std::string Board::get_last_move_record() const
     std::string result;
     for(const auto& move : get_game_record())
     {
-        auto cm = b.get_complete_move(move);
-        result = cm.game_record_item(b);
-        b.submit_move(cm);
+        result = move.game_record_item(b);
+        b.submit_move(move);
     }
 
     return result;

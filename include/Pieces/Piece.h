@@ -20,7 +20,7 @@ class Piece
         std::string ascii_art(unsigned int row) const;
         Color color() const;
 
-        bool can_move(const Move* move) const;
+        bool can_move(const Move* move, char file_start, int rank_start) const;
 
         const std::vector<Complete_Move>& get_move_list(char file, int rank) const;
 
@@ -69,7 +69,7 @@ class Piece
         std::string symbol;
 
         // Contains pointers to move data
-        std::vector<std::unique_ptr<const Move>> possible_moves;
+        static std::vector<std::unique_ptr<const Move>> possible_moves;
 
         // Holds lists of possible legal moves indexed by starting square (using Board::board_index())
         std::vector<std::vector<Complete_Move>> legal_moves;

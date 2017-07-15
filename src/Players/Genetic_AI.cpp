@@ -228,7 +228,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
         if(still_on_principal_variation)
         {
-            auto next_principal_variation_move = board.get_complete_move(principal_variation[depth + 2]);
+            auto next_principal_variation_move = principal_variation[depth + 2];
             auto move_iter = std::find(all_legal_moves.begin(),
                                        all_legal_moves.end(),
                                        next_principal_variation_move);
@@ -412,10 +412,10 @@ std::string Genetic_AI::get_commentary_for_move(size_t move_number) const
     std::string result;
     if(move_number < commentary.size() && ! commentary.at(move_number).empty())
     {
-        result = commentary.at(move_number).front();
+        result = commentary.at(move_number).front().coordinate_move();
         for(size_t i = 1; i < commentary.at(move_number).size(); ++i)
         {
-            result += " " + commentary.at(move_number).at(i);
+            result += " " + commentary.at(move_number).at(i).coordinate_move();
         }
     }
 
@@ -438,18 +438,22 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         score = -(10000.0 - thought.depth);
     }
 
+    auto time_so_far = clock_start_time - clock.time_left(clock.running_for());
     std::cout << thought.depth // ply
               << " "
               << int(score) // score in what should be centipawns
               << " "
-              << int((clock_start_time - clock.time_left(clock.running_for()))*100) // search time in centiseconds
+              << int(time_so_far*100) // search time in centiseconds
               << " "
-              << nodes_searched; // number of nodes searched
+              << nodes_searched // number of nodes searched
+              << " 0 " // Selective depth (not implemented)
+              << int(nodes_searched/time_so_far)
+              << '\t';
 
     // Principal variation
     for(const auto& move : thought.commentary)
     {
-        std::cout << " " << move;
+        std::cout << move.coordinate_move() << ' ';
     }
 
     std::cout << '\n';

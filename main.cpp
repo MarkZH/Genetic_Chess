@@ -391,7 +391,7 @@ void replay_game(const std::string& file_name, int game_number)
                 std::cout << "Last move: ";
                 std::cout << (board.get_game_record().size() + 1)/2 << ". ";
                 std::cout << (board.whose_turn() == WHITE ? "... " : "");
-                std::cout << board.get_game_record().back() << std::endl;
+                std::cout << board.get_game_record().back().coordinate_move() << std::endl;
                 if(result.game_has_ended())
                 {
                     std::cout << result.get_ending_reason() << std::endl;

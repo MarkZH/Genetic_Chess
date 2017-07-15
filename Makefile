@@ -193,7 +193,7 @@ $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shanno
 $(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : include/Players/Game_Tree_Node_Result.h include/Moves/Complete_Move.h include/Game/Color.h src/Players/Game_Tree_Node_Result.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Game_Tree_Node_Result.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Players/Thinking.h include/Players/Game_Tree_Node_Result.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Genes/Genome.h include/Moves/Complete_Move.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Players/Thinking.h include/Players/Game_Tree_Node_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Genetic_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h
@@ -355,7 +355,7 @@ $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : include/Players/Claude_Shan
 $(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : include/Players/Game_Tree_Node_Result.h include/Moves/Complete_Move.h include/Game/Color.h src/Players/Game_Tree_Node_Result.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Game_Tree_Node_Result.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Genes/Genome.h src/Players/Genetic_AI.cpp include/Moves/Complete_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Players/Thinking.h include/Players/Game_Tree_Node_Result.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : include/Players/Genetic_AI.h include/Players/Player.h include/Genes/Genome.h include/Moves/Complete_Move.h src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Game_Result.h include/Players/Thinking.h include/Players/Game_Tree_Node_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Genetic_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o : include/Players/Human_Player.h include/Players/Player.h src/Players/Human_Player.cpp include/Game/Board.h include/Game/Clock.h include/Moves/Complete_Move.h include/Exceptions/Illegal_Move_Exception.h include/Exceptions/Promotion_Exception.h

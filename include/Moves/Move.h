@@ -8,7 +8,7 @@ class Board;
 class Move
 {
     public:
-        explicit Move(int d_file_in, int d_rank_in);
+        Move(int d_file_in, int d_rank_in);
         virtual ~Move() = default;
 
         // side effects are changes to the state of the board beyond the change
@@ -30,6 +30,8 @@ class Move
 
         virtual std::string game_record_item(const Board& board, char file_start, int rank_start) const;
         virtual std::string coordinate_move(char file_stat, int rank_start) const;
+
+        bool operator==(const Move& other) const;
 
     protected:
         int d_file;

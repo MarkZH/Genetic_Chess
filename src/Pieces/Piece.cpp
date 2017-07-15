@@ -5,6 +5,8 @@
 
 #include "Game/Board.h"
 
+std::vector<std::unique_ptr<const Move>> Piece::possible_moves;
+
 Piece::Piece(Color color_in, const std::string& symbol_in) :
     my_color(color_in),
     symbol(symbol_in),
@@ -50,11 +52,11 @@ char Piece::fen_symbol() const
     return (my_color == WHITE ? std::toupper(symbol[0]) : std::tolower(symbol[0]));
 }
 
-bool Piece::can_move(const Move* move) const
+bool Piece::can_move(const Move* move, char file_start, int rank_start) const
 {
-    for(const auto& possible_move : possible_moves)
+    for(const auto& possible_move : get_move_list(file_start, rank_start))
     {
-        if(possible_move.get() == move)
+        if(possible_move == Complete_Move{move, file_start, rank_start})
         {
             return true;
         }

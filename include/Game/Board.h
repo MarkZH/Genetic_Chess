@@ -33,7 +33,7 @@ class Board
         void ascii_draw(Color perspective = WHITE) const;
 
         std::string fen_status() const; // current state of board in FEN
-        const std::vector<std::string>& get_game_record() const;
+        const std::vector<Complete_Move>& get_game_record() const;
         std::string get_last_move_record() const;
 
         // Communication between players
@@ -75,7 +75,7 @@ class Board
         std::vector<std::shared_ptr<const Piece>> board;
         std::map<std::string, int> repeat_count;
         Color turn_color;
-        std::vector<std::string> game_record;
+        std::vector<Complete_Move> game_record;
         std::set<Square> unmoved_positions;
         Square en_passant_target;
         std::string starting_fen;

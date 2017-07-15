@@ -7,10 +7,10 @@
 #include "Player.h"
 
 #include "Genes/Genome.h"
+#include "Moves/Complete_Move.h"
 
 class Board;
 class Clock;
-class Complete_Move;
 struct Game_Tree_Node_Result;
 
 class Genetic_AI : public Player
@@ -44,8 +44,8 @@ class Genetic_AI : public Player
         static int next_id;
         int id;
 
-        mutable std::vector<std::string> principal_variation;
-        mutable std::vector<std::vector<std::string>> commentary;
+        mutable std::vector<Complete_Move> principal_variation;
+        mutable std::vector<std::vector<Complete_Move>> commentary;
 
         // Monitor search speed to adapt to different computers/competing workloads
         mutable int nodes_searched;

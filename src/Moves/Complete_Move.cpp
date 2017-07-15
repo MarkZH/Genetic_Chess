@@ -88,5 +88,5 @@ bool Complete_Move::operator==(const Complete_Move& other) const
 {
     return start_file() == other.start_file() &&
            start_rank() == other.start_rank() &&
-           move == other.move;
+           *move == *other.move;
 }

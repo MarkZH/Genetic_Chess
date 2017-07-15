@@ -12,7 +12,7 @@
 #include "Game/Board.h"
 #include "Moves/Complete_Move.h"
 
-std::vector<std::string> search_stalemate(const Board& board, int max_depth);
+std::vector<Complete_Move> search_stalemate(const Board& board, int max_depth);
 
 void stalemate_search_start()
 {
@@ -28,9 +28,8 @@ void stalemate_search_start()
         if( ! result.empty())
         {
             Board b;
-            for(const auto& item : result)
+            for(const auto& move : result)
             {
-                auto move = b.get_complete_move(item);
                 std::cout << move.game_record_item(b) << " ";
                 b.submit_move(move);
             }
@@ -44,7 +43,7 @@ void stalemate_search_start()
     }
 }
 
-std::vector<std::string> search_stalemate(const Board& board, const int max_depth)
+std::vector<Complete_Move> search_stalemate(const Board& board, const int max_depth)
 {
     if(max_depth <= 0)
     {

@@ -35,7 +35,7 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start) const
     auto moving_piece = board.view_piece_on_square(file_start, rank_start);
     if( ! moving_piece
             || moving_piece->color() != board.whose_turn()
-            || ! moving_piece->can_move(this))
+            || ! moving_piece->can_move(this, file_start, rank_start))
     {
         return false;
     }
@@ -183,4 +183,11 @@ std::string Move::coordinate_move(char file_start, int rank_start) const
            + std::to_string(rank_start)
            + char(file_start + file_change())
            + std::to_string(rank_start + rank_change());
+}
+
+bool Move::operator==(const Move& other) const
+{
+    return file_change() == other.file_change() &&
+           rank_change() == other.rank_change() &&
+           name() == other.name();
 }

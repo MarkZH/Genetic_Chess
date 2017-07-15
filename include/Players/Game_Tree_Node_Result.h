@@ -13,7 +13,7 @@ struct Game_Tree_Node_Result
     double score;
     Color perspective;
     size_t depth;
-    std::vector<std::string> commentary;
+    std::vector<Complete_Move> commentary;
 
     double corrected_score(Color query) const;
 };
