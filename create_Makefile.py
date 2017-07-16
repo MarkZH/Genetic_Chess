@@ -123,14 +123,6 @@ for target in final_targets:
 
             depends[obj_file].extend(recursive_dependencies(source_file))
 
-to_delete = []
-for obj_file in depends:
-    if obj_file.endswith('.o') and obj_file not in operations:
-        to_delete.append(obj_file)
-
-for thing in to_delete:
-    del depends[thing]
-
 compiler = 'g++'
 
 base_options = [
