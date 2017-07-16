@@ -18,10 +18,10 @@ def recursive_dependencies(source_file):
                 include_file_name = os.path.join('include', file_name)
                 if not os.path.isfile(include_file_name):
                     include_file_name = os.path.join(os.path.dirname(source_file), file_name)
-                if os.path.isfile(include_file_name) and include_file_name not in depends[obj_file]:
+                if os.path.isfile(include_file_name) and include_file_name not in result:
                     result.append(include_file_name)
                     result.extend(recursive_dependencies(include_file_name))
-    return list(set(result))
+    return sorted(list(set(result)))
 
 
 def make_sort(a, b):
@@ -111,20 +111,11 @@ for target in final_targets:
     operations['before_' + target].append('test -d ' + bin_dir + ' || mkdir -p ' + bin_dir)
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
         dirpath = dirpath[len(os.getcwd()) + 1 :]
-        for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp') or fn.endswith('.h')]:
+        for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp')]:
             ext_length = len(source_file.split('.')[-1])
             obj_file = os.path.join(obj_dest[target], source_file[:-ext_length] + "o")
-            if 'include' in obj_file:
-                inc_ind = obj_file.find('include')
-                inc_len = len('include')
-                obj_file = obj_file[:inc_ind] + 'src' + obj_file[inc_ind + inc_len:]
-            try:
-                if source_file not in depends[obj_file]:
-                    depends[obj_file].append(source_file)
-            except KeyError:
-                depends[obj_file] = [source_file]
-            if source_file.endswith('.cpp'):
-                operations[obj_file] = [' '.join(['$(CXX)', "$(CFLAGS)", "$(LDFLAGS)", options[target], "-c", source_file, "-o", obj_file])]
+            depends[obj_file] = [source_file]
+            operations[obj_file] = [' '.join(['$(CXX)', "$(CFLAGS)", "$(LDFLAGS)", options[target], "-c", source_file, "-o", obj_file])]
             obj_dest_dir = os.path.dirname(obj_file)
             if obj_dest_dir not in obj_dir_written:
                 operations['before_' + target].append('test -d ' + obj_dest_dir + ' || mkdir -p ' + obj_dest_dir)
