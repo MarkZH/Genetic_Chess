@@ -2,6 +2,28 @@
 
 import os, functools
 
+def recursive_dependencies(source_file):
+    result = []
+    with open(source_file) as src:
+        skip = False
+        for line in src:
+            if line.find('#ifdef') != -1:
+                skip = (line.split()[1] != target.upper())
+            elif line.find("#else") != -1:
+                skip = not skip
+            elif line.find("#endif") != -1:
+                skip = False
+            elif not skip and line.find('#include "') != -1:
+                file_name = line.split('"')[1]
+                include_file_name = os.path.join('include', file_name)
+                if not os.path.isfile(include_file_name):
+                    include_file_name = os.path.join(os.path.dirname(source_file), file_name)
+                if os.path.isfile(include_file_name) and include_file_name not in depends[obj_file]:
+                    result.append(include_file_name)
+                    result.extend(recursive_dependencies(include_file_name))
+    return list(set(result))
+
+
 def make_sort(a, b):
     if a == b:
         return 0
@@ -107,22 +129,8 @@ for target in final_targets:
             if obj_dest_dir not in obj_dir_written:
                 operations['before_' + target].append('test -d ' + obj_dest_dir + ' || mkdir -p ' + obj_dest_dir)
                 obj_dir_written.append(obj_dest_dir)
-            with open(source_file) as src:
-                skip = False
-                for line in src:
-                    if line.find('#ifdef') != -1:
-                        skip = (line.split()[1] != target.upper())
-                    elif line.find("#else") != -1:
-                        skip = not skip
-                    elif line.find("#endif") != -1:
-                        skip = False
-                    elif not skip and line.find('#include "') != -1:
-                        file_name = line.split('"')[1]
-                        include_file_name = os.path.join('include', file_name)
-                        if not os.path.isfile(include_file_name):
-                            include_file_name = os.path.join(os.path.dirname(source_file), file_name)
-                        if os.path.isfile(include_file_name) and include_file_name not in depends[obj_file]:
-                            depends[obj_file].append(include_file_name)
+
+            depends[obj_file].extend(recursive_dependencies(source_file))
 
 to_delete = []
 for obj_file in depends:
@@ -175,8 +183,7 @@ with open("Makefile", 'w') as make_file:
         make_file.write("OUT_" + target.upper() + " = " + bins[target] + '\n')
         make_file.write(target.upper() + '_OBJ_DIR = obj/' + target + '\n')
         make_file.write('OBJ_' + target.upper() + ' = ')
-        for obj in [x for x in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)) if x.endswith('.o') and target.upper() in x]:
-            make_file.write(obj + ' ')
+        make_file.write(' '.join([x for x in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)) if x.endswith('.o') and target.upper() in x]))
         make_file.write('\n')
         make_file.write('CFLAGS_' + target.upper() + ' = ' + ' '.join(options_list[target]) + '\n')
         make_file.write('LDFLAGS_' + target.upper() + ' = ' + ' '.join(linker_options[target]) + '\n')
