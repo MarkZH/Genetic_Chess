@@ -135,6 +135,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
     nodes_searched = 0;
     clock_start_time = clock.time_left(clock.running_for());
+    maximum_depth = 0;
 
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
@@ -211,6 +212,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    Game_Tree_Node_Result beta) const
 {
     auto time_start = clock.time_left(clock.running_for());
+    maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
 
     // The first item in the principal variation is the last move that
@@ -445,8 +447,10 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
               << " "
               << int(time_so_far*100) // search time in centiseconds
               << " "
-              << nodes_searched // number of nodes searched
-              << " 0 " // Selective depth (not implemented)
+              << nodes_searched
+              << " "
+              << maximum_depth
+              << " "
               << int(nodes_searched/time_so_far)
               << '\t';
 

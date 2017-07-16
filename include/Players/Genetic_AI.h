@@ -51,6 +51,7 @@ class Genetic_AI : public Player
         mutable int nodes_searched;
         mutable double clock_start_time;
         mutable double positions_per_second;
+        mutable size_t maximum_depth;
 
 
         void read_from(std::istream& is);
