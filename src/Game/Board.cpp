@@ -358,11 +358,9 @@ Game_Result Board::submit_move(const Complete_Move& move)
 
     make_move(move.start_file(), move.start_rank(),
               move.end_file(),   move.end_rank());
+
+    set_turn(opposite(whose_turn()));
     move.side_effects(*this);
-
-    clear_caches();
-
-    turn_color = opposite(turn_color);
 
     if(no_legal_moves())
     {
