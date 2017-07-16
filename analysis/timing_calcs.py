@@ -5,11 +5,12 @@ import sys
 def main(file_name):
     timings = dict()
     with open(file_name) as f:
-        for line in f:
+        for line_number, line in enumerate(f):
             try:
                 name, time = line.split('|')
-            except ValueError:
-                print(line)
+            except ValueError as e:
+                print('ERROR:', line_number, line)
+                print(e)
                 return
             try:
                 count, time_sum = timings[name]
