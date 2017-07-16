@@ -12,7 +12,7 @@ Freedom_To_Move_Gene::Freedom_To_Move_Gene() :
 
 double Freedom_To_Move_Gene::score_board(const Board& board) const
 {
-    return double(board.legal_moves().size())/initial_number_of_moves;
+    return board.legal_moves().size()/initial_number_of_moves;
 }
 
 Freedom_To_Move_Gene* Freedom_To_Move_Gene::duplicate() const
