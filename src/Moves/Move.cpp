@@ -25,20 +25,14 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start) const
     int rank_end = rank_start + rank_change();
 
     // starting or ending square is outside board
-    if( ! (Board::inside_board(file_start, rank_start)
-           && Board::inside_board(file_end, rank_end)))
-    {
-        return false;
-    }
+    assert(Board::inside_board(file_start, rank_start));
+    assert(Board::inside_board(file_end, rank_end));
 
     // Piece-move compatibility
     auto moving_piece = board.view_piece_on_square(file_start, rank_start);
-    if( ! moving_piece
-            || moving_piece->color() != board.whose_turn()
-            || ! moving_piece->can_move(this, file_start, rank_start))
-    {
-        return false;
-    }
+    assert(moving_piece);
+    assert(moving_piece->color() == board.whose_turn());
+    assert(moving_piece->can_move(this));
 
     // Check that there are no intervening pieces for straight-line moves
     // if(...) conditional excludes checking knight moves
