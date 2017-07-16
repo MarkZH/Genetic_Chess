@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <cassert>
 #include <stdexcept>
+#include <map>
+#include <set>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
