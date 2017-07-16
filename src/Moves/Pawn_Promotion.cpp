@@ -23,7 +23,7 @@ void Pawn_Promotion::side_effects(Board& board, char file_start, int rank_start)
     Pawn_Move::side_effects(board, file_start, rank_start);
 
     // This line will call dtor on this if on original board, so it must be last.
-    board.piece_on_square(file_end, rank_end) = promote_to;
+    board.place_piece(promote_to, file_end, rank_end);
 }
 
 std::string Pawn_Promotion::name() const

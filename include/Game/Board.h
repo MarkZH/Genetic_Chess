@@ -73,6 +73,7 @@ class Board
 
     private:
         std::vector<std::shared_ptr<const Piece>> board;
+        std::vector<std::shared_ptr<const Piece>> captured_pieces;
         std::map<std::string, int> repeat_count;
         Color turn_color;
         std::vector<Complete_Move> game_record;
@@ -101,6 +102,7 @@ class Board
         bool is_legal(char file_start, int rank_start,
                       char file_end,   int rank_end) const;
         bool is_in_legal_moves_list(const Complete_Move& move) const;
+        void place_piece(std::shared_ptr<const Piece> piece, char file, int rank);
 
         // Moves with side effects
         friend class Kingside_Castle; // moves second piece
