@@ -214,78 +214,8 @@ bool Board::is_in_legal_moves_list(const Complete_Move& move) const
 
 std::string Board::fen_status() const
 {
-    std::string s;
-    int empty_count = 0;
-    for(int rank = 8; rank >= 1; --rank)
-    {
-        if(rank < 8)
-        {
-            s.append("/");
-        }
+    std::string s = board_status() + " ";
 
-        for(char file = 'a'; file <= 'h'; ++file)
-        {
-            auto piece = view_piece_on_square(file, rank);
-            if( ! piece)
-            {
-                ++empty_count;
-            }
-            else
-            {
-                if(empty_count > 0)
-                {
-                    s.append(std::to_string(empty_count));
-                    empty_count = 0;
-                }
-                s.push_back(piece->fen_symbol());
-            }
-        }
-        if(empty_count > 0)
-        {
-            s.append(std::to_string(empty_count));
-            empty_count = 0;
-        }
-    }
-
-    s.push_back(' ');
-    s.push_back(tolower(color_text(whose_turn())[0]));
-    s.push_back(' ');
-
-    for(int base_rank : {1, 8})
-    {
-        if( ! piece_has_moved('e', base_rank)) // has king moved?
-        {
-            for(char rook_file : {'h', 'a'})
-            {
-                if( ! piece_has_moved(rook_file, base_rank)) // have rooks moved
-                {
-                    char mark = (rook_file == 'h' ? 'K' : 'Q');
-                    if(base_rank == 8)
-                    {
-                        mark = std::tolower(mark);
-                    }
-                    s.push_back(mark);
-                }
-            }
-        }
-    }
-    if(s.back() == ' ')
-    {
-        s.push_back('-');
-    }
-    s.push_back(' ');
-
-    if(en_passant_target)
-    {
-        s.push_back(en_passant_target.file);
-        s.push_back(en_passant_target.rank + '0');
-    }
-    else
-    {
-        s.push_back('-');
-    }
-
-    s.push_back(' ');
     int moves_since_pawn_or_capture = -1; // -1 to not count current state of board
     for(const auto& board_count : repeat_count)
     {
@@ -969,21 +899,79 @@ void Board::print_game_record(const Player* white,
 
 std::string Board::board_status() const // for 3-fold rep count
 {
-    auto status = fen_status();
-    size_t space_before_move_counts_index = 0;
-    for(size_t i = 0, space_count = 0; i < status.size(); ++i)
+    std::string s;
+
+    int empty_count = 0;
+    for(int rank = 8; rank >= 1; --rank)
     {
-        if(std::isspace(status[i]))
+        if(rank < 8)
         {
-            if(++space_count == 4)
+            s.append("/");
+        }
+
+        for(char file = 'a'; file <= 'h'; ++file)
+        {
+            auto piece = view_piece_on_square(file, rank);
+            if( ! piece)
             {
-                space_before_move_counts_index = i;
-                break;
+                ++empty_count;
             }
+            else
+            {
+                if(empty_count > 0)
+                {
+                    s.append(std::to_string(empty_count));
+                    empty_count = 0;
+                }
+                s.push_back(piece->fen_symbol());
+            }
+        }
+        if(empty_count > 0)
+        {
+            s.append(std::to_string(empty_count));
+            empty_count = 0;
         }
     }
 
-    return status.substr(0, space_before_move_counts_index);
+    s.push_back(' ');
+    s.push_back(tolower(color_text(whose_turn())[0]));
+    s.push_back(' ');
+
+    for(int base_rank : {1, 8})
+    {
+        if( ! piece_has_moved('e', base_rank)) // has king moved?
+        {
+            for(char rook_file : {'h', 'a'})
+            {
+                if( ! piece_has_moved(rook_file, base_rank)) // have rooks moved
+                {
+                    char mark = (rook_file == 'h' ? 'K' : 'Q');
+                    if(base_rank == 8)
+                    {
+                        mark = std::tolower(mark);
+                    }
+                    s.push_back(mark);
+                }
+            }
+        }
+    }
+    if(s.back() == ' ')
+    {
+        s.push_back('-');
+    }
+    s.push_back(' ');
+
+    if(en_passant_target)
+    {
+        s.push_back(en_passant_target.file);
+        s.push_back(en_passant_target.rank + '0');
+    }
+    else
+    {
+        s.push_back('-');
+    }
+
+    return s;
 }
 
 std::string Board::last_move_coordinates() const
