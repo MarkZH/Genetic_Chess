@@ -792,6 +792,7 @@ void Board::print_game_record(const Player* white,
     auto now = std::chrono::system_clock::now();
     auto now_c = std::chrono::system_clock::to_time_t(now);
     out_stream << "[Date \"" << std::put_time(std::localtime(&now_c), "%Y.%m.%d") << "\"]\n";
+    out_stream << "[Time \"" << std::put_time(std::localtime(&now_c), "%H:%M:%S") << "\"]\n";
 
     if(white && ! white->name().empty())
     {
