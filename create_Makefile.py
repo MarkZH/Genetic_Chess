@@ -85,7 +85,13 @@ for target in final_targets:
 
     out_variable = "$(OUT_" + target.upper() + ")"
     all_objects = "$(OBJ_" + target.upper() + ")"
-    operations[out_variable] = [' '.join(["$(LD)", "-o", out_variable, all_objects, "$(LDFLAGS)", "$(LDFLAGS_" + target.upper() + ")"])]
+    operations[out_variable] = [' '.join(["$(LD)",
+                                          "-o", out_variable,
+                                          all_objects,
+                                          "$(LDFLAGS)",
+                                          "$(LDFLAGS_" + target.upper() + ")",
+                                          "$(CFLAGS)",
+                                          "$(CFLAGS_" + target.upper() + ")"])]
     bins[target] = os.path.join('bin', target, program_name)
     depends[target] = []
     for sub in ['before_', 'after_']:
@@ -148,7 +154,7 @@ base_linker_options = ["-pthread", "-fexceptions"]
 
 options_list = dict()
 options_list['debug'] = ["-g", "-DDEBUG"]
-options_list['release'] = ["-s", "-O2", "-DNDEBUG"]
+options_list['release'] = ["-s", "-O3", "-DNDEBUG"]
 
 linker_options = dict()
 linker_options['debug'] = []
