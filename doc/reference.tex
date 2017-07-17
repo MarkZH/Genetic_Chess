@@ -420,7 +420,7 @@ This method causes the state of the \code{Board} to be changed by enacting the m
 
 \subsubsection{Important Notes}
 \begin{itemize}
-\item The \code{Complete\_Move}s returned by the methods \code{Board::get\_complete\_move()} and \code{Board::legal\_moves()} are only valid for the unmodified originating board. In this, they are similar to iterators from STL containers. There is no guarantee that a \code{Complete\_Move} is valid if the board changes state after getting a copy of the move.
+\item The \code{Complete\_Move}s returned by the methods \code{Board::get\_complete\_move()} and \code{Board::legal\_moves()} are only valid for the unmodified originating board or an unmodified copy of the originating board. Using a \code{Complete\_Move} on a copy is only for temporary purposes, because if the originating board is destructed, then the \code{Complete\_Move} the the copies \code{game\_record} will be invalid--i.e., it will contain a pointer to deleted data--causing undefined behavior if, for example, the \code{Board::print\_game\_record()} method is called. There is also no guarantee that a \code{Complete\_Move} is valid if the board changes state after getting a copy of the move.
 
 \item Similarly, a \code{const Piece*} returned by \code{Board::view\_piece\_on\_square()}, is valid for the unmodified Board that returned it. If the \code{submit\_move()} method is called on the originating Board, that piece might be captured, which could result in the \code{Piece*} pointing to a piece no longer on the board (it will not be deleted until the original board is destructed).
 
