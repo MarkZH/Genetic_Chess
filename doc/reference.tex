@@ -116,33 +116,37 @@ This gene determines all aspects of the Genetic AIs time management. There are t
 	\item the uncertainty in the above average.
 	\item a constant related to probabilistically looking further ahead when not enough time is allocated.
 \end{enumerate}
-When the AI starts the algorithm to choose a move, it allocates a fraction of the time left on the clock so that all subsequent moves get equal time. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a log-normal distribution~\cite{log-norm-wiki}\cite{log-norm-chess-se} with a mean and spread given by the first two parameters listed above. Originally, it was assumed that the number of moves in a game was well-modeled by a Poisson distribution. This proved to be false (see Figure~\ref{game-length-plot}). The number of moves left in the game is estimated by
+When the AI starts the algorithm to choose a move, it allocates a fraction of the time left on the clock so that all subsequent moves get equal time. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a log-normal distribution~\cite{log-norm-wiki}\cite{log-norm-chess-se} with a mean and spread given by the first two parameters listed above. Originally, it was assumed that the number of moves in a game was well-modeled by a Poisson distribution. This proved to be false (see Figure~\ref{game-length-plot}), and the log-normal distribution--wherein the logarithm of the variable is normally distributed--is now used.
+
+The number of moves left in the game is estimated by
 \[N = \frac{\sum_{i = n + 1}^\infty P(i)\times{}i}{\sum_{i = n + 1}^\infty P(i)} - n\]
-where \(N\) is the estimated total number of moves in the game, given that \(n\) moves have already ben made, and \(P(i)\) is the \emph{a priori} probability distribution. The log-normal probability distribution is given by
-\[P(i) = \frac{1}{iS\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{\ln{i} - M}{S}\right)},\]
-where \(S\) and \(M\) are the standard deviation and mean of \(\ln{N}\), respectively. A plot of the number of moves in a long gene pool run can be seen in Figure~\ref{log-norm-plot}. Instead of using the summation formula above to estimate the number of moves remaining in the game, the result can be approximated by an integral to yield a closed-form expression using function available in native \cpp.
+where \(N\) is the estimated number of moves left in the game given that \(n\) moves have already been made, and \(P(i)\) is the \emph{a priori} probability distribution. The numerator is a truncated calculation of the average number of moves in a game, and the denominator is a truncated probability distribution to renormalize (since the probability of a game lasting 10~moves is zero if 11~moves have been played).
+
+The log-normal probability distribution is given by
+\[P(x) = \frac{1}{xS\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{\ln{x} - M}{S}\right)^2},\]
+where \(S\) and \(M\) are the standard deviation and mean of \(\ln{N}\), respectively. Even though this is a continuous probability distribution, it is a good fit for the length of chess games as can be seen in the plot of the number of moves in a long gene pool run can be seen in Figure~\ref{log-norm-plot}. Instead of using the summation formula above to estimate the number of moves remaining in the game, the result can be approximated with integrals\footnote{Courtesy of Wolfram Alpha: \url{http://www.wolframalpha.com/}} to yield a closed-form expression using function available in native \cpp.
 \[
-\sum_{i = n + 1}^\infty P(i)\times{}i \approx \int_{n+1}^\infty P(t)tdt = \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty e^{-\frac{1}{2}\left(\frac{\ln{t} - M}{S}\right)}dt
+\sum_{i = n + 1}^\infty P(i)\times{}i \approx \int_{n+1}^\infty P(t)tdt = \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty e^{-\frac{1}{2}\left(\frac{\ln{t} - M}{S}\right)^2}dt
 \]
 \[
 = \frac{1}{2}e^{M + S^2/2}\left[1 + \textrm{erf}\left(\frac{M + S^2 - \ln n}{S\sqrt{2}}\right)\right]
 \]
 and
 \[
-\sum_{i = n + 1}^\infty P(i) \approx \int_{n+1}^\infty P(t)dt = \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty \frac{1}{t} e^{-\frac{1}{2}\left(\frac{\ln{t} - M}{S}\right)}dt
+\sum_{i = n + 1}^\infty P(i) \approx \int_{n+1}^\infty P(t)dt = \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty \frac{1}{t} e^{-\frac{1}{2}\left(\frac{\ln{t} - M}{S}\right)^2}dt
 \]
 \[
-= \frac{1}{2}\left[1 + \textrm{erf}\left(\frac{M-ln_x}{Sr2}\right)\right].
+= \frac{1}{2}\left[1 + \textrm{erf}\left(\frac{M-\ln n}{S\sqrt{2}}\right)\right].
 \]
 Here, \(\textrm{erf}\) is the error function given by
 \[
 \textrm{erf}(x) = \frac{2}{\sqrt{\pi}}\int_0^x e^{-t^2}dt
 \]
-This results in the number of moves left in a game after \(n\) moves as
+This results in the number of moves left in a game (\(N\)) after \(n\) moves as
 \[
-N_{\textrm{left}}(n) = \left(e^{M + S^2/2}\right) \frac
+N = \left(e^{M + S^2/2}\right) \frac
 {1 + \textrm{erf}\left(\frac{M + S^2 - \ln n}{S\sqrt{2}}\right)}
-{1 + \textrm{erf}\left(\frac{M-ln_x}{Sr2}\right)}
+{1 + \textrm{erf}\left(\frac{M-\ln n}{S\sqrt{2}}\right)}
 - n.
 \]
 \begin{figure}[tbh]
@@ -159,7 +163,7 @@ N_{\textrm{left}}(n) = \left(e^{M + S^2/2}\right) \frac
 	\label{log-norm-plot}
 \end{figure}
 
-If the number of moves left in the game is greater than the number of moves that will result in a clock reset, then the latter will determine how much time will be used. In a game with 40/5~time control, where five minutes are added to the clock every 40~moves, every 40th move can use all the remaining time since an extra five minutes will be added after the move. Whatever the final number of moves left in the game is determined to be, the time on the clock is divided by that number to determine how much time to take to choose a move.
+If the number of moves left in the game is greater than the number of moves that will result in a clock reset, then the latter will determine how much time will be used. In a game with 40/5~time control, where five minutes are added to the clock every 40~moves, every 40th move can use all the remaining time since an extra five minutes will be added after the move. Whatever the final number of moves left is used, the time on the clock is divided by that number to determine how much time to take to choose a move.
 
 When choosing a move from the current board, the amount of time to consider a move is equal to the amount of time left for this board position divided by the number of legal moves left to consider. This naturally limits the depth of search while allowing deeper searches for positions with fewer legal moves. If a move examination is cut off early for whatever reason (e.g., a game-ending move is found or through alpha-beta pruning), then the remaining time is available for as yet unexamined moves.
 
