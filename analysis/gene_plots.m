@@ -72,6 +72,9 @@ for yi = 2 : length(data.colheaders) - 2
              'ok', ...
              'markersize', 10, ...
              'linewidth', 1);
+    if pool_id == max(pool_ids)
+      set(h, 'displayname', 'Still Alive');
+    end
   end
   leg = legend('show');
   set(leg, 'location', 'southoutside');
@@ -82,7 +85,6 @@ for yi = 2 : length(data.colheaders) - 2
   set(gca, 'FontSize', 14);
   plot(xlim, [0 0], 'k'); % X-axis
 
-  % Fill in nan gaps in data
   conv_window = 100;
   smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
   conv_margin = floor(conv_window/2);
