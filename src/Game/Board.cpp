@@ -551,7 +551,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
 
 void Board::make_move(char file_start, int rank_start, char file_end, int rank_end)
 {
-    if(view_piece_on_square(file_end, rank_end)) // capture
+    if(piece_on_square(file_end, rank_end)) // capture
     {
         repeat_count.clear();
     }
