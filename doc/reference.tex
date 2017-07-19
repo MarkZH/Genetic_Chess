@@ -4,8 +4,10 @@
 \usepackage[pdftex]{graphicx}
 
 \newcommand{\cpp}{C{\nobreak +}{\nobreak +}}
-\newcommand{\code}[1]{#1}
-\renewcommand\_{\textunderscore\allowbreak}
+
+\newcommand{\code}[1]{\textsf{#1}}
+
+\renewcommand{\_}{\allowbreak\textunderscore\allowbreak}
 
 
 \title{Genetic Chess}
@@ -414,21 +416,22 @@ Returns a \code{std::vector} of \code{Complete\_Move}s representing all the lega
 
 Returns a list of moves that are not currently legal but, if they were, would have the moved piece land on a square inside the board. For example, at the beginning of a standard game, the white rook on a1 has no legal moves, as it is blocked in every direction. But, Ra4 would be in the list of other moves, since a4 is on the board and would be legally reachable if the pawn on a2 was not present. Moves to the left or backwards will not be listed, since these moves land outside the board.
 
-\subsubsection[submit\_move]{submit\_move(const Complete\_Move\& move)}
+\subsubsection[submit\_move()]{submit\_move(const Complete\_Move\& move)}
 \label{board-submit-move-section}
 
 This method causes the state of the \code{Board} to be changed by enacting the move represented by the argument. Only copies of a move returned from \code{legal\_moves()} will be accepted. Otherwise, an assertion will fail in debug builds or undefined behavior will result in release builds. The method returns a \code{Game\_Result} \code{struct} that indicates whether the game has ended and the reason for the ending. Formerly, the end of a game was signaled by throwing an exception derived from \code{Game\_Ending\_Exception}. However, this was found dramatically slow down the game tree search due to the cost of throwing and catching multiple exceptions.
 
-
+\subsubsection[view\_piece\_on\_square()]{view\_piece\_on\_square(char file, int rank)}
+Returns a pointer to a \code{const Piece*} representing the piece on the square identified by the arguments. An empty square is represented by a \code{nullptr}.
 
 \subsubsection{Important Notes}
-\begin{itemize}
-\item The \code{Complete\_Move}s returned by the methods \code{Board::get\_complete\_move()} and \code{Board::legal\_moves()} are only valid for the unmodified originating board or an unmodified copy of the originating board. Using a \code{Complete\_Move} on a copy is only for temporary purposes, because if the originating board is destructed, then the \code{Complete\_Move} the the copies \code{game\_record} will be invalid--i.e., it will contain a pointer to deleted data--causing undefined behavior if, for example, the \code{Board::print\_game\_record()} method is called. There is also no guarantee that a \code{Complete\_Move} is valid if the board changes state after getting a copy of the move.
-
-\item Similarly, a \code{const Piece*} returned by \code{Board::view\_piece\_on\_square()}, is valid for the unmodified Board that returned it. If the \code{submit\_move()} method is called on the originating Board, that piece might be captured, which could result in the \code{Piece*} pointing to a piece no longer on the board (it will not be deleted until the original board is destructed).
-
-\item When calling \code{Board::view\_piece\_on\_square()}, an empty square is represented by a \code{nullptr}.
-\end{itemize}
+The \code{Complete\_Move}s returned by the methods \code{Board::get\_complete\_move()} and \code{Board::legal\_moves()} are the only moves guaranteed to be valid for a given \code{Board} instance, and only for the unmodified originating board or an unmodified copy. Calling \code{Board::submit\_move()} with a \code{Complete\_Move} from a different source will have three possible results:
+\begin{enumerate}
+	\item The move happens to be legal, in which case the game continues.
+	\item The debugging version of the program will fail an \code{assert}.
+	\item The release version of the program will enter an invalid game state with no warning.
+\end{enumerate}
+The legality of moves are only checked by the \code{Board} methods that generate legal \code{Complete\_Move} instances (the previously mentioned \code{Board::get\_complete\_move()} and \code{Board::legal\_moves()}), not on submission.
 
 \subsection{Piece}
 
