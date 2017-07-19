@@ -204,6 +204,7 @@ size_t Board::board_index(char file, int rank)
     // Square H1 = Board::board[7]
     // Square A8 = Board::board[56]
     // Square H8 = Board::board[63]
+    assert(inside_board(file, rank));
     return (file - 'a') + 8*(rank - 1);
 }
 
@@ -214,7 +215,7 @@ const Piece*& Board::piece_on_square(char file, int rank)
 
 const Piece* Board::view_piece_on_square(char file, int rank) const
 {
-    return board.at(board_index(file, rank));
+    return board[board_index(file, rank)];
 }
 
 bool Board::inside_board(char file, int rank)
@@ -361,6 +362,11 @@ Game_Result Board::submit_move(const Complete_Move& move)
         auto rank_origin = (en_passant_target.rank == 3 ? 4 : 5);
         for(auto file_origin : {en_passant_target.file - 1, en_passant_target.file + 1})
         {
+            if( ! inside_board(file_origin))
+            {
+                continue;
+            }
+
             auto piece = view_piece_on_square(file_origin, rank_origin);
             if(piece &&
                piece->color() == whose_turn() &&
