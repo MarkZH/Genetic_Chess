@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 
-#include "Pieces/Piece.h"
+#include "Game/Board.h"
 #include "Game/Color.h"
 
 #include "Moves/Move.h"
@@ -14,6 +14,7 @@
 #include "Moves/Pawn_Promotion_by_Capture.h"
 #include "Moves/En_Passant.h"
 
+#include "Pieces/Piece.h"
 #include "Pieces/Rook.h"
 #include "Pieces/Knight.h"
 #include "Pieces/Bishop.h"
@@ -39,11 +40,11 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P")
         add_special_legal_move<Pawn_Double_Move>(file, base_rank, color_in);
     }
 
-    std::vector<std::shared_ptr<const Piece>> possible_promotions;
-    possible_promotions.emplace_back(std::make_shared<Queen>(color_in));
-    possible_promotions.emplace_back(std::make_shared<Knight>(color_in));
-    possible_promotions.emplace_back(std::make_shared<Rook>(color_in));
-    possible_promotions.emplace_back(std::make_shared<Bishop>(color_in));
+    std::vector<const Piece*> possible_promotions;
+    possible_promotions.emplace_back(Board::get_queen(color_in));
+    possible_promotions.emplace_back(Board::get_knight(color_in));
+    possible_promotions.emplace_back(Board::get_rook(color_in));
+    possible_promotions.emplace_back(Board::get_bishop(color_in));
 
     // 'r' and 'l' refer to the direction of the capture from white's perspective
     for(auto dir : {'r', 'l'})

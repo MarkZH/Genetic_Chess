@@ -13,6 +13,7 @@
 #include "Game/Clock.h"
 #include "Game/Square.h"
 
+#include "Pieces/Piece.h"
 #include "Pieces/Pawn.h"
 #include "Pieces/Rook.h"
 #include "Pieces/Knight.h"
@@ -28,8 +29,54 @@
 
 #include "Utility.h"
 
+// NOTE: The pawn must be created last since it takes pointers to the other pieces
+const std::unique_ptr<const Rook>   Board::white_rook   = std::make_unique<Rook>(WHITE);
+const std::unique_ptr<const Knight> Board::white_knight = std::make_unique<Knight>(WHITE);
+const std::unique_ptr<const Bishop> Board::white_bishop = std::make_unique<Bishop>(WHITE);
+const std::unique_ptr<const Queen>  Board::white_queen  = std::make_unique<Queen>(WHITE);
+const std::unique_ptr<const King>   Board::white_king   = std::make_unique<King>(WHITE);
+const std::unique_ptr<const Pawn>   Board::white_pawn   = std::make_unique<Pawn>(WHITE);
+
+const std::unique_ptr<const Rook>   Board::black_rook   = std::make_unique<Rook>(BLACK);
+const std::unique_ptr<const Knight> Board::black_knight = std::make_unique<Knight>(BLACK);
+const std::unique_ptr<const Bishop> Board::black_bishop = std::make_unique<Bishop>(BLACK);
+const std::unique_ptr<const Queen>  Board::black_queen  = std::make_unique<Queen>(BLACK);
+const std::unique_ptr<const King>   Board::black_king   = std::make_unique<King>(BLACK);
+const std::unique_ptr<const Pawn>   Board::black_pawn   = std::make_unique<Pawn>(BLACK);
+
+const Pawn* Board::get_pawn(Color color)
+{
+    return color == WHITE ? white_pawn.get() : black_pawn.get();
+}
+
+const Rook* Board::get_rook(Color color)
+{
+    return color == WHITE ? white_rook.get() : black_rook.get();
+}
+
+const Knight* Board::get_knight(Color color)
+{
+    return color == WHITE ? white_knight.get() : black_knight.get();
+}
+
+const Bishop* Board::get_bishop(Color color)
+{
+    return color == WHITE ? white_bishop.get() : black_bishop.get();
+}
+
+const Queen* Board::get_queen(Color color)
+{
+    return color == WHITE ? white_queen.get() : black_queen.get();
+}
+
+const King* Board::get_king(Color color)
+{
+    return color == WHITE ? white_king.get() : black_king.get();
+}
+
+
 Board::Board() :
-    board(64),
+    board(64, nullptr),
     turn_color(WHITE),
     en_passant_target({'\0', 0}),
     thinking_indicator(NO_THINKING)
@@ -37,14 +84,14 @@ Board::Board() :
     for(auto color : {WHITE, BLACK})
     {
         int base_rank = (color == WHITE ? 1 : 8);
-        place_piece(std::make_shared<Rook>(color),   'a', base_rank);
-        place_piece(std::make_shared<Knight>(color), 'b', base_rank);
-        place_piece(std::make_shared<Bishop>(color), 'c', base_rank);
-        place_piece(std::make_shared<Queen>(color),  'd', base_rank);
-        place_piece(std::make_shared<King>(color),   'e', base_rank);
-        place_piece(std::make_shared<Bishop>(color), 'f', base_rank);
-        place_piece(std::make_shared<Knight>(color), 'g', base_rank);
-        place_piece(std::make_shared<Rook>(color),   'h', base_rank);
+        place_piece(get_rook(color),   'a', base_rank);
+        place_piece(get_knight(color), 'b', base_rank);
+        place_piece(get_bishop(color), 'c', base_rank);
+        place_piece(get_queen(color),  'd', base_rank);
+        place_piece(get_king(color),   'e', base_rank);
+        place_piece(get_bishop(color), 'f', base_rank);
+        place_piece(get_knight(color), 'g', base_rank);
+        place_piece(get_rook(color),   'h', base_rank);
 
         // Unmoved pieces for castling
         unmoved_positions.insert({'a', base_rank}); // Rook
@@ -54,7 +101,7 @@ Board::Board() :
         auto pawn_rank = (base_rank == 1 ? 2 : 7);
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            place_piece(std::make_shared<Pawn>(color), file, pawn_rank);
+            place_piece(get_pawn(color), file, pawn_rank);
         }
     }
 
@@ -62,7 +109,7 @@ Board::Board() :
 }
 
 Board::Board(const std::string& fen) :
-    board(64),
+    board(64, nullptr),
     turn_color(WHITE),
     en_passant_target({'\0', 0}),
     starting_fen(fen),
@@ -86,22 +133,22 @@ Board::Board(const std::string& fen) :
                 switch(toupper(symbol))
                 {
                     case 'P':
-                        place_piece(std::make_shared<Pawn>(color), file, rank);
+                        place_piece(get_pawn(color), file, rank);
                         break;
                     case 'R':
-                        place_piece(std::make_shared<Rook>(color), file, rank);
+                        place_piece(get_rook(color), file, rank);
                         break;
                     case 'N':
-                        place_piece(std::make_shared<Knight>(color), file, rank);
+                        place_piece(get_knight(color), file, rank);
                         break;
                     case 'B':
-                        place_piece(std::make_shared<Bishop>(color), file, rank);
+                        place_piece(get_bishop(color), file, rank);
                         break;
                     case 'Q':
-                        place_piece(std::make_shared<Queen>(color), file, rank);
+                        place_piece(get_queen(color), file, rank);
                         break;
                     case 'K':
-                        place_piece(std::make_shared<King>(color), file, rank);
+                        place_piece(get_king(color), file, rank);
                         break;
                     default:
                         throw std::runtime_error(std::string("Invalid  symbol in FEN string: ") + symbol);
@@ -160,14 +207,14 @@ size_t Board::board_index(char file, int rank)
     return (file - 'a') + 8*(rank - 1);
 }
 
-std::shared_ptr<const Piece>& Board::piece_on_square(char file, int rank)
+const Piece*& Board::piece_on_square(char file, int rank)
 {
     return board[board_index(file, rank)];
 }
 
 const Piece* Board::view_piece_on_square(char file, int rank) const
 {
-    return board.at(board_index(file, rank)).get();
+    return board.at(board_index(file, rank));
 }
 
 bool Board::inside_board(char file, int rank)
@@ -509,7 +556,8 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
         repeat_count.clear();
     }
 
-    place_piece(std::move(piece_on_square(file_start, rank_start)), file_end, rank_end);
+    place_piece(piece_on_square(file_start, rank_start), file_end, rank_end);
+    remove_piece(file_start, rank_start);
 
     unmoved_positions.erase({file_start, rank_start});
     unmoved_positions.erase({file_end, rank_end});
@@ -637,12 +685,11 @@ void Board::ascii_draw(Color perspective) const
 
 void Board::remove_piece(char file, int rank)
 {
-    captured_pieces.push_back(std::move(piece_on_square(file, rank)));
+    place_piece(nullptr, file, rank);
 }
 
-void Board::place_piece(std::shared_ptr<const Piece> piece, char file, int rank)
+void Board::place_piece(const Piece* piece, char file, int rank)
 {
-    remove_piece(file, rank);
     piece_on_square(file, rank) = piece;
 }
 

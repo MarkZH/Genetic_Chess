@@ -4,7 +4,6 @@
 #include "Pawn_Move.h"
 
 #include <string>
-#include <memory>
 
 class Board;
 class Piece;
@@ -12,7 +11,7 @@ class Piece;
 class Pawn_Promotion : public Pawn_Move
 {
     public:
-        explicit Pawn_Promotion(std::shared_ptr<const Piece> promotion);
+        explicit Pawn_Promotion(const Piece* promotion);
 
         void side_effects(Board& board, char file_start, int rank_start) const override;
         std::string name() const override;
@@ -22,7 +21,7 @@ class Pawn_Promotion : public Pawn_Move
         std::string coordinate_move(char file_start, int rank_start) const override;
 
     protected:
-        std::shared_ptr<const Piece> promote_to;
+        const Piece* promote_to;
 };
 
 #endif // PAWN_PROMOTION_H

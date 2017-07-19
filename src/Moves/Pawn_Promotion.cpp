@@ -1,6 +1,5 @@
 #include "Moves/Pawn_Promotion.h"
 
-#include <memory>
 #include <cctype>
 #include <string>
 
@@ -9,9 +8,9 @@
 #include "Pieces/Piece.h"
 #include "Utility.h"
 
-Pawn_Promotion::Pawn_Promotion(std::shared_ptr<const Piece> promotion_piece) :
+Pawn_Promotion::Pawn_Promotion(const Piece* promotion_piece) :
     Pawn_Move(promotion_piece->color()),
-    promote_to(std::move(promotion_piece))
+    promote_to(promotion_piece)
 {
 }
 

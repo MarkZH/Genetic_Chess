@@ -17,6 +17,13 @@
 class Piece;
 class Clock;
 
+class Pawn;
+class Rook;
+class Knight;
+class Bishop;
+class Queen;
+class King;
+
 class Board
 {
     public:
@@ -71,15 +78,36 @@ class Board
         Square find_king(Color color) const;
         bool king_is_in_check(Color color) const;
 
+        static const Pawn* get_pawn(Color color);
+        static const Rook* get_rook(Color color);
+        static const Knight* get_knight(Color color);
+        static const Bishop* get_bishop(Color color);
+        static const Queen* get_queen(Color color);
+        static const King* get_king(Color color);
+
     private:
-        std::vector<std::shared_ptr<const Piece>> board;
-        std::vector<std::shared_ptr<const Piece>> captured_pieces;
+        std::vector<const Piece*> board;
         std::map<std::string, int> repeat_count;
         Color turn_color;
         std::vector<Complete_Move> game_record;
         std::set<Square> unmoved_positions;
         Square en_passant_target;
         std::string starting_fen;
+
+        // Pieces
+        static const std::unique_ptr<const Pawn>   white_pawn;
+        static const std::unique_ptr<const Rook>   white_rook;
+        static const std::unique_ptr<const Knight> white_knight;
+        static const std::unique_ptr<const Bishop> white_bishop;
+        static const std::unique_ptr<const Queen>  white_queen;
+        static const std::unique_ptr<const King>   white_king;
+
+        static const std::unique_ptr<const Pawn>   black_pawn;
+        static const std::unique_ptr<const Rook>   black_rook;
+        static const std::unique_ptr<const Knight> black_knight;
+        static const std::unique_ptr<const Bishop> black_bishop;
+        static const std::unique_ptr<const Queen>  black_queen;
+        static const std::unique_ptr<const King>   black_king;
 
         // Caches
         mutable std::vector<Complete_Move> other_moves_cache;
@@ -89,7 +117,7 @@ class Board
         // Communication channels
         mutable Thinking_Output_Type thinking_indicator;
 
-        std::shared_ptr<const Piece>& piece_on_square(char file, int rank);
+        const Piece*& piece_on_square(char file, int rank);
         void remove_piece(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
         bool no_legal_moves() const;
@@ -102,7 +130,7 @@ class Board
         bool is_legal(char file_start, int rank_start,
                       char file_end,   int rank_end) const;
         bool is_in_legal_moves_list(const Complete_Move& move) const;
-        void place_piece(std::shared_ptr<const Piece> piece, char file, int rank);
+        void place_piece(const Piece* piece, char file, int rank);
 
         // Moves with side effects
         friend class Kingside_Castle; // moves second piece
