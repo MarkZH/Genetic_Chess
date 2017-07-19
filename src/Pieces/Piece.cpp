@@ -60,7 +60,7 @@ bool Piece::can_move(const Move* move) const
 
 const std::vector<Complete_Move>& Piece::get_move_list(char file, int rank) const
 {
-    return legal_moves.at(Board::board_index(file, rank));
+    return legal_moves[Board::board_index(file, rank)];
 }
 
 bool Piece::is_pawn() const
