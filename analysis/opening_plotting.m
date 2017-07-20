@@ -26,7 +26,7 @@ end
 raw_data = fullfile(directory, filename);
 
 if game_marks_file != 0
-  game_marks = importdata(fullfile(directory, game_marks_file));
+  game_marks = importdata(fullfile(directory, game_marks_file))';
 else
   game_marks = [];
 end
