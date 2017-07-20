@@ -4,7 +4,6 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <memory>
 #include <set>
 
 #include "Moves/Complete_Move.h"
@@ -95,19 +94,19 @@ class Board
         std::string starting_fen;
 
         // Pieces
-        static const std::unique_ptr<const Pawn>   white_pawn;
-        static const std::unique_ptr<const Rook>   white_rook;
-        static const std::unique_ptr<const Knight> white_knight;
-        static const std::unique_ptr<const Bishop> white_bishop;
-        static const std::unique_ptr<const Queen>  white_queen;
-        static const std::unique_ptr<const King>   white_king;
+        static const Rook   white_rook;
+        static const Knight white_knight;
+        static const Bishop white_bishop;
+        static const Queen  white_queen;
+        static const King   white_king;
+        static const Pawn   white_pawn;
 
-        static const std::unique_ptr<const Pawn>   black_pawn;
-        static const std::unique_ptr<const Rook>   black_rook;
-        static const std::unique_ptr<const Knight> black_knight;
-        static const std::unique_ptr<const Bishop> black_bishop;
-        static const std::unique_ptr<const Queen>  black_queen;
-        static const std::unique_ptr<const King>   black_king;
+        static const Rook   black_rook;
+        static const Knight black_knight;
+        static const Bishop black_bishop;
+        static const Queen  black_queen;
+        static const King   black_king;
+        static const Pawn   black_pawn;
 
         // Caches
         mutable std::vector<Complete_Move> other_moves_cache;

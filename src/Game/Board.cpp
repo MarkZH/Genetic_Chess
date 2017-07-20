@@ -30,48 +30,48 @@
 #include "Utility.h"
 
 // NOTE: The pawn must be created last since it takes pointers to the other pieces
-const std::unique_ptr<const Rook>   Board::white_rook   = std::make_unique<Rook>(WHITE);
-const std::unique_ptr<const Knight> Board::white_knight = std::make_unique<Knight>(WHITE);
-const std::unique_ptr<const Bishop> Board::white_bishop = std::make_unique<Bishop>(WHITE);
-const std::unique_ptr<const Queen>  Board::white_queen  = std::make_unique<Queen>(WHITE);
-const std::unique_ptr<const King>   Board::white_king   = std::make_unique<King>(WHITE);
-const std::unique_ptr<const Pawn>   Board::white_pawn   = std::make_unique<Pawn>(WHITE);
+const Rook   Board::white_rook(WHITE);
+const Knight Board::white_knight(WHITE);
+const Bishop Board::white_bishop(WHITE);
+const Queen  Board::white_queen(WHITE);
+const King   Board::white_king(WHITE);
+const Pawn   Board::white_pawn(WHITE);
 
-const std::unique_ptr<const Rook>   Board::black_rook   = std::make_unique<Rook>(BLACK);
-const std::unique_ptr<const Knight> Board::black_knight = std::make_unique<Knight>(BLACK);
-const std::unique_ptr<const Bishop> Board::black_bishop = std::make_unique<Bishop>(BLACK);
-const std::unique_ptr<const Queen>  Board::black_queen  = std::make_unique<Queen>(BLACK);
-const std::unique_ptr<const King>   Board::black_king   = std::make_unique<King>(BLACK);
-const std::unique_ptr<const Pawn>   Board::black_pawn   = std::make_unique<Pawn>(BLACK);
+const Rook   Board::black_rook(BLACK);
+const Knight Board::black_knight(BLACK);
+const Bishop Board::black_bishop(BLACK);
+const Queen  Board::black_queen(BLACK);
+const King   Board::black_king(BLACK);
+const Pawn   Board::black_pawn(BLACK);
 
 const Pawn* Board::get_pawn(Color color)
 {
-    return color == WHITE ? white_pawn.get() : black_pawn.get();
+    return color == WHITE ? &white_pawn : &black_pawn;
 }
 
 const Rook* Board::get_rook(Color color)
 {
-    return color == WHITE ? white_rook.get() : black_rook.get();
+    return color == WHITE ? &white_rook : &black_rook;
 }
 
 const Knight* Board::get_knight(Color color)
 {
-    return color == WHITE ? white_knight.get() : black_knight.get();
+    return color == WHITE ? &white_knight : &black_knight;
 }
 
 const Bishop* Board::get_bishop(Color color)
 {
-    return color == WHITE ? white_bishop.get() : black_bishop.get();
+    return color == WHITE ? &white_bishop : &black_bishop;
 }
 
 const Queen* Board::get_queen(Color color)
 {
-    return color == WHITE ? white_queen.get() : black_queen.get();
+    return color == WHITE ? &white_queen : &black_queen;
 }
 
 const King* Board::get_king(Color color)
 {
-    return color == WHITE ? white_king.get() : black_king.get();
+    return color == WHITE ? &white_king : &black_king;
 }
 
 
