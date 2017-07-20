@@ -34,6 +34,28 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start) const
     assert(moving_piece->color() == board.whose_turn());
     assert(moving_piece->can_move(this));
 
+    auto attacked_piece = board.view_piece_on_square(file_end, rank_end);
+    if(attacked_piece)
+    {
+        // Cannot capture piece of same color
+        if(moving_piece->color() == attacked_piece->color())
+        {
+            return false;
+        }
+
+        // Enforce non-capturing moves
+        if( ! can_capture())
+        {
+            return false;
+        }
+    }
+
+
+    if( ! move_specific_legal(board, file_start, rank_start))
+    {
+        return false;
+    }
+
     // Check that there are no intervening pieces for straight-line moves
     // if(...) conditional excludes checking knight moves
     if(file_change() == 0
@@ -52,24 +74,6 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start) const
                 return false;
             }
         }
-    }
-
-    // Cannot capture piece of same color
-    auto attacked_piece = board.view_piece_on_square(file_end, rank_end);
-    if(attacked_piece && moving_piece->color() == attacked_piece->color())
-    {
-        return false;
-    }
-
-    // Enforce non-capturing moves
-    if(attacked_piece && ! can_capture())
-    {
-        return false;
-    }
-
-    if( ! move_specific_legal(board, file_start, rank_start))
-    {
-        return false;
     }
 
     // King should not be in check after move
