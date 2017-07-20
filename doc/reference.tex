@@ -217,7 +217,52 @@ This gene counts the squares that have access to the king by any valid piece mov
 \subsubsection{Castling Possible Gene}
 This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away. The score can vary based on a genetically determined preference for kingside or queenside castling.
 
+\subsection{Genome File Format}
+An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line.
+\begin{verbatim}
+ID: 106768
 
+Name: Piece Strength Gene
+B: 9.5685
+N: 5.55439
+P: -0.285538
+Q: 23.8438
+R: 13.3138
+
+Name: Look Ahead Gene
+Game Length Uncertainty: 0.394859
+Mean Game Length: 33.0766
+Speculation Constant: 0.0142434
+
+Name: Total Force Gene
+Priority: 400.656
+
+Name: Freedom to Move Gene
+Priority: 30.5008
+
+Name: Pawn Advancement Gene
+Priority: 138.87
+
+Name: Opponent Pieces Targeted Gene
+Priority: 104.614
+
+Name: Sphere of Influence Gene
+King Target Factor: 0.260099
+Legal Bonus: 0.705431
+Priority: 220.958
+
+Name: King Confinement Gene
+Priority: -13.7753
+
+Name: King Protection Gene
+Priority: -0.469023
+
+Name: Castling Possible Gene
+Kingside Preference: 0.390153
+Priority: -18.3223
+
+END
+\end{verbatim}
 
 
 \section{The Gene Pool: On the Care and Feeding of Chess AIs}
@@ -267,46 +312,47 @@ gene pool file = pool.txt
 \end{verbatim}
 
 \subsection{Gene Pool Output}
-An example of typical output during a gene pool run is shown below:
+An example of typical output during a gene pool run is shown below. First, some general information about the pool is shown, then the results of the random matchups, thirdly the new makeup of this gene pool in the aftermath of the games, and finally the IDs of the AIs with the most ever wins and the most number of games survived.
 \begin{verbatim}
-Gene pool ID: 0  Gene pool size: 16  New blood introduced: 126 (*)
-Games: 22024  White wins: 10469  Black wins: 9562  Draws: 2737
-Time: 38.538 sec   Gene pool file name: pool.txt
+Gene pool ID: 0  Gene pool size: 16  New blood introduced: 6 (*)
+Games: 6000  White wins: 3402  Black wins: 2511  Draws: 87
+Time: 16.65 sec   Gene pool file name: pool.txt
 
-59055 vs 59097: White (White mates)
-59074 vs 59101: Black (Black mates)
-59102 vs 59100: White (White mates)
-59096 vs 59014: None (Threefold repetition)59014 mates with
-random / 59096 dies
-59031 vs 59078: None (Insufficient material)
-59054 vs 59095: Black (Time forfeiture)
-59098 vs 59099: Black (Black mates)
-59081 vs 59077: White (White mates)
+106514 vs 106495: None (Threefold repetition) 
+106531 vs 106513: White (White mates) 
+106511 vs 106479: Black (Black mates) 
+106392 vs 106457: None (Insufficient material) 106392
+mates with random / 106392 dies
+106516 vs 106497: None (Threefold repetition) 
+106532 vs 106530: White (White mates) 
+106529 vs 106433: White (White mates) 
+106533 vs 106534: White (White mates) 
 
-    ID   Wins  Streak  Draws  Streak
- 59014      9       7      1       0 T
- 59031      3       3      0       0
- 59054      1       0      2       2
- 59055      2       2      0       0
- 59074      1       1      0       0
- 59077      1       1      0       0
- 59078      1       1      0       0
- 59081      1       1      0       0
- 59095      0       0      0       0
- 59096      0       0      0       0
- 59097      0       0      0       0
- 59098      0       0      0       0
- 59099      0       0      0       0
- 59100      0       0      0       0 *
- 59101      0       0      0       0
- 59102      0       0      0       0
+     ID   Wins  Streak  Draws  Streak
+ 106457      2       0      3       2
+ 106479      4       4      0       0 T
+ 106495      1       0      2       1
+ 106497      1       0      2       2
+ 106514      0       0      2       2
+ 106516      0       0      2       2
+ 106529      1       1      0       0
+ 106531      1       1      0       0
+ 106532      1       1      0       0
+ 106533      1       1      0       0
+ 106548      0       0      0       0
+ 106549      0       0      0       0
+ 106551      0       0      0       0 *
+ 106552      0       0      0       0
+ 106553      0       0      0       0
+ 106554      0       0      0       0
 
-Most wins:     18 by ID 20968
-Longest lived: 27 by ID 45394
+Most wins:     16 by ID 96392
+Longest lived: 27 by ID 96392
+
 \end{verbatim}
-The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, Player 59014 is on a seven-game winning streak following its last draw. Player 59054 has drawn its last two games.
+The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, Player 106479 is on a four-game winning streak since it was born (including victories both in this pool and in pool 2 where it was born). Player 106457 has drawn its last two games after its last win.
 
-The asterisk (\verb|*|) indicates an offspring of the result of a drawn match. Note that the outcome of the game between 59096 and 59014 means that another such offspring will be brought into this pool for the next round. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
+The asterisk (\verb|*|) indicates an offspring of the result of a drawn match--in this case, from 106392 vs 106457, with the new AI replacing 106392. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
 
 
 \section{Some Consistent Results (in rough order of discovery)}
