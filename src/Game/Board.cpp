@@ -384,6 +384,13 @@ Game_Result Board::submit_move(const Complete_Move& move)
         }
     }
 
+    // An insufficient material draw can only happen after a capture,
+    // which clears the repeat_count map.
+    if(repeat_count.empty() && ! enough_material_to_checkmate())
+    {
+        return Game_Result(NONE, "Insufficient material", false);
+    }
+
     if(++repeat_count[board_status()] >= 3)
     {
         return Game_Result(NONE, "Threefold repetition", false);
@@ -397,11 +404,6 @@ Game_Result Board::submit_move(const Complete_Move& move)
     if(fifty_move_count >= 100) // "Move" means both players move.
     {
         return Game_Result(NONE, "50-move limit", false);
-    }
-
-    if( ! enough_material_to_checkmate())
-    {
-        return Game_Result(NONE, "Insufficient material", false);
     }
 
     return {};
