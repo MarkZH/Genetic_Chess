@@ -12,7 +12,6 @@ class Pawn_Move : public Move
         explicit Pawn_Move(Color color_in);
 
         void side_effects(Board& board, char file_start, int rank_end) const override;
-        bool move_specific_legal(const Board& board, char file_start, int rank_end) const override;
         bool can_capture() const override;
         std::string name() const override;
 };

@@ -11,13 +11,8 @@ En_Passant::En_Passant(Color color, Capture_Direction dir) : Pawn_Capture(color,
 
 bool En_Passant::move_specific_legal(const Board& board, char file_start, int rank_start) const
 {
-    char file_end = file_start + file_change();
-    int rank_end = rank_start + rank_change();
-    auto attacking_piece = board.view_piece_on_square(file_start, rank_start);
-    auto attacked_piece  = board.view_piece_on_square(file_end,   rank_start);
-    return board.is_en_passant_targetable(file_end, rank_end)
-           && attacked_piece
-           && attacking_piece->color() != attacked_piece->color();
+    return board.is_en_passant_targetable(file_start + file_change(),
+                                          rank_start + rank_change());
 }
 
 void En_Passant::side_effects(Board& board, char file_start, int rank_start) const

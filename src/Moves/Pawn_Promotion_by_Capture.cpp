@@ -17,9 +17,9 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,
 
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board, char file_start, int rank_start) const
 {
-    auto attacked_piece = board.view_piece_on_square(file_start + file_change(),
-                                                     rank_start + rank_change());
-    return attacked_piece && Pawn_Promotion::move_specific_legal(board, file_start, rank_start);
+    assert(rank_start == (rank_change() == 1 ? 7 : 2));
+    return board.view_piece_on_square(file_start + file_change(),
+                                      rank_start + rank_change()); // must capture
 }
 
 bool Pawn_Promotion_by_Capture::can_capture() const

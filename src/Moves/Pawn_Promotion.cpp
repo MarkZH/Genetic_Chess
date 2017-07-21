@@ -2,6 +2,7 @@
 
 #include <cctype>
 #include <string>
+#include <cassert>
 
 #include "Moves/Move.h"
 #include "Game/Board.h"
@@ -16,28 +17,16 @@ Pawn_Promotion::Pawn_Promotion(const Piece* promotion_piece) :
 
 void Pawn_Promotion::side_effects(Board& board, char file_start, int rank_start) const
 {
-    char file_end = file_start + file_change();
-    int  rank_end = rank_start + rank_change();
+    assert(rank_start == (rank_change() == 1 ? 7 : 2)); // last-minute debugging legality check
 
     Pawn_Move::side_effects(board, file_start, rank_start);
-
-    // This line will call dtor on this if on original board, so it must be last.
-    board.place_piece(promote_to, file_end, rank_end);
+    board.place_piece(promote_to, file_start + file_change(),
+                                  rank_start + rank_change());
 }
 
 std::string Pawn_Promotion::name() const
 {
     return std::string("Pawn Promotion ") + promote_to->pgn_symbol();
-}
-
-bool Pawn_Promotion::move_specific_legal(const Board& /* board */, char /* file_start */, int rank_start) const
-{
-    return (rank_start == (rank_change() == 1 ? 7 : 2)); // promoting
-}
-
-bool Pawn_Promotion::can_capture() const
-{
-    return false;
 }
 
 std::string Pawn_Promotion::game_record_item(const Board& board, char file_start, int rank_start) const

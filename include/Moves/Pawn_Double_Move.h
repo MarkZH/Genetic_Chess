@@ -14,8 +14,6 @@ class Pawn_Double_Move : public Pawn_Move
         explicit Pawn_Double_Move(Color color);
 
         void side_effects(Board& board, char file_start, int rank_start) const override;
-        bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
-        bool can_capture() const override;
         std::string name() const override;
 };
 
