@@ -1,25 +1,23 @@
 #include "Moves/Pawn_Capture.h"
 
+#include <cassert>
+
 #include "Moves/Move.h"
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
 #include "Utility.h"
 
-Pawn_Capture::Pawn_Capture(Color color_in, char dir) : Pawn_Move(color_in)
+Pawn_Capture::Pawn_Capture(Color color_in, Capture_Direction dir) : Pawn_Move(color_in)
 {
-    // 'r' and 'l' signify left and right from white's perspective
-    if(dir == 'r')
+    assert(dir == LEFT || dir == RIGHT);
+
+    if(dir == RIGHT)
     {
         d_file = 1;
     }
-    else if(dir == 'l')
-    {
-        d_file = -1;
-    }
     else
     {
-        throw std::runtime_error(std::string("Invalid direction specification for Pawn_Capture: ")
-                                + std::string().append(1, dir));
+        d_file = -1;
     }
 }
 

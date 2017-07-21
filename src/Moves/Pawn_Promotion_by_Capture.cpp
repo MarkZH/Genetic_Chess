@@ -1,16 +1,18 @@
 #include "Moves/Pawn_Promotion_by_Capture.h"
 
+#include <cassert>
+
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
 #include "Moves/Pawn_Capture.h"
 #include "Moves/Move.h"
 
 Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,
-                                                     char dir) :
+                                                     Capture_Direction dir) :
     Pawn_Promotion(promotion)
 {
-    // 'r' and 'l' refer to the direction of the capture from white's perspective
-    d_file = (dir == 'r' ? 1 : -1);
+    assert(dir == LEFT || dir == RIGHT);
+    d_file = (dir == RIGHT ? 1 : -1);
 }
 
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board, char file_start, int rank_start) const
@@ -33,7 +35,7 @@ std::string Pawn_Promotion_by_Capture::name() const
 std::string Pawn_Promotion_by_Capture::game_record_item(const Board& board, char file_start, int rank_start) const
 {
     return Pawn_Capture(rank_change() == 1 ? WHITE : BLACK,
-                        file_change() == 1 ? 'r' : 'l').
+                        file_change() == 1 ? RIGHT : LEFT).
                         game_record_item(board, file_start, rank_start)
                             + "=" + promote_to->pgn_symbol();
 }

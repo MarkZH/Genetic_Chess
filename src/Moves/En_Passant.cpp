@@ -5,7 +5,7 @@
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
 
-En_Passant::En_Passant(Color color, char dir) : Pawn_Capture(color, dir)
+En_Passant::En_Passant(Color color, Capture_Direction dir) : Pawn_Capture(color, dir)
 {
 }
 

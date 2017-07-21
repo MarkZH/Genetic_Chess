@@ -46,11 +46,10 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P")
     possible_promotions.emplace_back(Board::get_rook(color_in));
     possible_promotions.emplace_back(Board::get_bishop(color_in));
 
-    // 'r' and 'l' refer to the direction of the capture from white's perspective
-    for(auto dir : {'r', 'l'})
+    for(auto dir : {RIGHT, LEFT})
     {
-        auto first_file = (dir == 'r' ? 'a' : 'b');
-        auto last_file = (dir == 'r' ? 'g' : 'h');
+        auto first_file = (dir == RIGHT ? 'a' : 'b');
+        auto last_file = (dir == RIGHT ? 'g' : 'h');
         for(char file = first_file; file <= last_file; ++file)
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)

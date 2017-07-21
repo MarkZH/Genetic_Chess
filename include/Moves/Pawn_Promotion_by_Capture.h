@@ -2,11 +2,12 @@
 #define PAWN_PROMOTION_BY_CAPTURE_H
 
 #include "Pawn_Promotion.h"
+#include "Pawn_Capture.h"
 
 class Pawn_Promotion_by_Capture : public Pawn_Promotion
 {
     public:
-        Pawn_Promotion_by_Capture(const Piece* promotion, char dir);
+        Pawn_Promotion_by_Capture(const Piece* promotion, Capture_Direction dir);
 
         bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
         bool can_capture() const override;

@@ -6,10 +6,12 @@
 
 #include <string>
 
+enum Capture_Direction { LEFT, RIGHT };
+
 class Pawn_Capture : public Pawn_Move
 {
     public:
-        Pawn_Capture(Color C, char dir); // dir = 'l' (left) or 'r' (right)
+        Pawn_Capture(Color C, Capture_Direction dir);
 
         bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
         bool can_capture() const override;
