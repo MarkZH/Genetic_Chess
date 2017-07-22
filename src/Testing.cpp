@@ -340,12 +340,12 @@ void run_tests()
         tests_passed = false;
     }
 
-    Game_Tree_Node_Result alpha_start = {-Math::infinity,
+    Game_Tree_Node_Result alpha_start = {Math::lose_score,
                                          WHITE,
                                          0,
                                          {}};
 
-    Game_Tree_Node_Result beta_start = {Math::infinity,
+    Game_Tree_Node_Result beta_start = {Math::win_score,
                                         WHITE,
                                         0,
                                         {}};
@@ -382,7 +382,7 @@ void run_tests()
         tests_passed = false;
     }
 
-    Game_Tree_Node_Result black_loss6 = {-Math::win_score,
+    Game_Tree_Node_Result black_loss6 = {Math::lose_score,
                                          BLACK,
                                          6,
                                          {}};
