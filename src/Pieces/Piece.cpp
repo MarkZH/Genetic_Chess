@@ -102,27 +102,17 @@ void Piece::add_standard_legal_move(int file_step, int rank_step)
             char end_file = start_file + file_step;
             int  end_rank = start_rank + rank_step;
 
-            if(Board::inside_board(end_file, end_rank))
-            {
-                auto move = std::make_unique<Move>(start_file, start_rank,
-                                                   end_file, end_rank);
-                add_legal_move(move.get());
-                possible_moves.push_back(std::move(move));
-            }
+            add_legal_move(std::make_unique<Move>(start_file, start_rank,
+                                                  end_file, end_rank));
         }
     }
 }
 
-void Piece::add_special_legal_move(std::unique_ptr<Move> move)
+void Piece::add_legal_move(std::unique_ptr<Move> move)
 {
     if(Board::inside_board(move->end_file(), move->end_rank()))
     {
-        add_legal_move(move.get());
+        legal_moves[Board::board_index(move->start_file(), move->start_rank())].push_back(move.get());
         possible_moves.push_back(std::move(move));
     }
-}
-
-void Piece::add_legal_move(const Move* move)
-{
-    legal_moves[Board::board_index(move->start_file(), move->start_rank())].push_back(move);
 }

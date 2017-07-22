@@ -39,7 +39,7 @@ class Piece
 
         // Add a move to the list that is only legal when starting from a certain square
         // (e.g., castling, pawn double move, promotion, etc.)
-        void add_special_legal_move(std::unique_ptr<Move> move);
+        void add_legal_move(std::unique_ptr<Move> move);
 
         // Add a move to the list that is legal starting from all squares
         void add_standard_legal_move(int file_step, int rank_step);
