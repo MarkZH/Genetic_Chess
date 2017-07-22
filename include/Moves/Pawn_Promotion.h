@@ -17,6 +17,7 @@ class Pawn_Promotion : public Pawn_Move
         std::string name() const override;
         std::string game_record_move_item(const Board& board) const override;
         std::string coordinate_move() const override;
+        char promotion_piece() const override;
 
     protected:
         const Piece* promote_to;

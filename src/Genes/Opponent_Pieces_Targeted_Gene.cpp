@@ -25,7 +25,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board) const
         }
         auto end_file = move->end_file();
         auto end_rank = move->end_rank();
-        if(move->name().front() == 'E') // En passant capture
+        if(move->is_en_passant())
         {
             end_rank += (board.whose_turn() == WHITE ? -1 : 1);
         }

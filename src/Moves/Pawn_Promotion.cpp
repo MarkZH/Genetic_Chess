@@ -37,3 +37,8 @@ std::string Pawn_Promotion::coordinate_move() const
 {
     return Move::coordinate_move() + char(std::tolower(promote_to->fen_symbol()));
 }
+
+char Pawn_Promotion::promotion_piece() const
+{
+    return promote_to->pgn_symbol().front();
+}

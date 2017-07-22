@@ -60,7 +60,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board) const
             char final_file = move->end_file();
             int  final_rank = move->end_rank();
 
-            if(move->name().front() == 'E')
+            if(move->is_en_passant())
             {
                 if(board.is_en_passant_targetable(final_file, final_rank))
                 {

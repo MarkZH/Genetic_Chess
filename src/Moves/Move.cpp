@@ -221,3 +221,13 @@ std::string Move::coordinate_move() const
            + ending_file
            + std::to_string(ending_rank);
 }
+
+bool Move::is_en_passant() const
+{
+    return false;
+}
+
+char Move::promotion_piece() const
+{
+    return '\0';
+}

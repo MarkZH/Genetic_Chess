@@ -40,6 +40,10 @@ class Move
         std::string game_record_item(const Board& board) const;
         virtual std::string coordinate_move() const;
 
+        // Special case functions
+        virtual bool is_en_passant() const;
+        virtual char promotion_piece() const;
+
     protected:
         char starting_file;
         int  starting_rank;
