@@ -13,7 +13,7 @@
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
     game_length_uncertainty(0.5),
-    speculation_constant(0.0)
+    speculation_constant(0.5)
 {
     recalculate_exponent();
 }
@@ -52,10 +52,10 @@ void Look_Ahead_Gene::gene_specific_mutation()
             mean_game_length = std::max(1.0, mean_game_length + Random::random_normal(1.0));
             break;
         case 2:
-            game_length_uncertainty = std::abs(game_length_uncertainty + Random::random_normal(0.01));
+            game_length_uncertainty = std::abs(game_length_uncertainty + Random::random_normal(0.05));
             break;
         case 3:
-            speculation_constant += Random::random_normal(0.01);
+            speculation_constant += Random::random_normal(0.05);
             speculation_constant = std::max(speculation_constant, 0.0);
             speculation_constant = std::min(speculation_constant, 1.0);
             recalculate_exponent();
