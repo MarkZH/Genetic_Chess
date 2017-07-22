@@ -218,6 +218,7 @@ std::string Move::game_record_ending_item(Board board) const
     return {};
 
 }
+
 std::string Move::coordinate_move() const
 {
     return starting_file
