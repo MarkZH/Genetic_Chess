@@ -42,5 +42,5 @@ std::string Pawn_Capture::game_record_move_item(const Board&) const
     return starting_file
             + "x"
             + ending_file
-            + std::string(std::to_string(ending_rank));
+            + std::to_string(ending_rank);
 }

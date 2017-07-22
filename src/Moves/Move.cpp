@@ -197,8 +197,7 @@ std::string Move::game_record_move_item(const Board& board) const
         move_record += 'x';
     }
 
-    move_record += ending_file;
-    move_record += std::to_string(ending_rank);
+    move_record += ending_file + std::to_string(ending_rank);
 
     return move_record;
 }
