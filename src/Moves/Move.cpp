@@ -26,7 +26,6 @@ void Move::side_effects(Board&) const
 
 bool Move::is_legal(const Board& board) const
 {
-    // starting or ending square is outside board
     assert(Board::inside_board(starting_file, starting_rank));
     assert(Board::inside_board(ending_file, ending_rank));
 
