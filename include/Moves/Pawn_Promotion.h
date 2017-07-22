@@ -11,7 +11,7 @@ class Piece;
 class Pawn_Promotion : public Pawn_Move
 {
     public:
-        explicit Pawn_Promotion(const Piece* promotion_piece, char file_start);
+        Pawn_Promotion(const Piece* promotion_piece, char file_start);
 
         void side_effects(Board& board) const override;
         std::string move_name() const override;

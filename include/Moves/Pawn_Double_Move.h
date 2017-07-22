@@ -11,7 +11,7 @@ class Board;
 class Pawn_Double_Move : public Pawn_Move
 {
     public:
-        explicit Pawn_Double_Move(Color color, char file_start);
+        Pawn_Double_Move(Color color, char file_start);
 
         void side_effects(Board& board) const override;
         std::string move_name() const override;

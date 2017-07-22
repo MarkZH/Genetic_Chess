@@ -10,7 +10,7 @@ class Board;
 class Queenside_Castle : public Move
 {
     public:
-        Queenside_Castle(int base_rank);
+        explicit Queenside_Castle(int base_rank);
 
         void side_effects(Board& board) const override;
         bool move_specific_legal(const Board& board) const override;

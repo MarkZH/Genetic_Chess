@@ -14,7 +14,7 @@ struct Game_Result;
 class UCI_Mediator : public Outside_Player
 {
     public:
-        UCI_Mediator(const Player& local_player);
+        explicit UCI_Mediator(const Player& local_player);
 
         const Move& choose_move(const Board& board, const Clock& clock) const override;
         Color get_ai_color() const override;
