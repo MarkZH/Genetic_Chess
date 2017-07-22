@@ -10,11 +10,11 @@ class Board;
 class En_Passant : public Pawn_Capture
 {
     public:
-        En_Passant(Color color, Capture_Direction dir);
+        En_Passant(Color color, Capture_Direction dir, char file_start, int rank_start);
 
-        void side_effects(Board& board, char file_start, int rank_start) const override;
-        bool move_specific_legal(const Board& board, char file_start, int rank_start) const override;
-        std::string name() const override;
+        void side_effects(Board& board) const override;
+        bool move_specific_legal(const Board& board) const override;
+        std::string move_name() const override;
 };
 
 #endif // EN_PASSANT_H

@@ -4,16 +4,16 @@
 #include <vector>
 #include <string>
 
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 #include "Game/Color.h"
 
 struct Game_Tree_Node_Result
 {
-    Complete_Move move;
+    const Move* move;
     double score;
     Color perspective;
     size_t depth;
-    std::vector<Complete_Move> commentary;
+    std::vector<const Move*> commentary;
 
     double corrected_score(Color query) const;
 };

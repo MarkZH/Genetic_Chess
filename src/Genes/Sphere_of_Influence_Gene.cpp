@@ -5,7 +5,7 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Square.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 
 #include "Utility.h"
 
@@ -49,18 +49,18 @@ double Sphere_of_Influence_Gene::score_board(const Board& board) const
     double score_to_add = 1.0;
     for(const auto& move_list : {board.other_moves(), board.legal_moves()})
     {
-        for(const auto& cm : move_list)
+        for(const auto& move : move_list)
         {
             // Only potentially capturing moves are counted
-            if( ! cm.can_capture())
+            if( ! move->can_capture())
             {
                 continue;
             }
 
-            char final_file = cm.end_file();
-            int  final_rank = cm.end_rank();
+            char final_file = move->end_file();
+            int  final_rank = move->end_rank();
 
-            if(cm.name().front() == 'E')
+            if(move->name().front() == 'E')
             {
                 if(board.is_en_passant_targetable(final_file, final_rank))
                 {

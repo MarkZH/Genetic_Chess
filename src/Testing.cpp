@@ -10,7 +10,7 @@
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 #include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
 
@@ -66,7 +66,7 @@ void run_tests()
         auto move_count = 0;
         for(const auto& move : starting_board.legal_moves())
         {
-            std::cerr << ++move_count << ". " << move.game_record_item(starting_board) << std::endl;
+            std::cerr << ++move_count << ". " << move->game_record_item(starting_board) << std::endl;
         }
         starting_board.ascii_draw(WHITE);
 
@@ -82,13 +82,13 @@ void run_tests()
         auto num = 1;
         for(const auto& move : starting_board.other_moves())
         {
-            std::cout << num++ << ". " << move.coordinate_move() << " ";
+            std::cout << num++ << ". " << move->coordinate_move() << " ";
         }
         std::cout << std::endl;
         tests_passed = false;
     }
 
-    starting_board.submit_move(starting_board.get_complete_move("e4"));
+    starting_board.submit_move(starting_board.get_move("e4"));
     starting_move_count = starting_board.legal_moves().size();
     if(starting_move_count != correct_move_count)
     {
@@ -98,7 +98,7 @@ void run_tests()
         auto move_count = 0;
         for(const auto& move : starting_board.legal_moves())
         {
-            std::cerr << ++move_count << ". " << move.game_record_item(starting_board) << std::endl;
+            std::cerr << ++move_count << ". " << move->game_record_item(starting_board) << std::endl;
         }
         starting_board.ascii_draw(WHITE);
 
@@ -118,7 +118,7 @@ void run_tests()
 
             try
             {
-                board.get_complete_move('e', 1, final_file, 1);
+                board.get_move('e', 1, final_file, 1);
             }
             catch(const Illegal_Move_Exception&)
             {
@@ -168,7 +168,7 @@ void run_tests()
     Board white_pawn_board("k7/8/8/4p3/3P4/8/8/K7 w - - 0 1");
     try
     {
-        white_pawn_board.get_complete_move('d', 4, 'e', 5);
+        white_pawn_board.get_move('d', 4, 'e', 5);
     }
     catch(const Illegal_Move_Exception&)
     {
@@ -181,7 +181,7 @@ void run_tests()
     Board black_pawn_board("k7/8/8/4p3/3P4/8/8/K7 b - - 0 1");
     try
     {
-        black_pawn_board.get_complete_move('e', 5, 'd', 4);
+        black_pawn_board.get_move('e', 5, 'd', 4);
     }
     catch(const Illegal_Move_Exception&)
     {
@@ -319,12 +319,12 @@ void run_tests()
         tests_passed = false;
     }
 
-    Game_Tree_Node_Result r1 = {Complete_Move(),
+    Game_Tree_Node_Result r1 = {nullptr,
                                 10,
                                 WHITE,
                                 2,
                                 {}};
-    Game_Tree_Node_Result r2 = {Complete_Move(),
+    Game_Tree_Node_Result r2 = {nullptr,
                                 10,
                                 BLACK,
                                 2,
@@ -342,13 +342,13 @@ void run_tests()
         tests_passed = false;
     }
 
-    Game_Tree_Node_Result alpha_start = {Complete_Move(),
+    Game_Tree_Node_Result alpha_start = {nullptr,
                                          -Math::infinity,
                                          WHITE,
                                          0,
                                          {}};
 
-    Game_Tree_Node_Result beta_start = {Complete_Move(),
+    Game_Tree_Node_Result beta_start = {nullptr,
                                         Math::infinity,
                                         WHITE,
                                         0,
@@ -366,12 +366,12 @@ void run_tests()
     }
 
 
-    Game_Tree_Node_Result white_win4 = {Complete_Move(),
+    Game_Tree_Node_Result white_win4 = {nullptr,
                                         Math::win_score,
                                         WHITE,
                                         4,
                                         {}};
-    Game_Tree_Node_Result white_win6 = {Complete_Move(),
+    Game_Tree_Node_Result white_win6 = {nullptr,
                                         Math::win_score,
                                         WHITE,
                                         6,
@@ -388,7 +388,7 @@ void run_tests()
         tests_passed = false;
     }
 
-    Game_Tree_Node_Result black_loss6 = {Complete_Move(),
+    Game_Tree_Node_Result black_loss6 = {nullptr,
                                          -Math::win_score,
                                          BLACK,
                                          6,
@@ -410,7 +410,7 @@ void run_tests()
                          "Ne4", "c1",
                          "Ng5"})
         {
-            board.submit_move(board.get_complete_move(move));
+            board.submit_move(board.get_move(move));
         }
     }
     catch(const Illegal_Move_Exception&)

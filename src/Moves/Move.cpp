@@ -8,33 +8,35 @@
 #include "Exceptions/Illegal_Move_Exception.h"
 
 
-Move::Move(int d_file_in, int d_rank_in) : d_file(d_file_in), d_rank(d_rank_in)
+Move::Move(char file_start, int rank_start,
+           char file_end,   int rank_end) :
+               starting_file(file_start),
+               starting_rank(rank_start),
+               ending_file(file_end),
+               ending_rank(rank_end)
 {
-    assert(std::abs(d_file) < 8);
-    assert(std::abs(d_rank) < 8);
-    assert(d_file != 0 || d_rank != 0);
+    assert(std::abs(file_change()) < 8);
+    assert(std::abs(rank_change()) < 8);
+    assert(file_change() != 0 || rank_change() != 0);
 }
 
-void Move::side_effects(Board&, char /* file_start */, int /* rank_start */) const
+void Move::side_effects(Board&) const
 {
 }
 
-bool Move::is_legal(const Board& board, char file_start, int rank_start) const
+bool Move::is_legal(const Board& board) const
 {
-    char file_end = file_start + file_change();
-    int rank_end = rank_start + rank_change();
-
     // starting or ending square is outside board
-    assert(Board::inside_board(file_start, rank_start));
-    assert(Board::inside_board(file_end, rank_end));
+    assert(Board::inside_board(starting_file, starting_rank));
+    assert(Board::inside_board(ending_file, ending_rank));
 
     // Piece-move compatibility
-    auto moving_piece = board.view_piece_on_square(file_start, rank_start);
+    auto moving_piece = board.view_piece_on_square(starting_file, starting_rank);
     assert(moving_piece);
     assert(moving_piece->color() == board.whose_turn());
     assert(moving_piece->can_move(this));
 
-    auto attacked_piece = board.view_piece_on_square(file_end, rank_end);
+    auto attacked_piece = board.view_piece_on_square(ending_file, ending_rank);
     if(attacked_piece)
     {
         // Cannot capture piece of same color
@@ -51,7 +53,7 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start) const
     }
 
 
-    if( ! move_specific_legal(board, file_start, rank_start))
+    if( ! move_specific_legal(board))
     {
         return false;
     }
@@ -68,8 +70,8 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start) const
 
         for(int step = 1; step < max_move; ++step)
         {
-            if(board.view_piece_on_square(file_start + file_step*step,
-                                          rank_start + rank_step*step))
+            if(board.view_piece_on_square(starting_file + file_step*step,
+                                          starting_rank + rank_step*step))
             {
                 return false;
             }
@@ -78,12 +80,12 @@ bool Move::is_legal(const Board& board, char file_start, int rank_start) const
 
     // King should not be in check after move
     Board trial(board);
-    trial.make_move(file_start, rank_start, file_end, rank_end);
-    side_effects(trial, file_start, rank_start);
+    trial.make_move(starting_file, starting_rank, ending_file, ending_rank);
+    side_effects(trial);
     return ! trial.king_is_in_check(board.whose_turn());
 }
 
-bool Move::move_specific_legal(const Board& /* board */, char /* file_start */, int /* rank_start */) const
+bool Move::move_specific_legal(const Board&) const
 {
     return true;
 }
@@ -93,27 +95,54 @@ bool Move::can_capture() const
     return true;
 }
 
+char Move::start_file() const
+{
+    return starting_file;
+}
+
+int Move::start_rank() const
+{
+    return starting_rank;
+}
+
 int Move::file_change() const
 {
-    return d_file;
+    return ending_file - starting_file;
 }
 
 int Move::rank_change() const
 {
-    return d_rank;
+    return ending_rank - starting_rank;
+}
+
+char Move::end_file() const
+{
+    return ending_file;
+}
+
+int Move::end_rank() const
+{
+    return ending_rank;
 }
 
 std::string Move::name() const
 {
+    return move_name() + " (" + coordinate_move() + ")";
+}
+
+std::string Move::move_name() const
+{
     return "Move";
 }
 
-std::string Move::game_record_item(const Board& board, char file_start, int rank_start) const
+std::string Move::game_record_item(const Board& board) const
 {
-    char file_end = file_start + file_change();
-    int  rank_end = rank_start + rank_change();
+    return game_record_move_item(board) + game_record_ending_item(board);
+}
 
-    auto original_piece = board.view_piece_on_square(file_start, rank_start);
+std::string Move::game_record_move_item(const Board& board) const
+{
+    auto original_piece = board.view_piece_on_square(starting_file, starting_rank);
     std::string move_record = original_piece->pgn_symbol();
 
     bool record_file = false;
@@ -126,11 +155,11 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
             {
                 continue;
             }
-            if(file_other == file_start && rank_other == rank_start)
+            if(file_other == starting_file && rank_other == starting_rank)
             {
                 continue;
             }
-            if(file_other == file_end && rank_other == rank_end)
+            if(file_other == ending_file && rank_other == ending_rank)
             {
                 continue;
             }
@@ -140,14 +169,14 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
                 continue;
             }
 
-            if(board.is_legal(file_other, rank_other, file_end, rank_end))
+            if(board.is_legal(file_other, rank_other, ending_file, ending_rank))
             {
-                if(file_other != file_start && ! record_file)
+                if(file_other != starting_file && ! record_file)
                 {
                     record_file = true;
                     continue;
                 }
-                if(rank_other != rank_start)
+                if(rank_other != starting_rank)
                 {
                     record_rank = true;
                 }
@@ -157,35 +186,44 @@ std::string Move::game_record_item(const Board& board, char file_start, int rank
 
     if(record_file)
     {
-        move_record += file_start;
+        move_record += starting_file;
     }
     if(record_rank)
     {
-        move_record += std::to_string(rank_start);
+        move_record += std::to_string(starting_rank);
     }
 
-    if(board.view_piece_on_square(file_end, rank_end))
+    if(board.view_piece_on_square(ending_file, ending_rank))
     {
         move_record += 'x';
     }
 
-    move_record += file_end;
-    move_record += std::to_string(rank_end);
+    move_record += ending_file;
+    move_record += std::to_string(ending_rank);
 
     return move_record;
 }
 
-std::string Move::coordinate_move(char file_start, int rank_start) const
+std::string Move::game_record_ending_item(Board board) const
 {
-    return file_start
-           + std::to_string(rank_start)
-           + char(file_start + file_change())
-           + std::to_string(rank_start + rank_change());
-}
+    auto result = board.submit_move(*this);
+    if(result.game_has_ended())
+    {
+        return result.get_game_record_annotation();
+    }
 
-bool Move::operator==(const Move& other) const
+    if(board.king_is_in_check(board.whose_turn()))
+    {
+        return "+";
+    }
+
+    return {};
+
+}
+std::string Move::coordinate_move() const
 {
-    return file_change() == other.file_change() &&
-           rank_change() == other.rank_change() &&
-           name() == other.name();
+    return starting_file
+           + std::to_string(starting_rank)
+           + ending_file
+           + std::to_string(ending_rank);
 }

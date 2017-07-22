@@ -2,7 +2,7 @@
 
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 #include "Utility.h"
 #include "Genes/Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
@@ -17,15 +17,15 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board) const
     double score = 0.0;
     std::map<const Piece*, bool> already_counted;
 
-    for(const auto& complete_move : board.legal_moves())
+    for(const auto& move : board.legal_moves())
     {
-        if( ! complete_move.can_capture())
+        if( ! move->can_capture())
         {
             continue;
         }
-        auto end_file = complete_move.end_file();
-        auto end_rank = complete_move.end_rank();
-        if(complete_move.name().front() == 'E') // En passant capture
+        auto end_file = move->end_file();
+        auto end_rank = move->end_rank();
+        if(move->name().front() == 'E') // En passant capture
         {
             end_rank += (board.whose_turn() == WHITE ? -1 : 1);
         }

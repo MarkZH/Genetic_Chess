@@ -17,7 +17,7 @@ http://vision.unipv.it/IA1/aa2009-2010/ProgrammingaComputerforPlayingChess.pdf
 
 #include "Game/Color.h"
 
-class Complete_Move;
+class Move;
 class Board;
 class Clock;
 
@@ -26,7 +26,7 @@ class Claude_Shannon_AI : public Player
     public:
         Claude_Shannon_AI();
 
-        const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
+        const Move& choose_move(const Board& board, const Clock& clock) const override;
 
         std::string name() const override;
         std::string author() const override;
@@ -35,7 +35,7 @@ class Claude_Shannon_AI : public Player
         int recursion_depth;
 
         int evalutate_position(const Board& board, Color perspective, int look_ahead) const;
-        const Complete_Move choose_move(const Board& board, int look_ahead) const;
+        const Move& choose_move(const Board& board, int look_ahead) const;
 
         int count_pieces(const Board& board, Color piece_color, char piece_symbol) const;
         int count_doubled_pawns(const Board& board, Color pawn_color) const;

@@ -7,11 +7,12 @@
 
 class Board;
 class Clock;
+class Move;
 
 class Random_AI : public Player
 {
     public:
-        const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
+        const Move& choose_move(const Board& board, const Clock& clock) const override;
         std::string name() const override;
 };
 

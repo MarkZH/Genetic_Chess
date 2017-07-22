@@ -9,32 +9,31 @@
 #include "Pieces/Piece.h"
 #include "Utility.h"
 
-Pawn_Promotion::Pawn_Promotion(const Piece* promotion_piece) :
-    Pawn_Move(promotion_piece->color()),
+Pawn_Promotion::Pawn_Promotion(const Piece* promotion_piece, char file_start) :
+    Pawn_Move(promotion_piece->color(), file_start, promotion_piece->color() == WHITE ? 7 : 2),
     promote_to(promotion_piece)
 {
 }
 
-void Pawn_Promotion::side_effects(Board& board, char file_start, int rank_start) const
+void Pawn_Promotion::side_effects(Board& board) const
 {
-    assert(rank_start == (rank_change() == 1 ? 7 : 2)); // last-minute debugging legality check
+    assert(starting_rank == (rank_change() == 1 ? 7 : 2)); // last-minute debugging legality check
 
-    Pawn_Move::side_effects(board, file_start, rank_start);
-    board.place_piece(promote_to, file_start + file_change(),
-                                  rank_start + rank_change());
+    Pawn_Move::side_effects(board);
+    board.place_piece(promote_to, ending_file, ending_rank);
 }
 
-std::string Pawn_Promotion::name() const
+std::string Pawn_Promotion::move_name() const
 {
-    return std::string("Pawn Promotion ") + promote_to->pgn_symbol();
+    return "Pawn Promotion " + promote_to->pgn_symbol();
 }
 
-std::string Pawn_Promotion::game_record_item(const Board& board, char file_start, int rank_start) const
+std::string Pawn_Promotion::game_record_move_item(const Board& board) const
 {
-    return Pawn_Move::game_record_item(board, file_start, rank_start) + "=" + promote_to->pgn_symbol();
+    return Pawn_Move::game_record_item(board) + "=" + promote_to->pgn_symbol();
 }
 
-std::string Pawn_Promotion::coordinate_move(char file_start, int rank_start) const
+std::string Pawn_Promotion::coordinate_move() const
 {
-    return Move::coordinate_move(file_start, rank_start) + char(std::tolower(promote_to->fen_symbol()));
+    return Move::coordinate_move() + char(std::tolower(promote_to->fen_symbol()));
 }

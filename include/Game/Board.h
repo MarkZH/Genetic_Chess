@@ -6,7 +6,7 @@
 #include <string>
 #include <set>
 
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 #include "Color.h"
 #include "Square.h"
 #include "Game_Result.h"
@@ -29,17 +29,17 @@ class Board
         Board();
         explicit Board(const std::string& fen); // reproduce board from Forsythe-Edwards Notation string
 
-        Game_Result submit_move(const Complete_Move& cm);
+        Game_Result submit_move(const Move& move);
 
-        Complete_Move get_complete_move(const std::string& move, char promote = 0) const;
-        Complete_Move get_complete_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
+        const Move& get_move(const std::string& move, char promote = 0) const;
+        const Move& get_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
 
         Color whose_turn() const;
 
         void ascii_draw(Color perspective = WHITE) const;
 
         std::string fen_status() const; // current state of board in FEN
-        const std::vector<Complete_Move>& get_game_record() const;
+        const std::vector<const Move*>& get_game_record() const;
         std::string get_last_move_record() const;
 
         // Communication between players
@@ -68,8 +68,8 @@ class Board
 
         const Piece* view_piece_on_square(char file, int rank) const;
 
-        const std::vector<Complete_Move>& legal_moves() const;
-        const std::vector<Complete_Move>& other_moves() const;
+        const std::vector<const Move*>& legal_moves() const;
+        const std::vector<const Move*>& other_moves() const;
 
         bool safe_for_king(char file, int rank, Color king_color) const;
         bool is_en_passant_targetable(char file, int rank) const;
@@ -88,7 +88,7 @@ class Board
         std::vector<const Piece*> board;
         std::map<std::string, int> repeat_count;
         Color turn_color;
-        std::vector<Complete_Move> game_record;
+        std::vector<const Move*> game_record;
         std::set<Square> unmoved_positions;
         Square en_passant_target;
         std::string starting_fen;
@@ -109,8 +109,8 @@ class Board
         static const Pawn   black_pawn;
 
         // Caches
-        mutable std::vector<Complete_Move> other_moves_cache;
-        mutable std::vector<Complete_Move> legal_moves_cache;
+        mutable std::vector<const Move*> other_moves_cache;
+        mutable std::vector<const Move*> legal_moves_cache;
         void clear_caches();
 
         // Communication channels
@@ -128,7 +128,7 @@ class Board
         static Color square_color(char file, int rank);
         bool is_legal(char file_start, int rank_start,
                       char file_end,   int rank_end) const;
-        bool is_in_legal_moves_list(const Complete_Move& move) const;
+        bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
 
         // Moves with side effects

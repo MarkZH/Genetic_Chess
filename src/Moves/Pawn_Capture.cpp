@@ -7,24 +7,24 @@
 #include "Game/Board.h"
 #include "Utility.h"
 
-Pawn_Capture::Pawn_Capture(Color color_in, Capture_Direction dir) : Pawn_Move(color_in)
+Pawn_Capture::Pawn_Capture(Color color_in, Capture_Direction dir, char file_start, int rank_start) :
+    Pawn_Move(color_in, file_start, rank_start)
 {
     assert(dir == LEFT || dir == RIGHT);
 
     if(dir == RIGHT)
     {
-        d_file = 1;
+        ending_file += 1;
     }
     else
     {
-        d_file = -1;
+        ending_file -= 1;
     }
 }
 
-bool Pawn_Capture::move_specific_legal(const Board& board, char file_start, int rank_start) const
+bool Pawn_Capture::move_specific_legal(const Board& board) const
 {
-    return board.view_piece_on_square(file_start + file_change(),
-                                      rank_start + rank_change()); // must capture a piece
+    return board.view_piece_on_square(ending_file, ending_rank); // must capture a piece
 }
 
 bool Pawn_Capture::can_capture() const
@@ -32,15 +32,15 @@ bool Pawn_Capture::can_capture() const
     return true;
 }
 
-std::string Pawn_Capture::name() const
+std::string Pawn_Capture::move_name() const
 {
     return "Pawn Capture";
 }
 
-std::string Pawn_Capture::game_record_item(const Board&, char file_start, int rank_start) const
+std::string Pawn_Capture::game_record_move_item(const Board&) const
 {
-    return std::string(std::string(1, file_start))
+    return starting_file
             + "x"
-            + std::string(std::string(1, char(file_start + file_change())))
-            + std::string(std::to_string(rank_start + rank_change()));
+            + ending_file
+            + std::string(std::to_string(ending_rank));
 }

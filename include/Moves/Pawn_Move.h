@@ -9,11 +9,11 @@
 class Pawn_Move : public Move
 {
     public:
-        explicit Pawn_Move(Color color_in);
+        explicit Pawn_Move(Color color_in, char file_start, int rank_start);
 
-        void side_effects(Board& board, char file_start, int rank_end) const override;
+        void side_effects(Board& board) const override;
         bool can_capture() const override;
-        std::string name() const override;
+        std::string move_name() const override;
 };
 
 #endif // PAWN_MOVE_H

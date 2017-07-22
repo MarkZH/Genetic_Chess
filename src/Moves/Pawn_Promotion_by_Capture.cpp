@@ -8,18 +8,18 @@
 #include "Moves/Move.h"
 
 Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,
-                                                     Capture_Direction dir) :
-    Pawn_Promotion(promotion)
+                                                     Capture_Direction dir,
+                                                     char file_start) :
+    Pawn_Promotion(promotion, file_start)
 {
     assert(dir == LEFT || dir == RIGHT);
-    d_file = (dir == RIGHT ? 1 : -1);
+    ending_file += (dir == RIGHT ? 1 : -1);
 }
 
-bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board, char file_start, int rank_start) const
+bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const
 {
-    assert(rank_start == (rank_change() == 1 ? 7 : 2));
-    return board.view_piece_on_square(file_start + file_change(),
-                                      rank_start + rank_change()); // must capture
+    assert(starting_rank == (rank_change() == 1 ? 7 : 2));
+    return board.view_piece_on_square(ending_file, ending_rank); // must capture
 }
 
 bool Pawn_Promotion_by_Capture::can_capture() const
@@ -27,15 +27,13 @@ bool Pawn_Promotion_by_Capture::can_capture() const
     return true;
 }
 
-std::string Pawn_Promotion_by_Capture::name() const
+std::string Pawn_Promotion_by_Capture::move_name() const
 {
     return "Pawn Promotion by Capture " + promote_to->pgn_symbol();
 }
 
-std::string Pawn_Promotion_by_Capture::game_record_item(const Board& board, char file_start, int rank_start) const
+std::string Pawn_Promotion_by_Capture::game_record_move_item(const Board&) const
 {
-    return Pawn_Capture(rank_change() == 1 ? WHITE : BLACK,
-                        file_change() == 1 ? RIGHT : LEFT).
-                        game_record_item(board, file_start, rank_start)
-                            + "=" + promote_to->pgn_symbol();
+    return starting_file + "x" + ending_file + std::to_string(ending_rank)
+            + "=" + promote_to->pgn_symbol();
 }

@@ -3,7 +3,7 @@
 #include <limits>
 
 #include "Players/Player.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
 #include "Game/Game_Result.h"
@@ -22,22 +22,22 @@ std::string Claude_Shannon_AI::author() const
     return "Claude Shannon";
 }
 
-const Complete_Move Claude_Shannon_AI::choose_move(const Board& board, const Clock&) const
+const Move& Claude_Shannon_AI::choose_move(const Board& board, const Clock&) const
 {
     return choose_move(board, recursion_depth);
 }
 
-const Complete_Move Claude_Shannon_AI::choose_move(const Board& board, int look_ahead) const
+const Move& Claude_Shannon_AI::choose_move(const Board& board, int look_ahead) const
 {
     auto best_move = board.legal_moves().front();
     auto best_score = std::numeric_limits<double>::lowest();
     for(const auto& move : board.legal_moves())
     {
         auto next_board = board;
-        auto result = next_board.submit_move(move);
+        auto result = next_board.submit_move(*move);
         if(result.get_winner() != NONE) // checkmate
         {
-            return move;
+            return *move;
         }
 
         double score = 0;
@@ -53,7 +53,7 @@ const Complete_Move Claude_Shannon_AI::choose_move(const Board& board, int look_
         }
     }
 
-    return best_move;
+    return *best_move;
 }
 
 int Claude_Shannon_AI::evalutate_position(const Board& /*board*/, Color /*perspective*/, int /*look_ahead*/) const

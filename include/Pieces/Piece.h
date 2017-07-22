@@ -6,8 +6,8 @@
 #include <memory>
 
 #include "Moves/Move.h"
-#include "Moves/Complete_Move.h"
 #include "Game/Color.h"
+#include "Game/Board.h"
 
 class Piece
 {
@@ -22,7 +22,7 @@ class Piece
 
         bool can_move(const Move* move) const;
 
-        const std::vector<Complete_Move>& get_move_list(char file, int rank) const;
+        const std::vector<const Move*>& get_move_list(char file, int rank) const;
 
         bool operator==(const Piece& other) const;
         bool operator!=(const Piece& other) const;
@@ -39,30 +39,10 @@ class Piece
 
         // Add a move to the list that is only legal when starting from a certain square
         // (e.g., castling, pawn double move, promotion, etc.)
-        template<typename Move_Type, typename ...Move_Args>
-        void add_special_legal_move(char file, int rank, Move_Args... args)
-        {
-            auto move = std::make_unique<Move_Type>(args...);
-            add_legal_move(move.get(), file, rank);
-            possible_moves.push_back(std::move(move));
-        }
-
+        void add_special_legal_move(std::unique_ptr<Move> move);
 
         // Add a move to the list that is legal starting from all squares
-        template<typename Move_Type, typename ...Move_Args>
-        void add_standard_legal_move(Move_Args... args)
-        {
-            auto move = std::make_unique<Move_Type>(args...);
-            for(char file = 'a'; file <= 'h'; ++file)
-            {
-                for(int rank = 1; rank <= 8; ++rank)
-                {
-                    add_legal_move(move.get(), file, rank);
-                }
-            }
-
-            possible_moves.push_back(std::move(move));
-        }
+        void add_standard_legal_move(int file_step, int rank_step);
 
     private:
         Color my_color;
@@ -72,9 +52,9 @@ class Piece
         std::vector<std::unique_ptr<const Move>> possible_moves;
 
         // Holds lists of possible legal moves indexed by starting square (using Board::board_index())
-        std::vector<std::vector<Complete_Move>> legal_moves;
+        std::vector<std::vector<const Move*>> legal_moves;
 
-        void add_legal_move(const Move* move, char file, int rank);
+        void add_legal_move(const Move* move);
 };
 
 #endif // PIECE_H

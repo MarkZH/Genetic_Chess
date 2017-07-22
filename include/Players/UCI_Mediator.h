@@ -8,6 +8,7 @@
 
 class Board;
 class Clock;
+class Move;
 struct Game_Result;
 
 class UCI_Mediator : public Outside_Player
@@ -15,7 +16,7 @@ class UCI_Mediator : public Outside_Player
     public:
         UCI_Mediator(const Player& local_player);
 
-        const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
+        const Move& choose_move(const Board& board, const Clock& clock) const override;
         Color get_ai_color() const override;
         std::string name() const override;
         void process_game_ending(const Game_Result& gee, const Board& board) const override;

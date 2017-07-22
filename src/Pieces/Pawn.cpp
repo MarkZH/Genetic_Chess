@@ -32,13 +32,13 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P")
     {
         for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
         {
-            add_special_legal_move<Pawn_Move>(file, rank, color_in);
+            add_special_legal_move(std::make_unique<Pawn_Move>(color_in, file, rank));
         }
     }
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        add_special_legal_move<Pawn_Double_Move>(file, base_rank, color_in);
+        add_special_legal_move(std::make_unique<Pawn_Double_Move>(color_in, file));
     }
 
     std::vector<const Piece*> possible_promotions;
@@ -55,21 +55,21 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P")
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
             {
-                add_special_legal_move<Pawn_Capture>(file, rank, color_in, dir);
+                add_special_legal_move(std::make_unique<Pawn_Capture>(color_in, dir, file, rank));
             }
         }
 
         auto en_passant_rank = (color_in == WHITE ? 5 : 4);
         for(char file = first_file; file <= last_file; ++file)
         {
-            add_special_legal_move<En_Passant>(file, en_passant_rank, color_in, dir);
+            add_special_legal_move(std::make_unique<En_Passant>(color_in, dir, file, en_passant_rank));
         }
 
         for(auto promote : possible_promotions)
         {
             for(auto file = first_file; file <= last_file; ++file)
             {
-                add_special_legal_move<Pawn_Promotion_by_Capture>(file, no_normal_move_rank, promote, dir);
+                add_special_legal_move(std::make_unique<Pawn_Promotion_by_Capture>(promote, dir, file));
             }
         }
     }
@@ -78,7 +78,7 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P")
     {
         for(auto file = 'a'; file <= 'h'; ++file)
         {
-            add_special_legal_move<Pawn_Promotion>(file, no_normal_move_rank, promote);
+            add_special_legal_move(std::make_unique<Pawn_Promotion>(promote, file));
         }
     }
 

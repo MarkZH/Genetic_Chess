@@ -5,18 +5,19 @@
 #include "Game/Board.h"
 
 
-Pawn_Double_Move::Pawn_Double_Move(Color color) : Pawn_Move(color)
+Pawn_Double_Move::Pawn_Double_Move(Color color, char file_start) :
+    Pawn_Move(color, file_start, color == WHITE ? 2 : 7)
 {
-    d_rank *= 2;
+    ending_rank += (color == WHITE ? 1 : -1);
 }
 
-void Pawn_Double_Move::side_effects(Board& board, char file_start, int rank_start) const
+void Pawn_Double_Move::side_effects(Board& board) const
 {
-    board.make_en_passant_targetable(file_start, rank_start + rank_change()/2);
-    Pawn_Move::side_effects(board, file_start, rank_start);
+    board.make_en_passant_targetable(starting_file, (starting_rank + ending_rank)/2);
+    Pawn_Move::side_effects(board);
 }
 
-std::string Pawn_Double_Move::name() const
+std::string Pawn_Double_Move::move_name() const
 {
     return "Pawn Double Move";
 }

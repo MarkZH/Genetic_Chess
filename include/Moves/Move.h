@@ -8,37 +8,51 @@ class Board;
 class Move
 {
     public:
-        Move(int d_file_in, int d_rank_in);
+        Move(char file_start, int rank_start,
+             char file_end,   int rank_end);
         virtual ~Move() = default;
+        Move(const Move&) = delete;
+        Move& operator=(const Move&) = delete;
 
         // side effects are changes to the state of the board beyond the change
         // in position of the moved piece and captured piece (movement by rook
         // in castling, marking a square as a en passant target after a double
         // pawn move, etc.)
-        virtual void side_effects(Board& board, char file_start, int rank_start) const;
+        virtual void side_effects(Board& board) const;
 
         // Contains rules for move
-        bool is_legal(const Board& board, char file_start, int rank_start) const;
+        bool is_legal(const Board& board) const;
 
         // Can this move capture a piece?
         virtual bool can_capture() const;
 
+        char start_file() const;
+        int  start_rank() const;
+
+        char end_file() const;
+        int  end_rank() const;
+
         int file_change() const;
         int rank_change() const;
 
-        virtual std::string name() const;
+        std::string name() const;
 
-        virtual std::string game_record_item(const Board& board, char file_start, int rank_start) const;
-        virtual std::string coordinate_move(char file_stat, int rank_start) const;
-
-        bool operator==(const Move& other) const;
+        std::string game_record_item(const Board& board) const;
+        virtual std::string coordinate_move() const;
 
     protected:
-        int d_file;
-        int d_rank;
+        char starting_file;
+        int  starting_rank;
+
+        char ending_file;
+        int  ending_rank;
 
     private:
-        virtual bool move_specific_legal(const Board& board, char file_start, int rank_start) const;
+        virtual bool move_specific_legal(const Board& board) const;
+
+        virtual std::string game_record_move_item(const Board& board) const;
+        std::string game_record_ending_item(Board board) const;
+        virtual std::string move_name() const;
 };
 
 #endif // MOVE_H

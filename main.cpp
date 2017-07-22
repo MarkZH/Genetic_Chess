@@ -384,14 +384,14 @@ void replay_game(const std::string& file_name, int game_number)
         {
             try
             {
-                result = board.submit_move(board.get_complete_move(s));
+                result = board.submit_move(board.get_move(s));
 
                 board.ascii_draw(WHITE);
                 game_started = true;
                 std::cout << "Last move: ";
                 std::cout << (board.get_game_record().size() + 1)/2 << ". ";
                 std::cout << (board.whose_turn() == WHITE ? "... " : "");
-                std::cout << board.get_game_record().back().coordinate_move() << std::endl;
+                std::cout << board.get_game_record().back()->coordinate_move() << std::endl;
                 if(result.game_has_ended())
                 {
                     std::cout << result.get_ending_reason() << std::endl;

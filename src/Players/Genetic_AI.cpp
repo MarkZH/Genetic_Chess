@@ -8,7 +8,7 @@
 #include <cassert>
 
 #include "Players/Player.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
@@ -124,7 +124,7 @@ void Genetic_AI::read_from(std::istream& is)
     genome.read_from(is);
 }
 
-const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clock) const
+const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) const
 {
     // Erase data from previous board when starting new game
     if(board.get_game_record().size() <= 1)
@@ -157,20 +157,20 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
         commentary.push_back(principal_variation);
 
-        return legal_moves.front(); // If there's only one legal move, take it.
+        return *legal_moves.front(); // If there's only one legal move, take it.
     }
 
     auto time_to_use = genome.time_to_examine(board, clock);
 
     // alpha = highest score found that opponent will allow
-    Game_Tree_Node_Result alpha_start = {Complete_Move(),
+    Game_Tree_Node_Result alpha_start = {nullptr,
                                          Math::lose_score,
                                          board.whose_turn(),
                                          0,
                                          {}};
 
     // beta = score that will cause opponent to choose a different prior move
-    Game_Tree_Node_Result beta_start = {Complete_Move(),
+    Game_Tree_Node_Result beta_start = {nullptr,
                                         Math::win_score,
                                         board.whose_turn(),
                                         0,
@@ -201,7 +201,7 @@ const Complete_Move Genetic_AI::choose_move(const Board& board, const Clock& clo
 
     positions_per_second = nodes_searched/(clock_start_time - clock.time_left(clock.running_for()));
 
-    return result.move;
+    return *result.move;
 }
 
 Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
@@ -258,7 +258,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
         auto next_board = board;
 
-        auto move_result = next_board.submit_move(move);
+        auto move_result = next_board.submit_move(*move);
         if(move_result.get_winner() != NONE)
         {
             // Mate in one (try to pick the shortest path to checkmate)
@@ -414,10 +414,10 @@ std::string Genetic_AI::get_commentary_for_move(size_t move_number) const
     std::string result;
     if(move_number < commentary.size() && ! commentary.at(move_number).empty())
     {
-        result = commentary.at(move_number).front().coordinate_move();
+        result = commentary.at(move_number).front()->coordinate_move();
         for(size_t i = 1; i < commentary.at(move_number).size(); ++i)
         {
-            result += " " + commentary.at(move_number).at(i).coordinate_move();
+            result += " " + commentary.at(move_number).at(i)->coordinate_move();
         }
     }
 
@@ -457,7 +457,7 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     // Principal variation
     for(const auto& move : thought.commentary)
     {
-        std::cout << move.coordinate_move() << ' ';
+        std::cout << move->coordinate_move() << ' ';
     }
 
     std::cout << '\n';

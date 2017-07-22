@@ -9,7 +9,7 @@
 #include "Game/Clock.h"
 #include "Game/Color.h"
 #include "Game/Game_Result.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 
 #include "Players/Thinking.h"
 #include "Exceptions/Game_Ending_Exception.h"
@@ -59,7 +59,7 @@ Game_Result play_game_with_board(const Player& white,
             while(true)
             {
                 auto& player = board.whose_turn() == WHITE ? white : black;
-                auto move_chosen = player.choose_move(board, game_clock);
+                const auto& move_chosen = player.choose_move(board, game_clock);
                 result = game_clock.punch();
                 if(result.game_has_ended())
                 {

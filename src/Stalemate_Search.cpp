@@ -10,9 +10,9 @@
 #include <chrono>
 
 #include "Game/Board.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 
-std::vector<Complete_Move> search_stalemate(const Board& board, int max_depth);
+std::vector<const Move*> search_stalemate(const Board& board, int max_depth);
 
 void stalemate_search_start()
 {
@@ -30,8 +30,8 @@ void stalemate_search_start()
             Board b;
             for(const auto& move : result)
             {
-                std::cout << move.game_record_item(b) << " ";
-                b.submit_move(move);
+                std::cout << move->game_record_item(b) << " ";
+                b.submit_move(*move);
             }
             std::cout << std::endl;
             break;
@@ -43,7 +43,7 @@ void stalemate_search_start()
     }
 }
 
-std::vector<Complete_Move> search_stalemate(const Board& board, const int max_depth)
+std::vector<const Move*> search_stalemate(const Board& board, const int max_depth)
 {
     if(max_depth <= 0)
     {
@@ -53,7 +53,7 @@ std::vector<Complete_Move> search_stalemate(const Board& board, const int max_de
     for(const auto& move : board.legal_moves())
     {
         auto next_board = board;
-        auto move_result = next_board.submit_move(move);
+        auto move_result = next_board.submit_move(*move);
         if(move_result.game_has_ended())
         {
             if(move_result.get_ending_reason() == "Stalemate")

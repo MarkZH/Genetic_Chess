@@ -22,7 +22,7 @@
 #include "Pieces/Queen.h"
 
 #include "Moves/Move.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
 #include "Exceptions/Promotion_Exception.h"
@@ -243,10 +243,10 @@ bool Board::is_legal(char file_start, int rank_start,
 {
     for(const auto& move : legal_moves())
     {
-        if(move.start_file() == file_start &&
-           move.start_rank() == rank_start &&
-           move.end_file() == file_end &&
-           move.end_rank() == rank_end)
+        if(move->start_file() == file_start &&
+           move->start_rank() == rank_start &&
+           move->end_file() == file_end &&
+           move->end_rank() == rank_end)
         {
             return true;
         }
@@ -255,9 +255,9 @@ bool Board::is_legal(char file_start, int rank_start,
     return false;
 }
 
-bool Board::is_in_legal_moves_list(const Complete_Move& move) const
+bool Board::is_in_legal_moves_list(const Move& move) const
 {
-    return std::find(legal_moves().begin(), legal_moves().end(), move) != legal_moves().end();
+    return std::find(legal_moves().begin(), legal_moves().end(), &move) != legal_moves().end();
 }
 
 std::string Board::fen_status() const
@@ -286,21 +286,21 @@ std::string Board::fen_status() const
 }
 
 
-Complete_Move Board::get_complete_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
+const Move& Board::get_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
 {
-    std::vector<Complete_Move> move_list;
+    std::vector<const Move*> move_list;
     for(const auto& move : legal_moves())
     {
-        if(move.start_file() == file_start &&
-           move.start_rank() == rank_start &&
-           move.end_file() == file_end &&
-           move.end_rank() == rank_end)
+        if(move->start_file() == file_start &&
+           move->start_rank() == rank_start &&
+           move->end_file() == file_end &&
+           move->end_rank() == rank_end)
         {
             if(promote)
             {
-                if(move.name().back() == promote)
+                if(move->name().back() == promote)
                 {
-                    return move;
+                    return *move;
                 }
             }
             else
@@ -323,7 +323,7 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
 
     if(move_list.size() == 1)
     {
-        return move_list.front();
+        return *move_list.front();
     }
     else
     {
@@ -331,10 +331,10 @@ Complete_Move Board::get_complete_move(char file_start, int rank_start, char fil
     }
 }
 
-Game_Result Board::submit_move(const Complete_Move& move)
+Game_Result Board::submit_move(const Move& move)
 {
     assert(is_in_legal_moves_list(move));
-    game_record.push_back(move);
+    game_record.push_back(&move);
 
     make_move(move.start_file(), move.start_rank(),
               move.end_file(),   move.end_rank());
@@ -409,7 +409,7 @@ Game_Result Board::submit_move(const Complete_Move& move)
     return {};
 }
 
-Complete_Move Board::get_complete_move(const std::string& move, char promote) const
+const Move& Board::get_move(const std::string& move, char promote) const
 {
     const std::string pieces = "RNBQK";
     const std::string valid_files = "abcdefgh";
@@ -456,13 +456,13 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
     // Castling
     if(validated == "OO")
     {
-        return get_complete_move('e', whose_turn() == WHITE ? 1 : 8,
-                                 'g', whose_turn() == WHITE ? 1 : 8);
+        return get_move('e', whose_turn() == WHITE ? 1 : 8,
+                        'g', whose_turn() == WHITE ? 1 : 8);
     }
     if(validated == "OOO")
     {
-        return get_complete_move('e', whose_turn() == WHITE ? 1 : 8,
-                                 'c', whose_turn() == WHITE ? 1 : 8);
+        return get_move('e', whose_turn() == WHITE ? 1 : 8,
+                        'c', whose_turn() == WHITE ? 1 : 8);
     }
 
     // Normal PGN move
@@ -508,7 +508,7 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
             promoted_piece = std::toupper(move[4]);
         }
 
-        return get_complete_move(start_file, start_rank, end_file, end_rank, promoted_piece);
+        return get_move(start_file, start_rank, end_file, end_rank, promoted_piece);
     }
 
     // else normal PGN-style piece movement
@@ -549,9 +549,9 @@ Complete_Move Board::get_complete_move(const std::string& move, char promote) co
 
     if(starting_file != 0 && starting_rank != 0)
     {
-        return get_complete_move(starting_file, starting_rank,
-                                 ending_file,   ending_rank,
-                                 promoted_piece);
+        return get_move(starting_file, starting_rank,
+                        ending_file,   ending_rank,
+                        promoted_piece);
     }
 
     throw Illegal_Move_Exception("Malformed move: " + move);
@@ -578,7 +578,7 @@ Color Board::whose_turn() const
     return turn_color;
 }
 
-const std::vector<Complete_Move>& Board::legal_moves() const
+const std::vector<const Move*>& Board::legal_moves() const
 {
     if( ! legal_moves_cache.empty())
     {
@@ -594,7 +594,7 @@ const std::vector<Complete_Move>& Board::legal_moves() const
             {
                 for(const auto& move : piece->get_move_list(file, rank))
                 {
-                    if(move.is_legal(*this))
+                    if(move->is_legal(*this))
                     {
                         legal_moves_cache.push_back(move);
                     }
@@ -610,7 +610,7 @@ const std::vector<Complete_Move>& Board::legal_moves() const
     return legal_moves_cache;
 }
 
-const std::vector<Complete_Move>& Board::other_moves() const
+const std::vector<const Move*>& Board::other_moves() const
 {
     return other_moves_cache;
 }
@@ -812,7 +812,7 @@ bool Board::no_legal_moves() const
     return legal_moves().empty();
 }
 
-const std::vector<Complete_Move>& Board::get_game_record() const
+const std::vector<const Move*>& Board::get_game_record() const
 {
     return game_record;
 }
@@ -912,7 +912,7 @@ void Board::print_game_record(const Player* white,
         }
 
         auto next_move = game_record.at(i);
-        out_stream << " " << next_move.game_record_item(temp);
+        out_stream << " " << next_move->game_record_item(temp);
 
         std::string commentary;
         auto current_player = (temp.whose_turn() == WHITE ? white : black);
@@ -929,7 +929,7 @@ void Board::print_game_record(const Player* white,
             {
                 try
                 {
-                    auto cm = comment_board.get_complete_move(variation);
+                    const auto& cm = comment_board.get_move(variation);
                     out_stream << cm.game_record_item(comment_board) << " ";
                     comment_board.submit_move(cm);
                 }
@@ -941,7 +941,7 @@ void Board::print_game_record(const Player* white,
             out_stream << "}";
         }
 
-        temp.submit_move(next_move);
+        temp.submit_move(*next_move);
     }
     out_stream << '\n';
 
@@ -1032,7 +1032,7 @@ std::string Board::board_status() const // for 3-fold rep count
 
 std::string Board::last_move_coordinates() const
 {
-    return game_record.back().coordinate_move();
+    return game_record.back()->coordinate_move();
 }
 
 void Board::set_turn(Color color)
@@ -1175,8 +1175,8 @@ std::string Board::get_last_move_record() const
     std::string result;
     for(const auto& move : get_game_record())
     {
-        result = move.game_record_item(b);
-        b.submit_move(move);
+        result = move->game_record_item(b);
+        b.submit_move(*move);
     }
 
     return result;

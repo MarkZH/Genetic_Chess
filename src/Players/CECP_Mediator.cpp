@@ -1,7 +1,7 @@
 #include "Players/CECP_Mediator.h"
 
 #include "Players/Player.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 
@@ -32,7 +32,7 @@ CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THIN
     }
 }
 
-const Complete_Move CECP_Mediator::choose_move(const Board& board, const Clock& clock) const
+const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) const
 {
     while(true)
     {
@@ -50,7 +50,7 @@ const Complete_Move CECP_Mediator::choose_move(const Board& board, const Clock& 
             }
 
             board.set_thinking_mode(thinking_mode);
-            return board.get_complete_move(move_text);
+            return board.get_move(move_text);
         }
         catch(const Illegal_Move_Exception& e)
         {

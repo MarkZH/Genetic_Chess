@@ -1,7 +1,7 @@
 #include "Players/UCI_Mediator.h"
 
 #include "Players/Player.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
@@ -31,7 +31,7 @@ UCI_Mediator::UCI_Mediator(const Player& local_player)
     }
 }
 
-const Complete_Move UCI_Mediator::choose_move(const Board& /*board*/, const Clock& /*clock*/) const
+const Move& UCI_Mediator::choose_move(const Board& /*board*/, const Clock& /*clock*/) const
 {
     while(true)
     {

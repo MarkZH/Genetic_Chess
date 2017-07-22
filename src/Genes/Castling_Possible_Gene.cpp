@@ -46,7 +46,7 @@ double Castling_Possible_Gene::score_board(const Board& board) const
     for(size_t i = (perspective == WHITE ? 0 : 1); i < board.get_game_record().size(); i += 2)
     {
         // If already castled, return full score.
-        auto move_text = board.get_game_record()[i].coordinate_move();
+        auto move_text = board.get_game_record()[i]->coordinate_move();
         if(move_text == kingside_move ||
            move_text == queenside_move)
         {

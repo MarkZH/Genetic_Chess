@@ -17,12 +17,13 @@ King::King(Color color_in) : Piece(color_in, "K")
         {
             if(d_rank == 0 && d_file == 0) { continue; }
 
-            add_standard_legal_move<Move>(d_file, d_rank);
+            add_standard_legal_move(d_file, d_rank);
         }
     }
 
-    add_special_legal_move<Kingside_Castle>('e', color_in == WHITE ? 1 : 8);
-    add_special_legal_move<Queenside_Castle>('e', color_in == WHITE ? 1 : 8);
+    int base_rank = (color_in == WHITE ? 1 : 8);
+    add_special_legal_move(std::make_unique<Kingside_Castle>(base_rank));
+    add_special_legal_move(std::make_unique<Queenside_Castle>(base_rank));
 
     // ASCII Art http://ascii.co.uk/art/chess (VK)
     ascii_art_lines.push_back(" \\+/ ");

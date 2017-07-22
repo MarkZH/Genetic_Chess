@@ -5,7 +5,7 @@
 
 class Board;
 class Clock;
-class Complete_Move;
+class Move;
 class Game_Result;
 
 class Player
@@ -13,7 +13,7 @@ class Player
     public:
         virtual ~Player() = default;
 
-        virtual const Complete_Move choose_move(const Board& board, const Clock& clock) const = 0;
+        virtual const Move& choose_move(const Board& board, const Clock& clock) const = 0;
         virtual std::string name() const = 0;
         virtual std::string author() const;
 

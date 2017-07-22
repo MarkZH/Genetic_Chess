@@ -7,7 +7,7 @@
 #include "Player.h"
 
 #include "Genes/Genome.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 
 class Board;
 class Clock;
@@ -24,7 +24,7 @@ class Genetic_AI : public Player
                    const Genetic_AI& gai_father); // offspring with random recombination of genes
 
         void mutate();
-        const Complete_Move choose_move(const Board& board, const Clock& clock) const override;
+        const Move& choose_move(const Board& board, const Clock& clock) const override;
 
         std::string name() const override;
         std::string author() const override;
@@ -44,8 +44,8 @@ class Genetic_AI : public Player
         static int next_id;
         int id;
 
-        mutable std::vector<Complete_Move> principal_variation;
-        mutable std::vector<std::vector<Complete_Move>> commentary;
+        mutable std::vector<const Move*> principal_variation;
+        mutable std::vector<std::vector<const Move*>> commentary;
 
         // Monitor search speed to adapt to different computers/competing workloads
         mutable int nodes_searched;

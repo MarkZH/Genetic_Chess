@@ -7,7 +7,7 @@
 #include "Players/Player.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
-#include "Moves/Complete_Move.h"
+#include "Moves/Move.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
 #include "Exceptions/Promotion_Exception.h"
@@ -18,7 +18,7 @@ Human_Player::Human_Player()
     std::getline(std::cin, player_name);
 }
 
-const Complete_Move Human_Player::choose_move(const Board& board, const Clock& clock) const
+const Move& Human_Player::choose_move(const Board& board, const Clock& clock) const
 {
     auto last_move_illegal = false;
     std::string why_illegal;
@@ -50,7 +50,7 @@ const Complete_Move Human_Player::choose_move(const Board& board, const Clock& c
         try
         {
             board.ascii_draw(opposite(board.whose_turn()));
-            return board.get_complete_move(move);
+            return board.get_move(move);
         }
         catch(const Illegal_Move_Exception& e)
         {
@@ -67,7 +67,7 @@ const Complete_Move Human_Player::choose_move(const Board& board, const Clock& c
             try
             {
                 board.ascii_draw(opposite(board.whose_turn()));
-                return board.get_complete_move(move, promote);
+                return board.get_move(move, promote);
             }
             catch(const Illegal_Move_Exception& e)
             {

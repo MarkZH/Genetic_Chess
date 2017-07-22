@@ -18,8 +18,7 @@ Knight::Knight(Color color_in) : Piece(color_in, "N")
         {
             for(auto rank_direction : {-1, 1})
             {
-                add_standard_legal_move<Move>(d_file*file_direction,
-                                              d_rank*rank_direction);
+                add_standard_legal_move(d_file*file_direction, d_rank*rank_direction);
             }
         }
     }

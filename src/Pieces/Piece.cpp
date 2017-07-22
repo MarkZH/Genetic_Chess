@@ -58,7 +58,7 @@ bool Piece::can_move(const Move* move) const
                         [move](const auto& x){ return x.get() == move; }) != possible_moves.end();
 }
 
-const std::vector<Complete_Move>& Piece::get_move_list(char file, int rank) const
+const std::vector<const Move*>& Piece::get_move_list(char file, int rank) const
 {
     return legal_moves[Board::board_index(file, rank)];
 }
@@ -93,10 +93,36 @@ bool Piece::is_knight() const
     return false;
 }
 
-void Piece::add_legal_move(const Move* move, char file, int rank)
+void Piece::add_standard_legal_move(int file_step, int rank_step)
 {
-    if(Board::inside_board(file + move->file_change(), rank + move->rank_change()))
+    for(char start_file = 'a'; start_file <= 'h'; ++start_file)
     {
-        legal_moves[Board::board_index(file, rank)].emplace_back(move, file, rank);
+        for(int start_rank = 1; start_rank <= 8; ++start_rank)
+        {
+            char end_file = start_file + file_step;
+            int  end_rank = start_rank + rank_step;
+
+            if(Board::inside_board(end_file, end_rank))
+            {
+                auto move = std::make_unique<Move>(start_file, start_rank,
+                                                   end_file, end_rank);
+                add_legal_move(move.get());
+                possible_moves.push_back(std::move(move));
+            }
+        }
     }
+}
+
+void Piece::add_special_legal_move(std::unique_ptr<Move> move)
+{
+    if(Board::inside_board(move->end_file(), move->end_rank()))
+    {
+        add_legal_move(move.get());
+        possible_moves.push_back(std::move(move));
+    }
+}
+
+void Piece::add_legal_move(const Move* move)
+{
+    legal_moves[Board::board_index(move->start_file(), move->start_rank())].push_back(move);
 }
