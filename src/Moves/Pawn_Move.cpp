@@ -19,7 +19,7 @@ void Pawn_Move::side_effects(Board& board) const
     board.repeat_count.clear();
 }
 
-std::string Pawn_Move::move_name() const
+std::string Pawn_Move::name() const
 {
     return "Pawn Move";
 }

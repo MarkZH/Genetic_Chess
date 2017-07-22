@@ -21,7 +21,7 @@ void En_Passant::side_effects(Board& board) const
     Pawn_Move::side_effects(board);
 }
 
-std::string En_Passant::move_name() const
+std::string En_Passant::name() const
 {
     return "En Passant";
 }

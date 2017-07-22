@@ -27,7 +27,7 @@ bool Pawn_Promotion_by_Capture::can_capture() const
     return true;
 }
 
-std::string Pawn_Promotion_by_Capture::move_name() const
+std::string Pawn_Promotion_by_Capture::name() const
 {
     return "Pawn Promotion by Capture " + promote_to->pgn_symbol();
 }

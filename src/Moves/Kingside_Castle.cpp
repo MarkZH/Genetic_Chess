@@ -26,7 +26,7 @@ void Kingside_Castle::side_effects(Board& board) const
     board.make_move('h', starting_rank, 'f', starting_rank); // move Rook
 }
 
-std::string Kingside_Castle::move_name() const
+std::string Kingside_Castle::name() const
 {
     return "Kingside Castle";
 }

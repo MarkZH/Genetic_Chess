@@ -35,7 +35,7 @@ class Move
         int file_change() const;
         int rank_change() const;
 
-        std::string name() const;
+        virtual std::string name() const;
 
         std::string game_record_item(const Board& board) const;
         virtual std::string coordinate_move() const;
@@ -53,7 +53,6 @@ class Move
         virtual bool move_specific_legal(const Board& board) const;
 
         std::string game_record_ending_item(Board board) const;
-        virtual std::string move_name() const;
 };
 
 #endif // MOVE_H

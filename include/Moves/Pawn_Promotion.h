@@ -14,7 +14,7 @@ class Pawn_Promotion : public Pawn_Move
         Pawn_Promotion(const Piece* promotion_piece, char file_start);
 
         void side_effects(Board& board) const override;
-        std::string move_name() const override;
+        std::string name() const override;
         std::string game_record_move_item(const Board& board) const override;
         std::string coordinate_move() const override;
 

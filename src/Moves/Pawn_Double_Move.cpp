@@ -17,7 +17,7 @@ void Pawn_Double_Move::side_effects(Board& board) const
     Pawn_Move::side_effects(board);
 }
 
-std::string Pawn_Double_Move::move_name() const
+std::string Pawn_Double_Move::name() const
 {
     return "Pawn Double Move";
 }

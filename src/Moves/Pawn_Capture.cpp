@@ -32,7 +32,7 @@ bool Pawn_Capture::can_capture() const
     return true;
 }
 
-std::string Pawn_Capture::move_name() const
+std::string Pawn_Capture::name() const
 {
     return "Pawn Capture";
 }

@@ -14,7 +14,7 @@ class Pawn_Promotion_by_Capture : public Pawn_Promotion
         bool move_specific_legal(const Board& board) const override;
         bool can_capture() const override;
 
-        std::string move_name() const override;
+        std::string name() const override;
         std::string game_record_move_item(const Board& board) const override;
 };
 

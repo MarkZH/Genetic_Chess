@@ -126,11 +126,6 @@ int Move::end_rank() const
 
 std::string Move::name() const
 {
-    return move_name() + " (" + coordinate_move() + ")";
-}
-
-std::string Move::move_name() const
-{
     return "Move";
 }
 
