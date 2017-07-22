@@ -929,9 +929,9 @@ void Board::print_game_record(const Player* white,
             {
                 try
                 {
-                    const auto& cm = comment_board.get_move(variation);
-                    out_stream << cm.game_record_item(comment_board) << " ";
-                    comment_board.submit_move(cm);
+                    const auto& comment_move = comment_board.get_move(variation);
+                    out_stream << comment_move.game_record_item(comment_board) << " ";
+                    comment_board.submit_move(comment_move);
                 }
                 catch(const Illegal_Move_Exception&)
                 {
