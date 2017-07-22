@@ -227,7 +227,7 @@ void print_help()
               << "\t-time [number]" << std::endl
               << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option)." << std::endl << std::endl
               << "\t-reset_moves [number]" << std::endl
-              << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock resets to the initial time every time this\n\t\tnumber of moves is made." << std::endl << std::endl
+              << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock adds the initial time every time this\n\t\tnumber of moves is made." << std::endl << std::endl
               << "\t-increment_time [number]" << std::endl
               << "\t\tSpecify seconds to add to time after each move." << std::endl << std::endl;
 }
