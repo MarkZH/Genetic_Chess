@@ -187,7 +187,7 @@ $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : src/Players/CECP_Mediator.cpp inc
 $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : src/Players/Claude_Shannon_AI.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/Move.h include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Claude_Shannon_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : src/Players/Game_Tree_Node_Result.cpp include/Game/Color.h include/Moves/Move.h include/Players/Game_Tree_Node_Result.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : src/Players/Game_Tree_Node_Result.cpp include/Game/Color.h include/Players/Game_Tree_Node_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Game_Tree_Node_Result.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/Move.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
@@ -346,7 +346,7 @@ $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : src/Players/CECP_Mediator.cpp i
 $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o : src/Players/Claude_Shannon_AI.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/Move.h include/Players/Claude_Shannon_AI.h include/Players/Player.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Claude_Shannon_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : src/Players/Game_Tree_Node_Result.cpp include/Game/Color.h include/Moves/Move.h include/Players/Game_Tree_Node_Result.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : src/Players/Game_Tree_Node_Result.cpp include/Game/Color.h include/Players/Game_Tree_Node_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Game_Tree_Node_Result.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/Move.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Player.h include/Players/Thinking.h include/Utility.h

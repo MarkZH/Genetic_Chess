@@ -163,15 +163,13 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
     auto time_to_use = genome.time_to_examine(board, clock);
 
     // alpha = highest score found that opponent will allow
-    Game_Tree_Node_Result alpha_start = {nullptr,
-                                         Math::lose_score,
+    Game_Tree_Node_Result alpha_start = {Math::lose_score,
                                          board.whose_turn(),
                                          0,
                                          {}};
 
     // beta = score that will cause opponent to choose a different prior move
-    Game_Tree_Node_Result beta_start = {nullptr,
-                                        Math::win_score,
+    Game_Tree_Node_Result beta_start = {Math::win_score,
                                         board.whose_turn(),
                                         0,
                                         {}};
@@ -191,7 +189,7 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
 
     if(result.depth > 0)
     {
-        principal_variation = result.commentary;
+        principal_variation = result.variation;
     }
     else
     {
@@ -201,7 +199,7 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
 
     positions_per_second = nodes_searched/(clock_start_time - clock.time_left(clock.running_for()));
 
-    return *result.move;
+    return *result.variation.front();
 }
 
 Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
@@ -246,11 +244,10 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     auto perspective = board.whose_turn();
     auto moves_left = all_legal_moves.size();
 
-    Game_Tree_Node_Result best_result = {board.legal_moves().front(),
-                                         Math::lose_score,
+    Game_Tree_Node_Result best_result = {Math::lose_score,
                                          perspective,
                                          depth,
-                                         {}};
+                                         {all_legal_moves.front()}};
 
     for(const auto& move : all_legal_moves)
     {
@@ -262,8 +259,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         if(move_result.get_winner() != NONE)
         {
             // Mate in one (try to pick the shortest path to checkmate)
-            return {move,
-                    genome.evaluate(next_board, move_result, perspective),
+            return {genome.evaluate(next_board, move_result, perspective),
                     perspective,
                     depth,
                     {next_board.get_game_record().end() - (depth + 1),
@@ -315,8 +311,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         else
         {
             // Record immediate result without looking ahead further
-            result = {move,
-                      genome.evaluate(next_board, move_result, perspective),
+            result = {genome.evaluate(next_board, move_result, perspective),
                       perspective,
                       depth,
                       {next_board.get_game_record().end() - (depth + 1),
@@ -326,12 +321,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         if(better_than(result, best_result, perspective))
         {
             best_result = result;
-
-            // Update result with actual next move
-            if(recurse && depth == 0)
-            {
-                best_result.move = move;
-            }
 
             if(better_than(best_result, alpha, perspective))
             {
@@ -455,7 +444,7 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
               << '\t';
 
     // Principal variation
-    for(const auto& move : thought.commentary)
+    for(const auto& move : thought.variation)
     {
         std::cout << move->coordinate_move() << ' ';
     }

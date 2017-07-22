@@ -319,13 +319,11 @@ void run_tests()
         tests_passed = false;
     }
 
-    Game_Tree_Node_Result r1 = {nullptr,
-                                10,
+    Game_Tree_Node_Result r1 = {10,
                                 WHITE,
                                 2,
                                 {}};
-    Game_Tree_Node_Result r2 = {nullptr,
-                                10,
+    Game_Tree_Node_Result r2 = {10,
                                 BLACK,
                                 2,
                                 {}};
@@ -342,14 +340,12 @@ void run_tests()
         tests_passed = false;
     }
 
-    Game_Tree_Node_Result alpha_start = {nullptr,
-                                         -Math::infinity,
+    Game_Tree_Node_Result alpha_start = {-Math::infinity,
                                          WHITE,
                                          0,
                                          {}};
 
-    Game_Tree_Node_Result beta_start = {nullptr,
-                                        Math::infinity,
+    Game_Tree_Node_Result beta_start = {Math::infinity,
                                         WHITE,
                                         0,
                                         {}};
@@ -366,13 +362,11 @@ void run_tests()
     }
 
 
-    Game_Tree_Node_Result white_win4 = {nullptr,
-                                        Math::win_score,
+    Game_Tree_Node_Result white_win4 = {Math::win_score,
                                         WHITE,
                                         4,
                                         {}};
-    Game_Tree_Node_Result white_win6 = {nullptr,
-                                        Math::win_score,
+    Game_Tree_Node_Result white_win6 = {Math::win_score,
                                         WHITE,
                                         6,
                                         {}};
@@ -388,8 +382,7 @@ void run_tests()
         tests_passed = false;
     }
 
-    Game_Tree_Node_Result black_loss6 = {nullptr,
-                                         -Math::win_score,
+    Game_Tree_Node_Result black_loss6 = {-Math::win_score,
                                          BLACK,
                                          6,
                                          {}};
