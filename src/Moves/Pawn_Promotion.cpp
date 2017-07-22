@@ -30,7 +30,7 @@ std::string Pawn_Promotion::move_name() const
 
 std::string Pawn_Promotion::game_record_move_item(const Board& board) const
 {
-    return Pawn_Move::game_record_item(board) + "=" + promote_to->pgn_symbol();
+    return Pawn_Move::game_record_move_item(board) + "=" + promote_to->pgn_symbol();
 }
 
 std::string Pawn_Promotion::coordinate_move() const

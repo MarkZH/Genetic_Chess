@@ -47,10 +47,11 @@ class Move
         char ending_file;
         int  ending_rank;
 
+        virtual std::string game_record_move_item(const Board& board) const;
+
     private:
         virtual bool move_specific_legal(const Board& board) const;
 
-        virtual std::string game_record_move_item(const Board& board) const;
         std::string game_record_ending_item(Board board) const;
         virtual std::string move_name() const;
 };
