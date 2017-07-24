@@ -124,11 +124,6 @@ int Move::end_rank() const
     return ending_rank;
 }
 
-std::string Move::name() const
-{
-    return "Move";
-}
-
 std::string Move::game_record_item(const Board& board) const
 {
     return game_record_move_item(board) + game_record_ending_item(board);

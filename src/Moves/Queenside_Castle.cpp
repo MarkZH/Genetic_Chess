@@ -27,11 +27,6 @@ void Queenside_Castle::side_effects(Board& board) const
     board.make_move('a', starting_rank, 'd', starting_rank); // move Rook
 }
 
-std::string Queenside_Castle::name() const
-{
-    return "Queenside Castle";
-}
-
 std::string Queenside_Castle::game_record_move_item(const Board&) const
 {
     return "O-O-O";

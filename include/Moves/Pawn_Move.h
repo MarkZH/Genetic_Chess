@@ -13,7 +13,6 @@ class Pawn_Move : public Move
 
         void side_effects(Board& board) const override;
         bool can_capture() const override;
-        std::string name() const override;
 };
 
 #endif // PAWN_MOVE_H

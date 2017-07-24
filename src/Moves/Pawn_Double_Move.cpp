@@ -16,8 +16,3 @@ void Pawn_Double_Move::side_effects(Board& board) const
     board.make_en_passant_targetable(starting_file, (starting_rank + ending_rank)/2);
     Pawn_Move::side_effects(board);
 }
-
-std::string Pawn_Double_Move::name() const
-{
-    return "Pawn Double Move";
-}

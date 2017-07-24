@@ -32,11 +32,6 @@ bool Pawn_Capture::can_capture() const
     return true;
 }
 
-std::string Pawn_Capture::name() const
-{
-    return "Pawn Capture";
-}
-
 std::string Pawn_Capture::game_record_move_item(const Board&) const
 {
     return starting_file

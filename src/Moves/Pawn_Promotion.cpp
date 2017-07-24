@@ -23,11 +23,6 @@ void Pawn_Promotion::side_effects(Board& board) const
     board.place_piece(promote_to, ending_file, ending_rank);
 }
 
-std::string Pawn_Promotion::name() const
-{
-    return "Pawn Promotion " + promote_to->pgn_symbol();
-}
-
 std::string Pawn_Promotion::game_record_move_item(const Board& board) const
 {
     return Pawn_Move::game_record_move_item(board) + "=" + promote_to->pgn_symbol();

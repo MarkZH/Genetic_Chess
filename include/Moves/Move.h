@@ -35,8 +35,6 @@ class Move
         int file_change() const;
         int rank_change() const;
 
-        virtual std::string name() const;
-
         std::string game_record_item(const Board& board) const;
         virtual std::string coordinate_move() const;
 
