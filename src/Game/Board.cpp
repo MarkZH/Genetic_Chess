@@ -153,6 +153,10 @@ Board::Board(const std::string& fen) :
                         place_piece(get_queen(color), file, rank);
                         break;
                     case 'K':
+                        if(king_location[color])
+                        {
+                            throw std::runtime_error("More than one " + color_text(color) + " king in FEN: " + fen);
+                        }
                         place_piece(get_king(color), file, rank);
                         break;
                     default:
@@ -173,6 +177,13 @@ Board::Board(const std::string& fen) :
     }
 
     turn_color = (fen_parse[1] == "w" ? WHITE : BLACK);
+
+    if(king_is_in_check(opposite(whose_turn())))
+    {
+        throw std::runtime_error(color_text(opposite(whose_turn())) +
+                                 " is in check but it is " +
+                                 color_text(whose_turn()) + "'s turn.");
+    }
 
     auto castling_parse = fen_parse.at(2);
     if(String::contains(castling_parse, 'K'))
