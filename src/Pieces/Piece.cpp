@@ -3,6 +3,7 @@
 #include <cctype>
 #include <vector>
 #include <algorithm>
+#include <cassert>
 
 #include "Game/Board.h"
 
@@ -110,6 +111,7 @@ void Piece::add_standard_legal_move(int file_step, int rank_step)
 
 void Piece::add_legal_move(std::unique_ptr<Move> move)
 {
+    assert(Board::inside_board(move->start_file(), move->start_rank()));
     if(Board::inside_board(move->end_file(), move->end_rank()))
     {
         legal_moves[Board::board_index(move->start_file(), move->start_rank())].push_back(move.get());
