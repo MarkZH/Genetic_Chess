@@ -3,7 +3,9 @@
 
 #include <string>
 
-enum Color {WHITE, BLACK, NONE};
+enum Color {WHITE = 0,
+            BLACK = 1,
+            NONE}; // values for use as indices
 
 Color opposite(Color color);
 std::string color_text(Color color);

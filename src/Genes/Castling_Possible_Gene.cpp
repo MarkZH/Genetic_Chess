@@ -8,7 +8,9 @@
 
 #include "Utility.h"
 
-Castling_Possible_Gene::Castling_Possible_Gene() : kingside_preference(0.5)
+Castling_Possible_Gene::Castling_Possible_Gene() :
+    kingside_preference(0.5),
+    permanent_value({-1.0, -1.0})
 {
 }
 
@@ -36,50 +38,78 @@ std::string Castling_Possible_Gene::name() const
 
 double Castling_Possible_Gene::score_board(const Board& board) const
 {
-    // Check game record to see if player already castled
     auto perspective = board.whose_turn();
-    auto base_rank = (perspective == WHITE ? 1 : 8);
-    auto king_file = 'e';
-    auto starting_king_square = king_file + std::to_string(base_rank);
-    auto kingside_move = starting_king_square + 'g' + starting_king_square.back();
-    auto queenside_move = starting_king_square + 'c' + starting_king_square.back();
-    for(size_t i = (perspective == WHITE ? 0 : 1); i < board.get_game_record().size(); i += 2)
-    {
-        // If already castled, return full score.
-        auto move_text = board.get_game_record()[i]->coordinate_move();
-        if(move_text == kingside_move ||
-           move_text == queenside_move)
-        {
-            return 1.0;
-        }
 
-        // If king moved before castling, return 0.
-        if(String::starts_with(move_text, starting_king_square))
+    if(board.get_game_record().size() <= 1) // new game
+    {
+        permanent_value[perspective] = -1.0;
+    }
+
+    if(permanent_value[perspective] >= 0)
+    {
+        return permanent_value[perspective];
+    }
+
+    // Check game record to see if player already castled
+    auto base_rank = (perspective == WHITE ? 1 : 8);
+    auto king_start_file = 'e';
+    auto kingside_file = 'g';
+    auto queenside_file = 'c';
+
+    // Check if king has moved (castling or not)
+    if(board.piece_has_moved(king_start_file, base_rank))
+    {
+        for(auto move : board.get_game_record())
         {
-            return 0.0;
+            if(move->start_file() == king_start_file && move->start_rank() == base_rank)
+            {
+                if(move->end_file() == kingside_file || move->end_file() == queenside_file)
+                {
+                    // The only way the king can move two files is by castling
+                    permanent_value[perspective] = 1.0;
+                }
+                else
+                {
+                    // King moved but did not castle
+                    permanent_value[perspective] = 0.9;
+                }
+
+                return permanent_value[perspective];
+            }
         }
     }
 
+    // King has not moved, check rooks and intervening pieces
     auto score = 0.0;
+    bool both_rooks_moved = true;
 
     for(auto rook_file : {'a', 'h'})
     {
         if( ! board.piece_has_moved(rook_file, base_rank))
         {
+            both_rooks_moved = false;
+
             auto preference = (rook_file == 'h' ? kingside_preference : 1.0 - kingside_preference);
-            int files_to_clear = std::abs(rook_file - king_file) - 1;
+            int files_to_clear = std::abs(rook_file - king_start_file) - 1;
+            double score_per_clear_square = preference/(files_to_clear + 1);
 
             // Add score for clearing pieces between king and rook
-            for(char file = std::min(king_file, rook_file) + 1;
-                file < std::max(king_file, rook_file);
-                ++file)
+            auto first_file = std::min(king_start_file, rook_file) + 1;
+            auto last_file = std::max(king_start_file, rook_file);
+            for(char file = first_file; file < last_file; ++file)
             {
                 if( ! board.view_piece_on_square(file, base_rank))
                 {
-                    score += preference/(files_to_clear + 1);
+                    score += score_per_clear_square;
                 }
             }
         }
+    }
+
+    if(both_rooks_moved)
+    {
+        permanent_value[perspective] = 0.0;
+        return permanent_value[perspective];
     }
 
     return score;
