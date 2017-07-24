@@ -22,7 +22,6 @@ double Total_Force_Gene::score_board(const Board& board) const
             auto piece = board.view_piece_on_square(file, rank);
             if(piece && piece->color() == board.whose_turn())
             {
-                // King does not count towards score since it is always on the board.
                 score += piece_strength_source->piece_value(piece);
             }
         }
