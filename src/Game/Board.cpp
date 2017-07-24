@@ -79,6 +79,7 @@ Board::Board() :
     board(64, nullptr),
     turn_color(WHITE),
     en_passant_target({'\0', 0}),
+    king_location{{ {'\0', 0}, {'\0', 0} }},
     thinking_indicator(NO_THINKING)
 {
     for(auto color : {WHITE, BLACK})
@@ -105,6 +106,9 @@ Board::Board() :
         }
     }
 
+    assert(king_location[WHITE]);
+    assert(king_location[BLACK]);
+
     ++repeat_count[board_status()]; // Count initial position
 }
 
@@ -113,6 +117,7 @@ Board::Board(const std::string& fen) :
     turn_color(WHITE),
     en_passant_target({'\0', 0}),
     starting_fen(fen),
+    king_location{{ {'\0', 0}, {'\0', 0} }},
     thinking_indicator(NO_THINKING)
 {
     auto fen_parse = String::split(fen);
@@ -156,6 +161,15 @@ Board::Board(const std::string& fen) :
                 ++file;
             }
         }
+    }
+
+    if( ! king_location[WHITE])
+    {
+        throw std::runtime_error("White king not in FEN string: " + fen);
+    }
+    if( ! king_location[BLACK])
+    {
+        throw std::runtime_error("Black king not in FEN string: " + fen);
     }
 
     turn_color = (fen_parse[1] == "w" ? WHITE : BLACK);
@@ -699,6 +713,10 @@ void Board::remove_piece(char file, int rank)
 void Board::place_piece(const Piece* piece, char file, int rank)
 {
     piece_on_square(file, rank) = piece;
+    if(piece && piece->is_king())
+    {
+        king_location[piece->color()] = {file, rank};
+    }
 }
 
 bool Board::king_is_in_check(Color king_color) const
@@ -1068,20 +1086,11 @@ bool Board::piece_has_moved(char file, int rank) const
 
 Square Board::find_king(Color color) const
 {
-    for(char king_file = 'a'; king_file <= 'h'; ++king_file)
-    {
-        for(int king_rank = 1; king_rank <= 8; ++king_rank)
-        {
-            auto piece = view_piece_on_square(king_file, king_rank);
-            if(piece && piece->color() == color && piece->is_king())
-            {
-                return {king_file, king_rank};
-            }
-        }
-    }
-
-    ascii_draw(WHITE);
-    throw std::runtime_error(color_text(color) + " king not found on board.");
+    auto location = king_location[color];
+    assert(view_piece_on_square(location.file, location.rank));
+    assert(view_piece_on_square(location.file, location.rank)->color() == color);
+    assert(view_piece_on_square(location.file, location.rank)->is_king());
+    return location;
 }
 
 void Board::clear_caches()

@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <set>
+#include <array>
 
 #include "Moves/Move.h"
 #include "Color.h"
@@ -92,6 +93,7 @@ class Board
         std::set<Square> unmoved_positions;
         Square en_passant_target;
         std::string starting_fen;
+        std::array<Square, 2> king_location;
 
         // Pieces
         static const Rook   white_rook;
