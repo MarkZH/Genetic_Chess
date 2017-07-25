@@ -843,6 +843,15 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
     return true;
 }
 
+bool Board::king_is_in_check_after_move(const Move& move) const
+{
+    auto temp_board = *this;
+    temp_board.make_move(move.start_file(), move.start_rank(),
+                         move.end_file(),   move.end_rank());
+    move.side_effects(temp_board);
+    return temp_board.king_is_in_check(whose_turn());
+}
+
 bool Board::no_legal_moves() const
 {
     return legal_moves().empty();

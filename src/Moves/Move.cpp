@@ -78,10 +78,7 @@ bool Move::is_legal(const Board& board) const
     }
 
     // King should not be in check after move
-    Board trial(board);
-    trial.make_move(starting_file, starting_rank, ending_file, ending_rank);
-    side_effects(trial);
-    return ! trial.king_is_in_check(board.whose_turn());
+    return ! board.king_is_in_check_after_move(*this);
 }
 
 bool Move::move_specific_legal(const Board&) const
