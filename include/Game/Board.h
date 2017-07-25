@@ -106,6 +106,7 @@ class Board
         Square en_passant_target;
         std::string starting_fen;
         std::array<Square, 2> king_location;
+        size_t move_count_start_offset;
 
         // Pieces
         static const Rook   white_rook;

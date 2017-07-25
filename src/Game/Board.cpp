@@ -80,6 +80,7 @@ Board::Board() :
     turn_color(WHITE),
     en_passant_target({'\0', 0}),
     king_location{{ {'\0', 0}, {'\0', 0} }},
+    move_count_start_offset(0),
     thinking_indicator(NO_THINKING)
 {
     for(auto color : {WHITE, BLACK})
@@ -121,6 +122,10 @@ Board::Board(const std::string& fen) :
     thinking_indicator(NO_THINKING)
 {
     auto fen_parse = String::split(fen);
+    if(fen_parse.size() != 6)
+    {
+        throw std::runtime_error("Wrong number of fields (should be 6): " + fen);
+    }
 
     auto board_parse = String::split(fen_parse.at(0), "/");
     for(int rank = 8; rank >= 1; --rank)
@@ -221,6 +226,8 @@ Board::Board(const std::string& fen) :
         repeat_count[std::to_string(repeat_count.size())] = 1;
     }
     ++repeat_count[board_status()]; // Count initial position
+
+    move_count_start_offset = std::stoi(fen_parse.at(5)) - 1;
 }
 
 size_t Board::board_index(char file, int rank)
@@ -919,13 +926,11 @@ void Board::print_game_record(const Player* white,
     }
 
     auto temp = Board();
-    auto move_count_start = 0;
     if( ! starting_fen.empty())
     {
         out_stream << "[SetUp \"1\"]\n";
         out_stream << "[FEN \"" << starting_fen << "\"]\n";
         temp = Board(starting_fen);
-        move_count_start = std::stoi(String::split(starting_fen).back()) - 1;
     }
 
     for(size_t i = 0; i < game_record.size(); ++i)
@@ -933,7 +938,7 @@ void Board::print_game_record(const Player* white,
         if(temp.whose_turn() == WHITE || i == 0)
         {
             auto step = (i + 2)/2;
-            out_stream << '\n' << move_count_start + step << ".";
+            out_stream << '\n' << move_count_start_offset + step << ".";
             if(i == 0 && temp.whose_turn() == BLACK)
             {
                 out_stream << " ...";
