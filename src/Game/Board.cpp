@@ -376,7 +376,7 @@ Game_Result Board::submit_move(const Move& move)
 
     if(no_legal_moves())
     {
-        if(king_is_in_check(whose_turn())) // king in check
+        if(king_is_in_check(whose_turn()))
         {
             auto winner = opposite(whose_turn());
             return Game_Result(winner, color_text(winner) + " mates", false);
