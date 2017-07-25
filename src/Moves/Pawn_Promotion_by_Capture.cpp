@@ -29,6 +29,6 @@ bool Pawn_Promotion_by_Capture::can_capture() const
 
 std::string Pawn_Promotion_by_Capture::game_record_move_item(const Board&) const
 {
-    return starting_file + "x" + ending_file + std::to_string(ending_rank)
+    return starting_file + std::string("x") + ending_file + std::to_string(ending_rank)
             + "=" + promote_to->pgn_symbol();
 }

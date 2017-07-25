@@ -35,7 +35,7 @@ bool Pawn_Capture::can_capture() const
 std::string Pawn_Capture::game_record_move_item(const Board&) const
 {
     return starting_file
-            + "x"
+            + std::string("x")
             + ending_file
             + std::to_string(ending_rank);
 }

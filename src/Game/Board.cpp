@@ -1192,6 +1192,11 @@ bool Board::enough_material_to_checkmate() const
 std::string Board::get_last_move_record() const
 {
     Board b;
+    if( ! starting_fen.empty())
+    {
+        b = Board(starting_fen);
+    }
+
     std::string result;
     for(const auto& move : get_game_record())
     {
