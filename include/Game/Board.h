@@ -8,6 +8,13 @@
 #include <array>
 
 #include "Moves/Move.h"
+#include "Moves/Kingside_Castle.h"
+#include "Moves/Queenside_Castle.h"
+#include "Moves/En_Passant.h"
+#include "Moves/Pawn_Promotion.h"
+#include "Moves/Pawn_Double_Move.h"
+#include "Moves/Pawn_Move.h"
+
 #include "Color.h"
 #include "Square.h"
 #include "Game_Result.h"
@@ -24,6 +31,7 @@ class Bishop;
 class Queen;
 class King;
 
+
 class Board
 {
     public:
@@ -34,6 +42,9 @@ class Board
 
         const Move& get_move(const std::string& move, char promote = 0) const;
         const Move& get_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
+
+        bool is_legal(char file_start, int rank_start,
+              char file_end,   int rank_end) const;
 
         Color whose_turn() const;
 
@@ -128,20 +139,16 @@ class Board
         void clear_en_passant_target();
         bool enough_material_to_checkmate() const;
         static Color square_color(char file, int rank);
-        bool is_legal(char file_start, int rank_start,
-                      char file_end,   int rank_end) const;
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
 
-        // Moves with side effects
-        friend class Kingside_Castle; // moves second piece
-        friend class Queenside_Castle; // moves second piece
-        friend class En_Passant; // capture piece on another square
-        friend class Pawn_Promotion; // replace piece
-        friend class Pawn_Double_Move; // mark square as En Passant target
-        friend class Pawn_Move; // reset three-fold and 50-move counts
 
-        friend class Move; // needs access to check if King is in check after a move
+        friend void Kingside_Castle::side_effects(Board&) const; // moves second piece
+        friend void Queenside_Castle::side_effects(Board&) const; // moves second piece
+        friend void En_Passant::side_effects(Board&) const; // capture piece on another square
+        friend void Pawn_Promotion::side_effects(Board&) const; // replace piece
+        friend void Pawn_Double_Move::side_effects(Board&) const; // mark square as En Passant target
+        friend void Pawn_Move::side_effects(Board&) const; // reset three-fold and 50-move counts
 };
 
 #endif // BOARD_H
