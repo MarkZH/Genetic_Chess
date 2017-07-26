@@ -402,9 +402,8 @@ Game_Result Board::submit_move(const Move& move)
             }
 
             auto piece = view_piece_on_square(file_origin, rank_origin);
-            if(piece &&
-               piece->color() == whose_turn() &&
-               piece->is_pawn() &&
+            auto pawn = get_pawn(whose_turn());
+            if(piece == pawn &&
                is_legal(file_origin, rank_origin, en_passant_target.file, en_passant_target.rank))
             {
                 en_passant_legal = true;
@@ -818,6 +817,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
     }
 
     // Check for knight attacks
+    auto knight = get_knight(attacking_color);
     for(auto file_step : {1, 2})
     {
         auto rank_step = 3 - file_step;
@@ -833,8 +833,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
                     continue;
                 }
 
-                auto piece = view_piece_on_square(attacking_file, attacking_rank);
-                if(piece && piece->is_knight() && piece->color() == attacking_color)
+                if(view_piece_on_square(attacking_file, attacking_rank) == knight)
                 {
                     return false;
                 }
