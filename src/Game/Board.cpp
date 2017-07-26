@@ -78,17 +78,13 @@ const King* Board::get_king(Color color)
 Board::Board() :
     board{},
     turn_color(WHITE),
+    unmoved_positions{},
     en_passant_target({'\0', 0}),
     king_location{{ {'\0', 0}, {'\0', 0} }},
     move_count_start_offset(0),
     first_player_to_move(WHITE),
     thinking_indicator(NO_THINKING)
 {
-    for(size_t i = 0; i < unmoved_positions.size(); ++i)
-    {
-        unmoved_positions[i] = false;
-    }
-
     for(auto color : {WHITE, BLACK})
     {
         int base_rank = (color == WHITE ? 1 : 8);
@@ -122,6 +118,7 @@ Board::Board() :
 Board::Board(const std::string& fen) :
     board{},
     turn_color(WHITE),
+    unmoved_positions{},
     en_passant_target({'\0', 0}),
     starting_fen(fen),
     king_location{{ {'\0', 0}, {'\0', 0} }},
@@ -197,10 +194,6 @@ Board::Board(const std::string& fen) :
                                  color_text(whose_turn()) + "'s turn.");
     }
 
-    for(size_t i = 0; i < unmoved_positions.size(); ++i)
-    {
-        unmoved_positions[i] = false;
-    }
     auto castling_parse = fen_parse.at(2);
     if(String::contains(castling_parse, 'K'))
     {
