@@ -219,7 +219,12 @@ bool Move::is_en_passant() const
     return false;
 }
 
-char Move::promotion_piece() const
+char Move::promotion_piece_symbol() const
 {
     return '\0';
+}
+
+const Piece* Move::promotion_piece() const
+{
+    return nullptr;
 }

@@ -332,7 +332,7 @@ const Move& Board::get_move(char file_start, int rank_start, char file_end, int 
         {
             if(promote)
             {
-                if(move->promotion_piece() == promote)
+                if(move->promotion_piece_symbol() == promote)
                 {
                     return *move;
                 }

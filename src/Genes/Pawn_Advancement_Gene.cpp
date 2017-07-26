@@ -32,7 +32,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board) const
         i < move_list.size();
         i += 2)
     {
-        if(move_list[i]->coordinate_move().size() == 5) // promotion move in coordinate notation
+        if(move_list[i]->promotion_piece())
         {
             score += 6; // pawn made it to last rank
         }
