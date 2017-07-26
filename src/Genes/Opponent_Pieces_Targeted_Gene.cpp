@@ -15,7 +15,7 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strengt
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board) const
 {
     double score = 0.0;
-    std::map<const Piece*, bool> already_counted;
+    std::map<Square, bool> already_counted;
 
     for(const auto& move : board.legal_moves())
     {
@@ -30,10 +30,11 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board) const
             end_rank += (board.whose_turn() == WHITE ? -1 : 1);
         }
         auto target_piece = board.view_piece_on_square(end_file, end_rank);
-        if(target_piece && ! already_counted[target_piece])
+        auto target_square = Square{end_file, end_rank};
+        if(target_piece && ! already_counted[target_square])
         {
             score += piece_strenth_source->piece_value(target_piece);
-            already_counted[target_piece] = true;
+            already_counted[target_square] = true;
         }
     }
 
