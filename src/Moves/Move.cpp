@@ -150,7 +150,7 @@ std::string Move::game_record_move_item(const Board& board) const
                 continue;
             }
             auto new_piece = board.view_piece_on_square(file_other, rank_other);
-            if((*original_piece) != (*new_piece))
+            if(original_piece != new_piece)
             {
                 continue;
             }

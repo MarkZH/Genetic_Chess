@@ -32,16 +32,6 @@ Color Piece::color() const
     return my_color;
 }
 
-bool Piece::operator==(const Piece& other) const
-{
-    return fen_symbol() == other.fen_symbol();
-}
-
-bool Piece::operator!=(const Piece& other) const
-{
-    return ! (*this == other);
-}
-
 std::string Piece::pgn_symbol() const
 {
     return symbol;

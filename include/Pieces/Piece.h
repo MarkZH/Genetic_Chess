@@ -24,9 +24,6 @@ class Piece
 
         const std::vector<const Move*>& get_move_list(char file, int rank) const;
 
-        bool operator==(const Piece& other) const;
-        bool operator!=(const Piece& other) const;
-
         virtual bool is_pawn() const;
         virtual bool is_king() const;
         virtual bool is_queen() const;
