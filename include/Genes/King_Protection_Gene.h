@@ -5,8 +5,6 @@
 
 #include <string>
 
-#include "Game/Color.h"
-
 class Board;
 
 // Counts lines of attack to king

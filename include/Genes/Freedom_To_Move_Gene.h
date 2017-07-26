@@ -5,8 +5,6 @@
 
 #include <string>
 
-#include "Game/Color.h"
-
 class Board;
 
 // Total number of legal moves

@@ -5,8 +5,6 @@
 
 #include <string>
 
-#include "Game/Color.h"
-
 class Board;
 class Clock;
 

@@ -5,8 +5,6 @@
 
 #include <string>
 
-#include "Game/Color.h"
-
 class Board;
 
 // Number of squares attacked by color with bonus points for legal moves

@@ -6,8 +6,6 @@
 #include <string>
 #include <map>
 
-#include "Game/Color.h"
-
 class Piece;
 class Board;
 

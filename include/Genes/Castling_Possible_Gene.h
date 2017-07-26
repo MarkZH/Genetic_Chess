@@ -6,8 +6,6 @@
 #include <string>
 #include <array>
 
-#include "Game/Color.h"
-
 class Board;
 
 // Adds points to board if castling is possible or already happened
