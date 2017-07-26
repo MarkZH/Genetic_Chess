@@ -47,6 +47,7 @@ class Board
               char file_end,   int rank_end) const;
 
         Color whose_turn() const;
+        static Color square_color(char file, int rank);
 
         void ascii_draw(Color perspective = WHITE) const;
 
@@ -143,7 +144,6 @@ class Board
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();
         bool enough_material_to_checkmate() const;
-        static Color square_color(char file, int rank);
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
 

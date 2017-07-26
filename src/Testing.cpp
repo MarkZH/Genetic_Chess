@@ -421,7 +421,21 @@ void run_tests()
     }
 
     // check square colors are correct
-    Board().ascii_draw(WHITE);
+    auto current_color = WHITE;
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        current_color = opposite(current_color);
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            if(Board::square_color(file, rank) != current_color)
+            {
+                std::cerr << "Wrong color for square " << file << rank
+                          << ". Should be " << color_text(current_color) << '\n';
+                tests_passed = false;
+            }
+            current_color = opposite(current_color);
+        }
+    }
 
     int int_width = 10;
     int real_width = 15;
