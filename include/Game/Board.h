@@ -4,7 +4,6 @@
 #include <vector>
 #include <map>
 #include <string>
-#include <set>
 #include <array>
 
 #include "Moves/Move.h"
@@ -101,11 +100,11 @@ class Board
         static const King* get_king(Color color);
 
     private:
-        std::vector<const Piece*> board;
+        std::array<const Piece*, 64> board;
         std::map<std::string, int> repeat_count;
         Color turn_color;
         std::vector<const Move*> game_record;
-        std::set<Square> unmoved_positions;
+        std::array<bool, 64> unmoved_positions;
         Square en_passant_target;
         std::string starting_fen;
         std::array<Square, 2> king_location;

@@ -1,5 +1,7 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 
+#include <array>
+
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Moves/Move.h"
@@ -15,7 +17,7 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strengt
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board) const
 {
     double score = 0.0;
-    std::map<Square, bool> already_counted;
+    std::array<bool, 64> already_counted{};
 
     for(const auto& move : board.legal_moves())
     {
@@ -30,11 +32,11 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board) const
             end_rank += (board.whose_turn() == WHITE ? -1 : 1);
         }
         auto target_piece = board.view_piece_on_square(end_file, end_rank);
-        auto target_square = Square{end_file, end_rank};
-        if(target_piece && ! already_counted[target_square])
+        auto target_index = Board::board_index(end_file, end_rank);
+        if(target_piece && ! already_counted[target_index])
         {
             score += piece_strenth_source->piece_value(target_piece);
-            already_counted[target_square] = true;
+            already_counted[target_index] = true;
         }
     }
 

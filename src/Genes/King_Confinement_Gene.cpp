@@ -1,6 +1,9 @@
 #include "Genes/King_Confinement_Gene.h"
 
 #include <cmath>
+#include <array>
+#include <algorithm>
+#include <cassert>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -48,14 +51,17 @@ double King_Confinement_Gene::score_board(const Board& board) const
     auto king_square = board.find_king(perspective);
     square_queue.push_back(king_square);
 
-    std::map<Square, int> distance;
-    distance[king_square] = 1;
+    std::array<int, 64> distance{};
+    assert(std::all_of(distance.begin(), distance.end(), [](auto x){ return x == 0; }));
+
+    distance[Board::board_index(king_square.file, king_square.rank)] = 1;
 
     double score = 0.0;
 
     for(size_t i = 0; i < square_queue.size(); ++i)
     {
         auto square = square_queue[i];
+        auto square_index = Board::board_index(square.file, square.rank);
 
         bool attacked_by_other = ! board.safe_for_king(square.file,
                                                        square.rank,
@@ -69,7 +75,7 @@ double King_Confinement_Gene::score_board(const Board& board) const
         auto is_safe = ! attacked_by_other && ! occupied_by_same;
         if(is_safe)
         {
-            score += 1.0/distance[square];
+            score += 1.0/distance[square_index];
         }
 
         // Add surrounding squares to square_queue.
@@ -92,10 +98,11 @@ double King_Confinement_Gene::score_board(const Board& board) const
                     }
 
                     auto new_square = Square{new_file, new_rank};
-                    if(distance[new_square] == 0) // never checked
+                    auto new_index = Board::board_index(new_file, new_rank);
+                    if(distance[new_index] == 0) // never checked
                     {
                         square_queue.push_back(new_square);
-                        distance[new_square] = distance[square] + 1;
+                        distance[new_index] = distance[square_index] + 1;
                     }
                 }
             }

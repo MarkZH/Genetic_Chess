@@ -1,7 +1,7 @@
 #ifndef Clock_H
 #define Clock_H
 
-#include <map>
+#include <array>
 #include <chrono>
 
 #include "Color.h"
@@ -27,11 +27,11 @@ class Clock
         using fractional_seconds = std::chrono::duration<double>;
 
         // timers are mutable so they can be adjusted by external interfaces (xboard, UCI, etc.)
-        mutable std::map<Color, fractional_seconds> timers;
+        mutable std::array<fractional_seconds, 2> timers;
 
-        std::map<Color, int> moves;
-        std::map<Color, fractional_seconds> initial_time;
-        std::map<Color, fractional_seconds> increment;
+        std::array<int, 2> moves;
+        std::array<fractional_seconds, 2> initial_time;
+        std::array<fractional_seconds, 2> increment;
 
         Color whose_turn;
         bool use_clock;

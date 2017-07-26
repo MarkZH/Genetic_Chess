@@ -7,7 +7,7 @@
 #include <cassert>
 #include <stdexcept>
 #include <map>
-#include <set>
+#include <array>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -76,7 +76,7 @@ const King* Board::get_king(Color color)
 
 
 Board::Board() :
-    board(64, nullptr),
+    board{},
     turn_color(WHITE),
     en_passant_target({'\0', 0}),
     king_location{{ {'\0', 0}, {'\0', 0} }},
@@ -84,6 +84,11 @@ Board::Board() :
     first_player_to_move(WHITE),
     thinking_indicator(NO_THINKING)
 {
+    for(size_t i = 0; i < unmoved_positions.size(); ++i)
+    {
+        unmoved_positions[i] = false;
+    }
+
     for(auto color : {WHITE, BLACK})
     {
         int base_rank = (color == WHITE ? 1 : 8);
@@ -97,9 +102,9 @@ Board::Board() :
         place_piece(get_rook(color),   'h', base_rank);
 
         // Unmoved pieces for castling
-        unmoved_positions.insert({'a', base_rank}); // Rook
-        unmoved_positions.insert({'e', base_rank}); // King
-        unmoved_positions.insert({'h', base_rank}); // Rook
+        unmoved_positions[Board::board_index('a', base_rank)] = true; // Rook
+        unmoved_positions[Board::board_index('e', base_rank)] = true; // King
+        unmoved_positions[Board::board_index('h', base_rank)] = true; // Rook
 
         auto pawn_rank = (base_rank == 1 ? 2 : 7);
         for(char file = 'a'; file <= 'h'; ++file)
@@ -115,7 +120,7 @@ Board::Board() :
 }
 
 Board::Board(const std::string& fen) :
-    board(64, nullptr),
+    board{},
     turn_color(WHITE),
     en_passant_target({'\0', 0}),
     starting_fen(fen),
@@ -192,26 +197,30 @@ Board::Board(const std::string& fen) :
                                  color_text(whose_turn()) + "'s turn.");
     }
 
+    for(size_t i = 0; i < unmoved_positions.size(); ++i)
+    {
+        unmoved_positions[i] = false;
+    }
     auto castling_parse = fen_parse.at(2);
     if(String::contains(castling_parse, 'K'))
     {
-        unmoved_positions.insert({'h', 1});
-        unmoved_positions.insert({'e', 1});
+        unmoved_positions[Board::board_index('h', 1)] = true;
+        unmoved_positions[Board::board_index('e', 1)] = true;
     }
     if(String::contains(castling_parse, 'Q'))
     {
-        unmoved_positions.insert({'a', 1});
-        unmoved_positions.insert({'e', 1});
+        unmoved_positions[Board::board_index('a', 1)] = true;
+        unmoved_positions[Board::board_index('e', 1)] = true;
     }
     if(String::contains(castling_parse, 'k'))
     {
-        unmoved_positions.insert({'h', 8});
-        unmoved_positions.insert({'e', 8});
+        unmoved_positions[Board::board_index('h', 8)] = true;
+        unmoved_positions[Board::board_index('e', 8)] = true;
     }
     if(String::contains(castling_parse, 'q'))
     {
-        unmoved_positions.insert({'a', 8});
-        unmoved_positions.insert({'e', 8});
+        unmoved_positions[Board::board_index('a', 8)] = true;
+        unmoved_positions[Board::board_index('e', 8)] = true;
     }
 
     auto en_passant_parse = fen_parse.at(3);
@@ -600,8 +609,8 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
     place_piece(piece_on_square(file_start, rank_start), file_end, rank_end);
     remove_piece(file_start, rank_start);
 
-    unmoved_positions.erase({file_start, rank_start});
-    unmoved_positions.erase({file_end, rank_end});
+    unmoved_positions[Board::board_index(file_start, rank_start)] = false;
+    unmoved_positions[Board::board_index(file_end, rank_end)] = false;
 
     clear_en_passant_target();
 }
@@ -1107,7 +1116,7 @@ void Board::clear_en_passant_target()
 
 bool Board::piece_has_moved(char file, int rank) const
 {
-    return unmoved_positions.count({file, rank}) == 0;
+    return ! unmoved_positions[Board::board_index(file, rank)];
 }
 
 Square Board::find_king(Color color) const
@@ -1127,8 +1136,8 @@ void Board::clear_caches()
 
 bool Board::enough_material_to_checkmate() const
 {
-    std::map<Color, bool> knight_found;
-    std::map<std::tuple<Color, Color>, bool> bishop_found; // <Piece, Square> color -> bishop found
+    std::array<bool, 2> knight_found;
+    std::array<std::array<bool, 2>, 2> bishop_found; // <Piece, Square> color -> bishop found
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
@@ -1149,7 +1158,7 @@ bool Board::enough_material_to_checkmate() const
                 {
                     return true; // checkmate with two knights possible
                 }
-                else if(bishop_found[{piece->color(), WHITE}] || bishop_found[{piece->color(), BLACK}])
+                else if(bishop_found[piece->color()][WHITE] || bishop_found[piece->color()][BLACK])
                 {
                     return true; // checkmate with knight and bishop possible
                 }
@@ -1163,11 +1172,11 @@ bool Board::enough_material_to_checkmate() const
                 }
 
                 auto bishop_square_color = square_color(file, rank);
-                if(bishop_found[{piece->color(), opposite(bishop_square_color)}])
+                if(bishop_found[piece->color()][opposite(bishop_square_color)])
                 {
                     return true; // checkmate with opposite colored bishops possible
                 }
-                bishop_found[{piece->color(), bishop_square_color}] = true;
+                bishop_found[piece->color()][bishop_square_color] = true;
             }
 
             // Checkmates when minor pieces block own king
@@ -1179,8 +1188,8 @@ bool Board::enough_material_to_checkmate() const
             // ........
             // ........
             // ........
-            bool white_has_minor_pieces = (knight_found[WHITE] || bishop_found[{WHITE,WHITE}] || bishop_found[{WHITE,BLACK}]);
-            bool black_has_minor_pieces = (knight_found[BLACK] || bishop_found[{BLACK,WHITE}] || bishop_found[{BLACK,BLACK}]);
+            bool white_has_minor_pieces = (knight_found[WHITE] || bishop_found[WHITE][WHITE] || bishop_found[WHITE][BLACK]);
+            bool black_has_minor_pieces = (knight_found[BLACK] || bishop_found[BLACK][WHITE] || bishop_found[BLACK][BLACK]);
             if(white_has_minor_pieces && black_has_minor_pieces)
             {
                 if(knight_found[WHITE] || knight_found[BLACK])
@@ -1188,12 +1197,12 @@ bool Board::enough_material_to_checkmate() const
                     return true;
                 }
 
-                if(bishop_found[{WHITE,WHITE}] && bishop_found[{BLACK, BLACK}])
+                if(bishop_found[WHITE][WHITE] && bishop_found[BLACK][BLACK])
                 {
                     return true;
                 }
 
-                if(bishop_found[{WHITE,BLACK}] && bishop_found[{BLACK, WHITE}])
+                if(bishop_found[WHITE][BLACK] && bishop_found[BLACK][WHITE])
                 {
                     return true;
                 }

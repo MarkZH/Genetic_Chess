@@ -1,6 +1,6 @@
 #include "Game/Clock.h"
 
-#include <map>
+#include <array>
 #include <chrono>
 #include <cassert>
 
@@ -84,12 +84,12 @@ double Clock::time_left(Color color) const
     }
     if(whose_turn != color || ! clocks_running)
     {
-        return timers.at(color).count();
+        return timers[color].count();
     }
     else
     {
         auto now = std::chrono::steady_clock::now();
-        return fractional_seconds(timers.at(color) - (now - time_previous_punch)).count();
+        return fractional_seconds(timers[color] - (now - time_previous_punch)).count();
     }
 }
 
@@ -97,7 +97,7 @@ int Clock::moves_to_reset(Color color) const
 {
     if(use_reset)
     {
-        return move_count_reset - moves.at(color);
+        return move_count_reset - moves[color];
     }
     else
     {

@@ -1,6 +1,7 @@
 #include "Genes/Sphere_of_Influence_Gene.h"
 
 #include <algorithm>
+#include <array>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -43,8 +44,17 @@ std::string Sphere_of_Influence_Gene::name() const
 // the attacking move is legal.
 double Sphere_of_Influence_Gene::score_board(const Board& board) const
 {
-    std::map<Square, double> square_score;
+    std::array<double, 64> square_score{};
+    std::array<size_t, 64> distance_to_king{};
     auto opponent_king_square = board.find_king(opposite(board.whose_turn()));
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            distance_to_king[Board::board_index(file, rank)] =
+                king_distance({file, rank}, opponent_king_square);
+        }
+    }
 
     double score_to_add = 1.0;
     for(const auto& move_list : {board.other_moves(), board.legal_moves()})
@@ -72,17 +82,17 @@ double Sphere_of_Influence_Gene::score_board(const Board& board) const
                 }
             }
 
-            square_score[{final_file, final_rank}] = score_to_add;
+            square_score[Board::board_index(final_file, final_rank)] = score_to_add;
         }
 
         score_to_add = legal_bonus; // now on legal move list
     }
 
     double score = 0;
-    for(const auto& square_value : square_score)
+    for(size_t i = 0; i < square_score.size(); ++i)
     {
-        auto king_bonus = king_target_factor/(1 + king_distance(opponent_king_square, square_value.first));
-        score += square_value.second*(1 + king_bonus);
+        auto king_bonus = king_target_factor/(1 + distance_to_king[i]);
+        score += square_score[i]*(1 + king_bonus);
     }
 
     // normalizing to make maximum score near 1
