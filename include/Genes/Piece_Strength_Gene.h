@@ -4,7 +4,7 @@
 #include "Gene.h"
 
 #include <string>
-#include <map>
+#include <array>
 
 class Piece;
 class Board;
@@ -26,12 +26,15 @@ class Piece_Strength_Gene : public Gene
         void load_properties() override;
 
     private:
-        std::map<char, double> piece_strength;
+        static const std::string piece_types;
+        static const char first_piece;
+        std::array<double, 'R' - 'B' + 1> piece_strength;
         double normalizing_factor;
 
         double score_board(const Board& board) const override;
         void renormalize();
         double piece_value(char symbol) const;
+        double& piece_value(char symbol);
         void gene_specific_mutation() override;
 };
 

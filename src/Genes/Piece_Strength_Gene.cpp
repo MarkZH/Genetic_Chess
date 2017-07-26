@@ -3,25 +3,30 @@
 #include <cmath>
 #include <limits>
 #include <cctype>
+#include <array>
+#include <cassert>
 
 #include "Genes/Gene.h"
 #include "Utility.h"
 #include "Pieces/Piece.h"
 
+const std::string Piece_Strength_Gene::piece_types = "PRNBQ";
+const char Piece_Strength_Gene::first_piece = 'B';
+
 Piece_Strength_Gene::Piece_Strength_Gene()
 {
-    for(auto c : std::string("PRNBQ"))
+    for(size_t i = 0; i < piece_strength.size(); ++i)
     {
-        piece_strength[c] = 0.0;
+        piece_strength[i] = 0.0;
     }
     renormalize();
 }
 
 void Piece_Strength_Gene::reset_properties() const
 {
-    for(const auto& piece_score : piece_strength)
+    for(const auto& piece : piece_types)
     {
-        properties[std::string(1, piece_score.first)] = piece_score.second;
+        properties[std::string(1, piece)] = piece_value(piece);
     }
 }
 
@@ -29,19 +34,19 @@ void Piece_Strength_Gene::load_properties()
 {
     for(const auto& piece_score : properties)
     {
-        piece_strength[piece_score.first[0]] = piece_score.second;
+        piece_value(piece_score.first[0]) = piece_score.second;
     }
     renormalize();
 }
 
 void Piece_Strength_Gene::gene_specific_mutation()
 {
-    for(auto& key_value : piece_strength)
+    for(auto piece : piece_types)
     {
         const double mean_number_of_mutations = 2.0;
         if(Random::success_probability(mean_number_of_mutations/piece_strength.size()))
         {
-            key_value.second += Random::random_normal(1.0);
+            piece_value(piece) += Random::random_normal(1.0);
         }
     }
     renormalize();
@@ -49,7 +54,14 @@ void Piece_Strength_Gene::gene_specific_mutation()
 
 double Piece_Strength_Gene::piece_value(char symbol) const
 {
-    return piece_strength.at(symbol);
+    assert(piece_types.find(symbol) != std::string::npos);
+    return piece_strength[symbol - first_piece];
+}
+
+double& Piece_Strength_Gene::piece_value(char symbol)
+{
+    assert(piece_types.find(symbol) != std::string::npos);
+    return piece_strength[symbol - first_piece];
 }
 
 double Piece_Strength_Gene::piece_value(const Piece* piece) const
@@ -83,11 +95,11 @@ void Piece_Strength_Gene::renormalize()
 {
     // Sum is equal to the total strength of a player's starting pieces
     // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen).
-    auto total = 8*piece_strength['P'] +
-                 2*piece_strength['R'] +
-                 2*piece_strength['N'] +
-                 2*piece_strength['B'] +
-                   piece_strength['Q'];
+    auto total = 8*piece_value('P') +
+                 2*piece_value('R') +
+                 2*piece_value('N') +
+                 2*piece_value('B') +
+                   piece_value('Q');
 
     // Use absolute value so there aren't discontinuous jumps due to small mutations.
     normalizing_factor = std::abs(total);
