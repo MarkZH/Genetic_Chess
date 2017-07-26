@@ -1136,8 +1136,16 @@ void Board::clear_caches()
 
 bool Board::enough_material_to_checkmate() const
 {
-    std::array<bool, 2> knight_found;
-    std::array<std::array<bool, 2>, 2> bishop_found; // <Piece, Square> color -> bishop found
+    #ifdef DEBUG
+        auto is_false = [](bool x){ return x == false; };
+    #endif // DEBUG
+
+    std::array<bool, 2> knight_found{};
+    assert(std::all_of(knight_found.begin(), knight_found.end(), is_false));
+
+    std::array<std::array<bool, 2>, 2> bishop_found{}; // bishop_found[Piece color][Square color]
+    assert(std::all_of(bishop_found.begin(), bishop_found.end(),
+                       [is_false](auto x){ return std::all_of(x.begin(), x.end(), is_false);}));
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
