@@ -28,7 +28,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board) const
 
     // Count pawn promotions
     const auto& move_list = board.get_game_record();
-    for(size_t i = (perspective == WHITE ? 0 : 1);
+    for(size_t i = (perspective == board.first_to_move() ? 0 : 1);
         i < move_list.size();
         i += 2)
     {

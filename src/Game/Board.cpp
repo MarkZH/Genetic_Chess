@@ -81,6 +81,7 @@ Board::Board() :
     en_passant_target({'\0', 0}),
     king_location{{ {'\0', 0}, {'\0', 0} }},
     move_count_start_offset(0),
+    first_player_to_move(WHITE),
     thinking_indicator(NO_THINKING)
 {
     for(auto color : {WHITE, BLACK})
@@ -182,6 +183,7 @@ Board::Board(const std::string& fen) :
     }
 
     turn_color = (fen_parse[1] == "w" ? WHITE : BLACK);
+    first_player_to_move = turn_color;
 
     if(king_is_in_check(opposite(whose_turn())))
     {
@@ -1229,4 +1231,9 @@ void Board::set_thinking_mode(Thinking_Output_Type mode) const
 Thinking_Output_Type Board::get_thinking_mode() const
 {
     return thinking_indicator;
+}
+
+Color Board::first_to_move() const
+{
+    return first_player_to_move;
 }

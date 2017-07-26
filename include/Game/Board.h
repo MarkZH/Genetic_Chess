@@ -68,6 +68,8 @@ class Board
                                double increment,
                                const Clock& game_clock) const;
 
+        Color first_to_move() const;
+
         std::string last_move_coordinates() const;
 
         void set_turn(Color color);
@@ -107,6 +109,7 @@ class Board
         std::string starting_fen;
         std::array<Square, 2> king_location;
         size_t move_count_start_offset;
+        Color first_player_to_move;
 
         // Pieces
         static const Rook   white_rook;
