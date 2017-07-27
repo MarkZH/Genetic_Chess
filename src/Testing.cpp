@@ -321,12 +321,10 @@ void run_tests()
 
     Game_Tree_Node_Result r1 = {10,
                                 WHITE,
-                                2,
-                                {}};
+                                {nullptr, nullptr, nullptr}};
     Game_Tree_Node_Result r2 = {10,
                                 BLACK,
-                                2,
-                                {}};
+                                {nullptr, nullptr, nullptr}};
 
     if(better_than(r2, r1, WHITE))
     {
@@ -342,13 +340,11 @@ void run_tests()
 
     Game_Tree_Node_Result alpha_start = {Math::lose_score,
                                          WHITE,
-                                         0,
-                                         {}};
+                                         {nullptr}};
 
     Game_Tree_Node_Result beta_start = {Math::win_score,
                                         WHITE,
-                                        0,
-                                        {}};
+                                        {nullptr}};
     if(better_than(alpha_start, beta_start, WHITE))
     {
         std::cerr << "3. Error in comparing Game Tree Node Results." << std::endl;
@@ -364,12 +360,13 @@ void run_tests()
 
     Game_Tree_Node_Result white_win4 = {Math::win_score,
                                         WHITE,
-                                        4,
-                                        {}};
+                                        {nullptr, nullptr, nullptr,
+                                         nullptr, nullptr}};
     Game_Tree_Node_Result white_win6 = {Math::win_score,
                                         WHITE,
-                                        6,
-                                        {}};
+                                        {nullptr, nullptr, nullptr,
+                                         nullptr, nullptr, nullptr,
+                                         nullptr}};
     if(better_than(white_win6, white_win4, WHITE))
     {
         std::cerr << "Later win preferred over earlier win." << std::endl;
@@ -384,8 +381,9 @@ void run_tests()
 
     Game_Tree_Node_Result black_loss6 = {Math::lose_score,
                                          BLACK,
-                                         6,
-                                         {}};
+                                         {nullptr, nullptr, nullptr,
+                                          nullptr, nullptr, nullptr,
+                                          nullptr}};
     if( ! (white_win6 == black_loss6))
     {
         std::cerr << "White win in 6 not equal to black loss in 6." << std::endl;

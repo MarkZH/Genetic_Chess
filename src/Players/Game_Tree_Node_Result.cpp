@@ -1,6 +1,7 @@
 #include "Players/Game_Tree_Node_Result.h"
 
 #include <cmath>
+#include <cassert>
 
 #include "Game/Color.h"
 #include "Utility.h"
@@ -30,13 +31,13 @@ bool better_than(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b,
     // Shorter path to winning is better
     if(scoreA == Math::win_score)
     {
-        return a.depth < b.depth;
+        return a.depth() < b.depth();
     }
 
     // Longer path to losing is better
     if(scoreA == Math::lose_score)
     {
-        return a.depth > b.depth;
+        return a.depth() > b.depth();
     }
 
     return false;
@@ -56,8 +57,14 @@ bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b)
 
     if(std::abs(scoreA) == Math::win_score)
     {
-        return a.depth == b.depth;
+        return a.depth() == b.depth();
     }
 
     return true;
+}
+
+size_t Game_Tree_Node_Result::depth() const
+{
+    assert( ! variation.empty());
+    return variation.size() - 1;
 }

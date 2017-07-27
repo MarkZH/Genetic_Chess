@@ -12,10 +12,10 @@ struct Game_Tree_Node_Result
 {
     double score;
     Color perspective;
-    size_t depth;
     std::vector<const Move*> variation;
 
     double corrected_score(Color query) const;
+    size_t depth() const;
 };
 
 // Is "a" a better result than "b" from "perspective" color

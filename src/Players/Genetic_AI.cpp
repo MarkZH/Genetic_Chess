@@ -165,14 +165,12 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
     // alpha = highest score found that opponent will allow
     Game_Tree_Node_Result alpha_start = {Math::lose_score,
                                          board.whose_turn(),
-                                         0,
-                                         {}};
+                                         {nullptr}};
 
     // beta = score that will cause opponent to choose a different prior move
     Game_Tree_Node_Result beta_start = {Math::win_score,
                                         board.whose_turn(),
-                                        0,
-                                        {}};
+                                        {nullptr}};
 
     auto result = search_game_tree(board,
                                    time_to_use,
@@ -187,7 +185,7 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
         std::cout << std::flush;
     }
 
-    if(result.depth > 0)
+    if(result.depth() > 0)
     {
         commentary.push_back(result.variation);
     }
@@ -196,7 +194,7 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
         commentary.push_back({});
     }
 
-    if(result.depth > 1)
+    if(result.depth() > 1)
     {
         principal_variation = result.variation;
     }
@@ -254,7 +252,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
     Game_Tree_Node_Result best_result = {Math::lose_score,
                                          perspective,
-                                         depth,
                                          {all_legal_moves.front()}};
 
     for(const auto& move : all_legal_moves)
@@ -269,12 +266,11 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             // Mate in one (try to pick the shortest path to checkmate)
             return {genome.evaluate(next_board, move_result, perspective),
                     perspective,
-                    depth,
                     {next_board.get_game_record().end() - (depth + 1),
                      next_board.get_game_record().end()}};
         }
 
-        if(alpha.depth <= depth + 2 && alpha.corrected_score(perspective) == Math::win_score)
+        if(alpha.depth() <= depth + 2 && alpha.corrected_score(perspective) == Math::win_score)
         {
             // This move will take a longer path to victory
             // than one already found. Use "depth + 2" since,
@@ -314,14 +310,14 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                       clock,
                                       depth + 1,
                                       beta,
-                                      alpha);
+                                      alpha,
+                                      still_on_principal_variation);
         }
         else
         {
             // Record immediate result without looking ahead further
             result = {genome.evaluate(next_board, move_result, perspective),
                       perspective,
-                      depth,
                       {next_board.get_game_record().end() - (depth + 1),
                        next_board.get_game_record().end()}};
         }
@@ -430,15 +426,15 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     // Indicate "mate in N moves" where N == thought.depth
     if(score == Math::win_score)
     {
-        score = 10000.0 - thought.depth;
+        score = 10000.0 - thought.depth();
     }
     else if(score == Math::lose_score)
     {
-        score = -(10000.0 - thought.depth);
+        score = -(10000.0 - thought.depth());
     }
 
     auto time_so_far = clock_start_time - clock.time_left(clock.running_for());
-    std::cout << thought.depth // ply
+    std::cout << thought.depth() // ply
               << " "
               << int(score) // score in what should be centipawns
               << " "
