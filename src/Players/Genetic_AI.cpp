@@ -332,7 +332,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
-                else if(depth % 2 == 0 && board.get_thinking_mode() == CECP)
+                else if(board.get_thinking_mode() == CECP && depth % 4 == 0)
                 {
                     output_thinking_cecp(alpha, clock, perspective);
                 }
