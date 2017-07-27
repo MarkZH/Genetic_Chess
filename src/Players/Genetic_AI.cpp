@@ -177,7 +177,8 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
                                    clock,
                                    0,
                                    alpha_start,
-                                   beta_start);
+                                   beta_start,
+                                   ! principal_variation.empty());
 
     if(board.get_thinking_mode() == CECP)
     {
@@ -213,7 +214,8 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    const Clock& clock,
                                                    const size_t depth,
                                                    Game_Tree_Node_Result alpha,
-                                                   Game_Tree_Node_Result beta) const
+                                                   Game_Tree_Node_Result beta,
+                                                   bool still_on_principal_variation) const
 {
     auto time_start = clock.time_left(clock.running_for());
     maximum_depth = std::max(maximum_depth, depth);
@@ -225,12 +227,11 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     // game record item at game_record.size() - 2. The depth of the game
     // tree search increments both the game_record index and the principal
     // variation index in step.
-    bool still_on_principal_variation = false;
-    if(principal_variation.size() > depth + 2)
+    if(still_on_principal_variation && principal_variation.size() > depth + 2)
     {
-        still_on_principal_variation = std::equal(board.get_game_record().end() - 2 - depth,
-                                                  board.get_game_record().end(),
-                                                  principal_variation.begin());
+        // Previous move matches prediction
+        still_on_principal_variation =
+            (board.get_game_record().back() == principal_variation[depth + 1]);
 
         if(still_on_principal_variation)
         {
@@ -245,6 +246,10 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
             // the most pruning later.
             std::iter_swap(all_legal_moves.begin(), move_iter);
         }
+    }
+    else
+    {
+        still_on_principal_variation = false;
     }
 
     auto perspective = board.whose_turn();
