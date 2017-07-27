@@ -269,10 +269,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         if(move_result.get_winner() != NONE)
         {
             // Mate in one (try to pick the shortest path to checkmate)
-            return {genome.evaluate(next_board, move_result, perspective),
-                    perspective,
-                    {next_board.get_game_record().end() - (depth + 1),
-                     next_board.get_game_record().end()}};
+            return create_result(next_board, perspective, move_result, depth);
         }
 
         if(alpha.depth() <= depth + 2 && alpha.corrected_score(perspective) == Math::win_score)
@@ -321,10 +318,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         else
         {
             // Record immediate result without looking ahead further
-            result = {genome.evaluate(next_board, move_result, perspective),
-                      perspective,
-                      {next_board.get_game_record().end() - (depth + 1),
-                       next_board.get_game_record().end()}};
+            result = create_result(next_board, perspective, move_result, depth);
         }
 
         if(better_than(result, best_result, perspective))
@@ -474,3 +468,13 @@ void Genetic_AI::calibrate_thinking_speed()
     // more reasonable value.
 }
 
+Game_Tree_Node_Result Genetic_AI::create_result(const Board& board,
+                                                Color perspective,
+                                                Game_Result move_result,
+                                                size_t depth) const
+{
+    return {genome.evaluate(board, move_result, perspective),
+            perspective,
+            {board.get_game_record().end() - (depth + 1),
+             board.get_game_record().end()}};
+}

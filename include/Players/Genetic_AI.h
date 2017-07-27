@@ -65,6 +65,11 @@ class Genetic_AI : public Player
                                                Game_Tree_Node_Result beta,
                                                bool still_on_principal_variation) const;
 
+        Game_Tree_Node_Result create_result(const Board& board,
+                                            Color perspective,
+                                            Game_Result move_result,
+                                            size_t depth) const;
+
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                   const Clock& clock,
