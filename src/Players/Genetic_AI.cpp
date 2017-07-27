@@ -189,13 +189,21 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
 
     if(result.depth > 0)
     {
+        commentary.push_back(result.variation);
+    }
+    else
+    {
+        commentary.push_back({});
+    }
+
+    if(result.depth > 1)
+    {
         principal_variation = result.variation;
     }
     else
     {
         principal_variation.clear();
     }
-    commentary.push_back(principal_variation);
 
     positions_per_second = nodes_searched/(clock_start_time - clock.time_left(clock.running_for()));
 
