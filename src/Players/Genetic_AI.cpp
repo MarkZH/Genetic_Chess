@@ -137,6 +137,9 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
     clock_start_time = clock.time_left(clock.running_for());
     maximum_depth = 0;
 
+    nodes_evaluated = 0;
+    total_evaluation_time = 0.0;
+
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
     {
@@ -204,7 +207,7 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
         principal_variation.clear();
     }
 
-    positions_per_second = nodes_searched/(clock_start_time - clock.time_left(clock.running_for()));
+    evaluation_speed = nodes_evaluated/total_evaluation_time;
 
     return *result.variation.front();
 }
@@ -261,6 +264,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 
     for(const auto& move : all_legal_moves)
     {
+        auto evaluate_start_time = clock.time_left(clock.running_for());
         ++nodes_searched;
 
         auto next_board = board;
@@ -301,7 +305,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         }
         else
         {
-            recurse = genome.enough_time_to_recurse(time_allotted_for_this_move, next_board, positions_per_second);
+            recurse = genome.enough_time_to_recurse(time_allotted_for_this_move, next_board, evaluation_speed);
         }
 
         Game_Tree_Node_Result result;
@@ -345,6 +349,12 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         if(clock.time_left(clock.running_for()) < 0)
         {
             break;
+        }
+
+        if( ! recurse) // This move was scored by genome.evaluate().
+        {
+            ++nodes_evaluated;
+            total_evaluation_time += evaluate_start_time - clock.time_left(clock.running_for());
         }
     }
 
@@ -457,7 +467,7 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
 
 void Genetic_AI::calibrate_thinking_speed()
 {
-    positions_per_second = 100; // very conservative initial guess
+    evaluation_speed = 100; // very conservative initial guess
     auto calibration_time = 1.0; // seconds
     Board board;
     Clock clock(calibration_time, 1, 0.0);

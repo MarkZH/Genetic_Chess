@@ -50,9 +50,11 @@ class Genetic_AI : public Player
         // Monitor search speed to adapt to different computers/competing workloads
         mutable int nodes_searched;
         mutable double clock_start_time;
-        mutable double positions_per_second;
         mutable size_t maximum_depth;
 
+        mutable int nodes_evaluated;
+        mutable double total_evaluation_time;
+        mutable double evaluation_speed;
 
         void read_from(std::istream& is);
 
