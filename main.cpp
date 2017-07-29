@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
                 std::unique_ptr<Player> latest;
 
                 double game_time = 0;
-                int moves_per_reset = 0;
+                size_t moves_per_reset = 0;
                 double increment_time = 0;
 
                 for(int i = 1; i < argc; ++i)
@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-reset_moves")
                     {
-                        moves_per_reset = std::stoi(argv[++i]);
+                        moves_per_reset = std::stoul(argv[++i]);
                     }
                     else if(opt == "-increment_time")
                     {

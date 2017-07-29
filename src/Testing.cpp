@@ -281,7 +281,7 @@ void run_tests()
 
     // Clock time reset test
     auto time = 30;
-    double expected_time_after_reset;
+    double expected_time_after_reset = 0.0;
     auto moves_to_reset = 40;
     auto clock = Clock(time, moves_to_reset);
     clock.start();

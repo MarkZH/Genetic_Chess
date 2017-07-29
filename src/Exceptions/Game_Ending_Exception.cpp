@@ -12,7 +12,7 @@ Color Game_Ending_Exception::winner() const
     return victor;
 }
 
-const char* Game_Ending_Exception::what() const throw()
+const char* Game_Ending_Exception::what() const noexcept
 {
     return message.c_str();
 }

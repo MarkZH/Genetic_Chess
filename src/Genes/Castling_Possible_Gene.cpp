@@ -10,7 +10,7 @@
 
 Castling_Possible_Gene::Castling_Possible_Gene() :
     kingside_preference(0.5),
-    permanent_value({-1.0, -1.0})
+    permanent_value{{-1.0, -1.0}}
 {
 }
 

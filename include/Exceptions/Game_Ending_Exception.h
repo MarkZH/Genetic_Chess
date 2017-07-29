@@ -10,7 +10,7 @@ class Game_Ending_Exception : public std::exception
     public:
         Game_Ending_Exception(Color winner_in, const std::string& message_in);
 
-        const char* what() const throw() override;
+        const char* what() const noexcept override;
         Color winner() const;
 
     private:

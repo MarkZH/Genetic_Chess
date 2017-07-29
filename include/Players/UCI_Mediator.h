@@ -9,7 +9,7 @@
 class Board;
 class Clock;
 class Move;
-struct Game_Result;
+class Game_Result;
 
 class UCI_Mediator : public Outside_Player
 {
