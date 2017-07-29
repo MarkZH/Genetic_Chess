@@ -33,7 +33,7 @@ class Gene
 
     private:
         virtual double score_board(const Board& board) const = 0;
-        void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
+        [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
         virtual void gene_specific_mutation();
 
         double priority;
