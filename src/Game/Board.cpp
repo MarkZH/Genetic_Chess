@@ -184,7 +184,7 @@ Board::Board(const std::string& fen) :
         throw std::runtime_error("Black king not in FEN string: " + fen);
     }
 
-    turn_color = (fen_parse[1] == "w" ? WHITE : BLACK);
+    set_turn(fen_parse[1] == "w" ? WHITE : BLACK);
     first_player_to_move = turn_color;
 
     if(king_is_in_check(opposite(whose_turn())))
@@ -1104,7 +1104,7 @@ bool Board::is_en_passant_targetable(char file, int rank) const
 
 void Board::clear_en_passant_target()
 {
-    en_passant_target = {'\0', 0};
+    make_en_passant_targetable('\0', 0);
 }
 
 bool Board::piece_has_moved(char file, int rank) const
