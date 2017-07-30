@@ -438,17 +438,21 @@ void run_tests()
     int int_width = 10;
     int real_width = 15;
     int norm_width = 15;
+    int uint_width = 25;
     std::cout << std::setw(int_width) << "Integers"
               << std::setw(real_width) << "Reals"
-              << std::setw(norm_width) << "Normals" << '\n';
+              << std::setw(norm_width) << "Normals"
+              << std::setw(uint_width) << "Unsigned Ints" << '\n';
     std::cout << std::setw(int_width) << "+/-1000"
               << std::setw(real_width) << "[0-2]"
-              << std::setw(norm_width) << "sig = 3" << '\n';
+              << std::setw(norm_width) << "sig = 3"
+              << std::setw(uint_width) << "whole range" << '\n';
     for(int i = 0; i < 10; ++i)
     {
         std::cout << std::setw(int_width) << Random::random_integer(-1000, 1000)
                   << std::setw(real_width) << Random::random_real(0, 2)
-                  << std::setw(norm_width) << Random::random_normal(3) << '\n';
+                  << std::setw(norm_width) << Random::random_normal(3)
+                  << std::setw(uint_width) << Random::random_unsigned_int64() << '\n';
     }
 
     // FEN input/output

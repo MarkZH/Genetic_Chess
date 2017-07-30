@@ -101,7 +101,7 @@ class Board
 
     private:
         std::array<const Piece*, 64> board;
-        std::map<std::string, int> repeat_count;
+        std::map<uint64_t, int> repeat_count;
         Color turn_color;
         std::vector<const Move*> game_record;
         std::array<bool, 64> unmoved_positions;
@@ -146,7 +146,28 @@ class Board
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
 
+        // Zobrist hashing
+        uint64_t board_hash;
 
+        void initialize_board_hash();
+        uint64_t get_board_hash() const;
+
+        // Hash values for squares
+        std::array<std::map<const Piece*, uint64_t>, 64> square_hash_values; // [board_index][moved?][piece_hash]
+        std::array<uint64_t, 64> en_passant_hash_values;
+        std::array<uint64_t, 64> castling_hash_values;
+
+        void update_board_hash(char file, int rank);
+        uint64_t get_square_hash(char file, int rank) const;
+
+        // Whose turn?
+        std::array<uint64_t, 2> color_hash_values; // for whose_turn() hashing
+
+        uint64_t get_color_hash(Color color) const;
+        void update_board_hash(Color color);
+
+
+        // Moves with side effects are friends of Board
         friend void Kingside_Castle::side_effects(Board&) const; // moves second piece
         friend void Queenside_Castle::side_effects(Board&) const; // moves second piece
         friend void En_Passant::side_effects(Board&) const; // capture piece on another square
