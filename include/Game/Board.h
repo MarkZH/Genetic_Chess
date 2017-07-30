@@ -43,7 +43,7 @@ class Board
         const Move& get_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
 
         bool is_legal(char file_start, int rank_start,
-              char file_end,   int rank_end) const;
+                      char file_end,   int rank_end) const;
 
         Color whose_turn() const;
         static Color square_color(char file, int rank);
