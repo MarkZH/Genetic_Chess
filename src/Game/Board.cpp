@@ -419,8 +419,9 @@ Game_Result Board::submit_move(const Move& move)
         }
     }
 
-    // An insufficient material draw can only happen after a capture,
-    // which clears the repeat_count map.
+    // An insufficient material draw can only happen after a capture
+    // or a pawn promotion to a minor piece, both of which clear the
+    // repeat_count map.
     if(repeat_count.empty() && ! enough_material_to_checkmate())
     {
         return Game_Result(NONE, "Insufficient material", false);
