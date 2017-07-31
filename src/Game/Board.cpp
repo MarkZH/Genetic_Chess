@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <map>
 #include <array>
+#include <mutex>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -73,6 +74,14 @@ const King* Board::get_king(Color color)
 {
     return color == WHITE ? &white_king : &black_king;
 }
+
+
+std::mutex Board::hash_lock;
+bool Board::hash_values_initialized = false;
+std::array<std::map<const Piece*, uint64_t>, 64> Board::square_hash_values{};
+std::array<uint64_t, 64> Board::en_passant_hash_values{};
+std::array<uint64_t, 64> Board::castling_hash_values{};
+std::array<uint64_t, 2> Board::color_hash_values{}; // for whose_turn() hashing
 
 
 Board::Board() :
@@ -1266,6 +1275,13 @@ Color Board::first_to_move() const
 
 void Board::initialize_board_hash()
 {
+    std::lock_guard<std::mutex> hash_guard(hash_lock);
+
+    if(hash_values_initialized)
+    {
+        return;
+    }
+
     for(auto color : {WHITE, BLACK})
     {
         color_hash_values[color] = Random::random_unsigned_int64();
@@ -1305,6 +1321,8 @@ void Board::initialize_board_hash()
             board_hash ^= get_square_hash(file, rank);
         }
     }
+
+    hash_values_initialized = true;
 }
 
 void Board::update_board_hash(char file, int rank)

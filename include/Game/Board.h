@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <array>
+#include <mutex>
 
 #include "Moves/Move.h"
 #include "Moves/Kingside_Castle.h"
@@ -153,15 +154,17 @@ class Board
         uint64_t get_board_hash() const;
 
         // Hash values for squares
-        std::array<std::map<const Piece*, uint64_t>, 64> square_hash_values; // [board_index][moved?][piece_hash]
-        std::array<uint64_t, 64> en_passant_hash_values;
-        std::array<uint64_t, 64> castling_hash_values;
+        static std::mutex hash_lock;
+        static bool hash_values_initialized;
+        static std::array<std::map<const Piece*, uint64_t>, 64> square_hash_values; // [board_index][moved?][piece_hash]
+        static std::array<uint64_t, 64> en_passant_hash_values;
+        static std::array<uint64_t, 64> castling_hash_values;
 
         void update_board_hash(char file, int rank);
         uint64_t get_square_hash(char file, int rank) const;
 
         // Whose turn?
-        std::array<uint64_t, 2> color_hash_values; // for whose_turn() hashing
+        static std::array<uint64_t, 2> color_hash_values; // for whose_turn() hashing
 
         uint64_t get_color_hash(Color color) const;
         void update_board_hash(Color color);
