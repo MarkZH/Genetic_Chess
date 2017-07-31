@@ -1009,7 +1009,7 @@ std::string Board::board_status() const // for 3-fold rep count
     {
         if(rank < 8)
         {
-            s.append("/");
+            s.push_back('/');
         }
 
         for(char file = 'a'; file <= 'h'; ++file)
@@ -1023,7 +1023,7 @@ std::string Board::board_status() const // for 3-fold rep count
             {
                 if(empty_count > 0)
                 {
-                    s.append(std::to_string(empty_count));
+                    s.push_back('0' + empty_count);
                     empty_count = 0;
                 }
                 s.push_back(piece->fen_symbol());
@@ -1031,13 +1031,13 @@ std::string Board::board_status() const // for 3-fold rep count
         }
         if(empty_count > 0)
         {
-            s.append(std::to_string(empty_count));
+            s.push_back('0' + empty_count);
             empty_count = 0;
         }
     }
 
     s.push_back(' ');
-    s.push_back(tolower(color_text(whose_turn())[0]));
+    s.push_back(whose_turn() == WHITE ? 'w' : 'b');
     s.push_back(' ');
 
     for(int base_rank : {1, 8})
