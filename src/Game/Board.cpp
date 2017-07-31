@@ -234,6 +234,19 @@ Board::Board(const std::string& fen) :
     move_count_start_offset = std::stoi(fen_parse.at(5)) - 1;
 }
 
+// Only for use with minimal_copy()
+Board::Board(const Board* old_board) :
+    board(old_board->board),
+    king_location(old_board->king_location)
+{
+}
+
+// Only for use with king_is_in_check_after_move()
+Board Board::minimal_copy() const
+{
+    return Board(this);
+}
+
 size_t Board::board_index(char file, int rank)
 {
     // Square A1 = Board::board[0]
@@ -849,7 +862,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
 
 bool Board::king_is_in_check_after_move(const Move& move) const
 {
-    auto temp_board = *this;
+    auto temp_board = minimal_copy();
     temp_board.make_move(move.start_file(), move.start_rank(),
                          move.end_file(),   move.end_rank());
     move.side_effects(temp_board);

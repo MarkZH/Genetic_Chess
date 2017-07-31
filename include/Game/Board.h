@@ -146,6 +146,10 @@ class Board
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
 
+        // Minimal copy of board with custom constructor for
+        // use with king_is_in_check
+        Board(const Board* old_board);
+        Board minimal_copy() const; // Just copy board state with no history
 
         friend void Kingside_Castle::side_effects(Board&) const; // moves second piece
         friend void Queenside_Castle::side_effects(Board&) const; // moves second piece
