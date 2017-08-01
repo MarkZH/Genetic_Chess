@@ -189,14 +189,15 @@ mode_moves = mode(moves_in_game);
 std_dev = std(moves_in_game);
 
 % Log-normal fit
-valid = (bins > 15);
+minimum_game_length = 1;
+valid = (bins >= minimum_game_length); % Exclude shortest games
 mean_log = sum(log(bins(valid)).*counts(valid))/sum(counts(valid));
 std_log = sqrt(sum(((log(bins(valid)) - mean_log).^2).*counts(valid))/sum(counts(valid)));
 
 fit = sum(counts)*exp(-.5*((log(bins) - mean_log)/std_log).^2)./(bins*std_log*sqrt(2*pi));
 plot(bins, fit, 'linewidth', 3);
 
-legend('Histogram', 'Log-Normal distribution');
+legend('Histogram', ['Log-Normal distribution (N \geq ' num2str(minimum_game_length) ')']);
 
 stats = {['Mean = ' num2str(mean_moves)], ...
          ['Median = ' num2str(median(moves_in_game))], ...
