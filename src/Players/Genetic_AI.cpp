@@ -217,7 +217,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    const Clock& clock,
                                                    const size_t depth,
                                                    Game_Tree_Node_Result alpha,
-                                                   Game_Tree_Node_Result beta,
+                                                   const Game_Tree_Node_Result& beta,
                                                    bool still_on_principal_variation) const
 {
     auto time_start = clock.time_left(clock.running_for());

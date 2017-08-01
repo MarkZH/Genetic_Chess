@@ -882,7 +882,7 @@ const std::vector<const Move*>& Board::get_game_record() const
 void Board::print_game_record(const Player* white,
                               const Player* black,
                               const std::string& file_name,
-                              Game_Result result,
+                              const Game_Result& result,
                               double initial_time,
                               size_t moves_to_reset,
                               double increment,

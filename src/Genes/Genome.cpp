@@ -153,7 +153,7 @@ double Genome::score_board(const Board& board) const
     return score;
 }
 
-double Genome::evaluate(const Board& board, Game_Result result, Color perspective) const
+double Genome::evaluate(const Board& board, const Game_Result& result, Color perspective) const
 {
     if(result.game_has_ended())
     {

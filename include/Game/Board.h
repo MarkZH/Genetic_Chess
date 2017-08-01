@@ -62,7 +62,7 @@ class Board
         void print_game_record(const Player* white,
                                const Player* black,
                                const std::string& file_name,
-                               Game_Result result,
+                               const Game_Result& result,
                                double initial_time,
                                size_t moves_to_reset,
                                double increment,
@@ -148,7 +148,7 @@ class Board
 
         // Minimal copy of board with custom constructor for
         // use with king_is_in_check
-        Board(const Board* old_board);
+        explicit Board(const Board* old_board);
         Board minimal_copy() const; // Just copy board state with no history
 
         friend void Kingside_Castle::side_effects(Board&) const; // moves second piece
