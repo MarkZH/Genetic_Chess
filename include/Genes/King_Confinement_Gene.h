@@ -4,6 +4,7 @@
 #include "Genes/Gene.h"
 
 #include <string>
+#include <memory>
 
 class Board;
 
@@ -13,7 +14,7 @@ class King_Confinement_Gene : public Gene
     public:
         King_Confinement_Gene();
 
-        King_Confinement_Gene* duplicate() const override;
+        std::unique_ptr<Gene> duplicate() const override;
 
         std::string name() const override;
 

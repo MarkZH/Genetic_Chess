@@ -1,5 +1,7 @@
 #include "Genes/Total_Force_Gene.h"
 
+#include <memory>
+
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Genes/Gene.h"
@@ -30,9 +32,9 @@ double Total_Force_Gene::score_board(const Board& board) const
     return score;
 }
 
-Total_Force_Gene* Total_Force_Gene::duplicate() const
+std::unique_ptr<Gene> Total_Force_Gene::duplicate() const
 {
-    return new Total_Force_Gene(*this);
+    return std::make_unique<Total_Force_Gene>(*this);
 }
 
 std::string Total_Force_Gene::name() const

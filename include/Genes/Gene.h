@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <iosfwd>
+#include <memory>
 
 class Board;
 class Piece_Strength_Gene;
@@ -18,7 +19,7 @@ class Gene
 
         void mutate();
         double evaluate(const Board& board) const;
-        virtual Gene* duplicate() const = 0;
+        virtual std::unique_ptr<Gene> duplicate() const = 0;
 
         virtual std::string name() const = 0;
         void print(std::ostream& os) const;

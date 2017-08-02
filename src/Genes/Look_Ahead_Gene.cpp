@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <memory>
 
 #include "Genes/Gene.h"
 #include "Utility.h"
@@ -66,9 +67,9 @@ void Look_Ahead_Gene::gene_specific_mutation()
     }
 }
 
-Look_Ahead_Gene* Look_Ahead_Gene::duplicate() const
+std::unique_ptr<Gene> Look_Ahead_Gene::duplicate() const
 {
-    return new Look_Ahead_Gene(*this);
+    return std::make_unique<Look_Ahead_Gene>(*this);
 }
 
 std::string Look_Ahead_Gene::name() const

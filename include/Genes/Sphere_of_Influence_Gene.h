@@ -4,6 +4,7 @@
 #include "Gene.h"
 
 #include <string>
+#include <memory>
 
 class Board;
 
@@ -14,7 +15,7 @@ class Sphere_of_Influence_Gene : public Gene
     public:
         Sphere_of_Influence_Gene();
 
-        Sphere_of_Influence_Gene* duplicate() const override;
+        std::unique_ptr<Gene> duplicate() const override;
 
         std::string name() const override;
 

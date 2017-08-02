@@ -1,6 +1,7 @@
 #include "Genes/Castling_Possible_Gene.h"
 
 #include <string>
+#include <memory>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -26,9 +27,9 @@ void Castling_Possible_Gene::load_properties()
     kingside_preference = properties["Kingside Preference"];
 }
 
-Castling_Possible_Gene* Castling_Possible_Gene::duplicate() const
+std::unique_ptr<Gene> Castling_Possible_Gene::duplicate() const
 {
-    return new Castling_Possible_Gene(*this);
+    return std::make_unique<Castling_Possible_Gene>(*this);
 }
 
 std::string Castling_Possible_Gene::name() const

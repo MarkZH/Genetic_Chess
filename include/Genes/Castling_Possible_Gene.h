@@ -5,6 +5,7 @@
 
 #include <string>
 #include <array>
+#include <memory>
 
 class Board;
 
@@ -15,7 +16,7 @@ class Castling_Possible_Gene : public Gene
         Castling_Possible_Gene();
 
         std::string name() const override;
-        Castling_Possible_Gene* duplicate() const override;
+        std::unique_ptr<Gene> duplicate() const override;
 
     protected:
         void reset_properties() const override;

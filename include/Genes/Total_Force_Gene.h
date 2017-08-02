@@ -4,6 +4,7 @@
 #include "Gene.h"
 
 #include <string>
+#include <memory>
 
 class Board;
 class Piece_Strength_Gene;
@@ -14,7 +15,7 @@ class Total_Force_Gene : public Gene
     public:
         explicit Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source);
 
-        Total_Force_Gene* duplicate() const override;
+        std::unique_ptr<Gene> duplicate() const override;
         void reset_piece_strength_gene(const Piece_Strength_Gene* psg) override;
 
         std::string name() const override;

@@ -1,5 +1,7 @@
 #include "Genes/Freedom_To_Move_Gene.h"
 
+#include <memory>
+
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
@@ -15,9 +17,9 @@ double Freedom_To_Move_Gene::score_board(const Board& board) const
     return board.legal_moves().size()/initial_number_of_moves;
 }
 
-Freedom_To_Move_Gene* Freedom_To_Move_Gene::duplicate() const
+std::unique_ptr<Gene> Freedom_To_Move_Gene::duplicate() const
 {
-    return new Freedom_To_Move_Gene(*this);
+    return std::make_unique<Freedom_To_Move_Gene>(*this);
 }
 
 std::string Freedom_To_Move_Gene::name() const

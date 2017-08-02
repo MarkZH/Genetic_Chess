@@ -5,6 +5,7 @@
 
 #include <string>
 #include <array>
+#include <memory>
 
 class Piece;
 class Board;
@@ -15,7 +16,7 @@ class Piece_Strength_Gene : public Gene
     public:
         Piece_Strength_Gene();
 
-        Piece_Strength_Gene* duplicate() const override;
+        std::unique_ptr<Gene> duplicate() const override;
 
         std::string name() const override;
 

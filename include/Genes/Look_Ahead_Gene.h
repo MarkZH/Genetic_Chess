@@ -4,6 +4,7 @@
 #include "Gene.h"
 
 #include <string>
+#include <memory>
 
 class Board;
 class Clock;
@@ -14,7 +15,7 @@ class Look_Ahead_Gene : public Gene
     public:
         Look_Ahead_Gene();
 
-        Look_Ahead_Gene* duplicate() const override;
+        std::unique_ptr<Gene> duplicate() const override;
 
         std::string name() const override;
 

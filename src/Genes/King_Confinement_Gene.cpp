@@ -4,6 +4,7 @@
 #include <array>
 #include <algorithm>
 #include <cassert>
+#include <memory>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -26,9 +27,9 @@ King_Confinement_Gene::King_Confinement_Gene() : maximum_score(0.0)
     }
 }
 
-King_Confinement_Gene* King_Confinement_Gene::duplicate() const
+std::unique_ptr<Gene> King_Confinement_Gene::duplicate() const
 {
-    return new King_Confinement_Gene(*this);
+    return std::make_unique<King_Confinement_Gene>(*this);
 }
 
 std::string King_Confinement_Gene::name() const
