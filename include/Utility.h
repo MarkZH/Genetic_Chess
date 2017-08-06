@@ -66,6 +66,12 @@ namespace Math
     const auto lose_score = -win_score;
 
     double average_moves_left(double mean_moves, double width, size_t moves_so_far);
+
+    template<typename Number>
+    Number clamp(Number n, Number low, Number high)
+    {
+        return std::min(std::max(n, low), high);
+    }
 }
 
 class Configuration_File

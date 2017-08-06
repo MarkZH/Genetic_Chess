@@ -91,6 +91,7 @@ class Board
         Square find_king(Color color) const;
         bool king_is_in_check(Color color) const;
         bool king_is_in_check_after_move(const Move& move) const;
+        bool capture_possible() const;
 
         static const Pawn* get_pawn(Color color);
         static const Rook* get_rook(Color color);
@@ -129,6 +130,8 @@ class Board
         // Caches
         mutable std::vector<const Move*> other_moves_cache;
         mutable std::vector<const Move*> legal_moves_cache;
+        mutable bool capturing_move_available;
+
         void clear_caches();
 
         // Communication channels

@@ -464,6 +464,16 @@ void run_tests()
         }
     }
 
+    Board capture_board;
+    capture_board.submit_move(capture_board.get_move("e4"));
+    capture_board.submit_move(capture_board.get_move("d5"));
+    if( ! capture_board.capture_possible())
+    {
+        capture_board.ascii_draw(WHITE);
+        std::cerr << "Capture should be possible here." << std::endl;
+        tests_passed = false;
+    }
+
     if(tests_passed)
     {
         std::cout << "All tests passed." << std::endl;

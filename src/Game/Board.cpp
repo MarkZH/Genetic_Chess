@@ -83,6 +83,7 @@ Board::Board() :
     king_location{{ {'\0', 0}, {'\0', 0} }},
     move_count_start_offset(0),
     first_player_to_move(WHITE),
+    capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
     for(auto color : {WHITE, BLACK})
@@ -122,6 +123,7 @@ Board::Board(const std::string& fen) :
     en_passant_target({'\0', 0}),
     starting_fen(fen),
     king_location{{ {'\0', 0}, {'\0', 0} }},
+    capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
     auto fen_parse = String::split(fen);
@@ -634,6 +636,7 @@ const std::vector<const Move*>& Board::legal_moves() const
         return legal_moves_cache;
     }
 
+    capturing_move_available = false;
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
@@ -646,6 +649,11 @@ const std::vector<const Move*>& Board::legal_moves() const
                     if(move->is_legal(*this))
                     {
                         legal_moves_cache.push_back(move);
+                        if(view_piece_on_square(move->end_file(), move->end_rank()) ||
+                           move->is_en_passant())
+                        {
+                            capturing_move_available = true;
+                        }
                     }
                     else
                     {
@@ -1259,4 +1267,9 @@ Thinking_Output_Type Board::get_thinking_mode() const
 Color Board::first_to_move() const
 {
     return first_player_to_move;
+}
+
+bool Board::capture_possible() const
+{
+    return capturing_move_available;
 }
