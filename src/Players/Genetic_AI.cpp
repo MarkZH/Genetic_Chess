@@ -272,7 +272,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         auto move_result = next_board.submit_move(*move);
         if(move_result.get_winner() != NONE)
         {
-            // Mate in one (try to pick the shortest path to checkmate)
+            // This move results in checkmate, no other move can be better.
             return create_result(next_board, perspective, move_result, depth);
         }
 
