@@ -32,7 +32,7 @@ Though there is nothing OS-specific about the \cpp{} code, the Makefile is writt
 where \code{-I} indicates the option to specify the base directory of the header files.
 
 \subsection{Linux}
-Run \code{make} to create release and debug executables in a \code{bin/} subfolder that will be created if it does not already exist. If, in the course of working on this project, new files are created or the \code{\#include} files are changed within a file, run \code{python create\_Makefile.py} to regenerate the Makefile. This python script assumes all \code{*.cpp} and \code{*.h} files in the current directory and all subfolders are part of the project and need compiling.
+Run \code{make} to create release and debug executables in a \code{bin/} subfolder that will be created if it does not already exist. If, in the course of working on this project, new files are created or the \code{\#include} files are changed within a file, run \code{python create\_gcc\_Makefile.py} or \code{python create\_clang\_Makefile.py} to regenerate the Makefile. These python script assumes all \code{*.cpp} files in the current directory and all subfolders are part of the project and need compiling.
 
 
 \section{Running}
@@ -65,11 +65,11 @@ These sections describe the aspects of the chess AI that are not genetically mod
 \end{itemize}
 On the last point, it has been suggested to me that, instead of the specific genes listed in Section~\ref{gene-section}, the genes should encode more abstract and generic strategies and heuristics for evaluating a board state. While this would probably better mimic biological evolution (wherein adenine and thymine are rather neutral as to their teleology), I have no idea how to program such an abstract representation and how to translate the action of such genes into chess moves. So, what results from all this programming is a glorified tuning algorithm for parameters in predefined genes with hard-coded meanings.
 
-On the other hand, so is every other genetic algorithm (see \cite{evolved-antenna}, \cite{evolved-stellarator}, and others). Plus, these genes can be deactivated through mutation, so these AIs are perfectly capable of telling me exactly what they think of my painstakingly crafted genes.\footnote{The little ingrates!}
+On the other hand, so is every other genetic algorithm (see \cite{evolved-antenna}, \cite{evolved-stellarator}, and others). Plus, these genes can evolve to have near-zero influence on game decisions, so these AIs are perfectly capable of telling me exactly what they think of my painstakingly crafted genes.\footnote{The little ingrates!}
 
 \subsection{Endgame Scoring}
 
-Winning gives an infinite score.
+Winning gives a positive infinite score.
 Losing gives a negative infinite score.
 Draw gives zero.
 
@@ -121,8 +121,8 @@ This gene determines all aspects of the Genetic AIs time management. There are t
 When the AI starts the algorithm to choose a move, it allocates a fraction of the time left on the clock so that all subsequent moves get equal time. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a log-normal distribution~\cite{log-norm-wiki}\cite{log-norm-chess-se} with a mean and spread given by the first two parameters listed above. Originally, it was assumed that the number of moves in a game was well-modeled by a Poisson distribution. This proved to be false (see Figure~\ref{game-length-plot}), and the log-normal distribution--wherein the logarithm of the variable is normally distributed--is now used.
 
 The number of moves left in the game is estimated by
-\[N = \frac{\sum_{i = n + 1}^\infty P(i)\times{}i}{\sum_{i = n + 1}^\infty P(i)} - n\]
-where \(N\) is the estimated number of moves left in the game given that \(n\) moves have already been made, and \(P(i)\) is the \emph{a priori} probability distribution. The numerator is a truncated calculation of the average number of moves in a game, and the denominator is a truncated probability distribution to renormalize (since the probability of a game lasting 10~moves is zero if 11~moves have been played).
+\[N(n) = \frac{\sum_{i = n + 1}^\infty P(i)\times{}i}{\sum_{i = n + 1}^\infty P(i)} - n\]
+where \(N(n)\) is the estimated number of moves left in the game given that \(n\) moves have already been made, and \(P(i)\) is the \emph{a priori} probability distribution of the number of moves by one player in a single game. The numerator is a truncated calculation of the average number of moves in a game, and the denominator is a truncated probability distribution to renormalize (since the probability of a game lasting 10~moves is zero if 11~moves have been played).
 
 The log-normal probability distribution is given by
 \[P(x) = \frac{1}{xS\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{\ln{x} - M}{S}\right)^2},\]
@@ -144,9 +144,9 @@ Here, \(\textrm{erf}\) is the error function given by
 \[
 \textrm{erf}(x) = \frac{2}{\sqrt{\pi}}\int_0^x e^{-t^2}dt
 \]
-This results in the number of moves left in a game (\(N\)) after \(n\) moves as
+This results in the number of moves left in a game (\(N(n)\)) after \(n\) moves as
 \[
-N = \left(e^{M + S^2/2}\right) \frac
+N(n) = \left(e^{M + S^2/2}\right) \frac
 {1 + \textrm{erf}\left(\frac{M + S^2 - \ln n}{S\sqrt{2}}\right)}
 {1 + \textrm{erf}\left(\frac{M-\ln n}{S\sqrt{2}}\right)}
 - n.
@@ -456,13 +456,13 @@ Construct a board from a string containing a board state in \href{https://en.wik
 
 \subsubsection{legal\_moves()}
 
-Returns a \code{std::vector} of \code{Complete\_Move}s representing all the legal moves of the current board state. Calling this method only generates the list on the first call after a board state change. Every time afterwards it returns a cached copy of the list, so there is no penalty for calling it method multiple times.
+Returns a \code{std::vector} of \code{Move}s representing all the legal moves of the current board state. Calling this method only generates the list on the first call after a board state change. Every time afterwards it returns a cached copy of the list, so there is no penalty for calling it method multiple times.
 
 \subsubsection{other\_moves()}
 
 Returns a list of moves that are not currently legal but, if they were, would have the moved piece land on a square inside the board. For example, at the beginning of a standard game, the white rook on a1 has no legal moves, as it is blocked in every direction. But, Ra4 would be in the list of other moves, since a4 is on the board and would be legally reachable if the pawn on a2 was not present. Moves to the left or backwards will not be listed, since these moves land outside the board.
 
-\subsubsection[submit\_move()]{submit\_move(const Complete\_Move\& move)}
+\subsubsection[submit\_move()]{submit\_move(const Move\& move)}
 \label{board-submit-move-section}
 
 This method causes the state of the \code{Board} to be changed by enacting the move represented by the argument. Only copies of a move returned from \code{legal\_moves()} will be accepted. Otherwise, an assertion will fail in debug builds or undefined behavior will result in release builds. The method returns a \code{Game\_Result} \code{struct} that indicates whether the game has ended and the reason for the ending. Formerly, the end of a game was signaled by throwing an exception derived from \code{Game\_Ending\_Exception}. However, this was found dramatically slow down the game tree search due to the cost of throwing and catching multiple exceptions.
@@ -471,19 +471,17 @@ This method causes the state of the \code{Board} to be changed by enacting the m
 Returns a pointer to a \code{const Piece*} representing the piece on the square identified by the arguments. An empty square is represented by a \code{nullptr}.
 
 \subsubsection{Important Notes}
-The \code{Complete\_Move}s returned by the methods \code{Board::get\_complete\_move()} and \code{Board::legal\_moves()} are the only moves guaranteed to be valid for a given \code{Board} instance, and only for the unmodified originating board or an unmodified copy. Calling \code{Board::submit\_move()} with a \code{Complete\_Move} from a different source will have three possible results:
+The \code{Move}s returned by the methods \code{Board::get\_move()} and \code{Board::legal\_moves()} are the only moves guaranteed to be valid for a given \code{Board} instance, and only for the unmodified originating board or an unmodified copy. Calling \code{Board::submit\_move()} with a \code{Move} from a different source will have three possible results:
 \begin{enumerate}
 	\item The move happens to be legal, in which case the game continues.
 	\item The debugging version of the program will fail an \code{assert}.
 	\item The release version of the program will enter an invalid game state with no warning.
 \end{enumerate}
-The legality of moves are only checked by the \code{Board} methods that generate legal \code{Complete\_Move} instances (the previously mentioned \code{Board::get\_complete\_move()} and \code{Board::legal\_moves()}), not on submission.
+The legality of moves are only checked by the \code{Board} methods that generate legal \code{Move} instances (the previously mentioned \code{Board::get\_move()} and \code{Board::legal\_moves()}), not on submission.
 
 \subsection{Piece}
 
 \subsection{Move}
-
-\subsection{Complete\_Move}
 
 \subsection{Clock}
 
