@@ -25,9 +25,6 @@ class Castling_Possible_Gene : public Gene
     private:
         double kingside_preference;
 
-        mutable std::array<double, 2> permanent_value; // value to return once castling
-                                                       // has occurred or is impossible
-
         double score_board(const Board& board) const override;
         void gene_specific_mutation() override;
 };
