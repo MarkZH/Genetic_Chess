@@ -334,7 +334,8 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                 }
                 else if(board.get_thinking_mode() == CECP && ! recurse)
                 {
-                    output_thinking_cecp(alpha, clock, perspective);
+                    output_thinking_cecp(alpha, clock,
+                                         depth % 2 == 0 ? perspective : opposite(perspective));
                 }
             }
         }
