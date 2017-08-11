@@ -20,35 +20,7 @@
 
 // Declaration to silence warnings
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
-
-bool files_are_identical(const std::string& file_name1, const std::string& file_name2)
-{
-    std::ifstream file1(file_name1);
-    std::ifstream file2(file_name2);
-    int line_count = 0;
-
-    while(true)
-    {
-        std::string line1, line2;
-        std::getline(file1, line1);
-        std::getline(file2, line2);
-        ++line_count;
-
-        if(line1 != line2)
-        {
-            std::cerr << "Mismatch at line " << line_count << ":\n";
-            std::cerr << line1 << " != " << line2 << "\n";
-            return false;
-        }
-
-        if( ! file1 && ! file2)
-        {
-            break;
-        }
-    }
-
-    return true;
-}
+size_t move_count(const Board& board, size_t maximum_depth);
 
 void run_tests()
 {
@@ -193,6 +165,7 @@ void run_tests()
 
 
     // Test Genetic_AI file loading
+    std::cout << "Testing genome file handling ... " << std::flush;
     auto pool_file_name = "test_gene_pool.txt";
     auto write_file_name = "test_genome_write.txt";
     auto rewrite_file_name = "test_genome_rewrite.txt";
@@ -226,6 +199,7 @@ void run_tests()
         remove(write_file_name);
         remove(rewrite_file_name);
     }
+    std::cout << "Done." << std::endl;
 
 
     // String utilities
@@ -418,6 +392,17 @@ void run_tests()
         tests_passed = false;
     }
 
+    // Count game tree leaves up to 2 moves (4 ply) deep
+    std::cout << "Counting moves to 4-ply depth ... " << std::flush;
+    size_t expected_count = 197281;
+    size_t actual_count = move_count(Board(), 4);
+    if(actual_count != expected_count)
+    {
+        std::cerr << "Expected game tree leaves: " << expected_count << "  Got: " << actual_count << std::endl;
+        tests_passed = false;
+    }
+    std::cout << "Done." << std::endl;
+
     // check square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)
@@ -483,6 +468,59 @@ void run_tests()
         std::cout << "Tests failed." << std::endl;
     }
 }
+
+bool files_are_identical(const std::string& file_name1, const std::string& file_name2)
+{
+    std::ifstream file1(file_name1);
+    std::ifstream file2(file_name2);
+    int line_count = 0;
+
+    while(true)
+    {
+        std::string line1, line2;
+        std::getline(file1, line1);
+        std::getline(file2, line2);
+        ++line_count;
+
+        if(line1 != line2)
+        {
+            std::cerr << "Mismatch at line " << line_count << ":\n";
+            std::cerr << line1 << " != " << line2 << "\n";
+            return false;
+        }
+
+        if( ! file1 && ! file2)
+        {
+            break;
+        }
+    }
+
+    return true;
+}
+
+size_t move_count(const Board& board, size_t maximum_depth)
+{
+    if(maximum_depth == 0)
+    {
+        return 1;
+    }
+
+    if(maximum_depth == 1)
+    {
+        return board.legal_moves().size();
+    }
+
+    size_t count = 0;
+    for(auto move : board.legal_moves())
+    {
+        auto next_board = board;
+        next_board.submit_move(*move);
+        count += move_count(next_board, maximum_depth - 1);
+    }
+
+    return count;
+}
+
 #else
 void run_tests() {}
 #endif
