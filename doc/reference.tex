@@ -444,6 +444,25 @@ The same goes for the Piece Strength Gene with respect to the value of each type
 
 \section{Programmer's Reference}
 
+\subsection{Overview}
+
+Since this software is still in heavy development, the following sections are likely to change. As such, here is a summary of aspects of the code that might seem weird upon first--and possibly every other--reading. Specifically, if this is modern \cpp{}, why are there pointers everywhere?
+
+Though the operators \code{new} and \code{delete} appear nowhere in the code and smart pointers are used, raw pointers appear everywhere in the code. The driving reason for using pointers in the first place is the need for polymorphic storage. Classes representing pieces are derived from a \code{Piece} class and need to be stored within \code{Board} class instances (namely, in a \code{std::array<Piece*, 64>} where the position in the array corresponds to a position on the board). Classes representing moves are either instances of the \code{Move} class or derivative classes, and each type of piece stores a list of potentially legal moves.
+
+If a function or method returns a pointer, the caller of that function is not responsible for handling the data pointed to by the pointer. Most public methods and functions take reference arguments to prevent problems with null pointers. Where functions do take pointer arguments (such as \code{Board::print\_game\_record()} for the player instances), that argument is optional parameter that can take a \code{nullptr} to indicate no data.
+
+Originally, instances of the \code{Board} class contained an array of \code{std::shared\_ptr}s so that copying a board (for when computer players needed to think ahead) did not present difficulties in managing the piece resources (namely, when to call \code{delete}). While easy to code, the bookkeeping required by shared pointer copying slowed down the speed of the AIs traversal of the game tree. Now, each type and color of piece is stored as a static instance in the \code{Board} class and pointers to these instances are used as markers for board positions. While this does mean that \code{Piece} classes are treated like singletons (or, rather, doubletons, since there are black and white instances), I believe this is the simplest implementation. The pieces in this code do not have any modifiable internal state after creation, so a white pawn taken from different boards should be completely indistinguishable.
+
+Inside each derived \code{Piece} class, the legal moves for that piece are stored in two locations:
+\begin{enumerate}
+	\item A list of \code{std::unique\_ptr}s to handle resource reclamation,
+	\item A structure of raw pointers that makes it easy to query the potentially legal moves of that piece starting from a given square (``What are the legal moves of a knight on a3?'').
+\end{enumerate}
+Since there is only one instance of each piece (white rook, black queen, etc.), a move obtained from a piece is valid for every other board with a piece on the same square. Some caution is required, though, since the legality of a move is only check during \code{Board::legal\_moves()}. See Section~\ref{board_important_notes} for details.
+
+Finally, and most simply, the genome of a \code{Genetic\_AI} is stored as a list of \code{std::unique\_ptr<Gene>}, since each type of gene (Section~\ref{gene-section}) is derived from the \code{Gene} base class.
+
 \subsection{Board}
 
 \subsubsection{ctor()}
@@ -471,6 +490,7 @@ This method causes the state of the \code{Board} to be changed by enacting the m
 Returns a pointer to a \code{const Piece*} representing the piece on the square identified by the arguments. An empty square is represented by a \code{nullptr}.
 
 \subsubsection{Important Notes}
+\label{board_important_notes}
 The \code{Move}s returned by the methods \code{Board::get\_move()} and \code{Board::legal\_moves()} are the only moves guaranteed to be valid for a given \code{Board} instance, and only for the unmodified originating board or an unmodified copy. Calling \code{Board::submit\_move()} with a \code{Move} from a different source will have three possible results:
 \begin{enumerate}
 	\item The move happens to be legal, in which case the game continues.
