@@ -103,6 +103,12 @@ double Sphere_of_Influence_Gene::score_board(const Board& board) const
 
 void Sphere_of_Influence_Gene::gene_specific_mutation()
 {
-    legal_bonus += Random::random_normal(0.05);
-    king_target_factor += Random::random_normal(0.05);
+    if(Random::coin_flip())
+    {
+        legal_bonus += Random::random_normal(0.05);
+    }
+    else
+    {
+        king_target_factor += Random::random_normal(0.05);
+    }
 }
