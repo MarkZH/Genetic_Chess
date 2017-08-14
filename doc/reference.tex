@@ -175,8 +175,10 @@ T = \frac{N_{\textrm{legal}}}{v}
 \]
 where \(T\) is the time needed to look ahead on this move, \(N_{\textrm{legal}}\) is the number of legal moves, and \(v\) is the rate of position examinations. This speed is determined by counting the number of positions examined and dividing by the amount of time taken while choosing the previous move. If this time is less than the time allocated for the move, the algorithm looks ahead (the function recurses) to examine the moves the opponent can make in response. Otherwise, if there is any time at all, the AI looks ahead with a probability given by
 \[P(t, T; k) = \left(\frac{t}{T}\right)^\frac{1-k}{k}\]
-where \(t\) is the time available for a move, \(T\) is the time needed to look ahead, and \(k\) is a genetically determined constant and the third parameter in the list above. The parameter \(k\) varies between 0~and~1, resulting in an exponent that varies from \(\infty\) and \(0\), respectively. When \(k=0.5\), the exponent is equal to one, and the probability of look ahead is proportional to the time remaining. If \(k < 0.5\), then the exponent is greater than one, resulting in lower probabilities since \(x^p < x\) for \(0 < x < 1\) and \(p > 1\).  If \(k > 0.5\), then the exponent is less than one, resulting in higher probabilities. Additionally, transforming \(k \to 1-k\) transforms the exponent into its inverse, giving a nice symmetry to the parameter in that \(k\) and \(1-k\) are aggressive-conservative mirror images. We can see the effect of changing \(k\) by calculating the average probability of recursion when \(0 \leq t \leq T\) and \(t\) is assumed to be uniformly distributed in \([0, T]\):
+where \(t\) is the time available for a move, \(T\) is the time needed to look ahead, and \(k\) is a genetically determined constant, and the third parameter in the list above. The parameter \(k\), herein referred to as the ``speculation constant,'' varies from 0~to~1, resulting in an exponent that varies from \(\infty\) to \(0\). When \(k=0.5\), the exponent is equal to one, and the probability of look ahead is proportional to the time remaining. If \(k < 0.5\), then the exponent is greater than one, resulting in lower probabilities since \(x^p < x\) for \(0 < x < 1\) and \(p > 1\).  If \(k > 0.5\), then the exponent is less than one, resulting in higher probabilities. Additionally, transforming \(k \to 1-k\) transforms the exponent into its inverse, giving a nice symmetry to the parameter in that \(k\) and \(1-k\) are aggressive-conservative mirror images. We can see the effect of changing \(k\) by calculating the average probability of recursion when \(0 \leq t \leq T\) and \(t\) is assumed to be uniformly distributed in \([0, T]\):
 \[\bar{P} = \int_0^T \left(\frac{t}{T}\right)^{\frac{1-k}{k}}\frac{dt}{T} = \int_0^1 u^{\frac{1-k}{k}}du = \frac{1}{\frac{1-k}{k}+1} = k.\]
+
+Recently, the speculation constant has been divided into two constants: one for board positions containing a capturing move, and all others. Initial results indicate that the capturing speculation constant tends to be much larger (between 0.4 and 0.5) than the non-capturing counterpart (usually less than 0.2). This makes sense since board positions with capturing moves tend to be move volatile in who has the advantage. Capturing a piece is only good if it doesn't result in a greater loss in subsequent moves. This is the problem that is usually solved in other chess engines by a quiescence search, in which all interesting\footnote{Meaning, captures that aren't immediately losing.} capturing moves are performed on a board before it is scored, thereby only scoring stable, ``quiescent'' board states \cite{quiescence-ref}.
 
 \subsubsection{Branch Pruning Gene (deleted)}
 
@@ -526,6 +528,9 @@ W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a
 
 \bibitem{log-norm-chess-se}
 \url{https://chess.stackexchange.com/a/4899/5819}
+
+\bibitem{quiescence-ref}
+\url{http://chessprogramming.wikispaces.com/Quiescence+Search}
 
 \end{thebibliography}
 
