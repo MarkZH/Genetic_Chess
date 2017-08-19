@@ -56,7 +56,6 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
         {
             last_move_illegal = true;
             why_illegal = e.what();
-            continue;
         }
         catch(const Promotion_Exception&)
         {
@@ -73,7 +72,6 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
             {
                 last_move_illegal = true;
                 why_illegal = e.what();
-                continue;
             }
         }
     }
