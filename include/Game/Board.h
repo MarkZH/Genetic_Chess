@@ -132,7 +132,7 @@ class Board
         mutable std::vector<const Move*> legal_moves_cache;
         mutable bool capturing_move_available;
 
-        void clear_caches();
+        void recreate_move_caches();
 
         // Communication channels
         mutable Thinking_Output_Type thinking_indicator;

@@ -28,51 +28,75 @@ void run_tests()
 
     // Basic chess rules check
     Board starting_board;
-    auto starting_move_count = starting_board.legal_moves().size();
-    size_t correct_move_count = 20;
-    if(starting_move_count != correct_move_count)
+    while(true)
     {
-        std::cerr << "Wrong number of legal moves at beginning of game. Got " << starting_move_count
-                  << ", should be " << correct_move_count << std::endl;
-        std::cerr << "Legal moves found:" << std::endl;
-        auto move_count = 0;
-        for(const auto& move : starting_board.legal_moves())
+        // Moves that are currently illegal but would land on board
+        size_t correct_other_move_count = 86;
+        if(starting_board.other_moves().size() != correct_other_move_count)
         {
-            std::cerr << ++move_count << ". " << move->game_record_item(starting_board) << std::endl;
-        }
-        starting_board.ascii_draw(WHITE);
+            std::cerr << "Expected other move count = " << correct_other_move_count << std::endl;
+            starting_board.ascii_draw(WHITE);
+            auto num = 1;
+            for(const auto& move : starting_board.other_moves())
+            {
+                std::cout << num++ << ". " << move->coordinate_move() << " ";
+            }
 
-        tests_passed = false;
+            if(num == 1)
+            {
+                std::cout << "No other moves found.";
+            }
+
+            std::cout << std::endl;
+            tests_passed = false;
+        }
+
+        auto starting_move_count = starting_board.legal_moves().size();
+        size_t correct_move_count = 20;
+        if(starting_move_count != correct_move_count)
+        {
+            std::cerr << "Wrong number of legal moves at beginning of game. Got " << starting_move_count
+                      << ", should be " << correct_move_count << std::endl;
+            std::cerr << "Legal moves found:" << std::endl;
+            auto move_count = 0;
+            for(const auto& move : starting_board.legal_moves())
+            {
+                std::cerr << ++move_count << ". " << move->game_record_item(starting_board) << std::endl;
+            }
+
+            if(move_count == 0)
+            {
+                std::cout << "No legal moves found.\n";
+            }
+
+            starting_board.ascii_draw(WHITE);
+
+            tests_passed = false;
+        }
+
+        if(starting_board.whose_turn() == BLACK)
+        {
+            break;
+        }
+
+        starting_board.set_turn(BLACK);
     }
 
-    // Moves that are currently illegal but would land on board
-    size_t correct_other_move_count = 86;
-    if(starting_board.other_moves().size() != correct_other_move_count)
+    Board second_move_board;
+    second_move_board.submit_move(second_move_board.get_move("e4"));
+    auto second_move_count = second_move_board.legal_moves().size();
+    auto correct_second_move_count = 20;
+    if(second_move_count != correct_second_move_count)
     {
-        std::cerr << "Expected other move count = " << correct_other_move_count << std::endl;
-        starting_board.ascii_draw(WHITE);
-        auto num = 1;
-        for(const auto& move : starting_board.other_moves())
-        {
-            std::cout << num++ << ". " << move->coordinate_move() << " ";
-        }
-        std::cout << std::endl;
-        tests_passed = false;
-    }
-
-    starting_board.submit_move(starting_board.get_move("e4"));
-    starting_move_count = starting_board.legal_moves().size();
-    if(starting_move_count != correct_move_count)
-    {
-        std::cerr << "Wrong number of legal moves at beginning of game. Got " << starting_move_count
-                  << ", should be " << correct_move_count << std::endl;
+        std::cerr << "Wrong number of legal moves at beginning of game. Got " << second_move_count
+                  << ", should be " << correct_second_move_count << std::endl;
         std::cerr << "Legal moves found:" << std::endl;
         auto move_count = 0;
-        for(const auto& move : starting_board.legal_moves())
+        for(const auto& move : second_move_board.legal_moves())
         {
-            std::cerr << ++move_count << ". " << move->game_record_item(starting_board) << std::endl;
+            std::cerr << ++move_count << ". " << move->game_record_item(second_move_board) << std::endl;
         }
-        starting_board.ascii_draw(WHITE);
+        second_move_board.ascii_draw(WHITE);
 
         tests_passed = false;
     }
