@@ -188,6 +188,34 @@ void run_tests()
     }
 
 
+    // Prove there was a problem with generating moves before move
+    // side effects are applied to a board.
+
+    //   abcdefgh
+    // 8 ..k.....
+    // 7 P.......
+    // 6 K.......
+    // White pawn to promote to Queen
+    auto side_effects_board = Board("2k7/P7/K/8/8/8/8/8 w - - 0 1");
+    side_effects_board.submit_move(side_effects_board.get_move("a8=Q"));
+    auto illegal_move_made = true;
+    try
+    {
+        side_effects_board.get_move("Kb8");
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        illegal_move_made = false;
+    }
+
+    if(illegal_move_made)
+    {
+        side_effects_board.ascii_draw(WHITE);
+        std::cerr << "Kb7 should not be legal here." << std::endl;
+        tests_passed = false;
+    }
+
+
     // Test Genetic_AI file loading
     std::cout << "Testing genome file handling ... " << std::flush;
     auto pool_file_name = "test_gene_pool.txt";
