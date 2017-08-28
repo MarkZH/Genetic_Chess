@@ -389,7 +389,6 @@ Game_Result Board::submit_move(const Move& move)
     assert(is_in_legal_moves_list(move));
     game_record.push_back(&move);
 
-    clear_en_passant_target();
     make_move(move.start_file(), move.start_rank(),
               move.end_file(),   move.end_rank());
     move.side_effects(*this);
