@@ -148,6 +148,7 @@ class Board
         bool enough_material_to_checkmate() const;
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
+        void switch_turn();
 
         // Minimal copy of board with custom constructor for
         // use with king_is_in_check

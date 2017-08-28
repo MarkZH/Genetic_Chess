@@ -389,11 +389,12 @@ Game_Result Board::submit_move(const Move& move)
     assert(is_in_legal_moves_list(move));
     game_record.push_back(&move);
 
+    clear_en_passant_target();
     make_move(move.start_file(), move.start_rank(),
               move.end_file(),   move.end_rank());
     move.side_effects(*this);
 
-    set_turn(opposite(whose_turn()));
+    switch_turn();
 
     if(no_legal_moves())
     {
@@ -1077,9 +1078,14 @@ void Board::set_turn(Color color)
     if(turn_color != color)
     {
         clear_en_passant_target();
-        turn_color = color;
-        recreate_move_caches();
+        switch_turn();
     }
+}
+
+void Board::switch_turn()
+{
+    turn_color = opposite(turn_color);
+    recreate_move_caches();
 }
 
 void Board::make_en_passant_targetable(char file, int rank)
