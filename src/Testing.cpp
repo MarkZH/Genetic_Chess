@@ -85,7 +85,7 @@ void run_tests()
     Board second_move_board;
     second_move_board.submit_move(second_move_board.get_move("e4"));
     auto second_move_count = second_move_board.legal_moves().size();
-    auto correct_second_move_count = 20;
+    size_t correct_second_move_count = 20;
     if(second_move_count != correct_second_move_count)
     {
         std::cerr << "Wrong number of legal moves at beginning of game. Got " << second_move_count
