@@ -34,7 +34,8 @@ Game_Result play_game(const Player& white,
                                 time_in_seconds,
                                 moves_to_reset,
                                 increment_seconds,
-                                pgn_file_name, board);
+                                pgn_file_name,
+                                board);
 }
 
 Game_Result play_game_with_board(const Player& white,
