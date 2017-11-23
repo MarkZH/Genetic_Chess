@@ -80,7 +80,7 @@ class Board
 
         static size_t board_index(char file, int rank);
 
-        const Piece* view_piece_on_square(char file, int rank) const;
+        const Piece* piece_on_square(char file, int rank) const;
 
         const std::vector<const Move*>& legal_moves() const;
         const std::vector<const Move*>& other_moves() const;

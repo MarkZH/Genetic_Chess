@@ -24,7 +24,7 @@ Pawn_Capture::Pawn_Capture(Color color_in, Capture_Direction dir, char file_star
 
 bool Pawn_Capture::move_specific_legal(const Board& board) const
 {
-    return board.view_piece_on_square(ending_file, ending_rank); // must capture a piece
+    return board.piece_on_square(ending_file, ending_rank); // must capture a piece
 }
 
 bool Pawn_Capture::can_capture() const

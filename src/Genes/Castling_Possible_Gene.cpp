@@ -85,7 +85,7 @@ double Castling_Possible_Gene::score_board(const Board& board) const
             auto last_file = std::max(king_start_file, rook_file);
             for(char file = first_file; file < last_file; ++file)
             {
-                if( ! board.view_piece_on_square(file, base_rank))
+                if( ! board.piece_on_square(file, base_rank))
                 {
                     score += score_per_clear_square;
                 }

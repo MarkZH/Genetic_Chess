@@ -32,7 +32,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board) const
         {
             end_rank += (board.whose_turn() == WHITE ? -1 : 1);
         }
-        auto target_piece = board.view_piece_on_square(end_file, end_rank);
+        auto target_piece = board.piece_on_square(end_file, end_rank);
         auto target_index = Board::board_index(end_file, end_rank);
         if(target_piece && ! already_counted[target_index])
         {

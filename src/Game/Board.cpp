@@ -266,7 +266,7 @@ const Piece*& Board::piece_on_square(char file, int rank)
     return board[board_index(file, rank)];
 }
 
-const Piece* Board::view_piece_on_square(char file, int rank) const
+const Piece* Board::piece_on_square(char file, int rank) const
 {
     return board[board_index(file, rank)];
 }
@@ -420,7 +420,7 @@ Game_Result Board::submit_move(const Move& move)
                 continue;
             }
 
-            auto piece = view_piece_on_square(file_origin, rank_origin);
+            auto piece = piece_on_square(file_origin, rank_origin);
             auto pawn = get_pawn(whose_turn());
             if(piece == pawn &&
                is_legal(file_origin, rank_origin, en_passant_target.file, en_passant_target.rank))
@@ -582,7 +582,7 @@ const Move& Board::get_move(const std::string& move, char promote) const
     {
         for(int rank = rank_search_start; rank <= rank_search_end; ++rank)
         {
-            auto piece = view_piece_on_square(file, rank);
+            auto piece = piece_on_square(file, rank);
             if(piece &&
                piece->pgn_symbol() == piece_symbol &&
                is_legal(file, rank, ending_file, ending_rank))
@@ -687,7 +687,7 @@ void Board::ascii_draw(Color perspective) const
             for(char file = file_start; d_file*(file_end - file) >= 0; file += d_file)
             {
                 std::string piece_symbol;
-                auto piece = view_piece_on_square(file, rank);
+                auto piece = piece_on_square(file, rank);
                 char dark_square_fill = ':';
                 char filler = (square_color(file, rank) == WHITE ? ' ' : dark_square_fill);
                 if(piece)
@@ -763,7 +763,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
                     break;
                 }
 
-                auto piece = view_piece_on_square(attacking_file, attacking_rank);
+                auto piece = piece_on_square(attacking_file, attacking_rank);
                 if( ! piece)
                 {
                     continue;
@@ -826,7 +826,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
                     continue;
                 }
 
-                if(view_piece_on_square(attacking_file, attacking_rank) == knight)
+                if(piece_on_square(attacking_file, attacking_rank) == knight)
                 {
                     return false;
                 }
@@ -1004,7 +1004,7 @@ std::string Board::board_status() const // for 3-fold rep count
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            auto piece = view_piece_on_square(file, rank);
+            auto piece = piece_on_square(file, rank);
             if( ! piece)
             {
                 ++empty_count;
@@ -1111,9 +1111,7 @@ bool Board::piece_has_moved(char file, int rank) const
 Square Board::find_king(Color color) const
 {
     auto location = king_location[color];
-    assert(view_piece_on_square(location.file, location.rank));
-    assert(view_piece_on_square(location.file, location.rank)->color() == color);
-    assert(view_piece_on_square(location.file, location.rank)->is_king());
+    assert(piece_on_square(location.file, location.rank) == get_king(color));
     return location;
 }
 
@@ -1127,7 +1125,7 @@ void Board::recreate_move_caches()
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = view_piece_on_square(file, rank);
+            auto piece = piece_on_square(file, rank);
             if(piece && piece->color() == whose_turn())
             {
                 for(const auto& move : piece->get_move_list(file, rank))
@@ -1135,7 +1133,7 @@ void Board::recreate_move_caches()
                     if(move->is_legal(*this))
                     {
                         legal_moves_cache.push_back(move);
-                        if(view_piece_on_square(move->end_file(), move->end_rank()) ||
+                        if(piece_on_square(move->end_file(), move->end_rank()) ||
                            move->is_en_passant())
                         {
                             capturing_move_available = true;
@@ -1168,7 +1166,7 @@ bool Board::enough_material_to_checkmate() const
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = view_piece_on_square(file, rank);
+            auto piece = piece_on_square(file, rank);
             if( ! piece || piece->is_king())
             {
                 continue;

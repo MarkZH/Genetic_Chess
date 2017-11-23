@@ -21,7 +21,7 @@ double Total_Force_Gene::score_board(const Board& board) const
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = board.view_piece_on_square(file, rank);
+            auto piece = board.piece_on_square(file, rank);
             if(piece && piece->color() == board.whose_turn())
             {
                 score += piece_strength_source->piece_value(piece);
