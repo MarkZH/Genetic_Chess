@@ -98,13 +98,13 @@ bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& 
     // specifies how often this should happen, with 0 being never and 1 being always
     // (see the recalculate_exponent() function for the math).
 
-    auto minimum_time_to_recurse = board.legal_moves().size()/positions_per_second;
-    auto base = time_allotted/minimum_time_to_recurse;
-
-    if(base <= 0.0)
+    if(time_allotted <= 0)
     {
         return false;
     }
+
+    auto minimum_time_to_recurse = board.legal_moves().size()/positions_per_second;
+    auto base = time_allotted/minimum_time_to_recurse;
 
     if(base >= 1.0)
     {
