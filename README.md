@@ -39,3 +39,4 @@ the \*.cpp and \*.h files herein should work fine.
 5. About once a day, pause the gene pool with `Ctrl-C` and run
    `analysis/run_all_plots.sh pool.txt` to generate plots and other data
    showing the evolution and behavior of the specimens.
+   * This script requires the program `octave` to run.
