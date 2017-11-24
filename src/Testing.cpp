@@ -280,6 +280,10 @@ void run_tests()
     castling_board.submit_move(castling_board.get_move("Nc6"));
     tests_passed &= castling_possible_gene.test(castling_board, 1.0);
 
+    auto freedom_to_move_gene = Freedom_To_Move_Gene();
+    auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
+    auto freedom_to_move_score = 32.0/20.0;
+    tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, freedom_to_move_score);
 
     // String utilities
     std::string original = "   a    #     b";
