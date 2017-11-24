@@ -8,6 +8,7 @@
 #include <string>
 #include <cctype>
 #include <iostream>
+#include <cmath>
 
 namespace String
 {
@@ -208,6 +209,9 @@ double Math::average_moves_left(double mean_moves, double width, size_t moves_so
     //
     // B = Sum(x = moves_so_far + 1 to infinity) P(x) = renormalization of P(x) for a
     //                                                  truncated range
+    //
+    // The calculations below for A and B use integrals on continuous functions as a
+    // faster approximation.
 
     auto M = std::log(mean_moves);
     auto S = width;
