@@ -55,6 +55,28 @@ void Gene::read_from(std::istream& is)
     load_properties();
 }
 
+void Gene::read_from(const std::string& file_name)
+{
+    auto ifs = std::ifstream(file_name);
+    std::string line;
+
+    while(std::getline(ifs, line))
+    {
+        if(String::starts_with(line, "Name: "))
+        {
+            auto gene_name = String::trim_outer_whitespace(String::split(line, ":", 1)[1]);
+            if(gene_name == name())
+            {
+                read_from(ifs);
+                return;
+            }
+        }
+    }
+
+    throw std::runtime_error(name() + " not found in " + file_name);
+}
+
+
 void Gene::throw_on_invalid_line(const std::string& line, const std::string& reason) const
 {
     throw std::runtime_error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
@@ -91,6 +113,18 @@ void Gene::print(std::ostream& os) const
 
 void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 {
+}
+
+bool Gene::test(const Board& board, double expected_score) const
+{
+    auto result = score_board(board);
+    if(std::abs(result - expected_score) > 1e-6)
+    {
+        std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';
+        return false;
+    }
+
+    return true;
 }
 
 void Gene::make_priority_non_negative()

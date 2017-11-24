@@ -14,6 +14,16 @@
 #include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
 
+#include "Genes/Castling_Possible_Gene.h"
+#include "Genes/Freedom_To_Move_Gene.h"
+#include "Genes/King_Confinement_Gene.h"
+#include "Genes/King_Protection_Gene.h"
+#include "Genes/Opponent_Pieces_Targeted_Gene.h"
+#include "Genes/Pawn_Advancement_Gene.h"
+#include "Genes/Piece_Strength_Gene.h"
+#include "Genes/Sphere_of_Influence_Gene.h"
+#include "Genes/Total_Force_Gene.h"
+
 #include "Utility.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
@@ -252,6 +262,27 @@ void run_tests()
         remove(rewrite_file_name);
     }
     std::cout << "Done." << std::endl;
+
+
+    // Test individual board-scoring genes
+    auto test_genes_file_name = "test_genome.txt";
+
+    auto castling_possible_gene = Castling_Possible_Gene();
+    castling_possible_gene.read_from(test_genes_file_name);
+    auto castling_board = Board("rn2k4/8/8/8/8/8/8/R3K2R w KQq - 0 1");
+    auto white_castling_score = 1.0; // maximum score with and without actually castling
+    tests_passed &= castling_possible_gene.test(castling_board, white_castling_score);
+
+    castling_board.submit_move(castling_board.get_move("O-O"));
+    auto black_castling_score = 0.2*(3.0/4.0); // castling possible
+    tests_passed &= castling_possible_gene.test(castling_board, black_castling_score);
+
+    castling_board.submit_move(castling_board.get_move("Nc6"));
+    tests_passed &= castling_possible_gene.test(castling_board, white_castling_score);
+
+
+    auto piece_strength_gene = Piece_Strength_Gene();
+    piece_strength_gene.read_from(test_genes_file_name);
 
 
     // String utilities

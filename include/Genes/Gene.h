@@ -16,6 +16,7 @@ class Gene
         virtual ~Gene() = default;
 
         void read_from(std::istream& is);
+        void read_from(const std::string& file_name);
 
         void mutate();
         double evaluate(const Board& board) const;
@@ -25,6 +26,8 @@ class Gene
         void print(std::ostream& os) const;
 
         virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg);
+
+        bool test(const Board& board, double expected_score) const;
 
     protected:
         mutable std::map<std::string, double> properties; // used to simplify reading/writing from/to files

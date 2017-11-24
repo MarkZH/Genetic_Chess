@@ -79,6 +79,7 @@ double Castling_Possible_Gene::score_board(const Board& board) const
             auto preference = (rook_file == 'h' ? kingside_preference : 1.0 - kingside_preference);
             int files_to_clear = std::abs(rook_file - king_start_file) - 1;
             double score_per_clear_square = preference/(files_to_clear + 1);
+            score += score_per_clear_square; // score for castling possible even if all between squares occupied
 
             // Add score for clearing pieces between king and rook
             auto first_file = std::min(king_start_file, rook_file) + 1;
