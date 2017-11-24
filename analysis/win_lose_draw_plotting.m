@@ -152,9 +152,9 @@ end
 
 
 % Don't plot top 0.1% of longest games to make trends easier to see
+max_game_count = floor(0.999*length(moves_in_game));
 [counts, bins] = hist(moves_in_game, (0 : max(moves_in_game)));
 total_counts = 0;
-max_game_count = floor(0.999*length(moves_in_game));
 for index = 1 : length(counts)
   total_counts = total_counts + counts(index);
   if total_counts > max_game_count
