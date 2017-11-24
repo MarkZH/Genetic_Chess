@@ -7,7 +7,7 @@ game_marks_file="$3"
 if [[ -z "$pool_file" ]]
 then
     echo "Specify a gene pool file to analyze."
-    exit
+    exit 1
 fi
 
 game_file="${pool_file}_games.txt"
