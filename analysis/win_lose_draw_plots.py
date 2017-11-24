@@ -9,6 +9,9 @@ def main(files):
         black_wins = 0
         draws = 0
         number_of_moves = 0
+        time = 0
+        white_time_left = 0
+        black_time_left = 0
         with open(file_name) as f, open(file_name + '_plots.txt', 'w') as w:
             w.write('\t'.join(['Game', \
                                'White Wins', \
@@ -27,7 +30,7 @@ def main(files):
             #   5 = Time forfeit (black win)
             #   6 = Insufficient material
             #   7 = No legal moves
-            time_section = False
+            game_section = False
             for line in f:
                 if line.startswith('[Result'):
                     game += 1
@@ -53,16 +56,15 @@ def main(files):
                     else: # Stalemate
                         result_type = 7
                 elif '. ' in line:
+                    game_section = True
                     number_of_moves = line.split('. ')[0]
                 elif 'TimeControl' in line:
                     time = line.split('"')[1]
                 elif 'White:' in line:
                     white_time_left = line.split()[-2]
-                    time_section = True
                 elif 'Black:' in line:
                     black_time_left = line.split()[-2]
-                    time_section = True
-                elif time_section and not line.strip():
+                elif game_section and not line.strip():
                     w.write('\t'.join(str(x) for x in [game,
                                                        white_wins,
                                                        black_wins,
@@ -72,7 +74,7 @@ def main(files):
                                                        white_time_left,
                                                        black_time_left,
                                                        number_of_moves]) + '\n')
-                    time_section = False
+                    game_section = False
                     number_of_moves = 0
 
 if __name__ == '__main__':

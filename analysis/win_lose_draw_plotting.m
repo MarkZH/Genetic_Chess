@@ -122,32 +122,33 @@ end
 
 print([raw_data '_game_result_type_frequencies.png']);
 
+if max(game_time) > 0
+  figure('Position', [0, 0, 1200, 1000]);
+  hold all;
+  white_time_left(white_time_left < 0) = -0.05*max(white_time_left);
+  black_time_left(black_time_left < 0) = -0.05*max(white_time_left);
+  scatter(game_number, white_time_left, 'k');
+  scatter(game_number, black_time_left, 'k');
+  ylim(max(white_time_left)*[-0.10, 1.05]);
+  xlabel('Game number');
+  ylabel('Time left on clock');
+  title('Time left on clock at end of game')
 
-figure('Position', [0, 0, 1200, 1000]);
-hold all;
-white_time_left(white_time_left < 0) = -0.05*max(white_time_left);
-black_time_left(black_time_left < 0) = -0.05*max(white_time_left);
-scatter(game_number, white_time_left, 'k');
-scatter(game_number, black_time_left, 'k');
-ylim(max(white_time_left)*[-0.10, 1.05]);
-xlabel('Game number');
-ylabel('Time left on clock');
-title('Time left on clock at end of game')
+  for n = game_number_marks
+    plot(n*[1 1], ylim);
+  end
 
-for n = game_number_marks
-  plot(n*[1 1], ylim);
+  print([raw_data '_game_time_left.png']);
+
+  figure('Position', [0, 0, 1200, 1000]);
+  all_time_left = [black_time_left; white_time_left]./[game_time; game_time];
+  all_time_left(all_time_left < 0) = -.05;
+  hist(all_time_left, 100);
+  xlabel('Fraction of time left on clock');
+  ylabel(['Counts (total = ' num2str(number_of_games) ')']);
+  title('Time left on clock at end of game')
+  print([raw_data '_game_time_left_histogram.png']);
 end
-
-print([raw_data '_game_time_left.png']);
-
-figure('Position', [0, 0, 1200, 1000]);
-all_time_left = [black_time_left; white_time_left]./[game_time; game_time];
-all_time_left(all_time_left < 0) = -.05;
-hist(all_time_left, 100);
-xlabel('Fraction of time left on clock');
-ylabel(['Counts (total = ' num2str(number_of_games) ')']);
-title('Time left on clock at end of game')
-print([raw_data '_game_time_left_histogram.png']);
 
 
 % Don't plot top 0.1% of longest games to make trends easier to see
