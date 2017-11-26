@@ -25,14 +25,21 @@ This work is a program for evolving chess-playing AIs.  By pitting a population 
 
 
 \section{Building}
-Though there is nothing OS-specific about the \cpp{} code, the Makefile is written for a Linux system. The code can be compiled with any \cpp{} compiler via
+There is nothing OS-specific about the \cpp{} code, so the code can be compiled with any \cpp{} compiler via
 \begin{quote}
-	\code{<compiler> -I include <all *.cpp files>}
+	\code{<compiler> -I include -D NDEBUG <all *.cpp files>}
 \end{quote}
-where \code{-I} indicates the option to specify the base directory of the header files.
+where \code{-I} indicates the option to specify the base directory of the header files and \code{-D NDEBUG} instructs the compiler to skip tests and assertions. For testing and debugging, use
+\begin{quote}
+	\code{<compiler> -I include -D DEBUG <all *.cpp files>}
+\end{quote}
+instead.
 
 \subsection{Linux}
-Run \code{make} to create release and debug executables in a \code{bin/} subfolder that will be created if it does not already exist. If, in the course of working on this project, new files are created or the \code{\#include} files are changed within a file, run \code{python create\_gcc\_Makefile.py} or \code{python create\_clang\_Makefile.py} to regenerate the Makefile. These python script assumes all \code{*.cpp} files in the current directory and all subfolders are part of the project and need compiling.
+Run \code{make} to create release and debug executables in a \code{bin/} subfolder that will be created if it does not already exist. If, in the course of working on this project, new files are created or the \code{\#include} files are changed within a file, run \code{python create\_gcc\_Makefile.py} or \code{python create\_clang\_Makefile.py} to regenerate the Makefile. These python script assumes all \code{*.cpp} files in the current directory and all subfolders are part of the project and need compiling. Then, run \code{make} to create both release and debug builds, \code{make release} or \code{make debug} to only make one sort of build, or \code{make clean} to delete all build items (object files and executables).
+
+\subsection{Windows}
+The \code{.sln} and \code{.vcxproj} files are project files for Visual Studio. These will load all source files for one-click compiling.
 
 
 \section{Running}
