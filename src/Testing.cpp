@@ -285,6 +285,12 @@ void run_tests()
     auto freedom_to_move_score = 32.0/20.0;
     tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, freedom_to_move_score);
 
+    auto king_confinement_gene = King_Confinement_Gene();
+    auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+    auto king_confinement_score = (1.0 + 1.0/2.0 + 1.0/3.0)/king_confinement_gene.get_maximum_score();
+    tests_passed &= king_confinement_gene.test(king_confinement_board, king_confinement_score);
+
+
     // String utilities
     std::string original = "   a    #     b";
     std::string expected = "a";

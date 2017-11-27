@@ -112,3 +112,8 @@ double King_Confinement_Gene::score_board(const Board& board) const
 
     return score/maximum_score; // normalized so max is 1
 }
+
+double King_Confinement_Gene::get_maximum_score() const
+{
+    return maximum_score;
+}
