@@ -290,6 +290,13 @@ void run_tests()
     auto king_confinement_score = (1.0 + 1.0/2.0 + 1.0/3.0)/king_confinement_gene.get_maximum_score();
     tests_passed &= king_confinement_gene.test(king_confinement_board, king_confinement_score);
 
+    auto king_protection_gene = King_Protection_Gene();
+    auto king_protection_board = king_confinement_board;
+    auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
+    auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
+    auto king_protection_score = double(max_square_count - square_count)/max_square_count;
+    tests_passed &= king_protection_gene.test(king_protection_board, king_protection_score);
+
 
     // String utilities
     std::string original = "   a    #     b";
