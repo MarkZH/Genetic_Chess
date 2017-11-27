@@ -305,6 +305,11 @@ void run_tests()
     auto opponent_pieces_targeted_score = double(16 + 8 + 4 + 2 + 1)/(16 + 2*8 + 2*4 + 2*2 + 8*1);
     tests_passed &= opponent_pieces_targeted_gene.test(opponent_pieces_targeted_board, opponent_pieces_targeted_score);
 
+    auto pawn_advancement_gene = Pawn_Advancement_Gene();
+    auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
+    auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*6);
+    pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
+
 
     // String utilities
     std::string original = "   a    #     b";
