@@ -311,6 +311,9 @@ void run_tests()
     auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*6);
     pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
 
+    auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
+    tests_passed &= total_force_gene.test(Board(), 1.0);
+
 
     // String utilities
     std::string original = "   a    #     b";
