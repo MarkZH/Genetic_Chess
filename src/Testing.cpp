@@ -297,6 +297,14 @@ void run_tests()
     auto king_protection_score = double(max_square_count - square_count)/max_square_count;
     tests_passed &= king_protection_gene.test(king_protection_board, king_protection_score);
 
+    auto piece_strength_gene = Piece_Strength_Gene();
+    piece_strength_gene.read_from(test_genes_file_name);
+
+    auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
+    auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
+    auto opponent_pieces_targeted_score = double(16 + 8 + 4 + 2 + 1)/(16 + 2*8 + 2*4 + 2*2 + 8*1);
+    tests_passed &= opponent_pieces_targeted_gene.test(opponent_pieces_targeted_board, opponent_pieces_targeted_score);
+
 
     // String utilities
     std::string original = "   a    #     b";
