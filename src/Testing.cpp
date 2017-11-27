@@ -299,10 +299,11 @@ void run_tests()
 
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
+    auto piece_strength_normalizer = double(16 + 2*8 + 2*4 + 2*2 + 8*1);
 
     auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
     auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
-    auto opponent_pieces_targeted_score = double(16 + 8 + 4 + 2 + 1)/(16 + 2*8 + 2*4 + 2*2 + 8*1);
+    auto opponent_pieces_targeted_score = (16 + 8 + 4 + 2 + 1)/piece_strength_normalizer;
     tests_passed &= opponent_pieces_targeted_gene.test(opponent_pieces_targeted_board, opponent_pieces_targeted_score);
 
     auto pawn_advancement_gene = Pawn_Advancement_Gene();
