@@ -311,6 +311,37 @@ void run_tests()
     auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*6);
     pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
 
+    auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
+    sphere_of_influence_gene.read_from(test_genes_file_name);
+    auto sphere_of_influence_board = Board("k7/8/8/8/1R3p2/8/8/K7 w - - 0 1");
+    auto sphere_of_influence_score
+        = (4.0 * (1 + (2.0/(1 + 1.0))))  // b8
+        + (4.0 * (1 + (2.0/(1 + 1.0))))  // b7
+        + (4.0 * (1 + (2.0/(1 + 2.0))))  // b6
+        + (4.0 * (1 + (2.0/(1 + 3.0))))  // b5
+        + (4.0 * (1 + (2.0/(1 + 5.0))))  // b3
+        + (4.0 * (1 + (2.0/(1 + 6.0))))  // b2
+        + (4.0 * (1 + (2.0/(1 + 7.0))))  // b1
+        + (4.0 * (1 + (2.0/(1 + 4.0))))  // a4
+        + (4.0 * (1 + (2.0/(1 + 6.0))))  // a2
+        + (4.0 * (1 + (2.0/(1 + 4.0))))  // c4
+        + (4.0 * (1 + (2.0/(1 + 4.0))))  // d4
+        + (4.0 * (1 + (2.0/(1 + 4.0))))  // e4
+        + (4.0 * (1 + (2.0/(1 + 5.0))))  // f4
+        + (1.0 * (1 + (2.0/(1 + 6.0))))  // g4
+        + (1.0 * (1 + (2.0/(1 + 7.0)))); // h4
+    sphere_of_influence_score /= 64;
+    // Setup       Square score     King distance (from black king)
+    // k.......    k4......         k1......
+    // ........    .4......         .1......
+    // ........    .4......         .2......
+    // ........    .4......         .3......
+    // .R...p..    4R444411         4R444567
+    // ........    .4......         .5......
+    // ........    44......         66......
+    // K.......    K4......         K7......
+    sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
+
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
     tests_passed &= total_force_gene.test(Board(), 1.0);
 
