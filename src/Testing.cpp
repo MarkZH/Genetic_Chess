@@ -270,11 +270,11 @@ void run_tests()
     auto castling_possible_gene = Castling_Possible_Gene();
     castling_possible_gene.read_from(test_genes_file_name);
     auto castling_board = Board("rn2k4/8/8/8/8/8/8/R3K2R w KQq - 0 1");
-    auto white_castling_score = 0.8*(2.0/3.0) + 0.2*(3.0/4.0); // maximum score with and without actually castling
+    auto white_castling_score = 0.8*(3.0/4.0) + 0.2*(4.0/5.0); // maximum score with and without actually castling
     tests_passed &= castling_possible_gene.test(castling_board, white_castling_score);
 
     castling_board.submit_move(castling_board.get_move("O-O"));
-    auto black_castling_score = 0.2*(2.0/4.0); // castling possible
+    auto black_castling_score = 0.2*(3.0/5.0); // castling possible
     tests_passed &= castling_possible_gene.test(castling_board, black_castling_score);
 
     castling_board.submit_move(castling_board.get_move("Nc6"));
