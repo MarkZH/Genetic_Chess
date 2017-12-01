@@ -68,14 +68,11 @@ double Castling_Possible_Gene::score_board(const Board& board) const
 
     // King has not moved, check rooks and intervening pieces
     auto score = 0.0;
-    bool both_rooks_moved = true;
 
     for(auto rook_file : {'a', 'h'})
     {
         if( ! board.piece_has_moved(rook_file, base_rank))
         {
-            both_rooks_moved = false;
-
             auto preference = (rook_file == 'h' ? kingside_preference : 1.0 - kingside_preference);
             int files_to_clear = std::abs(rook_file - king_start_file) - 1;
             double score_per_clear_square = preference/(files_to_clear + 1);
@@ -91,11 +88,6 @@ double Castling_Possible_Gene::score_board(const Board& board) const
                 }
             }
         }
-    }
-
-    if(both_rooks_moved)
-    {
-        return 0.0;
     }
 
     return score;
