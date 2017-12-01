@@ -58,10 +58,7 @@ bool Move::is_legal(const Board& board) const
     }
 
     // Check that there are no intervening pieces for straight-line moves
-    // if(...) conditional excludes checking knight moves
-    if(file_change() == 0
-            || rank_change() == 0
-            || abs(file_change()) == abs(rank_change()))
+    if( ! moving_piece->is_knight())
     {
         int max_move = std::max(abs(file_change()), abs(rank_change()));
         int file_step = file_change()/max_move;
