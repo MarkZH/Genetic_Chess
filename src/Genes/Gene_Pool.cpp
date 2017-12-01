@@ -107,10 +107,10 @@ void gene_pool(const std::string& config_file = "")
     }
 
     std::string game_record_file = genome_file_name +  "_games.txt";
+    if(auto ifs = std::ifstream(game_record_file))
     {
         // Use game time from last run of this gene pool
         std::cout << "Searching " << game_record_file << " for last game time ..." << std::endl;
-        std::ifstream ifs(game_record_file);
         std::string line;
         std::string time_line;
         std::string previous_time_line;
