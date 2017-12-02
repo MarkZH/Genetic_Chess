@@ -1,9 +1,9 @@
 #!/usr/bin/bash
 
 pool_file="$1"
-id_marks_file="$2"
-game_marks_file="$3"
-opening_moves="$4"
+opening_moves="$2"
+id_marks_file="$3"
+game_marks_file="$4"
 
 if [[ -z "$pool_file" ]]
 then
