@@ -343,7 +343,7 @@ void run_tests()
     sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    tests_passed &= total_force_gene.test(Board(), 1.0);
+    tests_passed &= total_force_gene.test(Board(), 1.0 + 32/piece_strength_normalizer);
 
 
     // String utilities

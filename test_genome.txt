@@ -6,6 +6,7 @@ B: 2
 N: 4
 R: 8
 Q: 16
+K: 32
 
 Name: Look Ahead Gene
 Capturing Speculation Constant: 0.25
