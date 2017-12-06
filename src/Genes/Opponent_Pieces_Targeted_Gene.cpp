@@ -30,7 +30,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board) const
         auto end_rank = move->end_rank();
         if(move->is_en_passant())
         {
-            end_rank += (board.whose_turn() == WHITE ? -1 : 1);
+            end_rank -= move->rank_change();
         }
         auto target_piece = board.piece_on_square(end_file, end_rank);
         auto target_index = Board::board_index(end_file, end_rank);
