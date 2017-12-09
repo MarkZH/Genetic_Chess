@@ -153,7 +153,7 @@ end
 
 % Don't plot top 0.1% of longest games to make trends easier to see
 max_game_count = floor(0.999*length(moves_in_game));
-[counts, bins] = hist(moves_in_game, (0 : max(moves_in_game)));
+[counts, bins] = hist(moves_in_game, (1 : max(moves_in_game)));
 total_counts = 0;
 for index = 1 : length(counts)
   total_counts = total_counts + counts(index);
@@ -190,15 +190,13 @@ mode_moves = mode(moves_in_game);
 std_dev = std(moves_in_game);
 
 % Log-normal fit
-minimum_game_length = 1;
-valid = (bins >= minimum_game_length); % Exclude shortest games
-mean_log = sum(log(bins(valid)).*counts(valid))/sum(counts(valid));
-std_log = sqrt(sum(((log(bins(valid)) - mean_log).^2).*counts(valid))/sum(counts(valid)));
+mean_log = sum(log(bins).*counts)/sum(counts);
+std_log = sqrt(sum(((log(bins) - mean_log).^2).*counts)/sum(counts));
 
 fit = sum(counts)*exp(-.5*((log(bins) - mean_log)/std_log).^2)./(bins*std_log*sqrt(2*pi));
 plot(bins, fit, 'linewidth', 3);
 
-legend('Histogram', ['Log-Normal distribution (N \geq ' num2str(minimum_game_length) ')']);
+legend('Histogram', 'Log-Normal distribution');
 
 stats = {['Mean = ' num2str(mean_moves)], ...
          ['Median = ' num2str(median(moves_in_game))], ...
