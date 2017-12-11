@@ -190,10 +190,10 @@ mode_moves = mode(moves_in_game);
 std_dev = std(moves_in_game);
 
 % Log-normal fit
-mean_log = sum(log(bins).*counts)/sum(counts);
-std_log = sqrt(sum(((log(bins) - mean_log).^2).*counts)/sum(counts));
+mean_log = sum(log(bins).*counts)/number_of_games;
+std_log = sqrt(sum(((log(bins) - mean_log).^2).*counts)/number_of_games);
 
-fit = sum(counts)*exp(-.5*((log(bins) - mean_log)/std_log).^2)./(bins*std_log*sqrt(2*pi));
+fit = number_of_games*exp(-.5*((log(bins) - mean_log)/std_log).^2)./(bins*std_log*sqrt(2*pi));
 plot(bins, fit, 'linewidth', 3);
 
 legend('Histogram', 'Log-Normal distribution');
