@@ -129,6 +129,7 @@ void gene_pool(const std::string& config_file = "")
         if( ! time_line.empty())
         {
             game_time = std::stod(String::split(time_line, "\"").at(1));
+            game_time = Math::clamp(game_time, minimum_game_time, maximum_game_time);
         }
 
         double previous_game_time = game_time;
