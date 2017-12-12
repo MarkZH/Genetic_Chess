@@ -117,6 +117,21 @@ bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& 
 
 void Look_Ahead_Gene::recalculate_exponent()
 {
+    // constant = 0.0 ==> exponent = infinity
+    // constant = 0.5 ==> exponent = 1
+    // constant = 1.0 ==> exponent = 0
+    //
+    // Additionally, the function is symmetric about constant = 0.5:
+    //    constant --> 1 - constant ==> exponent --> 1/exponent
+    //
+    // This results in a value of the std::pow() expression in enough_time_to_recurse()
+    //
+    //    value = (0 < base < 1)^exponent
+    //
+    // Large exponents result in values near zero, which means recursion with little time
+    // has little probability. Small exponents result in values near 1, so recursion with
+    // little time is more likely.
+
     if(speculation_constant > 0.0)
     {
         speculation_exponent = (1.0 - speculation_constant)/speculation_constant;
@@ -132,22 +147,6 @@ void Look_Ahead_Gene::recalculate_exponent()
     }
     else
     {
-        capturing_speculation_exponent = Math::infinity;
+        capturing_speculation_exponent = std::numeric_limits<double>::infinity();
     }
-
-
-    // constant = 0.0 ==> exponent = infinity
-    // constant = 0.5 ==> exponent = 1
-    // constant = 1.0 ==> exponent = 0
-    //
-    // Additionally, the function is symmetric about constant = 0.5:
-    //    constant --> 1 - constant ==> exponent --> 1/exponent
-    //
-    // This results in a value of the std::pow() expression in enough_time_to_recurse()
-    //
-    //    value = (0 < base < 1)^exponent
-    //
-    // Large exponents result in values near zero, which means recursion with little time
-    // has little probability. Small exponents result in values near 1, so recursion with
-    // little time is more likely.
 }
