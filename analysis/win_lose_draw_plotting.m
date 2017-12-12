@@ -133,7 +133,7 @@ if max(game_time) > 0
     scatter(game_number, black_time_left, 'k');
     ylim(max(white_time_left)*[-0.10, 1.05]);
     xlabel('Game number');
-    ylabel('Time left on clock');
+    ylabel('Time (sec)');
     title('Time left on clock at end of game')
 
     for index = 1:length(game_number_marks)
