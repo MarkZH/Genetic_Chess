@@ -92,7 +92,7 @@ for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
 compiler = 'g++'
 options_list = dict()
 options_list['debug'] = ["-g", "-DDEBUG"]
-options_list['release'] = ["-s", "-O3", "-DNDEBUG"]
+options_list['release'] = ["-s", "-Ofast", "-DNDEBUG"]
 
 base_options = [
 	"-Wnon-virtual-dtor", 
