@@ -43,8 +43,8 @@ figure('Position', [0, 0, 1200, 1000]);
 hold all;
 for col = 1 : size(data.data, 2)
     plot(cumsum(data.data(:, col)),  ...
-    'LineWidth', 3, ...
-    'displayname', data.colheaders{col});
+         'LineWidth', 3, ...
+         'displayname', data.colheaders{col});
 end
 
 for index = 1:length(game_marks)
