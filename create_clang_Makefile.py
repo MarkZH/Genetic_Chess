@@ -118,7 +118,7 @@ base_options = [
 base_linker_options = ["-pthread", "-fexceptions"]
 
 options_list = dict()
-options_list['debug'] = ["-g", "-DDEBUG"]
+options_list['debug'] = ["-g", "-Og", "-DDEBUG"]
 options_list['release'] = ["-Ofast", "-DNDEBUG"]
 
 obj_dir_written = []
