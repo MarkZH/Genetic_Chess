@@ -26,7 +26,9 @@ end
 raw_data = fullfile(directory, filename);
 
 if game_marks_file != 0
-    game_marks = importdata(fullfile(directory, game_marks_file))';
+    data = importdata(fullfile(directory, game_marks_file), ';', 1);
+    game_marks = data.data(:,2)';
+    game_notes = data.textdata(2:end);
 else
     game_marks = [];
 end
@@ -45,8 +47,8 @@ for col = 1 : size(data.data, 2)
     'displayname', data.colheaders{col});
 end
 
-for mark = game_marks
-    plot([mark mark], ylim);
+for index = 1:length(game_marks)
+    plot(game_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
 end
 
 xlabel('Games played');

@@ -11,7 +11,9 @@ if isOctave
         if length(args) > 1
             marks_file_name = args{2};
             if ~isempty(marks_file_name)
-                id_marks = importdata(marks_file_name)';
+                data = importdata(marks_file_name, ';', 1);
+                id_marks = data.data(:,1)';
+                id_notes = data.textdata(2:end);
             end
         end
     end
@@ -79,24 +81,27 @@ for yi = 2 : length(data.colheaders) - 2
             set(h, 'displayname', 'Still Alive');
         end
     end
-    leg = legend('show');
-    set(leg, 'location', 'southoutside');
-    set(leg, 'orientation', 'horizontal');
-    legend left;
     xlabel(xaxis, 'FontSize', 18);
     title(name, 'FontSize', 22);
     set(gca, 'FontSize', 14);
+
     plot(xlim, [0 0], 'k'); % X-axis
+
+    for index = 1:length(id_marks)
+        plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
+    end
+
+    leg = legend('show');
+    set(leg, 'location', 'southoutside');
+    set(leg, 'orientation', 'horizontal');
+    set(leg, 'fontsize', 10);
+    legend left;
 
     conv_window = 100;
     smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
     conv_margin = floor(conv_window/2);
     x_axis = id_list(conv_margin : end - conv_margin);
     plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
-
-    for n = id_marks
-        plot(n*[1 1], ylim);
-    end
 
     print([gene_pool_filename '_gene_' name '.png']);
 
@@ -142,16 +147,20 @@ for index = 1 : length(special_plots)
     end
 
     figure(special_plots(index));
+
+    plot(xlim, [0 0], 'k'); % X-axis
+
+    for id_index = 1:length(id_marks)
+        plot(id_marks(id_index)*[1 1], ylim, 'displayname', id_notes{id_index});
+    end
+
     leg = legend('show');
     set(leg, 'orientation', 'horizontal');
     set(leg, 'location', 'southoutside');
+    set(leg, 'fontsize', 10);
     legend left;
-    plot(xlim, [0 0], 'k'); % X-axis
-    xlabel('ID');
 
-    for n = id_marks
-        plot(n*[1 1], ylim);
-    end
+    xlabel('ID');
 
     print([gene_pool_filename file_name_suffixes{index}]);
 end

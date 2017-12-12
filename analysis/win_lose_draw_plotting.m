@@ -14,7 +14,9 @@ if isOctave
         if length(args) > 1
             marks_file_name = args{2};
             if ~isempty(marks_file_name)
-                game_number_marks = importdata(marks_file_name)';
+                data = importdata(marks_file_name);
+                game_number_marks = data.data(:,2)';
+                game_notes = data.textdata(2:end);
             end
         end
     end
@@ -59,8 +61,8 @@ data.colheaders{4}, ...
 'location', 'northeast');
 title('Winning Sides');
 
-for n = game_number_marks
-    plot(n*[1 1], ylim);
+for index = 1:length(game_number_marks)
+    plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
 end
 
 print([raw_data '_game_outcomes.png']);
@@ -116,8 +118,8 @@ legend('White checkmate', 'Black checkmate', ...
 'location', 'southwest');
 title('Type of Endgame');
 
-for n = game_number_marks
-    plot(n*[1 1], ylim);
+for index = 1:length(game_number_marks)
+    plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
 end
 
 print([raw_data '_game_result_type_frequencies.png']);
@@ -134,9 +136,11 @@ if max(game_time) > 0
     ylabel('Time left on clock');
     title('Time left on clock at end of game')
 
-    for n = game_number_marks
-        plot(n*[1 1], ylim);
+    for index = 1:length(game_number_marks)
+        plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
     end
+
+    legend('location', 'southoutside', 'orientation', 'horizontal');
 
     print([raw_data '_game_time_left.png']);
 
@@ -171,9 +175,11 @@ ylabel('Moves in Game');
 title('Number of moves in game')
 ylim([0, max_game_length_display]);
 
-for n = game_number_marks
-    plot(n*[1 1], ylim);
+for index = 1:length(game_number_marks)
+    plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
 end
+
+legend('location', 'southoutside', 'orientation', 'horizontal');
 
 print([raw_data '_moves_in_game.png']);
 
