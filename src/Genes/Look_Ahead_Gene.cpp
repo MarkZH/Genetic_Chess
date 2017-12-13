@@ -138,7 +138,7 @@ void Look_Ahead_Gene::recalculate_exponent()
     }
     else
     {
-        speculation_exponent = Math::infinity;
+        speculation_exponent = std::numeric_limits<double>::infinity();
     }
 
     if(capturing_speculation_constant > 0.0)
