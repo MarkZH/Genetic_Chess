@@ -3,15 +3,6 @@
 #include <cmath>
 #include <algorithm>
 
-bool Square::operator<(const Square& other) const
-{
-    if(file == other.file)
-    {
-        return rank < other.rank;
-    }
-    return file < other.file;
-}
-
 Square::operator bool() const
 {
     return file != '\0' && rank != 0;
