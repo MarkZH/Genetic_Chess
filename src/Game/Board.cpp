@@ -1369,7 +1369,7 @@ uint64_t Board::get_square_hash(char file, int rank) const
         return 0; // do nothing for squares outside of board (e.g., clear_en_passant_target()).
     }
 
-    auto piece = view_piece_on_square(file, rank);
+    auto piece = piece_on_square(file, rank);
     auto index = Board::board_index(file, rank);
     auto result = square_hash_values[index].at(piece);
     if(piece && piece->is_rook()
