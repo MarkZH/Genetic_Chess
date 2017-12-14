@@ -75,7 +75,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board) const
             {
                 if(board.is_en_passant_targetable(final_file, final_rank))
                 {
-                    final_rank += (board.whose_turn() == WHITE ? -1 : 1);
+                    final_rank -= move->rank_change();
                 }
                 else
                 {

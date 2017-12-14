@@ -6,7 +6,6 @@ struct Square
     char file;
     int rank;
 
-    bool operator<(const Square& other) const;
     operator bool() const;
 };
 

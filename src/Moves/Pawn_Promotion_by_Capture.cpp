@@ -19,7 +19,7 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const
 {
     assert(starting_rank == (rank_change() == 1 ? 7 : 2));
-    return board.view_piece_on_square(ending_file, ending_rank); // must capture
+    return board.piece_on_square(ending_file, ending_rank); // must capture
 }
 
 bool Pawn_Promotion_by_Capture::can_capture() const

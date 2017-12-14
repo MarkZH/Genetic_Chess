@@ -68,7 +68,7 @@ double King_Confinement_Gene::score_board(const Board& board) const
                                                        square.rank,
                                                        perspective);
 
-        auto piece = board.view_piece_on_square(square.file, square.rank);
+        auto piece = board.piece_on_square(square.file, square.rank);
         bool occupied_by_same = piece &&
                                 piece->color() == perspective &&
                                 ! piece->is_king();
@@ -111,4 +111,9 @@ double King_Confinement_Gene::score_board(const Board& board) const
     }
 
     return score/maximum_score; // normalized so max is 1
+}
+
+double King_Confinement_Gene::get_maximum_score() const
+{
+    return maximum_score;
 }

@@ -8,6 +8,7 @@
 #include <string>
 #include <cctype>
 #include <iostream>
+#include <cmath>
 
 namespace String
 {
@@ -215,6 +216,9 @@ double Math::average_moves_left(double mean_moves, double width, size_t moves_so
     //
     // B = Sum(x = moves_so_far + 1 to infinity) P(x) = renormalization of P(x) for a
     //                                                  truncated range
+    //
+    // The calculations below for A and B use integrals on continuous functions as a
+    // faster approximation.
 
     auto M = std::log(mean_moves);
     auto S = width;
@@ -226,6 +230,17 @@ double Math::average_moves_left(double mean_moves, double width, size_t moves_so
     auto B = 1 + std::erf((M-ln_x)/Sr2);
 
     auto expected_mean = A/B;
+
+    // If moves_so_far is much greater than mean_moves with a small
+    // width in the log-normal distribution, A and B can end up
+    // being zero, resulting in an undefined answer (NaN most likely).
+    // This represents an extremely long game, so expect the game to end
+    // soon.
+    if( ! std::isfinite(expected_mean))
+    {
+        return 1.0;
+    }
+
     return expected_mean - moves_so_far;
 }
 

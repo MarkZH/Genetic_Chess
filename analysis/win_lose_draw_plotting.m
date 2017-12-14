@@ -1,36 +1,38 @@
 warning('off'); % Disable warnings about non-positive data
-                % in loglog plots (turn back on for debugging)
+% in loglog plots (turn back on for debugging)
 
 isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
 
 filename = 0;
 directory = '';
 if isOctave
-  graphics_toolkit("gnuplot");
-  args = argv();
-  if length(args) > 0
-    filename = args{1};
-    game_number_marks = [];
-    if length(args) > 1
-      marks_file_name = args{2};
-      if ~isempty(marks_file_name)
-        game_number_marks = importdata(marks_file_name)';
-      end
+    graphics_toolkit("gnuplot");
+    args = argv();
+    if length(args) > 0
+        filename = args{1};
+        game_number_marks = [];
+        if length(args) > 1
+            marks_file_name = args{2};
+            if ~isempty(marks_file_name)
+                data = importdata(marks_file_name);
+                game_number_marks = data.data(:,2)';
+                game_notes = data.textdata(2:end);
+            end
+        end
     end
-  end
 end
 
 if filename == 0
-  [filename, directory, ~] = uigetfile();
+    [filename, directory, ~] = uigetfile();
 end
 
 if filename == 0
-  return
+    return
 end
 raw_data = fullfile(directory, filename);
 
 if isOctave
-  python('analysis/win_lose_draw_plots.py', ['"' raw_data '"']);
+    python('analysis/win_lose_draw_plots.py', ['"' raw_data '"']);
 end
 
 data = importdata([raw_data, '_plots.txt'], '\t');
@@ -59,8 +61,8 @@ legend(data.colheaders{2}, ...
        'location', 'northeast');
 title('Winning Sides');
 
-for n = game_number_marks
-  plot(n*[1 1], ylim);
+for index = 1:length(game_number_marks)
+    plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
 end
 
 print([raw_data '_game_outcomes.png']);
@@ -77,25 +79,25 @@ material = zeros(size(game_number));
 no_legal = zeros(size(game_number));
 number_of_games = length(game_number);
 for index = 1 : number_of_games
-  if result_type(index) == 0
-    white_checkmates(index) = 1;
-  elseif result_type(index) == 1;
-    black_checkmates(index) = 1;
-  elseif result_type(index) == 2;
-    fifty_moves(index) = 1;
-  elseif result_type(index) == 3;
-    threefold(index) = 1;
-  elseif result_type(index) == 4
-    white_time_win(index) = 1;
-  elseif result_type(index) == 5
-    black_time_win(index) = 1;
-  elseif result_type(index) == 6
-    material(index) = 1;
-  elseif result_type(index) == 7
-    no_legal(index) = 1;
-  else
-    disp(['Unknown result type' num2str(result_type(index))]);
-  end
+    if result_type(index) == 0
+        white_checkmates(index) = 1;
+    elseif result_type(index) == 1;
+        black_checkmates(index) = 1;
+    elseif result_type(index) == 2;
+        fifty_moves(index) = 1;
+    elseif result_type(index) == 3;
+        threefold(index) = 1;
+    elseif result_type(index) == 4
+        white_time_win(index) = 1;
+    elseif result_type(index) == 5
+        black_time_win(index) = 1;
+    elseif result_type(index) == 6
+        material(index) = 1;
+    elseif result_type(index) == 7
+        no_legal(index) = 1;
+    else
+        disp(['Unknown result type' num2str(result_type(index))]);
+    end
 end
 
 figure('Position', [0, 0, 1200, 1000]);
@@ -116,50 +118,53 @@ legend('White checkmate', 'Black checkmate', ...
        'location', 'southwest');
 title('Type of Endgame');
 
-for n = game_number_marks
-  plot(n*[1 1], ylim);
+for index = 1:length(game_number_marks)
+    plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
 end
 
 print([raw_data '_game_result_type_frequencies.png']);
 
+if max(game_time) > 0
+    figure('Position', [0, 0, 1200, 1000]);
+    hold all;
+    white_time_left(white_time_left < 0) = -0.05*max(white_time_left);
+    black_time_left(black_time_left < 0) = -0.05*max(white_time_left);
+    scatter(game_number, white_time_left, 'k');
+    scatter(game_number, black_time_left, 'k');
+    ylim(max(white_time_left)*[-0.10, 1.05]);
+    xlabel('Game number');
+    ylabel('Time (sec)');
+    title('Time left on clock at end of game')
 
-figure('Position', [0, 0, 1200, 1000]);
-hold all;
-white_time_left(white_time_left < 0) = -0.05*max(white_time_left);
-black_time_left(black_time_left < 0) = -0.05*max(white_time_left);
-scatter(game_number, white_time_left, 'k');
-scatter(game_number, black_time_left, 'k');
-ylim(max(white_time_left)*[-0.10, 1.05]);
-xlabel('Game number');
-ylabel('Time left on clock');
-title('Time left on clock at end of game')
+    for index = 1:length(game_number_marks)
+        plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
+    end
 
-for n = game_number_marks
-  plot(n*[1 1], ylim);
+    legend('location', 'southoutside', 'orientation', 'horizontal');
+
+    print([raw_data '_game_time_left.png']);
+
+    figure('Position', [0, 0, 1200, 1000]);
+    all_time_left = [black_time_left; white_time_left]./[game_time; game_time];
+    all_time_left(all_time_left < 0) = -.05;
+    hist(all_time_left, 100);
+    xlabel('Fraction of time left on clock');
+    ylabel(['Counts (total = ' num2str(number_of_games) ')']);
+    title('Time left on clock at end of game')
+    print([raw_data '_game_time_left_histogram.png']);
 end
-
-print([raw_data '_game_time_left.png']);
-
-figure('Position', [0, 0, 1200, 1000]);
-all_time_left = [black_time_left; white_time_left]./[game_time; game_time];
-all_time_left(all_time_left < 0) = -.05;
-hist(all_time_left, 100);
-xlabel('Fraction of time left on clock');
-ylabel(['Counts (total = ' num2str(number_of_games) ')']);
-title('Time left on clock at end of game')
-print([raw_data '_game_time_left_histogram.png']);
 
 
 % Don't plot top 0.1% of longest games to make trends easier to see
-[counts, bins] = hist(moves_in_game, (0 : max(moves_in_game)));
-total_counts = 0;
 max_game_count = floor(0.999*length(moves_in_game));
+[counts, bins] = hist(moves_in_game, (1 : max(moves_in_game)));
+total_counts = 0;
 for index = 1 : length(counts)
-  total_counts = total_counts + counts(index);
-  if total_counts > max_game_count
-    max_game_length_display = bins(index);
-    break;
-  end
+    total_counts = total_counts + counts(index);
+    if total_counts > max_game_count
+        max_game_length_display = bins(index);
+        break;
+    end
 end
 
 figure('Position', [0, 0, 1200, 1000]);
@@ -170,9 +175,11 @@ ylabel('Moves in Game');
 title('Number of moves in game')
 ylim([0, max_game_length_display]);
 
-for n = game_number_marks
-  plot(n*[1 1], ylim);
+for index = 1:length(game_number_marks)
+    plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
 end
+
+legend('location', 'southoutside', 'orientation', 'horizontal');
 
 print([raw_data '_moves_in_game.png']);
 
@@ -189,15 +196,13 @@ mode_moves = mode(moves_in_game);
 std_dev = std(moves_in_game);
 
 % Log-normal fit
-minimum_game_length = 1;
-valid = (bins >= minimum_game_length); % Exclude shortest games
-mean_log = sum(log(bins(valid)).*counts(valid))/sum(counts(valid));
-std_log = sqrt(sum(((log(bins(valid)) - mean_log).^2).*counts(valid))/sum(counts(valid)));
+mean_log = sum(log(bins).*counts)/number_of_games;
+std_log = sqrt(sum(((log(bins) - mean_log).^2).*counts)/number_of_games);
 
-fit = sum(counts)*exp(-.5*((log(bins) - mean_log)/std_log).^2)./(bins*std_log*sqrt(2*pi));
+fit = number_of_games*exp(-.5*((log(bins) - mean_log)/std_log).^2)./(bins*std_log*sqrt(2*pi));
 plot(bins, fit, 'linewidth', 3);
 
-legend('Histogram', ['Log-Normal distribution (N \geq ' num2str(minimum_game_length) ')']);
+legend('Histogram', 'Log-Normal distribution');
 
 stats = {['Mean = ' num2str(mean_moves)], ...
          ['Median = ' num2str(median(moves_in_game))], ...

@@ -36,7 +36,7 @@ double King_Protection_Gene::score_board(const Board& board) const
                     break;
                 }
 
-                if(board.view_piece_on_square(file, rank))
+                if(board.piece_on_square(file, rank))
                 {
                     break;
                 }
@@ -65,7 +65,7 @@ double King_Protection_Gene::score_board(const Board& board) const
                     continue;
                 }
 
-                if( ! board.view_piece_on_square(file, rank))
+                if( ! board.piece_on_square(file, rank))
                 {
                     ++square_count;
                 }
@@ -73,9 +73,9 @@ double King_Protection_Gene::score_board(const Board& board) const
         }
     }
 
-    const int max_square_count =  8      // knight attack
-                                + 7 + 7  // rooks/queen row/column attack
-                                + 7 + 6; // bishop/queen/pawn attack
+    constexpr int max_square_count =  8      // knight attack
+                                    + 7 + 7  // rooks/queen row/column attack
+                                    + 7 + 6; // bishop/queen/pawn attack
     return double(max_square_count - square_count)/max_square_count; // return score [0, 1]
 }
 

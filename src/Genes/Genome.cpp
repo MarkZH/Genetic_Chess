@@ -171,13 +171,12 @@ double Genome::evaluate(const Board& board, const Game_Result& result, Color per
         }
     }
 
-    auto my_board = board;
-    my_board.set_turn(perspective);
+    auto other_board = board;
+    other_board.set_turn(opposite(board.whose_turn()));
+    const auto& my_board =        (board.whose_turn() == perspective ? board : other_board);
+    const auto& opponents_board = (board.whose_turn() == perspective ? other_board : board);
 
-    auto opponent_board = board;
-    opponent_board.set_turn(opposite(perspective));
-
-    return score_board(my_board) - score_board(opponent_board);
+    return score_board(my_board) - score_board(opponents_board);
 }
 
 void Genome::mutate()

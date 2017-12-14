@@ -1,5 +1,7 @@
 #!/usr/bin/python
 
+# For use with Scoped_Stopwatch result files
+
 import sys
 
 def main(file_name):

@@ -27,9 +27,7 @@ obj/
 octave-workspace
 *.out
 *.ipch
-*.sln
 *.db
-*.vcxproj
 *.filters
 *.user
 .vs/

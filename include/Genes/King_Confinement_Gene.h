@@ -18,6 +18,8 @@ class King_Confinement_Gene : public Gene
 
         std::string name() const override;
 
+        double get_maximum_score() const;
+
     private:
         double maximum_score;
 

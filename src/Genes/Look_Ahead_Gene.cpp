@@ -98,13 +98,13 @@ bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& 
     // specifies how often this should happen, with 0 being never and 1 being always
     // (see the recalculate_exponent() function for the math).
 
-    auto minimum_time_to_recurse = board.legal_moves().size()/positions_per_second;
-    auto base = time_allotted/minimum_time_to_recurse;
-
-    if(base <= 0.0)
+    if(time_allotted <= 0)
     {
         return false;
     }
+
+    auto minimum_time_to_recurse = board.legal_moves().size()/positions_per_second;
+    auto base = time_allotted/minimum_time_to_recurse;
 
     if(base >= 1.0)
     {
@@ -117,25 +117,6 @@ bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& 
 
 void Look_Ahead_Gene::recalculate_exponent()
 {
-    if(speculation_constant > 0.0)
-    {
-        speculation_exponent = (1.0 - speculation_constant)/speculation_constant;
-    }
-    else
-    {
-        speculation_exponent = Math::infinity;
-    }
-
-    if(capturing_speculation_constant > 0.0)
-    {
-        capturing_speculation_exponent = (1.0 - capturing_speculation_constant)/capturing_speculation_constant;
-    }
-    else
-    {
-        capturing_speculation_exponent = Math::infinity;
-    }
-
-
     // constant = 0.0 ==> exponent = infinity
     // constant = 0.5 ==> exponent = 1
     // constant = 1.0 ==> exponent = 0
@@ -150,4 +131,22 @@ void Look_Ahead_Gene::recalculate_exponent()
     // Large exponents result in values near zero, which means recursion with little time
     // has little probability. Small exponents result in values near 1, so recursion with
     // little time is more likely.
+
+    if(speculation_constant > 0.0)
+    {
+        speculation_exponent = (1.0 - speculation_constant)/speculation_constant;
+    }
+    else
+    {
+        speculation_exponent = std::numeric_limits<double>::infinity();
+    }
+
+    if(capturing_speculation_constant > 0.0)
+    {
+        capturing_speculation_exponent = (1.0 - capturing_speculation_constant)/capturing_speculation_constant;
+    }
+    else
+    {
+        capturing_speculation_exponent = std::numeric_limits<double>::infinity();
+    }
 }

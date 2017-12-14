@@ -81,7 +81,7 @@ class Board
 
         static size_t board_index(char file, int rank);
 
-        const Piece* view_piece_on_square(char file, int rank) const;
+        const Piece* piece_on_square(char file, int rank) const;
 
         const std::vector<const Move*>& legal_moves() const;
         const std::vector<const Move*>& other_moves() const;
@@ -142,7 +142,6 @@ class Board
         void remove_piece(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
         bool no_legal_moves() const;
-        void reset_fifty_move_count();
         std::string board_status() const; // for detecting threefold repetition
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();

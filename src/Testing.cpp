@@ -14,6 +14,16 @@
 #include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
 
+#include "Genes/Castling_Possible_Gene.h"
+#include "Genes/Freedom_To_Move_Gene.h"
+#include "Genes/King_Confinement_Gene.h"
+#include "Genes/King_Protection_Gene.h"
+#include "Genes/Opponent_Pieces_Targeted_Gene.h"
+#include "Genes/Pawn_Advancement_Gene.h"
+#include "Genes/Piece_Strength_Gene.h"
+#include "Genes/Sphere_of_Influence_Gene.h"
+#include "Genes/Total_Force_Gene.h"
+
 #include "Utility.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
@@ -252,6 +262,88 @@ void run_tests()
         remove(rewrite_file_name);
     }
     std::cout << "Done." << std::endl;
+
+
+    // Test individual board-scoring genes
+    auto test_genes_file_name = "test_genome.txt";
+
+    auto castling_possible_gene = Castling_Possible_Gene();
+    castling_possible_gene.read_from(test_genes_file_name);
+    auto castling_board = Board("rn2k4/8/8/8/8/8/8/R3K2R w KQq - 0 1");
+    auto white_castling_score = 0.8*(3.0/4.0) + 0.2*(4.0/5.0); // maximum score with and without actually castling
+    tests_passed &= castling_possible_gene.test(castling_board, white_castling_score);
+
+    castling_board.submit_move(castling_board.get_move("O-O"));
+    auto black_castling_score = 0.2*(3.0/5.0); // castling possible
+    tests_passed &= castling_possible_gene.test(castling_board, black_castling_score);
+
+    castling_board.submit_move(castling_board.get_move("Nc6"));
+    tests_passed &= castling_possible_gene.test(castling_board, 1.0);
+
+    auto freedom_to_move_gene = Freedom_To_Move_Gene();
+    auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
+    auto freedom_to_move_score = 32.0/20.0;
+    tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, freedom_to_move_score);
+
+    auto king_confinement_gene = King_Confinement_Gene();
+    auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+    auto king_confinement_score = (1.0 + 1.0/2.0 + 1.0/3.0)/king_confinement_gene.get_maximum_score();
+    tests_passed &= king_confinement_gene.test(king_confinement_board, king_confinement_score);
+
+    auto king_protection_gene = King_Protection_Gene();
+    auto king_protection_board = king_confinement_board;
+    auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
+    auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
+    auto king_protection_score = double(max_square_count - square_count)/max_square_count;
+    tests_passed &= king_protection_gene.test(king_protection_board, king_protection_score);
+
+    auto piece_strength_gene = Piece_Strength_Gene();
+    piece_strength_gene.read_from(test_genes_file_name);
+    auto piece_strength_normalizer = double(16 + 2*8 + 2*4 + 2*2 + 8*1);
+
+    auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
+    auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
+    auto opponent_pieces_targeted_score = (16 + 8 + 4 + 2 + 1)/piece_strength_normalizer;
+    tests_passed &= opponent_pieces_targeted_gene.test(opponent_pieces_targeted_board, opponent_pieces_targeted_score);
+
+    auto pawn_advancement_gene = Pawn_Advancement_Gene();
+    auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
+    auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*6);
+    pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
+
+    auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
+    sphere_of_influence_gene.read_from(test_genes_file_name);
+    auto sphere_of_influence_board = Board("k7/8/8/8/1R3p2/8/8/K7 w - - 0 1");
+    auto sphere_of_influence_score
+        = (4.0 * (1 + (2.0/(1 + 1.0))))  // b8
+        + (4.0 * (1 + (2.0/(1 + 1.0))))  // b7
+        + (4.0 * (1 + (2.0/(1 + 2.0))))  // b6
+        + (4.0 * (1 + (2.0/(1 + 3.0))))  // b5
+        + (4.0 * (1 + (2.0/(1 + 5.0))))  // b3
+        + (4.0 * (1 + (2.0/(1 + 6.0))))  // b2
+        + (4.0 * (1 + (2.0/(1 + 7.0))))  // b1
+        + (4.0 * (1 + (2.0/(1 + 4.0))))  // a4
+        + (4.0 * (1 + (2.0/(1 + 6.0))))  // a2
+        + (4.0 * (1 + (2.0/(1 + 4.0))))  // c4
+        + (4.0 * (1 + (2.0/(1 + 4.0))))  // d4
+        + (4.0 * (1 + (2.0/(1 + 4.0))))  // e4
+        + (4.0 * (1 + (2.0/(1 + 5.0))))  // f4
+        + (1.0 * (1 + (2.0/(1 + 6.0))))  // g4
+        + (1.0 * (1 + (2.0/(1 + 7.0)))); // h4
+    sphere_of_influence_score /= 64;
+    // Setup       Square score     King distance (from black king)
+    // k.......    k4......         k1......
+    // ........    .4......         .1......
+    // ........    .4......         .2......
+    // ........    .4......         .3......
+    // .R...p..    4R444411         4R444567
+    // ........    .4......         .5......
+    // ........    44......         66......
+    // K.......    K4......         K7......
+    sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
+
+    auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
+    tests_passed &= total_force_gene.test(Board(), 1.0 + 32/piece_strength_normalizer);
 
 
     // String utilities

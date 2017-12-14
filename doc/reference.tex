@@ -25,14 +25,21 @@ This work is a program for evolving chess-playing AIs.  By pitting a population 
 
 
 \section{Building}
-Though there is nothing OS-specific about the \cpp{} code, the Makefile is written for a Linux system. The code can be compiled with any \cpp{} compiler via
+There is nothing OS-specific about the \cpp{} code, so the code can be compiled with any \cpp{} compiler via
 \begin{quote}
-	\code{<compiler> -I include <all *.cpp files>}
+	\code{<compiler> -I include -D NDEBUG <all *.cpp files>}
 \end{quote}
-where \code{-I} indicates the option to specify the base directory of the header files.
+where \code{-I} indicates the option to specify the base directory of the header files and \code{-D NDEBUG} instructs the compiler to skip tests and assertions. For testing and debugging, use
+\begin{quote}
+	\code{<compiler> -I include -D DEBUG <all *.cpp files>}
+\end{quote}
+instead.
 
 \subsection{Linux}
-Run \code{make} to create release and debug executables in a \code{bin/} subfolder that will be created if it does not already exist. If, in the course of working on this project, new files are created or the \code{\#include} files are changed within a file, run \code{python create\_gcc\_Makefile.py} or \code{python create\_clang\_Makefile.py} to regenerate the Makefile. These python script assumes all \code{*.cpp} files in the current directory and all subfolders are part of the project and need compiling.
+Run \code{make} to create release and debug executables in a \code{bin/} subfolder that will be created if it does not already exist. If, in the course of working on this project, new files are created or the \code{\#include} files are changed within a file, run \code{python create\_gcc\_Makefile.py} or \code{python create\_clang\_Makefile.py} to regenerate the Makefile. These python script assumes all \code{*.cpp} files in the current directory and all subfolders are part of the project and need compiling. Then, run \code{make} to create both release and debug builds, \code{make release} or \code{make debug} to only make one sort of build, or \code{make clean} to delete all build items (object files and executables).
+
+\subsection{Windows}
+The \code{.sln} and \code{.vcxproj} files are project files for Visual Studio. These will load all source files for one-click compiling.
 
 
 \section{Running}
@@ -109,7 +116,9 @@ A regulator gene refers to a gene that does not participate in evaluating the st
 \subsubsection{Piece Strength Gene}
 This gene specifies the importance or strength of each different type of chess piece. Other genes like the Total Force Gene (Section~\ref{total-force}) reference this one for their own evaluation purposes.
 
-The number associated with each piece is not scaled to any other piece, but before a piece strength is returned, it is scaled so that that total value of all the pieces at the start of the game (8~pawns, 2~rooks, 2~knights, 2~bishops, and 1~queen) equals~1. This prevents mutations in this gene from changing the priorities of other genes that reference this one. In other words, if a series of mutations doubles the strength of all pieces, the Total Force Gene will not subsequently return double the score for the same board state. Only mutations that change piece strengths with respect to other pieces are effective. The king is not assigned a strength because it is always on the board, so it cannot affect the move chosen.
+The number associated with each piece is not scaled to any other piece, but before a piece strength is returned, it is scaled so that that total value of all the pieces at the start of the game (8~pawns, 2~rooks, 2~knights, 2~bishops, and 1~queen) equals~1. This prevents mutations in this gene from changing the priorities of other genes that reference this one. In other words, if a series of mutations doubles the strength of all pieces, the Total Force Gene will not subsequently return double the score for the same board state. Only mutations that change piece strengths with respect to other pieces are effective. The king is not included in this scaling because the king is always on the board. So, the Total Force Gene assigns a value of one to the starting piece set of a player and zero to a lone king.
+
+Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and \ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
 
 \subsubsection{Look Ahead Gene}
 This gene determines all aspects of the Genetic AIs time management. There are three genetically determined components to this gene that determine how the AI spends its time:
@@ -144,7 +153,7 @@ Here, \(\textrm{erf}\) is the error function given by
 \[
 \textrm{erf}(x) = \frac{2}{\sqrt{\pi}}\int_0^x e^{-t^2}dt
 \]
-This results in the number of moves left in a game (\(N(n)\)) after \(n\) moves as
+This results in the number of moves left in a game (\(N(n)\)) after \(n\) moves is
 \[
 N(n) = \left(e^{M + S^2/2}\right) \frac
 {1 + \textrm{erf}\left(\frac{M + S^2 - \ln n}{S\sqrt{2}}\right)}
@@ -185,6 +194,7 @@ Recently, the speculation constant has been divided into two constants: one for 
 This gene would prevent the game tree search from examining the moves following a certain move if the board state that immediately resulted from that move was of a sufficiently lower score than the present board state. This gene was supposed to save time by skipping in-depth examinations of moves that were obviously immediately bad. This gene was deleted because it seemed to slow down the evolution of other genes by harshly punishing large swings in board value. This would cause genes that increased in priority to trip this gene, preventing look-ahead, and thus good play.
 
 \subsection{Board-Scoring Genes}
+\label{board-score-section}
 These genes are used to give a score to a board state. The higher the score, the more desirable the moves that lead to this board. The score is calculated by
 \[Score = \sum_g Priority(g) \times Score(g,B)\]
 where \(g\) represents each gene, \(Priority(g)\) is a genetically determined scalar multiplicative factor that determines how much the gene's score of the board influences the final score, and \(Score(g,B)\) is the result of the scoring procedure of that gene on a given board \(B\). In general, the scores are scaled so that a typical board state gets a score of 1 from any gene. For example, the Freedom to Move Gene divides the number of legal moves by the number of legal moves at the start of the game (20 for standard chess). The Total Force Gene returns 1 for the pieces at the start of the game, so promoting a pawn can result in a score of more than one.
@@ -370,6 +380,19 @@ In descending order of valuation by a Genetic\_AI: Queen, Rook, Bishop and Knigh
 	\label{piece-value-plot}
 \end{figure}
 
+\subsubsection{Piece Strengths with the king}
+\label{piece-strength-with-king}
+
+After assigning the king a strength entry in the Piece Strength Gene (see Section~\ref{piece-strength}), the other pieces retained their relative values, but the king evolved a very negative value. See Figure~\ref{piece-strength-with-king-plot}.
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\textwidth]{piece-strength-with-king-plot}
+	\caption{The evolution of piece strengths after adding an entry for the king.}
+	\label{piece-strength-with-king-plot}
+\end{figure}
+
+My current guess is that the king entry is affected by the Opponent Pieces Targeted  Gene and the Look-Ahead Gene--specifically the Capturing Speculation Constant. A large value for the Capturing Speculation Constant means that the board position that is actually evaluated has a smaller chance of having pieces threatened with capture. It is even less likely that the opponent's king is in check since this usually results in a reduced number of moves available, making recursion to the next move more likely. Thus, an evaluated board position with only the king in check is see as rather worthless unless offset by an attack on another piece that will probably result in capture. The king cannot be captured, so attacking it had better serve some other purpose. A similar evolution is seen in the Sphere of Influence Gene in that the King Target Factor is often negative.
+
 \subsection{White has an advantage.}
 
 Of the games ending in checkmate, white wins about 10\% more often than black. Figure~\ref{win-lose-plot} shows that the advantage is persistent through almost the whole of a long gene pool run. Wins by time are shared by black and white equally (see Figure~\ref{game-ending-plot}).
@@ -450,7 +473,7 @@ The same goes for the Piece Strength Gene with respect to the value of each type
 
 Since this software is still in heavy development, the following sections are likely to change. As such, here is a summary of aspects of the code that might seem weird upon first--and possibly every other--reading. Specifically, if this is modern \cpp{}, why are there pointers everywhere?
 
-Though the operators \code{new} and \code{delete} appear nowhere in the code and smart pointers are used, raw pointers appear everywhere in the code. The driving reason for using pointers in the first place is the need for polymorphic storage. Classes representing pieces are derived from a \code{Piece} class and need to be stored within \code{Board} class instances (namely, in a \code{std::array<Piece*, 64>} where the position in the array corresponds to a position on the board). Classes representing moves are either instances of the \code{Move} class or derivative classes, and each type of piece stores a list of potentially legal moves.
+Though the operators \code{new} and \code{delete} appear nowhere in the code and smart pointers are used, raw pointers appear everywhere in the code. The driving reason for using pointers in the first place is the need for polymorphic storage. Classes representing pieces are derived from a \code{Piece} class and need to be stored within \code{Board} class instances (namely, in a \code{std::array<const Piece*, 64>} where the position in the array corresponds to a position on the board). Classes representing moves are either instances of the \code{Move} class or derivative classes, and each type of piece stores a list of potentially legal moves.
 
 If a function or method returns a pointer, the caller of that function is not responsible for handling the data pointed to by the pointer. Most public methods and functions take reference arguments to prevent problems with null pointers. Where functions do take pointer arguments (such as \code{Board::print\_game\_record()} for the player instances), that argument is optional parameter that can take a \code{nullptr} to indicate no data.
 

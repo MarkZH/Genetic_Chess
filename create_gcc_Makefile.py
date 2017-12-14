@@ -1,28 +1,6 @@
 #!/bin/python
 
-import os, functools
-
-def recursive_dependencies(source_file):
-    result = []
-    with open(source_file) as src:
-        skip = False
-        for line in src:
-            if line.find('#ifdef') != -1:
-                skip = (line.split()[1] != target.upper())
-            elif line.find("#else") != -1:
-                skip = not skip
-            elif line.find("#endif") != -1:
-                skip = False
-            elif not skip and line.find('#include "') != -1:
-                file_name = line.split('"')[1]
-                include_file_name = os.path.join('include', file_name)
-                if not os.path.isfile(include_file_name):
-                    include_file_name = os.path.join(os.path.dirname(source_file), file_name)
-                if os.path.isfile(include_file_name) and include_file_name not in result:
-                    result.append(include_file_name)
-                    result.extend(recursive_dependencies(include_file_name))
-    return sorted(list(set(result)))
-
+import os, functools, subprocess
 
 def make_sort(a, b):
     if a == b:
@@ -111,25 +89,10 @@ for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
     if target != '.PHONY' and not target.startswith('$'):
         depends['.PHONY'].append(target)
 
-obj_dir_written = []
-for target in final_targets:
-    bin_dir = os.path.dirname(bins[target])
-    operations['before_' + target].append('test -d ' + bin_dir + ' || mkdir -p ' + bin_dir)
-    for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
-        dirpath = dirpath[len(os.getcwd()) + 1 :]
-        for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp')]:
-            ext_length = len(source_file.split('.')[-1])
-            obj_file = os.path.join(obj_dest[target], source_file[:-ext_length] + "o")
-            depends[obj_file] = [source_file]
-            operations[obj_file] = [' '.join(['$(CXX)', "$(CFLAGS)", "$(LDFLAGS)", options[target], "-c", source_file, "-o", obj_file])]
-            obj_dest_dir = os.path.dirname(obj_file)
-            if obj_dest_dir not in obj_dir_written:
-                operations['before_' + target].append('test -d ' + obj_dest_dir + ' || mkdir -p ' + obj_dest_dir)
-                obj_dir_written.append(obj_dest_dir)
-
-            depends[obj_file].extend(recursive_dependencies(source_file))
-
 compiler = 'g++'
+options_list = dict()
+options_list['debug'] = ["-g", "-Og", "-DDEBUG"]
+options_list['release'] = ["-s", "-Ofast", "-DNDEBUG"]
 
 base_options = [
 	"-Wnon-virtual-dtor", 
@@ -152,13 +115,29 @@ base_options = [
 	"-Iinclude"]
 base_linker_options = ["-pthread", "-fexceptions"]
 
-options_list = dict()
-options_list['debug'] = ["-g", "-DDEBUG"]
-options_list['release'] = ["-s", "-O3", "-DNDEBUG"]
-
 linker_options = dict()
 linker_options['debug'] = []
 linker_options['release'] = ['-flto', '-fuse-linker-plugin']
+
+
+obj_dir_written = []
+for target in final_targets:
+    bin_dir = os.path.dirname(bins[target])
+    operations['before_' + target].append('test -d ' + bin_dir + ' || mkdir -p ' + bin_dir)
+    for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
+        dirpath = dirpath[len(os.getcwd()) + 1 :]
+        for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp')]:
+            ext_length = len(source_file.split('.')[-1])
+            obj_file = os.path.join(obj_dest[target], source_file[:-ext_length] + "o")
+            depends[obj_file] = [source_file]
+            operations[obj_file] = [' '.join(['$(CXX)', "$(CFLAGS)", "$(LDFLAGS)", options[target], "-c", source_file, "-o", obj_file])]
+            obj_dest_dir = os.path.dirname(obj_file)
+            if obj_dest_dir not in obj_dir_written:
+                operations['before_' + target].append('test -d ' + obj_dest_dir + ' || mkdir -p ' + obj_dest_dir)
+                obj_dir_written.append(obj_dest_dir)
+
+            compile_depends = subprocess.check_output([compiler] + base_options + options_list[target] + ['-MM', source_file]).decode('ascii').split()
+            depends[obj_file].extend(sorted(list(set(d for d in compile_depends if d != '\\' and d != source_file and not d.endswith(':')))))
 
 with open("Makefile", 'w') as make_file:
     # Variables

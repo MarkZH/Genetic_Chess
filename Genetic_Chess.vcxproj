@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{24960376-DC2D-4D5D-A71A-15D3B9BF76B4}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;DEBUG;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;DEBUG;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <OmitFramePointers>false</OmitFramePointers>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OmitFramePointers>false</OmitFramePointers>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <LanguageStandard>stdcpp14</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\exceptions\Game_Ending_Exception.cpp" />
+    <ClCompile Include="src\exceptions\Illegal_Move_Exception.cpp" />
+    <ClCompile Include="src\game\Board.cpp" />
+    <ClCompile Include="src\game\Clock.cpp" />
+    <ClCompile Include="src\game\Color.cpp" />
+    <ClCompile Include="src\game\Game.cpp" />
+    <ClCompile Include="src\game\Game_Result.cpp" />
+    <ClCompile Include="src\game\Square.cpp" />
+    <ClCompile Include="src\genes\Castling_Possible_Gene.cpp" />
+    <ClCompile Include="src\genes\Freedom_To_Move_Gene.cpp" />
+    <ClCompile Include="src\genes\Gene.cpp" />
+    <ClCompile Include="src\genes\Gene_Pool.cpp" />
+    <ClCompile Include="src\genes\Genome.cpp" />
+    <ClCompile Include="src\genes\King_Confinement_Gene.cpp" />
+    <ClCompile Include="src\genes\King_Protection_Gene.cpp" />
+    <ClCompile Include="src\genes\Look_Ahead_Gene.cpp" />
+    <ClCompile Include="src\genes\Opponent_Pieces_Targeted_Gene.cpp" />
+    <ClCompile Include="src\genes\Pawn_Advancement_Gene.cpp" />
+    <ClCompile Include="src\genes\Piece_Strength_Gene.cpp" />
+    <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
+    <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
+    <ClCompile Include="src\moves\En_Passant.cpp" />
+    <ClCompile Include="src\moves\Kingside_Castle.cpp" />
+    <ClCompile Include="src\moves\Move.cpp" />
+    <ClCompile Include="src\moves\Pawn_Capture.cpp" />
+    <ClCompile Include="src\moves\Pawn_Double_Move.cpp" />
+    <ClCompile Include="src\moves\Pawn_Move.cpp" />
+    <ClCompile Include="src\moves\Pawn_Promotion.cpp" />
+    <ClCompile Include="src\moves\Pawn_Promotion_by_Capture.cpp" />
+    <ClCompile Include="src\moves\Queenside_Castle.cpp" />
+    <ClCompile Include="src\pieces\Bishop.cpp" />
+    <ClCompile Include="src\pieces\King.cpp" />
+    <ClCompile Include="src\pieces\Knight.cpp" />
+    <ClCompile Include="src\pieces\Pawn.cpp" />
+    <ClCompile Include="src\pieces\Piece.cpp" />
+    <ClCompile Include="src\pieces\Queen.cpp" />
+    <ClCompile Include="src\pieces\Rook.cpp" />
+    <ClCompile Include="src\players\Alan_Turing_AI.cpp" />
+    <ClCompile Include="src\players\CECP_Mediator.cpp" />
+    <ClCompile Include="src\players\Claude_Shannon_AI.cpp" />
+    <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
+    <ClCompile Include="src\players\Genetic_AI.cpp" />
+    <ClCompile Include="src\players\Human_Player.cpp" />
+    <ClCompile Include="src\players\Outside_Player.cpp" />
+    <ClCompile Include="src\players\Player.cpp" />
+    <ClCompile Include="src\players\Random_AI.cpp" />
+    <ClCompile Include="src\players\UCI_Mediator.cpp" />
+    <ClCompile Include="src\Stalemate_Search.cpp" />
+    <ClCompile Include="src\Testing.cpp" />
+    <ClCompile Include="src\Utility.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\exceptions\Game_Ending_Exception.h" />
+    <ClInclude Include="include\exceptions\Illegal_Move_Exception.h" />
+    <ClInclude Include="include\exceptions\Promotion_Exception.h" />
+    <ClInclude Include="include\game\Board.h" />
+    <ClInclude Include="include\game\Clock.h" />
+    <ClInclude Include="include\game\Color.h" />
+    <ClInclude Include="include\game\Game.h" />
+    <ClInclude Include="include\game\Game_Result.h" />
+    <ClInclude Include="include\game\Square.h" />
+    <ClInclude Include="include\genes\Castling_Possible_Gene.h" />
+    <ClInclude Include="include\genes\Freedom_To_Move_Gene.h" />
+    <ClInclude Include="include\genes\Gene.h" />
+    <ClInclude Include="include\genes\Gene_Pool.h" />
+    <ClInclude Include="include\genes\Genome.h" />
+    <ClInclude Include="include\genes\King_Confinement_Gene.h" />
+    <ClInclude Include="include\genes\King_Protection_Gene.h" />
+    <ClInclude Include="include\genes\Look_Ahead_Gene.h" />
+    <ClInclude Include="include\genes\Opponent_Pieces_Targeted_Gene.h" />
+    <ClInclude Include="include\genes\Pawn_Advancement_Gene.h" />
+    <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
+    <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
+    <ClInclude Include="include\genes\Total_Force_Gene.h" />
+    <ClInclude Include="include\moves\En_Passant.h" />
+    <ClInclude Include="include\moves\Kingside_Castle.h" />
+    <ClInclude Include="include\moves\Move.h" />
+    <ClInclude Include="include\moves\Pawn_Capture.h" />
+    <ClInclude Include="include\moves\Pawn_Double_Move.h" />
+    <ClInclude Include="include\moves\Pawn_Move.h" />
+    <ClInclude Include="include\moves\Pawn_Promotion.h" />
+    <ClInclude Include="include\moves\Pawn_Promotion_by_Capture.h" />
+    <ClInclude Include="include\moves\Queenside_Castle.h" />
+    <ClInclude Include="include\pieces\Bishop.h" />
+    <ClInclude Include="include\pieces\King.h" />
+    <ClInclude Include="include\pieces\Knight.h" />
+    <ClInclude Include="include\pieces\Pawn.h" />
+    <ClInclude Include="include\pieces\Piece.h" />
+    <ClInclude Include="include\pieces\Queen.h" />
+    <ClInclude Include="include\pieces\Rook.h" />
+    <ClInclude Include="include\players\Alan_Turing_AI.h" />
+    <ClInclude Include="include\players\CECP_Mediator.h" />
+    <ClInclude Include="include\players\Claude_Shannon_AI.h" />
+    <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
+    <ClInclude Include="include\players\Genetic_AI.h" />
+    <ClInclude Include="include\players\Human_Player.h" />
+    <ClInclude Include="include\players\Outside_Player.h" />
+    <ClInclude Include="include\players\Player.h" />
+    <ClInclude Include="include\players\Random_AI.h" />
+    <ClInclude Include="include\players\Thinking.h" />
+    <ClInclude Include="include\players\UCI_Mediator.h" />
+    <ClInclude Include="include\Stalemate_Search.h" />
+    <ClInclude Include="include\Testing.h" />
+    <ClInclude Include="include\Utility.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

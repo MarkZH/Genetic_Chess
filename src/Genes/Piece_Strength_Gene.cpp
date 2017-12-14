@@ -11,7 +11,7 @@
 #include "Utility.h"
 #include "Pieces/Piece.h"
 
-const std::string Piece_Strength_Gene::piece_types = "PRNBQ";
+const std::string Piece_Strength_Gene::piece_types = "PRNBQK";
 const char Piece_Strength_Gene::first_piece = 'B';
 
 Piece_Strength_Gene::Piece_Strength_Gene()
@@ -67,7 +67,7 @@ double& Piece_Strength_Gene::piece_value(char symbol)
 
 double Piece_Strength_Gene::piece_value(const Piece* piece) const
 {
-    if( ! piece || piece->is_king()) // The king is always on the board, so value is meaningless.
+    if( ! piece)
     {
         return 0.0;
     }
