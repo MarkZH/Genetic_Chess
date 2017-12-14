@@ -221,6 +221,10 @@ This gene sums the total strength (as determined by the Piece Strength Gene) of 
 \subsubsection{Sphere of Influence Gene}
 This gene counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move. That is, if a piece cannot reach a square in one move (perhaps because such a move is blocked by another piece), then that square is still counted as falling under the influence of the side owning that piece. Further bonus points are awarded based on how close the attacked square is to the king.
 
+The effective formula for the score of this gene can be expressed as
+\[score = \sum_s legal(s)\left(1+\frac{KTF}{1+distance(s,king)}\right)\]
+where the sum is over all squares \(s\) on the board. The function \(legal(s)\) returns~0 if \(s\) is not attacked at all,~1 if the square is attacked by an illegal move, and a genetically determined result if attacked by a legal move. The term \(KTF\) is the king target factor and is a genetically determined weight that adjusts the importance of attacking squares close to the opposing king. The function \(distance(s_1, s_2)\) gives the distance between two squares in king moves and is equal to the maximum of the difference in file or difference in rank between the squares.
+
 \subsubsection{King Confinement Gene}
 This gene counts the squares the king can reach given unlimited legal moves. Squares that take a larger number of moves to reach are given lower scores. Kings that are hemmed in by squares occupied by friendly pieces and squares attacked by the opponent result in a low score from this gene. This is a measure of how much room the king has to maneuver and escape. It is somewhat in opposition to the King Protection Gene.
 
