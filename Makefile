@@ -217,10 +217,10 @@ $(DEBUG_OBJ_DIR)/src/Testing.o : src/Testing.cpp include/Exceptions/Illegal_Move
 $(DEBUG_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Utility.cpp -o $(DEBUG_OBJ_DIR)/src/Utility.o
 
-$(OUT_DEBUG) : before_debug $(OBJ_DEBUG)
+$(OUT_DEBUG) : $(OBJ_DEBUG)
 	$(LD) -o $(OUT_DEBUG) $(OBJ_DEBUG) $(LDFLAGS) $(LDFLAGS_DEBUG) $(CFLAGS) $(CFLAGS_DEBUG)
 
-$(OUT_RELEASE) : before_release $(OBJ_RELEASE)
+$(OUT_RELEASE) : $(OBJ_RELEASE)
 	$(LD) -o $(OUT_RELEASE) $(OBJ_RELEASE) $(LDFLAGS) $(LDFLAGS_RELEASE) $(CFLAGS) $(CFLAGS_RELEASE)
 
 $(RELEASE_OBJ_DIR)/main.o : main.cpp include/Exceptions/Illegal_Move_Exception.h include/Game/Board.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Gene_Pool.h include/Genes/Genome.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Stalemate_Search.h include/Testing.h include/Utility.h
