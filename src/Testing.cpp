@@ -382,6 +382,26 @@ void run_tests()
         tests_passed = false;
     }
 
+    std::string splitting_line = "\t a b c d e ";
+    std::vector<std::string> expected_split_line = {"a", "b", "c", "d", "e"};
+    auto split_line = String::split(splitting_line);
+    if(split_line.size() != expected_split_line.size() || ! std::equal(split_line.begin(), split_line.end(), expected_split_line.begin()))
+    {
+        std::cerr << "These lists should match from line splitting:\nExected from String::split(" << splitting_line << ")\n";
+        for(const auto& thing : expected_split_line)
+        {
+            std::cerr << thing << ", ";
+        }
+        std::cerr << "\nReturned by String::split()\n";
+        for(const auto& thing : split_line)
+        {
+            std::cerr << thing << ", ";
+        }
+        std::cerr << std::endl;
+        
+        tests_passed = false;
+    }
+
 
     // Log-Norm distribution check
     const double mean_moves = 26.0;
