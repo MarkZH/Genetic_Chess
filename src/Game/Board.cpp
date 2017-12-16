@@ -408,34 +408,6 @@ Game_Result Board::submit_move(const Move& move)
         }
     }
 
-    // Check if en passant is actually legal
-    if(en_passant_target)
-    {
-        auto en_passant_legal = false;
-        auto rank_origin = (en_passant_target.rank == 3 ? 4 : 5);
-        for(auto file_origin : {en_passant_target.file - 1, en_passant_target.file + 1})
-        {
-            if( ! inside_board(file_origin))
-            {
-                continue;
-            }
-
-            auto piece = piece_on_square(file_origin, rank_origin);
-            auto pawn = get_pawn(whose_turn());
-            if(piece == pawn &&
-               is_legal(file_origin, rank_origin, en_passant_target.file, en_passant_target.rank))
-            {
-                en_passant_legal = true;
-                break;
-            }
-        }
-
-        if( ! en_passant_legal)
-        {
-            clear_en_passant_target();
-        }
-    }
-
     // An insufficient material draw can only happen after a capture
     // or a pawn promotion to a minor piece, both of which clear the
     // repeat_count map.
@@ -1121,6 +1093,7 @@ void Board::recreate_move_caches()
     legal_moves_cache.clear();
 
     capturing_move_available = false;
+    bool en_passant_legal = false;
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
@@ -1133,10 +1106,15 @@ void Board::recreate_move_caches()
                     if(move->is_legal(*this))
                     {
                         legal_moves_cache.push_back(move);
-                        if(piece_on_square(move->end_file(), move->end_rank()) ||
-                           move->is_en_passant())
+                        
+                        if( ! en_passant_legal)
                         {
-                            capturing_move_available = true;
+                            en_passant_legal = move->is_en_passant();
+                        }
+
+                        if( ! capturing_move_available)
+                        {
+                            capturing_move_available = (en_passant_legal || piece_on_square(move->end_file(), move->end_rank()));
                         }
                     }
                     else
@@ -1146,6 +1124,11 @@ void Board::recreate_move_caches()
                 }
             }
         }
+    }
+
+    if( ! en_passant_legal)
+    {
+        clear_en_passant_target();
     }
 }
 
