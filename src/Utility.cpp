@@ -27,7 +27,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     while(end_index < s.size() && split_count < count)
     {
         end_index = (delim.empty() ?
-                     s.find_first_of(" \t\n", start_index) :
+                     s.find_first_of(whitespace, start_index) :
                      s.find(delim, start_index));
         result.push_back(s.substr(start_index, end_index-start_index));
         if(end_index == std::string::npos)
