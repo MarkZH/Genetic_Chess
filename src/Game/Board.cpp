@@ -426,7 +426,7 @@ Game_Result Board::submit_move(const Move& move)
     {
         fifty_move_count += board_count.second;
     }
-    if(fifty_move_count >= 100) // "Move" means both players move.
+    if(fifty_move_count >= 101) // "Move" means both players move, 101 including current position
     {
         return Game_Result(NONE, "50-move limit", false);
     }
