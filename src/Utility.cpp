@@ -68,12 +68,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 
 bool String::starts_with(const std::string& s, const std::string& beginning)
 {
-    if(beginning.size() > s.size())
-    {
-        return false;
-    }
-
-    return std::equal(beginning.begin(), beginning.end(), s.begin());
+    return (beginning.size() <= s.size()) && std::equal(beginning.begin(), beginning.end(), s.begin());
 }
 
 bool String::starts_with(const std::string& s, char beginning)
