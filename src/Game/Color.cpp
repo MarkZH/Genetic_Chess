@@ -1,4 +1,3 @@
-#include <stdexcept>
 #include <cassert>
 
 #include "Game/Color.h"
