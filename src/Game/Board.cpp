@@ -627,7 +627,7 @@ void Board::ascii_draw(Color perspective) const
     {
         horizontal_line.append(square_corner);
 
-        for(int j = 0; j < square_width; ++j)
+        for(size_t j = 0; j < square_width; ++j)
         {
             horizontal_line.append(square_horizontal_border);
         }
