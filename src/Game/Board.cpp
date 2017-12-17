@@ -234,7 +234,7 @@ Board::Board(const std::string& fen) :
     }
     ++repeat_count[board_status()]; // Count initial position
 
-    move_count_start_offset = std::stoi(fen_parse.at(5)) - 1;
+    move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
 }
 
@@ -615,8 +615,8 @@ const std::vector<const Move*>& Board::other_moves() const
 
 void Board::ascii_draw(Color perspective) const
 {
-    const int square_width = 7;
-    const int square_height = 3;
+    const size_t square_width = 7;
+    const size_t square_height = 3;
 
     const std::string square_corner = "+";
     const std::string square_horizontal_border = "-";
@@ -646,7 +646,7 @@ void Board::ascii_draw(Color perspective) const
     {
         std::cout << left_spacer << horizontal_line;
 
-        for(int square_row = 0; square_row < square_height; ++square_row)
+        for(size_t square_row = 0; square_row < square_height; ++square_row)
         {
             if(square_row == square_height/2)
             {
@@ -1106,7 +1106,7 @@ void Board::recreate_move_caches()
                     if(move->is_legal(*this))
                     {
                         legal_moves_cache.push_back(move);
-                        
+
                         if( ! en_passant_legal)
                         {
                             en_passant_legal = move->is_en_passant();

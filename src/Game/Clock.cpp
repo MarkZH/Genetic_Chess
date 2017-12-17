@@ -93,7 +93,7 @@ double Clock::time_left(Color color) const
     }
 }
 
-int Clock::moves_to_reset(Color color) const
+size_t Clock::moves_to_reset(Color color) const
 {
     if(use_reset)
     {
