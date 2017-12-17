@@ -93,6 +93,7 @@ class Scoped_Stopwatch
 
         void stop();
         void add_info(const std::string& info);
+        void reject(); // do not record time
 
     private:
         static std::ofstream out_file;

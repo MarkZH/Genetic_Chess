@@ -325,3 +325,8 @@ void Scoped_Stopwatch::add_info(const std::string& info)
 {
     place_name += info;
 }
+
+void Scoped_Stopwatch::reject()
+{
+    stopped = true;
+}
