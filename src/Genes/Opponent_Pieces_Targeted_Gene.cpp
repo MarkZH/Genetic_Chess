@@ -6,7 +6,6 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Moves/Move.h"
-#include "Utility.h"
 #include "Genes/Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 

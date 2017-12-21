@@ -7,7 +7,6 @@
 #include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
-#include "Utility.h"
 
 Pawn_Promotion::Pawn_Promotion(const Piece* promotion_piece, char file_start) :
     Pawn_Move(promotion_piece->color(), file_start, promotion_piece->color() == WHITE ? 7 : 2),
