@@ -398,7 +398,7 @@ void run_tests()
             std::cerr << thing << ", ";
         }
         std::cerr << std::endl;
-        
+
         tests_passed = false;
     }
 
@@ -558,11 +558,21 @@ void run_tests()
 
     // Count game tree leaves up to 2 moves (4 ply) deep
     std::cout << "Counting moves to 4-ply depth ... " << std::flush;
-    size_t expected_count = 197281;
-    size_t actual_count = move_count(Board(), 4);
-    if(actual_count != expected_count)
+    size_t expected_count4 = 197281;
+    size_t actual_count4 = move_count(Board(), 4);
+    if(actual_count4 != expected_count4)
     {
-        std::cerr << "Expected game tree leaves: " << expected_count << "  Got: " << actual_count << std::endl;
+        std::cerr << "Expected game tree leaves: " << expected_count4 << "  Got: " << actual_count4 << std::endl;
+        tests_passed = false;
+    }
+    std::cout << "Done." << std::endl;
+
+    std::cout << "Counting moves to 5-ply depth ... " << std::flush;
+    size_t expected_count5 = 4865609;
+    size_t actual_count5 = move_count(Board(), 5);
+    if(actual_count5 != expected_count5)
+    {
+        std::cerr << "Expected game tree leaves: " << expected_count5 << "  Got: " << actual_count5 << std::endl;
         tests_passed = false;
     }
     std::cout << "Done." << std::endl;
