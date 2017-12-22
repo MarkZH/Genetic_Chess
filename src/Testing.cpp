@@ -30,7 +30,7 @@
 
 // Declaration to silence warnings
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
-size_t move_count(const Board& board, size_t maximum_depth);
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& file_name);
 
 void run_tests()
 {
@@ -556,26 +556,23 @@ void run_tests()
         tests_passed = false;
     }
 
-    // Count game tree leaves up to 2 moves (4 ply) deep
-    std::cout << "Counting moves to 4-ply depth ... " << std::flush;
-    size_t expected_count4 = 197281;
-    size_t actual_count4 = move_count(Board(), 4);
-    if(actual_count4 != expected_count4)
+    // Count game tree leaves to given depth
+    auto ply_counts =      std::vector<size_t>{4,      5};
+    auto correct_answers = std::vector<size_t>{197281, 4865609};
+    for(size_t test_number = 0; test_number < ply_counts.size(); ++test_number)
     {
-        std::cerr << "Expected game tree leaves: " << expected_count4 << "  Got: " << actual_count4 << std::endl;
-        tests_passed = false;
+        auto plies = ply_counts[test_number];
+        auto answer = correct_answers[test_number];
+        std::cout << "Counting moves to " << plies << "-ply depth ... " << std::flush;
+        std::string file_name = (plies == 5 ? "perft5-new.txt" : "");
+        size_t count = move_count(Board(), plies, file_name);
+        if(count != answer)
+        {
+            std::cerr << "Expected game tree leaves: " << count << "  Got: " << answer << std::endl;
+            tests_passed = false;
+        }
+        std::cout << "Done." << std::endl;
     }
-    std::cout << "Done." << std::endl;
-
-    std::cout << "Counting moves to 5-ply depth ... " << std::flush;
-    size_t expected_count5 = 4865609;
-    size_t actual_count5 = move_count(Board(), 5);
-    if(actual_count5 != expected_count5)
-    {
-        std::cerr << "Expected game tree leaves: " << expected_count5 << "  Got: " << actual_count5 << std::endl;
-        tests_passed = false;
-    }
-    std::cout << "Done." << std::endl;
 
     // check square colors are correct
     auto current_color = WHITE;
@@ -675,14 +672,18 @@ bool files_are_identical(const std::string& file_name1, const std::string& file_
     return true;
 }
 
-size_t move_count(const Board& board, size_t maximum_depth)
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& file_name)
 {
     if(maximum_depth == 0)
     {
+        if( ! file_name.empty())
+        {
+            board.print_game_record(nullptr, nullptr, file_name, {}, 0, 0, 0, {});
+        }
         return 1;
     }
 
-    if(maximum_depth == 1)
+    if(maximum_depth == 1 && file_name.empty())
     {
         return board.legal_moves().size();
     }
@@ -692,7 +693,7 @@ size_t move_count(const Board& board, size_t maximum_depth)
     {
         auto next_board = board;
         next_board.submit_move(*move);
-        count += move_count(next_board, maximum_depth - 1);
+        count += move_count(next_board, maximum_depth - 1, file_name);
     }
 
     return count;
