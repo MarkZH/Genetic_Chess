@@ -1,18 +1,33 @@
-# <-- for comments
+# Gene Pool Configuration (# indicate comments)
 
-maximum simultaneous games = 2
+# The number of processors used will be the minimum
+# of this number and half the gene pool population.
+maximum simultaneous games = 8
 
-# Environment variables
+# How many players in each pool
 gene pool population = 16
+
+# How many gene pools
 gene pool count = 3
+
+# Probability of killing a player after a draw
 draw kill probability = 0.05
+
+# Games in between swapping players between pools
 pool swap interval = 1000
 
 # Oscillating game time
+#
+# The time for each game starts at the minimum, then goes up
+# by the increment after each round of games. When it reaches
+# the maximum, the increment is reversed and the time for each
+# game goes down until it reaches the minimum. Then, the cycle
+# starts again.
 minimum game time = 30 # seconds
 maximum game time = 120 # seconds
-game time increment = 0 # seconds (if zero, then stay at minimum time)
+game time increment = 0.01 # seconds
 
-# Where genomes will be recorded
-# Games recorded in file with "_games.txt" suffix
+# The name of the file where the genomes will be recorded.
+# Games will be recorded in a file with "_games.txt" appended
+# to the name.
 gene pool file = pool.txt

@@ -248,7 +248,7 @@ Board::Board(const std::string& fen) :
 
     ++repeat_count[get_board_hash()]; // Count initial position
 
-    move_count_start_offset = std::stoi(fen_parse.at(5)) - 1;
+    move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
 }
 
@@ -422,34 +422,6 @@ Game_Result Board::submit_move(const Move& move)
         }
     }
 
-    // Check if en passant is actually legal
-    if(en_passant_target)
-    {
-        auto en_passant_legal = false;
-        auto rank_origin = (en_passant_target.rank == 3 ? 4 : 5);
-        for(auto file_origin : {en_passant_target.file - 1, en_passant_target.file + 1})
-        {
-            if( ! inside_board(file_origin))
-            {
-                continue;
-            }
-
-            auto piece = piece_on_square(file_origin, rank_origin);
-            auto pawn = get_pawn(whose_turn());
-            if(piece == pawn &&
-               is_legal(file_origin, rank_origin, en_passant_target.file, en_passant_target.rank))
-            {
-                en_passant_legal = true;
-                break;
-            }
-        }
-
-        if( ! en_passant_legal)
-        {
-            clear_en_passant_target();
-        }
-    }
-
     // An insufficient material draw can only happen after a capture
     // or a pawn promotion to a minor piece, both of which clear the
     // repeat_count map.
@@ -468,7 +440,7 @@ Game_Result Board::submit_move(const Move& move)
     {
         fifty_move_count += board_count.second;
     }
-    if(fifty_move_count >= 100) // "Move" means both players move.
+    if(fifty_move_count >= 101) // "Move" means both players move, 101 including current position
     {
         return Game_Result(NONE, "50-move limit", false);
     }
@@ -654,8 +626,8 @@ const std::vector<const Move*>& Board::other_moves() const
 
 void Board::ascii_draw(Color perspective) const
 {
-    const int square_width = 7;
-    const int square_height = 3;
+    const size_t square_width = 7;
+    const size_t square_height = 3;
 
     const std::string square_corner = "+";
     const std::string square_horizontal_border = "-";
@@ -666,7 +638,7 @@ void Board::ascii_draw(Color perspective) const
     {
         horizontal_line.append(square_corner);
 
-        for(int j = 0; j < square_width; ++j)
+        for(size_t j = 0; j < square_width; ++j)
         {
             horizontal_line.append(square_horizontal_border);
         }
@@ -685,7 +657,7 @@ void Board::ascii_draw(Color perspective) const
     {
         std::cout << left_spacer << horizontal_line;
 
-        for(int square_row = 0; square_row < square_height; ++square_row)
+        for(size_t square_row = 0; square_row < square_height; ++square_row)
         {
             if(square_row == square_height/2)
             {
@@ -1146,6 +1118,7 @@ void Board::recreate_move_caches()
     legal_moves_cache.clear();
 
     capturing_move_available = false;
+    bool en_passant_legal = false;
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
@@ -1158,10 +1131,15 @@ void Board::recreate_move_caches()
                     if(move->is_legal(*this))
                     {
                         legal_moves_cache.push_back(move);
-                        if(piece_on_square(move->end_file(), move->end_rank()) ||
-                           move->is_en_passant())
+
+                        if( ! en_passant_legal)
                         {
-                            capturing_move_available = true;
+                            en_passant_legal = move->is_en_passant();
+                        }
+
+                        if( ! capturing_move_available)
+                        {
+                            capturing_move_available = (en_passant_legal || piece_on_square(move->end_file(), move->end_rank()));
                         }
                     }
                     else
@@ -1171,6 +1149,11 @@ void Board::recreate_move_caches()
                 }
             }
         }
+    }
+
+    if( ! en_passant_legal)
+    {
+        clear_en_passant_target();
     }
 }
 

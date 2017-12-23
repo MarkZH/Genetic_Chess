@@ -27,7 +27,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     while(end_index < s.size() && split_count < count)
     {
         end_index = (delim.empty() ?
-                     s.find_first_of(" \t\n", start_index) :
+                     s.find_first_of(whitespace, start_index) :
                      s.find(delim, start_index));
         result.push_back(s.substr(start_index, end_index-start_index));
         if(end_index == std::string::npos)
@@ -68,17 +68,12 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 
 bool String::starts_with(const std::string& s, const std::string& beginning)
 {
-    if(beginning.size() > s.size())
-    {
-        return false;
-    }
-
-    return std::equal(beginning.begin(), beginning.end(), s.begin());
+    return (beginning.size() <= s.size()) && std::equal(beginning.begin(), beginning.end(), s.begin());
 }
 
 bool String::starts_with(const std::string& s, char beginning)
 {
-    return s[0] == beginning;
+    return ( ! s.empty()) && s[0] == beginning;
 }
 
 std::string String::consolidate_inner_whitespace(const std::string& s)
@@ -336,4 +331,9 @@ void Scoped_Stopwatch::stop()
 void Scoped_Stopwatch::add_info(const std::string& info)
 {
     place_name += info;
+}
+
+void Scoped_Stopwatch::reject()
+{
+    stopped = true;
 }

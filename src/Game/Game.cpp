@@ -14,8 +14,6 @@
 #include "Players/Thinking.h"
 #include "Exceptions/Game_Ending_Exception.h"
 
-#include "Utility.h"
-
 // Play single game, return color of winner
 Game_Result play_game(const Player& white,
                       const Player& black,

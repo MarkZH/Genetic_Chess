@@ -6,7 +6,6 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
-#include "Utility.h"
 
 double Pawn_Advancement_Gene::score_board(const Board& board) const
 {

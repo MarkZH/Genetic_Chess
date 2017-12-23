@@ -30,7 +30,7 @@
 
 // Declaration to silence warnings
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
-size_t move_count(const Board& board, size_t maximum_depth);
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& file_name);
 
 void run_tests()
 {
@@ -382,6 +382,26 @@ void run_tests()
         tests_passed = false;
     }
 
+    std::string splitting_line = "\t a b c d e ";
+    std::vector<std::string> expected_split_line = {"a", "b", "c", "d", "e"};
+    auto split_line = String::split(splitting_line);
+    if(split_line.size() != expected_split_line.size() || ! std::equal(split_line.begin(), split_line.end(), expected_split_line.begin()))
+    {
+        std::cerr << "These lists should match from line splitting:\nExected from String::split(" << splitting_line << ")\n";
+        for(const auto& thing : expected_split_line)
+        {
+            std::cerr << thing << ", ";
+        }
+        std::cerr << "\nReturned by String::split()\n";
+        for(const auto& thing : split_line)
+        {
+            std::cerr << thing << ", ";
+        }
+        std::cerr << std::endl;
+
+        tests_passed = false;
+    }
+
 
     // Log-Norm distribution check
     const double mean_moves = 26.0;
@@ -536,16 +556,27 @@ void run_tests()
         tests_passed = false;
     }
 
-    // Count game tree leaves up to 2 moves (4 ply) deep
-    std::cout << "Counting moves to 4-ply depth ... " << std::flush;
-    size_t expected_count = 197281;
-    size_t actual_count = move_count(Board(), 4);
-    if(actual_count != expected_count)
+    // Count game tree leaves to given depth
+    auto ply_counts = std::map<size_t, size_t>{{0, 1},
+                                               {1, 20},
+                                               {2, 400},
+                                               {3, 8902},
+                                               {4, 197281},
+                                               {5, 4865609}};
+    for(const auto& depth_expected : ply_counts)
     {
-        std::cerr << "Expected game tree leaves: " << expected_count << "  Got: " << actual_count << std::endl;
-        tests_passed = false;
+        auto plies = depth_expected.first;
+        auto answer = depth_expected.second;
+        std::cout << "Counting moves to " << plies << "-ply depth ... " << std::flush;
+        std::string file_name = "";
+        size_t count = move_count(Board(), plies, file_name);
+        if(count != answer)
+        {
+            std::cerr << "\nExpected game tree leaves: " << count << "  Got: " << answer << std::endl;
+            tests_passed = false;
+        }
+        std::cout << "Done." << std::endl;
     }
-    std::cout << "Done." << std::endl;
 
     // check square colors are correct
     auto current_color = WHITE;
@@ -585,14 +616,17 @@ void run_tests()
     }
 
     // FEN input/output
-    for(std::string test : {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-                            "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1",
-                            "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2",
-                            "rnbqkbnr/pp1ppppp/8/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2"})
+    for(std::string test : {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", // Start
+                            "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1", // 1. e4
+                            "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",  // 1. ... c5
+                            "rnbqkbnr/pp1ppppp/8/2p1P3/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",  // 2. e5
+                            "rnbqkbnr/pp1pp1pp/8/2p1Pp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3"}) // 2. ... f4
     {
-        if(Board(test).fen_status() != test)
+        auto board_fen = Board(test);
+        if(board_fen.fen_status() != test)
         {
-            std::cerr << test << " -->\n" << Board(test).fen_status() << "\n\n";
+            std::cerr << test << " -->\n" << board_fen.fen_status() << "\n\n";
+            board_fen.ascii_draw();
             tests_passed = false;
         }
     }
@@ -646,16 +680,15 @@ bool files_are_identical(const std::string& file_name1, const std::string& file_
     return true;
 }
 
-size_t move_count(const Board& board, size_t maximum_depth)
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& file_name)
 {
     if(maximum_depth == 0)
     {
+        if( ! file_name.empty())
+        {
+            board.print_game_record(nullptr, nullptr, file_name, {}, 0, 0, 0, {});
+        }
         return 1;
-    }
-
-    if(maximum_depth == 1)
-    {
-        return board.legal_moves().size();
     }
 
     size_t count = 0;
@@ -663,7 +696,7 @@ size_t move_count(const Board& board, size_t maximum_depth)
     {
         auto next_board = board;
         next_board.submit_move(*move);
-        count += move_count(next_board, maximum_depth - 1);
+        count += move_count(next_board, maximum_depth - 1, file_name);
     }
 
     return count;

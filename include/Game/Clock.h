@@ -19,7 +19,7 @@ class Clock
         void stop(); // stop both clocks
         void start(); // resume after stop()
         double time_left(Color color) const;
-        int moves_to_reset(Color color) const;
+        size_t moves_to_reset(Color color) const;
         bool is_running() const;
         Color running_for() const;
 
@@ -29,14 +29,14 @@ class Clock
         // timers are mutable so they can be adjusted by external interfaces (xboard, UCI, etc.)
         mutable std::array<fractional_seconds, 2> timers;
 
-        std::array<int, 2> moves;
+        std::array<size_t, 2> moves;
         std::array<fractional_seconds, 2> initial_time;
         std::array<fractional_seconds, 2> increment;
 
         Color whose_turn;
         bool use_clock;
         bool use_reset;
-        int move_count_reset;
+        size_t move_count_reset;
         bool clocks_running;
         std::chrono::steady_clock::time_point time_previous_punch;
 

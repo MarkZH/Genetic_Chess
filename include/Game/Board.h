@@ -129,9 +129,9 @@ class Board
         static const Pawn   black_pawn;
 
         // Caches
-        mutable std::vector<const Move*> other_moves_cache;
-        mutable std::vector<const Move*> legal_moves_cache;
-        mutable bool capturing_move_available;
+        std::vector<const Move*> other_moves_cache;
+        std::vector<const Move*> legal_moves_cache;
+        bool capturing_move_available;
 
         void recreate_move_caches();
 

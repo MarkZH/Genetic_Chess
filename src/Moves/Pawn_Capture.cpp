@@ -5,7 +5,6 @@
 #include "Moves/Move.h"
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
-#include "Utility.h"
 
 Pawn_Capture::Pawn_Capture(Color color_in, Capture_Direction dir, char file_start, int rank_start) :
     Pawn_Move(color_in, file_start, rank_start)

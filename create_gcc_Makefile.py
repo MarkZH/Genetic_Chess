@@ -77,7 +77,7 @@ for target in final_targets:
         depends[target].append(sub + target)
     depends[target].insert(1, out_variable)
 
-    depends[out_variable] = ['before_' + target, all_objects]
+    depends[out_variable] = [all_objects]
     depends['clean'].append('clean_' + target)
     depends['clean_' + target] = []
     operations['clean_' + target] = ["rm " + all_objects + " " + out_variable]

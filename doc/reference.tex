@@ -2,6 +2,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[colorlinks]{hyperref}
 \usepackage[pdftex]{graphicx}
+\usepackage{verbatim}
 
 \newcommand{\cpp}{C{\nobreak +}{\nobreak +}}
 
@@ -220,6 +221,10 @@ This gene sums the total strength (as determined by the Piece Strength Gene) of 
 \subsubsection{Sphere of Influence Gene}
 This gene counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move. That is, if a piece cannot reach a square in one move (perhaps because such a move is blocked by another piece), then that square is still counted as falling under the influence of the side owning that piece. Further bonus points are awarded based on how close the attacked square is to the king.
 
+The effective formula for the score of this gene can be expressed as
+\[score = \sum_s legal(s)\left(1+\frac{KTF}{1+distance(s,king)}\right)\]
+where the sum is over all squares \(s\) on the board. The function \(legal(s)\) returns~0 if \(s\) is not attacked at all,~1 if the square is attacked by an illegal move, and a genetically determined result if attacked by a legal move. The term \(KTF\) is the king target factor and is a genetically determined weight that adjusts the importance of attacking squares close to the opposing king. The function \(distance(s_1, s_2)\) gives the distance between two squares in king moves and is equal to the maximum of the difference in file or difference in rank between the squares.
+
 \subsubsection{King Confinement Gene}
 This gene counts the squares the king can reach given unlimited legal moves. Squares that take a larger number of moves to reach are given lower scores. Kings that are hemmed in by squares occupied by friendly pieces and squares attacked by the opponent result in a low score from this gene. This is a measure of how much room the king has to maneuver and escape. It is somewhat in opposition to the King Protection Gene.
 
@@ -227,54 +232,11 @@ This gene counts the squares the king can reach given unlimited legal moves. Squ
 This gene counts the squares that have access to the king by any valid piece movement and are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a less exposed king.
 
 \subsubsection{Castling Possible Gene}
-This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away. The score can vary based on a genetically determined preference for kingside or queenside castling.
+This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away and the king and rook remaining unmoved. The score can vary based on a genetically determined preference for kingside or queenside castling.
 
 \subsection{Genome File Format}
 An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line.
-\begin{verbatim}
-ID: 106768
-
-Name: Piece Strength Gene
-B: 9.5685
-N: 5.55439
-P: -0.285538
-Q: 23.8438
-R: 13.3138
-
-Name: Look Ahead Gene
-Game Length Uncertainty: 0.394859
-Mean Game Length: 33.0766
-Speculation Constant: 0.0142434
-
-Name: Total Force Gene
-Priority: 400.656
-
-Name: Freedom to Move Gene
-Priority: 30.5008
-
-Name: Pawn Advancement Gene
-Priority: 138.87
-
-Name: Opponent Pieces Targeted Gene
-Priority: 104.614
-
-Name: Sphere of Influence Gene
-King Target Factor: 0.260099
-Legal Bonus: 0.705431
-Priority: 220.958
-
-Name: King Confinement Gene
-Priority: -13.7753
-
-Name: King Protection Gene
-Priority: -0.469023
-
-Name: Castling Possible Gene
-Kingside Preference: 0.390153
-Priority: -18.3223
-
-END
-\end{verbatim}
+\verbatiminput{../genetic_ai_example.txt}
 
 
 \section{The Gene Pool: On the Care and Feeding of Chess AIs}
@@ -287,41 +249,7 @@ One final means of preventing gene pool stagnation and preserving genetic divers
 
 \subsection{Gene Pool Configuration File}
 A gene pool is configured with a text file that is reference in the program starting arguments (see Section~\ref{running}). An example gene pool configuration file is presented below.
-\begin{verbatim}
-# Gene Pool Configuration (# indicate comments)
-
-# The number of processors used will be the minimum
-# of this number and half the gene pool population.
-maximum simultaneous games = 8
-
-# How many players in each pool
-gene pool population = 16
-
-# How many gene pools
-gene pool count = 3
-
-# Probability of killing a player after a draw
-draw kill probability = 0.05
-
-# Games in between swapping players between pools
-pool swap interval = 1000
-
-# Oscillating game time
-#
-# The time for each game starts at the minimum, then goes up
-# by the increment after each round of games. When it reaches
-# the maximum, the increment is reversed and the time for each
-# game goes down until it reaches the minimum. Then, the cycle
-# starts again.
-minimum game time = 30 # seconds
-maximum game time = 120 # seconds
-game time increment = 0 # seconds
-
-# The name of the file where the genomes will be recorded.
-# Games will be recorded in a file with "_games.txt" appended
-# to the name.
-gene pool file = pool.txt
-\end{verbatim}
+\verbatiminput{../gene_pool_config_example.txt}
 
 \subsection{Gene Pool Output}
 An example of typical output during a gene pool run is shown below. First, some general information about the pool is shown, then the results of the random matchups, thirdly the new makeup of this gene pool in the aftermath of the games, and finally the IDs of the AIs with the most ever wins and the most number of games survived.
