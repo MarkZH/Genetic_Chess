@@ -557,18 +557,22 @@ void run_tests()
     }
 
     // Count game tree leaves to given depth
-    auto ply_counts =      std::vector<size_t>{4,      5};
-    auto correct_answers = std::vector<size_t>{197281, 4865609};
-    for(size_t test_number = 0; test_number < ply_counts.size(); ++test_number)
+    auto ply_counts = std::map<size_t, size_t>{{0, 1},
+                                               {1, 20},
+                                               {2, 400},
+                                               {3, 8902},
+                                               {4, 197281},
+                                               {5, 4865609}};
+    for(const auto& depth_expected : ply_counts)
     {
-        auto plies = ply_counts[test_number];
-        auto answer = correct_answers[test_number];
+        auto plies = depth_expected.first;
+        auto answer = depth_expected.second;
         std::cout << "Counting moves to " << plies << "-ply depth ... " << std::flush;
-        std::string file_name = (plies == 5 ? "perft5-new.txt" : "");
+        std::string file_name = "";
         size_t count = move_count(Board(), plies, file_name);
         if(count != answer)
         {
-            std::cerr << "Expected game tree leaves: " << count << "  Got: " << answer << std::endl;
+            std::cerr << "\nExpected game tree leaves: " << count << "  Got: " << answer << std::endl;
             tests_passed = false;
         }
         std::cout << "Done." << std::endl;
@@ -681,11 +685,6 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& f
             board.print_game_record(nullptr, nullptr, file_name, {}, 0, 0, 0, {});
         }
         return 1;
-    }
-
-    if(maximum_depth == 1 && file_name.empty())
-    {
-        return board.legal_moves().size();
     }
 
     size_t count = 0;
