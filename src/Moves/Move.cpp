@@ -193,7 +193,7 @@ std::string Move::game_record_ending_item(Board board) const
         return result.get_game_record_annotation();
     }
 
-    if(board.king_is_in_check(board.whose_turn()))
+    if(board.king_is_in_check())
     {
         return "+";
     }

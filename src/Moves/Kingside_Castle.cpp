@@ -12,7 +12,7 @@ bool Kingside_Castle::move_specific_legal(const Board& board) const
 {
     return     ! board.piece_has_moved(starting_file, starting_rank)
             && ! board.piece_has_moved('h', starting_rank)
-            && ! board.king_is_in_check(board.whose_turn())
+            && ! board.king_is_in_check()
             && board.safe_for_king('f', starting_rank, board.whose_turn());
 }
 

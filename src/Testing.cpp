@@ -226,6 +226,121 @@ void run_tests()
     }
 
 
+    // Pinned piece test
+    auto pin_board = Board("k1KRr3/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! pin_board.piece_is_pinned('d', 8))
+    {
+        pin_board.ascii_draw(WHITE);
+        std::cerr << "Rook at d4 should register as pinned." << std::endl;
+        tests_passed = false;
+    }
+
+    auto no_pin_board = Board("k1KRRr2/8/8/8/8/8/8/8 w - - 0 1");
+    if(no_pin_board.piece_is_pinned('d', 8))
+    {
+        no_pin_board.ascii_draw(WHITE);
+        std::cerr << "Rook at d4 should not register as pinned." << std::endl;
+        tests_passed = false;
+    }
+
+    auto en_passant_pin_board = Board("K7/8/8/8/kpP4R/8/8/8 b - c3 0 1");
+    auto move_string = "b4c3";
+    auto move_is_legal = true;
+    try
+    {
+        en_passant_pin_board.get_move(move_string);
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        move_is_legal = false;
+    }
+
+    if(move_is_legal)
+    {
+        en_passant_pin_board.ascii_draw(WHITE);
+        std::cerr << "En passant capture by black (" << move_string << ") should not be legal here." << std::endl;
+        tests_passed = false;
+    }
+
+    Board perf_board;
+    try
+    {
+        for(const auto& move : {"c3", "a6", "Qa4"})
+        {
+            perf_board.submit_move(perf_board.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board.ascii_draw(WHITE);
+        perf_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+    bool legal_move = true;
+    auto illegal_move = "d5";
+    try
+    {
+        perf_board.submit_move(perf_board.get_move(illegal_move));
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        legal_move = false;
+    }
+
+    if(legal_move)
+    {
+        perf_board.ascii_draw(WHITE);
+        std::cout << "Last move (" << illegal_move << ") should have been illegal." << std::endl;
+        tests_passed = false;
+    }
+
+
+    Board perf_board2;
+    auto moves2 = {"c3", "d6", "Qa4", "Nc6"};
+    try
+    {
+        for(const auto& move : moves2)
+        {
+            perf_board2.submit_move(perf_board2.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board2.ascii_draw(WHITE);
+        perf_board2.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves2)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+    Board perf_board3;
+    std::vector<std::string> moves3 = {"d3", "c6", "Bd2", "Qa5", "Bb4"};
+    try
+    {
+        for(const auto& move : moves3)
+        {
+            perf_board3.submit_move(perf_board3.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board3.ascii_draw(WHITE);
+        perf_board3.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves3)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
     // Test Genetic_AI file loading
     std::cout << "Testing genome file handling ... " << std::flush;
     auto pool_file_name = "test_gene_pool.txt";
@@ -556,7 +671,7 @@ void run_tests()
         tests_passed = false;
     }
 
-    // Count game tree leaves to given depth
+    // Count game tree leaves to given depth (http://oeis.org/A048987)
     auto ply_counts = std::map<size_t, size_t>{{0, 1},
                                                {1, 20},
                                                {2, 400},

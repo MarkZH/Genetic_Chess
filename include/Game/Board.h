@@ -89,8 +89,9 @@ class Board
         bool is_en_passant_targetable(char file, int rank) const;
         bool piece_has_moved(char file, int rank) const;
         Square find_king(Color color) const;
-        bool king_is_in_check(Color color) const;
+        bool king_is_in_check() const;
         bool king_is_in_check_after_move(const Move& move) const;
+        bool piece_is_pinned(char file, int rank) const;
         bool capture_possible() const;
 
         static const Pawn* get_pawn(Color color);
@@ -131,8 +132,10 @@ class Board
         std::vector<const Move*> other_moves_cache;
         std::vector<const Move*> legal_moves_cache;
         bool capturing_move_available;
+        std::vector<Square> checking_squares;
 
         void recreate_move_caches();
+        void refresh_checking_squares();
 
         // Communication channels
         mutable Thinking_Output_Type thinking_indicator;
@@ -148,11 +151,7 @@ class Board
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
         void switch_turn();
-
-        // Minimal copy of board with custom constructor for
-        // use with king_is_in_check
-        explicit Board(const Board* old_board);
-        Board minimal_copy() const; // Just copy board state with no history
+        bool king_multiply_checked() const;
 
         friend void Kingside_Castle::side_effects(Board&) const; // moves second piece
         friend void Queenside_Castle::side_effects(Board&) const; // moves second piece

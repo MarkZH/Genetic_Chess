@@ -190,7 +190,9 @@ Board::Board(const std::string& fen) :
     set_turn(fen_parse[1] == "w" ? WHITE : BLACK);
     first_player_to_move = turn_color;
 
-    if(king_is_in_check(opposite(whose_turn())))
+    auto non_turn_color = opposite(whose_turn());
+    auto non_turn_king_square = king_location[non_turn_color];
+    if( ! safe_for_king(non_turn_king_square.file, non_turn_king_square.rank, non_turn_color))
     {
         throw std::runtime_error(color_text(opposite(whose_turn())) +
                                  " is in check but it is " +
@@ -236,19 +238,6 @@ Board::Board(const std::string& fen) :
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
-}
-
-// Only for use with minimal_copy()
-Board::Board(const Board* old_board) :
-    board(old_board->board),
-    king_location(old_board->king_location)
-{
-}
-
-// Only for use with king_is_in_check_after_move()
-Board Board::minimal_copy() const
-{
-    return Board(this);
 }
 
 size_t Board::board_index(char file, int rank)
@@ -397,7 +386,7 @@ Game_Result Board::submit_move(const Move& move)
 
     if(no_legal_moves())
     {
-        if(king_is_in_check(whose_turn()))
+        if(king_is_in_check())
         {
             auto winner = opposite(whose_turn());
             return Game_Result(winner, color_text(winner) + " mates", false);
@@ -703,16 +692,15 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     }
 }
 
-bool Board::king_is_in_check(Color king_color) const
+bool Board::king_is_in_check() const
 {
-    // find king of input color
-    auto king_square = find_king(king_color);
-    return ! safe_for_king(king_square.file, king_square.rank, king_color);
+    return ! checking_squares.empty();
 }
 
 bool Board::safe_for_king(char file, int rank, Color king_color) const
 {
     auto attacking_color = opposite(king_color);
+    auto king = get_king(king_color);
     int pawn_rank = rank - (attacking_color == WHITE ? 1 : -1); // which direction pawns attack
 
     // Straight-line moves
@@ -736,7 +724,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
                 }
 
                 auto piece = piece_on_square(attacking_file, attacking_rank);
-                if( ! piece)
+                if(( ! piece) || piece == king) // pretend king is not there when checking other squares
                 {
                     continue;
                 }
@@ -809,13 +797,219 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
     return true;
 }
 
+void Board::refresh_checking_squares()
+{
+    checking_squares.clear();
+    auto attacking_color = opposite(whose_turn());
+    auto king_square = king_location[whose_turn()];
+    int pawn_rank = king_square.rank - (attacking_color == WHITE ? 1 : -1); // which direction pawns attack
+
+    // Straight-line moves
+    for(auto rank_step : {-1, 0, 1})
+    {
+        for(auto file_step : {-1, 0, 1})
+        {
+            if(file_step == 0 && rank_step == 0)
+            {
+                continue;
+            }
+
+            for(int steps = 1; steps <= 7; ++steps)
+            {
+                char attacking_file = king_square.file + file_step*steps;
+                int  attacking_rank = king_square.rank + rank_step*steps;
+
+                if( ! inside_board(attacking_file, attacking_rank))
+                {
+                    break;
+                }
+
+                auto piece = piece_on_square(attacking_file, attacking_rank);
+                if( ! piece)
+                {
+                    continue;
+                }
+
+                if(piece->color() != attacking_color)
+                {
+                    break; // piece on square is blocking anything behind it
+                }
+
+                if(piece->is_queen())
+                {
+                    checking_squares.push_back({attacking_file, attacking_rank});
+                }
+
+                if(file_step == 0 || rank_step == 0)
+                {
+                    if(piece->is_rook())
+                    {
+                        checking_squares.push_back({attacking_file, attacking_rank});
+                    }
+                }
+                else
+                {
+                    if(attacking_rank == pawn_rank && piece->is_pawn())
+                    {
+                        checking_squares.push_back({attacking_file, attacking_rank});
+                    }
+
+                    if(piece->is_bishop())
+                    {
+                        checking_squares.push_back({attacking_file, attacking_rank});
+                    }
+                }
+
+                break; // piece on square is blocking anything behind it
+            }
+        }
+    }
+
+    // Check for knight attacks
+    auto knight = get_knight(attacking_color);
+    for(auto file_step : {1, 2})
+    {
+        auto rank_step = 3 - file_step;
+        for(auto file_step_direction : {-1, 1})
+        {
+            for(auto rank_step_direction : {-1, 1})
+            {
+                char attacking_file = king_square.file + file_step*file_step_direction;
+                char attacking_rank = king_square.rank + rank_step*rank_step_direction;
+
+                if( ! inside_board(attacking_file, attacking_rank))
+                {
+                    continue;
+                }
+
+                if(piece_on_square(attacking_file, attacking_rank) == knight)
+                {
+                    checking_squares.push_back({attacking_file, attacking_rank});
+                }
+            }
+        }
+    }
+}
+
 bool Board::king_is_in_check_after_move(const Move& move) const
 {
-    auto temp_board = minimal_copy();
-    temp_board.make_move(move.start_file(), move.start_rank(),
-                         move.end_file(),   move.end_rank());
-    move.side_effects(temp_board);
-    return temp_board.king_is_in_check(whose_turn());
+    if(piece_on_square(move.start_file(), move.start_rank())->is_king())
+    {
+        return ! safe_for_king(move.end_file(), move.end_rank(), whose_turn());
+    }
+
+    if(king_is_in_check())
+    {
+        // King is under check from multiple pieces but not moving
+        if(king_multiply_checked())
+        {
+            return true;
+        }
+
+        // Checking piece is captured by non-pinned piece
+        if(checking_squares.front() == Square{move.end_file(), move.end_rank()})
+        {
+            return piece_is_pinned(move.start_file(), move.start_rank());
+        }
+
+        // Non-pinned piece moves to block check
+        if(piece_is_pinned(move.end_file(), move.end_rank()))
+        {
+            return piece_is_pinned(move.start_file(), move.start_rank());
+        }
+
+        // Nothing is done about check
+        return true;
+    }
+
+    if(piece_is_pinned(move.start_file(), move.start_rank()))
+    {
+        if(piece_on_square(move.start_file(), move.start_rank())->is_knight())
+        {
+            return true; // knights cannot escape pins
+        }
+
+        // piece moves off line of attack to king
+        auto king_square = king_location[whose_turn()];
+
+        // Column move
+        if(move.file_change() == 0)
+        {
+            return move.start_file() != king_square.file;
+        }
+
+        // Row move
+        if(move.rank_change() == 0)
+        {
+            return move.start_rank() != king_square.rank;
+        }
+
+        // Move is diagonal, check if pin is on row or column
+        if(move.start_file() == king_square.file || move.start_rank() == king_square.rank)
+        {
+            return true;
+        }
+
+        // check that diagonal moves are parallel to pin direction
+        auto diagonal_of_move = (move.file_change() == move.rank_change());
+        auto diagonal_of_piece_to_king = ((king_square.file - move.start_file()) == (king_square.rank - move.start_rank()));
+        return diagonal_of_move != diagonal_of_piece_to_king;
+    }
+
+    // Make sure pawn captured en passant wasnt' blocking check
+    if(move.is_en_passant())
+    {
+        // Captured pawn was blocking diagonal check
+        if(piece_is_pinned(move.end_file(), move.start_rank()))
+        {
+            return king_location[whose_turn()].file != move.end_file();
+        }
+
+        // Check if king is on same row as both pawns and there is an enemy rook or queen on row
+        auto king_square = king_location[whose_turn()];
+        if(king_square.rank != move.start_rank())
+        {
+            return false;
+        }
+
+        auto step = (move.start_file() > king_square.file ? 1 : -1);
+        auto attacking_file = move.start_file();
+        auto attacked_file = move.end_file();
+        auto passed_pawns = 0;
+        for(char file = king_square.file + step; inside_board(file); file += step)
+        {
+            if(file == attacked_file || file == attacking_file)
+            {
+                ++ passed_pawns;
+                continue;
+            }
+
+            auto piece = piece_on_square(file, king_square.rank);
+            if(piece)
+            {
+                if(passed_pawns < 2)
+                {
+                    break;
+                }
+
+                if(piece->color() == whose_turn())
+                {
+                    break;
+                }
+
+                if(piece->is_rook() || piece->is_queen())
+                {
+                    return true;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    return false;
 }
 
 bool Board::no_legal_moves() const
@@ -1091,6 +1285,7 @@ void Board::recreate_move_caches()
 {
     other_moves_cache.clear();
     legal_moves_cache.clear();
+    refresh_checking_squares();
 
     capturing_move_available = false;
     bool en_passant_legal = false;
@@ -1255,4 +1450,85 @@ Color Board::first_to_move() const
 bool Board::capture_possible() const
 {
     return capturing_move_available;
+}
+
+bool Board::king_multiply_checked() const
+{
+    return checking_squares.size() > 1;
+}
+
+bool Board::piece_is_pinned(char file, int rank) const
+{
+    auto king_square = king_location[whose_turn()];
+    auto file_change = file - king_square.file;
+    auto rank_change = rank - king_square.rank;
+
+    if(file_change == 0 && rank_change == 0)
+    {
+        return false; // king is never pinned
+    }
+
+    auto straight_line_move = (file_change == 0 ||
+                               rank_change == 0 ||
+                               std::abs(file_change) == std::abs(rank_change));
+    if( ! straight_line_move)
+    {
+        return false;
+    }
+
+    auto max_step = std::max(std::abs(file_change), std::abs(rank_change));
+    auto file_step = file_change/max_step;
+    auto rank_step = rank_change/max_step;
+
+    for(int step = 1; step < max_step; ++step)
+    {
+        char current_file = king_square.file + file_step*step;
+        int  current_rank = king_square.rank + rank_step*step;
+        if(piece_on_square(current_file, current_rank))
+        {
+            return false; // another piece between king and piece
+        }
+    }
+
+    for(int step = 1; true; ++step) // loop until outside board or piece found
+    {
+        char current_file = file + file_step*step;
+        int  current_rank = rank + rank_step*step;
+
+        if( ! inside_board(current_file, current_rank))
+        {
+            return false;
+        }
+
+        auto attacking_piece = piece_on_square(current_file, current_rank);
+        if(attacking_piece)
+        {
+            if(attacking_piece->color() == whose_turn())
+            {
+                return false;
+            }
+
+            if(attacking_piece->is_queen())
+            {
+                return true;
+            }
+
+            if(file_change == 0 || rank_change == 0)
+            {
+                if(attacking_piece->is_rook())
+                {
+                    return true;
+                }
+            }
+            else
+            {
+                if(attacking_piece->is_bishop())
+                {
+                    return true;
+                }
+            }
+
+            return false; // Wrong piece to pin
+        }
+    }
 }
