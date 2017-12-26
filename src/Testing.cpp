@@ -805,6 +805,10 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& f
     size_t count = 0;
     for(auto move : board.legal_moves())
     {
+        if(board.get_game_record().empty())
+        {
+            std::cout << move->game_record_item(board) << ' ';
+        }
         auto next_board = board;
         next_board.submit_move(*move);
         count += move_count(next_board, maximum_depth - 1, file_name);

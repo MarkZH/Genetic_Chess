@@ -91,7 +91,7 @@ class Board
         Square find_king(Color color) const;
         bool king_is_in_check() const;
         bool king_is_in_check_after_move(const Move& move) const;
-        bool piece_is_pinned(char file, int rank) const;
+        Square piece_is_pinned(char file, int rank) const; // returns pinning square or {'\0', 0} if none
         bool capture_possible() const;
 
         static const Pawn* get_pawn(Color color);
@@ -152,6 +152,9 @@ class Board
         void place_piece(const Piece* piece, char file, int rank);
         void switch_turn();
         bool king_multiply_checked() const;
+        bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
+        static bool straight_line_move(char file_start, int rank_start, char file_end, int rank_end);
+        bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
 
         friend void Kingside_Castle::side_effects(Board&) const; // moves second piece
         friend void Queenside_Castle::side_effects(Board&) const; // moves second piece
