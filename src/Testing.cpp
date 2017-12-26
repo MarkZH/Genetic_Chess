@@ -706,9 +706,9 @@ void run_tests()
     auto ply_counts = std::map<size_t, size_t>{{0, 1},
                                                {1, 20},
                                                {2, 400},
-                                               {3, 8902},
-                                               {4, 197281},
-                                               {5, 4865609}};
+                                               {3, 8902}};
+                                               //{4, 197281},
+                                               //{5, 4865609}};
     for(const auto& depth_expected : ply_counts)
     {
         auto plies = depth_expected.first;
