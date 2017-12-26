@@ -341,6 +341,37 @@ void run_tests()
         tests_passed = false;
     }
 
+    Board perf_board4;
+    std::vector<std::string> moves4 = {"e3", "a6", "Qe2"};
+    try
+    {
+        Game_Result result;
+        for(const auto& move : moves4)
+        {
+            result = perf_board4.submit_move(perf_board4.get_move(move));
+        }
+
+        if(result.game_has_ended())
+        {
+            perf_board4.ascii_draw(WHITE);
+            std::cerr << "This is not checkmate." << std::endl;
+            tests_passed = false;
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board4.ascii_draw(WHITE);
+        perf_board4.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves4)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+
     // Test Genetic_AI file loading
     std::cout << "Testing genome file handling ... " << std::flush;
     auto pool_file_name = "test_gene_pool.txt";
