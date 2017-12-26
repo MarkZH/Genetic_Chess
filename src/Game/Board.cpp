@@ -980,7 +980,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         {
             if(file == attacked_file || file == attacking_file)
             {
-                ++ passed_pawns;
+                ++passed_pawns;
                 continue;
             }
 
