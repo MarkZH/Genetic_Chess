@@ -1650,6 +1650,8 @@ Square Board::piece_is_pinned(char file, int rank) const
                     return {current_file, current_rank};
                 }
             }
+
+            return no_pin;
         }
     }
 }

@@ -372,6 +372,35 @@ void run_tests()
         tests_passed = false;
     }
 
+    Board perf_board5("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+    std::vector<std::string> moves5 = {"Kf1", "Nc4", "Bd1"};
+    try
+    {
+        Game_Result result;
+        for(const auto& move : moves5)
+        {
+            result = perf_board5.submit_move(perf_board5.get_move(move));
+        }
+
+        if(result.game_has_ended())
+        {
+            perf_board5.ascii_draw(WHITE);
+            std::cerr << "This is not checkmate." << std::endl;
+            tests_passed = false;
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board5.ascii_draw(WHITE);
+        perf_board5.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves5)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
 
     // Test Genetic_AI file loading
     std::cout << "Testing genome file handling ... " << std::flush;
@@ -706,7 +735,7 @@ void run_tests()
     // Count game tree leaves (perft) to given depth to validate move generation
     // (downloaded from http://www.rocechess.ch/perft.html)
     // (leaves from starting posos also found at https://oeis.org/A048987)
-    size_t max_perft_depth = 3;
+    size_t max_perft_depth = 5;
     auto perft_suite_input = std::ifstream("perftsuite.epd");
     auto perft_suite_output_file_name = "";
     std::string line;
@@ -733,6 +762,7 @@ void run_tests()
             {
                 std::cerr << "Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
                 tests_passed = false;
+                perft_suite_input.close();
                 break;
             }
             else
@@ -849,6 +879,15 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
             board.print_game_record(nullptr, nullptr, file_name, {}, 0, 0, 0, {});
         }
         return 1;
+    }
+
+    if(maximum_depth == 1 && file_name.empty())
+    {
+        if(board.get_game_record().empty())
+        {
+            std::cout << line_prefix;
+        }
+        return board.legal_moves().size();
     }
 
     size_t count = 0;
