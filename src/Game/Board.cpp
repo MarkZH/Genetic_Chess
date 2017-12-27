@@ -1557,7 +1557,7 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
     if(attacking_piece->is_knight())
     {
         return (std::abs(file_change) == 1 && std::abs(rank_change) == 2) ||
-               (std::abs(file_change) == 2 && std::abs(file_change) == 1);
+               (std::abs(file_change) == 2 && std::abs(rank_change) == 1);
     }
 
     if(attacking_piece->is_king())
