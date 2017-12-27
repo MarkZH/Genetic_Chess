@@ -402,6 +402,32 @@ void run_tests()
         tests_passed = false;
     }
 
+
+    Board perf_board6("8/Pk6/8/8/8/8/6Kp/8 b - - 0 1");
+    std::vector<std::string> moves6 = {"Ka6", "Kf1", "h1=B", "a8=Q", "Bxa8"};
+    try
+    {
+        Game_Result result;
+        for(const auto& move : moves6)
+        {
+            result = perf_board6.submit_move(perf_board6.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board6.ascii_draw(WHITE);
+        perf_board6.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves6)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+
+
     // Test Genetic_AI file loading
     std::cout << "Testing genome file handling ... " << std::flush;
     auto pool_file_name = "test_gene_pool.txt";
