@@ -731,7 +731,7 @@ void run_tests()
             auto leaf_count = move_count(board, depth, "Depth " + std::to_string(depth) + ": ", perft_suite_output_file_name);
             if(leaf_count != expected_leaves)
             {
-                std::cerr << "Expected leaf count: " << expected_leaves << ", Got: " << leaf_count << std::endl;
+                std::cerr << "Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
                 tests_passed = false;
                 break;
             }
