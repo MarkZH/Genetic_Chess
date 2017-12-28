@@ -18,3 +18,8 @@ bool operator==(const Square& a, const Square& b)
 {
     return (a.file == b.file) && (a.rank == b.rank);
 }
+
+bool operator!=(const Square& a, const Square& b)
+{
+    return !(a == b);
+}

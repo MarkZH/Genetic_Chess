@@ -426,7 +426,35 @@ void run_tests()
         tests_passed = false;
     }
 
-
+    Board perf_board7("n1n5/PPPk4/8/8/8/8/4Kppp/5N1N w - - 0 1");
+    std::vector<std::string> moves7 = {"bxa8=Q", "Nd6", "Qb7", "gxh1=Q", "c8=Q"};
+    try
+    {
+        Game_Result result;
+        for(const auto& move : moves7)
+        {
+            result = perf_board7.submit_move(perf_board7.get_move(move));
+        }
+        if(result.get_winner() != WHITE)
+        {
+            perf_board7.ascii_draw(WHITE);
+            perf_board7.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+            std::cerr << "This should be checkmate for white." << std::endl;
+            tests_passed = false;
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board7.ascii_draw(WHITE);
+        perf_board7.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves7)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
 
     // Test Genetic_AI file loading
     std::cout << "Testing genome file handling ... " << std::flush;
