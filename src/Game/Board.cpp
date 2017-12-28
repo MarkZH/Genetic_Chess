@@ -895,7 +895,7 @@ void Board::print_game_record(const Player* white,
         out_stream << "[Result \"" << result.get_game_ending_annotation() << "\"]\n";
     }
 
-    if( ! String::contains(result.get_ending_reason(), "mates"))
+    if( ! result.get_ending_reason().empty() && ! String::contains(result.get_ending_reason(), "mates"))
     {
         out_stream << "[Termination \"" << result.get_ending_reason() << "\"]\n";
     }
