@@ -42,6 +42,10 @@ std::string Game_Result::get_game_ending_annotation() const
     {
         return "0-1";
     }
+    else if(cause.empty())
+    {
+        return {};
+    }
     else
     {
         return "1/2-1/2";

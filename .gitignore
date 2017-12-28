@@ -16,13 +16,15 @@ genetic chess.layout
 genetic chess.cscope_file_list
 CppCheckResults.xml
 
+# MS Visual Studio files
+.vs/
+enc_temp_folder/
+
 # Compiled output
 bin/
 obj/
 
 # Other files
-*.py
-*.m
 *.png
 octave-workspace
 *.out
@@ -30,7 +32,6 @@ octave-workspace
 *.db
 *.filters
 *.user
-.vs/
 *.obj
 *.log
 *.tlog

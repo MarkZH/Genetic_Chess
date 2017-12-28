@@ -7,6 +7,7 @@
 #include <cmath>
 #include <thread>
 #include <iomanip>
+#include <cassert>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -30,7 +31,7 @@
 
 // Declaration to silence warnings
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
-size_t move_count(const Board& board, size_t maximum_depth, const std::string& file_name);
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix, const std::string& file_name);
 
 void run_tests()
 {
@@ -556,26 +557,43 @@ void run_tests()
         tests_passed = false;
     }
 
-    // Count game tree leaves to given depth
-    auto ply_counts = std::map<size_t, size_t>{{0, 1},
-                                               {1, 20},
-                                               {2, 400},
-                                               {3, 8902},
-                                               {4, 197281},
-                                               {5, 4865609}};
-    for(const auto& depth_expected : ply_counts)
+    // Count game tree leaves (perft) to given depth to validate move generation
+    // (downloaded from http://www.rocechess.ch/perft.html)
+    // (leaves from starting posos also found at https://oeis.org/A048987)
+    size_t max_perft_depth = 3;
+    auto perft_suite_input = std::ifstream("perftsuite.epd");
+    auto perft_suite_output_file_name = "";
+    std::string line;
+    while(std::getline(perft_suite_input, line))
     {
-        auto plies = depth_expected.first;
-        auto answer = depth_expected.second;
-        std::cout << "Counting moves to " << plies << "-ply depth ... " << std::flush;
-        std::string file_name = "";
-        size_t count = move_count(Board(), plies, file_name);
-        if(count != answer)
+        auto split_line = String::split(line, " ;");
+        auto fen = split_line.front();
+        std::cout << fen << std::endl;
+        auto board = Board(fen);
+        auto tests = std::vector<std::string>(split_line.begin() + 1, split_line.end());
+        for(const auto& test : tests)
         {
-            std::cerr << "\nExpected game tree leaves: " << count << "  Got: " << answer << std::endl;
-            tests_passed = false;
+            auto depth_leaves = String::split(test);
+            assert(depth_leaves.size() == 2);
+            assert(depth_leaves.front().front() == 'D');
+            auto depth = std::stoi(depth_leaves.front().substr(1));
+            if(depth > max_perft_depth)
+            {
+                break;
+            }
+            auto expected_leaves = std::stoul(depth_leaves.back());
+            auto leaf_count = move_count(board, depth, "Depth " + std::to_string(depth) + ": ", perft_suite_output_file_name);
+            if(leaf_count != expected_leaves)
+            {
+                std::cerr << "Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
+                tests_passed = false;
+                break;
+            }
+            else
+            {
+                std::cout << " OK!" << std::endl;
+            }
         }
-        std::cout << "Done." << std::endl;
     }
 
     // check square colors are correct
@@ -680,7 +698,7 @@ bool files_are_identical(const std::string& file_name1, const std::string& file_
     return true;
 }
 
-size_t move_count(const Board& board, size_t maximum_depth, const std::string& file_name)
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix, const std::string& file_name)
 {
     if(maximum_depth == 0)
     {
@@ -692,11 +710,32 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& f
     }
 
     size_t count = 0;
+    auto first_move_count = board.legal_moves().size();
+    auto current_count = 0;
+    auto total_squares = 20;
     for(auto move : board.legal_moves())
     {
+        if(board.get_game_record().empty())
+        {
+            std::cout << '\r' << line_prefix << '[';
+            ++current_count;
+            auto squares_to_draw = (total_squares*current_count)/first_move_count;
+            for(int i = 0; i < total_squares; ++i)
+            {
+                if(i < squares_to_draw)
+                {
+                    std::cout << '#';
+                }
+                else
+                {
+                    std::cout << ' ';
+                }
+            }
+            std::cout << ']';
+        }
         auto next_board = board;
         next_board.submit_move(*move);
-        count += move_count(next_board, maximum_depth - 1, file_name);
+        count += move_count(next_board, maximum_depth - 1, line_prefix, file_name);
     }
 
     return count;
