@@ -1136,7 +1136,7 @@ void Board::print_game_record(const Player* white,
         out_stream << "[Result \"" << result.get_game_ending_annotation() << "\"]\n";
     }
 
-    if( ! String::contains(result.get_ending_reason(), "mates"))
+    if( ! result.get_ending_reason().empty() && ! String::contains(result.get_ending_reason(), "mates"))
     {
         out_stream << "[Termination \"" << result.get_ending_reason() << "\"]\n";
     }
@@ -1149,11 +1149,13 @@ void Board::print_game_record(const Player* white,
         temp = Board(starting_fen);
     }
 
+    auto starting_turn_offset = (temp.whose_turn() == WHITE ? 2 : 3);
+
     for(size_t i = 0; i < game_record.size(); ++i)
     {
         if(temp.whose_turn() == WHITE || i == 0)
         {
-            auto step = (i + 2)/2;
+            auto step = (i + starting_turn_offset)/2;
             out_stream << '\n' << move_count_start_offset + step << ".";
             if(i == 0 && temp.whose_turn() == BLACK)
             {
