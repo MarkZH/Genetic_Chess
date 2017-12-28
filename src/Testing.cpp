@@ -816,6 +816,7 @@ void run_tests()
             {
                 std::cerr << "Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
                 tests_passed = false;
+                break;
             }
             else
             {
