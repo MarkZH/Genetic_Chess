@@ -811,7 +811,7 @@ void run_tests()
     {
         auto split_line = String::split(line, " ;");
         auto fen = split_line.front();
-        std::cout << fen << std::endl;
+        std::cout << std::endl << fen << std::endl;
         auto board = Board(fen);
         auto tests = std::vector<std::string>(split_line.begin() + 1, split_line.end());
         for(const auto& test : tests)
