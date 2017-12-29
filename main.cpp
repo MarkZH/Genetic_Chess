@@ -22,6 +22,7 @@
 
 void print_help();
 void replay_game(const std::string& file_name, int game_number);
+bool confirm_game_record(const std::string& file_name);
 int find_last_id(const std::string& filename);
 
 int main(int argc, char *argv[])
@@ -63,6 +64,22 @@ int main(int argc, char *argv[])
             else if(std::string(argv[1]) == "-stalemate")
             {
                 stalemate_search_start();
+            }
+            else if(std::string(argv[1]) == "-confirm")
+            {
+                if(argc >= 3)
+                {
+                    if( ! confirm_game_record(argv[2]))
+                    {
+                        std::cerr << "Game contains illegal or mismarked moves." << std::endl;
+                        return 2;
+                    }
+                }
+                else
+                {
+                    std::cerr << "Provide a file containing a game to confirm has all legal moves." << std::endl;
+                    return 1;
+                }
             }
             else
             {
@@ -214,6 +231,8 @@ void print_help()
               << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name." << std::endl << std::endl
               << "\t-replay [filename]" << std::endl
               << "\t\tStep through a PGN game file, drawing the board after each\n\t\tmove with an option to begin playing at any time." << std::endl << std::endl
+              << "\t-confirm [filename]" << std::endl
+              << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates." << std::endl << std::endl
               << "\t-stalemate" << std::endl
               << "\t\tBegin a search for the shortest possible stalemate--i.e., where\n\t\tthe player to move has no legal moves. Estimated time to\n\t\tcompletion: months." << std::endl << std::endl
               << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying." << std::endl << std::endl
@@ -419,4 +438,134 @@ void replay_game(const std::string& file_name, int game_number)
             }
         }
     }
+}
+
+bool confirm_game_record(const std::string& file_name)
+{
+    auto input = std::ifstream(file_name);
+    std::string line;
+
+    auto expected_winner = NONE;
+    auto expect_checkmate = true;
+    auto in_game = false;
+    Board board;
+
+    while(std::getline(input, line))
+    {
+        line = String::strip_block_comment(line, '{', '}');
+        line = String::strip_comments(line, ';');
+        line = String::remove_extra_whitespace(line);
+        if(line.empty())
+        {
+            continue;
+        }
+
+        if(in_game && String::starts_with(line, '['))
+        {
+            expected_winner = NONE;
+            expect_checkmate = true;
+            in_game = false;
+            board = Board();
+        }
+
+        if(String::starts_with(line, "[Result"))
+        {
+            if(String::contains(line, "1-0"))
+            {
+                expected_winner = WHITE;
+            }
+            else if(String::contains(line, "0-1"))
+            {
+                expected_winner = BLACK;
+            }
+            else if(String::contains(line, "1/2-1/2"))
+            {
+                expected_winner = NONE;
+            }
+            else
+            {
+                std::cerr << "Malformed Result: " << line << std::endl;
+                return false;
+            }
+        }
+        else if(String::starts_with(line, "[Termination"))
+        {
+            expect_checkmate = false;
+        }
+        else if(String::starts_with(line, "[FEN"))
+        {
+            board = Board(String::split(line, "\"").at(1));
+        }
+        else if(String::starts_with(line, '['))
+        {
+            continue;
+        }
+        else
+        {
+            // In game
+            in_game = true;
+            for(const auto& move : String::split(line))
+            {
+                if(move.back() == '.')
+                {
+                    continue;
+                }
+
+                if((move == "1/2-1/2" && expected_winner != NONE) ||
+                    (move == "1-0" && expected_winner != WHITE) ||
+                   (move == "0-1" && expected_winner != BLACK))
+                {
+                    std::cerr << "Final result mark (" << move << ") does not match game result." << std::endl;
+                    return false;
+                }
+
+                if(move == "1/2-1/2" || move == "1-0" || move == "0-1")
+                {
+                    continue;
+                }
+
+                try
+                {
+                    auto move_checks = move.back() == '+';
+                    auto move_checkmates = move.back() == '#';
+                    auto& move_to_submit = board.get_move(move);
+                    if(String::contains(move, 'x')) // check that move captures
+                    {
+                        const Board& temp = board; // to prevent use of non-const private overload
+                        if( ! temp.piece_on_square(move_to_submit.end_file(), move_to_submit.end_rank()))
+                        {
+                            std::cerr << "Move: " << move << " indicates capture but does not capture." << std::endl;
+                            return false;
+                        }
+                    }
+
+                    auto result = board.submit_move(move_to_submit);
+                    if(move_checks)
+                    {
+                        if(!board.king_is_in_check(board.whose_turn()))
+                        {
+                            std::cerr << "Move (" << move << ") indicates check but does not check." << std::endl;
+                            return false;
+                        }
+                    }
+
+                    if(move_checkmates)
+                    {
+                        if(result.get_winner() != opposite(board.whose_turn()))
+                        {
+                            std::cerr << "Move (" << move << ") indicates checkmate, but move does not checkmate." << std::endl;
+                            return false;
+                        }
+                    }
+                }
+                catch(const Illegal_Move_Exception&)
+                {
+                    std::cerr << "Move (" << move << ") is illegal." << std::endl;
+                    return false;
+                }
+            }
+        }
+    }
+
+    return true;
 }
