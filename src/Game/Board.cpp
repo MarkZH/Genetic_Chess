@@ -964,9 +964,10 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         }
 
         // Non-pinned piece moves to block check
-        if(piece_is_pinned(move.end_file(), move.end_rank()))
+        if(auto blocking_square = piece_is_pinned(move.end_file(), move.end_rank()))
         {
-            return piece_is_pinned(move.start_file(), move.start_rank());
+            // Make sure piece being blocked is acutally doing the checking and the blocking piece can move
+            return (blocking_square == checking_squares.front()) && piece_is_pinned(move.start_file(), move.start_rank());
         }
 
         // Nothing is done about check
