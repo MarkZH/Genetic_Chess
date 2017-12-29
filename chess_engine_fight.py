@@ -3,12 +3,13 @@ import subprocess, os, sys
 master = './Genetic_Chess_master'
 new_king = './Genetic_Chess_new_king_check'
 game_file = 'game.pgn'
+count = 0
 
 while True:
-    # Run master to generate game, check if new_king_check
-    # rules any moves illegal
     for generator in [master, new_king]:
         os.remove(game_file)
+        count += 1
+        print('Game #' + str(count))
         if generator == master:
             checker = new_king
         else:
