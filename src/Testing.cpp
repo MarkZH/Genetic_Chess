@@ -803,7 +803,7 @@ void run_tests()
     // Count game tree leaves (perft) to given depth to validate move generation
     // (downloaded from http://www.rocechess.ch/perft.html)
     // (leaves from starting positions also found at https://oeis.org/A048987)
-    size_t max_perft_depth = 5;
+    size_t max_perft_depth = 6;
     auto perft_suite_input = std::ifstream("perftsuite.epd");
     auto perft_suite_output_file_name = "";
     std::string line;
@@ -820,12 +820,14 @@ void run_tests()
             assert(depth_leaves.size() == 2);
             assert(depth_leaves.front().front() == 'D');
             auto depth = std::stoi(depth_leaves.front().substr(1));
+            auto prefix = "Depth " + std::to_string(depth) + ": ";
             if(depth > max_perft_depth)
             {
-                break;
+                std::cout << prefix << "skipped" << std::endl;
+                continue;
             }
             auto expected_leaves = std::stoul(depth_leaves.back());
-            auto leaf_count = move_count(board, depth, "Depth " + std::to_string(depth) + ": ", perft_suite_output_file_name);
+            auto leaf_count = move_count(board, depth, prefix, perft_suite_output_file_name);
             if(leaf_count != expected_leaves)
             {
                 std::cerr << " Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
