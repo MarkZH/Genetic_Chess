@@ -845,6 +845,7 @@ void Board::refresh_checking_squares()
                     if(piece->is_queen())
                     {
                         checking_squares.push_back({attacking_file, attacking_rank});
+                        break; // piece on square is blocking anything behind it
                     }
 
                     if(file_step == 0 || rank_step == 0)
