@@ -660,7 +660,7 @@ void run_tests()
         clock.punch();
     }
     clock.stop();
-    if(std::abs(clock.time_left(BLACK) - expected_time_after_reset) > 1e-3)
+    if(std::abs(clock.time_left(BLACK) - expected_time_after_reset) > 0.2)
     {
         std::cerr << "Clock incorrect: time left for black is " << clock.time_left(BLACK) << " sec. Should be " << expected_time_after_reset << "sec." << std::endl;
         tests_passed = false;
@@ -681,7 +681,7 @@ void run_tests()
         }
     }
     clock2.stop();
-    if(std::abs(clock2.time_left(BLACK) - expected_time) > 0.01)
+    if(std::abs(clock2.time_left(BLACK) - expected_time) > 0.2)
     {
         std::cerr << "Clock incorrect: time left for black is " << clock2.time_left(BLACK) << " sec. Should be " << expected_time << "sec." << std::endl;
         tests_passed = false;
