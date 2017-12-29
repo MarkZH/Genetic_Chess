@@ -786,6 +786,20 @@ void run_tests()
         tests_passed = false;
     }
 
+    // Unambiguous move check
+    Board unambiguous;
+    std::string unambiguous_move = "Ng1h3";
+    try
+    {
+        unambiguous.get_move(unambiguous_move);
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        unambiguous.ascii_draw(WHITE);
+        std::cerr << "Unambiguous move (" << unambiguous_move << ") deemed illegal." << std::endl;
+        tests_passed = false;
+    }
+
     // Count game tree leaves (perft) to given depth to validate move generation
     // (downloaded from http://www.rocechess.ch/perft.html)
     // (leaves from starting positions also found at https://oeis.org/A048987)

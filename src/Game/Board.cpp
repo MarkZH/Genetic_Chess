@@ -539,23 +539,27 @@ const Move& Board::get_move(const std::string& move, char promote) const
     int rank_search_start = (starting_rank == 0 ? 1 : starting_rank);
     int rank_search_end   = (starting_rank == 0 ? 8 : starting_rank);
 
-    for(char file = file_search_start; file <= file_search_end; ++file)
+    if(starting_file == 0 || starting_rank == 0)
     {
-        for(int rank = rank_search_start; rank <= rank_search_end; ++rank)
+        for(char file = file_search_start; file <= file_search_end; ++file)
         {
-            auto piece = piece_on_square(file, rank);
-            if(piece &&
-               piece->pgn_symbol() == piece_symbol &&
-               is_legal(file, rank, ending_file, ending_rank))
+            for(int rank = rank_search_start; rank <= rank_search_end; ++rank)
             {
-                if(starting_file == 0 || starting_rank == 0)
+                auto piece = piece_on_square(file, rank);
+                if(piece &&
+                   piece->pgn_symbol() == piece_symbol &&
+                   is_legal(file, rank, ending_file, ending_rank))
                 {
-                    starting_file = file;
-                    starting_rank = rank;
-                }
-                else
-                {
-                    throw Illegal_Move_Exception("Ambiguous move: " + move);
+                    if(starting_file == 0 || starting_rank == 0)
+                    {
+                        starting_file = file;
+                        starting_rank = rank;
+                    }
+                    else
+                    {
+                        // If two moves satisfy text, argument is ambiguous.
+                        throw Illegal_Move_Exception("Ambiguous move: " + move);
+                    }
                 }
             }
         }
