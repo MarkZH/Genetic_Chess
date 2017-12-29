@@ -970,6 +970,12 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             return (pinning_square != checking_squares.front()) || piece_is_pinned(move.start_file(), move.start_rank());
         }
 
+        // En passant capture of checking pawn
+        if(move.is_en_passant())
+        {
+            return (checking_squares.front() != Square{move.end_file(), move.start_rank()}) || piece_is_pinned(move.start_file(), move.start_rank());
+        }
+
         // Nothing is done about check
         return true;
     }
