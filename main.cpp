@@ -542,7 +542,7 @@ bool confirm_game_record(const std::string& file_name)
                     auto result = board.submit_move(move_to_submit);
                     if(move_checks)
                     {
-                        if(!board.king_is_in_check(board.whose_turn()))
+                        if( ! board.king_is_in_check())
                         {
                             std::cerr << "Move (" << move << ") indicates check but does not check." << std::endl;
                             return false;
