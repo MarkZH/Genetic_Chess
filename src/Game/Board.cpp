@@ -1627,10 +1627,8 @@ Square Board::piece_is_pinned(char file, int rank) const
         return no_pin;
     }
 
-    auto file_change = file - king_square.file;
-    auto file_step = Math::sign(file_change);
-    auto rank_change = rank - king_square.rank;
-    auto rank_step = Math::sign(rank_change);
+    auto file_step = Math::sign(file - king_square.file);
+    auto rank_step = Math::sign(rank - king_square.rank);
 
     for(int step = 1; true; ++step) // loop until outside board or piece found
     {
@@ -1655,7 +1653,7 @@ Square Board::piece_is_pinned(char file, int rank) const
                 return {current_file, current_rank};
             }
 
-            if(file_change == 0 || rank_change == 0)
+            if(file_step == 0 || rank_step == 0)
             {
                 if(attacking_piece->is_rook())
                 {
