@@ -532,7 +532,7 @@ bool confirm_game_record(const std::string& file_name)
                     if(String::contains(move, 'x')) // check that move captures
                     {
                         const Board& temp = board; // to prevent use of non-const private overload
-                        if( ! temp.piece_on_square(move_to_submit.end_file(), move_to_submit.end_rank()))
+                        if( ! temp.piece_on_square(move_to_submit.end_file(), move_to_submit.end_rank()) && ! move_to_submit.is_en_passant())
                         {
                             std::cerr << "Move: " << move << " indicates capture but does not capture." << std::endl;
                             return false;
