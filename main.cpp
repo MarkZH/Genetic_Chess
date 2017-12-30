@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
                             {
                                 static_cast<Genetic_AI*>(latest.get())->mutate();
                             }
-                            static_cast<Genetic_AI*>(latest.get())->print_genome("single_game_player.txt");
+                            static_cast<const Genetic_AI*>(latest.get())->print_genome("single_game_player.txt");
                         }
                         else
                         {
