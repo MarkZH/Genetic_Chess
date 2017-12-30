@@ -57,10 +57,10 @@ void Look_Ahead_Gene::gene_specific_mutation()
             game_length_uncertainty = std::abs(game_length_uncertainty + Random::random_normal(0.05));
             break;
         case 3:
-            speculation_constant += Random::random_normal(0.001);
+            speculation_constant += Random::random_normal(0.01);
             break;
         case 4:
-            capturing_speculation_constant += Random::random_normal(0.001);
+            capturing_speculation_constant += Random::random_normal(0.01);
             break;
         default:
             assert(false); // If here, random_integer() called with wrong parameters
