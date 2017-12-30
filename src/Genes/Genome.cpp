@@ -33,7 +33,7 @@ Genome::Genome()
     look_ahead_gene_index = genome.size() - 1;
 
     // Normal genes
-    auto psg = static_cast<Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
+    auto psg = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
 
     genome.emplace_back(std::make_unique<Total_Force_Gene>(psg));
     genome.emplace_back(std::make_unique<Freedom_To_Move_Gene>());
@@ -61,7 +61,7 @@ Genome::Genome(const Genome& other) :
 
 void Genome::reseat_piece_strength_gene()
 {
-    auto piece_strength_gene = static_cast<Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
+    auto piece_strength_gene = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
     for(auto& gene : genome)
     {
         gene->reset_piece_strength_gene(piece_strength_gene);
@@ -202,7 +202,7 @@ void Genome::print(std::ostream& os) const
 
 double Genome::time_to_examine(const Board& board, const Clock& clock) const
 {
-    return static_cast<Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
+    return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
 }
 
 double Genome::speculation_time_factor(const Board & board) const
