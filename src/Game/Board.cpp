@@ -845,6 +845,10 @@ void Board::refresh_checking_squares()
                     if(piece->is_queen())
                     {
                         checking_squares.push_back({attacking_file, attacking_rank});
+                        if(checking_squares.size() >= 2)
+                        {
+                            return;
+                        }
                         break; // piece on square is blocking anything behind it
                     }
 
@@ -853,6 +857,10 @@ void Board::refresh_checking_squares()
                         if(piece->is_rook())
                         {
                             checking_squares.push_back({attacking_file, attacking_rank});
+                            if(checking_squares.size() >= 2)
+                            {
+                                return;
+                            }
                         }
                     }
                     else
@@ -860,11 +868,19 @@ void Board::refresh_checking_squares()
                         if(attacking_rank == pawn_rank && piece->is_pawn())
                         {
                             checking_squares.push_back({attacking_file, attacking_rank});
+                            if(checking_squares.size() >= 2)
+                            {
+                                return;
+                            }
                         }
 
                         if(piece->is_bishop())
                         {
                             checking_squares.push_back({attacking_file, attacking_rank});
+                            if(checking_squares.size() >= 2)
+                            {
+                                return;
+                            }
                         }
                     }
 
@@ -893,6 +909,10 @@ void Board::refresh_checking_squares()
                     if(piece_on_square(attacking_file, attacking_rank) == knight)
                     {
                         checking_squares.push_back({attacking_file, attacking_rank});
+                        if(checking_squares.size() >= 2)
+                        {
+                            return;
+                        }
                     }
                 }
             }
@@ -955,7 +975,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         // King is under check from multiple pieces but not moving
         if(king_multiply_checked())
         {
-            return true;
+            return true; // moving a piece can only block one checking piece
         }
 
         // Checking piece is captured by non-pinned piece
