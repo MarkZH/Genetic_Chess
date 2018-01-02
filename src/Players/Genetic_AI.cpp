@@ -232,19 +232,13 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     // variation index in step.
     if(still_on_principal_variation && principal_variation.size() > depth + 2)
     {
-        // Previous move matches prediction
-        still_on_principal_variation =
-            (board.get_game_record().back() == principal_variation[depth + 1]);
+        auto next_principal_variation_move = principal_variation[depth + 2];
+        auto move_iter = std::find(all_legal_moves.begin(),
+                                    all_legal_moves.end(),
+                                    next_principal_variation_move);
 
-        if(still_on_principal_variation)
+        if(move_iter != all_legal_moves.end())
         {
-            auto next_principal_variation_move = principal_variation[depth + 2];
-            auto move_iter = std::find(all_legal_moves.begin(),
-                                       all_legal_moves.end(),
-                                       next_principal_variation_move);
-
-            assert(move_iter != all_legal_moves.end());
-
             // Put principal variation move at start of list to allow
             // the most pruning later.
             std::iter_swap(all_legal_moves.begin(), move_iter);
