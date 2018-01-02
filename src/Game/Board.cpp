@@ -921,15 +921,14 @@ void Board::refresh_checking_squares()
     else
     {
         auto last_move = game_record.back();
-        auto moved_piece = piece_on_square(last_move->end_file(), last_move->end_rank());
 
         // Moved piece now attacks king
         if(attacks(last_move->end_file(), last_move->end_rank(), king_square.file, king_square.rank))
         {
             checking_squares.push_back({last_move->end_file(), last_move->end_rank()});
         }
-        
-        
+
+
         // Discovered check
         if(auto pinning_square = piece_is_pinned(last_move->start_file(), last_move->start_rank()))
         {

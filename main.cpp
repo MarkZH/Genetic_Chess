@@ -556,6 +556,12 @@ bool confirm_game_record(const std::string& file_name)
                             std::cerr << "Move (" << move << ") indicates checkmate, but move does not checkmate." << std::endl;
                             return false;
                         }
+
+                        if( ! expect_checkmate)
+                        {
+                            std::cerr << "Game ends in checkmate, but this is not indicated in headers." << std::endl;
+                            return false;
+                        }
                     }
                 }
                 catch(const Illegal_Move_Exception&)
