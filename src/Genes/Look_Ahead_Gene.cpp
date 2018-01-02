@@ -1,15 +1,15 @@
 #include "Genes/Look_Ahead_Gene.h"
 
-#include <cmath>
 #include <cassert>
 #include <memory>
+#include <algorithm>
 
 #include "Genes/Gene.h"
 #include "Utility.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
-#include "Moves/Move.h"
 
+class Move;
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
