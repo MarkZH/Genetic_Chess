@@ -24,6 +24,7 @@ Genetic_AI::Genetic_AI() :
     id(next_id++)
 {
     calibrate_thinking_speed();
+    calculate_centipawn_value();
 }
 
 // Sexual reproduction
@@ -32,6 +33,7 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     id(next_id++)
 {
     calibrate_thinking_speed();
+    calculate_centipawn_value();
 }
 
 Genetic_AI::Genetic_AI(const std::string& file_name)
@@ -45,6 +47,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name)
     read_from(ifs);
 
     calibrate_thinking_speed();
+    calculate_centipawn_value();
 }
 
 Genetic_AI::Genetic_AI(std::istream& is)
@@ -52,6 +55,7 @@ Genetic_AI::Genetic_AI(std::istream& is)
     read_from(is);
 
     calibrate_thinking_speed();
+    calculate_centipawn_value();
 }
 
 Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
@@ -81,6 +85,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
             genome.read_from(ifs);
 
             calibrate_thinking_speed();
+            calculate_centipawn_value();
 
             return;
         }
@@ -356,6 +361,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 void Genetic_AI::mutate()
 {
     genome.mutate();
+    calculate_centipawn_value();
 }
 
 void Genetic_AI::print_genome(const std::string& file_name) const
@@ -422,7 +428,7 @@ void Genetic_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                       const Clock& clock,
                                       Color perspective) const
 {
-    auto score = thought.corrected_score(perspective);
+    auto score = thought.corrected_score(perspective)/centipawn_value();
 
     // Indicate "mate in N moves" where N == thought.depth
     if(score == Math::win_score)
@@ -479,4 +485,15 @@ Game_Tree_Node_Result Genetic_AI::create_result(const Board& board,
             perspective,
             {board.get_game_record().end() - (depth + 1),
              board.get_game_record().end()}};
+}
+
+double Genetic_AI::centipawn_value() const
+{
+    return value_of_centipawn;
+}
+
+void Genetic_AI::calculate_centipawn_value()
+{
+    auto board = Board("k6K/8/8/8/8/8/P7/8 w - - 0 1");
+    value_of_centipawn = std::abs(genome.evaluate(board, {}, WHITE)/100);
 }

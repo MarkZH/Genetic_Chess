@@ -43,6 +43,7 @@ class Genetic_AI : public Player
 
         static int next_id;
         int id;
+        double value_of_centipawn;
 
         mutable std::vector<const Move*> principal_variation;
         mutable std::vector<std::vector<const Move*>> commentary;
@@ -78,6 +79,8 @@ class Genetic_AI : public Player
                                   Color perspective) const;
 
         void calibrate_thinking_speed();
+        double centipawn_value() const;
+        void calculate_centipawn_value();
 };
 
 #endif // GENETIC_AI_H
