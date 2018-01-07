@@ -985,7 +985,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
                     std::cout << ' ';
                 }
             }
-            std::cout << ']';
+            std::cout << ']' << std::flush;
         }
         auto next_board = board;
         next_board.submit_move(*move);

@@ -147,6 +147,11 @@ Board::Board(const std::string& fen) :
     }
 
     auto board_parse = String::split(fen_parse.at(0), "/");
+    if(board_parse.size() != 8)
+    {
+        throw std::runtime_error("Board has wrong number of rows (should be 8): " + fen);
+    }
+
     for(int rank = 8; rank >= 1; --rank)
     {
         char file = 'a';

@@ -45,7 +45,7 @@ def make_sort(a, b):
 
 
 program_name = 'genetic_chess'
-final_targets = ["release", "debug"]
+final_targets = ["release", "debug", "optimized_debug"]
 depends = dict()
 depends['all'] = final_targets
 depends['clean'] = []
@@ -120,6 +120,7 @@ base_linker_options = ["-pthread", "-fexceptions"]
 options_list = dict()
 options_list['debug'] = ["-g", "-Og", "-DDEBUG"]
 options_list['release'] = ["-Ofast", "-DNDEBUG"]
+options_list['optimized_debug'] = ["-Ofast", "-DDEBUG", "-DNDEBUG"]
 
 obj_dir_written = []
 for target in final_targets:
@@ -144,6 +145,7 @@ for target in final_targets:
 linker_options = dict()
 linker_options['debug'] = []
 linker_options['release'] = ['-flto']
+linker_options['optimized_debug'] = ['-flto']
 
 with open("Makefile", 'w') as make_file:
     # Variables
@@ -157,7 +159,7 @@ with open("Makefile", 'w') as make_file:
         make_file.write("OUT_" + target.upper() + " = " + bins[target] + '\n')
         make_file.write(target.upper() + '_OBJ_DIR = obj/' + target + '\n')
         make_file.write('OBJ_' + target.upper() + ' = ')
-        make_file.write(' '.join([x for x in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)) if x.endswith('.o') and target.upper() in x]))
+        make_file.write(' '.join([x for x in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)) if x.endswith('.o') and x.startswith('$(' + target.upper())]))
         make_file.write('\n')
         make_file.write('CFLAGS_' + target.upper() + ' = ' + ' '.join(options_list[target]) + '\n')
         make_file.write('LDFLAGS_' + target.upper() + ' = ' + ' '.join(linker_options[target]) + '\n')
