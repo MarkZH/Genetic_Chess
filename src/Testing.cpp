@@ -805,13 +805,22 @@ void run_tests()
     // (leaves from starting positions also found at https://oeis.org/A048987)
     size_t max_perft_depth = 6;
     auto perft_suite_input = std::ifstream("perftsuite.epd");
-    auto perft_suite_output_file_name = "";
     std::string line;
+    auto line_count = 0;
+    while(std::getline(perft_suite_input, line))
+    {
+        ++line_count;
+    }
+    perft_suite_input.clear();
+    perft_suite_input.seekg(0, std::ios::beg);
+
+    auto test_number = 0;
+    auto perft_suite_output_file_name = "";
     while(std::getline(perft_suite_input, line))
     {
         auto split_line = String::split(line, " ;");
         auto fen = split_line.front();
-        std::cout << std::endl << fen << std::endl;
+        std::cout << std::endl << '[' << ++test_number << '/' << line_count << "] " << fen << std::endl;
         auto board = Board(fen);
         auto tests = std::vector<std::string>(split_line.begin() + 1, split_line.end());
         for(const auto& test : tests)
