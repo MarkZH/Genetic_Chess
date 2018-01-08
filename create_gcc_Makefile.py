@@ -91,7 +91,7 @@ for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
 
 compiler = 'g++'
 options_list = dict()
-options_list['debug'] = ["-g", "-Og", "-DDEBUG"]
+options_list['debug'] = ["-g", "-DDEBUG"]
 options_list['release'] = ["-s", "-Ofast", "-DNDEBUG"]
 options_list['optimized_debug'] = ["-Ofast", "-DDEBUG", "-DNDEBUG"]
 
