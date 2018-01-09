@@ -1642,9 +1642,10 @@ uint64_t Board::get_square_hash(char file, int rank) const
     auto piece = piece_on_square(file, rank);
     auto index = Board::board_index(file, rank);
     auto result = square_hash_values[index].at(piece);
-    if(piece && piece->is_rook()
-       && ! piece_has_moved(file, rank)
-       && ! piece_has_moved('e', rank))
+    if(piece &&
+       piece->is_rook() &&
+       ! piece_has_moved(file, rank) &&
+       ! piece_has_moved('e', rank))
     {
         result ^= castling_hash_values[index];
     }
