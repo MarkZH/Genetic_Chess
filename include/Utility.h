@@ -43,6 +43,7 @@ namespace Random
     // Random number with inclusive range
     double random_real(double min, double max);
     int random_integer(int min, int max);
+    uint64_t random_unsigned_int64();
 
     // Return true with probability 50%
     bool coin_flip();

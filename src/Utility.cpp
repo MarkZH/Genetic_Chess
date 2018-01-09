@@ -186,6 +186,13 @@ double Random::random_real(double min, double max)
     return dist(generator, urd::param_type{min, max});
 }
 
+uint64_t Random::random_unsigned_int64()
+{
+    thread_local static std::mt19937_64 generator(std::random_device{}());
+    thread_local static std::uniform_int_distribution<uint64_t> dist;
+    return dist(generator);
+}
+
 bool Random::coin_flip()
 {
     return success_probability(0.5);

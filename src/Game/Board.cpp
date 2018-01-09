@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <map>
 #include <array>
+#include <mutex>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -75,6 +76,14 @@ const King* Board::get_king(Color color)
 }
 
 
+std::mutex Board::hash_lock;
+bool Board::hash_values_initialized = false;
+std::array<std::map<const Piece*, uint64_t>, 64> Board::square_hash_values{};
+std::array<uint64_t, 64> Board::en_passant_hash_values{};
+std::array<uint64_t, 64> Board::castling_hash_values{};
+std::array<uint64_t, 2> Board::color_hash_values{}; // for whose_turn() hashing
+
+
 Board::Board() :
     board{},
     turn_color(WHITE),
@@ -86,6 +95,8 @@ Board::Board() :
     capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
+    initialize_board_hash();
+
     for(auto color : {WHITE, BLACK})
     {
         int base_rank = (color == WHITE ? 1 : 8);
@@ -113,7 +124,7 @@ Board::Board() :
     assert(king_location[WHITE]);
     assert(king_location[BLACK]);
 
-    ++repeat_count[board_status()]; // Count initial position
+    ++repeat_count[get_board_hash()]; // Count initial position
     recreate_move_caches();
 }
 
@@ -127,6 +138,8 @@ Board::Board(const std::string& fen) :
     capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
+    initialize_board_hash();
+
     auto fen_parse = String::split(fen);
     if(fen_parse.size() != 6)
     {
@@ -237,9 +250,10 @@ Board::Board(const std::string& fen) :
     auto fifty_move_count = std::stoul(fen_parse.at(4));
     while(repeat_count.size() < fifty_move_count)
     {
-        repeat_count[std::to_string(repeat_count.size())] = 1;
+        repeat_count[Random::random_unsigned_int64()] = 1;
     }
-    ++repeat_count[board_status()]; // Count initial position
+
+    ++repeat_count[get_board_hash()]; // Count initial position
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
@@ -410,7 +424,7 @@ Game_Result Board::submit_move(const Move& move)
         return Game_Result(NONE, "Insufficient material", false);
     }
 
-    if(++repeat_count[board_status()] >= 3)
+    if(++repeat_count[get_board_hash()] >= 3)
     {
         return Game_Result(NONE, "Threefold repetition", false);
     }
@@ -590,9 +604,6 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
     place_piece(piece_on_square(file_start, rank_start), file_end, rank_end);
     remove_piece(file_start, rank_start);
 
-    unmoved_positions[Board::board_index(file_start, rank_start)] = false;
-    unmoved_positions[Board::board_index(file_end, rank_end)] = false;
-
     clear_en_passant_target();
 }
 
@@ -694,7 +705,13 @@ void Board::remove_piece(char file, int rank)
 
 void Board::place_piece(const Piece* piece, char file, int rank)
 {
+    update_board_hash(file, rank); // XOR out piece on square
+
     piece_on_square(file, rank) = piece;
+    unmoved_positions[Board::board_index(file, rank)] = false;
+
+    update_board_hash(file, rank); // XOR in new piece on square
+
     if(piece && piece->is_king())
     {
         king_location[piece->color()] = {file, rank};
@@ -1241,7 +1258,7 @@ void Board::print_game_record(const Player* white,
     out_stream << '\n';
 }
 
-std::string Board::board_status() const // for 3-fold rep count
+std::string Board::board_status() const
 {
     std::string s;
 
@@ -1328,6 +1345,7 @@ void Board::set_turn(Color color)
     if(turn_color != color)
     {
         clear_en_passant_target();
+        update_board_hash(color);
         switch_turn();
     }
 }
@@ -1340,7 +1358,14 @@ void Board::switch_turn()
 
 void Board::make_en_passant_targetable(char file, int rank)
 {
+    if(en_passant_target)
+    {
+        update_board_hash(en_passant_target.file,
+                          en_passant_target.rank); // XOR out previous en passant target
+    }
+
     en_passant_target = {file, rank};
+    update_board_hash(file, rank);
 }
 
 bool Board::is_en_passant_targetable(char file, int rank) const
@@ -1530,6 +1555,104 @@ Thinking_Output_Type Board::get_thinking_mode() const
 Color Board::first_to_move() const
 {
     return first_player_to_move;
+}
+
+void Board::initialize_board_hash()
+{
+    std::lock_guard<std::mutex> hash_guard(hash_lock);
+
+    if(hash_values_initialized)
+    {
+        return;
+    }
+
+    for(auto color : {WHITE, BLACK})
+    {
+        color_hash_values[color] = Random::random_unsigned_int64();
+    }
+
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            auto index = Board::board_index(file, rank);
+            en_passant_hash_values[index] = Random::random_unsigned_int64();
+            castling_hash_values[index] = Random::random_unsigned_int64();
+
+            for(auto piece_color : {BLACK, WHITE})
+            {
+                std::vector<const Piece*> pieces {nullptr,
+                                                  get_pawn(piece_color),
+                                                  get_rook(piece_color),
+                                                  get_knight(piece_color),
+                                                  get_bishop(piece_color),
+                                                  get_queen(piece_color),
+                                                  get_king(piece_color)};
+                for(auto piece : pieces)
+                {
+                    square_hash_values[index][piece] = Random::random_unsigned_int64();
+                }
+            }
+        }
+    }
+
+    board_hash = 0;
+    board_hash ^= get_color_hash(whose_turn());
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            board_hash ^= get_square_hash(file, rank);
+        }
+    }
+
+    hash_values_initialized = true;
+}
+
+void Board::update_board_hash(char file, int rank)
+{
+    board_hash ^= get_square_hash(file, rank);
+}
+
+void Board::update_board_hash(Color color)
+{
+    board_hash ^= get_color_hash(color);
+    board_hash ^= get_color_hash(opposite(color));
+}
+
+uint64_t Board::get_color_hash(Color color) const
+{
+    return color_hash_values[color];
+}
+
+uint64_t Board::get_square_hash(char file, int rank) const
+{
+    if( ! Board::inside_board(file, rank))
+    {
+        return 0; // do nothing for squares outside of board (e.g., clear_en_passant_target()).
+    }
+
+    auto piece = piece_on_square(file, rank);
+    auto index = Board::board_index(file, rank);
+    auto result = square_hash_values[index].at(piece);
+    if(piece && piece->is_rook()
+       && ! piece_has_moved(file, rank)
+       && ! piece_has_moved('e', rank))
+    {
+        result ^= castling_hash_values[index];
+    }
+
+    if( ! piece && is_en_passant_targetable(file, rank))
+    {
+        result = en_passant_hash_values[index];
+    }
+
+    return result;
+}
+
+uint64_t Board::get_board_hash() const
+{
+    return board_hash;
 }
 
 bool Board::capture_possible() const
