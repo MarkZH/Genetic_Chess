@@ -153,6 +153,7 @@ class Board
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
         void switch_turn();
+        void set_unmoved(char file, int rank);
 
         // Zobrist hashing
         uint64_t board_hash;

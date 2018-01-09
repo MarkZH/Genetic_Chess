@@ -110,9 +110,9 @@ Board::Board() :
         place_piece(get_rook(color),   'h', base_rank);
 
         // Unmoved pieces for castling
-        unmoved_positions[Board::board_index('a', base_rank)] = true; // Rook
-        unmoved_positions[Board::board_index('e', base_rank)] = true; // King
-        unmoved_positions[Board::board_index('h', base_rank)] = true; // Rook
+        set_unmoved('a', base_rank); // Rook
+        set_unmoved('e', base_rank); // King
+        set_unmoved('h', base_rank); // Rook
 
         auto pawn_rank = (base_rank == 1 ? 2 : 7);
         for(char file = 'a'; file <= 'h'; ++file)
@@ -220,23 +220,23 @@ Board::Board(const std::string& fen) :
     auto castling_parse = fen_parse.at(2);
     if(String::contains(castling_parse, 'K'))
     {
-        unmoved_positions[Board::board_index('h', 1)] = true;
-        unmoved_positions[Board::board_index('e', 1)] = true;
+        set_unmoved('h', 1);
+        set_unmoved('e', 1);
     }
     if(String::contains(castling_parse, 'Q'))
     {
-        unmoved_positions[Board::board_index('a', 1)] = true;
-        unmoved_positions[Board::board_index('e', 1)] = true;
+        set_unmoved('a', 1);
+        set_unmoved('e', 1);
     }
     if(String::contains(castling_parse, 'k'))
     {
-        unmoved_positions[Board::board_index('h', 8)] = true;
-        unmoved_positions[Board::board_index('e', 8)] = true;
+        set_unmoved('h', 8);
+        set_unmoved('e', 8);
     }
     if(String::contains(castling_parse, 'q'))
     {
-        unmoved_positions[Board::board_index('a', 8)] = true;
-        unmoved_positions[Board::board_index('e', 8)] = true;
+        set_unmoved('a', 8);
+        set_unmoved('e', 8);
     }
 
     auto en_passant_parse = fen_parse.at(3);
@@ -277,6 +277,13 @@ const Piece*& Board::piece_on_square(char file, int rank)
 const Piece* Board::piece_on_square(char file, int rank) const
 {
     return board[board_index(file, rank)];
+}
+
+void Board::set_unmoved(char file, int rank)
+{
+    update_board_hash(file, rank); // remove reference to moved piece
+    unmoved_positions[board_index(file, rank)] = true;
+    update_board_hash(file, rank);
 }
 
 bool Board::inside_board(char file, int rank)
