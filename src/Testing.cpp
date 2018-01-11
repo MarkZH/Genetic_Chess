@@ -800,56 +800,6 @@ void run_tests()
         tests_passed = false;
     }
 
-    // Count game tree leaves (perft) to given depth to validate move generation
-    // (downloaded from http://www.rocechess.ch/perft.html)
-    // (leaves from starting positions also found at https://oeis.org/A048987)
-    size_t max_perft_depth = 6;
-    auto perft_suite_input = std::ifstream("perftsuite.epd");
-    std::string line;
-    auto line_count = 0;
-    while(std::getline(perft_suite_input, line))
-    {
-        ++line_count;
-    }
-    perft_suite_input.clear();
-    perft_suite_input.seekg(0, std::ios::beg);
-
-    auto test_number = 0;
-    auto perft_suite_output_file_name = "";
-    while(std::getline(perft_suite_input, line))
-    {
-        auto split_line = String::split(line, " ;");
-        auto fen = split_line.front();
-        std::cout << std::endl << '[' << ++test_number << '/' << line_count << "] " << fen << std::endl;
-        auto board = Board(fen);
-        auto tests = std::vector<std::string>(split_line.begin() + 1, split_line.end());
-        for(const auto& test : tests)
-        {
-            auto depth_leaves = String::split(test);
-            assert(depth_leaves.size() == 2);
-            assert(depth_leaves.front().front() == 'D');
-            auto depth = std::stoi(depth_leaves.front().substr(1));
-            auto prefix = "Depth " + std::to_string(depth) + ": ";
-            if(depth > max_perft_depth)
-            {
-                std::cout << prefix << "skipped" << std::endl;
-                continue;
-            }
-            auto expected_leaves = std::stoul(depth_leaves.back());
-            auto leaf_count = move_count(board, depth, prefix, perft_suite_output_file_name);
-            if(leaf_count != expected_leaves)
-            {
-                std::cerr << " Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
-                tests_passed = false;
-                break;
-            }
-            else
-            {
-                std::cout << " OK!" << std::endl;
-            }
-        }
-    }
-
     // check square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)
@@ -912,6 +862,58 @@ void run_tests()
         std::cerr << "Capture should be possible here." << std::endl;
         tests_passed = false;
     }
+
+
+// Count game tree leaves (perft) to given depth to validate move generation
+    // (downloaded from http://www.rocechess.ch/perft.html)
+    // (leaves from starting positions also found at https://oeis.org/A048987)
+    size_t max_perft_depth = 6;
+    auto perft_suite_input = std::ifstream("perftsuite.epd");
+    std::string line;
+    auto line_count = 0;
+    while(std::getline(perft_suite_input, line))
+    {
+        ++line_count;
+    }
+    perft_suite_input.clear();
+    perft_suite_input.seekg(0, std::ios::beg);
+
+    auto test_number = 0;
+    auto perft_suite_output_file_name = "";
+    while(std::getline(perft_suite_input, line))
+    {
+        auto split_line = String::split(line, " ;");
+        auto fen = split_line.front();
+        std::cout << std::endl << '[' << ++test_number << '/' << line_count << "] " << fen << std::endl;
+        auto board = Board(fen);
+        auto tests = std::vector<std::string>(split_line.begin() + 1, split_line.end());
+        for(const auto& test : tests)
+        {
+            auto depth_leaves = String::split(test);
+            assert(depth_leaves.size() == 2);
+            assert(depth_leaves.front().front() == 'D');
+            auto depth = std::stoi(depth_leaves.front().substr(1));
+            auto prefix = "Depth " + std::to_string(depth) + ": ";
+            if(depth > max_perft_depth)
+            {
+                std::cout << prefix << "skipped" << std::endl;
+                continue;
+            }
+            auto expected_leaves = std::stoul(depth_leaves.back());
+            auto leaf_count = move_count(board, depth, prefix, perft_suite_output_file_name);
+            if(leaf_count != expected_leaves)
+            {
+                std::cerr << " Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
+                tests_passed = false;
+                break;
+            }
+            else
+            {
+                std::cout << " OK!" << std::endl;
+            }
+        }
+    }
+
 
     if(tests_passed)
     {
