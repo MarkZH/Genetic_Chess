@@ -21,6 +21,7 @@
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 #include "Genes/Pawn_Advancement_Gene.h"
+#include "Genes/Passed_Pawn_Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 #include "Genes/Sphere_of_Influence_Gene.h"
 #include "Genes/Total_Force_Gene.h"
@@ -540,6 +541,15 @@ void run_tests()
     auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
     auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*6);
     pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
+
+    auto passed_pawn_gene = Passed_Pawn_Gene();
+    auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P5/8/8/8 w - - 0 1");
+    auto passed_pawn_score = 1.0/8;
+    tests_passed &= passed_pawn_gene.test(passed_pawn_board, passed_pawn_score);
+
+    passed_pawn_board.submit_move(passed_pawn_board.get_move("Kd8"));
+    passed_pawn_score = 0;
+    tests_passed &= passed_pawn_gene.test(passed_pawn_board, passed_pawn_score);
 
     auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
     sphere_of_influence_gene.read_from(test_genes_file_name);
