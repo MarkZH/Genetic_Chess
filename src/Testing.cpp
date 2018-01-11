@@ -539,8 +539,8 @@ void run_tests()
 
     auto pawn_advancement_gene = Pawn_Advancement_Gene();
     auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
-    auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*6);
-    pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
+    auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*5);
+    tests_passed &= pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
 
     auto passed_pawn_gene = Passed_Pawn_Gene();
     auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P5/8/8/8 w - - 0 1");
