@@ -150,6 +150,10 @@ for index = 1 : length(special_plots)
 
     plot(xlim, [0 0], 'k'); % X-axis
 
+    if special_plots(index) == speculation_figure
+        plot(xlim, [1 1], 'k'); % default speculation constant
+    end
+
     for id_index = 1:length(id_marks)
         plot(id_marks(id_index)*[1 1], ylim, 'displayname', id_notes{id_index});
     end

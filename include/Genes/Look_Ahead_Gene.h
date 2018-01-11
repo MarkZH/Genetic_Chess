@@ -20,9 +20,7 @@ class Look_Ahead_Gene : public Gene
         std::string name() const override;
 
         double time_to_examine(const Board& board, const Clock& clock) const;
-        bool enough_time_to_recurse(double time_allotted,
-                                    const Board& board,
-                                    double positions_per_second) const;
+        double speculation_time_factor(const Board& board) const;
 
     protected:
         void reset_properties() const override;
@@ -33,14 +31,10 @@ class Look_Ahead_Gene : public Gene
         double game_length_uncertainty; // approximately as a fraction of the mean
 
         double speculation_constant; // how often to look ahead even with little time
-        double speculation_exponent;
-
         double capturing_speculation_constant; // how often to look ahead even with little time when capture is possible
-        double capturing_speculation_exponent;
 
         double score_board(const Board& board) const override;
         void gene_specific_mutation() override;
-        void recalculate_exponent();
 };
 
 #endif // LOOK_AHEAD_GENE_H
