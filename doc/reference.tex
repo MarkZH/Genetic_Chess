@@ -212,6 +212,9 @@ This gene counts the number of legal moves available in the current position.
 \subsubsection{Pawn Advancement Gene}
 This gene measures the progress of all pawns towards the opposite side of the board. Extra points are awarded to board states that have pawn promotions as past moves in order to prevent promotions from being penalized when such moves remove pawns from the board.
 
+\subsubsection{Passed Pawn Gene}
+The gene counts the number of pawns that cannot be stopped or captured by an opponent's pawns. That is, a pawn is a passed pawn if there are no pawns ahead of it in its file or any directly adjacent files.
+
 \subsubsection{Opponent Pieces Targeted Gene}
 This gene sums the total strength (as determined by the Piece Strength Gene) of the opponent's pieces currently under attack.
 
