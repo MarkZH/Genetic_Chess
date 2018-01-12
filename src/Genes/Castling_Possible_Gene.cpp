@@ -37,33 +37,16 @@ std::string Castling_Possible_Gene::name() const
 
 double Castling_Possible_Gene::score_board(const Board& board) const
 {
-    auto perspective = board.whose_turn();
+    if(board.has_castled(board.whose_turn()))
+    {
+        return 1.0;
+    }
 
-    // Check game record to see if player already castled
-    auto base_rank = (perspective == WHITE ? 1 : 8);
     auto king_start_file = 'e';
-    auto kingside_file = 'g';
-    auto queenside_file = 'c';
-
-    // Check if king has moved (castling or not)
+    auto base_rank = (board.whose_turn() == WHITE ? 1 : 8);
     if(board.piece_has_moved(king_start_file, base_rank))
     {
-        for(auto move : board.get_game_record())
-        {
-            if(move->start_file() == king_start_file && move->start_rank() == base_rank)
-            {
-                if(move->end_file() == kingside_file || move->end_file() == queenside_file)
-                {
-                    // The only way the king can move two files is by castling
-                    return 1.0;
-                }
-                else
-                {
-                    // King moved but did not castle
-                    return 0.0;
-                }
-            }
-        }
+        return 0.0;
     }
 
     // King has not moved, check rooks and intervening pieces

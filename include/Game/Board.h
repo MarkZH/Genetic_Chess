@@ -95,6 +95,7 @@ class Board
         Square piece_is_pinned(char file, int rank) const; // returns pinning square or {'\0', 0} if none
         bool capture_possible() const;
         bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
+        bool has_castled(Color player) const;
 
         static const Pawn* get_pawn(Color color);
         static const Rook* get_rook(Color color);
@@ -114,6 +115,7 @@ class Board
         std::array<Square, 2> king_location;
         size_t move_count_start_offset;
         Color first_player_to_move;
+        std::array<bool, 2> already_castled;
 
         // Pieces
         static const Rook   white_rook;
