@@ -873,8 +873,16 @@ void run_tests()
         tests_passed = false;
     }
 
+    if(tests_passed)
+    {
+        std::cout << "All pre-perft tests passed." << std::endl;
+    }
+    else
+    {
+        std::cout << "Pre-perft tests failed." << std::endl;
+    }
 
-// Count game tree leaves (perft) to given depth to validate move generation
+    // Count game tree leaves (perft) to given depth to validate move generation
     // (downloaded from http://www.rocechess.ch/perft.html)
     // (leaves from starting positions also found at https://oeis.org/A048987)
     size_t max_perft_depth = 6;
