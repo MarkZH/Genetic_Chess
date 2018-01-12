@@ -54,8 +54,9 @@ double King_Confinement_Gene::score_board(const Board& board) const
 
     std::array<int, 64> distance{};
     assert(std::all_of(distance.begin(), distance.end(), [](auto x){ return x == 0; }));
-
     distance[Board::board_index(king_square.file, king_square.rank)] = 1;
+
+    auto squares_attacked_by_other = board.all_square_indices_attacked_by(opposite(perspective));
 
     double score = 0.0;
 
@@ -64,9 +65,7 @@ double King_Confinement_Gene::score_board(const Board& board) const
         auto square = square_queue[i];
         auto square_index = Board::board_index(square.file, square.rank);
 
-        bool attacked_by_other = ! board.safe_for_king(square.file,
-                                                       square.rank,
-                                                       perspective);
+        bool attacked_by_other = squares_attacked_by_other[square_index];
 
         auto piece = board.piece_on_square(square.file, square.rank);
         bool occupied_by_same = piece &&

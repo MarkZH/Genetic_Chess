@@ -832,6 +832,111 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
     return true;
 }
 
+std::array<size_t, 64> Board::all_square_indices_attacked_by(Color player) const
+{
+    std::array<size_t, 64> attacked_indices{};
+
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            auto piece = piece_on_square(file, rank);
+            if(( ! piece) || piece->color() != player)
+            {
+                continue;
+            }
+
+            std::vector<int> file_steps;
+            std::vector<int> rank_steps;
+            int max_steps;
+            bool diagonal_move;
+
+            if(piece->is_rook() || piece->is_queen() || piece->is_king())
+            {
+                file_steps = {-1, 0, 1};
+                rank_steps = file_steps;
+                max_steps = piece->is_king() ? 1 : 7;
+                diagonal_move = false;
+            }
+            else if(piece->is_bishop() || piece->is_queen() || piece->is_king() || piece->is_pawn())
+            {
+                file_steps = {-1, 1};
+                if(piece->is_pawn())
+                {
+                    rank_steps = {player == WHITE ? 1 : -1};
+                }
+                else
+                {
+                    rank_steps = {-1, 1};
+                }
+                max_steps = (piece->is_king() || piece->is_pawn()) ? 1 : 7;
+                diagonal_move = true;
+            }
+            else // knight
+            {
+                for(auto file_step : {1, 2})
+                {
+                    auto rank_step = 3 - file_step;
+                    for(auto file_direction : {-1, 1})
+                    {
+                        for(auto rank_direction : {-1, 1})
+                        {
+                            char attacked_file = file + file_step*file_direction;
+                            int  attacked_rank = rank + rank_step*rank_direction;
+
+                            if(inside_board(attacked_file, attacked_rank))
+                            {
+                                attacked_indices[board_index(attacked_file, attacked_rank)] = true;
+                            }
+                        }
+                    }
+                }
+
+                continue;
+            }
+
+            for(auto file_step : file_steps)
+            {
+                for(auto rank_step : rank_steps)
+                {
+                    if( ! diagonal_move)
+                    {
+                        if(file_step == 0 && rank_step == 0)
+                        {
+                            continue;
+                        }
+
+                        if(file_step != 0 && rank_step != 0)
+                        {
+                            continue;
+                        }
+                    }
+
+                    for(int step = 1; step <= max_steps; ++step)
+                    {
+                        char attacked_file = file + step*file_step;
+                        int  attacked_rank = rank + step*rank_step;
+
+                        if( ! inside_board(attacked_file, attacked_rank))
+                        {
+                            break;
+                        }
+
+                        attacked_indices[board_index(attacked_file, attacked_rank)] = true;
+
+                        if(piece_on_square(attacked_file, attacked_rank))
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return attacked_indices;
+}
+
 void Board::refresh_checking_squares()
 {
     checking_squares.clear();
