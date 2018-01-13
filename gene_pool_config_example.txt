@@ -22,10 +22,13 @@ pool swap interval = 1000
 # by the increment after each round of games. When it reaches
 # the maximum, the increment is reversed and the time for each
 # game goes down until it reaches the minimum. Then, the cycle
-# starts again.
+# starts again. If the "oscillating time" is "no", then the
+# game time will stop and remain at the maximum time until the
+# end of the run.
 minimum game time = 30 # seconds
 maximum game time = 120 # seconds
 game time increment = 0.01 # seconds
+oscillating time = yes
 
 # The name of the file where the genomes will be recorded.
 # Games will be recorded in a file with "_games.txt" appended
