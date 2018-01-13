@@ -213,6 +213,7 @@
     <ClCompile Include="src\genes\King_Protection_Gene.cpp" />
     <ClCompile Include="src\genes\Look_Ahead_Gene.cpp" />
     <ClCompile Include="src\genes\Opponent_Pieces_Targeted_Gene.cpp" />
+    <ClCompile Include="src\Genes\Passed_Pawn_Gene.cpp" />
     <ClCompile Include="src\genes\Pawn_Advancement_Gene.cpp" />
     <ClCompile Include="src\genes\Piece_Strength_Gene.cpp" />
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
@@ -266,6 +267,7 @@
     <ClInclude Include="include\genes\King_Protection_Gene.h" />
     <ClInclude Include="include\genes\Look_Ahead_Gene.h" />
     <ClInclude Include="include\genes\Opponent_Pieces_Targeted_Gene.h" />
+    <ClInclude Include="include\Genes\Passed_Pawn_Gene.h" />
     <ClInclude Include="include\genes\Pawn_Advancement_Gene.h" />
     <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
     <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
