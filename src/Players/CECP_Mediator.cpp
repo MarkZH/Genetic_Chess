@@ -137,7 +137,7 @@ std::string CECP_Mediator::name() const
 
 void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board) const
 {
-    if(move_text != board.last_move_coordinates())
+    if(move_text != board.last_move_coordinates() && ! String::contains(ending.get_ending_reason(), "Time"))
     {
         // Last move from local opponent --> send last move to CECP intermediary
         send_command("move " + board.last_move_coordinates());
