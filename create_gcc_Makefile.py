@@ -93,7 +93,7 @@ compiler = 'g++'
 options_list = dict()
 options_list['debug'] = ["-g", "-DDEBUG"]
 options_list['release'] = ["-s", "-Ofast", "-DNDEBUG"]
-options_list['optimized_debug'] = ["-Ofast", "-DDEBUG", "-DNDEBUG"]
+options_list['optimized_debug'] = ["-Ofast", "-DDEBUG"]
 
 base_options = [
 	"-Wnon-virtual-dtor", 

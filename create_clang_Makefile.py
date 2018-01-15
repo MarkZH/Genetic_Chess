@@ -120,7 +120,7 @@ base_linker_options = ["-pthread", "-fexceptions"]
 options_list = dict()
 options_list['debug'] = ["-g", "-Og", "-DDEBUG"]
 options_list['release'] = ["-Ofast", "-DNDEBUG"]
-options_list['optimized_debug'] = ["-Ofast", "-DDEBUG", "-DNDEBUG"]
+options_list['optimized_debug'] = ["-Ofast", "-DDEBUG"]
 
 obj_dir_written = []
 for target in final_targets:
