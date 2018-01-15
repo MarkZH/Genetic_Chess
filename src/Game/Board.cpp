@@ -859,22 +859,9 @@ std::array<size_t, 64> Board::all_square_indices_attacked_by(Color player) const
             }
             else // knight
             {
-                for(auto file_step : {1, 2})
+                for(auto move : piece->get_move_list(file, rank))
                 {
-                    auto rank_step = 3 - file_step;
-                    for(auto file_direction : {-1, 1})
-                    {
-                        for(auto rank_direction : {-1, 1})
-                        {
-                            char attacked_file = file + file_step*file_direction;
-                            int  attacked_rank = rank + rank_step*rank_direction;
-
-                            if(inside_board(attacked_file, attacked_rank))
-                            {
-                                attacked_indices[board_index(attacked_file, attacked_rank)] = true;
-                            }
-                        }
-                    }
+                    attacked_indices[board_index(move->end_file(), move->end_rank())] = true;
                 }
 
                 continue;
