@@ -827,6 +827,64 @@ void run_tests()
         }
     }
 
+
+    // Enough material to checkmate
+    auto only_kings = Board("k1K5/8/8/8/8/8/8/8 w - - 0 1");
+    if(only_kings.enough_material_to_checkmate())
+    {
+        std::cerr << "This board cannot result in checkmate." << std::endl;
+        only_kings.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
+    auto one_queen = Board("k1KQ4/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! one_queen.enough_material_to_checkmate())
+    {
+        std::cerr << "This board could result in checkmate." << std::endl;
+        one_queen.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
+    auto opposite_color_bishops = Board("k1KBB3/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! opposite_color_bishops.enough_material_to_checkmate())
+    {
+        std::cerr << "This board could result in checkmate." << std::endl;
+        opposite_color_bishops.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
+    auto same_color_bishops = Board("k1KB1B2/8/8/8/8/8/8/8 w - - 0 1");
+    if(same_color_bishops.enough_material_to_checkmate())
+    {
+        std::cerr << "This board cannot result in checkmate." << std::endl;
+        same_color_bishops.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
+    auto two_knights = Board("k1KNn3/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! two_knights.enough_material_to_checkmate())
+    {
+        std::cerr << "This board could result in checkmate." << std::endl;
+        two_knights.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
+    auto two_knights_same_side = Board("k1KNN3/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! two_knights_same_side.enough_material_to_checkmate())
+    {
+        std::cerr << "This board could result in checkmate." << std::endl;
+        two_knights_same_side.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
+    auto knight_bishop_same_side = Board("k1KNB3/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! knight_bishop_same_side.enough_material_to_checkmate())
+    {
+        std::cerr << "This board could result in checkmate." << std::endl;
+        knight_bishop_same_side.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
     int int_width = 10;
     int real_width = 15;
     int norm_width = 15;

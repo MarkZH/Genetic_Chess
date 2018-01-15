@@ -97,6 +97,7 @@ class Board
         bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
         bool has_castled(Color player) const;
         std::array<size_t, 64> all_square_indices_attacked_by(Color player) const;
+        bool enough_material_to_checkmate() const;
 
         static const Pawn* get_pawn(Color color);
         static const Rook* get_rook(Color color);
@@ -152,7 +153,6 @@ class Board
         std::string board_status() const; // for detecting threefold repetition
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();
-        bool enough_material_to_checkmate() const;
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
         void switch_turn();
