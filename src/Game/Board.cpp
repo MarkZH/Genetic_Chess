@@ -1012,29 +1012,14 @@ void Board::refresh_checking_squares()
 
         // Check for knight attacks
         auto knight = get_knight(attacking_color);
-        for(auto file_step :{1, 2})
+        for(auto move : knight->get_move_list(king_square.file, king_square.rank))
         {
-            auto rank_step = 3 - file_step;
-            for(auto file_step_direction :{-1, 1})
+            if(piece_on_square(move->end_file(), move->end_rank()) == knight)
             {
-                for(auto rank_step_direction :{-1, 1})
+                checking_squares.push_back({move->end_file(), move->end_rank()});
+                if(checking_squares.size() >= 2)
                 {
-                    char attacking_file = king_square.file + file_step*file_step_direction;
-                    char attacking_rank = king_square.rank + rank_step*rank_step_direction;
-
-                    if( ! inside_board(attacking_file, attacking_rank))
-                    {
-                        continue;
-                    }
-
-                    if(piece_on_square(attacking_file, attacking_rank) == knight)
-                    {
-                        checking_squares.push_back({attacking_file, attacking_rank});
-                        if(checking_squares.size() >= 2)
-                        {
-                            return;
-                        }
-                    }
+                    return;
                 }
             }
         }
