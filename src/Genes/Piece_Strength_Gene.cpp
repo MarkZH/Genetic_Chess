@@ -50,6 +50,13 @@ void Piece_Strength_Gene::gene_specific_mutation()
             piece_value(piece) += Random::random_normal(1.0);
         }
     }
+
+    // The queen always has a value far from zero. Setting it to be
+    // non-negative should speed up the evolution of the values of the
+    // other pieces and genes that reference this gene. This does not
+    // narrow the range of genomes since multiplying the other piece values
+    // and gene priorities by -1 results in identical behavior.
+    piece_value('Q') = std::max(0.0, piece_value('Q'));
     renormalize();
 }
 

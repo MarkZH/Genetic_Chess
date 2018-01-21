@@ -10,7 +10,6 @@
 Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source_in) :
     piece_strength_source(piece_strength_source_in)
 {
-    make_priority_non_negative();
 }
 
 double Total_Force_Gene::score_board(const Board& board) const

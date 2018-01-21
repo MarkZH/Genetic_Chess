@@ -6,9 +6,7 @@
 #include "Game/Color.h"
 #include "Utility.h"
 
-Gene::Gene() :
-    priority(0.0),
-    priority_non_negative(false)
+Gene::Gene() : priority(0.0)
 {
 }
 
@@ -85,10 +83,6 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 void Gene::mutate()
 {
     priority += Random::random_normal(10.0);
-    if(priority_non_negative)
-    {
-        priority = std::max(priority, 0.0);
-    }
     gene_specific_mutation();
 }
 
@@ -125,9 +119,4 @@ bool Gene::test(const Board& board, double expected_score) const
     }
 
     return true;
-}
-
-void Gene::make_priority_non_negative()
-{
-    priority_non_negative = true;
 }
