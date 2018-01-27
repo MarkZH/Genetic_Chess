@@ -50,8 +50,6 @@ class Piece
 
         // Holds lists of possible legal moves indexed by starting square (using Board::board_index())
         std::vector<std::vector<const Move*>> legal_moves;
-
-        void add_legal_move(const Move* move);
 };
 
 #endif // PIECE_H
