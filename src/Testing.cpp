@@ -210,10 +210,11 @@ void run_tests()
     // White pawn to promote to Queen
     auto side_effects_board = Board("2k7/P7/K/8/8/8/8/8 w - - 0 1");
     side_effects_board.submit_move(side_effects_board.get_move("a8=Q"));
+    std::string bad_move = "Kb8";
     auto illegal_move_made = true;
     try
     {
-        side_effects_board.get_move("Kb8");
+        side_effects_board.get_move(bad_move);
     }
     catch(const Illegal_Move_Exception&)
     {
@@ -223,7 +224,7 @@ void run_tests()
     if(illegal_move_made)
     {
         side_effects_board.ascii_draw(WHITE);
-        std::cerr << "Kb7 should not be legal here." << std::endl;
+        std::cerr << bad_move << " should not be legal here." << std::endl;
         tests_passed = false;
     }
 
@@ -968,7 +969,7 @@ void run_tests()
             auto depth_leaves = String::split(test);
             assert(depth_leaves.size() == 2);
             assert(depth_leaves.front().front() == 'D');
-            auto depth = std::stoi(depth_leaves.front().substr(1));
+            auto depth = std::stoul(depth_leaves.front().substr(1));
             auto prefix = "Depth " + std::to_string(depth) + ": ";
             if(depth > max_perft_depth)
             {
@@ -1060,7 +1061,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
         {
             std::cout << '\r' << line_prefix << '[';
             ++current_count;
-            auto squares_to_draw = (total_squares*current_count)/first_move_count;
+            int squares_to_draw = (total_squares*current_count)/first_move_count;
             for(int i = 0; i < total_squares; ++i)
             {
                 if(i < squares_to_draw)

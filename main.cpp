@@ -27,6 +27,8 @@ int find_last_id(const std::string& filename);
 
 int main(int argc, char *argv[])
 {
+    std::ios_base::sync_with_stdio(false);
+
     try
     {
         run_tests();
