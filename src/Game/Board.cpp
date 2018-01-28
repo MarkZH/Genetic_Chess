@@ -23,7 +23,8 @@
 #include "Pieces/Queen.h"
 
 #include "Moves/Move.h"
-#include "Moves/Move.h"
+#include "Moves/Threat_Generator.h"
+#include "Moves/Threat_Iterator.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
 #include "Exceptions/Promotion_Exception.h"
@@ -734,84 +735,9 @@ bool Board::king_is_in_check() const
 
 bool Board::safe_for_king(char file, int rank, Color king_color) const
 {
-    auto attacking_color = opposite(king_color);
-    auto king = get_king(king_color);
-    int pawn_rank = rank - (attacking_color == WHITE ? 1 : -1); // which direction pawns attack
-
-    // Straight-line moves
-    for(auto rank_step : {-1, 0, 1})
+    for(auto move : Threat_Generator(file, rank, opposite(king_color), *this))
     {
-        for(auto file_step : {-1, 0, 1})
-        {
-            if(file_step == 0 && rank_step == 0)
-            {
-                continue;
-            }
-
-            for(int steps = 1; steps <= 7; ++steps)
-            {
-                char attacking_file = file + file_step*steps;
-                int  attacking_rank = rank + rank_step*steps;
-
-                if( ! inside_board(attacking_file, attacking_rank))
-                {
-                    break;
-                }
-
-                auto piece = piece_on_square(attacking_file, attacking_rank);
-                if(( ! piece) || piece == king) // pretend king is not there when checking other squares
-                {
-                    continue;
-                }
-
-                if(piece->color() != attacking_color)
-                {
-                    break; // piece on square is blocking anything behind it
-                }
-
-                if(steps == 1 && piece->is_king())
-                {
-                    return false;
-                }
-
-                if(piece->is_queen())
-                {
-                    return false;
-                }
-
-                if(file_step == 0 || rank_step == 0)
-                {
-                    if(piece->is_rook())
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    if(attacking_rank == pawn_rank && piece->is_pawn())
-                    {
-                        return false;
-                    }
-
-                    if(piece->is_bishop())
-                    {
-                        return false;
-                    }
-                }
-
-                break; // piece on square is blocking anything behind it
-            }
-        }
-    }
-
-    // Check for knight attacks
-    auto knight = get_knight(attacking_color);
-    for(auto move : knight->get_move_list(file, rank))
-    {
-        if(piece_on_square(move->end_file(), move->end_rank()) == knight)
-        {
-            return false;
-        }
+        return false;
     }
 
     return true;
@@ -825,83 +751,10 @@ std::array<size_t, 64> Board::all_square_indices_attacked_by(Color player) const
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = piece_on_square(file, rank);
-            if(( ! piece) || piece->color() != player)
+            for(auto move : Threat_Generator(file, rank, player, *this))
             {
-                continue;
-            }
-
-            std::vector<int> file_steps;
-            std::vector<int> rank_steps;
-            int max_steps;
-            bool diagonal_move;
-
-            if(piece->is_rook() || piece->is_queen() || piece->is_king())
-            {
-                file_steps = {-1, 0, 1};
-                rank_steps = file_steps;
-                max_steps = piece->is_king() ? 1 : 7;
-                diagonal_move = false;
-            }
-            else if(piece->is_bishop() || piece->is_queen() || piece->is_king() || piece->is_pawn())
-            {
-                file_steps = {-1, 1};
-                if(piece->is_pawn())
-                {
-                    rank_steps = {player == WHITE ? 1 : -1};
-                }
-                else
-                {
-                    rank_steps = {-1, 1};
-                }
-                max_steps = (piece->is_king() || piece->is_pawn()) ? 1 : 7;
-                diagonal_move = true;
-            }
-            else // knight
-            {
-                for(auto move : piece->get_move_list(file, rank))
-                {
-                    attacked_indices[board_index(move->end_file(), move->end_rank())] = true;
-                }
-
-                continue;
-            }
-
-            for(auto file_step : file_steps)
-            {
-                for(auto rank_step : rank_steps)
-                {
-                    if( ! diagonal_move)
-                    {
-                        if(file_step == 0 && rank_step == 0)
-                        {
-                            continue;
-                        }
-
-                        if(file_step != 0 && rank_step != 0)
-                        {
-                            continue;
-                        }
-                    }
-
-                    for(int step = 1; step <= max_steps; ++step)
-                    {
-                        char attacked_file = file + step*file_step;
-                        int  attacked_rank = rank + step*rank_step;
-
-                        if( ! inside_board(attacked_file, attacked_rank))
-                        {
-                            break;
-                        }
-
-                        attacked_indices[board_index(attacked_file, attacked_rank)] = true;
-
-                        if(piece_on_square(attacked_file, attacked_rank))
-                        {
-                            break;
-                        }
-                    }
-                }
+                attacked_indices[board_index(file, rank)] = true;
+                break;
             }
         }
     }
@@ -916,98 +769,12 @@ void Board::refresh_checking_squares()
 
     if(game_record.empty())
     {
-        auto attacking_color = opposite(whose_turn());
-        int pawn_rank = king_square.rank - (attacking_color == WHITE ? 1 : -1); // which direction pawns attack
-
-        // Straight-line moves
-        for(auto rank_step :{-1, 0, 1})
+        for(auto move : Threat_Generator(king_square.file, king_square.rank, opposite(whose_turn()), *this))
         {
-            for(auto file_step :{-1, 0, 1})
+            checking_squares.push_back({move.start_file(), move.start_rank()});
+            if(checking_squares.size() > 1)
             {
-                if(file_step == 0 && rank_step == 0)
-                {
-                    continue;
-                }
-
-                for(int steps = 1; steps <= 7; ++steps)
-                {
-                    char attacking_file = king_square.file + file_step*steps;
-                    int  attacking_rank = king_square.rank + rank_step*steps;
-
-                    if( ! inside_board(attacking_file, attacking_rank))
-                    {
-                        break;
-                    }
-
-                    auto piece = piece_on_square(attacking_file, attacking_rank);
-                    if( ! piece)
-                    {
-                        continue;
-                    }
-
-                    if(piece->color() != attacking_color)
-                    {
-                        break; // piece on square is blocking anything behind it
-                    }
-
-                    if(piece->is_queen())
-                    {
-                        checking_squares.push_back({attacking_file, attacking_rank});
-                        if(checking_squares.size() >= 2)
-                        {
-                            return;
-                        }
-                        break; // piece on square is blocking anything behind it
-                    }
-
-                    if(file_step == 0 || rank_step == 0)
-                    {
-                        if(piece->is_rook())
-                        {
-                            checking_squares.push_back({attacking_file, attacking_rank});
-                            if(checking_squares.size() >= 2)
-                            {
-                                return;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if(attacking_rank == pawn_rank && piece->is_pawn())
-                        {
-                            checking_squares.push_back({attacking_file, attacking_rank});
-                            if(checking_squares.size() >= 2)
-                            {
-                                return;
-                            }
-                        }
-
-                        if(piece->is_bishop())
-                        {
-                            checking_squares.push_back({attacking_file, attacking_rank});
-                            if(checking_squares.size() >= 2)
-                            {
-                                return;
-                            }
-                        }
-                    }
-
-                    break; // piece on square is blocking anything behind it
-                }
-            }
-        }
-
-        // Check for knight attacks
-        auto knight = get_knight(attacking_color);
-        for(auto move : knight->get_move_list(king_square.file, king_square.rank))
-        {
-            if(piece_on_square(move->end_file(), move->end_rank()) == knight)
-            {
-                checking_squares.push_back({move->end_file(), move->end_rank()});
-                if(checking_squares.size() >= 2)
-                {
-                    return;
-                }
+                break;
             }
         }
     }
