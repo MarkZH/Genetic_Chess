@@ -210,10 +210,11 @@ void run_tests()
     // White pawn to promote to Queen
     auto side_effects_board = Board("2k7/P7/K/8/8/8/8/8 w - - 0 1");
     side_effects_board.submit_move(side_effects_board.get_move("a8=Q"));
+    std::string bad_move = "Kb8";
     auto illegal_move_made = true;
     try
     {
-        side_effects_board.get_move("Kb8");
+        side_effects_board.get_move(bad_move);
     }
     catch(const Illegal_Move_Exception&)
     {
@@ -223,7 +224,7 @@ void run_tests()
     if(illegal_move_made)
     {
         side_effects_board.ascii_draw(WHITE);
-        std::cerr << "Kb7 should not be legal here." << std::endl;
+        std::cerr << bad_move << " should not be legal here." << std::endl;
         tests_passed = false;
     }
 
