@@ -969,7 +969,7 @@ void run_tests()
             auto depth_leaves = String::split(test);
             assert(depth_leaves.size() == 2);
             assert(depth_leaves.front().front() == 'D');
-            auto depth = std::stoi(depth_leaves.front().substr(1));
+            auto depth = std::stoul(depth_leaves.front().substr(1));
             auto prefix = "Depth " + std::to_string(depth) + ": ";
             if(depth > max_perft_depth)
             {
@@ -1061,7 +1061,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
         {
             std::cout << '\r' << line_prefix << '[';
             ++current_count;
-            auto squares_to_draw = (total_squares*current_count)/first_move_count;
+            int squares_to_draw = (total_squares*current_count)/first_move_count;
             for(int i = 0; i < total_squares; ++i)
             {
                 if(i < squares_to_draw)
