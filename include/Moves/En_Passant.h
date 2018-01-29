@@ -15,6 +15,7 @@ class En_Passant : public Pawn_Capture
         void side_effects(Board& board) const override;
         bool move_specific_legal(const Board& board) const override;
         bool is_en_passant() const override;
+        bool can_capture() const override;
 };
 
 #endif // EN_PASSANT_H

@@ -25,3 +25,8 @@ bool En_Passant::is_en_passant() const
 {
     return true;
 }
+
+bool En_Passant::can_capture() const
+{
+    return false; // does not capture on destination square
+}

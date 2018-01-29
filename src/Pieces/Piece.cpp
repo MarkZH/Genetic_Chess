@@ -6,6 +6,7 @@
 #include <cassert>
 
 #include "Game/Board.h"
+#include "Utility.h"
 
 Piece::Piece(Color color_in, const std::string& symbol_in) :
     my_color(color_in),
@@ -107,4 +108,38 @@ void Piece::add_legal_move(std::unique_ptr<Move> move)
         legal_moves[Board::board_index(move->start_file(), move->start_rank())].push_back(move.get());
         possible_moves.push_back(std::move(move));
     }
+}
+
+std::vector<Square> Piece::all_attacked_squares(char file, int rank, const Board& board) const
+{
+    std::vector<Square> result{};
+    result.reserve(64);
+    std::array<int, 2> blocking_direction{};
+
+    for(const auto& move : get_move_list(file, rank))
+    {
+        if( ! move->can_capture())
+        {
+            continue;
+        }
+
+        if(blocking_direction == std::array<int, 2>{move->file_change(), move->rank_change()})
+        {
+            continue;
+        }
+
+        auto attacked_piece = board.piece_on_square(move->end_file(), move->end_rank());
+        if(attacked_piece)
+        {
+            blocking_direction = {Math::sign(move->file_change()), Math::sign(move->rank_change())};
+            if(attacked_piece->color() == color())
+            {
+                continue;
+            }
+        }
+
+        result.push_back({move->end_file(), move->end_rank()});
+    }
+
+    return result;
 }

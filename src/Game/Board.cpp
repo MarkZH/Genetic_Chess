@@ -751,10 +751,13 @@ std::array<size_t, 64> Board::all_square_indices_attacked_by(Color player) const
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            for(auto move : Threat_Generator(file, rank, player, *this))
+            auto piece = piece_on_square(file, rank);
+            if(piece && piece->color() == player)
             {
-                attacked_indices[board_index(file, rank)] = true;
-                break;
+                for(auto square : piece->all_attacked_squares(file, rank, *this))
+                {
+                    attacked_indices[board_index(square.file, square.rank)] = true;
+                }
             }
         }
     }
