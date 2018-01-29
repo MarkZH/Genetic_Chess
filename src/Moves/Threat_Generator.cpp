@@ -23,3 +23,8 @@ Threat_Iterator Threat_Generator::end() const
 {
     return finish;
 }
+
+bool Threat_Generator::empty() const
+{
+    return begin() == end();
+}

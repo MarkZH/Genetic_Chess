@@ -19,6 +19,7 @@ class Threat_Iterator
         Threat_Iterator& operator++();
         Square operator*() const;
         bool operator!=(const Threat_Iterator& other) const;
+        bool operator==(const Threat_Iterator& other) const;
 
         Threat_Iterator make_end_iterator() const;
 

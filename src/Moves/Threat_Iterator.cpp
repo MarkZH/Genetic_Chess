@@ -41,6 +41,11 @@ bool Threat_Iterator::operator!=(const Threat_Iterator& other) const
            &board != &other.board;
 }
 
+bool Threat_Iterator::operator==(const Threat_Iterator& other) const
+{
+    return ! (*this != other);
+}
+
 char Threat_Iterator::attacking_file() const
 {
     return target_file + file_step*step_size;

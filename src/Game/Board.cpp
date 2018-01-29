@@ -735,12 +735,7 @@ bool Board::king_is_in_check() const
 
 bool Board::safe_for_king(char file, int rank, Color king_color) const
 {
-    for(auto square : Threat_Generator(file, rank, opposite(king_color), *this))
-    {
-        return false;
-    }
-
-    return true;
+    return Threat_Generator(file, rank, opposite(king_color), *this).empty();
 }
 
 std::array<size_t, 64> Board::all_square_indices_attacked_by(Color player) const

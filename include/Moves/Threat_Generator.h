@@ -18,6 +18,7 @@ class Threat_Generator
 
         Threat_Iterator begin() const;
         Threat_Iterator end() const;
+        bool empty() const;
 
     private:
         Threat_Iterator start;
