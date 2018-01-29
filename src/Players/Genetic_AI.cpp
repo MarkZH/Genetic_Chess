@@ -301,7 +301,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         else
         {
             auto minimum_time_to_recurse = next_board.legal_moves().size()/evaluation_speed;
-            recurse = (time_allotted_for_this_move >= minimum_time_to_recurse);
+            recurse = (time_allotted_for_this_move > minimum_time_to_recurse);
         }
 
         Game_Tree_Node_Result result;
