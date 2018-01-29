@@ -2,11 +2,11 @@
 #define THREAT_GENERATOR_H
 
 #include "Game/Color.h"
+#include "Moves/Threat_Iterator.h"
 
-class Threat_Iterator;
 class Board;
 
-// Generates a list of all moves by attack_color that
+// Generates a list of all squares that that
 // attack Square{file_start, rank_start}.
 class Threat_Generator
 {
@@ -20,10 +20,8 @@ class Threat_Generator
         Threat_Iterator end() const;
 
     private:
-        char target_file;
-        int  target_rank;
-        Color attacking_color;
-        const Board& board;
+        Threat_Iterator start;
+        Threat_Iterator finish;
 };
 
 #endif // THREAT_GENERATOR_H

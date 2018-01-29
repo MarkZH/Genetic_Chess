@@ -735,7 +735,7 @@ bool Board::king_is_in_check() const
 
 bool Board::safe_for_king(char file, int rank, Color king_color) const
 {
-    for(auto move : Threat_Generator(file, rank, opposite(king_color), *this))
+    for(auto square : Threat_Generator(file, rank, opposite(king_color), *this))
     {
         return false;
     }
@@ -769,9 +769,9 @@ void Board::refresh_checking_squares()
 
     if(game_record.empty())
     {
-        for(auto move : Threat_Generator(king_square.file, king_square.rank, opposite(whose_turn()), *this))
+        for(auto square : Threat_Generator(king_square.file, king_square.rank, opposite(whose_turn()), *this))
         {
-            checking_squares.push_back({move.start_file(), move.start_rank()});
+            checking_squares.push_back(square);
             if(checking_squares.size() > 1)
             {
                 break;

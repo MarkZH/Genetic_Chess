@@ -1,6 +1,7 @@
 #include "Moves/Threat_Iterator.h"
 
 #include "Game/Board.h"
+#include "Game/Square.h"
 #include "Game/Color.h"
 #include "Pieces/Piece.h"
 
@@ -25,12 +26,9 @@ Threat_Iterator& Threat_Iterator::operator++()
     return *this;
 }
 
-Move Threat_Iterator::operator*() const
+Square Threat_Iterator::operator*() const
 {
-    return Move(attacking_file(),
-                attacking_rank(),
-                target_file,
-                target_rank);
+    return {attacking_file(), attacking_rank()};
 }
 
 bool Threat_Iterator::operator!=(const Threat_Iterator& other) const
@@ -153,10 +151,17 @@ void Threat_Iterator::next_threat()
         rank_step = -2;
     }
 
-    make_end_iterator();
+    convert_to_end_iterator();
 }
 
-void Threat_Iterator::make_end_iterator()
+Threat_Iterator Threat_Iterator::make_end_iterator() const
+{
+    auto end = *this;
+    end.convert_to_end_iterator();
+    return end;
+}
+
+void Threat_Iterator::convert_to_end_iterator()
 {
     target_file = '\0';
     target_rank = 0;

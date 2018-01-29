@@ -9,21 +9,17 @@ Threat_Generator::Threat_Generator(char target_file_in,
                                    int  target_rank_in,
                                    Color attack_color,
                                    const Board& reference_board) :
-    target_file(target_file_in),
-    target_rank(target_rank_in),
-    attacking_color(attack_color),
-    board(reference_board)
+    start(target_file_in, target_rank_in, attack_color, reference_board),
+    finish(start.make_end_iterator())
 {
 }
 
 Threat_Iterator Threat_Generator::begin() const
 {
-    return Threat_Iterator(target_file, target_rank, attacking_color, board);
+    return start;
 }
 
 Threat_Iterator Threat_Generator::end() const
 {
-    auto iter = begin();
-    iter.make_end_iterator();
-    return iter;
+    return finish;
 }
