@@ -33,7 +33,7 @@ Square Threat_Iterator::operator*() const
 
 bool Threat_Iterator::operator!=(const Threat_Iterator& other) const
 {
-    return target_file != other.target_file||
+    return target_file != other.target_file ||
            target_rank != other.target_rank ||
            file_step != other.file_step ||
            rank_step != other.rank_step ||
