@@ -23,7 +23,7 @@ Threat_Iterator Threat_Generator::begin() const
 
 Threat_Iterator Threat_Generator::end() const
 {
-    auto t = Threat_Iterator(starting_file, starting_rank, attacking_color, board);
-    t.make_end_iterator();
-    return t;
+    auto iter = begin();
+    iter.make_end_iterator();
+    return iter;
 }
