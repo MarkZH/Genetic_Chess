@@ -458,6 +458,19 @@ void run_tests()
         tests_passed = false;
     }
 
+    Board perf_board8("8/6k1/4b3/8/3N2p1/8/6q1/4n1K1 w - - 10 120");
+    if(perf_board8.legal_moves().size() > 0)
+    {
+        perf_board8.ascii_draw(WHITE);
+        std::cerr << "This should be checkmate for black." << std::endl;
+        for(auto move : perf_board8.legal_moves())
+        {
+            std::cerr << move->game_record_item(perf_board8) << std::endl;
+        }
+        tests_passed = false;
+    }
+
+
     // Test Genetic_AI file loading
     std::cout << "Testing genome file handling ... " << std::flush;
     auto pool_file_name = "test_gene_pool.txt";
