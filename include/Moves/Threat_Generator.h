@@ -14,7 +14,7 @@ class Threat_Generator
         Threat_Generator(char target_file_in,
                          int  target_rank_in,
                          Color attack_color,
-                         const Board& refernce_board);
+                         const Board& reference_board);
 
         Threat_Iterator begin() const;
         Threat_Iterator end() const;
