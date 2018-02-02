@@ -12,6 +12,7 @@ class Move
         Move(char file_start, int rank_start,
              char file_end,   int rank_end);
         virtual ~Move() = default;
+        Move(const Move&) = delete;
         Move& operator=(const Move&) = delete;
 
         // side effects are changes to the state of the board beyond the change
