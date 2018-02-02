@@ -34,19 +34,19 @@ Square Threat_Iterator::operator*() const
     return {attacking_file(), attacking_rank()};
 }
 
-bool Threat_Iterator::operator!=(const Threat_Iterator& other) const
-{
-    return target_file != other.target_file ||
-           target_rank != other.target_rank ||
-           file_step != other.file_step ||
-           rank_step != other.rank_step ||
-           step_size != other.step_size ||
-           &board != &other.board;
-}
-
 bool Threat_Iterator::operator==(const Threat_Iterator& other) const
 {
-    return ! (*this != other);
+    return target_file == other.target_file &&
+           target_rank == other.target_rank &&
+           file_step == other.file_step &&
+           rank_step == other.rank_step &&
+           step_size == other.step_size &&
+           &board == &other.board;
+}
+
+bool Threat_Iterator::operator!=(const Threat_Iterator& other) const
+{
+    return ! (*this == other);
 }
 
 char Threat_Iterator::attacking_file() const
