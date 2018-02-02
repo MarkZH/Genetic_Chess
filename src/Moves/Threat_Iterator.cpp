@@ -159,6 +159,10 @@ void Threat_Iterator::convert_to_end_iterator()
 
 bool Threat_Iterator::way_blocked() const
 {
+    // Threats are only relevant to moves that attack the king. So, in case
+    // the square being checked for attack is a square the king used to
+    // occupy, pretend the king is not there so you don't have the king
+    // blocking itself.
     auto blocking_piece = board.piece_on_square(attacking_file(), attacking_rank());
     auto king = (const Piece*) board.get_king(opposite(attacking_color));
     return blocking_piece && blocking_piece != king;
