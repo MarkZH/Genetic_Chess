@@ -33,3 +33,8 @@ bool Queen::is_queen() const
 {
     return true;
 }
+
+bool Queen::can_attack(int, int file_step, int rank_step) const
+{
+    return std::abs(file_step) < 2 && std::abs(rank_step) < 2;
+}

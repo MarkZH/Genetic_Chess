@@ -11,6 +11,7 @@ class Rook : public Piece
         explicit Rook(Color color_in);
 
         bool is_rook() const override;
+        bool can_attack(int step_size, int file_step, int rank_step) const override;
 };
 
 #endif // ROOK_H

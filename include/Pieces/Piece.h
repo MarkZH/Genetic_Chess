@@ -24,6 +24,7 @@ class Piece
 
         const std::vector<const Move*>& get_move_list(char file, int rank) const;
         std::vector<Square> all_attacked_squares(char file, int rank, const Board& board) const;
+        virtual bool can_attack(int step_size, int file_step, int rank_step) const = 0;
 
         virtual bool is_pawn() const;
         virtual bool is_king() const;

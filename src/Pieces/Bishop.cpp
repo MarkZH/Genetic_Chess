@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <cmath>
 
 #include "Pieces/Piece.h"
 #include "Game/Color.h"
@@ -34,4 +35,9 @@ Bishop::Bishop(Color color_in) : Piece(color_in, "B")
 bool Bishop::is_bishop() const
 {
     return true;
+}
+
+bool Bishop::can_attack(int, int file_step, int rank_step) const
+{
+    return std::abs(file_step) == std::abs(rank_step);
 }

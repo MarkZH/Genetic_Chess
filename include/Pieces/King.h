@@ -11,6 +11,7 @@ class King : public Piece
         explicit King(Color color_in);
 
         bool is_king() const override;
+        bool can_attack(int step_size, int file_step, int rank_step) const override;
 };
 
 #endif // KING_H

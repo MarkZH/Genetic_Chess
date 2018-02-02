@@ -4,6 +4,7 @@
 #include "Game/Square.h"
 #include "Game/Color.h"
 #include "Pieces/Piece.h"
+#include "Pieces/Knight.h"
 
 Threat_Iterator::Threat_Iterator(char target_file_in,
                                  int  target_rank_in,
@@ -11,9 +12,11 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
                                  const Board& reference_board) :
     target_file(target_file_in),
     target_rank(target_rank_in),
-    file_step(-2),
-    rank_step(-2),
+    file_step(-1),
+    rank_step(-1),
     step_size(0),
+    knight_index(-1),
+    on_knight_moves(false),
     attacking_color(attack_color),
     board(reference_board)
 {
@@ -64,48 +67,27 @@ bool Threat_Iterator::is_a_threat() const
         return false;
     }
 
-    if(piece->is_king())
-    {
-        return step_size == 1 &&
-               std::abs(file_step) <= 1 &&
-               std::abs(rank_step) <= 1;
-    }
-
-    if(piece->is_pawn())
-    {
-        return step_size == 1 &&
-               std::abs(file_step) == 1 &&
-               rank_step == (attacking_color == WHITE ? -1 : 1);
-    }
-
-    if(file_step == 0 || rank_step == 0)
-    {
-        return piece->is_rook() || piece->is_queen();
-    }
-
-    if(std::abs(file_step) == std::abs(rank_step))
-    {
-        return piece->is_bishop() || piece->is_queen();
-    }
-
-    return piece->is_knight();
+    return piece->can_attack(step_size, file_step, rank_step);
 }
 
 void Threat_Iterator::next_threat()
 {
-    // Iterator is initialized with step_size == 0, since this is
-    // the square that we want to check if it's attacked, ignore any
-    // piece already on it.
-    if(step_size > 0 && way_blocked())
+    if(on_knight_moves)
     {
-        step_size = 8; // skip to next direction
+        goto knight_continuation_point;
     }
 
-    ++step_size;
-
-    for( ; file_step <= 2; ++file_step)
+    // Iterator is initialized with step_size == 0. So, after the
+    // first run-through, skip to just after the return statement to
+    // resume where we left off.
+    if(step_size++ > 0) // post-increment subtlety here
     {
-        for( ; rank_step <= 2; ++rank_step)
+        goto resume_point;
+    }
+
+    for( ; file_step <= 1; ++file_step)
+    {
+        for( ; rank_step <= 1; ++rank_step)
         {
             // Filter invalid move steps, namely (0, 0) and (+/-2, +/-2)
             // for (file_change, rank_change).
@@ -114,26 +96,8 @@ void Threat_Iterator::next_threat()
                 continue;
             }
 
-            // Only knight moves should have a file/rank step of more than 1
-            if(std::abs(file_step) == 2 && std::abs(rank_step) != 1)
-            {
-                continue;
-            }
-
-            if(std::abs(rank_step) == 2 && std::abs(file_step) != 1)
-            {
-                continue;
-            }
-
             for( ; step_size <= 7; ++step_size)
             {
-                // Knight moves have only one possible length of move, unlike
-                // pieces that move in straight lines.
-                if((std::abs(file_step) > 1 || std::abs(rank_step) > 1) && step_size > 1)
-                {
-                    break;
-                }
-
                 if( ! board.inside_board(attacking_file(), attacking_rank()))
                 {
                     break; // go to next direction
@@ -144,6 +108,7 @@ void Threat_Iterator::next_threat()
                     return; // threatening move will be returned by operator*()
                 }
 
+                resume_point:
                 if(way_blocked())
                 {
                     break; // go to next direction
@@ -153,7 +118,24 @@ void Threat_Iterator::next_threat()
             step_size = 1;
         }
 
-        rank_step = -2;
+        rank_step = -1;
+    }
+
+    on_knight_moves = true;
+    step_size = 1;
+
+    knight_continuation_point:
+    auto knight = board.get_knight(attacking_color);
+    const auto& moves = knight->get_move_list(target_file, target_rank);
+    while(++knight_index < moves.size())
+    {
+        auto move = moves[knight_index];
+        if(board.piece_on_square(move->end_file(), move->end_rank()) == knight)
+        {
+            file_step = -move->file_change();
+            rank_step = -move->rank_change();
+            return;
+        }
     }
 
     convert_to_end_iterator();

@@ -14,6 +14,7 @@ class Pawn : public Piece
 
         std::string pgn_symbol() const override;
         bool is_pawn() const override;
+        bool can_attack(int step_size, int file_step, int rank_step) const override;
 };
 
 #endif // PAWN_H

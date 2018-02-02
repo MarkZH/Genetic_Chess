@@ -40,3 +40,10 @@ bool King::is_king() const
 {
     return true;
 }
+
+bool King::can_attack(int step_size, int file_step, int rank_step) const
+{
+    return step_size == 1 &&
+           std::abs(file_step) <= 1 &&
+           std::abs(rank_step) <= 1;
+}
