@@ -80,9 +80,13 @@ void Threat_Iterator::next_threat()
     // Iterator is initialized with step_size == 0. So, after the
     // first run-through, skip to just after the return statement to
     // resume where we left off.
-    if(step_size++ > 0) // post-increment subtlety here
+    if(step_size > 0)
     {
         goto resume_point;
+    }
+    else
+    {
+        step_size = 1;
     }
 
     for( ; file_step <= 1; ++file_step)
