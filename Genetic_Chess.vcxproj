@@ -227,6 +227,8 @@
     <ClCompile Include="src\moves\Pawn_Promotion.cpp" />
     <ClCompile Include="src\moves\Pawn_Promotion_by_Capture.cpp" />
     <ClCompile Include="src\moves\Queenside_Castle.cpp" />
+    <ClCompile Include="src\Moves\Threat_Generator.cpp" />
+    <ClCompile Include="src\Moves\Threat_Iterator.cpp" />
     <ClCompile Include="src\pieces\Bishop.cpp" />
     <ClCompile Include="src\pieces\King.cpp" />
     <ClCompile Include="src\pieces\Knight.cpp" />
@@ -281,6 +283,8 @@
     <ClInclude Include="include\moves\Pawn_Promotion.h" />
     <ClInclude Include="include\moves\Pawn_Promotion_by_Capture.h" />
     <ClInclude Include="include\moves\Queenside_Castle.h" />
+    <ClInclude Include="include\Moves\Threat_Generator.h" />
+    <ClInclude Include="include\Moves\Threat_Iterator.h" />
     <ClInclude Include="include\pieces\Bishop.h" />
     <ClInclude Include="include\pieces\King.h" />
     <ClInclude Include="include\pieces\Knight.h" />
