@@ -4,7 +4,7 @@
 #include "Game/Color.h"
 
 class Board;
-class Square;
+struct Square;
 
 // The iterator created by Threat_Generator that creates
 // all squares that attack Square{file_start, rank_start}.
