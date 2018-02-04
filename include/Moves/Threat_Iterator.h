@@ -31,7 +31,6 @@ class Threat_Iterator
         int rank_step;
         int step_size;
         size_t knight_index;
-        bool on_knight_moves;
 
         Color attacking_color;
         const Board& board;

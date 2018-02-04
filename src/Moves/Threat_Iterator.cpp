@@ -15,8 +15,7 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     file_step(-1),
     rank_step(-1),
     step_size(0),
-    knight_index(-1),
-    on_knight_moves(false),
+    knight_index(0),
     attacking_color(attack_color),
     board(reference_board)
 {
@@ -41,6 +40,8 @@ bool Threat_Iterator::operator==(const Threat_Iterator& other) const
            file_step == other.file_step &&
            rank_step == other.rank_step &&
            step_size == other.step_size &&
+           knight_index == other.knight_index &&
+           attacking_color == other.attacking_color &&
            &board == &other.board;
 }
 
@@ -72,7 +73,7 @@ bool Threat_Iterator::is_a_threat() const
 
 void Threat_Iterator::next_threat()
 {
-    if(on_knight_moves)
+    if(knight_index > 0)
     {
         goto knight_continuation_point;
     }
@@ -125,15 +126,13 @@ void Threat_Iterator::next_threat()
         rank_step = -1;
     }
 
-    on_knight_moves = true;
-    step_size = 1;
-
     knight_continuation_point:
     auto knight = board.get_knight(attacking_color);
     const auto& moves = knight->get_move_list(target_file, target_rank);
-    while(++knight_index < moves.size())
+    while(knight_index < moves.size())
     {
         auto move = moves[knight_index];
+        ++knight_index;
         if(board.piece_on_square(move->end_file(), move->end_rank()) == knight)
         {
             file_step = -move->file_change();
@@ -159,6 +158,8 @@ void Threat_Iterator::convert_to_end_iterator()
     file_step = 0;
     rank_step = 0;
     step_size = 0;
+    knight_index = -1;
+    attacking_color = NONE;
 }
 
 bool Threat_Iterator::way_blocked() const
