@@ -511,8 +511,13 @@ bool confirm_game_record(const std::string& file_name)
             {
                 if(move.back() == '.')
                 {
-                    move_number = move;
+                    move_number = move + ' ';
                     continue;
+                }
+
+                if(board.whose_turn() == BLACK)
+                {
+                    move_number += "... ";
                 }
 
                 if((move == "1/2-1/2" && expected_winner != NONE) ||
@@ -538,7 +543,7 @@ bool confirm_game_record(const std::string& file_name)
                         const Board& temp = board; // to prevent use of non-const private overload
                         if( ! temp.piece_on_square(move_to_submit.end_file(), move_to_submit.end_rank()) && ! move_to_submit.is_en_passant())
                         {
-                            std::cerr << "Move: " << move_number << ' ' << move << " indicates capture but does not capture." << std::endl;
+                            std::cerr << "Move: " << move_number << move << " indicates capture but does not capture." << std::endl;
                             return false;
                         }
                     }
@@ -548,7 +553,7 @@ bool confirm_game_record(const std::string& file_name)
                     {
                         if( ! board.king_is_in_check())
                         {
-                            std::cerr << "Move (" << move_number << ' ' << move << ") indicates check but does not check." << std::endl;
+                            std::cerr << "Move (" << move_number << move << ") indicates check but does not check." << std::endl;
                             return false;
                         }
                     }
@@ -557,7 +562,7 @@ bool confirm_game_record(const std::string& file_name)
                     {
                         if(result.get_winner() != opposite(board.whose_turn()))
                         {
-                            std::cerr << "Move (" << move_number << ' ' << move << ") indicates checkmate, but move does not checkmate." << std::endl;
+                            std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate." << std::endl;
                             return false;
                         }
 
@@ -570,7 +575,7 @@ bool confirm_game_record(const std::string& file_name)
                 }
                 catch(const Illegal_Move_Exception&)
                 {
-                    std::cerr << "Move (" << move_number << ' ' << move << ") is illegal." << std::endl;
+                    std::cerr << "Move (" << move_number << move << ") is illegal." << std::endl;
                     return false;
                 }
             }
