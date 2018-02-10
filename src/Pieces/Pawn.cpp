@@ -103,12 +103,3 @@ bool Pawn::is_pawn() const
 {
     return true;
 }
-
-bool Pawn::can_attack(int step_size, int file_step, int rank_step) const
-{
-    // The rank_step indicates the step from the target to this pawn,
-    // hence the negative sign in the last comparison.
-    return step_size == 1 &&
-           std::abs(file_step) == 1 &&
-           rank_step == (color() == WHITE ? -1 : 1);
-}

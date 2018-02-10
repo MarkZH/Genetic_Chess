@@ -38,9 +38,3 @@ bool Knight::is_knight() const
 {
     return true;
 }
-
-bool Knight::can_attack(int, int file_step, int rank_step) const
-{
-    return (std::abs(file_step) == 2 && std::abs(rank_step) == 1) ||
-           (std::abs(file_step) == 1 && std::abs(rank_step) == 2);
-}

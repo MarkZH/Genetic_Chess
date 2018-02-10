@@ -36,8 +36,3 @@ bool Bishop::is_bishop() const
 {
     return true;
 }
-
-bool Bishop::can_attack(int, int file_step, int rank_step) const
-{
-    return std::abs(file_step) == std::abs(rank_step);
-}

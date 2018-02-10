@@ -35,11 +35,9 @@ class Threat_Iterator
         Color attacking_color;
         const Board& board;
 
-        bool is_a_threat() const;
         void next_threat();
         char attacking_file() const;
         int  attacking_rank() const;
-        bool way_blocked() const;
         void convert_to_end_iterator();
 };
 

@@ -60,19 +60,11 @@ int Threat_Iterator::attacking_rank() const
     return target_rank + rank_step*step_size;
 }
 
-bool Threat_Iterator::is_a_threat() const
-{
-    auto piece = board.piece_on_square(attacking_file(), attacking_rank());
-    if(( ! piece) || piece->color() != attacking_color)
-    {
-        return false;
-    }
-
-    return piece->can_attack(step_size, file_step, rank_step);
-}
-
 void Threat_Iterator::next_threat()
 {
+    // The knight_index is incremented immediately after it's first use,
+    // so this index having a value greater than zero indicates that the
+    // knight move section has been started.
     if(knight_index > 0)
     {
         goto knight_continuation_point;
@@ -83,7 +75,7 @@ void Threat_Iterator::next_threat()
     // resume where we left off.
     if(step_size > 0)
     {
-        goto resume_point;
+        goto straight_move_continuation_point;
     }
     else
     {
@@ -92,11 +84,20 @@ void Threat_Iterator::next_threat()
 
     for( ; file_step <= 1; ++file_step)
     {
+        if( ! board.inside_board(attacking_file()))
+        {
+            continue;
+        }
+
         for( ; rank_step <= 1; ++rank_step)
         {
-            // Filter invalid move steps, namely (0, 0) and (+/-2, +/-2)
-            // for (file_change, rank_change).
+            // Filter non-moves
             if(file_step == 0 && rank_step == 0)
+            {
+                continue;
+            }
+
+            if( ! board.inside_board(attacking_rank()))
             {
                 continue;
             }
@@ -108,18 +109,51 @@ void Threat_Iterator::next_threat()
                     break; // go to next direction
                 }
 
-                if(is_a_threat())
+                auto piece = board.piece_on_square(attacking_file(), attacking_rank());
+                if(( ! piece) || piece == (const Piece*)board.get_king(opposite(attacking_color)))
                 {
-                    return; // threatening move will be returned by operator*()
+                    continue;
                 }
 
-                resume_point:
-                if(way_blocked())
+                if(piece->color() != attacking_color)
                 {
-                    break; // go to next direction
+                    break;
                 }
+
+                if(piece->is_queen())
+                {
+                    return;
+                }
+
+                if(piece->is_king() && step_size == 1)
+                {
+                    return;
+                }
+
+                if(rank_step == 0 || file_step == 0)
+                {
+                    if(piece->is_rook())
+                    {
+                        return;
+                    }
+                }
+                else
+                {
+                    if(piece->is_bishop())
+                    {
+                        return;
+                    }
+
+                    if(piece->is_pawn() && step_size == 1 && rank_step == (attacking_color == WHITE ? -1 : 1))
+                    {
+                        return;
+                    }
+                }
+
+                break; // Piece on square blocks farther movements
             }
 
+            straight_move_continuation_point:
             step_size = 1;
         }
 
@@ -160,15 +194,4 @@ void Threat_Iterator::convert_to_end_iterator()
     step_size = 0;
     knight_index = -1;
     attacking_color = NONE;
-}
-
-bool Threat_Iterator::way_blocked() const
-{
-    // Threats are only relevant to moves that attack the king. So, in case
-    // the square being checked for attack is a square the king used to
-    // occupy, pretend the king is not there so you don't have the king
-    // blocking itself.
-    auto blocking_piece = board.piece_on_square(attacking_file(), attacking_rank());
-    auto king = (const Piece*) board.get_king(opposite(attacking_color));
-    return blocking_piece && blocking_piece != king;
 }

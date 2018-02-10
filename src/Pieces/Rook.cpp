@@ -34,8 +34,3 @@ bool Rook::is_rook() const
 {
     return true;
 }
-
-bool Rook::can_attack(int, int file_step, int rank_step) const
-{
-    return file_step == 0 || rank_step == 0;
-}
