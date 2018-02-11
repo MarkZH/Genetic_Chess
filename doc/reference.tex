@@ -132,6 +132,8 @@ The number associated with each piece is not scaled to any other piece, but befo
 
 Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and \ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
 
+The queen's value is forced to be non-negative. This tends to speed up the evolution of the other piece values and the priorities of the Total Force Gene and the Opponent Pieces Targeted Gene without limiting their range of mutations. If the proper value of a queen is negative (meaning that, for example, the Total Force Gene makes a player want to get rid of their own queen), then this can be expressed by the Total Force Gene taking on a negative value.
+
 \subsubsection{Look Ahead Gene}
 This gene determines all aspects of the Genetic AIs time management. There are three genetically determined components to this gene that determine how the AI spends its time:
 \begin{enumerate}
@@ -222,8 +224,6 @@ Since it is not only important to find position that are advantageous to the pla
 \subsubsection{Total Force Gene}
 \label{total-force}
 This gene sums the strength (according to the Piece Strength Gene) of all the player's pieces on the board.
-
-A unique aspect of this gene is that it is the only one whose priority is constrained to be non-negative. This was done to avoid a genome where the Total Force Gene and the Opponent Pieces Targeted Gene have oppositely signed priorities. This would cause mixed pressure on the Piece Strength Gene values, interfering with its evolution. This does not limit the expressiveness of this gene, since the Piece Strength Gene and the Opponent Pieces Targeted Gene are free to take on negative values. Any genome with a negative priority on the Total Force Gene is equivalent to another genome with the signs of the three mentioned genes' priorities negated.
 
 \subsubsection{Freedom to Move Gene}
 This gene counts the number of legal moves available in the current position.
