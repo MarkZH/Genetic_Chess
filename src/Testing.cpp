@@ -946,24 +946,27 @@ void run_tests()
     // (leaves from starting positions also found at https://oeis.org/A048987)
     size_t max_perft_depth = 6;
     auto perft_suite_input = std::ifstream("perftsuite.epd");
-    std::string line;
-    auto line_count = 0;
-    while(std::getline(perft_suite_input, line))
+    std::string input_line;
+    std::vector<std::string> lines;
+    while(std::getline(perft_suite_input, input_line))
     {
-        ++line_count;
+        lines.push_back(input_line);
     }
-    perft_suite_input.clear();
-    perft_suite_input.seekg(0, std::ios::beg);
+    std::sort(lines.begin(), lines.end(),
+              [](auto x, auto y)
+              {
+                  return std::stoi(String::split(x).back()) > std::stoi(String::split(y).back());
+              });
 
     auto test_number = 0;
     auto perft_suite_output_file_name = "";
-    while(std::getline(perft_suite_input, line))
+    for(const auto& line : lines)
     {
-        auto split_line = String::split(line, " ;");
-        auto fen = split_line.front();
-        std::cout << std::endl << '[' << ++test_number << '/' << line_count << "] " << fen << std::endl;
-        auto board = Board(fen);
-        auto tests = std::vector<std::string>(split_line.begin() + 1, split_line.end());
+        auto line_parts = String::split(line, " ;");
+        auto fen = line_parts.front();
+        std::cout << std::endl << '[' << ++test_number << '/' << lines.size() << "] " << fen << std::endl;
+        auto perft_board = Board(fen);
+        auto tests = std::vector<std::string>(line_parts.begin() + 1, line_parts.end());
         for(const auto& test : tests)
         {
             auto depth_leaves = String::split(test);
@@ -977,7 +980,7 @@ void run_tests()
                 continue;
             }
             auto expected_leaves = std::stoul(depth_leaves.back());
-            auto leaf_count = move_count(board, depth, prefix, perft_suite_output_file_name);
+            auto leaf_count = move_count(perft_board, depth, prefix, perft_suite_output_file_name);
             if(leaf_count != expected_leaves)
             {
                 std::cerr << " Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
