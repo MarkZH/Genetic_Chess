@@ -100,7 +100,6 @@ Genome& Genome::operator=(const Genome& other)
 
 // Sexual reproduction
 Genome::Genome(const Genome& A, const Genome& B) :
-    genome(),
     piece_strength_gene_index(A.piece_strength_gene_index),
     look_ahead_gene_index(A.look_ahead_gene_index),
     priority_threshold_gene_index(A.priority_threshold_gene_index)
