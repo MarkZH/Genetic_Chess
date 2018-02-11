@@ -361,6 +361,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
 void Genetic_AI::mutate()
 {
     genome.mutate();
+    calibrate_thinking_speed();
     calculate_centipawn_value();
 }
 
