@@ -472,7 +472,7 @@ void run_tests()
     {
         for(int i = 0; i < 1000; ++i)
         {
-            ai.mutate();
+            ai.mutate(true);
         }
         ai.print_genome(pool_file_name);
     }

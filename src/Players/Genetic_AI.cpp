@@ -358,10 +358,13 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     return best_result;
 }
 
-void Genetic_AI::mutate()
+void Genetic_AI::mutate(bool just_testing)
 {
     genome.mutate();
-    calibrate_thinking_speed();
+    if( ! just_testing)
+    {
+        calibrate_thinking_speed();
+    }
     calculate_centipawn_value();
 }
 
