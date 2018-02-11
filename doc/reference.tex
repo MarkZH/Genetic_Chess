@@ -111,6 +111,17 @@ The genome is the repository for genetic information in the Genetic AIs and cont
 
 Formerly, one result of a mutation was to deactivate a gene entirely. Gene deactivation was thought to be a strategy for exiting local peaks in fitness since a gene could still mutate when deactivated. Since it felt no evolutionary pressure, the deactivated gene was free to random walk somewhere else, perhaps to a more advantageous state that would be discovered upon reactivation. However, it was found that, once deactivated, a gene would only very rarely become reactivated. This was for two reasons. First, a random walk is a very slow way to reach a better genome, especially with no evolutionary pressure. Second, and more importantly, a deactivated gene uses less time when evaluating a board or doing some other calculation. This means that Genetic AIs with more deactivated genes have an advantage in being able to evaluate more positions and see farther ahead in the game. This is a powerful incentive to keep genes deactivated, often leading to AIs that had most of their genome deactivated aside from the Total Force Gene. This would lead to gene pools where games only ended in draws, stagnating the pool. Now, all genes are always active.
 
+\emph{Update:} The idea in the above paragraph has been revisited in a different form. See Section~\ref{priority-threshold}.
+
+\subsection{A Note on Designer Genes}
+
+Evolution is an effective means of optimizing when every mutation makes a difference in the fitness of an organism. In an abstract sense, the fitness function of an organism should be
+\begin{enumerate}
+	\item a smooth function of the parameters of its genome and
+	\item without flat sections.
+\end{enumerate}
+The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. This is why the deactivating-gene mutation was discarded. It is better to let a gene fall in importance by gradually reducing its priority. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI. This random walk period only represents wasted time.
+
 \subsection{Regulatory Genes}
 A regulator gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
 
@@ -186,6 +197,14 @@ T = k\frac{N_{\textrm{legal}}}{v}
 where \(T\) is the time needed to look ahead on this move, \(N_{\textrm{legal}}\) is the number of legal moves, \(v\) is the rate of position examinations, and \(k\) is a genetically determined factor that is generally bigger than one. The speed \(v\) is determined by counting the number of positions examined and dividing by the amount of time taken while choosing the previous move. If this time is less than the time allocated for the move, the algorithm looks ahead (the function recurses) to examine the moves the opponent can make in response. Otherwise, it evaluates the current position and moves on to the next legal move.
 
 The speculation constant is divided into two versions: one for board positions containing a capturing move, and ones that do not. Initial results indicate that the capturing speculation constant tends to be much larger (between 1.1 and 1.2) than the non-capturing counterpart (usually nearer to 1.0). This makes sense since board positions with capturing moves tend to be move volatile in who has the advantage. Capturing a piece is only good if it doesn't result in a greater loss in subsequent moves. This is the problem that is usually solved in other chess engines by a quiescence search, in which all interesting\footnote{Meaning, captures that aren't immediately losing.} capturing moves are performed on a board before it is scored, thereby only scoring stable, ``quiescent'' board states \cite{quiescence-ref}.
+
+\subsubsection{Priority Threshold Gene}
+\label{priority-threshold}
+
+This gene stops any other board-scoring gene from running its \code{score\_board()} if that other gene's priority is too low, thus trading lower score detail for faster evaluations. It contains a genetically determined threshold value that is referenced during the genome's \code{evaluate\_board()} method. Instead of using the value directly, the actually threshold used is a random number uniformly distributed between 0.0 and the threshold value.  The reason for this is to prevent low-priority genes from being permanently cut off from evolutionary pressure while still providing a means of speeding up evaluations.
+
+Since skipping \code{score\_board()} methods will tend to lower the score given to a position (assuming all genes have positive priorities), the resulting score is scaled by the ratio of the sum of all genes' priorities to the sum of all used genes' priorities. This way, board positions with higher scores due to using more genes to score it will not be unduly favored over board positions with a lower score due to using fewer genes. To put it in mathematical terms:
+\[Final\ score = Score\times\frac{Sum\ of\ all\ priorities}{Sum\ of\ all\ used\ priorities}\]
 
 \subsubsection{Branch Pruning Gene (deleted)}
 
