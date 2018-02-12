@@ -498,6 +498,7 @@ double Genetic_AI::centipawn_value() const
 
 void Genetic_AI::calculate_centipawn_value()
 {
-    auto board = Board("k6K/8/8/8/8/8/P7/8 w - - 0 1");
-    value_of_centipawn = std::abs(genome.evaluate(board, {}, WHITE)/100);
+    auto board_with_pawns =          Board("4k3/pppppppp/8/8/8/8/PPPPPPPP/4K3 w - - 0 1");
+    auto board_with_no_white_pawns = Board("4k3/pppppppp/8/8/8/8/8/4K3 w - - 0 1");
+    value_of_centipawn = std::abs(genome.evaluate(board_with_pawns, {}, WHITE) - genome.evaluate(board_with_no_white_pawns, {}, WHITE))/800;
 }
