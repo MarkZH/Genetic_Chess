@@ -962,6 +962,7 @@ void run_tests()
     auto perft_suite_output_file_name = "";
     for(const auto& line : lines)
     {
+        auto perft_test_passed = true;
         auto line_parts = String::split(line, " ;");
         auto fen = line_parts.front();
         std::cout << std::endl << '[' << ++test_number << '/' << lines.size() << "] " << fen << std::endl;
@@ -984,6 +985,7 @@ void run_tests()
             if(leaf_count != expected_leaves)
             {
                 std::cerr << " Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
+                perft_test_passed = false;
                 tests_passed = false;
                 break;
             }
@@ -991,6 +993,11 @@ void run_tests()
             {
                 std::cout << " OK!" << std::endl;
             }
+        }
+
+        if( ! perft_test_passed)
+        {
+            break;
         }
     }
 
