@@ -955,7 +955,7 @@ void run_tests()
     std::sort(lines.begin(), lines.end(),
               [](auto x, auto y)
               {
-                  return std::stoi(String::split(x).back()) > std::stoi(String::split(y).back());
+                  return std::stoi(String::split(x).back()) < std::stoi(String::split(y).back());
               });
 
     auto test_number = 0;
