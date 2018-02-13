@@ -13,7 +13,7 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     target_file(target_file_in),
     target_rank(target_rank_in),
     file_step(-1),
-    rank_step(-1),
+    rank_step(-2),
     step_size(0),
     knight_index(0),
     attacking_color(attack_color),
@@ -62,27 +62,9 @@ int Threat_Iterator::attacking_rank() const
 
 void Threat_Iterator::next_threat()
 {
-    // The knight_index is incremented immediately after it's first use,
-    // so this index having a value greater than zero indicates that the
-    // knight move section has been started.
-    if(knight_index > 0)
-    {
-        goto knight_continuation_point;
-    }
+    ++rank_step;
 
-    // Iterator is initialized with step_size == 0. So, after the
-    // first run-through, skip to just after the return statement to
-    // resume where we left off.
-    if(step_size > 0)
-    {
-        goto straight_move_continuation_point;
-    }
-    else
-    {
-        step_size = 1;
-    }
-
-    for( ; file_step <= 1; ++file_step)
+    for( ; knight_index == 0 && file_step <= 1; ++file_step)
     {
         if( ! board.inside_board(attacking_file()))
         {
@@ -102,7 +84,7 @@ void Threat_Iterator::next_threat()
                 continue;
             }
 
-            for( ; step_size <= 7; ++step_size)
+            for(step_size = 1 ; step_size <= 7; ++step_size)
             {
                 if( ! board.inside_board(attacking_file(), attacking_rank()))
                 {
@@ -152,15 +134,11 @@ void Threat_Iterator::next_threat()
 
                 break; // Piece on square blocks farther movements
             }
-
-            straight_move_continuation_point:
-            step_size = 1;
         }
 
         rank_step = -1;
     }
 
-    knight_continuation_point:
     auto knight = board.get_knight(attacking_color);
     const auto& moves = knight->get_move_list(target_file, target_rank);
     while(knight_index < moves.size())
