@@ -1127,7 +1127,6 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         return diagonal_of_move != diagonal_of_piece_to_king;
     }
 
-    // Make sure pawn captured en passant wasnt' blocking check
     if(move.is_en_passant())
     {
         // Captured pawn was blocking diagonal check
@@ -1160,22 +1159,15 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             {
                 if(passed_pawns < 2)
                 {
-                    break;
+                    return false;
                 }
 
                 if(piece->color() == whose_turn())
                 {
-                    break;
+                    return false;
                 }
 
-                if(piece->is_rook() || piece->is_queen())
-                {
-                    return true;
-                }
-                else
-                {
-                    break;
-                }
+                return piece->is_rook() || piece->is_queen();
             }
         }
     }
