@@ -939,6 +939,7 @@ void run_tests()
     else
     {
         std::cout << "Pre-perft tests failed." << std::endl;
+        return;
     }
 
     // Count game tree leaves (perft) to given depth to validate move generation
