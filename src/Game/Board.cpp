@@ -1775,23 +1775,23 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
         return false;
     }
 
-    auto file_change = target_file - origin_file;
-    auto rank_change = target_rank - origin_rank;
+    auto file_change = std::abs(target_file - origin_file);
+    auto rank_change = std::abs(target_rank - origin_rank);
 
     if(attacking_piece->is_knight())
     {
-        return (std::abs(file_change) == 1 && std::abs(rank_change) == 2) ||
-               (std::abs(file_change) == 2 && std::abs(rank_change) == 1);
+        return (file_change == 1 && rank_change == 2) ||
+               (file_change == 2 && rank_change == 1);
     }
 
     if(attacking_piece->is_king())
     {
-        return std::max(std::abs(file_change), std::abs(rank_change)) == 1;
+        return std::max(file_change, rank_change) == 1;
     }
 
     if(attacking_piece->is_pawn())
     {
-        return std::abs(file_change) == 1 && (rank_change == (attacking_piece->color() == WHITE ? 1 : -1));
+        return file_change == 1 && rank_change == 1 && (attacking_piece->color() == WHITE) == (target_rank > origin_rank);
     }
 
     if( ! all_empty_between(origin_file, origin_rank, target_file, target_rank))
