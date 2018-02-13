@@ -824,6 +824,18 @@ void run_tests()
         tests_passed = false;
     }
 
+    Board en_passant_pin("7k/4p3/8/2KP3r/8/8/8/8 b - - 0 1");
+    en_passant_pin.submit_move(en_passant_pin.get_move("e5"));
+    try
+    {
+        en_passant_pin.submit_move(en_passant_pin.get_move("dxe6"));
+        std::cerr << "Last move (" << en_passant_pin.get_last_move_record() << ") should have been illegal." << std::endl;
+        tests_passed = false;
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+    }
+
     // check square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)
@@ -952,6 +964,7 @@ void run_tests()
     else
     {
         std::cout << "Pre-perft tests failed." << std::endl;
+        return;
     }
 
     // Count game tree leaves (perft) to given depth to validate move generation
