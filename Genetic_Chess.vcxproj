@@ -216,6 +216,7 @@
     <ClCompile Include="src\Genes\Passed_Pawn_Gene.cpp" />
     <ClCompile Include="src\genes\Pawn_Advancement_Gene.cpp" />
     <ClCompile Include="src\genes\Piece_Strength_Gene.cpp" />
+    <ClCompile Include="src\Genes\Priority_Threshold_Gene.cpp" />
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
     <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
     <ClCompile Include="src\moves\En_Passant.cpp" />
@@ -270,6 +271,7 @@
     <ClInclude Include="include\Genes\Passed_Pawn_Gene.h" />
     <ClInclude Include="include\genes\Pawn_Advancement_Gene.h" />
     <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
+    <ClInclude Include="include\Genes\Priority_Threshold_Gene.h" />
     <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
     <ClInclude Include="include\genes\Total_Force_Gene.h" />
     <ClInclude Include="include\moves\En_Passant.h" />
