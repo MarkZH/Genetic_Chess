@@ -17,7 +17,8 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     step_size(0),
     knight_index(0),
     attacking_color(attack_color),
-    board(reference_board)
+    board(reference_board),
+    target_king((const Piece*)board.get_king(opposite(attacking_color)))
 {
     next_threat();
 }
@@ -91,7 +92,7 @@ void Threat_Iterator::next_threat()
                 }
 
                 auto piece = board.piece_on_square(attacking_file(), attacking_rank());
-                if(( ! piece) || piece == (const Piece*)board.get_king(opposite(attacking_color)))
+                if(( ! piece) || piece == target_king)
                 {
                     continue;
                 }

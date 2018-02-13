@@ -5,6 +5,7 @@
 
 class Board;
 struct Square;
+class Piece;
 
 // The iterator created by Threat_Generator that creates
 // all squares that attack Square{file_start, rank_start}.
@@ -34,6 +35,7 @@ class Threat_Iterator
 
         Color attacking_color;
         const Board& board;
+        const Piece* target_king;
 
         void next_threat();
         char attacking_file() const;
