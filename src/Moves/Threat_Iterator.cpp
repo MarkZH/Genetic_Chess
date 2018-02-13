@@ -22,10 +22,9 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     next_threat();
 }
 
-Threat_Iterator& Threat_Iterator::operator++()
+void Threat_Iterator::operator++()
 {
     next_threat();
-    return *this;
 }
 
 Square Threat_Iterator::operator*() const

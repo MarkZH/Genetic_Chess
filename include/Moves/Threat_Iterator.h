@@ -16,7 +16,7 @@ class Threat_Iterator
                         Color attack_color,
                         const Board& reference_board);
 
-        Threat_Iterator& operator++();
+        void operator++();
         Square operator*() const;
         bool operator!=(const Threat_Iterator& other) const;
         bool operator==(const Threat_Iterator& other) const;
