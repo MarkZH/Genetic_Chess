@@ -66,20 +66,10 @@ void Threat_Iterator::next_threat()
 
     for( ; knight_index == 0 && file_step <= 1; ++file_step)
     {
-        if( ! board.inside_board(attacking_file()))
-        {
-            continue;
-        }
-
         for( ; rank_step <= 1; ++rank_step)
         {
             // Filter non-moves
             if(file_step == 0 && rank_step == 0)
-            {
-                continue;
-            }
-
-            if( ! board.inside_board(attacking_rank()))
             {
                 continue;
             }
