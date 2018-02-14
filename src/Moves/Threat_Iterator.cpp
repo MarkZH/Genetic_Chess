@@ -18,7 +18,7 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     knight_index(0),
     attacking_color(attack_color),
     board(reference_board),
-    target_king((const Piece*)board.get_king(opposite(attacking_color)))
+    target_king((const Piece*)reference_board.get_king(opposite(attack_color)))
 {
     next_threat();
 }
