@@ -836,6 +836,19 @@ void run_tests()
     {
     }
 
+    Board threat_iterator_bug("8/6K1/2k5/5n2/8/8/8/5R2 w - - 0 1");
+    auto test_move_text = "Rxf5";
+    try
+    {
+        const auto& test_move = threat_iterator_bug.get_move(test_move_text);
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        threat_iterator_bug.ascii_draw(WHITE);
+        std::cerr << test_move_text << " should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
     // check square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)

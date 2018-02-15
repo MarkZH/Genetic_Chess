@@ -137,8 +137,9 @@ void Threat_Iterator::next_threat()
         ++knight_index;
         if(board.piece_on_square(move->end_file(), move->end_rank()) == knight)
         {
-            file_step = -move->file_change();
-            rank_step = -move->rank_change();
+            file_step = move->file_change();
+            rank_step = move->rank_change();
+            step_size = 1;
             return;
         }
     }
