@@ -841,7 +841,7 @@ void run_tests()
     auto test_move_text = "Rxf5";
     try
     {
-        const auto& test_move = threat_iterator_bug.get_move(test_move_text);
+        threat_iterator_bug.get_move(test_move_text);
     }
     catch(const Illegal_Move_Exception&)
     {
