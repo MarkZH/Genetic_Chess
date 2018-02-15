@@ -815,7 +815,10 @@ void Board::refresh_checking_squares()
            piece_on_square(last_move->end_file(), last_move->end_rank())->is_king())
         {
             char rook_file = (last_move->file_change() > 0 ? 'f' : 'd');
-            if(attacks(rook_file, last_move->end_rank(), king_square.file, king_square.rank))
+
+            // If the non-castling king is on the same rank as the castling king, the check will have
+            // been found by the discovered check block above. Only look for checks along columns.
+            if(king_square.file == rook_file && attacks(rook_file, last_move->end_rank(), king_square.file, king_square.rank))
             {
                 checking_squares.push_back({rook_file, last_move->end_rank()});
             }

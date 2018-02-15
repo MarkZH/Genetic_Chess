@@ -865,6 +865,20 @@ void run_tests()
         tests_passed = false;
     }
 
+    Board castling_double_pin("8/8/5r2/8/8/8/8/R3K1k1 w Q - 0 1");
+    try
+    {
+        for(auto move : {"O-O-O", "Rf1"})
+        {
+            castling_double_pin.submit_move(castling_double_pin.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        castling_double_pin.ascii_draw(WHITE);
+        std::cerr << "Blocking check with rook should be legal here." << std::endl;
+        tests_passed = false;
+    }
     // check square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)
