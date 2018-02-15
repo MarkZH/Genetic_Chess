@@ -952,6 +952,8 @@ void run_tests()
     else
     {
         std::cout << "Pre-perft tests failed." << std::endl;
+        std::cout << "Press enter to continue ..." << std::endl;
+        std::cin.get();
         return;
     }
 
