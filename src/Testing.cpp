@@ -824,6 +824,21 @@ void run_tests()
     {
     }
 
+    Board en_passant_pin_capture("7R/8/8/8/1K2p2q/8/5P2/3k4 w - - 0 1");
+    try
+    {
+        for(auto move : {"f4", "exf3", "Rxh4"})
+        {
+            en_passant_pin_capture.submit_move(en_passant_pin_capture.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        en_passant_pin_capture.ascii_draw(WHITE);
+        std::cerr << "Capturing the queen with the rook should be possible here." << std::endl;
+        tests_passed = false;
+    }
+
     // check square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)

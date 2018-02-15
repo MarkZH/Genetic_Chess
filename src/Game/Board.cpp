@@ -1038,7 +1038,10 @@ void Board::refresh_checking_squares()
         {
             if(auto pinning_square = piece_is_pinned(last_move->end_file(), last_move->start_rank()))
             {
-                checking_squares.push_back(pinning_square);
+                if(checking_squares.empty() || pinning_square != checking_squares.front())
+                {
+                    checking_squares.push_back(pinning_square);
+                }
             }
         }
 
