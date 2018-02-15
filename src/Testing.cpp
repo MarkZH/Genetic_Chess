@@ -816,6 +816,7 @@ void run_tests()
     try
     {
         en_passant_pin.submit_move(en_passant_pin.get_move("dxe6"));
+        en_passant_pin.ascii_draw(WHITE);
         std::cerr << "Last move (" << en_passant_pin.get_last_move_record() << ") should have been illegal." << std::endl;
         tests_passed = false;
     }
