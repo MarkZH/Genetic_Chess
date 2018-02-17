@@ -1267,8 +1267,8 @@ void Board::recreate_move_caches()
 
 bool Board::enough_material_to_checkmate() const
 {
-    std::array<bool, 2> knight_found{}; // indexed by piece color
-    std::array<bool, 2> bishop_found{}; // indexed by square color
+    bool knight_found = false;
+    Color bishop_square_color_found = NONE;
     
     for(char file = 'a'; file <= 'h'; ++file)
     {
@@ -1285,28 +1285,31 @@ bool Board::enough_material_to_checkmate() const
                 return true; // checkmate possible with just queen or rook; pawn can promote
             }
 
-            if(knight_found[WHITE] || knight_found[BLACK])
+            // Newly found piece is either a bishop or knight
+            if(knight_found)
             {
                 return true; // checkmate with a knight and any non-king piece on either side is possible
             }
 
             if(piece->is_knight())
             {
-                if(bishop_found[WHITE] || bishop_found[BLACK])
+                if(bishop_square_color_found != NONE)
                 {
                     return true;
                 }
-                knight_found[piece->color()] = true;
+                knight_found = true;
             }
-            else if(piece->is_bishop())
+            else // if(piece->is_bishop())
             {
                 auto bishop_square_color = square_color(file, rank);
-                if(bishop_found[opposite(bishop_square_color)])
+                if(bishop_square_color_found == NONE)
+                {
+                    bishop_square_color_found = bishop_square_color;
+                }
+                else if(bishop_square_color != bishop_square_color_found)
                 {
                     return true; // checkmate with opposite colored bishops possible
                 }
-
-                bishop_found[bishop_square_color] = true;
             }
         }
     }
