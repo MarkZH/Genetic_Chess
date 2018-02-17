@@ -3,7 +3,6 @@
 #include <cmath>
 #include <array>
 #include <algorithm>
-#include <cassert>
 #include <memory>
 
 #include "Genes/Gene.h"
@@ -53,7 +52,6 @@ double King_Confinement_Gene::score_board(const Board& board) const
     square_queue.push_back(king_square);
 
     std::array<int, 64> distance{};
-    assert(std::all_of(distance.begin(), distance.end(), [](auto x){ return x == 0; }));
     distance[Board::board_index(king_square.file, king_square.rank)] = 1;
 
     auto squares_attacked_by_other = board.all_square_indices_attacked_by(opposite(perspective));

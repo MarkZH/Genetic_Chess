@@ -5,7 +5,6 @@
 #include <cmath>
 #include <algorithm>
 #include <stdexcept>
-#include <cassert>
 
 #include "Players/Player.h"
 #include "Moves/Move.h"
