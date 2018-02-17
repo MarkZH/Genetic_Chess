@@ -930,6 +930,22 @@ void run_tests()
         tests_passed = false;
     }
 
+    auto opposite_color_bishops_opposing_sides = Board("k1KBb3/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! opposite_color_bishops_opposing_sides.enough_material_to_checkmate())
+    {
+        std::cerr << "This board could result in checkmate." << std::endl;
+        opposite_color_bishops_opposing_sides.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
+    auto same_color_bishops_opposing_sides = Board("k1KB1b2/8/8/8/8/8/8/8 w - - 0 1");
+    if(same_color_bishops_opposing_sides.enough_material_to_checkmate())
+    {
+        std::cerr << "This board cannot result in checkmate." << std::endl;
+        same_color_bishops_opposing_sides.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
     auto two_knights = Board("k1KNn3/8/8/8/8/8/8/8 w - - 0 1");
     if( ! two_knights.enough_material_to_checkmate())
     {
@@ -951,6 +967,22 @@ void run_tests()
     {
         std::cerr << "This board could result in checkmate." << std::endl;
         knight_bishop_same_side.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
+    auto knight_bishop_opposing_sides = Board("k1KnB3/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! knight_bishop_opposing_sides.enough_material_to_checkmate())
+    {
+        std::cerr << "This board could result in checkmate." << std::endl;
+        knight_bishop_opposing_sides.ascii_draw(WHITE);
+        tests_passed = false;
+    }
+
+    auto knight_bishop_opposing_sides_bishop_first = Board("k1KBn3/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! knight_bishop_opposing_sides_bishop_first.enough_material_to_checkmate())
+    {
+        std::cerr << "This board could result in checkmate." << std::endl;
+        knight_bishop_opposing_sides_bishop_first.ascii_draw(WHITE);
         tests_passed = false;
     }
 
