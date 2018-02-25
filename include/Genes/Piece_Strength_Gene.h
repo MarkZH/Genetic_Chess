@@ -7,6 +7,8 @@
 #include <array>
 #include <memory>
 
+#include "Pieces/Piece_Types.h"
+
 class Piece;
 class Board;
 
@@ -27,15 +29,13 @@ class Piece_Strength_Gene : public Gene
         void load_properties() override;
 
     private:
-        static const std::string piece_types;
-        static const char first_piece;
-        std::array<double, 'R' - 'B' + 1> piece_strength;
+        std::array<double, 6> piece_strength;
         double normalizing_factor;
 
         double score_board(const Board& board) const override;
         void renormalize();
-        double piece_value(char symbol) const;
-        double& piece_value(char symbol);
+        double piece_value(Piece_Type type) const;
+        double& piece_value(Piece_Type type);
         void gene_specific_mutation() override;
 };
 

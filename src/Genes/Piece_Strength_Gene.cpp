@@ -10,15 +10,15 @@
 #include "Genes/Gene.h"
 #include "Utility.h"
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 
-const std::string Piece_Strength_Gene::piece_types = "PRNBQK";
-const char Piece_Strength_Gene::first_piece = 'B';
+static const auto piece_types = {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING};
 
 Piece_Strength_Gene::Piece_Strength_Gene()
 {
-    for(size_t i = 0; i < piece_strength.size(); ++i)
+    for(auto type : piece_types)
     {
-        piece_strength[i] = 0.0;
+        piece_strength[type] = 0.0;
     }
     renormalize();
 }
@@ -27,7 +27,7 @@ void Piece_Strength_Gene::reset_properties() const
 {
     for(const auto& piece : piece_types)
     {
-        properties[std::string(1, piece)] = piece_value(piece);
+        properties[std::string(1, Board::get_piece(piece, WHITE)->fen_symbol())] = piece_value(piece);
     }
 }
 
@@ -35,7 +35,31 @@ void Piece_Strength_Gene::load_properties()
 {
     for(const auto& piece_score : properties)
     {
-        piece_value(piece_score.first[0]) = piece_score.second;
+        Piece_Type piece;
+        switch(piece_score.first[0])
+        {
+            case 'P':
+                piece = PAWN;
+                break;
+            case 'R':
+                piece = ROOK;
+                break;
+            case 'N':
+                piece = KNIGHT;
+                break;
+            case 'B':
+                piece = BISHOP;
+                break;
+            case 'Q':
+                piece = QUEEN;
+                break;
+            case 'K':
+                piece = KING;
+                break;
+            default:
+                throw std::runtime_error("Unrecognized piece type: " + piece_score.first);
+        }
+        piece_value(piece) = piece_score.second;
     }
     renormalize();
 }
@@ -56,20 +80,18 @@ void Piece_Strength_Gene::gene_specific_mutation()
     // other pieces and genes that reference this gene. This does not
     // narrow the range of genomes since multiplying the other piece values
     // and gene priorities by -1 results in identical behavior.
-    piece_value('Q') = std::max(0.0, piece_value('Q'));
+    piece_value(QUEEN) = std::max(0.0, piece_value(QUEEN));
     renormalize();
 }
 
-double Piece_Strength_Gene::piece_value(char symbol) const
+double Piece_Strength_Gene::piece_value(Piece_Type type) const
 {
-    assert(piece_types.find(symbol) != std::string::npos);
-    return piece_strength[symbol - first_piece];
+    return piece_strength[type];
 }
 
-double& Piece_Strength_Gene::piece_value(char symbol)
+double& Piece_Strength_Gene::piece_value(Piece_Type type)
 {
-    assert(piece_types.find(symbol) != std::string::npos);
-    return piece_strength[symbol - first_piece];
+    return piece_strength[type];
 }
 
 double Piece_Strength_Gene::piece_value(const Piece* piece) const
@@ -80,7 +102,7 @@ double Piece_Strength_Gene::piece_value(const Piece* piece) const
     }
     else
     {
-        return piece_value(std::toupper(piece->fen_symbol()))/normalizing_factor;
+        return piece_value(piece->type())/normalizing_factor;
     }
 }
 
@@ -103,11 +125,11 @@ void Piece_Strength_Gene::renormalize()
 {
     // Sum is equal to the total strength of a player's starting pieces
     // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen).
-    auto total = 8*piece_value('P') +
-                 2*piece_value('R') +
-                 2*piece_value('N') +
-                 2*piece_value('B') +
-                   piece_value('Q');
+    auto total = 8*piece_value(PAWN) +
+                 2*piece_value(ROOK) +
+                 2*piece_value(KNIGHT) +
+                 2*piece_value(BISHOP) +
+                   piece_value(QUEEN);
 
     // Use absolute value so there aren't discontinuous jumps due to small mutations.
     normalizing_factor = std::abs(total);
