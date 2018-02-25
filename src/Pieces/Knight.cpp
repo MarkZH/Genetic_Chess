@@ -5,11 +5,12 @@
 #include <string>
 
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 #include "Game/Color.h"
 #include "Moves/Move.h"
 
 
-Knight::Knight(Color color_in) : Piece(color_in, "N")
+Knight::Knight(Color color_in) : Piece(color_in, "N", KNIGHT)
 {
     for(auto d_file : {1, 2})
     {
@@ -32,9 +33,4 @@ Knight::Knight(Color color_in) : Piece(color_in, "N")
         ascii_art_lines[1].replace(2, 1, "#");
         ascii_art_lines[2].replace(1, 3, "###");
     }
-}
-
-bool Knight::is_knight() const
-{
-    return true;
 }

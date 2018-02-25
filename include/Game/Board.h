@@ -18,12 +18,13 @@
 #include "Color.h"
 #include "Square.h"
 #include "Game_Result.h"
+#include "Pieces/Piece_Types.h"
 #include "Players/Player.h"
 #include "Players/Thinking.h"
 
-class Piece;
 class Clock;
 
+class Piece;
 class Pawn;
 class Rook;
 class Knight;
@@ -99,12 +100,7 @@ class Board
         std::array<size_t, 64> all_square_indices_attacked_by(Color player) const;
         bool enough_material_to_checkmate() const;
 
-        static const Pawn* get_pawn(Color color);
-        static const Rook* get_rook(Color color);
-        static const Knight* get_knight(Color color);
-        static const Bishop* get_bishop(Color color);
-        static const Queen* get_queen(Color color);
-        static const King* get_king(Color color);
+        static const Piece* get_piece(Piece_Type piece_type, Color color);
 
     private:
         std::array<const Piece*, 64> board;

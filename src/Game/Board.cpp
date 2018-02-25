@@ -15,6 +15,7 @@
 #include "Game/Square.h"
 
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 #include "Pieces/Pawn.h"
 #include "Pieces/Rook.h"
 #include "Pieces/Knight.h"
@@ -46,36 +47,16 @@ const Queen  Board::black_queen(BLACK);
 const King   Board::black_king(BLACK);
 const Pawn   Board::black_pawn(BLACK);
 
-const Pawn* Board::get_pawn(Color color)
+const Piece* Board::get_piece(Piece_Type piece_type, Color color)
 {
-    return color == WHITE ? &white_pawn : &black_pawn;
+    static std::array<std::array<const Piece*, 2>, 6> all_pieces = {{{{&white_pawn,   &black_pawn  }},
+                                                                     {{&white_rook,   &black_rook  }},
+                                                                     {{&white_knight, &black_knight}},
+                                                                     {{&white_bishop, &black_bishop}},
+                                                                     {{&white_queen,  &black_queen }},
+                                                                     {{&white_king,   &black_king  }}}};
+    return all_pieces[piece_type][color];
 }
-
-const Rook* Board::get_rook(Color color)
-{
-    return color == WHITE ? &white_rook : &black_rook;
-}
-
-const Knight* Board::get_knight(Color color)
-{
-    return color == WHITE ? &white_knight : &black_knight;
-}
-
-const Bishop* Board::get_bishop(Color color)
-{
-    return color == WHITE ? &white_bishop : &black_bishop;
-}
-
-const Queen* Board::get_queen(Color color)
-{
-    return color == WHITE ? &white_queen : &black_queen;
-}
-
-const King* Board::get_king(Color color)
-{
-    return color == WHITE ? &white_king : &black_king;
-}
-
 
 std::mutex Board::hash_lock;
 bool Board::hash_values_initialized = false;
@@ -102,14 +83,14 @@ Board::Board() :
     for(auto color : {WHITE, BLACK})
     {
         int base_rank = (color == WHITE ? 1 : 8);
-        place_piece(get_rook(color),   'a', base_rank);
-        place_piece(get_knight(color), 'b', base_rank);
-        place_piece(get_bishop(color), 'c', base_rank);
-        place_piece(get_queen(color),  'd', base_rank);
-        place_piece(get_king(color),   'e', base_rank);
-        place_piece(get_bishop(color), 'f', base_rank);
-        place_piece(get_knight(color), 'g', base_rank);
-        place_piece(get_rook(color),   'h', base_rank);
+        place_piece(get_piece(ROOK, color),   'a', base_rank);
+        place_piece(get_piece(KNIGHT, color), 'b', base_rank);
+        place_piece(get_piece(BISHOP, color), 'c', base_rank);
+        place_piece(get_piece(QUEEN, color),  'd', base_rank);
+        place_piece(get_piece(KING, color),   'e', base_rank);
+        place_piece(get_piece(BISHOP, color), 'f', base_rank);
+        place_piece(get_piece(KNIGHT, color), 'g', base_rank);
+        place_piece(get_piece(ROOK, color),   'h', base_rank);
 
         // Unmoved pieces for castling
         set_unmoved('a', base_rank); // Rook
@@ -119,7 +100,7 @@ Board::Board() :
         auto pawn_rank = (base_rank == 1 ? 2 : 7);
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            place_piece(get_pawn(color), file, pawn_rank);
+            place_piece(get_piece(PAWN, color), file, pawn_rank);
         }
     }
 
@@ -170,26 +151,26 @@ Board::Board(const std::string& fen) :
                 switch(toupper(symbol))
                 {
                     case 'P':
-                        place_piece(get_pawn(color), file, rank);
+                        place_piece(get_piece(PAWN, color), file, rank);
                         break;
                     case 'R':
-                        place_piece(get_rook(color), file, rank);
+                        place_piece(get_piece(ROOK, color), file, rank);
                         break;
                     case 'N':
-                        place_piece(get_knight(color), file, rank);
+                        place_piece(get_piece(KNIGHT, color), file, rank);
                         break;
                     case 'B':
-                        place_piece(get_bishop(color), file, rank);
+                        place_piece(get_piece(BISHOP, color), file, rank);
                         break;
                     case 'Q':
-                        place_piece(get_queen(color), file, rank);
+                        place_piece(get_piece(QUEEN, color), file, rank);
                         break;
                     case 'K':
                         if(king_location[color])
                         {
                             throw std::runtime_error("More than one " + color_text(color) + " king in FEN: " + fen);
                         }
-                        place_piece(get_king(color), file, rank);
+                        place_piece(get_piece(KING, color), file, rank);
                         break;
                     default:
                         throw std::runtime_error(std::string("Invalid  symbol in FEN string: ") + symbol);
@@ -722,7 +703,7 @@ void Board::place_piece(const Piece* piece, char file, int rank)
 
     update_board_hash(file, rank); // XOR in new piece on square
 
-    if(piece && piece->is_king())
+    if(piece && piece->type() == KING)
     {
         king_location[piece->color()] = {file, rank};
     }
@@ -812,7 +793,7 @@ void Board::refresh_checking_squares()
 
         // Discovered check by rook due to castling
         if(std::abs(last_move->file_change()) == 2 &&
-           piece_on_square(last_move->end_file(), last_move->end_rank())->is_king())
+           piece_on_square(last_move->end_file(), last_move->end_rank())->type() == KING)
         {
             char rook_file = (last_move->file_change() > 0 ? 'f' : 'd');
 
@@ -828,7 +809,7 @@ void Board::refresh_checking_squares()
 
 bool Board::king_is_in_check_after_move(const Move& move) const
 {
-    if(piece_on_square(move.start_file(), move.start_rank())->is_king())
+    if(piece_on_square(move.start_file(), move.start_rank())->type() == KING)
     {
         return ! safe_for_king(move.end_file(), move.end_rank(), whose_turn());
     }
@@ -866,7 +847,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
 
     if(piece_is_pinned(move.start_file(), move.start_rank()))
     {
-        if(piece_on_square(move.start_file(), move.start_rank())->is_knight())
+        if(piece_on_square(move.start_file(), move.start_rank())->type() == KNIGHT)
         {
             return true; // knights cannot escape pins
         }
@@ -932,7 +913,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
                     return false;
                 }
 
-                return piece->is_rook() || piece->is_queen();
+                return piece->type() == ROOK || piece->type() == QUEEN;
             }
         }
     }
@@ -1215,7 +1196,7 @@ bool Board::piece_has_moved(char file, int rank) const
 Square Board::find_king(Color color) const
 {
     auto location = king_location[color];
-    assert(piece_on_square(location.file, location.rank) == get_king(color));
+    assert(piece_on_square(location.file, location.rank) == get_piece(KING, color));
     return location;
 }
 
@@ -1269,18 +1250,18 @@ bool Board::enough_material_to_checkmate() const
 {
     bool knight_found = false;
     Color bishop_square_color_found = NONE;
-    
+
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto piece = piece_on_square(file, rank);
-            if( ! piece || piece->is_king())
+            if( ! piece || piece->type() == KING)
             {
                 continue;
             }
 
-            if(piece->is_queen() || piece->is_rook() || piece->is_pawn())
+            if(piece->type() == QUEEN || piece->type() == ROOK || piece->type() == PAWN)
             {
                 return true; // checkmate possible with just queen or rook; pawn can promote
             }
@@ -1291,7 +1272,7 @@ bool Board::enough_material_to_checkmate() const
                 return true; // checkmate with a knight and any non-king piece on either side is possible
             }
 
-            if(piece->is_knight())
+            if(piece->type() == KNIGHT)
             {
                 if(bishop_square_color_found != NONE)
                 {
@@ -1375,12 +1356,12 @@ void Board::initialize_board_hash()
             for(auto piece_color : {BLACK, WHITE})
             {
                 std::vector<const Piece*> pieces {nullptr,
-                                                  get_pawn(piece_color),
-                                                  get_rook(piece_color),
-                                                  get_knight(piece_color),
-                                                  get_bishop(piece_color),
-                                                  get_queen(piece_color),
-                                                  get_king(piece_color)};
+                                                  get_piece(PAWN, piece_color),
+                                                  get_piece(ROOK, piece_color),
+                                                  get_piece(KNIGHT, piece_color),
+                                                  get_piece(BISHOP, piece_color),
+                                                  get_piece(QUEEN, piece_color),
+                                                  get_piece(KING, piece_color)};
                 for(auto piece : pieces)
                 {
                     square_hash_values[index][piece] = Random::random_unsigned_int64();
@@ -1429,7 +1410,7 @@ uint64_t Board::get_square_hash(char file, int rank) const
     auto index = Board::board_index(file, rank);
     auto result = square_hash_values[index].at(piece);
     if(piece &&
-       piece->is_rook() &&
+       piece->type() == ROOK &&
        ! piece_has_moved(file, rank) &&
        ! piece_has_moved('e', rank))
     {
@@ -1514,18 +1495,18 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
     auto file_change = std::abs(target_file - origin_file);
     auto rank_change = std::abs(target_rank - origin_rank);
 
-    if(attacking_piece->is_knight())
+    if(attacking_piece->type() == KNIGHT)
     {
         return (file_change == 1 && rank_change == 2) ||
                (file_change == 2 && rank_change == 1);
     }
 
-    if(attacking_piece->is_king())
+    if(attacking_piece->type() == KING)
     {
         return std::max(file_change, rank_change) == 1;
     }
 
-    if(attacking_piece->is_pawn())
+    if(attacking_piece->type() == PAWN)
     {
         return file_change == 1 && rank_change == 1 && (attacking_piece->color() == WHITE) == (target_rank > origin_rank);
     }
@@ -1535,18 +1516,18 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
         return false;
     }
 
-    if(attacking_piece->is_queen())
+    if(attacking_piece->type() == QUEEN)
     {
         return true;
     }
 
     if(file_change == 0 || rank_change == 0)
     {
-        return attacking_piece->is_rook();
+        return attacking_piece->type() == ROOK;
     }
     else
     {
-        return attacking_piece->is_bishop();
+        return attacking_piece->type() == BISHOP;
     }
 }
 
@@ -1591,21 +1572,21 @@ Square Board::piece_is_pinned(char file, int rank) const
                 return no_pin;
             }
 
-            if(attacking_piece->is_queen())
+            if(attacking_piece->type() == QUEEN)
             {
                 return {current_file, current_rank};
             }
 
             if(file_step == 0 || rank_step == 0)
             {
-                if(attacking_piece->is_rook())
+                if(attacking_piece->type() == ROOK)
                 {
                     return {current_file, current_rank};
                 }
             }
             else
             {
-                if(attacking_piece->is_bishop())
+                if(attacking_piece->type() == BISHOP)
                 {
                     return {current_file, current_rank};
                 }

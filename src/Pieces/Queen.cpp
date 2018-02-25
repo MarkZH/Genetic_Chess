@@ -1,9 +1,10 @@
 #include "Pieces/Queen.h"
 
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 #include "Moves/Move.h"
 
-Queen::Queen(Color color_in) : Piece(color_in, "Q")
+Queen::Queen(Color color_in) : Piece(color_in, "Q", QUEEN)
 {
     for(int d_file = -1; d_file <= 1; ++d_file)
     {
@@ -27,9 +28,4 @@ Queen::Queen(Color color_in) : Piece(color_in, "Q")
         ascii_art_lines[1].replace(2, 1, "#");
         ascii_art_lines[2].replace(1, 3, "###");
     }
-}
-
-bool Queen::is_queen() const
-{
-    return true;
 }

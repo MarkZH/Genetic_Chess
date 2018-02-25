@@ -4,12 +4,13 @@
 #include <string>
 
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 #include "Game/Color.h"
 #include "Moves/Move.h"
 #include "Moves/Kingside_Castle.h"
 #include "Moves/Queenside_Castle.h"
 
-King::King(Color color_in) : Piece(color_in, "K")
+King::King(Color color_in) : Piece(color_in, "K", KING)
 {
     for(int d_rank = -1; d_rank <= 1; ++d_rank)
     {
@@ -34,9 +35,4 @@ King::King(Color color_in) : Piece(color_in, "K")
         ascii_art_lines[1].replace(2, 1, "#");
         ascii_art_lines[2].replace(1, 3, "###");
     }
-}
-
-bool King::is_king() const
-{
-    return true;
 }

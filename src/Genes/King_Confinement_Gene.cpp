@@ -10,6 +10,7 @@
 #include "Game/Color.h"
 #include "Game/Square.h"
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 
 King_Confinement_Gene::King_Confinement_Gene() : maximum_score(0.0)
 {
@@ -68,7 +69,7 @@ double King_Confinement_Gene::score_board(const Board& board) const
         auto piece = board.piece_on_square(square.file, square.rank);
         bool occupied_by_same = piece &&
                                 piece->color() == perspective &&
-                                ! piece->is_king();
+                                piece->type() != KING;
 
         auto is_safe = ! attacked_by_other && ! occupied_by_same;
         if(is_safe)

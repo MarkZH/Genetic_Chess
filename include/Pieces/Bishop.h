@@ -9,8 +9,6 @@ class Bishop : public Piece
 {
     public:
         explicit Bishop(Color color);
-
-        bool is_bishop() const override;
 };
 
 #endif // BISHOP_H

@@ -6,6 +6,7 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 
 double Pawn_Advancement_Gene::score_board(const Board& board) const
 {
@@ -18,7 +19,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board) const
         for(int rank = 2; rank <= 7; ++rank)
         {
             auto piece = board.piece_on_square(file, rank);
-            if(piece && piece->color() == perspective && piece->is_pawn())
+            if(piece && piece->color() == perspective && piece->type() == PAWN)
             {
                 // 1 point per move towards promotion
                 score += std::abs(home_rank - rank);

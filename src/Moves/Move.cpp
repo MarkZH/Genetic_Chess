@@ -4,6 +4,7 @@
 
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 #include "Exceptions/Illegal_Move_Exception.h"
 #include "Utility.h"
 
@@ -58,7 +59,7 @@ bool Move::is_legal(const Board& board) const
     }
 
     // Check that there are no intervening pieces for straight-line moves
-    if( ! moving_piece->is_knight())
+    if(moving_piece->type() != KNIGHT)
     {
         if( ! board.all_empty_between(starting_file, starting_rank, ending_file, ending_rank))
         {

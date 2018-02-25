@@ -5,10 +5,11 @@
 #include <cmath>
 
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 #include "Game/Color.h"
 #include "Moves/Move.h"
 
-Bishop::Bishop(Color color_in) : Piece(color_in, "B")
+Bishop::Bishop(Color color_in) : Piece(color_in, "B", BISHOP)
 {
     for(int d_rank : {-1, 1})
     {
@@ -30,9 +31,4 @@ Bishop::Bishop(Color color_in) : Piece(color_in, "B")
         ascii_art_lines[1].replace(2, 1, "#");
         ascii_art_lines[2].replace(1, 3, "###");
     }
-}
-
-bool Bishop::is_bishop() const
-{
-    return true;
 }

@@ -7,12 +7,14 @@
 
 #include "Moves/Move.h"
 #include "Game/Color.h"
+#include "Piece_Types.h"
 #include "Game/Board.h"
+
 
 class Piece
 {
     public:
-        Piece(Color color_in, const std::string& symbol_in);
+        Piece(Color color_in, const std::string& symbol_in, Piece_Type type_in);
         virtual ~Piece() = 0;
 
         virtual std::string pgn_symbol() const;
@@ -25,12 +27,7 @@ class Piece
         const std::vector<const Move*>& get_move_list(char file, int rank) const;
         std::vector<Square> all_attacked_squares(char file, int rank, const Board& board) const;
 
-        virtual bool is_pawn() const;
-        virtual bool is_king() const;
-        virtual bool is_queen() const;
-        virtual bool is_rook() const;
-        virtual bool is_bishop() const;
-        virtual bool is_knight() const;
+        Piece_Type type() const;
 
     protected:
         std::vector<std::string> ascii_art_lines;
@@ -45,6 +42,7 @@ class Piece
     private:
         Color my_color;
         std::string symbol;
+        Piece_Type my_type;
 
         // Contains pointers to move data
         std::vector<std::unique_ptr<const Move>> possible_moves;

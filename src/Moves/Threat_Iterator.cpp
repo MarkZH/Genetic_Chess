@@ -4,6 +4,7 @@
 #include "Game/Square.h"
 #include "Game/Color.h"
 #include "Pieces/Piece.h"
+#include "Pieces/Piece_Types.h"
 #include "Pieces/Knight.h"
 
 Threat_Iterator::Threat_Iterator(char target_file_in,
@@ -18,7 +19,7 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     knight_index(0),
     attacking_color(attack_color),
     board(reference_board),
-    target_king((const Piece*)reference_board.get_king(opposite(attack_color)))
+    target_king(reference_board.get_piece(KING, opposite(attack_color)))
 {
     next_threat();
 }
@@ -92,31 +93,31 @@ void Threat_Iterator::next_threat()
                     break;
                 }
 
-                if(piece->is_queen())
+                if(piece->type() == QUEEN)
                 {
                     return;
                 }
 
-                if(piece->is_king() && step_size == 1)
+                if(piece->type() == KING && step_size == 1)
                 {
                     return;
                 }
 
                 if(rank_step == 0 || file_step == 0)
                 {
-                    if(piece->is_rook())
+                    if(piece->type() == ROOK)
                     {
                         return;
                     }
                 }
                 else
                 {
-                    if(piece->is_bishop())
+                    if(piece->type() == BISHOP)
                     {
                         return;
                     }
 
-                    if(piece->is_pawn() && step_size == 1 && rank_step == (attacking_color == WHITE ? -1 : 1))
+                    if(piece->type() == PAWN && step_size == 1 && rank_step == (attacking_color == WHITE ? -1 : 1))
                     {
                         return;
                     }
@@ -129,7 +130,7 @@ void Threat_Iterator::next_threat()
         rank_step = -1;
     }
 
-    auto knight = board.get_knight(attacking_color);
+    auto knight = board.get_piece(KNIGHT, attacking_color);
     const auto& moves = knight->get_move_list(target_file, target_rank);
     while(knight_index < moves.size())
     {

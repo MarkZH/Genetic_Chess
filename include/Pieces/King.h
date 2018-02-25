@@ -9,8 +9,6 @@ class King : public Piece
 {
     public:
         explicit King(Color color_in);
-
-        bool is_king() const override;
 };
 
 #endif // KING_H
