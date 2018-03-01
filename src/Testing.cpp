@@ -553,7 +553,7 @@ void run_tests()
 
     auto pawn_advancement_gene = Pawn_Advancement_Gene();
     auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
-    auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*5);
+    auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*6);
     tests_passed &= pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
 
     auto passed_pawn_gene = Passed_Pawn_Gene();
@@ -599,6 +599,21 @@ void run_tests()
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
     tests_passed &= total_force_gene.test(Board(), 1.0 + 32/piece_strength_normalizer);
 
+    // Test board information sources
+    auto promotion_board = Board("8/k6P/8/8/8/8/8/K7 w - - 0 1");
+    auto promotion_count = promotion_board.number_of_promoted_pawns(WHITE);
+    if(promotion_count != 0)
+    {
+        std::cerr << "Number of pawns promoted at start should be 0. Got " << promotion_count << std::endl;
+        tests_passed = false;
+    }
+    promotion_board.submit_move(promotion_board.get_move("h8=Q"));
+    promotion_count = promotion_board.number_of_promoted_pawns(WHITE);
+    if(promotion_count != 1)
+    {
+        std::cerr << "Number of pawns promoted at start should be 1. Got " << promotion_count << std::endl;
+        tests_passed = false;
+    }
 
     // String utilities
     std::string original = "   a    #     b";

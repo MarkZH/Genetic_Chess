@@ -20,6 +20,7 @@ void Pawn_Promotion::side_effects(Board& board) const
 
     Pawn_Move::side_effects(board);
     board.place_piece(promotion_piece(), ending_file, ending_rank);
+    ++board.promoted_pawns_count[board.whose_turn()];
 }
 
 std::string Pawn_Promotion::game_record_move_item(const Board& board) const

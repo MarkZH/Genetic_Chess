@@ -10,7 +10,7 @@
 
 double Pawn_Advancement_Gene::score_board(const Board& board) const
 {
-    double score = 0.0;
+    double score = board.number_of_promoted_pawns(board.whose_turn())*6;
     auto perspective = board.whose_turn();
     int home_rank = (perspective == WHITE ? 2 : 7);
 
@@ -27,7 +27,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board) const
         }
     }
 
-    return score/(8*5); // normalize to 8 pawns at the last rank before promotion
+    return score/(8*6); // normalize to 8 pawns at the far rank (i.e., promoted)
 }
 
 std::unique_ptr<Gene> Pawn_Advancement_Gene::duplicate() const
