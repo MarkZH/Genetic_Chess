@@ -19,7 +19,7 @@ class Piece
 
         virtual std::string pgn_symbol() const;
         char fen_symbol() const;
-        std::string ascii_art(unsigned int row) const;
+        std::string ascii_art(size_t row) const;
         Color color() const;
 
         bool can_move(const Move* move) const;

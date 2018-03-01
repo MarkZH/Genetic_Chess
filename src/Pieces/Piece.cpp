@@ -20,7 +20,7 @@ Piece::~Piece()
 {
 }
 
-std::string Piece::ascii_art(unsigned int row) const
+std::string Piece::ascii_art(size_t row) const
 {
     if(row >= ascii_art_lines.size())
     {
