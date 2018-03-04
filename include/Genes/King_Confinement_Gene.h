@@ -12,16 +12,19 @@ class Board;
 class King_Confinement_Gene : public Gene
 {
     public:
-        King_Confinement_Gene();
-
         std::unique_ptr<Gene> duplicate() const override;
+        void gene_specific_mutation() override;
 
         std::string name() const override;
 
-        double get_maximum_score() const;
+    protected:
+        void load_properties() override;
+        void reset_properties() const override;
 
     private:
-        double maximum_score;
+        double friendly_block_score;
+        double enemy_block_score;
+        double free_square_score;
 
         double score_board(const Board& board) const override;
 };
