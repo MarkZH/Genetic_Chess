@@ -721,9 +721,9 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
     return Threat_Generator(file, rank, opposite(king_color), *this).empty();
 }
 
-std::array<size_t, 64> Board::all_square_indices_attacked_by(Color player) const
+std::array<bool, 64> Board::all_square_indices_attacked_by(Color player) const
 {
-    std::array<size_t, 64> attacked_indices{};
+    std::array<bool, 64> attacked_indices{};
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
