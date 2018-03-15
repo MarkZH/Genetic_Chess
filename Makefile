@@ -28,15 +28,6 @@ LDFLAGS_OPTIMIZED_DEBUG = -flto -fuse-linker-plugin
 all : release debug optimized_debug
 
 
-after_debug : 
-
-
-after_optimized_debug : 
-
-
-after_release : 
-
-
 before_debug : 
 	test -d bin/debug || mkdir -p bin/debug
 	test -d $(DEBUG_OBJ_DIR) || mkdir -p $(DEBUG_OBJ_DIR)
@@ -74,21 +65,21 @@ clean : clean_release clean_debug clean_optimized_debug
 
 
 clean_debug : 
-	rm $(OBJ_DEBUG) $(OUT_DEBUG)
+	rm -rf $(DEBUG_OBJ_DIR) $(OUT_DEBUG)
 
 clean_optimized_debug : 
-	rm $(OBJ_OPTIMIZED_DEBUG) $(OUT_OPTIMIZED_DEBUG)
+	rm -rf $(OPTIMIZED_DEBUG_OBJ_DIR) $(OUT_OPTIMIZED_DEBUG)
 
 clean_release : 
-	rm $(OBJ_RELEASE) $(OUT_RELEASE)
+	rm -rf $(RELEASE_OBJ_DIR) $(OUT_RELEASE)
 
-debug : before_debug $(OUT_DEBUG) after_debug
-
-
-optimized_debug : before_optimized_debug $(OUT_OPTIMIZED_DEBUG) after_optimized_debug
+debug : before_debug $(OUT_DEBUG)
 
 
-release : before_release $(OUT_RELEASE) after_release
+optimized_debug : before_optimized_debug $(OUT_OPTIMIZED_DEBUG)
+
+
+release : before_release $(OUT_RELEASE)
 
 
 $(DEBUG_OBJ_DIR)/main.o : main.cpp include/Exceptions/Illegal_Move_Exception.h include/Game/Board.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Gene_Pool.h include/Genes/Genome.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Stalemate_Search.h include/Testing.h include/Utility.h
@@ -595,6 +586,6 @@ $(RELEASE_OBJ_DIR)/src/Testing.o : src/Testing.cpp include/Testing.h
 $(RELEASE_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Utility.cpp -o $(RELEASE_OBJ_DIR)/src/Utility.o
 
-.PHONY : all after_debug after_optimized_debug after_release before_debug before_optimized_debug before_release clean clean_debug clean_optimized_debug clean_release debug optimized_debug release
+.PHONY : all before_debug before_optimized_debug before_release clean clean_debug clean_optimized_debug clean_release debug optimized_debug release
 
 
