@@ -73,7 +73,6 @@ Board::Board() :
     en_passant_target({'\0', 0}),
     king_location{{ {'\0', 0}, {'\0', 0} }},
     move_count_start_offset(0),
-    first_player_to_move(WHITE),
     already_castled{{false, false}},
     promoted_pawns_count{{0, 0}},
     capturing_move_available(false),
@@ -192,7 +191,6 @@ Board::Board(const std::string& fen) :
     }
 
     set_turn(fen_parse[1] == "w" ? WHITE : BLACK);
-    first_player_to_move = turn_color;
 
     auto non_turn_color = opposite(whose_turn());
     auto non_turn_king_square = king_location[non_turn_color];
@@ -1326,11 +1324,6 @@ void Board::set_thinking_mode(Thinking_Output_Type mode) const
 Thinking_Output_Type Board::get_thinking_mode() const
 {
     return thinking_indicator;
-}
-
-Color Board::first_to_move() const
-{
-    return first_player_to_move;
 }
 
 void Board::initialize_board_hash()

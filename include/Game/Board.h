@@ -70,8 +70,6 @@ class Board
                                double increment,
                                const Clock& game_clock) const;
 
-        Color first_to_move() const;
-
         std::string last_move_coordinates() const;
 
         void set_turn(Color color);
