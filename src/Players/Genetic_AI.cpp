@@ -211,7 +211,10 @@ const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) cons
         principal_variation.clear();
     }
 
-    evaluation_speed = nodes_evaluated/total_evaluation_time;
+    if(nodes_evaluated > 0)
+    {
+        evaluation_speed = nodes_evaluated/total_evaluation_time;
+    }
 
     return *result.variation.front();
 }

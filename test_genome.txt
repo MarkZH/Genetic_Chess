@@ -14,6 +14,9 @@ Game Length Uncertainty: 0.5
 Mean Game Length: 50
 Speculation Constant: 0.5
 
+Name Priority Threshold Gene
+Threshold: 0
+
 Name: Total Force Gene
 Priority: 1
 
@@ -32,6 +35,9 @@ Legal Bonus: 4
 Priority: 1
 
 Name: King Confinement Gene
+Enemy Block Score: -1
+Free Square Score: 2
+Friendly Block Score: 4
 Priority: 1
 
 Name: King Protection Gene

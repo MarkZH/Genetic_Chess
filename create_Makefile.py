@@ -124,7 +124,7 @@ elif sys.argv[1] == 'gcc':
     linker_options['optimized_debug'] = ['-flto', '-fuse-linker-plugin']
 elif sys.argv[1] == 'clang':
     compiler = 'clang++'
-    options_list['debug'] = ["-g", "-Og", "-DDEBUG"]
+    options_list['debug'] = ["-g", "-Og", "-DDEBUG", "-fsanitize=undefined", "-fsanitize=integer"]
     options_list['release'] = ["-Ofast", "-DNDEBUG"]
     options_list['optimized_debug'] = ["-Ofast", "-DDEBUG"]
 
@@ -154,7 +154,7 @@ elif sys.argv[1] == 'clang':
             "-Iinclude"]
     base_linker_options = ["-pthread", "-fexceptions"]
 
-    linker_options['debug'] = []
+    linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     linker_options['release'] = ['-flto']
     linker_options['optimized_debug'] = ['-flto']
 else:
