@@ -113,7 +113,6 @@ class Board
         std::string starting_fen;
         std::array<Square, 2> king_location;
         size_t move_count_start_offset;
-        Color first_player_to_move;
 
         // Information cache for gene reference
         std::array<bool, 2> already_castled;
