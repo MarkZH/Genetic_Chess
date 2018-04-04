@@ -42,7 +42,8 @@ void King_Confinement_Gene::reset_properties() const
 
 void King_Confinement_Gene::gene_specific_mutation()
 {
-    auto mutation_size = Random::random_normal(0.1);
+    make_priority_positive();
+    auto mutation_size = Random::random_normal(0.2);
     switch(Random::random_integer(1, 3))
     {
         case 1:

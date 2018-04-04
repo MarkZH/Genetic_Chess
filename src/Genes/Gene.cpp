@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <algorithm>
 
 #include "Game/Color.h"
 #include "Utility.h"
@@ -124,4 +125,14 @@ bool Gene::test(const Board& board, double expected_score) const
 double Gene::get_priority() const
 {
     return priority;
+}
+
+void Gene::make_priority_minimum_zero()
+{
+    priority = std::max(priority, 0.0);
+}
+
+void Gene::make_priority_positive()
+{
+    priority = std::abs(priority);
 }
