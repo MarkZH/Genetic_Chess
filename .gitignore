@@ -52,3 +52,6 @@ octave-workspace
 *.toc
 *.bak
 *.gz
+*.xml
+*.lastcodeanalysissucceeded
+*.pyperf
