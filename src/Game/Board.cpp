@@ -250,7 +250,7 @@ size_t Board::board_index(char file, int rank)
     // Square A8 = Board::board[56]
     // Square H8 = Board::board[63]
     assert(inside_board(file, rank));
-    return (file - 'a') + 8*(rank - 1);
+    return 8*(file - 'a') + (rank - 1);
 }
 
 const Piece*& Board::piece_on_square(char file, int rank)
