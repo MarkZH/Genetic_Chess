@@ -86,10 +86,9 @@ void Piece::add_legal_move(std::unique_ptr<Move> move)
     }
 }
 
-std::vector<Square> Piece::all_attacked_squares(char file, int rank, const Board& board) const
+std::array<bool, 64> Piece::all_attacked_squares(char file, int rank, const Board& board) const
 {
-    std::vector<Square> result{};
-    result.reserve(64);
+    std::array<bool, 64> result = {false};
     std::array<int, 2> blocking_direction{};
 
     for(const auto& move : get_move_list(file, rank))
@@ -114,7 +113,7 @@ std::vector<Square> Piece::all_attacked_squares(char file, int rank, const Board
             }
         }
 
-        result.push_back({move->end_file(), move->end_rank()});
+        result[board.board_index(move->end_file(), move->end_rank())] = true;
     }
 
     return result;

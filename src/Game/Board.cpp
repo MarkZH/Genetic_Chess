@@ -730,9 +730,10 @@ std::array<bool, 64> Board::all_square_indices_attacked_by(Color player) const
             auto piece = piece_on_square(file, rank);
             if(piece && piece->color() == player)
             {
-                for(auto square : piece->all_attacked_squares(file, rank, *this))
+                auto attacked_squares = piece->all_attacked_squares(file, rank, *this);
+                for(size_t i = 0; i < attacked_squares.size(); ++i)
                 {
-                    attacked_indices[board_index(square.file, square.rank)] = true;
+                    attacked_indices[i] = attacked_indices[i] || attacked_squares[i];
                 }
             }
         }
