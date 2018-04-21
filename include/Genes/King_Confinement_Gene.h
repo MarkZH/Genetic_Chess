@@ -12,6 +12,7 @@ class Board;
 class King_Confinement_Gene : public Gene
 {
     public:
+        King_Confinement_Gene();
         std::unique_ptr<Gene> duplicate() const override;
         void gene_specific_mutation() override;
 
