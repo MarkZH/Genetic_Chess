@@ -483,10 +483,7 @@ void run_tests()
     std::vector<Genetic_AI> test_pool(10);
     for(auto& ai : test_pool)
     {
-        for(int i = 0; i < 1000; ++i)
-        {
-            ai.mutate(true);
-        }
+        ai.mutate(1000);
         ai.print_genome(pool_file_name);
     }
 

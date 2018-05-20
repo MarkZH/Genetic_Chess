@@ -360,13 +360,14 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
     return best_result;
 }
 
-void Genetic_AI::mutate(bool just_testing)
+void Genetic_AI::mutate(int mutation_count)
 {
-    genome.mutate();
-    if( ! just_testing)
+    for(int i = 0; i < mutation_count; ++i)
     {
-        calibrate_thinking_speed();
+        genome.mutate();
     }
+    
+    calibrate_thinking_speed();
     calculate_centipawn_value();
 }
 
