@@ -63,7 +63,7 @@ void Look_Ahead_Gene::gene_specific_mutation()
             capturing_speculation_constant += Random::random_normal(0.05);
             break;
         default:
-            assert(false); // If here, random_integer() called with wrong parameters
+            throw std::runtime_error("Bad random value in Look Ahead Gene");
             break;
     }
 }
