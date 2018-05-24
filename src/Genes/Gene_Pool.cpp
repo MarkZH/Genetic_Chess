@@ -64,7 +64,7 @@ void gene_pool(const std::string& config_file = "")
     std::map<Genetic_AI, int> consecutive_wins;
     std::map<Genetic_AI, size_t> original_pool;
 
-    const int scramble_mutations = 100;
+    const int scramble_mutations = 100000;
 
     std::string genome_file_name = config.get_text("gene pool file");
     if(genome_file_name.empty())
@@ -276,10 +276,7 @@ void gene_pool(const std::string& config_file = "")
                     }
                     else
                     {
-                        for(int i = 0; i < scramble_mutations; ++i)
-                        {
-                            new_specimen.mutate();
-                        }
+                        new_specimen.mutate(scramble_mutations);
                         std::cout << "random";
                     }
 

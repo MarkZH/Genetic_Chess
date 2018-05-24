@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
                         if(filename.empty())
                         {
                             latest = std::make_unique<Genetic_AI>();
-                            static_cast<Genetic_AI*>(latest.get())->mutate(100);
+                            static_cast<Genetic_AI*>(latest.get())->mutate(10000);
                             static_cast<const Genetic_AI*>(latest.get())->print_genome("single_game_player.txt");
                         }
                         else

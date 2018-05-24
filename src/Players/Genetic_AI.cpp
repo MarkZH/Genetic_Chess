@@ -366,7 +366,7 @@ void Genetic_AI::mutate(int mutation_count)
     {
         genome.mutate();
     }
-    
+
     calibrate_thinking_speed();
     calculate_centipawn_value();
 }
