@@ -4,7 +4,7 @@
 #include <iosfwd>
 #include <string>
 
-#include "Player.h"
+#include "Minimax_AI.h"
 
 #include "Genes/Genome.h"
 #include "Moves/Move.h"
@@ -12,8 +12,9 @@
 class Board;
 class Clock;
 struct Game_Tree_Node_Result;
+class Game_Result;
 
-class Genetic_AI : public Player
+class Genetic_AI : public Minimax_AI
 {
     public:
         Genetic_AI();
@@ -24,12 +25,9 @@ class Genetic_AI : public Player
                    const Genetic_AI& gai_father); // offspring with random recombination of genes
 
         void mutate(int mutation_count = 1);
-        const Move& choose_move(const Board& board, const Clock& clock) const override;
 
         std::string name() const override;
         std::string author() const override;
-
-        std::string get_commentary_for_move(size_t move_number) const override;
 
         void print_genome(const std::string& file_name = "") const;
         void print_genome(std::ostream& file) const;
@@ -43,44 +41,16 @@ class Genetic_AI : public Player
 
         static int next_id;
         int id;
-        double value_of_centipawn;
-
-        mutable std::vector<const Move*> principal_variation;
-        mutable std::vector<std::vector<const Move*>> commentary;
-
-        // Monitor search speed to adapt to different computers/competing workloads
-        mutable int nodes_searched;
-        mutable double clock_start_time;
-        mutable size_t maximum_depth;
-
-        mutable int nodes_evaluated;
-        mutable double total_evaluation_time;
-        mutable double evaluation_speed;
 
         void read_from(std::istream& is);
 
-        // Minimax (actually negamax) with alpha-beta pruning
-        Game_Tree_Node_Result search_game_tree(const Board& board,
-                                               double time_to_examine,
-                                               const Clock& clock,
-                                               size_t depth,
-                                               Game_Tree_Node_Result alpha,
-                                               const Game_Tree_Node_Result& beta,
-                                               bool still_on_principal_variation) const;
+        virtual double evaluate(const Board& board,
+                                Game_Result move_result,
+                                Color perspective) const override;
 
-        Game_Tree_Node_Result create_result(const Board& board,
-                                            Color perspective,
-                                            Game_Result move_result,
-                                            size_t depth) const;
-
-        // Output thinking to stdout
-        void output_thinking_cecp(const Game_Tree_Node_Result& thought,
-                                  const Clock& clock,
-                                  Color perspective) const;
-
-        void calibrate_thinking_speed();
-        double centipawn_value() const;
-        void calculate_centipawn_value();
+        // Time management
+        virtual double time_to_examine(const Board& board, const Clock& clock) const override;
+        virtual double speculation_time_factor(const Board& board) const override;
 };
 
 #endif // GENETIC_AI_H
