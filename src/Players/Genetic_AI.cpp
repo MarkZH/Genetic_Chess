@@ -123,9 +123,9 @@ void Genetic_AI::read_from(std::istream& is)
     genome.read_from(is);
 }
 
-double Genetic_AI::evaluate(const Board & board, Game_Result move_result, Color perspective) const
+double Genetic_AI::internal_evaluate(const Board & board, Color perspective) const
 {
-    return genome.evaluate(board, move_result, perspective);
+    return genome.evaluate(board, perspective);
 }
 
 double Genetic_AI::time_to_examine(const Board & board, const Clock & clock) const

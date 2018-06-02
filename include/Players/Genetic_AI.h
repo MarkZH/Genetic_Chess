@@ -44,9 +44,8 @@ class Genetic_AI : public Minimax_AI
 
         void read_from(std::istream& is);
 
-        virtual double evaluate(const Board& board,
-                                Game_Result move_result,
-                                Color perspective) const override;
+        double internal_evaluate(const Board& board,
+                                 Color perspective) const override;
 
         // Time management
         virtual double time_to_examine(const Board& board, const Clock& clock) const override;

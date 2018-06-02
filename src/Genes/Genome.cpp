@@ -170,24 +170,8 @@ double Genome::score_board(const Board& board) const
     return score*(total_priority/used_priority);
 }
 
-double Genome::evaluate(const Board& board, const Game_Result& result, Color perspective) const
+double Genome::evaluate(const Board& board, Color perspective) const
 {
-    if(result.game_has_ended())
-    {
-        if(result.get_winner() == NONE) // stalemate
-        {
-            return 0;
-        }
-        else if(result.get_winner() == perspective) // checkmate win
-        {
-            return Math::win_score;
-        }
-        else // checkmate loss
-        {
-            return Math::lose_score;
-        }
-    }
-
     auto other_board = board;
     other_board.set_turn(opposite(board.whose_turn()));
     const auto& my_board =        (board.whose_turn() == perspective ? board : other_board);

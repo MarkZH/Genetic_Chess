@@ -37,9 +37,11 @@ class Minimax_AI : public Player
         double value_of_centipawn;
 
         // Evaluation method
-        virtual double evaluate(const Board& board,
-                                Game_Result move_result,
-                                Color perspective) const = 0;
+        double evaluate(const Board& board,
+                        Game_Result move_result,
+                        Color perspective) const;
+        virtual double internal_evaluate(const Board& board,
+                                         Color perspective) const = 0;
 
         // Time management
         virtual double time_to_examine(const Board& board, const Clock& clock) const = 0;

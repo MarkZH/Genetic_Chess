@@ -302,6 +302,27 @@ void Minimax_AI::calibrate_thinking_speed() const
     // more reasonable value.
 }
 
+double Minimax_AI::evaluate(const Board & board, Game_Result move_result, Color perspective) const
+{
+    if(move_result.game_has_ended())
+    {
+        if(move_result.get_winner() == NONE) // stalemate
+        {
+            return 0;
+        }
+        else if(move_result.get_winner() == perspective) // checkmate win
+        {
+            return Math::win_score;
+        }
+        else // checkmate loss
+        {
+            return Math::lose_score;
+        }
+    }
+
+    return internal_evaluate(board, perspective);
+}
+
 double Minimax_AI::centipawn_value() const
 {
     return value_of_centipawn;
