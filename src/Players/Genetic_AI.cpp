@@ -149,20 +149,20 @@ void Genetic_AI::mutate(int mutation_count)
     calculate_centipawn_value();
 }
 
-void Genetic_AI::print_genome(const std::string& file_name) const
+void Genetic_AI::print(const std::string& file_name) const
 {
     if(file_name.empty())
     {
-        print_genome(std::cout);
+        print(std::cout);
     }
     else
     {
         auto dest = std::ofstream(file_name, std::ofstream::app);
-        print_genome(dest);
+        print(dest);
     }
 }
 
-void Genetic_AI::print_genome(std::ostream& os) const
+void Genetic_AI::print(std::ostream& os) const
 {
     os << "ID: " << get_id() << std::endl;
     genome.print(os);

@@ -29,8 +29,8 @@ class Genetic_AI : public Minimax_AI
         std::string name() const override;
         std::string author() const override;
 
-        void print_genome(const std::string& file_name = "") const;
-        void print_genome(std::ostream& file) const;
+        void print(const std::string& file_name = "") const;
+        void print(std::ostream& file) const;
 
         int get_id() const;
         bool operator<(const Genetic_AI& other) const;

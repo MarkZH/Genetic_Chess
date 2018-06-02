@@ -484,13 +484,13 @@ void run_tests()
     for(auto& ai : test_pool)
     {
         ai.mutate(10000);
-        ai.print_genome(pool_file_name);
+        ai.print(pool_file_name);
     }
 
     auto index = Random::random_integer(0, test_pool.size() - 1);
-    test_pool[index].print_genome(write_file_name);
+    test_pool[index].print(write_file_name);
     auto read_ai = Genetic_AI(pool_file_name, index);
-    read_ai.print_genome(rewrite_file_name);
+    read_ai.print(rewrite_file_name);
 
     if( ! files_are_identical(write_file_name, rewrite_file_name))
     {

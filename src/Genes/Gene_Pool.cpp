@@ -358,7 +358,7 @@ void gene_pool(const std::string& config_file = "")
                                                  best_compare), best_compare);
         }
         std::ofstream best_file(genome_file_name + "_best_genome.txt");
-        best_ai.print_genome(best_file);
+        best_ai.print(best_file);
 
         // Pause gene pool
         if(signal_activated == 1)
@@ -469,7 +469,7 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
     {
         if( ! written_before[ai])
         {
-            ai.print_genome(ofs);
+            ai.print(ofs);
             written_before[ai] = true;
         }
     }
