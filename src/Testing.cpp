@@ -14,6 +14,7 @@
 #include "Moves/Move.h"
 #include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
+#include "Players/Neural_AI.h"
 
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Freedom_To_Move_Gene.h"
@@ -1046,6 +1047,10 @@ void run_tests()
         std::cerr << "Capture should be possible here." << std::endl;
         tests_passed = false;
     }
+
+    Neural_AI neural;
+    neural.mutate(1000);
+    neural.print("neural_printing_test.txt");
 
     if(tests_passed)
     {
