@@ -45,23 +45,23 @@ void gene_pool(const std::string& config_file = "")
     double game_time = minimum_game_time;
 
     // Stats (map: Pool ID --> counts)
-    std::map<size_t, int> game_count;
-    std::map<size_t, int> white_wins;
-    std::map<size_t, int> black_wins;
-    std::map<size_t, int> draw_count;
-    std::map<size_t, int> most_wins;
+    std::map<size_t, size_t> game_count;
+    std::map<size_t, size_t> white_wins;
+    std::map<size_t, size_t> black_wins;
+    std::map<size_t, size_t> draw_count;
+    std::map<size_t, size_t> most_wins;
     std::map<size_t, Genetic_AI> most_wins_player;
 
-    std::map<size_t, int> most_games_survived;
+    std::map<size_t, size_t> most_games_survived;
     std::map<size_t, Genetic_AI> most_games_survived_player;
 
     std::map<size_t, std::vector<Genetic_AI>> new_blood; // ex nihilo players
-    std::map<size_t, int> new_blood_count;
+    std::map<size_t, size_t> new_blood_count;
 
-    std::map<Genetic_AI, int> wins;
-    std::map<Genetic_AI, int> draws;
-    std::map<Genetic_AI, int> games_since_last_win;
-    std::map<Genetic_AI, int> consecutive_wins;
+    std::map<Genetic_AI, size_t> wins;
+    std::map<Genetic_AI, size_t> draws;
+    std::map<Genetic_AI, size_t> games_since_last_win;
+    std::map<Genetic_AI, size_t> consecutive_wins;
     std::map<Genetic_AI, size_t> original_pool;
 
     const int scramble_mutations = 100000;
