@@ -99,12 +99,12 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 }
 
 Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
-    const double time_to_examine,
-    const Clock& clock,
-    const size_t depth,
-    Game_Tree_Node_Result alpha,
-    const Game_Tree_Node_Result& beta,
-    bool still_on_principal_variation) const
+                                                   const double time_to_examine,
+                                                   const Clock& clock,
+                                                   const size_t depth,
+                                                   Game_Tree_Node_Result alpha,
+                                                   const Game_Tree_Node_Result& beta,
+                                                   bool still_on_principal_variation) const
 {
     auto time_start = clock.time_left(clock.running_for());
     maximum_depth = std::max(maximum_depth, depth);
@@ -189,12 +189,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if(recurse)
         {
             result = search_game_tree(next_board,
-                time_allotted_for_this_move,
-                clock,
-                depth + 1,
-                beta,
-                alpha,
-                still_on_principal_variation);
+                                      time_allotted_for_this_move,
+                                      clock,
+                                      depth + 1,
+                                      beta,
+                                      alpha,
+                                      still_on_principal_variation);
         }
         else
         {
@@ -240,8 +240,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 }
 
 void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
-    const Clock& clock,
-    Color perspective) const
+                                      const Clock& clock,
+                                      Color perspective) const
 {
     auto score = thought.corrected_score(perspective) / centipawn_value();
 
@@ -279,9 +279,9 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
 }
 
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
-    Color perspective,
-    Game_Result move_result,
-    size_t depth) const
+                                                Color perspective,
+                                                Game_Result move_result,
+                                                size_t depth) const
 {
     return {evaluate(board, move_result, perspective),
         perspective,
