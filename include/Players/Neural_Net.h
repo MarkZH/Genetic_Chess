@@ -24,7 +24,7 @@ class Neural_Net
     private:
         const static size_t input_node_count = 64*6*2; // (board squares)*(piece types)*(colors)
         const static size_t output_node_count = 64;
-        
+
         std::vector<Connections> hidden_connections;
         Connections output_connections;
 
