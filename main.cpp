@@ -8,6 +8,7 @@
 #include "Game/Game_Result.h"
 
 #include "Players/Genetic_AI.h"
+#include "Players/Neural_AI.h"
 #include "Players/Human_Player.h"
 #include "Players/Random_AI.h"
 #include "Players/Outside_Player.h"
@@ -148,6 +149,12 @@ int main(int argc, char *argv[])
                                 i += 2;
                             }
                         }
+                    }
+                    else if(opt == "-neuro")
+                    {
+                        latest = std::make_unique<Neural_AI>();
+                        static_cast<Neural_AI*>(latest.get())->mutate(10000);
+                        static_cast<const Neural_AI*>(latest.get())->print("single_game_player.txt");
                     }
                     else if(opt == "-time")
                     {
