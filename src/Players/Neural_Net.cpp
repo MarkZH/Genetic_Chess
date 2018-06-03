@@ -89,9 +89,9 @@ void mutate_2D_array(Connections& arr)
     }
 }
 
-void Neural_Net::mutate(size_t iterations)
+void Neural_Net::mutate(int iterations)
 {
-    for(size_t i = 0; i < iterations; ++i)
+    for(int i = 0; i < iterations; ++i)
     {
         for(auto& layer : hidden_connections)
         {

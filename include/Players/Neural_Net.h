@@ -17,7 +17,7 @@ class Neural_Net
         Neural_Net();
 
         double evaluate(const Board& board, Color perspective) const;
-        void mutate(size_t iterations = 1);
+        void mutate(int iterations = 1);
 
         void print(std::ostream& output) const;
 

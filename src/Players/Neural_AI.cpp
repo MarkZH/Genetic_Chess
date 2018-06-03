@@ -27,7 +27,7 @@ size_t Neural_AI::get_id() const
     return id;
 }
 
-void Neural_AI::mutate(size_t iterations)
+void Neural_AI::mutate(int iterations)
 {
     brain.mutate(iterations);
 }

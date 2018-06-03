@@ -18,7 +18,7 @@ class Neural_AI : public Minimax_AI
 
         size_t get_id() const;
 
-        void mutate(size_t iterations = 1);
+        void mutate(int iterations = 1);
 
         void print(const std::string& file_name) const;
         void print(std::ostream& output) const;
