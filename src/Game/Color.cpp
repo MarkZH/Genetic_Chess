@@ -1,6 +1,7 @@
-#include <cassert>
-
 #include "Game/Color.h"
+
+#include <cassert>
+#include <stdexcept>
 
 Color opposite(Color color)
 {
