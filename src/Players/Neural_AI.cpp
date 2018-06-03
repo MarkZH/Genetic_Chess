@@ -34,7 +34,8 @@ void Neural_AI::mutate(size_t iterations)
 
 void Neural_AI::print(const std::string & file_name) const
 {
-    print(std::ofstream(file_name, std::ios::app));
+    auto ofs = std::ofstream(file_name, std::ios::app);
+    print(ofs);
 }
 
 void Neural_AI::print(std::ostream & output) const
