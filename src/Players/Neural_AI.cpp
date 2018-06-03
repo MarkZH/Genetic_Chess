@@ -10,6 +10,8 @@ size_t Neural_AI::next_id = 0;
 
 Neural_AI::Neural_AI() : id(next_id++)
 {
+    calibrate_thinking_speed();
+    calculate_centipawn_value();
 }
 
 std::string Neural_AI::name() const
@@ -30,6 +32,9 @@ size_t Neural_AI::get_id() const
 void Neural_AI::mutate(int iterations)
 {
     brain.mutate(iterations);
+
+    calibrate_thinking_speed();
+    calculate_centipawn_value();
 }
 
 void Neural_AI::print(const std::string & file_name) const
