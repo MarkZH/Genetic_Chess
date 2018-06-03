@@ -1,4 +1,4 @@
-#include "Players\Neural_AI.h"
+#include "Players/Neural_AI.h"
 
 #include <iostream>
 #include <fstream>

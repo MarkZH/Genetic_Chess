@@ -1,4 +1,4 @@
-#include "Players\Neural_Net.h"
+#include "Players/Neural_Net.h"
 
 #include <vector>
 #include <cassert>
