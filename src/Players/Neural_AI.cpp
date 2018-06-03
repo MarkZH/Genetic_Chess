@@ -182,7 +182,8 @@ double Neural_AI::speculation_time_factor(const Board&) const
     return 1.0;
 }
 
-double Neural_AI::time_to_examine(const Board&, const Clock& clock) const
+double Neural_AI::time_to_examine(const Board& board, const Clock& clock) const
 {
-    return clock.time_left(clock.running_for())/30.0;
+    auto moves_so_far = board.get_game_record().size()/2; // only count own moves
+    return clock.time_left(clock.running_for())/Math::average_moves_left(40.0, 0.5, moves_so_far);
 }
