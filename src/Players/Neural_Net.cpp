@@ -71,7 +71,7 @@ double Neural_Net::evaluate(const Board & board, Color perspective) const
     {
         if(final_layer[i] == 1)
         {
-            bits += (uint64_t(0) << i);
+            bits += (uint64_t(1) << i);
         }
     }
 
