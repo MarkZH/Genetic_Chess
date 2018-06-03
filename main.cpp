@@ -13,7 +13,9 @@
 #include "Players/Random_AI.h"
 #include "Players/Outside_Player.h"
 
-#include "Genes/Gene_Pool.h"
+#include "Breeding/Gene_Pool.h"
+#include "Breeding/Think_Tank.h"
+
 #include "Stalemate_Search.h"
 
 #include "Exceptions/Illegal_Move_Exception.h"
@@ -45,6 +47,16 @@ int main(int argc, char *argv[])
                 }
 
                 gene_pool(gene_pool_config_file_name);
+            }
+            else if(std::string(argv[1]) == "-thinktank")
+            {
+                std::string think_tank_config_file_name;
+                if(argc > 2)
+                {
+                    think_tank_config_file_name = argv[2];
+                }
+
+                think_tank(think_tank_config_file_name);
             }
             else if(std::string(argv[1]) == "-replay")
             {

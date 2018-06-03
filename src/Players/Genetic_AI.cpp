@@ -164,9 +164,9 @@ void Genetic_AI::print(const std::string& file_name) const
 
 void Genetic_AI::print(std::ostream& os) const
 {
-    os << "ID: " << get_id() << std::endl;
+    os << "ID: " << get_id() << '\n';
     genome.print(os);
-    os << "END" << std::endl << std::endl;
+    os << "END" << "\n\n";
 }
 
 std::string Genetic_AI::name() const

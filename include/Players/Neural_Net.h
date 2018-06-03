@@ -20,6 +20,7 @@ class Neural_Net
         void mutate(int iterations = 1);
 
         void print(std::ostream& output) const;
+        void read_from(std::istream& input);
 
     private:
         const static size_t input_node_count = 64*6*2; // (board squares)*(piece types)*(colors)

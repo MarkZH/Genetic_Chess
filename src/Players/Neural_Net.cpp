@@ -140,7 +140,7 @@ void Neural_Net::print(std::ostream & output) const
         print_2D_array(*layer_iter, output);
     }
 
-    output << "\nOoutput: ";
+    output << "\nOutput: ";
     print_2D_array(output_connections, output);
     output << "\n\n";
 }
@@ -162,4 +162,57 @@ Layer Neural_Net::get_initial_layer(const Board & board) const
     }
 
     return result;
+}
+
+Connections read_single_connection(const std::string& text)
+{
+    Connections result;
+    for(auto row : String::split(text, "/"))
+    {
+        result.push_back({});
+        for(auto entry : String::split(row, ","))
+        {
+            result.back().push_back(std::stod(entry));
+        }
+    }
+
+    return result;
+}
+
+std::vector<Connections> read_connection_list(const std::string& line)
+{
+    std::vector<Connections> result;
+    auto connection_text = String::split(line, ": ").back();
+    for(auto connection_string : String::split(connection_text, ";"))
+    {
+        result.push_back(read_single_connection(connection_string));
+    }
+
+    return result;
+}
+
+void Neural_Net::read_from(std::istream& is)
+{
+    std::string line;
+    while(std::getline(is, line))
+    {
+        if(line.empty())
+        {
+            continue;
+        }
+
+        if(line == "END")
+        {
+            return;
+        }
+
+        if(String::starts_with(line, "Hidden:"))
+        {
+            hidden_connections = read_connection_list(line);
+        }
+        else if(String::starts_with(line, "Output:"))
+        {
+            output_connections = read_single_connection(line);
+        }
+    }
 }

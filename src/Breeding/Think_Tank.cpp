@@ -1,4 +1,4 @@
-#include "Genes/Gene_Pool.h"
+#include "Breeding/Think_Tank.h"
 
 #include <vector>
 #include <iostream>
@@ -11,31 +11,31 @@
 #include <future>
 #include <numeric>
 
-#include "Players/Genetic_AI.h"
+#include "Players/Neural_AI.h"
 #include "Game/Game.h"
 #include "Game/Game_Result.h"
 #include "Utility.h"
 
 static sig_atomic_t signal_activated = 0;
-void pause_gene_pool(int);
-void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
+void pause_think_tank(int);
+void write_generation(const std::vector<Think_Tank>& tanks, size_t tank_index, const std::string& genome_file_name);
 
 template<typename Stat>
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats);
+void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<Neural_AI, Stat>& stats);
 
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<size_t, std::vector<Genetic_AI>>& ai_lists);
+void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<size_t, std::vector<Neural_AI>>& ai_lists);
 
 
-void gene_pool(const std::string& config_file = "")
+void think_tank(const std::string& config_file = "")
 {
     auto config = Configuration_File(config_file);
 
     // Environment variables
     const auto maximum_simultaneous_games = size_t(config.get_number("maximum simultaneous games"));
-    const auto gene_pool_population = size_t(config.get_number("gene pool population"));
-    const auto gene_pool_count = size_t(config.get_number("gene pool count"));
+    const auto think_tank_population = size_t(config.get_number("think tank population"));
+    const auto think_tank_count = size_t(config.get_number("think tank count"));
     const auto draw_kill_probability = double(config.get_number("draw kill probability"));
-    const auto pool_swap_interval = size_t(config.get_number("pool swap interval"));
+    const auto tank_swap_interval = size_t(config.get_number("tank swap interval"));
 
     // Oscillating game time
     const double minimum_game_time = config.get_number("minimum game time"); // seconds
@@ -44,32 +44,32 @@ void gene_pool(const std::string& config_file = "")
     const bool oscillating_time = (String::lowercase(config.get_text("oscillating time")) == "yes");
     double game_time = minimum_game_time;
 
-    // Stats (map: Pool ID --> counts)
+    // Stats (map: tank ID --> counts)
     std::map<size_t, size_t> game_count;
     std::map<size_t, size_t> white_wins;
     std::map<size_t, size_t> black_wins;
     std::map<size_t, size_t> draw_count;
     std::map<size_t, size_t> most_wins;
-    std::map<size_t, Genetic_AI> most_wins_player;
+    std::map<size_t, Neural_AI> most_wins_player;
 
     std::map<size_t, size_t> most_games_survived;
-    std::map<size_t, Genetic_AI> most_games_survived_player;
+    std::map<size_t, Neural_AI> most_games_survived_player;
 
-    std::map<size_t, std::vector<Genetic_AI>> new_blood; // ex nihilo players
+    std::map<size_t, std::vector<Neural_AI>> new_blood; // ex nihilo players
     std::map<size_t, size_t> new_blood_count;
 
-    std::map<Genetic_AI, size_t> wins;
-    std::map<Genetic_AI, size_t> draws;
-    std::map<Genetic_AI, size_t> games_since_last_win;
-    std::map<Genetic_AI, size_t> consecutive_wins;
-    std::map<Genetic_AI, size_t> original_pool;
+    std::map<Neural_AI, size_t> wins;
+    std::map<Neural_AI, size_t> draws;
+    std::map<Neural_AI, size_t> games_since_last_win;
+    std::map<Neural_AI, size_t> consecutive_wins;
+    std::map<Neural_AI, size_t> original_tank;
 
     const int scramble_mutations = 100000;
 
-    std::string genome_file_name = config.get_text("gene pool file");
+    std::string genome_file_name = config.get_text("think tank file");
     if(genome_file_name.empty())
     {
-        genome_file_name = "gene_pool_record_";
+        genome_file_name = "think_tank_record_";
         for(int i = 0; i < 10; ++i)
         {
             genome_file_name += char('a' + Random::random_integer(0, 25));
@@ -77,37 +77,37 @@ void gene_pool(const std::string& config_file = "")
         genome_file_name += ".txt";
     }
 
-    auto pools = load_gene_pool_file(genome_file_name);
-    while(pools.size() < gene_pool_count)
+    auto tanks = load_think_tank_file(genome_file_name);
+    while(tanks.size() < think_tank_count)
     {
-        pools.push_back({});
+        tanks.push_back({});
     }
 
-    for(size_t i = 0; i < pools.size(); ++i)
+    for(size_t i = 0; i < tanks.size(); ++i)
     {
-        while(pools[i].size() < gene_pool_population)
+        while(tanks[i].size() < think_tank_population)
         {
-            pools[i].push_back(Genetic_AI());
-            pools[i].back().mutate(scramble_mutations);
+            tanks[i].push_back(Neural_AI());
+            tanks[i].back().mutate(scramble_mutations);
         }
 
-        while(pools[i].size() > gene_pool_population)
+        while(tanks[i].size() > think_tank_population)
         {
-            pools[i].pop_back();
+            tanks[i].pop_back();
         }
 
-        for(const auto& ai : pools[i])
+        for(const auto& ai : tanks[i])
         {
-            original_pool[ai] = i;
+            original_tank[ai] = i;
         }
 
-        write_generation(pools, i, genome_file_name);
+        write_generation(tanks, i, genome_file_name);
     }
 
     std::string game_record_file = genome_file_name +  "_games.txt";
     if(auto ifs = std::ifstream(game_record_file))
     {
-        // Use game time from last run of this gene pool
+        // Use game time from last run of this think tank
         std::cout << "Searching " << game_record_file << " for last game time ..." << std::endl;
         std::string line;
         std::string time_line;
@@ -144,41 +144,41 @@ void gene_pool(const std::string& config_file = "")
         std::cout << "Done." << std::endl;
     }
 
-    // Ctrl-C to pause gene pool
-    signal(SIGINT, pause_gene_pool);
+    // Ctrl-C to pause think tank
+    signal(SIGINT, pause_think_tank);
 
-    // Indices in gene pool to be shuffled for game match-ups
-    std::vector<size_t> pool_indices(gene_pool_population);
-    std::iota(pool_indices.begin(), pool_indices.end(), 0);
+    // Indices in think tank to be shuffled for game match-ups
+    std::vector<size_t> tank_indices(think_tank_population);
+    std::iota(tank_indices.begin(), tank_indices.end(), 0);
 
-    for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % pools.size()) // run forever
+    for(size_t tank_index = 0; true; tank_index = (tank_index + 1) % tanks.size()) // run forever
     {
-        auto& pool = pools[pool_index];
+        auto& tank = tanks[tank_index];
 
         // Write overall stats
-        std::cout << "\nGene pool ID: " << pool_index
-                  << "  Gene pool size: " << pool.size()
-                  << "  New blood introduced: " << new_blood_count[pool_index] << " (*)\n"
-                  << "Games: " << game_count[pool_index]
-                  << "  White wins: " << white_wins[pool_index]
-                  << "  Black wins: " << black_wins[pool_index]
-                  << "  Draws: " << draw_count[pool_index]
+        std::cout << "\nThink tank ID: " << tank_index
+                  << "  Think tank size: " << tank.size()
+                  << "  New blood introduced: " << new_blood_count[tank_index] << " (*)\n"
+                  << "Games: " << game_count[tank_index]
+                  << "  White wins: " << white_wins[tank_index]
+                  << "  Black wins: " << black_wins[tank_index]
+                  << "  Draws: " << draw_count[tank_index]
                   << "\nTime: " << game_time << " sec"
-                  << "   Gene pool file name: " << genome_file_name << "\n\n";
+                  << "   Think tank file name: " << genome_file_name << "\n\n";
 
-        // The pool_indices list determines the match-ups. After shuffling the list
-        // of indices (0 to gene_pool_population - 1), adjacent indices in the pool are
+        // The tank_indices list determines the match-ups. After shuffling the list
+        // of indices (0 to think_tank_population - 1), adjacent indices in the tank are
         // matched as opponents.
-        Random::shuffle(pool_indices);
+        Random::shuffle(tank_indices);
 
-        std::vector<std::future<Game_Result>> results; // map from pool_indices index to winner
-        for(size_t index = 0; index < gene_pool_population; index += 2)
+        std::vector<std::future<Game_Result>> results; // map from tank_indices index to winner
+        for(size_t index = 0; index < think_tank_population; index += 2)
         {
-            auto white_index = pool_indices[index];
-            auto black_index = pool_indices[index + 1];
+            auto white_index = tank_indices[index];
+            auto black_index = tank_indices[index + 1];
 
-            auto& white = pool[white_index];
-            auto& black = pool[black_index];
+            auto& white = tank[white_index];
+            auto& black = tank[black_index];
 
             // Limit the number of simultaneous games by waiting for earlier games to finish
             // before starting a new one.
@@ -197,10 +197,10 @@ void gene_pool(const std::string& config_file = "")
         }
 
         // Get results as they come in
-        for(size_t index = 0; index < gene_pool_population; index += 2)
+        for(size_t index = 0; index < think_tank_population; index += 2)
         {
-            auto& white = pool[pool_indices[index]];
-            auto& black = pool[pool_indices[index + 1]];
+            auto& white = tank[tank_indices[index]];
+            auto& black = tank[tank_indices[index + 1]];
 
             std::cout << white.get_id() << " vs "
                       << black.get_id() << ": " << std::flush;
@@ -211,11 +211,11 @@ void gene_pool(const std::string& config_file = "")
 
             if(winner == WHITE)
             {
-                ++white_wins[pool_index];
+                ++white_wins[tank_index];
             }
             else if(winner == BLACK)
             {
-                ++black_wins[pool_index];
+                ++black_wins[tank_index];
             }
             else // DRAW
             {
@@ -225,7 +225,7 @@ void gene_pool(const std::string& config_file = "")
                 games_since_last_win[black]++;
                 consecutive_wins[white] = 0;
                 consecutive_wins[black] = 0;
-                ++draw_count[pool_index];
+                ++draw_count[tank_index];
             }
 
             if(winner != NONE)
@@ -234,15 +234,15 @@ void gene_pool(const std::string& config_file = "")
                 wins[winning_player]++;
                 games_since_last_win[winning_player] = 0;
                 consecutive_wins[winning_player]++;
-                if(wins[winning_player] >= most_wins[pool_index])
+                if(wins[winning_player] >= most_wins[tank_index])
                 {
-                    most_wins[pool_index] = wins[winning_player];
-                    most_wins_player[pool_index] = winning_player;
+                    most_wins[tank_index] = wins[winning_player];
+                    most_wins_player[tank_index] = winning_player;
                 }
 
-                auto offspring = Genetic_AI(white, black);
+                auto offspring = winning_player;
                 offspring.mutate();
-                original_pool[offspring] = pool_index;
+                original_tank[offspring] = tank_index;
 
                 auto& losing_player  = (winner == WHITE ? black : white);
                 losing_player = offspring; // offspring replaces loser
@@ -251,70 +251,43 @@ void gene_pool(const std::string& config_file = "")
             {
                 if(Random::success_probability(draw_kill_probability))
                 {
-                    auto& pseudo_loser = (Random::coin_flip() ? white : black);
-                    std::cout << "\n    --> " << pseudo_loser.get_id() << " mates with ";
-                    auto new_specimen = Genetic_AI();
-
-                    if(Random::coin_flip() && pseudo_loser.get_id() > 0)
-                    {
-                        while(true)
-                        {
-                            try
-                            {
-                                new_specimen = Genetic_AI(genome_file_name,
-                                                          Random::random_integer(0, pseudo_loser.get_id() - 1));
-                                break;
-                            }
-                            catch(const std::runtime_error&)
-                            {
-                                // In case invalid ID was chosen.
-                                // (New IDs are not always consecutively chosen.)
-                                continue;
-                            }
-                        }
-                        std::cout << new_specimen.get_id();
-                    }
-                    else
-                    {
-                        new_specimen.mutate(scramble_mutations);
-                        std::cout << "random";
-                    }
-
-                    auto offspring = Genetic_AI(pseudo_loser, new_specimen);
-                    offspring.mutate();
-                    new_blood[pool_index].push_back(offspring);
-                    ++new_blood_count[pool_index];
-                    original_pool[offspring] = pool_index;
-
-                    std::cout << " / " << pseudo_loser.get_id() << " dies";
-                    pseudo_loser = offspring; // offspring replaces loser
+                    auto heads = Random::coin_flip();
+                    auto& pseudo_winner = (heads ? white : black);
+                    auto& pseudo_loser  = (heads ? black : white);
+                    pseudo_loser = pseudo_winner;
+                    pseudo_loser.mutate();
+                    std::cout << "\n    --> " << pseudo_winner.get_id() << " survives" << " / "
+                              << pseudo_loser.get_id() << " dies";
+                    new_blood[tank_index].push_back(pseudo_loser);
+                    ++new_blood_count[tank_index];
+                    original_tank[pseudo_loser] = tank_index;
                 }
             }
             std::cout << std::endl;
         }
 
-        std::sort(pool.begin(), pool.end());
-        write_generation(pools, pool_index, genome_file_name);
+        std::sort(tank.begin(), tank.end());
+        write_generation(tanks, tank_index, genome_file_name);
 
-        purge_dead_from_map(pools, wins);
-        purge_dead_from_map(pools, draws);
-        purge_dead_from_map(pools, games_since_last_win);
-        purge_dead_from_map(pools, consecutive_wins);
-        purge_dead_from_map(pools, original_pool);
-        purge_dead_from_map(pools, new_blood);
+        purge_dead_from_map(tanks, wins);
+        purge_dead_from_map(tanks, draws);
+        purge_dead_from_map(tanks, games_since_last_win);
+        purge_dead_from_map(tanks, consecutive_wins);
+        purge_dead_from_map(tanks, original_tank);
+        purge_dead_from_map(tanks, new_blood);
 
-        for(const auto& ai : pool)
+        for(const auto& ai : tank)
         {
             auto games_survived = wins[ai] + draws[ai];
-            if(games_survived >= most_games_survived[pool_index])
+            if(games_survived >= most_games_survived[tank_index])
             {
-                most_games_survived[pool_index] = games_survived;
-                most_games_survived_player[pool_index] = ai;
+                most_games_survived[tank_index] = games_survived;
+                most_games_survived_player[tank_index] = ai;
             }
         }
 
         // widths of columns for stats printout
-        auto max_id = pool.back().get_id();
+        auto max_id = tank.back().get_id();
         auto id_digits = int(std::floor(std::log10(max_id) + 1));
 
         // Write results
@@ -325,45 +298,45 @@ void gene_pool(const std::string& config_file = "")
                   << std::setw(9)  << "Streak\n";
 
         // Write stats for each specimen
-        for(const auto& ai : pool)
+        for(const auto& ai : tank)
         {
             std::cout << std::setw(id_digits + 1) << ai.get_id();
             std::cout << std::setw(7)    << wins[ai]
                       << std::setw(8)   << consecutive_wins[ai]
                       << std::setw(7)    << draws[ai]
                       << std::setw(8)   << games_since_last_win[ai]
-                      << (std::binary_search(new_blood[pool_index].begin(),
-                                             new_blood[pool_index].end(),
+                      << (std::binary_search(new_blood[tank_index].begin(),
+                                             new_blood[tank_index].end(),
                                              ai) ? " *" : "")
-                      << (original_pool[ai] != pool_index ? " T" : "") << "\n";
+                      << (original_tank[ai] != tank_index ? " T" : "") << "\n";
         }
         std::cout << std::endl;
 
-        std::cout << "Most wins:     " << most_wins[pool_index]
-                  << " by ID " << most_wins_player[pool_index].get_id() << std::endl;
-        std::cout <<   "Longest lived: " << most_games_survived[pool_index]
-                  << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
+        std::cout << "Most wins:     " << most_wins[tank_index]
+                  << " by ID " << most_wins_player[tank_index].get_id() << std::endl;
+        std::cout <<   "Longest lived: " << most_games_survived[tank_index]
+                  << " by ID " << most_games_survived_player[tank_index].get_id() << std::endl;
 
-        // Record best AI from all pools.
-        auto best_ai = pool.front();
+        // Record best AI from all tanks.
+        auto best_ai = tank.front();
         auto best_compare = [&wins, &draws](const auto& x, const auto& y)
                             {
                                 return wins[x] - draws[x] < wins[y] - draws[y];
                             };
-        for(const auto& search_pool : pools)
+        for(const auto& search_tank : tanks)
         {
             best_ai = std::max(best_ai,
-                               *std::max_element(search_pool.begin(),
-                                                 search_pool.end(),
+                               *std::max_element(search_tank.begin(),
+                                                 search_tank.end(),
                                                  best_compare), best_compare);
         }
         std::ofstream best_file(genome_file_name + "_best_genome.txt");
         best_ai.print(best_file);
 
-        // Pause gene pool
+        // Pause think tank
         if(signal_activated == 1)
         {
-            std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
+            std::cout << "Think tank paused. Press Enter to continue ..." << std::endl;
             std::cin.get();
         }
 
@@ -376,7 +349,7 @@ void gene_pool(const std::string& config_file = "")
             signal_activated = 0;
         }
 
-        game_count[pool_index] += results.size();
+        game_count[tank_index] += results.size();
         if((game_time >= maximum_game_time && game_time_increment > 0) ||
            (game_time <= minimum_game_time && game_time_increment < 0))
         {
@@ -397,34 +370,34 @@ void gene_pool(const std::string& config_file = "")
                                return wins[x] < wins[y];
                            };
 
-        // Transfer best players between gene pools to keep pools
+        // Transfer best players between think tanks to keep tanks
         // from stagnating or amplifying pathological behavior
-        if(pools.size() > 1 && pool_index == pools.size() - 1) // all pools have equal number of games
+        if(tanks.size() > 1 && tank_index == tanks.size() - 1) // all tanks have equal number of games
         {
             static size_t previous_mod = 0;
-            auto this_mod = game_count[pool_index] % pool_swap_interval;
+            auto this_mod = game_count[tank_index] % tank_swap_interval;
             if(this_mod < previous_mod)
             {
-                // Replace player with least wins in each pool with clone of winner from pool to left
+                // Replace player with least wins in each tank with clone of winner from tank to left
                 std::cout << std::endl;
-                std::vector<Genetic_AI> winners;
-                for(const auto& source_pool : pools)
+                std::vector<Neural_AI> winners;
+                for(const auto& source_tank : tanks)
                 {
-                    winners.push_back(*std::max_element(source_pool.begin(),
-                                                        source_pool.end(),
+                    winners.push_back(*std::max_element(source_tank.begin(),
+                                                        source_tank.end(),
                                                         win_compare));
                 }
 
-                for(size_t source_pool_index = 0; source_pool_index < pools.size(); ++source_pool_index)
+                for(size_t source_tank_index = 0; source_tank_index < tanks.size(); ++source_tank_index)
                 {
-                    auto dest_pool_index = (source_pool_index + 1) % pools.size();
-                    auto& dest_pool = pools[dest_pool_index];
-                    auto& loser = *std::min_element(dest_pool.begin(), dest_pool.end(), win_compare);
+                    auto dest_tank_index = (source_tank_index + 1) % tanks.size();
+                    auto& dest_tank = tanks[dest_tank_index];
+                    auto& loser = *std::min_element(dest_tank.begin(), dest_tank.end(), win_compare);
                     std::cout << "Sending ID "
-                              << winners[source_pool_index].get_id()
-                              << " to pool "
-                              << dest_pool_index << std::endl;
-                    loser = winners[source_pool_index]; // winner replaces loser in destination pool
+                              << winners[source_tank_index].get_id()
+                              << " to tank "
+                              << dest_tank_index << std::endl;
+                    loser = winners[source_tank_index]; // winner replaces loser in destination tank
                 }
             }
 
@@ -434,7 +407,7 @@ void gene_pool(const std::string& config_file = "")
 }
 
 
-void pause_gene_pool(int)
+void pause_think_tank(int)
 {
     ++signal_activated;
     if(signal_activated == 1)
@@ -452,9 +425,9 @@ void pause_gene_pool(int)
     }
 }
 
-void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
+void write_generation(const std::vector<Think_Tank>& tanks, size_t tank_index, const std::string& genome_file_name)
 {
-    static std::map<Genetic_AI, bool> written_before;
+    static std::map<Neural_AI, bool> written_before;
     static std::string last_file_name;
     static std::ofstream ofs;
     if(last_file_name != genome_file_name)
@@ -464,8 +437,8 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
         last_file_name = genome_file_name;
     }
 
-    auto pool = pools.at(pool_index);
-    for(const auto& ai : pool)
+    auto tank = tanks.at(tank_index);
+    for(const auto& ai : tank)
     {
         if( ! written_before[ai])
         {
@@ -474,27 +447,27 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
         }
     }
 
-    ofs << "\nStill Alive: " << pool_index << " : ";
-    for(const auto& ai : pool)
+    ofs << "\nStill Alive: " << tank_index << " : ";
+    for(const auto& ai : tank)
     {
         ofs << ai.get_id() << " ";
     }
     ofs << "\n\n";
 
-    purge_dead_from_map(pools, written_before);
+    purge_dead_from_map(tanks, written_before);
 }
 
-std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
+std::vector<Think_Tank> load_think_tank_file(const std::string& load_file)
 {
     std::ifstream ifs(load_file);
     if( ! ifs)
     {
         std::cout << "Could not open file: " << load_file << std::endl;
-        std::cout << "Starting with empty gene pool." << std::endl;
-        return std::vector<Gene_Pool>();
+        std::cout << "Starting with empty think tank." << std::endl;
+        return std::vector<Think_Tank>();
     }
 
-    std::cout << "Loading gene pool file: " << load_file << " ..." << std::endl;
+    std::cout << "Loading think tank file: " << load_file << " ..." << std::endl;
     std::map<int, std::string> still_alive;
     std::string line;
     while(std::getline(ifs, line))
@@ -507,7 +480,7 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
     }
     ifs.close();
 
-    std::vector<Gene_Pool> result(still_alive.size());
+    std::vector<Think_Tank> result(still_alive.size());
     for(const auto& index_list : still_alive)
     {
         for(const auto& number_string : String::split(index_list.second))
@@ -518,7 +491,7 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
             }
 
             auto index = std::stoi(number_string);
-            result[index_list.first].push_back(Genetic_AI(load_file, index));
+            result[index_list.first].push_back(Neural_AI(load_file, index));
         }
         write_generation(result, index_list.first, ""); // mark AIs from file as already written
     }
@@ -528,15 +501,15 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
 }
 
 template<typename Stat>
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats)
+void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<Neural_AI, Stat>& stats)
 {
     auto stat_iter = stats.begin();
     while(stat_iter != stats.end())
     {
         bool ai_found = false;
-        for(const auto& pool : pools)
+        for(const auto& tank : tanks)
         {
-            if(std::find(pool.begin(), pool.end(), stat_iter->first) != pool.end())
+            if(std::find(tank.begin(), tank.end(), stat_iter->first) != tank.end())
             {
                 ai_found = true;
                 break;
@@ -554,18 +527,18 @@ void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_A
     }
 }
 
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<size_t, std::vector<Genetic_AI>>& ai_lists)
+void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<size_t, std::vector<Neural_AI>>& ai_lists)
 {
-    for(size_t i = 0; i < pools.size(); ++i)
+    for(size_t i = 0; i < tanks.size(); ++i)
     {
-        const auto& pool = pools[i];
+        const auto& tank = tanks[i];
         auto& ai_list = ai_lists[i];
 
         ai_list.erase(std::remove_if(ai_list.begin(),
                                      ai_list.end(),
-                                     [&pool](const Genetic_AI& g)
+                                     [&tank](const Neural_AI& g)
                                      {
-                                         return std::find(pool.begin(), pool.end(), g) == pool.end();
+                                         return std::find(tank.begin(), tank.end(), g) == tank.end();
                                      }),
                       ai_list.end());
     }

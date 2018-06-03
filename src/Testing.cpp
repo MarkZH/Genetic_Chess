@@ -473,38 +473,79 @@ void run_tests()
 
 
     // Test Genetic_AI file loading
-    std::cout << "Testing genome file handling ... " << std::flush;
-    auto pool_file_name = "test_gene_pool.txt";
-    auto write_file_name = "test_genome_write.txt";
-    auto rewrite_file_name = "test_genome_rewrite.txt";
-    remove(pool_file_name);
-    remove(write_file_name);
-    remove(rewrite_file_name);
-
-    std::vector<Genetic_AI> test_pool(10);
-    for(auto& ai : test_pool)
     {
-        ai.mutate(10000);
-        ai.print(pool_file_name);
-    }
-
-    auto index = Random::random_integer(0, test_pool.size() - 1);
-    test_pool[index].print(write_file_name);
-    auto read_ai = Genetic_AI(pool_file_name, index);
-    read_ai.print(rewrite_file_name);
-
-    if( ! files_are_identical(write_file_name, rewrite_file_name))
-    {
-        std::cerr << "Genome loaded from gene pool file not preserved." << std::endl;
-        tests_passed = false;
-    }
-    else
-    {
+        std::cout << "Testing genome file handling ... " << std::flush;
+        auto pool_file_name = "test_gene_pool.txt";
+        auto write_file_name = "test_genome_write.txt";
+        auto rewrite_file_name = "test_genome_rewrite.txt";
         remove(pool_file_name);
         remove(write_file_name);
         remove(rewrite_file_name);
+
+        std::vector<Genetic_AI> test_pool(10);
+        for(auto& ai : test_pool)
+        {
+            ai.mutate(10000);
+            ai.print(pool_file_name);
+        }
+
+        auto index = Random::random_integer(0, test_pool.size() - 1);
+        test_pool[index].print(write_file_name);
+        auto read_ai = Genetic_AI(pool_file_name, index);
+        read_ai.print(rewrite_file_name);
+
+        if( ! files_are_identical(write_file_name, rewrite_file_name))
+        {
+            std::cerr << "Genome loaded from gene pool file not preserved." << std::endl;
+            tests_passed = false;
+        }
+        else
+        {
+            remove(pool_file_name);
+            remove(write_file_name);
+            remove(rewrite_file_name);
+        }
+        std::cout << "Done." << std::endl;
     }
-    std::cout << "Done." << std::endl;
+
+
+    // Test Neural_AI file loading
+    {
+        std::cout << "Testing neural net file handling ... " << std::flush;
+        auto tank_file_name = "test_tank.txt";
+        auto tank_write_file_name = "test_tank_write.txt";
+        auto tank_rewrite_file_name = "test_tank_rewrite.txt";
+        remove(tank_file_name);
+        remove(tank_write_file_name);
+        remove(tank_rewrite_file_name);
+
+        std::vector<Neural_AI> test_tank(10);
+        for(auto& ai : test_tank)
+        {
+            ai.mutate(1000);
+            ai.print(tank_file_name);
+        }
+
+        auto index = Random::random_integer(0, test_tank.size() - 1);
+        test_tank[index].print(tank_write_file_name);
+        auto read_ai = Neural_AI(tank_file_name, index);
+        read_ai.print(tank_rewrite_file_name);
+
+        if( ! files_are_identical(tank_write_file_name, tank_rewrite_file_name))
+        {
+            std::cerr << "Neurons loaded from think tank file not preserved." << std::endl;
+            tests_passed = false;
+        }
+        else
+        {
+            remove(tank_file_name);
+            remove(tank_write_file_name);
+            remove(tank_rewrite_file_name);
+        }
+        std::cout << "Done." << std::endl;
+    }
+
+
 
 
     // Test individual board-scoring genes

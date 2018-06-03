@@ -12,6 +12,11 @@ class Neural_AI : public Minimax_AI
 {
     public:
         Neural_AI();
+        Neural_AI(const Neural_AI& other);
+        explicit Neural_AI(const std::string& file_name);
+        Neural_AI(const std::string& file_name, int id);
+        explicit Neural_AI(std::istream& is);
+        Neural_AI& operator=(const Neural_AI& other);
 
         std::string name() const override;
         std::string author() const override;
@@ -23,10 +28,16 @@ class Neural_AI : public Minimax_AI
         void print(const std::string& file_name) const;
         void print(std::ostream& output) const;
 
+        bool operator<(const Neural_AI& other) const;
+        bool operator==(const Neural_AI& other) const;
+
     private:
-        Neural_Net brain;
         static size_t next_id;
         size_t id;
+
+        Neural_Net brain;
+
+        void read_from(std::istream& input);
 
         double internal_evaluate(const Board& board, Color perspective) const override;
 
