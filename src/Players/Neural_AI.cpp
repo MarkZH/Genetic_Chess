@@ -48,7 +48,7 @@ double Neural_AI::internal_evaluate(const Board& board, Color perspective) const
     return brain.evaluate(board, perspective);
 }
 
-double Neural_AI::speculation_time_factor(const Board& board) const
+double Neural_AI::speculation_time_factor(const Board&) const
 {
     return 1.0;
 }

@@ -31,4 +31,4 @@ class Neural_Net
         Layer get_initial_layer(const Board& board) const;
 };
 
-#endif NEURAL_NET_H
+#endif // NEURAL_NET_H

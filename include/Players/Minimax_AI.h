@@ -70,4 +70,4 @@ class Minimax_AI : public Player
                                   Color perspective) const;
 };
 
-#endif MINIMAX_AI_H
+#endif // MINIMAX_AI_H

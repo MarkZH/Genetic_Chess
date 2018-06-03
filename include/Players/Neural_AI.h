@@ -34,4 +34,4 @@ class Neural_AI : public Minimax_AI
         double time_to_examine(const Board& board, const Clock& clock) const override;
 };
 
-#endif // !NEURAL_AI_H
+#endif // NEURAL_AI_H
