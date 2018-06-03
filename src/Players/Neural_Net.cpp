@@ -127,20 +127,14 @@ void print_2D_array(const Connections& arr, std::ostream& output)
 
 void Neural_Net::print(std::ostream & output) const
 {
-    output << "Hidden: ";
-    for(auto layer_iter = hidden_connections.begin();
-        layer_iter != hidden_connections.end();
-        ++layer_iter)
+    for(const auto& layer : hidden_connections)
     {
-        if(layer_iter != hidden_connections.begin())
-        {
-            output << ';';
-        }
-
-        print_2D_array(*layer_iter, output);
+        output << "Hidden: ";
+        print_2D_array(layer, output);
+        output << '\n';
     }
 
-    output << "\nOutput: ";
+    output << "Output: ";
     print_2D_array(output_connections, output);
     output << "\n\n";
 }
@@ -179,20 +173,11 @@ Connections read_single_connection(const std::string& text)
     return result;
 }
 
-std::vector<Connections> read_connection_list(const std::string& line)
-{
-    std::vector<Connections> result;
-    auto connection_text = String::split(line, ": ").back();
-    for(auto connection_string : String::split(connection_text, ";"))
-    {
-        result.push_back(read_single_connection(connection_string));
-    }
-
-    return result;
-}
-
 void Neural_Net::read_from(std::istream& is)
 {
+    hidden_connections.clear();
+    output_connections.clear();
+
     std::string line;
     while(std::getline(is, line))
     {
@@ -206,13 +191,21 @@ void Neural_Net::read_from(std::istream& is)
             return;
         }
 
-        if(String::starts_with(line, "Hidden:"))
+        auto parse_line = String::split(line, ":");
+        if(parse_line.size() != 2)
         {
-            hidden_connections = read_connection_list(line);
+            throw std::runtime_error("Bad Neural_AI line: " + line);
         }
-        else if(String::starts_with(line, "Output:"))
+
+        auto header = parse_line.front();
+        auto data = parse_line.back();
+        if(header == "Hidden")
         {
-            output_connections = read_single_connection(line);
+            hidden_connections.push_back(read_single_connection(data));
+        }
+        else if(header == "Output")
+        {
+            output_connections = read_single_connection(data);
         }
     }
 }

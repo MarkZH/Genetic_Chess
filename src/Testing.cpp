@@ -1089,9 +1089,6 @@ void run_tests()
         tests_passed = false;
     }
 
-    Neural_AI neural;
-    neural.mutate(1000);
-    neural.print("neural_printing_test.txt");
 
     if(tests_passed)
     {
