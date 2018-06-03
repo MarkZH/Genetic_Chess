@@ -197,6 +197,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="src\Breeding\Gene_Pool.cpp" />
+    <ClCompile Include="src\Breeding\Think_Tank.cpp" />
     <ClCompile Include="src\exceptions\Game_Ending_Exception.cpp" />
     <ClCompile Include="src\exceptions\Illegal_Move_Exception.cpp" />
     <ClCompile Include="src\game\Board.cpp" />
@@ -208,7 +210,6 @@
     <ClCompile Include="src\genes\Castling_Possible_Gene.cpp" />
     <ClCompile Include="src\genes\Freedom_To_Move_Gene.cpp" />
     <ClCompile Include="src\genes\Gene.cpp" />
-    <ClCompile Include="src\genes\Gene_Pool.cpp" />
     <ClCompile Include="src\genes\Genome.cpp" />
     <ClCompile Include="src\genes\King_Confinement_Gene.cpp" />
     <ClCompile Include="src\genes\King_Protection_Gene.cpp" />
@@ -256,6 +257,8 @@
     <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Breeding\Gene_Pool.h" />
+    <ClInclude Include="include\Breeding\Think_Tank.h" />
     <ClInclude Include="include\exceptions\Game_Ending_Exception.h" />
     <ClInclude Include="include\exceptions\Illegal_Move_Exception.h" />
     <ClInclude Include="include\exceptions\Promotion_Exception.h" />
@@ -268,7 +271,6 @@
     <ClInclude Include="include\genes\Castling_Possible_Gene.h" />
     <ClInclude Include="include\genes\Freedom_To_Move_Gene.h" />
     <ClInclude Include="include\genes\Gene.h" />
-    <ClInclude Include="include\genes\Gene_Pool.h" />
     <ClInclude Include="include\genes\Genome.h" />
     <ClInclude Include="include\genes\King_Confinement_Gene.h" />
     <ClInclude Include="include\genes\King_Protection_Gene.h" />
