@@ -7,6 +7,7 @@
 #include <iosfwd>
 
 #include "Neural_Net.h"
+#include "Genes/Look_Ahead_Gene.h"
 
 class Neural_AI : public Minimax_AI
 {
@@ -36,8 +37,10 @@ class Neural_AI : public Minimax_AI
         size_t id;
 
         Neural_Net brain;
+        Look_Ahead_Gene time_manager;
 
         void read_from(std::istream& input);
+        void read_internals(std::istream& input);
 
         double internal_evaluate(const Board& board, Color perspective) const override;
 

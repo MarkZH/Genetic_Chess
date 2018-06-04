@@ -136,7 +136,7 @@ void Neural_Net::print(std::ostream & output) const
 
     output << "Output: ";
     print_2D_array(output_connections, output);
-    output << "\n\n";
+    output << "\n";
 }
 
 Layer Neural_Net::get_initial_layer(const Board & board) const
@@ -186,11 +186,6 @@ void Neural_Net::read_from(std::istream& is)
             continue;
         }
 
-        if(line == "END")
-        {
-            return;
-        }
-
         auto parse_line = String::split(line, ":");
         if(parse_line.size() != 2)
         {
@@ -206,6 +201,7 @@ void Neural_Net::read_from(std::istream& is)
         else if(header == "Output")
         {
             output_connections = read_single_connection(data);
+            return; // Output is last line of neural net section
         }
     }
 

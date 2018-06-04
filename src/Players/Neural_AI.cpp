@@ -69,11 +69,7 @@ Neural_AI::Neural_AI(const std::string& file_name, int id_in) : id(id_in)
         auto param_value = String::split(line, ":", 1);
         if(id_in == std::stoi(param_value[1]))
         {
-            brain.read_from(ifs);
-
-            calibrate_thinking_speed();
-            calculate_centipawn_value();
-
+            read_internals(ifs);
             return;
         }
     }
@@ -113,7 +109,16 @@ void Neural_AI::read_from(std::istream& is)
         next_id = id + 1;
     }
 
+    read_internals(is);
+}
+
+void Neural_AI::read_internals(std::istream& is)
+{
     brain.read_from(is);
+    time_manager.read_from(is);
+
+    calibrate_thinking_speed();
+    calculate_centipawn_value();
 }
 
 std::string Neural_AI::name() const
@@ -134,6 +139,7 @@ size_t Neural_AI::get_id() const
 void Neural_AI::mutate(int iterations)
 {
     brain.mutate(iterations);
+    time_manager.mutate();
 
     calibrate_thinking_speed();
     calculate_centipawn_value();
@@ -149,7 +155,8 @@ void Neural_AI::print(std::ostream & output) const
 {
     output << "ID: " << get_id() << '\n';
     brain.print(output);
-    output << "END\n\n";
+    time_manager.print(output);
+    output << '\n';
 }
 
 bool Neural_AI::operator<(const Neural_AI& other) const
@@ -167,13 +174,12 @@ double Neural_AI::internal_evaluate(const Board& board, Color perspective) const
     return brain.evaluate(board, perspective);
 }
 
-double Neural_AI::speculation_time_factor(const Board&) const
+double Neural_AI::speculation_time_factor(const Board& board) const
 {
-    return 1.0;
+    return time_manager.speculation_time_factor(board);
 }
 
 double Neural_AI::time_to_examine(const Board& board, const Clock& clock) const
 {
-    auto moves_so_far = board.get_game_record().size()/2; // only count own moves
-    return clock.time_left(clock.running_for())/Math::average_moves_left(40.0, 0.5, moves_so_far);
+    return time_manager.time_to_examine(board, clock);
 }

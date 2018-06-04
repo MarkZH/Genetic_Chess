@@ -40,7 +40,19 @@ void Gene::read_from(std::istream& is)
             throw_on_invalid_line(line, "There should be exactly one colon per gene property line.");
         }
         auto property_name = split_line[0];
-        auto property_value = std::stod(split_line[1]);
+        auto property_data = String::trim_outer_whitespace(split_line[1]);
+        if(property_name == "Name")
+        {
+            if(property_data == name())
+            {
+                continue;
+            }
+            else
+            {
+                throw std::runtime_error("Reading data for wrong gene. Gene is " + name() + ", data is for " + property_data + ".");
+            }
+        }
+        auto property_value = std::stod(property_data);
         try
         {
             properties.at(property_name) = property_value;
@@ -99,11 +111,12 @@ double Gene::evaluate(const Board& board) const
 void Gene::print(std::ostream& os) const
 {
     reset_properties();
-    os << "\nName: " << name() << "\n";
+    os << "Name: " << name() << "\n";
     for(const auto& name_value : properties)
     {
         os << name_value.first << ": " << name_value.second << "\n";
     }
+    os << '\n';
 }
 
 void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
