@@ -208,4 +208,6 @@ void Neural_Net::read_from(std::istream& is)
             output_connections = read_single_connection(data);
         }
     }
+
+    throw std::runtime_error("Incomplete Neural_Net input file (END statement not found).");
 }
