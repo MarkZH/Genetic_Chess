@@ -80,7 +80,7 @@ double Neural_Net::evaluate(const Board & board, Color perspective) const
 
 void mutate_2D_array(Connections& arr)
 {
-    size_t total_mutating_nodes = arr.size()*arr.front().size()*0.01; // muatate 1% of connections
+    size_t total_mutating_nodes = arr.size()*arr.front().size()/100; // muatate 1% of connections
     for(size_t i = 0; i < total_mutating_nodes; ++i)
     {
         auto index1 = Random::random_integer(0, arr.size() - 1);
