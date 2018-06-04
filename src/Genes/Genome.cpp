@@ -198,8 +198,7 @@ void Genome::print(std::ostream& os) const
     {
         gene->print(os);
     }
-    os << "\n";
-}
+S}
 
 double Genome::time_to_examine(const Board& board, const Clock& clock) const
 {
