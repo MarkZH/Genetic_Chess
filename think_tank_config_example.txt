@@ -1,0 +1,36 @@
+# Think Tank Configuration (# indicate comments)
+
+# The number of processors used will be the minimum
+# of this number and half the think tank population.
+maximum simultaneous games = 8
+
+# How many players in each pool
+think tank population = 16
+
+# How many gene pools
+think tank count = 3
+
+# Probability of killing a player after a draw
+draw kill probability = 0.05
+
+# Games in between swapping players between pools
+tank swap interval = 1000
+
+# Oscillating game time
+#
+# The time for each game starts at the minimum, then goes up
+# by the increment after each round of games. When it reaches
+# the maximum, the increment is reversed and the time for each
+# game goes down until it reaches the minimum. Then, the cycle
+# starts again. If the "oscillating time" is "no", then the
+# game time will stop and remain at the maximum time until the
+# end of the run.
+minimum game time = 1 # seconds
+maximum game time = 30 # seconds
+game time increment = 0.001 # seconds
+oscillating time = no
+
+# The name of the file where the neural nets will be recorded.
+# Games will be recorded in a file with "_games.txt" appended
+# to the name.
+think tank file = tank.txt
