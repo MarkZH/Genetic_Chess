@@ -12,11 +12,11 @@ class Neural_AI : public Minimax_AI
 {
     public:
         Neural_AI();
-        Neural_AI(const Neural_AI& other);
         explicit Neural_AI(const std::string& file_name);
         Neural_AI(const std::string& file_name, int id);
         explicit Neural_AI(std::istream& is);
-        Neural_AI& operator=(const Neural_AI& other);
+
+        Neural_AI copy() const; // make copy with new ID
 
         std::string name() const override;
         std::string author() const override;

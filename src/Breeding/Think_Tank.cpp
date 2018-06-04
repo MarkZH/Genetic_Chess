@@ -18,12 +18,16 @@
 
 static sig_atomic_t signal_activated = 0;
 void pause_think_tank(int);
-void write_generation(const std::vector<Think_Tank>& tanks, size_t tank_index, const std::string& genome_file_name);
+
+using Think_Tank = std::vector<Neural_AI>;
+std::vector<Think_Tank> load_think_tank_file(const std::string& load_file, size_t tank_population);
+
+void write_generation(const std::vector<Think_Tank>& tanks, const std::string& neural_file_name);
 
 template<typename Stat>
-void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<Neural_AI, Stat>& stats);
+void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<size_t, Stat>& stats);
 
-void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<size_t, std::vector<Neural_AI>>& ai_lists);
+void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<size_t, std::vector<size_t>>& ai_lists);
 
 
 void think_tank(const std::string& config_file = "")
@@ -50,37 +54,35 @@ void think_tank(const std::string& config_file = "")
     std::map<size_t, size_t> black_wins;
     std::map<size_t, size_t> draw_count;
     std::map<size_t, size_t> most_wins;
-    std::map<size_t, Neural_AI> most_wins_player;
+    std::map<size_t, size_t> most_wins_player_id;
 
     std::map<size_t, size_t> most_games_survived;
-    std::map<size_t, Neural_AI> most_games_survived_player;
+    std::map<size_t, size_t> most_games_survived_player_id;
 
-    std::map<size_t, std::vector<Neural_AI>> new_blood; // ex nihilo players
-    std::map<size_t, size_t> new_blood_count;
+    std::map<size_t, size_t> wins;
+    std::map<size_t, size_t> draws;
+    std::map<size_t, size_t> games_since_last_win;
+    std::map<size_t, size_t> consecutive_wins;
+    std::map<size_t, size_t> original_tank;
 
-    std::map<Neural_AI, size_t> wins;
-    std::map<Neural_AI, size_t> draws;
-    std::map<Neural_AI, size_t> games_since_last_win;
-    std::map<Neural_AI, size_t> consecutive_wins;
-    std::map<Neural_AI, size_t> original_tank;
+    const int scramble_mutations = 100;
 
-    const int scramble_mutations = 100000;
-
-    std::string genome_file_name = config.get_text("think tank file");
-    if(genome_file_name.empty())
+    std::string think_tank_fils_name = config.get_text("think tank file");
+    if(think_tank_fils_name.empty())
     {
-        genome_file_name = "think_tank_record_";
+        think_tank_fils_name = "think_tank_record_";
         for(int i = 0; i < 10; ++i)
         {
-            genome_file_name += char('a' + Random::random_integer(0, 25));
+            think_tank_fils_name += char('a' + Random::random_integer(0, 25));
         }
-        genome_file_name += ".txt";
+        think_tank_fils_name += ".txt";
     }
 
-    auto tanks = load_think_tank_file(genome_file_name);
+    auto tanks = load_think_tank_file(think_tank_fils_name, think_tank_population);
     while(tanks.size() < think_tank_count)
     {
         tanks.push_back({});
+        tanks.back().reserve(think_tank_population);
     }
 
     for(size_t i = 0; i < tanks.size(); ++i)
@@ -98,13 +100,11 @@ void think_tank(const std::string& config_file = "")
 
         for(const auto& ai : tanks[i])
         {
-            original_tank[ai] = i;
+            original_tank[ai.get_id()] = i;
         }
-
-        write_generation(tanks, i, genome_file_name);
     }
 
-    std::string game_record_file = genome_file_name +  "_games.txt";
+    std::string game_record_file = think_tank_fils_name +  "_games.txt";
     if(auto ifs = std::ifstream(game_record_file))
     {
         // Use game time from last run of this think tank
@@ -153,18 +153,38 @@ void think_tank(const std::string& config_file = "")
 
     for(size_t tank_index = 0; true; tank_index = (tank_index + 1) % tanks.size()) // run forever
     {
+        if(tank_index == 0)
+        {
+            write_generation(tanks, think_tank_fils_name);
+
+            // Pause think tank
+            if(signal_activated == 1)
+            {
+                std::cout << "Think tank paused. Press Enter to continue ..." << std::endl;
+                std::cin.get();
+            }
+
+            if(signal_activated >= 2)
+            {
+                return;
+            }
+            else
+            {
+                signal_activated = 0;
+            }
+        }
+
         auto& tank = tanks[tank_index];
 
         // Write overall stats
         std::cout << "\nThink tank ID: " << tank_index
-                  << "  Think tank size: " << tank.size()
-                  << "  New blood introduced: " << new_blood_count[tank_index] << " (*)\n"
+                  << "  Think tank size: " << tank.size() << "\n"
                   << "Games: " << game_count[tank_index]
                   << "  White wins: " << white_wins[tank_index]
                   << "  Black wins: " << black_wins[tank_index]
                   << "  Draws: " << draw_count[tank_index]
                   << "\nTime: " << game_time << " sec"
-                  << "   Think tank file name: " << genome_file_name << "\n\n";
+                  << "   Think tank file name: " << think_tank_fils_name << "\n\n";
 
         // The tank_indices list determines the match-ups. After shuffling the list
         // of indices (0 to think_tank_population - 1), adjacent indices in the tank are
@@ -219,30 +239,30 @@ void think_tank(const std::string& config_file = "")
             }
             else // DRAW
             {
-                draws[white]++;
-                draws[black]++;
-                games_since_last_win[white]++;
-                games_since_last_win[black]++;
-                consecutive_wins[white] = 0;
-                consecutive_wins[black] = 0;
+                draws[white.get_id()]++;
+                draws[black.get_id()]++;
+                games_since_last_win[white.get_id()]++;
+                games_since_last_win[black.get_id()]++;
+                consecutive_wins[white.get_id()] = 0;
+                consecutive_wins[black.get_id()] = 0;
                 ++draw_count[tank_index];
             }
 
             if(winner != NONE)
             {
                 auto& winning_player = (winner == WHITE ? white : black);
-                wins[winning_player]++;
-                games_since_last_win[winning_player] = 0;
-                consecutive_wins[winning_player]++;
-                if(wins[winning_player] >= most_wins[tank_index])
+                wins[winning_player.get_id()]++;
+                games_since_last_win[winning_player.get_id()] = 0;
+                consecutive_wins[winning_player.get_id()]++;
+                if(wins[winning_player.get_id()] >= most_wins[tank_index])
                 {
-                    most_wins[tank_index] = wins[winning_player];
-                    most_wins_player[tank_index] = winning_player;
+                    most_wins[tank_index] = wins[winning_player.get_id()];
+                    most_wins_player_id[tank_index] = winning_player.get_id();
                 }
 
-                auto offspring = winning_player;
+                auto offspring = winning_player.copy();
                 offspring.mutate();
-                original_tank[offspring] = tank_index;
+                original_tank[offspring.get_id()] = tank_index;
 
                 auto& losing_player  = (winner == WHITE ? black : white);
                 losing_player = offspring; // offspring replaces loser
@@ -254,35 +274,31 @@ void think_tank(const std::string& config_file = "")
                     auto heads = Random::coin_flip();
                     auto& pseudo_winner = (heads ? white : black);
                     auto& pseudo_loser  = (heads ? black : white);
-                    pseudo_loser = pseudo_winner;
-                    pseudo_loser.mutate();
                     std::cout << "\n    --> " << pseudo_winner.get_id() << " survives" << " / "
                               << pseudo_loser.get_id() << " dies";
-                    new_blood[tank_index].push_back(pseudo_loser);
-                    ++new_blood_count[tank_index];
-                    original_tank[pseudo_loser] = tank_index;
+                    pseudo_loser = pseudo_winner.copy();
+                    pseudo_loser.mutate();
+                    original_tank[pseudo_loser.get_id()] = tank_index;
                 }
             }
             std::cout << std::endl;
         }
 
         std::sort(tank.begin(), tank.end());
-        write_generation(tanks, tank_index, genome_file_name);
 
         purge_dead_from_map(tanks, wins);
         purge_dead_from_map(tanks, draws);
         purge_dead_from_map(tanks, games_since_last_win);
         purge_dead_from_map(tanks, consecutive_wins);
         purge_dead_from_map(tanks, original_tank);
-        purge_dead_from_map(tanks, new_blood);
 
         for(const auto& ai : tank)
         {
-            auto games_survived = wins[ai] + draws[ai];
+            auto games_survived = wins[ai.get_id()] + draws[ai.get_id()];
             if(games_survived >= most_games_survived[tank_index])
             {
                 most_games_survived[tank_index] = games_survived;
-                most_games_survived_player[tank_index] = ai;
+                most_games_survived_player_id[tank_index] = ai.get_id();
             }
         }
 
@@ -301,27 +317,24 @@ void think_tank(const std::string& config_file = "")
         for(const auto& ai : tank)
         {
             std::cout << std::setw(id_digits + 1) << ai.get_id();
-            std::cout << std::setw(7)    << wins[ai]
-                      << std::setw(8)   << consecutive_wins[ai]
-                      << std::setw(7)    << draws[ai]
-                      << std::setw(8)   << games_since_last_win[ai]
-                      << (std::binary_search(new_blood[tank_index].begin(),
-                                             new_blood[tank_index].end(),
-                                             ai) ? " *" : "")
-                      << (original_tank[ai] != tank_index ? " T" : "") << "\n";
+            std::cout << std::setw(7)    << wins[ai.get_id()]
+                      << std::setw(8)   << consecutive_wins[ai.get_id()]
+                      << std::setw(7)    << draws[ai.get_id()]
+                      << std::setw(8)   << games_since_last_win[ai.get_id()]
+                      << (original_tank[ai.get_id()] != tank_index ? " T" : "") << "\n";
         }
         std::cout << std::endl;
 
         std::cout << "Most wins:     " << most_wins[tank_index]
-                  << " by ID " << most_wins_player[tank_index].get_id() << std::endl;
+                  << " by ID " << most_wins_player_id[tank_index] << std::endl;
         std::cout <<   "Longest lived: " << most_games_survived[tank_index]
-                  << " by ID " << most_games_survived_player[tank_index].get_id() << std::endl;
+                  << " by ID " << most_games_survived_player_id[tank_index] << std::endl;
 
         // Record best AI from all tanks.
         auto best_ai = tank.front();
         auto best_compare = [&wins, &draws](const auto& x, const auto& y)
                             {
-                                return wins[x] - draws[x] < wins[y] - draws[y];
+                                return wins[x.get_id()] - draws[x.get_id()] < wins[y.get_id()] - draws[y.get_id()];
                             };
         for(const auto& search_tank : tanks)
         {
@@ -330,24 +343,8 @@ void think_tank(const std::string& config_file = "")
                                                  search_tank.end(),
                                                  best_compare), best_compare);
         }
-        std::ofstream best_file(genome_file_name + "_best_genome.txt");
+        std::ofstream best_file(think_tank_fils_name + "_best_neural_ai.txt");
         best_ai.print(best_file);
-
-        // Pause think tank
-        if(signal_activated == 1)
-        {
-            std::cout << "Think tank paused. Press Enter to continue ..." << std::endl;
-            std::cin.get();
-        }
-
-        if(signal_activated >= 2)
-        {
-            return;
-        }
-        else
-        {
-            signal_activated = 0;
-        }
 
         game_count[tank_index] += results.size();
         if((game_time >= maximum_game_time && game_time_increment > 0) ||
@@ -363,11 +360,11 @@ void think_tank(const std::string& config_file = "")
 
         auto win_compare = [&wins, &draws](const auto& x, const auto& y)
                            {
-                               if(wins[x] == wins[y])
+                               if(wins[x.get_id()] == wins[y.get_id()])
                                {
-                                   return draws[x] < draws[y];
+                                   return draws[x.get_id()] < draws[y.get_id()];
                                }
-                               return wins[x] < wins[y];
+                               return wins[x.get_id()] < wins[y.get_id()];
                            };
 
         // Transfer best players between think tanks to keep tanks
@@ -425,39 +422,40 @@ void pause_think_tank(int)
     }
 }
 
-void write_generation(const std::vector<Think_Tank>& tanks, size_t tank_index, const std::string& genome_file_name)
+void write_generation(const std::vector<Think_Tank>& tanks, const std::string& neural_file_name)
 {
-    static std::map<Neural_AI, bool> written_before;
-    static std::string last_file_name;
-    static std::ofstream ofs;
-    if(last_file_name != genome_file_name)
-    {
-        ofs.close();
-        ofs.open(genome_file_name, std::ios::app);
-        last_file_name = genome_file_name;
-    }
+    auto ofs = std::ofstream(neural_file_name);
+    auto total_ais = tanks.size()*tanks.front().size();
+    auto progress_bar_complete_length = 20;
+    size_t ai_count = 0;
 
-    auto tank = tanks.at(tank_index);
-    for(const auto& ai : tank)
+    for(const auto& tank : tanks)
     {
-        if( ! written_before[ai])
+        for(const auto& ai : tank)
         {
             ai.print(ofs);
-            written_before[ai] = true;
+            ++ai_count;
+            auto progress_length = progress_bar_complete_length*(double(ai_count)/total_ais);
+
+            std::cout << "Writing to " << neural_file_name << ": [";
+            for(size_t i = 0; i < progress_bar_complete_length; ++i)
+            {
+                if(i < progress_length)
+                {
+                    std::cout << '#';
+                }
+                else
+                {
+                    std::cout << ' ';
+                }
+            }
+            std::cout << "]\r" << std::flush;
         }
     }
-
-    ofs << "\nStill Alive: " << tank_index << " : ";
-    for(const auto& ai : tank)
-    {
-        ofs << ai.get_id() << " ";
-    }
-    ofs << "\n\n";
-
-    purge_dead_from_map(tanks, written_before);
+    std::cout << std::endl;
 }
 
-std::vector<Think_Tank> load_think_tank_file(const std::string& load_file)
+std::vector<Think_Tank> load_think_tank_file(const std::string& load_file, size_t tank_population)
 {
     std::ifstream ifs(load_file);
     if( ! ifs)
@@ -468,40 +466,26 @@ std::vector<Think_Tank> load_think_tank_file(const std::string& load_file)
     }
 
     std::cout << "Loading think tank file: " << load_file << " ..." << std::endl;
-    std::map<int, std::string> still_alive;
     std::string line;
-    while(std::getline(ifs, line))
+    std::vector<Think_Tank> result;
+    
+    while(ifs)
     {
-        if(String::contains(line, "Still Alive: "))
+        if(result.empty() || result.back().size() == tank_population)
         {
-            auto parse = String::split(line, ":");
-            still_alive[std::stoi(parse[1])] = parse[2];
+            result.push_back({});
         }
-    }
-    ifs.close();
 
-    std::vector<Think_Tank> result(still_alive.size());
-    for(const auto& index_list : still_alive)
-    {
-        for(const auto& number_string : String::split(index_list.second))
-        {
-            if(number_string.empty())
-            {
-                continue;
-            }
-
-            auto index = std::stoi(number_string);
-            result[index_list.first].push_back(Neural_AI(load_file, index));
-        }
-        write_generation(result, index_list.first, ""); // mark AIs from file as already written
+        result.back().emplace_back(ifs);
     }
+
     std::cout << "Done." << std::endl;
 
     return result;
 }
 
 template<typename Stat>
-void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<Neural_AI, Stat>& stats)
+void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<size_t, Stat>& stats)
 {
     auto stat_iter = stats.begin();
     while(stat_iter != stats.end())
@@ -509,7 +493,10 @@ void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<Neural_A
         bool ai_found = false;
         for(const auto& tank : tanks)
         {
-            if(std::find(tank.begin(), tank.end(), stat_iter->first) != tank.end())
+            if(std::find_if(tank.begin(), tank.end(), [stat_iter](auto x)
+                            {
+                                return stat_iter->first == x.get_id();
+                            }) != tank.end())
             {
                 ai_found = true;
                 break;

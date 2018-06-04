@@ -8,7 +8,4 @@
 
 void think_tank(const std::string& load_file);
 
-using Think_Tank = std::vector<Neural_AI>;
-std::vector<Think_Tank> load_think_tank_file(const std::string& load_file);
-
 #endif // THINK_TANK_H

@@ -16,23 +16,6 @@ Neural_AI::Neural_AI() : id(next_id++)
     calculate_centipawn_value();
 }
 
-Neural_AI::Neural_AI(const Neural_AI& other) :
-    id(next_id++),
-    brain(other.brain)
-{
-}
-
-Neural_AI& Neural_AI::operator=(const Neural_AI& other)
-{
-    if(this != &other)
-    {
-        id = next_id++;
-        brain = other.brain;
-    }
-
-    return *this;
-}
-
 Neural_AI::Neural_AI(const std::string& file_name)
 {
     std::ifstream ifs(file_name);
@@ -53,6 +36,13 @@ Neural_AI::Neural_AI(std::istream& is)
 
     calibrate_thinking_speed();
     calculate_centipawn_value();
+}
+
+Neural_AI Neural_AI::copy() const
+{
+    Neural_AI new_copy;
+    new_copy.brain = brain;
+    return new_copy;
 }
 
 Neural_AI::Neural_AI(const std::string& file_name, int id_in) : id(id_in)
