@@ -37,8 +37,8 @@ namespace String
 
 namespace Random
 {
-    // Random number with normal distribution and mean of zero
-    double random_normal(double standard_deviation);
+    // Random number with Laplace distribution (double-sided exponential) and mean of zero
+    double random_laplace(double width);
 
     // Random number with inclusive range
     double random_real(double min, double max);

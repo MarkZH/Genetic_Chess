@@ -170,12 +170,12 @@ int Random::random_integer(int min, int max)
     return dist(generator, uid::param_type{min, max});
 }
 
-double Random::random_normal(double standard_deviation)
+double Random::random_laplace(double width)
 {
     thread_local static std::mt19937_64 generator(std::random_device{}());
-    using nd = std::normal_distribution<double>;
-    thread_local static auto dist = nd{};
-    return dist(generator, nd::param_type{0.0, standard_deviation});
+    using ed = std::exponential_distribution<double>;
+    thread_local static auto dist = ed{};
+    return (coin_flip() ? 1 : -1)*dist(generator, ed::param_type{width});
 }
 
 double Random::random_real(double min, double max)
@@ -195,7 +195,7 @@ uint64_t Random::random_unsigned_int64()
 
 bool Random::coin_flip()
 {
-    return success_probability(0.5);
+    return random_integer(0, 1) == 1;
 }
 
 bool Random::success_probability(double probability)

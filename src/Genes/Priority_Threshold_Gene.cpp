@@ -44,5 +44,5 @@ double Priority_Threshold_Gene::get_threshold() const
 
 void Priority_Threshold_Gene::gene_specific_mutation()
 {
-    threshold = std::max(0.0, threshold + Random::random_normal(2.0));
+    threshold = std::max(0.0, threshold + Random::random_laplace(2.0));
 }

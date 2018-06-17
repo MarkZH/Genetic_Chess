@@ -51,16 +51,16 @@ void Look_Ahead_Gene::gene_specific_mutation()
     switch(Random::random_integer(1, 4))
     {
         case 1:
-            mean_game_length = std::max(1.0, mean_game_length + Random::random_normal(1.0));
+            mean_game_length = std::max(1.0, mean_game_length + Random::random_laplace(1.0));
             break;
         case 2:
-            game_length_uncertainty = std::abs(game_length_uncertainty + Random::random_normal(0.05));
+            game_length_uncertainty = std::abs(game_length_uncertainty + Random::random_laplace(0.1));
             break;
         case 3:
-            speculation_constant += Random::random_normal(0.05);
+            speculation_constant += Random::random_laplace(0.1);
             break;
         case 4:
-            capturing_speculation_constant += Random::random_normal(0.05);
+            capturing_speculation_constant += Random::random_laplace(0.1);
             break;
         default:
             throw std::runtime_error("Bad random value in Look Ahead Gene");

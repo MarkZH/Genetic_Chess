@@ -179,6 +179,10 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             recurse = true;
         }
+        else if(depth > 500)
+        {
+            recurse = false;
+        }
         else
         {
             auto minimum_time_to_recurse = next_board.legal_moves().size() / evaluation_speed;
