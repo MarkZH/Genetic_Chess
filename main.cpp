@@ -164,9 +164,47 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-neuro")
                     {
-                        latest = std::make_unique<Neural_AI>();
-                        static_cast<Neural_AI*>(latest.get())->mutate(10000);
-                        static_cast<const Neural_AI*>(latest.get())->print("single_game_player.txt");
+                        std::string filename;
+                        int id = -1;
+                        if(i + 1 < argc)
+                        {
+                            filename = argv[i+1];
+                            if(filename.front() == '-')
+                            {
+                                filename.clear();
+                            }
+                        }
+
+                        if(i + 2 < argc)
+                        {
+                            try
+                            {
+                                id = std::stoi(argv[i+2]);
+                            }
+                            catch(const std::exception&)
+                            {
+                            }
+                        }
+
+                        if(filename.empty())
+                        {
+                            latest = std::make_unique<Neural_AI>();
+                            static_cast<Neural_AI*>(latest.get())->mutate(1000);
+                            static_cast<const Neural_AI*>(latest.get())->print("single_game_player.txt");
+                        }
+                        else
+                        {
+                            if(id < 0)
+                            {
+                                latest = std::make_unique<Neural_AI>(filename, find_last_id(filename));
+                                i += 1;
+                            }
+                            else
+                            {
+                                latest = std::make_unique<Neural_AI>(filename, id);
+                                i += 2;
+                            }
+                        }
                     }
                     else if(opt == "-time")
                     {

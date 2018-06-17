@@ -123,7 +123,7 @@ void Neural_AI::read_internals(std::istream& is)
 
 std::string Neural_AI::name() const
 {
-    return "Neural Net AI";
+    return "Neural Net AI " + std::to_string(get_id());
 }
 
 std::string Neural_AI::author() const
