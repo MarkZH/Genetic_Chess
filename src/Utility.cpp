@@ -175,7 +175,7 @@ double Random::random_laplace(double width)
     thread_local static std::mt19937_64 generator(std::random_device{}());
     using ed = std::exponential_distribution<double>;
     thread_local static auto dist = ed{};
-    return (coin_flip() ? 1 : -1)*dist(generator, ed::param_type{width});
+    return (coin_flip() ? 1 : -1)*dist(generator, ed::param_type{1.0/width});
 }
 
 double Random::random_real(double min, double max)
