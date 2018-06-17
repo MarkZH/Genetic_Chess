@@ -156,7 +156,7 @@ void Neural_AI::print(std::ostream & output) const
     output << "ID: " << get_id() << '\n';
     brain.print(output);
     time_manager.print(output);
-    output << '\n';
+    output << std::endl;
 }
 
 bool Neural_AI::operator<(const Neural_AI& other) const
