@@ -105,10 +105,10 @@ void Sphere_of_Influence_Gene::gene_specific_mutation()
 {
     if(Random::coin_flip())
     {
-        legal_bonus += Random::random_normal(0.05);
+        legal_bonus += Random::random_laplace(0.5);
     }
     else
     {
-        king_target_factor += Random::random_normal(0.05);
+        king_target_factor += Random::random_laplace(0.5);
     }
 }

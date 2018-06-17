@@ -85,7 +85,7 @@ void mutate_2D_array(Connections& arr)
     {
         auto index1 = Random::random_integer(0, arr.size() - 1);
         auto index2 = Random::random_integer(0, arr.front().size() - 1);
-        arr[index1][index2] += Random::random_normal(0.2);
+        arr[index1][index2] += Random::random_laplace(0.5);
     }
 }
 

@@ -71,7 +71,7 @@ void Piece_Strength_Gene::gene_specific_mutation()
         const double mean_number_of_mutations = 2.0;
         if(Random::success_probability(mean_number_of_mutations/piece_types.size()))
         {
-            piece_value(piece) += Random::random_normal(1.0);
+            piece_value(piece) += Random::random_laplace(1.0);
         }
     }
 

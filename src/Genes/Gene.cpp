@@ -95,7 +95,7 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 
 void Gene::mutate()
 {
-    priority += Random::random_normal(10.0);
+    priority += Random::random_laplace(10.0);
     gene_specific_mutation();
 }
 
