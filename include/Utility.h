@@ -112,6 +112,7 @@ class Scoped_Stopwatch
         void stop();
         void add_info(const std::string& info);
         void reject(); // do not record time
+        double time_so_far() const;
 
     private:
         static std::ofstream out_file;

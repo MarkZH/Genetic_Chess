@@ -7,6 +7,7 @@
 #include "Player.h"
 
 #include "Game/Color.h"
+#include "Utility.h"
 
 class Clock;
 
@@ -38,6 +39,7 @@ class Outside_Player : public Player
 
     private:
         static std::string log_file_name;
+        static Scoped_Stopwatch running_time;
 
         double starting_game_time;
         size_t moves_to_reset_clock;

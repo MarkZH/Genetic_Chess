@@ -346,3 +346,10 @@ void Scoped_Stopwatch::reject()
 {
     stopped = true;
 }
+
+double Scoped_Stopwatch::time_so_far() const
+{
+    auto end_time = std::chrono::steady_clock::now();
+    return std::chrono::duration_cast<std::chrono::duration<double>>
+                (end_time - start_time).count();
+}
