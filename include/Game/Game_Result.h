@@ -9,7 +9,7 @@ class Game_Result
 {
     public:
         Game_Result();
-        Game_Result(Color winner, const std::string& reason, bool end_by_clock);
+        Game_Result(Color winner, const std::string& reason);
 
         bool game_has_ended() const;
         Color get_winner() const;
@@ -20,7 +20,6 @@ class Game_Result
     private:
         Color victor;
         std::string cause;
-        bool out_of_time_ending;
 };
 
 #endif // GAME_RESULT_H

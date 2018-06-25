@@ -3,17 +3,16 @@
 #include <string>
 
 #include "Game/Color.h"
+#include "Utility.h"
 
-Game_Result::Game_Result() : victor(NONE), cause(), out_of_time_ending(false)
+Game_Result::Game_Result() : victor(NONE), cause()
 {
 }
 
 Game_Result::Game_Result(Color winner,
-                         const std::string& reason,
-                         bool end_by_clock) :
+                         const std::string& reason) :
                              victor(winner),
-                             cause(reason),
-                             out_of_time_ending(end_by_clock)
+                             cause(reason)
 {
 }
 
@@ -57,7 +56,7 @@ std::string Game_Result::get_game_record_annotation() const
     if(game_has_ended())
     {
         std::string prefix = "\t";
-        if( ! out_of_time_ending && get_winner() != NONE)
+        if(String::ends_with(cause, "mates"))
         {
             prefix =  "#" + prefix;
         }

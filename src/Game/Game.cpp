@@ -75,7 +75,7 @@ Game_Result play_game_with_board(const Player& white,
         catch(const Game_Ending_Exception& gee)
         {
             // Only occurs for GUI communication errors
-            result = {gee.winner(), gee.what(), false};
+            result = {gee.winner(), gee.what()};
         }
 
         // for Outside_Players communicating with xboard and the like
@@ -102,7 +102,7 @@ Game_Result play_game_with_board(const Player& white,
         board.print_game_record(&white,
                                 &black,
                                 pgn_file_name,
-                                Game_Result(NONE, error.what(), false),
+                                Game_Result(NONE, error.what()),
                                 time_in_seconds,
                                 moves_to_reset,
                                 increment_seconds,

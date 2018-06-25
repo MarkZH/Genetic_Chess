@@ -693,6 +693,20 @@ void run_tests()
         tests_passed = false;
     }
 
+    std::string end_target = "efg";
+    if( ! String::ends_with(search_string, end_target))
+    {
+        std::cerr << "\"" << end_target << "\" not found at end of " << search_string << std::endl;
+        tests_passed = false;
+    }
+
+    std::string wrong_end_target = "efh";
+    if(String::ends_with(search_string, wrong_end_target))
+    {
+        std::cerr << "\"" << wrong_end_target << "\" erroneously found at end of " << search_string << std::endl;
+        tests_passed = false;
+    }
+
     std::string splitting_line = "\t a b c d e ";
     std::vector<std::string> expected_split_line = {"a", "b", "c", "d", "e"};
     auto split_line = String::split(splitting_line);
@@ -862,7 +876,7 @@ void run_tests()
     {
         std::cerr << "Last move should have been an error:" << std::endl;
         board.print_game_record(nullptr, nullptr,
-                                "", Game_Result(NONE, "", false), 0, 0, 0, Clock());
+                                "", Game_Result(NONE, ""), 0, 0, 0, Clock());
 
         tests_passed = false;
     }

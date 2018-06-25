@@ -46,7 +46,7 @@ Game_Result Clock::punch()
     if(timers[whose_turn] < std::chrono::seconds(0))
     {
         stop();
-        return Game_Result(opposite(whose_turn), "Time Forfeiture", true);
+        return Game_Result(opposite(whose_turn), "Time Forfeiture");
     }
 
     if(use_reset && (++moves[whose_turn] == move_count_reset))

@@ -76,6 +76,11 @@ bool String::starts_with(const std::string& s, char beginning)
     return ( ! s.empty()) && s[0] == beginning;
 }
 
+bool String::ends_with(const std::string& s, const std::string& ending)
+{
+    return (ending.size() <= s.size()) && std::equal(ending.rbegin(), ending.rend(), s.rbegin());
+}
+
 std::string String::consolidate_inner_whitespace(const std::string& s)
 {
     if(s.empty())

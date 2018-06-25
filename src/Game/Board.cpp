@@ -401,11 +401,11 @@ Game_Result Board::submit_move(const Move& move)
         if(king_is_in_check())
         {
             auto winner = opposite(whose_turn());
-            return Game_Result(winner, color_text(winner) + " mates", false);
+            return Game_Result(winner, color_text(winner) + " mates");
         }
         else
         {
-            return Game_Result(NONE, "Stalemate", false);
+            return Game_Result(NONE, "Stalemate");
         }
     }
 
@@ -414,12 +414,12 @@ Game_Result Board::submit_move(const Move& move)
     // repeat_count map.
     if(repeat_count.empty() && ! enough_material_to_checkmate())
     {
-        return Game_Result(NONE, "Insufficient material", false);
+        return Game_Result(NONE, "Insufficient material");
     }
 
     if(++repeat_count[get_board_hash()] >= 3)
     {
-        return Game_Result(NONE, "Threefold repetition", false);
+        return Game_Result(NONE, "Threefold repetition");
     }
 
     int fifty_move_count = 0;
@@ -429,7 +429,7 @@ Game_Result Board::submit_move(const Move& move)
     }
     if(fifty_move_count >= 101) // "Move" means both players move, 101 including current position
     {
-        return Game_Result(NONE, "50-move limit", false);
+        return Game_Result(NONE, "50-move limit");
     }
 
     return {};

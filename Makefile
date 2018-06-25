@@ -115,7 +115,7 @@ $(DEBUG_OBJ_DIR)/src/Game/Color.o : src/Game/Color.cpp include/Game/Color.h
 $(DEBUG_OBJ_DIR)/src/Game/Game.o : src/Game/Game.cpp include/Exceptions/Game_Ending_Exception.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Game/Game.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Game.o
 
-$(DEBUG_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Game/Color.h include/Game/Game_Result.h
+$(DEBUG_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Game/Color.h include/Game/Game_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Game/Game_Result.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Game_Result.o
 
 $(DEBUG_OBJ_DIR)/src/Game/Square.o : src/Game/Square.cpp include/Game/Square.h
@@ -292,7 +292,7 @@ $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Color.o : src/Game/Color.cpp include/Game/Co
 $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game.o : src/Game/Game.cpp include/Exceptions/Game_Ending_Exception.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Game/Game.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game.o
 
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Game/Color.h include/Game/Game_Result.h
+$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Game/Color.h include/Game/Game_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Game/Game_Result.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game_Result.o
 
 $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Square.o : src/Game/Square.cpp include/Game/Square.h
@@ -478,7 +478,7 @@ $(RELEASE_OBJ_DIR)/src/Game/Color.o : src/Game/Color.cpp include/Game/Color.h
 $(RELEASE_OBJ_DIR)/src/Game/Game.o : src/Game/Game.cpp include/Exceptions/Game_Ending_Exception.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Game/Game.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Game.o
 
-$(RELEASE_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Game/Color.h include/Game/Game_Result.h
+$(RELEASE_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Game/Color.h include/Game/Game_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Game/Game_Result.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Game_Result.o
 
 $(RELEASE_OBJ_DIR)/src/Game/Square.o : src/Game/Square.cpp include/Game/Square.h
