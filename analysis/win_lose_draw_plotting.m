@@ -185,7 +185,7 @@ print([raw_data '_moves_in_game.png']);
 
 figure('Position', [0, 0, 1200, 1000]);
 hold all;
-bar(bins, counts, 'barwidth', 1);
+bar(bins, counts, 'barwidth', 1, 'facecolor', 'y');
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(number_of_games) ')']);
 title('Number of moves in game')
