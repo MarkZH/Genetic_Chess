@@ -22,8 +22,6 @@ void pause_think_tank(int);
 using Think_Tank = std::vector<Neural_AI>;
 std::vector<Think_Tank> load_think_tank_file(const std::string& load_file, size_t tank_population);
 
-void write_generation(const std::vector<Think_Tank>& tanks, const std::string& neural_file_name);
-
 template<typename Stat>
 void purge_dead_from_map(const std::vector<Think_Tank>& tanks, std::map<size_t, Stat>& stats);
 
@@ -155,8 +153,6 @@ void think_tank(const std::string& config_file = "")
     {
         if(tank_index == 0)
         {
-            write_generation(tanks, think_tank_fils_name);
-
             // Pause think tank
             if(signal_activated == 1)
             {
@@ -420,39 +416,6 @@ void pause_think_tank(int)
         std::cout << std::endl << "Exiting ..." << std::endl;
         exit(1);
     }
-}
-
-void write_generation(const std::vector<Think_Tank>& tanks, const std::string& neural_file_name)
-{
-    auto ofs = std::ofstream(neural_file_name);
-    auto total_ais = tanks.size()*tanks.front().size();
-    auto progress_bar_complete_length = 20;
-    size_t ai_count = 0;
-
-    for(const auto& tank : tanks)
-    {
-        for(const auto& ai : tank)
-        {
-            ai.print(ofs);
-            ++ai_count;
-            auto progress_length = progress_bar_complete_length*(double(ai_count)/total_ais);
-
-            std::cout << "Writing to " << neural_file_name << ": [";
-            for(size_t i = 0; i < progress_bar_complete_length; ++i)
-            {
-                if(i < progress_length)
-                {
-                    std::cout << '#';
-                }
-                else
-                {
-                    std::cout << ' ';
-                }
-            }
-            std::cout << "]\r" << std::flush;
-        }
-    }
-    std::cout << std::endl;
 }
 
 std::vector<Think_Tank> load_think_tank_file(const std::string& load_file, size_t tank_population)
