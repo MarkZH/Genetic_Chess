@@ -83,7 +83,7 @@ double Look_Ahead_Gene::score_board(const Board&) const
     return 0.0;
 }
 
-double Look_Ahead_Gene::speculation_time_factor(const Board& board) const
+double Look_Ahead_Gene::speculation_time_factor(const Board& board, const Move& move) const
 {
-    return board.capture_possible() ? capturing_speculation_constant : speculation_constant;
+    return board.capture_possible(move) ? capturing_speculation_constant : speculation_constant;
 }

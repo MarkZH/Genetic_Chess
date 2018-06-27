@@ -1096,13 +1096,21 @@ void run_tests()
     Board capture_board;
     capture_board.submit_move(capture_board.get_move("e4"));
     capture_board.submit_move(capture_board.get_move("d5"));
-    if( ! capture_board.capture_possible())
+    const Move& capturing_move = capture_board.get_move("exd5");
+    if( ! capture_board.capture_possible(capturing_move))
     {
         capture_board.ascii_draw(WHITE);
-        std::cerr << "Capture should be possible here." << std::endl;
+        std::cerr << "This move should capture: " << capturing_move.game_record_item(capture_board) << std::endl;
         tests_passed = false;
     }
 
+    const Move& non_capturing_move = capture_board.get_move("e5");
+    if(capture_board.capture_possible(non_capturing_move))
+    {
+        capture_board.ascii_draw(WHITE);
+        std::cerr << "This move should not capture: " << non_capturing_move.game_record_item(capture_board) << std::endl;
+        tests_passed = false;
+    }
 
     if(tests_passed)
     {

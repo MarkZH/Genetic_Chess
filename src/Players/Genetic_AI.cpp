@@ -8,6 +8,7 @@
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 #include "Game/Color.h"
+#include "Moves/Move.h"
 
 #include "Utility.h"
 
@@ -133,9 +134,9 @@ double Genetic_AI::time_to_examine(const Board & board, const Clock & clock) con
     return genome.time_to_examine(board, clock);
 }
 
-double Genetic_AI::speculation_time_factor(const Board & board) const
+double Genetic_AI::speculation_time_factor(const Board & board, const Move& move) const
 {
-    return genome.speculation_time_factor(board);
+    return genome.speculation_time_factor(board, move);
 }
 
 void Genetic_AI::mutate(int mutation_count)

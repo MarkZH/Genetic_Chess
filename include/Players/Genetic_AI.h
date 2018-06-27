@@ -7,9 +7,9 @@
 #include "Minimax_AI.h"
 
 #include "Genes/Genome.h"
-#include "Moves/Move.h"
 
 class Board;
+class Move;
 class Clock;
 struct Game_Tree_Node_Result;
 class Game_Result;
@@ -49,7 +49,7 @@ class Genetic_AI : public Minimax_AI
 
         // Time management
         virtual double time_to_examine(const Board& board, const Clock& clock) const override;
-        virtual double speculation_time_factor(const Board& board) const override;
+        virtual double speculation_time_factor(const Board& board, const Move& move) const override;
 };
 
 #endif // GENETIC_AI_H

@@ -9,6 +9,10 @@
 #include "Neural_Net.h"
 #include "Genes/Look_Ahead_Gene.h"
 
+class Board;
+class Move;
+class Clock;
+
 class Neural_AI : public Minimax_AI
 {
     public:
@@ -44,7 +48,7 @@ class Neural_AI : public Minimax_AI
 
         double internal_evaluate(const Board& board, Color perspective) const override;
 
-        double speculation_time_factor(const Board& board) const override;
+        double speculation_time_factor(const Board& board, const Move& move) const override;
         double time_to_examine(const Board& board, const Clock& clock) const override;
 };
 
