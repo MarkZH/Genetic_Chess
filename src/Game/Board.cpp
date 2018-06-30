@@ -76,6 +76,7 @@ Board::Board() :
     move_count_start_offset(0),
     already_castled{{false, false}},
     promoted_pawns_count{{0, 0}},
+    capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
     initialize_board_hash();
@@ -120,6 +121,7 @@ Board::Board(const std::string& fen) :
     king_location{{ {'\0', 0}, {'\0', 0} }},
     already_castled{{false, false}},
     promoted_pawns_count{{0, 0}},
+    capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
     initialize_board_hash();
@@ -1208,6 +1210,7 @@ void Board::recreate_move_caches()
     refresh_checking_squares();
 
     bool en_passant_legal = false;
+    capturing_move_available = false;
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
@@ -1221,10 +1224,10 @@ void Board::recreate_move_caches()
                     {
                         legal_moves_cache.push_back(move);
 
-                        if( ! en_passant_legal)
-                        {
-                            en_passant_legal = move->is_en_passant();
-                        }
+                        capturing_move_available = capturing_move_available
+                            || piece_on_square(move->end_file(), move->end_rank()) != nullptr
+                            || move->is_en_passant();
+                        en_passant_legal = en_passant_legal || move->is_en_passant();
                     }
                     else
                     {
@@ -1420,9 +1423,9 @@ uint64_t Board::get_board_hash() const
     return board_hash;
 }
 
-bool Board::capture_possible(const Move& move) const
+bool Board::capture_possible() const
 {
-    return piece_on_square(move.end_file(), move.end_rank()) != nullptr || move.is_en_passant();
+    return capturing_move_available;
 }
 
 bool Board::king_multiply_checked() const

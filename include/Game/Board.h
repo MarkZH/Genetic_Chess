@@ -96,7 +96,7 @@ class Board
         bool enough_material_to_checkmate() const;
 
         // Methods for gene reference
-        bool capture_possible(const Move& move) const; // returns true if move captures (method assumes move is legal)
+        bool capture_possible() const;
         bool has_castled(Color player) const;
         std::array<bool, 64> all_square_indices_attacked_by(Color player) const;
         size_t number_of_promoted_pawns(Color color) const;
@@ -117,6 +117,7 @@ class Board
         // Information cache for gene reference
         std::array<bool, 2> already_castled;
         std::array<size_t, 2> promoted_pawns_count;
+        bool capturing_move_available;
 
         // Pieces
         static const Rook   white_rook;

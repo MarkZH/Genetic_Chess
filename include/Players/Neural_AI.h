@@ -48,7 +48,7 @@ class Neural_AI : public Minimax_AI
 
         double internal_evaluate(const Board& board, Color perspective) const override;
 
-        double speculation_time_factor(const Board& board, const Move& move) const override;
+        double speculation_time_factor(const Board& board) const override;
         double time_to_examine(const Board& board, const Clock& clock) const override;
 };
 

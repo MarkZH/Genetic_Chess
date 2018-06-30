@@ -174,9 +174,9 @@ double Neural_AI::internal_evaluate(const Board& board, Color perspective) const
     return brain.evaluate(board, perspective);
 }
 
-double Neural_AI::speculation_time_factor(const Board& board, const Move& move) const
+double Neural_AI::speculation_time_factor(const Board& board) const
 {
-    return time_manager.speculation_time_factor(board, move);
+    return time_manager.speculation_time_factor(board);
 }
 
 double Neural_AI::time_to_examine(const Board& board, const Clock& clock) const

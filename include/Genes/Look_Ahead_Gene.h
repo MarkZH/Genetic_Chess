@@ -21,7 +21,7 @@ class Look_Ahead_Gene : public Gene
         std::string name() const override;
 
         double time_to_examine(const Board& board, const Clock& clock) const;
-        double speculation_time_factor(const Board& board, const Move& move) const;
+        double speculation_time_factor(const Board& board) const;
 
     protected:
         void reset_properties() const override;
