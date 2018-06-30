@@ -168,6 +168,10 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
 
         double time_left = time_to_examine - (time_start - clock.time_left(clock.running_for()));
+        if(time_left < 0.0)
+        {
+            break;
+        }
         double time_allotted_for_this_move = (time_left / moves_left)*speculation_time_factor(next_board);
 
         bool recurse;
