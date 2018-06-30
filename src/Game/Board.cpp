@@ -422,11 +422,8 @@ Game_Result Board::submit_move(const Move& move)
         return Game_Result(NONE, "Threefold repetition");
     }
 
-    int fifty_move_count = 0;
-    for(const auto& board_count : repeat_count)
-    {
-        fifty_move_count += board_count.second;
-    }
+    int fifty_move_count = std::accumulate(repeat_count.begin(), repeat_count.end(), 0,
+                                           [](auto n, auto iter){ return n + iter.second; });
     if(fifty_move_count >= 101) // "Move" means both players move, 101 including current position
     {
         return Game_Result(NONE, "50-move limit");
