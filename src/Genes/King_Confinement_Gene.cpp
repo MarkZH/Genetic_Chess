@@ -135,11 +135,10 @@ double King_Confinement_Gene::score_board(const Board& board) const
                         continue;
                     }
 
-                    auto new_square = Square{new_file, new_rank};
                     auto new_index = Board::board_index(new_file, new_rank);
                     if(distance[new_index] == 0) // never checked
                     {
-                        square_queue.push_back(new_square);
+                        square_queue.push_back(Square{new_file, new_rank});
                         distance[new_index] = distance[square_index] + 1;
                     }
                 }
