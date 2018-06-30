@@ -98,7 +98,8 @@ std::array<bool, 64> Piece::all_attacked_squares(char file, int rank, const Boar
             continue;
         }
 
-        if(blocking_direction == std::array<int, 2>{move->file_change(), move->rank_change()})
+        auto move_direction = std::array<int, 2>{Math::sign(move->file_change()), Math::sign(move->rank_change())};
+        if(blocking_direction == move_direction)
         {
             continue;
         }
@@ -106,7 +107,7 @@ std::array<bool, 64> Piece::all_attacked_squares(char file, int rank, const Boar
         auto attacked_piece = board.piece_on_square(move->end_file(), move->end_rank());
         if(attacked_piece)
         {
-            blocking_direction = {Math::sign(move->file_change()), Math::sign(move->rank_change())};
+            blocking_direction = move_direction;
             if(attacked_piece->color() == color())
             {
                 continue;
