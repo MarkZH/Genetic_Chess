@@ -42,7 +42,6 @@ Outside_Player::Outside_Player() :
     time_increment(0),
     got_clock(false)
 {
-    running_time.reject(); // Don't write time to another file
 }
 
 std::string Outside_Player::receive_command()

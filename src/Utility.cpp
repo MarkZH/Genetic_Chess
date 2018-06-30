@@ -304,7 +304,7 @@ std::mutex Scoped_Stopwatch::write_lock;
 Scoped_Stopwatch::Scoped_Stopwatch(const std::string& name) :
     place_name(name),
     start_time(std::chrono::steady_clock::now()),
-    stopped(false)
+    stopped(place_name.empty())
 {
 }
 
