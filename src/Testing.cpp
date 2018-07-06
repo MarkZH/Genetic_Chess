@@ -358,7 +358,7 @@ void run_tests()
         if(result.game_has_ended())
         {
             perf_board4.ascii_draw(WHITE);
-            std::cerr << "This is not checkmate." << std::endl;
+            std::cerr << "This is not " << result.get_ending_reason() << "." << std::endl;
             tests_passed = false;
         }
     }
@@ -388,7 +388,7 @@ void run_tests()
         if(result.game_has_ended())
         {
             perf_board5.ascii_draw(WHITE);
-            std::cerr << "This is not checkmate." << std::endl;
+            std::cerr << "This is not " << result.get_ending_reason() << "." << std::endl;
             tests_passed = false;
         }
     }
