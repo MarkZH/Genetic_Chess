@@ -58,11 +58,14 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&) c
     }
 
     double score_to_add = 1.0;
-    for(const auto& square_list : {board.other_square_indices_attacked(), board.all_square_indices_attacked()})
+    for(const auto& attack_list : {board.other_square_indices_attacked(), board.all_square_indices_attacked()})
     {
-        for(size_t i = 0; i < square_list.size(); ++i)
+        for(size_t i = 0; i < attack_list.size(); ++i)
         {
-            square_score[i] = square_list[i] ? score_to_add : square_score[i];
+            if(attack_list[i])
+            {
+                square_score[i] = score_to_add;
+            }
         }
 
         score_to_add = legal_bonus; // now on legal move list
