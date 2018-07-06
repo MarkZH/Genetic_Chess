@@ -175,7 +175,7 @@ double Genome::evaluate(const Board& board, Color perspective) const
 {
     auto other_board = board;
     other_board.set_turn(opposite(board.whose_turn()));
-    const auto& my_board =        (board.whose_turn() == perspective ? board : other_board);
+    const auto& my_board        = (board.whose_turn() == perspective ? board : other_board);
     const auto& opponents_board = (board.whose_turn() == perspective ? other_board : board);
 
     return score_board(my_board, opponents_board) - score_board(opponents_board, my_board);
