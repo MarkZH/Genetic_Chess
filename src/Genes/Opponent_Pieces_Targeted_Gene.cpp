@@ -18,29 +18,16 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strengt
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, const Board&) const
 {
     double score = 0.0;
-    std::array<bool, 64> already_counted{};
+    auto squares_attacked = board.all_square_indices_attacked();
 
-    for(const auto& move : board.legal_moves())
+    for(char file = 'a'; file <= 'h'; ++file)
     {
-        if(move->is_en_passant())
+        for(int rank = 1; rank <= 8; ++rank)
         {
-            score += piece_strenth_source->piece_value(board.get_piece(PAWN, opposite(board.whose_turn())));
-            continue;
-        }
-
-        if( ! move->can_capture())
-        {
-            continue;
-        }
-
-        auto end_file = move->end_file();
-        auto end_rank = move->end_rank();
-        auto target_piece = board.piece_on_square(end_file, end_rank);
-        auto target_index = Board::board_index(end_file, end_rank);
-        if(target_piece && ! already_counted[target_index])
-        {
-            score += piece_strenth_source->piece_value(target_piece);
-            already_counted[target_index] = true;
+            if(squares_attacked[board.board_index(file, rank)])
+            {
+                score += piece_strenth_source->piece_value(board.piece_on_square(file, rank));
+            }
         }
     }
 
