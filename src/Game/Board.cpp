@@ -1207,7 +1207,13 @@ void Board::recreate_move_caches()
 
                         if(move->can_capture())
                         {
-                            attacked_indices[board_index(move->end_file(), move->end_rank())] = true;
+                            auto rank_adjust = 0;
+                            if(move->is_en_passant())
+                            {
+                                rank_adjust = whose_turn() == WHITE ? -1 : 1;
+                            }
+                            attacked_indices[board_index(move->end_file(),
+                                                         move->end_rank() + rank_adjust)] = true;
                         }
                         capturing_move_available = capturing_move_available
                             || piece_on_square(move->end_file(), move->end_rank()) != nullptr
