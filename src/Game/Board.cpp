@@ -723,6 +723,11 @@ std::array<bool, 64> Board::all_square_indices_attacked() const
     return attacked_indices;
 }
 
+std::array<bool, 64> Board::other_square_indices_attacked() const
+{
+    return other_attacked_indices;
+}
+
 void Board::refresh_checking_squares()
 {
     checking_squares.clear();
@@ -1188,7 +1193,7 @@ void Board::recreate_move_caches()
     legal_moves_cache.clear();
     refresh_checking_squares();
     attacked_indices = {};
-    assert(std::all_of(attacked_indices.begin(), attacked_indices.end(), [](auto x){return ! x;}));
+    other_attacked_indices = {};
 
     bool en_passant_legal = false;
     capturing_move_available = false;
@@ -1223,6 +1228,11 @@ void Board::recreate_move_caches()
                     else
                     {
                         other_moves_cache.push_back(move);
+
+                        if(move->can_capture())
+                        {
+                            other_attacked_indices[board_index(move->end_file(), move->end_rank())] = true;
+                        }
                     }
                 }
             }

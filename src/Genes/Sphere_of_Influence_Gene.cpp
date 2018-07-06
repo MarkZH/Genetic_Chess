@@ -58,32 +58,11 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&) c
     }
 
     double score_to_add = 1.0;
-    for(const auto& move_list : {board.other_moves(), board.legal_moves()})
+    for(const auto& square_list : {board.other_square_indices_attacked(), board.all_square_indices_attacked()})
     {
-        for(const auto& move : move_list)
+        for(size_t i = 0; i < square_list.size(); ++i)
         {
-            // Only potentially capturing moves are counted
-            if( ! move->can_capture())
-            {
-                continue;
-            }
-
-            char final_file = move->end_file();
-            int  final_rank = move->end_rank();
-
-            if(move->is_en_passant())
-            {
-                if(board.is_en_passant_targetable(final_file, final_rank))
-                {
-                    final_rank -= move->rank_change();
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            square_score[Board::board_index(final_file, final_rank)] = score_to_add;
+            square_score[i] = square_list[i] ? score_to_add : square_score[i];
         }
 
         score_to_add = legal_bonus; // now on legal move list
