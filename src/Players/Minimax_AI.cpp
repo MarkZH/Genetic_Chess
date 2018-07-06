@@ -34,7 +34,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
             // the next move of this side after checking that the immediately
             // preceding move was the expected one.
             principal_variation.erase(principal_variation.begin(),
-                principal_variation.begin() + 2);
+                                      principal_variation.begin() + 2);
         }
         else
         {
@@ -50,21 +50,21 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
     // alpha = highest score found that opponent will allow
     Game_Tree_Node_Result alpha_start = {Math::lose_score,
-        board.whose_turn(),
-    {nullptr}};
+                                         board.whose_turn(),
+                                         {nullptr}};
 
     // beta = score that will cause opponent to choose a different prior move
     Game_Tree_Node_Result beta_start = {Math::win_score,
-        board.whose_turn(),
-    {nullptr}};
+                                        board.whose_turn(),
+                                        {nullptr}};
 
     auto result = search_game_tree(board,
-        time_to_use,
-        clock,
-        0,
-        alpha_start,
-        beta_start,
-        !principal_variation.empty());
+                                   time_to_use,
+                                   clock,
+                                   0,
+                                   alpha_start,
+                                   beta_start,
+                                   ! principal_variation.empty());
 
     if(board.get_thinking_mode() == CECP)
     {
@@ -120,8 +120,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     {
         auto next_principal_variation_move = principal_variation[depth + 2];
         auto move_iter = std::find(all_legal_moves.begin(),
-            all_legal_moves.end(),
-            next_principal_variation_move);
+                                   all_legal_moves.end(),
+                                   next_principal_variation_move);
 
         if(move_iter != all_legal_moves.end())
         {
@@ -139,8 +139,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     auto moves_left = all_legal_moves.size();
 
     Game_Tree_Node_Result best_result = {Math::lose_score,
-        perspective,
-    {all_legal_moves.front()}};
+                                         perspective,
+                                         {all_legal_moves.front()}};
 
     for(const auto& move : all_legal_moves)
     {
@@ -224,7 +224,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 else if(board.get_thinking_mode() == CECP && recurse)
                 {
                     output_thinking_cecp(alpha, clock,
-                        depth % 2 == 0 ? perspective : opposite(perspective));
+                                         depth % 2 == 0 ? perspective : opposite(perspective));
                 }
             }
         }
@@ -292,9 +292,9 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
                                                 size_t depth) const
 {
     return {evaluate(board, move_result, perspective),
-        perspective,
-    {board.get_game_record().end() - (depth + 1),
-        board.get_game_record().end()}};
+            perspective,
+            {board.get_game_record().end() - (depth + 1),
+            board.get_game_record().end()}};
 }
 
 void Minimax_AI::calibrate_thinking_speed() const
