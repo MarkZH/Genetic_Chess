@@ -8,7 +8,7 @@
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
 
-double Pawn_Advancement_Gene::score_board(const Board& board) const
+double Pawn_Advancement_Gene::score_board(const Board& board, const Board&) const
 {
     double score = board.number_of_promoted_pawns(board.whose_turn())*6;
     auto perspective = board.whose_turn();

@@ -35,7 +35,7 @@ std::string Castling_Possible_Gene::name() const
     return "Castling Possible Gene";
 }
 
-double Castling_Possible_Gene::score_board(const Board& board) const
+double Castling_Possible_Gene::score_board(const Board& board, const Board&) const
 {
     if(board.has_castled(board.whose_turn()))
     {

@@ -8,7 +8,7 @@
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
 
-double Passed_Pawn_Gene::score_board(const Board& board) const
+double Passed_Pawn_Gene::score_board(const Board& board, const Board&) const
 {
     // Counts the number of passed pawns. A passed pawn is one with
     // no enemy pawns on the same or adjacent files ahead of it.

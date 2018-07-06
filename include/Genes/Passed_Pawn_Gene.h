@@ -11,7 +11,7 @@ class Board;
 class Passed_Pawn_Gene : public Gene
 {
     public:
-        double score_board(const Board& board) const override;
+        double score_board(const Board& board, const Board& opposite_board) const override;
 
         std::unique_ptr<Gene> duplicate() const override;
 

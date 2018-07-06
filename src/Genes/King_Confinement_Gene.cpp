@@ -67,7 +67,7 @@ void King_Confinement_Gene::gene_specific_mutation()
     }
 }
 
-double King_Confinement_Gene::score_board(const Board& board) const
+double King_Confinement_Gene::score_board(const Board& board, const Board& opposite_board) const
 {
     // A flood-fill-like algorithm to count the squares that are reachable by the
     // king from its current positions with unlimited consecutive moves. The
@@ -85,7 +85,7 @@ double King_Confinement_Gene::score_board(const Board& board) const
     std::array<int, 64> distance{};
     distance[Board::board_index(king_square.file, king_square.rank)] = 1;
 
-    auto squares_attacked_by_other = board.all_square_indices_attacked_by(opposite(perspective));
+    auto squares_attacked_by_other = opposite_board.all_square_indices_attacked();
 
     double score = 0.0;
 

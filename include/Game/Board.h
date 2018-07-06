@@ -98,7 +98,7 @@ class Board
         // Methods for gene reference
         bool capture_possible() const;
         bool has_castled(Color player) const;
-        std::array<bool, 64> all_square_indices_attacked_by(Color player) const;
+        std::array<bool, 64> all_square_indices_attacked() const;
         size_t number_of_promoted_pawns(Color color) const;
 
         static const Piece* get_piece(Piece_Type piece_type, Color color);
@@ -117,6 +117,7 @@ class Board
         // Information cache for gene reference
         std::array<bool, 2> already_castled;
         std::array<size_t, 2> promoted_pawns_count;
+        std::array<bool, 64> attacked_indices;
         bool capturing_move_available;
 
         // Pieces

@@ -6,7 +6,7 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 
-double King_Protection_Gene::score_board(const Board& board) const
+double King_Protection_Gene::score_board(const Board& board, const Board&) const
 {
     // Count the number of empty squares from which a piece could attack the king. This
     // is a measure of the exposure of the king

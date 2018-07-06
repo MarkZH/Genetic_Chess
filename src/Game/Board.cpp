@@ -718,26 +718,8 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
     return Threat_Generator(file, rank, opposite(king_color), *this).empty();
 }
 
-std::array<bool, 64> Board::all_square_indices_attacked_by(Color player) const
+std::array<bool, 64> Board::all_square_indices_attacked() const
 {
-    std::array<bool, 64> attacked_indices{};
-
-    for(char file = 'a'; file <= 'h'; ++file)
-    {
-        for(int rank = 1; rank <= 8; ++rank)
-        {
-            auto piece = piece_on_square(file, rank);
-            if(piece && piece->color() == player)
-            {
-                auto attacked_squares = piece->all_attacked_squares(file, rank, *this);
-                for(size_t i = 0; i < attacked_squares.size(); ++i)
-                {
-                    attacked_indices[i] = attacked_indices[i] || attacked_squares[i];
-                }
-            }
-        }
-    }
-
     return attacked_indices;
 }
 
@@ -1205,6 +1187,8 @@ void Board::recreate_move_caches()
     other_moves_cache.clear();
     legal_moves_cache.clear();
     refresh_checking_squares();
+    attacked_indices = {};
+    assert(std::all_of(attacked_indices.begin(), attacked_indices.end(), [](auto x){return ! x;}));
 
     bool en_passant_legal = false;
     capturing_move_available = false;
@@ -1221,6 +1205,10 @@ void Board::recreate_move_caches()
                     {
                         legal_moves_cache.push_back(move);
 
+                        if(move->can_capture())
+                        {
+                            attacked_indices[board_index(move->end_file(), move->end_rank())] = true;
+                        }
                         capturing_move_available = capturing_move_available
                             || piece_on_square(move->end_file(), move->end_rank()) != nullptr
                             || move->is_en_passant();

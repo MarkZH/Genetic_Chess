@@ -23,7 +23,7 @@ class Opponent_Pieces_Targeted_Gene : public Gene
     private:
         const Piece_Strength_Gene* piece_strenth_source;
 
-        double score_board(const Board& board) const override;
+        double score_board(const Board& board, const Board& opposite_board) const override;
 };
 
 #endif // OPPONENT_PIECES_TARGETED_GENE_H

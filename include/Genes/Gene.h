@@ -19,7 +19,7 @@ class Gene
         void read_from(const std::string& file_name);
 
         void mutate();
-        double evaluate(const Board& board) const;
+        double evaluate(const Board& board, const Board& opposite_board) const;
         virtual std::unique_ptr<Gene> duplicate() const = 0;
 
         virtual std::string name() const = 0;
@@ -39,7 +39,7 @@ class Gene
         void make_priority_positive();
 
     private:
-        virtual double score_board(const Board& board) const = 0;
+        virtual double score_board(const Board& board, const Board& opposite_board) const = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
         virtual void gene_specific_mutation();
 

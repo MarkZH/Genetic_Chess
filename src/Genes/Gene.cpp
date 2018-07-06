@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 
+#include "Game/Board.h"
 #include "Game/Color.h"
 #include "Utility.h"
 
@@ -103,9 +104,9 @@ void Gene::gene_specific_mutation()
 {
 }
 
-double Gene::evaluate(const Board& board) const
+double Gene::evaluate(const Board& board, const Board& opposite_board) const
 {
-    return priority*score_board(board);
+    return priority*score_board(board, opposite_board);
 }
 
 void Gene::print(std::ostream& os) const
@@ -125,7 +126,9 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 
 bool Gene::test(const Board& board, double expected_score) const
 {
-    auto result = score_board(board);
+    auto other_board = board;
+    other_board.set_turn(opposite(board.whose_turn()));
+    auto result = score_board(board, other_board);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';
