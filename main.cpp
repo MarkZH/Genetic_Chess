@@ -500,6 +500,7 @@ bool confirm_game_record(const std::string& file_name)
 {
     auto input = std::ifstream(file_name);
     std::string line;
+    auto line_number = 0;
 
     auto expected_winner = NONE;
     auto expect_checkmate = true;
@@ -508,6 +509,7 @@ bool confirm_game_record(const std::string& file_name)
 
     while(std::getline(input, line))
     {
+        ++line_number;
         line = String::strip_block_comment(line, '{', '}');
         line = String::strip_comments(line, ';');
         line = String::remove_extra_whitespace(line);
@@ -540,7 +542,7 @@ bool confirm_game_record(const std::string& file_name)
             }
             else
             {
-                std::cerr << "Malformed Result: " << line << std::endl;
+                std::cerr << "Malformed Result: " << line << " (line: " << line_number << ")" << std::endl;
                 return false;
             }
         }
@@ -575,10 +577,10 @@ bool confirm_game_record(const std::string& file_name)
                 }
 
                 if((move == "1/2-1/2" && expected_winner != NONE) ||
-                    (move == "1-0" && expected_winner != WHITE) ||
+                   (move == "1-0" && expected_winner != WHITE) ||
                    (move == "0-1" && expected_winner != BLACK))
                 {
-                    std::cerr << "Final result mark (" << move << ") does not match game result." << std::endl;
+                    std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")" << std::endl;
                     return false;
                 }
 
@@ -597,7 +599,7 @@ bool confirm_game_record(const std::string& file_name)
                         const Board& temp = board; // to prevent use of non-const private overload
                         if( ! temp.piece_on_square(move_to_submit.end_file(), move_to_submit.end_rank()) && ! move_to_submit.is_en_passant())
                         {
-                            std::cerr << "Move: " << move_number << move << " indicates capture but does not capture." << std::endl;
+                            std::cerr << "Move: " << move_number << move << " indicates capture but does not capture. (line: " << line_number << ")" << std::endl;
                             return false;
                         }
                     }
@@ -607,7 +609,7 @@ bool confirm_game_record(const std::string& file_name)
                     {
                         if( ! board.king_is_in_check())
                         {
-                            std::cerr << "Move (" << move_number << move << ") indicates check but does not check." << std::endl;
+                            std::cerr << "Move (" << move_number << move << ") indicates check but does not check. (line: " << line_number << ")" << std::endl;
                             return false;
                         }
                     }
@@ -616,20 +618,20 @@ bool confirm_game_record(const std::string& file_name)
                     {
                         if(result.get_winner() != opposite(board.whose_turn()))
                         {
-                            std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate." << std::endl;
+                            std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate. (line: " << line_number << ")" << std::endl;
                             return false;
                         }
 
                         if( ! expect_checkmate)
                         {
-                            std::cerr << "Game ends in checkmate, but this is not indicated in headers." << std::endl;
+                            std::cerr << "Game ends in checkmate, but this is not indicated in headers. (line: " << line_number << ")" << std::endl;
                             return false;
                         }
                     }
                 }
                 catch(const Illegal_Move_Exception&)
                 {
-                    std::cerr << "Move (" << move_number << move << ") is illegal." << std::endl;
+                    std::cerr << "Move (" << move_number << move << ") is illegal. (line: " << line_number << ")" << std::endl;
                     return false;
                 }
             }
