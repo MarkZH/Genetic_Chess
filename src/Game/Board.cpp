@@ -718,12 +718,12 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
     return Threat_Generator(file, rank, opposite(king_color), *this).empty();
 }
 
-std::array<bool, 64> Board::all_square_indices_attacked() const
+const std::array<bool, 64>& Board::all_square_indices_attacked() const
 {
     return attacked_indices;
 }
 
-std::array<bool, 64> Board::other_square_indices_attacked() const
+const std::array<bool, 64>& Board::other_square_indices_attacked() const
 {
     return other_attacked_indices;
 }
