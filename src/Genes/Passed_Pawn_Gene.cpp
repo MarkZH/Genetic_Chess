@@ -24,30 +24,25 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&) const
             if(piece == own_pawn)
             {
                 auto rank_step = (board.whose_turn() == WHITE ? 1 : -1);
-                auto last_rank = (board.whose_turn() == WHITE ? 8 : 1);
-                auto left_file = std::max('a', char(file - 1));
+                auto last_rank = (board.whose_turn() == WHITE ? 7 :  2);
+                auto left_file  = std::max('a', char(file - 1));
                 auto right_file = std::min('h', char(file + 1));
 
-                auto possible_passed_pawn = true;
-                for(int pawn_rank = rank + rank_step;
-                    possible_passed_pawn && pawn_rank != last_rank;
-                    pawn_rank += rank_step)
-                {
-                    for(char pawn_file = left_file;
-                        possible_passed_pawn && pawn_file <= right_file;
+                score += 1.0;
+                for(char pawn_file = left_file;
+                        pawn_file <= right_file;
                         ++pawn_file)
+                {
+                    for(int pawn_rank = rank + rank_step;
+                        pawn_rank != last_rank;
+                        pawn_rank += rank_step)
                     {
-                        auto check_piece = board.piece_on_square(pawn_file, pawn_rank);
-                        if(check_piece == other_pawn)
+                        if(board.piece_on_square(pawn_file, pawn_rank) == other_pawn)
                         {
-                            possible_passed_pawn = false;
+                            score -= (file == 'a' || file == 'h' ? 0.5 : 1.0/3.0);
+                            break;
                         }
                     }
-                }
-
-                if(possible_passed_pawn)
-                {
-                    score += 1;
                 }
             }
         }
