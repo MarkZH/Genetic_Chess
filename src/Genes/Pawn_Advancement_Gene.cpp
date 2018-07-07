@@ -12,6 +12,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Board&) cons
 {
     double score = board.number_of_promoted_pawns(board.whose_turn())*6;
     auto perspective = board.whose_turn();
+    auto own_pawn = board.get_piece(PAWN, perspective);
     int home_rank = (perspective == WHITE ? 2 : 7);
 
     for(char file = 'a'; file <= 'h'; ++file)
@@ -19,7 +20,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Board&) cons
         for(int rank = 2; rank <= 7; ++rank)
         {
             auto piece = board.piece_on_square(file, rank);
-            if(piece && piece->color() == perspective && piece->type() == PAWN)
+            if(piece == own_pawn)
             {
                 // 1 point per move towards promotion
                 score += std::abs(home_rank - rank);
