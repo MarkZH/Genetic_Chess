@@ -13,13 +13,15 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&) const
     // Counts the number of passed pawns. A passed pawn is one with
     // no enemy pawns on the same or adjacent files ahead of it.
     double score = board.number_of_promoted_pawns(board.whose_turn());
+    auto own_pawn = board.get_piece(PAWN, board.whose_turn());
+    auto other_pawn = board.get_piece(PAWN, opposite(board.whose_turn()));
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 2; rank <= 7; ++rank)
         {
             auto piece = board.piece_on_square(file, rank);
-            if(piece && piece->type() == PAWN && piece->color() == board.whose_turn())
+            if(piece == own_pawn)
             {
                 auto rank_step = (board.whose_turn() == WHITE ? 1 : -1);
                 auto last_rank = (board.whose_turn() == WHITE ? 8 : 1);
@@ -36,9 +38,7 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&) const
                         ++pawn_file)
                     {
                         auto check_piece = board.piece_on_square(pawn_file, pawn_rank);
-                        if(check_piece &&
-                           check_piece->type() == PAWN &&
-                           check_piece->color() == opposite(board.whose_turn()))
+                        if(check_piece == other_pawn)
                         {
                             possible_passed_pawn = false;
                         }
