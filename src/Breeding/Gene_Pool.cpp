@@ -446,13 +446,9 @@ void pause_gene_pool(int signal)
     {
         action = "pausing";
     }
-    else if(signal_activated == SIGINT)
-    {
-        action = "exiting";
-    }
     else
     {
-        throw std::runtime_error("Unexpected signal received: " + std::to_string(signal));
+        action = "exiting";
     }
 
     std::cout << std::endl << "Waiting for games to end and be recorded before " << action << " ..." << std::endl;
