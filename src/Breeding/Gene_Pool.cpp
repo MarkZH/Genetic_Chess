@@ -17,7 +17,7 @@
 #include "Utility.h"
 
 static sig_atomic_t signal_activated = 0;
-void pause_gene_pool(int);
+void pause_gene_pool(int signal);
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
 
 template<typename Stat>
@@ -146,6 +146,7 @@ void gene_pool(const std::string& config_file = "")
 
     // Ctrl-C to pause gene pool
     signal(SIGINT, pause_gene_pool);
+    signal(SIGTSTP, pause_gene_pool);
 
     // Indices in gene pool to be shuffled for game match-ups
     std::vector<size_t> pool_indices(gene_pool_population);
@@ -362,19 +363,16 @@ void gene_pool(const std::string& config_file = "")
         best_ai.print(best_file);
 
         // Pause gene pool
-        if(signal_activated == 1)
+        if(signal_activated == SIGTSTP)
         {
             std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
             std::cin.get();
+            signal_activated = 0;
         }
 
-        if(signal_activated >= 2)
+        if(signal_activated != 0)
         {
             return;
-        }
-        else
-        {
-            signal_activated = 0;
         }
 
         game_count[pool_index] += results.size();
@@ -435,22 +433,29 @@ void gene_pool(const std::string& config_file = "")
 }
 
 
-void pause_gene_pool(int)
+void pause_gene_pool(int signal)
 {
-    ++signal_activated;
-    if(signal_activated == 1)
+    if(signal == signal_activated)
     {
-        std::cout << std::endl << "Waiting for games to end and be recorded before pausing..." << std::endl;
+        return;
     }
-    else if(signal_activated == 2)
+
+    signal_activated = signal;
+    std::string action;
+    if(signal_activated == SIGTSTP)
     {
-        std::cout << std::endl << "Waiting for games to end and be recorded before exiting ..." << std::endl;
+        action = "pausing";
+    }
+    else if(signal_activated == SIGINT)
+    {
+        action = "exiting";
     }
     else
     {
-        std::cout << std::endl << "Exiting ..." << std::endl;
-        exit(1);
+        throw std::runtime_error("Unexpected signal received: " + std::to_string(signal));
     }
+
+    std::cout << std::endl << "Waiting for games to end and be recorded before " << action << " ..." << std::endl;
 }
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
