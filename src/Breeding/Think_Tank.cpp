@@ -17,7 +17,7 @@
 #include "Utility.h"
 
 static sig_atomic_t signal_activated = 0;
-void pause_think_tank(int);
+void pause_think_tank(int signal);
 
 using Think_Tank = std::vector<Neural_AI>;
 std::vector<Think_Tank> load_think_tank_file(const std::string& load_file, size_t tank_population);
@@ -144,6 +144,7 @@ void think_tank(const std::string& config_file = "")
 
     // Ctrl-C to pause think tank
     signal(SIGINT, pause_think_tank);
+    signal(SIGTSTP, pause_think_tank);
 
     // Indices in think tank to be shuffled for game match-ups
     std::vector<size_t> tank_indices(think_tank_population);
@@ -151,23 +152,17 @@ void think_tank(const std::string& config_file = "")
 
     for(size_t tank_index = 0; true; tank_index = (tank_index + 1) % tanks.size()) // run forever
     {
-        if(tank_index == 0)
+        // Pause gene pool
+        if(signal_activated == SIGTSTP)
         {
-            // Pause think tank
-            if(signal_activated == 1)
-            {
-                std::cout << "Think tank paused. Press Enter to continue ..." << std::endl;
-                std::cin.get();
-            }
+            std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
+            std::cin.get();
+            signal_activated = 0;
+        }
 
-            if(signal_activated >= 2)
-            {
-                return;
-            }
-            else
-            {
-                signal_activated = 0;
-            }
+        if(signal_activated != 0)
+        {
+            return;
         }
 
         auto& tank = tanks[tank_index];
@@ -400,22 +395,25 @@ void think_tank(const std::string& config_file = "")
 }
 
 
-void pause_think_tank(int)
+void pause_think_tank(int signal)
 {
-    ++signal_activated;
-    if(signal_activated == 1)
+    if(signal == signal_activated)
     {
-        std::cout << std::endl << "Waiting for games to end and be recorded before pausing..." << std::endl;
+        return;
     }
-    else if(signal_activated == 2)
+
+    signal_activated = signal;
+    std::string action;
+    if(signal_activated == SIGTSTP)
     {
-        std::cout << std::endl << "Waiting for games to end and be recorded before exiting ..." << std::endl;
+        action = "pausing";
     }
     else
     {
-        std::cout << std::endl << "Exiting ..." << std::endl;
-        exit(1);
+        action = "exiting";
     }
+
+    std::cout << std::endl << "Waiting for games to end and be recorded before " << action << " ..." << std::endl;
 }
 
 std::vector<Think_Tank> load_think_tank_file(const std::string& load_file, size_t tank_population)
@@ -431,7 +429,7 @@ std::vector<Think_Tank> load_think_tank_file(const std::string& load_file, size_
     std::cout << "Loading think tank file: " << load_file << " ..." << std::endl;
     std::string line;
     std::vector<Think_Tank> result;
-    
+
     while(ifs)
     {
         if(result.empty() || result.back().size() == tank_population)
