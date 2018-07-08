@@ -34,13 +34,9 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&) const
                 auto left_file  = std::max('a', char(file - 1));
                 auto right_file = std::min('h', char(file + 1));
 
-                for(char pawn_file = left_file;
-                        pawn_file <= right_file;
-                        ++pawn_file)
+                for(char pawn_file = left_file; pawn_file <= right_file; ++pawn_file)
                 {
-                    for(int pawn_rank = rank + rank_step;
-                        pawn_rank != last_rank;
-                        pawn_rank += rank_step)
+                    for(int pawn_rank = rank + rank_step; pawn_rank != last_rank; pawn_rank += rank_step)
                     {
                         if(board.piece_on_square(pawn_file, pawn_rank) == other_pawn)
                         {
