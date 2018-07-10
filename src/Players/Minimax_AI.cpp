@@ -135,6 +135,11 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         still_on_principal_variation = false;
     }
 
+    // Consider capturing moves first after principal variation move
+    auto partition_start = std::next(all_legal_moves.begin(), still_on_principal_variation ? 1 : 0);
+    std::partition(partition_start, all_legal_moves.end(),
+                   [&board](auto move){ return board.move_captures(*move); });
+
     auto perspective = board.whose_turn();
     auto moves_left = all_legal_moves.size();
 

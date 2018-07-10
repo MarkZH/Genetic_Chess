@@ -94,6 +94,7 @@ class Board
         Square piece_is_pinned(char file, int rank) const; // returns pinning square or {'\0', 0} if none
         bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
         bool enough_material_to_checkmate() const;
+        bool move_captures(const Move& move) const;
 
         // Methods for gene reference
         bool capture_possible() const;

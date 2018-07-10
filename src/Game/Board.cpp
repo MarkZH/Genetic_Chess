@@ -1429,6 +1429,18 @@ bool Board::capture_possible() const
     return capturing_move_available;
 }
 
+bool Board::move_captures(const Move& move) const
+{
+    auto attacked_piece = piece_on_square(move.end_file(), move.end_rank());
+
+    // Assert move is actually legal
+    assert(is_in_legal_moves_list(move));
+    assert(attacked_piece == nullptr ||
+           (move.can_capture() && attacked_piece->color() == opposite(whose_turn())));
+
+    return attacked_piece != nullptr;
+}
+
 bool Board::king_multiply_checked() const
 {
     return checking_squares.size() > 1;
