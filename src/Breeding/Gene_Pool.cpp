@@ -367,6 +367,10 @@ void gene_pool(const std::string& config_file = "")
         {
             std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
             std::cin.get();
+            if(signal_activated == SIGINT)
+            {
+                return;
+            }
             signal_activated = 0;
         }
 

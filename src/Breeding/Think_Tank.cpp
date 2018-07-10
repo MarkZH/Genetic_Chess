@@ -152,11 +152,15 @@ void think_tank(const std::string& config_file = "")
 
     for(size_t tank_index = 0; true; tank_index = (tank_index + 1) % tanks.size()) // run forever
     {
-        // Pause gene pool
+        // Pause think tank
         if(signal_activated == SIGTSTP)
         {
             std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
             std::cin.get();
+            if(signal_activated == SIGINT)
+            {
+                return;
+            }
             signal_activated = 0;
         }
 
