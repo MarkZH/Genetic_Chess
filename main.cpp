@@ -8,13 +8,11 @@
 #include "Game/Game_Result.h"
 
 #include "Players/Genetic_AI.h"
-#include "Players/Neural_AI.h"
 #include "Players/Human_Player.h"
 #include "Players/Random_AI.h"
 #include "Players/Outside_Player.h"
 
 #include "Breeding/Gene_Pool.h"
-#include "Breeding/Think_Tank.h"
 
 #include "Stalemate_Search.h"
 
@@ -47,16 +45,6 @@ int main(int argc, char *argv[])
                 }
 
                 gene_pool(gene_pool_config_file_name);
-            }
-            else if(std::string(argv[1]) == "-thinktank")
-            {
-                std::string think_tank_config_file_name;
-                if(argc > 2)
-                {
-                    think_tank_config_file_name = argv[2];
-                }
-
-                think_tank(think_tank_config_file_name);
             }
             else if(std::string(argv[1]) == "-replay")
             {
@@ -158,50 +146,6 @@ int main(int argc, char *argv[])
                             else
                             {
                                 latest = std::make_unique<Genetic_AI>(filename, id);
-                                i += 2;
-                            }
-                        }
-                    }
-                    else if(opt == "-neuro")
-                    {
-                        std::string filename;
-                        int id = -1;
-                        if(i + 1 < argc)
-                        {
-                            filename = argv[i+1];
-                            if(filename.front() == '-')
-                            {
-                                filename.clear();
-                            }
-                        }
-
-                        if(i + 2 < argc)
-                        {
-                            try
-                            {
-                                id = std::stoi(argv[i+2]);
-                            }
-                            catch(const std::exception&)
-                            {
-                            }
-                        }
-
-                        if(filename.empty())
-                        {
-                            latest = std::make_unique<Neural_AI>();
-                            static_cast<Neural_AI*>(latest.get())->mutate(1000);
-                            static_cast<const Neural_AI*>(latest.get())->print("single_game_player.txt");
-                        }
-                        else
-                        {
-                            if(id < 0)
-                            {
-                                latest = std::make_unique<Neural_AI>(filename, find_last_id(filename));
-                                i += 1;
-                            }
-                            else
-                            {
-                                latest = std::make_unique<Neural_AI>(filename, id);
                                 i += 2;
                             }
                         }
