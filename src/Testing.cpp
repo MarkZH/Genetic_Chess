@@ -1212,17 +1212,8 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
             std::cout << '\r' << line_prefix << '[';
             ++current_count;
             int squares_to_draw = (total_squares*current_count)/first_move_count;
-            for(int i = 0; i < total_squares; ++i)
-            {
-                if(i < squares_to_draw)
-                {
-                    std::cout << '#';
-                }
-                else
-                {
-                    std::cout << ' ';
-                }
-            }
+            std::cout << std::string(squares_to_draw, '#');
+            std::cout << std::string(total_squares - squares_to_draw, ' ');
             std::cout << ']' << std::flush;
         }
         auto next_board = board;
