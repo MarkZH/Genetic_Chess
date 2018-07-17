@@ -14,8 +14,6 @@
 
 #include "Breeding/Gene_Pool.h"
 
-#include "Stalemate_Search.h"
-
 #include "Exceptions/Illegal_Move_Exception.h"
 
 #include "Utility.h"
@@ -63,10 +61,6 @@ int main(int argc, char *argv[])
                     std::cout << "Provide a file containing a game to replay." << std::endl;
                     return 1;
                 }
-            }
-            else if(std::string(argv[1]) == "-stalemate")
-            {
-                stalemate_search_start();
             }
             else if(std::string(argv[1]) == "-confirm")
             {
@@ -233,8 +227,6 @@ void print_help()
               << "\t\tStep through a PGN game file, drawing the board after each\n\t\tmove with an option to begin playing at any time." << std::endl << std::endl
               << "\t-confirm [filename]" << std::endl
               << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates." << std::endl << std::endl
-              << "\t-stalemate" << std::endl
-              << "\t\tBegin a search for the shortest possible stalemate--i.e., where\n\t\tthe player to move has no legal moves. Estimated time to\n\t\tcompletion: months." << std::endl << std::endl
               << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying." << std::endl << std::endl
               << "\t-human" << std::endl
               << "\t\tSpecify a human player for a game." << std::endl << std::endl
