@@ -10,6 +10,7 @@
 #include <array>
 #include <mutex>
 #include <sstream>
+#include <numeric>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
