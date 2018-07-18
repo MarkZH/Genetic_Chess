@@ -18,6 +18,13 @@
 
 static sig_atomic_t signal_activated = 0;
 void pause_gene_pool(int signal);
+const auto PAUSE_SIGNAL =
+#ifdef __linux__
+SIGTSTP;
+#elif _WIN32
+SIGBREAK;
+#endif
+
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
 
 template<typename Stat>
@@ -146,7 +153,7 @@ void gene_pool(const std::string& config_file = "")
 
     // Ctrl-C to pause gene pool
     signal(SIGINT, pause_gene_pool);
-    signal(SIGTSTP, pause_gene_pool);
+    signal(PAUSE_SIGNAL, pause_gene_pool);
 
     // Indices in gene pool to be shuffled for game match-ups
     std::vector<size_t> pool_indices(gene_pool_population);
@@ -363,7 +370,7 @@ void gene_pool(const std::string& config_file = "")
         best_ai.print(best_file);
 
         // Pause gene pool
-        if(signal_activated == SIGTSTP)
+        if(signal_activated == PAUSE_SIGNAL)
         {
             std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
             std::cin.get();
@@ -446,7 +453,7 @@ void pause_gene_pool(int signal)
 
     signal_activated = signal;
     std::string action;
-    if(signal_activated == SIGTSTP)
+    if(signal_activated == PAUSE_SIGNAL)
     {
         action = "pausing";
     }
