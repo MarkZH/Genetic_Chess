@@ -198,7 +198,6 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Breeding\Gene_Pool.cpp" />
-    <ClCompile Include="src\Breeding\Think_Tank.cpp" />
     <ClCompile Include="src\exceptions\Game_Ending_Exception.cpp" />
     <ClCompile Include="src\exceptions\Illegal_Move_Exception.cpp" />
     <ClCompile Include="src\game\Board.cpp" />
@@ -246,19 +245,15 @@
     <ClCompile Include="src\players\Genetic_AI.cpp" />
     <ClCompile Include="src\players\Human_Player.cpp" />
     <ClCompile Include="src\Players\Minimax_AI.cpp" />
-    <ClCompile Include="src\Players\Neural_AI.cpp" />
-    <ClCompile Include="src\Players\Neural_Net.cpp" />
     <ClCompile Include="src\players\Outside_Player.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
     <ClCompile Include="src\players\Random_AI.cpp" />
     <ClCompile Include="src\players\UCI_Mediator.cpp" />
-    <ClCompile Include="src\Stalemate_Search.cpp" />
     <ClCompile Include="src\Testing.cpp" />
     <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Breeding\Gene_Pool.h" />
-    <ClInclude Include="include\Breeding\Think_Tank.h" />
     <ClInclude Include="include\exceptions\Game_Ending_Exception.h" />
     <ClInclude Include="include\exceptions\Illegal_Move_Exception.h" />
     <ClInclude Include="include\exceptions\Promotion_Exception.h" />
@@ -307,14 +302,11 @@
     <ClInclude Include="include\players\Genetic_AI.h" />
     <ClInclude Include="include\players\Human_Player.h" />
     <ClInclude Include="include\Players\Minimax_AI.h" />
-    <ClInclude Include="include\Players\Neural_AI.h" />
-    <ClInclude Include="include\Players\Neural_Net.h" />
     <ClInclude Include="include\players\Outside_Player.h" />
     <ClInclude Include="include\players\Player.h" />
     <ClInclude Include="include\players\Random_AI.h" />
     <ClInclude Include="include\players\Thinking.h" />
     <ClInclude Include="include\players\UCI_Mediator.h" />
-    <ClInclude Include="include\Stalemate_Search.h" />
     <ClInclude Include="include\Testing.h" />
     <ClInclude Include="include\Utility.h" />
   </ItemGroup>
