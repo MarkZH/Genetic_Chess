@@ -238,9 +238,7 @@
     <ClCompile Include="src\pieces\Piece.cpp" />
     <ClCompile Include="src\pieces\Queen.cpp" />
     <ClCompile Include="src\pieces\Rook.cpp" />
-    <ClCompile Include="src\players\Alan_Turing_AI.cpp" />
     <ClCompile Include="src\players\CECP_Mediator.cpp" />
-    <ClCompile Include="src\players\Claude_Shannon_AI.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
     <ClCompile Include="src\players\Genetic_AI.cpp" />
     <ClCompile Include="src\players\Human_Player.cpp" />
@@ -295,9 +293,7 @@
     <ClInclude Include="include\pieces\Piece.h" />
     <ClInclude Include="include\pieces\Queen.h" />
     <ClInclude Include="include\pieces\Rook.h" />
-    <ClInclude Include="include\players\Alan_Turing_AI.h" />
     <ClInclude Include="include\players\CECP_Mediator.h" />
-    <ClInclude Include="include\players\Claude_Shannon_AI.h" />
     <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
     <ClInclude Include="include\players\Genetic_AI.h" />
     <ClInclude Include="include\players\Human_Player.h" />
