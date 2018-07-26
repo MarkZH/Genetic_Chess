@@ -8,27 +8,6 @@ R: 8
 Q: 16
 K: 32
 
-Name: Look Ahead Gene
-Capturing Speculation Constant: 0.25
-Game Length Uncertainty: 0.5
-Mean Game Length: 50
-Speculation Constant: 0.5
-
-Name Priority Threshold Gene
-Threshold: 0
-
-Name: Total Force Gene
-Priority: 1
-
-Name: Freedom to Move Gene
-Priority: 1
-
-Name: Pawn Advancement Gene
-Priority: 1
-
-Name: Opponent Pieces Targeted Gene
-Priority: 1
-
 Name: Sphere of Influence Gene
 King Target Factor: 2
 Legal Bonus: 4
@@ -38,9 +17,6 @@ Name: King Confinement Gene
 Enemy Block Score: -1
 Free Square Score: 2
 Friendly Block Score: 4
-Priority: 1
-
-Name: King Protection Gene
 Priority: 1
 
 Name: Castling Possible Gene
