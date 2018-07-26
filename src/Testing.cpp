@@ -26,6 +26,7 @@
 #include "Genes/Sphere_of_Influence_Gene.h"
 #include "Genes/Total_Force_Gene.h"
 #include "Genes/Stacked_Pawns_Gene.h"
+#include "Genes/Pawn_Islands_Gene.h"
 
 #include "Utility.h"
 
@@ -603,6 +604,10 @@ void run_tests()
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
     tests_passed &= stacked_pawns_gene.test(stacked_pawns_board, -3.0);
+
+    auto pawn_islands_gene = Pawn_Islands_Gene();
+    auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
+    tests_passed &= pawn_islands_gene.test(pawn_islands_board, -3.0);
 
     // Test board information sources
     auto promotion_board = Board("8/k6P/8/8/8/8/8/K7 w - - 0 1");
