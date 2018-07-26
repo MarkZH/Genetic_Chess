@@ -25,6 +25,7 @@
 #include "Genes/Piece_Strength_Gene.h"
 #include "Genes/Sphere_of_Influence_Gene.h"
 #include "Genes/Total_Force_Gene.h"
+#include "Genes/Stacked_Pawns_Gene.h"
 
 #include "Utility.h"
 
@@ -598,6 +599,10 @@ void run_tests()
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
     tests_passed &= total_force_gene.test(Board(), 1.0 + 32/piece_strength_normalizer);
+
+    auto stacked_pawns_gene = Stacked_Pawns_Gene();
+    auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
+    tests_passed &= stacked_pawns_gene.test(stacked_pawns_board, -3.0);
 
     // Test board information sources
     auto promotion_board = Board("8/k6P/8/8/8/8/8/K7 w - - 0 1");

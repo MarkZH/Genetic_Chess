@@ -23,6 +23,7 @@
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 #include "Genes/Priority_Threshold_Gene.h"
+#include "Genes/Stacked_Pawns_Gene.h"
 
 
 // Creation ex nihilo
@@ -50,6 +51,7 @@ Genome::Genome()
     genome.emplace_back(std::make_unique<King_Confinement_Gene>());
     genome.emplace_back(std::make_unique<King_Protection_Gene>());
     genome.emplace_back(std::make_unique<Castling_Possible_Gene>());
+    genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
 }
 
 // Cloning
