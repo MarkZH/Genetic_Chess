@@ -223,8 +223,8 @@ void print_help()
               << "Options:" << std::endl
               << "\t-genepool [file name]" << std::endl
               << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name." << std::endl << std::endl
-              << "\t-replay [filename]" << std::endl
-              << "\t\tStep through a PGN game file, drawing the board after each\n\t\tmove with an option to begin playing at any time." << std::endl << std::endl
+              << "\t-replay [filename] [game number]" << std::endl
+              << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time." << std::endl << std::endl
               << "\t-confirm [filename]" << std::endl
               << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates." << std::endl << std::endl
               << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying." << std::endl << std::endl

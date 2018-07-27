@@ -102,7 +102,7 @@ std::string CECP_Mediator::receive_move(const Clock& clock) const
             {
                 winner = BLACK;
             }
-            auto data = String::split(move, " ")[1];
+            auto data = String::split(String::split(move, "{", 1)[1], "}", 1)[0];
             throw Game_Ending_Exception(winner, data);
         }
         else if(String::starts_with(move, "time") || String::starts_with(move, "otim"))
