@@ -34,7 +34,7 @@
 
 // Declaration to silence warnings
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
-size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix, const std::string& file_name);
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix);
 
 void run_tests()
 {
@@ -1109,7 +1109,7 @@ void run_tests()
               });
 
     auto test_number = 0;
-    auto perft_suite_output_file_name = "";
+    auto perft_timer = Scoped_Stopwatch("");
     for(const auto& line : lines)
     {
         auto perft_test_passed = true;
@@ -1131,7 +1131,7 @@ void run_tests()
                 continue;
             }
             auto expected_leaves = std::stoul(depth_leaves.back());
-            auto leaf_count = move_count(perft_board, depth, prefix, perft_suite_output_file_name);
+            auto leaf_count = move_count(perft_board, depth, prefix);
             if(leaf_count != expected_leaves)
             {
                 std::cerr << " Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
@@ -1150,6 +1150,8 @@ void run_tests()
             break;
         }
     }
+
+    std::cout << "Perft time: " << perft_timer.time_so_far() << std::endl;
 
 
     if(tests_passed)
@@ -1191,18 +1193,14 @@ bool files_are_identical(const std::string& file_name1, const std::string& file_
     return true;
 }
 
-size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix, const std::string& file_name)
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix)
 {
     if(maximum_depth == 0)
     {
-        if( ! file_name.empty())
-        {
-            board.print_game_record(nullptr, nullptr, file_name, {}, 0, 0, 0, {});
-        }
         return 1;
     }
 
-    if(maximum_depth == 1 && file_name.empty())
+    if(maximum_depth == 1)
     {
         if(board.get_game_record().empty())
         {
@@ -1228,7 +1226,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
         }
         auto next_board = board;
         next_board.submit_move(*move);
-        count += move_count(next_board, maximum_depth - 1, line_prefix, file_name);
+        count += move_count(next_board, maximum_depth - 1, line_prefix);
     }
 
     return count;
