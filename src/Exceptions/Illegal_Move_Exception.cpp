@@ -1,10 +1,8 @@
 #include "Exceptions/Illegal_Move_Exception.h"
 
-Illegal_Move_Exception::Illegal_Move_Exception(const std::string& reason) : message(reason)
-{
-}
+#include <stdexcept>
+#include <string>
 
-const char* Illegal_Move_Exception::what() const noexcept
+Illegal_Move_Exception::Illegal_Move_Exception(const std::string& reason) : std::runtime_error(reason)
 {
-    return message.c_str();
 }

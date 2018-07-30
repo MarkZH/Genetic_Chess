@@ -216,9 +216,11 @@
     <ClCompile Include="src\genes\Opponent_Pieces_Targeted_Gene.cpp" />
     <ClCompile Include="src\Genes\Passed_Pawn_Gene.cpp" />
     <ClCompile Include="src\genes\Pawn_Advancement_Gene.cpp" />
+    <ClCompile Include="src\Genes\Pawn_Islands_Gene.cpp" />
     <ClCompile Include="src\genes\Piece_Strength_Gene.cpp" />
     <ClCompile Include="src\Genes\Priority_Threshold_Gene.cpp" />
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
+    <ClCompile Include="src\Genes\Stacked_Pawns_Gene.cpp" />
     <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
     <ClCompile Include="src\moves\En_Passant.cpp" />
     <ClCompile Include="src\moves\Kingside_Castle.cpp" />
@@ -247,7 +249,6 @@
     <ClCompile Include="src\players\Outside_Player.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
     <ClCompile Include="src\players\Random_AI.cpp" />
-    <ClCompile Include="src\players\UCI_Mediator.cpp" />
     <ClCompile Include="src\Testing.cpp" />
     <ClCompile Include="src\Utility.cpp" />
   </ItemGroup>
@@ -272,9 +273,11 @@
     <ClInclude Include="include\genes\Opponent_Pieces_Targeted_Gene.h" />
     <ClInclude Include="include\Genes\Passed_Pawn_Gene.h" />
     <ClInclude Include="include\genes\Pawn_Advancement_Gene.h" />
+    <ClInclude Include="include\Genes\Pawn_Islands_Gene.h" />
     <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
     <ClInclude Include="include\Genes\Priority_Threshold_Gene.h" />
     <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
+    <ClInclude Include="include\Genes\Stacked_Pawns_Gene.h" />
     <ClInclude Include="include\genes\Total_Force_Gene.h" />
     <ClInclude Include="include\moves\En_Passant.h" />
     <ClInclude Include="include\moves\Kingside_Castle.h" />
@@ -304,7 +307,6 @@
     <ClInclude Include="include\players\Player.h" />
     <ClInclude Include="include\players\Random_AI.h" />
     <ClInclude Include="include\players\Thinking.h" />
-    <ClInclude Include="include\players\UCI_Mediator.h" />
     <ClInclude Include="include\Testing.h" />
     <ClInclude Include="include\Utility.h" />
   </ItemGroup>
