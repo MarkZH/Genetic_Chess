@@ -1,19 +1,13 @@
 #ifndef ILLEGAL_MOVE_EXCEPTION_H
 #define ILLEGAL_MOVE_EXCEPTION_H
 
-#include <exception>
+#include <stdexcept>
 #include <string>
 
-
-class Illegal_Move_Exception : public std::exception
+class Illegal_Move_Exception : public std::runtime_error
 {
     public:
         explicit Illegal_Move_Exception(const std::string& reason);
-
-        const char * what() const noexcept override;
-
-    private:
-        std::string message;
 };
 
 #endif // ILLEGAL_MOVE_EXCEPTION_H
