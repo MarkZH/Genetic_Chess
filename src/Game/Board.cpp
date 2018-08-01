@@ -60,7 +60,6 @@ const Piece* Board::get_piece(Piece_Type piece_type, Color color)
     return all_pieces[piece_type][color];
 }
 
-thread_local std::array<uint64_t, 101> Board::repeat_count{};
 std::mutex Board::hash_lock;
 bool Board::hash_values_initialized = false;
 std::array<std::map<const Piece*, uint64_t>, 64> Board::square_hash_values{};
@@ -71,7 +70,6 @@ std::array<uint64_t, 2> Board::color_hash_values{}; // for whose_turn() hashing
 
 Board::Board() :
     board{},
-    insertion_point{0},
     turn_color(WHITE),
     unmoved_positions{},
     en_passant_target({'\0', 0}),
@@ -111,13 +109,12 @@ Board::Board() :
     assert(king_location[WHITE]);
     assert(king_location[BLACK]);
 
-    record_board_hash(get_board_hash()); // Count initial position
+    ++repeat_count[get_board_hash()]; // Count initial position
     recreate_move_caches();
 }
 
 Board::Board(const std::string& fen) :
     board{},
-    insertion_point{0},
     turn_color(WHITE),
     unmoved_positions{},
     en_passant_target({'\0', 0}),
@@ -237,12 +234,12 @@ Board::Board(const std::string& fen) :
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
     auto fifty_move_count = std::stoul(fen_parse.at(4));
-    while(board_hash_record_size() < fifty_move_count)
+    while(repeat_count.size() < fifty_move_count)
     {
-        record_board_hash(Random::random_unsigned_int64());
+        repeat_count[Random::random_unsigned_int64()] = 1;
     }
 
-    record_board_hash(get_board_hash()); // Count initial position
+    ++repeat_count[get_board_hash()]; // Count initial position
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
@@ -321,7 +318,11 @@ std::string Board::fen_status() const
 {
     std::string s = board_status() + " ";
 
-    int moves_since_pawn_or_capture = board_hash_record_size() - 1; // -1 to not count current state of board
+    int moves_since_pawn_or_capture = -1; // -1 to not count current state of board
+    for(const auto& board_count : repeat_count)
+    {
+        moves_since_pawn_or_capture += board_count.second;
+    }
     s.append(std::to_string(moves_since_pawn_or_capture));
     s.push_back(' ');
     if(starting_fen.empty())
@@ -411,20 +412,20 @@ Game_Result Board::submit_move(const Move& move)
 
     // An insufficient material draw can only happen after a capture
     // or a pawn promotion to a minor piece, both of which clear the
-    // repeat_count.
-    if(board_hash_record_size() == 0 && ! enough_material_to_checkmate())
+    // repeat_count map.
+    if(repeat_count.empty() && ! enough_material_to_checkmate())
     {
         return Game_Result(NONE, "Insufficient material");
     }
 
-    auto current_hash = get_board_hash();
-    if(count_previously_seen(current_hash) == 2)
+    if(++repeat_count[get_board_hash()] >= 3)
     {
         return Game_Result(NONE, "Threefold repetition");
     }
-    record_board_hash(current_hash);
 
-    if(board_hash_record_size() >= 101) // "Move" means both players move, 101 including current position
+    int fifty_move_count = std::accumulate(repeat_count.begin(), repeat_count.end(), 0,
+                                           [](auto n, auto iter){ return n + iter.second; });
+    if(fifty_move_count >= 101) // "Move" means both players move, 101 including current position
     {
         return Game_Result(NONE, "50-move limit");
     }
@@ -588,7 +589,7 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
 {
     if(piece_on_square(file_end, rank_end)) // capture
     {
-        clear_board_hash_record();
+        repeat_count.clear();
     }
 
     place_piece(piece_on_square(file_start, rank_start), file_end, rank_end);
@@ -1611,24 +1612,4 @@ bool Board::has_castled(Color player) const
 size_t Board::number_of_promoted_pawns(Color player) const
 {
     return promoted_pawns_count[player];
-}
-
-void Board::record_board_hash(uint64_t new_hash)
-{
-    repeat_count[insertion_point++] = new_hash;
-}
-
-void Board::clear_board_hash_record()
-{
-    insertion_point = 0;
-}
-
-size_t Board::board_hash_record_size() const
-{
-    return insertion_point;
-}
-
-size_t Board::count_previously_seen(uint64_t new_hash) const
-{
-    return std::count(repeat_count.begin(), repeat_count.begin() + insertion_point, new_hash);
 }
