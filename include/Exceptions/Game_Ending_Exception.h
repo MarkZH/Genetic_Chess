@@ -2,6 +2,7 @@
 #define GAME_ENDING_EXCEPTION_H
 
 #include <stdexcept>
+#include <string>
 
 #include "Game/Color.h"
 
