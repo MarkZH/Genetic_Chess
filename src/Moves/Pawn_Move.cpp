@@ -16,5 +16,5 @@ bool Pawn_Move::can_capture() const
 
 void Pawn_Move::side_effects(Board& board) const
 {
-    board.clear_board_hash_record();
+    board.repeat_count.clear();
 }

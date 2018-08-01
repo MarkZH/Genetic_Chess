@@ -107,8 +107,7 @@ class Board
 
     private:
         std::array<const Piece*, 64> board;
-        static thread_local std::array<uint64_t, 101> repeat_count;
-        size_t insertion_point;
+        std::map<uint64_t, int> repeat_count;
         Color turn_color;
         std::vector<const Move*> game_record;
         std::array<bool, 64> unmoved_positions;
@@ -167,11 +166,6 @@ class Board
 
         void initialize_board_hash();
         uint64_t get_board_hash() const;
-
-        void record_board_hash(uint64_t new_hash);
-        void clear_board_hash_record();
-        size_t board_hash_record_size() const;
-        size_t count_previously_seen(uint64_t new_hash) const;
 
         // Hash values for squares
         static std::mutex hash_lock;
