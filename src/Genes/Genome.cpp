@@ -208,10 +208,7 @@ void Genome::mutate()
 
 void Genome::print(std::ostream& os) const
 {
-    for(const auto& gene : genome)
-    {
-        gene->print(os);
-    }
+    std::for_each(genome.begin(), genome.end(), [&](const auto& gene){ gene->print(os); });
 }
 
 double Genome::time_to_examine(const Board& board, const Clock& clock) const
