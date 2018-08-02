@@ -70,6 +70,7 @@ std::array<uint64_t, 2> Board::color_hash_values{}; // for whose_turn() hashing
 
 Board::Board() :
     board{},
+    moves_since_pawn_or_capture_count{0},
     turn_color(WHITE),
     unmoved_positions{},
     en_passant_target({'\0', 0}),
@@ -109,12 +110,13 @@ Board::Board() :
     assert(king_location[WHITE]);
     assert(king_location[BLACK]);
 
-    ++repeat_count[get_board_hash()]; // Count initial position
+    add_to_repeat_count(get_board_hash()); // Count initial position
     recreate_move_caches();
 }
 
 Board::Board(const std::string& fen) :
     board{},
+    moves_since_pawn_or_capture_count{0},
     turn_color(WHITE),
     unmoved_positions{},
     en_passant_target({'\0', 0}),
@@ -233,13 +235,13 @@ Board::Board(const std::string& fen) :
 
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
-    auto fifty_move_count = std::stoul(fen_parse.at(4));
-    while(repeat_count.size() < fifty_move_count)
+    auto fifty_move_count_input = std::stoi(fen_parse.at(4));
+    while(moves_since_pawn_or_capture() < fifty_move_count_input)
     {
-        repeat_count[Random::random_unsigned_int64()] = 1;
+        add_to_repeat_count(Random::random_unsigned_int64());
     }
 
-    ++repeat_count[get_board_hash()]; // Count initial position
+    add_to_repeat_count(get_board_hash()); // Count initial position
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
@@ -317,13 +319,7 @@ bool Board::is_in_legal_moves_list(const Move& move) const
 std::string Board::fen_status() const
 {
     std::string s = board_status() + " ";
-
-    int moves_since_pawn_or_capture = -1; // -1 to not count current state of board
-    for(const auto& board_count : repeat_count)
-    {
-        moves_since_pawn_or_capture += board_count.second;
-    }
-    s.append(std::to_string(moves_since_pawn_or_capture));
+    s.append(std::to_string(moves_since_pawn_or_capture() - 1)); // -1 to exclude current position
     s.push_back(' ');
     if(starting_fen.empty())
     {
@@ -413,19 +409,17 @@ Game_Result Board::submit_move(const Move& move)
     // An insufficient material draw can only happen after a capture
     // or a pawn promotion to a minor piece, both of which clear the
     // repeat_count map.
-    if(repeat_count.empty() && ! enough_material_to_checkmate())
+    if(moves_since_pawn_or_capture() == 0 && ! enough_material_to_checkmate())
     {
         return Game_Result(NONE, "Insufficient material");
     }
 
-    if(++repeat_count[get_board_hash()] >= 3)
+    if(add_to_repeat_count(get_board_hash()) >= 3)
     {
         return Game_Result(NONE, "Threefold repetition");
     }
 
-    int fifty_move_count = std::accumulate(repeat_count.begin(), repeat_count.end(), 0,
-                                           [](auto n, auto iter){ return n + iter.second; });
-    if(fifty_move_count >= 101) // "Move" means both players move, 101 including current position
+    if(moves_since_pawn_or_capture() >= 101) // "Move" means both players move, 101 including current position
     {
         return Game_Result(NONE, "50-move limit");
     }
@@ -589,7 +583,7 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
 {
     if(piece_on_square(file_end, rank_end)) // capture
     {
-        repeat_count.clear();
+        clear_repeat_count();
     }
 
     place_piece(piece_on_square(file_start, rank_start), file_end, rank_end);
@@ -1612,4 +1606,21 @@ bool Board::has_castled(Color player) const
 size_t Board::number_of_promoted_pawns(Color player) const
 {
     return promoted_pawns_count[player];
+}
+
+int Board::add_to_repeat_count(uint64_t new_hash)
+{
+    ++moves_since_pawn_or_capture_count;
+    return ++repeat_count[new_hash];
+}
+
+int Board::moves_since_pawn_or_capture() const
+{
+    return moves_since_pawn_or_capture_count;
+}
+
+void Board::clear_repeat_count()
+{
+    moves_since_pawn_or_capture_count = 0;
+    repeat_count.clear();
 }
