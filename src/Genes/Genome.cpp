@@ -68,10 +68,10 @@ Genome::Genome(const Genome& other) :
         genome.emplace_back(gene->duplicate());
     }
 
-    reseat_piece_strength_gene();
+    reset_piece_strength_gene();
 }
 
-void Genome::reseat_piece_strength_gene()
+void Genome::reset_piece_strength_gene()
 {
     auto piece_strength_gene = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
     for(auto& gene : genome)
@@ -98,7 +98,7 @@ Genome& Genome::operator=(const Genome& other)
         genome.emplace_back(gene->duplicate());
     }
 
-    reseat_piece_strength_gene();
+    reset_piece_strength_gene();
 
     return *this;
 }
@@ -115,7 +115,7 @@ Genome::Genome(const Genome& A, const Genome& B) :
         genome.emplace_back(donor.genome[i]->duplicate());
     }
 
-    reseat_piece_strength_gene();
+    reset_piece_strength_gene();
 }
 
 void Genome::read_from(std::istream& is)
