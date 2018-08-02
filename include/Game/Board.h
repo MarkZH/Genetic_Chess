@@ -108,6 +108,7 @@ class Board
     private:
         std::array<const Piece*, 64> board;
         std::map<uint64_t, int> repeat_count;
+        int moves_since_pawn_or_capture_count;
         Color turn_color;
         std::vector<const Move*> game_record;
         std::array<bool, 64> unmoved_positions;
@@ -160,6 +161,11 @@ class Board
         void place_piece(const Piece* piece, char file, int rank);
         void switch_turn();
         void set_unmoved(char file, int rank);
+
+        // Track threefold repetition and fifty-move rule
+        int add_to_repeat_count(uint64_t new_hash);
+        void clear_repeat_count();
+        int moves_since_pawn_or_capture() const;
 
         // Zobrist hashing
         uint64_t board_hash;

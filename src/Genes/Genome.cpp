@@ -68,10 +68,10 @@ Genome::Genome(const Genome& other) :
         genome.emplace_back(gene->duplicate());
     }
 
-    reseat_piece_strength_gene();
+    reset_piece_strength_gene();
 }
 
-void Genome::reseat_piece_strength_gene()
+void Genome::reset_piece_strength_gene()
 {
     auto piece_strength_gene = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
     for(auto& gene : genome)
@@ -98,7 +98,7 @@ Genome& Genome::operator=(const Genome& other)
         genome.emplace_back(gene->duplicate());
     }
 
-    reseat_piece_strength_gene();
+    reset_piece_strength_gene();
 
     return *this;
 }
@@ -115,7 +115,7 @@ Genome::Genome(const Genome& A, const Genome& B) :
         genome.emplace_back(donor.genome[i]->duplicate());
     }
 
-    reseat_piece_strength_gene();
+    reset_piece_strength_gene();
 }
 
 void Genome::read_from(std::istream& is)
@@ -123,6 +123,8 @@ void Genome::read_from(std::istream& is)
     std::string line;
     while(std::getline(is, line))
     {
+        line = String::trim_outer_whitespace(line);
+
         if(line.empty())
         {
             continue;
@@ -133,9 +135,14 @@ void Genome::read_from(std::istream& is)
             return;
         }
 
-        if(String::starts_with(line, "Name:"))
+        auto line_split = String::split(line, ":", 1);
+        if(line_split.size() != 2)
         {
-            auto gene_name = String::split(line, ": ")[1];
+            throw std::runtime_error("No colon in parameter line: " + line);
+        }
+        if(String::trim_outer_whitespace(line_split[0]) == "Name")
+        {
+            auto gene_name = String::trim_outer_whitespace(line_split[1]);
             bool gene_found = false;
             for(auto& gene : genome)
             {
@@ -152,27 +159,27 @@ void Genome::read_from(std::istream& is)
                 throw std::runtime_error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
             }
         }
-    }
-}
-
-double Genome::score_board(const Board& board, const Board& opposite_board) const
-{
-    double score = 0.0;
-    double total_priority = 0.0;
-    double used_priority = 0.0;
-    auto minimum_priority = Random::random_real(0.0, get_minimum_priority());
-    for(const auto& gene : genome)
-    {
-        auto priority = gene->get_priority();
-        total_priority += priority;
-        if(std::abs(priority) > minimum_priority)
+        else
         {
-            score += gene->evaluate(board, opposite_board);
-            used_priority += priority;
+            throw std::runtime_error("Bad line in genome file (expected Name): " + line);
         }
     }
 
-    return score*(total_priority/used_priority);
+    throw std::runtime_error("Reached end of file before END of genome.");
+}
+
+double Genome::score_board(const Board& board, const Board& opposite_board, double minimum_priority) const
+{
+    double score = 0.0;
+    for(const auto& gene : genome)
+    {
+        if(std::abs(gene->get_priority()) > minimum_priority)
+        {
+            score += gene->evaluate(board, opposite_board);
+        }
+    }
+
+    return score;
 }
 
 double Genome::evaluate(const Board& board, Color perspective) const
@@ -182,7 +189,9 @@ double Genome::evaluate(const Board& board, Color perspective) const
     const auto& my_board        = (board.whose_turn() == perspective ? board : other_board);
     const auto& opponents_board = (board.whose_turn() == perspective ? other_board : board);
 
-    return score_board(my_board, opponents_board) - score_board(opponents_board, my_board);
+    auto minimum_priority = Random::random_real(0.0, get_minimum_priority());
+    return score_board(my_board, opponents_board, minimum_priority) -
+           score_board(opponents_board, my_board, minimum_priority);
 }
 
 void Genome::mutate()
@@ -199,10 +208,7 @@ void Genome::mutate()
 
 void Genome::print(std::ostream& os) const
 {
-    for(const auto& gene : genome)
-    {
-        gene->print(os);
-    }
+    std::for_each(genome.begin(), genome.end(), [&](const auto& gene){ gene->print(os); });
 }
 
 double Genome::time_to_examine(const Board& board, const Clock& clock) const
