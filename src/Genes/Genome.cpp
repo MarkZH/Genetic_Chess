@@ -158,21 +158,16 @@ void Genome::read_from(std::istream& is)
 double Genome::score_board(const Board& board, const Board& opposite_board) const
 {
     double score = 0.0;
-    double total_priority = 0.0;
-    double used_priority = 0.0;
     auto minimum_priority = Random::random_real(0.0, get_minimum_priority());
     for(const auto& gene : genome)
     {
-        auto priority = gene->get_priority();
-        total_priority += priority;
-        if(std::abs(priority) > minimum_priority)
+        if(std::abs(gene->get_priority()) > minimum_priority)
         {
             score += gene->evaluate(board, opposite_board);
-            used_priority += priority;
         }
     }
 
-    return score*(total_priority/used_priority);
+    return score;
 }
 
 double Genome::evaluate(const Board& board, Color perspective) const
