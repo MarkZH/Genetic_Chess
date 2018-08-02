@@ -41,7 +41,9 @@ class Genome
         size_t look_ahead_gene_index;
         size_t priority_threshold_gene_index;
 
-        double score_board(const Board& board, const Board& opposite_board) const;
+        double score_board(const Board& board,
+                           const Board& opposite_board,
+                           double minimum_priority) const;
         void reset_piece_strength_gene();
         double get_minimum_priority() const;
 };
