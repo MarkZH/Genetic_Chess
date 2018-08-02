@@ -123,6 +123,8 @@ void Genome::read_from(std::istream& is)
     std::string line;
     while(std::getline(is, line))
     {
+        line = String::trim_outer_whitespace(line);
+
         if(line.empty())
         {
             continue;
@@ -133,9 +135,14 @@ void Genome::read_from(std::istream& is)
             return;
         }
 
-        if(String::starts_with(line, "Name:"))
+        auto line_split = String::split(line, ":", 1);
+        if(line_split.size() != 2)
         {
-            auto gene_name = String::split(line, ": ")[1];
+            throw std::runtime_error("No colon in parameter line: " + line);
+        }
+        if(String::trim_outer_whitespace(line_split[0]) == "Name")
+        {
+            auto gene_name = String::trim_outer_whitespace(line_split[1]);
             bool gene_found = false;
             for(auto& gene : genome)
             {
@@ -152,7 +159,13 @@ void Genome::read_from(std::istream& is)
                 throw std::runtime_error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
             }
         }
+        else
+        {
+            throw std::runtime_error("Bad line in genome file (expected Name): " + line);
+        }
     }
+
+    throw std::runtime_error("Reached end of file before END of genome.");
 }
 
 double Genome::score_board(const Board& board, const Board& opposite_board, double minimum_priority) const

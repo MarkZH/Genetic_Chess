@@ -69,12 +69,18 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
     std::string line;
     while(std::getline(ifs, line))
     {
-        if( ! String::starts_with(line, "ID:"))
+        line = String::trim_outer_whitespace(line);
+        if( ! String::starts_with(line, "ID"))
         {
             continue;
         }
 
         auto param_value = String::split(line, ":", 1);
+        if(param_value.size() != 2 || param_value[0] != "ID")
+        {
+            throw std::runtime_error("Bad ID line: " + line);
+        }
+
         if(id_in == std::stoi(param_value[1]))
         {
             genome.read_from(ifs);
@@ -95,14 +101,20 @@ void Genetic_AI::read_from(std::istream& is)
     id = -1;
     while(std::getline(is, line))
     {
+        line = String::trim_outer_whitespace(line);
         if(line.empty())
         {
             continue;
         }
 
-        if(String::starts_with(line, "ID:"))
+        if(String::starts_with(line, "ID"))
         {
-            id = std::stoi(String::split(line)[1]);
+            auto param_value = String::split(line, ":", 1);
+            if(param_value.size() != 2 || param_value[0] != "ID")
+            {
+                throw std::runtime_error("Bad ID line: " + line);
+            }
+            id = std::stoi(param_value[1]);
             break;
         }
         else
