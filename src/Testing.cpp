@@ -532,9 +532,11 @@ void run_tests()
     auto king_confinement_gene = King_Confinement_Gene();
     king_confinement_gene.read_from(test_genes_file_name);
     auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+    auto king_confinement_norm = 64*(2 + 4 + 1); // sum of absolute values of square scores
     auto king_confinement_score = (2*(1.0/1.0 + 1.0/2.0 + 1.0/3.0) + // free squares (h1, g1, f1)
                                    4*(1.0/2.0 + 1.0/2.0 + 1.0/3.0) + // blocked by friendlies (h2, g2, f2)
-                                   (-1)*(1.0/4.0 + 1.0/4.0))/64; // blocked by enemy (e1, e2)
+                                   (-1)*(1.0/4.0 + 1.0/4.0)) // blocked by enemy (e1, e2)
+                                   /king_confinement_norm;
     tests_passed &= king_confinement_gene.test(king_confinement_board, king_confinement_score);
 
     auto king_protection_gene = King_Protection_Gene();
@@ -546,7 +548,7 @@ void run_tests()
 
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
-    auto piece_strength_normalizer = double(16 + 2*8 + 2*4 + 2*2 + 8*1);
+    auto piece_strength_normalizer = double(32 + 16 + 2*8 + 2*4 + 2*2 + 8*1);
 
     auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
     auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
@@ -586,7 +588,7 @@ void run_tests()
         + (4.0 * (1 + (2.0/(1 + 5.0))))  // f4
         + (1.0 * (1 + (2.0/(1 + 6.0))))  // g4
         + (1.0 * (1 + (2.0/(1 + 7.0)))); // h4
-    sphere_of_influence_score /= 64;
+    sphere_of_influence_score /= 64*(4.0 + 1.0);
     // Setup       Square score     King distance (from black king)
     // k.......    k4......         k1......
     // ........    .4......         .1......
@@ -596,18 +598,18 @@ void run_tests()
     // ........    .4......         .5......
     // ........    44......         66......
     // K.......    K4......         K7......
-    sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
+    tests_passed &= sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    tests_passed &= total_force_gene.test(Board(), 1.0 + 32/piece_strength_normalizer);
+    tests_passed &= total_force_gene.test(Board(), 1.0);
 
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
-    tests_passed &= stacked_pawns_gene.test(stacked_pawns_board, -3.0);
+    tests_passed &= stacked_pawns_gene.test(stacked_pawns_board, -3.0/6);
 
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-    tests_passed &= pawn_islands_gene.test(pawn_islands_board, -3.0);
+    tests_passed &= pawn_islands_gene.test(pawn_islands_board, -3.0/4);
 
     // Test board information sources
     auto promotion_board = Board("8/k6P/8/8/8/8/8/K7 w - - 0 1");

@@ -12,7 +12,8 @@
 #include "Utility.h"
 
 Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
-    legal_bonus(1.0),
+    legal_square_score(1.0),
+    illegal_square_score(1.0),
     king_target_factor(0.0)
 {
 }
@@ -20,14 +21,16 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
 void Sphere_of_Influence_Gene::reset_properties() const
 {
     Gene::reset_properties();
-    properties["Legal Bonus"] = legal_bonus;
+    properties["Legal Square Score"] = legal_square_score;
+    properties["Illegal Square Score"] = illegal_square_score;
     properties["King Target Factor"] = king_target_factor;
 }
 
 void Sphere_of_Influence_Gene::load_properties()
 {
     Gene::load_properties();
-    legal_bonus = properties["Legal Bonus"];
+    legal_square_score = properties["Legal Square Score"];
+    illegal_square_score = properties["Illegal Square Score"];
     king_target_factor = properties["King Target Factor"];
 }
 
@@ -57,7 +60,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&) c
         }
     }
 
-    double score_to_add = 1.0;
+    double score_to_add = illegal_square_score;
     for(const auto& attack_list : {board.other_square_indices_attacked(), board.all_square_indices_attacked()})
     {
         for(size_t i = 0; i < attack_list.size(); ++i)
@@ -68,7 +71,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&) c
             }
         }
 
-        score_to_add = legal_bonus; // now on legal move list
+        score_to_add = legal_square_score; // now on legal move list
     }
 
     double score = 0;
@@ -79,18 +82,24 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&) c
     }
 
     // normalizing to make maximum score near 1
-    return score/64.0;
+    return score/(64*(std::abs(legal_square_score) + std::abs(illegal_square_score)));
 }
 
 
 void Sphere_of_Influence_Gene::gene_specific_mutation()
 {
-    if(Random::coin_flip())
+    switch(Random::random_integer(1, 3))
     {
-        legal_bonus += Random::random_laplace(0.5);
-    }
-    else
-    {
-        king_target_factor += Random::random_laplace(0.5);
+        case 1:
+            legal_square_score += Random::random_laplace(0.5);
+            break;
+        case 2:
+            illegal_square_score += Random::random_laplace(0.5);
+            break;
+        case 3:
+            king_target_factor += Random::random_laplace(0.5);
+            break;
+        default:
+            throw std::runtime_error("Bad range in Sphere_of_Influence_Gene::gene_specific_mutation()");
     }
 }

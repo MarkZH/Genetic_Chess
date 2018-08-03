@@ -54,23 +54,24 @@ void gene_pool(const std::string& config_file = "")
     double game_time = minimum_game_time;
 
     // Stats (map: Pool ID --> counts)
-    std::map<size_t, size_t> game_count;
-    std::map<size_t, size_t> white_wins;
-    std::map<size_t, size_t> black_wins;
-    std::map<size_t, size_t> draw_count;
-    std::map<size_t, size_t> most_wins;
+    std::map<size_t, int> game_count;
+    std::map<size_t, int> white_wins;
+    std::map<size_t, int> black_wins;
+    std::map<size_t, int> draw_count;
+    std::map<size_t, int> most_wins;
     std::map<size_t, Genetic_AI> most_wins_player;
 
-    std::map<size_t, size_t> most_games_survived;
+    std::map<size_t, int> most_games_survived;
     std::map<size_t, Genetic_AI> most_games_survived_player;
 
     std::map<size_t, std::vector<Genetic_AI>> new_blood; // ex nihilo players
-    std::map<size_t, size_t> new_blood_count;
+    std::map<size_t, int> new_blood_count;
 
-    std::map<Genetic_AI, size_t> wins;
-    std::map<Genetic_AI, size_t> draws;
-    std::map<Genetic_AI, size_t> games_since_last_win;
-    std::map<Genetic_AI, size_t> consecutive_wins;
+    // Individual Genetic AI stats
+    std::map<Genetic_AI, int> wins;
+    std::map<Genetic_AI, int> draws;
+    std::map<Genetic_AI, int> games_since_last_win;
+    std::map<Genetic_AI, int> consecutive_wins;
     std::map<Genetic_AI, size_t> original_pool;
 
     const int scramble_mutations = 100;
@@ -402,15 +403,6 @@ void gene_pool(const std::string& config_file = "")
             game_time += game_time_increment;
         }
 
-        auto win_compare = [&wins, &draws](const auto& x, const auto& y)
-                           {
-                               if(wins[x] == wins[y])
-                               {
-                                   return draws[x] < draws[y];
-                               }
-                               return wins[x] < wins[y];
-                           };
-
         // Transfer best players between gene pools to keep pools
         // from stagnating or amplifying pathological behavior
         if(pools.size() > 1 && pool_index == pools.size() - 1) // all pools have equal number of games
@@ -426,14 +418,14 @@ void gene_pool(const std::string& config_file = "")
                 {
                     winners.push_back(*std::max_element(source_pool.begin(),
                                                         source_pool.end(),
-                                                        win_compare));
+                                                        best_compare));
                 }
 
                 for(size_t source_pool_index = 0; source_pool_index < pools.size(); ++source_pool_index)
                 {
                     auto dest_pool_index = (source_pool_index + 1) % pools.size();
                     auto& dest_pool = pools[dest_pool_index];
-                    auto& loser = *std::min_element(dest_pool.begin(), dest_pool.end(), win_compare);
+                    auto& loser = *std::min_element(dest_pool.begin(), dest_pool.end(), best_compare);
                     std::cout << "Sending ID "
                               << winners[source_pool_index].get_id()
                               << " to pool "

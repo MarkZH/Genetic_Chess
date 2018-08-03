@@ -151,8 +151,3 @@ void Gene::make_priority_minimum_zero()
 {
     priority = std::max(priority, 0.0);
 }
-
-void Gene::make_priority_positive()
-{
-    priority = std::abs(priority);
-}

@@ -6,7 +6,7 @@
 
 \newcommand{\cpp}{C{\nobreak +}{\nobreak +}}
 
-\newcommand{\code}[1]{\textsf{#1}}
+\newcommand{\code}[1]{\small\textsf{#1}}
 
 \renewcommand{\_}{\allowbreak\textunderscore\allowbreak}
 
@@ -93,8 +93,8 @@ The principle behind the minimax algorithm is that the quality of a move is meas
 
 Alpha-beta pruning is based upon keeping a record of two game state evaluations:
 \begin{description}
-	\item[Alpha:] is the highest score that the player whose turn it is guaranteed once the game reaches the current state and cannot be avoided by the opponent making different moves later in the game. That is, the player whose turn it is at this point in the game tree can force the game into a state with at least this score.
-	\item[Beta:] is the lowest score to which the opponent can limit the current player by making different moves earlier in the game. If the current player finds a move with a higher score than Beta, then the opponent would make an earlier move that makes this game state impossible to reach. This is called ``refuting'' the move. Once such a move is found, the examination of moves from the current game state is abandoned, as the opponent will not allow this state to be reached.
+	\item[Alpha:] is the highest guaranteed score that the player whose turn it is can reach once the game reaches the current state (i.e., the root of the current game tree) and cannot be avoided by the opponent making different moves later in the game. That is, the player whose turn it is at this point in the game tree can force the game into a state with at least this score.
+	\item[Beta:] is the lowest score to which the opponent can limit the current player by making moves that avoid higher scores. If the current player finds a move with a higher score than Beta, then the opponent would make a different move earlier in the game that makes this game state impossible to reach. This earlier move is called a ``refuting'' move. Once a move is found that is refuted by an earlier opponent move, the examination of that set of moves is abandoned, as the opponent will not allow the game to reach that state.
 \end{description}
 Each time a move examination reaches a greater depth in the game tree, these values switch roles to represent the view of the board from the opponent's perspective.
 
@@ -104,28 +104,29 @@ An extra optimization implemented in this program is one where the search is cut
 
 If the best move is chosen based upon the probable resulting future board state based on a sequence of moves (a variation) found through minimaxing with alpha-beta pruning, and if the opponent makes the next predicted move in that variation, then the moves leading to that board state are examined first during the next move. This high-scoring board state should lead to early cutoffs from alpha-beta pruning, especially if that board state was a game-ending state. If that board state is actually avoidable by the opponent, then the shallower depth of that state during the next turn should lead to a faster refutation, leaving time to examine alternate variations.
 
+\subsection{Move Ordering}
+
+Besides Principal Variation Recall, those moves that capture an opponent's piece are examined before other moves. Capturing moves usually result in the largest changes in position evaluations (see Section~\ref{total-force-and-pawn-result}), so they should quickly establish alpha and beta values that will lead to quick cutoffs.
 
 \section{The Genome}
 \label{gene-section}
 The genome is the repository for genetic information in the Genetic AIs and controls all aspects of game play not mentioned in the previous section. All are subject to mutation, which can change the behavior and influence of a given gene.
 
-Formerly, one result of a mutation was to deactivate a gene entirely. Gene deactivation was thought to be a strategy for exiting local peaks in fitness since a gene could still mutate when deactivated. Since it felt no evolutionary pressure, the deactivated gene was free to random walk somewhere else, perhaps to a more advantageous state that would be discovered upon reactivation. However, it was found that, once deactivated, a gene would only very rarely become reactivated. This was for two reasons. First, a random walk is a very slow way to reach a better genome, especially with no evolutionary pressure. Second, and more importantly, a deactivated gene uses less time when evaluating a board or doing some other calculation. This means that Genetic AIs with more deactivated genes have an advantage in being able to evaluate more positions and see farther ahead in the game. This is a powerful incentive to keep genes deactivated, often leading to AIs that had most of their genome deactivated aside from the Total Force Gene. This would lead to gene pools where games only ended in draws, stagnating the pool. Now, all genes are always active.
-
-\emph{Update:} The idea in the above paragraph has been revisited in a different form. See Section~\ref{priority-threshold}.
-
 \subsection{A Note on Designer Genes}
 
 Evolution is an effective means of optimizing when every mutation makes a difference in the fitness of an organism. In an abstract sense, the fitness function of an organism should be
 \begin{enumerate}
-	\item a smooth function of the parameters of its genome and
+	\item a continuous function of the parameters of its genome and
 	\item without flat sections.
 \end{enumerate}
-The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. This is why the deactivating-gene mutation was discarded. It is better to let a gene fall in importance by gradually reducing its priority. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI. This random walk period only represents wasted time.
+The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. This is why the deactivating-gene mutation was discarded (Section~\ref{priority-threshold}). It is better to let a gene fall in importance by gradually reducing its priority. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI. This random walk period only represents wasted time. To this end, certain gene parameters are restricted to, for example, non-negative values. 
 
 \subsection{Regulatory Genes}
 A regulator gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
 
 \subsubsection{Piece Strength Gene}
+\label{piece-strength}
+
 This gene specifies the importance or strength of each different type of chess piece. Other genes like the Total Force Gene (Section~\ref{total-force}) reference this one for their own evaluation purposes.
 
 The number associated with each piece is not scaled to any other piece, but before a piece strength is returned, it is scaled so that that total value of all the pieces at the start of the game (8~pawns, 2~rooks, 2~knights, 2~bishops, and 1~queen) equals~1. This prevents mutations in this gene from changing the priorities of other genes that reference this one. In other words, if a series of mutations doubles the strength of all pieces, the Total Force Gene will not subsequently return double the score for the same board state. Only mutations that change piece strengths with respect to other pieces are effective. The king is not included in this scaling because the king is always on the board. So, the Total Force Gene assigns a value of one to the starting piece set of a player and zero to a lone king.
@@ -176,14 +177,14 @@ N(n) = \left(e^{M + S^2/2}\right) \frac
 \]
 \begin{figure}[tbh]
 	\centering
-	\includegraphics[width=\textwidth]{game_length_distribution.png}
+	\includegraphics[width=0.7\textwidth]{game_length_distribution.png}
 	\caption{First attempts at determining the distribution of moves in chess games. The black histogram shows the distribution of the number of moves in a game (with one move consisting of both a black and white play). The (mean) and (mode) designations in the legend indicate which statistic was used as the mean parameter of the fitted Poisson and normal distributions (neither of which are a good fit). The spike at 9~moves was created just after a change to the program that resulted in much faster changes in board state (see Section~\ref{board-submit-move-section} for details).}
 	\label{game-length-plot}
 \end{figure}
 
 \begin{figure}[tbh]
 	\centering
-	\includegraphics[width=\textwidth]{game_length_log_norm_distribution.png}
+	\includegraphics[width=0.7\textwidth]{game_length_log_norm_distribution.png}
 	\caption{The distribution of the number of moves in a game with a log-normal fit. The Log-Norm parameters listed are \(M\) for the Peak parameter and \(S\) for the Width parameter. To obtain a better fit, only games longer than 15~moves were considered, as shorter games were primarily by ill-adapted AIs (especially the spike at 9-move games), especially at the beginning of the gene pool run.}
 	\label{log-norm-plot}
 \end{figure}
@@ -203,10 +204,9 @@ The speculation constant is divided into two versions: one for board positions c
 \subsubsection{Priority Threshold Gene}
 \label{priority-threshold}
 
-This gene stops any other board-scoring gene from running its \code{score\_board()} if that other gene's priority is too low, thus trading lower score detail for faster evaluations. It contains a genetically determined threshold value that is referenced during the genome's \code{evaluate\_board()} method. Instead of using the value directly, the actually threshold used is a random number uniformly distributed between 0.0 and the threshold value.  The reason for this is to prevent low-priority genes from being permanently cut off from evolutionary pressure while still providing a means of speeding up evaluations.
+This gene stops any other board-scoring gene from running its \code{score\_board()} if that other gene's priority (rather, the absolute value of it) is too low, thus trading lower score detail for faster evaluations. It contains a genetically determined threshold value that is referenced during the genome's \code{evaluate\_board()} method. Instead of using the value directly, the actually threshold used is a random number uniformly distributed between 0.0 and the threshold value.  The reason for this is to prevent low-priority genes from being permanently cut off from evolutionary pressure while still providing a means of speeding up evaluations. This way, low-priority genes still feel evolutionary pressure to improve, or else their priorities feel further downward pressure so that they are called even less often.
 
-Since skipping \code{score\_board()} methods will tend to lower the score given to a position (assuming all genes have positive priorities), the resulting score is scaled by the ratio of the sum of all genes' priorities to the sum of all used genes' priorities. This way, board positions with higher scores due to using more genes to score it will not be unduly favored over board positions with a lower score due to using fewer genes. To put it in mathematical terms:
-\[Final\ score = Score\times\frac{Sum\ of\ all\ priorities}{Sum\ of\ all\ used\ priorities}\]
+Formerly, one result of a mutation was to deactivate a gene entirely. Gene deactivation was thought to be a strategy for exiting local peaks in fitness since a gene could still mutate when deactivated. Since it felt no evolutionary pressure, the deactivated gene was free to random walk somewhere else, perhaps to a more advantageous state that would be discovered upon reactivation. However, it was found that, once deactivated, a gene would only very rarely become reactivated. This was for two reasons. First, a random walk is a very slow way to reach a better genome, especially with no evolutionary pressure. Second, and more importantly, a deactivated gene uses less time when evaluating a board or doing some other calculation. This means that Genetic AIs with more deactivated genes have an advantage in being able to evaluate more positions and see farther ahead in the game. This is a powerful incentive to keep genes deactivated, often leading to AIs that had most of their genome deactivated aside from the Total Force Gene. This would lead to gene pools where games only ended in draws, stagnating the pool. Now, all genes are always active with some probabilistic suppression for the lowest priority genes.
 
 \subsubsection{Branch Pruning Gene (deleted)}
 
@@ -232,7 +232,7 @@ This gene counts the number of legal moves available in the current position.
 This gene measures the progress of all pawns towards the opposite side of the board. Extra points are awarded to board states that have pawn promotions as past moves in order to prevent promotions from being penalized when such moves remove pawns from the board.
 
 \subsubsection{Passed Pawn Gene}
-The gene counts the number of pawns that cannot be stopped or captured by an opponent's pawns. That is, a pawn is a passed pawn if there are no pawns ahead of it in its file or any directly adjacent files.
+The gene counts the number of pawns that cannot be stopped or captured by an opponent's pawns. That is, a pawn is a passed pawn if there are no pawns ahead of it in its file or any directly adjacent files. Partial points are awarded for pawns that have fewer pawns ahead than usual ($1/3$ for each free column ahead of mid-board pawns, $1/2$ for for pawns on the edge).
 
 \subsubsection{Opponent Pieces Targeted Gene}
 This gene sums the total strength (as determined by the Piece Strength Gene) of the opponent's pieces currently under attack.
@@ -247,11 +247,25 @@ where the sum is over all squares \(s\) on the board. The function \(legal(s)\) 
 \subsubsection{King Confinement Gene}
 This gene counts the squares the king can reach given unlimited legal moves. Squares that take a larger number of moves to reach are given lower scores. Kings that are hemmed in by squares occupied by friendly pieces and squares attacked by the opponent result in a low score from this gene. This is a measure of how much room the king has to maneuver and escape. It is somewhat in opposition to the King Protection Gene.
 
+For a more detailed picture, each square potentially reachable by the king is classified into three types given one of three genetically determined scores for each:
+\begin{itemize}
+	\item Free: the king is free to move on to these squars,
+	\item Friendly block: the king is blocked by pieces of the same color, and
+	\item Enemy block: the king is blocked due to the square being attacked by an opponent piece.
+\end{itemize}
+
 \subsubsection{King Protection Gene}
 This gene counts the squares that have access to the king by any valid piece movement and are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a less exposed king.
 
 \subsubsection{Castling Possible Gene}
 This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away and the king and rook remaining unmoved. The score can vary based on a genetically determined preference for kingside or queenside castling.
+
+\subsubsection{Pawn Islands Gene}
+This gene counts the number of groups of pawns that are separated by columns with no pawns of the same color. These pawns are isolated from each other and cannot help to defend pawns on other islands. Since a greater number of pawn islands is usually considered bad, the score returned is the negative of the result.
+
+\subsubsection{Stacked Pawns Gene}
+This gene counts the pawns that have a pawn of the same color ahead of them in the same file. The motion of these pawns is limited by the pawn in front. Like the Pawn Islands Gene, the score returned is the negative of the count since stacked pawns are generally considered to be disadvantageous.
+
 
 \subsection{Genome File Format}
 An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line.
@@ -351,15 +365,18 @@ Of the games ending in checkmate, white wins about 10\% more often than black. F
 \end{figure}
 
 \subsection{The Total Force Gene and the Pawn Advancement Gene typically dominate.}
+\label{total-force-and-pawn-result}
+
+That the Total Force Gene dominates is fairly predictable. Highly skilled human players will usually resign after the loss of a minor (bishop or knight) piece without compensation. 
 
 The Pawn Advancement Gene usually gains higher priority first, probably because it is the simplest gene that makes an immediate difference in the game. Push the pawns forward both threatens the opponent's pieces with low-risk attacks and increases the chances of promotion.
 
-\subsubsection{Late-Breaking News: The Pawn Advancement Gene is a temporary substitute for a valid value of the pawn in the Piece Strength Gene.}
+\subsubsection{The Pawn Advancement Gene is a temporary substitute for a valid value of the pawn in the Piece Strength Gene.}
 
 Near the birth of the Genetic AI with ID~\#120,000, the Pawn Advancement Gene suddenly died off, with nearly all AIs in the gene pool deactivating the gene simultaneously (see Figure~\ref{pawn-crash}).
 \begin{figure}[htb]
 	\centering
-	\includegraphics[width=\textwidth]{pawn-advancement-crash}
+	\includegraphics[width=0.7\textwidth]{pawn-advancement-crash}
 	\caption{The sudden crash of the Pawn Advancement Gene}
 	\label{pawn-crash}
 \end{figure}
@@ -404,7 +421,7 @@ It seems that the Look Ahead Gene does not experience significant evolutionary p
 
 This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game.
 
-\subsubsection{Late-Breaking News: Update after deleting the Branch Pruning Gene}
+\subsubsection{Update after deleting the Branch Pruning Gene}
 The Sphere of Influence Gene now counts legal moves as 50\% more valuable than illegal moves.
 
 \subsection{Genes with properly lower priorities have to wait for higher priority genes to evolve their higher priority before evolving themselves.}
@@ -433,7 +450,7 @@ Inside each derived \code{Piece} class, the legal moves for that piece are store
 \end{enumerate}
 Since there is only one instance of each piece (white rook, black queen, etc.), a move obtained from a piece is valid for every other board with a piece on the same square. Some caution is required, though, since the legality of a move is only check during \code{Board::legal\_moves()}. See Section~\ref{board_important_notes} for details.
 
-Finally, and most simply, the genome of a \code{Genetic\_AI} is stored as a list of \code{std::unique\_ptr<Gene>}, since each type of gene (Section~\ref{gene-section}) is derived from the \code{Gene} base class.
+Finally, the genome of a \code{Genetic\_AI} is stored as a list of \code{std::unique\_ptr<Gene>}, since each type of gene (Section~\ref{gene-section}) is derived from the \code{Gene} base class.
 
 \subsection{Board}
 
@@ -443,7 +460,7 @@ Constructs a board in the starting state of a standard chess game.
 
 \subsubsection[ctor(string)]{ctor(const std::string\& fen)}
 
-Construct a board from a string containing a board state in \href{https://en.wikipedia.org/wiki/Forsyth\%E2\%80\%93Edwards\_Notation}{Forsyth-Edwards Notation}.
+Construct a board from a string containing a board state in \href{https://en.wikipedia.org/wiki/Forsyth\%E2\%80\%93Edwards\_Notation}{Forsyth-Edwards Notation}~\cite{fen-notation}.
 
 \subsubsection{legal\_moves()}
 
@@ -458,8 +475,9 @@ Returns a list of moves that are not currently legal but, if they were, would ha
 
 This method causes the state of the \code{Board} to be changed by enacting the move represented by the argument. Only copies of a move returned from \code{legal\_moves()} will be accepted. Otherwise, an assertion will fail in debug builds or undefined behavior will result in release builds. The method returns a \code{Game\_Result} \code{struct} that indicates whether the game has ended and the reason for the ending. Formerly, the end of a game was signaled by throwing an exception derived from \code{Game\_Ending\_Exception}. However, this was found dramatically slow down the game tree search due to the cost of throwing and catching multiple exceptions.
 
-\subsubsection[view\_piece\_on\_square()]{view\_piece\_on\_square(char file, int rank)}
-Returns a pointer to a \code{const Piece*} representing the piece on the square identified by the arguments. An empty square is represented by a \code{nullptr}.
+\subsubsection[piece\_on\_square()]{piece\_on\_square(char file, int rank)}
+
+Returns a pointer to a \code{Piece*} (or \code{const Piece*} when the \code{Board} instance is \code{const}) representing the piece on the square identified by the arguments. An empty square is represented by a \code{nullptr}.
 
 \subsubsection{Important Notes}
 \label{board_important_notes}
@@ -501,6 +519,9 @@ W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a
 
 \bibitem{quiescence-ref}
 \url{http://chessprogramming.wikispaces.com/Quiescence+Search}
+
+\bibitem{fen-notation}
+\url{http://www.thechessdrum.net/PGN_Reference.txt} Section~16.1
 
 \end{thebibliography}
 

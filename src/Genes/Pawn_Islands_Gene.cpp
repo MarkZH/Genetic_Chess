@@ -34,8 +34,9 @@ double Pawn_Islands_Gene::score_board(const Board& board, const Board&) const
         on_island = own_pawn_found;
     }
 
-    return -score; // negative since, presumably, pawn islands are bad;
-                   // priority can still evolve to be negative
+    return -score/4; // negative since, presumably, pawn islands are bad;
+                     // priority can still evolve to be negative.
+                     // Divide by 4 since 4 is the greatest number of pawn islands possible.
 }
 
 std::unique_ptr<Gene> Pawn_Islands_Gene::duplicate() const

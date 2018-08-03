@@ -408,7 +408,7 @@ Game_Result Board::submit_move(const Move& move)
 
     // An insufficient material draw can only happen after a capture
     // or a pawn promotion to a minor piece, both of which clear the
-    // repeat_count map.
+    // repeat_count tracker.
     if(moves_since_pawn_or_capture() == 0 && ! enough_material_to_checkmate())
     {
         return Game_Result(NONE, "Insufficient material");
@@ -1610,8 +1610,10 @@ size_t Board::number_of_promoted_pawns(Color player) const
 
 int Board::add_to_repeat_count(uint64_t new_hash)
 {
-    ++moves_since_pawn_or_capture_count;
-    return ++repeat_count[new_hash];
+    repeat_count[++moves_since_pawn_or_capture_count] = new_hash;
+    return std::count(repeat_count.begin(),
+                      repeat_count.begin() + moves_since_pawn_or_capture_count,
+                      new_hash);
 }
 
 int Board::moves_since_pawn_or_capture() const
@@ -1622,5 +1624,4 @@ int Board::moves_since_pawn_or_capture() const
 void Board::clear_repeat_count()
 {
     moves_since_pawn_or_capture_count = 0;
-    repeat_count.clear();
 }

@@ -36,7 +36,6 @@ class Gene
         virtual void load_properties();
 
         void make_priority_minimum_zero();
-        void make_priority_positive();
 
     private:
         virtual double score_board(const Board& board, const Board& opposite_board) const = 0;

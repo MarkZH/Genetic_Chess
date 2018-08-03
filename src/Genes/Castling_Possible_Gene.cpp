@@ -9,7 +9,9 @@
 
 #include "Utility.h"
 
-Castling_Possible_Gene::Castling_Possible_Gene() : kingside_preference(0.5)
+Castling_Possible_Gene::Castling_Possible_Gene() :
+    kingside_preference(0.5),
+    queenside_preference(0.5)
 {
 }
 
@@ -17,12 +19,14 @@ void Castling_Possible_Gene::reset_properties() const
 {
     Gene::reset_properties();
     properties["Kingside Preference"] = kingside_preference;
+    properties["Queenside Preference"] = queenside_preference;
 }
 
 void Castling_Possible_Gene::load_properties()
 {
     Gene::load_properties();
     kingside_preference = properties["Kingside Preference"];
+    queenside_preference = properties["Queenside Preference"];
 }
 
 std::unique_ptr<Gene> Castling_Possible_Gene::duplicate() const
@@ -56,7 +60,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&) con
     {
         if( ! board.piece_has_moved(rook_file, base_rank))
         {
-            auto preference = (rook_file == 'h' ? kingside_preference : 1.0 - kingside_preference);
+            auto preference = (rook_file == 'h' ? kingside_preference : queenside_preference);
             int files_to_clear = std::abs(rook_file - king_start_file) - 1;
             double score_per_clear_square = preference/(files_to_clear + 2);
             score += score_per_clear_square; // score for keeping rook unmoved
@@ -74,10 +78,19 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&) con
         }
     }
 
-    return score;
+    return score/(std::abs(kingside_preference) + std::abs(queenside_preference));
 }
 
 void Castling_Possible_Gene::gene_specific_mutation()
 {
-    kingside_preference += Random::random_laplace(0.1);
+    make_priority_minimum_zero();
+
+    if(Random::coin_flip())
+    {
+        kingside_preference += Random::random_laplace(0.1);
+    }
+    else
+    {
+        queenside_preference += Random::random_laplace(0.1);
+    }
 }
