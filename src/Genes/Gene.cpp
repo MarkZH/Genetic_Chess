@@ -53,14 +53,18 @@ void Gene::read_from(std::istream& is)
                 throw std::runtime_error("Reading data for wrong gene. Gene is " + name() + ", data is for " + property_data + ".");
             }
         }
-        auto property_value = std::stod(property_data);
+
         try
         {
-            properties.at(property_name) = property_value;
+            properties.at(property_name) = std::stod(property_data);
         }
         catch(const std::out_of_range&)
         {
             throw_on_invalid_line(line, "Unrecognized parameter.");
+        }
+        catch(const std::invalid_argument&)
+        {
+            throw_on_invalid_line(line, "Bad parameter value.");
         }
     }
 
