@@ -69,14 +69,14 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
     std::string line;
     while(std::getline(ifs, line))
     {
-        line = String::trim_outer_whitespace(line);
+        line = String::strip_comments(line, '#');
         if( ! String::starts_with(line, "ID"))
         {
             continue;
         }
 
         auto param_value = String::split(line, ":", 1);
-        if(param_value.size() != 2 || param_value[0] != "ID")
+        if(param_value.size() != 2 || String::trim_outer_whitespace(param_value[0]) != "ID")
         {
             throw std::runtime_error("Bad ID line: " + line);
         }
@@ -101,7 +101,7 @@ void Genetic_AI::read_from(std::istream& is)
     id = -1;
     while(std::getline(is, line))
     {
-        line = String::trim_outer_whitespace(line);
+        line = String::strip_comments(line, '#');
         if(line.empty())
         {
             continue;
@@ -110,7 +110,7 @@ void Genetic_AI::read_from(std::istream& is)
         if(String::starts_with(line, "ID"))
         {
             auto param_value = String::split(line, ":", 1);
-            if(param_value.size() != 2 || param_value[0] != "ID")
+            if(param_value.size() != 2 || String::trim_outer_whitespace(param_value[0]) != "ID")
             {
                 throw std::runtime_error("Bad ID line: " + line);
             }

@@ -123,7 +123,7 @@ void Genome::read_from(std::istream& is)
     std::string line;
     while(std::getline(is, line))
     {
-        line = String::trim_outer_whitespace(line);
+        line = String::strip_comments(line, '#');
 
         if(line.empty())
         {

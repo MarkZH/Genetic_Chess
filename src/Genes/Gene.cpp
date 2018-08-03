@@ -40,7 +40,7 @@ void Gene::read_from(std::istream& is)
         {
             throw_on_invalid_line(line, "There should be exactly one colon per gene property line.");
         }
-        auto property_name = split_line[0];
+        auto property_name = String::trim_outer_whitespace(split_line[0]);
         auto property_data = String::trim_outer_whitespace(split_line[1]);
         if(property_name == "Name")
         {
