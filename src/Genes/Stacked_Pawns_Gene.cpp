@@ -31,8 +31,10 @@ double Stacked_Pawns_Gene::score_board(const Board& board, const Board&) const
         }
     }
 
-    return -score; // negative since, presumably, stacked pawns are bad;
-                   // priority can still evolve to be negative
+    return -score/6; // negative since, presumably, stacked pawns are bad;
+                     // priority can still evolve to be negative.
+                     // Divide by six since six is the maximum number of pawns
+                     // that can be blocked by other pawns.
 }
 
 std::unique_ptr<Gene> Stacked_Pawns_Gene::duplicate() const
