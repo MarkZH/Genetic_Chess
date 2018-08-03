@@ -532,9 +532,11 @@ void run_tests()
     auto king_confinement_gene = King_Confinement_Gene();
     king_confinement_gene.read_from(test_genes_file_name);
     auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+    auto king_confinement_norm = 64*(2 + 4 + 1); // sum of absolute values of square scores
     auto king_confinement_score = (2*(1.0/1.0 + 1.0/2.0 + 1.0/3.0) + // free squares (h1, g1, f1)
                                    4*(1.0/2.0 + 1.0/2.0 + 1.0/3.0) + // blocked by friendlies (h2, g2, f2)
-                                   (-1)*(1.0/4.0 + 1.0/4.0))/64; // blocked by enemy (e1, e2)
+                                   (-1)*(1.0/4.0 + 1.0/4.0)) // blocked by enemy (e1, e2)
+                                   /king_confinement_norm;
     tests_passed &= king_confinement_gene.test(king_confinement_board, king_confinement_score);
 
     auto king_protection_gene = King_Protection_Gene();

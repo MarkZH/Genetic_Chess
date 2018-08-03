@@ -146,5 +146,8 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         }
     }
 
-    return score/64; // normalized so max is near 1
+    auto norm = std::abs(free_square_score) +
+                std::abs(friendly_block_score) +
+                std::abs(enemy_block_score);
+    return score/(64*norm); // normalized so max is near 1
 }
