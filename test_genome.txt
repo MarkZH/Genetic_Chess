@@ -21,6 +21,7 @@ Priority: 1
 
 Name: Castling Possible Gene
 Kingside Preference: 0.8
+Queenside Preference: 0.2
 Priority: 1
 
 END

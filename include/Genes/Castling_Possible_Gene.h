@@ -24,6 +24,7 @@ class Castling_Possible_Gene : public Gene
 
     private:
         double kingside_preference;
+        double queenside_preference;
 
         double score_board(const Board& board, const Board& opposite_board) const override;
         void gene_specific_mutation() override;
