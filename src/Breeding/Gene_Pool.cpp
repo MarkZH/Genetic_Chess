@@ -459,7 +459,7 @@ void pause_gene_pool(int signal)
 
     if(gene_pool_paused)
     {
-        std::cout << "\nPress enter to " << (signal_activated == STOP_SIGNAL ? "quit." : "resume.");
+        std::cout << "\nPress enter to " << (signal_activated == STOP_SIGNAL ? "quit." : "resume.") << std::endl;
         return;
     }
 
