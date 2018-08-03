@@ -548,7 +548,7 @@ void run_tests()
 
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
-    auto piece_strength_normalizer = double(16 + 2*8 + 2*4 + 2*2 + 8*1);
+    auto piece_strength_normalizer = double(32 + 16 + 2*8 + 2*4 + 2*2 + 8*1);
 
     auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
     auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
@@ -601,7 +601,7 @@ void run_tests()
     sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    tests_passed &= total_force_gene.test(Board(), 1.0 + 32/piece_strength_normalizer);
+    tests_passed &= total_force_gene.test(Board(), 1.0);
 
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");

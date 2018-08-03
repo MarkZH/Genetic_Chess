@@ -124,18 +124,11 @@ double Piece_Strength_Gene::score_board(const Board&, const Board&) const
 void Piece_Strength_Gene::renormalize()
 {
     // Sum is equal to the total strength of a player's starting pieces
-    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen).
-    auto total = 8*piece_value(PAWN) +
-                 2*piece_value(ROOK) +
-                 2*piece_value(KNIGHT) +
-                 2*piece_value(BISHOP) +
-                   piece_value(QUEEN);
-
-    // Use absolute value so there aren't discontinuous jumps due to small mutations.
-    normalizing_factor = std::abs(total);
-    if(normalizing_factor < std::numeric_limits<double>::epsilon())
-    {
-        // Prevent absurdly large strength return values due to near-zero sum of pieces.
-        normalizing_factor = 1.0;
-    }
+    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen, and 1 king).
+    normalizing_factor = 8*std::abs(piece_value(PAWN)) +
+                         2*std::abs(piece_value(ROOK)) +
+                         2*std::abs(piece_value(KNIGHT)) +
+                         2*std::abs(piece_value(BISHOP)) +
+                           std::abs(piece_value(QUEEN)) +
+                           std::abs(piece_value(KING));
 }
