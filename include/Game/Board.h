@@ -107,7 +107,7 @@ class Board
 
     private:
         std::array<const Piece*, 64> board;
-        std::map<uint64_t, int> repeat_count;
+        std::array<uint64_t, 101> repeat_count;
         int moves_since_pawn_or_capture_count;
         Color turn_color;
         std::vector<const Move*> game_record;
