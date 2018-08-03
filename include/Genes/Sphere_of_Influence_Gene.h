@@ -24,7 +24,8 @@ class Sphere_of_Influence_Gene : public Gene
         void load_properties() override;
 
     private:
-        double legal_bonus;
+        double legal_square_score;
+        double illegal_square_score;
         double king_target_factor;
 
         double score_board(const Board& board, const Board& opposite_board) const override;

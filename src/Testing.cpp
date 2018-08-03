@@ -588,7 +588,7 @@ void run_tests()
         + (4.0 * (1 + (2.0/(1 + 5.0))))  // f4
         + (1.0 * (1 + (2.0/(1 + 6.0))))  // g4
         + (1.0 * (1 + (2.0/(1 + 7.0)))); // h4
-    sphere_of_influence_score /= 64;
+    sphere_of_influence_score /= 64*(4.0 + 1.0);
     // Setup       Square score     King distance (from black king)
     // k.......    k4......         k1......
     // ........    .4......         .1......
@@ -598,7 +598,7 @@ void run_tests()
     // ........    .4......         .5......
     // ........    44......         66......
     // K.......    K4......         K7......
-    sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
+    tests_passed &= sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
     tests_passed &= total_force_gene.test(Board(), 1.0);
