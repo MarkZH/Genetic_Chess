@@ -609,7 +609,7 @@ void run_tests()
 
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-    tests_passed &= pawn_islands_gene.test(pawn_islands_board, -3.0);
+    tests_passed &= pawn_islands_gene.test(pawn_islands_board, -3.0/4);
 
     // Test board information sources
     auto promotion_board = Board("8/k6P/8/8/8/8/8/K7 w - - 0 1");
