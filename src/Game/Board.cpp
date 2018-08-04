@@ -9,7 +9,6 @@
 #include <map>
 #include <array>
 #include <mutex>
-#include <sstream>
 #include <numeric>
 
 #include "Game/Board.h"
@@ -327,9 +326,7 @@ std::string Board::fen_status() const
     }
     else
     {
-        size_t move_number;
-        std::stringstream(String::split(starting_fen).back()) >> move_number;
-        move_number += game_record.size()/2;
+        auto move_number = std::stoi(String::split(starting_fen).back()) + game_record.size()/2;
         s.append(std::to_string(move_number));
     }
 
