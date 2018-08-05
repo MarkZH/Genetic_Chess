@@ -154,7 +154,7 @@ class Board
         void remove_piece(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
         bool no_legal_moves() const;
-        std::string board_status() const; // for detecting threefold repetition
+        std::string board_status() const;
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();
         bool is_in_legal_moves_list(const Move& move) const;
@@ -163,6 +163,8 @@ class Board
         void set_unmoved(char file, int rank);
 
         // Track threefold repetition and fifty-move rule
+
+         // adds to previously seen list and returns count of times board position has occured
         int add_to_repeat_count(uint64_t new_hash);
         void clear_repeat_count();
         int moves_since_pawn_or_capture() const;
