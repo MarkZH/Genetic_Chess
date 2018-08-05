@@ -1050,9 +1050,9 @@ std::string Board::board_status() const
 {
     std::string s;
 
-    int empty_count = 0;
     for(int rank = 8; rank >= 1; --rank)
     {
+        int empty_count = 0;
         if(rank < 8)
         {
             s.push_back('/');
@@ -1078,7 +1078,6 @@ std::string Board::board_status() const
         if(empty_count > 0)
         {
             s.push_back('0' + empty_count);
-            empty_count = 0;
         }
     }
 
