@@ -158,10 +158,6 @@ void gene_pool(const std::string& config_file = "")
     signal(STOP_SIGNAL, pause_gene_pool);
     signal(PAUSE_SIGNAL, pause_gene_pool);
 
-    // Indices in gene pool to be shuffled for game match-ups
-    std::vector<size_t> pool_indices(gene_pool_population);
-    std::iota(pool_indices.begin(), pool_indices.end(), 0);
-
     for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % pools.size()) // run forever
     {
         auto& pool = pools[pool_index];
@@ -178,19 +174,15 @@ void gene_pool(const std::string& config_file = "")
                   << "   Gene pool file name: " << genome_file_name << "\n"
                   << std::endl;;
 
-        // The pool_indices list determines the match-ups. After shuffling the list
-        // of indices (0 to gene_pool_population - 1), adjacent indices in the pool are
-        // matched as opponents.
-        Random::shuffle(pool_indices);
+        // The shuffled pool list determines the match-ups. After shuffling the list,
+        // adjacent AIs are matched as opponents.
+        Random::shuffle(pool);
 
-        std::vector<std::future<Game_Result>> results; // map from pool_indices index to winner
+        std::vector<std::future<Game_Result>> results; // map from matchups to winners (half the size of pool)
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
-            auto white_index = pool_indices[index];
-            auto black_index = pool_indices[index + 1];
-
-            auto& white = pool[white_index];
-            auto& black = pool[black_index];
+            auto& white = pool[index];
+            auto& black = pool[index + 1];
 
             // Limit the number of simultaneous games by waiting for earlier games to finish
             // before starting a new one.
@@ -211,8 +203,8 @@ void gene_pool(const std::string& config_file = "")
         // Get results as they come in
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
-            auto& white = pool[pool_indices[index]];
-            auto& black = pool[pool_indices[index + 1]];
+            auto& white = pool[index];
+            auto& black = pool[index + 1];
 
             std::cout << white.get_id() << " vs "
                       << black.get_id() << ": " << std::flush;
