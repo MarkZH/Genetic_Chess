@@ -437,11 +437,15 @@ bool confirm_game_record(const std::string& file_name)
     auto input = std::ifstream(file_name);
     std::string line;
     auto line_number = 0;
+    auto last_move_line_number = 0;
 
     auto expected_winner = NONE;
     auto expect_checkmate = true;
+    auto expect_fifty_move_draw = false;
+    auto expect_threefold_draw = false;
     auto in_game = false;
     Board board;
+    Game_Result result;
 
     while(std::getline(input, line))
     {
@@ -459,12 +463,12 @@ bool confirm_game_record(const std::string& file_name)
         {
             if(expect_fifty_move_draw != String::contains(result.get_ending_reason(), "50"))
             {
-                std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line << ")." << std::endl;
+                std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
                 return false;
             }
             if(expect_threefold_draw != String::contains(result.get_ending_reason(), "fold"))
             {
-                std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line << ")." << std::endl;
+                std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
                 return false;
             }
 
@@ -554,7 +558,7 @@ bool confirm_game_record(const std::string& file_name)
                     auto move_checkmates = move.back() == '#';
                     auto move_checks = move_checkmates || move.back() == '+';
                     auto& move_to_submit = board.get_move(move);
-                    last_move_line = line_number;
+                    last_move_line_number = line_number;
                     if(String::contains(move, 'x')) // check that move captures
                     {
                         const Board& temp = board; // to prevent use of non-const private overload
