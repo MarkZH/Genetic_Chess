@@ -454,12 +454,27 @@ bool confirm_game_record(const std::string& file_name)
             continue;
         }
 
+        // Start header of new game
         if(in_game && String::starts_with(line, '['))
         {
+            if(expect_fifty_move_draw != String::contains(result.get_ending_reason(), "50"))
+            {
+                std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line << ")." << std::endl;
+                return false;
+            }
+            if(expect_threefold_draw != String::contains(result.get_ending_reason(), "fold"))
+            {
+                std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line << ")." << std::endl;
+                return false;
+            }
+
             expected_winner = NONE;
             expect_checkmate = true;
+            expect_fifty_move_draw = false;
+            expect_threefold_draw = false;
             in_game = false;
             board = Board();
+            result = {};
         }
 
         if(String::starts_with(line, "[Result"))
@@ -475,6 +490,7 @@ bool confirm_game_record(const std::string& file_name)
             else if(String::contains(line, "1/2-1/2"))
             {
                 expected_winner = NONE;
+                expect_checkmate = false;
             }
             else
             {
@@ -485,6 +501,14 @@ bool confirm_game_record(const std::string& file_name)
         else if(String::starts_with(line, "[Termination"))
         {
             expect_checkmate = false;
+            if(String::contains(line, "fold"))
+            {
+                expect_threefold_draw = true;
+            }
+            else if(String::contains(line, "50"))
+            {
+                expect_fifty_move_draw = true;
+            }
         }
         else if(String::starts_with(line, "[FEN"))
         {
@@ -527,9 +551,10 @@ bool confirm_game_record(const std::string& file_name)
 
                 try
                 {
-                    auto move_checks = move.back() == '+';
                     auto move_checkmates = move.back() == '#';
+                    auto move_checks = move_checkmates || move.back() == '+';
                     auto& move_to_submit = board.get_move(move);
+                    last_move_line = line_number;
                     if(String::contains(move, 'x')) // check that move captures
                     {
                         const Board& temp = board; // to prevent use of non-const private overload
@@ -540,12 +565,20 @@ bool confirm_game_record(const std::string& file_name)
                         }
                     }
 
-                    auto result = board.submit_move(move_to_submit);
+                    result = board.submit_move(move_to_submit);
                     if(move_checks)
                     {
                         if( ! board.king_is_in_check())
                         {
                             std::cerr << "Move (" << move_number << move << ") indicates check but does not check. (line: " << line_number << ")" << std::endl;
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if(board.king_is_in_check())
+                        {
+                            std::cerr << "Move (" << move_number << move << ") indicates no check but does check. (line: " << line_number << ")" << std::endl;
                             return false;
                         }
                     }
@@ -561,6 +594,14 @@ bool confirm_game_record(const std::string& file_name)
                         if( ! expect_checkmate)
                         {
                             std::cerr << "Game ends in checkmate, but this is not indicated in headers. (line: " << line_number << ")" << std::endl;
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        if(result.get_winner() != NONE)
+                        {
+                            std::cerr << "Move (" << move_number << move << ") does not indicate checkmate, but move does checkmate. (line: " << line_number << ")" << std::endl;
                             return false;
                         }
                     }
