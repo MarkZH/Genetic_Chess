@@ -1606,7 +1606,7 @@ size_t Board::number_of_promoted_pawns(Color player) const
 
 int Board::add_to_repeat_count(uint64_t new_hash)
 {
-    repeat_count[++moves_since_pawn_or_capture_count] = new_hash;
+    repeat_count[moves_since_pawn_or_capture_count++] = new_hash;
     return std::count(repeat_count.begin(),
                       repeat_count.begin() + moves_since_pawn_or_capture_count,
                       new_hash);
