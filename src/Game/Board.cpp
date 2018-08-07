@@ -1203,8 +1203,7 @@ void Board::recreate_move_caches()
                     auto file_direction = Math::sign(move->file_change());
                     auto rank_direction = Math::sign(move->rank_change());
 
-                    auto blocked = piece->type() != KNIGHT &&
-                                   file_direction == blocked_file_direction &&
+                    auto blocked = file_direction == blocked_file_direction &&
                                    rank_direction == blocked_rank_direction;
 
                     if( ! blocked && move->is_legal(*this))
@@ -1236,8 +1235,9 @@ void Board::recreate_move_caches()
                         }
                     }
 
-                    if( ! blocked &&
-                       piece->type() != KNIGHT &&
+                    if( ! blocked && // this move is blocked, keep same direction
+                       piece->type() != KNIGHT && // knights cannot be blocked
+                       ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
                        piece_on_square(move->end_file(), move->end_rank()))
                     {
                         blocked_file_direction = file_direction;
