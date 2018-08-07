@@ -20,6 +20,8 @@ CppCheckResults.xml
 # MS Visual Studio files
 .vs/
 enc_temp_folder/
+*.vspx
+
 
 # Compiled output
 bin/
