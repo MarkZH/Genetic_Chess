@@ -58,15 +58,6 @@ bool Move::is_legal(const Board& board) const
         return false;
     }
 
-    // Check that there are no intervening pieces for straight-line moves
-    if(moving_piece->type() != KNIGHT)
-    {
-        if( ! board.all_empty_between(starting_file, starting_rank, ending_file, ending_rank))
-        {
-            return false;
-        }
-    }
-
     // King should not be in check after move
     return ! board.king_is_in_check_after_move(*this);
 }
