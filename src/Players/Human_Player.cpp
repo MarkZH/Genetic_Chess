@@ -4,7 +4,6 @@
 #include <iostream>
 #include <cmath>
 
-#include "Players/Player.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Moves/Move.h"
@@ -20,16 +19,16 @@ Human_Player::Human_Player()
 
 const Move& Human_Player::choose_move(const Board& board, const Clock& clock) const
 {
-    auto last_move_illegal = false;
     std::string why_illegal;
     std::string move;
 
     while(true)
     {
         board.ascii_draw(board.whose_turn());
-        if(last_move_illegal)
+        if( ! why_illegal.empty())
         {
             std::cout << "Illegal move: " << move << " (" << why_illegal << ")" << std::endl;
+            why_illegal.clear();
         }
         std::cout << color_text(board.whose_turn());
         if( ! name().empty())
@@ -54,7 +53,6 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
         }
         catch(const Illegal_Move_Exception& e)
         {
-            last_move_illegal = true;
             why_illegal = e.what();
         }
         catch(const Promotion_Exception&)
@@ -70,7 +68,6 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
             }
             catch(const Illegal_Move_Exception& e)
             {
-                last_move_illegal = true;
                 why_illegal = e.what();
             }
         }
