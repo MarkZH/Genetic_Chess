@@ -11,6 +11,8 @@
 #include "Exceptions/Illegal_Move.h"
 #include "Exceptions/Promotion_Piece_Needed.h"
 
+#include "Utility.h"
+
 Human_Player::Human_Player()
 {
     std::cout << "Enter name: ";
@@ -28,8 +30,8 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
         if( ! why_illegal.empty())
         {
             std::cout << "Illegal move: " << move << " (" << why_illegal << ")" << std::endl;
-            why_illegal.clear();
         }
+
         std::cout << color_text(board.whose_turn());
         if( ! name().empty())
         {
@@ -44,32 +46,29 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
                       << board.get_last_move_record() << "  |  ";
         }
         std::cout << "Time: " << clock.time_left(board.whose_turn()) << std::endl;
+
         std::cout << "Enter move: ";
         std::getline(std::cin, move);
+
         try
         {
-            board.ascii_draw(opposite(board.whose_turn()));
-            return board.get_move(move);
+            try
+            {
+                return board.get_move(move);
+            }
+            catch(const Promotion_Piece_Needed&)
+            {
+                std::cout << "What should the pawn be promoted to?\n";
+                std::cout << "Choice: [B N R Q]: ";
+                std::string promote;
+                std::getline(std::cin, promote);
+                promote = String::trim_outer_whitespace(promote);
+                return board.get_move(move, promote.empty() ? ' ' : promote.front());
+            }
         }
         catch(const Illegal_Move& e)
         {
             why_illegal = e.what();
-        }
-        catch(const Promotion_Piece_Needed&)
-        {
-            std::cout << "What should the pawn be promoted to?\n";
-            std::cout << "Choice: [B N R Q]: ";
-            char promote;
-            std::cin >> promote;
-            try
-            {
-                board.ascii_draw(opposite(board.whose_turn()));
-                return board.get_move(move, promote);
-            }
-            catch(const Illegal_Move& e)
-            {
-                why_illegal = e.what();
-            }
         }
     }
 }
