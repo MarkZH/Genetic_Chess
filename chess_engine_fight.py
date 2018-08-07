@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 import subprocess, os, sys
 
 if len(sys.argv) < 2:

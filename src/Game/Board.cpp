@@ -1195,9 +1195,18 @@ void Board::recreate_move_caches()
             auto piece = piece_on_square(file, rank);
             if(piece && piece->color() == whose_turn())
             {
+                auto blocked_file_direction = 0;
+                auto blocked_rank_direction = 0;
+
                 for(const auto& move : piece->get_move_list(file, rank))
                 {
-                    if(move->is_legal(*this))
+                    auto file_direction = Math::sign(move->file_change());
+                    auto rank_direction = Math::sign(move->rank_change());
+
+                    auto blocked = file_direction == blocked_file_direction &&
+                                   rank_direction == blocked_rank_direction;
+
+                    if( ! blocked && move->is_legal(*this))
                     {
                         legal_moves_cache.push_back(move);
 
@@ -1224,6 +1233,15 @@ void Board::recreate_move_caches()
                         {
                             other_attacked_indices[board_index(move->end_file(), move->end_rank())] = true;
                         }
+                    }
+
+                    if( ! blocked && // this move is blocked, keep same direction
+                       piece->type() != KNIGHT && // knights cannot be blocked
+                       ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
+                       piece_on_square(move->end_file(), move->end_rank()))
+                    {
+                        blocked_file_direction = file_direction;
+                        blocked_rank_direction = rank_direction;
                     }
                 }
             }
