@@ -8,8 +8,8 @@
 #include "Game/Clock.h"
 #include "Moves/Move.h"
 
-#include "Exceptions/Illegal_Move_Exception.h"
-#include "Exceptions/Promotion_Exception.h"
+#include "Exceptions/Illegal_Move.h"
+#include "Exceptions/Promotion_Piece_Needed.h"
 
 Human_Player::Human_Player()
 {
@@ -51,11 +51,11 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
             board.ascii_draw(opposite(board.whose_turn()));
             return board.get_move(move);
         }
-        catch(const Illegal_Move_Exception& e)
+        catch(const Illegal_Move& e)
         {
             why_illegal = e.what();
         }
-        catch(const Promotion_Exception&)
+        catch(const Promotion_Piece_Needed&)
         {
             std::cout << "What should the pawn be promoted to?\n";
             std::cout << "Choice: [B N R Q]: ";
@@ -66,7 +66,7 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
                 board.ascii_draw(opposite(board.whose_turn()));
                 return board.get_move(move, promote);
             }
-            catch(const Illegal_Move_Exception& e)
+            catch(const Illegal_Move& e)
             {
                 why_illegal = e.what();
             }
