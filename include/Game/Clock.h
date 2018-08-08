@@ -8,7 +8,6 @@
 #include "Game_Result.h"
 
 class CECP_Mediator;
-class UCI_Mediator;
 
 class Clock
 {
@@ -44,7 +43,7 @@ class Clock
 
         // When playing with outside interfaces, use the external clock
         friend class CECP_Mediator;
-        friend class UCI_Mediator;
+
         void set_time(Color player, double new_time_seconds) const;
         void stop_external() const; // stop clocks for non-local players
 };
