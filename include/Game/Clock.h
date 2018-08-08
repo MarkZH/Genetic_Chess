@@ -38,12 +38,15 @@ class Clock
         bool use_reset;
         size_t move_count_reset;
         bool clocks_running;
-        std::chrono::steady_clock::time_point time_previous_punch;
+
+        // mutable for external adjustment
+        mutable std::chrono::steady_clock::time_point time_previous_punch;
 
         // When playing with outside interfaces, use the external clock
         friend class CECP_Mediator;
         friend class UCI_Mediator;
         void set_time(Color player, double new_time_seconds) const;
+        void stop_external() const; // stop clocks for non-local players
 };
 
 #endif // Clock_H

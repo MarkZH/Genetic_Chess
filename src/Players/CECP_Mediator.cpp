@@ -34,6 +34,8 @@ CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THIN
 
 const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) const
 {
+    clock.stop_external();
+
     while(true)
     {
         try
@@ -105,18 +107,14 @@ std::string CECP_Mediator::receive_move(const Clock& clock) const
             auto data = String::split(String::split(move, "{", 1)[1], "}", 1)[0];
             throw Game_Ended(winner, data);
         }
-        else if(String::starts_with(move, "time") || String::starts_with(move, "otim"))
+        else if(String::starts_with(move, "time"))
         {
-            auto time = std::stod(String::split(move, " ")[1])/100; // time specified in centiseconds
-
             // Waiting for non-local move, so the non-local clock is running
             // for the local AI. The local clock has not been punched yet, so
             // it is still running for the non-local player. Therefore, the
             // "opponent time" ("otim") refers to the local AI's clock.
-            auto player = String::starts_with(move, 'o') ?
-                                            clock.running_for() :
-                                            opposite(clock.running_for());
-
+            auto player = opposite(clock.running_for());
+            auto time = std::stod(String::split(move, " ")[1])/100; // time specified in centiseconds
             clock.set_time(player, time);
             log("setting " + color_text(player) + "'s time to " + std::to_string(time) + " seconds.");
         }
@@ -135,17 +133,37 @@ std::string CECP_Mediator::name() const
     }
 }
 
-void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board, const std::string& last_move) const
+void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board, const std::string& time_out_move) const
 {
-    if(move_text != board.last_move_coordinates() && ! String::contains(ending.get_ending_reason(), "Time"))
+    if(time_out_move.empty()) // game ended by a rule (not by time)
     {
-        // Last move from local opponent --> send last move to CECP intermediary
-        send_command("move " + board.last_move_coordinates());
+        if(move_text != board.last_move_coordinates())
+        {
+            send_command("move " + board.last_move_coordinates());
+        }
+
+        send_command(ending.get_game_ending_annotation() + " {" + ending.get_ending_reason() + "}");
+    }
+    else // game ended by time
+    {
+        if(move_text == time_out_move)
+        {
+            // move from outside never applied due to time
+            auto temp = board;
+            temp.submit_move(board.get_move(move_text));
+            auto legal_moves = temp.legal_moves();
+            if( ! legal_moves.empty())
+            {
+                send_command("move " + legal_moves.front()->coordinate_move());
+            }
+        }
+        else
+        {
+            // move from local AI not applied due to time
+            send_command(ending.get_game_ending_annotation() + " {" + ending.get_ending_reason() + "}");
+        }
     }
 
-    last_move_text = last_move;
-
-    send_command("result " + ending.get_game_ending_annotation() + " {" + ending.get_ending_reason() + "}");
     wait_for_quit();
 }
 
@@ -233,10 +251,7 @@ void CECP_Mediator::wait_for_quit() const
     {
         while(true)
         {
-            if(receive_cecp_command() == "?")
-            {
-                send_command("move " + last_move_text);
-            }
+            receive_cecp_command();
         }
     }
     catch(const std::runtime_error&)

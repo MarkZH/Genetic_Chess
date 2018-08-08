@@ -20,7 +20,7 @@ class CECP_Mediator : public Outside_Player
         std::string receive_move(const Clock& clock) const override;
 
         Color get_ai_color() const override;
-        void process_game_ending(const Game_Result& gee, const Board& board, const std::string& last_move) const override;
+        void process_game_ending(const Game_Result& gee, const Board& board, const std::string& time_out_move) const override;
 
         std::string name() const override;
 
@@ -31,7 +31,6 @@ class CECP_Mediator : public Outside_Player
         mutable std::string received_name;
         mutable Thinking_Output_Type thinking_mode;
         mutable std::string move_text;
-        mutable std::string last_move_text;
 
         void get_clock_specs() override;
         std::string receive_cecp_command() const;
