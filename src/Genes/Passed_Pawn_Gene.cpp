@@ -12,7 +12,7 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&) const
 {
     // Counts the number of passed pawns. A passed pawn is one with
     // no enemy pawns on the same or adjacent files ahead of it.
-    double score = board.number_of_promoted_pawns(board.whose_turn());
+    double score = 0.0;
     auto own_pawn = board.get_piece(PAWN, board.whose_turn());
     auto other_pawn = board.get_piece(PAWN, opposite(board.whose_turn()));
 

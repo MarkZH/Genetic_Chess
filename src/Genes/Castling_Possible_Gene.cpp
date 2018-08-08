@@ -41,11 +41,6 @@ std::string Castling_Possible_Gene::name() const
 
 double Castling_Possible_Gene::score_board(const Board& board, const Board&) const
 {
-    if(board.has_castled(board.whose_turn()))
-    {
-        return 1.0;
-    }
-
     auto king_start_file = 'e';
     auto base_rank = (board.whose_turn() == WHITE ? 1 : 8);
     if(board.piece_has_moved(king_start_file, base_rank))
@@ -62,7 +57,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&) con
         {
             auto preference = (rook_file == 'h' ? kingside_preference : queenside_preference);
             int files_to_clear = std::abs(rook_file - king_start_file) - 1;
-            double score_per_clear_square = preference/(files_to_clear + 2);
+            double score_per_clear_square = preference/(files_to_clear + 1);
             score += score_per_clear_square; // score for keeping rook unmoved
 
             // Add score for clearing pieces between king and rook

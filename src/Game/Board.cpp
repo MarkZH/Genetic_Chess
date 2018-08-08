@@ -75,8 +75,6 @@ Board::Board() :
     en_passant_target({'\0', 0}),
     king_location{{ {'\0', 0}, {'\0', 0} }},
     move_count_start_offset(0),
-    already_castled{{false, false}},
-    promoted_pawns_count{{0, 0}},
     capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
@@ -121,8 +119,6 @@ Board::Board(const std::string& fen) :
     en_passant_target({'\0', 0}),
     starting_fen(fen),
     king_location{{ {'\0', 0}, {'\0', 0} }},
-    already_castled{{false, false}},
-    promoted_pawns_count{{0, 0}},
     capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
@@ -1610,16 +1606,6 @@ Square Board::piece_is_pinned(char file, int rank) const
             return no_pin;
         }
     }
-}
-
-bool Board::has_castled(Color player) const
-{
-    return already_castled[player];
-}
-
-size_t Board::number_of_promoted_pawns(Color player) const
-{
-    return promoted_pawns_count[player];
 }
 
 int Board::add_to_repeat_count(uint64_t new_hash)
