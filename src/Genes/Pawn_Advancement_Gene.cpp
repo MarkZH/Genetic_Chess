@@ -19,8 +19,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Board&) cons
     {
         for(int rank = 2; rank <= 7; ++rank)
         {
-            auto piece = board.piece_on_square(file, rank);
-            if(piece == own_pawn)
+            if(board.piece_on_square(file, rank) == own_pawn)
             {
                 // 1 point per move towards promotion
                 score += std::abs(home_rank - rank);
