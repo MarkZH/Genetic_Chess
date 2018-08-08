@@ -135,13 +135,15 @@ std::string CECP_Mediator::name() const
     }
 }
 
-void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board) const
+void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board, const std::string& last_move) const
 {
     if(move_text != board.last_move_coordinates() && ! String::contains(ending.get_ending_reason(), "Time"))
     {
         // Last move from local opponent --> send last move to CECP intermediary
         send_command("move " + board.last_move_coordinates());
     }
+
+    last_move_text = last_move;
 
     send_command("result " + ending.get_game_ending_annotation() + " {" + ending.get_ending_reason() + "}");
     wait_for_quit();
@@ -231,7 +233,10 @@ void CECP_Mediator::wait_for_quit() const
     {
         while(true)
         {
-            receive_cecp_command();
+            if(receive_cecp_command() == "?")
+            {
+                send_command("move " + last_move_text);
+            }
         }
     }
     catch(const std::runtime_error&)

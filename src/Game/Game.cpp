@@ -52,6 +52,7 @@ Game_Result play_game_with_board(const Player& white,
     {
         game_clock.start();
         Game_Result result;
+        std::string last_move;
 
         try
         {
@@ -62,6 +63,7 @@ Game_Result play_game_with_board(const Player& white,
                 result = game_clock.punch();
                 if(result.game_has_ended())
                 {
+                    last_move = move_chosen.coordinate_move();
                     break;
                 }
 
@@ -79,8 +81,8 @@ Game_Result play_game_with_board(const Player& white,
         }
 
         // for Outside_Players communicating with xboard and the like
-        white.process_game_ending(result, board);
-        black.process_game_ending(result, board);
+        white.process_game_ending(result, board, last_move);
+        black.process_game_ending(result, board, last_move);
 
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
 

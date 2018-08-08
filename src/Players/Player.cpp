@@ -5,7 +5,7 @@
 class Game_Result;
 class Board;
 
-void Player::process_game_ending(const Game_Result&, const Board&) const
+void Player::process_game_ending(const Game_Result&, const Board&, const std::string&) const
 {
 }
 
