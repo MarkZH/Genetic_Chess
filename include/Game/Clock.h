@@ -43,9 +43,7 @@ class Clock
 
         // When playing with outside interfaces, use the external clock
         friend class CECP_Mediator;
-
         void set_time(Color player, double new_time_seconds) const;
-        void stop_external() const; // stop clocks for non-local players
 };
 
 #endif // Clock_H

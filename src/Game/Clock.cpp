@@ -116,8 +116,3 @@ void Clock::set_time(Color player, double new_time_seconds) const
     timers[player] = fractional_seconds(new_time_seconds);
     time_previous_punch = std::chrono::steady_clock::now();
 }
-
-void Clock::stop_external() const
-{
-    timers[running_for()] = fractional_seconds(std::numeric_limits<double>::infinity());
-}

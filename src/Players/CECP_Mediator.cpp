@@ -34,8 +34,6 @@ CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THIN
 
 const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) const
 {
-    clock.stop_external();
-
     while(true)
     {
         try
