@@ -49,7 +49,7 @@ Game_Result play_game_with_board(const Player& white,
     Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds);
     game_clock.start();
     Game_Result result;
-    auto stop_for_clock = white.stop_for_local_clock() && white.stop_for_local_clock();
+    auto stop_for_clock = white.stop_for_local_clock() && black.stop_for_local_clock();
 
     try
     {
