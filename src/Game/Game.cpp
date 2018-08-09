@@ -59,6 +59,7 @@ Game_Result play_game_with_board(const Player& white,
             {
                 auto& player = board.whose_turn() == WHITE ? white : black;
                 const auto& move_chosen = player.choose_move(board, game_clock);
+
                 result = game_clock.punch();
                 if(stop_for_clock && result.game_has_ended())
                 {
@@ -72,10 +73,10 @@ Game_Result play_game_with_board(const Player& white,
                 }
             }
         }
-        catch(const Game_Ended& gee)
+        catch(const Game_Ended& game_error)
         {
             // Only occurs for GUI communication errors
-            result = {gee.winner(), gee.what()};
+            result = {game_error.winner(), game_error.what()};
         }
 
         // for Outside_Players communicating with xboard and the like
