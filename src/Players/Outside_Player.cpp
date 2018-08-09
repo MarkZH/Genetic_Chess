@@ -109,3 +109,8 @@ void Outside_Player::set_increment(double increment)
 {
     time_increment = increment;
 }
+
+bool Outside_Player::stop_for_local_clock() const
+{
+    return false;
+}

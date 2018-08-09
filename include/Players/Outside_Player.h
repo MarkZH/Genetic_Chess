@@ -21,6 +21,8 @@ class Outside_Player : public Player
         size_t get_reset_moves();
         double get_increment();
 
+        bool stop_for_local_clock() const override;
+
     protected:
         Outside_Player();
 

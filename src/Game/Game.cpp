@@ -47,13 +47,12 @@ Game_Result play_game_with_board(const Player& white,
     static std::mutex write_lock;
 
     Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds);
+    game_clock.start();
+    Game_Result result;
+    auto stop_for_clock = white.stop_for_local_clock() && white.stop_for_local_clock();
 
     try
     {
-        game_clock.start();
-        Game_Result result;
-        std::string last_move;
-
         try
         {
             while(true)
@@ -61,9 +60,8 @@ Game_Result play_game_with_board(const Player& white,
                 auto& player = board.whose_turn() == WHITE ? white : black;
                 const auto& move_chosen = player.choose_move(board, game_clock);
                 result = game_clock.punch();
-                if(result.game_has_ended())
+                if(stop_for_clock && result.game_has_ended())
                 {
-                    last_move = move_chosen.coordinate_move();
                     break;
                 }
 
@@ -81,8 +79,8 @@ Game_Result play_game_with_board(const Player& white,
         }
 
         // for Outside_Players communicating with xboard and the like
-        white.process_game_ending(result, board, last_move);
-        black.process_game_ending(result, board, last_move);
+        white.process_game_ending(result, board);
+        black.process_game_ending(result, board);
 
         std::lock_guard<std::mutex> write_lock_guard(write_lock);
 

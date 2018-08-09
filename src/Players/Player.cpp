@@ -5,7 +5,7 @@
 class Game_Result;
 class Board;
 
-void Player::process_game_ending(const Game_Result&, const Board&, const std::string&) const
+void Player::process_game_ending(const Game_Result&, const Board&) const
 {
 }
 
@@ -21,4 +21,9 @@ std::string Player::get_commentary_for_move(size_t) const
 
 void Player::initial_board_setup(Board&) const
 {
+}
+
+bool Player::stop_for_local_clock() const
+{
+    return true;
 }

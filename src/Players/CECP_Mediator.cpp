@@ -43,21 +43,21 @@ const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) c
             if(first_move.empty())
             {
                 send_command("move " + board.last_move_coordinates());
-                move_text = receive_move(clock);
+                received_move_text = receive_move(clock);
             }
             else
             {
-                move_text = first_move;
+                received_move_text = first_move;
                 first_move.clear();
             }
 
             board.set_thinking_mode(thinking_mode);
-            return board.get_move(move_text);
+            return board.get_move(received_move_text);
         }
         catch(const Illegal_Move& e)
         {
             log("ERROR: Illegal move: " + std::string(e.what()));
-            send_command("Illegal move (" + std::string(e.what()) + ") " + move_text);
+            send_command("Illegal move (" + std::string(e.what()) + ") " + received_move_text);
         }
     }
 }
@@ -133,36 +133,14 @@ std::string CECP_Mediator::name() const
     }
 }
 
-void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board, const std::string& time_out_move) const
+void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board) const
 {
-    if(time_out_move.empty()) // game ended by a rule (not by time)
+    if(board.last_move_coordinates() != received_move_text)
     {
-        if(move_text != board.last_move_coordinates())
-        {
-            send_command("move " + board.last_move_coordinates());
-        }
+        send_command("move " + board.last_move_coordinates());
+    }
 
-        send_command(ending.get_game_ending_annotation() + " {" + ending.get_ending_reason() + "}");
-    }
-    else // game ended by time
-    {
-        if(move_text == time_out_move)
-        {
-            // move from outside never applied due to time
-            auto temp = board;
-            temp.submit_move(board.get_move(move_text));
-            auto legal_moves = temp.legal_moves();
-            if( ! legal_moves.empty())
-            {
-                send_command("move " + legal_moves.front()->coordinate_move());
-            }
-        }
-        else
-        {
-            // move from local AI not applied due to time
-            send_command(ending.get_game_ending_annotation() + " {" + ending.get_ending_reason() + "}");
-        }
-    }
+    send_command(ending.get_game_ending_annotation() + " {" + ending.get_ending_reason() + "}");
 
     wait_for_quit();
 }

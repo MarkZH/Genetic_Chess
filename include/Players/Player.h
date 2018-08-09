@@ -17,10 +17,11 @@ class Player
         virtual std::string name() const = 0;
         virtual std::string author() const;
 
-        virtual void process_game_ending(const Game_Result& gee, const Board& board, const std::string& last_move) const;
+        virtual void process_game_ending(const Game_Result& ending, const Board& board) const;
         virtual std::string get_commentary_for_move(size_t move_number) const;
 
         virtual void initial_board_setup(Board& board) const;
+        virtual bool stop_for_local_clock() const;
 };
 
 #endif // PLAYER_H
