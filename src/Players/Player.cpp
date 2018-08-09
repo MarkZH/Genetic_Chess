@@ -22,3 +22,8 @@ std::string Player::get_commentary_for_move(size_t) const
 void Player::initial_board_setup(Board&) const
 {
 }
+
+bool Player::stop_for_local_clock() const
+{
+    return true;
+}

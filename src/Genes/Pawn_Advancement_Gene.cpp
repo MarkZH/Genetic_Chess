@@ -10,7 +10,7 @@
 
 double Pawn_Advancement_Gene::score_board(const Board& board, const Board&) const
 {
-    double score = board.number_of_promoted_pawns(board.whose_turn())*6;
+    double score = 0.0;
     auto perspective = board.whose_turn();
     auto own_pawn = board.get_piece(PAWN, perspective);
     int home_rank = (perspective == WHITE ? 2 : 7);
@@ -19,8 +19,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Board&) cons
     {
         for(int rank = 2; rank <= 7; ++rank)
         {
-            auto piece = board.piece_on_square(file, rank);
-            if(piece == own_pawn)
+            if(board.piece_on_square(file, rank) == own_pawn)
             {
                 // 1 point per move towards promotion
                 score += std::abs(home_rank - rank);
@@ -28,7 +27,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Board&) cons
         }
     }
 
-    return score/(8*6); // normalize to 8 pawns at the far rank (i.e., promoted)
+    return score/(8*5); // normalize to 8 pawns at the far rank (i.e., promoted)
 }
 
 std::unique_ptr<Gene> Pawn_Advancement_Gene::duplicate() const
