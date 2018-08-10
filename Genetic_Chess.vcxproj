@@ -198,8 +198,9 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Breeding\Gene_Pool.cpp" />
-    <ClCompile Include="src\exceptions\Game_Ending_Exception.cpp" />
-    <ClCompile Include="src\exceptions\Illegal_Move_Exception.cpp" />
+    <ClCompile Include="src\Exceptions\Game_Ended.cpp" />
+    <ClCompile Include="src\Exceptions\Illegal_Move.cpp" />
+    <ClCompile Include="src\Exceptions\Promotion_Piece_Needed.cpp" />
     <ClCompile Include="src\game\Board.cpp" />
     <ClCompile Include="src\game\Clock.cpp" />
     <ClCompile Include="src\game\Color.cpp" />
@@ -253,9 +254,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Breeding\Gene_Pool.h" />
-    <ClInclude Include="include\exceptions\Game_Ending_Exception.h" />
-    <ClInclude Include="include\exceptions\Illegal_Move_Exception.h" />
-    <ClInclude Include="include\exceptions\Promotion_Exception.h" />
+    <ClInclude Include="include\Exceptions\Game_Ended.h" />
+    <ClInclude Include="include\Exceptions\Illegal_Move.h" />
+    <ClInclude Include="include\Exceptions\Promotion_Piece_Needed.h" />
     <ClInclude Include="include\game\Board.h" />
     <ClInclude Include="include\game\Clock.h" />
     <ClInclude Include="include\game\Color.h" />
