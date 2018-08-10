@@ -9,7 +9,6 @@
 #include <cmath>
 #include <algorithm>
 #include <future>
-#include <numeric>
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"

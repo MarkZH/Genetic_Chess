@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <array>
 #include <mutex>
-#include <numeric>
+#include <algorithm>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
