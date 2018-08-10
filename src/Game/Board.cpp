@@ -421,7 +421,7 @@ Game_Result Board::submit_move(const Move& move)
     return {};
 }
 
-const Move& Board::get_move(const std::string& move, char promote) const
+const Move& Board::get_move(const std::string& move) const
 {
     const std::string pieces = "RNBQK";
     const std::string valid_files = "abcdefgh";
@@ -441,10 +441,6 @@ const Move& Board::get_move(const std::string& move, char promote) const
                 break;
             }
         }
-    }
-    else
-    {
-        promoted_piece = promote;
     }
 
     for(char c : move)

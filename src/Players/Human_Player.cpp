@@ -62,8 +62,7 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
                 std::cout << "Choice: [B N R Q]: ";
                 std::string promote;
                 std::getline(std::cin, promote);
-                promote = String::trim_outer_whitespace(promote);
-                return board.get_move(move, promote.empty() ? ' ' : promote.front());
+                return board.get_move(move + promote);
             }
         }
         catch(const Illegal_Move& e)
