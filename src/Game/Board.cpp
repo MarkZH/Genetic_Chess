@@ -49,12 +49,14 @@ const Pawn   Board::black_pawn(BLACK);
 
 const Piece* Board::get_piece(Piece_Type piece_type, Color color)
 {
-    static std::array<std::array<const Piece*, 2>, 6> all_pieces = {{{{&white_pawn,   &black_pawn  }},
-                                                                     {{&white_rook,   &black_rook  }},
-                                                                     {{&white_knight, &black_knight}},
-                                                                     {{&white_bishop, &black_bishop}},
-                                                                     {{&white_queen,  &black_queen }},
-                                                                     {{&white_king,   &black_king  }}}};
+    static const std::array<std::array<const Piece*, 2>, 6> all_pieces =
+        {{{{&white_pawn,   &black_pawn  }},
+          {{&white_rook,   &black_rook  }},
+          {{&white_knight, &black_knight}},
+          {{&white_bishop, &black_bishop}},
+          {{&white_queen,  &black_queen }},
+          {{&white_king,   &black_king  }}}};
+
     return all_pieces[piece_type][color];
 }
 
