@@ -30,8 +30,6 @@ int main(int argc, char *argv[])
 
     try
     {
-        run_tests();
-
         if(argc > 1)
         {
             if(std::string(argv[1]) == "-genepool")
@@ -75,6 +73,17 @@ int main(int argc, char *argv[])
                 else
                 {
                     std::cerr << "Provide a file containing a game to confirm has all legal moves." << std::endl;
+                    return 1;
+                }
+            }
+            else if(std::string(argv[1]) == "-test")
+            {
+                if(run_tests())
+                {
+                    return 0;
+                }
+                else
+                {
                     return 1;
                 }
             }

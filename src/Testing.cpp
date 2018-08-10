@@ -1,6 +1,5 @@
 #include "Testing.h"
 
-#ifdef DEBUG
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -36,7 +35,7 @@
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
 size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix);
 
-void run_tests()
+bool run_tests()
 {
     bool tests_passed = true;
 
@@ -1074,8 +1073,7 @@ void run_tests()
     {
         std::cout << "Pre-perft tests failed." << std::endl;
         std::cout << "Press enter to continue ..." << std::endl;
-        std::cin.get();
-        return;
+        return false;
     }
 
     // Count game tree leaves (perft) to given depth to validate move generation
@@ -1149,6 +1147,8 @@ void run_tests()
     {
         std::cout << "Tests failed." << std::endl;
     }
+
+    return tests_passed;
 }
 
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2)
@@ -1218,7 +1218,3 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
 
     return count;
 }
-
-#else
-void run_tests() {}
-#endif

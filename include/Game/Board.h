@@ -40,7 +40,7 @@ class Board
 
         Game_Result submit_move(const Move& move);
 
-        const Move& get_move(const std::string& move, char promote = 0) const;
+        const Move& get_move(const std::string& move) const;
         const Move& get_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
 
         bool is_legal(char file_start, int rank_start,
