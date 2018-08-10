@@ -6,7 +6,6 @@
 #include <iomanip>
 #include <cassert>
 #include <stdexcept>
-#include <map>
 #include <array>
 #include <mutex>
 #include <numeric>
@@ -50,18 +49,20 @@ const Pawn   Board::black_pawn(BLACK);
 
 const Piece* Board::get_piece(Piece_Type piece_type, Color color)
 {
-    static std::array<std::array<const Piece*, 2>, 6> all_pieces = {{{{&white_pawn,   &black_pawn  }},
-                                                                     {{&white_rook,   &black_rook  }},
-                                                                     {{&white_knight, &black_knight}},
-                                                                     {{&white_bishop, &black_bishop}},
-                                                                     {{&white_queen,  &black_queen }},
-                                                                     {{&white_king,   &black_king  }}}};
+    static const std::array<std::array<const Piece*, 2>, 6> all_pieces =
+        {{{{&white_pawn,   &black_pawn  }},
+          {{&white_rook,   &black_rook  }},
+          {{&white_knight, &black_knight}},
+          {{&white_bishop, &black_bishop}},
+          {{&white_queen,  &black_queen }},
+          {{&white_king,   &black_king  }}}};
+
     return all_pieces[piece_type][color];
 }
 
 std::mutex Board::hash_lock;
 bool Board::hash_values_initialized = false;
-std::array<std::map<const Piece*, uint64_t>, 64> Board::square_hash_values{};
+std::array<std::array<uint64_t, 13>, 64> Board::square_hash_values{};
 std::array<uint64_t, 64> Board::en_passant_hash_values{};
 std::array<uint64_t, 64> Board::castling_hash_values{};
 std::array<uint64_t, 2> Board::color_hash_values{}; // for whose_turn() hashing
@@ -1354,18 +1355,14 @@ void Board::initialize_board_hash()
 
             for(auto piece_color : {BLACK, WHITE})
             {
-                std::vector<const Piece*> pieces {nullptr,
-                                                  get_piece(PAWN, piece_color),
-                                                  get_piece(ROOK, piece_color),
-                                                  get_piece(KNIGHT, piece_color),
-                                                  get_piece(BISHOP, piece_color),
-                                                  get_piece(QUEEN, piece_color),
-                                                  get_piece(KING, piece_color)};
-                for(auto piece : pieces)
+                for(auto piece_type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
                 {
-                    square_hash_values[index][piece] = Random::random_unsigned_int64();
+                    auto hash_index = square_hash_index(get_piece(piece_type, piece_color));
+                    square_hash_values[index][hash_index] = Random::random_unsigned_int64();
                 }
             }
+
+            square_hash_values[index][square_hash_index(nullptr)] = Random::random_unsigned_int64();
         }
     }
 
@@ -1407,7 +1404,7 @@ uint64_t Board::get_square_hash(char file, int rank) const
 
     auto piece = piece_on_square(file, rank);
     auto index = Board::board_index(file, rank);
-    auto result = square_hash_values[index].at(piece);
+    auto result = square_hash_values[index][square_hash_index(piece)];
     if(piece &&
        piece->type() == ROOK &&
        ! piece_has_moved(file, rank) &&
@@ -1422,6 +1419,16 @@ uint64_t Board::get_square_hash(char file, int rank) const
     }
 
     return result;
+}
+
+size_t Board::square_hash_index(const Piece* piece)
+{
+    if(piece)
+    {
+        return piece->type() + (piece->color()*6); // 6 == number of piece types
+    }
+
+    return square_hash_values.front().size() - 1; // last value for empty square (nullptr)
 }
 
 uint64_t Board::get_board_hash() const

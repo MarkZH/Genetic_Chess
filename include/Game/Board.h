@@ -2,7 +2,6 @@
 #define BOARD_H
 
 #include <vector>
-#include <map>
 #include <string>
 #include <array>
 #include <mutex>
@@ -174,12 +173,16 @@ class Board
         // Hash values for squares
         static std::mutex hash_lock;
         static bool hash_values_initialized;
-        static std::array<std::map<const Piece*, uint64_t>, 64> square_hash_values; // [board_index][Piece*] --> [piece_hash]
+
+        // [board_index][square_hash_index()] --> [piece_hash] (13 == number of piece types (black and white) + empty
+        static std::array<std::array<uint64_t, 13>, 64> square_hash_values;
+
         static std::array<uint64_t, 64> en_passant_hash_values;
         static std::array<uint64_t, 64> castling_hash_values;
 
         void update_board_hash(char file, int rank);
         uint64_t get_square_hash(char file, int rank) const;
+        static size_t square_hash_index(const Piece* piece);
 
         // Whose turn?
         static std::array<uint64_t, 2> color_hash_values; // for whose_turn() hashing
