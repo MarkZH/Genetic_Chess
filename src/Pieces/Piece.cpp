@@ -85,37 +85,3 @@ void Piece::add_legal_move(std::unique_ptr<Move> move)
         possible_moves.push_back(std::move(move));
     }
 }
-
-std::array<bool, 64> Piece::all_attacked_squares(char file, int rank, const Board& board) const
-{
-    std::array<bool, 64> result = {false};
-    std::array<int, 2> blocking_direction{};
-
-    for(const auto& move : get_move_list(file, rank))
-    {
-        if( ! move->can_capture())
-        {
-            continue;
-        }
-
-        auto move_direction = std::array<int, 2>{Math::sign(move->file_change()), Math::sign(move->rank_change())};
-        if(blocking_direction == move_direction)
-        {
-            continue;
-        }
-
-        auto attacked_piece = board.piece_on_square(move->end_file(), move->end_rank());
-        if(attacked_piece)
-        {
-            blocking_direction = move_direction;
-            if(attacked_piece->color() == color())
-            {
-                continue;
-            }
-        }
-
-        result[board.board_index(move->end_file(), move->end_rank())] = true;
-    }
-
-    return result;
-}
