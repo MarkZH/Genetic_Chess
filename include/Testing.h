@@ -1,6 +1,7 @@
 #ifndef TESTING_H
 #define TESTING_H
 
-void run_tests();
+// Returns true if all tests passed
+bool run_tests();
 
 #endif // TESTING_H
