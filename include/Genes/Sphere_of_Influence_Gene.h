@@ -28,7 +28,7 @@ class Sphere_of_Influence_Gene : public Gene
         double illegal_square_score;
         double king_target_factor;
 
-        double score_board(const Board& board, const Board& opposite_board) const override;
+        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
         void gene_specific_mutation() override;
 };
 

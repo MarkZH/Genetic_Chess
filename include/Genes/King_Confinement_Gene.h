@@ -27,7 +27,7 @@ class King_Confinement_Gene : public Gene
         double enemy_block_score;
         double free_square_score;
 
-        double score_board(const Board& board, const Board& opposite_board) const override;
+        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
 };
 
 #endif // KING_CONFINEMENT_GENE_H

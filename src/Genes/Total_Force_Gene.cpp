@@ -12,7 +12,7 @@ Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_sou
 {
 }
 
-double Total_Force_Gene::score_board(const Board& board, const Board&) const
+double Total_Force_Gene::score_board(const Board& board, const Board&, size_t) const
 {
     double score = 0.0;
 

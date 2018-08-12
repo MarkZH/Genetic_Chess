@@ -168,21 +168,21 @@ void Genome::read_from(std::istream& is)
     throw std::runtime_error("Reached end of file before END of genome.");
 }
 
-double Genome::score_board(const Board& board, const Board& opposite_board, double minimum_priority) const
+double Genome::score_board(const Board& board, const Board& opposite_board, size_t depth, double minimum_priority) const
 {
     double score = 0.0;
     for(const auto& gene : genome)
     {
         if(std::abs(gene->get_priority()) > minimum_priority)
         {
-            score += gene->evaluate(board, opposite_board);
+            score += gene->evaluate(board, opposite_board, depth);
         }
     }
 
     return score;
 }
 
-double Genome::evaluate(const Board& board, Color perspective) const
+double Genome::evaluate(const Board& board, Color perspective, size_t depth) const
 {
     auto other_board = board;
     other_board.set_turn(opposite(board.whose_turn()));
@@ -190,8 +190,8 @@ double Genome::evaluate(const Board& board, Color perspective) const
     const auto& opponents_board = (board.whose_turn() == perspective ? other_board : board);
 
     auto minimum_priority = Random::random_real(0.0, get_minimum_priority());
-    return score_board(my_board, opponents_board, minimum_priority) -
-           score_board(opponents_board, my_board, minimum_priority);
+    return score_board(my_board, opponents_board, depth, minimum_priority) -
+           score_board(opponents_board, my_board, depth, minimum_priority);
 }
 
 void Genome::mutate()

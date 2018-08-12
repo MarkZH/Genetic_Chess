@@ -16,7 +16,7 @@ class Priority_Threshold_Gene : public Gene
         std::unique_ptr<Gene> duplicate() const override;
         void gene_specific_mutation() override;
         std::string name() const override;
-        double score_board(const Board& board, const Board& opposite_board) const override;
+        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
 
         double get_threshold() const;
 

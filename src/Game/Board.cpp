@@ -77,6 +77,7 @@ Board::Board() :
     king_location{{ {'\0', 0}, {'\0', 0} }},
     move_count_start_offset(0),
     capturing_move_available(false),
+    castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {
     initialize_board_hash();
@@ -121,6 +122,7 @@ Board::Board(const std::string& fen) :
     starting_fen(fen),
     king_location{{ {'\0', 0}, {'\0', 0} }},
     capturing_move_available(false),
+    castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {
     initialize_board_hash();
@@ -1627,4 +1629,9 @@ int Board::moves_since_pawn_or_capture() const
 void Board::clear_repeat_count()
 {
     moves_since_pawn_or_capture_count = 0;
+}
+
+size_t Board::castling_move_index(Color player) const
+{
+    return castling_index[player];
 }

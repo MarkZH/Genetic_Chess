@@ -39,9 +39,11 @@ class Minimax_AI : public Player
         // Evaluation method
         double evaluate(const Board& board,
                         Game_Result move_result,
-                        Color perspective) const;
+                        Color perspective,
+                        size_t depth) const;
         virtual double internal_evaluate(const Board& board,
-                                         Color perspective) const = 0;
+                                         Color perspective,
+                                         size_t depth) const = 0;
 
         // Time management
         virtual double time_to_examine(const Board& board, const Clock& clock) const = 0;

@@ -32,7 +32,7 @@ class Piece_Strength_Gene : public Gene
         std::array<double, 6> piece_strength;
         double normalizing_factor;
 
-        double score_board(const Board& board, const Board& opposite_board) const override;
+        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
         void renormalize();
         double piece_value(Piece_Type type) const;
         double& piece_value(Piece_Type type);

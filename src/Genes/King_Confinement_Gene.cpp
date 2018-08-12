@@ -67,7 +67,7 @@ void King_Confinement_Gene::gene_specific_mutation()
     }
 }
 
-double King_Confinement_Gene::score_board(const Board& board, const Board& opposite_board) const
+double King_Confinement_Gene::score_board(const Board& board, const Board& opposite_board, size_t) const
 {
     // A flood-fill-like algorithm to count the squares that are reachable by the
     // king from its current positions with unlimited consecutive moves. The
