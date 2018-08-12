@@ -20,7 +20,6 @@ Piece_Strength_Gene::Piece_Strength_Gene()
     {
         piece_strength[type] = 0.0;
     }
-    renormalize();
 }
 
 void Piece_Strength_Gene::reset_properties() const
@@ -61,7 +60,6 @@ void Piece_Strength_Gene::load_properties()
         }
         piece_value(piece) = piece_score.second;
     }
-    renormalize();
 }
 
 void Piece_Strength_Gene::gene_specific_mutation()
@@ -81,7 +79,6 @@ void Piece_Strength_Gene::gene_specific_mutation()
     // narrow the range of genomes since multiplying the other piece values
     // and gene priorities by -1 results in identical behavior.
     piece_value(QUEEN) = std::max(0.0, piece_value(QUEEN));
-    renormalize();
 }
 
 double Piece_Strength_Gene::piece_value(Piece_Type type) const
@@ -102,6 +99,15 @@ double Piece_Strength_Gene::piece_value(const Piece* piece) const
     }
     else
     {
+        // Sum is equal to the total strength of a player's starting pieces
+        // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen, and 1 king).
+        auto normalizing_factor = 8*std::abs(piece_value(PAWN)) +
+                                  2*std::abs(piece_value(ROOK)) +
+                                  2*std::abs(piece_value(KNIGHT)) +
+                                  2*std::abs(piece_value(BISHOP)) +
+                                    std::abs(piece_value(QUEEN)) +
+                                    std::abs(piece_value(KING));
+
         return piece_value(piece->type())/normalizing_factor;
     }
 }
@@ -119,16 +125,4 @@ std::string Piece_Strength_Gene::name() const
 double Piece_Strength_Gene::score_board(const Board&, const Board&, size_t) const
 {
     return 0.0;
-}
-
-void Piece_Strength_Gene::renormalize()
-{
-    // Sum is equal to the total strength of a player's starting pieces
-    // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen, and 1 king).
-    normalizing_factor = 8*std::abs(piece_value(PAWN)) +
-                         2*std::abs(piece_value(ROOK)) +
-                         2*std::abs(piece_value(KNIGHT)) +
-                         2*std::abs(piece_value(BISHOP)) +
-                           std::abs(piece_value(QUEEN)) +
-                           std::abs(piece_value(KING));
 }
