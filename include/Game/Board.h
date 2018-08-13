@@ -99,6 +99,7 @@ class Board
         bool capture_possible() const;
         const std::array<bool, 64>& all_square_indices_attacked() const;
         const std::array<bool, 64>& other_square_indices_attacked() const;
+        size_t castling_move_index(Color player) const;
 
         static const Piece* get_piece(Piece_Type piece_type, Color color);
 
@@ -118,6 +119,7 @@ class Board
         std::array<bool, 64> attacked_indices;
         std::array<bool, 64> other_attacked_indices;
         bool capturing_move_available;
+        std::array<size_t, 2> castling_index;
 
         // Pieces
         static const Rook   white_rook;

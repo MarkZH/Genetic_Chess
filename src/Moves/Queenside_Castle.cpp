@@ -25,6 +25,7 @@ bool Queenside_Castle::can_capture() const
 void Queenside_Castle::side_effects(Board& board) const
 {
     board.make_move('a', starting_rank, 'd', starting_rank); // move Rook
+    board.castling_index[board.whose_turn()] = board.get_game_record().size() - 1;
 }
 
 std::string Queenside_Castle::game_record_move_item(const Board&) const

@@ -32,7 +32,7 @@ std::string Priority_Threshold_Gene::name() const
     return "Priority Threshold Gene";
 }
 
-double Priority_Threshold_Gene::score_board(const Board&, const Board&) const
+double Priority_Threshold_Gene::score_board(const Board&, const Board&, size_t) const
 {
     return 0.0;
 }

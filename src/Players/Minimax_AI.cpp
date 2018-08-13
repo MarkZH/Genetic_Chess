@@ -293,7 +293,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
                                                 Game_Result move_result,
                                                 size_t depth) const
 {
-    return {evaluate(board, move_result, perspective),
+    return {evaluate(board, move_result, perspective, depth),
             perspective,
             {board.get_game_record().end() - (depth + 1),
             board.get_game_record().end()}};
@@ -312,7 +312,7 @@ void Minimax_AI::calibrate_thinking_speed() const
     // more reasonable value.
 }
 
-double Minimax_AI::evaluate(const Board & board, Game_Result move_result, Color perspective) const
+double Minimax_AI::evaluate(const Board & board, Game_Result move_result, Color perspective, size_t depth) const
 {
     if(move_result.game_has_ended())
     {
@@ -330,7 +330,7 @@ double Minimax_AI::evaluate(const Board & board, Game_Result move_result, Color 
         }
     }
 
-    return internal_evaluate(board, perspective);
+    return internal_evaluate(board, perspective, depth);
 }
 
 double Minimax_AI::centipawn_value() const
@@ -342,7 +342,7 @@ void Minimax_AI::calculate_centipawn_value()
 {
     auto board_with_pawns = Board("4k3/pppppppp/8/8/8/8/PPPPPPPP/4K3 w - - 0 1");
     auto board_with_no_white_pawns = Board("4k3/pppppppp/8/8/8/8/8/4K3 w - - 0 1");
-    value_of_centipawn = std::abs(evaluate(board_with_pawns, {}, WHITE) - evaluate(board_with_no_white_pawns, {}, WHITE)) / 800;
+    value_of_centipawn = std::abs(evaluate(board_with_pawns, {}, WHITE, 0) - evaluate(board_with_no_white_pawns, {}, WHITE, 0)) / 800;
 }
 
 std::string Minimax_AI::get_commentary_for_move(size_t move_number) const

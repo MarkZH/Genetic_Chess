@@ -46,7 +46,7 @@ std::string Sphere_of_Influence_Gene::name() const
 
 // Count all squares potentially attacked by all pieces with bonus points if
 // the attacking move is legal.
-double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&) const
+double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, size_t) const
 {
     std::array<double, 64> square_score{};
     std::array<size_t, 64> distance_to_king{};

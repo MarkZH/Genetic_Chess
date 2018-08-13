@@ -8,7 +8,7 @@
 
 #include "Genes/Gene.h"
 
-double Stacked_Pawns_Gene::score_board(const Board& board, const Board&) const
+double Stacked_Pawns_Gene::score_board(const Board& board, const Board&, size_t) const
 {
     double score = 0.0;
 

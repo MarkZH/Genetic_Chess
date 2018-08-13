@@ -39,8 +39,30 @@ std::string Castling_Possible_Gene::name() const
     return "Castling Possible Gene";
 }
 
-double Castling_Possible_Gene::score_board(const Board& board, const Board&) const
+double Castling_Possible_Gene::score_board(const Board& board, const Board&, size_t depth) const
 {
+    auto normalizing_factor = std::abs(kingside_preference) + std::abs(queenside_preference);
+
+    // check if a castling move lies between here and the actual state of the board
+    if( ! board.get_game_record().empty())
+    {
+        auto castling_index = board.castling_move_index(board.whose_turn());
+        auto last_move_index = board.get_game_record().size() - 1;
+
+        if(castling_index <= last_move_index) // castling has occurred in the past of this board
+        {
+            if(last_move_index - castling_index <= depth) // castling has not occured on the actual board
+            {
+                return (board.get_game_record()[castling_index]->file_change() > 0 ?
+                        kingside_preference : queenside_preference)/normalizing_factor;
+            }
+            else // castling already happened in past of actual board, no longer relevant
+            {
+                return 0.0;
+            }
+        }
+    }
+
     auto king_start_file = 'e';
     auto base_rank = (board.whose_turn() == WHITE ? 1 : 8);
     if(board.piece_has_moved(king_start_file, base_rank))
@@ -57,7 +79,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&) con
         {
             auto preference = (rook_file == 'h' ? kingside_preference : queenside_preference);
             int files_to_clear = std::abs(rook_file - king_start_file) - 1;
-            double score_per_clear_square = preference/(files_to_clear + 1);
+            double score_per_clear_square = preference/(files_to_clear + 2);
             score += score_per_clear_square; // score for keeping rook unmoved
 
             // Add score for clearing pieces between king and rook
@@ -73,7 +95,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&) con
         }
     }
 
-    return score/(std::abs(kingside_preference) + std::abs(queenside_preference));
+    return score/normalizing_factor;
 }
 
 void Castling_Possible_Gene::gene_specific_mutation()

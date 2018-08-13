@@ -17,7 +17,7 @@ class Pawn_Advancement_Gene : public Gene
         std::string name() const override;
 
     private:
-        double score_board(const Board& board, const Board& opposite_board) const override;
+        double score_board(const Board& board, const Board& opposite_board, size_t) const override;
 };
 
 #endif // GENES_PAWN_ADVANCEMENT_GENE_H

@@ -108,9 +108,9 @@ void Gene::gene_specific_mutation()
 {
 }
 
-double Gene::evaluate(const Board& board, const Board& opposite_board) const
+double Gene::evaluate(const Board& board, const Board& opposite_board, size_t depth) const
 {
-    return priority*score_board(board, opposite_board);
+    return priority*score_board(board, opposite_board, depth);
 }
 
 void Gene::print(std::ostream& os) const
@@ -132,7 +132,7 @@ bool Gene::test(const Board& board, double expected_score) const
 {
     auto other_board = board;
     other_board.set_turn(opposite(board.whose_turn()));
-    auto result = score_board(board, other_board);
+    auto result = score_board(board, other_board, 0);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';

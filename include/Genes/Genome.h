@@ -25,7 +25,7 @@ class Genome
 
         void read_from(std::istream& is);
 
-        double evaluate(const Board& board, Color perspective) const;
+        double evaluate(const Board& board, Color perspective, size_t depth) const;
         void mutate();
 
         double time_to_examine(const Board& board, const Clock& clock) const; // how much time to use for this move
@@ -43,6 +43,7 @@ class Genome
 
         double score_board(const Board& board,
                            const Board& opposite_board,
+                           size_t depth,
                            double minimum_priority) const;
         void reset_piece_strength_gene();
         double get_minimum_priority() const;
