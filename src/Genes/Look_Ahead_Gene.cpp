@@ -64,7 +64,6 @@ void Look_Ahead_Gene::gene_specific_mutation()
             break;
         default:
             throw std::runtime_error("Bad random value in Look Ahead Gene");
-            break;
     }
 }
 
