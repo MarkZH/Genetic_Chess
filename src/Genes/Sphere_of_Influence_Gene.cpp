@@ -88,6 +88,8 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
 
 void Sphere_of_Influence_Gene::gene_specific_mutation()
 {
+    make_priority_minimum_zero();
+
     switch(Random::random_integer(1, 3))
     {
         case 1:
