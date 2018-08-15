@@ -45,3 +45,8 @@ void Total_Force_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* psg)
 {
     piece_strength_source = psg;
 }
+
+void Total_Force_Gene::gene_specific_mutation()
+{
+    make_priority_minimum_zero();
+}
