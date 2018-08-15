@@ -1230,7 +1230,7 @@ void Board::recreate_move_caches()
                         }
                     }
 
-                    if( ! blocked && // this move is blocked, keep same direction
+                    if( ! blocked && // new move direction
                        piece->type() != KNIGHT && // knights cannot be blocked
                        ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
                        piece_on_square(move->end_file(), move->end_rank()))
