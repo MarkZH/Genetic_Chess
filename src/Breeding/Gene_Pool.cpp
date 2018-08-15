@@ -204,7 +204,8 @@ void gene_pool(const std::string& config_file = "")
                 --in_progress_games;
             }
 
-            results.emplace_back(std::async(play_game, white, black, game_time, 0, 0, game_record_file));
+            results.emplace_back(std::async(std::launch::async,
+                                            play_game, white, black, game_time, 0, 0, game_record_file));
         }
 
         // Get results as they come in
