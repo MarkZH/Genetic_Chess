@@ -9,22 +9,30 @@
 #include <cmath>
 #include <algorithm>
 #include <future>
+#include <thread>
+#include <chrono>
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
 #include "Game/Game_Result.h"
 #include "Utility.h"
 
-static sig_atomic_t signal_activated = 0;
-void pause_gene_pool(int signal);
-static bool gene_pool_paused = false;
+const auto NO_SIGNAL = 0;
 const auto STOP_SIGNAL = SIGINT;
-const auto PAUSE_SIGNAL =
+const std::string stop_key = "Ctrl-c";
+
 #ifdef __linux__
-SIGTSTP;
+const auto PAUSE_SIGNAL = SIGTSTP;
+const std::string pause_key = "Ctrl-z";
 #elif _WIN32
-SIGBREAK;
+const auto PAUSE_SIGNAL = SIGBREAK;
+const std::string pause_key = "Ctrl-Break";
 #endif
+
+static sig_atomic_t signal_activated = NO_SIGNAL;
+static bool gene_pool_paused = false;
+
+void pause_gene_pool(int signal);
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
 
@@ -367,18 +375,18 @@ void gene_pool(const std::string& config_file = "")
         if(signal_activated == PAUSE_SIGNAL)
         {
             gene_pool_paused = true;
-            std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
-            std::cin.get();
-            if(signal_activated == STOP_SIGNAL)
+            std::cout << "\nGene pool paused. Press " << pause_key << " to continue ..." << std::endl;
+            std::cout << "Or, " << stop_key << " to quit." << std::endl;
+            while(signal_activated == PAUSE_SIGNAL)
             {
-                return;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
-            signal_activated = 0;
             gene_pool_paused = false;
         }
 
-        if(signal_activated != 0)
+        if(signal_activated == STOP_SIGNAL)
         {
+            std::cout << std::endl;
             return;
         }
 
@@ -433,21 +441,24 @@ void gene_pool(const std::string& config_file = "")
 
 void pause_gene_pool(int signal)
 {
+    auto action = signal == PAUSE_SIGNAL ? "pausing" : "exiting";
+
     if(signal == signal_activated)
     {
+        signal_activated = NO_SIGNAL;
+        if( ! gene_pool_paused)
+        {
+            std::cout << "\nNo longer " << action << "." << std::endl;
+        }
         return;
     }
 
     signal_activated = signal;
 
-    if(gene_pool_paused)
+    if( ! gene_pool_paused)
     {
-        std::cout << "\nPress enter to " << (signal_activated == STOP_SIGNAL ? "quit." : "resume.") << std::endl;
-        return;
+        std::cout << "\nWaiting for games to end and be recorded before " << action << " ..." << std::endl;
     }
-
-    auto action = signal_activated == PAUSE_SIGNAL ? "pausing" : "exiting";
-    std::cout << "\nWaiting for games to end and be recorded before " << action << " ..." << std::endl;
 }
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
