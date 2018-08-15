@@ -376,8 +376,8 @@ void gene_pool(const std::string& config_file = "")
         if(signal_activated == PAUSE_SIGNAL)
         {
             gene_pool_paused = true;
-            std::cout << "\nGene pool paused. Press " << pause_key << " to continue ..." << std::endl;
-            std::cout << "Or, " << stop_key << " to quit." << std::endl;
+            std::cout << "\nGene pool paused. Press " << pause_key << " to continue" << std::endl;
+            std::cout << "or " << stop_key << " to quit." << std::endl;
             while(signal_activated == PAUSE_SIGNAL)
             {
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
