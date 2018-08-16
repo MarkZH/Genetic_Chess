@@ -36,10 +36,10 @@ void pause_gene_pool(int signal);
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
 
-template<typename Stat>
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats);
+template<typename Stat_Map>
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats);
 
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<size_t, std::vector<Genetic_AI>>& ai_lists);
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::vector<std::vector<Genetic_AI>>& ai_lists);
 
 
 void gene_pool(const std::string& config_file = "")
@@ -61,18 +61,18 @@ void gene_pool(const std::string& config_file = "")
     double game_time = minimum_game_time;
 
     // Stats (map: Pool ID --> counts)
-    std::map<size_t, int> game_count;
-    std::map<size_t, int> white_wins;
-    std::map<size_t, int> black_wins;
-    std::map<size_t, int> draw_count;
-    std::map<size_t, int> most_wins;
-    std::map<size_t, Genetic_AI> most_wins_player;
+    std::vector<int> game_count(gene_pool_count);
+    std::vector<int> white_wins(gene_pool_count);
+    std::vector<int> black_wins(gene_pool_count);
+    std::vector<int> draw_count(gene_pool_count);
+    std::vector<int> most_wins(gene_pool_count);
+    std::vector<Genetic_AI> most_wins_player(gene_pool_count);
 
-    std::map<size_t, int> most_games_survived;
-    std::map<size_t, Genetic_AI> most_games_survived_player;
+    std::vector<int> most_games_survived(gene_pool_count);
+    std::vector<Genetic_AI> most_games_survived_player(gene_pool_count);
 
-    std::map<size_t, std::vector<Genetic_AI>> new_blood; // ex nihilo players
-    std::map<size_t, int> new_blood_count;
+    std::vector<std::vector<Genetic_AI>> new_blood(gene_pool_count); // ex nihilo players
+    std::vector<int> new_blood_count(gene_pool_count);
 
     // Individual Genetic AI stats
     std::map<Genetic_AI, int> wins;
@@ -537,46 +537,34 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
     return result;
 }
 
-template<typename Stat>
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats)
+template<typename Stat_Map>
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats)
 {
-    auto stat_iter = stats.begin();
-    while(stat_iter != stats.end())
+    Stat_Map new_stats;
+    for(const auto& pool : pools)
     {
-        bool ai_found = false;
-        for(const auto& pool : pools)
+        for(const auto& ai : pool)
         {
-            if(std::find(pool.begin(), pool.end(), stat_iter->first) != pool.end())
-            {
-                ai_found = true;
-                break;
-            }
-        }
-
-        if( ! ai_found)
-        {
-            stat_iter = stats.erase(stat_iter);
-        }
-        else
-        {
-            ++stat_iter;
+            new_stats[ai] = stats[ai];
         }
     }
+    stats = new_stats;
 }
 
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<size_t, std::vector<Genetic_AI>>& ai_lists)
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::vector<std::vector<Genetic_AI>>& ai_lists)
 {
     for(size_t i = 0; i < pools.size(); ++i)
     {
         const auto& pool = pools[i];
         auto& ai_list = ai_lists[i];
-
-        ai_list.erase(std::remove_if(ai_list.begin(),
-                                     ai_list.end(),
-                                     [&pool](const Genetic_AI& g)
-                                     {
-                                         return std::find(pool.begin(), pool.end(), g) == pool.end();
-                                     }),
-                      ai_list.end());
+        std::vector<Genetic_AI> new_ai_list;
+        for(const auto& ai : ai_list)
+        {
+            if(std::find(pool.begin(), pool.end(), ai) != pool.end())
+            {
+                new_ai_list.push_back(ai);
+            }
+        }
+        ai_list = new_ai_list;
     }
 }
