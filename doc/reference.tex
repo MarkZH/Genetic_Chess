@@ -46,6 +46,7 @@ The \code{.sln} and \code{.vcxproj} files are project files for Visual Studio. T
 \section{Running}
 \label{running}
 \begin{description}
+	\item[\code{genetic\_chess -test}] Run tests of the program for chess rule conformance and for Genetic AIs working properly.
 	\item[\code{genetic\_chess -genepool [file\_name]}]
 This will start up a gene pool with Genetic\_AIs playing against each other--mating, killing, mutating--all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
 
@@ -133,14 +134,13 @@ The number associated with each piece is not scaled to any other piece, but befo
 
 Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and \ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
 
-The queen's value is forced to be non-negative. This tends to speed up the evolution of the other piece values and the priorities of the Total Force Gene and the Opponent Pieces Targeted Gene without limiting their range of mutations. If the proper value of a queen is negative (meaning that, for example, the Total Force Gene makes a player want to get rid of their own queen), then this can be expressed by the Total Force Gene taking on a negative value.
-
 \subsubsection{Look Ahead Gene}
-This gene determines all aspects of the Genetic AIs time management. There are three genetically determined components to this gene that determine how the AI spends its time:
+This gene determines all aspects of the Genetic AIs time management through a set of genetically determined components to this gene that determine how the AI spends its time:
 \begin{enumerate}
 	\item the average number of moves per game,
 	\item the uncertainty in the above average.
-	\item a constant related to over-allocating search time while counting on alpha-beta pruning to not use too much.
+	\item a constant related to over-allocating search time while counting on alpha-beta pruning to not use too much
+	\item an adjustment rate of the above time allocation based on the depth of the current search.
 \end{enumerate}
 When the AI starts the algorithm to choose a move, it allocates a fraction of the time left on the clock so that all subsequent moves get equal time. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a log-normal distribution~\cite{log-norm-wiki}\cite{log-norm-chess-se} with a mean and spread given by the first two parameters listed above. Originally, it was assumed that the number of moves in a game was well-modeled by a Poisson distribution. This proved to be false (see Figure~\ref{game-length-plot}), and the log-normal distribution--wherein the logarithm of the variable is normally distributed--is now used.
 
@@ -201,16 +201,16 @@ where \(T\) is the time needed to look ahead on this move, \(N_{\textrm{legal}}\
 
 The speculation constant is divided into two versions: one for board positions containing a capturing move, and ones that do not. Initial results indicate that the capturing speculation constant tends to be much larger (between 1.1 and 1.2) than the non-capturing counterpart (usually nearer to 1.0). This makes sense since board positions with capturing moves tend to be move volatile in who has the advantage. Capturing a piece is only good if it doesn't result in a greater loss in subsequent moves. This is the problem that is usually solved in other chess engines by a quiescence search, in which all interesting\footnote{Meaning, captures that aren't immediately losing.} capturing moves are performed on a board before it is scored, thereby only scoring stable, ``quiescent'' board states \cite{quiescence-ref}.
 
+The time allocation adjustment rate for the speculation constants either increases or decreases the effective constant by the following formula:
+\[C' = C(1+r)^d\]
+where \(C'\) is the new speculation constant, \(C\) is the default value of that constant, \(r\) is the adjustment rate, and \(d\) is the current depth of the search. If the adjustment rate is positive, then more time will be allocated at greater depths. If negative, increasingly less time will be allocated at greater depths.
+
 \subsubsection{Priority Threshold Gene}
 \label{priority-threshold}
 
 This gene stops any other board-scoring gene from running its \code{score\_board()} if that other gene's priority (rather, the absolute value of it) is too low, thus trading lower score detail for faster evaluations. It contains a genetically determined threshold value that is referenced during the genome's \code{evaluate\_board()} method. Instead of using the value directly, the actually threshold used is a random number uniformly distributed between 0.0 and the threshold value.  The reason for this is to prevent low-priority genes from being permanently cut off from evolutionary pressure while still providing a means of speeding up evaluations. This way, low-priority genes still feel evolutionary pressure to improve, or else their priorities feel further downward pressure so that they are called even less often.
 
 Formerly, one result of a mutation was to deactivate a gene entirely. Gene deactivation was thought to be a strategy for exiting local peaks in fitness since a gene could still mutate when deactivated. Since it felt no evolutionary pressure, the deactivated gene was free to random walk somewhere else, perhaps to a more advantageous state that would be discovered upon reactivation. However, it was found that, once deactivated, a gene would only very rarely become reactivated. This was for two reasons. First, a random walk is a very slow way to reach a better genome, especially with no evolutionary pressure. Second, and more importantly, a deactivated gene uses less time when evaluating a board or doing some other calculation. This means that Genetic AIs with more deactivated genes have an advantage in being able to evaluate more positions and see farther ahead in the game. This is a powerful incentive to keep genes deactivated, often leading to AIs that had most of their genome deactivated aside from the Total Force Gene. This would lead to gene pools where games only ended in draws, stagnating the pool. Now, all genes are always active with some probabilistic suppression for the lowest priority genes.
-
-\subsubsection{Branch Pruning Gene (deleted)}
-
-This gene would prevent the game tree search from examining the moves following a certain move if the board state that immediately resulted from that move was of a sufficiently lower score than the present board state. This gene was supposed to save time by skipping in-depth examinations of moves that were obviously immediately bad. This gene was deleted because it seemed to slow down the evolution of other genes by harshly punishing large swings in board value. This would cause genes that increased in priority to trip this gene, preventing look-ahead, and thus good play.
 
 \subsection{Board-Scoring Genes}
 \label{board-score-section}
@@ -221,9 +221,11 @@ where \(g\) represents each gene, \(Priority(g)\) is a genetically determined sc
 Since it is not only important to find position that are advantageous to the player, but also disadvantageous to the opponent, the final heuristic score for a board position is
 \[Heuristic\ Score = Score(Player) - Score(Opponent).\]
 
+Some of the board-scoring genes are forced to have non-negative priorities as a way of speeding up the optimization. As an example, the Total Force Gene (Section~\ref{total-force}) has a non-negative priority because its scoring method relies on values from the Piece Strength Gene (Section~\ref{piece-strength}). The score returned is basically the product of the priority of the Total Force Gene and the values of the piece strengths. When both of these are allowed to mutate to both positive and negative values, they often get stuck near zero. When one changes sign, the other is driven towards changing sign as well to get back to better evaluation results. Forcing the priority to be positive puts a consistent pressure on the piece strengths to get to their proper values (whether positive or negative). This does not limit the behavior of the Genetic AIs since the piece strengths could evolve to negative strengths if the AI wants to lose its pieces.
+
 \subsubsection{Total Force Gene}
 \label{total-force}
-This gene sums the strength (according to the Piece Strength Gene) of all the player's pieces on the board.
+This gene sums the strength (according to the Piece Strength Gene) of all the player's pieces on the board. As noted in Section~\ref{board-score-section} above, the priority of this gene is restricted to be non-negative.
 
 \subsubsection{Freedom to Move Gene}
 This gene counts the number of legal moves available in the current position.
@@ -235,10 +237,13 @@ This gene measures the progress of all pawns towards the opposite side of the bo
 The gene counts the number of pawns that cannot be stopped or captured by an opponent's pawns. That is, a pawn is a passed pawn if there are no pawns ahead of it in its file or any directly adjacent files. Partial points are awarded for pawns that have fewer pawns ahead than usual ($1/3$ for each free column ahead of mid-board pawns, $1/2$ for for pawns on the edge).
 
 \subsubsection{Opponent Pieces Targeted Gene}
-This gene sums the total strength (as determined by the Piece Strength Gene) of the opponent's pieces currently under attack.
+\label{opponent-pieces-targeted}
+This gene sums the total strength (as determined by the Piece Strength Gene) of the opponent's pieces currently under attack. Despite relying on values from the Piece Strength Gene, it is not restricted to non-negative priorities like the Total Force Gene because the Total Force Gene provides enough evolutionary pressure on the Piece Strength Gene to force it to a consistent sign.
+
+Interestingly, since both kings are always on the board, they always cancel each others effect in the Total Force Gene, leaving this gene alone to drive their strength value. The result of this is discussed in the results section (Section~\ref{piece-strength-with-king}).
 
 \subsubsection{Sphere of Influence Gene}
-This gene counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move. That is, if a piece cannot reach a square in one move (perhaps because such a move is blocked by another piece), then that square is still counted as falling under the influence of the side owning that piece. Further bonus points are awarded based on how close the attacked square is to the king.
+This gene counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move. That is, if a piece cannot reach a square in one move (perhaps because such a move is blocked by another piece), then that square is still counted as falling under the influence of the side owning that piece. Further bonus points are awarded based on how close the attacked square is to the king. Because of its subcomponents, this gene's priority is restricted to non-negative values.
 
 The effective formula for the score of this gene can be expressed as
 \[score = \sum_s legal(s)\left(1+\frac{KTF}{1+distance(s,king)}\right)\]
@@ -254,11 +259,13 @@ For a more detailed picture, each square potentially reachable by the king is cl
 	\item Enemy block: the king is blocked due to the square being attacked by an opponent piece.
 \end{itemize}
 
+The priority of this gene is non-negative.
+
 \subsubsection{King Protection Gene}
 This gene counts the squares that have access to the king by any valid piece movement and are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a less exposed king.
 
 \subsubsection{Castling Possible Gene}
-This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away and the king and rook remaining unmoved. The score can vary based on a genetically determined preference for kingside or queenside castling.
+This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away and the king and rook remaining unmoved. The score can vary based on a genetically determined preference for kingside or queenside castling. Because of these preference values, the priority is non-negative.
 
 \subsubsection{Pawn Islands Gene}
 This gene counts the number of groups of pawns that are separated by columns with no pawns of the same color. These pawns are isolated from each other and cannot help to defend pawns on other islands. Since a greater number of pawn islands is usually considered bad, the score returned is the negative of the result.
@@ -354,6 +361,8 @@ After assigning the king a strength entry in the Piece Strength Gene (see Sectio
 
 My current guess is that the king entry is affected by the Opponent Pieces Targeted  Gene and the Look-Ahead Gene--specifically the Capturing Speculation Constant. A large value for the Capturing Speculation Constant means that the board position that is actually evaluated has a smaller chance of having pieces threatened with capture. It is even less likely that the opponent's king is in check since this usually results in a reduced number of moves available, making recursion to the next move more likely. Thus, an evaluated board position with only the king in check is see as rather worthless unless offset by an attack on another piece that will probably result in capture. The king cannot be captured, so attacking it had better serve some other purpose. A similar evolution is seen in the Sphere of Influence Gene in that the King Target Factor is often negative.
 
+This conclusion is corroborated by the King Target Bonus in the Opponent Pieces Targeted Gene (see Section~\ref{opponent-pieces-targeted}), which always has a negative or near-zero value that causes a preference for piece arrangements that attack more of the board away from the king.
+
 \subsection{White has an advantage.}
 
 Of the games ending in checkmate, white wins about 10\% more often than black. Figure~\ref{win-lose-plot} shows that the advantage is persistent through almost the whole of a long gene pool run. Wins by time are shared by black and white equally (see Figure~\ref{game-ending-plot}).
@@ -372,6 +381,7 @@ That the Total Force Gene dominates is fairly predictable. Highly skilled human 
 The Pawn Advancement Gene usually gains higher priority first, probably because it is the simplest gene that makes an immediate difference in the game. Push the pawns forward both threatens the opponent's pieces with low-risk attacks and increases the chances of promotion.
 
 \subsubsection{The Pawn Advancement Gene is a temporary substitute for a valid value of the pawn in the Piece Strength Gene.}
+\label{pawn-result}
 
 Near the birth of the Genetic AI with ID~\#120,000, the Pawn Advancement Gene suddenly died off, with nearly all AIs in the gene pool deactivating the gene simultaneously (see Figure~\ref{pawn-crash}).
 \begin{figure}[htb]
@@ -417,12 +427,9 @@ The plot in Figure~\ref{game-ending-plot} shows the counts of how games end.
 \end{figure}
 It seems that the Look Ahead Gene does not experience significant evolutionary pressure until the board-scoring genes have been tuned to a semi-decent state. My hypothesis is that if the board-scoring function is not able to tell a good position from bad, then looking ahead only increases the risk of losing by time forfeiture with no benefit. However, when the board-scoring genes are in a decent state, the increase in look ahead is very quick. This leads to a rapid increase in the rate of deaths by running out of time, but apparently this is worth the risk as those who are more conservative with their time lose to those who see farther ahead.
 
-\subsection{The Sphere of Influence Gene typically counts legal moves as just as valuable as any other move.}
+\subsection{The Sphere of Influence Gene typically counts legal moves as having lower value than other moves.}
 
-This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game.
-
-\subsubsection{Update after deleting the Branch Pruning Gene}
-The Sphere of Influence Gene now counts legal moves as 50\% more valuable than illegal moves.
+This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game. Or, the Opponent Pieces Targeted Gene relieves this gene of having to consider legal moves (much the same as how the Pawn value in the Piece Strength Gene and the priority of the Pawn Advancement Gene interact (Section~\ref{pawn-result})).
 
 \subsection{Genes with properly lower priorities have to wait for higher priority genes to evolve their higher priority before evolving themselves.}
 \label{lower-priority-waits}
