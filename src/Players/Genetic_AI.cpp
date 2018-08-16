@@ -136,19 +136,19 @@ void Genetic_AI::read_from(std::istream& is)
     genome.read_from(is);
 }
 
-double Genetic_AI::internal_evaluate(const Board & board, Color perspective, size_t depth) const
+double Genetic_AI::internal_evaluate(const Board& board, Color perspective, size_t depth) const
 {
     return genome.evaluate(board, perspective, depth);
 }
 
-double Genetic_AI::time_to_examine(const Board & board, const Clock & clock) const
+double Genetic_AI::time_to_examine(const Board& board, const Clock& clock) const
 {
     return genome.time_to_examine(board, clock);
 }
 
-double Genetic_AI::speculation_time_factor(const Board & board) const
+double Genetic_AI::speculation_time_factor(const Board& board, size_t depth) const
 {
-    return genome.speculation_time_factor(board);
+    return genome.speculation_time_factor(board, depth);
 }
 
 void Genetic_AI::mutate(int mutation_count)

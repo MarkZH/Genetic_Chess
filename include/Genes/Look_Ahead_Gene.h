@@ -21,7 +21,7 @@ class Look_Ahead_Gene : public Gene
         std::string name() const override;
 
         double time_to_examine(const Board& board, const Clock& clock) const;
-        double speculation_time_factor(const Board& board) const;
+        double speculation_time_factor(const Board& board, size_t depth) const;
 
     protected:
         void reset_properties() const override;
@@ -33,6 +33,8 @@ class Look_Ahead_Gene : public Gene
 
         double speculation_constant; // how often to look ahead even with little time
         double capturing_speculation_constant; // how often to look ahead even with little time when capture is possible
+
+        double depth_extension_rate; // how to modify the speculations constants at increasing depth
 
         double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
         void gene_specific_mutation() override;

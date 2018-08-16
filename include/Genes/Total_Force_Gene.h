@@ -23,6 +23,7 @@ class Total_Force_Gene : public Gene
     private:
         const Piece_Strength_Gene* piece_strength_source;
 
+        void gene_specific_mutation() override;
         double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
 };
 

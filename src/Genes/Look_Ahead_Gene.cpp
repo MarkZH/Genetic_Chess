@@ -15,7 +15,8 @@ Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
     game_length_uncertainty(0.5),
     speculation_constant(0.0),
-    capturing_speculation_constant(0.0)
+    capturing_speculation_constant(0.0),
+    depth_extension_rate{0.0}
 {
 }
 
@@ -25,6 +26,7 @@ void Look_Ahead_Gene::reset_properties() const
     properties["Game Length Uncertainty"] = game_length_uncertainty;
     properties["Speculation Constant"] = speculation_constant;
     properties["Capturing Speculation Constant"] = capturing_speculation_constant;
+    properties["Depth Extension Rate"] = depth_extension_rate;
 }
 
 void Look_Ahead_Gene::load_properties()
@@ -33,6 +35,7 @@ void Look_Ahead_Gene::load_properties()
     game_length_uncertainty = properties["Game Length Uncertainty"];
     speculation_constant = properties["Speculation Constant"];
     capturing_speculation_constant = properties["Capturing Speculation Constant"];
+    depth_extension_rate = properties["Depth Extension Rate"];
 }
 
 double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const
@@ -48,7 +51,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
 
 void Look_Ahead_Gene::gene_specific_mutation()
 {
-    switch(Random::random_integer(1, 4))
+    switch(Random::random_integer(1, 5))
     {
         case 1:
             mean_game_length = std::max(1.0, mean_game_length + Random::random_laplace(1.0));
@@ -62,9 +65,11 @@ void Look_Ahead_Gene::gene_specific_mutation()
         case 4:
             capturing_speculation_constant += Random::random_laplace(0.1);
             break;
+        case 5:
+            depth_extension_rate += Random::random_laplace(0.01);
+            break;
         default:
             throw std::runtime_error("Bad random value in Look Ahead Gene");
-            break;
     }
 }
 
@@ -83,7 +88,9 @@ double Look_Ahead_Gene::score_board(const Board&, const Board&, size_t) const
     return 0.0;
 }
 
-double Look_Ahead_Gene::speculation_time_factor(const Board& board) const
+double Look_Ahead_Gene::speculation_time_factor(const Board& board, size_t depth) const
 {
-    return board.capture_possible() ? capturing_speculation_constant : speculation_constant;
+    return (board.capture_possible() ?
+            capturing_speculation_constant :
+                speculation_constant)*std::pow(1.0 + depth_extension_rate, depth);
 }

@@ -9,29 +9,37 @@
 #include <cmath>
 #include <algorithm>
 #include <future>
+#include <thread>
+#include <chrono>
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
 #include "Game/Game_Result.h"
 #include "Utility.h"
 
-static sig_atomic_t signal_activated = 0;
-void pause_gene_pool(int signal);
-static bool gene_pool_paused = false;
+const auto NO_SIGNAL = 0;
 const auto STOP_SIGNAL = SIGINT;
-const auto PAUSE_SIGNAL =
+const std::string stop_key = "Ctrl-c";
+
 #ifdef __linux__
-SIGTSTP;
+const auto PAUSE_SIGNAL = SIGTSTP;
+const std::string pause_key = "Ctrl-z";
 #elif _WIN32
-SIGBREAK;
+const auto PAUSE_SIGNAL = SIGBREAK;
+const std::string pause_key = "Ctrl-Break";
 #endif
+
+static sig_atomic_t signal_activated = NO_SIGNAL;
+static bool gene_pool_paused = false;
+
+void pause_gene_pool(int signal);
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
 
-template<typename Stat>
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats);
+template<typename Stat_Map>
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats);
 
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<size_t, std::vector<Genetic_AI>>& ai_lists);
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::vector<std::vector<Genetic_AI>>& ai_lists);
 
 
 void gene_pool(const std::string& config_file = "")
@@ -53,18 +61,18 @@ void gene_pool(const std::string& config_file = "")
     double game_time = minimum_game_time;
 
     // Stats (map: Pool ID --> counts)
-    std::map<size_t, int> game_count;
-    std::map<size_t, int> white_wins;
-    std::map<size_t, int> black_wins;
-    std::map<size_t, int> draw_count;
-    std::map<size_t, int> most_wins;
-    std::map<size_t, Genetic_AI> most_wins_player;
+    std::vector<int> game_count(gene_pool_count);
+    std::vector<int> white_wins(gene_pool_count);
+    std::vector<int> black_wins(gene_pool_count);
+    std::vector<int> draw_count(gene_pool_count);
+    std::vector<int> most_wins(gene_pool_count);
+    std::vector<Genetic_AI> most_wins_player(gene_pool_count);
 
-    std::map<size_t, int> most_games_survived;
-    std::map<size_t, Genetic_AI> most_games_survived_player;
+    std::vector<int> most_games_survived(gene_pool_count);
+    std::vector<Genetic_AI> most_games_survived_player(gene_pool_count);
 
-    std::map<size_t, std::vector<Genetic_AI>> new_blood; // ex nihilo players
-    std::map<size_t, int> new_blood_count;
+    std::vector<std::vector<Genetic_AI>> new_blood(gene_pool_count); // ex nihilo players
+    std::vector<int> new_blood_count(gene_pool_count);
 
     // Individual Genetic AI stats
     std::map<Genetic_AI, int> wins;
@@ -196,7 +204,8 @@ void gene_pool(const std::string& config_file = "")
                 --in_progress_games;
             }
 
-            results.emplace_back(std::async(play_game, white, black, game_time, 0, 0, game_record_file));
+            results.emplace_back(std::async(std::launch::async,
+                                            play_game, white, black, game_time, 0, 0, game_record_file));
         }
 
         // Get results as they come in
@@ -367,18 +376,18 @@ void gene_pool(const std::string& config_file = "")
         if(signal_activated == PAUSE_SIGNAL)
         {
             gene_pool_paused = true;
-            std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
-            std::cin.get();
-            if(signal_activated == STOP_SIGNAL)
+            std::cout << "\nGene pool paused. Press " << pause_key << " to continue" << std::endl;
+            std::cout << "or " << stop_key << " to quit." << std::endl;
+            while(signal_activated == PAUSE_SIGNAL)
             {
-                return;
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
-            signal_activated = 0;
             gene_pool_paused = false;
         }
 
-        if(signal_activated != 0)
+        if(signal_activated == STOP_SIGNAL)
         {
+            std::cout << std::endl;
             return;
         }
 
@@ -433,21 +442,24 @@ void gene_pool(const std::string& config_file = "")
 
 void pause_gene_pool(int signal)
 {
+    auto action = signal == PAUSE_SIGNAL ? "pausing" : "exiting";
+
     if(signal == signal_activated)
     {
+        signal_activated = NO_SIGNAL;
+        if( ! gene_pool_paused)
+        {
+            std::cout << "\nNo longer " << action << "." << std::endl;
+        }
         return;
     }
 
     signal_activated = signal;
 
-    if(gene_pool_paused)
+    if( ! gene_pool_paused)
     {
-        std::cout << "\nPress enter to " << (signal_activated == STOP_SIGNAL ? "quit." : "resume.") << std::endl;
-        return;
+        std::cout << "\nWaiting for games to end and be recorded before " << action << " ..." << std::endl;
     }
-
-    auto action = signal_activated == PAUSE_SIGNAL ? "pausing" : "exiting";
-    std::cout << "\nWaiting for games to end and be recorded before " << action << " ..." << std::endl;
 }
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
@@ -525,46 +537,34 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
     return result;
 }
 
-template<typename Stat>
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<Genetic_AI, Stat>& stats)
+template<typename Stat_Map>
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats)
 {
-    auto stat_iter = stats.begin();
-    while(stat_iter != stats.end())
+    Stat_Map new_stats;
+    for(const auto& pool : pools)
     {
-        bool ai_found = false;
-        for(const auto& pool : pools)
+        for(const auto& ai : pool)
         {
-            if(std::find(pool.begin(), pool.end(), stat_iter->first) != pool.end())
-            {
-                ai_found = true;
-                break;
-            }
-        }
-
-        if( ! ai_found)
-        {
-            stat_iter = stats.erase(stat_iter);
-        }
-        else
-        {
-            ++stat_iter;
+            new_stats[ai] = stats[ai];
         }
     }
+    stats = new_stats;
 }
 
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::map<size_t, std::vector<Genetic_AI>>& ai_lists)
+void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::vector<std::vector<Genetic_AI>>& ai_lists)
 {
     for(size_t i = 0; i < pools.size(); ++i)
     {
         const auto& pool = pools[i];
         auto& ai_list = ai_lists[i];
-
-        ai_list.erase(std::remove_if(ai_list.begin(),
-                                     ai_list.end(),
-                                     [&pool](const Genetic_AI& g)
-                                     {
-                                         return std::find(pool.begin(), pool.end(), g) == pool.end();
-                                     }),
-                      ai_list.end());
+        std::vector<Genetic_AI> new_ai_list;
+        for(const auto& ai : ai_list)
+        {
+            if(std::find(pool.begin(), pool.end(), ai) != pool.end())
+            {
+                new_ai_list.push_back(ai);
+            }
+        }
+        ai_list = new_ai_list;
     }
 }
