@@ -216,9 +216,9 @@ double Genome::time_to_examine(const Board& board, const Clock& clock) const
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
 }
 
-double Genome::speculation_time_factor(const Board& board) const
+double Genome::speculation_time_factor(const Board& board, size_t depth) const
 {
-    return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor(board);
+    return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor(board, depth);
 }
 
 double Genome::get_minimum_priority() const
