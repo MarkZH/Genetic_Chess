@@ -16,7 +16,7 @@ int Genetic_AI::next_id = 0;
 
 Genetic_AI::Genetic_AI() :
     genome(),
-    id(next_id++)
+    id_number(next_id++)
 {
     calibrate_thinking_speed();
     calculate_centipawn_value();
@@ -25,7 +25,7 @@ Genetic_AI::Genetic_AI() :
 // Sexual reproduction
 Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     genome(A.genome, B.genome),
-    id(next_id++)
+    id_number(next_id++)
 {
     calibrate_thinking_speed();
     calculate_centipawn_value();
@@ -53,12 +53,9 @@ Genetic_AI::Genetic_AI(std::istream& is)
     calculate_centipawn_value();
 }
 
-Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
+Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_in)
 {
-    if(id >= next_id)
-    {
-        next_id = id + 1;
-    }
+    next_id = std::max(next_id, id_number + 1);
 
     std::ifstream ifs(file_name);
     if( ! ifs)
@@ -98,7 +95,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id(id_in)
 void Genetic_AI::read_from(std::istream& is)
 {
     std::string line;
-    id = -1;
+    id_number = -1;
     while(std::getline(is, line))
     {
         line = String::strip_comments(line, '#');
@@ -114,7 +111,7 @@ void Genetic_AI::read_from(std::istream& is)
             {
                 throw std::runtime_error("Bad ID line: " + line);
             }
-            id = std::stoi(param_value[1]);
+            id_number = std::stoi(param_value[1]);
             break;
         }
         else
@@ -125,13 +122,10 @@ void Genetic_AI::read_from(std::istream& is)
 
     if( ! is)
     {
-        throw std::runtime_error("Incomplete Genetic_AI spec in file for ID " + std::to_string(id));
+        throw std::runtime_error("Incomplete Genetic_AI spec in file for ID " + std::to_string(id_number));
     }
 
-    if(id >= next_id)
-    {
-        next_id = id + 1;
-    }
+    next_id = std::max(next_id, id_number + 1);
 
     genome.read_from(is);
 }
@@ -177,14 +171,14 @@ void Genetic_AI::print(const std::string& file_name) const
 
 void Genetic_AI::print(std::ostream& os) const
 {
-    os << "ID: " << get_id() << '\n';
+    os << "ID: " << id() << '\n';
     genome.print(os);
     os << "END" << "\n" << std::endl;
 }
 
 std::string Genetic_AI::name() const
 {
-    return "Genetic AI " + std::to_string(get_id());
+    return "Genetic AI " + std::to_string(id());
 }
 
 std::string Genetic_AI::author() const
@@ -192,17 +186,17 @@ std::string Genetic_AI::author() const
     return "Mark Harrison";
 }
 
-int Genetic_AI::get_id() const
+int Genetic_AI::id() const
 {
-    return id;
+    return id_number;
 }
 
 bool Genetic_AI::operator<(const Genetic_AI& other) const
 {
-    return get_id() < other.get_id();
+    return id() < other.id();
 }
 
 bool Genetic_AI::operator==(const Genetic_AI& other) const
 {
-    return get_id() == other.get_id();
+    return id() == other.id();
 }

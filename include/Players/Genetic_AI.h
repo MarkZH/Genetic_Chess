@@ -32,7 +32,7 @@ class Genetic_AI : public Minimax_AI
         void print(const std::string& file_name = "") const;
         void print(std::ostream& file) const;
 
-        int get_id() const;
+        int id() const;
         bool operator<(const Genetic_AI& other) const;
         bool operator==(const Genetic_AI& other) const;
 
@@ -40,7 +40,7 @@ class Genetic_AI : public Minimax_AI
         Genome genome;
 
         static int next_id;
-        int id;
+        int id_number;
 
         void read_from(std::istream& is);
 

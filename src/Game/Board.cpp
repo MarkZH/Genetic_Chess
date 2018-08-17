@@ -47,7 +47,7 @@ const Queen  Board::black_queen(BLACK);
 const King   Board::black_king(BLACK);
 const Pawn   Board::black_pawn(BLACK);
 
-const Piece* Board::get_piece(Piece_Type piece_type, Color color)
+const Piece* Board::piece_instance(Piece_Type piece_type, Color color)
 {
     static const std::array<std::array<const Piece*, 2>, 6> all_pieces =
         {{{{&white_pawn,   &black_pawn  }},
@@ -85,14 +85,14 @@ Board::Board() :
     for(auto color : {WHITE, BLACK})
     {
         int base_rank = (color == WHITE ? 1 : 8);
-        place_piece(get_piece(ROOK, color),   'a', base_rank);
-        place_piece(get_piece(KNIGHT, color), 'b', base_rank);
-        place_piece(get_piece(BISHOP, color), 'c', base_rank);
-        place_piece(get_piece(QUEEN, color),  'd', base_rank);
-        place_piece(get_piece(KING, color),   'e', base_rank);
-        place_piece(get_piece(BISHOP, color), 'f', base_rank);
-        place_piece(get_piece(KNIGHT, color), 'g', base_rank);
-        place_piece(get_piece(ROOK, color),   'h', base_rank);
+        place_piece(piece_instance(ROOK, color),   'a', base_rank);
+        place_piece(piece_instance(KNIGHT, color), 'b', base_rank);
+        place_piece(piece_instance(BISHOP, color), 'c', base_rank);
+        place_piece(piece_instance(QUEEN, color),  'd', base_rank);
+        place_piece(piece_instance(KING, color),   'e', base_rank);
+        place_piece(piece_instance(BISHOP, color), 'f', base_rank);
+        place_piece(piece_instance(KNIGHT, color), 'g', base_rank);
+        place_piece(piece_instance(ROOK, color),   'h', base_rank);
 
         // Unmoved pieces for castling
         set_unmoved('a', base_rank); // Rook
@@ -102,14 +102,14 @@ Board::Board() :
         auto pawn_rank = (base_rank == 1 ? 2 : 7);
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            place_piece(get_piece(PAWN, color), file, pawn_rank);
+            place_piece(piece_instance(PAWN, color), file, pawn_rank);
         }
     }
 
     assert(king_location[WHITE]);
     assert(king_location[BLACK]);
 
-    add_to_repeat_count(get_board_hash()); // Count initial position
+    add_to_repeat_count(board_hash()); // Count initial position
     recreate_move_caches();
 }
 
@@ -154,26 +154,26 @@ Board::Board(const std::string& fen) :
                 switch(toupper(symbol))
                 {
                     case 'P':
-                        place_piece(get_piece(PAWN, color), file, rank);
+                        place_piece(piece_instance(PAWN, color), file, rank);
                         break;
                     case 'R':
-                        place_piece(get_piece(ROOK, color), file, rank);
+                        place_piece(piece_instance(ROOK, color), file, rank);
                         break;
                     case 'N':
-                        place_piece(get_piece(KNIGHT, color), file, rank);
+                        place_piece(piece_instance(KNIGHT, color), file, rank);
                         break;
                     case 'B':
-                        place_piece(get_piece(BISHOP, color), file, rank);
+                        place_piece(piece_instance(BISHOP, color), file, rank);
                         break;
                     case 'Q':
-                        place_piece(get_piece(QUEEN, color), file, rank);
+                        place_piece(piece_instance(QUEEN, color), file, rank);
                         break;
                     case 'K':
                         if(king_location[color])
                         {
                             throw std::runtime_error("More than one " + color_text(color) + " king in FEN: " + fen);
                         }
-                        place_piece(get_piece(KING, color), file, rank);
+                        place_piece(piece_instance(KING, color), file, rank);
                         break;
                     default:
                         throw std::runtime_error(std::string("Invalid  symbol in FEN string: ") + symbol);
@@ -239,7 +239,7 @@ Board::Board(const std::string& fen) :
         add_to_repeat_count(Random::random_unsigned_int64());
     }
 
-    add_to_repeat_count(get_board_hash()); // Count initial position
+    add_to_repeat_count(board_hash()); // Count initial position
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
@@ -321,11 +321,11 @@ std::string Board::fen_status() const
     s.push_back(' ');
     if(starting_fen.empty())
     {
-        s.append(std::to_string(1 + game_record.size()/2));
+        s.append(std::to_string(1 + game_record_listing.size()/2));
     }
     else
     {
-        auto move_number = std::stoi(String::split(starting_fen).back()) + game_record.size()/2;
+        auto move_number = std::stoi(String::split(starting_fen).back()) + game_record_listing.size()/2;
         s.append(std::to_string(move_number));
     }
 
@@ -333,7 +333,7 @@ std::string Board::fen_status() const
 }
 
 
-const Move& Board::get_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
+const Move& Board::create_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
 {
     std::vector<const Move*> move_list;
     for(const auto& move : legal_moves())
@@ -381,7 +381,7 @@ const Move& Board::get_move(char file_start, int rank_start, char file_end, int 
 Game_Result Board::submit_move(const Move& move)
 {
     assert(is_in_legal_moves_list(move));
-    game_record.push_back(&move);
+    game_record_listing.push_back(&move);
 
     make_move(move.start_file(), move.start_rank(),
               move.end_file(),   move.end_rank());
@@ -410,7 +410,7 @@ Game_Result Board::submit_move(const Move& move)
         return Game_Result(NONE, "Insufficient material");
     }
 
-    if(add_to_repeat_count(get_board_hash()) >= 3)
+    if(add_to_repeat_count(board_hash()) >= 3)
     {
         return Game_Result(NONE, "Threefold repetition");
     }
@@ -423,7 +423,7 @@ Game_Result Board::submit_move(const Move& move)
     return {};
 }
 
-const Move& Board::get_move(const std::string& move) const
+const Move& Board::create_move(const std::string& move) const
 {
     const std::string pieces = "RNBQK";
     const std::string valid_files = "abcdefgh";
@@ -466,13 +466,13 @@ const Move& Board::get_move(const std::string& move) const
     // Castling
     if(validated == "OO")
     {
-        return get_move('e', whose_turn() == WHITE ? 1 : 8,
-                        'g', whose_turn() == WHITE ? 1 : 8);
+        return create_move('e', whose_turn() == WHITE ? 1 : 8,
+                           'g', whose_turn() == WHITE ? 1 : 8);
     }
     if(validated == "OOO")
     {
-        return get_move('e', whose_turn() == WHITE ? 1 : 8,
-                        'c', whose_turn() == WHITE ? 1 : 8);
+        return create_move('e', whose_turn() == WHITE ? 1 : 8,
+                           'c', whose_turn() == WHITE ? 1 : 8);
     }
 
     // Normal PGN move
@@ -518,7 +518,7 @@ const Move& Board::get_move(const std::string& move) const
             promoted_piece = std::toupper(move[4]);
         }
 
-        return get_move(start_file, start_rank, end_file, end_rank, promoted_piece);
+        return create_move(start_file, start_rank, end_file, end_rank, promoted_piece);
     }
 
     // else normal PGN-style piece movement
@@ -563,9 +563,9 @@ const Move& Board::get_move(const std::string& move) const
 
     if(starting_file != 0 && starting_rank != 0)
     {
-        return get_move(starting_file, starting_rank,
-                        ending_file,   ending_rank,
-                        promoted_piece);
+        return create_move(starting_file, starting_rank,
+                           ending_file,   ending_rank,
+                           promoted_piece);
     }
 
     throw Illegal_Move("Malformed move: " + move);
@@ -720,7 +720,7 @@ void Board::refresh_checking_squares()
     checking_squares.clear();
     auto king_square = king_location[whose_turn()];
 
-    if(game_record.empty())
+    if(game_record_listing.empty())
     {
         for(auto square : Threat_Generator(king_square.file, king_square.rank, opposite(whose_turn()), *this))
         {
@@ -733,7 +733,7 @@ void Board::refresh_checking_squares()
     }
     else
     {
-        auto last_move = game_record.back();
+        auto last_move = game_record_listing.back();
 
         // Moved piece now attacks king
         if(attacks(last_move->end_file(), last_move->end_rank(), king_square.file, king_square.rank))
@@ -900,9 +900,9 @@ bool Board::no_legal_moves() const
     return legal_moves().empty();
 }
 
-const std::vector<const Move*>& Board::get_game_record() const
+const std::vector<const Move*>& Board::game_record() const
 {
-    return game_record;
+    return game_record_listing;
 }
 
 void Board::print_game_record(const Player* white,
@@ -967,14 +967,14 @@ void Board::print_game_record(const Player* white,
         out_stream << "\"]\n";
     }
 
-    if( ! result.get_game_ending_annotation().empty())
+    if( ! result.game_ending_annotation().empty())
     {
-        out_stream << "[Result \"" << result.get_game_ending_annotation() << "\"]\n";
+        out_stream << "[Result \"" << result.game_ending_annotation() << "\"]\n";
     }
 
-    if( ! result.get_ending_reason().empty() && ! String::contains(result.get_ending_reason(), "mates"))
+    if( ! result.ending_reason().empty() && ! String::contains(result.ending_reason(), "mates"))
     {
-        out_stream << "[Termination \"" << result.get_ending_reason() << "\"]\n";
+        out_stream << "[Termination \"" << result.ending_reason() << "\"]\n";
     }
 
     auto temp = Board();
@@ -987,7 +987,7 @@ void Board::print_game_record(const Player* white,
 
     auto starting_turn_offset = (temp.whose_turn() == WHITE ? 2 : 3);
 
-    for(size_t i = 0; i < game_record.size(); ++i)
+    for(size_t i = 0; i < game_record_listing.size(); ++i)
     {
         if(temp.whose_turn() == WHITE || i == 0)
         {
@@ -999,14 +999,14 @@ void Board::print_game_record(const Player* white,
             }
         }
 
-        auto next_move = game_record.at(i);
+        auto next_move = game_record_listing.at(i);
         out_stream << " " << next_move->game_record_item(temp);
 
         std::string commentary;
         auto current_player = (temp.whose_turn() == WHITE ? white : black);
         if(current_player)
         {
-            commentary = current_player->get_commentary_for_move(i/2);
+            commentary = current_player->commentary_for_move(i/2);
         }
 
         if( ! commentary.empty())
@@ -1017,7 +1017,7 @@ void Board::print_game_record(const Player* white,
             {
                 try
                 {
-                    const auto& comment_move = comment_board.get_move(variation);
+                    const auto& comment_move = comment_board.create_move(variation);
                     out_stream << comment_move.game_record_item(comment_board) << " ";
                     comment_board.submit_move(comment_move);
                 }
@@ -1119,7 +1119,7 @@ std::string Board::board_status() const
 
 std::string Board::last_move_coordinates() const
 {
-    return game_record.back()->coordinate_move();
+    return game_record_listing.back()->coordinate_move();
 }
 
 void Board::set_turn(Color color)
@@ -1169,7 +1169,7 @@ bool Board::piece_has_moved(char file, int rank) const
 Square Board::find_king(Color color) const
 {
     auto location = king_location[color];
-    assert(piece_on_square(location.file, location.rank) == get_piece(KING, color));
+    assert(piece_on_square(location.file, location.rank) == piece_instance(KING, color));
     return location;
 }
 
@@ -1193,7 +1193,7 @@ void Board::recreate_move_caches()
                 auto blocked_file_direction = 0;
                 auto blocked_rank_direction = 0;
 
-                for(const auto& move : piece->get_move_list(file, rank))
+                for(const auto& move : piece->move_list(file, rank))
                 {
                     auto file_direction = Math::sign(move->file_change());
                     auto rank_direction = Math::sign(move->rank_change());
@@ -1301,7 +1301,7 @@ bool Board::enough_material_to_checkmate() const
     return false;
 }
 
-std::string Board::get_last_move_record() const
+std::string Board::last_move_record() const
 {
     Board b;
     if( ! starting_fen.empty())
@@ -1310,7 +1310,7 @@ std::string Board::get_last_move_record() const
     }
 
     std::string result;
-    for(const auto& move : get_game_record())
+    for(const auto& move : game_record())
     {
         result = move->game_record_item(b);
         b.submit_move(*move);
@@ -1324,7 +1324,7 @@ void Board::set_thinking_mode(Thinking_Output_Type mode) const
     thinking_indicator = mode;
 }
 
-Thinking_Output_Type Board::get_thinking_mode() const
+Thinking_Output_Type Board::thinking_mode() const
 {
     return thinking_indicator;
 }
@@ -1355,7 +1355,7 @@ void Board::initialize_board_hash()
             {
                 for(auto piece_type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
                 {
-                    auto hash_index = square_hash_index(get_piece(piece_type, piece_color));
+                    auto hash_index = square_hash_index(piece_instance(piece_type, piece_color));
                     square_hash_values[index][hash_index] = Random::random_unsigned_int64();
                 }
             }
@@ -1364,13 +1364,13 @@ void Board::initialize_board_hash()
         }
     }
 
-    board_hash = 0;
-    board_hash ^= get_color_hash(whose_turn());
+    current_board_hash = 0;
+    current_board_hash ^= color_hash(whose_turn());
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            board_hash ^= get_square_hash(file, rank);
+            current_board_hash ^= square_hash(file, rank);
         }
     }
 
@@ -1379,21 +1379,21 @@ void Board::initialize_board_hash()
 
 void Board::update_board_hash(char file, int rank)
 {
-    board_hash ^= get_square_hash(file, rank);
+    current_board_hash ^= square_hash(file, rank);
 }
 
 void Board::update_board_hash(Color color)
 {
-    board_hash ^= get_color_hash(color);
-    board_hash ^= get_color_hash(opposite(color));
+    current_board_hash ^= color_hash(color);
+    current_board_hash ^= color_hash(opposite(color));
 }
 
-uint64_t Board::get_color_hash(Color color) const
+uint64_t Board::color_hash(Color color) const
 {
     return color_hash_values[color];
 }
 
-uint64_t Board::get_square_hash(char file, int rank) const
+uint64_t Board::square_hash(char file, int rank) const
 {
     if( ! Board::inside_board(file, rank))
     {
@@ -1429,9 +1429,9 @@ size_t Board::square_hash_index(const Piece* piece)
     return square_hash_values.front().size() - 1; // last value for empty square (nullptr)
 }
 
-uint64_t Board::get_board_hash() const
+uint64_t Board::board_hash() const
 {
-    return board_hash;
+    return current_board_hash;
 }
 
 bool Board::capture_possible() const

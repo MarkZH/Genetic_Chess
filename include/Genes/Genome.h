@@ -46,7 +46,7 @@ class Genome
                            size_t depth,
                            double minimum_priority) const;
         void reset_piece_strength_gene();
-        double get_minimum_priority() const;
+        double minimum_priority() const;
 };
 
 #endif // GENOME_H

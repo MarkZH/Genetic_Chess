@@ -12,7 +12,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Board&, size
 {
     double score = 0.0;
     auto perspective = board.whose_turn();
-    auto own_pawn = board.get_piece(PAWN, perspective);
+    auto own_pawn = board.piece_instance(PAWN, perspective);
     int home_rank = (perspective == WHITE ? 2 : 7);
 
     for(char file = 'a'; file <= 'h'; ++file)

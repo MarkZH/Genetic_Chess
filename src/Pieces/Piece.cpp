@@ -51,7 +51,7 @@ bool Piece::can_move(const Move* move) const
                         [move](const auto& x){ return x.get() == move; }) != possible_moves.end();
 }
 
-const std::vector<const Move*>& Piece::get_move_list(char file, int rank) const
+const std::vector<const Move*>& Piece::move_list(char file, int rank) const
 {
     return legal_moves[Board::board_index(file, rank)];
 }

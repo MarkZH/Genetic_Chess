@@ -24,7 +24,7 @@ class Gene
 
         virtual std::string name() const = 0;
         void print(std::ostream& os) const;
-        double get_priority() const;
+        double priority() const;
 
         virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg);
 
@@ -42,7 +42,7 @@ class Gene
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
         virtual void gene_specific_mutation();
 
-        double priority;
+        double scoring_priority;
 };
 
 #endif // GENE_H

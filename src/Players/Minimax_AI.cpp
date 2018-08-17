@@ -10,7 +10,7 @@
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const
 {
     // Erase data from previous board when starting new game
-    if(board.get_game_record().size() <= 1)
+    if(board.game_record().size() <= 1)
     {
         principal_variation.clear();
         commentary.clear();
@@ -26,7 +26,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
     {
-        if(principal_variation.size() > 2 && principal_variation[1] == board.get_game_record().back())
+        if(principal_variation.size() > 2 && principal_variation[1] == board.game_record().back())
         {
             // search_game_tree() assumes the principal variation starts
             // with the previous move of this player. If a move was forced,
@@ -66,7 +66,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
                                    beta_start,
                                    ! principal_variation.empty());
 
-    if(board.get_thinking_mode() == CECP)
+    if(board.thinking_mode() == CECP)
     {
         output_thinking_cecp(result, clock, board.whose_turn());
         std::cout << std::flush;
@@ -155,7 +155,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         auto next_board = board;
 
         auto move_result = next_board.submit_move(*move);
-        if(move_result.get_winner() != NONE)
+        if(move_result.winner() != NONE)
         {
             // This move results in checkmate, no other move can be better.
             return create_result(next_board, perspective, move_result, depth);
@@ -223,7 +223,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
-                else if(board.get_thinking_mode() == CECP && depth < 4)
+                else if(board.thinking_mode() == CECP && depth < 4)
                 {
                     output_thinking_cecp(alpha, clock,
                                          depth % 2 == 0 ? perspective : opposite(perspective));
@@ -295,8 +295,8 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
 {
     return {evaluate(board, move_result, perspective, depth),
             perspective,
-            {board.get_game_record().end() - (depth + 1),
-            board.get_game_record().end()}};
+            {board.game_record().end() - (depth + 1),
+            board.game_record().end()}};
 }
 
 void Minimax_AI::calibrate_thinking_speed() const
@@ -316,11 +316,11 @@ double Minimax_AI::evaluate(const Board & board, Game_Result move_result, Color 
 {
     if(move_result.game_has_ended())
     {
-        if(move_result.get_winner() == NONE) // stalemate
+        if(move_result.winner() == NONE) // stalemate
         {
             return 0;
         }
-        else if(move_result.get_winner() == perspective) // checkmate win
+        else if(move_result.winner() == perspective) // checkmate win
         {
             return Math::win_score;
         }
@@ -345,7 +345,7 @@ void Minimax_AI::calculate_centipawn_value()
     value_of_centipawn = std::abs(evaluate(board_with_pawns, {}, WHITE, 0) - evaluate(board_with_no_white_pawns, {}, WHITE, 0)) / 800;
 }
 
-std::string Minimax_AI::get_commentary_for_move(size_t move_number) const
+std::string Minimax_AI::commentary_for_move(size_t move_number) const
 {
     std::string result;
     if(move_number < commentary.size() && !commentary.at(move_number).empty())

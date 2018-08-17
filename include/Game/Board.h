@@ -40,8 +40,8 @@ class Board
 
         Game_Result submit_move(const Move& move);
 
-        const Move& get_move(const std::string& move) const;
-        const Move& get_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
+        const Move& create_move(const std::string& move) const;
+        const Move& create_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
 
         bool is_legal(char file_start, int rank_start,
                       char file_end,   int rank_end) const;
@@ -52,12 +52,12 @@ class Board
         void ascii_draw(Color perspective = WHITE) const;
 
         std::string fen_status() const; // current state of board in FEN
-        const std::vector<const Move*>& get_game_record() const;
-        std::string get_last_move_record() const;
+        const std::vector<const Move*>& game_record() const;
+        std::string last_move_record() const;
 
         // Communication between players
         void set_thinking_mode(Thinking_Output_Type) const;
-        Thinking_Output_Type get_thinking_mode() const;
+        Thinking_Output_Type thinking_mode() const;
 
         // With commentary
         void print_game_record(const Player* white,
@@ -101,14 +101,14 @@ class Board
         const std::array<bool, 64>& other_square_indices_attacked() const;
         size_t castling_move_index(Color player) const;
 
-        static const Piece* get_piece(Piece_Type piece_type, Color color);
+        static const Piece* piece_instance(Piece_Type piece_type, Color color);
 
     private:
         std::array<const Piece*, 64> board;
         std::array<uint64_t, 101> repeat_count;
         int moves_since_pawn_or_capture_count;
         Color turn_color;
-        std::vector<const Move*> game_record;
+        std::vector<const Move*> game_record_listing;
         std::array<bool, 64> unmoved_positions;
         Square en_passant_target;
         std::string starting_fen;
@@ -167,10 +167,10 @@ class Board
         int moves_since_pawn_or_capture() const;
 
         // Zobrist hashing
-        uint64_t board_hash;
+        uint64_t current_board_hash;
 
         void initialize_board_hash();
-        uint64_t get_board_hash() const;
+        uint64_t board_hash() const;
 
         // Hash values for squares
         static std::mutex hash_lock;
@@ -183,13 +183,13 @@ class Board
         static std::array<uint64_t, 64> castling_hash_values;
 
         void update_board_hash(char file, int rank);
-        uint64_t get_square_hash(char file, int rank) const;
+        uint64_t square_hash(char file, int rank) const;
         static size_t square_hash_index(const Piece* piece);
 
         // Whose turn?
         static std::array<uint64_t, 2> color_hash_values; // for whose_turn() hashing
 
-        uint64_t get_color_hash(Color color) const;
+        uint64_t color_hash(Color color) const;
         void update_board_hash(Color color);
 
         bool king_multiply_checked() const;

@@ -24,7 +24,7 @@ class Piece
 
         bool can_move(const Move* move) const;
 
-        const std::vector<const Move*>& get_move_list(char file, int rank) const;
+        const std::vector<const Move*>& move_list(char file, int rank) const;
 
         Piece_Type type() const;
 

@@ -16,7 +16,7 @@ class Minimax_AI : public Player
 {
     public:
         const Move& choose_move(const Board& board, const Clock& clock) const override;
-        std::string get_commentary_for_move(size_t move_number) const override;
+        std::string commentary_for_move(size_t move_number) const override;
 
     protected:
         void calculate_centipawn_value();

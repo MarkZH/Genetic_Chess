@@ -12,10 +12,10 @@ class Game_Result
         Game_Result(Color winner, const std::string& reason);
 
         bool game_has_ended() const;
-        Color get_winner() const;
-        std::string get_ending_reason() const;
-        std::string get_game_ending_annotation() const;
-        std::string get_game_record_annotation() const;
+        Color winner() const;
+        std::string ending_reason() const;
+        std::string game_ending_annotation() const;
+        std::string game_record_annotation() const;
 
     private:
         Color victor;

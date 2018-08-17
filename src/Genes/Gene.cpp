@@ -8,18 +8,18 @@
 #include "Game/Color.h"
 #include "Utility.h"
 
-Gene::Gene() : priority(0.0)
+Gene::Gene() : scoring_priority(0.0)
 {
 }
 
 void Gene::reset_properties() const
 {
-    properties["Priority"] = priority;
+    properties["Priority"] = scoring_priority;
 }
 
 void Gene::load_properties()
 {
-    priority = properties["Priority"];
+    scoring_priority = properties["Priority"];
 }
 
 void Gene::read_from(std::istream& is)
@@ -100,7 +100,7 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 
 void Gene::mutate()
 {
-    priority += Random::random_laplace(10.0);
+    scoring_priority += Random::random_laplace(10.0);
     gene_specific_mutation();
 }
 
@@ -110,7 +110,7 @@ void Gene::gene_specific_mutation()
 
 double Gene::evaluate(const Board& board, const Board& opposite_board, size_t depth) const
 {
-    return priority*score_board(board, opposite_board, depth);
+    return scoring_priority*score_board(board, opposite_board, depth);
 }
 
 void Gene::print(std::ostream& os) const
@@ -142,12 +142,12 @@ bool Gene::test(const Board& board, double expected_score) const
     return true;
 }
 
-double Gene::get_priority() const
+double Gene::priority() const
 {
-    return priority;
+    return scoring_priority;
 }
 
 void Gene::make_priority_minimum_zero()
 {
-    priority = std::max(priority, 0.0);
+    scoring_priority = std::max(scoring_priority, 0.0);
 }

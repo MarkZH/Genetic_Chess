@@ -47,17 +47,17 @@ void gene_pool(const std::string& config_file = "")
     auto config = Configuration_File(config_file);
 
     // Environment variables
-    const auto maximum_simultaneous_games = size_t(config.get_number("maximum simultaneous games"));
-    const auto gene_pool_population = size_t(config.get_number("gene pool population"));
-    const auto gene_pool_count = size_t(config.get_number("gene pool count"));
-    const auto draw_kill_probability = double(config.get_number("draw kill probability"));
-    const auto pool_swap_interval = size_t(config.get_number("pool swap interval"));
+    const auto maximum_simultaneous_games = size_t(config.as_number("maximum simultaneous games"));
+    const auto gene_pool_population = size_t(config.as_number("gene pool population"));
+    const auto gene_pool_count = size_t(config.as_number("gene pool count"));
+    const auto draw_kill_probability = double(config.as_number("draw kill probability"));
+    const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
 
     // Oscillating game time
-    const double minimum_game_time = config.get_number("minimum game time"); // seconds
-    const double maximum_game_time = config.get_number("maximum game time"); // seconds
-    double game_time_increment = config.get_number("game time increment"); // seconds
-    const bool oscillating_time = (String::lowercase(config.get_text("oscillating time")) == "yes");
+    const double minimum_game_time = config.as_number("minimum game time"); // seconds
+    const double maximum_game_time = config.as_number("maximum game time"); // seconds
+    double game_time_increment = config.as_number("game time increment"); // seconds
+    const bool oscillating_time = (String::lowercase(config.as_text("oscillating time")) == "yes");
     double game_time = minimum_game_time;
 
     // Stats (map: Pool ID --> counts)
@@ -83,7 +83,7 @@ void gene_pool(const std::string& config_file = "")
 
     const int scramble_mutations = 100;
 
-    std::string genome_file_name = config.get_text("gene pool file");
+    std::string genome_file_name = config.as_text("gene pool file");
     if(genome_file_name.empty())
     {
         genome_file_name = "gene_pool_record_";
@@ -179,7 +179,9 @@ void gene_pool(const std::string& config_file = "")
                   << "  Draws: " << draw_count[pool_index]
                   << "\nTime: " << game_time << " sec"
                   << "   Gene pool file name: " << genome_file_name << "\n"
-                  << std::endl;;
+                  << std::endl;
+
+        std::cout << "Pause: " << pause_key << "    Quit: " << stop_key << "\n" << std::endl;
 
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
@@ -188,22 +190,24 @@ void gene_pool(const std::string& config_file = "")
         std::vector<std::future<Game_Result>> results; // map from matchups to winners (half the size of pool)
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
-            auto& white = pool[index];
-            auto& black = pool[index + 1];
-
             // Limit the number of simultaneous games by waiting for earlier games to finish
             // before starting a new one.
             auto in_progress_games = results.size();
-            for(const auto& game : results)
+            while(in_progress_games >= maximum_simultaneous_games)
             {
-                if(in_progress_games < maximum_simultaneous_games)
+                for(const auto& game : results)
                 {
-                    break;
+                    if(game.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
+                    {
+                        --in_progress_games;
+                    }
                 }
-                game.wait();
-                --in_progress_games;
+
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
 
+            auto& white = pool[index];
+            auto& black = pool[index + 1];
             results.emplace_back(std::async(std::launch::async,
                                             play_game, white, black, game_time, 0, 0, game_record_file));
         }
@@ -214,12 +218,12 @@ void gene_pool(const std::string& config_file = "")
             auto& white = pool[index];
             auto& black = pool[index + 1];
 
-            std::cout << white.get_id() << " vs "
-                      << black.get_id() << ": " << std::flush;
+            std::cout << white.id() << " vs "
+                      << black.id() << ": " << std::flush;
 
             auto result = results[index/2].get();
-            auto winner = result.get_winner();
-            std::cout << color_text(winner) << " (" << result.get_ending_reason() << ")";
+            auto winner = result.winner();
+            std::cout << color_text(winner) << " (" << result.ending_reason() << ")";
 
             if(winner == WHITE)
             {
@@ -264,17 +268,17 @@ void gene_pool(const std::string& config_file = "")
                 if(Random::success_probability(draw_kill_probability))
                 {
                     auto& pseudo_loser = (Random::coin_flip() ? white : black);
-                    std::cout << "\n    --> " << pseudo_loser.get_id() << " mates with ";
+                    std::cout << "\n    --> " << pseudo_loser.id() << " mates with ";
                     auto new_specimen = Genetic_AI();
 
-                    if(Random::coin_flip() && pseudo_loser.get_id() > 0)
+                    if(Random::coin_flip() && pseudo_loser.id() > 0)
                     {
                         while(true)
                         {
                             try
                             {
                                 new_specimen = Genetic_AI(genome_file_name,
-                                                          Random::random_integer(0, pseudo_loser.get_id() - 1));
+                                                          Random::random_integer(0, pseudo_loser.id() - 1));
                                 break;
                             }
                             catch(const std::runtime_error&)
@@ -284,7 +288,7 @@ void gene_pool(const std::string& config_file = "")
                                 continue;
                             }
                         }
-                        std::cout << new_specimen.get_id();
+                        std::cout << new_specimen.id();
                     }
                     else
                     {
@@ -298,7 +302,7 @@ void gene_pool(const std::string& config_file = "")
                     ++new_blood_count[pool_index];
                     original_pool[offspring] = pool_index;
 
-                    std::cout << " / " << pseudo_loser.get_id() << " dies";
+                    std::cout << " / " << pseudo_loser.id() << " dies";
                     pseudo_loser = offspring; // offspring replaces loser
                 }
             }
@@ -326,7 +330,7 @@ void gene_pool(const std::string& config_file = "")
         }
 
         // widths of columns for stats printout
-        auto max_id = pool.back().get_id();
+        auto max_id = pool.back().id();
         auto id_digits = int(std::floor(std::log10(max_id) + 1));
 
         // Write results
@@ -339,7 +343,7 @@ void gene_pool(const std::string& config_file = "")
         // Write stats for each specimen
         for(const auto& ai : pool)
         {
-            std::cout << std::setw(id_digits + 1) << ai.get_id();
+            std::cout << std::setw(id_digits + 1) << ai.id();
             std::cout << std::setw(7)    << wins[ai]
                       << std::setw(8)   << consecutive_wins[ai]
                       << std::setw(7)    << draws[ai]
@@ -352,9 +356,9 @@ void gene_pool(const std::string& config_file = "")
         std::cout << std::endl;
 
         std::cout << "Most wins:     " << most_wins[pool_index]
-                  << " by ID " << most_wins_player[pool_index].get_id() << std::endl;
+                  << " by ID " << most_wins_player[pool_index].id() << std::endl;
         std::cout <<   "Longest lived: " << most_games_survived[pool_index]
-                  << " by ID " << most_games_survived_player[pool_index].get_id() << std::endl;
+                  << " by ID " << most_games_survived_player[pool_index].id() << std::endl;
 
         // Record best AI from all pools.
         auto best_ai = pool.front();
@@ -427,7 +431,7 @@ void gene_pool(const std::string& config_file = "")
                     auto& dest_pool = pools[dest_pool_index];
                     auto& loser = *std::min_element(dest_pool.begin(), dest_pool.end(), best_compare);
                     std::cout << "Sending ID "
-                              << winners[source_pool_index].get_id()
+                              << winners[source_pool_index].id()
                               << " to pool "
                               << dest_pool_index << std::endl;
                     loser = winners[source_pool_index]; // winner replaces loser in destination pool
@@ -487,7 +491,7 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
     ofs << "\nStill Alive: " << pool_index << " : ";
     for(const auto& ai : pool)
     {
-        ofs << ai.get_id() << " ";
+        ofs << ai.id() << " ";
     }
     ofs << "\n\n";
 

@@ -96,8 +96,8 @@ class Configuration_File
     public:
         explicit Configuration_File(const std::string& file_name);
 
-        std::string get_text(const std::string& parameter) const;
-        double get_number(const std::string& parameter) const;
+        std::string as_text(const std::string& parameter) const;
+        double as_number(const std::string& parameter) const;
 
     private:
         std::map<std::string, std::string> parameters;
