@@ -13,8 +13,8 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&, size_t) c
     // Counts the number of passed pawns. A passed pawn is one with
     // no enemy pawns on the same or adjacent files ahead of it.
     double score = 0.0;
-    auto own_pawn = board.get_piece(PAWN, board.whose_turn());
-    auto other_pawn = board.get_piece(PAWN, opposite(board.whose_turn()));
+    auto own_pawn = board.piece_instance(PAWN, board.whose_turn());
+    auto other_pawn = board.piece_instance(PAWN, opposite(board.whose_turn()));
 
     for(char file = 'a'; file <= 'h'; ++file)
     {

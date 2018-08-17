@@ -65,31 +65,31 @@ void Outside_Player::send_command(const std::string& cmd)
     std::cout << cmd << std::endl;
 }
 
-double Outside_Player::get_game_time()
+double Outside_Player::game_time()
 {
     if( ! got_clock)
     {
-        get_clock_specs();
+        receive_clock_specs();
         got_clock = true;
     }
     return starting_game_time;
 }
 
-size_t Outside_Player::get_reset_moves()
+size_t Outside_Player::reset_moves()
 {
     if( ! got_clock)
     {
-        get_clock_specs();
+        receive_clock_specs();
         got_clock = true;
     }
     return moves_to_reset_clock;
 }
 
-double Outside_Player::get_increment()
+double Outside_Player::increment()
 {
     if( ! got_clock)
     {
-        get_clock_specs();
+        receive_clock_specs();
         got_clock = true;
     }
     return time_increment;

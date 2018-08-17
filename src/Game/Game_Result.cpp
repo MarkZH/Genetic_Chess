@@ -21,17 +21,17 @@ bool Game_Result::game_has_ended() const
     return ! cause.empty();
 }
 
-Color Game_Result::get_winner() const
+Color Game_Result::winner() const
 {
     return victor;
 }
 
-std::string Game_Result::get_ending_reason() const
+std::string Game_Result::ending_reason() const
 {
     return cause;
 }
 
-std::string Game_Result::get_game_ending_annotation() const
+std::string Game_Result::game_ending_annotation() const
 {
     if(victor == WHITE)
     {
@@ -51,7 +51,7 @@ std::string Game_Result::get_game_ending_annotation() const
     }
 }
 
-std::string Game_Result::get_game_record_annotation() const
+std::string Game_Result::game_record_annotation() const
 {
     if(game_has_ended())
     {
@@ -60,7 +60,7 @@ std::string Game_Result::get_game_record_annotation() const
         {
             prefix =  "#" + prefix;
         }
-        return prefix + get_game_ending_annotation();
+        return prefix + game_ending_annotation();
     }
     else
     {

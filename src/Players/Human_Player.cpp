@@ -38,12 +38,12 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
             std::cout << " (" << name() << ")";
         }
         std::cout << " to move  |  ";
-        if( ! board.get_game_record().empty())
+        if( ! board.game_record().empty())
         {
             std::cout << "Last move: "
-                      << int(std::ceil(board.get_game_record().size()/2.0)) << ". "
+                      << int(std::ceil(board.game_record().size()/2.0)) << ". "
                       << (board.whose_turn() == WHITE ? "... " : "")
-                      << board.get_last_move_record() << "  |  ";
+                      << board.last_move_record() << "  |  ";
         }
         std::cout << "Time: " << clock.time_left(board.whose_turn()) << std::endl;
 
@@ -54,7 +54,7 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
         {
             try
             {
-                return board.get_move(move);
+                return board.create_move(move);
             }
             catch(const Promotion_Piece_Needed&)
             {
@@ -62,7 +62,7 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
                 std::cout << "Choice: [B N R Q]: ";
                 std::string promote;
                 std::getline(std::cin, promote);
-                return board.get_move(move + promote);
+                return board.create_move(move + promote);
             }
         }
         catch(const Illegal_Move& e)

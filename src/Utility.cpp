@@ -270,7 +270,7 @@ Configuration_File::Configuration_File(const std::string& file_name)
     }
 }
 
-std::string Configuration_File::get_text(const std::string& parameter) const
+std::string Configuration_File::as_text(const std::string& parameter) const
 {
     try
     {
@@ -286,15 +286,15 @@ std::string Configuration_File::get_text(const std::string& parameter) const
     }
 }
 
-double Configuration_File::get_number(const std::string& parameter) const
+double Configuration_File::as_number(const std::string& parameter) const
 {
     try
     {
-        return std::stod(get_text(parameter));
+        return std::stod(as_text(parameter));
     }
     catch(const std::invalid_argument&)
     {
-        throw std::runtime_error("Invalid number for \"" + parameter + "\" : " + get_text(parameter));
+        throw std::runtime_error("Invalid number for \"" + parameter + "\" : " + as_text(parameter));
     }
 }
 

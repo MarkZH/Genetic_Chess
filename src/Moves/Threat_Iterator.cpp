@@ -19,7 +19,7 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     knight_index(0),
     attacking_color(attack_color),
     board(reference_board),
-    target_king(reference_board.get_piece(KING, opposite(attack_color)))
+    target_king(reference_board.piece_instance(KING, opposite(attack_color)))
 {
     next_threat();
 }
@@ -130,8 +130,8 @@ void Threat_Iterator::next_threat()
         rank_step = -1;
     }
 
-    auto knight = board.get_piece(KNIGHT, attacking_color);
-    const auto& moves = knight->get_move_list(target_file, target_rank);
+    auto knight = board.piece_instance(KNIGHT, attacking_color);
+    const auto& moves = knight->move_list(target_file, target_rank);
     while(knight_index < moves.size())
     {
         auto move = moves[knight_index];

@@ -15,11 +15,11 @@ class Clock;
 class Outside_Player : public Player
 {
     public:
-        virtual Color get_ai_color() const = 0;
+        virtual Color ai_color() const = 0;
 
-        double get_game_time();
-        size_t get_reset_moves();
-        double get_increment();
+        double game_time();
+        size_t reset_moves();
+        double increment();
 
         bool stop_for_local_clock() const override;
 
@@ -48,7 +48,7 @@ class Outside_Player : public Player
         double time_increment;
         bool got_clock;
 
-        virtual void get_clock_specs() = 0;
+        virtual void receive_clock_specs() = 0;
 
         friend std::unique_ptr<Outside_Player> connect_to_outside(const Player& player);
 };

@@ -173,7 +173,7 @@ double Genome::score_board(const Board& board, const Board& opposite_board, size
     double score = 0.0;
     for(const auto& gene : genome)
     {
-        if(std::abs(gene->get_priority()) > minimum_priority)
+        if(std::abs(gene->priority()) > minimum_priority)
         {
             score += gene->evaluate(board, opposite_board, depth);
         }
@@ -189,9 +189,9 @@ double Genome::evaluate(const Board& board, Color perspective, size_t depth) con
     const auto& my_board        = (board.whose_turn() == perspective ? board : other_board);
     const auto& opponents_board = (board.whose_turn() == perspective ? other_board : board);
 
-    auto minimum_priority = Random::random_real(0.0, get_minimum_priority());
-    return score_board(my_board, opponents_board, depth, minimum_priority) -
-           score_board(opponents_board, my_board, depth, minimum_priority);
+    auto current_minimum_priority = Random::random_real(0.0, minimum_priority());
+    return score_board(my_board, opponents_board, depth, current_minimum_priority) -
+           score_board(opponents_board, my_board, depth, current_minimum_priority);
 }
 
 void Genome::mutate()
@@ -221,7 +221,7 @@ double Genome::speculation_time_factor(const Board& board, size_t depth) const
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor(board, depth);
 }
 
-double Genome::get_minimum_priority() const
+double Genome::minimum_priority() const
 {
-    return static_cast<const Priority_Threshold_Gene*>(genome[priority_threshold_gene_index].get())->get_threshold();
+    return static_cast<const Priority_Threshold_Gene*>(genome[priority_threshold_gene_index].get())->threshold();
 }

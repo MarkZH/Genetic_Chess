@@ -180,7 +180,7 @@ std::string Move::game_record_ending_item(Board board) const
 
     if(result.game_has_ended())
     {
-        appendage += result.get_game_record_annotation();
+        appendage += result.game_record_annotation();
     }
 
     return appendage.substr(String::starts_with(appendage, "+#") ? 1 : 0);

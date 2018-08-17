@@ -18,14 +18,14 @@ class Priority_Threshold_Gene : public Gene
         std::string name() const override;
         double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
 
-        double get_threshold() const;
+        double threshold() const;
 
     protected:
         void reset_properties() const override;
         void load_properties() override;
 
     private:
-        double threshold;
+        double priority_threshold;
 };
 
 #endif // PRIORITY_THRESHOLD_GENE_H

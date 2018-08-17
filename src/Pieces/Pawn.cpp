@@ -44,10 +44,10 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P", PAWN)
     }
 
     std::vector<const Piece*> possible_promotions;
-    possible_promotions.emplace_back(Board::get_piece(QUEEN, color_in));
-    possible_promotions.emplace_back(Board::get_piece(KNIGHT, color_in));
-    possible_promotions.emplace_back(Board::get_piece(ROOK, color_in));
-    possible_promotions.emplace_back(Board::get_piece(BISHOP, color_in));
+    possible_promotions.emplace_back(Board::piece_instance(QUEEN, color_in));
+    possible_promotions.emplace_back(Board::piece_instance(KNIGHT, color_in));
+    possible_promotions.emplace_back(Board::piece_instance(ROOK, color_in));
+    possible_promotions.emplace_back(Board::piece_instance(BISHOP, color_in));
 
     for(auto dir : {RIGHT, LEFT})
     {

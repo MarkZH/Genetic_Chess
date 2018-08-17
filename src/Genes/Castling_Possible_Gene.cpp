@@ -44,16 +44,16 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&, siz
     auto normalizing_factor = std::abs(kingside_preference) + std::abs(queenside_preference);
 
     // check if a castling move lies between here and the actual state of the board
-    if( ! board.get_game_record().empty())
+    if( ! board.game_record().empty())
     {
         auto castling_index = board.castling_move_index(board.whose_turn());
-        auto last_move_index = board.get_game_record().size() - 1;
+        auto last_move_index = board.game_record().size() - 1;
 
         if(castling_index <= last_move_index) // castling has occurred in the past of this board
         {
             if(last_move_index - castling_index <= depth) // castling has not occured on the actual board
             {
-                return (board.get_game_record()[castling_index]->file_change() > 0 ?
+                return (board.game_record()[castling_index]->file_change() > 0 ?
                         kingside_preference : queenside_preference)/normalizing_factor;
             }
             else // castling already happened in past of actual board, no longer relevant

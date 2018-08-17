@@ -96,7 +96,7 @@ bool run_tests()
     }
 
     Board second_move_board;
-    second_move_board.submit_move(second_move_board.get_move("e4"));
+    second_move_board.submit_move(second_move_board.create_move("e4"));
     auto second_move_count = second_move_board.legal_moves().size();
     size_t correct_second_move_count = 20;
     if(second_move_count != correct_second_move_count)
@@ -127,7 +127,7 @@ bool run_tests()
 
             try
             {
-                board.get_move('e', 1, final_file, 1);
+                board.create_move('e', 1, final_file, 1);
             }
             catch(const Illegal_Move&)
             {
@@ -177,7 +177,7 @@ bool run_tests()
     Board white_pawn_board("k7/8/8/4p3/3P4/8/8/K7 w - - 0 1");
     try
     {
-        white_pawn_board.get_move('d', 4, 'e', 5);
+        white_pawn_board.create_move('d', 4, 'e', 5);
     }
     catch(const Illegal_Move&)
     {
@@ -190,7 +190,7 @@ bool run_tests()
     Board black_pawn_board("k7/8/8/4p3/3P4/8/8/K7 b - - 0 1");
     try
     {
-        black_pawn_board.get_move('e', 5, 'd', 4);
+        black_pawn_board.create_move('e', 5, 'd', 4);
     }
     catch(const Illegal_Move&)
     {
@@ -210,12 +210,12 @@ bool run_tests()
     // 6 K.......
     // White pawn to promote to Queen
     auto side_effects_board = Board("2k7/P7/K/8/8/8/8/8 w - - 0 1");
-    side_effects_board.submit_move(side_effects_board.get_move("a8=Q"));
+    side_effects_board.submit_move(side_effects_board.create_move("a8=Q"));
     std::string bad_move = "Kb8";
     auto illegal_move_made = true;
     try
     {
-        side_effects_board.get_move(bad_move);
+        side_effects_board.create_move(bad_move);
     }
     catch(const Illegal_Move&)
     {
@@ -252,7 +252,7 @@ bool run_tests()
     auto move_is_legal = true;
     try
     {
-        en_passant_pin_board.get_move(move_string);
+        en_passant_pin_board.create_move(move_string);
     }
     catch(const Illegal_Move&)
     {
@@ -271,7 +271,7 @@ bool run_tests()
     {
         for(const auto& move : {"c3", "a6", "Qa4"})
         {
-            perf_board.submit_move(perf_board.get_move(move));
+            perf_board.submit_move(perf_board.create_move(move));
         }
     }
     catch(const Illegal_Move&)
@@ -286,7 +286,7 @@ bool run_tests()
     auto illegal_move = "d5";
     try
     {
-        perf_board.submit_move(perf_board.get_move(illegal_move));
+        perf_board.submit_move(perf_board.create_move(illegal_move));
     }
     catch(const Illegal_Move&)
     {
@@ -307,7 +307,7 @@ bool run_tests()
     {
         for(const auto& move : moves2)
         {
-            perf_board2.submit_move(perf_board2.get_move(move));
+            perf_board2.submit_move(perf_board2.create_move(move));
         }
     }
     catch(const Illegal_Move&)
@@ -329,7 +329,7 @@ bool run_tests()
     {
         for(const auto& move : moves3)
         {
-            perf_board3.submit_move(perf_board3.get_move(move));
+            perf_board3.submit_move(perf_board3.create_move(move));
         }
     }
     catch(const Illegal_Move&)
@@ -352,13 +352,13 @@ bool run_tests()
         Game_Result result;
         for(const auto& move : moves4)
         {
-            result = perf_board4.submit_move(perf_board4.get_move(move));
+            result = perf_board4.submit_move(perf_board4.create_move(move));
         }
 
         if(result.game_has_ended())
         {
             perf_board4.ascii_draw(WHITE);
-            std::cerr << "This is not " << result.get_ending_reason() << "." << std::endl;
+            std::cerr << "This is not " << result.ending_reason() << "." << std::endl;
             tests_passed = false;
         }
     }
@@ -382,13 +382,13 @@ bool run_tests()
         Game_Result result;
         for(const auto& move : moves5)
         {
-            result = perf_board5.submit_move(perf_board5.get_move(move));
+            result = perf_board5.submit_move(perf_board5.create_move(move));
         }
 
         if(result.game_has_ended())
         {
             perf_board5.ascii_draw(WHITE);
-            std::cerr << "This is not " << result.get_ending_reason() << "." << std::endl;
+            std::cerr << "This is not " << result.ending_reason() << "." << std::endl;
             tests_passed = false;
         }
     }
@@ -413,7 +413,7 @@ bool run_tests()
         Game_Result result;
         for(const auto& move : moves6)
         {
-            result = perf_board6.submit_move(perf_board6.get_move(move));
+            result = perf_board6.submit_move(perf_board6.create_move(move));
         }
     }
     catch(const Illegal_Move&)
@@ -436,9 +436,9 @@ bool run_tests()
         Game_Result result;
         for(const auto& move : moves7)
         {
-            result = perf_board7.submit_move(perf_board7.get_move(move));
+            result = perf_board7.submit_move(perf_board7.create_move(move));
         }
-        if(result.get_winner() != WHITE)
+        if(result.winner() != WHITE)
         {
             perf_board7.ascii_draw(WHITE);
             perf_board7.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
@@ -516,7 +516,7 @@ bool run_tests()
     auto white_castling_score = 0.8*(3.0/4.0) + 0.2*(4.0/5.0); // maximum score with and without actually castling
     tests_passed &= castling_possible_gene.test(castling_board, white_castling_score);
 
-    castling_board.submit_move(castling_board.get_move("O-O"));
+    castling_board.submit_move(castling_board.create_move("O-O"));
     castling_board.set_turn(WHITE);
     tests_passed &= castling_possible_gene.test(castling_board, 0.8); // full score for kingside castling
 
@@ -524,7 +524,7 @@ bool run_tests()
     auto black_castling_score = 0.2*(3.0/5.0); // castling possible
     tests_passed &= castling_possible_gene.test(castling_board, black_castling_score);
 
-    castling_board.submit_move(castling_board.get_move("Nc6"));
+    castling_board.submit_move(castling_board.create_move("Nc6"));
     tests_passed &= castling_possible_gene.test(castling_board, 0.0); // castling no longer relevant
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
@@ -568,7 +568,7 @@ bool run_tests()
     auto passed_pawn_score = (1.0 + 2.0/3.0)/8;
     tests_passed &= passed_pawn_gene.test(passed_pawn_board, passed_pawn_score);
 
-    passed_pawn_board.submit_move(passed_pawn_board.get_move("Kd8"));
+    passed_pawn_board.submit_move(passed_pawn_board.create_move("Kd8"));
     passed_pawn_score = (2.0/3.0)/8;
     tests_passed &= passed_pawn_gene.test(passed_pawn_board, passed_pawn_score);
 
@@ -822,7 +822,7 @@ bool run_tests()
                          "Ne4", "c1",
                          "Ng5"})
         {
-            board.submit_move(board.get_move(move));
+            board.submit_move(board.create_move(move));
         }
     }
     catch(const Illegal_Move&)
@@ -844,7 +844,7 @@ bool run_tests()
     std::string unambiguous_move = "Ng1h3";
     try
     {
-        unambiguous.get_move(unambiguous_move);
+        unambiguous.create_move(unambiguous_move);
     }
     catch(const Illegal_Move&)
     {
@@ -854,12 +854,12 @@ bool run_tests()
     }
 
     Board en_passant_pin("7k/4p3/8/2KP3r/8/8/8/8 b - - 0 1");
-    en_passant_pin.submit_move(en_passant_pin.get_move("e5"));
+    en_passant_pin.submit_move(en_passant_pin.create_move("e5"));
     try
     {
-        en_passant_pin.submit_move(en_passant_pin.get_move("dxe6"));
+        en_passant_pin.submit_move(en_passant_pin.create_move("dxe6"));
         en_passant_pin.ascii_draw(WHITE);
-        std::cerr << "Last move (" << en_passant_pin.get_last_move_record() << ") should have been illegal." << std::endl;
+        std::cerr << "Last move (" << en_passant_pin.last_move_record() << ") should have been illegal." << std::endl;
         tests_passed = false;
     }
     catch(const Illegal_Move&)
@@ -870,7 +870,7 @@ bool run_tests()
     auto test_move_text = "Rxf5";
     try
     {
-        threat_iterator_bug.get_move(test_move_text);
+        threat_iterator_bug.create_move(test_move_text);
     }
     catch(const Illegal_Move&)
     {
@@ -884,7 +884,7 @@ bool run_tests()
     {
         for(auto move : {"f4", "exf3", "Rxh4"})
         {
-            en_passant_pin_capture.submit_move(en_passant_pin_capture.get_move(move));
+            en_passant_pin_capture.submit_move(en_passant_pin_capture.create_move(move));
         }
     }
     catch(const Illegal_Move&)
@@ -899,7 +899,7 @@ bool run_tests()
     {
         for(auto move : {"O-O-O", "Rf1"})
         {
-            castling_double_pin.submit_move(castling_double_pin.get_move(move));
+            castling_double_pin.submit_move(castling_double_pin.create_move(move));
         }
     }
     catch(const Illegal_Move&)
@@ -1052,8 +1052,8 @@ bool run_tests()
     }
 
     Board capture_board;
-    capture_board.submit_move(capture_board.get_move("e4"));
-    capture_board.submit_move(capture_board.get_move("d5"));
+    capture_board.submit_move(capture_board.create_move("e4"));
+    capture_board.submit_move(capture_board.create_move("d5"));
     if( ! capture_board.capture_possible())
     {
         capture_board.ascii_draw(WHITE);
@@ -1061,7 +1061,7 @@ bool run_tests()
         tests_passed = false;
     }
 
-    capture_board.submit_move(capture_board.get_move("e5"));
+    capture_board.submit_move(capture_board.create_move("e5"));
     if(capture_board.capture_possible())
     {
         capture_board.ascii_draw(WHITE);
@@ -1193,7 +1193,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
 
     if(maximum_depth == 1)
     {
-        if(board.get_game_record().empty())
+        if(board.game_record().empty())
         {
             std::cout << line_prefix;
         }
@@ -1206,7 +1206,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
     auto total_squares = 20;
     for(auto move : board.legal_moves())
     {
-        if(board.get_game_record().empty())
+        if(board.game_record().empty())
         {
             std::cout << '\r' << line_prefix << '[';
             ++current_count;

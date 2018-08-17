@@ -196,11 +196,11 @@ int main(int argc, char *argv[])
                 else
                 {
                     auto outside = connect_to_outside(*white);
-                    game_time = outside->get_game_time();
-                    moves_per_reset = outside->get_reset_moves();
-                    increment_time = outside->get_increment();
+                    game_time = outside->game_time();
+                    moves_per_reset = outside->reset_moves();
+                    increment_time = outside->increment();
 
-                    if(outside->get_ai_color() == WHITE)
+                    if(outside->ai_color() == WHITE)
                     {
                         play_game(*white, *outside, game_time, moves_per_reset, increment_time, game_file_name);
                     }
@@ -258,14 +258,14 @@ int find_last_id(const std::string& players_file_name)
     int smallest_id = -1;
     if( ! pools.empty())
     {
-        smallest_id = pools.front().front().get_id();
+        smallest_id = pools.front().front().id();
         for(const auto& pool : pools)
         {
             for(const auto& player : pool)
             {
-                if(player.get_id() < smallest_id)
+                if(player.id() < smallest_id)
                 {
-                    smallest_id = player.get_id();
+                    smallest_id = player.id();
                 }
             }
         }
@@ -404,17 +404,17 @@ void replay_game(const std::string& file_name, int game_number)
         {
             try
             {
-                result = board.submit_move(board.get_move(s));
+                result = board.submit_move(board.create_move(s));
 
                 board.ascii_draw(WHITE);
                 game_started = true;
                 std::cout << "Last move: ";
-                std::cout << (board.get_game_record().size() + 1)/2 << ". ";
+                std::cout << (board.game_record().size() + 1)/2 << ". ";
                 std::cout << (board.whose_turn() == WHITE ? "... " : "");
-                std::cout << board.get_game_record().back()->coordinate_move() << std::endl;
+                std::cout << board.game_record().back()->coordinate_move() << std::endl;
                 if(result.game_has_ended())
                 {
-                    std::cout << result.get_ending_reason() << std::endl;
+                    std::cout << result.ending_reason() << std::endl;
                     break;
                 }
 
@@ -470,12 +470,12 @@ bool confirm_game_record(const std::string& file_name)
         // Start header of new game
         if(in_game && String::starts_with(line, '['))
         {
-            if(expect_fifty_move_draw != String::contains(result.get_ending_reason(), "50"))
+            if(expect_fifty_move_draw != String::contains(result.ending_reason(), "50"))
             {
                 std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
                 return false;
             }
-            if(expect_threefold_draw != String::contains(result.get_ending_reason(), "fold"))
+            if(expect_threefold_draw != String::contains(result.ending_reason(), "fold"))
             {
                 std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
                 return false;
@@ -566,7 +566,7 @@ bool confirm_game_record(const std::string& file_name)
                 {
                     auto move_checkmates = move.back() == '#';
                     auto move_checks = move_checkmates || move.back() == '+';
-                    auto& move_to_submit = board.get_move(move);
+                    auto& move_to_submit = board.create_move(move);
                     last_move_line_number = line_number;
                     if(String::contains(move, 'x')) // check that move captures
                     {
@@ -598,7 +598,7 @@ bool confirm_game_record(const std::string& file_name)
 
                     if(move_checkmates)
                     {
-                        if(result.get_winner() != opposite(board.whose_turn()))
+                        if(result.winner() != opposite(board.whose_turn()))
                         {
                             std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate. (line: " << line_number << ")" << std::endl;
                             return false;
@@ -612,7 +612,7 @@ bool confirm_game_record(const std::string& file_name)
                     }
                     else
                     {
-                        if(result.get_winner() != NONE)
+                        if(result.winner() != NONE)
                         {
                             std::cerr << "Move (" << move_number << move << ") does not indicate checkmate, but move does checkmate. (line: " << line_number << ")" << std::endl;
                             return false;

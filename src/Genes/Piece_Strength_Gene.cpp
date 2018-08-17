@@ -26,7 +26,7 @@ void Piece_Strength_Gene::reset_properties() const
 {
     for(const auto& piece : piece_types)
     {
-        properties[std::string(1, Board::get_piece(piece, WHITE)->fen_symbol())] = piece_value(piece);
+        properties[std::string(1, Board::piece_instance(piece, WHITE)->fen_symbol())] = piece_value(piece);
     }
 }
 

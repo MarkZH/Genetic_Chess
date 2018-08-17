@@ -50,7 +50,7 @@ const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) c
             }
 
             board.set_thinking_mode(thinking_mode);
-            return board.get_move(received_move_text);
+            return board.create_move(received_move_text);
         }
         catch(const Illegal_Move& e)
         {
@@ -60,7 +60,7 @@ const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) c
     }
 }
 
-Color CECP_Mediator::get_ai_color() const
+Color CECP_Mediator::ai_color() const
 {
     while(true)
     {
@@ -138,12 +138,12 @@ void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& 
         send_command("move " + board.last_move_coordinates());
     }
 
-    send_command(ending.get_game_ending_annotation() + " {" + ending.get_ending_reason() + "}");
+    send_command(ending.game_ending_annotation() + " {" + ending.ending_reason() + "}");
 
     wait_for_quit();
 }
 
-void CECP_Mediator::get_clock_specs()
+void CECP_Mediator::receive_clock_specs()
 {
     while(true)
     {
