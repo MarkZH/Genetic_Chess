@@ -179,7 +179,9 @@ void gene_pool(const std::string& config_file = "")
                   << "  Draws: " << draw_count[pool_index]
                   << "\nTime: " << game_time << " sec"
                   << "   Gene pool file name: " << genome_file_name << "\n"
-                  << std::endl;;
+                  << std::endl;
+
+        std::cout << "Pause: " << pause_key << "    Quit: " << stop_key << "\n" << std::endl;
 
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
