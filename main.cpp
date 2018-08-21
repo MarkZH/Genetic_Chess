@@ -236,6 +236,8 @@ void print_help()
               << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time." << std::endl << std::endl
               << "\t-confirm [filename]" << std::endl
               << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates." << std::endl << std::endl
+              << "\t-test" << std::endl
+              << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly." << std::endl << std::endl
               << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying." << std::endl << std::endl
               << "\t-human" << std::endl
               << "\t\tSpecify a human player for a game." << std::endl << std::endl
