@@ -326,7 +326,7 @@ void Scoped_Stopwatch::stop()
 
     if( ! out_file.is_open())
     {
-        out_file.open("timings.txt");
+        out_file.open("timings-" + std::to_string(Random::random_unsigned_int64()) + ".txt");
     }
 
     out_file << place_name << "|"
