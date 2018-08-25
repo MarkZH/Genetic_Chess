@@ -4,22 +4,24 @@
 
 import sys
 
-def main(file_name):
+def main(file_names):
     timings = dict()
-    with open(file_name) as f:
-        for line_number, line in enumerate(f):
-            try:
-                name, time = line.split('|')
-            except ValueError as e:
-                print('ERROR:', line_number, line)
-                print(e)
-                return
-            try:
-                count, time_sum = timings[name]
-            except KeyError:
-                count = 0
-                time_sum = 0
-            timings[name] = (count + 1, time_sum + float(time))
+    for index, file_name in enumerate(file_names, 1):
+        with open(file_name) as f:
+            print('Reading file ' + str(index) + ' of ' + str(len(file_names)) + ': ' + file_name, flush=True, file=sys.stderr)
+            for line_number, line in enumerate(f):
+                try:
+                    name, time = line.split('|')
+                except ValueError as e:
+                    print('ERROR:', line_number, line)
+                    print(e)
+                    return
+                try:
+                    count, time_sum = timings[name]
+                except KeyError:
+                    count = 0
+                    time_sum = 0
+                timings[name] = (count + 1, time_sum + float(time))
     
     print('Average time (sec)|Total time (sec)|Count|Name') # Column Headings
     for name in timings:
@@ -27,4 +29,4 @@ def main(file_name):
         print(str(time_sum/count) + '|' + str(time_sum) + '|' + str(count) + '|' + name)
 
 if __name__ == "__main__":
-    main(sys.argv[1])
+    main(sys.argv[1:])
