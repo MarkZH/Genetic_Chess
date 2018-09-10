@@ -1,61 +1,61 @@
-ID: 130602
+ID: 296879
 Name: Piece Strength Gene
-B: 16.6727
-K: -8.50377
-N: 11.351
-P: 2.71785
-Q: 36.0004
-R: 27.1734
+B: 9.58579
+K: -8.9191
+N: 9.16401
+P: 3.68654
+Q: 26.9882
+R: 11.0642
 
 Name: Look Ahead Gene
-Capturing Speculation Constant: 2.1968
-Game Length Uncertainty: 0.367611
-Mean Game Length: 40.9459
-Speculation Constant: 1.20144
+Capturing Speculation Constant: 1.80674
+Game Length Uncertainty: 0.304463
+Mean Game Length: 31.7346
+Speculation Constant: 1.48518
 
 Name: Priority Threshold Gene
-Threshold: 22.0639
+Threshold: 41.351
 
 Name: Total Force Gene
-Priority: 1096.6
+Priority: 1647.92
 
 Name: Freedom to Move Gene
-Priority: 52.2905
+Priority: 63.8559
 
 Name: Pawn Advancement Gene
-Priority: 169.628
+Priority: 338.722
 
 Name: Passed Pawn Gene
-Priority: -19.2381
+Priority: -208.13
 
 Name: Opponent Pieces Targeted Gene
-Priority: 100.491
+Priority: 364.119
 
 Name: Sphere of Influence Gene
-Illegal Square Score: 8.552
-King Target Factor: -1.92218
-Legal Square Score: 0.637701
-Priority: 337.498
+Illegal Square Score: 10.0745
+King Target Factor: -0.793538
+Legal Square Score: 3.90185
+Priority: 240.939
 
 Name: King Confinement Gene
-Enemy Block Score: 3.45292
-Free Square Score: -14.3943
-Friendly Block Score: -11.2906
-Priority: 9.96648
+Enemy Block Score: -2.03122
+Free Square Score: 1.58551
+Friendly Block Score: 1.49596
+Priority: 0
 
 Name: King Protection Gene
-Priority: 58.7458
+Priority: -42.9047
 
 Name: Castling Possible Gene
-Kingside Preference: 2.05802
-Priority: 129.226
-Queenside Preference: -0.871188
+Kingside Preference: -0.608921
+Priority: 2.07684
+Queenside Preference: 1.65484
 
 Name: Stacked Pawns Gene
-Priority: 31.1879
+Priority: 15.6747
 
 Name: Pawn Islands Gene
-Priority: -15.6646
+Priority: -16.5405
 
 END
 
