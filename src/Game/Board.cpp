@@ -147,9 +147,20 @@ Board::Board(const std::string& fen) :
             if(isdigit(symbol))
             {
                 file += symbol - '0';
+                if(file > 'h' + 1)
+                {
+                    std::cerr << "FEN input: " << fen << "\nToo many squares in rank " << rank << std::endl;
+                    throw std::runtime_error("Bad FEN input.");
+                }
             }
             else
             {
+                if(file > 'h')
+                {
+                    std::cerr << "FEN input: " << fen << "\nToo many squares in rank " << rank << std::endl;
+                    throw std::runtime_error("Bad FEN input.");
+                }
+
                 Color color = (isupper(symbol) ? WHITE : BLACK);
                 switch(toupper(symbol))
                 {
@@ -240,6 +251,12 @@ Board::Board(const std::string& fen) :
         add_to_repeat_count(Random::random_unsigned_int64());
     }
 
+    if(fen_status() != fen)
+    {
+        std::cerr << "input:  " << fen << std::endl
+                  << "Result: " << fen_status() << std::endl;
+        throw std::runtime_error("Bad FEN Board creation");
+    }
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();

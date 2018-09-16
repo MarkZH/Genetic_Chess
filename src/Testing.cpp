@@ -209,7 +209,7 @@ bool run_tests()
     // 7 P.......
     // 6 K.......
     // White pawn to promote to Queen
-    auto side_effects_board = Board("2k7/P7/K/8/8/8/8/8 w - - 0 1");
+    auto side_effects_board = Board("2k5/P7/K7/8/8/8/8/8 w - - 0 1");
     side_effects_board.submit_move(side_effects_board.create_move("a8=Q"));
     std::string bad_move = "Kb8";
     auto illegal_move_made = true;
@@ -512,7 +512,7 @@ bool run_tests()
 
     auto castling_possible_gene = Castling_Possible_Gene();
     castling_possible_gene.read_from(test_genes_file_name);
-    auto castling_board = Board("rn2k4/8/8/8/8/8/8/R3K2R w KQq - 0 1");
+    auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
     auto white_castling_score = 0.8*(3.0/4.0) + 0.2*(4.0/5.0); // maximum score with and without actually castling
     tests_passed &= castling_possible_gene.test(castling_board, white_castling_score);
 
@@ -564,7 +564,7 @@ bool run_tests()
     tests_passed &= pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
 
     auto passed_pawn_gene = Passed_Pawn_Gene();
-    auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P5/8/8/8 w - - 0 1");
+    auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P4/8/8/8 w - - 0 1");
     auto passed_pawn_score = (1.0 + 2.0/3.0)/8;
     tests_passed &= passed_pawn_gene.test(passed_pawn_board, passed_pawn_score);
 
