@@ -70,7 +70,7 @@ std::array<uint64_t, 2> Board::color_hash_values{}; // for whose_turn() hashing
 
 Board::Board() :
     board{},
-    moves_since_pawn_or_capture_count{0},
+    repeat_count_insertion_point{0},
     turn_color(WHITE),
     unmoved_positions{},
     en_passant_target({'\0', 0}),
@@ -109,13 +109,13 @@ Board::Board() :
     assert(king_location[WHITE]);
     assert(king_location[BLACK]);
 
-    add_to_repeat_count(board_hash()); // Count initial position
+    add_board_position_to_repeat_record(); // Count initial position
     recreate_move_caches();
 }
 
 Board::Board(const std::string& fen) :
     board{},
-    moves_since_pawn_or_capture_count{0},
+    repeat_count_insertion_point{0},
     turn_color(WHITE),
     unmoved_positions{},
     en_passant_target({'\0', 0}),
@@ -234,12 +234,12 @@ Board::Board(const std::string& fen) :
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
     auto fifty_move_count_input = std::stoi(fen_parse.at(4));
+    add_board_position_to_repeat_record();
     while(moves_since_pawn_or_capture() < fifty_move_count_input)
     {
         add_to_repeat_count(Random::random_unsigned_int64());
     }
 
-    add_to_repeat_count(board_hash()); // Count initial position
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
@@ -317,7 +317,7 @@ bool Board::is_in_legal_moves_list(const Move& move) const
 std::string Board::fen_status() const
 {
     std::string s = board_status() + " ";
-    s.append(std::to_string(moves_since_pawn_or_capture() - 1)); // -1 to exclude current position
+    s.append(std::to_string(moves_since_pawn_or_capture()));
     s.push_back(' ');
     if(starting_fen.empty())
     {
@@ -380,14 +380,7 @@ const Move& Board::create_move(char file_start, int rank_start, char file_end, i
 
 Game_Result Board::submit_move(const Move& move)
 {
-    assert(is_in_legal_moves_list(move));
-    game_record_listing.push_back(&move);
-
-    make_move(move.start_file(), move.start_rank(),
-              move.end_file(),   move.end_rank());
-    move.side_effects(*this);
-
-    switch_turn();
+    update_board(move);
 
     if(no_legal_moves())
     {
@@ -410,17 +403,33 @@ Game_Result Board::submit_move(const Move& move)
         return Game_Result(NONE, "Insufficient material");
     }
 
-    if(add_to_repeat_count(board_hash()) >= 3)
+    if(current_board_position_repeat_count() >= 3)
     {
         return Game_Result(NONE, "Threefold repetition");
     }
 
-    if(moves_since_pawn_or_capture() >= 101) // "Move" means both players move, 101 including current position
+    // "Move" means both players move, so the fifty-move rule is
+    // triggered after 100 player moves
+    if(moves_since_pawn_or_capture() >= 100)
     {
         return Game_Result(NONE, "50-move limit");
     }
 
     return {};
+}
+
+void Board::update_board(const Move& move)
+{
+    assert(is_in_legal_moves_list(move));
+    game_record_listing.push_back(&move);
+
+    make_move(move.start_file(), move.start_rank(),
+              move.end_file(), move.end_rank());
+    move.side_effects(*this);
+
+    switch_turn();
+
+    add_board_position_to_repeat_record();
 }
 
 const Move& Board::create_move(const std::string& move) const
@@ -1613,22 +1622,31 @@ Square Board::piece_is_pinned(char file, int rank) const
     }
 }
 
-int Board::add_to_repeat_count(uint64_t new_hash)
+void Board::add_board_position_to_repeat_record()
 {
-    repeat_count[moves_since_pawn_or_capture_count++] = new_hash;
+    add_to_repeat_count(board_hash());
+}
+
+void Board::add_to_repeat_count(uint64_t new_hash)
+{
+    repeat_count[repeat_count_insertion_point++] = new_hash;
+}
+
+int Board::current_board_position_repeat_count() const
+{
     return std::count(repeat_count.begin(),
-                      repeat_count.begin() + moves_since_pawn_or_capture_count,
-                      new_hash);
+                      repeat_count.begin() + repeat_count_insertion_point,
+                      board_hash());
 }
 
 int Board::moves_since_pawn_or_capture() const
 {
-    return moves_since_pawn_or_capture_count;
+    return repeat_count_insertion_point - 1;
 }
 
 void Board::clear_repeat_count()
 {
-    moves_since_pawn_or_capture_count = 0;
+    repeat_count_insertion_point = 0;
 }
 
 size_t Board::castling_move_index(Color player) const

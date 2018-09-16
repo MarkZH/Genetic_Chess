@@ -106,7 +106,7 @@ class Board
     private:
         std::array<const Piece*, 64> board;
         std::array<uint64_t, 101> repeat_count;
-        int moves_since_pawn_or_capture_count;
+        int repeat_count_insertion_point;
         Color turn_color;
         std::vector<const Move*> game_record_listing;
         std::array<bool, 64> unmoved_positions;
@@ -158,11 +158,12 @@ class Board
         void place_piece(const Piece* piece, char file, int rank);
         void switch_turn();
         void set_unmoved(char file, int rank);
+        void update_board(const Move& move);
 
         // Track threefold repetition and fifty-move rule
-
-         // adds to previously seen list and returns count of times board position has occured
-        int add_to_repeat_count(uint64_t new_hash);
+        void add_board_position_to_repeat_record();
+        void add_to_repeat_count(uint64_t new_hash);
+        int current_board_position_repeat_count() const;
         void clear_repeat_count();
         int moves_since_pawn_or_capture() const;
 
