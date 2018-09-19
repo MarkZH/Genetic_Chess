@@ -3,14 +3,13 @@
 #include <cassert>
 
 #include "Moves/Move.h"
+#include "Moves/Direction.h"
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
 
-Pawn_Capture::Pawn_Capture(Color color_in, Capture_Direction dir, char file_start, int rank_start) :
+Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, char file_start, int rank_start) :
     Pawn_Move(color_in, file_start, rank_start)
 {
-    assert(dir == LEFT || dir == RIGHT);
-
     if(dir == RIGHT)
     {
         ending_file += 1;

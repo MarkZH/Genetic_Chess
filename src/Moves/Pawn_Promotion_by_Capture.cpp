@@ -4,11 +4,12 @@
 
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
-#include "Moves/Pawn_Capture.h"
+#include "Moves/Pawn_Promotion.h"
 #include "Moves/Move.h"
+#include "Moves/Direction.h"
 
 Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,
-                                                     Capture_Direction dir,
+                                                     Direction dir,
                                                      char file_start) :
     Pawn_Promotion(promotion, file_start)
 {

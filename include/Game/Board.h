@@ -7,8 +7,7 @@
 #include <mutex>
 
 #include "Moves/Move.h"
-#include "Moves/Kingside_Castle.h"
-#include "Moves/Queenside_Castle.h"
+#include "Moves/Castle.h"
 #include "Moves/En_Passant.h"
 #include "Moves/Pawn_Promotion.h"
 #include "Moves/Pawn_Double_Move.h"
@@ -198,8 +197,7 @@ class Board
         bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
 
         // Moves with side effects are friends of Board
-        friend void Kingside_Castle::side_effects(Board&) const; // moves second piece
-        friend void Queenside_Castle::side_effects(Board&) const; // moves second piece
+        friend void Castle::side_effects(Board&) const; // moves second piece
         friend void En_Passant::side_effects(Board&) const; // capture piece on another square
         friend void Pawn_Promotion::side_effects(Board&) const; // replace piece
         friend void Pawn_Double_Move::side_effects(Board&) const; // mark square as En Passant target
