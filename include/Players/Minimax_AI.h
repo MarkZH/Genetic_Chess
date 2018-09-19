@@ -31,10 +31,12 @@ class Minimax_AI : public Player
         mutable double clock_start_time;
         mutable size_t maximum_depth;
 
+        // For thinking output
         mutable int nodes_evaluated;
         mutable double total_evaluation_time;
         mutable double evaluation_speed;
         double value_of_centipawn;
+        mutable double time_at_last_output;
 
         // Evaluation method
         double evaluate(const Board& board,
@@ -70,6 +72,7 @@ class Minimax_AI : public Player
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                   const Clock& clock,
                                   Color perspective) const;
+        double time_since_last_output(const Clock& clock) const;
 };
 
 #endif // MINIMAX_AI_H

@@ -22,6 +22,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
     nodes_evaluated = 0;
     total_evaluation_time = 0.0;
+    time_at_last_output = clock.time_left(clock.running_for());
 
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
@@ -223,10 +224,11 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
-                else if(board.thinking_mode() == CECP && depth < 4)
+                else if(board.thinking_mode() == CECP && time_since_last_output(clock) > 1.0)
                 {
                     output_thinking_cecp(alpha, clock,
                                          depth % 2 == 0 ? perspective : opposite(perspective));
+                    time_at_last_output = clock.time_left(clock.running_for());
                 }
             }
         }
@@ -285,7 +287,12 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         std::cout << move->coordinate_move() << ' ';
     }
 
-    std::cout << '\n';
+    std::cout << std::endl;
+}
+
+double Minimax_AI::time_since_last_output(const Clock& clock) const
+{
+    return time_at_last_output - clock.time_left(clock.running_for());
 }
 
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
