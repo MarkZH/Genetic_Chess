@@ -508,7 +508,7 @@ bool run_tests()
 
 
     // Test individual board-scoring genes
-    auto test_genes_file_name = "test_genome.txt";
+    auto test_genes_file_name = "testing/test_genome.txt";
 
     auto castling_possible_gene = Castling_Possible_Gene();
     castling_possible_gene.read_from(test_genes_file_name);
@@ -1084,7 +1084,7 @@ bool run_tests()
     // (downloaded from http://www.rocechess.ch/perft.html)
     // (leaves from starting positions also found at https://oeis.org/A048987)
     size_t max_perft_depth = 6;
-    auto perft_suite_input = std::ifstream("perftsuite.epd");
+    auto perft_suite_input = std::ifstream("testing/perftsuite.epd");
     std::string input_line;
     std::vector<std::string> lines;
     while(std::getline(perft_suite_input, input_line))
