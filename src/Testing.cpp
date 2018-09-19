@@ -1130,7 +1130,7 @@ bool run_tests()
             }
             else
             {
-                std::cout << " OK!" << std::endl;
+                std::cout << "OK!" << std::endl;
             }
         }
 
@@ -1213,7 +1213,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
             int squares_to_draw = (total_squares*current_count)/first_move_count;
             std::cout << std::string(squares_to_draw, '#');
             std::cout << std::string(total_squares - squares_to_draw, ' ');
-            std::cout << ']' << std::flush;
+            std::cout << "] " << std::flush;
         }
         auto next_board = board;
         next_board.submit_move(*move);
