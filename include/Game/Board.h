@@ -81,7 +81,6 @@ class Board
         const Piece* piece_on_square(char file, int rank) const;
 
         const std::vector<const Move*>& legal_moves() const;
-        const std::vector<const Move*>& other_moves() const;
 
         bool safe_for_king(char file, int rank, Color king_color) const;
         bool is_en_passant_targetable(char file, int rank) const;
@@ -136,7 +135,6 @@ class Board
         static const Pawn   black_pawn;
 
         // Caches
-        std::vector<const Move*> other_moves_cache;
         std::vector<const Move*> legal_moves_cache;
         std::vector<Square> checking_squares;
 

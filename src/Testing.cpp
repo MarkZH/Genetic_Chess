@@ -43,27 +43,6 @@ bool run_tests()
     Board starting_board;
     while(true)
     {
-        // Moves that are currently illegal but would land on board
-        size_t correct_other_move_count = 86;
-        if(starting_board.other_moves().size() != correct_other_move_count)
-        {
-            std::cerr << "Expected other move count = " << correct_other_move_count << std::endl;
-            starting_board.ascii_draw(WHITE);
-            auto num = 1;
-            for(const auto& move : starting_board.other_moves())
-            {
-                std::cout << num++ << ". " << move->coordinate_move() << " ";
-            }
-
-            if(num == 1)
-            {
-                std::cout << "No other moves found.";
-            }
-
-            std::cout << std::endl;
-            tests_passed = false;
-        }
-
         auto starting_move_count = starting_board.legal_moves().size();
         size_t correct_move_count = 20;
         if(starting_move_count != correct_move_count)

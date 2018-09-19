@@ -622,11 +622,6 @@ const std::vector<const Move*>& Board::legal_moves() const
     return legal_moves_cache;
 }
 
-const std::vector<const Move*>& Board::other_moves() const
-{
-    return other_moves_cache;
-}
-
 void Board::ascii_draw(Color perspective) const
 {
     const size_t square_width = 7;
@@ -1203,7 +1198,6 @@ Square Board::find_king(Color color) const
 
 void Board::recreate_move_caches()
 {
-    other_moves_cache.clear();
     legal_moves_cache.clear();
     refresh_checking_squares();
     attacked_indices = {};
@@ -1250,8 +1244,6 @@ void Board::recreate_move_caches()
                     }
                     else
                     {
-                        other_moves_cache.push_back(move);
-
                         if(move->can_capture())
                         {
                             other_attacked_indices[board_index(move->end_file(), move->end_rank())] = true;
