@@ -140,7 +140,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     std::partition(partition_start, all_legal_moves.end(),
                    [&board](auto move){ return board.move_captures(*move); });
 
-    auto perspective = board.whose_turn();
+    const auto perspective = board.whose_turn();
     auto moves_left = all_legal_moves.size();
 
     Game_Tree_Node_Result best_result = {Math::lose_score,
