@@ -70,7 +70,6 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     if(board.thinking_mode() == CECP)
     {
         output_thinking_cecp(result, clock, board.whose_turn());
-        std::cout << std::flush;
     }
 
     if(result.depth() > 0)
