@@ -52,17 +52,17 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     // alpha = highest score found that opponent will allow
     Game_Tree_Node_Result alpha_start = {Math::lose_score,
                                          board.whose_turn(),
-                                         {nullptr}};
+                                         {}};
 
     // beta = score that will cause opponent to choose a different prior move
     Game_Tree_Node_Result beta_start = {Math::win_score,
                                         board.whose_turn(),
-                                        {nullptr}};
+                                        {}};
 
     auto result = search_game_tree(board,
                                    time_to_use,
                                    clock,
-                                   0,
+                                   1,
                                    alpha_start,
                                    beta_start,
                                    ! principal_variation.empty());
@@ -110,15 +110,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
 
-    // The first item in the principal variation is the last move that
-    // this player made. Since then, the opponent has also made a move,
-    // so the first item in the principal variation corresponds to the
-    // game record item at game_record.size() - 2. The depth of the game
-    // tree search increments both the game_record index and the principal
-    // variation index in step.
-    if(still_on_principal_variation && principal_variation.size() > depth + 2)
+    // The two items in the principal variation are the last two moves of
+    // the non-hypothetical board. So, the first item in the principal variation to
+    // consider is at index depth + 1 (since depth starts at 1).
+    if(still_on_principal_variation && principal_variation.size() > depth + 1)
     {
-        auto next_principal_variation_move = principal_variation[depth + 2];
+        auto next_principal_variation_move = principal_variation[depth + 1];
         auto move_iter = std::find(all_legal_moves.begin(),
                                    all_legal_moves.end(),
                                    next_principal_variation_move);
@@ -226,7 +223,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 else if(board.thinking_mode() == CECP && time_since_last_output(clock) > 1.0)
                 {
                     output_thinking_cecp(alpha, clock,
-                                         depth % 2 == 0 ? perspective : opposite(perspective));
+                                         depth % 2 == 1 ? perspective : opposite(perspective));
                     time_at_last_output = clock.time_left(clock.running_for());
                 }
             }
@@ -259,11 +256,11 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     // Indicate "mate in N moves" where N == thought.depth
     if(score == Math::win_score)
     {
-        score = 10000.0 - thought.depth();
+        score = 10000.0 - thought.depth() + 1;
     }
     else if(score == Math::lose_score)
     {
-        score = -(10000.0 - thought.depth());
+        score = -(10000.0 - thought.depth() + 1);
     }
 
     auto time_so_far = clock_start_time - clock.time_left(clock.running_for());
@@ -301,7 +298,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
 {
     return {evaluate(board, move_result, perspective, depth),
             perspective,
-            {board.game_record().end() - (depth + 1),
+            {board.game_record().end() - depth,
             board.game_record().end()}};
 }
 

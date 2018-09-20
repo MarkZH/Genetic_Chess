@@ -65,6 +65,5 @@ bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b)
 
 size_t Game_Tree_Node_Result::depth() const
 {
-    assert( ! variation.empty());
-    return variation.size() - 1;
+    return variation.size();
 }
