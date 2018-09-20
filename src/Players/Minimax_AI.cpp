@@ -106,7 +106,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const Game_Tree_Node_Result& beta,
                                                    bool still_on_principal_variation) const
 {
-    auto time_start = clock.time_left(clock.running_for());
+    const auto time_start = clock.time_left(clock.running_for());
     maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
 
