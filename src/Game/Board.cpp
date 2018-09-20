@@ -1445,8 +1445,10 @@ size_t Board::square_hash_index(const Piece* piece)
     {
         return piece->type() + (piece->color()*6); // 6 == number of piece types
     }
-
-    return square_hash_values.front().size() - 1; // last value for empty square (nullptr)
+    else
+    {
+        return square_hash_values.front().size() - 1; // last value for empty square
+    }
 }
 
 uint64_t Board::board_hash() const
