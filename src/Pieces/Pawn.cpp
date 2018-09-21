@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <cmath>
 
 #include "Game/Board.h"
 #include "Game/Color.h"
