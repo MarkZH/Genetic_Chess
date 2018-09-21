@@ -264,30 +264,26 @@ Board::Board(const std::string& fen) :
     recreate_move_caches();
 }
 
-size_t Board::board_index(char file, int rank)
+size_t Board::square_index(char file, int rank)
 {
-    // Square A1 = Board::board[0]
-    // Square H1 = Board::board[7]
-    // Square A8 = Board::board[56]
-    // Square H8 = Board::board[63]
     assert(inside_board(file, rank));
     return 8*(file - 'a') + (rank - 1);
 }
 
 const Piece*& Board::piece_on_square(char file, int rank)
 {
-    return board[board_index(file, rank)];
+    return board[square_index(file, rank)];
 }
 
 const Piece* Board::piece_on_square(char file, int rank) const
 {
-    return board[board_index(file, rank)];
+    return board[square_index(file, rank)];
 }
 
 void Board::set_unmoved(char file, int rank)
 {
     update_board_hash(file, rank); // remove reference to moved piece
-    unmoved_positions[board_index(file, rank)] = true;
+    unmoved_positions[square_index(file, rank)] = true;
     update_board_hash(file, rank);
 }
 
@@ -708,7 +704,7 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     update_board_hash(file, rank); // XOR out piece on square
 
     piece_on_square(file, rank) = piece;
-    unmoved_positions[Board::board_index(file, rank)] = false;
+    unmoved_positions[square_index(file, rank)] = false;
 
     update_board_hash(file, rank); // XOR in new piece on square
 
@@ -1186,7 +1182,7 @@ void Board::clear_en_passant_target()
 
 bool Board::piece_has_moved(char file, int rank) const
 {
-    return ! unmoved_positions[Board::board_index(file, rank)];
+    return ! unmoved_positions[square_index(file, rank)];
 }
 
 Square Board::find_king(Color color) const
@@ -1234,8 +1230,8 @@ void Board::recreate_move_caches()
                             {
                                 rank_adjust = whose_turn() == WHITE ? -1 : 1;
                             }
-                            attacked_indices[board_index(move->end_file(),
-                                                         move->end_rank() + rank_adjust)] = true;
+                            attacked_indices[square_index(move->end_file(),
+                                                          move->end_rank() + rank_adjust)] = true;
                         }
                         capturing_move_available = capturing_move_available
                             || piece_on_square(move->end_file(), move->end_rank())
@@ -1246,7 +1242,7 @@ void Board::recreate_move_caches()
                     {
                         if(move->can_capture())
                         {
-                            other_attacked_indices[board_index(move->end_file(), move->end_rank())] = true;
+                            other_attacked_indices[square_index(move->end_file(), move->end_rank())] = true;
                         }
                     }
 
@@ -1367,7 +1363,7 @@ void Board::initialize_board_hash()
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto index = Board::board_index(file, rank);
+            auto index = square_index(file, rank);
             en_passant_hash_values[index] = Random::random_unsigned_int64();
             castling_hash_values[index] = Random::random_unsigned_int64();
 
@@ -1421,7 +1417,7 @@ uint64_t Board::square_hash(char file, int rank) const
     }
 
     auto piece = piece_on_square(file, rank);
-    auto index = Board::board_index(file, rank);
+    auto index = square_index(file, rank);
     auto result = square_hash_values[index][square_hash_index(piece)];
     if(piece &&
        piece->type() == ROOK &&

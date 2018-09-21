@@ -53,7 +53,7 @@ bool Piece::can_move(const Move* move) const
 
 const std::vector<const Move*>& Piece::move_list(char file, int rank) const
 {
-    return legal_moves[Board::board_index(file, rank)];
+    return legal_moves[Board::square_index(file, rank)];
 }
 
 Piece_Type Piece::type() const
@@ -81,7 +81,7 @@ void Piece::add_legal_move(std::unique_ptr<Move> move)
     assert(Board::inside_board(move->start_file(), move->start_rank()));
     if(Board::inside_board(move->end_file(), move->end_rank()))
     {
-        legal_moves[Board::board_index(move->start_file(), move->start_rank())].push_back(move.get());
+        legal_moves[Board::square_index(move->start_file(), move->start_rank())].push_back(move.get());
         possible_moves.push_back(std::move(move));
     }
 }

@@ -76,7 +76,7 @@ class Board
         static bool inside_board(char file);
         static bool inside_board(int rank);
 
-        static size_t board_index(char file, int rank);
+        static size_t square_index(char file, int rank);
 
         const Piece* piece_on_square(char file, int rank) const;
 

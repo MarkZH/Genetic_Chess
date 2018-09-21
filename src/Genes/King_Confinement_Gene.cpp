@@ -83,7 +83,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     square_queue.push_back(king_square);
 
     std::array<int, 64> distance{};
-    distance[Board::board_index(king_square.file, king_square.rank)] = 1;
+    distance[Board::square_index(king_square.file, king_square.rank)] = 1;
 
     auto squares_attacked_by_other = opposite_board.all_square_indices_attacked();
 
@@ -92,7 +92,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     for(size_t i = 0; i < square_queue.size(); ++i)
     {
         auto square = square_queue[i];
-        auto square_index = Board::board_index(square.file, square.rank);
+        auto square_index = Board::square_index(square.file, square.rank);
 
         auto attacked_by_other = squares_attacked_by_other[square_index];
 
@@ -135,7 +135,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
                         continue;
                     }
 
-                    auto new_index = Board::board_index(new_file, new_rank);
+                    auto new_index = Board::square_index(new_file, new_rank);
                     if(distance[new_index] == 0) // never checked
                     {
                         square_queue.push_back(Square{new_file, new_rank});
