@@ -36,7 +36,7 @@ Color Piece::color() const
 
 std::string Piece::pgn_symbol() const
 {
-    return symbol;
+    return type() == PAWN ? std::string{} : symbol;
 }
 
 char Piece::fen_symbol() const

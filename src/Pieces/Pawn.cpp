@@ -94,8 +94,3 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P", PAWN)
         ascii_art_lines[2].replace(1, 3, "###");
     }
 }
-
-std::string Pawn::pgn_symbol() const
-{
-    return "";
-}

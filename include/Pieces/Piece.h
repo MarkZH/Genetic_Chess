@@ -17,7 +17,7 @@ class Piece
         Piece(Color color_in, const std::string& symbol_in, Piece_Type type_in);
         virtual ~Piece() = 0;
 
-        virtual std::string pgn_symbol() const;
+        std::string pgn_symbol() const;
         char fen_symbol() const;
         std::string ascii_art(size_t row) const;
         Color color() const;
