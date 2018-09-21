@@ -13,19 +13,14 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,
                                                      char file_start) :
     Pawn_Promotion(promotion, file_start)
 {
-    assert(dir == LEFT || dir == RIGHT);
     ending_file += (dir == RIGHT ? 1 : -1);
+    able_to_capture = true;
 }
 
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const
 {
     assert(starting_rank == (rank_change() == 1 ? 7 : 2));
     return board.piece_on_square(ending_file, ending_rank); // must capture
-}
-
-bool Pawn_Promotion_by_Capture::can_capture() const
-{
-    return true;
 }
 
 std::string Pawn_Promotion_by_Capture::game_record_move_item(const Board&) const

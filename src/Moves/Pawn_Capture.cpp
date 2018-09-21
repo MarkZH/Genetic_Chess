@@ -18,16 +18,13 @@ Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, char file_start, int r
     {
         ending_file -= 1;
     }
+
+    able_to_capture = true;
 }
 
 bool Pawn_Capture::move_specific_legal(const Board& board) const
 {
     return board.piece_on_square(ending_file, ending_rank); // must capture a piece
-}
-
-bool Pawn_Capture::can_capture() const
-{
-    return true;
 }
 
 std::string Pawn_Capture::game_record_move_item(const Board&) const

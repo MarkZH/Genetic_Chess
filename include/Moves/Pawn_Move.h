@@ -12,7 +12,6 @@ class Pawn_Move : public Move
         Pawn_Move(Color color_in, char file_start, int rank_start);
 
         void side_effects(Board& board) const override;
-        bool can_capture() const override;
 };
 
 #endif // PAWN_MOVE_H

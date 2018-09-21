@@ -13,6 +13,7 @@ Castle::Castle(int base_rank, Direction direction) :
     rook_starting_file(direction == RIGHT ? 'h' : 'a'),
     rook_ending_file(direction == RIGHT ? 'f' : 'd')
 {
+    able_to_capture = false;
 }
 
 bool Castle::move_specific_legal(const Board& board) const
@@ -23,11 +24,6 @@ bool Castle::move_specific_legal(const Board& board) const
             && ! board.king_is_in_check()
             && board.all_empty_between(starting_file, starting_rank, rook_starting_file, starting_rank)
             && board.safe_for_king(skipped_file, starting_rank, board.whose_turn());
-}
-
-bool Castle::can_capture() const
-{
-    return false;
 }
 
 void Castle::side_effects(Board& board) const
