@@ -1299,7 +1299,7 @@ bool Board::enough_material_to_checkmate() const
                 }
                 knight_found = true;
             }
-            else // if(piece->is_bishop())
+            else // BISHOP
             {
                 auto bishop_square_color = square_color(file, rank);
                 if(bishop_square_color_found == NONE)
