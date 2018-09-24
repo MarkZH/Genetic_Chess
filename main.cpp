@@ -10,6 +10,7 @@
 #include "Players/Genetic_AI.h"
 #include "Players/Human_Player.h"
 #include "Players/Random_AI.h"
+#include "Players/Monte_Carlo_AI.h"
 #include "Players/Outside_Player.h"
 
 #include "Breeding/Gene_Pool.h"
@@ -108,6 +109,10 @@ int main(int argc, char *argv[])
                     else if(opt == "-random")
                     {
                         latest = std::make_unique<Random_AI>();
+                    }
+                    else if(opt == "-montecarlo")
+                    {
+                        latest = std::make_unique<Monte_Carlo_AI>();
                     }
                     else if(opt == "-genetic")
                     {
@@ -243,6 +248,8 @@ void print_help()
               << "\t\tSpecify a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file." << std::endl << std::endl
               << "\t-random" << std::endl
               << "\t\tSpecify a player that makes random moves for a game." << std::endl << std::endl
+              << "\t-montecarlo" << std::endl
+              << "\t\tSpecify a player that evaluates moves by playing random\n\t\tcomplete games." << std::endl << std::endl
               << "Other game options:" << std::endl << std::endl
               << "\t-time [number]" << std::endl
               << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option)." << std::endl << std::endl

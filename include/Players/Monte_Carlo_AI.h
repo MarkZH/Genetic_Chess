@@ -1,22 +1,19 @@
-#ifndef RANDOM_AI_H
-#define RANDOM_AI_H
+#ifndef MONTE_CARLO_AI_H
+#define MONTE_CARLO_AI_H
 
 #include <string>
 
-#include "Player.h"
+#include "Random_AI.h"
 
 class Board;
 class Clock;
 class Move;
 
-class Random_AI : public Player
+class Monte_Carlo_AI : public Random_AI
 {
     public:
         const Move& choose_move(const Board& board, const Clock& clock) const override;
         std::string name() const override;
-
-    protected:
-        const Move* choose_random_move(const Board& board) const;
 };
 
-#endif // RANDOM_AI_H
+#endif // MONTE_CARLO_AI_H
