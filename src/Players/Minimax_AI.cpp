@@ -220,7 +220,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
-                else if(board.thinking_mode() == CECP && time_since_last_output(clock) > 1.0)
+                else if(board.thinking_mode() == CECP && time_since_last_output(clock) > 0.1)
                 {
                     output_thinking_cecp(alpha, clock,
                                          depth % 2 == 1 ? perspective : opposite(perspective));
