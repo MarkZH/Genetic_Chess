@@ -16,6 +16,8 @@ struct Game_Tree_Node_Result
 
     double corrected_score(Color query) const;
     size_t depth() const;
+    bool is_winning_for(Color query) const;
+    bool is_losing_for(Color query) const;
 };
 
 // Is "a" a better result than "b" from "perspective" color

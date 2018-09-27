@@ -790,6 +790,17 @@ bool run_tests()
         tests_passed = false;
     }
 
+    if( ! black_loss6.is_winning_for(WHITE))
+    {
+        std::cerr << "Black loss in 6 returns false for is_winning_for(WHITE)." << std::endl;
+        tests_passed = false;
+    }
+
+    if( ! black_loss6.is_losing_for(BLACK))
+    {
+        std::cerr << "Black loss in 6 returns false for is_losing_for(BLACK)." << std::endl;
+        tests_passed = false;
+    }
 
     // Move ambiguity check
     Board board;
