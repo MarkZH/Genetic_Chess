@@ -6,7 +6,6 @@
 #include "Game/Board.h"
 #include "Game/Color.h"
 
-#include "Moves/Move.h"
 #include "Moves/Pawn_Move.h"
 #include "Moves/Pawn_Capture.h"
 #include "Moves/Pawn_Double_Move.h"

@@ -5,11 +5,10 @@
 #include <vector>
 #include <memory>
 
-#include "Moves/Move.h"
 #include "Game/Color.h"
 #include "Piece_Types.h"
-#include "Game/Board.h"
 
+class Move;
 
 class Piece
 {
