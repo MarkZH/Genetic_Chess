@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include <array>
 
 #include "Game/Board.h"
 #include "Utility.h"
@@ -11,8 +12,7 @@
 Piece::Piece(Color color_in, const std::string& symbol_in, Piece_Type type_in) :
     my_color(color_in),
     symbol(symbol_in),
-    my_type(type_in),
-    legal_moves(64)
+    my_type(type_in)
 {
 }
 
