@@ -22,8 +22,8 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     auto time_for_each_move = 0.99*time_to_examine/board.legal_moves().size();
 
     auto best_move = board.legal_moves().front();
-    auto best_result = std::numeric_limits<int>::lowest();
-    int game_count = 0;
+    auto best_result = std::numeric_limits<double>::lowest();
+    int move_count = 0;
 
     for(auto move : board.legal_moves())
     {
@@ -42,33 +42,40 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
                 best_result = 0;
                 best_move = move;
             }
-            
+
             continue;
         }
 
 
-        int result = 0;
+        int wins = 0;
+        int draws = 0;
+        int losses = 0;
         auto time_start = clock.time_left(clock.running_for());
         while(time_start - clock.time_left(clock.running_for()) < time_for_each_move)
         {
-            ++game_count;
             auto monte_carlo_board = next_board;
             Game_Result game_result;
             while( ! game_result.game_has_ended())
             {
+                ++move_count;
                 auto next_move = choose_random_move(monte_carlo_board);
                 game_result = monte_carlo_board.submit_move(*next_move);
             }
             if(game_result.winner() == board.whose_turn())
             {
-                result += 1;
+                wins += 1;
             }
             else if(game_result.winner() == opposite(board.whose_turn()))
             {
-                result -= 1;
+                losses += 1;
+            }
+            else
+            {
+                draws += 1;
             }
         }
 
+        auto result = double(wins - losses)/(wins + draws + losses);
         if(result > best_result)
         {
             best_result = result;
@@ -79,15 +86,15 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
                 auto time_so_far = choice_time_start - clock.time_left(clock.running_for());
                 std::cout << 1 // thought depth
                     << " "
-                    << best_result*100 // score
+                    << int(best_result*100) // score
                     << " "
                     << int(time_so_far*100) // search time in centiseconds
                     << " "
-                    << game_count // "nodes" searched
+                    << move_count // "nodes" searched
                     << " "
                     << 0 // maximum depth (N/A)
                     << " "
-                    << int(game_count/time_so_far) // search speed
+                    << int(move_count/time_so_far) // search speed
                     << "\t"
                     << move->game_record_item(board) // best move so far
                     << std::endl;
