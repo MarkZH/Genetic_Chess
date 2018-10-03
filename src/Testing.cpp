@@ -12,6 +12,8 @@
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
+#include "Pieces/Piece.h"
+
 #include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
 
@@ -449,6 +451,107 @@ bool run_tests()
             std::cerr << move->game_record_item(perf_board8) << std::endl;
         }
         tests_passed = false;
+    }
+
+
+    // Threefold repetition rule test
+    auto repeat_board = Board();
+    Game_Result repeat_result;
+    auto repeat_move_count = 0;
+
+    // Repeating the sequence of moves twice creates a board with the starting position
+    // three times (including the state before any moves).
+    for(int repetition = 0; repetition < 2; ++repetition)
+    {
+        for(const auto& move : {"Nc3", "Nc6", "Nb1", "Nb8"})
+        {
+            ++repeat_move_count;
+            repeat_result = repeat_board.submit_move(repeat_board.create_move(move));
+            if(repeat_result.game_has_ended())
+            {
+                if(repeat_move_count < 8)
+                {
+                    tests_passed = false;
+                    std::cerr << "Threefold repetition triggered early." << std::endl;
+                }
+            }
+        }
+    }
+
+    if( ! repeat_result.game_has_ended())
+    {
+        tests_passed = false;
+        std::cerr << "Threefold stalemate not triggered." << std::endl;
+    }
+    else if(repeat_result.ending_reason() != "Threefold repetition")
+    {
+        tests_passed = false;
+        std::cerr << "Wrong game ending. Got " << repeat_result.ending_reason() << "; Expected Threefold Repetition." << std::endl;
+    }
+
+
+    // Fifty-move stalemate test (100 plies with no capture or pawn movement)
+    auto fifty_move_board = Board();
+    auto fifty_move_result = Game_Result();
+    for(int move_counter = 1; move_counter <= 100; ++move_counter)
+    {
+        auto move_chosen = false;
+        for(const auto& move : fifty_move_board.legal_moves())
+        {
+            if(fifty_move_board.move_captures(*move))
+            {
+                continue;
+            }
+
+            const auto fifty_move_board_view = fifty_move_board;
+            if(fifty_move_board_view.piece_on_square(move->start_file(), move->start_rank())->type() == PAWN)
+            {
+                continue;
+            }
+
+            auto next_board = fifty_move_board;
+            auto result = next_board.submit_move(*move);
+
+            if(result.winner() != NONE)
+            {
+                continue;
+            }
+
+            if(result.game_has_ended())
+            {
+                if(result.ending_reason() == "Threefold repetition")
+                {
+                    continue;
+                }
+
+                if(move_counter < 100)
+                {
+                    tests_passed = false;
+                    std::cerr << "Fifty-move statlemate triggered early." << std::endl;
+                    std::cout << result.ending_reason() << std::endl;
+                    break;
+                }
+            }
+
+            fifty_move_result = fifty_move_board.submit_move(*move);
+            move_chosen = true;
+            break;
+        }
+
+        if( ! move_chosen)
+        {
+            tests_passed = false;
+            std::cerr << "Unable to choose next move (moves made = " << move_counter << ")." << std::endl;
+            fifty_move_board.ascii_draw(WHITE);
+            break;
+        }
+    }
+
+    if(fifty_move_result.ending_reason() != "50-move limit")
+    {
+        tests_passed = false;
+        std::cerr << "Error in 50-move stalemate test." << std::endl;
+        std::cerr << "Got: " << fifty_move_result.ending_reason() << "; Expected 50-move limit." << std::endl;
     }
 
 
