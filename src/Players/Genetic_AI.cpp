@@ -4,11 +4,10 @@
 #include <fstream>
 #include <stdexcept>
 
-#include "Game/Board.h"
-#include "Game/Clock.h"
-#include "Game/Game_Result.h"
+class Board;
+class Clock;
+
 #include "Game/Color.h"
-#include "Moves/Move.h"
 
 #include "Utility.h"
 

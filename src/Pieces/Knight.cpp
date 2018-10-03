@@ -1,6 +1,5 @@
 #include "Pieces/Knight.h"
 
-#include <cmath>
 #include <vector>
 #include <string>
 

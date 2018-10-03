@@ -2,7 +2,6 @@
 
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
-#include "Moves/Move.h"
 
 Queen::Queen(Color color_in) : Piece(color_in, "Q", QUEEN)
 {

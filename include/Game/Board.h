@@ -8,12 +8,12 @@
 
 #include "Color.h"
 #include "Square.h"
-#include "Game_Result.h"
 #include "Pieces/Piece_Types.h"
-#include "Players/Player.h"
 #include "Players/Thinking.h"
 
 class Clock;
+class Game_Result;
+class Player;
 
 class Piece;
 class Pawn;

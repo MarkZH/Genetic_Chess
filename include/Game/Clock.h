@@ -5,8 +5,8 @@
 #include <chrono>
 
 #include "Color.h"
-#include "Game_Result.h"
 
+class Game_Result;
 class CECP_Mediator;
 
 class Clock

@@ -9,7 +9,6 @@
 #include "Game/Board.h"
 #include "Moves/Move.h"
 
-#include "Utility.h"
 
 Piece::Piece(Color color_in, const std::string& symbol_in, Piece_Type type_in) :
     my_color(color_in),

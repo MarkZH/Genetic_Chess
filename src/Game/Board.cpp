@@ -13,6 +13,7 @@
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Square.h"
+#include "Game/Game_Result.h"
 
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
@@ -26,6 +27,8 @@
 #include "Moves/Move.h"
 #include "Moves/Threat_Generator.h"
 #include "Moves/Threat_Iterator.h"
+
+#include "Players/Player.h"
 
 #include "Exceptions/Illegal_Move.h"
 #include "Exceptions/Promotion_Piece_Needed.h"

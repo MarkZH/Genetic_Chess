@@ -5,15 +5,9 @@
 #include <memory>
 #include <string>
 
-#include "Moves/Move.h"
-#include "Game/Board.h"
-#include "Game/Color.h"
-#include "Utility.h"
-
-#include "Players/Player.h"
 #include "Players/CECP_Mediator.h"
-
 #include "Exceptions/Game_Ended.h"
+#include "Utility.h"
 
 std::string Outside_Player::log_file_name = "chess_comm_log.txt";
 std::string Outside_Player::indent = "\t";

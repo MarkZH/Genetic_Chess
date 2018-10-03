@@ -5,8 +5,6 @@
 
 #include "Game/Board.h"
 #include "Game/Color.h"
-#include "Game/Game_Result.h"
-#include "Moves/Move.h"
 #include "Utility.h"
 
 #include "Genes/Gene.h"

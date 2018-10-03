@@ -4,7 +4,6 @@
 #include "Gene.h"
 
 #include <string>
-#include <array>
 #include <memory>
 
 class Board;

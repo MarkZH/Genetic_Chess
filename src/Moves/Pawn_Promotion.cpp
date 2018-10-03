@@ -4,7 +4,7 @@
 #include <string>
 #include <cassert>
 
-#include "Moves/Move.h"
+#include "Moves/Pawn_Move.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 

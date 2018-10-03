@@ -2,12 +2,10 @@
 
 #include <vector>
 #include <string>
-#include <cmath>
 
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
 #include "Game/Color.h"
-#include "Moves/Move.h"
 
 Bishop::Bishop(Color color_in) : Piece(color_in, "B", BISHOP)
 {
