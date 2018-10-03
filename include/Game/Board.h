@@ -6,13 +6,6 @@
 #include <array>
 #include <mutex>
 
-#include "Moves/Move.h"
-#include "Moves/Castle.h"
-#include "Moves/En_Passant.h"
-#include "Moves/Pawn_Promotion.h"
-#include "Moves/Pawn_Double_Move.h"
-#include "Moves/Pawn_Move.h"
-
 #include "Color.h"
 #include "Square.h"
 #include "Game_Result.h"
@@ -29,6 +22,13 @@ class Knight;
 class Bishop;
 class Queen;
 class King;
+
+class Move;
+class Castle;
+class En_Passant;
+class Pawn_Promotion;
+class Pawn_Double_Move;
+class Pawn_Move;
 
 
 class Board
@@ -195,11 +195,11 @@ class Board
         bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
 
         // Moves with side effects are friends of Board
-        friend void Castle::side_effects(Board&) const; // moves second piece
-        friend void En_Passant::side_effects(Board&) const; // capture piece on another square
-        friend void Pawn_Promotion::side_effects(Board&) const; // replace piece
-        friend void Pawn_Double_Move::side_effects(Board&) const; // mark square as En Passant target
-        friend void Pawn_Move::side_effects(Board&) const; // reset three-fold and 50-move counts
+        friend class Castle; // moves second piece
+        friend class En_Passant; // capture piece on another square
+        friend class Pawn_Promotion; // replace piece
+        friend class Pawn_Double_Move; // mark square as En Passant target
+        friend class Pawn_Move; // reset three-fold and 50-move counts
 };
 
 #endif // BOARD_H
