@@ -197,7 +197,7 @@ void Genome::mutate()
     for(auto& gene : genome)
     {
         const int mean_number_of_mutations = 2;
-        if(Random::random_integer(1, genome.size()) <= mean_number_of_mutations)
+        if(Random::random_integer(1, int(genome.size())) <= mean_number_of_mutations)
         {
             gene->mutate();
         }

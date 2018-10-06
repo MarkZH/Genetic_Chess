@@ -6,7 +6,7 @@
 #include "Game/Board.h"
 
 Freedom_To_Move_Gene::Freedom_To_Move_Gene() :
-    initial_number_of_moves(Board().legal_moves().size())
+    initial_number_of_moves(double(Board().legal_moves().size()))
 {
 }
 

@@ -956,8 +956,10 @@ void Board::print_game_record(const Player* white,
 
     auto now = std::chrono::system_clock::now();
     auto now_c = std::chrono::system_clock::to_time_t(now);
-    out_stream << "[Date \"" << std::put_time(std::localtime(&now_c), "%Y.%m.%d") << "\"]\n";
-    out_stream << "[Time \"" << std::put_time(std::localtime(&now_c), "%H:%M:%S") << "\"]\n";
+    std::tm time_out;
+    localtime_s(&time_out, &now_c);
+    out_stream << "[Date \"" << std::put_time(&time_out, "%Y.%m.%d") << "\"]\n";
+    out_stream << "[Time \"" << std::put_time(&time_out, "%H:%M:%S") << "\"]\n";
 
     if(white && ! white->name().empty())
     {
@@ -1634,7 +1636,7 @@ void Board::add_to_repeat_count(uint64_t new_hash)
     repeat_count[repeat_count_insertion_point++] = new_hash;
 }
 
-int Board::current_board_position_repeat_count() const
+size_t Board::current_board_position_repeat_count() const
 {
     return std::count(repeat_count.begin(),
                       repeat_count.begin() + repeat_count_insertion_point,

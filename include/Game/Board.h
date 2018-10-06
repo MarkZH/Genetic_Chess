@@ -160,7 +160,7 @@ class Board
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record();
         void add_to_repeat_count(uint64_t new_hash);
-        int current_board_position_repeat_count() const;
+        size_t current_board_position_repeat_count() const;
         void clear_repeat_count();
         int moves_since_pawn_or_capture() const;
 

@@ -395,7 +395,7 @@ void gene_pool(const std::string& config_file = "")
             return;
         }
 
-        game_count[pool_index] += results.size();
+        game_count[pool_index] += int(results.size());
         if((game_time >= maximum_game_time && game_time_increment > 0) ||
            (game_time <= minimum_game_time && game_time_increment < 0))
         {

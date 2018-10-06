@@ -571,7 +571,7 @@ bool run_tests()
         ai.print(pool_file_name);
     }
 
-    auto index = Random::random_integer(0, test_pool.size() - 1);
+    auto index = Random::random_integer(0, int(test_pool.size()) - 1);
     test_pool[index].print(write_file_name);
     auto read_ai = Genetic_AI(pool_file_name, index);
     read_ai.print(rewrite_file_name);
@@ -1304,7 +1304,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
         {
             std::cout << '\r' << line_prefix << '[';
             ++current_count;
-            int squares_to_draw = (total_squares*current_count)/first_move_count;
+            auto squares_to_draw = (total_squares*current_count)/first_move_count;
             std::cout << std::string(squares_to_draw, '#');
             std::cout << std::string(total_squares - squares_to_draw, ' ');
             std::cout << "] " << std::flush;
