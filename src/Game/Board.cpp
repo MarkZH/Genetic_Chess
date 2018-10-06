@@ -957,7 +957,11 @@ void Board::print_game_record(const Player* white,
     auto now = std::chrono::system_clock::now();
     auto now_c = std::chrono::system_clock::to_time_t(now);
     std::tm time_out;
+#ifdef _WIN32
     localtime_s(&time_out, &now_c);
+#elif defined(__linux__)
+    localtime_r(&now_c, &time_out);
+#endif
     out_stream << "[Date \"" << std::put_time(&time_out, "%Y.%m.%d") << "\"]\n";
     out_stream << "[Time \"" << std::put_time(&time_out, "%H:%M:%S") << "\"]\n";
 

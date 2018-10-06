@@ -24,7 +24,7 @@ const std::string stop_key = "Ctrl-c";
 #ifdef __linux__
 const auto PAUSE_SIGNAL = SIGTSTP;
 const std::string pause_key = "Ctrl-z";
-#elif _WIN32
+#elif defined(_WIN32)
 const auto PAUSE_SIGNAL = SIGBREAK;
 const std::string pause_key = "Ctrl-Break";
 #endif
