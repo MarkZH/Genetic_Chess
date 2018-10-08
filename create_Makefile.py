@@ -145,6 +145,7 @@ elif sys.argv[1] == 'clang':
             "-Wmissing-include-dirs", 
             "-Wswitch-enum", 
             "-Wswitch-default", 
+            "-Wno-weak-vtables",
             "-Wmain", 
             "-pedantic", 
             "-Wextra", 
