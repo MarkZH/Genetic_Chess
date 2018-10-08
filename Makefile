@@ -1,7 +1,7 @@
 CXX = g++
 LD = g++
 
-CFLAGS = -std=c++17 -Wnon-virtual-dtor -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equal -Wunreachable-code -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Wzero-as-null-pointer-constant -Wmain -pedantic -Wextra -Wall -Iinclude
+CFLAGS = -std=c++17 -Wshadow -Wcast-align -Wundef -Wfloat-equal -Wunreachable-code -Wswitch-enum -Wzero-as-null-pointer-constant -Wmain -pedantic -Wextra -Wall -Iinclude
 LDFLAGS = -pthread -fexceptions
 
 RELEASE_BIN_DIR = bin/release
