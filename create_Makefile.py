@@ -98,6 +98,7 @@ elif sys.argv[1] == 'gcc':
     options_list['release'] = ["-s", "-O3", "-DNDEBUG"]
 
     base_options = [
+            "-std=c++17",
             "-Wnon-virtual-dtor", 
             "-Wshadow", 
             "-Winit-self", 
@@ -126,7 +127,7 @@ elif sys.argv[1] == 'clang':
     options_list['release'] = ["-O3", "-DNDEBUG"]
 
     base_options = [
-            "-std=c++14",
+            "-std=c++17",
             "-Weverything",
             "-Wno-padded",
             "-Wno-c++98-compat",
