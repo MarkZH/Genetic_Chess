@@ -79,14 +79,7 @@ int main(int argc, char *argv[])
             }
             else if(std::string(argv[1]) == "-test")
             {
-                if(run_tests())
-                {
-                    return 0;
-                }
-                else
-                {
-                    return 1;
-                }
+                return run_tests() ? 0 : 1;
             }
             else
             {
