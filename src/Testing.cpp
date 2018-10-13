@@ -1002,6 +1002,23 @@ bool run_tests()
         std::cerr << "Blocking check with rook should be legal here." << std::endl;
         tests_passed = false;
     }
+
+    auto multiple_check_board = Board("Q6r/4k3/8/8/8/5b2/8/7K w - - 0 1");
+    auto multi_check_list = multiple_check_board.legal_moves();
+    if(multi_check_list.size() != 1 || multi_check_list.front()->coordinate_move() != "h1g1")
+    {
+        multiple_check_board.ascii_draw(WHITE);
+        std::cerr << "Only Kg1 should be legal here." << std::endl;
+        std::cerr << "Legal moves found:";
+        for(auto move : multi_check_list)
+        {
+            std::cerr << " " << move->game_record_item(multiple_check_board);
+        }
+        std::cerr << std::endl;
+
+        tests_passed = false;
+    }
+
     // check square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)

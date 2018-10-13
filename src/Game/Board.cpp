@@ -747,10 +747,6 @@ void Board::refresh_checking_squares()
         for(auto square : Threat_Generator(king_square.file, king_square.rank, opposite(whose_turn()), *this))
         {
             checking_squares.push_back(square);
-            if(checking_squares.size() > 1)
-            {
-                break;
-            }
         }
     }
     else
