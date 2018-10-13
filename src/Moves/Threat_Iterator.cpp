@@ -78,12 +78,15 @@ void Threat_Iterator::next_threat()
 
             for(step_size = 1 ; step_size <= 7; ++step_size)
             {
-                if( ! board.inside_board(attacking_file(), attacking_rank()))
+                auto attack_file = attacking_file();
+                auto attack_rank = attacking_rank();
+
+                if( ! board.inside_board(attack_file, attack_rank))
                 {
                     break; // go to next direction
                 }
 
-                auto piece = board.piece_on_square(attacking_file(), attacking_rank());
+                auto piece = board.piece_on_square(attack_file, attack_rank);
                 if(( ! piece) || piece == target_king)
                 {
                     continue;
