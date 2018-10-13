@@ -1170,8 +1170,8 @@ bool run_tests()
     else
     {
         std::cout << "Pre-perft tests failed." << std::endl;
-        std::cout << "Press enter to continue ..." << std::endl;
-        return false;
+        std::cout << "Press enter to continue with perft test ..." << std::endl;
+        std::cin.get();
     }
 
     // Count game tree leaves (perft) to given depth to validate move generation
