@@ -44,8 +44,14 @@ def make_sort(a, b):
         return 1
 
 
+if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
+    print('Specify a compiler ("gcc" or "clang")')
+    sys.exit(1)
+
 program_name = 'genetic_chess'
 final_targets = ["release", "debug"]
+if sys.argv[1] == 'gcc':
+    final_targets.append('profile')
 depends = dict()
 depends['all'] = final_targets
 depends['clean'] = []
@@ -89,13 +95,11 @@ for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
 
 options_list = dict()
 linker_options = dict()
-if len(sys.argv) == 1:
-    print('Specify a compiler ("gcc" or "clang")')
-    sys.exit(1)
-elif sys.argv[1] == 'gcc':
+if sys.argv[1] == 'gcc':
     compiler = 'g++'
     options_list['debug'] = ["-g", "-DDEBUG"]
     options_list['release'] = ["-s", "-O3", "-DNDEBUG"]
+    options_list['profile'] = ["-O3", "-pg", "-DNDEBUG"]
 
     base_options = [
             "-std=c++17",
@@ -115,6 +119,7 @@ elif sys.argv[1] == 'gcc':
 
     linker_options['debug'] = []
     linker_options['release'] = ['-flto', '-fuse-linker-plugin']
+    linker_options['profile'] = ['-flto', '-fuse-linker-plugin', '-pg']
 elif sys.argv[1] == 'clang':
     compiler = 'clang++'
     options_list['debug'] = ["-g", "-Og", "-DDEBUG", "-fsanitize=undefined", "-fsanitize=integer"]
@@ -140,10 +145,6 @@ elif sys.argv[1] == 'clang':
 
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     linker_options['release'] = ['-flto']
-else:
-    print('Uknown compiler: ' + sys.argv[1])
-    sys.exit(1)
-
 
 obj_dir_written = []
 for target in final_targets:
