@@ -1471,10 +1471,7 @@ bool Board::king_multiply_checked() const
 
 bool Board::all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const
 {
-    if( ! straight_line_move(file_start, rank_start, file_end, rank_end))
-    {
-        return false;
-    }
+    assert(straight_line_move(file_start, rank_start, file_end, rank_end));
 
     auto file_step = Math::sign(file_end - file_start);
     auto rank_step = Math::sign(rank_end - rank_start);
@@ -1484,6 +1481,8 @@ bool Board::all_empty_between(char file_start, int rank_start, char file_end, in
 
     while(file != file_end || rank != rank_end)
     {
+        assert(inside_board(file, rank));
+
         if(piece_on_square(file, rank))
         {
             return false;
@@ -1528,6 +1527,12 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
     {
         return (file_change == 1 && rank_change == 2) ||
                (file_change == 2 && rank_change == 1);
+    }
+
+    if( ! straight_line_move(origin_file, origin_rank,
+                             target_file, target_rank))
+    {
+        return false;
     }
 
     if(attacking_piece->type() == KING)
