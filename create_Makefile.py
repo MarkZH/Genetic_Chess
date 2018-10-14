@@ -108,7 +108,6 @@ if sys.argv[1] == 'gcc':
             "-Wundef", 
             "-Wfloat-equal", 
             "-Wunreachable-code", 
-            "-Wswitch-enum", 
             "-Wzero-as-null-pointer-constant", 
             "-Wmain", 
             "-pedantic", 
