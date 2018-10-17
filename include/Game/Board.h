@@ -136,7 +136,7 @@ class Board
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
-        std::vector<Square> checking_squares;
+        std::array<Square, 2> checking_squares;
 
         void recreate_move_caches();
         void refresh_checking_squares();

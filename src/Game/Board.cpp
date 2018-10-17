@@ -719,7 +719,7 @@ void Board::place_piece(const Piece* piece, char file, int rank)
 
 bool Board::king_is_in_check() const
 {
-    return ! checking_squares.empty();
+    return checking_squares.front(); // check whether first entry is valid Square
 }
 
 bool Board::safe_for_king(char file, int rank, Color king_color) const
@@ -739,14 +739,15 @@ const std::array<bool, 64>& Board::other_square_indices_attacked() const
 
 void Board::refresh_checking_squares()
 {
-    checking_squares.clear();
+    checking_squares = {};
+    size_t insertion_point = 0;
     auto king_square = king_location[whose_turn()];
 
     if(game_record_listing.empty())
     {
         for(auto square : Threat_Generator(king_square.file, king_square.rank, opposite(whose_turn()), *this))
         {
-            checking_squares.push_back(square);
+            checking_squares[insertion_point++] = square;
         }
     }
     else
@@ -756,17 +757,19 @@ void Board::refresh_checking_squares()
         // Moved piece now attacks king
         if(attacks(last_move->end_file(), last_move->end_rank(), king_square.file, king_square.rank))
         {
-            checking_squares.push_back({last_move->end_file(), last_move->end_rank()});
+            checking_squares[insertion_point++] = {last_move->end_file(), last_move->end_rank()};
         }
-
 
         // Discovered check
         if(auto pinning_square = piece_is_pinned(last_move->start_file(), last_move->start_rank()))
         {
-            // Prevent pawn promotions from registering twice
-            if(checking_squares.empty() || pinning_square != checking_squares.front())
+            // Prevent pawn promotions from registering twice, for example
+            // ...   a8=Q     Q..
+            // P.. -------->  ... Check from queen on a8 and discovered check by queen on a8
+            // k..            k..
+            if(pinning_square != checking_squares.front())
             {
-                checking_squares.push_back(pinning_square);
+                checking_squares[insertion_point++] = pinning_square;
             }
         }
 
@@ -776,9 +779,9 @@ void Board::refresh_checking_squares()
             if(auto pinning_square = piece_is_pinned(last_move->end_file(), last_move->start_rank()))
             {
                 // Since two pieces are removed, make sure the discovered check isn't recorded twice
-                if(checking_squares.empty() || pinning_square != checking_squares.front())
+                if(pinning_square != checking_squares.front())
                 {
-                    checking_squares.push_back(pinning_square);
+                    checking_squares[insertion_point++] = pinning_square;
                 }
             }
         }
@@ -793,7 +796,7 @@ void Board::refresh_checking_squares()
             // been found by the discovered check block above. Only look for checks along columns.
             if(king_square.file == rook_file && attacks(rook_file, last_move->end_rank(), king_square.file, king_square.rank))
             {
-                checking_squares.push_back({rook_file, last_move->end_rank()});
+                checking_squares[insertion_point] = {rook_file, last_move->end_rank()};
             }
         }
     }
@@ -821,10 +824,12 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         }
 
         // Non-pinned piece moves to block check
-        if(auto pinning_square = piece_is_pinned(move.end_file(), move.end_rank()))
+        if( ! piece_on_square(move.end_file(), move.end_rank()))
         {
-            // Make sure piece being blocked is actually doing the checking and the blocking piece can move
-            return (pinning_square != checking_squares.front()) || piece_is_pinned(move.start_file(), move.start_rank());
+            if(piece_is_pinned(move.end_file(), move.end_rank()))
+            {
+                return piece_is_pinned(move.start_file(), move.start_rank());
+            }
         }
 
         // En passant capture of checking pawn
@@ -833,7 +838,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             return (checking_squares.front() != Square{move.end_file(), move.start_rank()}) || piece_is_pinned(move.start_file(), move.start_rank());
         }
 
-        // Nothing is done about check
+        // Nothing is done about the check
         return true;
     }
 
@@ -1466,7 +1471,7 @@ bool Board::move_captures(const Move& move) const
 
 bool Board::king_multiply_checked() const
 {
-    return checking_squares.size() > 1;
+    return checking_squares.back(); // See if second entry is valid Square
 }
 
 bool Board::all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const
