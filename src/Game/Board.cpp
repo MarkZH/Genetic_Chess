@@ -134,13 +134,13 @@ Board::Board(const std::string& fen) :
     auto fen_parse = String::split(fen);
     if(fen_parse.size() != 6)
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nWrong number of fields (should be 6): " + fen);
+        fen_error(fen, "Wrong number of fields (should be 6)");
     }
 
     auto board_parse = String::split(fen_parse.at(0), "/");
     if(board_parse.size() != 8)
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nBoard has wrong number of rows (should be 8): " + fen);
+        fen_error(fen, "Board has wrong number of rows (should be 8)");
     }
 
     for(int rank = 8; rank >= 1; --rank)
@@ -153,14 +153,14 @@ Board::Board(const std::string& fen) :
                 file += symbol - '0';
                 if(file > 'h' + 1)
                 {
-                    throw std::runtime_error("Bad FEN input: " + fen + "\nToo many squares in rank " + std::to_string(rank));
+                    fen_error(fen, "Too many squares in rank " + std::to_string(rank));
                 }
             }
             else
             {
                 if(file > 'h')
                 {
-                    throw std::runtime_error("Bad FEN input: " + fen + "\nToo many squares in rank " + std::to_string(rank));
+                    fen_error(fen, "Too many squares in rank " + std::to_string(rank));
                 }
 
                 Color color = (isupper(symbol) ? WHITE : BLACK);
@@ -184,12 +184,12 @@ Board::Board(const std::string& fen) :
                     case 'K':
                         if(king_location[color])
                         {
-                            throw std::runtime_error("Bad FEN input: " + fen + "\nMore than one " + color_text(color) + " king.");
+                            fen_error(fen, "More than one " + color_text(color) + " king.");
                         }
                         place_piece(piece_instance(KING, color), file, rank);
                         break;
                     default:
-                        throw std::runtime_error("Bad FEN input: " + fen + "\nInvalid symbol in FEN string: " + symbol);
+                        fen_error(fen, "Invalid symbol in FEN string: " + symbol);
                 }
                 ++file;
             }
@@ -197,32 +197,55 @@ Board::Board(const std::string& fen) :
 
         if(file != 'h' + 1)
         {
-            throw std::runtime_error("Bad FEN input: " + fen + "\nToo few squares in rank " + std::to_string(rank));
+            fen_error(fen, "Too few squares in rank " + std::to_string(rank));
         }
     }
 
     if( ! king_location[WHITE])
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nWhite king not in FEN string: " + fen);
+        fen_error(fen, "White king not in FEN string: " + fen);
     }
     if( ! king_location[BLACK])
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nBlack king not in FEN string: " + fen);
+        fen_error(fen, "Black king not in FEN string: " + fen);
     }
 
-    set_turn(fen_parse[1] == "w" ? WHITE : BLACK);
+    if(fen_parse[1] == "w")
+    {
+        set_turn(WHITE);
+    }
+    else if(fen_parse[1] == "b")
+    {
+        set_turn(BLACK);
+    }
+    else
+    {
+        fen_error(fen, "Invalid character for whose turn: " + fen_parse[1]);
+    }
 
     auto non_turn_color = opposite(whose_turn());
     auto non_turn_king_square = king_location[non_turn_color];
     if( ! safe_for_king(non_turn_king_square.file, non_turn_king_square.rank, non_turn_color))
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\n" +
-                                 color_text(opposite(whose_turn())) +
-                                 " is in check but it is " +
-                                 color_text(whose_turn()) + "'s turn.");
+        fen_error(fen, color_text(opposite(whose_turn())) +
+                       " is in check but it is " +
+                       color_text(whose_turn()) + "'s turn.");
     }
 
     auto castling_parse = fen_parse.at(2);
+    for(auto c : castling_parse)
+    {
+        if( ! String::contains("KQkq-", c))
+        {
+            fen_error(fen, "Illegal character in castling section");
+        }
+    }
+
+    if(String::contains(castling_parse, '-') && castling_parse.size() != 1)
+    {
+        fen_error(fen, "Castling section contains - and other characters.");
+    }
+
     if(String::contains(castling_parse, 'K'))
     {
         set_unmoved('h', 1);
@@ -247,7 +270,17 @@ Board::Board(const std::string& fen) :
     auto en_passant_parse = fen_parse.at(3);
     if(en_passant_parse != "-")
     {
+        if(en_passant_parse.size() != 2)
+        {
+            fen_error(fen, "Invalid en passant square.");
+        }
+
         make_en_passant_targetable(en_passant_parse[0], en_passant_parse[1] - '0');
+
+        if( ! inside_board(en_passant_target.file, en_passant_target.rank))
+        {
+            fen_error(fen, "Invalid en passant square.");
+        }
     }
 
     // Fill repeat counter to indicate moves since last
@@ -261,7 +294,7 @@ Board::Board(const std::string& fen) :
 
     if(fen_status() != fen)
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nResult: " + fen_status());
+        fen_error(fen, "Result: " + fen_status());
     }
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
@@ -282,8 +315,13 @@ Board::Board(const std::string& fen) :
 
     if(pieces_attacking_king.size() > 2)
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nToo many pieces attacking " + color_text(whose_turn()) + " king.");
+        fen_error(fen, "Too many pieces attacking " + color_text(whose_turn()) + " king.");
     }
+}
+
+void Board::fen_error(const std::string& fen, const std::string& reason) const
+{
+    throw std::runtime_error("Bad FEN input: " + fen + "\n" + reason);
 }
 
 size_t Board::square_index(char file, int rank)
