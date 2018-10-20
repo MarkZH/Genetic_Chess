@@ -9,6 +9,7 @@
 #include <array>
 #include <mutex>
 #include <algorithm>
+#include <set>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -265,6 +266,24 @@ Board::Board(const std::string& fen) :
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
+
+    auto test_board = *this;
+    test_board.set_turn(opposite(whose_turn()));
+    auto pieces_attacking_king = std::set<Square>();
+    auto king_square = test_board.king_location[whose_turn()];
+    for(auto move : test_board.legal_moves())
+    {
+        if(move->end_file() == king_square.file &&
+           move->end_rank() == king_square.rank)
+        {
+            pieces_attacking_king.insert({move->start_file(), move->start_rank()});
+        }
+    }
+
+    if(pieces_attacking_king.size() > 2)
+    {
+        throw std::runtime_error("Bad FEN input: " + fen + "\nToo many pieces attacking " + color_text(whose_turn()) + " king.");
+    }
 }
 
 size_t Board::square_index(char file, int rank)

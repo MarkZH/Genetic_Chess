@@ -1019,7 +1019,18 @@ bool run_tests()
         tests_passed = false;
     }
 
-    // check square colors are correct
+    try
+    {
+        auto too_many_attackers_board = Board("k1RK4/1P6/R7/8/8/8/8/8 b - - 0 1");
+        too_many_attackers_board.ascii_draw(WHITE);
+        std::cerr << "Illegal board created with too many pieces attacking black king." << std::endl;
+        tests_passed = false;
+    }
+    catch(const std::runtime_error&)
+    {
+    }
+
+    // check that square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)
     {
