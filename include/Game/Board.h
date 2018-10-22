@@ -136,7 +136,7 @@ class Board
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
-        std::vector<Square> checking_squares;
+        std::array<Square, 2> checking_squares;
 
         void recreate_move_caches();
         void refresh_checking_squares();
@@ -191,6 +191,8 @@ class Board
         bool king_multiply_checked() const;
         static bool straight_line_move(char file_start, int rank_start, char file_end, int rank_end);
         bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
+
+        [[noreturn]] void fen_error(const std::string& fen, const std::string& reason) const;
 
         // Moves with side effects are friends of Board
         friend class Castle; // moves second piece

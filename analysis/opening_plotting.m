@@ -39,7 +39,7 @@ end
 
 data = importdata([raw_data, '_opening_plots.txt'], ',');
 
-figure('Position', [0, 0, 1200, 1000]);
+figure;
 hold all;
 for col = 1 : size(data.data, 2)
     plot(cumsum(data.data(:, col)),  ...

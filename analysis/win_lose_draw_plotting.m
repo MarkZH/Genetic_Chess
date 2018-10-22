@@ -48,7 +48,7 @@ black_time_left = data.data(:, 8);
 moves_in_game = data.data(:, 9);
 
 
-figure('Position', [0, 0, 1200, 1000]);
+figure;
 hold all;
 semilogx(game_number, 100*white_wins./game_number, 'LineWidth', 3, ...
          game_number, 100*black_wins./game_number, 'LineWidth', 3, ...
@@ -100,7 +100,7 @@ for index = 1 : number_of_games
     end
 end
 
-figure('Position', [0, 0, 1200, 1000]);
+figure;
 hold all;
 loglog(game_number, 100*cumsum(white_checkmates)./game_number, 'LineWidth', 3, ...
        game_number, 100*cumsum(black_checkmates)./game_number, 'LineWidth', 3, ...
@@ -125,7 +125,7 @@ end
 print([raw_data '_game_result_type_frequencies.png']);
 
 if max(game_time) > 0
-    figure('Position', [0, 0, 1200, 1000]);
+    figure;
     hold all;
     white_time_left(white_time_left < 0) = -0.05*max(white_time_left);
     black_time_left(black_time_left < 0) = -0.05*max(white_time_left);
@@ -144,7 +144,7 @@ if max(game_time) > 0
 
     print([raw_data '_game_time_left.png']);
 
-    figure('Position', [0, 0, 1200, 1000]);
+    figure;
     all_time_left = [black_time_left; white_time_left]./[game_time; game_time];
     all_time_left(all_time_left < 0) = -.05;
     hist(all_time_left, 100);
@@ -167,7 +167,7 @@ for index = 1 : length(counts)
     end
 end
 
-figure('Position', [0, 0, 1200, 1000]);
+figure;
 hold all;
 scatter(game_number, moves_in_game, 'k');
 xlabel('Game number');
@@ -183,7 +183,7 @@ legend('location', 'southoutside', 'orientation', 'horizontal');
 
 print([raw_data '_moves_in_game.png']);
 
-figure('Position', [0, 0, 1200, 1000]);
+figure;
 hold all;
 bar(bins, counts, 'barwidth', 1, 'facecolor', 'y');
 xlabel('Moves in Game');

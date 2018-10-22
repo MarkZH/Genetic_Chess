@@ -28,10 +28,15 @@ class Threat_Iterator
         char target_file;
         int  target_rank;
 
+        char attack_file;
+        int  attack_rank;
+
         int file_step;
         int rank_step;
         int step_size;
         size_t knight_index;
+        size_t hit_count;
+        const size_t max_hit_count;
 
         Color attacking_color;
         const Board& board;
