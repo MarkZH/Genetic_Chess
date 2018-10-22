@@ -1030,6 +1030,32 @@ bool run_tests()
     {
     }
 
+    // En passant check-rescue
+    auto en_passant_check = Board("k7/8/8/3pP3/4B3/8/8/7K w - d6 0 1");
+    en_passant_check.ascii_draw(WHITE);
+    en_passant_check.submit_move(en_passant_check.create_move("exd6"));
+    if(!en_passant_check.king_is_in_check())
+    {
+        en_passant_check.ascii_draw(WHITE);
+        std::cerr << "King should be in check." << std::endl;
+        tests_passed = false;
+    }
+
+    // En passant discovered check
+    auto en_passant_check_capture = Board("k7/8/8/3pP3/2K5/8/8/8 w - d6 0 1");
+    en_passant_check_capture.ascii_draw(WHITE);
+    try
+    {
+        en_passant_check_capture.create_move("exd6");
+    }
+    catch(const std::exception&)
+    {
+        en_passant_check_capture.ascii_draw(WHITE);
+        en_passant_check_capture.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, {});
+        std::cerr << "Move exd6 should be legal." << std::endl;
+        tests_passed = false;
+    }
+
     // check that square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)
