@@ -187,7 +187,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else if(depth > 500)
         {
-            recurse = false;
+            recurse = false; // prevent stack overflow
         }
         else
         {
@@ -240,7 +240,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             break;
         }
 
-        if(!recurse) // This move was scored by genome.evaluate().
+        if( ! recurse) // This move was scored by genome.evaluate().
         {
             ++nodes_evaluated;
             total_evaluation_time += evaluate_start_time - clock.time_left(clock.running_for());
