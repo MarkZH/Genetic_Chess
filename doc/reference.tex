@@ -210,11 +210,42 @@ Formerly, one result of a mutation was to deactivate a gene entirely. Gene deact
 \subsection{Board-Scoring Genes}
 \label{board-score-section}
 These genes are used to give a score to a board state. The higher the score, the more desirable the moves that lead to this board. The score is calculated by
-\[Score = \sum_g Priority(g) \times Score(g,B)\]
-where \(g\) represents each gene, \(Priority(g)\) is a genetically determined scalar multiplicative factor that determines how much the gene's score of the board influences the final score, and \(Score(g,B)\) is the result of the scoring procedure of that gene on a given board \(B\). In general, the scores are scaled so that a typical board state gets a score of 1 from any gene. For example, the Freedom to Move Gene divides the number of legal moves by the number of legal moves at the start of the game (20 for standard chess). The Total Force Gene returns 1 for the pieces at the start of the game, so promoting a pawn can result in a score of more than one.
+\[Score = \sum_g Priority(g) \times sgn\left(Score(g,B)\right) \times \left|Score(g,B)\right|^{Exp(g)}\]
+where \(g\) represents each gene, \(\textrm{sgn(x)}\) gives then sign (+/-) of its argument, \(Priority(g)\) is a genetically determined scalar multiplicative factor that determines how much the gene's score of the board influences the final score, \(Score(g,B)\) is the result of the scoring procedure of that gene on a given board \(B\), and \(Exp(g)\) is an exponent associated with each gene. The \(\textrm{sgn}\) and absolute value functions are used so that negative scores can be used with non-integral exponents, which would otherwise result in \code{NaN} values (for \cpp's \code{std::pow()} function) or complex values (for symbolic math).
 
-Since it is not only important to find position that are advantageous to the player, but also disadvantageous to the opponent, the final heuristic score for a board position is
+Since it is not only important to find position that are advantageous to the player, but also disadvantageous to the opponent, the final heuristic score for a board position is given by
 \[Heuristic\ Score = Score(Player) - Score(Opponent).\]
+
+In general, the scoring function outputs of each gene are scaled so that a typical board state gets a score near one. For example, the Freedom to Move Gene divides the number of legal moves by the number of legal moves at the start of the game (20 for standard chess). The Total Force Gene returns 1 for the pieces at the start of the game, so promoting a pawn can result in a score of more than one.
+
+The exponent influences how changes in the score returned by the scoring function affect the overall score. There are two overall effects.
+
+First, the effect of a change in value of the heuristic score function depends on the size of the original value (assuming White is doing the scoring and all scores are positive):
+\begin{align*}
+\Delta S &= \left.\frac{\partial S}{\partial x}\right|_{x=0}\Delta x \\
+		 &= \left.\frac{\partial}{\partial x}\left[P(W+x)^E - PB^E\right]\right|_{x=0} \Delta x \\
+		 &= \left.PE(W+x)^{E-1}\right|_{x = 0} \Delta x \\
+		 &= PEW^{E-1} \Delta x
+\end{align*}
+where \(S\) is the heuristic score for the board, \(x\) is the change in a gene's scoring function, \(P\) is the priority of the function, \(W\) is the score from White's perspective, \(B\) is the score from Black's perspective, and \(E\) is the exponent of the gene. For \(E > 1\), the changes to a larger starting score have a larger effect than changes to a smaller score. The reverse is true for \(E < 1\), in that changes to a small score have a larger effect than changes to a larger score. For \(E = 1\), the same size change leads to the same size effect.
+
+The second effect of the exponent is to determine how parallel changes in score for White and Black affect the heuristic score--for example, if White and Black trade identical pieces.\footnote{This effect was inspired by an observation by Alan Turing in \cite{turing-chess} that using \(W/B\) was better than \(W-B\) for materials scores for White and Black since the latter does not favor trading pieces when ahead in material. The exponent formulation makes the preference for trading adjustable through mutation and general enough to use with all scoring genes.}
+\begin{align*}
+\Delta S &= \left.\frac{\partial S}{\partial x}\right|_{x = 0} \Delta x \\
+         &= \left.\frac{\partial}{\partial x}\left[P(W+x)^E - P(B+x)^E\right]\right|_{x = 0} \Delta x \\
+         &= \left.PE(W+x)^{E-1} - PE(B+x)^{E-1}\right|_{x = 0} \Delta x \\
+         &= PE\left(W^{E-1} - B^{E-1}\right) \Delta x
+\end{align*}
+The following table shows the change in overall score \(\Delta S\) if White is ahead (\(W > B\)):
+\begin{center}
+\begin{tabular}[htb]{l|c c c}
+					& \(E < 1\)		& \(E = 1\)		& \(E > 1\) \\
+\hline
+\(\Delta x > 0\)		& \(-\)		& \(0\)			& \(+\)	\\
+\(\Delta x < 0\)		& \(+\)		& \(0\)			& \(-\)	\\
+\end{tabular}
+\end{center}
+As an example, if White has a Total Force Gene with an exponent less than one, then, all else being equal, it will happily trade pieces of equal value if it has gained a material advantage.
 
 Some of the board-scoring genes are forced to have non-negative priorities as a way of speeding up the optimization. As an example, the Total Force Gene (Section~\ref{total-force}) has a non-negative priority because its scoring method relies on values from the Piece Strength Gene (Section~\ref{piece-strength}). The score returned is basically the product of the priority of the Total Force Gene and the values of the piece strengths. When both of these are allowed to mutate to both positive and negative values, they often get stuck near zero. When one changes sign, the other is driven towards changing sign as well to get back to better evaluation results. Forcing the priority to be positive puts a consistent pressure on the piece strengths to get to their proper values (whether positive or negative). This does not limit the behavior of the Genetic AIs since the piece strengths could evolve to negative strengths if the AI wants to lose its pieces.
 
@@ -525,6 +556,8 @@ W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a
 \bibitem{fen-notation}
 \url{http://www.thechessdrum.net/PGN_Reference.txt} Section~16.1
 
+\bibitem{turing-chess}
+Turing, Alan M., ``Digital Computers Applied to Games.'' Faster Than Thought. B. V. Bowden. London: Sir Isaac Pitman \& Sons, Ltd., 1953, pg. 291. Print.
 \end{thebibliography}
 
 \end{document}

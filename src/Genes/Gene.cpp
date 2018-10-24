@@ -8,18 +8,20 @@
 #include "Game/Color.h"
 #include "Utility.h"
 
-Gene::Gene() : scoring_priority(0.0)
+Gene::Gene() : scoring_priority(0.0), exponent(1.0)
 {
 }
 
 void Gene::reset_properties() const
 {
     properties["Priority"] = scoring_priority;
+    properties["Exponent"] = exponent;
 }
 
 void Gene::load_properties()
 {
     scoring_priority = properties["Priority"];
+    exponent = properties["Exponent"];
 }
 
 void Gene::read_from(std::istream& is)
@@ -101,6 +103,7 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 void Gene::mutate()
 {
     scoring_priority += Random::random_laplace(10.0);
+    exponent += Random::random_laplace(0.01);
     gene_specific_mutation();
 }
 
@@ -110,7 +113,8 @@ void Gene::gene_specific_mutation()
 
 double Gene::evaluate(const Board& board, const Board& opposite_board, size_t depth) const
 {
-    return scoring_priority*score_board(board, opposite_board, depth);
+    auto score = score_board(board, opposite_board, depth);
+    return Math::sign(score)*scoring_priority*std::pow(std::abs(score), exponent);
 }
 
 void Gene::print(std::ostream& os) const
