@@ -12,6 +12,7 @@
 #include "Players/Human_Player.h"
 #include "Players/Random_AI.h"
 #include "Players/Outside_Player.h"
+#include "Players/Alan_Turing_AI.h"
 
 #include "Breeding/Gene_Pool.h"
 
@@ -164,6 +165,10 @@ int main(int argc, char *argv[])
                                 i += 2;
                             }
                         }
+                    }
+                    else if(opt == "-turing")
+                    {
+                        latest = std::make_unique<Alan_Turing_AI>();
                     }
                     else if(opt == "-time")
                     {

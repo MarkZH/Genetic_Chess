@@ -51,6 +51,7 @@ class Board
         void ascii_draw(Color perspective = WHITE) const;
 
         std::string fen_status() const; // current state of board in FEN
+        Board starting_position() const; // returns copy of board as it was on construction
         const std::vector<const Move*>& game_record() const;
         std::string last_move_record() const;
 
