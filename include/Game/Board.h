@@ -51,7 +51,6 @@ class Board
         void ascii_draw(Color perspective = WHITE) const;
 
         std::string fen_status() const; // current state of board in FEN
-        Board starting_position() const; // returns copy of board as it was on construction
         const std::vector<const Move*>& game_record() const;
         std::string last_move_record() const;
 
@@ -93,6 +92,7 @@ class Board
         bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
         bool enough_material_to_checkmate() const;
         bool move_captures(const Move& move) const;
+        int moves_since_pawn_or_capture() const;
 
         // Methods for gene reference
         bool capture_possible() const;
@@ -163,7 +163,6 @@ class Board
         void add_to_repeat_count(uint64_t new_hash);
         size_t current_board_position_repeat_count() const;
         void clear_repeat_count();
-        int moves_since_pawn_or_capture() const;
 
         // Zobrist hashing
         uint64_t current_board_hash;

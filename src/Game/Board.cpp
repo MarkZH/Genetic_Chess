@@ -407,11 +407,6 @@ std::string Board::fen_status() const
     return s;
 }
 
-Board Board::starting_position() const
-{
-    return starting_fen.empty() ? Board() : Board(starting_fen);
-}
-
 const Move& Board::create_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
 {
     std::vector<const Move*> move_list;

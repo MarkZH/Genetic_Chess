@@ -12,6 +12,7 @@ class Move;
 class Board;
 class CLock;
 class Piece;
+class Game_Result;
 
 class Alan_Turing_AI : public Player
 {
@@ -31,9 +32,15 @@ class Alan_Turing_AI : public Player
 
         double position_play_value(const Board& board, Color perspective) const;
 
+        std::pair<double, double> score_board(const Board& board,
+                                              Color perspective,
+                                              const Game_Result& move_result) const;
+
         // Returns a pair of values consiting of the material value and the position value
         // of a board in that order.
-        std::pair<double, double> position_value(const Board& board, Color perspective) const;
+        std::pair<double, double> position_value(const Board& board,
+                                                 Color perspective,
+                                                 const Game_Result& move_result) const;
 };
 
 #endif // ALAN_TURING_AI_H

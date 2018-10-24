@@ -18,18 +18,11 @@ const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
     for(auto first_move : board.legal_moves())
     {
         auto first_board = board;
-        auto first_result = first_board.submit_move(*first_move);
+        auto first_move_result = first_board.submit_move(*first_move);
         std::pair<double, double> first_move_score;
-        if(first_result.game_has_ended())
+        if(first_move_result.game_has_ended())
         {
-            if(first_result.winner() == NONE)
-            {
-                first_move_score = {0.0, 0.0};
-            }
-            else
-            {
-                first_move_score = {1000.0, 1000.0}; // checkmate win
-            }
+            first_move_score = position_value(first_board, board.whose_turn(), first_move_result);
         }
         else
         {
@@ -42,14 +35,7 @@ const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
                 auto second_move_result = second_board.submit_move(*second_move);
                 if(second_move_result.game_has_ended())
                 {
-                    if(second_move_result.winner() == NONE)
-                    {
-                        second_move_score = {0.0, 0.0};
-                    }
-                    else
-                    {
-                        second_move_score = {-1000.0, -1001.0}; // checkmate loss
-                    }
+                    second_move_score = position_value(second_board, board.whose_turn(), second_move_result);
                 }
                 else
                 {
@@ -58,39 +44,20 @@ const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
                     {
                         auto third_board = second_board;
                         auto third_move_result = third_board.submit_move(*third_move);
-                        std::pair<double, double> third_move_score;
-                        if(third_move_result.winner() != NONE)
-                        {
-                            third_move_score = {1000.0, 1000.0};
-                        }
-                        else
-                        {
-                            third_move_score = position_value(third_board, third_board.whose_turn());
-                        }
-
-                        if(third_move_score > best_third_move_score)
-                        {
-                            best_third_move_score = third_move_score;
-                        }
+                        auto third_move_score = position_value(third_board, board.whose_turn(), third_move_result);
+                        best_third_move_score = std::max(best_third_move_score, third_move_score);
                     }
 
                     second_move_score = best_third_move_score;
                 }
 
-                if(second_move_score < worst_second_move_score)
-                {
-                    worst_second_move_score = second_move_score;
-                }
+                worst_second_move_score = std::min(worst_second_move_score, second_move_score);
             }
 
             first_move_score = worst_second_move_score;
         }
 
-        if(first_move_score > best_first_move_score)
-        {
-            best_first_move_score = first_move_score;
-            best_first_move = first_move;
-        }
+        best_first_move_score = std::max(best_first_move_score, first_move_score);
     }
 
     return *best_first_move;
@@ -162,15 +129,19 @@ bool Alan_Turing_AI::is_considerable(const Move& move, const Board& board) const
 
 bool Alan_Turing_AI::last_move_captured(const Board& board) const
 {
-    auto scratch_board = board.starting_position();
-    auto result = false;
-    for(auto move : board.game_record())
+    if(board.moves_since_pawn_or_capture() > 0 || board.game_record().empty())
     {
-        result = scratch_board.move_captures(*move);
-        scratch_board.submit_move(*move);
+        return false;
     }
 
-    return result;
+    auto last_move = board.game_record().back();
+    auto piece = board.piece_on_square(last_move->end_file(), last_move->end_rank());
+    if(piece->type() != PAWN)
+    {
+        return true; // must have captured if not pawn move
+    }
+
+    return last_move->file_change() != 0; // return true if move was pawn capture
 }
 
 double Alan_Turing_AI::material_value(const Board& board, Color perspective) const
@@ -437,9 +408,13 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
     return total_score;
 }
 
-std::pair<double, double> Alan_Turing_AI::position_value(const Board& board, Color perspective) const
+std::pair<double, double> Alan_Turing_AI::position_value(const Board& board, Color perspective, const Game_Result& move_result) const
 {
-    auto best_score = std::make_pair(material_value(board, perspective), position_play_value(board, perspective));
+    auto best_score = score_board(board, perspective, move_result);
+    if(move_result.game_has_ended())
+    {
+        return best_score;
+    }
 
     auto considerable_move_list = considerable_moves(board);
 
@@ -449,10 +424,31 @@ std::pair<double, double> Alan_Turing_AI::position_value(const Board& board, Col
         for(auto move : considerable_moves(board))
         {
             auto temp_board = board;
-            temp_board.submit_move(*move);
-            best_score = std::max(best_score, position_value(temp_board, perspective));
+            auto result = temp_board.submit_move(*move);
+            best_score = std::max(best_score, score_board(temp_board, perspective, result));
         }
     }
 
     return best_score;
+}
+
+std::pair<double, double> Alan_Turing_AI::score_board(const Board& board, Color perspective, const Game_Result& move_result) const
+{
+    if(move_result.game_has_ended())
+    {
+        if(move_result.winner() == perspective)
+        {
+            return {1000.0, 1000.0};
+        }
+        else if(move_result.winner() == opposite(perspective))
+        {
+            return {-1000.0, -1000.0};
+        }
+        else
+        {
+            return {0.0, 0.0};
+        }
+    }
+
+    return std::make_pair(material_value(board, perspective), position_play_value(board, perspective));
 }
