@@ -236,17 +236,17 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     // Non-queen pieces defended
                     if(piece->type() != QUEEN)
                     {
-                        bool already_defended = false;
+                        Square defending_square{};
                         for(auto defender : Threat_Generator(file, rank, opposite(perspective), board))
                         {
-                            if(already_defended)
+                            if(defending_square)
                             {
                                 total_score += 0.5;
                             }
                             else
                             {
                                 total_score += 1.0;
-                                already_defended = true;
+                                defending_square = defender;
                             }
                         }
                     }
@@ -290,14 +290,14 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                                     break;
                                 }
 
-                                auto piece = board.piece_on_square(attack_file, attack_rank);
-                                if(!piece)
+                                auto other_piece = board.piece_on_square(attack_file, attack_rank);
+                                if( ! other_piece)
                                 {
                                     king_squares += 1.0;
                                 }
                                 else
                                 {
-                                    if(piece->color() != perspective)
+                                    if(other_piece->color() != perspective)
                                     {
                                         king_squares += 1.0;
                                     }
