@@ -899,38 +899,16 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         return true;
     }
 
-    if(piece_is_pinned(move.start_file(), move.start_rank()))
+    if(auto pinning_square = piece_is_pinned(move.start_file(), move.start_rank()))
     {
-        if(piece_on_square(move.start_file(), move.start_rank())->type() == KNIGHT)
-        {
-            return true; // knights cannot escape pins
-        }
-
-        // piece moves off line of attack to king
         auto king_square = king_location[whose_turn()];
 
-        // Column move
-        if(move.file_change() == 0)
-        {
-            return move.start_file() != king_square.file;
-        }
+        auto pin_direction_file = king_square.file - pinning_square.file;
+        auto pin_direction_rank = king_square.rank - pinning_square.rank;
 
-        // Row move
-        if(move.rank_change() == 0)
-        {
-            return move.start_rank() != king_square.rank;
-        }
-
-        // Move is diagonal, check if pin is on row or column
-        if(move.start_file() == king_square.file || move.start_rank() == king_square.rank)
-        {
-            return true;
-        }
-
-        // check that diagonal moves are parallel to pin direction
-        auto diagonal_of_move = (move.file_change() == move.rank_change());
-        auto diagonal_of_piece_to_king = ((king_square.file - move.start_file()) == (king_square.rank - move.start_rank()));
-        return diagonal_of_move != diagonal_of_piece_to_king;
+        // If move direction and pin direction are not parallel, the piece will move
+        // out of pin and expose the king to check.
+        return move.file_change()*pin_direction_rank != move.rank_change()*pin_direction_file;
     }
 
     if(move.is_en_passant())
