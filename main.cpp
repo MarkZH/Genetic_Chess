@@ -259,9 +259,11 @@ void print_help()
               << "\t-human" << std::endl
               << "\t\tSpecify a human player for a game." << std::endl << std::endl
               << "\t-genetic [filename [number]]" << std::endl
-              << "\t\tSpecify a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file." << std::endl << std::endl
+              << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file." << std::endl << std::endl
               << "\t-random" << std::endl
-              << "\t\tSpecify a player that makes random moves for a game." << std::endl << std::endl
+              << "\t\tSelect a player that makes random moves for a game." << std::endl << std::endl
+              << "\t-turing" << std::endl
+              << "\t\tSelect a player based on Alan Turing's Turbocomp chess AI." << std::endl << std::endl
               << "Other game options:" << std::endl << std::endl
               << "\t-time [number]" << std::endl
               << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option)." << std::endl << std::endl
