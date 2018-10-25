@@ -48,13 +48,13 @@ The \code{.sln} and \code{.vcxproj} files are project files for Visual Studio. T
 \label{running}
 \begin{description}
 	\item[\code{genetic\_chess -test}] Run tests of the program for chess rule conformance and for Genetic AIs working properly.
-	\item[\code{genetic\_chess -genepool [file\_name]}]
+	\item[\code{genetic\_chess -genepool [file name]}]
 This will start up a gene pool with Genetic\_AIs playing against each other--mating, killing, mutating--all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
 
 	\item[\code{genetic\_chess <-player> <-player>}] Starts a local game played in the terminal with an ASCII art board. The first parameter is the white player, the second is black. The \code{<-player>} argument is replaced with one of the following:
 	\begin{description}
 		\item[\code{-human}:] a human player entering moves on the command line and seeing the results on a text-based drawing of the board. Moves are specified in standard algebraic notation (SAN) or in coordinates that indicate the starting and ending square.
-		\item[\code{-genetic}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID. If no number is specified, then there are two possibilities:
+		\item[\code{-genetic [file name [number]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID. If no number is specified, then there are two possibilities:
 		\begin{itemize}
 			\item If the genome file is the output of a gene pool run, then the AI with the smallest ID that was still alive is chosen. As the oldest surviving AI, it is the nearly the most evolved while still having been tested.
 			\item Otherwise, the last genome in the file is loaded (presumably this one is the most evolved). If there is another file containing records of games played during a gene pool run that has the same name as the genome file name with an extra suffix ``\_games.txt'', then the last genome with at least 3 wins will be selected.
