@@ -60,6 +60,7 @@ This will start up a gene pool with Genetic\_AIs playing against each other--mat
 			\item Otherwise, the last genome in the file is loaded (presumably this one is the most evolved). If there is another file containing records of games played during a gene pool run that has the same name as the genome file name with an extra suffix ``\_games.txt'', then the last genome with at least 3 wins will be selected.
 		\end{itemize}
 		\item[\code{-random}:] an AI player that chooses a random legal move at each turn.
+		\item[\code{-turing}:] a chess engine implemented according to the design by Alan Turing \cite{turing-chess}.
 	\end{description}
 \end{description}
 Genetic Chess can communicate with GUI chess programs through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol}, including xboard, PyChess, Cute Chess, and others. When using Genetic Chess this way, only specify the arguments for a single player (\code{-genetic} or \code{-random}). The program will then wait for communication from the GUI.
@@ -229,7 +230,7 @@ First, the effect of a change in value of the heuristic score function depends o
 \end{align*}
 where \(S\) is the heuristic score for the board, \(x\) is the change in a gene's scoring function, \(P\) is the priority of the function, \(W\) is the score from White's perspective, \(B\) is the score from Black's perspective, and \(E\) is the exponent of the gene. For \(E > 1\), the changes to a larger starting score have a larger effect than changes to a smaller score. The reverse is true for \(E < 1\), in that changes to a small score have a larger effect than changes to a larger score. For \(E = 1\), the same size change leads to the same size effect.
 
-The second effect of the exponent is to determine how parallel changes in score for White and Black affect the heuristic score--for example, if White and Black trade identical pieces.\footnote{This effect was inspired by an observation by Alan Turing in \cite{turing-chess} that using \(W/B\) was better than \(W-B\) for materials scores for White and Black since the latter does not favor trading pieces when ahead in material. The exponent formulation makes the preference for trading adjustable through mutation and general enough to use with all scoring genes.}
+The second effect of the exponent is to determine how parallel changes in score for White and Black affect the heuristic score--for example, if White and Black trade identical pieces.\footnote{This effect was inspired by an observation by Alan Turing in \cite{turing-chess} (pg. 291) that using \(W/B\) was better than \(W-B\) for materials scores for White and Black since the latter does not favor trading pieces when ahead in material. The exponent formulation makes the preference for trading adjustable through mutation and general enough to use with all scoring genes.}
 \begin{align*}
 \Delta S &= \left.\frac{\partial S}{\partial x}\right|_{x = 0} \Delta x \\
          &= \left.\frac{\partial}{\partial x}\left[P(W+x)^E - P(B+x)^E\right]\right|_{x = 0} \Delta x \\
@@ -557,7 +558,7 @@ W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a
 \url{http://www.thechessdrum.net/PGN_Reference.txt} Section~16.1
 
 \bibitem{turing-chess}
-Turing, Alan M., ``Digital Computers Applied to Games.'' Faster Than Thought. B. V. Bowden. London: Sir Isaac Pitman \& Sons, Ltd., 1953, pg. 291. Print.
+Turing, Alan M., ``Digital Computers Applied to Games.'' Faster Than Thought. B. V. Bowden. London: Sir Isaac Pitman \& Sons, Ltd., 1953, pg. 286--297. Print.
 \end{thebibliography}
 
 \end{document}

@@ -14,6 +14,9 @@ class CLock;
 class Piece;
 class Game_Result;
 
+// As described in Turing, Alan M., ``Digital Computers Applied to Games.''
+// Faster Than Thought. B. V. Bowden. London: Sir Isaac Pitman \& Sons, Ltd.,
+// 1953, pgs. 286-297. Print.
 class Alan_Turing_AI : public Player
 {
     public:
