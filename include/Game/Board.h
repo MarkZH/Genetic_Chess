@@ -190,6 +190,8 @@ class Board
 
         bool king_multiply_checked() const;
         static bool straight_line_move(char file_start, int rank_start, char file_end, int rank_end);
+        static bool moves_are_parallel(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2);
+        static bool same_direction(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2);
         bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
 
         [[noreturn]] void fen_error(const std::string& fen, const std::string& reason) const;

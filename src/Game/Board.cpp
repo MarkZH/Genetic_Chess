@@ -907,7 +907,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
 
         // If move direction and pin direction are not parallel, the piece will move
         // out of pin and expose the king to check.
-        return move.file_change()*pin_direction_rank != move.rank_change()*pin_direction_file;
+        return ! moves_are_parallel(move.file_change(), move.rank_change(), pin_direction_file, pin_direction_rank);
     }
 
     if(move.is_en_passant())
@@ -1253,16 +1253,13 @@ void Board::recreate_move_caches()
             auto piece = piece_on_square(file, rank);
             if(piece && piece->color() == whose_turn())
             {
-                auto blocked_file_direction = 0;
-                auto blocked_rank_direction = 0;
+                // invalid direction
+                auto blocked_file_direction = 2;
+                auto blocked_rank_direction = 3;
 
                 for(const auto& move : piece->move_list(file, rank))
                 {
-                    auto file_direction = Math::sign(move->file_change());
-                    auto rank_direction = Math::sign(move->rank_change());
-
-                    auto blocked = file_direction == blocked_file_direction &&
-                                   rank_direction == blocked_rank_direction;
+                    auto blocked = same_direction(move->file_change(), move->rank_change(), blocked_file_direction, blocked_rank_direction);
 
                     if( ! blocked && move->is_legal(*this))
                     {
@@ -1292,12 +1289,11 @@ void Board::recreate_move_caches()
                     }
 
                     if( ! blocked && // new move direction
-                       piece->type() != KNIGHT && // knights cannot be blocked
-                       ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
-                       piece_on_square(move->end_file(), move->end_rank()))
+                        ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
+                        piece_on_square(move->end_file(), move->end_rank())) // piece blocks further moves
                     {
-                        blocked_file_direction = file_direction;
-                        blocked_rank_direction = rank_direction;
+                        blocked_file_direction = move->file_change();
+                        blocked_rank_direction = move->rank_change();
                     }
                 }
             }
@@ -1515,8 +1511,8 @@ bool Board::all_empty_between(char file_start, int rank_start, char file_end, in
     auto file_step = Math::sign(file_end - file_start);
     auto rank_step = Math::sign(rank_end - rank_start);
 
-    auto file = file_start + file_step;
-    auto rank = rank_start + rank_step;
+    char file = file_start + file_step;
+    int  rank = rank_start + rank_step;
 
     while(file != file_end || rank != rank_end)
     {
@@ -1549,6 +1545,18 @@ bool Board::straight_line_move(char file_start, int rank_start, char file_end, i
     }
 
     return std::abs(file_change) == std::abs(rank_change);
+}
+
+bool Board::moves_are_parallel(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2)
+{
+    // Think of the determinant of a 2x2 matrix with the two moves as column vectors
+    return file_change_1*rank_change_2 == file_change_2*rank_change_1;
+}
+
+bool Board::same_direction(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2)
+{
+    return moves_are_parallel(file_change_1, rank_change_1, file_change_2, rank_change_2) &&
+           file_change_1*file_change_2 + rank_change_1*rank_change_2 > 0; // dot product
 }
 
 bool Board::attacks(char origin_file, int origin_rank, char target_file, int target_rank) const
