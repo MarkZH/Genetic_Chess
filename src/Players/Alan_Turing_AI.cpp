@@ -57,7 +57,11 @@ const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
             first_move_score = worst_second_move_score;
         }
 
-        best_first_move_score = std::max(best_first_move_score, first_move_score);
+        if(first_move_score > best_first_move_score)
+        {
+            best_first_move = first_move;
+            best_first_move_score = first_move_score;
+        }
     }
 
     return *best_first_move;
