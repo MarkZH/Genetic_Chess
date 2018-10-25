@@ -850,7 +850,7 @@ void Board::refresh_checking_squares()
 
             // If the non-castling king is on the same rank as the castling king, the check will have
             // been found by the discovered check block above. Only look for checks along columns.
-            if(king_square.file == rook_file && attacks(rook_file, last_move->end_rank(), king_square.file, king_square.rank))
+            if(king_square.file == rook_file && all_empty_between(rook_file, last_move->end_rank(), king_square.file, king_square.rank))
             {
                 checking_squares[insertion_point] = {rook_file, last_move->end_rank()};
             }
@@ -1572,8 +1572,7 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
 
     if(attacking_piece->type() == KNIGHT)
     {
-        return (file_change == 1 && rank_change == 2) ||
-               (file_change == 2 && rank_change == 1);
+        return file_change*rank_change == 2; // 1x2 or 2x1 move
     }
 
     if( ! straight_line_move(origin_file, origin_rank,
@@ -1589,7 +1588,8 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
 
     if(attacking_piece->type() == PAWN)
     {
-        return file_change == 1 && rank_change == 1 && (attacking_piece->color() == WHITE) == (target_rank > origin_rank);
+        return file_change*rank_change == 1 && // 1x1 move
+               (attacking_piece->color() == WHITE) == (target_rank > origin_rank);
     }
 
     if( ! all_empty_between(origin_file, origin_rank, target_file, target_rank))
@@ -1602,13 +1602,13 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
         return true;
     }
 
-    if(file_change == 0 || rank_change == 0)
+    if(file_change == rank_change)
     {
-        return attacking_piece->type() == ROOK;
+        return attacking_piece->type() == BISHOP;
     }
     else
     {
-        return attacking_piece->type() == BISHOP;
+        return attacking_piece->type() == ROOK;
     }
 }
 
