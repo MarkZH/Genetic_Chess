@@ -17,11 +17,11 @@ genetic chess.layout
 genetic chess.cscope_file_list
 CppCheckResults.xml
 
-# MS Visual Studio files
+# MS Visual Studio/Code files
 .vs/
 enc_temp_folder/
 *.vspx
-
+*.json
 
 # Compiled output
 bin/
