@@ -250,22 +250,58 @@ Board::Board(const std::string& fen) :
 
     if(String::contains(castling_parse, 'K'))
     {
+        if(piece_on_square('h', 1) != piece_instance(ROOK, WHITE))
+        {
+            fen_error(fen, "There must be a white rook on h1 to castle kingside.");
+        }
         set_unmoved('h', 1);
+
+        if(piece_on_square('e', 1) != piece_instance(KING, WHITE))
+        {
+            fen_error(fen, "There must be a white king on e1 to castle.");
+        }
         set_unmoved('e', 1);
     }
     if(String::contains(castling_parse, 'Q'))
     {
+        if(piece_on_square('a', 1) != piece_instance(ROOK, WHITE))
+        {
+            fen_error(fen, "There must be a white rook on a1 to castle queenside.");
+        }
         set_unmoved('a', 1);
+
+        if(piece_on_square('e', 1) != piece_instance(KING, WHITE))
+        {
+            fen_error(fen, "There must be a white king on e1 to castle.");
+        }
         set_unmoved('e', 1);
     }
     if(String::contains(castling_parse, 'k'))
     {
+        if(piece_on_square('h', 8) != piece_instance(ROOK, BLACK))
+        {
+            fen_error(fen, "There must be a black rook on h8 to castle kingside.");
+        }
         set_unmoved('h', 8);
+
+        if(piece_on_square('e', 8) != piece_instance(KING, BLACK))
+        {
+            fen_error(fen, "There must be a black king on e8 to castle.");
+        }
         set_unmoved('e', 8);
     }
     if(String::contains(castling_parse, 'q'))
     {
+        if(piece_on_square('a', 8) != piece_instance(ROOK, BLACK))
+        {
+            fen_error(fen, "There must be a black rook on a8 to castle kingside.");
+        }
         set_unmoved('a', 8);
+
+        if(piece_on_square('e', 8) != piece_instance(KING, BLACK))
+        {
+            fen_error(fen, "There must be a black king on e8 to castle.");
+        }
         set_unmoved('e', 8);
     }
 
@@ -282,6 +318,18 @@ Board::Board(const std::string& fen) :
         if( ! inside_board(en_passant_target.file, en_passant_target.rank))
         {
             fen_error(fen, "Invalid en passant square.");
+        }
+
+        if(piece_on_square(en_passant_target.file, en_passant_target.rank))
+        {
+            fen_error(fen, "Piece is not allowed on en passant target square.");
+        }
+
+        auto last_move_pawn = piece_on_square(en_passant_target.file,
+                                              en_passant_target.rank + (whose_turn() == WHITE ? -1 : 1));
+        if(last_move_pawn != piece_instance(PAWN, opposite(whose_turn())))
+        {
+            fen_error(fen, "There must be a pawn past the en passant target square.");
         }
     }
 
