@@ -7,7 +7,6 @@
 En_Passant::En_Passant(Color color, Direction dir, char file_start, int rank_start) :
     Pawn_Capture(color, dir, file_start, rank_start)
 {
-    able_to_capture = false; // does not capture on destination square
     is_en_passant_move = true;
 }
 

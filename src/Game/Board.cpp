@@ -1320,15 +1320,15 @@ void Board::recreate_move_caches()
                             auto rank_adjust = 0;
                             if(move->is_en_passant())
                             {
-                                rank_adjust = whose_turn() == WHITE ? -1 : 1;
+                                rank_adjust = -move->rank_change();
+                                en_passant_legal = true;
+                                capturing_move_available = true;
                             }
                             attacked_indices[square_index(move->end_file(),
                                                           move->end_rank() + rank_adjust)] = true;
+
+                            capturing_move_available = capturing_move_available || move_captures(*move);
                         }
-                        capturing_move_available = capturing_move_available
-                            || piece_on_square(move->end_file(), move->end_rank())
-                            || move->is_en_passant();
-                        en_passant_legal = en_passant_legal || move->is_en_passant();
                     }
                     else
                     {
@@ -1551,7 +1551,7 @@ bool Board::move_captures(const Move& move) const
     assert(is_in_legal_moves_list(move));
     assert( ! attacked_piece || (move.can_capture() && attacked_piece->color() == opposite(whose_turn())));
 
-    return attacked_piece;
+    return attacked_piece || move.is_en_passant();
 }
 
 bool Board::king_multiply_checked() const
