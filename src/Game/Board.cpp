@@ -80,6 +80,7 @@ Board::Board() :
     en_passant_target({'\0', 0}),
     king_location{{ {'\0', 0}, {'\0', 0} }},
     move_count_start_offset(0),
+    previous_move_captured(false),
     capturing_move_available(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
@@ -125,6 +126,7 @@ Board::Board(const std::string& fen) :
     en_passant_target({'\0', 0}),
     starting_fen(fen),
     king_location{{ {'\0', 0}, {'\0', 0} }},
+    previous_move_captured(false),
     capturing_move_available(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
@@ -656,7 +658,8 @@ const Move& Board::create_move(const std::string& move) const
 
 void Board::make_move(char file_start, int rank_start, char file_end, int rank_end)
 {
-    if(piece_on_square(file_end, rank_end)) // capture
+    previous_move_captured = piece_on_square(file_end, rank_end);
+    if(previous_move_captured)
     {
         clear_repeat_count();
     }
@@ -1481,6 +1484,11 @@ size_t Board::square_hash_index(const Piece* piece)
 uint64_t Board::board_hash() const
 {
     return current_board_hash;
+}
+
+bool Board::last_move_captured() const
+{
+    return previous_move_captured;
 }
 
 bool Board::capture_possible() const

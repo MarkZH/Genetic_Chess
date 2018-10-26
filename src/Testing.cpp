@@ -1199,20 +1199,35 @@ bool run_tests()
     }
 
     Board capture_board;
-    capture_board.submit_move(capture_board.create_move("e4"));
-    capture_board.submit_move(capture_board.create_move("d5"));
+    capture_board.submit_move(capture_board.create_move("b4"));
+    capture_board.submit_move(capture_board.create_move("c5"));
     if( ! capture_board.capture_possible())
     {
         capture_board.ascii_draw(WHITE);
         std::cerr << "This board has a capturing move." << std::endl;
         tests_passed = false;
     }
+    capture_board.submit_move(capture_board.create_move("bxc5"));
+    if( ! capture_board.last_move_captured())
+    {
+        capture_board.ascii_draw(WHITE);
+        capture_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, {});
+        std::cerr << "The previous move was a capture." << std::endl;
+        tests_passed = false;
+    }
 
-    capture_board.submit_move(capture_board.create_move("e5"));
     if(capture_board.capture_possible())
     {
         capture_board.ascii_draw(WHITE);
         std::cerr << "This board does not have a capturing move." << std::endl;
+        tests_passed = false;
+    }
+    capture_board.submit_move(capture_board.create_move("h5"));
+    if(capture_board.last_move_captured())
+    {
+        capture_board.ascii_draw(WHITE);
+        capture_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, {});
+        std::cerr << "The previous move did not capture." << std::endl;
         tests_passed = false;
     }
 
