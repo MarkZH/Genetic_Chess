@@ -30,7 +30,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
     {
-        if(principal_variation.size() > 2 && principal_variation[1] == board.game_record().back())
+        if(principal_variation.size() > 3 && principal_variation[1] == board.game_record().back())
         {
             // search_game_tree() assumes the principal variation starts
             // with the previous move of this player. If a move was forced,
