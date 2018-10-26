@@ -15,7 +15,8 @@ Move::Move(char file_start, int rank_start,
                ending_file(file_end),
                ending_rank(rank_end),
                able_to_capture(true),
-               is_en_passant_move(false)
+               is_en_passant_move(false),
+               is_castling_move(false)
 {
     assert(std::abs(file_change()) < 8);
     assert(std::abs(rank_change()) < 8);
@@ -200,6 +201,11 @@ std::string Move::coordinate_move() const
 bool Move::is_en_passant() const
 {
     return is_en_passant_move;
+}
+
+bool Move::is_castling() const
+{
+    return is_castling_move;
 }
 
 char Move::promotion_piece_symbol() const

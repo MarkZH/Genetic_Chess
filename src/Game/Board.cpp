@@ -894,8 +894,7 @@ void Board::refresh_checking_squares()
         }
 
         // Discovered check by rook due to castling
-        if(std::abs(last_move->file_change()) == 2 &&
-           piece_on_square(last_move->end_file(), last_move->end_rank())->type() == KING)
+        if(last_move->is_castling())
         {
             char rook_file = (last_move->file_change() > 0 ? 'f' : 'd');
 

@@ -14,6 +14,7 @@ Castle::Castle(int base_rank, Direction direction) :
     rook_ending_file(direction == RIGHT ? 'f' : 'd')
 {
     able_to_capture = false;
+    is_castling_move = true;
 }
 
 bool Castle::move_specific_legal(const Board& board) const
