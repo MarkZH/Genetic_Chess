@@ -75,7 +75,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         output_thinking_cecp(result, clock, board.whose_turn());
     }
 
-    if(result.depth() > 0)
+    if(result.depth() > 1)
     {
         commentary.push_back(result.variation);
     }
@@ -84,7 +84,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         commentary.push_back({});
     }
 
-    if(result.depth() > 1)
+    if(result.depth() > 2)
     {
         principal_variation = result.variation;
     }
