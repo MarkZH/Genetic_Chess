@@ -26,8 +26,9 @@ Exponent: 1.15268
 Priority: 55.771
 
 Name: Pawn Advancement Gene
-Exponent: 1.05315
-Priority: 123.211
+Exponent: 1.07839
+Non-linearity: 0.165564
+Priority: 197.638
 
 Name: Passed Pawn Gene
 Exponent: 0.988396
