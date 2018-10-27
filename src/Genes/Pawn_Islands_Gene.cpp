@@ -11,33 +11,37 @@
 
 double Pawn_Islands_Gene::score_board(const Board& board, const Board&, size_t) const
 {
-    double score = 0.0;
+    auto islands = 0;
+    auto pawn_count = 0;
     bool on_island = false;
+    auto own_pawn = board.piece_instance(PAWN, board.whose_turn());
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
         bool own_pawn_found = false;
-        for(int rank = 1; rank <= 8; ++rank)
+        for(int rank = 2; rank <= 7; ++rank)
         {
-            auto piece = board.piece_on_square(file, rank);
-            if(piece && piece->type() == PAWN && piece->color() == board.whose_turn())
+            if(board.piece_on_square(file, rank) == own_pawn)
             {
                 own_pawn_found = true;
+                ++pawn_count;
                 if( ! on_island)
                 {
                     on_island = true;
-                    ++score;
+                    ++islands;
                 }
-                break; // move to next file
             }
         }
 
         on_island = own_pawn_found;
     }
 
-    return -score/4; // negative since, presumably, pawn islands are bad;
-                     // priority can still evolve to be negative.
-                     // Divide by 4 since 4 is the greatest number of pawn islands possible.
+    if(pawn_count == 0)
+    {
+        return 0.0;
+    }
+
+    return (double(pawn_count)/islands)/8;
 }
 
 std::unique_ptr<Gene> Pawn_Islands_Gene::duplicate() const

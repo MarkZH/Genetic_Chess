@@ -642,8 +642,9 @@ bool run_tests()
     tests_passed &= opponent_pieces_targeted_gene.test(opponent_pieces_targeted_board, opponent_pieces_targeted_score);
 
     auto pawn_advancement_gene = Pawn_Advancement_Gene();
+    pawn_advancement_gene.read_from(test_genes_file_name);
     auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
-    auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*5);
+    auto pawn_advancement_score = (std::pow(1, 1.2) + std::pow(2, 1.2) + std::pow(3, 1.2) + std::pow(4, 1.2) + std::pow(5, 1.2))/(8*std::pow(5, 1.2));
     tests_passed &= pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
 
     auto passed_pawn_gene = Passed_Pawn_Gene();
@@ -695,7 +696,7 @@ bool run_tests()
 
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-    tests_passed &= pawn_islands_gene.test(pawn_islands_board, -3.0/4);
+    tests_passed &= pawn_islands_gene.test(pawn_islands_board, (6.0/3)/8);
 
 
     // String utilities
@@ -1199,20 +1200,35 @@ bool run_tests()
     }
 
     Board capture_board;
-    capture_board.submit_move(capture_board.create_move("e4"));
-    capture_board.submit_move(capture_board.create_move("d5"));
+    capture_board.submit_move(capture_board.create_move("b4"));
+    capture_board.submit_move(capture_board.create_move("c5"));
     if( ! capture_board.capture_possible())
     {
         capture_board.ascii_draw(WHITE);
         std::cerr << "This board has a capturing move." << std::endl;
         tests_passed = false;
     }
+    capture_board.submit_move(capture_board.create_move("bxc5"));
+    if( ! capture_board.last_move_captured())
+    {
+        capture_board.ascii_draw(WHITE);
+        capture_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, {});
+        std::cerr << "The previous move was a capture." << std::endl;
+        tests_passed = false;
+    }
 
-    capture_board.submit_move(capture_board.create_move("e5"));
     if(capture_board.capture_possible())
     {
         capture_board.ascii_draw(WHITE);
         std::cerr << "This board does not have a capturing move." << std::endl;
+        tests_passed = false;
+    }
+    capture_board.submit_move(capture_board.create_move("h5"));
+    if(capture_board.last_move_captured())
+    {
+        capture_board.ascii_draw(WHITE);
+        capture_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, {});
+        std::cerr << "The previous move did not capture." << std::endl;
         tests_passed = false;
     }
 

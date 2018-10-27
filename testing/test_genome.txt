@@ -25,4 +25,8 @@ Kingside Preference: 0.8
 Queenside Preference: 0.2
 Priority: 1
 
+Name: Pawn Advancement Gene
+Non-linearity: 0.2
+Priority: 1
+
 END

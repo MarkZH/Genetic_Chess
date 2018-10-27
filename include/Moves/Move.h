@@ -41,6 +41,7 @@ class Move
 
         // Special case functions
         bool is_en_passant() const;
+        bool is_castling() const;
         virtual char promotion_piece_symbol() const;
         virtual const Piece* promotion_piece() const;
 
@@ -53,6 +54,7 @@ class Move
 
         bool able_to_capture;
         bool is_en_passant_move;
+        bool is_castling_move;
 
         virtual std::string game_record_move_item(const Board& board) const;
 

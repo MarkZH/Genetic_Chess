@@ -57,7 +57,11 @@ const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
             first_move_score = worst_second_move_score;
         }
 
-        best_first_move_score = std::max(best_first_move_score, first_move_score);
+        if(first_move_score > best_first_move_score)
+        {
+            best_first_move = first_move;
+            best_first_move_score = first_move_score;
+        }
     }
 
     return *best_first_move;
@@ -90,7 +94,7 @@ std::vector<const Move*> Alan_Turing_AI::considerable_moves(const Board& board) 
 bool Alan_Turing_AI::is_considerable(const Move& move, const Board& board) const
 {
     // Recapture is considerable
-    if(last_move_captured(board) && board.move_captures(move))
+    if(board.last_move_captured() && board.move_captures(move))
     {
         auto last_move = board.game_record().back();
         if(last_move->end_file() == move.end_file() && last_move->end_rank() == move.end_rank())
@@ -125,23 +129,6 @@ bool Alan_Turing_AI::is_considerable(const Move& move, const Board& board) const
     }
 
     return false;
-}
-
-bool Alan_Turing_AI::last_move_captured(const Board& board) const
-{
-    if(board.moves_since_pawn_or_capture() > 0 || board.game_record().empty())
-    {
-        return false;
-    }
-
-    auto last_move = board.game_record().back();
-    auto piece = board.piece_on_square(last_move->end_file(), last_move->end_rank());
-    if(piece->type() != PAWN)
-    {
-        return true; // must have captured if not pawn move
-    }
-
-    return last_move->file_change() != 0; // return true if move was pawn capture
 }
 
 double Alan_Turing_AI::material_value(const Board& board, Color perspective) const

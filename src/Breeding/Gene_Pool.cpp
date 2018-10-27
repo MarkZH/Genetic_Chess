@@ -65,11 +65,12 @@ void gene_pool(const std::string& config_file = "")
     std::vector<int> white_wins(gene_pool_count);
     std::vector<int> black_wins(gene_pool_count);
     std::vector<int> draw_count(gene_pool_count);
-    std::vector<int> most_wins(gene_pool_count);
-    std::vector<Genetic_AI> most_wins_player(gene_pool_count);
 
-    std::vector<int> most_games_survived(gene_pool_count);
-    std::vector<Genetic_AI> most_games_survived_player(gene_pool_count);
+    std::map<size_t, int> most_wins;
+    std::map<size_t, Genetic_AI> most_wins_player;
+
+    std::map<size_t, int> most_games_survived;
+    std::map<size_t, Genetic_AI> most_games_survived_player;
 
     std::vector<std::vector<Genetic_AI>> new_blood(gene_pool_count); // ex nihilo players
     std::vector<int> new_blood_count(gene_pool_count);
@@ -253,7 +254,14 @@ void gene_pool(const std::string& config_file = "")
                 if(wins[winning_player] >= most_wins[pool_index])
                 {
                     most_wins[pool_index] = wins[winning_player];
-                    most_wins_player[pool_index] = winning_player;
+                    if(most_wins_player.count(pool_index))
+                    {
+                        most_wins_player[pool_index] = winning_player;
+                    }
+                    else
+                    {
+                        most_wins_player.emplace(pool_index, winning_player);
+                    }
                 }
 
                 auto offspring = Genetic_AI(white, black);
@@ -325,7 +333,14 @@ void gene_pool(const std::string& config_file = "")
             if(games_survived >= most_games_survived[pool_index])
             {
                 most_games_survived[pool_index] = games_survived;
-                most_games_survived_player[pool_index] = ai;
+                if(most_games_survived_player.count(pool_index))
+                {
+                    most_games_survived_player[pool_index] = ai;
+                }
+                else
+                {
+                    most_games_survived_player.emplace(pool_index, ai);
+                }
             }
         }
 

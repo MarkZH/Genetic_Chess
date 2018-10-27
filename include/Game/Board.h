@@ -95,6 +95,7 @@ class Board
         int moves_since_pawn_or_capture() const;
 
         // Methods for gene reference
+        bool last_move_captured() const;
         bool capture_possible() const;
         const std::array<bool, 64>& all_square_indices_attacked() const;
         const std::array<bool, 64>& other_square_indices_attacked() const;
@@ -117,6 +118,7 @@ class Board
         // Information cache for gene reference
         std::array<bool, 64> attacked_indices;
         std::array<bool, 64> other_attacked_indices;
+        bool previous_move_captured;
         bool capturing_move_available;
         std::array<size_t, 2> castling_index;
 
@@ -190,6 +192,8 @@ class Board
 
         bool king_multiply_checked() const;
         static bool straight_line_move(char file_start, int rank_start, char file_end, int rank_end);
+        static bool moves_are_parallel(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2);
+        static bool same_direction(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2);
         bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
 
         [[noreturn]] void fen_error(const std::string& fen, const std::string& reason) const;
