@@ -11,8 +11,6 @@
 
 class Board;
 class Move;
-class Game_Result;
-class Player;
 class Clock;
 
 class Genome
