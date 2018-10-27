@@ -209,7 +209,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     double move_score = 0.0;
                     for(auto move : board.legal_moves())
                     {
-                        if(move->start_file() == file || move->start_rank() == rank)
+                        if(move->start_file() == file && move->start_rank() == rank)
                         {
                             move_score += 1.0;
                             if(board.move_captures(*move))
@@ -242,6 +242,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                 {
                     // King move scores
                     double move_score = 0.0;
+                    double castling_moves = 0.0;
                     for(auto move : board.legal_moves())
                     {
                         if(move->start_file() != file || move->start_rank() != rank)
@@ -249,14 +250,18 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                             continue;
                         }
 
-                        if(std::abs(move->file_change()) < 2)
+                        if(move->is_castling())
+                        {
+                            castling_moves += 1.0;
+                        }
+                        else
                         {
                             move_score += 1.0;
                         }
                     }
-                    total_score += std::sqrt(move_score);
+                    total_score += std::sqrt(move_score) + castling_moves;
 
-                    // King vulnerability
+                    // King vulnerability (count number of queen moves from king square and subtract)
                     double king_squares = 0.0;
                     for(int file_step = -1; file_step <= 1; ++file_step)
                     {
