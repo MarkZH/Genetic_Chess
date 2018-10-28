@@ -14,9 +14,8 @@
 #include "Utility.h"
 
 King_Confinement_Gene::King_Confinement_Gene() :
-    friendly_block_score(0),
-    enemy_block_score(0),
-    free_square_score(0)
+    friendly_block_score(0.0),
+    enemy_block_score(0.0)
 {
 }
 
@@ -35,7 +34,6 @@ void King_Confinement_Gene::load_properties()
     Gene::load_properties();
     friendly_block_score = properties["Friendly Block Score"];
     enemy_block_score = properties["Enemy Block Score"];
-    free_square_score = properties["Free Square Score"];
 }
 
 void King_Confinement_Gene::reset_properties() const
@@ -43,23 +41,19 @@ void King_Confinement_Gene::reset_properties() const
     Gene::reset_properties();
     properties["Friendly Block Score"] = friendly_block_score;
     properties["Enemy Block Score"] = enemy_block_score;
-    properties["Free Square Score"] = free_square_score;
 }
 
 void King_Confinement_Gene::gene_specific_mutation()
 {
     make_priority_minimum_zero();
     auto mutation_size = Random::random_laplace(0.5);
-    switch(Random::random_integer(1, 3))
+    switch(Random::random_integer(1, 2))
     {
         case 1:
             friendly_block_score += mutation_size;
             break;
         case 2:
             enemy_block_score += mutation_size;
-            break;
-        case 3:
-            free_square_score += mutation_size;
             break;
         default:
             throw std::runtime_error("Bad random value in King Confinement Gene");
@@ -86,7 +80,9 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
 
     auto squares_attacked_by_other = opposite_board.all_square_indices_attacked();
 
-    double score = 0.0;
+    double friendly_block_total = 0.0;
+    double enemy_block_total = 0.0;
+    double free_space_total = 0.0;
 
     for(size_t i = 0; i < square_queue.size(); ++i)
     {
@@ -102,15 +98,15 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
 
         if(occupied_by_same)
         {
-            score += friendly_block_score/distance[square_index];
+            friendly_block_total += friendly_block_score/distance[square_index];
         }
         else if(attacked_by_other)
         {
-            score += enemy_block_score/distance[square_index];
+            enemy_block_total += enemy_block_score/distance[square_index];
         }
         else
         {
-            score += free_square_score/distance[square_index];
+            free_space_total += 1.0/distance[square_index];
         }
 
         auto is_safe = ! occupied_by_same && ! attacked_by_other;
@@ -145,8 +141,5 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         }
     }
 
-    auto norm = std::abs(free_square_score) +
-                std::abs(friendly_block_score) +
-                std::abs(enemy_block_score);
-    return score/(64*norm); // normalized so max is near 1
+    return (friendly_block_total + enemy_block_total)/free_space_total;
 }

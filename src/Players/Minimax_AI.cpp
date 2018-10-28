@@ -30,7 +30,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
     {
-        if(principal_variation.size() > 2 && principal_variation[1] == board.game_record().back())
+        if(principal_variation.size() > 3 && principal_variation[1] == board.game_record().back())
         {
             // search_game_tree() assumes the principal variation starts
             // with the previous move of this player. If a move was forced,
@@ -75,7 +75,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         output_thinking_cecp(result, clock, board.whose_turn());
     }
 
-    if(result.depth() > 0)
+    if(result.depth() > 1)
     {
         commentary.push_back(result.variation);
     }
@@ -84,7 +84,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         commentary.push_back({});
     }
 
-    if(result.depth() > 1)
+    if(result.depth() > 2)
     {
         principal_variation = result.variation;
     }
@@ -172,7 +172,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
 
         double time_left = time_to_examine - (time_start - clock.time_left(clock.running_for()));
-        double time_allotted_for_this_move = (time_left / moves_left)*speculation_time_factor(next_board);
+        double time_allotted_for_this_move = (time_left / moves_left)*speculation_time_factor(next_board, *move);
         time_allotted_for_this_move = std::min(time_allotted_for_this_move, clock.time_left(clock.running_for()));
 
         bool recurse;
@@ -184,7 +184,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             recurse = true;
         }
-        else if(depth > 500)
+        else if(depth > 300)
         {
             recurse = false; // prevent stack overflow
         }

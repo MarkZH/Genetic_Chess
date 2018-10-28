@@ -80,6 +80,7 @@ Board::Board() :
     en_passant_target({'\0', 0}),
     king_location{{ {'\0', 0}, {'\0', 0} }},
     move_count_start_offset(0),
+    previous_move_captured(false),
     capturing_move_available(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
@@ -125,6 +126,7 @@ Board::Board(const std::string& fen) :
     en_passant_target({'\0', 0}),
     starting_fen(fen),
     king_location{{ {'\0', 0}, {'\0', 0} }},
+    previous_move_captured(false),
     capturing_move_available(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
@@ -248,22 +250,58 @@ Board::Board(const std::string& fen) :
 
     if(String::contains(castling_parse, 'K'))
     {
+        if(piece_on_square('h', 1) != piece_instance(ROOK, WHITE))
+        {
+            fen_error(fen, "There must be a white rook on h1 to castle kingside.");
+        }
         set_unmoved('h', 1);
+
+        if(piece_on_square('e', 1) != piece_instance(KING, WHITE))
+        {
+            fen_error(fen, "There must be a white king on e1 to castle.");
+        }
         set_unmoved('e', 1);
     }
     if(String::contains(castling_parse, 'Q'))
     {
+        if(piece_on_square('a', 1) != piece_instance(ROOK, WHITE))
+        {
+            fen_error(fen, "There must be a white rook on a1 to castle queenside.");
+        }
         set_unmoved('a', 1);
+
+        if(piece_on_square('e', 1) != piece_instance(KING, WHITE))
+        {
+            fen_error(fen, "There must be a white king on e1 to castle.");
+        }
         set_unmoved('e', 1);
     }
     if(String::contains(castling_parse, 'k'))
     {
+        if(piece_on_square('h', 8) != piece_instance(ROOK, BLACK))
+        {
+            fen_error(fen, "There must be a black rook on h8 to castle kingside.");
+        }
         set_unmoved('h', 8);
+
+        if(piece_on_square('e', 8) != piece_instance(KING, BLACK))
+        {
+            fen_error(fen, "There must be a black king on e8 to castle.");
+        }
         set_unmoved('e', 8);
     }
     if(String::contains(castling_parse, 'q'))
     {
+        if(piece_on_square('a', 8) != piece_instance(ROOK, BLACK))
+        {
+            fen_error(fen, "There must be a black rook on a8 to castle kingside.");
+        }
         set_unmoved('a', 8);
+
+        if(piece_on_square('e', 8) != piece_instance(KING, BLACK))
+        {
+            fen_error(fen, "There must be a black king on e8 to castle.");
+        }
         set_unmoved('e', 8);
     }
 
@@ -280,6 +318,18 @@ Board::Board(const std::string& fen) :
         if( ! inside_board(en_passant_target.file, en_passant_target.rank))
         {
             fen_error(fen, "Invalid en passant square.");
+        }
+
+        if(piece_on_square(en_passant_target.file, en_passant_target.rank))
+        {
+            fen_error(fen, "Piece is not allowed on en passant target square.");
+        }
+
+        auto last_move_pawn = piece_on_square(en_passant_target.file,
+                                              en_passant_target.rank + (whose_turn() == WHITE ? -1 : 1));
+        if(last_move_pawn != piece_instance(PAWN, opposite(whose_turn())))
+        {
+            fen_error(fen, "There must be a pawn past the en passant target square.");
         }
     }
 
@@ -656,7 +706,8 @@ const Move& Board::create_move(const std::string& move) const
 
 void Board::make_move(char file_start, int rank_start, char file_end, int rank_end)
 {
-    if(piece_on_square(file_end, rank_end)) // capture
+    previous_move_captured = piece_on_square(file_end, rank_end);
+    if(previous_move_captured)
     {
         clear_repeat_count();
     }
@@ -843,14 +894,13 @@ void Board::refresh_checking_squares()
         }
 
         // Discovered check by rook due to castling
-        if(std::abs(last_move->file_change()) == 2 &&
-           piece_on_square(last_move->end_file(), last_move->end_rank())->type() == KING)
+        if(last_move->is_castling())
         {
             char rook_file = (last_move->file_change() > 0 ? 'f' : 'd');
 
             // If the non-castling king is on the same rank as the castling king, the check will have
             // been found by the discovered check block above. Only look for checks along columns.
-            if(king_square.file == rook_file && attacks(rook_file, last_move->end_rank(), king_square.file, king_square.rank))
+            if(king_square.file == rook_file && all_empty_between(rook_file, last_move->end_rank(), king_square.file, king_square.rank))
             {
                 checking_squares[insertion_point] = {rook_file, last_move->end_rank()};
             }
@@ -907,7 +957,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
 
         // If move direction and pin direction are not parallel, the piece will move
         // out of pin and expose the king to check.
-        return move.file_change()*pin_direction_rank != move.rank_change()*pin_direction_file;
+        return ! moves_are_parallel(move.file_change(), move.rank_change(), pin_direction_file, pin_direction_rank);
     }
 
     if(move.is_en_passant())
@@ -1253,16 +1303,13 @@ void Board::recreate_move_caches()
             auto piece = piece_on_square(file, rank);
             if(piece && piece->color() == whose_turn())
             {
-                auto blocked_file_direction = 0;
-                auto blocked_rank_direction = 0;
+                // invalid direction
+                auto blocked_file_direction = 2;
+                auto blocked_rank_direction = 3;
 
                 for(const auto& move : piece->move_list(file, rank))
                 {
-                    auto file_direction = Math::sign(move->file_change());
-                    auto rank_direction = Math::sign(move->rank_change());
-
-                    auto blocked = file_direction == blocked_file_direction &&
-                                   rank_direction == blocked_rank_direction;
+                    auto blocked = same_direction(move->file_change(), move->rank_change(), blocked_file_direction, blocked_rank_direction);
 
                     if( ! blocked && move->is_legal(*this))
                     {
@@ -1273,15 +1320,15 @@ void Board::recreate_move_caches()
                             auto rank_adjust = 0;
                             if(move->is_en_passant())
                             {
-                                rank_adjust = whose_turn() == WHITE ? -1 : 1;
+                                rank_adjust = -move->rank_change();
+                                en_passant_legal = true;
+                                capturing_move_available = true;
                             }
                             attacked_indices[square_index(move->end_file(),
                                                           move->end_rank() + rank_adjust)] = true;
+
+                            capturing_move_available = capturing_move_available || move_captures(*move);
                         }
-                        capturing_move_available = capturing_move_available
-                            || piece_on_square(move->end_file(), move->end_rank())
-                            || move->is_en_passant();
-                        en_passant_legal = en_passant_legal || move->is_en_passant();
                     }
                     else
                     {
@@ -1292,12 +1339,11 @@ void Board::recreate_move_caches()
                     }
 
                     if( ! blocked && // new move direction
-                       piece->type() != KNIGHT && // knights cannot be blocked
-                       ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
-                       piece_on_square(move->end_file(), move->end_rank()))
+                        ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
+                        piece_on_square(move->end_file(), move->end_rank())) // piece blocks further moves
                     {
-                        blocked_file_direction = file_direction;
-                        blocked_rank_direction = rank_direction;
+                        blocked_file_direction = move->file_change();
+                        blocked_rank_direction = move->rank_change();
                     }
                 }
             }
@@ -1487,6 +1533,11 @@ uint64_t Board::board_hash() const
     return current_board_hash;
 }
 
+bool Board::last_move_captured() const
+{
+    return previous_move_captured;
+}
+
 bool Board::capture_possible() const
 {
     return capturing_move_available;
@@ -1500,7 +1551,7 @@ bool Board::move_captures(const Move& move) const
     assert(is_in_legal_moves_list(move));
     assert( ! attacked_piece || (move.can_capture() && attacked_piece->color() == opposite(whose_turn())));
 
-    return attacked_piece;
+    return attacked_piece || move.is_en_passant();
 }
 
 bool Board::king_multiply_checked() const
@@ -1515,8 +1566,8 @@ bool Board::all_empty_between(char file_start, int rank_start, char file_end, in
     auto file_step = Math::sign(file_end - file_start);
     auto rank_step = Math::sign(rank_end - rank_start);
 
-    auto file = file_start + file_step;
-    auto rank = rank_start + rank_step;
+    char file = file_start + file_step;
+    int  rank = rank_start + rank_step;
 
     while(file != file_end || rank != rank_end)
     {
@@ -1551,6 +1602,18 @@ bool Board::straight_line_move(char file_start, int rank_start, char file_end, i
     return std::abs(file_change) == std::abs(rank_change);
 }
 
+bool Board::moves_are_parallel(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2)
+{
+    // Think of the determinant of a 2x2 matrix with the two moves as column vectors
+    return file_change_1*rank_change_2 == file_change_2*rank_change_1;
+}
+
+bool Board::same_direction(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2)
+{
+    return moves_are_parallel(file_change_1, rank_change_1, file_change_2, rank_change_2) &&
+           file_change_1*file_change_2 + rank_change_1*rank_change_2 > 0; // dot product
+}
+
 bool Board::attacks(char origin_file, int origin_rank, char target_file, int target_rank) const
 {
     auto attacking_piece = piece_on_square(origin_file, origin_rank);
@@ -1564,8 +1627,7 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
 
     if(attacking_piece->type() == KNIGHT)
     {
-        return (file_change == 1 && rank_change == 2) ||
-               (file_change == 2 && rank_change == 1);
+        return file_change*rank_change == 2; // 1x2 or 2x1 move
     }
 
     if( ! straight_line_move(origin_file, origin_rank,
@@ -1581,7 +1643,8 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
 
     if(attacking_piece->type() == PAWN)
     {
-        return file_change == 1 && rank_change == 1 && (attacking_piece->color() == WHITE) == (target_rank > origin_rank);
+        return file_change*rank_change == 1 && // 1x1 move
+               (attacking_piece->color() == WHITE) == (target_rank > origin_rank);
     }
 
     if( ! all_empty_between(origin_file, origin_rank, target_file, target_rank))
@@ -1594,13 +1657,13 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
         return true;
     }
 
-    if(file_change == 0 || rank_change == 0)
+    if(file_change == rank_change)
     {
-        return attacking_piece->type() == ROOK;
+        return attacking_piece->type() == BISHOP;
     }
     else
     {
-        return attacking_piece->type() == BISHOP;
+        return attacking_piece->type() == ROOK;
     }
 }
 

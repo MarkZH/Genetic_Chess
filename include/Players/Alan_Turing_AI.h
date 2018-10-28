@@ -14,6 +14,9 @@ class CLock;
 class Piece;
 class Game_Result;
 
+// As described in Turing, Alan M., ``Digital Computers Applied to Games.''
+// Faster Than Thought. B. V. Bowden. London: Sir Isaac Pitman \& Sons, Ltd.,
+// 1953, pgs. 286-297. Print.
 class Alan_Turing_AI : public Player
 {
     public:
@@ -25,7 +28,6 @@ class Alan_Turing_AI : public Player
     private:
         std::vector<const Move*> considerable_moves(const Board& board) const;
         bool is_considerable(const Move& move, const Board& board) const;
-        bool last_move_captured(const Board& board) const;
 
         double material_value(const Board& board, Color perspective) const;
         double piece_value(const Piece* piece) const;

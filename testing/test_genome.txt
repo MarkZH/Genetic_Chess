@@ -16,13 +16,16 @@ Priority: 1
 
 Name: King Confinement Gene
 Enemy Block Score: -1
-Free Square Score: 2
 Friendly Block Score: 4
 Priority: 1
 
 Name: Castling Possible Gene
 Kingside Preference: 0.8
 Queenside Preference: 0.2
+Priority: 1
+
+Name: Pawn Advancement Gene
+Non-linearity: 0.2
 Priority: 1
 
 END

@@ -20,8 +20,11 @@ class Look_Ahead_Gene : public Gene
 
         std::string name() const override;
 
+        // How much time to use in choosing a move
         double time_to_examine(const Board& board, const Clock& clock) const;
-        double speculation_time_factor(const Board& board) const;
+
+        // How much extra time to allocate due to alpha-beta pruning
+        double speculation_time_factor(const Board& board, const Move& move) const;
 
     protected:
         void reset_properties() const override;
@@ -31,8 +34,14 @@ class Look_Ahead_Gene : public Gene
         double mean_game_length; // in moves by one player
         double game_length_uncertainty; // approximately as a fraction of the mean
 
-        double speculation_constant; // how often to look ahead even with little time
-        double capturing_speculation_constant; // how often to look ahead even with little time when capture is possible
+        // how much extra time to allocate by default
+        double speculation_constant;
+
+        // how much extra time to allocate when capture moves are possible (but not taken)
+        double can_capture_speculation_constant;
+
+        // how much extra time to allocate when the current move captures
+        double will_capture_speculation_constant;
 
         double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
         void gene_specific_mutation() override;
