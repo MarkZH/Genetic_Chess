@@ -15,7 +15,7 @@ Look_Ahead_Gene::Look_Ahead_Gene() :
     game_length_uncertainty(0.5),
     speculation_constant(0.0),
     can_capture_speculation_constant(0.0),
-    did_capture_speculation_constant(0.0)
+    will_capture_speculation_constant(0.0)
 {
 }
 
@@ -24,7 +24,7 @@ void Look_Ahead_Gene::reset_properties() const
     properties["Mean Game Length"] = mean_game_length;
     properties["Game Length Uncertainty"] = game_length_uncertainty;
     properties["Speculation Constant"] = speculation_constant;
-    properties["Captured Speculation Constant"] = did_capture_speculation_constant;
+    properties["Will Capture Speculation Constant"] = will_capture_speculation_constant;
     properties["Can Capture Speculation Constant"] = can_capture_speculation_constant;
 }
 
@@ -33,7 +33,7 @@ void Look_Ahead_Gene::load_properties()
     mean_game_length = properties["Mean Game Length"];
     game_length_uncertainty = properties["Game Length Uncertainty"];
     speculation_constant = properties["Speculation Constant"];
-    did_capture_speculation_constant = properties["Captured Speculation Constant"];
+    will_capture_speculation_constant = properties["Will Capture Speculation Constant"];
     can_capture_speculation_constant = properties["Can Capture Speculation Constant"];
 }
 
@@ -62,7 +62,7 @@ void Look_Ahead_Gene::gene_specific_mutation()
             speculation_constant = std::max(0.0, speculation_constant + Random::random_laplace(0.1));
             break;
         case 4:
-            did_capture_speculation_constant = std::max(0.0, did_capture_speculation_constant + Random::random_laplace(0.1));
+            will_capture_speculation_constant = std::max(0.0, will_capture_speculation_constant + Random::random_laplace(0.1));
             break;
         case 5:
             can_capture_speculation_constant = std::max(0.0, can_capture_speculation_constant + Random::random_laplace(0.1));
@@ -89,22 +89,16 @@ double Look_Ahead_Gene::score_board(const Board&, const Board&, size_t) const
 
 double Look_Ahead_Gene::speculation_time_factor(const Board& board, const Move& move) const
 {
-    if(board.capture_possible())
+    if(board.move_captures(move))
     {
-        if(board.move_captures(move))
-        {
-            return std::max(did_capture_speculation_constant,
-                            can_capture_speculation_constant);
-        }
-        else
-        {
-            return can_capture_speculation_constant;
-        }
+        return will_capture_speculation_constant;
     }
-    else if(board.move_captures(move))
+    else if(board.capture_possible())
     {
-        return did_capture_speculation_constant;
+        return can_capture_speculation_constant;
     }
-
-    return speculation_constant;
+    else
+    {
+        return speculation_constant;
+    }
 }
