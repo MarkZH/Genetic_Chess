@@ -277,14 +277,20 @@ The effective formula for the score of this gene can be expressed as
 where the sum is over all squares \(s\) on the board. The function \(legal(s)\) returns~0 if \(s\) is not attacked at all,~1 if the square is attacked by an illegal move, and a genetically determined result if attacked by a legal move. The term \(KTF\) is the king target factor and is a genetically determined weight that adjusts the importance of attacking squares close to the opposing king. The function \(distance(s_1, s_2)\) gives the distance between two squares in king moves and is equal to the maximum of the difference in file or difference in rank between the squares.
 
 \subsubsection{King Confinement Gene}
-This gene counts the squares the king can reach given unlimited legal moves. Squares that take a larger number of moves to reach are given lower scores. Kings that are hemmed in by squares occupied by friendly pieces and squares attacked by the opponent result in a low score from this gene. This is a measure of how much room the king has to maneuver and escape. It is somewhat in opposition to the King Protection Gene.
+This gene tracks the manner in which the king is prevented from moving. In general, a king is safe if it is surrounded by friendly pieces or, failing that, it is free to move around the board when there are enemy pieces near. In scoring a board, this gene tracks the squares the king can reach given unlimited legal moves. Squares that take a larger number of moves to reach are given lower scores.
 
 For a more detailed picture, each square potentially reachable by the king is classified into three types given one of three genetically determined scores for each:
 \begin{itemize}
-	\item Free: the king is free to move on to these squars,
+	\item Free: the king is free to move on to these squares,
 	\item Friendly block: the king is blocked by pieces of the same color, and
 	\item Enemy block: the king is blocked due to the square being attacked by an opponent piece.
 \end{itemize}
+Once all reachable squares have been found, the score is calculated by the following:
+\[S = \frac{W_{friend}\sum_{sq}\frac{Friend(sq)}{1+dis(sq)} + W_{enemy}\sum_{sq}\frac{Enemy(sq)}{1+dis(sq)}}{\sum_{sq}\frac{Free(sq)}{1+dis(sq)}}
+\]
+where \(S\) is the resulting score, \(\sum_{sq}\) is a sum over every square \(sq\) on the board, \(W_{friend}\) is the genetically determined weight of squares blocked by friendly pieces, \(W_{enemy}\) is the genetically determined weight of squares blocked by enemy attacks, \(Friend(sq)\) returns 1 if the square \(sq\) is blocked by a friendly piece and 0 otherwise, \(Enemy(sq)\) returns 1 if the square \(sq\) is attacked by an enemy piece and 0 otherwise, \(Free(sq)\) returns 1 if the square \(sq\) is reachable by the king and 0 otherwise, and \(dis(sq)\) is the distance to the square from the current king location in king moves.
+
+Usually, the weight \(W_{friend}\) will be positive and \(W_{enemy}\) will be negative. So, a king that is hemmed in by friendly pieces will receive a positive score while a king hemmed in by enemy attacks receives a negative score. In both cases, a greater number of reachable free squares and a farther distance to the blocking squares bring the score closer to zero.
 
 The priority of this gene is non-negative.
 

@@ -16,7 +16,6 @@ Priority: 1
 
 Name: King Confinement Gene
 Enemy Block Score: -1
-Free Square Score: 2
 Friendly Block Score: 4
 Priority: 1
 

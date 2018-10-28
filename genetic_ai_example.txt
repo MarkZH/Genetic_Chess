@@ -46,11 +46,10 @@ Legal Square Score: 1.25846
 Priority: 316.912
 
 Name: King Confinement Gene
-Enemy Block Score: 0.546934
-Exponent: 0.929164
-Free Square Score: 2.60087
-Friendly Block Score: -2.02418
-Priority: 1.05338
+Enemy Block Score: 3.36279
+Exponent: 1.16013
+Friendly Block Score: 7.80593
+Priority: 0
 
 Name: King Protection Gene
 Exponent: 1.06818
