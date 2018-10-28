@@ -8,11 +8,11 @@ Q: 13.5766
 R: 12.2242
 
 Name: Look Ahead Gene
-Can Capture Speculation Constant: 2.63103
-Captured Speculation Constant: 1.37802
-Game Length Uncertainty: 0.459693
-Mean Game Length: 36.7392
-Speculation Constant: 1.72037
+Can Capture Speculation Constant: 0
+Game Length Uncertainty: 0.363839
+Mean Game Length: 42.9669
+Speculation Constant: 1.0064
+Will Capture Speculation Constant: 1.8993
 
 Name: Priority Threshold Gene
 Threshold: 4.81217
