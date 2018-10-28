@@ -24,6 +24,9 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     auto best_move = board.legal_moves().front();
     auto best_result = std::numeric_limits<double>::lowest();
     int move_count = 0;
+    int game_count = 0;
+
+    auto time_at_last_cecp_output = clock.time_left(clock.running_for());
 
     for(auto move : board.legal_moves())
     {
@@ -45,7 +48,6 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
 
             continue;
         }
-
 
         int wins = 0;
         int draws = 0;
@@ -73,6 +75,7 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
             {
                 draws += 1;
             }
+            game_count += 1;
         }
 
         auto result = double(wins - losses)/(wins + draws + losses);
@@ -80,26 +83,31 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
         {
             best_result = result;
             best_move = move;
-
-            if(board.thinking_mode() == CECP)
-            {
-                auto time_so_far = choice_time_start - clock.time_left(clock.running_for());
-                std::cout << 1 // thought depth
-                    << " "
-                    << int(best_result*100) // score
-                    << " "
-                    << int(time_so_far*100) // search time in centiseconds
-                    << " "
-                    << move_count // "nodes" searched
-                    << " "
-                    << 0 // maximum depth (N/A)
-                    << " "
-                    << int(move_count/time_so_far) // search speed
-                    << "\t"
-                    << move->game_record_item(board) // best move so far
-                    << std::endl;
-            }
         }
+
+        auto current_time = clock.time_left(clock.running_for());
+        if(board.thinking_mode() == CECP &&
+           time_at_last_cecp_output - current_time > 0.1)
+        {
+            time_at_last_cecp_output = current_time;
+            print_cecp_thinking(choice_time_start - current_time,
+                                result,
+                                move_count,
+                                game_count,
+                                move,
+                                board);
+        }
+    }
+
+    auto current_time = clock.time_left(clock.running_for());
+    if(board.thinking_mode() == CECP)
+    {
+        print_cecp_thinking(choice_time_start - current_time,
+                            best_result,
+                            move_count,
+                            game_count,
+                            best_move,
+                            board);
     }
 
     return *best_move;
@@ -108,4 +116,27 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
 std::string Monte_Carlo_AI::name() const
 {
     return "Monte Carlo AI";
+}
+
+void Monte_Carlo_AI::print_cecp_thinking(double time_so_far,
+                                         double result,
+                                         int move_count,
+                                         int game_count,
+                                         const Move* move,
+                                         const Board& board) const
+{
+    std::cout << 1 // thought depth
+        << " "
+        << int(result*100) // score
+        << " "
+        << int(time_so_far*100) // search time in centiseconds
+        << " "
+        << move_count // "nodes" searched
+        << " "
+        << game_count // maximum depth (N/A)
+        << " "
+        << int(move_count/time_so_far) // search speed
+        << "\t"
+        << move->game_record_item(board) // best move so far
+        << std::endl;
 }
