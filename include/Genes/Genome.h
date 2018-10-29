@@ -27,7 +27,9 @@ class Genome
         void mutate();
 
         double time_to_examine(const Board& board, const Clock& clock) const; // how much time to use for this move
-        double speculation_time_factor(const Board& board, const Move& move) const;
+        double speculation_time_factor(const Board& pre_move_board,
+                                       const Board& post_move_board,
+                                       const Move& move) const;
 
         void print(std::ostream& os) const;
 

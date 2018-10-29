@@ -24,7 +24,9 @@ class Look_Ahead_Gene : public Gene
         double time_to_examine(const Board& board, const Clock& clock) const;
 
         // How much extra time to allocate due to alpha-beta pruning
-        double speculation_time_factor(const Board& board, const Move& move) const;
+        double speculation_time_factor(const Board& pre_move_board,
+                                       const Board& post_move_board,
+                                       const Move& move) const;
 
     protected:
         void reset_properties() const override;
