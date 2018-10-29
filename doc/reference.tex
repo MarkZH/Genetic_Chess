@@ -259,7 +259,9 @@ This gene sums the strength (according to the Piece Strength Gene) of all the pl
 This gene counts the number of legal moves available in the current position.
 
 \subsubsection{Pawn Advancement Gene}
-This gene measures the progress of all pawns towards the opposite side of the board. Extra points are awarded to board states that have pawn promotions as past moves in order to prevent promotions from being penalized when such moves remove pawns from the board.
+This gene measures the progress of all pawns towards the opposite side of the board. The gene includes a non-linearity term that controls how the position of the moving pawn affects the score as it moves.
+\[S = \sum_p \left|rank(p) - home(p)\right|^{1 + N}\]
+Here, \(S\) is the total score, the sum is over all pawns \(p\) of the scoring side, \(rank(p)\) is the rank position of the current pawn, \(home(p)\) is the home rank of the pawn (2~for White and~7~for Black), and \(N\) is the non-linear term. A positive \(N\) means more points are awarded as the pawn advances farther from the home rank. A negative \(N\) rewards moving pawns off the the home rank.
 
 \subsubsection{Passed Pawn Gene}
 The gene counts the number of pawns that cannot be stopped or captured by an opponent's pawns. That is, a pawn is a passed pawn if there are no pawns ahead of it in its file or any directly adjacent files. Partial points are awarded for pawns that have fewer pawns ahead than usual ($1/3$ for each free column ahead of mid-board pawns, $1/2$ for for pawns on the edge).
