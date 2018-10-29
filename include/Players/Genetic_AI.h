@@ -7,12 +7,10 @@
 #include "Minimax_AI.h"
 
 #include "Genes/Genome.h"
+#include "Game/Color.h"
 
 class Board;
-class Move;
 class Clock;
-struct Game_Tree_Node_Result;
-class Game_Result;
 
 class Genetic_AI : public Minimax_AI
 {
