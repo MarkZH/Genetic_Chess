@@ -211,14 +211,14 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             result = create_result(next_board, perspective, move_result, depth);
         }
 
-        if(better_than(result, best_result, perspective))
+        if(result.value(perspective) > best_result.value(perspective))
         {
             best_result = result;
 
-            if(better_than(best_result, alpha, perspective))
+            if(best_result.value(perspective) > alpha.value(perspective))
             {
                 alpha = best_result;
-                if(better_than(alpha, beta, perspective) || alpha == beta)
+                if(alpha.value(perspective) >= beta.value(perspective))
                 {
                     break;
                 }

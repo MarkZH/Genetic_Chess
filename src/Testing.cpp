@@ -829,13 +829,13 @@ bool run_tests()
                                 BLACK,
                                 {nullptr, nullptr, nullptr}};
 
-    if(better_than(r2, r1, WHITE))
+    if(r2.value(WHITE) > r1.value(WHITE))
     {
         std::cerr << "1. Error in comparing Game Tree Node Results." << std::endl;
         tests_passed = false;
     }
 
-    if(better_than(r1, r2, BLACK))
+    if(r1.value(BLACK) > r2.value(BLACK))
     {
         std::cerr << "2. Error in comparing Game Tree Node Results." << std::endl;
         tests_passed = false;
@@ -848,13 +848,13 @@ bool run_tests()
     Game_Tree_Node_Result beta_start = {Math::win_score,
                                         WHITE,
                                         {}};
-    if(better_than(alpha_start, beta_start, WHITE))
+    if(alpha_start.value(WHITE) > beta_start.value(WHITE))
     {
         std::cerr << "3. Error in comparing Game Tree Node Results." << std::endl;
         tests_passed = false;
     }
 
-    if( ! better_than(alpha_start, beta_start, BLACK))
+    if(alpha_start.value(BLACK) <= beta_start.value(BLACK))
     {
         std::cerr << "4. Error in comparing Game Tree Node Results." << std::endl;
         tests_passed = false;
@@ -870,13 +870,13 @@ bool run_tests()
                                         {nullptr, nullptr, nullptr,
                                          nullptr, nullptr, nullptr,
                                          nullptr}};
-    if(better_than(white_win6, white_win4, WHITE))
+    if(white_win6.value(WHITE) > white_win4.value(WHITE))
     {
         std::cerr << "Later win preferred over earlier win." << std::endl;
         tests_passed = false;
     }
 
-    if(better_than(white_win4, white_win6, BLACK))
+    if(white_win4.value(BLACK) > white_win6.value(BLACK))
     {
         std::cerr << "Earlier loss preferred over later win." << std::endl;
         tests_passed = false;
@@ -887,7 +887,8 @@ bool run_tests()
                                          {nullptr, nullptr, nullptr,
                                           nullptr, nullptr, nullptr,
                                           nullptr}};
-    if( ! (white_win6 == black_loss6))
+    if(white_win6.value(WHITE) != black_loss6.value(WHITE) ||
+       white_win6.value(BLACK) != black_loss6.value(BLACK))
     {
         std::cerr << "White win in 6 not equal to black loss in 6." << std::endl;
         tests_passed = false;
