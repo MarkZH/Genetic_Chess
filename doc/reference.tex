@@ -4,9 +4,11 @@
 \usepackage[pdftex]{graphicx}
 \usepackage{verbatim}
 \usepackage{amsmath}
+\usepackage{booktabs}
 
-\newcommand{\cpp}{C{\nobreak +}{\nobreak +}}
+\newcommand{\cpp}{C{\nobreak+}{\nobreak+}}
 
+% chktex-file 36
 \newcommand{\code}[1]{\small\textsf{#1}}
 
 \renewcommand{\_}{\allowbreak\textunderscore\allowbreak}
@@ -44,27 +46,26 @@ Run \code{make} to create various executables in a \code{bin/} subfolder that wi
 The \code{.sln} and \code{.vcxproj} files are project files for Visual Studio. These will load all source files for one-click compiling.
 
 
-\section{Running}
-\label{running}
+\section{Running}\label{running}
 \begin{description}
 	\item[\code{genetic\_chess -test}] Run tests of the program for chess rule conformance and for Genetic AIs working properly.
 	\item[\code{genetic\_chess -genepool [file name]}]
-This will start up a gene pool with Genetic\_AIs playing against each other--mating, killing, mutating--all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
+This will start up a gene pool with Genetic\_AIs playing against each other---mating, killing, mutating, all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
 
 	\item[\code{genetic\_chess <-player> <-player>}] Starts a local game played in the terminal with an ASCII art board. The first parameter is the white player, the second is black. The \code{<-player>} argument is replaced with one of the following:
 	\begin{description}
 		\item[\code{-human}:] a human player entering moves on the command line and seeing the results on a text-based drawing of the board. Moves are specified in standard algebraic notation (SAN) or in coordinates that indicate the starting and ending square.
-		\item[\code{-genetic [file name [number]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID. If no number is specified, then there are two possibilities:
+		\item[\code{-genetic [file name [number]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID\@. If no number is specified, then there are two possibilities:
 		\begin{itemize}
 			\item If the genome file is the output of a gene pool run, then the AI with the smallest ID that was still alive is chosen. As the oldest surviving AI, it is the nearly the most evolved while still having been tested.
 			\item Otherwise, the last genome in the file is loaded (presumably this one is the most evolved). If there is another file containing records of games played during a gene pool run that has the same name as the genome file name with an extra suffix ``\_games.txt'', then the last genome with at least 3 wins will be selected.
 		\end{itemize}
 		\item[\code{-random}:] an AI player that chooses a random legal move at each turn.
-		\item[\code{-turing}:] a chess engine implemented according to the design by Alan Turing \cite{turing-chess}.
-		\item[\code{-montecarlo}:] a chess AI that picks a move based on the results of randomly played complete games, i.e., the pure version of Monte Carlo tree search \cite{monte-carlo}.
+		\item[\code{-turing}:] a chess engine implemented according to the design by Alan Turing~\cite{turing-chess}.
+		\item[\code{-montecarlo}:] a chess AI that picks a move based on the results of randomly played complete games, i.e., the pure version of Monte Carlo tree search~\cite{monte-carlo}.
 	\end{description}
 \end{description}
-Genetic Chess can communicate with GUI chess programs through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol}, including xboard, PyChess, Cute Chess, and others. When using Genetic Chess this way, only specify the arguments for a single player (\code{-genetic} or \code{-random}). The program will then wait for communication from the GUI.
+Genetic Chess can communicate with GUI chess programs through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol}, including xboard, PyChess, Cute Chess, and others. When using Genetic Chess this way, only specify the arguments for a single player (\code{-genetic} or \code{-random}). The program will then wait for communication from the GUI\@.
 
 
 \section{Non-Evolutionary Aspects}
@@ -77,7 +78,7 @@ These sections describe the aspects of the chess AI that are not genetically mod
 \end{itemize}
 On the last point, it has been suggested to me that, instead of the specific genes listed in Section~\ref{gene-section}, the genes should encode more abstract and generic strategies and heuristics for evaluating a board state. While this would probably better mimic biological evolution (wherein adenine and thymine are rather neutral as to their teleology), I have no idea how to program such an abstract representation and how to translate the action of such genes into chess moves. So, what results from all this programming is a glorified tuning algorithm for parameters in predefined genes with hard-coded meanings.
 
-On the other hand, so is every other genetic algorithm (see \cite{evolved-antenna}, \cite{evolved-stellarator}, and others). Plus, these genes can evolve to have near-zero influence on game decisions, so these AIs are perfectly capable of telling me exactly what they think of my painstakingly crafted genes.\footnote{The little ingrates!}
+On the other hand, so is every other genetic algorithm (see~\cite{evolved-antenna},~\cite{evolved-stellarator}, and others). Plus, these genes can evolve to have near-zero influence on game decisions, so these AIs are perfectly capable of telling me exactly what they think of my painstakingly crafted genes.\footnote{The little ingrates!}
 
 \subsection{Endgame Scoring}
 
@@ -112,8 +113,7 @@ If the best move is chosen based upon the probable resulting future board state 
 
 Besides Principal Variation Recall, those moves that capture an opponent's piece are examined before other moves. Capturing moves usually result in the largest changes in position evaluations (see Section~\ref{total-force-and-pawn-result}), so they should quickly establish alpha and beta values that will lead to quick cutoffs.
 
-\section{The Genome}
-\label{gene-section}
+\section{The Genome}\label{gene-section}
 The genome is the repository for genetic information in the Genetic AIs and controls all aspects of game play not mentioned in the previous section. All are subject to mutation, which can change the behavior and influence of a given gene.
 
 \subsection{A Note on Designer Genes}
@@ -123,19 +123,18 @@ Evolution is an effective means of optimizing when every mutation makes a differ
 	\item a continuous function of the parameters of its genome and
 	\item without flat sections.
 \end{enumerate}
-The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. This is why the deactivating-gene mutation was discarded (Section~\ref{priority-threshold}). It is better to let a gene fall in importance by gradually reducing its priority. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI. This random walk period only represents wasted time. To this end, certain gene parameters are restricted to, for example, non-negative values.
+The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. This is why the deactivating-gene mutation was discarded (Section~\ref{priority-threshold}). It is better to let a gene fall in importance by gradually reducing its priority. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI\@. This random walk period only represents wasted time. To this end, certain gene parameters are restricted to, for example, non-negative values.
 
 \subsection{Regulatory Genes}
 A regulator gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
 
-\subsubsection{Piece Strength Gene}
-\label{piece-strength}
+\subsubsection{Piece Strength Gene}\label{piece-strength}
 
 This gene specifies the importance or strength of each different type of chess piece. Other genes like the Total Force Gene (Section~\ref{total-force}) reference this one for their own evaluation purposes.
 
 The number associated with each piece is not scaled to any other piece, but before a piece strength is returned, it is scaled so that that total value of all the pieces at the start of the game (8~pawns, 2~rooks, 2~knights, 2~bishops, and 1~queen) equals~1. This prevents mutations in this gene from changing the priorities of other genes that reference this one. In other words, if a series of mutations doubles the strength of all pieces, the Total Force Gene will not subsequently return double the score for the same board state. Only mutations that change piece strengths with respect to other pieces are effective. The king is not included in this scaling because the king is always on the board. So, the Total Force Gene assigns a value of one to the starting piece set of a player and zero to a lone king.
 
-Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and \ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
+Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and~\ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
 
 \subsubsection{Look Ahead Gene}
 This gene determines all aspects of the Genetic AIs time management through a set of genetically determined components to this gene that determine how the AI spends its time:
@@ -145,24 +144,24 @@ This gene determines all aspects of the Genetic AIs time management through a se
 	\item a constant related to over-allocating search time while counting on alpha-beta pruning to not use too much
 	\item adjustments of the above time allocation based on the depth of the current search.
 \end{enumerate}
-When the AI starts the algorithm to choose a move, it allocates a fraction of the time left on the clock so that all subsequent moves get equal time. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a log-normal distribution~\cite{log-norm-wiki}\cite{log-norm-chess-se} with a mean and spread given by the first two parameters listed above. Originally, it was assumed that the number of moves in a game was well-modeled by a Poisson distribution. This proved to be false (see Figure~\ref{game-length-plot}), and the log-normal distribution--wherein the logarithm of the variable is normally distributed--is now used.
+When the AI starts the algorithm to choose a move, it allocates a fraction of the time left on the clock so that all subsequent moves get equal time. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a log-normal distribution~\cite{log-norm-wiki}\cite{log-norm-chess-se} with a mean and spread given by the first two parameters listed above. Originally, it was assumed that the number of moves in a game was well-modeled by a Poisson distribution. This proved to be false (see Figure~\ref{game-length-plot}), and the log-normal distribution---wherein the logarithm of the variable is normally distributed---is now used.
 
 The number of moves left in the game is estimated by
 \[N(n) = \frac{\sum_{i = n + 1}^\infty P(i)\times{}i}{\sum_{i = n + 1}^\infty P(i)} - n\]
 where \(N(n)\) is the estimated number of moves left in the game given that \(n\) moves have already been made, and \(P(i)\) is the \emph{a priori} probability distribution of the number of moves by one player in a single game. The numerator is a truncated calculation of the average number of moves in a game, and the denominator is a truncated probability distribution to renormalize (since the probability of a game lasting 10~moves is zero if 11~moves have been played).
 
 The log-normal probability distribution is given by
-\[P(x) = \frac{1}{xS\sqrt{2\pi}} e^{-\frac{1}{2}\left(\frac{\ln{x} - M}{S}\right)^2},\]
+\[P(x) = \frac{1}{xS\sqrt{2\pi}} e^{-\frac{1}{2}{\left(\frac{\ln{x} - M}{S}\right)}^2},\]
 where \(S\) and \(M\) are the standard deviation and mean of the logarithm of the number of moves in a game, respectively. Even though this is a continuous probability distribution, it is a good fit for the length of chess games as can be seen in the plot of the number of moves in a long gene pool run can be seen in Figure~\ref{log-norm-plot}. Instead of using the summation formula above to estimate the number of moves remaining in the game, the result can be approximated with integrals\footnote{Courtesy of Wolfram Alpha: \url{http://www.wolframalpha.com/}} to yield a closed-form expression using function available in native \cpp.
 \begin{align*}
 \sum_{i = n + 1}^\infty P(i)\times{}i &\approx \int_{n+1}^\infty P(t)tdt \\
-	&= \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty e^{-\frac{1}{2}\left(\frac{\ln{t} - M}{S}\right)^2}dt\\
-	&= \frac{1}{2}e^{M + S^2/2}\left[1 + \textrm{erf}\left(\frac{M + S^2 - \ln n}{S\sqrt{2}}\right)\right]
+	&= \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty e^{-\frac{1}{2}{\left(\frac{\ln{t} - M}{S}\right)}^2}dt\\
+	&= \frac{1}{2}e^{M + S^2/2}{\left[1 + \textrm{erf}{\left(\frac{M + S^2 - \ln n}{S\sqrt{2}}\right)}\right]}
 \end{align*}
 and
 \begin{align*}
 \sum_{i = n + 1}^\infty P(i) &\approx \int_{n+1}^\infty P(t)dt \\
-	&= \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty \frac{1}{t} e^{-\frac{1}{2}\left(\frac{\ln{t} - M}{S}\right)^2}dt \\
+	&= \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty \frac{1}{t} e^{-\frac{1}{2}{\left(\frac{\ln{t} - M}{S}\right)}^2}dt \\
 	&= \frac{1}{2}\left[1 + \textrm{erf}\left(\frac{M-\ln n}{S\sqrt{2}}\right)\right].
 \end{align*}
 Here, \(\textrm{erf}\) is the error function given by
@@ -179,15 +178,13 @@ N(n) = \left(e^{M + S^2/2}\right) \frac
 \begin{figure}[tbh]
 	\centering
 	\includegraphics[width=0.7\textwidth]{game_length_distribution.png}
-	\caption{First attempts at determining the distribution of moves in chess games. The black histogram shows the distribution of the number of moves in a game (with one move consisting of both a black and white play). The (mean) and (mode) designations in the legend indicate which statistic was used as the mean parameter of the fitted Poisson and normal distributions (neither of which are a good fit). The spike at 9~moves was created just after a change to the program that resulted in much faster changes in board state (see Section~\ref{board-submit-move-section} for details).}
-	\label{game-length-plot}
+	\caption{First attempts at determining the distribution of moves in chess games. The black histogram shows the distribution of the number of moves in a game (with one move consisting of both a black and white play). The (mean) and (mode) designations in the legend indicate which statistic was used as the mean parameter of the fitted Poisson and normal distributions (neither of which are a good fit). The spike at 9~moves was created just after a change to the program that resulted in much faster changes in board state (see Section~\ref{board-submit-move-section} for details).}\label{game-length-plot}
 \end{figure}
 
 \begin{figure}[tbh]
 	\centering
 	\includegraphics[width=0.7\textwidth]{game_length_log_norm_distribution.png}
-	\caption{The distribution of the number of moves in a game with a log-normal fit. The Log-Norm parameters listed are \(M\) for the Peak parameter and \(S\) for the Width parameter. To obtain a better fit, only games longer than 15~moves were considered, as shorter games were primarily by ill-adapted AIs (especially the spike at 9-move games), especially at the beginning of the gene pool run.}
-	\label{log-norm-plot}
+	\caption{The distribution of the number of moves in a game with a log-normal fit. The Log-Norm parameters listed are \(M\) for the Peak parameter and \(S\) for the Width parameter. To obtain a better fit, only games longer than 15~moves were considered, as shorter games were primarily by ill-adapted AIs (especially the spike at 9-move games), especially at the beginning of the gene pool run.}\label{log-norm-plot}
 \end{figure}
 
 If the number of moves left in the game is greater than the number of moves that will result in a clock reset, then the latter will determine how much time will be used. In a game with 40/5~time control, where five minutes are added to the clock every 40~moves, every 40th move can use all the remaining time since an extra five minutes will be added after the move. Whatever the final number of moves left is used, the time on the clock is divided by that number to determine how much time to take to choose a move.
@@ -200,17 +197,15 @@ T = k\frac{N_{\textrm{legal}}}{v}
 \]
 where \(T\) is the time needed to look ahead on this move, \(N_{\textrm{legal}}\) is the number of legal moves on the board after the move is made, \(v\) is the rate of position examinations, and \(k\) is a genetically determined speculation constant that adjusts the amount of time to use. The speed \(v\) is determined by counting the number of positions evaluated (leaf nodes in the game tree) and dividing by the amount of time spent evaluating during the previous move. If the time \(T\) is less than the time allocated for the move, the algorithm looks ahead (the search function recurses) to examine the moves the opponent can make in response. Otherwise, it evaluates the current position and moves on to the next legal move.
 
-The speculation constant is divided into three versions: one for board positions containing a capturing move, one for moves that actually capture, and one for board positions with no possibility of capture. Initial results indicate that the speculation constant for capturing moves tends to be much larger (near 2.0) than the constants for non-capturing moves or boards (usually much less than 1.0). This makes sense since capturing very rapidly changes the evaluation of boards, requiring further examination until the board reaches a less volatile state. Capturing a piece is only good if it doesn't result in a greater loss in subsequent moves. This is the problem that is usually solved in other chess engines by a quiescence search, in which all interesting\footnote{Meaning, captures that aren't immediately losing.} capturing moves are performed on a board before it is scored, thereby only scoring stable, ``quiescent'' board states \cite{quiescence-ref}.
+The speculation constant is divided into three versions: one for board positions containing a capturing move, one for moves that actually capture, and one for board positions with no possibility of capture. Initial results indicate that the speculation constant for capturing moves tends to be much larger (near 2.0) than the constants for non-capturing moves or boards (usually much less than 1.0). This makes sense since capturing very rapidly changes the evaluation of boards, requiring further examination until the board reaches a less volatile state. Capturing a piece is only good if it doesn't result in a greater loss in subsequent moves. This is the problem that is usually solved in other chess engines by a quiescence search, in which all interesting\footnote{Meaning, captures that aren't immediately losing.} capturing moves are performed on a board before it is scored, thereby only scoring stable, ``quiescent'' board states~\cite{quiescence-ref}.
 
-\subsubsection{Priority Threshold Gene}
-\label{priority-threshold}
+\subsubsection{Priority Threshold Gene}\label{priority-threshold}
 
 This gene stops any other board-scoring gene from running its \code{score\_board()} if that other gene's priority (rather, the absolute value of it) is too low, thus trading lower score detail for faster evaluations. It contains a genetically determined threshold value that is referenced during the genome's \code{evaluate\_board()} method. Instead of using the value directly, the actually threshold used is a random number uniformly distributed between 0.0 and the threshold value.  The reason for this is to prevent low-priority genes from being permanently cut off from evolutionary pressure while still providing a means of speeding up evaluations. This way, low-priority genes still feel evolutionary pressure to improve, or else their priorities feel further downward pressure so that they are called even less often.
 
 Formerly, one result of a mutation was to deactivate a gene entirely. Gene deactivation was thought to be a strategy for exiting local peaks in fitness since a gene could still mutate when deactivated. Since it felt no evolutionary pressure, the deactivated gene was free to random walk somewhere else, perhaps to a more advantageous state that would be discovered upon reactivation. However, it was found that, once deactivated, a gene would only very rarely become reactivated. This was for two reasons. First, a random walk is a very slow way to reach a better genome, especially with no evolutionary pressure. Second, and more importantly, a deactivated gene uses less time when evaluating a board or doing some other calculation. This means that Genetic AIs with more deactivated genes have an advantage in being able to evaluate more positions and see farther ahead in the game. This is a powerful incentive to keep genes deactivated, often leading to AIs that had most of their genome deactivated aside from the Total Force Gene. This would lead to gene pools where games only ended in draws, stagnating the pool. Now, all genes are always active with some probabilistic suppression for the lowest priority genes.
 
-\subsection{Board-Scoring Genes}
-\label{board-score-section}
+\subsection{Board-Scoring Genes}\label{board-score-section}
 These genes are used to give a score to a board state. The higher the score, the more desirable the moves that lead to this board. The score is calculated by
 \[Score = \sum_g Priority(g) \times sgn\left(Score(g,B)\right) \times \left|Score(g,B)\right|^{Exp(g)}\]
 where \(g\) represents each gene, \(\textrm{sgn(x)}\) gives then sign (+/-) of its argument, \(Priority(g)\) is a genetically determined scalar multiplicative factor that determines how much the gene's score of the board influences the final score, \(Score(g,B)\) is the result of the scoring procedure of that gene on a given board \(B\), and \(Exp(g)\) is an exponent associated with each gene. The \(\textrm{sgn}\) and absolute value functions are used so that negative scores can be used with non-integral exponents, which would otherwise result in \code{NaN} values (for \cpp's \code{std::pow()} function) or complex values (for symbolic math).
@@ -225,24 +220,24 @@ The exponent influences how changes in the score returned by the scoring functio
 First, the effect of a change in value of the heuristic score function depends on the size of the original value (assuming White is doing the scoring and all scores are positive):
 \begin{align*}
 \Delta S &= \left.\frac{\partial S}{\partial x}\right|_{x=0}\Delta x \\
-		 &= \left.\frac{\partial}{\partial x}\left[P(W+x)^E - PB^E\right]\right|_{x=0} \Delta x \\
-		 &= \left.PE(W+x)^{E-1}\right|_{x = 0} \Delta x \\
+		 &= \left.\frac{\partial}{\partial x}{\left[P{(W+x)}^E - PB^E\right]}\right|_{x=0} \Delta x \\
+		 &= {\left.PE{(W+x)}^{E-1}\right|}_{x = 0} \Delta x \\
 		 &= PEW^{E-1} \Delta x
 \end{align*}
 where \(S\) is the heuristic score for the board, \(x\) is the change in a gene's scoring function, \(P\) is the priority of the function, \(W\) is the score from White's perspective, \(B\) is the score from Black's perspective, and \(E\) is the exponent of the gene. For \(E > 1\), the changes to a larger starting score have a larger effect than changes to a smaller score. The reverse is true for \(E < 1\), in that changes to a small score have a larger effect than changes to a larger score. For \(E = 1\), the same size change leads to the same size effect.
 
-The second effect of the exponent is to determine how parallel changes in score for White and Black affect the heuristic score--for example, if White and Black trade identical pieces.\footnote{This effect was inspired by an observation by Alan Turing in \cite{turing-chess} (pg. 291) that using \(W/B\) was better than \(W-B\) for materials scores for White and Black since the latter does not favor trading pieces when ahead in material. The exponent formulation makes the preference for trading adjustable through mutation and general enough to use with all scoring genes.}
+The second effect of the exponent is to determine how parallel changes in score for White and Black affect the heuristic score---for example, if White and Black trade identical pieces.\footnote{This effect was inspired by an observation by Alan Turing in~\cite{turing-chess} (pg. 291) that using \(W/B\) was better than \(W-B\) for materials scores for White and Black since the latter does not favor trading pieces when ahead in material. The exponent formulation makes the preference for trading adjustable through mutation and general enough to use with all scoring genes.}
 \begin{align*}
 \Delta S &= \left.\frac{\partial S}{\partial x}\right|_{x = 0} \Delta x \\
-         &= \left.\frac{\partial}{\partial x}\left[P(W+x)^E - P(B+x)^E\right]\right|_{x = 0} \Delta x \\
-         &= \left.PE(W+x)^{E-1} - PE(B+x)^{E-1}\right|_{x = 0} \Delta x \\
+         &= \left.\frac{\partial}{\partial x}\left[P{(W+x)}^E - P{(B+x)}^E\right]\right|_{x = 0} \Delta x \\
+         &= \left.PE{(W+x)}^{E-1} - PE{(B+x)}^{E-1}\right|_{x = 0} \Delta x \\
          &= PE\left(W^{E-1} - B^{E-1}\right) \Delta x
 \end{align*}
 The following table shows the change in overall score \(\Delta S\) if White is ahead (\(W > B\)):
 \begin{center}
-\begin{tabular}[htb]{l|c c c}
-					& \(E < 1\)		& \(E = 1\)		& \(E > 1\) \\
-\hline
+\begin{tabular}[htb]{l c c c}
+						& \(E < 1\)		& \(E = 1\)		& \(E > 1\) \\
+\toprule
 \(\Delta x > 0\)		& \(-\)		& \(0\)			& \(+\)	\\
 \(\Delta x < 0\)		& \(+\)		& \(0\)			& \(-\)	\\
 \end{tabular}
@@ -251,8 +246,7 @@ As an example, if White has a Total Force Gene with an exponent less than one, t
 
 Some of the board-scoring genes are forced to have non-negative priorities as a way of speeding up the optimization. As an example, the Total Force Gene (Section~\ref{total-force}) has a non-negative priority because its scoring method relies on values from the Piece Strength Gene (Section~\ref{piece-strength}). The score returned is basically the product of the priority of the Total Force Gene and the values of the piece strengths. When both of these are allowed to mutate to both positive and negative values, they often get stuck near zero. When one changes sign, the other is driven towards changing sign as well to get back to better evaluation results. Forcing the priority to be positive puts a consistent pressure on the piece strengths to get to their proper values (whether positive or negative). This does not limit the behavior of the Genetic AIs since the piece strengths could evolve to negative strengths if the AI wants to lose its pieces.
 
-\subsubsection{Total Force Gene}
-\label{total-force}
+\subsubsection{Total Force Gene}\label{total-force}
 This gene sums the strength (according to the Piece Strength Gene) of all the player's pieces on the board. As noted in Section~\ref{board-score-section} above, the priority of this gene is restricted to be non-negative.
 
 \subsubsection{Freedom to Move Gene}
@@ -264,10 +258,9 @@ This gene measures the progress of all pawns towards the opposite side of the bo
 Here, \(S\) is the total score, the sum is over all pawns \(p\) of the scoring side, \(rank(p)\) is the rank position of the current pawn, \(home(p)\) is the home rank of the pawn (2~for White and~7~for Black), and \(N\) is the non-linear term. A positive \(N\) means more points are awarded as the pawn advances farther from the home rank. A negative \(N\) rewards moving pawns off the the home rank.
 
 \subsubsection{Passed Pawn Gene}
-The gene counts the number of pawns that cannot be stopped or captured by an opponent's pawns. That is, a pawn is a passed pawn if there are no pawns ahead of it in its file or any directly adjacent files. Partial points are awarded for pawns that have fewer pawns ahead than usual ($1/3$ for each free column ahead of mid-board pawns, $1/2$ for for pawns on the edge).
+The gene counts the number of pawns that cannot be stopped or captured by an opponent's pawns. That is, a pawn is a passed pawn if there are no pawns ahead of it in its file or any directly adjacent files. Partial points are awarded for pawns that have fewer pawns ahead than usual (\(1/3\) for each free column ahead of mid-board pawns, \(1/2\) for for pawns on the edge).
 
-\subsubsection{Opponent Pieces Targeted Gene}
-\label{opponent-pieces-targeted}
+\subsubsection{Opponent Pieces Targeted Gene}\label{opponent-pieces-targeted}
 This gene sums the total strength (as determined by the Piece Strength Gene) of the opponent's pieces currently under attack. Despite relying on values from the Piece Strength Gene, it is not restricted to non-negative priorities like the Total Force Gene because the Total Force Gene provides enough evolutionary pressure on the Piece Strength Gene to force it to a consistent sign.
 
 Interestingly, since both kings are always on the board, they always cancel each others effect in the Total Force Gene, leaving this gene alone to drive their strength value. The result of this is discussed in the results section (Section~\ref{piece-strength-with-king}).
@@ -319,7 +312,7 @@ An example genome file is shown below. Each genome starts with the \verb|ID:| li
 
 In each generation, the players in a gene pool are randomly matched up with each other to play a single game of chess. If the game ends with a winner, whether through checkmate or time violation, then the two players mate to produce an offspring by picking each gene randomly from either parent with equal probability. The offspring is then subject to a a single extra mutation procedure wherein two genes on average are individually mutated. Finally, the offspring replaces the loser in the gene pool. This way, some the genes of losing players are passed on and only slowly weeded out since a single game does not actually provide much information about the fitness of any gene with respect to game play.
 
-If the game ends in  a draw, then one of two things happens. With high probability--currently 95\%--the players are left as they are and will participate in the next generation. The other possibility is that one of the players is randomly picked to mate with either a randomly generated AI, or a randomly chosen past AI, even long dead ones. The chosen player is then replaced by the offspring. This happens with low probability because it destroys genetic information. By ``information,'' I mean filtered genomes. If a gene (including small variations, given the continuous nature of these genotypes) is present is a large percentage of the species, then that gene must have been present in a great number of AIs that were victorious in their games through many generations and many different opponents. Genes found in losing organisms slowly fade away as their host organisms fail to reproduce. However, it is necessary to keep a pool from stagnating due to never-ending drawn games. Bringing in a randomly generated AI injects new genetic information into the pool (though with low probability of high-quality information). Bringing back dead AIs injects good information from the past and should help to keep a gene pool from becoming trapped in a self-reinforcing, pathological playing style that only works against similar players. In effect, both of these strategies are meant to kick a gene pool off of a local peak of genetic fitness.
+If the game ends in a draw, then one of two things happens. With high probability (currently 95\%) the players are left as they are and will participate in the next generation. The other possibility is that one of the players is randomly picked to mate with either a randomly generated AI, or a randomly chosen past AI, even long dead ones. The chosen player is then replaced by the offspring. This happens with low probability because it destroys genetic information. By ``information,'' I mean filtered genomes. If a gene (including small variations, given the continuous nature of these genotypes) is present is a large percentage of the species, then that gene must have been present in a great number of AIs that were victorious in their games through many generations and many different opponents. Genes found in losing organisms slowly fade away as their host organisms fail to reproduce. However, it is necessary to keep a pool from stagnating due to never-ending drawn games. Bringing in a randomly generated AI injects new genetic information into the pool (though with low probability of high-quality information). Bringing back dead AIs injects good information from the past and should help to keep a gene pool from becoming trapped in a self-reinforcing, pathological playing style that only works against similar players. In effect, both of these strategies are meant to kick a gene pool out of a local peak of genetic fitness.
 
 One final means of preventing gene pool stagnation and preserving genetic diversity is the use of multiple gene pools. Each gene pool evolves separately for a long time, allowing each to genetically diverge. Then, every once in a long while (the time being user-specified), the best player from each pool is transferred to the next pool over. Thus, the best genes are further spread afield so that they can be tested against a wide range of opponents. A useful measure of a pool's strength is how long its best player survives when it enters a new pool.
 
@@ -368,7 +361,7 @@ Longest lived: 27 by ID 96392
 \end{verbatim}
 The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, Player 106479 is on a four-game winning streak since it was born (including victories both in this pool and in pool 2 where it was born). Player 106457 has drawn its last two games after its last win.
 
-The asterisk (\verb|*|) indicates an offspring of the result of a drawn match--in this case, from 106392 vs 106457, with the new AI replacing 106392. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
+The asterisk (\verb|*|) indicates an offspring of the result of a drawn match---in this case, from 106392 vs 106457, with the new AI replacing 106392. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
 
 
 \section{Some Consistent Results (in rough order of discovery)}
@@ -376,26 +369,23 @@ The asterisk (\verb|*|) indicates an offspring of the result of a drawn match--i
 Here are a few results that are reliably reproduced in multiple simulations. In these runs, there were three gene pools with 16~players each (so the number of games equaled the number of processors on my computer, i.e.,~8). Each game is played with 30~seconds per side for the entire game with no increment.
 
 \subsection{Piece values are rated in near-standard order.}
-In descending order of valuation by a Genetic\_AI: Queen, Rook, Bishop and Knight nearly equally, and Pawn. As time goes on,there is a lot of variation, especially in the relative order of the Rook, Knight, and Bishop. But, the standard order is preserved for the most part, as can be seen in Figure~\ref{piece-value-plot}.
+In descending order of valuation by a Genetic\_AI\@: Queen, Rook, Bishop and Knight nearly equally, and Pawn. As time goes on,there is a lot of variation, especially in the relative order of the Rook, Knight, and Bishop. But, the standard order is preserved for the most part, as can be seen in Figure~\ref{piece-value-plot}.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=\textwidth]{pawn-crash-strength-plot}
-	\caption{The evolution of the value of pieces to the AIs. The small bump near ID~\#120,000 in the strength of a pawn that caused the Pawn Advancement Gene crash seen in Figure~\ref{pawn-crash}}
-	\label{piece-value-plot}
+	\caption{The evolution of the value of pieces to the AIs. The small bump near ID~\#120,000 in the strength of a pawn that caused the Pawn Advancement Gene crash seen in Figure~\ref{pawn-crash}}\label{piece-value-plot}
 \end{figure}
 
-\subsubsection{Piece Strengths with the king}
-\label{piece-strength-with-king}
+\subsubsection{Piece Strengths with the king}\label{piece-strength-with-king}
 
 After assigning the king a strength entry in the Piece Strength Gene (see Section~\ref{piece-strength}), the other pieces retained their relative values, but the king evolved a very negative value. See Figure~\ref{piece-strength-with-king-plot}.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=\textwidth]{piece-strength-with-king-plot}
-	\caption{The evolution of piece strengths after adding an entry for the king.}
-	\label{piece-strength-with-king-plot}
+	\caption{The evolution of piece strengths after adding an entry for the king.}\label{piece-strength-with-king-plot}
 \end{figure}
 
-My current guess is that the king entry is affected by the Opponent Pieces Targeted  Gene and the Look-Ahead Gene--specifically the Capturing Speculation Constant. A large value for the Capturing Speculation Constant means that the board position that is actually evaluated has a smaller chance of having pieces threatened with capture. It is even less likely that the opponent's king is in check since this usually results in a reduced number of moves available, making recursion to the next move more likely. Thus, an evaluated board position with only the king in check is see as rather worthless unless offset by an attack on another piece that will probably result in capture. The king cannot be captured, so attacking it had better serve some other purpose. A similar evolution is seen in the Sphere of Influence Gene in that the King Target Factor is often negative.
+My current guess is that the king entry is affected by the Opponent Pieces Targeted  Gene and the Look-Ahead Gene---specifically the Capturing Speculation Constant. A large value for the Capturing Speculation Constant means that the board position that is actually evaluated has a smaller chance of having pieces threatened with capture. It is even less likely that the opponent's king is in check since this usually results in a reduced number of moves available, making recursion to the next move more likely. Thus, an evaluated board position with only the king in check is see as rather worthless unless offset by an attack on another piece that will probably result in capture. The king cannot be captured, so attacking it had better serve some other purpose. A similar evolution is seen in the Sphere of Influence Gene in that the King Target Factor is often negative.
 
 This conclusion is corroborated by the King Target Bonus in the Opponent Pieces Targeted Gene (see Section~\ref{opponent-pieces-targeted}), which always has a negative or near-zero value that causes a preference for piece arrangements that attack more of the board away from the king.
 
@@ -405,26 +395,22 @@ Of the games ending in checkmate, white wins about 10\% more often than black. F
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=\textwidth]{win-lose-plot}
-	\caption{The percentage of games won by white, black, or neither over the course of a gene pool run. The advantage that white has over black seems persistent. Also, as the AIs evolve, the rate of draws decreases, presumably because they evolve a genome that can tell the difference between a good and bad position.}
-	\label{win-lose-plot}
+	\caption{The percentage of games won by white, black, or neither over the course of a gene pool run. The advantage that white has over black seems persistent. Also, as the AIs evolve, the rate of draws decreases, presumably because they evolve a genome that can tell the difference between a good and bad position.}\label{win-lose-plot}
 \end{figure}
 
-\subsection{The Total Force Gene and the Pawn Advancement Gene typically dominate.}
-\label{total-force-and-pawn-result}
+\subsection{The Total Force Gene and the Pawn Advancement Gene typically dominate.}\label{total-force-and-pawn-result}
 
 That the Total Force Gene dominates is fairly predictable. Highly skilled human players will usually resign after the loss of a minor (bishop or knight) piece without compensation.
 
 The Pawn Advancement Gene usually gains higher priority first, probably because it is the simplest gene that makes an immediate difference in the game. Push the pawns forward both threatens the opponent's pieces with low-risk attacks and increases the chances of promotion.
 
-\subsubsection{The Pawn Advancement Gene is a temporary substitute for a valid value of the pawn in the Piece Strength Gene.}
-\label{pawn-result}
+\subsubsection{The Pawn Advancement Gene is a temporary substitute for a valid value of the pawn in the Piece Strength Gene.}\label{pawn-result}
 
 Near the birth of the Genetic AI with ID~\#120,000, the Pawn Advancement Gene suddenly died off, with nearly all AIs in the gene pool deactivating the gene simultaneously (see Figure~\ref{pawn-crash}).
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=0.7\textwidth]{pawn-advancement-crash}
-	\caption{The sudden crash of the Pawn Advancement Gene}
-	\label{pawn-crash}
+	\caption{The sudden crash of the Pawn Advancement Gene}\label{pawn-crash}
 \end{figure}
 
 The only correlation with another gene near that time is in the Piece Strength Gene (see Figure~\ref{piece-value-plot}). The change is small, but in the comparison plot shown in Figure~\ref{pawn-crash}, one can see that the pawn strength has a small jump in value near ID~\#120,000. This is the first time that all of the AIs in the gene pools have strictly positive values for the pawn. Prior to this, the value of a pawn was zero on average. When mutations would push the pawn value higher, it would be weighted too much compared to other pieces, leading to losses and a lower value for the remaining population. It was only when the other pieces reached a large enough value that the pawn value could be properly weighted and sustained. Until this happened, the Pawn Advancement Gene evolved a large value in step with the Total Force Gene since pawns are not actually valueless in real games. Until the Piece Strength Gene transition occurred, the Pawn Advanment Gene served as a proxy for the value of a pawn that was more easily tuned in comparison with the Total Force Gene and Piece Strength Gene.
@@ -437,9 +423,9 @@ Even when the Piece Strength Gene has not been tuned at all, the queen is the ov
 
 As an example, the following is a count of all promotions in a gene pool run after more than 300,000 gaes.
 \begin{center}
-\begin{tabular}{l|r}
+\begin{tabular}{l r}
 	Piece & Promotions \\
-\hline
+\toprule
 	Bishop & 2232  \\
 	Knight  &  1648 \\
 	Rook    &  7215 \\
@@ -458,8 +444,7 @@ The plot in Figure~\ref{game-ending-plot} shows the counts of how games end.
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=\textwidth]{game-endings-log-plot}
-	\caption{A log-log scale of the percentage of games with various endings. Note that the time forfeits don't get going until about 30,000 games in.}
-	\label{game-ending-plot}
+	\caption{A log-log scale of the percentage of games with various endings. Note that the time forfeits don't get going until about 30,000 games in.}\label{game-ending-plot}
 \end{figure}
 It seems that the Look Ahead Gene does not experience significant evolutionary pressure until the board-scoring genes have been tuned to a semi-decent state. My hypothesis is that if the board-scoring function is not able to tell a good position from bad, then looking ahead only increases the risk of losing by time forfeiture with no benefit. However, when the board-scoring genes are in a decent state, the increase in look ahead is very quick. This leads to a rapid increase in the rate of deaths by running out of time, but apparently this is worth the risk as those who are more conservative with their time lose to those who see farther ahead.
 
@@ -467,8 +452,7 @@ It seems that the Look Ahead Gene does not experience significant evolutionary p
 
 This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game. Or, the Opponent Pieces Targeted Gene relieves this gene of having to consider legal moves (much the same as how the Pawn value in the Piece Strength Gene and the priority of the Pawn Advancement Gene interact (Section~\ref{pawn-result})).
 
-\subsection{Genes with properly lower priorities have to wait for higher priority genes to evolve their higher priority before evolving themselves.}
-\label{lower-priority-waits}
+\subsection{Genes with properly lower priorities have to wait for higher priority genes to evolve their higher priority before evolving themselves.}\label{lower-priority-waits}
 
 Some genes are more important than others. The Total Force Gene dominates because it is nearly always more difficult to win when behind in pieces. So, if another gene evolves too high a priority, it hinders game play and will soon be killed off. This means that, because the rate of evolution is the same for all gene priorities, that genes with a lower proper priority\footnote{By proper priority, I mean the as yet unknown relative priority compared with other genes that leads to winning game play. The proper priorities are what this program should be evolving towards.} need to wait for those genes with higher proper priority to evolve a large enough value. Before then, it is too likely for a random mutation to push a lower priority too high and get a gene killed off.
 
@@ -478,7 +462,7 @@ The same goes for the Piece Strength Gene with respect to the value of each type
 
 \subsection{Overview}
 
-Since this software is still in heavy development, the following sections are likely to change. As such, here is a summary of aspects of the code that might seem weird upon first--and possibly every other--reading. Specifically, if this is modern \cpp{}, why are there pointers everywhere?
+Since this software is still in heavy development, the following sections are likely to change. As such, here is a summary of aspects of the code that might seem weird upon first---and possibly every other---reading. Specifically, if this is modern \cpp{}, why are there pointers everywhere?
 
 Though the operators \code{new} and \code{delete} appear nowhere in the code and smart pointers are used, raw pointers appear everywhere in the code. The driving reason for using pointers in the first place is the need for polymorphic storage. Classes representing pieces are derived from a \code{Piece} class and need to be stored within \code{Board} class instances (namely, in a \code{std::array<const Piece*, 64>} where the position in the array corresponds to a position on the board). Classes representing moves are either instances of the \code{Move} class or derivative classes, and each type of piece stores a list of potentially legal moves.
 
@@ -497,7 +481,7 @@ Finally, the genome of a \code{Genetic\_AI} is stored as a list of \code{std::un
 
 \subsection{Board}
 
-\subsubsection{ctor()}
+\subsubsection{ctor()} % chktex 26
 
 Constructs a board in the starting state of a standard chess game.
 
@@ -513,8 +497,7 @@ Returns a \code{std::vector} of \code{Move}s representing all the legal moves of
 
 Returns a list of moves that are not currently legal but, if they were, would have the moved piece land on a square inside the board. For example, at the beginning of a standard game, the white rook on a1 has no legal moves, as it is blocked in every direction. But, Ra4 would be in the list of other moves, since a4 is on the board and would be legally reachable if the pawn on a2 was not present. Moves to the left or backwards will not be listed, since these moves land outside the board.
 
-\subsubsection[submit\_move()]{submit\_move(const Move\& move)}
-\label{board-submit-move-section}
+\subsubsection[submit\_move()]{submit\_move(const Move\& move)}\label{board-submit-move-section}
 
 This method causes the state of the \code{Board} to be changed by enacting the move represented by the argument. Only copies of a move returned from \code{legal\_moves()} will be accepted. Otherwise, an assertion will fail in debug builds or undefined behavior will result in release builds. The method returns a \code{Game\_Result} \code{struct} that indicates whether the game has ended and the reason for the ending. Formerly, the end of a game was signaled by throwing an exception derived from \code{Game\_Ending\_Exception}. However, this was found dramatically slow down the game tree search due to the cost of throwing and catching multiple exceptions.
 
@@ -522,8 +505,7 @@ This method causes the state of the \code{Board} to be changed by enacting the m
 
 Returns a pointer to a \code{Piece*} (or \code{const Piece*} when the \code{Board} instance is \code{const}) representing the piece on the square identified by the arguments. An empty square is represented by a \code{nullptr}.
 
-\subsubsection{Important Notes}
-\label{board_important_notes}
+\subsubsection{Important Notes}\label{board_important_notes}
 The \code{Move}s returned by the methods \code{Board::get\_move()} and \code{Board::legal\_moves()} are the only moves guaranteed to be valid for a given \code{Board} instance, and only for the unmodified originating board or an unmodified copy. Calling \code{Board::submit\_move()} with a \code{Move} from a different source will have three possible results:
 \begin{enumerate}
 	\item The move happens to be legal, in which case the game continues.
@@ -552,7 +534,7 @@ The legality of moves are only checked by the \code{Board} methods that generate
 G.S. Hornby, A. Globus, D.S. Linden, J.D. Lohn, ``Automated Antenna Design with Evolutionary Algorithms.'' AIAA
 
 \bibitem{evolved-stellarator}
-W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a genetic algorithm for compact stellarator coil design.'' IAEA Nuclear Fusion, Vol. 41, No. 9. 1185-1195
+W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a genetic algorithm for compact stellarator coil design.'' IAEA Nuclear Fusion, Vol. 41, No. 9. 1185--1195
 
 \bibitem{log-norm-wiki}
 \url{https://en.wikipedia.org/wiki/Log-normal\_distribution}
