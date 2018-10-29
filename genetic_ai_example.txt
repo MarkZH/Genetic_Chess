@@ -1,73 +1,74 @@
-ID: 34042
+ID: 35915
 Name: Piece Strength Gene
-B: 7.34897
-K: 0.18466
-N: 3.57263
-P: 0.0283209
-Q: 13.427
-R: 6.56085
+B: 7.6153
+K: -6.3908
+N: 5.29567
+P: -0.022297
+Q: 11.8414
+R: 13.8875
 
 Name: Look Ahead Gene
-Can Capture Speculation Constant: 0
-Game Length Uncertainty: 0.363839
-Mean Game Length: 42.9669
-Speculation Constant: 1.0064
-Will Capture Speculation Constant: 1.8993
+Can Capture Speculation Addition: 1.48676
+Game Length Uncertainty: 0.359439
+Mean Game Length: 54.1218
+Speculation Constant: 1.12852
+Will Capture Speculation Addition: 1.55846
 
 Name: Priority Threshold Gene
-Threshold: 20.2418
+Threshold: 18.3031
 
 Name: Total Force Gene
-Exponent: 1.1151
-Priority: 505.626
+Exponent: 1.06805
+Priority: 296.307
 
 Name: Freedom to Move Gene
-Exponent: 0.957536
-Priority: 51.6324
+Exponent: 0.788805
+Priority: 62.4201
 
 Name: Pawn Advancement Gene
-Exponent: 0.956428
-Non-linearity: 0.0618441
-Priority: 98.3997
+Exponent: 0.988908
+Non-linearity: -0.0506272
+Priority: 124.693
 
 Name: Passed Pawn Gene
-Exponent: 0.916329
-Priority: 52.8365
+Exponent: 1.09078
+Priority: -11.7025
 
 Name: Opponent Pieces Targeted Gene
-Exponent: 0.860747
-Priority: 106.144
+Exponent: 0.731673
+Priority: 57.067
 
 Name: Sphere of Influence Gene
-Exponent: 1.10548
-Illegal Square Score: 5.63342
-King Target Factor: -1.74483
-Legal Square Score: 0.0781624
-Priority: 385.528
+Exponent: 0.915896
+Illegal Square Score: 2.13345
+King Target Factor: -1.54328
+Legal Square Score: 0.668739
+Priority: 315.525
 
 Name: King Confinement Gene
-Enemy Block Score: 3.36279
-Exponent: 1.16013
-Friendly Block Score: 7.80593
-Priority: 0
+Enemy Block Score: -0.83681
+Exponent: 0.840082
+Friendly Block Score: 1.27162
+Maximum Distance: 3
+Priority: 17.2917
 
 Name: King Protection Gene
-Exponent: 1.07687
-Priority: 56.8975
+Exponent: 0.978663
+Priority: 57.2245
 
 Name: Castling Possible Gene
-Exponent: 0.868891
-Kingside Preference: 1.19635
-Priority: 22.1253
-Queenside Preference: 0.805947
+Exponent: 1.05404
+Kingside Preference: 0.214334
+Priority: 14.2417
+Queenside Preference: -1.67294
 
 Name: Stacked Pawns Gene
-Exponent: 0.891757
-Priority: -35.89
+Exponent: 0.877135
+Priority: -49.4367
 
 Name: Pawn Islands Gene
-Exponent: 0.893094
-Priority: 2.029
+Exponent: 1.06193
+Priority: 7.95872
 
 END
 
