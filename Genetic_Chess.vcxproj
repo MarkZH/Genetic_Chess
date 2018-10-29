@@ -262,6 +262,7 @@
     <ClCompile Include="src\players\Genetic_AI.cpp" />
     <ClCompile Include="src\players\Human_Player.cpp" />
     <ClCompile Include="src\Players\Minimax_AI.cpp" />
+    <ClCompile Include="src\Players\Monte_Carlo_AI.cpp" />
     <ClCompile Include="src\players\Outside_Player.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
     <ClCompile Include="src\players\Random_AI.cpp" />
@@ -319,6 +320,7 @@
     <ClInclude Include="include\players\Genetic_AI.h" />
     <ClInclude Include="include\players\Human_Player.h" />
     <ClInclude Include="include\Players\Minimax_AI.h" />
+    <ClInclude Include="include\Players\Monte_Carlo_AI.h" />
     <ClInclude Include="include\players\Outside_Player.h" />
     <ClInclude Include="include\players\Player.h" />
     <ClInclude Include="include\players\Random_AI.h" />
