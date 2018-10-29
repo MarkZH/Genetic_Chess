@@ -54,8 +54,8 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&, siz
         {
             if(castling_index + depth > last_move_index) // castling has not occured on the actual board
             {
-                return (board.game_record()[castling_index]->file_change() > 0 ?
-                        kingside_preference : queenside_preference)/normalizing_factor;
+                return Math::sign(board.game_record()[castling_index]->file_change() > 0 ?
+                                  kingside_preference : queenside_preference);
             }
             else // castling already happened in past of actual board, no longer relevant
             {
@@ -76,11 +76,22 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&, siz
 
     for(auto rook_file : {'a', 'h'})
     {
+        auto preference = (rook_file == 'h' ? kingside_preference : queenside_preference);
+        int files_to_clear = std::abs(rook_file - king_start_file) - 1;
+        double score_per_clear_square = preference/(files_to_clear + 3);
+
+        auto king_end_file = (rook_file == 'a' ? 'c' : 'g');
+
+        // Score if castling is currently legal (all intermediate pieces removed
+        // and no attacking pieces preventing move).
+        if(board.is_legal(king_start_file, base_rank, king_end_file, base_rank))
+        {
+            score += score_per_clear_square*(files_to_clear + 2); // just below full preference score
+            continue;
+        }
+
         if( ! board.piece_has_moved(rook_file, base_rank))
         {
-            auto preference = (rook_file == 'h' ? kingside_preference : queenside_preference);
-            int files_to_clear = std::abs(rook_file - king_start_file) - 1;
-            double score_per_clear_square = preference/(files_to_clear + 2);
             score += score_per_clear_square; // score for keeping rook unmoved
 
             // Add score for clearing pieces between king and rook
