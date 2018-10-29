@@ -24,9 +24,7 @@ class Look_Ahead_Gene : public Gene
         double time_to_examine(const Board& board, const Clock& clock) const;
 
         // How much extra time to allocate due to alpha-beta pruning
-        double speculation_time_factor(const Board& pre_move_board,
-                                       const Board& post_move_board,
-                                       const Move& move) const;
+        double speculation_time_factor(const Board& board) const;
 
     protected:
         void reset_properties() const override;
@@ -40,10 +38,10 @@ class Look_Ahead_Gene : public Gene
         double speculation_constant;
 
         // how much extra time to allocate when capture moves are possible (but not taken)
-        double can_capture_speculation_constant;
+        double can_capture_speculation_addition;
 
         // how much extra time to allocate when the current move captures
-        double will_capture_speculation_constant;
+        double will_capture_speculation_addition;
 
         double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
         void gene_specific_mutation() override;

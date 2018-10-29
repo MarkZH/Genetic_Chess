@@ -49,9 +49,7 @@ class Minimax_AI : public Player
 
         // Time management
         virtual double time_to_examine(const Board& board, const Clock& clock) const = 0;
-        virtual double speculation_time_factor(const Board& pre_move_board,
-                                               const Board& post_move_board,
-                                               const Move& move) const = 0;
+        virtual double speculation_time_factor(const Board& board) const = 0;
 
         // Scoring output
         double centipawn_value() const;
