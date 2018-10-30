@@ -27,11 +27,6 @@ Clock::Clock(double duration_seconds, size_t moves_to_reset, double increment_se
     moves[BLACK] = 0;
 }
 
-bool Clock::is_running() const
-{
-    return clocks_running;
-}
-
 Game_Result Clock::punch()
 {
     assert(clocks_running);
