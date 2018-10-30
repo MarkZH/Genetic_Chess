@@ -40,7 +40,7 @@ class Minimax_AI : public Player
 
         // Evaluation method
         double evaluate(const Board& board,
-                        Game_Result move_result,
+                        const Game_Result& move_result,
                         Color perspective,
                         size_t depth) const;
         virtual double internal_evaluate(const Board& board,
@@ -65,7 +65,7 @@ class Minimax_AI : public Player
 
         Game_Tree_Node_Result create_result(const Board& board,
                                             Color perspective,
-                                            Game_Result move_result,
+                                            const Game_Result& move_result,
                                             size_t depth) const;
 
         // Output thinking to stdout

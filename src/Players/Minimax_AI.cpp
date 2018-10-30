@@ -295,7 +295,7 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const
 
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
                                                 Color perspective,
-                                                Game_Result move_result,
+                                                const Game_Result& move_result,
                                                 size_t depth) const
 {
     return {evaluate(board, move_result, perspective, depth),
@@ -317,7 +317,7 @@ void Minimax_AI::calibrate_thinking_speed() const
     // more reasonable value.
 }
 
-double Minimax_AI::evaluate(const Board & board, Game_Result move_result, Color perspective, size_t depth) const
+double Minimax_AI::evaluate(const Board & board, const Game_Result& move_result, Color perspective, size_t depth) const
 {
     if(move_result.game_has_ended())
     {
