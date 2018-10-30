@@ -19,7 +19,6 @@ class Piece
 
         std::string pgn_symbol() const;
         char fen_symbol() const;
-        std::string ascii_art(size_t row) const;
         Color color() const;
 
         bool can_move(const Move* move) const;
@@ -29,8 +28,6 @@ class Piece
         Piece_Type type() const;
 
     protected:
-        std::vector<std::string> ascii_art_lines;
-
         // Add a move to the list that is only legal when starting from a certain square
         // (e.g., castling, pawn double move, promotion, etc.)
         void add_legal_move(std::unique_ptr<Move> move);

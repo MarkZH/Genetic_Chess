@@ -21,15 +21,6 @@ Piece::~Piece()
 {
 }
 
-std::string Piece::ascii_art(size_t row) const
-{
-    if(row >= ascii_art_lines.size())
-    {
-        return std::string(ascii_art_lines.front().size(), ' ');
-    }
-    return ascii_art_lines[row];
-}
-
 Color Piece::color() const
 {
     return my_color;

@@ -17,14 +17,4 @@ Queen::Queen(Color color_in) : Piece(color_in, "Q", QUEEN)
             }
         }
     }
-
-    // ASCII Art http://ascii.co.uk/art/chess (VK)
-    ascii_art_lines.push_back(" \\^/ ");
-    ascii_art_lines.push_back(" ) ( ");
-    ascii_art_lines.push_back("(___}");
-    if(color() == BLACK)
-    {
-        ascii_art_lines[1].replace(2, 1, "#");
-        ascii_art_lines[2].replace(1, 3, "###");
-    }
 }
