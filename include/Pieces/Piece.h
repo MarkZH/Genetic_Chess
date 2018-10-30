@@ -14,7 +14,7 @@ class Move;
 class Piece
 {
     public:
-        Piece(Color color_in, const std::string& symbol_in, Piece_Type type_in);
+        Piece(Color color_in, Piece_Type type_in);
         virtual ~Piece() = 0;
 
         std::string pgn_symbol() const;
@@ -37,7 +37,6 @@ class Piece
 
     private:
         Color my_color;
-        std::string symbol;
         Piece_Type my_type;
 
         // Contains pointers to move data

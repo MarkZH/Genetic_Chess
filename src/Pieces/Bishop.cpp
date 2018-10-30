@@ -7,7 +7,7 @@
 #include "Pieces/Piece_Types.h"
 #include "Game/Color.h"
 
-Bishop::Bishop(Color color_in) : Piece(color_in, "B", BISHOP)
+Bishop::Bishop(Color color_in) : Piece(color_in, BISHOP)
 {
     for(int d_rank : {-1, 1})
     {

@@ -10,7 +10,7 @@
 #include "Moves/Castle.h"
 #include "Moves/Direction.h"
 
-King::King(Color color_in) : Piece(color_in, "K", KING)
+King::King(Color color_in) : Piece(color_in, KING)
 {
     for(int d_rank = -1; d_rank <= 1; ++d_rank)
     {

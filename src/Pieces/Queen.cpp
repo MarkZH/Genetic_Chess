@@ -3,7 +3,7 @@
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
 
-Queen::Queen(Color color_in) : Piece(color_in, "Q", QUEEN)
+Queen::Queen(Color color_in) : Piece(color_in, QUEEN)
 {
     for(int d_file = -1; d_file <= 1; ++d_file)
     {

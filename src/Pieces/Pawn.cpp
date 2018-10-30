@@ -20,7 +20,7 @@
 #include "Pieces/Bishop.h"
 #include "Pieces/Queen.h"
 
-Pawn::Pawn(Color color_in) : Piece(color_in, "P", PAWN)
+Pawn::Pawn(Color color_in) : Piece(color_in, PAWN)
 {
     // Ranks where pawns can exist
     auto base_rank = (color_in == WHITE ? 2 : 7);

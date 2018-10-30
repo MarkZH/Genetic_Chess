@@ -10,9 +10,8 @@
 #include "Moves/Move.h"
 
 
-Piece::Piece(Color color_in, const std::string& symbol_in, Piece_Type type_in) :
+Piece::Piece(Color color_in, Piece_Type type_in) :
     my_color(color_in),
-    symbol(symbol_in),
     my_type(type_in)
 {
 }
@@ -28,12 +27,36 @@ Color Piece::color() const
 
 std::string Piece::pgn_symbol() const
 {
-    return type() == PAWN ? std::string{} : symbol;
+    return type() == PAWN ? std::string{} : std::string(1, std::toupper(fen_symbol()));
 }
 
 char Piece::fen_symbol() const
 {
-    return (my_color == WHITE ? std::toupper(symbol[0]) : std::tolower(symbol[0]));
+    char symbol;
+    switch(type())
+    {
+        case PAWN:
+            symbol = 'P';
+            break;
+        case ROOK:
+            symbol = 'R';
+            break;
+        case KNIGHT:
+            symbol = 'N';
+            break;
+        case BISHOP:
+            symbol = 'B';
+            break;
+        case QUEEN:
+            symbol = 'Q';
+            break;
+        case KING:
+            symbol = 'K';
+            break;
+        default:
+            throw std::runtime_error("Program bug: Invalid piece type: " + std::to_string(type()));
+    }
+    return (my_color == WHITE ? symbol : std::tolower(symbol));
 }
 
 bool Piece::can_move(const Move* move) const

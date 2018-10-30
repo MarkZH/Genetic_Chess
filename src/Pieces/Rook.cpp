@@ -6,7 +6,7 @@
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
 
-Rook::Rook(Color color_in) : Piece(color_in, "R", ROOK)
+Rook::Rook(Color color_in) : Piece(color_in, ROOK)
 {
     for(int d_file = -1; d_file <= 1; ++d_file)
     {

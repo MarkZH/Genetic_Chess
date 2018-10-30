@@ -9,7 +9,7 @@
 #include "Moves/Move.h"
 
 
-Knight::Knight(Color color_in) : Piece(color_in, "N", KNIGHT)
+Knight::Knight(Color color_in) : Piece(color_in, KNIGHT)
 {
     for(auto d_file : {1, 2})
     {
