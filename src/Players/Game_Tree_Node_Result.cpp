@@ -4,6 +4,7 @@
 #include <utility>
 
 #include "Game/Color.h"
+#include "Utility.h"
 
 double Game_Tree_Node_Result::corrected_score(Color query) const
 {
@@ -13,7 +14,19 @@ double Game_Tree_Node_Result::corrected_score(Color query) const
 std::pair<double, int> Game_Tree_Node_Result::value(Color query) const
 {
     auto standardized_score = corrected_score(query);
-    return {standardized_score, int(depth())*(standardized_score > 0 ? -1 : 1)};
+    if(std::isinf(standardized_score))
+    {
+        // standardized_score == +infinity means a shallower depth
+        // is better, and vice versa for -infintiy,
+        // so make the depth the opposite sign of the score
+        return {standardized_score,
+                -Math::sign(standardized_score)*int(depth())};
+    }
+    else
+    {
+        // For non-winning results, the depth doesn't matter
+        return {standardized_score, 0};
+    }
 }
 
 size_t Game_Tree_Node_Result::depth() const
