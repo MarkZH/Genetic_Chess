@@ -79,7 +79,7 @@ class Board
         bool safe_for_king(char file, int rank, Color king_color) const;
         bool is_en_passant_targetable(char file, int rank) const;
         bool piece_has_moved(char file, int rank) const;
-        Square find_king(Color color) const;
+        const Square& find_king(Color color) const;
         bool king_is_in_check() const;
         bool king_is_in_check_after_move(const Move& move) const;
         Square piece_is_pinned(char file, int rank) const; // returns pinning square or {'\0', 0} if none
