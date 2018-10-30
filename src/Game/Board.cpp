@@ -18,12 +18,6 @@
 
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
-#include "Pieces/Pawn.h"
-#include "Pieces/Rook.h"
-#include "Pieces/Knight.h"
-#include "Pieces/Bishop.h"
-#include "Pieces/King.h"
-#include "Pieces/Queen.h"
 
 #include "Moves/Move.h"
 #include "Moves/Threat_Generator.h"
@@ -37,19 +31,19 @@
 #include "Utility.h"
 
 // NOTE: The pawn must be created last since it takes pointers to the other pieces
-const Rook   Board::white_rook(WHITE);
-const Knight Board::white_knight(WHITE);
-const Bishop Board::white_bishop(WHITE);
-const Queen  Board::white_queen(WHITE);
-const King   Board::white_king(WHITE);
-const Pawn   Board::white_pawn(WHITE);
+const Piece Board::white_rook(WHITE, ROOK);
+const Piece Board::white_knight(WHITE, KNIGHT);
+const Piece Board::white_bishop(WHITE, BISHOP);
+const Piece Board::white_queen(WHITE, QUEEN);
+const Piece Board::white_king(WHITE, KING);
+const Piece Board::white_pawn(WHITE, PAWN);
 
-const Rook   Board::black_rook(BLACK);
-const Knight Board::black_knight(BLACK);
-const Bishop Board::black_bishop(BLACK);
-const Queen  Board::black_queen(BLACK);
-const King   Board::black_king(BLACK);
-const Pawn   Board::black_pawn(BLACK);
+const Piece Board::black_rook(BLACK, ROOK);
+const Piece Board::black_knight(BLACK, KNIGHT);
+const Piece Board::black_bishop(BLACK, BISHOP);
+const Piece Board::black_queen(BLACK, QUEEN);
+const Piece Board::black_king(BLACK, KING);
+const Piece Board::black_pawn(BLACK, PAWN);
 
 const Piece* Board::piece_instance(Piece_Type piece_type, Color color)
 {

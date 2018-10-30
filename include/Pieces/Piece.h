@@ -15,7 +15,6 @@ class Piece
 {
     public:
         Piece(Color color_in, Piece_Type type_in);
-        virtual ~Piece() = 0;
 
         std::string pgn_symbol() const;
         char fen_symbol() const;
@@ -27,14 +26,6 @@ class Piece
 
         Piece_Type type() const;
 
-    protected:
-        // Add a move to the list that is only legal when starting from a certain square
-        // (e.g., castling, pawn double move, promotion, etc.)
-        void add_legal_move(std::unique_ptr<Move> move);
-
-        // Add a move to the list that is legal starting from all squares
-        void add_standard_legal_move(int file_step, int rank_step);
-
     private:
         Color my_color;
         Piece_Type my_type;
@@ -44,6 +35,20 @@ class Piece
 
         // Holds lists of possible legal moves indexed by starting square (using Board::board_index())
         std::array<std::vector<const Move*>, 64> legal_moves;
+
+        void add_pawn_moves();
+        void add_rook_moves();
+        void add_knight_moves();
+        void add_bishop_moves();
+        void add_king_moves();
+
+        // Add a move to the list that is only legal when starting from a certain square
+        // (e.g., castling, pawn double move, promotion, etc.)
+        void add_legal_move(std::unique_ptr<Move> move);
+
+        // Add a move to the list that is legal starting from all squares
+        void add_standard_legal_move(int file_step, int rank_step);
+
 };
 
 #endif // PIECE_H

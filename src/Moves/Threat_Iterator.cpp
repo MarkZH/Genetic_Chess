@@ -5,7 +5,6 @@
 #include "Game/Color.h"
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
-#include "Pieces/Knight.h"
 #include "Moves/Move.h"
 
 Threat_Iterator::Threat_Iterator(char target_file_in,

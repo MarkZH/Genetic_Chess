@@ -16,12 +16,6 @@ class Game_Result;
 class Player;
 
 class Piece;
-class Pawn;
-class Rook;
-class Knight;
-class Bishop;
-class Queen;
-class King;
 
 class Move;
 class Castle;
@@ -123,19 +117,19 @@ class Board
         std::array<size_t, 2> castling_index;
 
         // Pieces
-        static const Rook   white_rook;
-        static const Knight white_knight;
-        static const Bishop white_bishop;
-        static const Queen  white_queen;
-        static const King   white_king;
-        static const Pawn   white_pawn;
+        static const Piece white_rook;
+        static const Piece white_knight;
+        static const Piece white_bishop;
+        static const Piece white_queen;
+        static const Piece white_king;
+        static const Piece white_pawn;
 
-        static const Rook   black_rook;
-        static const Knight black_knight;
-        static const Bishop black_bishop;
-        static const Queen  black_queen;
-        static const King   black_king;
-        static const Pawn   black_pawn;
+        static const Piece black_rook;
+        static const Piece black_knight;
+        static const Piece black_bishop;
+        static const Piece black_queen;
+        static const Piece black_king;
+        static const Piece black_pawn;
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
