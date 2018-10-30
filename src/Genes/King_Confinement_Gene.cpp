@@ -79,7 +79,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     std::vector<Square> square_queue;
     square_queue.reserve(64);
     auto perspective = board.whose_turn();
-    auto king_square = board.find_king(perspective);
+    const auto& king_square = board.find_king(perspective);
     square_queue.push_back(king_square);
 
     std::array<int, 64> distance;

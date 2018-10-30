@@ -50,7 +50,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
 {
     std::array<double, 64> square_score{};
     std::array<size_t, 64> distance_to_king{};
-    auto opponent_king_square = board.find_king(opposite(board.whose_turn()));
+    const auto& opponent_king_square = board.find_king(opposite(board.whose_turn()));
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)

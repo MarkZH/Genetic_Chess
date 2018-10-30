@@ -111,8 +111,8 @@ Board::Board() :
         }
     }
 
-    assert(king_location[WHITE]);
-    assert(king_location[BLACK]);
+    assert(find_king(WHITE));
+    assert(find_king(BLACK));
 
     add_board_position_to_repeat_record(); // Count initial position
     recreate_move_caches();
@@ -184,7 +184,7 @@ Board::Board(const std::string& fen) :
                         place_piece(piece_instance(QUEEN, color), file, rank);
                         break;
                     case 'K':
-                        if(king_location[color])
+                        if(find_king(color))
                         {
                             fen_error(fen, "More than one " + color_text(color) + " king.");
                         }
@@ -203,11 +203,11 @@ Board::Board(const std::string& fen) :
         }
     }
 
-    if( ! king_location[WHITE])
+    if( ! find_king(WHITE))
     {
         fen_error(fen, "White king not in FEN string: " + fen);
     }
-    if( ! king_location[BLACK])
+    if( ! find_king(BLACK))
     {
         fen_error(fen, "Black king not in FEN string: " + fen);
     }
@@ -226,7 +226,7 @@ Board::Board(const std::string& fen) :
     }
 
     auto non_turn_color = opposite(whose_turn());
-    auto non_turn_king_square = king_location[non_turn_color];
+    const auto& non_turn_king_square = find_king(non_turn_color);
     if( ! safe_for_king(non_turn_king_square.file, non_turn_king_square.rank, non_turn_color))
     {
         fen_error(fen, color_text(opposite(whose_turn())) +
@@ -353,7 +353,7 @@ Board::Board(const std::string& fen) :
     auto test_board = *this;
     test_board.set_turn(opposite(whose_turn()));
     auto pieces_attacking_king = std::set<Square>();
-    auto king_square = test_board.king_location[whose_turn()];
+    const auto& king_square = test_board.find_king(whose_turn());
     for(auto move : test_board.legal_moves())
     {
         if(move->end_file() == king_square.file &&
@@ -848,7 +848,7 @@ void Board::refresh_checking_squares()
 {
     checking_squares = {};
     size_t insertion_point = 0;
-    auto king_square = king_location[whose_turn()];
+    const auto& king_square = find_king(whose_turn());
 
     if(game_record_listing.empty())
     {
@@ -950,7 +950,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
 
     if(auto pinning_square = piece_is_pinned(move.start_file(), move.start_rank()))
     {
-        auto king_square = king_location[whose_turn()];
+        const auto& king_square = find_king(whose_turn());
 
         auto pin_direction_file = king_square.file - pinning_square.file;
         auto pin_direction_rank = king_square.rank - pinning_square.rank;
@@ -963,7 +963,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
     if(move.is_en_passant())
     {
         // Check if king is on same row as both pawns and there is an enemy rook or queen on row
-        auto king_square = king_location[whose_turn()];
+        const auto& king_square = find_king(whose_turn());
         if(king_square.rank != move.start_rank())
         {
             return false;
@@ -1280,11 +1280,10 @@ bool Board::piece_has_moved(char file, int rank) const
     return ! unmoved_positions[square_index(file, rank)];
 }
 
-Square Board::find_king(Color color) const
+const Square& Board::find_king(Color color) const
 {
-    auto location = king_location[color];
-    assert(piece_on_square(location.file, location.rank) == piece_instance(KING, color));
-    return location;
+    assert(piece_on_square(king_location[color].file, king_location[color].rank) == piece_instance(KING, color));
+    return king_location[color];
 }
 
 void Board::recreate_move_caches()
@@ -1669,7 +1668,7 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
 
 Square Board::piece_is_pinned(char file, int rank) const
 {
-    auto king_square = king_location[whose_turn()];
+    const auto& king_square = find_king(whose_turn());
     auto no_pin = Square{};
 
     if(king_square == Square{file, rank})

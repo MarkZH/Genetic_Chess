@@ -11,7 +11,7 @@ double King_Protection_Gene::score_board(const Board& board, const Board&, size_
     // is a measure of the exposure of the king
 
     auto perspective = board.whose_turn();
-    auto king_square = board.find_king(perspective);
+    const auto& king_square = board.find_king(perspective);
 
     auto square_count = 0;
 
