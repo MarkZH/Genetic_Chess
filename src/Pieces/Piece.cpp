@@ -27,27 +27,41 @@ Piece::Piece(Color color_in, Piece_Type type_in) :
     {
         case PAWN:
             add_pawn_moves();
+            add_pawn_art();
             break;
         case ROOK:
             add_rook_moves();
+            add_rook_art();
             break;
         case KNIGHT:
             add_knight_moves();
+            add_knight_art();
             break;
         case BISHOP:
             add_bishop_moves();
+            add_bishop_art();
             break;
         case QUEEN:
             add_bishop_moves();
             add_rook_moves();
+            add_queen_art();
             break;
         case KING:
             add_king_moves();
+            add_king_art();
             break;
         default:
             throw std::runtime_error("Program bug: Invalid piece type in Piece(): " + std::to_string(type()));
     }
- 
+}
+
+std::string Piece::ascii_art(size_t row) const
+{
+    if(row >= ascii_art_lines.size())
+    {
+        return std::string(ascii_art_lines.front().size(), ' ');
+    }
+    return ascii_art_lines[row];
 }
 
 Color Piece::color() const
@@ -255,4 +269,82 @@ void Piece::add_king_moves()
     int base_rank = (color() == WHITE ? 1 : 8);
     add_legal_move(std::make_unique<Castle>(base_rank, LEFT));
     add_legal_move(std::make_unique<Castle>(base_rank, RIGHT));
+}
+
+void Piece::add_pawn_art()
+{
+    // ASCII Art http://ascii.co.uk/art/chess (VK)
+    ascii_art_lines.push_back("  _  ");
+    ascii_art_lines.push_back(" ( ) ");
+    ascii_art_lines.push_back("/___\\");
+    if(color() == BLACK)
+    {
+        ascii_art_lines[1].replace(2, 1, "#");
+        ascii_art_lines[2].replace(1, 3, "###");
+    }
+}
+
+void Piece::add_rook_art()
+{
+    // ASCII Art http://ascii.co.uk/art/chess (VK)
+    ascii_art_lines.push_back(" |U| ");
+    ascii_art_lines.push_back(" | | ");
+    ascii_art_lines.push_back("/___\\");
+    if(color() == BLACK)
+    {
+        ascii_art_lines[1].replace(2, 1, "#");
+        ascii_art_lines[2].replace(1, 3, "###");
+    }
+}
+
+void Piece::add_knight_art()
+{
+    // ASCII Art http://ascii.co.uk/art/chess (VK)
+    ascii_art_lines.push_back(" /\") ");
+    ascii_art_lines.push_back(" 7 ( ");
+    ascii_art_lines.push_back("/___\\");
+    if(color() == BLACK)
+    {
+        ascii_art_lines[1].replace(2, 1, "#");
+        ascii_art_lines[2].replace(1, 3, "###");
+    }
+}
+
+void Piece::add_bishop_art()
+{
+    // ASCII art http://ascii.co.uk/art/chess (VK)
+    ascii_art_lines.push_back(" (V) ");
+    ascii_art_lines.push_back(" ) ( ");
+    ascii_art_lines.push_back("/___\\");
+    if(color() == BLACK)
+    {
+        ascii_art_lines[1].replace(2, 1, "#");
+        ascii_art_lines[2].replace(1, 3, "###");
+    }
+}
+
+void Piece::add_queen_art()
+{
+    // ASCII Art http://ascii.co.uk/art/chess (VK)
+    ascii_art_lines.push_back(" \\^/ ");
+    ascii_art_lines.push_back(" ) ( ");
+    ascii_art_lines.push_back("(___}");
+    if(color() == BLACK)
+    {
+        ascii_art_lines[1].replace(2, 1, "#");
+        ascii_art_lines[2].replace(1, 3, "###");
+    }
+}
+
+void Piece::add_king_art()
+{
+    // ASCII Art http://ascii.co.uk/art/chess (VK)
+    ascii_art_lines.push_back(" \\+/ ");
+    ascii_art_lines.push_back(" | | ");
+    ascii_art_lines.push_back("/___\\");
+    if(color() == BLACK)
+    {
+        ascii_art_lines[1].replace(2, 1, "#");
+        ascii_art_lines[2].replace(1, 3, "###");
+    }
 }

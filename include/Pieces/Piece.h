@@ -18,6 +18,7 @@ class Piece
 
         std::string pgn_symbol() const;
         char fen_symbol() const;
+        std::string ascii_art(size_t row) const;
         Color color() const;
 
         bool can_move(const Move* move) const;
@@ -49,6 +50,14 @@ class Piece
         // Add a move to the list that is legal starting from all squares
         void add_standard_legal_move(int file_step, int rank_step);
 
+        std::vector<std::string> ascii_art_lines;
+
+        void add_pawn_art();
+        void add_rook_art();
+        void add_knight_art();
+        void add_bishop_art();
+        void add_queen_art();
+        void add_king_art();
 };
 
 #endif // PIECE_H

@@ -724,6 +724,26 @@ const std::vector<const Move*>& Board::legal_moves() const
 
 void Board::ascii_draw(Color perspective) const
 {
+    const size_t square_width = 7;
+    const size_t square_height = 3;
+
+    const std::string square_corner = "+";
+    const std::string square_horizontal_border = "-";
+    const std::string square_vertical_border = "|";
+
+    std::string horizontal_line;
+    for(int i = 0; i < 8; ++i)
+    {
+        horizontal_line.append(square_corner);
+
+        for(size_t j = 0; j < square_width; ++j)
+        {
+            horizontal_line.append(square_horizontal_border);
+        }
+    }
+    horizontal_line.append(square_corner + "\n");
+    const std::string left_spacer = "   ";
+
     int rank_start = (perspective == WHITE ? 8 : 1);
     int rank_end = (perspective == WHITE ? 1 : 8);
     int d_rank = (perspective == WHITE ? -1 : 1);
@@ -733,28 +753,47 @@ void Board::ascii_draw(Color perspective) const
 
     for(int rank = rank_start; d_rank*(rank_end - rank) >= 0; rank += d_rank)
     {
-        std::cout << " " << rank << " ";
-        for(char file = file_start; d_file*(file_end - file) >= 0; file += d_file)
+        std::cout << left_spacer << horizontal_line;
+
+        for(size_t square_row = 0; square_row < square_height; ++square_row)
         {
-            auto piece = piece_on_square(file, rank);
-            if(piece)
+            if(square_row == square_height/2)
             {
-                std::cout << piece->fen_symbol();
+                std::cout << " " << rank << " ";
             }
             else
             {
-                std::cout << '.';
+                std::cout << left_spacer;
             }
-            std::cout << ' ';
+            for(char file = file_start; d_file*(file_end - file) >= 0; file += d_file)
+            {
+                std::string piece_symbol;
+                auto piece = piece_on_square(file, rank);
+                char dark_square_fill = ':';
+                char filler = (square_color(file, rank) == WHITE ? ' ' : dark_square_fill);
+                if(piece)
+                {
+                    auto piece_row = piece->ascii_art(square_row);
+                    std::string padding((square_width - piece_row.size())/2, filler);
+                    piece_symbol = padding + piece_row + padding;
+                }
+                else
+                {
+                    piece_symbol.append(square_width, filler);
+                }
+                std::cout << square_vertical_border << piece_symbol;
+            }
+            std::cout << square_vertical_border << "\n";
         }
-
-        std::cout << '\n';
     }
+    std::cout << left_spacer << horizontal_line;
 
-    std::cout << "   ";
+    std::cout << left_spacer;
     for(char file = file_start; d_file*(file_end - file) >= 0; file += d_file)
     {
-        std::cout << file;
+        std::cout << " " << std::string(square_width/2, ' ')
+                  << file
+                  << std::string(square_width/2, ' ');
     }
     std::cout << std::endl << std::endl;
 }
