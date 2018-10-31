@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "Game/Board.h"
-#include "Pieces/Piece.h"
+#include "Game/Piece.h"
 #include "Genes/Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 

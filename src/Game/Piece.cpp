@@ -1,4 +1,4 @@
-#include "Pieces/Piece.h"
+#include "Game/Piece.h"
 
 #include <cctype>
 #include <vector>
@@ -7,7 +7,7 @@
 #include <array>
 
 #include "Game/Board.h"
-#include "Pieces/Piece_Types.h"
+#include "Game/Piece_Types.h"
 
 #include "Moves/Move.h"
 #include "Moves/Direction.h"

@@ -7,7 +7,7 @@
 #include <array>
 #include <memory>
 
-#include "Pieces/Piece_Types.h"
+#include "Game/Piece_Types.h"
 
 class Piece;
 class Board;

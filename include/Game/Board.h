@@ -8,7 +8,7 @@
 
 #include "Color.h"
 #include "Square.h"
-#include "Pieces/Piece_Types.h"
+#include "Game/Piece_Types.h"
 #include "Players/Thinking.h"
 
 class Clock;

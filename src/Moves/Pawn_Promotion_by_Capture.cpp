@@ -2,7 +2,7 @@
 
 #include <cassert>
 
-#include "Pieces/Piece.h"
+#include "Game/Piece.h"
 #include "Game/Board.h"
 #include "Moves/Pawn_Promotion.h"
 #include "Moves/Direction.h"

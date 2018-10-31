@@ -3,7 +3,7 @@
 #include "Moves/Move.h"
 #include "Moves/Direction.h"
 #include "Game/Board.h"
-#include "Pieces/Piece.h"
+#include "Game/Piece.h"
 
 Castle::Castle(int base_rank, Direction direction) :
     Move('e',

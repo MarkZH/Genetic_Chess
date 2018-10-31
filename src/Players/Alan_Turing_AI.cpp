@@ -5,7 +5,7 @@
 
 #include "Game/Board.h"
 #include "Moves/Move.h"
-#include "Pieces/Piece.h"
+#include "Game/Piece.h"
 #include "Game/Game_Result.h"
 #include "Game/Color.h"
 #include "Moves/Threat_Generator.h"

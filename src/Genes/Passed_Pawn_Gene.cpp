@@ -5,8 +5,8 @@
 #include <algorithm>
 
 #include "Game/Board.h"
-#include "Pieces/Piece.h"
-#include "Pieces/Piece_Types.h"
+#include "Game/Piece.h"
+#include "Game/Piece_Types.h"
 
 double Passed_Pawn_Gene::score_board(const Board& board, const Board&, size_t) const
 {

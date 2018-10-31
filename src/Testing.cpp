@@ -12,7 +12,7 @@
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
-#include "Pieces/Piece.h"
+#include "Game/Piece.h"
 
 #include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"

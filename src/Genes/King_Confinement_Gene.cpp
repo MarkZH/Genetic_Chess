@@ -8,8 +8,8 @@
 #include "Game/Board.h"
 #include "Game/Color.h"
 #include "Game/Square.h"
-#include "Pieces/Piece.h"
-#include "Pieces/Piece_Types.h"
+#include "Game/Piece.h"
+#include "Game/Piece_Types.h"
 
 #include "Utility.h"
 

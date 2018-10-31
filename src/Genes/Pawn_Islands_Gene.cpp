@@ -4,8 +4,8 @@
 #include <string>
 
 #include "Game/Board.h"
-#include "Pieces/Piece.h"
-#include "Pieces/Piece_Types.h"
+#include "Game/Piece.h"
+#include "Game/Piece_Types.h"
 
 #include "Genes/Gene.h"
 
