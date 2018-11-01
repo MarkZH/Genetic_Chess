@@ -21,6 +21,7 @@ class Gene
         void mutate();
         double evaluate(const Board& board, const Board& opposite_board, size_t depth) const;
         virtual std::unique_ptr<Gene> duplicate() const = 0;
+        size_t mutatable_components() const;
 
         virtual std::string name() const = 0;
         void print(std::ostream& os) const;

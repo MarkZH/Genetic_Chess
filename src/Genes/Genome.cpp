@@ -217,13 +217,22 @@ double Genome::evaluate(const Board& board, Color perspective, size_t depth) con
 
 void Genome::mutate()
 {
+    // Create copies of genes based on the number of internal components
+    // that are mutatable
+    std::vector<Gene*> genes;
     for(auto& gene : genome)
     {
-        const int mean_number_of_mutations = 2;
-        if(Random::random_integer(1, int(genome.size())) <= mean_number_of_mutations)
-        {
-            gene->mutate();
-        }
+        auto mutatable_components = gene->mutatable_components();
+        genes.insert(genes.end(), mutatable_components, gene.get());
+    }
+
+    // Pick randomly from the list of copies to make sure genes with
+    // more components don't lack for mutations.
+    auto mutations = 0;
+    const auto number_of_mutations = 3;
+    while(mutations++ < number_of_mutations)
+    {
+        genes[Random::random_integer(0, genes.size() - 1)]->mutate();
     }
 }
 

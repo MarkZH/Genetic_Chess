@@ -24,6 +24,12 @@ void Gene::load_properties()
     exponent = properties["Exponent"];
 }
 
+size_t Gene::mutatable_components() const
+{
+    reset_properties();
+    return properties.size();
+}
+
 void Gene::read_from(std::istream& is)
 {
     reset_properties();
