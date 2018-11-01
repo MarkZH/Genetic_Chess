@@ -10,7 +10,6 @@
 #include "Genes/Gene.h"
 #include "Utility.h"
 #include "Game/Piece.h"
-#include "Game/Piece_Types.h"
 #include "Game/Board.h"
 
 static const auto piece_types = {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING};

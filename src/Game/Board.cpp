@@ -15,9 +15,7 @@
 #include "Game/Clock.h"
 #include "Game/Square.h"
 #include "Game/Game_Result.h"
-
 #include "Game/Piece.h"
-#include "Game/Piece_Types.h"
 
 #include "Moves/Move.h"
 #include "Moves/Threat_Generator.h"

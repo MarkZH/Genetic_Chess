@@ -5,7 +5,6 @@
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
-#include "Game/Piece_Types.h"
 
 #include "Genes/Gene.h"
 

@@ -9,7 +9,6 @@
 #include "Game/Color.h"
 #include "Game/Square.h"
 #include "Game/Piece.h"
-#include "Game/Piece_Types.h"
 
 #include "Utility.h"
 
