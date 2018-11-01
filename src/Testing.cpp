@@ -620,7 +620,7 @@ bool run_tests()
     auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
     auto king_confinement_score = (4*(1.0/2.0 + 1.0/2.0 + 1.0/3.0) + // blocked by friendlies (h2, g2, f2)
                                    (-1)*(1.0/4.0 + 1.0/4.0))/ // blocked by enemy (e1, e2)
-                                   (1.0/1.0 + 1.0/2.0 + 1.0/3.0); // free squares (h1, g1, f1)
+                                   (1.0 + 1.0 + 1.0); // free squares (h1, g1, f1)
     tests_passed &= king_confinement_gene.test(king_confinement_board, king_confinement_score);
 
     auto king_protection_gene = King_Protection_Gene();
@@ -686,7 +686,8 @@ bool run_tests()
     tests_passed &= sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    tests_passed &= total_force_gene.test(Board(), 1.0);
+    auto all_pieces_score = (8*1 + 2*2 + 2*4 + 2*8 + 1*16 + 1*32);
+    tests_passed &= total_force_gene.test(Board(), (all_pieces_score - 32.0)/all_pieces_score); // all pieces minus king
 
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
