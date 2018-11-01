@@ -282,7 +282,7 @@ For a more detailed picture, each square potentially reachable by the king is cl
 	\item Enemy block: the king is blocked due to the square being attacked by an opponent piece.
 \end{itemize}
 Once all reachable squares have been found within a genetically determined maximum distance (measured in king moves), the score is calculated by the following:
-\[S = \frac{W_{friend}\sum_{sq}\frac{Friend(sq)}{1+dis(sq)} + W_{enemy}\sum_{sq}\frac{Enemy(sq)}{1+dis(sq)}}{\sum_{sq}\frac{Free(sq)}{1+dis(sq)}}
+\[S = \frac{W_{friend}\sum_{sq}\frac{Friend(sq)}{1+dis(sq)} + W_{enemy}\sum_{sq}\frac{Enemy(sq)}{1+dis(sq)}}{\sum_{sq}Free(sq)}
 \]
 where \(S\) is the resulting score, \(\sum_{sq}\) is a sum over every square \(sq\) on the board, \(W_{friend}\) is the genetically determined weight of squares blocked by friendly pieces, \(W_{enemy}\) is the genetically determined weight of squares blocked by enemy attacks, \(Friend(sq)\) returns 1 if the square \(sq\) is blocked by a friendly piece and 0 otherwise, \(Enemy(sq)\) returns 1 if the square \(sq\) is attacked by an enemy piece and 0 otherwise, \(Free(sq)\) returns 1 if the square \(sq\) is reachable by the king and 0 otherwise, and \(dis(sq)\) is the distance to the square from the current king location in king moves.
 

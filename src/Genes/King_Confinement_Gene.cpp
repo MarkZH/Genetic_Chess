@@ -89,7 +89,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
 
     double friendly_block_total = 0.0;
     double enemy_block_total = 0.0;
-    double free_space_total = 0.0;
+    int free_space_total = 0;
 
     for(size_t i = 0; i < square_queue.size(); ++i)
     {
@@ -97,6 +97,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         auto square_index = Board::square_index(square.file, square.rank);
 
         auto attacked_by_other = squares_attacked_by_other[square_index];
+        auto dist = distance[square_index];
 
         auto piece = board.piece_on_square(square.file, square.rank);
         bool occupied_by_same = piece &&
@@ -105,15 +106,15 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
 
         if(occupied_by_same)
         {
-            friendly_block_total += friendly_block_score/(1 + distance[square_index]);
+            friendly_block_total += friendly_block_score/(1 + dist);
         }
         else if(attacked_by_other)
         {
-            enemy_block_total += enemy_block_score/(1 + distance[square_index]);
+            enemy_block_total += enemy_block_score/(1 + dist);
         }
         else
         {
-            free_space_total += 1.0/(1 + distance[square_index]);
+            ++free_space_total;
         }
 
         auto is_safe = ! occupied_by_same && ! attacked_by_other;
@@ -121,7 +122,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         // Add surrounding squares to square_queue.
         // always check the squares surrounding the king's current positions, even if
         // it is not safe (i.e., the king is in check).
-        if((is_safe && distance[square_index] < maximum_distance) || square_queue.size() == 1)
+        if((is_safe && dist < maximum_distance) || square_queue.size() == 1)
         {
             for(char new_file = square.file - 1; new_file <= square.file + 1; ++new_file)
             {
@@ -141,7 +142,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
                     if(distance[new_index] == -1) // never checked
                     {
                         square_queue.push_back(Square{new_file, new_rank});
-                        distance[new_index] = distance[square_index] + 1;
+                        distance[new_index] = dist + 1;
                     }
                 }
             }
