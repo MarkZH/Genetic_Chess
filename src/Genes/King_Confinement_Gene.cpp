@@ -81,9 +81,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     const auto& king_square = board.find_king(perspective);
     square_queue.push_back(king_square);
 
-    std::array<int, 64> distance;
-    distance.fill(-1); // never-visited value
-    distance[Board::square_index(king_square.file, king_square.rank)] = 0;
+    std::array<int, 64> distance{};
 
     auto squares_attacked_by_other = opposite_board.all_square_indices_attacked();
 
@@ -138,7 +136,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
                     }
 
                     auto new_index = Board::square_index(new_file, new_rank);
-                    if(distance[new_index] == -1) // never checked
+                    if(distance[new_index] == 0) // never checked
                     {
                         square_queue.push_back(Square{new_file, new_rank});
                         distance[new_index] = distance[square_index] + 1;
