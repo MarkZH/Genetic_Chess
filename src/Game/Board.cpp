@@ -176,7 +176,7 @@ Board::Board(const std::string& fen) :
                         place_piece(piece_instance(QUEEN, color), file, rank);
                         break;
                     case 'K':
-                        if(find_king(color))
+                        if(king_location[color])
                         {
                             fen_error(fen, "More than one " + color_text(color) + " king.");
                         }
