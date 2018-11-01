@@ -38,10 +38,15 @@ class Look_Ahead_Gene : public Gene
         double speculation_constant;
 
         // how much extra time to allocate when capture moves are possible (but not taken)
-        double can_capture_speculation_addition;
+        double can_capture_speculation_constant;
 
         // how much extra time to allocate when the current move captures
-        double will_capture_speculation_addition;
+        double will_capture_speculation_constant;
+
+        // how much extra time to allocate when last move captured and current move captured
+        // (i.e., the move under consideration recaptures)
+        double recapture_speculation_constant;
+
 
         double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
         void gene_specific_mutation() override;

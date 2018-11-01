@@ -14,8 +14,9 @@ Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
     game_length_uncertainty(0.5),
     speculation_constant(0.0),
-    can_capture_speculation_addition(0.0),
-    will_capture_speculation_addition(0.0)
+    can_capture_speculation_constant(0.0),
+    will_capture_speculation_constant(0.0),
+    recapture_speculation_constant(0.0)
 {
 }
 
@@ -24,8 +25,9 @@ void Look_Ahead_Gene::reset_properties() const
     properties["Mean Game Length"] = mean_game_length;
     properties["Game Length Uncertainty"] = game_length_uncertainty;
     properties["Speculation Constant"] = speculation_constant;
-    properties["Will Capture Speculation Addition"] = will_capture_speculation_addition;
-    properties["Can Capture Speculation Addition"] = can_capture_speculation_addition;
+    properties["Will Capture Speculation Constant"] = will_capture_speculation_constant;
+    properties["Can Capture Speculation Constant"] = can_capture_speculation_constant;
+    properties["Recapture Speculation Constant"] = recapture_speculation_constant;
 }
 
 void Look_Ahead_Gene::load_properties()
@@ -33,8 +35,9 @@ void Look_Ahead_Gene::load_properties()
     mean_game_length = properties["Mean Game Length"];
     game_length_uncertainty = properties["Game Length Uncertainty"];
     speculation_constant = properties["Speculation Constant"];
-    will_capture_speculation_addition = properties["Will Capture Speculation Addition"];
-    can_capture_speculation_addition = properties["Can Capture Speculation Addition"];
+    will_capture_speculation_constant = properties["Will Capture Speculation Constant"];
+    can_capture_speculation_constant = properties["Can Capture Speculation Constant"];
+    recapture_speculation_constant = properties["Recapture Speculation Constant"];
 }
 
 double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const
@@ -50,7 +53,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
 
 void Look_Ahead_Gene::gene_specific_mutation()
 {
-    switch(Random::random_integer(1, 5))
+    switch(Random::random_integer(1, 6))
     {
         case 1:
             mean_game_length = std::max(1.0, mean_game_length + Random::random_laplace(1.0));
@@ -62,10 +65,13 @@ void Look_Ahead_Gene::gene_specific_mutation()
             speculation_constant += Random::random_laplace(0.1);
             break;
         case 4:
-            will_capture_speculation_addition += Random::random_laplace(0.1);
+            will_capture_speculation_constant += Random::random_laplace(0.1);
             break;
         case 5:
-            can_capture_speculation_addition += Random::random_laplace(0.1);
+            can_capture_speculation_constant += Random::random_laplace(0.1);
+            break;
+        case 6:
+            recapture_speculation_constant += Random::random_laplace(0.1);
             break;
         default:
             throw std::runtime_error("Bad random value in Look Ahead Gene");
@@ -89,17 +95,20 @@ double Look_Ahead_Gene::score_board(const Board&, const Board&, size_t) const
 
 double Look_Ahead_Gene::speculation_time_factor(const Board& board) const
 {
-    auto result = speculation_constant;
-
     if(board.last_move_captured())
     {
-        result += will_capture_speculation_addition;
+        if(board.capture_possible())
+        {
+            return recapture_speculation_constant;
+        }
+        return will_capture_speculation_constant;
     }
-
-    if(board.capture_possible())
+    else if(board.capture_possible())
     {
-         result += can_capture_speculation_addition;
+         return can_capture_speculation_constant;
     }
-
-    return result;
+    else
+    {
+        return speculation_constant;
+    }
 }
