@@ -59,7 +59,7 @@ void King_Confinement_Gene::gene_specific_mutation()
             break;
         case 3:
             maximum_distance += Random::random_integer(-1, 1);
-            maximum_distance = Math::clamp(maximum_distance, 0, 63);
+            maximum_distance = Math::clamp(maximum_distance, 1, 63);
             break;
         default:
             throw std::runtime_error("Bad random value in King Confinement Gene");
