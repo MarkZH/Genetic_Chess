@@ -37,14 +37,11 @@ class Genome
         // Regulatory gene locations
         size_t piece_strength_gene_index;
         size_t look_ahead_gene_index;
-        size_t priority_threshold_gene_index;
 
         double score_board(const Board& board,
                            const Board& opposite_board,
-                           size_t depth,
-                           double minimum_priority) const;
+                           size_t depth) const;
         void reset_piece_strength_gene();
-        double minimum_priority() const;
 };
 
 #endif // GENOME_H

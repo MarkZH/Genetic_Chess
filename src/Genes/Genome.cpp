@@ -20,7 +20,6 @@
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
-#include "Genes/Priority_Threshold_Gene.h"
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 
@@ -34,9 +33,6 @@ Genome::Genome()
 
     genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
     look_ahead_gene_index = genome.size() - 1;
-
-    genome.emplace_back(std::make_unique<Priority_Threshold_Gene>());
-    priority_threshold_gene_index = genome.size() - 1;
 
     // Normal genes
     auto psg = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
@@ -58,8 +54,7 @@ Genome::Genome()
 Genome::Genome(const Genome& other) :
     genome(),
     piece_strength_gene_index(other.piece_strength_gene_index),
-    look_ahead_gene_index(other.look_ahead_gene_index),
-    priority_threshold_gene_index(other.priority_threshold_gene_index)
+    look_ahead_gene_index(other.look_ahead_gene_index)
 {
     for(const auto& gene : other.genome)
     {
@@ -88,7 +83,6 @@ Genome& Genome::operator=(const Genome& other)
 
     piece_strength_gene_index = other.piece_strength_gene_index;
     look_ahead_gene_index = other.look_ahead_gene_index;
-    priority_threshold_gene_index = other.priority_threshold_gene_index;
 
     genome.clear();
     for(const auto& gene : other.genome)
@@ -104,8 +98,7 @@ Genome& Genome::operator=(const Genome& other)
 // Sexual reproduction
 Genome::Genome(const Genome& A, const Genome& B) :
     piece_strength_gene_index(A.piece_strength_gene_index),
-    look_ahead_gene_index(A.look_ahead_gene_index),
-    priority_threshold_gene_index(A.priority_threshold_gene_index)
+    look_ahead_gene_index(A.look_ahead_gene_index)
 {
     for(size_t i = 0; i < A.genome.size(); ++i)
     {
@@ -166,15 +159,12 @@ void Genome::read_from(std::istream& is)
     throw std::runtime_error("Reached end of file before END of genome.");
 }
 
-double Genome::score_board(const Board& board, const Board& opposite_board, size_t depth, double minimum_priority) const
+double Genome::score_board(const Board& board, const Board& opposite_board, size_t depth) const
 {
     double score = 0.0;
     for(const auto& gene : genome)
     {
-        if(std::abs(gene->priority()) > minimum_priority)
-        {
-            score += gene->evaluate(board, opposite_board, depth);
-        }
+        score += gene->evaluate(board, opposite_board, depth);
     }
 
     return score;
@@ -187,9 +177,8 @@ double Genome::evaluate(const Board& board, Color perspective, size_t depth) con
     const auto& my_board        = (board.whose_turn() == perspective ? board : other_board);
     const auto& opponents_board = (board.whose_turn() == perspective ? other_board : board);
 
-    auto current_minimum_priority = Random::random_real(0.0, minimum_priority());
-    return score_board(my_board, opponents_board, depth, current_minimum_priority) -
-           score_board(opponents_board, my_board, depth, current_minimum_priority);
+    return score_board(my_board, opponents_board, depth) -
+           score_board(opponents_board, my_board, depth);
 }
 
 void Genome::mutate()
@@ -217,9 +206,4 @@ double Genome::time_to_examine(const Board& board, const Clock& clock) const
 double Genome::speculation_time_factor(const Board& board) const
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor(board);
-}
-
-double Genome::minimum_priority() const
-{
-    return static_cast<const Priority_Threshold_Gene*>(genome[priority_threshold_gene_index].get())->threshold();
 }
