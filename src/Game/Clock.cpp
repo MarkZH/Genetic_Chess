@@ -7,12 +7,16 @@
 
 #include "Game/Game_Result.h"
 
-Clock::Clock(double duration_seconds, size_t moves_to_reset, double increment_seconds) :
+Clock::Clock(double duration_seconds,
+             size_t moves_to_reset,
+             double increment_seconds,
+             bool clock_stops_game) :
     whose_turn(WHITE),
     use_clock(duration_seconds > 0),
     use_reset(moves_to_reset > 0),
     move_count_reset(moves_to_reset),
-    clocks_running(false)
+    clocks_running(false),
+    local_clock_stoppage(clock_stops_game)
 {
     timers[WHITE] = fractional_seconds(duration_seconds);
     timers[BLACK] = fractional_seconds(duration_seconds);
@@ -39,7 +43,7 @@ Game_Result Clock::punch()
     }
 
     timers[whose_turn] -= (time_this_punch - time_previous_punch);
-    if(timers[whose_turn] < std::chrono::seconds(0))
+    if(local_clock_stoppage && timers[whose_turn] < std::chrono::seconds(0))
     {
         stop();
         return Game_Result(opposite(whose_turn), "Time Forfeiture");

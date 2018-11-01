@@ -46,10 +46,10 @@ Game_Result play_game_with_board(const Player& white,
 {
     static std::mutex write_lock;
 
-    Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds);
+    auto stop_for_clock = white.stop_for_local_clock() && black.stop_for_local_clock();
+    Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds, stop_for_clock);
     game_clock.start();
     Game_Result result;
-    auto stop_for_clock = white.stop_for_local_clock() && black.stop_for_local_clock();
 
     try
     {
@@ -61,7 +61,7 @@ Game_Result play_game_with_board(const Player& white,
                 const auto& move_chosen = player.choose_move(board, game_clock);
 
                 result = game_clock.punch();
-                if(stop_for_clock && result.game_has_ended())
+                if(result.game_has_ended())
                 {
                     break;
                 }

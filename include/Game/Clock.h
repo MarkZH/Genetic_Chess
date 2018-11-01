@@ -13,7 +13,10 @@ class Clock
 {
     public:
         // Game clock settings: total time, moves to reset clock, time increment per move
-        Clock(double duration_seconds = 0.0, size_t moves = 0, double increment_seconds = 0.0);
+        Clock(double duration_seconds = 0.0,
+              size_t moves = 0,
+              double increment_seconds = 0.0,
+              bool clock_stops_game = true);
         Game_Result punch(); // start/stop both clocks
         void stop(); // stop both clocks
         void start(); // resume after stop()
@@ -36,6 +39,7 @@ class Clock
         bool use_reset;
         size_t move_count_reset;
         bool clocks_running;
+        bool local_clock_stoppage;
 
         // mutable for external adjustment
         mutable std::chrono::steady_clock::time_point time_previous_punch;
