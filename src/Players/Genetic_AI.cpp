@@ -54,8 +54,6 @@ Genetic_AI::Genetic_AI(std::istream& is)
 
 Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_in)
 {
-    next_id = std::max(next_id, id_number + 1);
-
     std::ifstream ifs(file_name);
     if( ! ifs)
     {
@@ -83,6 +81,8 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
 
             calibrate_thinking_speed();
             calculate_centipawn_value();
+
+            next_id = std::max(next_id, id_number + 1);
 
             return;
         }
@@ -124,9 +124,9 @@ void Genetic_AI::read_from(std::istream& is)
         throw std::runtime_error("Incomplete Genetic_AI spec in file for ID " + std::to_string(id_number));
     }
 
-    next_id = std::max(next_id, id_number + 1);
-
     genome.read_from(is);
+
+    next_id = std::max(next_id, id_number + 1);
 }
 
 double Genetic_AI::internal_evaluate(const Board& board, Color perspective, size_t depth) const
