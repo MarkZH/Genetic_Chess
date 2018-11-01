@@ -62,7 +62,7 @@ void King_Confinement_Gene::gene_specific_mutation()
             maximum_distance = Math::clamp(maximum_distance, 1, 63);
             break;
         default:
-            throw std::runtime_error("Bad random value in King Confinement Gene");
+            throw std::logic_error("Bad random value in King Confinement Gene");
     }
 }
 
@@ -149,5 +149,6 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         }
     }
 
-    return (friendly_block_total + enemy_block_total)/free_space_total;
+    auto normalizer = std::abs(friendly_block_score) + std::abs(enemy_block_score);
+    return ((friendly_block_total + enemy_block_total)/free_space_total)/normalizer;
 }
