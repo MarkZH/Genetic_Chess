@@ -63,6 +63,10 @@ for yi = 2 : length(data.colheaders) - 2
     this_data = data.data(:, yi);
     name_list = data.colheaders(yi);
     name = name_list{1};
+    if(all(int64(this_data) == this_data)) % integer data
+        % Offset integer data to see all pools
+        this_data = this_data + 0.1*(pool_ids - max(pool_ids)/2);
+    end
 
     figure;
     hold all;
