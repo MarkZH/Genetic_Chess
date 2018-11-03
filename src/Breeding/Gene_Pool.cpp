@@ -404,23 +404,22 @@ void gene_pool(const std::string& config_file = "")
             gene_pool_paused = false;
         }
 
-        if(signal_activated == STOP_SIGNAL)
+        // Update game time
+        game_time += game_time_increment;
+        if(game_time > maximum_game_time || game_time < minimum_game_time)
         {
-            std::cout << std::endl;
-            return;
+            if(oscillating_time)
+            {
+                game_time_increment *= -1;
+            }
+            else
+            {
+                game_time_increment = 0;
+            }
         }
+        game_time = Math::clamp(game_time, minimum_game_time, maximum_game_time);
 
         game_count[pool_index] += int(results.size());
-        if((game_time >= maximum_game_time && game_time_increment > 0) ||
-           (game_time <= minimum_game_time && game_time_increment < 0))
-        {
-            game_time_increment *= -1;
-        }
-
-        if(game_time_increment > 0 || oscillating_time)
-        {
-            game_time += game_time_increment;
-        }
 
         // Transfer best players between gene pools to keep pools
         // from stagnating or amplifying pathological behavior
