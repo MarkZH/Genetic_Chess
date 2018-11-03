@@ -18,7 +18,6 @@
 #include "Utility.h"
 
 const auto NO_SIGNAL = 0;
-const auto STOP_SIGNAL = SIGINT;
 const std::string stop_key = "Ctrl-c";
 
 #ifdef __linux__
@@ -163,7 +162,6 @@ void gene_pool(const std::string& config_file = "")
     }
 
     // Ctrl-C to pause gene pool
-    signal(STOP_SIGNAL, pause_gene_pool);
     signal(PAUSE_SIGNAL, pause_gene_pool);
 
     for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % pools.size()) // run forever
@@ -182,7 +180,7 @@ void gene_pool(const std::string& config_file = "")
                   << "   Gene pool file name: " << genome_file_name << "\n"
                   << std::endl;
 
-        std::cout << "Pause: " << pause_key << "    Quit: " << stop_key << "\n" << std::endl;
+        std::cout << "Pause: " << pause_key << "    Abort: " << stop_key << "\n" << std::endl;
 
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
@@ -457,17 +455,15 @@ void gene_pool(const std::string& config_file = "")
     }
 }
 
-
 void pause_gene_pool(int signal)
 {
-    auto action = signal == PAUSE_SIGNAL ? "pausing" : "exiting";
-
+    // Second time signal activated
     if(signal == signal_activated)
     {
         signal_activated = NO_SIGNAL;
         if( ! gene_pool_paused)
         {
-            std::cout << "\nNo longer " << action << "." << std::endl;
+            std::cout << "\nNo longer pausing." << std::endl;
         }
         return;
     }
@@ -476,7 +472,7 @@ void pause_gene_pool(int signal)
 
     if( ! gene_pool_paused)
     {
-        std::cout << "\nWaiting for games to end and be recorded before " << action << " ..." << std::endl;
+        std::cout << "\nWaiting for games to end and be recorded before pausing ..." << std::endl;
     }
 }
 
