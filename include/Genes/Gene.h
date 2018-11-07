@@ -33,18 +33,18 @@ class Gene
 
     protected:
         mutable std::map<std::string, double> properties; // used to simplify reading/writing from/to files
+
         virtual void reset_properties() const;
         virtual void load_properties();
 
         void make_priority_minimum_zero();
 
     private:
+        double scoring_priority;
+
         virtual double score_board(const Board& board, const Board& opposite_board, size_t depth) const = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
         virtual void gene_specific_mutation();
-
-        double scoring_priority;
-        double exponent;
 };
 
 #endif // GENE_H
