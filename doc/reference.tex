@@ -142,7 +142,6 @@ This gene determines all aspects of the Genetic AIs time management through a se
 	\item the average number of moves per game,
 	\item the uncertainty in the above average.
 	\item a constant related to over-allocating search time while counting on alpha-beta pruning to not use too much
-	\item adjustments of the above time allocation based on the depth of the current search.
 \end{enumerate}
 When the AI starts the algorithm to choose a move, it allocates a fraction of the time left on the clock so that all subsequent moves get equal time. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a log-normal distribution~\cite{log-norm-wiki}\cite{log-norm-chess-se} with a mean and spread given by the first two parameters listed above. Originally, it was assumed that the number of moves in a game was well-modeled by a Poisson distribution. This proved to be false (see Figure~\ref{game-length-plot}), and the log-normal distribution---wherein the logarithm of the variable is normally distributed---is now used.
 
