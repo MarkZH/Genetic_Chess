@@ -196,7 +196,14 @@ T = k\frac{N_{\textrm{legal}}}{v}
 \]
 where \(T\) is the time needed to look ahead on this move, \(N_{\textrm{legal}}\) is the number of legal moves on the board after the move is made, \(v\) is the rate of position examinations, and \(k\) is a genetically determined speculation constant that adjusts the amount of time to use. The speed \(v\) is determined by counting the number of positions evaluated (leaf nodes in the game tree) and dividing by the amount of time spent evaluating during the previous move. If the time \(T\) is less than the time allocated for the move, the algorithm looks ahead (the search function recurses) to examine the moves the opponent can make in response. Otherwise, it evaluates the current position and moves on to the next legal move.
 
-The speculation constant is divided into three parts: a default value and two additive adjustments base on if the move being considered caputures and whether the board state after a move contains a capturing move (perhaps a recapture). These board qualities were chosen since capturing very rapidly changes the evaluation of boards, requiring further examination until the board reaches a less volatile state. Capturing a piece is only good if it doesn't result in a greater loss in subsequent moves. This is the problem that is usually solved in other chess engines by a quiescence search, in which all interesting\footnote{Meaning, captures that aren't immediately losing.} capturing moves are performed on a board before it is scored, thereby only scoring stable, ``quiescent'' board states~\cite{quiescence-ref}.
+The speculation constant has four possible values depding on whether
+\begin{enumerate}
+	\item the move under consideration captures (Just Caputured),
+	\item the board position after the move has a capturing move (Can Capture),
+	\item both of the above are true (Recapture),
+	\item none of the above are true (Default).
+\end{enumerate}
+The names in parenthese are the labels used in the source code and genome analysis plots. These board qualities were chosen since capturing very rapidly changes the evaluation of boards, requiring further examination until the board reaches a less volatile state. Capturing a piece is only good if it doesn't result in a greater loss in subsequent moves. This is the problem that is usually solved in other chess engines by a quiescence search, in which all interesting\footnote{Meaning, captures that aren't immediately losing.} capturing moves are performed on a board before it is scored, thereby only scoring stable, ``quiescent'' board states~\cite{quiescence-ref}.
 
 \subsection{Board-Scoring Genes}\label{board-score-section}
 These genes are used to give a score to a board state. The higher the score, the more desirable the moves that lead to this board. The score is calculated by

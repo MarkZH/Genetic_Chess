@@ -8,14 +8,12 @@ Q: 11.8414
 R: 13.8875
 
 Name: Look Ahead Gene
-Can Capture Speculation Addition: 1.48676
-Game Length Uncertainty: 0.359439
-Mean Game Length: 54.1218
-Speculation Constant: 1.12852
-Will Capture Speculation Addition: 1.55846
-
-Name: Priority Threshold Gene
-Threshold: 18.3031
+Game Length Uncertainty: 0.51267
+Mean Game Length: 28.7295
+Speculation-Can Capture: 2.06896
+Speculation-Default: 0.838842
+Speculation-Just Captured: 1.29264
+Speculation-Recapture: 3.02804
 
 Name: Total Force Gene
 Exponent: 1.06805
