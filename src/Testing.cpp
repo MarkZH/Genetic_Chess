@@ -29,6 +29,7 @@
 #include "Genes/Total_Force_Gene.h"
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
+#include "Genes/Checkmate_Material_Gene.h"
 
 #include "Utility.h"
 
@@ -697,6 +698,13 @@ bool run_tests()
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
     tests_passed &= pawn_islands_gene.test(pawn_islands_board, (6.0/3)/8);
+
+    auto checkmate_material_gene = Checkmate_Material_Gene();
+    auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
+    tests_passed &= checkmate_material_gene.test(checkmate_material_board, 1.0); // white can checkmate
+    checkmate_material_board.submit_move(*checkmate_material_board.legal_moves().front());
+    tests_passed &= checkmate_material_gene.test(checkmate_material_board, 0.0); // black cannot
+
 
 
     // String utilities

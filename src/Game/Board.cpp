@@ -1347,7 +1347,7 @@ void Board::recreate_move_caches()
     }
 }
 
-bool Board::enough_material_to_checkmate() const
+bool Board::enough_material_to_checkmate(Color color) const
 {
     bool knight_found = false;
     Color bishop_square_color_found = NONE;
@@ -1358,6 +1358,11 @@ bool Board::enough_material_to_checkmate() const
         {
             auto piece = piece_on_square(file, rank);
             if( ! piece || piece->type() == KING)
+            {
+                continue;
+            }
+
+            if(color != NONE && piece->color() != color)
             {
                 continue;
             }

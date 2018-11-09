@@ -84,7 +84,7 @@ class Board
         bool king_is_in_check_after_move(const Move& move) const;
         Square piece_is_pinned(char file, int rank) const; // returns pinning square or {'\0', 0} if none
         bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
-        bool enough_material_to_checkmate() const;
+        bool enough_material_to_checkmate(Color color = NONE) const;
         bool move_captures(const Move& move) const;
         int moves_since_pawn_or_capture() const;
 
