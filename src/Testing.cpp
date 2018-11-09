@@ -1195,7 +1195,7 @@ bool run_tests()
         if(board_fen.fen_status() != test)
         {
             std::cerr << test << " -->\n" << board_fen.fen_status() << "\n\n";
-            board_fen.ascii_draw();
+            board_fen.ascii_draw(WHITE);
             tests_passed = false;
         }
     }

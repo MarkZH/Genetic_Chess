@@ -42,7 +42,7 @@ class Board
         Color whose_turn() const;
         static Color square_color(char file, int rank);
 
-        void ascii_draw(Color perspective = WHITE) const;
+        void ascii_draw(Color perspective) const;
 
         std::string fen_status() const; // current state of board in FEN
         const std::vector<const Move*>& game_record() const;
