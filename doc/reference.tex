@@ -304,6 +304,9 @@ A pawn island is a group of pawns on neighboring files that are isolated from ot
 \subsubsection{Stacked Pawns Gene}
 This gene counts the pawns that have a pawn of the same color ahead of them in the same file. The motion of these pawns is limited by the pawn in front. The score returned is the negative of the count since stacked pawns are generally considered to be disadvantageous.
 
+\subsubsection{Checkmate Material Gene}
+The gene returns a score of one if the scoring side has enough pieces to checkmate a lone king. Otherwise, it returns zero. This should help avoid piece tradeoffs resuliting in one side having a material advantage but unable to checkmate---king and knight vs\@. king and pawn, for example.
+
 
 \subsection{Genome File Format}
 An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line.
