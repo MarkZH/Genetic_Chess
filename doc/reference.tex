@@ -506,7 +506,7 @@ Returns a list of moves that are not currently legal but, if they were, would ha
 
 \subsubsection[submit\_move()]{submit\_move(const Move\& move)}\label{board-submit-move-section}
 
-This method causes the state of the \code{Board} to be changed by enacting the move represented by the argument. Only copies of a move returned from \code{legal\_moves()} will be accepted. Otherwise, an assertion will fail in debug builds or undefined behavior will result in release builds. The method returns a \code{Game\_Result} \code{struct} that indicates whether the game has ended and the reason for the ending. Formerly, the end of a game was signaled by throwing an exception derived from \code{Game\_Ending\_Exception}. However, this was found dramatically slow down the game tree search due to the cost of throwing and catching multiple exceptions.
+This method causes the state of the \code{Board} to be changed by enacting the move represented by the argument. Only copies of a move returned from \code{legal\_moves()} will be accepted. Otherwise, an assertion will fail in debug builds or undefined behavior will result in release builds. The method returns a \code{Game\_Result} that indicates whether the game has ended and the reason for the ending. Formerly, the end of a game was signaled by throwing an exception. However, this was found dramatically slow down the game tree search due to the cost of throwing and catching multiple exceptions.
 
 \subsubsection[piece\_on\_square()]{piece\_on\_square(char file, int rank)}
 
