@@ -48,7 +48,7 @@ void King_Confinement_Gene::reset_properties() const
 void King_Confinement_Gene::gene_specific_mutation()
 {
     make_priority_minimum_zero();
-    auto mutation_size = Random::random_laplace(0.5);
+    auto mutation_size = Random::random_laplace(2.0);
     switch(Random::random_integer(1, 3))
     {
         case 1:
@@ -58,7 +58,7 @@ void King_Confinement_Gene::gene_specific_mutation()
             enemy_block_score += mutation_size;
             break;
         case 3:
-            maximum_distance += Random::random_integer(-1, 1);
+            maximum_distance += mutation_size;
             maximum_distance = Math::clamp(maximum_distance, 1, 63);
             break;
         default:
