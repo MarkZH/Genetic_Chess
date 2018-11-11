@@ -4,7 +4,11 @@
 
 import sys
 
-def main(file_names):
+def main(args):
+    file_names = [name for name in args if not name.startswith('-')]
+    time_unit = 'sec'
+    if len(file_names) < len(args):
+        time_unit = [unit for unit in args if unit not in file_names][0][1:]
     timings = dict()
     for index, file_name in enumerate(file_names, 1):
         with open(file_name) as f:
@@ -23,10 +27,22 @@ def main(file_names):
                     time_sum = 0
                 timings[name] = (count + 1, time_sum + float(time))
     
-    print('Average time (sec)|Total time (sec)|Count|Name') # Column Headings
+    if time_unit == 'sec':
+        multiplier = 1
+    elif time_unit == 'msec':
+        multiplier = 1e3
+    elif time_unit == 'usec':
+        multiplier = 1e6
+    elif time_unit == 'nsec':
+        multiplier = 1e9
+    else:
+        print('Invalid time unit:', time_unit)
+        sys.exit(1)
+
+    print('Average time (' + time_unit + ')|Total time (sec)|Count|Name') # Column Headings
     for name in timings:
         count, time_sum = timings[name]
-        print(str(time_sum/count) + '|' + str(time_sum) + '|' + str(count) + '|' + name)
+        print(str(multiplier*time_sum/count) + '|' + str(time_sum) + '|' + str(count) + '|' + name)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
