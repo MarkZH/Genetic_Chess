@@ -56,7 +56,7 @@ void gene_pool(const std::string& config_file = "")
     const double minimum_game_time = config.as_number("minimum game time"); // seconds
     const double maximum_game_time = config.as_number("maximum game time"); // seconds
     double game_time_increment = config.as_number("game time increment"); // seconds
-    const bool oscillating_time = (String::lowercase(config.as_text("oscillating time")) == "yes");
+    const bool oscillating_time = config.as_boolean("oscillating time", "yes", "no");
     double game_time = minimum_game_time;
 
     // Stats (map: Pool ID --> counts)

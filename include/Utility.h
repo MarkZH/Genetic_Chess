@@ -98,9 +98,12 @@ class Configuration_File
 
         std::string as_text(const std::string& parameter) const;
         double as_number(const std::string& parameter) const;
+        bool as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const;
 
     private:
         std::map<std::string, std::string> parameters;
+
+        static std::string standardize_text(const std::string& input);
 };
 
 class Scoped_Stopwatch

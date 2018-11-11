@@ -265,7 +265,7 @@ Configuration_File::Configuration_File(const std::string& file_name)
             throw std::runtime_error("Configuration file lines must be of form \"Name = Value\"\n" + line);
         }
         auto line_split = String::split(line, "=", 1);
-        auto parameter = String::lowercase(String::remove_extra_whitespace(line_split[0]));
+        auto parameter = standardize_text(line_split[0]);
         parameters[parameter] = String::trim_outer_whitespace(line_split[1]);
     }
 }
@@ -274,7 +274,7 @@ std::string Configuration_File::as_text(const std::string& parameter) const
 {
     try
     {
-        return parameters.at(parameter);
+        return parameters.at(standardize_text(parameter));
     }
     catch(const std::out_of_range&)
     {
@@ -297,6 +297,30 @@ double Configuration_File::as_number(const std::string& parameter) const
         throw std::runtime_error("Invalid number for \"" + parameter + "\" : " + as_text(parameter));
     }
 }
+
+bool Configuration_File::as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const
+{
+    auto response = standardize_text(as_text(parameter));
+    if(response == standardize_text(affirmative))
+    {
+        return true;
+    }
+    else if(response == standardize_text(negative))
+    {
+        return false;
+    }
+    else
+    {
+        throw std::runtime_error("Invalid value for \"" + parameter + "\" : \"" + as_text(parameter) + "\"" +
+                                 "\nExpected \"" + affirmative + "\" or \"" + negative + "\".");
+    }
+}
+
+std::string Configuration_File::standardize_text(const std::string& input)
+{
+    return String::lowercase(String::remove_extra_whitespace(input));
+}
+
 
 std::ofstream Scoped_Stopwatch::out_file;
 std::mutex Scoped_Stopwatch::write_lock;
