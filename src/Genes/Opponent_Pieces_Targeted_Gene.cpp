@@ -8,7 +8,7 @@
 #include "Genes/Piece_Strength_Gene.h"
 
 Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene) :
-    piece_strenth_source(piece_strength_gene)
+    piece_strength_source(piece_strength_gene)
 {
 }
 
@@ -23,7 +23,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, const Boar
         {
             if(squares_attacked[Board::square_index(file, rank)])
             {
-                score += piece_strenth_source->piece_value(board.piece_on_square(file, rank));
+                score += piece_strength_source->piece_value(board.piece_on_square(file, rank));
             }
         }
     }
@@ -43,5 +43,5 @@ std::string Opponent_Pieces_Targeted_Gene::name() const
 
 void Opponent_Pieces_Targeted_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* psg)
 {
-    piece_strenth_source = psg;
+    piece_strength_source = psg;
 }

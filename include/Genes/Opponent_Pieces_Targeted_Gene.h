@@ -21,7 +21,7 @@ class Opponent_Pieces_Targeted_Gene : public Gene
         std::string name() const override;
 
     private:
-        const Piece_Strength_Gene* piece_strenth_source;
+        const Piece_Strength_Gene* piece_strength_source;
 
         double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
 };
