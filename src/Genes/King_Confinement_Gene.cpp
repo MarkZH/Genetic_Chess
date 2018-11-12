@@ -106,11 +106,11 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
 
         if(occupied_by_same)
         {
-            friendly_block_total += friendly_block_score/(1 + dist);
+            friendly_block_total += friendly_block_score;
         }
         else if(attacked_by_other)
         {
-            enemy_block_total += enemy_block_score/(1 + dist);
+            enemy_block_total += enemy_block_score;
         }
         else
         {
