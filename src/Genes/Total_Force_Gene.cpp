@@ -24,13 +24,14 @@ double Total_Force_Gene::score_board(const Board& board, const Board&, size_t) c
             auto piece = board.piece_on_square(file, rank);
             if(piece &&
                piece->color() == board.whose_turn() &&
-               piece->type() != KING)
+               piece->type() != KING) // kings are always on the board, so skip them
             {
                 score += piece_strength_source->piece_value(piece);
             }
         }
     }
 
+    // normalize to score at the beginning of a game
     auto normalizer = 8*std::abs(piece_strength_source->piece_value(Board::piece_instance(PAWN, WHITE))) +
                       2*std::abs(piece_strength_source->piece_value(Board::piece_instance(ROOK, WHITE))) +
                       2*std::abs(piece_strength_source->piece_value(Board::piece_instance(KNIGHT, WHITE))) +
