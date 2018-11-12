@@ -688,8 +688,7 @@ bool run_tests()
     tests_passed &= sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    auto all_pieces_score = (8*1 + 2*2 + 2*4 + 2*8 + 1*16 + 1*32);
-    tests_passed &= total_force_gene.test(Board(), (all_pieces_score - 32.0)/all_pieces_score); // all pieces minus king
+    tests_passed &= total_force_gene.test(Board(), 1.0);
 
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");

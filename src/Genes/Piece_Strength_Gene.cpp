@@ -83,16 +83,7 @@ double Piece_Strength_Gene::piece_value(const Piece* piece) const
     }
     else
     {
-        // Sum is equal to the total strength of a player's starting pieces
-        // (8 pawns, 2 rooks, 2 knights, 2 bishops, 1 queen, and 1 king).
-        auto normalizing_factor = 8*std::abs(piece_value(PAWN)) +
-                                  2*std::abs(piece_value(ROOK)) +
-                                  2*std::abs(piece_value(KNIGHT)) +
-                                  2*std::abs(piece_value(BISHOP)) +
-                                    std::abs(piece_value(QUEEN)) +
-                                    std::abs(piece_value(KING));
-
-        return piece_value(piece->type())/normalizing_factor;
+        return piece_value(piece->type());
     }
 }
 

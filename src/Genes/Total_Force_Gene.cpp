@@ -30,7 +30,13 @@ double Total_Force_Gene::score_board(const Board& board, const Board&, size_t) c
         }
     }
 
-    return score;
+    auto normalizer = 8*std::abs(piece_strength_source->piece_value(Board::piece_instance(PAWN, WHITE))) +
+                      2*std::abs(piece_strength_source->piece_value(Board::piece_instance(ROOK, WHITE))) +
+                      2*std::abs(piece_strength_source->piece_value(Board::piece_instance(KNIGHT, WHITE))) +
+                      2*std::abs(piece_strength_source->piece_value(Board::piece_instance(BISHOP, WHITE))) +
+                      1*std::abs(piece_strength_source->piece_value(Board::piece_instance(QUEEN, WHITE)));
+
+    return score/normalizer;
 }
 
 std::unique_ptr<Gene> Total_Force_Gene::duplicate() const

@@ -28,7 +28,14 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, const Boar
         }
     }
 
-    return score;
+    auto normalizer = 8*std::abs(piece_strength_source->piece_value(Board::piece_instance(PAWN, WHITE))) +
+                      2*std::abs(piece_strength_source->piece_value(Board::piece_instance(ROOK, WHITE))) +
+                      2*std::abs(piece_strength_source->piece_value(Board::piece_instance(KNIGHT, WHITE))) +
+                      2*std::abs(piece_strength_source->piece_value(Board::piece_instance(BISHOP, WHITE))) +
+                      1*std::abs(piece_strength_source->piece_value(Board::piece_instance(QUEEN, WHITE))) +
+                      1*std::abs(piece_strength_source->piece_value(Board::piece_instance(KING, WHITE)));
+
+    return score/normalizer;
 }
 
 std::unique_ptr<Gene> Opponent_Pieces_Targeted_Gene::duplicate() const
