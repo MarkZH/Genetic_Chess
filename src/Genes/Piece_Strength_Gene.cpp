@@ -1,10 +1,6 @@
 #include "Genes/Piece_Strength_Gene.h"
 
-#include <cmath>
-#include <limits>
-#include <cctype>
 #include <array>
-#include <cassert>
 #include <memory>
 
 #include "Genes/Gene.h"
@@ -12,21 +8,16 @@
 #include "Game/Piece.h"
 #include "Game/Board.h"
 
-static const auto piece_types = {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING};
-
-Piece_Strength_Gene::Piece_Strength_Gene()
+Piece_Strength_Gene::Piece_Strength_Gene() : piece_strength{}
 {
-    for(auto type : piece_types)
-    {
-        piece_strength[type] = 0.0;
-    }
 }
 
 void Piece_Strength_Gene::reset_properties() const
 {
-    for(const auto& piece : piece_types)
+    for(auto piece_type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
     {
-        properties[std::string(1, Board::piece_instance(piece, WHITE)->fen_symbol())] = piece_value(piece);
+        auto piece = Board::piece_instance(piece_type, WHITE);
+        properties[std::string(1, piece->fen_symbol())] = piece_value(piece);
     }
 }
 
@@ -64,12 +55,12 @@ void Piece_Strength_Gene::load_properties()
 
 void Piece_Strength_Gene::gene_specific_mutation()
 {
-    for(auto piece : piece_types)
+    for(auto& piece_score : piece_strength)
     {
         const double mean_number_of_mutations = 2.0;
-        if(Random::success_probability(mean_number_of_mutations/piece_types.size()))
+        if(Random::success_probability(mean_number_of_mutations/piece_strength.size()))
         {
-            piece_value(piece) += Random::random_laplace(1.0);
+            piece_score += Random::random_laplace(1.0);
         }
     }
 }
