@@ -15,7 +15,7 @@
 King_Confinement_Gene::King_Confinement_Gene() :
     friendly_block_score(0.0),
     enemy_block_score(0.0),
-    maximum_distance(0)
+    maximum_distance(1)
 {
 }
 
