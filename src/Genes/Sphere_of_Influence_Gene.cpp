@@ -1,8 +1,9 @@
 #include "Genes/Sphere_of_Influence_Gene.h"
 
-#include <algorithm>
+#include <cmath>
 #include <array>
 #include <memory>
+#include <map>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"

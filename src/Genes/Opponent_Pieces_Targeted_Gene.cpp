@@ -2,6 +2,7 @@
 
 #include <array>
 #include <memory>
+#include <string>
 
 #include "Game/Board.h"
 #include "Genes/Gene.h"

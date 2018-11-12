@@ -2,11 +2,12 @@
 
 #include <array>
 #include <memory>
+#include <map>
 
 #include "Genes/Gene.h"
-#include "Utility.h"
 #include "Game/Piece.h"
 #include "Game/Board.h"
+#include "Utility.h"
 
 Piece_Strength_Gene::Piece_Strength_Gene() : piece_strength{}
 {

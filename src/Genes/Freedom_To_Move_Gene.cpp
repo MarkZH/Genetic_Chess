@@ -1,6 +1,8 @@
 #include "Genes/Freedom_To_Move_Gene.h"
 
 #include <memory>
+#include <string>
+#include <vector>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"

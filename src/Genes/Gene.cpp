@@ -3,6 +3,7 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include <map>
 
 #include "Game/Board.h"
 #include "Game/Color.h"

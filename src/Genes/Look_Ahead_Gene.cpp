@@ -5,9 +5,9 @@
 #include <cassert>
 
 #include "Genes/Gene.h"
-#include "Utility.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Utility.h"
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     speculation_constants{},
