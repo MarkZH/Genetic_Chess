@@ -328,7 +328,7 @@ void Piece::add_queen_art()
     // ASCII Art http://ascii.co.uk/art/chess (VK)
     ascii_art_lines.push_back(" \\^/ ");
     ascii_art_lines.push_back(" ) ( ");
-    ascii_art_lines.push_back("(___}");
+    ascii_art_lines.push_back("(___)");
     if(color() == BLACK)
     {
         ascii_art_lines[1].replace(2, 1, "#");
