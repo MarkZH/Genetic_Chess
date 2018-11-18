@@ -156,5 +156,5 @@ double Gene::priority() const
 
 void Gene::make_priority_minimum_zero()
 {
-    scoring_priority = std::max(scoring_priority, 0.0);
+    scoring_priority = std::abs(scoring_priority);
 }

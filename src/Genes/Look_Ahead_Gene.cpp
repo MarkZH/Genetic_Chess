@@ -54,16 +54,17 @@ void Look_Ahead_Gene::gene_specific_mutation()
     {
         case 1:
             mean_game_length += Random::random_laplace(1.0);
-            mean_game_length = std::max(1.0, mean_game_length);
+            mean_game_length = std::abs(mean_game_length);
             break;
         case 2:
             game_length_uncertainty += Random::random_laplace(0.05);
-            game_length_uncertainty = std::max(0.0, game_length_uncertainty);
+            game_length_uncertainty = std::abs(game_length_uncertainty);
             break;
         default:
             assert(choice >= 3 && size_t(choice) < speculation_constants.size() + 3);
-            speculation_constants[choice - 3] += Random::random_laplace(0.1);
-            speculation_constants[choice - 3] = std::max(0.0, speculation_constants[choice - 3]);
+            auto& spec = speculation_constants[choice - 3];
+            spec += Random::random_laplace(0.1);
+            spec = std::abs(spec);
             break;
     }
 }
