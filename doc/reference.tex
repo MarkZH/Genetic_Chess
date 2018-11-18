@@ -315,9 +315,9 @@ An example genome file is shown below. Each genome starts with the \verb|ID:| li
 
 \section{The Gene Pool: On the Care and Feeding of Chess AIs}
 
-In each generation, the players in a gene pool are randomly matched up with each other to play a single game of chess. After the game, the two players mate to produce one offspring by picking each gene randomly from either parent with equal probability. The offspring is then subject to a single extra mutation procedure wherein two genes on average are individually mutated. Finally, the offspring replaces the loser in the gene pool. If the game ended in a draw, the player to be replaced by the offspring is picked by coin flip.
+In each generation, the players in a gene pool are randomly matched up with each other to play a single game of chess. After the game, the two players mate to produce one offspring by picking each gene randomly from either parent with equal probability (recombination~\cite{recombination-wiki}). The offspring is then subject to a single extra mutation procedure wherein two genes on average are individually mutated. Finally, the offspring replaces the loser in the gene pool. If the game ended in a draw, the player to be replaced by the offspring is picked by coin flip. In the literature, this setup is classified under Evolutionary Strategies~\cite{evolution-strategy-wiki}, more specifically \((N/2+N)\)-ES~\cite{evolution-strategy-glossary}, where \(N\) is the population size after the chess games (half the initial population), \(/2\) refers to two parents producing one offspring through recombination, \(+\) means that the offspring compete with the parents (elitism), and the final \(N\) refers to how many offspring are generated to keep a constant population of \(2N\), half of which are killed off every generation.
 
-In this procedure, some the genes of losing players are passed on and only slowly weeded out since a single game does not actually provide much information about the fitness of any gene with respect to game play. The removal of individuals destroys genetic information. By ``information,'' I mean filtered genomes. If a gene (including small variations, given the continuous nature of these genotypes) is present is a large percentage of the species, then that gene must have been present in a great number of AIs that were victorious in their games through many generations and many different opponents. Genes found in losing organisms slowly fade away as their host organisms fail to survive long enough reproduce multiple times. On average, a gene from a losing AI will be present in 0.5~AIs (50\% chance of being passed on) in the next generation; a gene from a winning AI will be present in 1.5~AIs (1.0 from the parent and another 0.5 from the 50\% chance of being passed on) in the next generation.
+In this procedure, some the genes of losing players are passed on and are only slowly weeded out since a single game does not actually provide much information about the fitness of any gene with respect to game play. The removal of individuals destroys genetic information. By ``information,'' I mean filtered genomes. If a gene (including small variations, given the continuous nature of these genotypes) is present is a large percentage of the species, then that gene must have been present in a great number of AIs that were victorious in their games through many generations and many different opponents. Genes found in losing organisms slowly fade away as their host organisms fail to survive long enough reproduce multiple times. On average, a gene from a losing AI will be present in 0.5~AIs (50\% chance of being passed on) in the next generation; a gene from a winning AI will be present in 1.5~AIs (1.0 from the parent and another 0.5 from the 50\% chance of being passed on) in the next generation.
 
 One final means of preventing gene pool stagnation and preserving genetic diversity is the use of multiple gene pools. Each gene pool evolves separately for a long time, allowing each to genetically diverge. Then, every once in a long while (the time being user-specified), the best player from each pool is transferred to the next pool over. Thus, the best genes are further spread afield so that they can be tested against a wide range of opponents. A useful measure of a pool's relative strength is how long its best player survives when it enters a new pool.
 
@@ -561,6 +561,15 @@ Turing, Alan M., ``Digital Computers Applied to Games.'' Faster Than Thought. B.
 
 \bibitem{monte-carlo}
 \url{https://en.wikipedia.org/wiki/Monte_Carlo_tree_search}
+
+\bibitem{recombination-wiki}
+\url{https://en.wikipedia.org/wiki/Genetic_recombination}
+
+\bibitem{evolution-strategy-wiki}
+\url{https://en.wikipedia.org/wiki/Evolution_strategy}
+
+\bibitem{evolution-strategy-glossary}
+\url{http://ls11-www.cs.tu-dortmund.de/~beyer/EA-glossary/node41.html}
 
 \end{thebibliography}
 
