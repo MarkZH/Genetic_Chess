@@ -60,8 +60,8 @@ void gene_pool(const std::string& config_file = "")
 
     // Stats (Pool ID --> counts)
     std::vector<int> game_count(gene_pool_count);
-    std::vector<int> white_wins(gene_pool_count);
-    std::vector<int> black_wins(gene_pool_count);
+    std::array<std::vector<int>, 2> color_wins; // indexed with [Color][pool_index]
+    color_wins.fill(std::vector<int>(gene_pool_population, 0));
     std::vector<int> draw_count(gene_pool_count);
 
     std::map<size_t, int> most_wins;
@@ -170,8 +170,8 @@ void gene_pool(const std::string& config_file = "")
         std::cout << "\nGene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
                   << "\nGames: " << game_count[pool_index]
-                  << "  White wins: " << white_wins[pool_index]
-                  << "  Black wins: " << black_wins[pool_index]
+                  << "  White wins: " << color_wins[WHITE][pool_index]
+                  << "  Black wins: " << color_wins[BLACK][pool_index]
                   << "  Draws: " << draw_count[pool_index]
                   << "\nTime: " << game_time << " sec"
                   << "   Gene pool file name: " << genome_file_name << "\n\n";
@@ -225,7 +225,7 @@ void gene_pool(const std::string& config_file = "")
 
             if(winner != NONE)
             {
-                (winner == WHITE ? white_wins : black_wins)[pool_index]++;
+                color_wins[winner][pool_index]++;
                 auto& winning_player = (winner == WHITE ? white : black);
                 wins[winning_player]++;
                 games_since_last_win[winning_player] = 0;
