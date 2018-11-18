@@ -46,7 +46,7 @@ void gene_pool(const std::string& config_file = "")
     auto config = Configuration_File(config_file);
 
     // Environment variables
-    const auto maximum_simultaneous_games = size_t(config.as_number("maximum simultaneous games"));
+    const auto maximum_simultaneous_games = config.as_number("maximum simultaneous games");
     const auto gene_pool_population = size_t(config.as_number("gene pool population"));
     const auto gene_pool_count = size_t(config.as_number("gene pool count"));
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
@@ -185,26 +185,29 @@ void gene_pool(const std::string& config_file = "")
         std::vector<std::future<Game_Result>> results; // map from matchups to winners (half the size of pool)
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
-            // Limit the number of simultaneous games by waiting for earlier games to finish
-            // before starting a new one.
-            auto in_progress_games = results.size();
-            while(in_progress_games >= maximum_simultaneous_games)
-            {
-                for(const auto& game : results)
-                {
-                    if(game.wait_for(std::chrono::seconds(0)) == std::future_status::ready)
-                    {
-                        --in_progress_games;
-                    }
-                }
-
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-
             auto& white = pool[index];
             auto& black = pool[index + 1];
             results.emplace_back(std::async(std::launch::async,
                                             play_game, white, black, game_time, 0, 0, game_record_file));
+
+            // Limit the number of simultaneous games by waiting for earlier games to finish
+            // before starting a new one.
+            while(true)
+            {
+                auto in_progress_games = std::count_if(results.begin(),
+                                                       results.end(),
+                                                       [](const auto& r)
+                                                       { return r.wait_for(std::chrono::seconds(0)) != std::future_status::ready; });
+
+                if(in_progress_games >= maximum_simultaneous_games)
+                {
+                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
         // Get results as they come in
