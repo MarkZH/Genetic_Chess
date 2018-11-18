@@ -161,6 +161,8 @@ void gene_pool(const std::string& config_file = "")
         std::cout << "Done." << std::endl;
     }
 
+    config.print_unused_parameters();
+
     // Signal to pause gene pool
     signal(PAUSE_SIGNAL, pause_gene_pool);
 

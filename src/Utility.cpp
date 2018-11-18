@@ -267,6 +267,7 @@ Configuration_File::Configuration_File(const std::string& file_name)
         auto line_split = String::split(line, "=", 1);
         auto parameter = standardize_text(line_split[0]);
         parameters[parameter] = String::trim_outer_whitespace(line_split[1]);
+        used[parameter] = false;
     }
 }
 
@@ -274,6 +275,7 @@ std::string Configuration_File::as_text(const std::string& parameter) const
 {
     try
     {
+        used.at(parameter) = true;
         return parameters.at(standardize_text(parameter));
     }
     catch(const std::out_of_range&)
@@ -319,6 +321,23 @@ bool Configuration_File::as_boolean(const std::string& parameter, const std::str
 std::string Configuration_File::standardize_text(const std::string& input)
 {
     return String::lowercase(String::remove_extra_whitespace(input));
+}
+
+void Configuration_File::print_unused_parameters() const
+{
+    auto header_printed = false;
+    for(const auto& param_value : parameters)
+    {
+        if( ! used[param_value.first])
+        {
+            if( ! header_printed)
+            {
+                std::cout << "Unused configuration parameters:\n";
+                header_printed = true;
+            }
+            std::cout << param_value.first << " --> " << param_value.second << std::endl;
+        }
+    }
 }
 
 
