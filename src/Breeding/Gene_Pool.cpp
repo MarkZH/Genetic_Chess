@@ -255,7 +255,7 @@ void gene_pool(const std::string& config_file = "")
 
                 // Draw results in random player being replaced
                 winner = (Random::coin_flip() ? WHITE : BLACK);
-                std::cout << " --> " << (winner == WHITE ? white : black).id() << " dies";
+                std::cout << " --> " << (winner == WHITE ? black : white).id() << " dies";
             }
 
             auto offspring = Genetic_AI(white, black);
