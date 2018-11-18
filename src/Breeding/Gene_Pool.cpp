@@ -59,7 +59,7 @@ void gene_pool(const std::string& config_file = "")
     const bool oscillating_time = config.as_boolean("oscillating time", "yes", "no");
     double game_time = minimum_game_time;
 
-    // Stats (map: Pool ID --> counts)
+    // Stats (Pool ID --> counts)
     std::vector<int> game_count(gene_pool_count);
     std::vector<int> white_wins(gene_pool_count);
     std::vector<int> black_wins(gene_pool_count);
@@ -161,7 +161,7 @@ void gene_pool(const std::string& config_file = "")
         std::cout << "Done." << std::endl;
     }
 
-    // Ctrl-C to pause gene pool
+    // Signal to pause gene pool
     signal(PAUSE_SIGNAL, pause_gene_pool);
 
     for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % pools.size()) // run forever
@@ -177,8 +177,7 @@ void gene_pool(const std::string& config_file = "")
                   << "  Black wins: " << black_wins[pool_index]
                   << "  Draws: " << draw_count[pool_index]
                   << "\nTime: " << game_time << " sec"
-                  << "   Gene pool file name: " << genome_file_name << "\n"
-                  << std::endl;
+                  << "   Gene pool file name: " << genome_file_name << "\n\n";
 
         std::cout << "Pause: " << pause_key << "    Abort: " << stop_key << "\n" << std::endl;
 
