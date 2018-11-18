@@ -49,7 +49,6 @@ void gene_pool(const std::string& config_file = "")
     const auto maximum_simultaneous_games = size_t(config.as_number("maximum simultaneous games"));
     const auto gene_pool_population = size_t(config.as_number("gene pool population"));
     const auto gene_pool_count = size_t(config.as_number("gene pool count"));
-    const auto draw_kill_probability = double(config.as_number("draw kill probability"));
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
 
     // Oscillating game time
@@ -70,9 +69,6 @@ void gene_pool(const std::string& config_file = "")
 
     std::map<size_t, int> most_games_survived;
     std::map<size_t, Genetic_AI> most_games_survived_player;
-
-    std::vector<std::vector<Genetic_AI>> new_blood(gene_pool_count); // ex nihilo players
-    std::vector<int> new_blood_count(gene_pool_count);
 
     // Individual Genetic AI stats
     std::map<Genetic_AI, int> wins;
@@ -173,8 +169,7 @@ void gene_pool(const std::string& config_file = "")
         // Write overall stats
         std::cout << "\nGene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
-                  << "  New blood introduced: " << new_blood_count[pool_index] << " (*)\n"
-                  << "Games: " << game_count[pool_index]
+                  << "\nGames: " << game_count[pool_index]
                   << "  White wins: " << white_wins[pool_index]
                   << "  Black wins: " << black_wins[pool_index]
                   << "  Draws: " << draw_count[pool_index]
@@ -225,27 +220,9 @@ void gene_pool(const std::string& config_file = "")
             auto winner = result.winner();
             std::cout << color_text(winner) << " (" << result.ending_reason() << ")";
 
-            if(winner == WHITE)
-            {
-                ++white_wins[pool_index];
-            }
-            else if(winner == BLACK)
-            {
-                ++black_wins[pool_index];
-            }
-            else // DRAW
-            {
-                draws[white]++;
-                draws[black]++;
-                games_since_last_win[white]++;
-                games_since_last_win[black]++;
-                consecutive_wins[white] = 0;
-                consecutive_wins[black] = 0;
-                ++draw_count[pool_index];
-            }
-
             if(winner != NONE)
             {
+                (winner == WHITE ? white_wins : black_wins)[pool_index]++;
                 auto& winning_player = (winner == WHITE ? white : black);
                 wins[winning_player]++;
                 games_since_last_win[winning_player] = 0;
@@ -262,57 +239,28 @@ void gene_pool(const std::string& config_file = "")
                         most_wins_player.emplace(pool_index, winning_player);
                     }
                 }
-
-                auto offspring = Genetic_AI(white, black);
-                offspring.mutate();
-                original_pool[offspring] = pool_index;
-
-                auto& losing_player  = (winner == WHITE ? black : white);
-                losing_player = offspring; // offspring replaces loser
             }
             else
             {
-                if(Random::success_probability(draw_kill_probability))
-                {
-                    auto& pseudo_loser = (Random::coin_flip() ? white : black);
-                    std::cout << "\n    --> " << pseudo_loser.id() << " mates with ";
-                    auto new_specimen = Genetic_AI();
+                draws[white]++;
+                draws[black]++;
+                games_since_last_win[white]++;
+                games_since_last_win[black]++;
+                consecutive_wins[white] = 0;
+                consecutive_wins[black] = 0;
+                ++draw_count[pool_index];
 
-                    if(Random::coin_flip() && pseudo_loser.id() > 0)
-                    {
-                        while(true)
-                        {
-                            try
-                            {
-                                new_specimen = Genetic_AI(genome_file_name,
-                                                          Random::random_integer(0, pseudo_loser.id() - 1));
-                                break;
-                            }
-                            catch(const std::runtime_error&)
-                            {
-                                // In case invalid ID was chosen.
-                                // (New IDs are not always consecutively chosen.)
-                                continue;
-                            }
-                        }
-                        std::cout << new_specimen.id();
-                    }
-                    else
-                    {
-                        new_specimen.mutate(scramble_mutations);
-                        std::cout << "random";
-                    }
-
-                    auto offspring = Genetic_AI(pseudo_loser, new_specimen);
-                    offspring.mutate();
-                    new_blood[pool_index].push_back(offspring);
-                    ++new_blood_count[pool_index];
-                    original_pool[offspring] = pool_index;
-
-                    std::cout << " / " << pseudo_loser.id() << " dies";
-                    pseudo_loser = offspring; // offspring replaces loser
-                }
+                // Draw results in random player being replaced
+                winner = (Random::coin_flip() ? WHITE : BLACK);
+                std::cout << " --> " << (winner == WHITE ? white : black).id() << " dies";
             }
+
+            auto offspring = Genetic_AI(white, black);
+            offspring.mutate();
+            original_pool[offspring] = pool_index;
+
+            auto& losing_player  = (winner == WHITE ? black : white);
+            losing_player = offspring; // offspring replaces loser
             std::cout << std::endl;
         }
 
@@ -324,7 +272,6 @@ void gene_pool(const std::string& config_file = "")
         purge_dead_from_map(pools, games_since_last_win);
         purge_dead_from_map(pools, consecutive_wins);
         purge_dead_from_map(pools, original_pool);
-        purge_dead_from_map(pools, new_blood);
 
         for(const auto& ai : pool)
         {
@@ -362,9 +309,6 @@ void gene_pool(const std::string& config_file = "")
                       << std::setw(8)   << consecutive_wins[ai]
                       << std::setw(7)    << draws[ai]
                       << std::setw(8)   << games_since_last_win[ai]
-                      << (std::binary_search(new_blood[pool_index].begin(),
-                                             new_blood[pool_index].end(),
-                                             ai) ? " *" : "")
                       << (original_pool[ai] != pool_index ? " T" : "") << "\n";
         }
         std::cout << std::endl;

@@ -10,9 +10,6 @@ gene pool population = 16
 # How many gene pools
 gene pool count = 3
 
-# Probability of killing a player after a draw
-draw kill probability = 0.05
-
 # Games in between swapping players between pools
 pool swap interval = 1000
 
