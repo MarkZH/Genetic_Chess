@@ -196,19 +196,16 @@ mode_moves = mode(moves_in_game);
 std_dev = std(moves_in_game);
 
 % Log-normal fit
-mean_log = sum(log(bins).*counts)/number_of_games;
-std_log = sqrt(sum(((log(bins) - mean_log).^2).*counts)/number_of_games);
+mean_log = mean(log(moves_in_game));
+std_log = std(log(moves_in_game));
 fit = number_of_games*exp(-.5*((log(bins) - mean_log)/std_log).^2)./(bins*std_log*sqrt(2*pi));
 plot(bins, fit, 'linewidth', 3);
 
 last10p = [floor(.9*length(moves_in_game)) : length(moves_in_game)];
-[counts10p, bins10p] = hist(moves_in_game(last10p), (1 : max(moves_in_game(last10p))));
-number_of_games10p = .1*number_of_games;
-
-mean_log10p = sum(log(bins10p).*counts10p)/number_of_games10p;
-std_log10p = sqrt(sum(((log(bins10p) - mean_log10p).^2).*counts10p)/number_of_games10p);
-fit10p = number_of_games*exp(-.5*((log(bins10p) - mean_log10p)/std_log10p).^2)./(bins10p*std_log10p*sqrt(2*pi));
-plot(bins10p, fit10p, 'k', 'linewidth', 3);
+mean_log10p = mean(log(moves_in_game(last10p)));
+std_log10p = std(log(moves_in_game(last10p)));
+fit10p = number_of_games*exp(-.5*((log(bins) - mean_log10p)/std_log10p).^2)./(bins*std_log10p*sqrt(2*pi));
+plot(bins, fit10p, 'k', 'linewidth', 3);
 
 legend('Histogram', 'Log-Normal distribution (all games)', 'Log-normal distribution (last 10%)');
 
