@@ -238,6 +238,6 @@ stats = {['Mean = ' num2str(mean_moves)], ...
 
 xl = xlim;
 yl = ylim;
-text(0.5*xl(2), 0.6*yl(2), stats, 'fontsize', 14);
+text(0.5*xl(2), 0.5*yl(2), stats, 'fontsize', 14);
 
 print([raw_data '_moves_in_game_histogram.png']);
