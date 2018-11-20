@@ -5,6 +5,8 @@
 
 #include "Random_AI.h"
 
+#include "Monte_Carlo_Search_Tree.h"
+
 class Board;
 class Clock;
 class Move;
@@ -16,6 +18,8 @@ class Monte_Carlo_AI : public Random_AI
         std::string name() const override;
 
     private:
+        mutable Monte_Carlo_Search_Tree search_tree;
+
         void print_cecp_thinking(double time_so_far,
                                  double result,
                                  int move_count,
