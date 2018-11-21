@@ -14,16 +14,7 @@
 
 const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) const
 {
-    if( ! board.game_record().empty())
-    {
-        if(board.game_record().size() > 1)
-        {
-            search_tree.reroot(board.game_record()[board.game_record().size() - 2]);
-        }
-        search_tree.reroot(board.game_record().back());
-    }
-
-    auto choice_time_start = clock.time_left(clock.running_for());
+    auto time_start = clock.time_left(clock.running_for());
     auto moves_left_in_game = size_t(Math::average_moves_left(50, 0.5, board.game_record().size()/2));
     auto moves_to_reset = clock.moves_to_reset(clock.running_for());
     auto moves_left = std::min(moves_left_in_game, moves_to_reset);
@@ -34,7 +25,15 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
 
     auto time_at_last_cecp_output = clock.time_left(clock.running_for());
 
-    auto time_start = clock.time_left(clock.running_for());
+    if( ! board.game_record().empty())
+    {
+        if(board.game_record().size() > 1)
+        {
+            search_tree.reroot(board.game_record()[board.game_record().size() - 2]);
+        }
+        search_tree.reroot(board.game_record().back());
+    }
+
     while(time_start - clock.time_left(clock.running_for()) < time_to_examine)
     {
         auto monte_carlo_board = board;
@@ -70,7 +69,7 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
            time_at_last_cecp_output - current_time > 0.1)
         {
             time_at_last_cecp_output = current_time;
-            print_cecp_thinking(choice_time_start - current_time,
+            print_cecp_thinking(time_start - current_time,
                                 score,
                                 move_count,
                                 game_count,
@@ -83,7 +82,7 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     auto current_time = clock.time_left(clock.running_for());
     if(board.thinking_mode() == CECP)
     {
-        print_cecp_thinking(choice_time_start - current_time,
+        print_cecp_thinking(time_start - current_time,
                             best_result.second,
                             move_count,
                             game_count,
