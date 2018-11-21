@@ -36,22 +36,38 @@ void Monte_Carlo_Search_Tree::add_search(Move_Iterator begin,
     branches[index]->add_search(std::next(begin), end, score);
 }
 
-void Monte_Carlo_Search_Tree::reroot(const Move* move)
+void Monte_Carlo_Search_Tree::reroot(const Move* first_move, const Move* second_move)
 {
-    auto index = index_of(move);
-    if(index >= moves.size())
+    auto next_branch = this;
+
+    for(auto move : {first_move, second_move})
+    {
+        if( ! move)
+        {
+            break;
+        }
+
+        auto index = next_branch->index_of(move);
+        if(index < next_branch->moves.size())
+        {
+            next_branch = next_branch->branches[index].get();
+        }
+    }
+
+    if(next_branch != this)
+    {
+        moves = next_branch->moves;
+        results = next_branch->results;
+        visits = next_branch->visits;
+        branches = std::move(next_branch->branches);
+    }
+    else
     {
         moves.clear();
         results.clear();
-        branches.clear();
         visits.clear();
-
-        return;
+        branches.clear();
     }
-
-    results = branches[index]->results;
-    visits = branches[index]->visits;
-    branches = std::move(branches[index]->branches);
 }
 
 std::pair<const Move*, double> Monte_Carlo_Search_Tree::best_result() const
