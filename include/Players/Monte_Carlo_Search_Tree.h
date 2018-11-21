@@ -17,6 +17,7 @@ class Monte_Carlo_Search_Tree
                         int score);
         void reroot(const Move* move);
         std::pair<const Move*, double> best_result() const;
+        double current_score(const Move* move) const;
 
     private:
         std::vector<const Move*> moves;

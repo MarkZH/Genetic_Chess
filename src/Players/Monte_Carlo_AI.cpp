@@ -70,7 +70,7 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
         {
             time_at_last_cecp_output = current_time;
             print_cecp_thinking(time_start - current_time,
-                                score,
+                                search_tree.current_score(*begin),
                                 move_count,
                                 game_count,
                                 *begin,
@@ -107,7 +107,7 @@ void Monte_Carlo_AI::print_cecp_thinking(double time_so_far,
 {
     std::cout << 1 // thought depth
         << " "
-        << int(result*100) // score
+        << int(result*100*100) // score in % chance of winning
         << " "
         << int(time_so_far*100) // search time in centiseconds
         << " "

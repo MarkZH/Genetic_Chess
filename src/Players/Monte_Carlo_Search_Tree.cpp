@@ -76,3 +76,16 @@ size_t Monte_Carlo_Search_Tree::index_of(const Move* move) const
     auto iter = std::find(moves.begin(), moves.end(), move);
     return std::distance(moves.begin(), iter);
 }
+
+double Monte_Carlo_Search_Tree::current_score(const Move* move) const
+{
+    auto index = index_of(move);
+    if(index < results.size())
+    {
+        return double(results[index])/visits[index];
+    }
+    else
+    {
+        return 0.0;
+    }
+}
