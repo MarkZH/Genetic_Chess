@@ -62,7 +62,7 @@ This will start up a gene pool with Genetic\_AIs playing against each other---ma
 		\end{itemize}
 		\item[\code{-random}:] an AI player that chooses a random legal move at each turn.
 		\item[\code{-turing}:] a chess engine implemented according to the design by Alan Turing~\cite{turing-chess}.
-		\item[\code{-montecarlo}:] a chess AI that picks a move based on the results of randomly played complete games, i.e., the pure version of Monte Carlo tree search~\cite{monte-carlo}.
+		\item[\code{-montecarlo}:] a chess AI that picks a move based on the results of randomly played complete games, i.e., the pure version of Monte Carlo tree search~\cite{monte-carlo}. A warning: this AI can be very memory intensive depending upon the computer's speed and the time controls of the game. On my computer, 5/40 time control results in almost 900~GB of memory usage per player.
 	\end{description}
 \end{description}
 Genetic Chess can communicate with GUI chess programs through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol}, including xboard, PyChess, Cute Chess, and others. When using Genetic Chess this way, only specify the arguments for a single player (\code{-genetic} or \code{-random}). The program will then wait for communication from the GUI\@.
