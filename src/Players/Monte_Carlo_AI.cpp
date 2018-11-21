@@ -107,7 +107,7 @@ void Monte_Carlo_AI::print_cecp_thinking(double time_so_far,
 {
     std::cout << 1 // thought depth
         << " "
-        << int(result*100*100) // score in % chance of winning
+        << int(result*100) // score
         << " "
         << int(time_so_far*100) // search time in centiseconds
         << " "
