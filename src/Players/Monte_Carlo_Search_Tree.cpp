@@ -23,8 +23,8 @@ void Monte_Carlo_Search_Tree::add_search(Move_Iterator begin,
     {
         moves.push_back(*begin);
         results.push_back(0);
-        branches.push_back(std::make_unique<Monte_Carlo_Search_Tree>());
         visits.push_back(0);
+        branches.push_back(std::make_unique<Monte_Carlo_Search_Tree>());
 
         assert(moves.size() == index + 1);
         assert(results.size() == index + 1);
@@ -32,8 +32,8 @@ void Monte_Carlo_Search_Tree::add_search(Move_Iterator begin,
         assert(visits.size() == index + 1);
     }
     results[index] += score;
-    branches[index]->add_search(std::next(begin), end, score);
     ++visits[index];
+    branches[index]->add_search(std::next(begin), end, score);
 }
 
 void Monte_Carlo_Search_Tree::reroot(const Move* move)

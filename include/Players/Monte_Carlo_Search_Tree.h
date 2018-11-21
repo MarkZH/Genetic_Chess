@@ -21,9 +21,9 @@ class Monte_Carlo_Search_Tree
 
     private:
         std::vector<const Move*> moves;
-        std::vector<std::unique_ptr<Monte_Carlo_Search_Tree>> branches;
         std::vector<int> results;
         std::vector<int> visits;
+        std::vector<std::unique_ptr<Monte_Carlo_Search_Tree>> branches;
 
         size_t index_of(const Move* move) const;
 };
