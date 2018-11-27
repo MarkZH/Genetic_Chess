@@ -3,6 +3,7 @@
 #include <vector>
 #include <limits>
 #include <iostream>
+#include <iterator>
 
 #include "Players/Random_AI.h"
 #include "Game/Board.h"
@@ -25,16 +26,17 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
 
     auto time_at_last_cecp_output = clock.time_left(clock.running_for());
 
-    if( ! board.game_record().empty())
+    auto first_move = board.game_record().end();
+    if(first_move != board.game_record().begin())
     {
-        auto last_move = board.game_record().back();
-        if(board.game_record().size() > 1)
+        first_move = std::prev(first_move);
+        if(first_move != board.game_record().begin())
         {
-            auto move_before_last = board.game_record()[board.game_record().size() - 2];
-            search_tree.reroot(move_before_last, last_move);
+            first_move = std::prev(first_move);
         }
-        search_tree.reroot(last_move);
     }
+
+    search_tree.reroot(first_move, board.game_record().end());
 
     while(time_start - clock.time_left(clock.running_for()) < time_to_examine)
     {

@@ -28,29 +28,32 @@ void Monte_Carlo_Search_Tree::add_search(Move_Iterator begin,
 
         assert(moves.size() == index + 1);
         assert(results.size() == index + 1);
-        assert(branches.size() == index + 1);
         assert(visits.size() == index + 1);
+        assert(branches.size() == index + 1);
     }
     results[index] += score;
     ++visits[index];
     branches[index]->add_search(std::next(begin), end, score);
 }
 
-void Monte_Carlo_Search_Tree::reroot(const Move* first_move, const Move* second_move)
+void Monte_Carlo_Search_Tree::reroot(Move_Iterator begin, Move_Iterator end)
 {
     auto next_branch = this;
 
-    for(auto move : {first_move, second_move})
+    for(auto current = begin; current != end; current = std::next(current))
     {
-        if( ! move)
-        {
-            break;
-        }
-
-        auto index = next_branch->index_of(move);
-        if(index < next_branch->moves.size())
+        auto index = next_branch->index_of(*current);
+        if(index < next_branch->branches.size())
         {
             next_branch = next_branch->branches[index].get();
+        }
+        else
+        {
+            moves.clear();
+            results.clear();
+            visits.clear();
+            branches.clear();
+            return;
         }
     }
 
@@ -60,13 +63,6 @@ void Monte_Carlo_Search_Tree::reroot(const Move* first_move, const Move* second_
         results = next_branch->results;
         visits = next_branch->visits;
         branches = std::move(next_branch->branches);
-    }
-    else
-    {
-        moves.clear();
-        results.clear();
-        visits.clear();
-        branches.clear();
     }
 }
 
