@@ -331,16 +331,15 @@ A gene pool is configured with a text file that is reference in the program star
 \subsection{Gene Pool Output}
 An example of typical output during a gene pool run is shown below. First, some general information about the pool is shown, then the results of the random matchups, thirdly the new makeup of this gene pool in the aftermath of the games, and finally the IDs of the AIs with the most ever wins and the most number of games survived.
 \begin{verbatim}
-Gene pool ID: 0  Gene pool size: 16  New blood introduced: 6 (*)
+Gene pool ID: 0  Gene pool size: 16
 Games: 6000  White wins: 3402  Black wins: 2511  Draws: 87
 Time: 16.65 sec   Gene pool file name: pool.txt
 
-106514 vs 106495: None (Threefold repetition)
+106514 vs 106495: Black (Time forfeiture)
 106531 vs 106513: White (White mates)
 106511 vs 106479: Black (Black mates)
-106392 vs 106457: None (Insufficient material) 106392
-mates with random / 106392 dies
-106516 vs 106497: None (Threefold repetition)
+106392 vs 106457: None (Insufficient material) --> 106392 dies
+106516 vs 106497: None (Threefold repetition) --> 106516 dies
 106532 vs 106530: White (White mates)
 106529 vs 106433: White (White mates)
 106533 vs 106534: White (White mates)
@@ -348,28 +347,26 @@ mates with random / 106392 dies
      ID   Wins  Streak  Draws  Streak
  106457      2       0      3       2
  106479      4       4      0       0 T
- 106495      1       0      2       1
+ 106495      1       1      2       0
  106497      1       0      2       2
- 106514      0       0      2       2
- 106516      0       0      2       2
  106529      1       1      0       0
  106531      1       1      0       0
  106532      1       1      0       0
  106533      1       1      0       0
- 106548      0       0      0       0
  106549      0       0      0       0
- 106551      0       0      0       0 *
+ 106550      0       0      0       0
+ 106551      0       0      0       0
  106552      0       0      0       0
  106553      0       0      0       0
  106554      0       0      0       0
-
+ 106555      0       0      0       0
+ 106556      0       0      0       0
+ 
 Most wins:     16 by ID 96392
 Longest lived: 27 by ID 96392
 
 \end{verbatim}
-The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, Player 106479 is on a four-game winning streak since it was born (including victories both in this pool and in pool 2 where it was born). Player 106457 has drawn its last two games after its last win.
-
-The asterisk (\verb|*|) indicates an offspring of the result of a drawn match---in this case, from 106392 vs 106457, with the new AI replacing 106392. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
+The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, Player 106479 is on a four-game winning streak since it was born (including victories both in this pool and in pool 2 where it was born). Player 106457 has drawn its last two games after its last win. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
 
 
 \section{Some Consistent Results (in rough order of discovery)}
