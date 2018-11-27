@@ -203,7 +203,7 @@ void Genome::mutate()
     // Create copies of genes based on the number of internal components
     // that are mutatable
     std::vector<Gene*> genes;
-    for(auto& gene : genome)
+    for(const auto& gene : genome)
     {
         auto mutatable_components = gene->mutatable_components();
         genes.insert(genes.end(), mutatable_components, gene.get());
@@ -215,7 +215,7 @@ void Genome::mutate()
     const auto number_of_mutations = 3;
     while(mutations++ < number_of_mutations)
     {
-        genes[Random::random_integer(0, genes.size() - 1)]->mutate();
+        genes[Random::random_integer(0, int(genes.size()) - 1)]->mutate();
     }
 }
 

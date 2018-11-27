@@ -35,7 +35,7 @@ void King_Confinement_Gene::load_properties()
     Gene::load_properties();
     friendly_block_score = properties["Friendly Block Score"];
     enemy_block_score = properties["Enemy Block Score"];
-    maximum_distance = properties["Maximum Distance"];
+    maximum_distance = int(properties["Maximum Distance"]);
 }
 
 void King_Confinement_Gene::reset_properties() const
@@ -59,7 +59,7 @@ void King_Confinement_Gene::gene_specific_mutation()
             enemy_block_score += mutation_size;
             break;
         case 3:
-            maximum_distance += mutation_size;
+            maximum_distance += int(mutation_size);
             maximum_distance = Math::clamp(maximum_distance, 1, 63);
             break;
         default:
