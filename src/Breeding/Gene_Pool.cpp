@@ -11,6 +11,7 @@
 #include <future>
 #include <thread>
 #include <chrono>
+#include <array>
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
