@@ -30,7 +30,7 @@ obj/
 # Other files
 *.png
 octave-workspace
-*.out
+*.out*
 *.ipch
 *.db
 *.filters
