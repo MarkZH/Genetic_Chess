@@ -183,7 +183,7 @@ Board::Board(const std::string& fen) :
                         place_piece(piece_instance(KING, color), file, rank);
                         break;
                     default:
-                        fen_error(fen, "Invalid symbol in FEN string: " + symbol);
+                        fen_error(fen, std::string("Invalid symbol in FEN string: ") + symbol);
                 }
                 ++file;
             }
