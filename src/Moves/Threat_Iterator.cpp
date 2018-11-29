@@ -18,7 +18,8 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     max_hit_count(3),
     attacking_color(attack_color),
     board(reference_board),
-    target_king(reference_board.piece_instance(KING, opposite(attack_color)))
+    target_king(reference_board.piece_instance(KING, opposite(attack_color))),
+    attacking_knight(reference_board.piece_instance(KNIGHT, attack_color))
 {
     next_threat();
 }
@@ -152,8 +153,7 @@ void Threat_Iterator::next_threat()
                     continue;
                 }
 
-                auto knight = Board::piece_instance(KNIGHT, attacking_color);
-                if(board.piece_on_square(attack_file, attack_rank) == knight)
+                if(board.piece_on_square(attack_file, attack_rank) == attacking_knight)
                 {
                     // Cannot have more than one knight checking the king
                     hit_count = max_hit_count - 1;

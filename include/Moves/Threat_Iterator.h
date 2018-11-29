@@ -41,6 +41,7 @@ class Threat_Iterator
         Color attacking_color;
         const Board& board;
         const Piece* target_king;
+        const Piece* attacking_knight;
 
         void next_threat();
         char attacking_file() const;
