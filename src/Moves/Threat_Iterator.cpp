@@ -4,7 +4,6 @@
 #include "Game/Square.h"
 #include "Game/Color.h"
 #include "Game/Piece.h"
-#include "Moves/Move.h"
 
 Threat_Iterator::Threat_Iterator(char target_file_in,
                                  int  target_rank_in,
@@ -14,8 +13,7 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     target_rank(target_rank_in),
     file_step(-1),
     rank_step(-2),
-    step_size(0),
-    knight_index(0),
+    on_knight_moves(false),
     hit_count(0),
     max_hit_count(3),
     attacking_color(attack_color),
@@ -64,7 +62,7 @@ void Threat_Iterator::next_threat()
 
     ++rank_step;
 
-    for( ; knight_index == 0 && file_step <= 1; ++file_step)
+    for( ; ! on_knight_moves && file_step <= 1; ++file_step)
     {
         for( ; rank_step <= 1; ++rank_step)
         {
@@ -74,7 +72,7 @@ void Threat_Iterator::next_threat()
                 continue;
             }
 
-            for(step_size = 1 ; step_size <= 7; ++step_size)
+            for(int step_size = 1 ; step_size <= 7; ++step_size)
             {
                 attack_file = target_file + file_step*step_size;
                 attack_rank = target_rank + rank_step*step_size;
@@ -132,17 +130,35 @@ void Threat_Iterator::next_threat()
         rank_step = -1;
     }
 
-    auto knight = board.piece_instance(KNIGHT, attacking_color);
-    const auto& moves = knight->move_list(target_file, target_rank);
-    while(knight_index < moves.size())
+    on_knight_moves = true;
+
+    for(file_step = 1 ; file_step <= 2; ++file_step)
     {
-        auto move = moves[knight_index];
-        ++knight_index;
-        attack_file = move->end_file();
-        attack_rank = move->end_rank();
-        if(board.piece_on_square(attack_file, attack_rank) == knight)
+        rank_step = 3 - file_step;
+        for(int file_direction = -1 ; file_direction <= 1; file_direction += 2)
         {
-            return;
+            attack_file = target_file + file_step*file_direction;
+            if( ! Board::inside_board(attack_file))
+            {
+                continue;
+            }
+
+            for(int rank_direction = -1; rank_direction <= 1; rank_direction += 2)
+            {
+                attack_rank = target_rank + rank_step*rank_direction;
+                if( ! Board::inside_board(attack_rank))
+                {
+                    continue;
+                }
+
+                auto knight = Board::piece_instance(KNIGHT, attacking_color);
+                if(board.piece_on_square(attack_file, attack_rank) == knight)
+                {
+                    // Cannot have more than one knight checking the king
+                    hit_count = max_hit_count - 1;
+                    return;
+                }
+            }
         }
     }
 

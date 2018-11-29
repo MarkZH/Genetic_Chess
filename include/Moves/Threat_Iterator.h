@@ -33,8 +33,8 @@ class Threat_Iterator
 
         int file_step;
         int rank_step;
-        int step_size;
-        size_t knight_index;
+        bool on_knight_moves;
+
         size_t hit_count;
         const size_t max_hit_count;
 
