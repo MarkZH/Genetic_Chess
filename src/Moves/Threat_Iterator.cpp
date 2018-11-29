@@ -93,31 +93,32 @@ void Threat_Iterator::next_threat()
                     break;
                 }
 
-                if(piece->type() == QUEEN)
+                auto piece_type = piece->type();
+                if(piece_type == QUEEN)
                 {
                     return;
                 }
 
-                if(piece->type() == KING && step_size == 1)
+                if(piece_type == KING && step_size == 1)
                 {
                     return;
                 }
 
                 if(rank_step == 0 || file_step == 0)
                 {
-                    if(piece->type() == ROOK)
+                    if(piece_type == ROOK)
                     {
                         return;
                     }
                 }
                 else
                 {
-                    if(piece->type() == BISHOP)
+                    if(piece_type == BISHOP)
                     {
                         return;
                     }
 
-                    if(piece->type() == PAWN && step_size == 1 && rank_step == (attacking_color == WHITE ? -1 : 1))
+                    if(piece_type == PAWN && step_size == 1 && rank_step == (attacking_color == WHITE ? -1 : 1))
                     {
                         return;
                     }
