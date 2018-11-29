@@ -13,7 +13,6 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     target_rank(target_rank_in),
     file_step(-1),
     rank_step(-2),
-    on_knight_moves(false),
     hit_count(0),
     max_hit_count(3),
     attacking_color(attack_color),
@@ -63,7 +62,7 @@ void Threat_Iterator::next_threat()
 
     ++rank_step;
 
-    for( ; ! on_knight_moves && file_step <= 1; ++file_step)
+    for( ; file_step <= 1; ++file_step)
     {
         for( ; rank_step <= 1; ++rank_step)
         {
@@ -131,8 +130,6 @@ void Threat_Iterator::next_threat()
 
         rank_step = -1;
     }
-
-    on_knight_moves = true;
 
     for(file_step = 1 ; file_step <= 2; ++file_step)
     {

@@ -1040,6 +1040,18 @@ bool run_tests()
     {
     }
 
+    try
+    {
+        auto too_many_knight_attackers_board = Board("k7/2N5/1N6/8/8/8/8/7K b - - 0 1");
+        too_many_knight_attackers_board.ascii_draw(WHITE);
+        std::cerr << "Illegal board created with too many knights attacking black king." << std::endl;
+        tests_passed = false;
+    }
+    catch(const std::runtime_error&)
+    {
+    }
+
+
     // En passant check-rescue
     auto en_passant_check = Board("k7/8/8/3pP3/4B3/8/8/7K w - d6 0 1");
     en_passant_check.submit_move(en_passant_check.create_move("exd6"));

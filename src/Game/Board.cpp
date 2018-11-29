@@ -346,18 +346,28 @@ Board::Board(const std::string& fen) :
     test_board.set_turn(opposite(whose_turn()));
     auto pieces_attacking_king = std::set<Square>();
     const auto& king_square = test_board.find_king(whose_turn());
+    auto attacking_knight_count = 0;
     for(auto move : test_board.legal_moves())
     {
         if(move->end_file() == king_square.file &&
            move->end_rank() == king_square.rank)
         {
             pieces_attacking_king.insert({move->start_file(), move->start_rank()});
+            if(piece_on_square(move->start_file(), move->start_rank())->type() == KNIGHT)
+            {
+                ++attacking_knight_count;
+            }
         }
     }
 
     if(pieces_attacking_king.size() > 2)
     {
         fen_error(fen, "Too many pieces attacking " + color_text(whose_turn()) + " king.");
+    }
+
+    if(attacking_knight_count > 1)
+    {
+        fen_error(fen, "It is impossible for more than one knight to check king.");
     }
 }
 
