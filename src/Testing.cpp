@@ -447,6 +447,7 @@ bool run_tests()
     {
         perf_board8.ascii_draw(WHITE);
         std::cerr << "This should be checkmate for black." << std::endl;
+        std::cerr << "Allegedly legal moves:\n";
         for(auto move : perf_board8.legal_moves())
         {
             std::cerr << move->game_record_item(perf_board8) << std::endl;
