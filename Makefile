@@ -196,7 +196,7 @@ $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o : src/Moves/Pawn_Promotio
 $(DEBUG_OBJ_DIR)/src/Moves/Threat_Generator.o : src/Moves/Threat_Generator.cpp include/Game/Color.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Moves/Threat_Generator.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Threat_Generator.o
 
-$(DEBUG_OBJ_DIR)/src/Moves/Threat_Iterator.o : src/Moves/Threat_Iterator.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Threat_Iterator.h include/Players/Thinking.h
+$(DEBUG_OBJ_DIR)/src/Moves/Threat_Iterator.o : src/Moves/Threat_Iterator.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Threat_Iterator.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Moves/Threat_Iterator.cpp -o $(DEBUG_OBJ_DIR)/src/Moves/Threat_Iterator.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o : src/Players/Alan_Turing_AI.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h include/Players/Alan_Turing_AI.h include/Players/Player.h include/Players/Thinking.h
@@ -358,7 +358,7 @@ $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o : src/Moves/Pawn_Promot
 $(PROFILE_OBJ_DIR)/src/Moves/Threat_Generator.o : src/Moves/Threat_Generator.cpp include/Game/Color.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Threat_Generator.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Threat_Generator.o
 
-$(PROFILE_OBJ_DIR)/src/Moves/Threat_Iterator.o : src/Moves/Threat_Iterator.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Threat_Iterator.h include/Players/Thinking.h
+$(PROFILE_OBJ_DIR)/src/Moves/Threat_Iterator.o : src/Moves/Threat_Iterator.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Threat_Iterator.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Threat_Iterator.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Threat_Iterator.o
 
 $(PROFILE_OBJ_DIR)/src/Players/Alan_Turing_AI.o : src/Players/Alan_Turing_AI.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h include/Players/Alan_Turing_AI.h include/Players/Player.h include/Players/Thinking.h
@@ -511,7 +511,7 @@ $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o : src/Moves/Pawn_Promot
 $(RELEASE_OBJ_DIR)/src/Moves/Threat_Generator.o : src/Moves/Threat_Generator.cpp include/Game/Color.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Moves/Threat_Generator.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Threat_Generator.o
 
-$(RELEASE_OBJ_DIR)/src/Moves/Threat_Iterator.o : src/Moves/Threat_Iterator.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Threat_Iterator.h include/Players/Thinking.h
+$(RELEASE_OBJ_DIR)/src/Moves/Threat_Iterator.o : src/Moves/Threat_Iterator.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Threat_Iterator.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Moves/Threat_Iterator.cpp -o $(RELEASE_OBJ_DIR)/src/Moves/Threat_Iterator.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Alan_Turing_AI.o : src/Players/Alan_Turing_AI.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h include/Players/Alan_Turing_AI.h include/Players/Player.h include/Players/Thinking.h
