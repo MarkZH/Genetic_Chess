@@ -50,8 +50,6 @@ if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
 
 program_name = 'genetic_chess'
 final_targets = ["release", "debug"]
-if sys.argv[1] == 'gcc':
-    final_targets.append('profile')
 depends = dict()
 depends['all'] = final_targets
 depends['clean'] = []
@@ -98,8 +96,7 @@ linker_options = dict()
 if sys.argv[1] == 'gcc':
     compiler = 'g++'
     options_list['debug'] = ["-g", "-DDEBUG"]
-    options_list['release'] = ["-s", "-O3", "-DNDEBUG"]
-    options_list['profile'] = ["-O3", "-pg", "-DNDEBUG"]
+    options_list['release'] = ["-O3", "-DNDEBUG"]
 
     base_options = [
             "-std=c++17",
@@ -115,10 +112,9 @@ if sys.argv[1] == 'gcc':
             "-Wall", 
             "-Iinclude"]
     base_linker_options = ["-pthread", "-fexceptions"]
-
     linker_options['debug'] = []
     linker_options['release'] = ['-flto', '-fuse-linker-plugin']
-    linker_options['profile'] = ['-flto', '-fuse-linker-plugin', '-pg']
+
 elif sys.argv[1] == 'clang':
     compiler = 'clang++'
     options_list['debug'] = ["-g", "-Og", "-DDEBUG", "-fsanitize=undefined", "-fsanitize=integer"]
@@ -141,7 +137,6 @@ elif sys.argv[1] == 'clang':
             "-Wall", 
             "-Iinclude"]
     base_linker_options = ["-pthread", "-fexceptions"]
-
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     linker_options['release'] = ['-flto']
 

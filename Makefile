@@ -8,7 +8,7 @@ RELEASE_BIN_DIR = bin/release
 OUT_RELEASE = $(RELEASE_BIN_DIR)/genetic_chess
 RELEASE_OBJ_DIR = obj/release
 OBJ_RELEASE = $(RELEASE_OBJ_DIR)/main.o $(RELEASE_OBJ_DIR)/src/Breeding/Gene_Pool.o $(RELEASE_OBJ_DIR)/src/Exceptions/Game_Ended.o $(RELEASE_OBJ_DIR)/src/Exceptions/Illegal_Move.o $(RELEASE_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o $(RELEASE_OBJ_DIR)/src/Game/Board.o $(RELEASE_OBJ_DIR)/src/Game/Clock.o $(RELEASE_OBJ_DIR)/src/Game/Color.o $(RELEASE_OBJ_DIR)/src/Game/Game.o $(RELEASE_OBJ_DIR)/src/Game/Game_Result.o $(RELEASE_OBJ_DIR)/src/Game/Piece.o $(RELEASE_OBJ_DIR)/src/Game/Square.o $(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Checkmate_Material_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Genome.o $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Pawn_Islands_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Stacked_Pawns_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(RELEASE_OBJ_DIR)/src/Moves/Castle.o $(RELEASE_OBJ_DIR)/src/Moves/En_Passant.o $(RELEASE_OBJ_DIR)/src/Moves/Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Capture.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(RELEASE_OBJ_DIR)/src/Moves/Threat_Generator.o $(RELEASE_OBJ_DIR)/src/Moves/Threat_Iterator.o $(RELEASE_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o $(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o $(RELEASE_OBJ_DIR)/src/Players/Minimax_AI.o $(RELEASE_OBJ_DIR)/src/Players/Monte_Carlo_AI.o $(RELEASE_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o $(RELEASE_OBJ_DIR)/src/Players/Outside_Player.o $(RELEASE_OBJ_DIR)/src/Players/Player.o $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o $(RELEASE_OBJ_DIR)/src/Testing.o $(RELEASE_OBJ_DIR)/src/Utility.o
-CFLAGS_RELEASE = -s -O3 -DNDEBUG
+CFLAGS_RELEASE = -O3 -DNDEBUG
 LDFLAGS_RELEASE = -flto -fuse-linker-plugin
 
 
@@ -20,15 +20,7 @@ CFLAGS_DEBUG = -g -DDEBUG
 LDFLAGS_DEBUG = 
 
 
-PROFILE_BIN_DIR = bin/profile
-OUT_PROFILE = $(PROFILE_BIN_DIR)/genetic_chess
-PROFILE_OBJ_DIR = obj/profile
-OBJ_PROFILE = $(PROFILE_OBJ_DIR)/main.o $(PROFILE_OBJ_DIR)/src/Breeding/Gene_Pool.o $(PROFILE_OBJ_DIR)/src/Exceptions/Game_Ended.o $(PROFILE_OBJ_DIR)/src/Exceptions/Illegal_Move.o $(PROFILE_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o $(PROFILE_OBJ_DIR)/src/Game/Board.o $(PROFILE_OBJ_DIR)/src/Game/Clock.o $(PROFILE_OBJ_DIR)/src/Game/Color.o $(PROFILE_OBJ_DIR)/src/Game/Game.o $(PROFILE_OBJ_DIR)/src/Game/Game_Result.o $(PROFILE_OBJ_DIR)/src/Game/Piece.o $(PROFILE_OBJ_DIR)/src/Game/Square.o $(PROFILE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Checkmate_Material_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Genome.o $(PROFILE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Pawn_Islands_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Stacked_Pawns_Gene.o $(PROFILE_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(PROFILE_OBJ_DIR)/src/Moves/Castle.o $(PROFILE_OBJ_DIR)/src/Moves/En_Passant.o $(PROFILE_OBJ_DIR)/src/Moves/Move.o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Capture.o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Move.o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(PROFILE_OBJ_DIR)/src/Moves/Threat_Generator.o $(PROFILE_OBJ_DIR)/src/Moves/Threat_Iterator.o $(PROFILE_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(PROFILE_OBJ_DIR)/src/Players/CECP_Mediator.o $(PROFILE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o $(PROFILE_OBJ_DIR)/src/Players/Genetic_AI.o $(PROFILE_OBJ_DIR)/src/Players/Human_Player.o $(PROFILE_OBJ_DIR)/src/Players/Minimax_AI.o $(PROFILE_OBJ_DIR)/src/Players/Monte_Carlo_AI.o $(PROFILE_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o $(PROFILE_OBJ_DIR)/src/Players/Outside_Player.o $(PROFILE_OBJ_DIR)/src/Players/Player.o $(PROFILE_OBJ_DIR)/src/Players/Random_AI.o $(PROFILE_OBJ_DIR)/src/Testing.o $(PROFILE_OBJ_DIR)/src/Utility.o
-CFLAGS_PROFILE = -O3 -pg -DNDEBUG
-LDFLAGS_PROFILE = -flto -fuse-linker-plugin -pg
-
-
-all : release debug profile
+all : release debug
 
 
 before_debug : 
@@ -42,17 +34,6 @@ before_debug :
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Moves
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Players
 
-before_profile : 
-	mkdir -p $(PROFILE_BIN_DIR)
-	mkdir -p $(PROFILE_OBJ_DIR)
-	mkdir -p $(PROFILE_OBJ_DIR)/src
-	mkdir -p $(PROFILE_OBJ_DIR)/src/Breeding
-	mkdir -p $(PROFILE_OBJ_DIR)/src/Genes
-	mkdir -p $(PROFILE_OBJ_DIR)/src/Exceptions
-	mkdir -p $(PROFILE_OBJ_DIR)/src/Game
-	mkdir -p $(PROFILE_OBJ_DIR)/src/Moves
-	mkdir -p $(PROFILE_OBJ_DIR)/src/Players
-
 before_release : 
 	mkdir -p $(RELEASE_BIN_DIR)
 	mkdir -p $(RELEASE_OBJ_DIR)
@@ -64,22 +45,16 @@ before_release :
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Moves
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Players
 
-clean : clean_release clean_debug clean_profile
+clean : clean_release clean_debug
 
 
 clean_debug : 
 	rm -rf $(DEBUG_OBJ_DIR) $(DEBUG_BIN_DIR)
 
-clean_profile : 
-	rm -rf $(PROFILE_OBJ_DIR) $(PROFILE_BIN_DIR)
-
 clean_release : 
 	rm -rf $(RELEASE_OBJ_DIR) $(RELEASE_BIN_DIR)
 
 debug : before_debug $(OUT_DEBUG)
-
-
-profile : before_profile $(OUT_PROFILE)
 
 
 release : before_release $(OUT_RELEASE)
@@ -241,164 +216,8 @@ $(DEBUG_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
 $(OUT_DEBUG) : $(OBJ_DEBUG)
 	$(LD) -o $(OUT_DEBUG) $(OBJ_DEBUG) $(LDFLAGS) $(LDFLAGS_DEBUG) $(CFLAGS) $(CFLAGS_DEBUG)
 
-$(OUT_PROFILE) : $(OBJ_PROFILE)
-	$(LD) -o $(OUT_PROFILE) $(OBJ_PROFILE) $(LDFLAGS) $(LDFLAGS_PROFILE) $(CFLAGS) $(CFLAGS_PROFILE)
-
 $(OUT_RELEASE) : $(OBJ_RELEASE)
 	$(LD) -o $(OUT_RELEASE) $(OBJ_RELEASE) $(LDFLAGS) $(LDFLAGS_RELEASE) $(CFLAGS) $(CFLAGS_RELEASE)
-
-$(PROFILE_OBJ_DIR)/main.o : main.cpp include/Breeding/Gene_Pool.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/Move.h include/Players/Alan_Turing_AI.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Minimax_AI.h include/Players/Monte_Carlo_AI.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Testing.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c main.cpp -o $(PROFILE_OBJ_DIR)/main.o
-
-$(PROFILE_OBJ_DIR)/src/Breeding/Gene_Pool.o : src/Breeding/Gene_Pool.cpp include/Breeding/Gene_Pool.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Breeding/Gene_Pool.cpp -o $(PROFILE_OBJ_DIR)/src/Breeding/Gene_Pool.o
-
-$(PROFILE_OBJ_DIR)/src/Exceptions/Game_Ended.o : src/Exceptions/Game_Ended.cpp include/Exceptions/Game_Ended.h include/Game/Color.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Exceptions/Game_Ended.cpp -o $(PROFILE_OBJ_DIR)/src/Exceptions/Game_Ended.o
-
-$(PROFILE_OBJ_DIR)/src/Exceptions/Illegal_Move.o : src/Exceptions/Illegal_Move.cpp include/Exceptions/Illegal_Move.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Exceptions/Illegal_Move.cpp -o $(PROFILE_OBJ_DIR)/src/Exceptions/Illegal_Move.o
-
-$(PROFILE_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o : src/Exceptions/Promotion_Piece_Needed.cpp include/Exceptions/Promotion_Piece_Needed.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Exceptions/Promotion_Piece_Needed.cpp -o $(PROFILE_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o
-
-$(PROFILE_OBJ_DIR)/src/Game/Board.o : src/Game/Board.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Game/Board.cpp -o $(PROFILE_OBJ_DIR)/src/Game/Board.o
-
-$(PROFILE_OBJ_DIR)/src/Game/Clock.o : src/Game/Clock.cpp include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Game/Clock.cpp -o $(PROFILE_OBJ_DIR)/src/Game/Clock.o
-
-$(PROFILE_OBJ_DIR)/src/Game/Color.o : src/Game/Color.cpp include/Game/Color.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Game/Color.cpp -o $(PROFILE_OBJ_DIR)/src/Game/Color.o
-
-$(PROFILE_OBJ_DIR)/src/Game/Game.o : src/Game/Game.cpp include/Exceptions/Game_Ended.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Game/Game.cpp -o $(PROFILE_OBJ_DIR)/src/Game/Game.o
-
-$(PROFILE_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Game/Color.h include/Game/Game_Result.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Game/Game_Result.cpp -o $(PROFILE_OBJ_DIR)/src/Game/Game_Result.o
-
-$(PROFILE_OBJ_DIR)/src/Game/Piece.o : src/Game/Piece.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Castle.h include/Moves/Direction.h include/Moves/En_Passant.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Game/Piece.cpp -o $(PROFILE_OBJ_DIR)/src/Game/Piece.o
-
-$(PROFILE_OBJ_DIR)/src/Game/Square.o : src/Game/Square.cpp include/Game/Square.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Game/Square.cpp -o $(PROFILE_OBJ_DIR)/src/Game/Square.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h include/Moves/Move.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Castling_Possible_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Checkmate_Material_Gene.o : src/Genes/Checkmate_Material_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Checkmate_Material_Gene.h include/Genes/Gene.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Checkmate_Material_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Checkmate_Material_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : src/Genes/Freedom_To_Move_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Gene.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Freedom_To_Move_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Gene.o : src/Genes/Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Genome.o : src/Genes/Genome.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Castling_Possible_Gene.h include/Genes/Checkmate_Material_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Gene.h include/Genes/Genome.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Passed_Pawn_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Pawn_Islands_Gene.h include/Genes/Piece_Strength_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Stacked_Pawns_Gene.h include/Genes/Total_Force_Gene.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Genome.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Genome.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Confinement_Gene.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/King_Confinement_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/King_Protection_Gene.o : src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Protection_Gene.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/King_Protection_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/King_Protection_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : src/Genes/Look_Ahead_Gene.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Look_Ahead_Gene.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Look_Ahead_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o : src/Genes/Opponent_Pieces_Targeted_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Piece_Strength_Gene.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Opponent_Pieces_Targeted_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o : src/Genes/Passed_Pawn_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Passed_Pawn_Gene.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Passed_Pawn_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o : src/Genes/Pawn_Advancement_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Pawn_Advancement_Gene.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Pawn_Advancement_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Pawn_Islands_Gene.o : src/Genes/Pawn_Islands_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Pawn_Islands_Gene.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Pawn_Islands_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Pawn_Islands_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o : src/Genes/Piece_Strength_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Piece_Strength_Gene.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Piece_Strength_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o : src/Genes/Sphere_of_Influence_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Moves/Move.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Stacked_Pawns_Gene.o : src/Genes/Stacked_Pawns_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Stacked_Pawns_Gene.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Stacked_Pawns_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Stacked_Pawns_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Genes/Total_Force_Gene.o : src/Genes/Total_Force_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Piece_Strength_Gene.h include/Genes/Total_Force_Gene.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Genes/Total_Force_Gene.cpp -o $(PROFILE_OBJ_DIR)/src/Genes/Total_Force_Gene.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/Castle.o : src/Moves/Castle.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Castle.h include/Moves/Direction.h include/Moves/Move.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Castle.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Castle.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/En_Passant.o : src/Moves/En_Passant.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Direction.h include/Moves/En_Passant.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Move.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/En_Passant.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/En_Passant.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/Move.o : src/Moves/Move.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Move.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Move.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/Pawn_Capture.o : src/Moves/Pawn_Capture.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Direction.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Move.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Pawn_Capture.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Capture.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o : src/Moves/Pawn_Double_Move.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Pawn_Double_Move.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/Pawn_Move.o : src/Moves/Pawn_Move.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Pawn_Move.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Pawn_Move.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Move.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/Pawn_Promotion.o : src/Moves/Pawn_Promotion.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Pawn_Promotion.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Promotion.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o : src/Moves/Pawn_Promotion_by_Capture.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Direction.h include/Moves/Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Pawn_Promotion_by_Capture.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/Threat_Generator.o : src/Moves/Threat_Generator.cpp include/Game/Color.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Threat_Generator.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Threat_Generator.o
-
-$(PROFILE_OBJ_DIR)/src/Moves/Threat_Iterator.o : src/Moves/Threat_Iterator.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Threat_Iterator.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Moves/Threat_Iterator.cpp -o $(PROFILE_OBJ_DIR)/src/Moves/Threat_Iterator.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Alan_Turing_AI.o : src/Players/Alan_Turing_AI.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h include/Players/Alan_Turing_AI.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Alan_Turing_AI.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Alan_Turing_AI.o
-
-$(PROFILE_OBJ_DIR)/src/Players/CECP_Mediator.o : src/Players/CECP_Mediator.cpp include/Exceptions/Game_Ended.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/CECP_Mediator.cpp -o $(PROFILE_OBJ_DIR)/src/Players/CECP_Mediator.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : src/Players/Game_Tree_Node_Result.cpp include/Game/Color.h include/Players/Game_Tree_Node_Result.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Game_Tree_Node_Result.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Genetic_AI.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Genetic_AI.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Human_Player.o : src/Players/Human_Player.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Players/Human_Player.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Human_Player.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Human_Player.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Minimax_AI.o : src/Players/Minimax_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Game_Tree_Node_Result.h include/Players/Minimax_AI.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Minimax_AI.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Minimax_AI.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Monte_Carlo_AI.o : src/Players/Monte_Carlo_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Monte_Carlo_AI.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Monte_Carlo_AI.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Monte_Carlo_AI.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o : src/Players/Monte_Carlo_Search_Tree.cpp include/Players/Monte_Carlo_Search_Tree.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Monte_Carlo_Search_Tree.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Outside_Player.o : src/Players/Outside_Player.cpp include/Exceptions/Game_Ended.h include/Game/Color.h include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Outside_Player.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Outside_Player.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Player.o : src/Players/Player.cpp include/Players/Player.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Player.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Player.o
-
-$(PROFILE_OBJ_DIR)/src/Players/Random_AI.o : src/Players/Random_AI.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Players/Random_AI.cpp -o $(PROFILE_OBJ_DIR)/src/Players/Random_AI.o
-
-$(PROFILE_OBJ_DIR)/src/Testing.o : src/Testing.cpp include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Castling_Possible_Gene.h include/Genes/Checkmate_Material_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Gene.h include/Genes/Genome.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Passed_Pawn_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Pawn_Islands_Gene.h include/Genes/Piece_Strength_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Stacked_Pawns_Gene.h include/Genes/Total_Force_Gene.h include/Moves/Move.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Players/Thinking.h include/Testing.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Testing.cpp -o $(PROFILE_OBJ_DIR)/src/Testing.o
-
-$(PROFILE_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_PROFILE) $(LDFLAGS_PROFILE) -c src/Utility.cpp -o $(PROFILE_OBJ_DIR)/src/Utility.o
 
 $(RELEASE_OBJ_DIR)/main.o : main.cpp include/Breeding/Gene_Pool.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/Move.h include/Players/Alan_Turing_AI.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Minimax_AI.h include/Players/Monte_Carlo_AI.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Testing.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c main.cpp -o $(RELEASE_OBJ_DIR)/main.o
@@ -553,6 +372,6 @@ $(RELEASE_OBJ_DIR)/src/Testing.o : src/Testing.cpp include/Exceptions/Illegal_Mo
 $(RELEASE_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Utility.cpp -o $(RELEASE_OBJ_DIR)/src/Utility.o
 
-.PHONY : all before_debug before_profile before_release clean clean_debug clean_profile clean_release debug profile release
+.PHONY : all before_debug before_release clean clean_debug clean_release debug release
 
 
