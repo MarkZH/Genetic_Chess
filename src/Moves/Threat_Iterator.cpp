@@ -95,9 +95,16 @@ void Threat_Iterator::next_threat()
                     return;
                 }
 
-                if(piece_type == KING && step_size == 1)
+                if(piece_type == KING)
                 {
-                    return;
+                    if(step_size == 1)
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
 
                 if(rank_step == 0 || file_step == 0)
