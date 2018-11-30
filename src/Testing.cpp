@@ -1031,7 +1031,7 @@ bool run_tests()
 
     try
     {
-        auto too_many_attackers_board = Board("k1RK4/1P6/R7/8/8/8/8/8 b - - 0 1");
+        auto too_many_attackers_board = Board("1k1R4/2P5/KR5q/8/8/8/8/8 b - - 0 1");
         too_many_attackers_board.ascii_draw(WHITE);
         std::cerr << "Illegal board created with too many pieces attacking black king." << std::endl;
         tests_passed = false;

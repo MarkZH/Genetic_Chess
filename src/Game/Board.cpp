@@ -342,25 +342,40 @@ Board::Board(const std::string& fen) :
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
 
-    auto test_board = *this;
-    test_board.set_turn(opposite(whose_turn()));
-    auto pieces_attacking_king = std::set<Square>();
-    const auto& king_square = test_board.find_king(whose_turn());
+    const auto& king_square = find_king(whose_turn());
+    auto attacker_count = 0;
     auto attacking_knight_count = 0;
-    for(auto move : test_board.legal_moves())
+    for(char file = 'a'; file <= 'h'; ++file)
     {
-        if(move->end_file() == king_square.file &&
-           move->end_rank() == king_square.rank)
+        for(int rank = 1; rank <= 8; ++rank)
         {
-            pieces_attacking_king.insert({move->start_file(), move->start_rank()});
-            if(piece_on_square(move->start_file(), move->start_rank())->type() == KNIGHT)
+            auto piece = piece_on_square(file,rank);
+            if( ! piece || piece->color() == whose_turn())
             {
-                ++attacking_knight_count;
+                continue;
+            }
+
+            for(auto move : piece->move_list(file, rank))
+            {
+                if(move->can_capture() &&
+                   move->end_file() == king_square.file &&
+                   move->end_rank() == king_square.rank)
+                {
+                    if(piece->type() == KNIGHT)
+                    {
+                        ++attacker_count;
+                        ++attacking_knight_count;
+                    }
+                    else if(all_empty_between(file, rank, king_square.file, king_square.rank))
+                    {
+                        ++attacker_count;
+                    }
+                }
             }
         }
     }
 
-    if(pieces_attacking_king.size() > 2)
+    if(attacker_count > 2)
     {
         fen_error(fen, "Too many pieces attacking " + color_text(whose_turn()) + " king.");
     }
