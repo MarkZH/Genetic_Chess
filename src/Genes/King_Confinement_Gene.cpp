@@ -86,7 +86,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     distance.fill(-1); // never-visited value
     distance[Board::square_index(king_square.file, king_square.rank)] = 0;
 
-    auto squares_attacked_by_other = opposite_board.all_square_indices_attacked();
+    auto squares_safe_for_king = opposite_board.squares_safe_for_king();
 
     double friendly_block_total = 0.0;
     double enemy_block_total = 0.0;
@@ -97,7 +97,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         auto square = square_queue[i];
         auto square_index = Board::square_index(square.file, square.rank);
 
-        auto attacked_by_other = squares_attacked_by_other[square_index];
+        auto attacked_by_other = ! squares_safe_for_king[square_index];
         auto dist = distance[square_index];
 
         auto piece = board.piece_on_square(square.file, square.rank);
@@ -118,12 +118,12 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
             ++free_space_total;
         }
 
-        auto is_safe = ! occupied_by_same && ! attacked_by_other;
+        auto reachable = (square == king_square) || (! occupied_by_same && ! attacked_by_other);
 
         // Add surrounding squares to square_queue.
         // always check the squares surrounding the king's current positions, even if
         // it is not safe (i.e., the king is in check).
-        if((is_safe && dist < maximum_distance) || square_queue.size() == 1)
+        if(reachable && dist < maximum_distance)
         {
             for(char new_file = square.file - 1; new_file <= square.file + 1; ++new_file)
             {

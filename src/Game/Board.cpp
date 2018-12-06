@@ -861,6 +861,11 @@ const std::array<bool, 64>& Board::other_square_indices_attacked() const
     return other_attacked_indices;
 }
 
+const std::array<bool, 64>& Board::squares_safe_for_king() const
+{
+    return safe_squares_for_king;
+}
+
 void Board::refresh_checking_squares()
 {
     checking_squares = {};
@@ -1307,8 +1312,10 @@ void Board::recreate_move_caches()
 {
     legal_moves_cache.clear();
     refresh_checking_squares();
-    attacked_indices = {};
-    other_attacked_indices = {};
+    attacked_indices.fill(false);
+    other_attacked_indices.fill(false);
+    safe_squares_for_king.fill(true);
+
 
     bool en_passant_legal = false;
     capturing_move_available = false;
@@ -1352,6 +1359,12 @@ void Board::recreate_move_caches()
                         {
                             other_attacked_indices[square_index(move->end_file(), move->end_rank())] = true;
                         }
+                    }
+
+                    auto& safe = safe_squares_for_king[square_index(move->end_file(), move->end_rank())];
+                    if(safe)
+                    {
+                        safe = ( blocked || ! move->can_capture());
                     }
 
                     if( ! blocked && // new move direction

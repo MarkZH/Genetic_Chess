@@ -93,6 +93,7 @@ class Board
         bool capture_possible() const;
         const std::array<bool, 64>& all_square_indices_attacked() const;
         const std::array<bool, 64>& other_square_indices_attacked() const;
+        const std::array<bool, 64>& squares_safe_for_king() const;
         size_t castling_move_index(Color player) const;
 
         static const Piece* piece_instance(Piece_Type piece_type, Color color);
@@ -112,6 +113,7 @@ class Board
         // Information cache for gene reference
         std::array<bool, 64> attacked_indices;
         std::array<bool, 64> other_attacked_indices;
+        std::array<bool, 64> safe_squares_for_king;
         bool previous_move_captured;
         bool capturing_move_available;
         std::array<size_t, 2> castling_index;
