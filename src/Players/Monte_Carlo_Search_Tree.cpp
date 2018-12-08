@@ -43,7 +43,7 @@ void Monte_Carlo_Search_Tree::add_search(Move_Iterator begin,
     ++visits[index];
     if(branches[index])
     {
-        branches[index]->add_search(std::next(begin), end, score);
+        branches[index]->add_search(next, end, score);
     }
 }
 
