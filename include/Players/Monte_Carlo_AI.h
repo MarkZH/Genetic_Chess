@@ -21,6 +21,7 @@ class Monte_Carlo_AI : public Random_AI
         mutable Monte_Carlo_Search_Tree search_tree;
 
         void print_cecp_thinking(double time_so_far,
+                                 double search_time,
                                  double result,
                                  int move_count,
                                  int game_count,
