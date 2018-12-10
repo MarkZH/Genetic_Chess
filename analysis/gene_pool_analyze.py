@@ -23,6 +23,8 @@ def main(gene_pool_file_name):
                     still_alive[pool_id] = ids
                     for ident in ids:
                         pool[ident] = pool_id
+                elif parameter == 'Ancestry':
+                    continue
                 else:
                     header_line.append(current_gene + ' - ' + parameter)
 
@@ -54,8 +56,8 @@ def main(gene_pool_file_name):
                     value = value.strip()
                     if parameter == 'Name':
                         current_gene = value
-                    elif parameter == 'Still Alive':
-                        pass
+                    elif parameter in ['Still Alive', 'Ancestry']:
+                        continue
                     else:
                         if current_gene:
                             title = current_gene + ' - ' + parameter
