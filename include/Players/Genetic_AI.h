@@ -3,6 +3,7 @@
 
 #include <iosfwd>
 #include <string>
+#include <map>
 
 #include "Minimax_AI.h"
 
@@ -31,6 +32,8 @@ class Genetic_AI : public Minimax_AI
         void print(std::ostream& file) const;
 
         int id() const;
+        void set_origin_pool(int pool_id);
+
         bool operator<(const Genetic_AI& other) const;
         bool operator==(const Genetic_AI& other) const;
 
@@ -38,9 +41,13 @@ class Genetic_AI : public Minimax_AI
         Genome genome;
 
         static int next_id;
+        static int max_origin_pool_id;
+
         int id_number;
+        std::map<int, double> ancestry; // record mix of parents' original gene pool ancestry
 
         void read_from(std::istream& is);
+        void read_ancestry(std::istream& is);
 
         double internal_evaluate(const Board& board,
                                  Color perspective,

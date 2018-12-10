@@ -569,13 +569,19 @@ bool run_tests()
     std::vector<Genetic_AI> test_pool(10);
     for(auto& ai : test_pool)
     {
+        ai.set_origin_pool(Random::random_integer(0, 9));
         ai.mutate(10000);
+    }
+    for(auto& ai : test_pool)
+    {
+        ai = Genetic_AI(ai, test_pool[Random::random_integer(0, 9)]); // test ancestry writing/parsing
         ai.print(pool_file_name);
     }
 
     auto index = Random::random_integer(0, int(test_pool.size()) - 1);
-    test_pool[index].print(write_file_name);
-    auto read_ai = Genetic_AI(pool_file_name, index);
+    const auto& test_ai = test_pool[index];
+    test_ai.print(write_file_name);
+    auto read_ai = Genetic_AI(pool_file_name, test_ai.id());
     read_ai.print(rewrite_file_name);
 
     if( ! files_are_identical(write_file_name, rewrite_file_name))
