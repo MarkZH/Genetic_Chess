@@ -136,11 +136,13 @@ if max(game_time) > 0
     ylabel('Time (sec)');
     title('Time left on clock at end of game')
 
-    for index = 1:length(game_number_marks)
-        plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
-    end
+    if length(game_number_marks) > 0
+        for index = 1:length(game_number_marks)
+            plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
+        end
 
-    legend('location', 'southoutside', 'orientation', 'horizontal');
+        legend('location', 'southoutside', 'orientation', 'horizontal');
+    end
 
     print([raw_data '_game_time_left.png']);
 
@@ -175,11 +177,13 @@ ylabel('Moves in Game');
 title('Number of moves in game')
 ylim([0, max_game_length_display]);
 
-for index = 1:length(game_number_marks)
-    plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
-end
+if length(game_number_marks) > 0
+    for index = 1:length(game_number_marks)
+        plot(game_number_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
+    end
 
-legend('location', 'southoutside', 'orientation', 'horizontal');
+    legend('location', 'southoutside', 'orientation', 'horizontal');
+end
 
 print([raw_data '_moves_in_game.png']);
 
