@@ -54,8 +54,8 @@ class Genetic_AI : public Minimax_AI
                                  size_t depth) const override;
 
         // Time management
-        virtual double time_to_examine(const Board& board, const Clock& clock) const override;
-        virtual double speculation_time_factor(const Board& board) const override;
+        double time_to_examine(const Board& board, const Clock& clock) const override;
+        double speculation_time_factor(const Board& board) const override;
 };
 
 #endif // GENETIC_AI_H
