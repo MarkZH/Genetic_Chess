@@ -34,7 +34,7 @@ then
     ./analysis/openings.sh "$game_file" "$opening_moves" && octave analysis/opening_plotting.m "$opening_file" "$notes_file" &
 fi
 
-wait
+wait # for opening_plotting.m to finish outputing to command line
 ./analysis/promotions.sh "$game_file"
 ./analysis/castling.sh "$game_file"
 ./analysis/offspring_frequency.sh "$game_file"
