@@ -45,7 +45,7 @@ def main(files):
                         result_type = 1
                 elif line.startswith('[Termination'):
                     result_text = line.split('"')[1]
-                    if result_text.lower() in ['threefold repitition', 'threefold repetition']:
+                    if result_text.lower() == 'threefold repetition':
                         result_type = 3
                     elif result_text.lower() == '50-move limit':
                         result_type = 2
