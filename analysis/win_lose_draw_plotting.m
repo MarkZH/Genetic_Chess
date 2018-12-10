@@ -6,7 +6,7 @@ isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
 filename = 0;
 directory = '';
 if isOctave
-    graphics_toolkit("gnuplot");
+    graphics_toolkit('gnuplot');
     args = argv();
     if length(args) > 0
         filename = args{1};
