@@ -570,7 +570,7 @@ bool run_tests()
     for(auto& ai : test_pool)
     {
         ai.set_origin_pool(Random::random_integer(0, 9));
-        ai.mutate(10000);
+        ai.mutate(1000);
     }
     for(auto& ai : test_pool)
     {
