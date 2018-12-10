@@ -45,16 +45,16 @@ xaxis = xaxis_list{1};
 
 piece_strength_prefix = 'Piece Strength Gene';
 piece_strength_figure = figure;
-title('Piece Strength Evolution', 'FontSize', 22);
+title('Piece Strength Evolution');
 
 priority_figure = figure;
 priority_suffix = ' Gene - Priority';
 priority_count = 0;
-title('Gene Priority Evolution', 'FontSize', 22);
+title('Gene Priority Evolution');
 
 speculation_keyword = 'Speculation';
 speculation_figure = figure;
-title('Speculation Constants', 'FontSize', 22);
+title('Speculation Constants');
 
 special_plots = [0, 0, 0];
 file_name_suffixes = {'_piece_strength.png', '_gene_priorities.png', '_speculation.png'};
@@ -85,9 +85,8 @@ for yi = 2 : length(data.colheaders) - 2
             set(h, 'displayname', 'Still Alive');
         end
     end
-    xlabel(xaxis, 'FontSize', 18);
-    title(name, 'FontSize', 22);
-    set(gca, 'FontSize', 14);
+    xlabel(xaxis);
+    title(name);
 
     plot(xlim, [0 0], 'k'); % X-axis
 
@@ -98,7 +97,6 @@ for yi = 2 : length(data.colheaders) - 2
     leg = legend('show');
     set(leg, 'location', 'southoutside');
     set(leg, 'orientation', 'horizontal');
-    set(leg, 'fontsize', 10);
     legend left;
 
     conv_window = 100;
@@ -165,7 +163,6 @@ for index = 1 : length(special_plots)
     leg = legend('show');
     set(leg, 'orientation', 'horizontal');
     set(leg, 'location', 'southoutside');
-    set(leg, 'fontsize', 10);
     legend left;
 
     xlabel('ID');

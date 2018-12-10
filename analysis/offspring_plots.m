@@ -56,13 +56,11 @@ y_fit = A*exp(b*x_fit);
 plot(x_fit, y_fit, 'LineWidth', 3);
 
 fit_text = {'y = Ae^{-Bx}',
-            '',
             ['A = ' num2str(A)],
-            '',
             ['B = ' num2str(B) ' = log(' num2str(exp(B)) ')']};
 xl = xlim;
 yl = ylim;
-text(0.6*xl(2), 0.4*yl(2), fit_text, 'FontSize', 14);
+text(0.6*xl(2), 0.4*yl(2), fit_text);
 
 print([raw_data_file_name '_offspring_plot.png']);
 set(gca, 'yscale', 'log');
