@@ -33,21 +33,14 @@ std::string Game_Result::ending_reason() const
 
 std::string Game_Result::game_ending_annotation() const
 {
-    if(victor == WHITE)
+    switch(winner())
     {
-        return "1-0";
-    }
-    else if(victor == BLACK)
-    {
-        return "0-1";
-    }
-    else if(cause.empty())
-    {
-        return {};
-    }
-    else
-    {
-        return "1/2-1/2";
+        case WHITE:
+            return "1-0";
+        case BLACK:
+            return "0-1";
+        default:
+            return game_has_ended() ? "1/2-1/2" : "";
     }
 }
 
