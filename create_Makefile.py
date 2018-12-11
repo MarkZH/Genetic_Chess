@@ -95,7 +95,7 @@ options_list = dict()
 linker_options = dict()
 if sys.argv[1] == 'gcc':
     compiler = 'g++'
-    options_list['debug'] = ["-g", "-DDEBUG"]
+    options_list['debug'] = ["-g"]
     options_list['release'] = ["-O3", "-DNDEBUG"]
 
     base_options = [
@@ -117,7 +117,7 @@ if sys.argv[1] == 'gcc':
 
 elif sys.argv[1] == 'clang':
     compiler = 'clang++'
-    options_list['debug'] = ["-g", "-Og", "-DDEBUG", "-fsanitize=undefined", "-fsanitize=integer"]
+    options_list['debug'] = ["-g", "-Og", "-fsanitize=undefined", "-fsanitize=integer"]
     options_list['release'] = ["-O3", "-DNDEBUG"]
 
     base_options = [
