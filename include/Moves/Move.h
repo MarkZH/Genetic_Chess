@@ -4,7 +4,6 @@
 #include <string>
 
 class Board;
-class Piece;
 
 class Move
 {
@@ -43,7 +42,6 @@ class Move
         bool is_en_passant() const;
         bool is_castling() const;
         virtual char promotion_piece_symbol() const;
-        virtual const Piece* promotion_piece() const;
 
     protected:
         char starting_file;
