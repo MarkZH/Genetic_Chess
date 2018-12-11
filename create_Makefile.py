@@ -100,16 +100,16 @@ if sys.argv[1] == 'gcc':
 
     base_options = [
             "-std=c++17",
-            "-Wshadow", 
-            "-Wcast-align", 
-            "-Wundef", 
-            "-Wfloat-equal", 
-            "-Wunreachable-code", 
-            "-Wzero-as-null-pointer-constant", 
-            "-Wmain", 
-            "-pedantic", 
-            "-Wextra", 
-            "-Wall", 
+            "-Wshadow",
+            "-Wcast-align",
+            "-Wundef",
+            "-Wfloat-equal",
+            "-Wunreachable-code",
+            "-Wzero-as-null-pointer-constant",
+            "-Wmain",
+            "-pedantic",
+            "-Wextra",
+            "-Wall",
             "-Iinclude"]
     base_linker_options = ["-pthread", "-fexceptions"]
     linker_options['debug'] = []
@@ -122,19 +122,19 @@ elif sys.argv[1] == 'clang':
 
     base_options = [
             "-std=c++17",
-            "-Wnon-virtual-dtor", 
-            "-Wshadow", 
-            "-Wredundant-decls", 
-            "-Wcast-align", 
-            "-Wundef", 
-            "-Wfloat-equal", 
-            "-Wunreachable-code", 
-            "-Wmissing-declarations", 
-            "-Wmissing-include-dirs", 
+            "-Wnon-virtual-dtor",
+            "-Wshadow",
+            "-Wredundant-decls",
+            "-Wcast-align",
+            "-Wundef",
+            "-Wfloat-equal",
+            "-Wunreachable-code",
+            "-Wmissing-declarations",
+            "-Wmissing-include-dirs",
             "-Wswitch",
-            "-pedantic", 
-            "-Wextra", 
-            "-Wall", 
+            "-pedantic",
+            "-Wextra",
+            "-Wall",
             "-Iinclude"]
     base_linker_options = ["-pthread", "-fexceptions"]
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
