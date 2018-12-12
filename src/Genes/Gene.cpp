@@ -128,7 +128,7 @@ void Gene::print(std::ostream& os) const
     {
         os << name_value.first << ": " << name_value.second << "\n";
     }
-    os << '\n';
+    os << "Original Pool: " << original_pool << "\n\n";
 }
 
 void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
@@ -157,4 +157,9 @@ double Gene::priority() const
 void Gene::make_priority_minimum_zero()
 {
     scoring_priority = std::abs(scoring_priority);
+}
+
+void Gene::set_original_pool(int pool_id)
+{
+    original_pool = pool_id;
 }

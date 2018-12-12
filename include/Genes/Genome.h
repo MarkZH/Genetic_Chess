@@ -22,6 +22,7 @@ class Genome
         Genome& operator=(const Genome& other);
 
         void read_from(std::istream& is);
+        void set_original_pool(int pool_id);
 
         double evaluate(const Board& board, Color perspective, size_t depth) const;
         void mutate();

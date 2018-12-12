@@ -22,6 +22,7 @@ class Gene
         double evaluate(const Board& board, const Board& opposite_board, size_t depth) const;
         virtual std::unique_ptr<Gene> duplicate() const = 0;
         size_t mutatable_components() const;
+        void set_original_pool(int pool_id);
 
         virtual std::string name() const = 0;
         void print(std::ostream& os) const;
@@ -41,6 +42,7 @@ class Gene
 
     private:
         double scoring_priority;
+        int original_pool;
 
         virtual double score_board(const Board& board, const Board& opposite_board, size_t depth) const = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;

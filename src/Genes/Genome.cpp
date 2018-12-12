@@ -233,3 +233,11 @@ double Genome::speculation_time_factor(const Board& board) const
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor(board);
 }
+
+void Genome::set_original_pool(int pool_id)
+{
+    for(auto& gene : genome)
+    {
+        gene->set_original_pool(pool_id);
+    }
+}
