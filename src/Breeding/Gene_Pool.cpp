@@ -456,7 +456,7 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
     {
         ofs << ai.id() << " ";
     }
-    ofs << "\n\n";
+    ofs << "\n\n" << std::flush;
 
     purge_dead_from_map(pools, written_before);
 }
