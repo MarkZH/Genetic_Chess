@@ -56,7 +56,7 @@ speculation_keyword = 'Speculation';
 speculation_figure = figure;
 title('Speculation Constants');
 
-ancestor_prefix = 'Ancestors'
+ancestor_prefix = 'Ancestors';
 
 special_plots = [0, 0, 0];
 file_name_suffixes = {'_piece_strength.png', '_gene_priorities.png', '_speculation.png'};
