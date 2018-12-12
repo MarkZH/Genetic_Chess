@@ -56,6 +56,8 @@ speculation_keyword = 'Speculation';
 speculation_figure = figure;
 title('Speculation Constants');
 
+ancestor_prefix = 'Ancestors'
+
 special_plots = [0, 0, 0];
 file_name_suffixes = {'_piece_strength.png', '_gene_priorities.png', '_speculation.png'};
 
@@ -103,7 +105,9 @@ for yi = 2 : length(data.colheaders) - 2
     smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
     conv_margin = floor(conv_window/2);
     x_axis = id_list(conv_margin : end - conv_margin);
-    plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
+    if isempty(findstr(name, ancestor_prefix))
+        plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
+    end
 
     print([gene_pool_filename '_gene_' name '.png']);
 

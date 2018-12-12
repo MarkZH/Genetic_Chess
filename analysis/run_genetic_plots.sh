@@ -27,7 +27,6 @@ game_file="${pool_file}_games.txt"
 opening_file="${game_file}_opening_list.txt"
 octave analysis/gene_plots.m "$pool_file" "$notes_file" &
 octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
-octave analysis/ancestry_plot.m "$pool_file" &
 
 # Second term here checks if argument is a number
 if [[ -n "$opening_moves" ]] && [ "$opening_moves" -eq "$opening_moves" ]
