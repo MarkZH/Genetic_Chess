@@ -60,6 +60,11 @@ void Gene::read_from(std::istream& is)
                 throw std::runtime_error("Reading data for wrong gene. Gene is " + name() + ", data is for " + property_data + ".");
             }
         }
+        else if(property_name == "Original Pool")
+        {
+            original_pool = std::stoi(property_data);
+            continue;
+        }
 
         try
         {
