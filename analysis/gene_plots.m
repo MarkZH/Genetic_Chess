@@ -117,7 +117,7 @@ for yi = 2 : length(data.colheaders) - 2
     print([gene_pool_filename '_gene_' name '.png']);
 
     special_plot_index = 0;
-    if length(findstr(name, piece_strength_prefix)) > 0
+    if ~isempty(findstr(name, piece_strength_prefix)) && isempty(findstr(name, original_pool_prefix))
         plot_figure = piece_strength_figure;
         special_plot_index = 1;
     elseif length(findstr(name, priority_suffix)) > 0
