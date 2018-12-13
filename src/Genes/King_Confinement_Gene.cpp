@@ -4,6 +4,7 @@
 #include <array>
 #include <memory>
 #include <map>
+#include <algorithm>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -126,20 +127,14 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         // it is not safe (i.e., the king is in check).
         if(keep_going)
         {
-            for(char new_file = square.file - 1; new_file <= square.file + 1; ++new_file)
+            auto left_file = std::max('a', char(square.file() - 1));
+            auto right_file = std::min('h', char(square.file() + 1));
+            auto low_rank = std::max(1, square.rank() - 1);
+            auto high_rank = std::min(8, square.rank() + 1);
+            for(char new_file = left_file; new_file <= right_file; ++new_file)
             {
-                if( ! board.inside_board(new_file))
+                for(int new_rank = low_rank; new_rank <= high_rank; ++new_rank)
                 {
-                    continue;
-                }
-
-                for(int new_rank = square.rank - 1; new_rank <= square.rank + 1; ++new_rank)
-                {
-                    if( ! board.inside_board(new_rank))
-                    {
-                        continue;
-                    }
-
                     auto new_index = Board::square_index(new_file, new_rank);
                     if(distance[new_index] == -1) // never checked
                     {
