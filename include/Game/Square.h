@@ -1,12 +1,20 @@
 #ifndef SQUARE_H
 #define SQUARE_H
 
-struct Square
+class Square
 {
-    char file;
-    int rank;
+    public:
+        Square();
+        Square(char file_in, int rank_in);
 
-    operator bool() const;
+        char file() const;
+        int rank() const;
+
+        operator bool() const;
+
+    private:
+        char square_file;
+        int square_rank;
 };
 
 // The distance between two squares in king moves

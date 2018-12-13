@@ -28,8 +28,8 @@ double King_Protection_Gene::score_board(const Board& board, const Board&, size_
 
             for(int steps = 1; steps <= 7; ++steps)
             {
-                char file = king_square.file + steps*file_step;
-                int  rank = king_square.rank + steps*rank_step;
+                char file = king_square.file() + steps*file_step;
+                int  rank = king_square.rank() + steps*rank_step;
 
                 if( ! board.inside_board(file, rank))
                 {
@@ -57,8 +57,8 @@ double King_Protection_Gene::score_board(const Board& board, const Board&, size_
         {
             for(auto rank_direction : {-1, 1})
             {
-                char file = king_square.file + file_direction*file_step;
-                int  rank = king_square.rank + rank_direction*rank_step;
+                char file = king_square.file() + file_direction*file_step;
+                int  rank = king_square.rank() + rank_direction*rank_step;
 
                 if( ! board.inside_board(file, rank))
                 {
