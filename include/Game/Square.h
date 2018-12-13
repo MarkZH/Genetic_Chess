@@ -22,6 +22,5 @@ int king_distance(const Square& a, const Square& b);
 
 bool operator==(const Square& a, const Square& b);
 bool operator!=(const Square& a, const Square& b);
-bool operator<(const Square& a, const Square& b);
 
 #endif // SQUARE_H
