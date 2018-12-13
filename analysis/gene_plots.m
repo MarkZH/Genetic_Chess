@@ -120,10 +120,10 @@ for yi = 2 : length(data.colheaders) - 2
     if ~isempty(findstr(name, piece_strength_prefix)) && isempty(findstr(name, original_pool_prefix))
         plot_figure = piece_strength_figure;
         special_plot_index = 1;
-    elseif length(findstr(name, priority_suffix)) > 0
+    elseif ~isempty(findstr(name, priority_suffix))
         plot_figure = priority_figure;
         special_plot_index = 2;
-    elseif length(findstr(name, speculation_keyword)) > 0
+    elseif ~isempty(findstr(name, speculation_keyword))
         plot_figure = speculation_figure;
         special_plot_index = 3;
     end
