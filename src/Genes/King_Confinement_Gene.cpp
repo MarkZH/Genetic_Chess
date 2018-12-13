@@ -118,12 +118,13 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
             ++free_space_total;
         }
 
-        auto reachable = (square == king_square) || (! occupied_by_same && ! attacked_by_other);
+        auto keep_going = (square == king_square) ||
+            (! occupied_by_same && ! attacked_by_other && dist < maximum_distance);
 
         // Add surrounding squares to square_queue.
         // always check the squares surrounding the king's current positions, even if
         // it is not safe (i.e., the king is in check).
-        if(reachable && dist < maximum_distance)
+        if(keep_going)
         {
             for(char new_file = square.file - 1; new_file <= square.file + 1; ++new_file)
             {
