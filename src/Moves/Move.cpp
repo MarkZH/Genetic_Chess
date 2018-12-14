@@ -33,15 +33,16 @@ bool Move::is_legal(const Board& board) const
     assert(Board::inside_board(ending_file, ending_rank));
 
     // Piece-move compatibility
-    assert(board.piece_on_square(starting_file, starting_rank));
-    assert(board.piece_on_square(starting_file, starting_rank)->color() == board.whose_turn());
-    assert(board.piece_on_square(starting_file, starting_rank)->can_move(this));
+    auto moving_piece = board.piece_on_square(starting_file, starting_rank);
+    assert(moving_piece);
+    assert(moving_piece->color() == board.whose_turn());
+    assert(moving_piece->can_move(this));
 
     auto attacked_piece = board.piece_on_square(ending_file, ending_rank);
     if(attacked_piece)
     {
         // Cannot capture piece of same color
-        if(board.whose_turn() == attacked_piece->color())
+        if(moving_piece->color() == attacked_piece->color())
         {
             return false;
         }
