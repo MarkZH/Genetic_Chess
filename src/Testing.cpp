@@ -740,11 +740,11 @@ bool run_tests()
 
     Game_Tree_Node_Result alpha_start = {Math::lose_score,
                                          WHITE,
-                                         {nullptr}};
+                                         {}};
 
     Game_Tree_Node_Result beta_start = {Math::win_score,
                                         WHITE,
-                                        {nullptr}};
+                                        {}};
     if(better_than(alpha_start, beta_start, WHITE))
     {
         std::cerr << "3. Error in comparing Game Tree Node Results." << std::endl;
@@ -790,6 +790,17 @@ bool run_tests()
         tests_passed = false;
     }
 
+    if( ! black_loss6.is_winning_for(WHITE))
+    {
+        std::cerr << "Black loss in 6 returns false for is_winning_for(WHITE)." << std::endl;
+        tests_passed = false;
+    }
+
+    if( ! black_loss6.is_losing_for(BLACK))
+    {
+        std::cerr << "Black loss in 6 returns false for is_losing_for(BLACK)." << std::endl;
+        tests_passed = false;
+    }
 
     // Move ambiguity check
     Board board;

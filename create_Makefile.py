@@ -95,7 +95,7 @@ if len(sys.argv) == 1:
 elif sys.argv[1] == 'gcc':
     compiler = 'g++'
     options_list['debug'] = ["-g", "-DDEBUG"]
-    options_list['release'] = ["-s", "-Ofast", "-DNDEBUG"]
+    options_list['release'] = ["-s", "-O3", "-DNDEBUG"]
 
     base_options = [
             "-Wnon-virtual-dtor", 
@@ -123,7 +123,7 @@ elif sys.argv[1] == 'gcc':
 elif sys.argv[1] == 'clang':
     compiler = 'clang++'
     options_list['debug'] = ["-g", "-Og", "-DDEBUG", "-fsanitize=undefined", "-fsanitize=integer"]
-    options_list['release'] = ["-Ofast", "-DNDEBUG"]
+    options_list['release'] = ["-O3", "-DNDEBUG"]
 
     base_options = [
             "-std=c++14",

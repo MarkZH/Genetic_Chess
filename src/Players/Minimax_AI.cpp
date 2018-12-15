@@ -158,7 +158,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             return create_result(next_board, perspective, move_result, depth);
         }
 
-        if(alpha.depth() <= depth + 2 && alpha.corrected_score(perspective) == Math::win_score)
+        if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
         {
             // This move will take a longer path to victory
             // than one already found. Use "depth + 2" since,
@@ -220,7 +220,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
-                else if(board.thinking_mode() == CECP && time_since_last_output(clock) > 1.0)
+                else if(board.thinking_mode() == CECP && time_since_last_output(clock) > 0.1)
                 {
                     output_thinking_cecp(alpha, clock,
                                          depth % 2 == 1 ? perspective : opposite(perspective));
@@ -254,11 +254,11 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     auto score = thought.corrected_score(perspective) / centipawn_value();
 
     // Indicate "mate in N moves" where N == thought.depth
-    if(score == Math::win_score)
+    if(thought.is_winning_for(perspective))
     {
         score = 10000.0 - thought.depth() + 1;
     }
-    else if(score == Math::lose_score)
+    else if(thought.is_losing_for(perspective))
     {
         score = -(10000.0 - thought.depth() + 1);
     }

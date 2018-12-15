@@ -4,12 +4,12 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <array>
 
-#include "Moves/Move.h"
 #include "Game/Color.h"
 #include "Piece_Types.h"
-#include "Game/Board.h"
 
+class Move;
 
 class Piece
 {
@@ -47,7 +47,7 @@ class Piece
         std::vector<std::unique_ptr<const Move>> possible_moves;
 
         // Holds lists of possible legal moves indexed by starting square (using Board::board_index())
-        std::vector<std::vector<const Move*>> legal_moves;
+        std::array<std::vector<const Move*>, 64> legal_moves;
 };
 
 #endif // PIECE_H
