@@ -1,9 +1,8 @@
 #include "Moves/Threat_Generator.h"
 
-#include <cmath>
-
-#include "Game/Board.h"
 #include "Moves/Threat_Iterator.h"
+
+class Board;
 
 Threat_Generator::Threat_Generator(char target_file_in,
                                    int  target_rank_in,

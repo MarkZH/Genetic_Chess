@@ -1,8 +1,10 @@
 #include "Pieces/Rook.h"
 
+#include <vector>
+#include <string>
+
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
-#include "Moves/Move.h"
 
 Rook::Rook(Color color_in) : Piece(color_in, "R", ROOK)
 {

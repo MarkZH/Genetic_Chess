@@ -5,6 +5,9 @@
 #include "Players/Game_Tree_Node_Result.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Game/Game_Result.h"
+#include "Moves/Move.h"
+
 #include "Utility.h"
 
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const

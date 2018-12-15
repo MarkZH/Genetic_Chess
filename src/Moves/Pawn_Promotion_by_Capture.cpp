@@ -5,7 +5,6 @@
 #include "Pieces/Piece.h"
 #include "Game/Board.h"
 #include "Moves/Pawn_Promotion.h"
-#include "Moves/Move.h"
 #include "Moves/Direction.h"
 
 Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,

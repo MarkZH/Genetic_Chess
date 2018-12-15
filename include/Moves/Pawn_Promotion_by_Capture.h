@@ -1,6 +1,8 @@
 #ifndef PAWN_PROMOTION_BY_CAPTURE_H
 #define PAWN_PROMOTION_BY_CAPTURE_H
 
+#include <string>
+
 #include "Pawn_Promotion.h"
 #include "Direction.h"
 

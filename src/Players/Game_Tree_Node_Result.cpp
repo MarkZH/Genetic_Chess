@@ -1,10 +1,8 @@
 #include "Players/Game_Tree_Node_Result.h"
 
 #include <cmath>
-#include <cassert>
 
 #include "Game/Color.h"
-#include "Utility.h"
 
 double Game_Tree_Node_Result::corrected_score(Color query) const
 {

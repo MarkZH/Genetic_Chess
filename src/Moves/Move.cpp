@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "Game/Board.h"
+#include "Game/Game_Result.h"
 #include "Pieces/Piece.h"
 #include "Utility.h"
 

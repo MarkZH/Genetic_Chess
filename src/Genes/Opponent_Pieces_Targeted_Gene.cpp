@@ -4,9 +4,6 @@
 #include <memory>
 
 #include "Game/Board.h"
-#include "Pieces/Piece.h"
-#include "Pieces/Piece_Types.h"
-#include "Moves/Move.h"
 #include "Genes/Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 

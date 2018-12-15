@@ -4,7 +4,6 @@
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
-#include "Pieces/Piece.h"
 
 double King_Protection_Gene::score_board(const Board& board, const Board&, size_t) const
 {

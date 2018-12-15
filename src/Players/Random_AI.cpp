@@ -4,12 +4,12 @@
 #include <string>
 #include <stdexcept>
 
-#include "Players/Player.h"
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Moves/Move.h"
 #include "Utility.h"
 
+class Move;
 class Clock;
 
 const Move& Random_AI::choose_move(const Board& board, const Clock&) const

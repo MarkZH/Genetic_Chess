@@ -2,7 +2,6 @@
 
 #include <cmath>
 #include <array>
-#include <algorithm>
 #include <memory>
 
 #include "Genes/Gene.h"
