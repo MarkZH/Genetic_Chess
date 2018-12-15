@@ -14,7 +14,7 @@ if isOctave
         if length(args) > 1
             marks_file_name = args{2};
             if ~isempty(marks_file_name)
-                data = importdata(marks_file_name);
+                data = importdata(marks_file_name, ';', 1);
                 game_number_marks = data.data(:,2)';
                 game_notes = data.textdata(2:end);
             end

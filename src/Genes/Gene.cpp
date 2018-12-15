@@ -120,3 +120,8 @@ bool Gene::test(const Board& board, double expected_score) const
 
     return true;
 }
+
+double Gene::get_priority() const
+{
+    return priority;
+}

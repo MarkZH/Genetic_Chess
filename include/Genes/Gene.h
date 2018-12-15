@@ -24,6 +24,7 @@ class Gene
 
         virtual std::string name() const = 0;
         void print(std::ostream& os) const;
+        double get_priority() const;
 
         virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg);
 

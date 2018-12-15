@@ -21,6 +21,7 @@
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
+#include "Genes/Priority_Threshold_Gene.h"
 
 
 // Creation ex nihilo
@@ -32,6 +33,9 @@ Genome::Genome()
 
     genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
     look_ahead_gene_index = genome.size() - 1;
+
+    genome.emplace_back(std::make_unique<Priority_Threshold_Gene>());
+    priority_threshold_gene_index = genome.size() - 1;
 
     // Normal genes
     auto psg = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
@@ -51,7 +55,8 @@ Genome::Genome()
 Genome::Genome(const Genome& other) :
     genome(),
     piece_strength_gene_index(other.piece_strength_gene_index),
-    look_ahead_gene_index(other.look_ahead_gene_index)
+    look_ahead_gene_index(other.look_ahead_gene_index),
+    priority_threshold_gene_index(other.priority_threshold_gene_index)
 {
     for(const auto& gene : other.genome)
     {
@@ -80,6 +85,7 @@ Genome& Genome::operator=(const Genome& other)
 
     piece_strength_gene_index = other.piece_strength_gene_index;
     look_ahead_gene_index = other.look_ahead_gene_index;
+    priority_threshold_gene_index = other.priority_threshold_gene_index;
 
     genome.clear();
     for(const auto& gene : other.genome)
@@ -94,9 +100,9 @@ Genome& Genome::operator=(const Genome& other)
 
 // Sexual reproduction
 Genome::Genome(const Genome& A, const Genome& B) :
-    genome(),
     piece_strength_gene_index(A.piece_strength_gene_index),
-    look_ahead_gene_index(A.look_ahead_gene_index)
+    look_ahead_gene_index(A.look_ahead_gene_index),
+    priority_threshold_gene_index(A.priority_threshold_gene_index)
 {
     for(size_t i = 0; i < A.genome.size(); ++i)
     {
@@ -146,13 +152,22 @@ void Genome::read_from(std::istream& is)
 
 double Genome::score_board(const Board& board) const
 {
-    double score = 0;
+    double score = 0.0;
+    double total_priority = 0.0;
+    double used_priority = 0.0;
+    auto minimum_priority = Random::random_real(0.0, get_minimum_priority());
     for(const auto& gene : genome)
     {
-        score += gene->evaluate(board);
+        auto priority = gene->get_priority();
+        total_priority += priority;
+        if(std::abs(priority) > minimum_priority)
+        {
+            score += gene->evaluate(board);
+            used_priority += priority;
+        }
     }
 
-    return score;
+    return score*(total_priority/used_priority);
 }
 
 double Genome::evaluate(const Board& board, const Game_Result& result, Color perspective) const
@@ -210,4 +225,9 @@ double Genome::time_to_examine(const Board& board, const Clock& clock) const
 double Genome::speculation_time_factor(const Board & board) const
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor(board);
+}
+
+double Genome::get_minimum_priority() const
+{
+    return static_cast<const Priority_Threshold_Gene*>(genome[priority_threshold_gene_index].get())->get_threshold();
 }

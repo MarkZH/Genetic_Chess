@@ -111,6 +111,17 @@ The genome is the repository for genetic information in the Genetic AIs and cont
 
 Formerly, one result of a mutation was to deactivate a gene entirely. Gene deactivation was thought to be a strategy for exiting local peaks in fitness since a gene could still mutate when deactivated. Since it felt no evolutionary pressure, the deactivated gene was free to random walk somewhere else, perhaps to a more advantageous state that would be discovered upon reactivation. However, it was found that, once deactivated, a gene would only very rarely become reactivated. This was for two reasons. First, a random walk is a very slow way to reach a better genome, especially with no evolutionary pressure. Second, and more importantly, a deactivated gene uses less time when evaluating a board or doing some other calculation. This means that Genetic AIs with more deactivated genes have an advantage in being able to evaluate more positions and see farther ahead in the game. This is a powerful incentive to keep genes deactivated, often leading to AIs that had most of their genome deactivated aside from the Total Force Gene. This would lead to gene pools where games only ended in draws, stagnating the pool. Now, all genes are always active.
 
+\emph{Update:} The idea in the above paragraph has been revisited in a different form. See Section~\ref{priority-threshold}.
+
+\subsection{A Note on Designer Genes}
+
+Evolution is an effective means of optimizing when every mutation makes a difference in the fitness of an organism. In an abstract sense, the fitness function of an organism should be
+\begin{enumerate}
+	\item a smooth function of the parameters of its genome and
+	\item without flat sections.
+\end{enumerate}
+The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. This is why the deactivating-gene mutation was discarded. It is better to let a gene fall in importance by gradually reducing its priority. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI. This random walk period only represents wasted time.
+
 \subsection{Regulatory Genes}
 A regulator gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
 
@@ -120,6 +131,8 @@ This gene specifies the importance or strength of each different type of chess p
 The number associated with each piece is not scaled to any other piece, but before a piece strength is returned, it is scaled so that that total value of all the pieces at the start of the game (8~pawns, 2~rooks, 2~knights, 2~bishops, and 1~queen) equals~1. This prevents mutations in this gene from changing the priorities of other genes that reference this one. In other words, if a series of mutations doubles the strength of all pieces, the Total Force Gene will not subsequently return double the score for the same board state. Only mutations that change piece strengths with respect to other pieces are effective. The king is not included in this scaling because the king is always on the board. So, the Total Force Gene assigns a value of one to the starting piece set of a player and zero to a lone king.
 
 Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and \ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
+
+The queen's value is forced to be non-negative. This tends to speed up the evolution of the other piece values and the priorities of the Total Force Gene and the Opponent Pieces Targeted Gene without limiting their range of mutations. If the proper value of a queen is negative (meaning that, for example, the Total Force Gene makes a player want to get rid of their own queen), then this can be expressed by the Total Force Gene taking on a negative value.
 
 \subsubsection{Look Ahead Gene}
 This gene determines all aspects of the Genetic AIs time management. There are three genetically determined components to this gene that determine how the AI spends its time:
@@ -187,6 +200,14 @@ where \(T\) is the time needed to look ahead on this move, \(N_{\textrm{legal}}\
 
 The speculation constant is divided into two versions: one for board positions containing a capturing move, and ones that do not. Initial results indicate that the capturing speculation constant tends to be much larger (between 1.1 and 1.2) than the non-capturing counterpart (usually nearer to 1.0). This makes sense since board positions with capturing moves tend to be move volatile in who has the advantage. Capturing a piece is only good if it doesn't result in a greater loss in subsequent moves. This is the problem that is usually solved in other chess engines by a quiescence search, in which all interesting\footnote{Meaning, captures that aren't immediately losing.} capturing moves are performed on a board before it is scored, thereby only scoring stable, ``quiescent'' board states \cite{quiescence-ref}.
 
+\subsubsection{Priority Threshold Gene}
+\label{priority-threshold}
+
+This gene stops any other board-scoring gene from running its \code{score\_board()} if that other gene's priority is too low, thus trading lower score detail for faster evaluations. It contains a genetically determined threshold value that is referenced during the genome's \code{evaluate\_board()} method. Instead of using the value directly, the actually threshold used is a random number uniformly distributed between 0.0 and the threshold value.  The reason for this is to prevent low-priority genes from being permanently cut off from evolutionary pressure while still providing a means of speeding up evaluations.
+
+Since skipping \code{score\_board()} methods will tend to lower the score given to a position (assuming all genes have positive priorities), the resulting score is scaled by the ratio of the sum of all genes' priorities to the sum of all used genes' priorities. This way, board positions with higher scores due to using more genes to score it will not be unduly favored over board positions with a lower score due to using fewer genes. To put it in mathematical terms:
+\[Final\ score = Score\times\frac{Sum\ of\ all\ priorities}{Sum\ of\ all\ used\ priorities}\]
+
 \subsubsection{Branch Pruning Gene (deleted)}
 
 This gene would prevent the game tree search from examining the moves following a certain move if the board state that immediately resulted from that move was of a sufficiently lower score than the present board state. This gene was supposed to save time by skipping in-depth examinations of moves that were obviously immediately bad. This gene was deleted because it seemed to slow down the evolution of other genes by harshly punishing large swings in board value. This would cause genes that increased in priority to trip this gene, preventing look-ahead, and thus good play.
@@ -203,8 +224,6 @@ Since it is not only important to find position that are advantageous to the pla
 \subsubsection{Total Force Gene}
 \label{total-force}
 This gene sums the strength (according to the Piece Strength Gene) of all the player's pieces on the board.
-
-A unique aspect of this gene is that it is the only one whose priority is constrained to be non-negative. This was done to avoid a genome where the Total Force Gene and the Opponent Pieces Targeted Gene have oppositely signed priorities. This would cause mixed pressure on the Piece Strength Gene values, interfering with its evolution. This does not limit the expressiveness of this gene, since the Piece Strength Gene and the Opponent Pieces Targeted Gene are free to take on negative values. Any genome with a negative priority on the Total Force Gene is equivalent to another genome with the signs of the three mentioned genes' priorities negated.
 
 \subsubsection{Freedom to Move Gene}
 This gene counts the number of legal moves available in the current position.

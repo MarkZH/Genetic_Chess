@@ -23,7 +23,7 @@ class Genetic_AI : public Player
         Genetic_AI(const Genetic_AI& gai_mother,
                    const Genetic_AI& gai_father); // offspring with random recombination of genes
 
-        void mutate();
+        void mutate(bool just_testing = false);
         const Move& choose_move(const Board& board, const Clock& clock) const override;
 
         std::string name() const override;
