@@ -5,6 +5,7 @@
 #include <cctype>
 #include <array>
 #include <cassert>
+#include <memory>
 
 #include "Genes/Gene.h"
 #include "Utility.h"
@@ -76,9 +77,9 @@ double Piece_Strength_Gene::piece_value(const Piece* piece) const
     }
 }
 
-Piece_Strength_Gene* Piece_Strength_Gene::duplicate() const
+std::unique_ptr<Gene> Piece_Strength_Gene::duplicate() const
 {
-    return new Piece_Strength_Gene(*this);
+    return std::make_unique<Piece_Strength_Gene>(*this);
 }
 
 std::string Piece_Strength_Gene::name() const

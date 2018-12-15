@@ -1,6 +1,7 @@
 #include "Genes/Pawn_Advancement_Gene.h"
 
 #include <string>
+#include <memory>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -41,9 +42,9 @@ double Pawn_Advancement_Gene::score_board(const Board& board) const
     return score/(8*6); // normalize to 8 pawns 6 ranks from home (promotion rank)
 }
 
-Pawn_Advancement_Gene* Pawn_Advancement_Gene::duplicate() const
+std::unique_ptr<Gene> Pawn_Advancement_Gene::duplicate() const
 {
-    return new Pawn_Advancement_Gene(*this);
+    return std::make_unique<Pawn_Advancement_Gene>(*this);
 }
 
 std::string Pawn_Advancement_Gene::name() const

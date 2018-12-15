@@ -1,6 +1,7 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 
 #include <array>
+#include <memory>
 
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
@@ -43,9 +44,9 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board) const
     return score;
 }
 
-Opponent_Pieces_Targeted_Gene* Opponent_Pieces_Targeted_Gene::duplicate() const
+std::unique_ptr<Gene> Opponent_Pieces_Targeted_Gene::duplicate() const
 {
-    return new Opponent_Pieces_Targeted_Gene(*this);
+    return std::make_unique<Opponent_Pieces_Targeted_Gene>(*this);
 }
 
 std::string Opponent_Pieces_Targeted_Gene::name() const

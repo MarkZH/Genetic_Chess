@@ -208,7 +208,7 @@ void gene_pool(const std::string& config_file = "")
 
             auto result = results[index/2].get();
             auto winner = result.get_winner();
-            std::cout << color_text(winner) << " (" << result.get_ending_reason() << ") ";
+            std::cout << color_text(winner) << " (" << result.get_ending_reason() << ")";
 
             if(winner == WHITE)
             {
@@ -253,7 +253,7 @@ void gene_pool(const std::string& config_file = "")
                 if(Random::success_probability(draw_kill_probability))
                 {
                     auto& pseudo_loser = (Random::coin_flip() ? white : black);
-                    std::cout << pseudo_loser.get_id() << " mates with ";
+                    std::cout << "\n    --> " << pseudo_loser.get_id() << " mates with ";
                     auto new_specimen = Genetic_AI();
 
                     if(Random::coin_flip() && pseudo_loser.get_id() > 0)

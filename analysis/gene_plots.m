@@ -44,15 +44,18 @@ xaxis = xaxis_list{1};
 piece_strength_prefix = 'Piece Strength Gene';
 piece_strength_figure = figure('Position', [0, 0, 1200, 1000]);
 title('Piece Strength Evolution', 'FontSize', 22);
-xlabel('ID');
 
 priority_figure = figure('Position', [0, 0, 1200, 1000]);
 priority_suffix = ' Gene - Priority';
 priority_count = 0;
 title('Gene Priority Evolution', 'FontSize', 22);
-xlabel('ID');
 
-piece_priority_plots = [0, 0];
+speculation_keyword = 'Speculation';
+speculation_figure = figure('Position', [0, 0, 1200, 1000]);
+title('Speculation Constants', 'FontSize', 22);
+
+special_plots = [0, 0, 0];
+file_name_suffixes = {'_piece_strength.png', '_gene_priorities.png', '_speculation.png'};
 
 for yi = 2 : length(data.colheaders) - 2
   this_data = data.data(:, yi);
@@ -97,52 +100,54 @@ for yi = 2 : length(data.colheaders) - 2
 
   print([gene_pool_filename '_gene_' name '.png']);
 
-  special_plot = false;
-  if strncmp(name, piece_strength_prefix, length(piece_strength_prefix))
+  special_plot_index = 0;
+  if length(findstr(name, piece_strength_prefix)) > 0
     plot_figure = piece_strength_figure;
-    piece_priority_index = 1;
-    special_plot = true;
-  end
-
-  if strncmp(fliplr(name), fliplr(priority_suffix), length(priority_suffix))
+    special_plot_index = 1;
+  elseif length(findstr(name, priority_suffix)) > 0
     plot_figure = priority_figure;
-    piece_priority_index = 2;
-    special_plot = true;
+    special_plot_index = 2;
+  elseif length(findstr(name, speculation_keyword)) > 0
+    plot_figure = speculation_figure;
+    special_plot_index = 3;
   end
 
-  if special_plot && length(this_data) > conv_window;
+  if special_plot_index > 0 && length(this_data) > conv_window;
     figure(plot_figure);
     hold all;
 
-    if piece_priority_index == 1
+    make_dashed = false;
+    if special_plot_index == 1
       name = name(end);
-      make_dashed = false;
-    else
+    elseif special_plot_index == 2
       name = name(1 : end - length(priority_suffix));
       priority_count = priority_count + 1;
       make_dashed = (priority_count > 7);
+    elseif special_plot_index == 3
+      cutoff = findstr('-', name);
+      name = name(cutoff + 2 : end);
     end
 
     p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
     if make_dashed
       set(p, 'LineStyle', ':');
     end
-    piece_priority_plots(piece_priority_index) = plot_figure;
+    special_plots(special_plot_index) = plot_figure;
   end
 end
 
-file_name_suffixes = {'_piece_strength.png', '_gene_priorities.png'};
-for index = 1 : 2
-  if ~piece_priority_plots(index)
+for index = 1 : length(special_plots)
+  if ~special_plots(index)
     continue;
   end
 
-  figure(piece_priority_plots(index));
+  figure(special_plots(index));
   leg = legend('show');
   set(leg, 'orientation', 'horizontal');
   set(leg, 'location', 'southoutside');
   legend left;
   plot(xlim, [0 0], 'k'); % X-axis
+  xlabel('ID');
 
   for n = id_marks
     plot(n*[1 1], ylim);

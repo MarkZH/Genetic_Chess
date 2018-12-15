@@ -4,6 +4,7 @@
 #include "Gene.h"
 
 #include <string>
+#include <memory>
 
 class Board;
 class Clock;
@@ -14,7 +15,7 @@ class Look_Ahead_Gene : public Gene
     public:
         Look_Ahead_Gene();
 
-        Look_Ahead_Gene* duplicate() const override;
+        std::unique_ptr<Gene> duplicate() const override;
 
         std::string name() const override;
 
@@ -30,8 +31,12 @@ class Look_Ahead_Gene : public Gene
     private:
         double mean_game_length; // in moves by one player
         double game_length_uncertainty; // approximately as a fraction of the mean
+
         double speculation_constant; // how often to look ahead even with little time
         double speculation_exponent;
+
+        double capturing_speculation_constant; // how often to look ahead even with little time when capture is possible
+        double capturing_speculation_exponent;
 
         double score_board(const Board& board) const override;
         void gene_specific_mutation() override;

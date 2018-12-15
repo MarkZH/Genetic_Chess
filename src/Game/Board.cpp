@@ -92,6 +92,7 @@ Board::Board() :
     king_location{{ {'\0', 0}, {'\0', 0} }},
     move_count_start_offset(0),
     first_player_to_move(WHITE),
+    capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
     initialize_board_hash();
@@ -124,6 +125,7 @@ Board::Board() :
     assert(king_location[BLACK]);
 
     ++repeat_count[get_board_hash()]; // Count initial position
+    recreate_move_caches();
 }
 
 Board::Board(const std::string& fen) :
@@ -133,6 +135,7 @@ Board::Board(const std::string& fen) :
     en_passant_target({'\0', 0}),
     starting_fen(fen),
     king_location{{ {'\0', 0}, {'\0', 0} }},
+    capturing_move_available(false),
     thinking_indicator(NO_THINKING)
 {
     initialize_board_hash();
@@ -246,6 +249,7 @@ Board::Board(const std::string& fen) :
     ++repeat_count[get_board_hash()]; // Count initial position
 
     move_count_start_offset = std::stoi(fen_parse.at(5)) - 1;
+    recreate_move_caches();
 }
 
 // Only for use with minimal_copy()
@@ -401,9 +405,9 @@ Game_Result Board::submit_move(const Move& move)
 
     make_move(move.start_file(), move.start_rank(),
               move.end_file(),   move.end_rank());
-
-    set_turn(opposite(whose_turn()));
     move.side_effects(*this);
+
+    switch_turn();
 
     if(no_legal_moves())
     {
@@ -640,33 +644,6 @@ Color Board::whose_turn() const
 
 const std::vector<const Move*>& Board::legal_moves() const
 {
-    if( ! legal_moves_cache.empty())
-    {
-        return legal_moves_cache;
-    }
-
-    for(char file = 'a'; file <= 'h'; ++file)
-    {
-        for(int rank = 1; rank <= 8; ++rank)
-        {
-            auto piece = view_piece_on_square(file, rank);
-            if(piece && piece->color() == whose_turn())
-            {
-                for(const auto& move : piece->get_move_list(file, rank))
-                {
-                    if(move->is_legal(*this))
-                    {
-                        legal_moves_cache.push_back(move);
-                    }
-                    else
-                    {
-                        other_moves_cache.push_back(move);
-                    }
-                }
-            }
-        }
-    }
-
     return legal_moves_cache;
 }
 
@@ -899,7 +876,7 @@ const std::vector<const Move*>& Board::get_game_record() const
 void Board::print_game_record(const Player* white,
                               const Player* black,
                               const std::string& file_name,
-                              Game_Result result,
+                              const Game_Result& result,
                               double initial_time,
                               size_t moves_to_reset,
                               double increment,
@@ -1116,11 +1093,16 @@ void Board::set_turn(Color color)
 {
     if(turn_color != color)
     {
-        clear_caches();
         clear_en_passant_target();
-        turn_color = color;
         update_board_hash(color);
+        switch_turn();
     }
+}
+
+void Board::switch_turn()
+{
+    turn_color = opposite(turn_color);
+    recreate_move_caches();
 }
 
 void Board::make_en_passant_targetable(char file, int rank)
@@ -1160,10 +1142,38 @@ Square Board::find_king(Color color) const
     return location;
 }
 
-void Board::clear_caches()
+void Board::recreate_move_caches()
 {
     other_moves_cache.clear();
     legal_moves_cache.clear();
+
+    capturing_move_available = false;
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            auto piece = view_piece_on_square(file, rank);
+            if(piece && piece->color() == whose_turn())
+            {
+                for(const auto& move : piece->get_move_list(file, rank))
+                {
+                    if(move->is_legal(*this))
+                    {
+                        legal_moves_cache.push_back(move);
+                        if(view_piece_on_square(move->end_file(), move->end_rank()) ||
+                           move->is_en_passant())
+                        {
+                            capturing_move_available = true;
+                        }
+                    }
+                    else
+                    {
+                        other_moves_cache.push_back(move);
+                    }
+                }
+            }
+        }
+    }
 }
 
 bool Board::enough_material_to_checkmate() const
@@ -1382,4 +1392,9 @@ uint64_t Board::get_square_hash(char file, int rank) const
 uint64_t Board::get_board_hash() const
 {
     return board_hash;
+}
+
+bool Board::capture_possible() const
+{
+    return capturing_move_available;
 }

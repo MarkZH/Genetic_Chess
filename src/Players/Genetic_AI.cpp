@@ -217,7 +217,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    const Clock& clock,
                                                    const size_t depth,
                                                    Game_Tree_Node_Result alpha,
-                                                   Game_Tree_Node_Result beta,
+                                                   const Game_Tree_Node_Result& beta,
                                                    bool still_on_principal_variation) const
 {
     auto time_start = clock.time_left(clock.running_for());
@@ -272,7 +272,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         auto move_result = next_board.submit_move(*move);
         if(move_result.get_winner() != NONE)
         {
-            // Mate in one (try to pick the shortest path to checkmate)
+            // This move results in checkmate, no other move can be better.
             return create_result(next_board, perspective, move_result, depth);
         }
 
@@ -294,10 +294,6 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
         if(move_result.game_has_ended())
         {
             recurse = false;
-        }
-        else if(next_board.legal_moves().size() == 1)
-        {
-            recurse = true;
         }
         else if(still_on_principal_variation)
         {
@@ -338,7 +334,8 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                 }
                 else if(board.get_thinking_mode() == CECP && ! recurse)
                 {
-                    output_thinking_cecp(alpha, clock, perspective);
+                    output_thinking_cecp(alpha, clock,
+                                         depth % 2 == 0 ? perspective : opposite(perspective));
                 }
             }
         }

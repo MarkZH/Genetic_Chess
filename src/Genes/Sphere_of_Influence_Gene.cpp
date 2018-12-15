@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <memory>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -30,9 +31,9 @@ void Sphere_of_Influence_Gene::load_properties()
     king_target_factor = properties["King Target Factor"];
 }
 
-Sphere_of_Influence_Gene* Sphere_of_Influence_Gene::duplicate() const
+std::unique_ptr<Gene> Sphere_of_Influence_Gene::duplicate() const
 {
-    return new Sphere_of_Influence_Gene(*this);
+    return std::make_unique<Sphere_of_Influence_Gene>(*this);
 }
 
 std::string Sphere_of_Influence_Gene::name() const
@@ -102,6 +103,12 @@ double Sphere_of_Influence_Gene::score_board(const Board& board) const
 
 void Sphere_of_Influence_Gene::gene_specific_mutation()
 {
-    legal_bonus += Random::random_normal(0.05);
-    king_target_factor += Random::random_normal(0.05);
+    if(Random::coin_flip())
+    {
+        legal_bonus += Random::random_normal(0.05);
+    }
+    else
+    {
+        king_target_factor += Random::random_normal(0.05);
+    }
 }

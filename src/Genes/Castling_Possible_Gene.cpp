@@ -1,6 +1,7 @@
 #include "Genes/Castling_Possible_Gene.h"
 
 #include <string>
+#include <memory>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -8,9 +9,7 @@
 
 #include "Utility.h"
 
-Castling_Possible_Gene::Castling_Possible_Gene() :
-    kingside_preference(0.5),
-    permanent_value{{-1.0, -1.0}}
+Castling_Possible_Gene::Castling_Possible_Gene() : kingside_preference(0.5)
 {
 }
 
@@ -26,9 +25,9 @@ void Castling_Possible_Gene::load_properties()
     kingside_preference = properties["Kingside Preference"];
 }
 
-Castling_Possible_Gene* Castling_Possible_Gene::duplicate() const
+std::unique_ptr<Gene> Castling_Possible_Gene::duplicate() const
 {
-    return new Castling_Possible_Gene(*this);
+    return std::make_unique<Castling_Possible_Gene>(*this);
 }
 
 std::string Castling_Possible_Gene::name() const
@@ -39,16 +38,6 @@ std::string Castling_Possible_Gene::name() const
 double Castling_Possible_Gene::score_board(const Board& board) const
 {
     auto perspective = board.whose_turn();
-
-    if(board.get_game_record().size() <= 1) // new game
-    {
-        permanent_value[perspective] = -1.0;
-    }
-
-    if(permanent_value[perspective] >= 0)
-    {
-        return permanent_value[perspective];
-    }
 
     // Check game record to see if player already castled
     auto base_rank = (perspective == WHITE ? 1 : 8);
@@ -66,15 +55,13 @@ double Castling_Possible_Gene::score_board(const Board& board) const
                 if(move->end_file() == kingside_file || move->end_file() == queenside_file)
                 {
                     // The only way the king can move two files is by castling
-                    permanent_value[perspective] = 1.0;
+                    return 1.0;
                 }
                 else
                 {
                     // King moved but did not castle
-                    permanent_value[perspective] = 0.9;
+                    return 0.0;
                 }
-
-                return permanent_value[perspective];
             }
         }
     }
@@ -108,8 +95,7 @@ double Castling_Possible_Gene::score_board(const Board& board) const
 
     if(both_rooks_moved)
     {
-        permanent_value[perspective] = 0.0;
-        return permanent_value[perspective];
+        return 0.0;
     }
 
     return score;

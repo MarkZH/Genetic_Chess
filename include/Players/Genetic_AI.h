@@ -64,7 +64,7 @@ class Genetic_AI : public Player
                                                const Clock& clock,
                                                size_t depth,
                                                Game_Tree_Node_Result alpha,
-                                               Game_Tree_Node_Result beta,
+                                               const Game_Tree_Node_Result& beta,
                                                bool still_on_principal_variation) const;
 
         Game_Tree_Node_Result create_result(const Board& board,

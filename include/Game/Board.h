@@ -63,7 +63,7 @@ class Board
         void print_game_record(const Player* white,
                                const Player* black,
                                const std::string& file_name,
-                               Game_Result result,
+                               const Game_Result& result,
                                double initial_time,
                                size_t moves_to_reset,
                                double increment,
@@ -92,6 +92,7 @@ class Board
         Square find_king(Color color) const;
         bool king_is_in_check(Color color) const;
         bool king_is_in_check_after_move(const Move& move) const;
+        bool capture_possible() const;
 
         static const Pawn* get_pawn(Color color);
         static const Rook* get_rook(Color color);
@@ -130,7 +131,9 @@ class Board
         // Caches
         mutable std::vector<const Move*> other_moves_cache;
         mutable std::vector<const Move*> legal_moves_cache;
-        void clear_caches();
+        mutable bool capturing_move_available;
+
+        void recreate_move_caches();
 
         // Communication channels
         mutable Thinking_Output_Type thinking_indicator;
@@ -146,6 +149,7 @@ class Board
         bool enough_material_to_checkmate() const;
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
+        void switch_turn();
 
         // Zobrist hashing
         uint64_t board_hash;
@@ -171,7 +175,7 @@ class Board
 
         // Minimal copy of board with custom constructor for
         // use with king_is_in_check
-        Board(const Board* old_board);
+        explicit Board(const Board* old_board);
         Board minimal_copy() const; // Just copy board state with no history
 
         // Moves with side effects are friends of Board

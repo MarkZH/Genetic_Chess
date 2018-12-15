@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cassert>
+#include <memory>
 
 #include "Genes/Gene.h"
 #include "Utility.h"
@@ -13,7 +14,8 @@
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
     game_length_uncertainty(0.5),
-    speculation_constant(0.5)
+    speculation_constant(0.5),
+    capturing_speculation_constant(0.5)
 {
     recalculate_exponent();
 }
@@ -23,6 +25,7 @@ void Look_Ahead_Gene::reset_properties() const
     properties["Mean Game Length"] = mean_game_length;
     properties["Game Length Uncertainty"] = game_length_uncertainty;
     properties["Speculation Constant"] = speculation_constant;
+    properties["Capturing Speculation Constant"] = capturing_speculation_constant;
 }
 
 void Look_Ahead_Gene::load_properties()
@@ -30,6 +33,7 @@ void Look_Ahead_Gene::load_properties()
     mean_game_length = properties["Mean Game Length"];
     game_length_uncertainty = properties["Game Length Uncertainty"];
     speculation_constant = properties["Speculation Constant"];
+    capturing_speculation_constant = properties["Capturing Speculation Constant"];
     recalculate_exponent();
 }
 
@@ -46,7 +50,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
 
 void Look_Ahead_Gene::gene_specific_mutation()
 {
-    switch(Random::random_integer(1, 3))
+    switch(Random::random_integer(1, 4))
     {
         case 1:
             mean_game_length = std::max(1.0, mean_game_length + Random::random_normal(1.0));
@@ -56,8 +60,12 @@ void Look_Ahead_Gene::gene_specific_mutation()
             break;
         case 3:
             speculation_constant += Random::random_normal(0.05);
-            speculation_constant = std::max(speculation_constant, 0.0);
-            speculation_constant = std::min(speculation_constant, 1.0);
+            speculation_constant = Math::clamp(speculation_constant, 0.0, 1.0);
+            recalculate_exponent();
+            break;
+        case 4:
+            capturing_speculation_constant += Random::random_normal(0.05);
+            capturing_speculation_constant = Math::clamp(capturing_speculation_constant, 0.0, 1.0);
             recalculate_exponent();
             break;
         default:
@@ -66,9 +74,9 @@ void Look_Ahead_Gene::gene_specific_mutation()
     }
 }
 
-Look_Ahead_Gene* Look_Ahead_Gene::duplicate() const
+std::unique_ptr<Gene> Look_Ahead_Gene::duplicate() const
 {
-    return new Look_Ahead_Gene(*this);
+    return std::make_unique<Look_Ahead_Gene>(*this);
 }
 
 std::string Look_Ahead_Gene::name() const
@@ -103,7 +111,8 @@ bool Look_Ahead_Gene::enough_time_to_recurse(double time_allotted, const Board& 
         return true;
     }
 
-    return Random::success_probability(std::pow(base, speculation_exponent));
+    auto exponent = (board.capture_possible() ? capturing_speculation_exponent : speculation_exponent);
+    return Random::success_probability(std::pow(base, exponent));
 }
 
 void Look_Ahead_Gene::recalculate_exponent()
@@ -116,6 +125,16 @@ void Look_Ahead_Gene::recalculate_exponent()
     {
         speculation_exponent = Math::infinity;
     }
+
+    if(capturing_speculation_constant > 0.0)
+    {
+        capturing_speculation_exponent = (1.0 - capturing_speculation_constant)/capturing_speculation_constant;
+    }
+    else
+    {
+        capturing_speculation_exponent = Math::infinity;
+    }
+
 
     // constant = 0.0 ==> exponent = infinity
     // constant = 0.5 ==> exponent = 1
