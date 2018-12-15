@@ -12,7 +12,6 @@
 
 #include "Players/Player.h"
 #include "Players/CECP_Mediator.h"
-#include "Players/UCI_Mediator.h"
 
 std::string Outside_Player::log_file_name = "chess_comm_log.txt";
 std::string Outside_Player::indent = "\t";
@@ -25,10 +24,6 @@ std::unique_ptr<Outside_Player> connect_to_outside(const Player& player)
     if(protocol_type == "xboard")
     {
         return std::make_unique<CECP_Mediator>(player);
-    }
-    else if(protocol_type == "uci")
-    {
-        return std::make_unique<UCI_Mediator>(player);
     }
     else
     {
