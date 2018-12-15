@@ -7,8 +7,7 @@
 #include <mutex>
 
 #include "Moves/Move.h"
-#include "Moves/Kingside_Castle.h"
-#include "Moves/Queenside_Castle.h"
+#include "Moves/Castle.h"
 #include "Moves/En_Passant.h"
 #include "Moves/Pawn_Promotion.h"
 #include "Moves/Pawn_Double_Move.h"
@@ -77,12 +76,11 @@ class Board
         static bool inside_board(char file);
         static bool inside_board(int rank);
 
-        static size_t board_index(char file, int rank);
+        static size_t square_index(char file, int rank);
 
         const Piece* piece_on_square(char file, int rank) const;
 
         const std::vector<const Move*>& legal_moves() const;
-        const std::vector<const Move*>& other_moves() const;
 
         bool safe_for_king(char file, int rank, Color king_color) const;
         bool is_en_passant_targetable(char file, int rank) const;
@@ -106,7 +104,7 @@ class Board
     private:
         std::array<const Piece*, 64> board;
         std::array<uint64_t, 101> repeat_count;
-        int moves_since_pawn_or_capture_count;
+        int repeat_count_insertion_point;
         Color turn_color;
         std::vector<const Move*> game_record_listing;
         std::array<bool, 64> unmoved_positions;
@@ -137,7 +135,6 @@ class Board
         static const Pawn   black_pawn;
 
         // Caches
-        std::vector<const Move*> other_moves_cache;
         std::vector<const Move*> legal_moves_cache;
         std::vector<Square> checking_squares;
 
@@ -158,11 +155,12 @@ class Board
         void place_piece(const Piece* piece, char file, int rank);
         void switch_turn();
         void set_unmoved(char file, int rank);
+        void update_board(const Move& move);
 
         // Track threefold repetition and fifty-move rule
-
-         // adds to previously seen list and returns count of times board position has occured
-        int add_to_repeat_count(uint64_t new_hash);
+        void add_board_position_to_repeat_record();
+        void add_to_repeat_count(uint64_t new_hash);
+        int current_board_position_repeat_count() const;
         void clear_repeat_count();
         int moves_since_pawn_or_capture() const;
 
@@ -197,8 +195,7 @@ class Board
         bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
 
         // Moves with side effects are friends of Board
-        friend void Kingside_Castle::side_effects(Board&) const; // moves second piece
-        friend void Queenside_Castle::side_effects(Board&) const; // moves second piece
+        friend void Castle::side_effects(Board&) const; // moves second piece
         friend void En_Passant::side_effects(Board&) const; // capture piece on another square
         friend void Pawn_Promotion::side_effects(Board&) const; // replace piece
         friend void Pawn_Double_Move::side_effects(Board&) const; // mark square as En Passant target

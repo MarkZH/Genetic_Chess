@@ -25,7 +25,7 @@ class Move
         bool is_legal(const Board& board) const;
 
         // Can this move capture a piece?
-        virtual bool can_capture() const;
+        bool can_capture() const;
 
         char start_file() const;
         int  start_rank() const;
@@ -40,7 +40,7 @@ class Move
         virtual std::string coordinate_move() const;
 
         // Special case functions
-        virtual bool is_en_passant() const;
+        bool is_en_passant() const;
         virtual char promotion_piece_symbol() const;
         virtual const Piece* promotion_piece() const;
 
@@ -50,6 +50,9 @@ class Move
 
         char ending_file;
         int  ending_rank;
+
+        bool able_to_capture;
+        bool is_en_passant_move;
 
         virtual std::string game_record_move_item(const Board& board) const;
 

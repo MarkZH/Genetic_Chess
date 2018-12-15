@@ -12,7 +12,9 @@ Move::Move(char file_start, int rank_start,
                starting_file(file_start),
                starting_rank(rank_start),
                ending_file(file_end),
-               ending_rank(rank_end)
+               ending_rank(rank_end),
+               able_to_capture(true),
+               is_en_passant_move(false)
 {
     assert(std::abs(file_change()) < 8);
     assert(std::abs(rank_change()) < 8);
@@ -67,7 +69,7 @@ bool Move::move_specific_legal(const Board&) const
 
 bool Move::can_capture() const
 {
-    return true;
+    return able_to_capture;
 }
 
 char Move::start_file() const
@@ -196,7 +198,7 @@ std::string Move::coordinate_move() const
 
 bool Move::is_en_passant() const
 {
-    return false;
+    return is_en_passant_move;
 }
 
 char Move::promotion_piece_symbol() const

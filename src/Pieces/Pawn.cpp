@@ -2,12 +2,10 @@
 
 #include <vector>
 #include <string>
-#include <cmath>
 
 #include "Game/Board.h"
 #include "Game/Color.h"
 
-#include "Moves/Move.h"
 #include "Moves/Pawn_Move.h"
 #include "Moves/Pawn_Capture.h"
 #include "Moves/Pawn_Double_Move.h"
@@ -93,9 +91,4 @@ Pawn::Pawn(Color color_in) : Piece(color_in, "P", PAWN)
         ascii_art_lines[1].replace(2, 1, "#");
         ascii_art_lines[2].replace(1, 3, "###");
     }
-}
-
-std::string Pawn::pgn_symbol() const
-{
-    return "";
 }

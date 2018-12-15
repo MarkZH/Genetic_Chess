@@ -189,26 +189,24 @@ int main(int argc, char *argv[])
 
                 std::string game_file_name = "game.pgn";
 
-                if(black)
-                {
-                    play_game(*white, *black, game_time, moves_per_reset, increment_time, game_file_name);
-                }
-                else
+                if( ! black)
                 {
                     auto outside = connect_to_outside(*white);
                     game_time = outside->game_time();
                     moves_per_reset = outside->reset_moves();
                     increment_time = outside->increment();
-
                     if(outside->ai_color() == WHITE)
                     {
-                        play_game(*white, *outside, game_time, moves_per_reset, increment_time, game_file_name);
+                        black = std::move(outside);
                     }
                     else
                     {
-                        play_game(*outside, *white, game_time, moves_per_reset, increment_time, game_file_name);
+                        black = std::move(white);
+                        white = std::move(outside);
                     }
                 }
+
+                play_game(*white, *black, game_time, moves_per_reset, increment_time, game_file_name);
             }
         }
         else

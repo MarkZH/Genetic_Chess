@@ -70,7 +70,7 @@ std::array<uint64_t, 2> Board::color_hash_values{}; // for whose_turn() hashing
 
 Board::Board() :
     board{},
-    moves_since_pawn_or_capture_count{0},
+    repeat_count_insertion_point{0},
     turn_color(WHITE),
     unmoved_positions{},
     en_passant_target({'\0', 0}),
@@ -109,13 +109,13 @@ Board::Board() :
     assert(king_location[WHITE]);
     assert(king_location[BLACK]);
 
-    add_to_repeat_count(board_hash()); // Count initial position
+    add_board_position_to_repeat_record(); // Count initial position
     recreate_move_caches();
 }
 
 Board::Board(const std::string& fen) :
     board{},
-    moves_since_pawn_or_capture_count{0},
+    repeat_count_insertion_point{0},
     turn_color(WHITE),
     unmoved_positions{},
     en_passant_target({'\0', 0}),
@@ -130,13 +130,13 @@ Board::Board(const std::string& fen) :
     auto fen_parse = String::split(fen);
     if(fen_parse.size() != 6)
     {
-        throw std::runtime_error("Wrong number of fields (should be 6): " + fen);
+        throw std::runtime_error("Bad FEN input: " + fen + "\nWrong number of fields (should be 6): " + fen);
     }
 
     auto board_parse = String::split(fen_parse.at(0), "/");
     if(board_parse.size() != 8)
     {
-        throw std::runtime_error("Board has wrong number of rows (should be 8): " + fen);
+        throw std::runtime_error("Bad FEN input: " + fen + "\nBoard has wrong number of rows (should be 8): " + fen);
     }
 
     for(int rank = 8; rank >= 1; --rank)
@@ -147,9 +147,18 @@ Board::Board(const std::string& fen) :
             if(isdigit(symbol))
             {
                 file += symbol - '0';
+                if(file > 'h' + 1)
+                {
+                    throw std::runtime_error("Bad FEN input: " + fen + "\nToo many squares in rank " + std::to_string(rank));
+                }
             }
             else
             {
+                if(file > 'h')
+                {
+                    throw std::runtime_error("Bad FEN input: " + fen + "\nToo many squares in rank " + std::to_string(rank));
+                }
+
                 Color color = (isupper(symbol) ? WHITE : BLACK);
                 switch(toupper(symbol))
                 {
@@ -171,25 +180,30 @@ Board::Board(const std::string& fen) :
                     case 'K':
                         if(king_location[color])
                         {
-                            throw std::runtime_error("More than one " + color_text(color) + " king in FEN: " + fen);
+                            throw std::runtime_error("Bad FEN input: " + fen + "\nMore than one " + color_text(color) + " king.");
                         }
                         place_piece(piece_instance(KING, color), file, rank);
                         break;
                     default:
-                        throw std::runtime_error(std::string("Invalid  symbol in FEN string: ") + symbol);
+                        throw std::runtime_error("Bad FEN input: " + fen + "\nInvalid symbol in FEN string: " + symbol);
                 }
                 ++file;
             }
+        }
+
+        if(file != 'h' + 1)
+        {
+            throw std::runtime_error("Bad FEN input: " + fen + "\nToo few squares in rank " + std::to_string(rank));
         }
     }
 
     if( ! king_location[WHITE])
     {
-        throw std::runtime_error("White king not in FEN string: " + fen);
+        throw std::runtime_error("Bad FEN input: " + fen + "\nWhite king not in FEN string: " + fen);
     }
     if( ! king_location[BLACK])
     {
-        throw std::runtime_error("Black king not in FEN string: " + fen);
+        throw std::runtime_error("Bad FEN input: " + fen + "\nBlack king not in FEN string: " + fen);
     }
 
     set_turn(fen_parse[1] == "w" ? WHITE : BLACK);
@@ -198,7 +212,8 @@ Board::Board(const std::string& fen) :
     auto non_turn_king_square = king_location[non_turn_color];
     if( ! safe_for_king(non_turn_king_square.file, non_turn_king_square.rank, non_turn_color))
     {
-        throw std::runtime_error(color_text(opposite(whose_turn())) +
+        throw std::runtime_error("Bad FEN input: " + fen + "\n" +
+                                 color_text(opposite(whose_turn())) +
                                  " is in check but it is " +
                                  color_text(whose_turn()) + "'s turn.");
     }
@@ -234,41 +249,41 @@ Board::Board(const std::string& fen) :
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
     auto fifty_move_count_input = std::stoi(fen_parse.at(4));
+    add_board_position_to_repeat_record();
     while(moves_since_pawn_or_capture() < fifty_move_count_input)
     {
         add_to_repeat_count(Random::random_unsigned_int64());
     }
 
-    add_to_repeat_count(board_hash()); // Count initial position
+    if(fen_status() != fen)
+    {
+        throw std::runtime_error("Bad FEN input: " + fen + "\nResult: " + fen_status());
+    }
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
 }
 
-size_t Board::board_index(char file, int rank)
+size_t Board::square_index(char file, int rank)
 {
-    // Square A1 = Board::board[0]
-    // Square H1 = Board::board[7]
-    // Square A8 = Board::board[56]
-    // Square H8 = Board::board[63]
     assert(inside_board(file, rank));
     return 8*(file - 'a') + (rank - 1);
 }
 
 const Piece*& Board::piece_on_square(char file, int rank)
 {
-    return board[board_index(file, rank)];
+    return board[square_index(file, rank)];
 }
 
 const Piece* Board::piece_on_square(char file, int rank) const
 {
-    return board[board_index(file, rank)];
+    return board[square_index(file, rank)];
 }
 
 void Board::set_unmoved(char file, int rank)
 {
     update_board_hash(file, rank); // remove reference to moved piece
-    unmoved_positions[board_index(file, rank)] = true;
+    unmoved_positions[square_index(file, rank)] = true;
     update_board_hash(file, rank);
 }
 
@@ -317,7 +332,7 @@ bool Board::is_in_legal_moves_list(const Move& move) const
 std::string Board::fen_status() const
 {
     std::string s = board_status() + " ";
-    s.append(std::to_string(moves_since_pawn_or_capture() - 1)); // -1 to exclude current position
+    s.append(std::to_string(moves_since_pawn_or_capture()));
     s.push_back(' ');
     if(starting_fen.empty())
     {
@@ -380,14 +395,7 @@ const Move& Board::create_move(char file_start, int rank_start, char file_end, i
 
 Game_Result Board::submit_move(const Move& move)
 {
-    assert(is_in_legal_moves_list(move));
-    game_record_listing.push_back(&move);
-
-    make_move(move.start_file(), move.start_rank(),
-              move.end_file(),   move.end_rank());
-    move.side_effects(*this);
-
-    switch_turn();
+    update_board(move);
 
     if(no_legal_moves())
     {
@@ -410,17 +418,33 @@ Game_Result Board::submit_move(const Move& move)
         return Game_Result(NONE, "Insufficient material");
     }
 
-    if(add_to_repeat_count(board_hash()) >= 3)
+    if(current_board_position_repeat_count() >= 3)
     {
         return Game_Result(NONE, "Threefold repetition");
     }
 
-    if(moves_since_pawn_or_capture() >= 101) // "Move" means both players move, 101 including current position
+    // "Move" means both players move, so the fifty-move rule is
+    // triggered after 100 player moves
+    if(moves_since_pawn_or_capture() >= 100)
     {
         return Game_Result(NONE, "50-move limit");
     }
 
     return {};
+}
+
+void Board::update_board(const Move& move)
+{
+    assert(is_in_legal_moves_list(move));
+    game_record_listing.push_back(&move);
+
+    make_move(move.start_file(), move.start_rank(),
+              move.end_file(), move.end_rank());
+    move.side_effects(*this);
+
+    switch_turn();
+
+    add_board_position_to_repeat_record();
 }
 
 const Move& Board::create_move(const std::string& move) const
@@ -594,11 +618,6 @@ const std::vector<const Move*>& Board::legal_moves() const
     return legal_moves_cache;
 }
 
-const std::vector<const Move*>& Board::other_moves() const
-{
-    return other_moves_cache;
-}
-
 void Board::ascii_draw(Color perspective) const
 {
     const size_t square_width = 7;
@@ -685,7 +704,7 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     update_board_hash(file, rank); // XOR out piece on square
 
     piece_on_square(file, rank) = piece;
-    unmoved_positions[Board::board_index(file, rank)] = false;
+    unmoved_positions[square_index(file, rank)] = false;
 
     update_board_hash(file, rank); // XOR in new piece on square
 
@@ -1163,7 +1182,7 @@ void Board::clear_en_passant_target()
 
 bool Board::piece_has_moved(char file, int rank) const
 {
-    return ! unmoved_positions[Board::board_index(file, rank)];
+    return ! unmoved_positions[square_index(file, rank)];
 }
 
 Square Board::find_king(Color color) const
@@ -1175,7 +1194,6 @@ Square Board::find_king(Color color) const
 
 void Board::recreate_move_caches()
 {
-    other_moves_cache.clear();
     legal_moves_cache.clear();
     refresh_checking_squares();
     attacked_indices = {};
@@ -1212,21 +1230,19 @@ void Board::recreate_move_caches()
                             {
                                 rank_adjust = whose_turn() == WHITE ? -1 : 1;
                             }
-                            attacked_indices[board_index(move->end_file(),
-                                                         move->end_rank() + rank_adjust)] = true;
+                            attacked_indices[square_index(move->end_file(),
+                                                          move->end_rank() + rank_adjust)] = true;
                         }
                         capturing_move_available = capturing_move_available
-                            || piece_on_square(move->end_file(), move->end_rank()) != nullptr
+                            || piece_on_square(move->end_file(), move->end_rank())
                             || move->is_en_passant();
                         en_passant_legal = en_passant_legal || move->is_en_passant();
                     }
                     else
                     {
-                        other_moves_cache.push_back(move);
-
                         if(move->can_capture())
                         {
-                            other_attacked_indices[board_index(move->end_file(), move->end_rank())] = true;
+                            other_attacked_indices[square_index(move->end_file(), move->end_rank())] = true;
                         }
                     }
 
@@ -1283,7 +1299,7 @@ bool Board::enough_material_to_checkmate() const
                 }
                 knight_found = true;
             }
-            else // if(piece->is_bishop())
+            else // BISHOP
             {
                 auto bishop_square_color = square_color(file, rank);
                 if(bishop_square_color_found == NONE)
@@ -1347,7 +1363,7 @@ void Board::initialize_board_hash()
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto index = Board::board_index(file, rank);
+            auto index = square_index(file, rank);
             en_passant_hash_values[index] = Random::random_unsigned_int64();
             castling_hash_values[index] = Random::random_unsigned_int64();
 
@@ -1401,7 +1417,7 @@ uint64_t Board::square_hash(char file, int rank) const
     }
 
     auto piece = piece_on_square(file, rank);
-    auto index = Board::board_index(file, rank);
+    auto index = square_index(file, rank);
     auto result = square_hash_values[index][square_hash_index(piece)];
     if(piece &&
        piece->type() == ROOK &&
@@ -1425,8 +1441,10 @@ size_t Board::square_hash_index(const Piece* piece)
     {
         return piece->type() + (piece->color()*6); // 6 == number of piece types
     }
-
-    return square_hash_values.front().size() - 1; // last value for empty square (nullptr)
+    else
+    {
+        return square_hash_values.front().size() - 1; // last value for empty square
+    }
 }
 
 uint64_t Board::board_hash() const
@@ -1445,10 +1463,9 @@ bool Board::move_captures(const Move& move) const
 
     // Assert move is actually legal
     assert(is_in_legal_moves_list(move));
-    assert(attacked_piece == nullptr ||
-           (move.can_capture() && attacked_piece->color() == opposite(whose_turn())));
+    assert( ! attacked_piece || (move.can_capture() && attacked_piece->color() == opposite(whose_turn())));
 
-    return attacked_piece != nullptr;
+    return attacked_piece;
 }
 
 bool Board::king_multiply_checked() const
@@ -1613,22 +1630,31 @@ Square Board::piece_is_pinned(char file, int rank) const
     }
 }
 
-int Board::add_to_repeat_count(uint64_t new_hash)
+void Board::add_board_position_to_repeat_record()
 {
-    repeat_count[moves_since_pawn_or_capture_count++] = new_hash;
+    add_to_repeat_count(board_hash());
+}
+
+void Board::add_to_repeat_count(uint64_t new_hash)
+{
+    repeat_count[repeat_count_insertion_point++] = new_hash;
+}
+
+int Board::current_board_position_repeat_count() const
+{
     return std::count(repeat_count.begin(),
-                      repeat_count.begin() + moves_since_pawn_or_capture_count,
-                      new_hash);
+                      repeat_count.begin() + repeat_count_insertion_point,
+                      board_hash());
 }
 
 int Board::moves_since_pawn_or_capture() const
 {
-    return moves_since_pawn_or_capture_count;
+    return repeat_count_insertion_point - 1;
 }
 
 void Board::clear_repeat_count()
 {
-    moves_since_pawn_or_capture_count = 0;
+    repeat_count_insertion_point = 0;
 }
 
 size_t Board::castling_move_index(Color player) const

@@ -11,6 +11,7 @@
 #include "Utility.h"
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
+#include "Game/Board.h"
 
 static const auto piece_types = {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING};
 

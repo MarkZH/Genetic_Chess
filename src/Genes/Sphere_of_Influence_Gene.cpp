@@ -55,7 +55,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            distance_to_king[Board::board_index(file, rank)] =
+            distance_to_king[Board::square_index(file, rank)] =
                 king_distance({file, rank}, opponent_king_square);
         }
     }

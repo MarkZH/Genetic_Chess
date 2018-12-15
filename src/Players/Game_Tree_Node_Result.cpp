@@ -29,13 +29,13 @@ bool better_than(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b,
     // scoreA == scoreB
 
     // Shorter path to winning is better
-    if(scoreA == Math::win_score)
+    if(a.is_winning_for(perspective))
     {
         return a.depth() < b.depth();
     }
 
     // Longer path to losing is better
-    if(scoreA == Math::lose_score)
+    if(a.is_losing_for(perspective))
     {
         return a.depth() > b.depth();
     }
@@ -48,14 +48,14 @@ bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b)
     auto scoreA = a.corrected_score(WHITE);
     auto scoreB = b.corrected_score(WHITE);
 
-    if(scoreA != scoreB)
+    if(scoreA > scoreB || scoreA < scoreB)
     {
         return false;
     }
 
     // scoreA == scoreB
 
-    if(std::abs(scoreA) == Math::win_score)
+    if(a.is_losing_for(WHITE) || a.is_winning_for(WHITE))
     {
         return a.depth() == b.depth();
     }
@@ -65,6 +65,15 @@ bool operator==(const Game_Tree_Node_Result& a, const Game_Tree_Node_Result& b)
 
 size_t Game_Tree_Node_Result::depth() const
 {
-    assert( ! variation.empty());
-    return variation.size() - 1;
+    return variation.size();
+}
+
+bool Game_Tree_Node_Result::is_winning_for(Color query) const
+{
+    return std::isinf(score) && ((score > 0) == (query == perspective));
+}
+
+bool Game_Tree_Node_Result::is_losing_for(Color query) const
+{
+    return std::isinf(score) && ((score < 0) == (query == perspective));
 }

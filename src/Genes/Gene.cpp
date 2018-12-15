@@ -132,7 +132,7 @@ bool Gene::test(const Board& board, double expected_score) const
 {
     auto other_board = board;
     other_board.set_turn(opposite(board.whose_turn()));
-    auto result = score_board(board, other_board, 0);
+    auto result = score_board(board, other_board, 1);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';

@@ -43,27 +43,6 @@ bool run_tests()
     Board starting_board;
     while(true)
     {
-        // Moves that are currently illegal but would land on board
-        size_t correct_other_move_count = 86;
-        if(starting_board.other_moves().size() != correct_other_move_count)
-        {
-            std::cerr << "Expected other move count = " << correct_other_move_count << std::endl;
-            starting_board.ascii_draw(WHITE);
-            auto num = 1;
-            for(const auto& move : starting_board.other_moves())
-            {
-                std::cout << num++ << ". " << move->coordinate_move() << " ";
-            }
-
-            if(num == 1)
-            {
-                std::cout << "No other moves found.";
-            }
-
-            std::cout << std::endl;
-            tests_passed = false;
-        }
-
         auto starting_move_count = starting_board.legal_moves().size();
         size_t correct_move_count = 20;
         if(starting_move_count != correct_move_count)
@@ -209,7 +188,7 @@ bool run_tests()
     // 7 P.......
     // 6 K.......
     // White pawn to promote to Queen
-    auto side_effects_board = Board("2k7/P7/K/8/8/8/8/8 w - - 0 1");
+    auto side_effects_board = Board("2k5/P7/K7/8/8/8/8/8 w - - 0 1");
     side_effects_board.submit_move(side_effects_board.create_move("a8=Q"));
     std::string bad_move = "Kb8";
     auto illegal_move_made = true;
@@ -508,11 +487,11 @@ bool run_tests()
 
 
     // Test individual board-scoring genes
-    auto test_genes_file_name = "test_genome.txt";
+    auto test_genes_file_name = "testing/test_genome.txt";
 
     auto castling_possible_gene = Castling_Possible_Gene();
     castling_possible_gene.read_from(test_genes_file_name);
-    auto castling_board = Board("rn2k4/8/8/8/8/8/8/R3K2R w KQq - 0 1");
+    auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
     auto white_castling_score = 0.8*(3.0/4.0) + 0.2*(4.0/5.0); // maximum score with and without actually castling
     tests_passed &= castling_possible_gene.test(castling_board, white_castling_score);
 
@@ -564,7 +543,7 @@ bool run_tests()
     tests_passed &= pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
 
     auto passed_pawn_gene = Passed_Pawn_Gene();
-    auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P5/8/8/8 w - - 0 1");
+    auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P4/8/8/8 w - - 0 1");
     auto passed_pawn_score = (1.0 + 2.0/3.0)/8;
     tests_passed &= passed_pawn_gene.test(passed_pawn_board, passed_pawn_score);
 
@@ -761,11 +740,11 @@ bool run_tests()
 
     Game_Tree_Node_Result alpha_start = {Math::lose_score,
                                          WHITE,
-                                         {nullptr}};
+                                         {}};
 
     Game_Tree_Node_Result beta_start = {Math::win_score,
                                         WHITE,
-                                        {nullptr}};
+                                        {}};
     if(better_than(alpha_start, beta_start, WHITE))
     {
         std::cerr << "3. Error in comparing Game Tree Node Results." << std::endl;
@@ -811,6 +790,17 @@ bool run_tests()
         tests_passed = false;
     }
 
+    if( ! black_loss6.is_winning_for(WHITE))
+    {
+        std::cerr << "Black loss in 6 returns false for is_winning_for(WHITE)." << std::endl;
+        tests_passed = false;
+    }
+
+    if( ! black_loss6.is_losing_for(BLACK))
+    {
+        std::cerr << "Black loss in 6 returns false for is_losing_for(BLACK)." << std::endl;
+        tests_passed = false;
+    }
 
     // Move ambiguity check
     Board board;
@@ -1084,7 +1074,7 @@ bool run_tests()
     // (downloaded from http://www.rocechess.ch/perft.html)
     // (leaves from starting positions also found at https://oeis.org/A048987)
     size_t max_perft_depth = 6;
-    auto perft_suite_input = std::ifstream("perftsuite.epd");
+    auto perft_suite_input = std::ifstream("testing/perftsuite.epd");
     std::string input_line;
     std::vector<std::string> lines;
     while(std::getline(perft_suite_input, input_line))
@@ -1130,7 +1120,7 @@ bool run_tests()
             }
             else
             {
-                std::cout << " OK!" << std::endl;
+                std::cout << "OK!" << std::endl;
             }
         }
 
@@ -1213,7 +1203,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
             int squares_to_draw = (total_squares*current_count)/first_move_count;
             std::cout << std::string(squares_to_draw, '#');
             std::cout << std::string(total_squares - squares_to_draw, ' ');
-            std::cout << ']' << std::flush;
+            std::cout << "] " << std::flush;
         }
         auto next_board = board;
         next_board.submit_move(*move);

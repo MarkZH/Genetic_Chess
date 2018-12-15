@@ -22,6 +22,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
     nodes_evaluated = 0;
     total_evaluation_time = 0.0;
+    time_at_last_output = clock.time_left(clock.running_for());
 
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
@@ -51,17 +52,17 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     // alpha = highest score found that opponent will allow
     Game_Tree_Node_Result alpha_start = {Math::lose_score,
                                          board.whose_turn(),
-                                         {nullptr}};
+                                         {}};
 
     // beta = score that will cause opponent to choose a different prior move
     Game_Tree_Node_Result beta_start = {Math::win_score,
                                         board.whose_turn(),
-                                        {nullptr}};
+                                        {}};
 
     auto result = search_game_tree(board,
                                    time_to_use,
                                    clock,
-                                   0,
+                                   1,
                                    alpha_start,
                                    beta_start,
                                    ! principal_variation.empty());
@@ -69,7 +70,6 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     if(board.thinking_mode() == CECP)
     {
         output_thinking_cecp(result, clock, board.whose_turn());
-        std::cout << std::flush;
     }
 
     if(result.depth() > 0)
@@ -106,19 +106,16 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const Game_Tree_Node_Result& beta,
                                                    bool still_on_principal_variation) const
 {
-    auto time_start = clock.time_left(clock.running_for());
+    const auto time_start = clock.time_left(clock.running_for());
     maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
 
-    // The first item in the principal variation is the last move that
-    // this player made. Since then, the opponent has also made a move,
-    // so the first item in the principal variation corresponds to the
-    // game record item at game_record.size() - 2. The depth of the game
-    // tree search increments both the game_record index and the principal
-    // variation index in step.
-    if(still_on_principal_variation && principal_variation.size() > depth + 2)
+    // The two items in the principal variation are the last two moves of
+    // the non-hypothetical board. So, the first item in the principal variation to
+    // consider is at index depth + 1 (since depth starts at 1).
+    if(still_on_principal_variation && principal_variation.size() > depth + 1)
     {
-        auto next_principal_variation_move = principal_variation[depth + 2];
+        auto next_principal_variation_move = principal_variation[depth + 1];
         auto move_iter = std::find(all_legal_moves.begin(),
                                    all_legal_moves.end(),
                                    next_principal_variation_move);
@@ -140,7 +137,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     std::partition(partition_start, all_legal_moves.end(),
                    [&board](auto move){ return board.move_captures(*move); });
 
-    auto perspective = board.whose_turn();
+    const auto perspective = board.whose_turn();
     auto moves_left = all_legal_moves.size();
 
     Game_Tree_Node_Result best_result = {Math::lose_score,
@@ -161,7 +158,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             return create_result(next_board, perspective, move_result, depth);
         }
 
-        if(alpha.depth() <= depth + 2 && alpha.corrected_score(perspective) == Math::win_score)
+        if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
         {
             // This move will take a longer path to victory
             // than one already found. Use "depth + 2" since,
@@ -223,10 +220,11 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
-                else if(board.thinking_mode() == CECP && depth < 4)
+                else if(board.thinking_mode() == CECP && time_since_last_output(clock) > 0.1)
                 {
                     output_thinking_cecp(alpha, clock,
-                                         depth % 2 == 0 ? perspective : opposite(perspective));
+                                         depth % 2 == 1 ? perspective : opposite(perspective));
+                    time_at_last_output = clock.time_left(clock.running_for());
                 }
             }
         }
@@ -256,13 +254,13 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     auto score = thought.corrected_score(perspective) / centipawn_value();
 
     // Indicate "mate in N moves" where N == thought.depth
-    if(score == Math::win_score)
+    if(thought.is_winning_for(perspective))
     {
-        score = 10000.0 - thought.depth();
+        score = 10000.0 - thought.depth() + 1;
     }
-    else if(score == Math::lose_score)
+    else if(thought.is_losing_for(perspective))
     {
-        score = -(10000.0 - thought.depth());
+        score = -(10000.0 - thought.depth() + 1);
     }
 
     auto time_so_far = clock_start_time - clock.time_left(clock.running_for());
@@ -285,7 +283,12 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         std::cout << move->coordinate_move() << ' ';
     }
 
-    std::cout << '\n';
+    std::cout << std::endl;
+}
+
+double Minimax_AI::time_since_last_output(const Clock& clock) const
+{
+    return time_at_last_output - clock.time_left(clock.running_for());
 }
 
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
@@ -295,7 +298,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
 {
     return {evaluate(board, move_result, perspective, depth),
             perspective,
-            {board.game_record().end() - (depth + 1),
+            {board.game_record().end() - depth,
             board.game_record().end()}};
 }
 

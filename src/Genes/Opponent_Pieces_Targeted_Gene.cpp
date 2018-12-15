@@ -24,7 +24,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, const Boar
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            if(squares_attacked[board.board_index(file, rank)])
+            if(squares_attacked[Board::square_index(file, rank)])
             {
                 score += piece_strenth_source->piece_value(board.piece_on_square(file, rank));
             }
