@@ -4,6 +4,8 @@
 #include "Player.h"
 
 class Move;
+class Board;
+class Clock;
 
 class Human_Player : public Player
 {

@@ -6,21 +6,14 @@
 #include <array>
 #include <mutex>
 
-#include "Moves/Move.h"
-#include "Moves/Castle.h"
-#include "Moves/En_Passant.h"
-#include "Moves/Pawn_Promotion.h"
-#include "Moves/Pawn_Double_Move.h"
-#include "Moves/Pawn_Move.h"
-
 #include "Color.h"
 #include "Square.h"
-#include "Game_Result.h"
 #include "Pieces/Piece_Types.h"
-#include "Players/Player.h"
 #include "Players/Thinking.h"
 
 class Clock;
+class Game_Result;
+class Player;
 
 class Piece;
 class Pawn;
@@ -29,6 +22,13 @@ class Knight;
 class Bishop;
 class Queen;
 class King;
+
+class Move;
+class Castle;
+class En_Passant;
+class Pawn_Promotion;
+class Pawn_Double_Move;
+class Pawn_Move;
 
 
 class Board
@@ -160,7 +160,7 @@ class Board
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record();
         void add_to_repeat_count(uint64_t new_hash);
-        int current_board_position_repeat_count() const;
+        size_t current_board_position_repeat_count() const;
         void clear_repeat_count();
         int moves_since_pawn_or_capture() const;
 
@@ -185,21 +185,19 @@ class Board
         static size_t square_hash_index(const Piece* piece);
 
         // Whose turn?
-        static std::array<uint64_t, 2> color_hash_values; // for whose_turn() hashing
-
-        uint64_t color_hash(Color color) const;
-        void update_board_hash(Color color);
+        static uint64_t switch_turn_board_hash;
+        void update_whose_turn_hash();
 
         bool king_multiply_checked() const;
         static bool straight_line_move(char file_start, int rank_start, char file_end, int rank_end);
         bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
 
         // Moves with side effects are friends of Board
-        friend void Castle::side_effects(Board&) const; // moves second piece
-        friend void En_Passant::side_effects(Board&) const; // capture piece on another square
-        friend void Pawn_Promotion::side_effects(Board&) const; // replace piece
-        friend void Pawn_Double_Move::side_effects(Board&) const; // mark square as En Passant target
-        friend void Pawn_Move::side_effects(Board&) const; // reset three-fold and 50-move counts
+        friend class Castle; // moves second piece
+        friend class En_Passant; // capture piece on another square
+        friend class Pawn_Promotion; // replace piece
+        friend class Pawn_Double_Move; // mark square as En Passant target
+        friend class Pawn_Move; // reset three-fold and 50-move counts
 };
 
 #endif // BOARD_H

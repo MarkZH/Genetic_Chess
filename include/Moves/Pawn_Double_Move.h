@@ -4,8 +4,6 @@
 #include "Pawn_Move.h"
 #include "Game/Color.h"
 
-#include <string>
-
 class Board;
 
 class Pawn_Double_Move : public Pawn_Move

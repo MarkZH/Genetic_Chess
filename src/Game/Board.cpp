@@ -13,6 +13,7 @@
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Square.h"
+#include "Game/Game_Result.h"
 
 #include "Pieces/Piece.h"
 #include "Pieces/Piece_Types.h"
@@ -26,6 +27,8 @@
 #include "Moves/Move.h"
 #include "Moves/Threat_Generator.h"
 #include "Moves/Threat_Iterator.h"
+
+#include "Players/Player.h"
 
 #include "Exceptions/Illegal_Move.h"
 #include "Exceptions/Promotion_Piece_Needed.h"
@@ -65,7 +68,7 @@ bool Board::hash_values_initialized = false;
 std::array<std::array<uint64_t, 13>, 64> Board::square_hash_values{};
 std::array<uint64_t, 64> Board::en_passant_hash_values{};
 std::array<uint64_t, 64> Board::castling_hash_values{};
-std::array<uint64_t, 2> Board::color_hash_values{}; // for whose_turn() hashing
+uint64_t Board::switch_turn_board_hash; // for whose_turn() hashing
 
 
 Board::Board() :
@@ -953,8 +956,14 @@ void Board::print_game_record(const Player* white,
 
     auto now = std::chrono::system_clock::now();
     auto now_c = std::chrono::system_clock::to_time_t(now);
-    out_stream << "[Date \"" << std::put_time(std::localtime(&now_c), "%Y.%m.%d") << "\"]\n";
-    out_stream << "[Time \"" << std::put_time(std::localtime(&now_c), "%H:%M:%S") << "\"]\n";
+    std::tm time_out;
+#ifdef _WIN32
+    localtime_s(&time_out, &now_c);
+#elif defined(__linux__)
+    localtime_r(&now_c, &time_out);
+#endif
+    out_stream << "[Date \"" << std::put_time(&time_out, "%Y.%m.%d") << "\"]\n";
+    out_stream << "[Time \"" << std::put_time(&time_out, "%H:%M:%S") << "\"]\n";
 
     if(white && ! white->name().empty())
     {
@@ -1154,6 +1163,7 @@ void Board::set_turn(Color color)
 void Board::switch_turn()
 {
     turn_color = opposite(turn_color);
+    update_whose_turn_hash();
     recreate_move_caches();
 }
 
@@ -1354,10 +1364,7 @@ void Board::initialize_board_hash()
         return;
     }
 
-    for(auto color : {WHITE, BLACK})
-    {
-        color_hash_values[color] = Random::random_unsigned_int64();
-    }
+    switch_turn_board_hash = Random::random_unsigned_int64();
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
@@ -1381,7 +1388,6 @@ void Board::initialize_board_hash()
     }
 
     current_board_hash = 0;
-    current_board_hash ^= color_hash(whose_turn());
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
@@ -1398,15 +1404,9 @@ void Board::update_board_hash(char file, int rank)
     current_board_hash ^= square_hash(file, rank);
 }
 
-void Board::update_board_hash(Color color)
+void Board::update_whose_turn_hash()
 {
-    current_board_hash ^= color_hash(color);
-    current_board_hash ^= color_hash(opposite(color));
-}
-
-uint64_t Board::color_hash(Color color) const
-{
-    return color_hash_values[color];
+    current_board_hash ^= switch_turn_board_hash;
 }
 
 uint64_t Board::square_hash(char file, int rank) const
@@ -1640,7 +1640,7 @@ void Board::add_to_repeat_count(uint64_t new_hash)
     repeat_count[repeat_count_insertion_point++] = new_hash;
 }
 
-int Board::current_board_position_repeat_count() const
+size_t Board::current_board_position_repeat_count() const
 {
     return std::count(repeat_count.begin(),
                       repeat_count.begin() + repeat_count_insertion_point,

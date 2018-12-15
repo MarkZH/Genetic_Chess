@@ -1,9 +1,7 @@
 #include "Moves/En_Passant.h"
 
-#include "Moves/Move.h"
 #include "Moves/Direction.h"
 #include "Moves/Pawn_Capture.h"
-#include "Pieces/Piece.h"
 #include "Game/Board.h"
 
 En_Passant::En_Passant(Color color, Direction dir, char file_start, int rank_start) :

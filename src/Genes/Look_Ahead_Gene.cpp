@@ -3,13 +3,12 @@
 #include <cassert>
 #include <memory>
 #include <algorithm>
+#include <stdexcept>
 
 #include "Genes/Gene.h"
 #include "Utility.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
-
-class Move;
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),

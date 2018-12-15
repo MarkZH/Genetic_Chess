@@ -4,8 +4,6 @@
 #include "Pawn_Capture.h"
 #include "Direction.h"
 
-#include <string>
-
 class Board;
 
 class En_Passant : public Pawn_Capture

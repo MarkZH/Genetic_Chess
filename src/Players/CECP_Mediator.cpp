@@ -1,9 +1,10 @@
 #include "Players/CECP_Mediator.h"
 
-#include "Players/Player.h"
-#include "Moves/Move.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Game/Game_Result.h"
+
+class Move;
 
 #include "Exceptions/Illegal_Move.h"
 #include "Exceptions/Game_Ended.h"

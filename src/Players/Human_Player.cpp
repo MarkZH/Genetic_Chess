@@ -6,12 +6,12 @@
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
-#include "Moves/Move.h"
+
+class Move;
 
 #include "Exceptions/Illegal_Move.h"
 #include "Exceptions/Promotion_Piece_Needed.h"
 
-#include "Utility.h"
 
 Human_Player::Human_Player()
 {

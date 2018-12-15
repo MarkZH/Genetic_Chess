@@ -24,7 +24,7 @@ const std::string stop_key = "Ctrl-c";
 #ifdef __linux__
 const auto PAUSE_SIGNAL = SIGTSTP;
 const std::string pause_key = "Ctrl-z";
-#elif _WIN32
+#elif defined(_WIN32)
 const auto PAUSE_SIGNAL = SIGBREAK;
 const std::string pause_key = "Ctrl-Break";
 #endif
@@ -395,7 +395,7 @@ void gene_pool(const std::string& config_file = "")
             return;
         }
 
-        game_count[pool_index] += results.size();
+        game_count[pool_index] += int(results.size());
         if((game_time >= maximum_game_time && game_time_increment > 0) ||
            (game_time <= minimum_game_time && game_time_increment < 0))
         {
