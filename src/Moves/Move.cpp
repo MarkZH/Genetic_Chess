@@ -5,6 +5,7 @@
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
 #include "Exceptions/Illegal_Move_Exception.h"
+#include "Utility.h"
 
 
 Move::Move(char file_start, int rank_start,
@@ -59,17 +60,9 @@ bool Move::is_legal(const Board& board) const
     // Check that there are no intervening pieces for straight-line moves
     if( ! moving_piece->is_knight())
     {
-        int max_move = std::max(std::abs(file_change()), std::abs(rank_change()));
-        int file_step = file_change()/max_move;
-        int rank_step = rank_change()/max_move;
-
-        for(int step = 1; step < max_move; ++step)
+        if( ! board.all_empty_between(starting_file, starting_rank, ending_file, ending_rank))
         {
-            if(board.piece_on_square(starting_file + file_step*step,
-                                     starting_rank + rank_step*step))
-            {
-                return false;
-            }
+            return false;
         }
     }
 
@@ -193,7 +186,7 @@ std::string Move::game_record_ending_item(Board board) const
         return result.get_game_record_annotation();
     }
 
-    if(board.king_is_in_check(board.whose_turn()))
+    if(board.king_is_in_check())
     {
         return "+";
     }

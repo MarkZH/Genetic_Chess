@@ -72,6 +72,22 @@ namespace Math
     {
         return std::min(std::max(n, low), high);
     }
+
+    template<typename Number>
+    int sign(Number x)
+    {
+        if(x > 0)
+        {
+            return 1;
+        }
+
+        if(x < 0)
+        {
+            return -1;
+        }
+
+        return 0;
+    }
 }
 
 class Configuration_File

@@ -31,7 +31,7 @@ double King_Protection_Gene::score_board(const Board& board) const
                 char file = king_square.file + steps*file_step;
                 int  rank = king_square.rank + steps*rank_step;
 
-                if(! board.inside_board(file, rank))
+                if( ! board.inside_board(file, rank))
                 {
                     break;
                 }

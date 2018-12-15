@@ -227,6 +227,235 @@ void run_tests()
     }
 
 
+    // Pinned piece test
+    auto pin_board = Board("k1KRr3/8/8/8/8/8/8/8 w - - 0 1");
+    if( ! pin_board.piece_is_pinned('d', 8))
+    {
+        pin_board.ascii_draw(WHITE);
+        std::cerr << "Rook at d4 should register as pinned." << std::endl;
+        tests_passed = false;
+    }
+
+    auto no_pin_board = Board("k1KRRr2/8/8/8/8/8/8/8 w - - 0 1");
+    if(no_pin_board.piece_is_pinned('d', 8))
+    {
+        no_pin_board.ascii_draw(WHITE);
+        std::cerr << "Rook at d4 should not register as pinned." << std::endl;
+        tests_passed = false;
+    }
+
+    auto en_passant_pin_board = Board("K7/8/8/8/kpP4R/8/8/8 b - c3 0 1");
+    auto move_string = "b4c3";
+    auto move_is_legal = true;
+    try
+    {
+        en_passant_pin_board.get_move(move_string);
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        move_is_legal = false;
+    }
+
+    if(move_is_legal)
+    {
+        en_passant_pin_board.ascii_draw(WHITE);
+        std::cerr << "En passant capture by black (" << move_string << ") should not be legal here." << std::endl;
+        tests_passed = false;
+    }
+
+    Board perf_board;
+    try
+    {
+        for(const auto& move : {"c3", "a6", "Qa4"})
+        {
+            perf_board.submit_move(perf_board.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board.ascii_draw(WHITE);
+        perf_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+    bool legal_move = true;
+    auto illegal_move = "d5";
+    try
+    {
+        perf_board.submit_move(perf_board.get_move(illegal_move));
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        legal_move = false;
+    }
+
+    if(legal_move)
+    {
+        perf_board.ascii_draw(WHITE);
+        std::cout << "Last move (" << illegal_move << ") should have been illegal." << std::endl;
+        tests_passed = false;
+    }
+
+
+    Board perf_board2;
+    auto moves2 = {"c3", "d6", "Qa4", "Nc6"};
+    try
+    {
+        for(const auto& move : moves2)
+        {
+            perf_board2.submit_move(perf_board2.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board2.ascii_draw(WHITE);
+        perf_board2.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves2)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+    Board perf_board3;
+    std::vector<std::string> moves3 = {"d3", "c6", "Bd2", "Qa5", "Bb4"};
+    try
+    {
+        for(const auto& move : moves3)
+        {
+            perf_board3.submit_move(perf_board3.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board3.ascii_draw(WHITE);
+        perf_board3.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves3)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+    Board perf_board4;
+    std::vector<std::string> moves4 = {"e3", "a6", "Qe2"};
+    try
+    {
+        Game_Result result;
+        for(const auto& move : moves4)
+        {
+            result = perf_board4.submit_move(perf_board4.get_move(move));
+        }
+
+        if(result.game_has_ended())
+        {
+            perf_board4.ascii_draw(WHITE);
+            std::cerr << "This is not checkmate." << std::endl;
+            tests_passed = false;
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board4.ascii_draw(WHITE);
+        perf_board4.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves4)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+    Board perf_board5("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+    std::vector<std::string> moves5 = {"Kf1", "Nc4", "Bd1"};
+    try
+    {
+        Game_Result result;
+        for(const auto& move : moves5)
+        {
+            result = perf_board5.submit_move(perf_board5.get_move(move));
+        }
+
+        if(result.game_has_ended())
+        {
+            perf_board5.ascii_draw(WHITE);
+            std::cerr << "This is not checkmate." << std::endl;
+            tests_passed = false;
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board5.ascii_draw(WHITE);
+        perf_board5.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves5)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+
+    Board perf_board6("8/Pk6/8/8/8/8/6Kp/8 b - - 0 1");
+    std::vector<std::string> moves6 = {"Ka6", "Kf1", "h1=B", "a8=Q", "Bxa8"};
+    try
+    {
+        Game_Result result;
+        for(const auto& move : moves6)
+        {
+            result = perf_board6.submit_move(perf_board6.get_move(move));
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board6.ascii_draw(WHITE);
+        perf_board6.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves6)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
+    Board perf_board7("n1n5/PPPk4/8/8/8/8/4Kppp/5N1N w - - 0 1");
+    std::vector<std::string> moves7 = {"bxa8=Q", "Nd6", "Qb7", "gxh1=Q", "c8=Q"};
+    try
+    {
+        Game_Result result;
+        for(const auto& move : moves7)
+        {
+            result = perf_board7.submit_move(perf_board7.get_move(move));
+        }
+        if(result.get_winner() != WHITE)
+        {
+            perf_board7.ascii_draw(WHITE);
+            perf_board7.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+            std::cerr << "This should be checkmate for white." << std::endl;
+            tests_passed = false;
+        }
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        perf_board7.ascii_draw(WHITE);
+        perf_board7.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        for(const auto& move : moves7)
+        {
+            std::cout << move << " ";
+        }
+        std::cout << std::endl;
+        std::cerr << "All moves so far should have been legal." << std::endl;
+        tests_passed = false;
+    }
+
     // Test Genetic_AI file loading
     std::cout << "Testing genome file handling ... " << std::flush;
     auto pool_file_name = "test_gene_pool.txt";
@@ -431,7 +660,7 @@ void run_tests()
         clock.punch();
     }
     clock.stop();
-    if(std::abs(clock.time_left(BLACK) - expected_time_after_reset) > 1e-3)
+    if(std::abs(clock.time_left(BLACK) - expected_time_after_reset) > 0.2)
     {
         std::cerr << "Clock incorrect: time left for black is " << clock.time_left(BLACK) << " sec. Should be " << expected_time_after_reset << "sec." << std::endl;
         tests_passed = false;
@@ -452,7 +681,7 @@ void run_tests()
         }
     }
     clock2.stop();
-    if(std::abs(clock2.time_left(BLACK) - expected_time) > 0.01)
+    if(std::abs(clock2.time_left(BLACK) - expected_time) > 0.2)
     {
         std::cerr << "Clock incorrect: time left for black is " << clock2.time_left(BLACK) << " sec. Should be " << expected_time << "sec." << std::endl;
         tests_passed = false;
@@ -557,10 +786,24 @@ void run_tests()
         tests_passed = false;
     }
 
+    // Unambiguous move check
+    Board unambiguous;
+    std::string unambiguous_move = "Ng1h3";
+    try
+    {
+        unambiguous.get_move(unambiguous_move);
+    }
+    catch(const Illegal_Move_Exception&)
+    {
+        unambiguous.ascii_draw(WHITE);
+        std::cerr << "Unambiguous move (" << unambiguous_move << ") deemed illegal." << std::endl;
+        tests_passed = false;
+    }
+
     // Count game tree leaves (perft) to given depth to validate move generation
     // (downloaded from http://www.rocechess.ch/perft.html)
-    // (leaves from starting posos also found at https://oeis.org/A048987)
-    size_t max_perft_depth = 3;
+    // (leaves from starting positions also found at https://oeis.org/A048987)
+    size_t max_perft_depth = 6;
     auto perft_suite_input = std::ifstream("perftsuite.epd");
     auto perft_suite_output_file_name = "";
     std::string line;
@@ -568,7 +811,7 @@ void run_tests()
     {
         auto split_line = String::split(line, " ;");
         auto fen = split_line.front();
-        std::cout << fen << std::endl;
+        std::cout << std::endl << fen << std::endl;
         auto board = Board(fen);
         auto tests = std::vector<std::string>(split_line.begin() + 1, split_line.end());
         for(const auto& test : tests)
@@ -577,15 +820,17 @@ void run_tests()
             assert(depth_leaves.size() == 2);
             assert(depth_leaves.front().front() == 'D');
             auto depth = std::stoi(depth_leaves.front().substr(1));
+            auto prefix = "Depth " + std::to_string(depth) + ": ";
             if(depth > max_perft_depth)
             {
-                break;
+                std::cout << prefix << "skipped" << std::endl;
+                continue;
             }
             auto expected_leaves = std::stoul(depth_leaves.back());
-            auto leaf_count = move_count(board, depth, "Depth " + std::to_string(depth) + ": ", perft_suite_output_file_name);
+            auto leaf_count = move_count(board, depth, prefix, perft_suite_output_file_name);
             if(leaf_count != expected_leaves)
             {
-                std::cerr << "Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
+                std::cerr << " Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
                 tests_passed = false;
                 break;
             }
@@ -707,6 +952,15 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
             board.print_game_record(nullptr, nullptr, file_name, {}, 0, 0, 0, {});
         }
         return 1;
+    }
+
+    if(maximum_depth == 1 && file_name.empty())
+    {
+        if(board.get_game_record().empty())
+        {
+            std::cout << line_prefix;
+        }
+        return board.legal_moves().size();
     }
 
     size_t count = 0;

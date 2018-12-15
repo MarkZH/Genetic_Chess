@@ -78,6 +78,10 @@ bool String::starts_with(const std::string& s, char beginning)
 
 std::string String::consolidate_inner_whitespace(const std::string& s)
 {
+    if(s.empty())
+    {
+        return s;
+    }
     size_t start = s.find_first_not_of(whitespace);
     auto initial_whitespace = s.substr(0, start);
 
