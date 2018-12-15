@@ -30,7 +30,7 @@
 
 #include "Utility.h"
 
-#include "Exceptions/Illegal_Move_Exception.h"
+#include "Exceptions/Illegal_Move.h"
 
 // Declaration to silence warnings
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
@@ -130,7 +130,7 @@ void run_tests()
             {
                 board.get_move('e', 1, final_file, 1);
             }
-            catch(const Illegal_Move_Exception&)
+            catch(const Illegal_Move&)
             {
                 if(castle_side == 'K')
                 {
@@ -180,7 +180,7 @@ void run_tests()
     {
         white_pawn_board.get_move('d', 4, 'e', 5);
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         white_pawn_board.ascii_draw(WHITE);
         std::cerr << "Number of legal moves = " << white_pawn_board.legal_moves().size() << std::endl;
@@ -193,7 +193,7 @@ void run_tests()
     {
         black_pawn_board.get_move('e', 5, 'd', 4);
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         black_pawn_board.ascii_draw(WHITE);
         std::cerr << "Number of legal moves = " << black_pawn_board.legal_moves().size() << std::endl;
@@ -218,7 +218,7 @@ void run_tests()
     {
         side_effects_board.get_move(bad_move);
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         illegal_move_made = false;
     }
@@ -255,7 +255,7 @@ void run_tests()
     {
         en_passant_pin_board.get_move(move_string);
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         move_is_legal = false;
     }
@@ -275,7 +275,7 @@ void run_tests()
             perf_board.submit_move(perf_board.get_move(move));
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         perf_board.ascii_draw(WHITE);
         perf_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
@@ -289,7 +289,7 @@ void run_tests()
     {
         perf_board.submit_move(perf_board.get_move(illegal_move));
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         legal_move = false;
     }
@@ -311,7 +311,7 @@ void run_tests()
             perf_board2.submit_move(perf_board2.get_move(move));
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         perf_board2.ascii_draw(WHITE);
         perf_board2.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
@@ -333,7 +333,7 @@ void run_tests()
             perf_board3.submit_move(perf_board3.get_move(move));
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         perf_board3.ascii_draw(WHITE);
         perf_board3.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
@@ -363,7 +363,7 @@ void run_tests()
             tests_passed = false;
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         perf_board4.ascii_draw(WHITE);
         perf_board4.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
@@ -393,7 +393,7 @@ void run_tests()
             tests_passed = false;
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         perf_board5.ascii_draw(WHITE);
         perf_board5.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
@@ -417,7 +417,7 @@ void run_tests()
             result = perf_board6.submit_move(perf_board6.get_move(move));
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         perf_board6.ascii_draw(WHITE);
         perf_board6.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
@@ -447,7 +447,7 @@ void run_tests()
             tests_passed = false;
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         perf_board7.ascii_draw(WHITE);
         perf_board7.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
@@ -837,7 +837,7 @@ void run_tests()
             board.submit_move(board.get_move(move));
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         ambiguous_move_caught = true;
     }
@@ -858,7 +858,7 @@ void run_tests()
     {
         unambiguous.get_move(unambiguous_move);
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         unambiguous.ascii_draw(WHITE);
         std::cerr << "Unambiguous move (" << unambiguous_move << ") deemed illegal." << std::endl;
@@ -874,7 +874,7 @@ void run_tests()
         std::cerr << "Last move (" << en_passant_pin.get_last_move_record() << ") should have been illegal." << std::endl;
         tests_passed = false;
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
     }
 
@@ -884,7 +884,7 @@ void run_tests()
     {
         threat_iterator_bug.get_move(test_move_text);
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         threat_iterator_bug.ascii_draw(WHITE);
         std::cerr << test_move_text << " should have been legal." << std::endl;
@@ -899,7 +899,7 @@ void run_tests()
             en_passant_pin_capture.submit_move(en_passant_pin_capture.get_move(move));
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         en_passant_pin_capture.ascii_draw(WHITE);
         std::cerr << "Capturing the queen with the rook should be possible here." << std::endl;
@@ -914,7 +914,7 @@ void run_tests()
             castling_double_pin.submit_move(castling_double_pin.get_move(move));
         }
     }
-    catch(const Illegal_Move_Exception&)
+    catch(const Illegal_Move&)
     {
         castling_double_pin.ascii_draw(WHITE);
         std::cerr << "Blocking check with rook should be legal here." << std::endl;

@@ -13,7 +13,7 @@
 #include "Players/Player.h"
 #include "Players/CECP_Mediator.h"
 
-#include "Exceptions/Game_Ending_Exception.h"
+#include "Exceptions/Game_Ended.h"
 
 std::string Outside_Player::log_file_name = "chess_comm_log.txt";
 std::string Outside_Player::indent = "\t";
@@ -48,7 +48,7 @@ std::string Outside_Player::receive_command()
     log("RECEIVING: " + result);
     if(result == "quit")
     {
-        throw Game_Ending_Exception(NONE, "Told to quit");
+        throw Game_Ended(NONE, "Told to quit");
     }
 
     return result;

@@ -5,8 +5,8 @@
 #include "Game/Board.h"
 #include "Game/Clock.h"
 
-#include "Exceptions/Illegal_Move_Exception.h"
-#include "Exceptions/Game_Ending_Exception.h"
+#include "Exceptions/Illegal_Move.h"
+#include "Exceptions/Game_Ended.h"
 
 #include "Utility.h"
 
@@ -52,7 +52,7 @@ const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) c
             board.set_thinking_mode(thinking_mode);
             return board.get_move(move_text);
         }
-        catch(const Illegal_Move_Exception& e)
+        catch(const Illegal_Move& e)
         {
             log("ERROR: Illegal move: " + std::string(e.what()));
             send_command("Illegal move (" + std::string(e.what()) + ") " + move_text);
@@ -103,7 +103,7 @@ std::string CECP_Mediator::receive_move(const Clock& clock) const
                 winner = BLACK;
             }
             auto data = String::split(String::split(move, "{", 1)[1], "}", 1)[0];
-            throw Game_Ending_Exception(winner, data);
+            throw Game_Ended(winner, data);
         }
         else if(String::starts_with(move, "time") || String::starts_with(move, "otim"))
         {

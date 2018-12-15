@@ -12,7 +12,7 @@
 #include "Moves/Move.h"
 
 #include "Players/Thinking.h"
-#include "Exceptions/Game_Ending_Exception.h"
+#include "Exceptions/Game_Ended.h"
 
 // Play single game, return color of winner
 Game_Result play_game(const Player& white,
@@ -72,7 +72,7 @@ Game_Result play_game_with_board(const Player& white,
                 }
             }
         }
-        catch(const Game_Ending_Exception& gee)
+        catch(const Game_Ended& gee)
         {
             // Only occurs for GUI communication errors
             result = {gee.winner(), gee.what()};

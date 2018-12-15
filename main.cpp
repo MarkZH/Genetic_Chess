@@ -14,7 +14,7 @@
 
 #include "Breeding/Gene_Pool.h"
 
-#include "Exceptions/Illegal_Move_Exception.h"
+#include "Exceptions/Illegal_Move.h"
 
 #include "Utility.h"
 #include "Testing.h"
@@ -423,7 +423,7 @@ void replay_game(const std::string& file_name, int game_number)
                      break;
                 }
             }
-            catch(const Illegal_Move_Exception&)
+            catch(const Illegal_Move&)
             {
                 std::cout << "Ignoring: " << s << std::endl;
                 continue;
@@ -610,7 +610,7 @@ bool confirm_game_record(const std::string& file_name)
                         }
                     }
                 }
-                catch(const Illegal_Move_Exception&)
+                catch(const Illegal_Move&)
                 {
                     std::cerr << "Move (" << move_number << move << ") is illegal. (line: " << line_number << ")" << std::endl;
                     return false;

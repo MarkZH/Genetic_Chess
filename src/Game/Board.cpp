@@ -28,8 +28,8 @@
 #include "Moves/Threat_Generator.h"
 #include "Moves/Threat_Iterator.h"
 
-#include "Exceptions/Illegal_Move_Exception.h"
-#include "Exceptions/Promotion_Exception.h"
+#include "Exceptions/Illegal_Move.h"
+#include "Exceptions/Promotion_Piece_Needed.h"
 
 #include "Utility.h"
 
@@ -360,13 +360,13 @@ const Move& Board::get_move(char file_start, int rank_start, char file_end, int 
 
     if(move_list.empty())
     {
-        throw Illegal_Move_Exception("No legal move found for " +
-                                     std::string(1, file_start) +
-                                     std::to_string(rank_start) +
-                                     "-" +
-                                     std::string(1, file_end) +
-                                     std::to_string(rank_end) +
-                                     " (" + std::string(1, promote ? promote : ' ') + ")");
+        throw Illegal_Move("No legal move found for " +
+                           std::string(1, file_start) +
+                           std::to_string(rank_start) +
+                           "-" +
+                           std::string(1, file_end) +
+                           std::to_string(rank_end) +
+                           " (" + std::string(1, promote ? promote : ' ') + ")");
     }
 
     if(move_list.size() == 1)
@@ -375,7 +375,7 @@ const Move& Board::get_move(char file_start, int rank_start, char file_end, int 
     }
     else
     {
-        throw Promotion_Exception();
+        throw Promotion_Piece_Needed();
     }
 }
 
@@ -465,7 +465,7 @@ const Move& Board::get_move(const std::string& move, char promote) const
 
     if(validated.size() < 2)
     {
-        throw Illegal_Move_Exception(move + " does not specify a valid move.");
+        throw Illegal_Move(move + " does not specify a valid move.");
     }
 
     // Castling
@@ -511,7 +511,7 @@ const Move& Board::get_move(const std::string& move, char promote) const
         // No PGN-style move works, try coordinate move (e.g., e7e8q)
         if(move.size() < 4 || move.size() > 5)
         {
-            throw Illegal_Move_Exception("Illegal text move (wrong length): " + move);
+            throw Illegal_Move("Illegal text move (wrong length): " + move);
         }
 
         char start_file = move[0];
@@ -531,7 +531,7 @@ const Move& Board::get_move(const std::string& move, char promote) const
     int  ending_rank = validated[validated.size() - 1] - '0';
     if( ! inside_board(ending_file, ending_rank))
     {
-        throw Illegal_Move_Exception("Illegal text move (out of board): " + move);
+        throw Illegal_Move("Illegal text move (out of board): " + move);
     }
 
     char file_search_start = (starting_file == 0 ? 'a' : starting_file);
@@ -559,7 +559,7 @@ const Move& Board::get_move(const std::string& move, char promote) const
                     else
                     {
                         // If two moves satisfy text, argument is ambiguous.
-                        throw Illegal_Move_Exception("Ambiguous move: " + move);
+                        throw Illegal_Move("Ambiguous move: " + move);
                     }
                 }
             }
@@ -573,7 +573,7 @@ const Move& Board::get_move(const std::string& move, char promote) const
                         promoted_piece);
     }
 
-    throw Illegal_Move_Exception("Malformed move: " + move);
+    throw Illegal_Move("Malformed move: " + move);
 }
 
 void Board::make_move(char file_start, int rank_start, char file_end, int rank_end)
@@ -1026,7 +1026,7 @@ void Board::print_game_record(const Player* white,
                     out_stream << comment_move.game_record_item(comment_board) << " ";
                     comment_board.submit_move(comment_move);
                 }
-                catch(const Illegal_Move_Exception&)
+                catch(const Illegal_Move&)
                 {
                     out_stream << variation << " ";
                 }

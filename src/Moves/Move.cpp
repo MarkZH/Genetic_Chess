@@ -4,8 +4,6 @@
 
 #include "Game/Board.h"
 #include "Pieces/Piece.h"
-#include "Pieces/Piece_Types.h"
-#include "Exceptions/Illegal_Move_Exception.h"
 #include "Utility.h"
 
 
