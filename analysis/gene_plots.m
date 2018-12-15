@@ -44,16 +44,16 @@ xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
 
 piece_strength_prefix = 'Piece Strength Gene';
-piece_strength_figure = figure('Position', [0, 0, 1200, 1000]);
+piece_strength_figure = figure;
 title('Piece Strength Evolution', 'FontSize', 22);
 
-priority_figure = figure('Position', [0, 0, 1200, 1000]);
+priority_figure = figure;
 priority_suffix = ' Gene - Priority';
 priority_count = 0;
 title('Gene Priority Evolution', 'FontSize', 22);
 
 speculation_keyword = 'Speculation';
-speculation_figure = figure('Position', [0, 0, 1200, 1000]);
+speculation_figure = figure;
 title('Speculation Constants', 'FontSize', 22);
 
 special_plots = [0, 0, 0];
@@ -64,7 +64,7 @@ for yi = 2 : length(data.colheaders) - 2
     name_list = data.colheaders(yi);
     name = name_list{1};
 
-    figure('Position', [0, 0, 1200, 1000]);
+    figure;
     hold all;
     for pool_id = 0 : max(pool_ids)
         id_right = (pool_ids == pool_id);

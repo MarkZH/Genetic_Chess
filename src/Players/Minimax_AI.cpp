@@ -116,27 +116,26 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     // The two items in the principal variation are the last two moves of
     // the non-hypothetical board. So, the first item in the principal variation to
     // consider is at index depth + 1 (since depth starts at 1).
-    if(still_on_principal_variation && principal_variation.size() > depth + 1)
+    still_on_principal_variation = (still_on_principal_variation && principal_variation.size() > depth + 1);
+    auto found_principal_variation_move = still_on_principal_variation;
+    if(still_on_principal_variation)
     {
         auto next_principal_variation_move = principal_variation[depth + 1];
         auto move_iter = std::find(all_legal_moves.begin(),
                                    all_legal_moves.end(),
                                    next_principal_variation_move);
 
-        if(move_iter != all_legal_moves.end())
+        found_principal_variation_move = (move_iter != all_legal_moves.end());
+        if(found_principal_variation_move)
         {
             // Put principal variation move at start of list to allow
             // the most pruning later.
             std::iter_swap(all_legal_moves.begin(), move_iter);
         }
     }
-    else
-    {
-        still_on_principal_variation = false;
-    }
 
     // Consider capturing moves first after principal variation move
-    auto partition_start = std::next(all_legal_moves.begin(), still_on_principal_variation ? 1 : 0);
+    auto partition_start = std::next(all_legal_moves.begin(), found_principal_variation_move ? 1 : 0);
     std::partition(partition_start, all_legal_moves.end(),
                    [&board](auto move){ return board.move_captures(*move); });
 
@@ -187,7 +186,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else if(depth > 500)
         {
-            recurse = false;
+            recurse = false; // prevent stack overflow
         }
         else
         {
@@ -240,7 +239,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             break;
         }
 
-        if(!recurse) // This move was scored by genome.evaluate().
+        if( ! recurse) // This move was scored by genome.evaluate().
         {
             ++nodes_evaluated;
             total_evaluation_time += evaluate_start_time - clock.time_left(clock.running_for());

@@ -44,8 +44,14 @@ def make_sort(a, b):
         return 1
 
 
+if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
+    print('Specify a compiler ("gcc" or "clang")')
+    sys.exit(1)
+
 program_name = 'genetic_chess'
 final_targets = ["release", "debug"]
+if sys.argv[1] == 'gcc':
+    final_targets.append('profile')
 depends = dict()
 depends['all'] = final_targets
 depends['clean'] = []
@@ -89,27 +95,19 @@ for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
 
 options_list = dict()
 linker_options = dict()
-if len(sys.argv) == 1:
-    print('Specify a compiler ("gcc" or "clang")')
-    sys.exit(1)
-elif sys.argv[1] == 'gcc':
+if sys.argv[1] == 'gcc':
     compiler = 'g++'
     options_list['debug'] = ["-g", "-DDEBUG"]
     options_list['release'] = ["-s", "-O3", "-DNDEBUG"]
+    options_list['profile'] = ["-O3", "-pg", "-DNDEBUG"]
 
     base_options = [
-            "-Wnon-virtual-dtor", 
+            "-std=c++17",
             "-Wshadow", 
-            "-Winit-self", 
-            "-Wredundant-decls", 
             "-Wcast-align", 
             "-Wundef", 
             "-Wfloat-equal", 
             "-Wunreachable-code", 
-            "-Wmissing-declarations", 
-            "-Wmissing-include-dirs", 
-            "-Wswitch-enum", 
-            "-Wswitch-default", 
             "-Wzero-as-null-pointer-constant", 
             "-Wmain", 
             "-pedantic", 
@@ -120,21 +118,16 @@ elif sys.argv[1] == 'gcc':
 
     linker_options['debug'] = []
     linker_options['release'] = ['-flto', '-fuse-linker-plugin']
+    linker_options['profile'] = ['-flto', '-fuse-linker-plugin', '-pg']
 elif sys.argv[1] == 'clang':
     compiler = 'clang++'
     options_list['debug'] = ["-g", "-Og", "-DDEBUG", "-fsanitize=undefined", "-fsanitize=integer"]
     options_list['release'] = ["-O3", "-DNDEBUG"]
 
     base_options = [
-            "-std=c++14",
-            "-Weverything",
-            "-Wno-padded",
-            "-Wno-c++98-compat",
-            "-Wno-exit-time-destructors",
-            "-Wno-global-constructors",
+            "-std=c++17",
             "-Wnon-virtual-dtor", 
             "-Wshadow", 
-            "-Winit-self", 
             "-Wredundant-decls", 
             "-Wcast-align", 
             "-Wundef", 
@@ -142,9 +135,7 @@ elif sys.argv[1] == 'clang':
             "-Wunreachable-code", 
             "-Wmissing-declarations", 
             "-Wmissing-include-dirs", 
-            "-Wswitch-enum", 
-            "-Wswitch-default", 
-            "-Wmain", 
+            "-Wswitch",
             "-pedantic", 
             "-Wextra", 
             "-Wall", 
@@ -153,10 +144,6 @@ elif sys.argv[1] == 'clang':
 
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     linker_options['release'] = ['-flto']
-else:
-    print('Uknown compiler: ' + sys.argv[1])
-    sys.exit(1)
-
 
 obj_dir_written = []
 for target in final_targets:

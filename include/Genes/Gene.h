@@ -43,6 +43,7 @@ class Gene
         virtual void gene_specific_mutation();
 
         double scoring_priority;
+        double exponent;
 };
 
 #endif // GENE_H

@@ -107,6 +107,8 @@ class Scoped_Stopwatch
 {
     public:
         explicit Scoped_Stopwatch(const std::string& name);
+        Scoped_Stopwatch(const Scoped_Stopwatch& other) = delete;
+        Scoped_Stopwatch& operator=(const Scoped_Stopwatch& other) = delete;
         ~Scoped_Stopwatch();
 
         void stop();

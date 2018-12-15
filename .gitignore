@@ -57,3 +57,7 @@ octave-workspace
 *.xml
 *.lastcodeanalysissucceeded
 *.pyperf
+*.psess
+*.orig
+*.vsp
+*.vsps

@@ -23,3 +23,19 @@ bool operator!=(const Square& a, const Square& b)
 {
     return !(a == b);
 }
+
+bool operator<(const Square& a, const Square& b)
+{
+    if(a.file < b.file)
+    {
+        return true;
+    }
+    else if(b.file < a.file)
+    {
+        return false;
+    }
+    else
+    {
+        return a.rank < b.rank;
+    }
+}

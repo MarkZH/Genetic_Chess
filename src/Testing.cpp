@@ -1002,7 +1002,59 @@ bool run_tests()
         std::cerr << "Blocking check with rook should be legal here." << std::endl;
         tests_passed = false;
     }
-    // check square colors are correct
+
+    auto multiple_check_board = Board("Q6r/4k3/8/8/8/5b2/8/7K w - - 0 1");
+    auto multi_check_list = multiple_check_board.legal_moves();
+    if(multi_check_list.size() != 1 || multi_check_list.front()->coordinate_move() != "h1g1")
+    {
+        multiple_check_board.ascii_draw(WHITE);
+        std::cerr << "Only Kg1 should be legal here." << std::endl;
+        std::cerr << "Legal moves found:";
+        for(auto move : multi_check_list)
+        {
+            std::cerr << " " << move->game_record_item(multiple_check_board);
+        }
+        std::cerr << std::endl;
+
+        tests_passed = false;
+    }
+
+    try
+    {
+        auto too_many_attackers_board = Board("k1RK4/1P6/R7/8/8/8/8/8 b - - 0 1");
+        too_many_attackers_board.ascii_draw(WHITE);
+        std::cerr << "Illegal board created with too many pieces attacking black king." << std::endl;
+        tests_passed = false;
+    }
+    catch(const std::runtime_error&)
+    {
+    }
+
+    // En passant check-rescue
+    auto en_passant_check = Board("k7/8/8/3pP3/4B3/8/8/7K w - d6 0 1");
+    en_passant_check.submit_move(en_passant_check.create_move("exd6"));
+    if( ! en_passant_check.king_is_in_check())
+    {
+        en_passant_check.ascii_draw(WHITE);
+        std::cerr << "King should be in check." << std::endl;
+        tests_passed = false;
+    }
+
+    // En passant discovered check
+    auto en_passant_check_capture = Board("k7/8/8/3pP3/2K5/8/8/8 w - d6 0 1");
+    try
+    {
+        en_passant_check_capture.create_move("exd6");
+    }
+    catch(const std::exception&)
+    {
+        en_passant_check_capture.ascii_draw(WHITE);
+        en_passant_check_capture.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, {});
+        std::cerr << "Move exd6 should be legal." << std::endl;
+        tests_passed = false;
+    }
+
+    // check that square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)
     {
@@ -1113,6 +1165,7 @@ bool run_tests()
     int real_width = 15;
     int norm_width = 15;
     int uint_width = 25;
+    std::cout << std::endl;
     std::cout << std::setw(int_width) << "Integers"
               << std::setw(real_width) << "Reals"
               << std::setw(norm_width) << "Laplace"
@@ -1170,8 +1223,8 @@ bool run_tests()
     else
     {
         std::cout << "Pre-perft tests failed." << std::endl;
-        std::cout << "Press enter to continue ..." << std::endl;
-        return false;
+        std::cout << "Press enter to continue with perft test ..." << std::endl;
+        std::cin.get();
     }
 
     // Count game tree leaves (perft) to given depth to validate move generation

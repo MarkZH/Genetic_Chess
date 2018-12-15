@@ -9,6 +9,7 @@
 #include <array>
 #include <mutex>
 #include <algorithm>
+#include <set>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -133,13 +134,13 @@ Board::Board(const std::string& fen) :
     auto fen_parse = String::split(fen);
     if(fen_parse.size() != 6)
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nWrong number of fields (should be 6): " + fen);
+        fen_error(fen, "Wrong number of fields (should be 6)");
     }
 
     auto board_parse = String::split(fen_parse.at(0), "/");
     if(board_parse.size() != 8)
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nBoard has wrong number of rows (should be 8): " + fen);
+        fen_error(fen, "Board has wrong number of rows (should be 8)");
     }
 
     for(int rank = 8; rank >= 1; --rank)
@@ -152,14 +153,14 @@ Board::Board(const std::string& fen) :
                 file += symbol - '0';
                 if(file > 'h' + 1)
                 {
-                    throw std::runtime_error("Bad FEN input: " + fen + "\nToo many squares in rank " + std::to_string(rank));
+                    fen_error(fen, "Too many squares in rank " + std::to_string(rank));
                 }
             }
             else
             {
                 if(file > 'h')
                 {
-                    throw std::runtime_error("Bad FEN input: " + fen + "\nToo many squares in rank " + std::to_string(rank));
+                    fen_error(fen, "Too many squares in rank " + std::to_string(rank));
                 }
 
                 Color color = (isupper(symbol) ? WHITE : BLACK);
@@ -183,12 +184,12 @@ Board::Board(const std::string& fen) :
                     case 'K':
                         if(king_location[color])
                         {
-                            throw std::runtime_error("Bad FEN input: " + fen + "\nMore than one " + color_text(color) + " king.");
+                            fen_error(fen, "More than one " + color_text(color) + " king.");
                         }
                         place_piece(piece_instance(KING, color), file, rank);
                         break;
                     default:
-                        throw std::runtime_error("Bad FEN input: " + fen + "\nInvalid symbol in FEN string: " + symbol);
+                        fen_error(fen, "Invalid symbol in FEN string: " + symbol);
                 }
                 ++file;
             }
@@ -196,32 +197,55 @@ Board::Board(const std::string& fen) :
 
         if(file != 'h' + 1)
         {
-            throw std::runtime_error("Bad FEN input: " + fen + "\nToo few squares in rank " + std::to_string(rank));
+            fen_error(fen, "Too few squares in rank " + std::to_string(rank));
         }
     }
 
     if( ! king_location[WHITE])
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nWhite king not in FEN string: " + fen);
+        fen_error(fen, "White king not in FEN string: " + fen);
     }
     if( ! king_location[BLACK])
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nBlack king not in FEN string: " + fen);
+        fen_error(fen, "Black king not in FEN string: " + fen);
     }
 
-    set_turn(fen_parse[1] == "w" ? WHITE : BLACK);
+    if(fen_parse[1] == "w")
+    {
+        set_turn(WHITE);
+    }
+    else if(fen_parse[1] == "b")
+    {
+        set_turn(BLACK);
+    }
+    else
+    {
+        fen_error(fen, "Invalid character for whose turn: " + fen_parse[1]);
+    }
 
     auto non_turn_color = opposite(whose_turn());
     auto non_turn_king_square = king_location[non_turn_color];
     if( ! safe_for_king(non_turn_king_square.file, non_turn_king_square.rank, non_turn_color))
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\n" +
-                                 color_text(opposite(whose_turn())) +
-                                 " is in check but it is " +
-                                 color_text(whose_turn()) + "'s turn.");
+        fen_error(fen, color_text(opposite(whose_turn())) +
+                       " is in check but it is " +
+                       color_text(whose_turn()) + "'s turn.");
     }
 
     auto castling_parse = fen_parse.at(2);
+    for(auto c : castling_parse)
+    {
+        if( ! String::contains("KQkq-", c))
+        {
+            fen_error(fen, "Illegal character in castling section");
+        }
+    }
+
+    if(String::contains(castling_parse, '-') && castling_parse.size() != 1)
+    {
+        fen_error(fen, "Castling section contains - and other characters.");
+    }
+
     if(String::contains(castling_parse, 'K'))
     {
         set_unmoved('h', 1);
@@ -246,7 +270,17 @@ Board::Board(const std::string& fen) :
     auto en_passant_parse = fen_parse.at(3);
     if(en_passant_parse != "-")
     {
+        if(en_passant_parse.size() != 2)
+        {
+            fen_error(fen, "Invalid en passant square.");
+        }
+
         make_en_passant_targetable(en_passant_parse[0], en_passant_parse[1] - '0');
+
+        if( ! inside_board(en_passant_target.file, en_passant_target.rank))
+        {
+            fen_error(fen, "Invalid en passant square.");
+        }
     }
 
     // Fill repeat counter to indicate moves since last
@@ -260,11 +294,34 @@ Board::Board(const std::string& fen) :
 
     if(fen_status() != fen)
     {
-        throw std::runtime_error("Bad FEN input: " + fen + "\nResult: " + fen_status());
+        fen_error(fen, "Result: " + fen_status());
     }
 
     move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
+
+    auto test_board = *this;
+    test_board.set_turn(opposite(whose_turn()));
+    auto pieces_attacking_king = std::set<Square>();
+    auto king_square = test_board.king_location[whose_turn()];
+    for(auto move : test_board.legal_moves())
+    {
+        if(move->end_file() == king_square.file &&
+           move->end_rank() == king_square.rank)
+        {
+            pieces_attacking_king.insert({move->start_file(), move->start_rank()});
+        }
+    }
+
+    if(pieces_attacking_king.size() > 2)
+    {
+        fen_error(fen, "Too many pieces attacking " + color_text(whose_turn()) + " king.");
+    }
+}
+
+void Board::fen_error(const std::string& fen, const std::string& reason) const
+{
+    throw std::runtime_error("Bad FEN input: " + fen + "\n" + reason);
 }
 
 size_t Board::square_index(char file, int rank)
@@ -349,7 +406,6 @@ std::string Board::fen_status() const
 
     return s;
 }
-
 
 const Move& Board::create_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
 {
@@ -719,7 +775,7 @@ void Board::place_piece(const Piece* piece, char file, int rank)
 
 bool Board::king_is_in_check() const
 {
-    return ! checking_squares.empty();
+    return checking_squares.front(); // check whether first entry is valid Square
 }
 
 bool Board::safe_for_king(char file, int rank, Color king_color) const
@@ -739,18 +795,15 @@ const std::array<bool, 64>& Board::other_square_indices_attacked() const
 
 void Board::refresh_checking_squares()
 {
-    checking_squares.clear();
+    checking_squares = {};
+    size_t insertion_point = 0;
     auto king_square = king_location[whose_turn()];
 
     if(game_record_listing.empty())
     {
         for(auto square : Threat_Generator(king_square.file, king_square.rank, opposite(whose_turn()), *this))
         {
-            checking_squares.push_back(square);
-            if(checking_squares.size() > 1)
-            {
-                break;
-            }
+            checking_squares[insertion_point++] = square;
         }
     }
     else
@@ -760,17 +813,19 @@ void Board::refresh_checking_squares()
         // Moved piece now attacks king
         if(attacks(last_move->end_file(), last_move->end_rank(), king_square.file, king_square.rank))
         {
-            checking_squares.push_back({last_move->end_file(), last_move->end_rank()});
+            checking_squares[insertion_point++] = {last_move->end_file(), last_move->end_rank()};
         }
-
 
         // Discovered check
         if(auto pinning_square = piece_is_pinned(last_move->start_file(), last_move->start_rank()))
         {
-            // Prevent pawn promotions from registering twice
-            if(checking_squares.empty() || pinning_square != checking_squares.front())
+            // Prevent pawn promotions from registering twice, for example
+            // ...   a8=Q     Q..
+            // P.. -------->  ... Check from queen on a8 and discovered check by queen on a8
+            // k..            k..
+            if(pinning_square != checking_squares.front())
             {
-                checking_squares.push_back(pinning_square);
+                checking_squares[insertion_point++] = pinning_square;
             }
         }
 
@@ -780,9 +835,9 @@ void Board::refresh_checking_squares()
             if(auto pinning_square = piece_is_pinned(last_move->end_file(), last_move->start_rank()))
             {
                 // Since two pieces are removed, make sure the discovered check isn't recorded twice
-                if(checking_squares.empty() || pinning_square != checking_squares.front())
+                if(pinning_square != checking_squares.front())
                 {
-                    checking_squares.push_back(pinning_square);
+                    checking_squares[insertion_point++] = pinning_square;
                 }
             }
         }
@@ -797,7 +852,7 @@ void Board::refresh_checking_squares()
             // been found by the discovered check block above. Only look for checks along columns.
             if(king_square.file == rook_file && attacks(rook_file, last_move->end_rank(), king_square.file, king_square.rank))
             {
-                checking_squares.push_back({rook_file, last_move->end_rank()});
+                checking_squares[insertion_point] = {rook_file, last_move->end_rank()};
             }
         }
     }
@@ -825,10 +880,12 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         }
 
         // Non-pinned piece moves to block check
-        if(auto pinning_square = piece_is_pinned(move.end_file(), move.end_rank()))
+        if( ! piece_on_square(move.end_file(), move.end_rank()))
         {
-            // Make sure piece being blocked is actually doing the checking and the blocking piece can move
-            return (pinning_square != checking_squares.front()) || piece_is_pinned(move.start_file(), move.start_rank());
+            if(piece_is_pinned(move.end_file(), move.end_rank()))
+            {
+                return piece_is_pinned(move.start_file(), move.start_rank());
+            }
         }
 
         // En passant capture of checking pawn
@@ -837,42 +894,20 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             return (checking_squares.front() != Square{move.end_file(), move.start_rank()}) || piece_is_pinned(move.start_file(), move.start_rank());
         }
 
-        // Nothing is done about check
+        // Nothing is done about the check
         return true;
     }
 
-    if(piece_is_pinned(move.start_file(), move.start_rank()))
+    if(auto pinning_square = piece_is_pinned(move.start_file(), move.start_rank()))
     {
-        if(piece_on_square(move.start_file(), move.start_rank())->type() == KNIGHT)
-        {
-            return true; // knights cannot escape pins
-        }
-
-        // piece moves off line of attack to king
         auto king_square = king_location[whose_turn()];
 
-        // Column move
-        if(move.file_change() == 0)
-        {
-            return move.start_file() != king_square.file;
-        }
+        auto pin_direction_file = king_square.file - pinning_square.file;
+        auto pin_direction_rank = king_square.rank - pinning_square.rank;
 
-        // Row move
-        if(move.rank_change() == 0)
-        {
-            return move.start_rank() != king_square.rank;
-        }
-
-        // Move is diagonal, check if pin is on row or column
-        if(move.start_file() == king_square.file || move.start_rank() == king_square.rank)
-        {
-            return true;
-        }
-
-        // check that diagonal moves are parallel to pin direction
-        auto diagonal_of_move = (move.file_change() == move.rank_change());
-        auto diagonal_of_piece_to_king = ((king_square.file - move.start_file()) == (king_square.rank - move.start_rank()));
-        return diagonal_of_move != diagonal_of_piece_to_king;
+        // If move direction and pin direction are not parallel, the piece will move
+        // out of pin and expose the king to check.
+        return move.file_change()*pin_direction_rank != move.rank_change()*pin_direction_file;
     }
 
     if(move.is_en_passant())
@@ -1470,15 +1505,12 @@ bool Board::move_captures(const Move& move) const
 
 bool Board::king_multiply_checked() const
 {
-    return checking_squares.size() > 1;
+    return checking_squares.back(); // See if second entry is valid Square
 }
 
 bool Board::all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const
 {
-    if( ! straight_line_move(file_start, rank_start, file_end, rank_end))
-    {
-        return false;
-    }
+    assert(straight_line_move(file_start, rank_start, file_end, rank_end));
 
     auto file_step = Math::sign(file_end - file_start);
     auto rank_step = Math::sign(rank_end - rank_start);
@@ -1488,6 +1520,8 @@ bool Board::all_empty_between(char file_start, int rank_start, char file_end, in
 
     while(file != file_end || rank != rank_end)
     {
+        assert(inside_board(file, rank));
+
         if(piece_on_square(file, rank))
         {
             return false;
@@ -1532,6 +1566,12 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
     {
         return (file_change == 1 && rank_change == 2) ||
                (file_change == 2 && rank_change == 1);
+    }
+
+    if( ! straight_line_move(origin_file, origin_rank,
+                             target_file, target_rank))
+    {
+        return false;
     }
 
     if(attacking_piece->type() == KING)

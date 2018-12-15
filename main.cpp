@@ -13,6 +13,7 @@
 #include "Players/Random_AI.h"
 #include "Players/Monte_Carlo_AI.h"
 #include "Players/Outside_Player.h"
+#include "Players/Alan_Turing_AI.h"
 
 #include "Breeding/Gene_Pool.h"
 
@@ -24,6 +25,7 @@
 void print_help();
 void replay_game(const std::string& file_name, int game_number);
 bool confirm_game_record(const std::string& file_name);
+void game_progress_move_count(const std::string& game_record_file_name, const std::string& results_file_name);
 int find_last_id(const std::string& filename);
 
 int main(int argc, char *argv[])
@@ -80,14 +82,24 @@ int main(int argc, char *argv[])
             }
             else if(std::string(argv[1]) == "-test")
             {
-                if(run_tests())
+                return run_tests() ? 0 : 1;
+            }
+            else if(std::string(argv[1]) == "-progress")
+            {
+                if(argc < 3)
                 {
-                    return 0;
+                    throw std::runtime_error("Specify a file name for input.");
                 }
-                else
+
+                auto input_file_name = std::string(argv[2]);
+
+                std::string output_file_name;
+                if(argc >= 4)
                 {
-                    return 1;
+                    output_file_name = argv[3];
                 }
+
+                game_progress_move_count(input_file_name, output_file_name);
             }
             else
             {
@@ -158,6 +170,10 @@ int main(int argc, char *argv[])
                                 i += 2;
                             }
                         }
+                    }
+                    else if(opt == "-turing")
+                    {
+                        latest = std::make_unique<Alan_Turing_AI>();
                     }
                     else if(opt == "-time")
                     {
@@ -233,24 +249,28 @@ void print_help()
 {
     std::cout << "\n\nGenetic Chess" << std::endl
               << "=============" << std::endl << std::endl
-              << "Options:" << std::endl
+              << "Standalone functions (only first is run if multiple are specified):" << std::endl
               << "\t-genepool [file name]" << std::endl
               << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name." << std::endl << std::endl
               << "\t-replay [filename] [game number]" << std::endl
               << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time." << std::endl << std::endl
               << "\t-confirm [filename]" << std::endl
               << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates." << std::endl << std::endl
+              << "\t-progress" << std::endl
+              << "\t\tParse a file with PGN-style game records and record the number\n\t\tof legal moves as the game progresses." << std::endl << std::endl
               << "\t-test" << std::endl
               << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly." << std::endl << std::endl
               << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying." << std::endl << std::endl
               << "\t-human" << std::endl
-              << "\t\tSpecify a human player for a game." << std::endl << std::endl
+              << "\t\tSelect a human player for a game." << std::endl << std::endl
               << "\t-genetic [filename [number]]" << std::endl
-              << "\t\tSpecify a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file." << std::endl << std::endl
+              << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file." << std::endl << std::endl
               << "\t-random" << std::endl
-              << "\t\tSpecify a player that makes random moves for a game." << std::endl << std::endl
+              << "\t\tSelect a player that makes random moves for a game." << std::endl << std::endl
               << "\t-montecarlo" << std::endl
-              << "\t\tSpecify a player that evaluates moves by playing random\n\t\tcomplete games." << std::endl << std::endl
+              << "\t\tSelect a player that evaluates moves by playing random\n\t\tcomplete games." << std::endl << std::endl
+              << "\t-turing" << std::endl
+              << "\t\tSelect a player based on Alan Turing's Turbocomp chess AI." << std::endl << std::endl
               << "Other game options:" << std::endl << std::endl
               << "\t-time [number]" << std::endl
               << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option)." << std::endl << std::endl
@@ -637,4 +657,58 @@ bool confirm_game_record(const std::string& file_name)
     }
 
     return true;
+}
+
+void game_progress_move_count(const std::string& input_file_name, const std::string& output_file_name)
+{
+    auto input = std::ifstream(input_file_name);
+    auto output_file = std::ofstream(output_file_name);
+    std::ostream& output = output_file ? output_file : std::cout;
+
+    std::string line;
+    std::vector<std::string> game_moves;
+    auto game_count = 0;
+    while(std::getline(input, line))
+    {
+        // Headers at start of new game
+        if(String::starts_with(line, '['))
+        {
+            if(game_moves.empty())
+            {
+                continue;
+            }
+
+            std::cout << "\rGame count: " << ++game_count << std::flush;
+
+            // Output result
+            Board board;
+            auto move_index = 0;
+            for(const auto& move_record : game_moves)
+            {
+                board.submit_move(board.create_move(move_record));
+                output << ++move_index << '\t'
+                       << game_moves.size() << '\t'
+                       << board.legal_moves().size() << '\n';
+            }
+
+            game_moves.clear();
+            continue;
+        }
+
+        if(line.empty() || ! std::isdigit(line.front()))
+        {
+            continue;
+        }
+
+        line = String::strip_block_comment(line, '{', '}');
+        line = String::strip_comments(line, ';');
+
+        for(const auto& move_record : String::split(line))
+        {
+            if( ! std::isdigit(move_record.front()))
+            {
+                game_moves.push_back(move_record);
+            }
+        }
+    }
 }

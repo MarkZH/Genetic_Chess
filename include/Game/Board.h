@@ -92,6 +92,7 @@ class Board
         bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
         bool enough_material_to_checkmate() const;
         bool move_captures(const Move& move) const;
+        int moves_since_pawn_or_capture() const;
 
         // Methods for gene reference
         bool capture_possible() const;
@@ -136,7 +137,7 @@ class Board
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
-        std::vector<Square> checking_squares;
+        std::array<Square, 2> checking_squares;
 
         void recreate_move_caches();
         void refresh_checking_squares();
@@ -162,7 +163,6 @@ class Board
         void add_to_repeat_count(uint64_t new_hash);
         size_t current_board_position_repeat_count() const;
         void clear_repeat_count();
-        int moves_since_pawn_or_capture() const;
 
         // Zobrist hashing
         uint64_t current_board_hash;
@@ -191,6 +191,8 @@ class Board
         bool king_multiply_checked() const;
         static bool straight_line_move(char file_start, int rank_start, char file_end, int rank_end);
         bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
+
+        [[noreturn]] void fen_error(const std::string& fen, const std::string& reason) const;
 
         // Moves with side effects are friends of Board
         friend class Castle; // moves second piece
