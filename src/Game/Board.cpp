@@ -1262,7 +1262,6 @@ void Board::set_turn(Color color)
     if(turn_color != color)
     {
         clear_en_passant_target();
-        update_board_hash(color);
         switch_turn();
     }
 }
