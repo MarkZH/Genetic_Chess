@@ -25,6 +25,8 @@
 #include "Genes/Piece_Strength_Gene.h"
 #include "Genes/Sphere_of_Influence_Gene.h"
 #include "Genes/Total_Force_Gene.h"
+#include "Genes/Stacked_Pawns_Gene.h"
+#include "Genes/Pawn_Islands_Gene.h"
 
 #include "Utility.h"
 
@@ -32,7 +34,7 @@
 
 // Declaration to silence warnings
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
-size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix, const std::string& file_name);
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix);
 
 void run_tests()
 {
@@ -599,6 +601,14 @@ void run_tests()
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
     tests_passed &= total_force_gene.test(Board(), 1.0 + 32/piece_strength_normalizer);
 
+    auto stacked_pawns_gene = Stacked_Pawns_Gene();
+    auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
+    tests_passed &= stacked_pawns_gene.test(stacked_pawns_board, -3.0);
+
+    auto pawn_islands_gene = Pawn_Islands_Gene();
+    auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
+    tests_passed &= pawn_islands_gene.test(pawn_islands_board, -3.0);
+
     // Test board information sources
     auto promotion_board = Board("8/k6P/8/8/8/8/8/K7 w - - 0 1");
     auto promotion_count = promotion_board.number_of_promoted_pawns(WHITE);
@@ -1099,7 +1109,7 @@ void run_tests()
               });
 
     auto test_number = 0;
-    auto perft_suite_output_file_name = "";
+    auto perft_timer = Scoped_Stopwatch("");
     for(const auto& line : lines)
     {
         auto perft_test_passed = true;
@@ -1121,7 +1131,7 @@ void run_tests()
                 continue;
             }
             auto expected_leaves = std::stoul(depth_leaves.back());
-            auto leaf_count = move_count(perft_board, depth, prefix, perft_suite_output_file_name);
+            auto leaf_count = move_count(perft_board, depth, prefix);
             if(leaf_count != expected_leaves)
             {
                 std::cerr << " Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
@@ -1140,6 +1150,8 @@ void run_tests()
             break;
         }
     }
+
+    std::cout << "Perft time: " << perft_timer.time_so_far() << std::endl;
 
 
     if(tests_passed)
@@ -1181,18 +1193,14 @@ bool files_are_identical(const std::string& file_name1, const std::string& file_
     return true;
 }
 
-size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix, const std::string& file_name)
+size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix)
 {
     if(maximum_depth == 0)
     {
-        if( ! file_name.empty())
-        {
-            board.print_game_record(nullptr, nullptr, file_name, {}, 0, 0, 0, {});
-        }
         return 1;
     }
 
-    if(maximum_depth == 1 && file_name.empty())
+    if(maximum_depth == 1)
     {
         if(board.get_game_record().empty())
         {
@@ -1218,7 +1226,7 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
         }
         auto next_board = board;
         next_board.submit_move(*move);
-        count += move_count(next_board, maximum_depth - 1, line_prefix, file_name);
+        count += move_count(next_board, maximum_depth - 1, line_prefix);
     }
 
     return count;

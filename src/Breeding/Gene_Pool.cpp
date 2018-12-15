@@ -18,6 +18,8 @@
 
 static sig_atomic_t signal_activated = 0;
 void pause_gene_pool(int signal);
+static bool gene_pool_paused = false;
+const auto STOP_SIGNAL = SIGINT;
 const auto PAUSE_SIGNAL =
 #ifdef __linux__
 SIGTSTP;
@@ -152,7 +154,7 @@ void gene_pool(const std::string& config_file = "")
     }
 
     // Ctrl-C to pause gene pool
-    signal(SIGINT, pause_gene_pool);
+    signal(STOP_SIGNAL, pause_gene_pool);
     signal(PAUSE_SIGNAL, pause_gene_pool);
 
     // Indices in gene pool to be shuffled for game match-ups
@@ -372,13 +374,15 @@ void gene_pool(const std::string& config_file = "")
         // Pause gene pool
         if(signal_activated == PAUSE_SIGNAL)
         {
+            gene_pool_paused = true;
             std::cout << "Gene pool paused. Press Enter to continue ..." << std::endl;
             std::cin.get();
-            if(signal_activated == SIGINT)
+            if(signal_activated == STOP_SIGNAL)
             {
                 return;
             }
             signal_activated = 0;
+            gene_pool_paused = false;
         }
 
         if(signal_activated != 0)
@@ -452,17 +456,15 @@ void pause_gene_pool(int signal)
     }
 
     signal_activated = signal;
-    std::string action;
-    if(signal_activated == PAUSE_SIGNAL)
+
+    if(gene_pool_paused)
     {
-        action = "pausing";
-    }
-    else
-    {
-        action = "exiting";
+        std::cout << "\nPress enter to " << (signal_activated == SIGTERM ? "quit." : "resume.");
+        return;
     }
 
-    std::cout << std::endl << "Waiting for games to end and be recorded before " << action << " ..." << std::endl;
+    auto action = signal_activated == PAUSE_SIGNAL ? "pausing" : "exiting";
+    std::cout << "\nWaiting for games to end and be recorded before " << action << " ..." << std::endl;
 }
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
