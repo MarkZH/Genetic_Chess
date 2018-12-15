@@ -68,7 +68,7 @@ bool Board::hash_values_initialized = false;
 std::array<std::array<uint64_t, 13>, 64> Board::square_hash_values{};
 std::array<uint64_t, 64> Board::en_passant_hash_values{};
 std::array<uint64_t, 64> Board::castling_hash_values{};
-std::array<uint64_t, 2> Board::color_hash_values{}; // for whose_turn() hashing
+uint64_t Board::switch_turn_board_hash; // for whose_turn() hashing
 
 
 Board::Board() :
@@ -1157,6 +1157,7 @@ void Board::set_turn(Color color)
 void Board::switch_turn()
 {
     turn_color = opposite(turn_color);
+    update_whose_turn_hash();
     recreate_move_caches();
 }
 
@@ -1357,10 +1358,7 @@ void Board::initialize_board_hash()
         return;
     }
 
-    for(auto color : {WHITE, BLACK})
-    {
-        color_hash_values[color] = Random::random_unsigned_int64();
-    }
+    switch_turn_board_hash = Random::random_unsigned_int64();
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
@@ -1384,7 +1382,6 @@ void Board::initialize_board_hash()
     }
 
     current_board_hash = 0;
-    current_board_hash ^= color_hash(whose_turn());
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
@@ -1401,15 +1398,9 @@ void Board::update_board_hash(char file, int rank)
     current_board_hash ^= square_hash(file, rank);
 }
 
-void Board::update_board_hash(Color color)
+void Board::update_whose_turn_hash()
 {
-    current_board_hash ^= color_hash(color);
-    current_board_hash ^= color_hash(opposite(color));
-}
-
-uint64_t Board::color_hash(Color color) const
-{
-    return color_hash_values[color];
+    current_board_hash ^= switch_turn_board_hash;
 }
 
 uint64_t Board::square_hash(char file, int rank) const

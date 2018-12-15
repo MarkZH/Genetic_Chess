@@ -185,10 +185,8 @@ class Board
         static size_t square_hash_index(const Piece* piece);
 
         // Whose turn?
-        static std::array<uint64_t, 2> color_hash_values; // for whose_turn() hashing
-
-        uint64_t color_hash(Color color) const;
-        void update_board_hash(Color color);
+        static uint64_t switch_turn_board_hash;
+        void update_whose_turn_hash();
 
         bool king_multiply_checked() const;
         static bool straight_line_move(char file_start, int rank_start, char file_end, int rank_end);
