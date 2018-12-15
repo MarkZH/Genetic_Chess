@@ -169,6 +169,10 @@ class Board
         uint64_t get_color_hash(Color color) const;
         void update_board_hash(Color color);
 
+        // Minimal copy of board with custom constructor for
+        // use with king_is_in_check
+        Board(const Board* old_board);
+        Board minimal_copy() const; // Just copy board state with no history
 
         // Moves with side effects are friends of Board
         friend void Kingside_Castle::side_effects(Board&) const; // moves second piece

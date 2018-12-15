@@ -248,6 +248,19 @@ Board::Board(const std::string& fen) :
     move_count_start_offset = std::stoi(fen_parse.at(5)) - 1;
 }
 
+// Only for use with minimal_copy()
+Board::Board(const Board* old_board) :
+    board(old_board->board),
+    king_location(old_board->king_location)
+{
+}
+
+// Only for use with king_is_in_check_after_move()
+Board Board::minimal_copy() const
+{
+    return Board(this);
+}
+
 size_t Board::board_index(char file, int rank)
 {
     // Square A1 = Board::board[0]
@@ -866,7 +879,7 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
 
 bool Board::king_is_in_check_after_move(const Move& move) const
 {
-    auto temp_board = *this;
+    auto temp_board = minimal_copy();
     temp_board.make_move(move.start_file(), move.start_rank(),
                          move.end_file(),   move.end_rank());
     move.side_effects(temp_board);
@@ -1026,7 +1039,7 @@ std::string Board::board_status() const
     {
         if(rank < 8)
         {
-            s.append("/");
+            s.push_back('/');
         }
 
         for(char file = 'a'; file <= 'h'; ++file)
@@ -1040,7 +1053,7 @@ std::string Board::board_status() const
             {
                 if(empty_count > 0)
                 {
-                    s.append(std::to_string(empty_count));
+                    s.push_back('0' + empty_count);
                     empty_count = 0;
                 }
                 s.push_back(piece->fen_symbol());
@@ -1048,13 +1061,13 @@ std::string Board::board_status() const
         }
         if(empty_count > 0)
         {
-            s.append(std::to_string(empty_count));
+            s.push_back('0' + empty_count);
             empty_count = 0;
         }
     }
 
     s.push_back(' ');
-    s.push_back(tolower(color_text(whose_turn())[0]));
+    s.push_back(whose_turn() == WHITE ? 'w' : 'b');
     s.push_back(' ');
 
     for(int base_rank : {1, 8})
