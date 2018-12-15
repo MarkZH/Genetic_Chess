@@ -788,7 +788,7 @@ void run_tests()
 
     // Count game tree leaves (perft) to given depth to validate move generation
     // (downloaded from http://www.rocechess.ch/perft.html)
-    // (leaves from starting posos also found at https://oeis.org/A048987)
+    // (leaves from starting positions also found at https://oeis.org/A048987)
     size_t max_perft_depth = 5;
     auto perft_suite_input = std::ifstream("perftsuite.epd");
     auto perft_suite_output_file_name = "";
