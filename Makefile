@@ -4,21 +4,24 @@ LD = g++
 CFLAGS = -Wnon-virtual-dtor -Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equal -Wunreachable-code -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default -Wzero-as-null-pointer-constant -Wmain -pedantic -Wextra -Wall -Iinclude
 LDFLAGS = -pthread -fexceptions
 
-OUT_RELEASE = bin/release/genetic_chess
+RELEASE_BIN_DIR = bin/release
+OUT_RELEASE = $(RELEASE_BIN_DIR)/genetic_chess
 RELEASE_OBJ_DIR = obj/release
 OBJ_RELEASE = $(RELEASE_OBJ_DIR)/main.o $(RELEASE_OBJ_DIR)/src/Exceptions/Game_Ending_Exception.o $(RELEASE_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o $(RELEASE_OBJ_DIR)/src/Game/Board.o $(RELEASE_OBJ_DIR)/src/Game/Clock.o $(RELEASE_OBJ_DIR)/src/Game/Color.o $(RELEASE_OBJ_DIR)/src/Game/Game.o $(RELEASE_OBJ_DIR)/src/Game/Game_Result.o $(RELEASE_OBJ_DIR)/src/Game/Square.o $(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Gene_Pool.o $(RELEASE_OBJ_DIR)/src/Genes/Genome.o $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Priority_Threshold_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(RELEASE_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(RELEASE_OBJ_DIR)/src/Moves/En_Passant.o $(RELEASE_OBJ_DIR)/src/Moves/Kingside_Castle.o $(RELEASE_OBJ_DIR)/src/Moves/Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Capture.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Move.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(RELEASE_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(RELEASE_OBJ_DIR)/src/Moves/Queenside_Castle.o $(RELEASE_OBJ_DIR)/src/Moves/Threat_Generator.o $(RELEASE_OBJ_DIR)/src/Moves/Threat_Iterator.o $(RELEASE_OBJ_DIR)/src/Pieces/Bishop.o $(RELEASE_OBJ_DIR)/src/Pieces/King.o $(RELEASE_OBJ_DIR)/src/Pieces/Knight.o $(RELEASE_OBJ_DIR)/src/Pieces/Pawn.o $(RELEASE_OBJ_DIR)/src/Pieces/Piece.o $(RELEASE_OBJ_DIR)/src/Pieces/Queen.o $(RELEASE_OBJ_DIR)/src/Pieces/Rook.o $(RELEASE_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o $(RELEASE_OBJ_DIR)/src/Players/Claude_Shannon_AI.o $(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o $(RELEASE_OBJ_DIR)/src/Players/Outside_Player.o $(RELEASE_OBJ_DIR)/src/Players/Player.o $(RELEASE_OBJ_DIR)/src/Players/Random_AI.o $(RELEASE_OBJ_DIR)/src/Players/UCI_Mediator.o $(RELEASE_OBJ_DIR)/src/Stalemate_Search.o $(RELEASE_OBJ_DIR)/src/Testing.o $(RELEASE_OBJ_DIR)/src/Utility.o
 CFLAGS_RELEASE = -s -Ofast -DNDEBUG
 LDFLAGS_RELEASE = -flto -fuse-linker-plugin
 
 
-OUT_DEBUG = bin/debug/genetic_chess
+DEBUG_BIN_DIR = bin/debug
+OUT_DEBUG = $(DEBUG_BIN_DIR)/genetic_chess
 DEBUG_OBJ_DIR = obj/debug
 OBJ_DEBUG = $(DEBUG_OBJ_DIR)/main.o $(DEBUG_OBJ_DIR)/src/Exceptions/Game_Ending_Exception.o $(DEBUG_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o $(DEBUG_OBJ_DIR)/src/Game/Board.o $(DEBUG_OBJ_DIR)/src/Game/Clock.o $(DEBUG_OBJ_DIR)/src/Game/Color.o $(DEBUG_OBJ_DIR)/src/Game/Game.o $(DEBUG_OBJ_DIR)/src/Game/Game_Result.o $(DEBUG_OBJ_DIR)/src/Game/Square.o $(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o $(DEBUG_OBJ_DIR)/src/Genes/Genome.o $(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Priority_Threshold_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(DEBUG_OBJ_DIR)/src/Moves/En_Passant.o $(DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o $(DEBUG_OBJ_DIR)/src/Moves/Move.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Move.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(DEBUG_OBJ_DIR)/src/Moves/Queenside_Castle.o $(DEBUG_OBJ_DIR)/src/Moves/Threat_Generator.o $(DEBUG_OBJ_DIR)/src/Moves/Threat_Iterator.o $(DEBUG_OBJ_DIR)/src/Pieces/Bishop.o $(DEBUG_OBJ_DIR)/src/Pieces/King.o $(DEBUG_OBJ_DIR)/src/Pieces/Knight.o $(DEBUG_OBJ_DIR)/src/Pieces/Pawn.o $(DEBUG_OBJ_DIR)/src/Pieces/Piece.o $(DEBUG_OBJ_DIR)/src/Pieces/Queen.o $(DEBUG_OBJ_DIR)/src/Pieces/Rook.o $(DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o $(DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o $(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o $(DEBUG_OBJ_DIR)/src/Players/Outside_Player.o $(DEBUG_OBJ_DIR)/src/Players/Player.o $(DEBUG_OBJ_DIR)/src/Players/Random_AI.o $(DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o $(DEBUG_OBJ_DIR)/src/Stalemate_Search.o $(DEBUG_OBJ_DIR)/src/Testing.o $(DEBUG_OBJ_DIR)/src/Utility.o
 CFLAGS_DEBUG = -g -DDEBUG
 LDFLAGS_DEBUG = 
 
 
-OUT_OPTIMIZED_DEBUG = bin/optimized_debug/genetic_chess
+OPTIMIZED_DEBUG_BIN_DIR = bin/optimized_debug
+OUT_OPTIMIZED_DEBUG = $(OPTIMIZED_DEBUG_BIN_DIR)/genetic_chess
 OPTIMIZED_DEBUG_OBJ_DIR = obj/optimized_debug
 OBJ_OPTIMIZED_DEBUG = $(OPTIMIZED_DEBUG_OBJ_DIR)/main.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Game_Ending_Exception.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Illegal_Move_Exception.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Board.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Clock.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Color.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game_Result.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Square.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Gene_Pool.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Genome.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Priority_Threshold_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/En_Passant.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Move.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Move.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Queenside_Castle.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Threat_Generator.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Threat_Iterator.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Bishop.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/King.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Knight.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Pawn.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Piece.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Queen.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Rook.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Claude_Shannon_AI.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Human_Player.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Outside_Player.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Player.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Random_AI.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/UCI_Mediator.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Stalemate_Search.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Testing.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Utility.o
 CFLAGS_OPTIMIZED_DEBUG = -Ofast -DDEBUG
@@ -29,49 +32,49 @@ all : release debug optimized_debug
 
 
 before_debug : 
-	test -d bin/debug || mkdir -p bin/debug
-	test -d $(DEBUG_OBJ_DIR) || mkdir -p $(DEBUG_OBJ_DIR)
-	test -d $(DEBUG_OBJ_DIR)/src || mkdir -p $(DEBUG_OBJ_DIR)/src
-	test -d $(DEBUG_OBJ_DIR)/src/Genes || mkdir -p $(DEBUG_OBJ_DIR)/src/Genes
-	test -d $(DEBUG_OBJ_DIR)/src/Exceptions || mkdir -p $(DEBUG_OBJ_DIR)/src/Exceptions
-	test -d $(DEBUG_OBJ_DIR)/src/Game || mkdir -p $(DEBUG_OBJ_DIR)/src/Game
-	test -d $(DEBUG_OBJ_DIR)/src/Moves || mkdir -p $(DEBUG_OBJ_DIR)/src/Moves
-	test -d $(DEBUG_OBJ_DIR)/src/Players || mkdir -p $(DEBUG_OBJ_DIR)/src/Players
-	test -d $(DEBUG_OBJ_DIR)/src/Pieces || mkdir -p $(DEBUG_OBJ_DIR)/src/Pieces
+	mkdir -p $(DEBUG_BIN_DIR)
+	mkdir -p $(DEBUG_OBJ_DIR)
+	mkdir -p $(DEBUG_OBJ_DIR)/src
+	mkdir -p $(DEBUG_OBJ_DIR)/src/Genes
+	mkdir -p $(DEBUG_OBJ_DIR)/src/Exceptions
+	mkdir -p $(DEBUG_OBJ_DIR)/src/Game
+	mkdir -p $(DEBUG_OBJ_DIR)/src/Moves
+	mkdir -p $(DEBUG_OBJ_DIR)/src/Players
+	mkdir -p $(DEBUG_OBJ_DIR)/src/Pieces
 
 before_optimized_debug : 
-	test -d bin/optimized_debug || mkdir -p bin/optimized_debug
-	test -d $(OPTIMIZED_DEBUG_OBJ_DIR) || mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)
-	test -d $(OPTIMIZED_DEBUG_OBJ_DIR)/src || mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src
-	test -d $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes || mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes
-	test -d $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions || mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions
-	test -d $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game || mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game
-	test -d $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves || mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves
-	test -d $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players || mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players
-	test -d $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces || mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces
+	mkdir -p $(OPTIMIZED_DEBUG_BIN_DIR)
+	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)
+	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src
+	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes
+	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions
+	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game
+	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves
+	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players
+	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces
 
 before_release : 
-	test -d bin/release || mkdir -p bin/release
-	test -d $(RELEASE_OBJ_DIR) || mkdir -p $(RELEASE_OBJ_DIR)
-	test -d $(RELEASE_OBJ_DIR)/src || mkdir -p $(RELEASE_OBJ_DIR)/src
-	test -d $(RELEASE_OBJ_DIR)/src/Genes || mkdir -p $(RELEASE_OBJ_DIR)/src/Genes
-	test -d $(RELEASE_OBJ_DIR)/src/Exceptions || mkdir -p $(RELEASE_OBJ_DIR)/src/Exceptions
-	test -d $(RELEASE_OBJ_DIR)/src/Game || mkdir -p $(RELEASE_OBJ_DIR)/src/Game
-	test -d $(RELEASE_OBJ_DIR)/src/Moves || mkdir -p $(RELEASE_OBJ_DIR)/src/Moves
-	test -d $(RELEASE_OBJ_DIR)/src/Players || mkdir -p $(RELEASE_OBJ_DIR)/src/Players
-	test -d $(RELEASE_OBJ_DIR)/src/Pieces || mkdir -p $(RELEASE_OBJ_DIR)/src/Pieces
+	mkdir -p $(RELEASE_BIN_DIR)
+	mkdir -p $(RELEASE_OBJ_DIR)
+	mkdir -p $(RELEASE_OBJ_DIR)/src
+	mkdir -p $(RELEASE_OBJ_DIR)/src/Genes
+	mkdir -p $(RELEASE_OBJ_DIR)/src/Exceptions
+	mkdir -p $(RELEASE_OBJ_DIR)/src/Game
+	mkdir -p $(RELEASE_OBJ_DIR)/src/Moves
+	mkdir -p $(RELEASE_OBJ_DIR)/src/Players
+	mkdir -p $(RELEASE_OBJ_DIR)/src/Pieces
 
 clean : clean_release clean_debug clean_optimized_debug
 
 
 clean_debug : 
-	rm -rf $(DEBUG_OBJ_DIR) $(OUT_DEBUG)
+	rm -rf $(DEBUG_OBJ_DIR) $(DEBUG_BIN_DIR)
 
 clean_optimized_debug : 
-	rm -rf $(OPTIMIZED_DEBUG_OBJ_DIR) $(OUT_OPTIMIZED_DEBUG)
+	rm -rf $(OPTIMIZED_DEBUG_OBJ_DIR) $(OPTIMIZED_DEBUG_BIN_DIR)
 
 clean_release : 
-	rm -rf $(RELEASE_OBJ_DIR) $(OUT_RELEASE)
+	rm -rf $(RELEASE_OBJ_DIR) $(RELEASE_BIN_DIR)
 
 debug : before_debug $(OUT_DEBUG)
 
