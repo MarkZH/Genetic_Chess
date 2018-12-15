@@ -45,7 +45,7 @@ def make_sort(a, b):
 
 
 program_name = 'genetic_chess'
-final_targets = ["release", "debug", "optimized_debug"]
+final_targets = ["release", "debug"]
 depends = dict()
 depends['all'] = final_targets
 depends['clean'] = []
@@ -96,7 +96,6 @@ elif sys.argv[1] == 'gcc':
     compiler = 'g++'
     options_list['debug'] = ["-g", "-DDEBUG"]
     options_list['release'] = ["-s", "-Ofast", "-DNDEBUG"]
-    options_list['optimized_debug'] = ["-Ofast", "-DDEBUG"]
 
     base_options = [
             "-Wnon-virtual-dtor", 
@@ -121,12 +120,10 @@ elif sys.argv[1] == 'gcc':
 
     linker_options['debug'] = []
     linker_options['release'] = ['-flto', '-fuse-linker-plugin']
-    linker_options['optimized_debug'] = ['-flto', '-fuse-linker-plugin']
 elif sys.argv[1] == 'clang':
     compiler = 'clang++'
     options_list['debug'] = ["-g", "-Og", "-DDEBUG", "-fsanitize=undefined", "-fsanitize=integer"]
     options_list['release'] = ["-Ofast", "-DNDEBUG"]
-    options_list['optimized_debug'] = ["-Ofast", "-DDEBUG"]
 
     base_options = [
             "-std=c++14",
@@ -156,7 +153,6 @@ elif sys.argv[1] == 'clang':
 
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     linker_options['release'] = ['-flto']
-    linker_options['optimized_debug'] = ['-flto']
 else:
     print('Uknown compiler: ' + sys.argv[1])
     sys.exit(1)

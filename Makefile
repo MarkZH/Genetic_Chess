@@ -20,15 +20,7 @@ CFLAGS_DEBUG = -g -DDEBUG
 LDFLAGS_DEBUG = 
 
 
-OPTIMIZED_DEBUG_BIN_DIR = bin/optimized_debug
-OUT_OPTIMIZED_DEBUG = $(OPTIMIZED_DEBUG_BIN_DIR)/genetic_chess
-OPTIMIZED_DEBUG_OBJ_DIR = obj/optimized_debug
-OBJ_OPTIMIZED_DEBUG = $(OPTIMIZED_DEBUG_OBJ_DIR)/main.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Breeding/Gene_Pool.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Game_Ended.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Illegal_Move.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Board.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Clock.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Color.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game_Result.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Square.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Genome.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Pawn_Islands_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Priority_Threshold_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Stacked_Pawns_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/En_Passant.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Move.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Move.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Queenside_Castle.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Threat_Generator.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Threat_Iterator.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Bishop.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/King.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Knight.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Pawn.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Piece.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Queen.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Rook.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Human_Player.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Minimax_AI.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Outside_Player.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Player.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Random_AI.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Testing.o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Utility.o
-CFLAGS_OPTIMIZED_DEBUG = -Ofast -DDEBUG
-LDFLAGS_OPTIMIZED_DEBUG = -flto -fuse-linker-plugin
-
-
-all : release debug optimized_debug
+all : release debug
 
 
 before_debug : 
@@ -43,18 +35,6 @@ before_debug :
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Players
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Pieces
 
-before_optimized_debug : 
-	mkdir -p $(OPTIMIZED_DEBUG_BIN_DIR)
-	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)
-	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src
-	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Breeding
-	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes
-	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions
-	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game
-	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves
-	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players
-	mkdir -p $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces
-
 before_release : 
 	mkdir -p $(RELEASE_BIN_DIR)
 	mkdir -p $(RELEASE_OBJ_DIR)
@@ -67,22 +47,16 @@ before_release :
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Players
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Pieces
 
-clean : clean_release clean_debug clean_optimized_debug
+clean : clean_release clean_debug
 
 
 clean_debug : 
 	rm -rf $(DEBUG_OBJ_DIR) $(DEBUG_BIN_DIR)
 
-clean_optimized_debug : 
-	rm -rf $(OPTIMIZED_DEBUG_OBJ_DIR) $(OPTIMIZED_DEBUG_BIN_DIR)
-
 clean_release : 
 	rm -rf $(RELEASE_OBJ_DIR) $(RELEASE_BIN_DIR)
 
 debug : before_debug $(OUT_DEBUG)
-
-
-optimized_debug : before_optimized_debug $(OUT_OPTIMIZED_DEBUG)
 
 
 release : before_release $(OUT_RELEASE)
@@ -256,179 +230,8 @@ $(DEBUG_OBJ_DIR)/src/Testing.o : src/Testing.cpp include/Exceptions/Illegal_Move
 $(DEBUG_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Utility.cpp -o $(DEBUG_OBJ_DIR)/src/Utility.o
 
-$(OPTIMIZED_DEBUG_OBJ_DIR)/main.o : main.cpp include/Breeding/Gene_Pool.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Minimax_AI.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Testing.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c main.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/main.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Breeding/Gene_Pool.o : src/Breeding/Gene_Pool.cpp include/Breeding/Gene_Pool.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Breeding/Gene_Pool.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Breeding/Gene_Pool.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Game_Ended.o : src/Exceptions/Game_Ended.cpp include/Exceptions/Game_Ended.h include/Game/Color.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Exceptions/Game_Ended.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Game_Ended.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Illegal_Move.o : src/Exceptions/Illegal_Move.cpp include/Exceptions/Illegal_Move.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Exceptions/Illegal_Move.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Illegal_Move.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o : src/Exceptions/Promotion_Piece_Needed.cpp include/Exceptions/Promotion_Piece_Needed.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Exceptions/Promotion_Piece_Needed.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Board.o : src/Game/Board.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h include/Pieces/Bishop.h include/Pieces/King.h include/Pieces/Knight.h include/Pieces/Pawn.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Pieces/Queen.h include/Pieces/Rook.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Game/Board.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Board.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Clock.o : src/Game/Clock.cpp include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Game/Clock.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Clock.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Color.o : src/Game/Color.cpp include/Game/Color.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Game/Color.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Color.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game.o : src/Game/Game.cpp include/Exceptions/Game_Ended.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Game/Game.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Game/Color.h include/Game/Game_Result.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Game/Game_Result.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Game_Result.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Square.o : src/Game/Square.cpp include/Game/Square.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Game/Square.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Game/Square.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Castling_Possible_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o : src/Genes/Freedom_To_Move_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Freedom_To_Move_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Freedom_To_Move_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Gene.o : src/Genes/Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Genome.o : src/Genes/Genome.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Castling_Possible_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Gene.h include/Genes/Genome.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Look_Ahead_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Passed_Pawn_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Pawn_Islands_Gene.h include/Genes/Piece_Strength_Gene.h include/Genes/Priority_Threshold_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Stacked_Pawns_Gene.h include/Genes/Total_Force_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Genome.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Genome.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Confinement_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/King_Confinement_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o : src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Protection_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/King_Protection_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : src/Genes/Look_Ahead_Gene.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Look_Ahead_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Look_Ahead_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o : src/Genes/Opponent_Pieces_Targeted_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Piece_Strength_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Opponent_Pieces_Targeted_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Opponent_Pieces_Targeted_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o : src/Genes/Passed_Pawn_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Passed_Pawn_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Passed_Pawn_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Passed_Pawn_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o : src/Genes/Pawn_Advancement_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Pawn_Advancement_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Pawn_Advancement_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Pawn_Advancement_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Pawn_Islands_Gene.o : src/Genes/Pawn_Islands_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Pawn_Islands_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Pawn_Islands_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Pawn_Islands_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o : src/Genes/Piece_Strength_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Piece_Strength_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Piece_Strength_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Piece_Strength_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Priority_Threshold_Gene.o : src/Genes/Priority_Threshold_Gene.cpp include/Genes/Gene.h include/Genes/Priority_Threshold_Gene.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Priority_Threshold_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Priority_Threshold_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o : src/Genes/Sphere_of_Influence_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Sphere_of_Influence_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Sphere_of_Influence_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Stacked_Pawns_Gene.o : src/Genes/Stacked_Pawns_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Stacked_Pawns_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Stacked_Pawns_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Stacked_Pawns_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o : src/Genes/Total_Force_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Piece_Strength_Gene.h include/Genes/Total_Force_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Genes/Total_Force_Gene.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Genes/Total_Force_Gene.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/En_Passant.o : src/Moves/En_Passant.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/En_Passant.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/En_Passant.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o : src/Moves/Kingside_Castle.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Kingside_Castle.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Kingside_Castle.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Move.o : src/Moves/Move.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Move.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Move.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o : src/Moves/Pawn_Capture.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Pawn_Capture.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Capture.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o : src/Moves/Pawn_Double_Move.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Pawn_Double_Move.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Double_Move.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Move.o : src/Moves/Pawn_Move.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Pawn_Move.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Move.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o : src/Moves/Pawn_Promotion.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Pawn_Promotion.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o : src/Moves/Pawn_Promotion_by_Capture.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Pawn_Promotion_by_Capture.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Pawn_Promotion_by_Capture.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Queenside_Castle.o : src/Moves/Queenside_Castle.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Queenside_Castle.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Queenside_Castle.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Threat_Generator.o : src/Moves/Threat_Generator.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Moves/Threat_Generator.h include/Moves/Threat_Iterator.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Threat_Generator.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Threat_Generator.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Threat_Iterator.o : src/Moves/Threat_Iterator.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Moves/Threat_Iterator.h include/Pieces/Knight.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Moves/Threat_Iterator.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Moves/Threat_Iterator.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Bishop.o : src/Pieces/Bishop.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Bishop.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Pieces/Bishop.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Bishop.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/King.o : src/Pieces/King.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/King.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Pieces/King.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/King.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Knight.o : src/Pieces/Knight.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Knight.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Pieces/Knight.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Knight.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Pawn.o : src/Pieces/Pawn.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Moves/Queenside_Castle.h include/Pieces/Bishop.h include/Pieces/Knight.h include/Pieces/Pawn.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Pieces/Queen.h include/Pieces/Rook.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Pieces/Pawn.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Pawn.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Piece.o : src/Pieces/Piece.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Pieces/Piece.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Piece.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Queen.o : src/Pieces/Queen.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Pieces/Queen.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Pieces/Queen.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Queen.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Rook.o : src/Pieces/Rook.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece.h include/Pieces/Piece_Types.h include/Pieces/Rook.h include/Players/Player.h include/Players/Thinking.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Pieces/Rook.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Pieces/Rook.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o : src/Players/Alan_Turing_AI.cpp include/Players/Alan_Turing_AI.h include/Players/Player.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Players/Alan_Turing_AI.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Alan_Turing_AI.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : src/Players/CECP_Mediator.cpp include/Exceptions/Game_Ended.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Players/CECP_Mediator.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : src/Players/Game_Tree_Node_Result.cpp include/Game/Color.h include/Players/Game_Tree_Node_Result.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Players/Game_Tree_Node_Result.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Players/Genetic_AI.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Human_Player.o : src/Players/Human_Player.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Human_Player.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Players/Human_Player.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Human_Player.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Minimax_AI.o : src/Players/Minimax_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Game_Tree_Node_Result.h include/Players/Minimax_AI.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Players/Minimax_AI.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Minimax_AI.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Outside_Player.o : src/Players/Outside_Player.cpp include/Exceptions/Game_Ended.h include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Players/Outside_Player.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Outside_Player.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Player.o : src/Players/Player.cpp include/Players/Player.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Players/Player.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Player.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Random_AI.o : src/Players/Random_AI.cpp include/Game/Board.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Players/Random_AI.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Players/Random_AI.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Testing.o : src/Testing.cpp include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Square.h include/Genes/Castling_Possible_Gene.h include/Genes/Freedom_To_Move_Gene.h include/Genes/Gene.h include/Genes/Genome.h include/Genes/King_Confinement_Gene.h include/Genes/King_Protection_Gene.h include/Genes/Opponent_Pieces_Targeted_Gene.h include/Genes/Passed_Pawn_Gene.h include/Genes/Pawn_Advancement_Gene.h include/Genes/Pawn_Islands_Gene.h include/Genes/Piece_Strength_Gene.h include/Genes/Sphere_of_Influence_Gene.h include/Genes/Stacked_Pawns_Gene.h include/Genes/Total_Force_Gene.h include/Moves/En_Passant.h include/Moves/Kingside_Castle.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Queenside_Castle.h include/Pieces/Piece_Types.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Players/Thinking.h include/Testing.h include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Testing.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Testing.o
-
-$(OPTIMIZED_DEBUG_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
-	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_OPTIMIZED_DEBUG) $(LDFLAGS_OPTIMIZED_DEBUG) -c src/Utility.cpp -o $(OPTIMIZED_DEBUG_OBJ_DIR)/src/Utility.o
-
 $(OUT_DEBUG) : $(OBJ_DEBUG)
 	$(LD) -o $(OUT_DEBUG) $(OBJ_DEBUG) $(LDFLAGS) $(LDFLAGS_DEBUG) $(CFLAGS) $(CFLAGS_DEBUG)
-
-$(OUT_OPTIMIZED_DEBUG) : $(OBJ_OPTIMIZED_DEBUG)
-	$(LD) -o $(OUT_OPTIMIZED_DEBUG) $(OBJ_OPTIMIZED_DEBUG) $(LDFLAGS) $(LDFLAGS_OPTIMIZED_DEBUG) $(CFLAGS) $(CFLAGS_OPTIMIZED_DEBUG)
 
 $(OUT_RELEASE) : $(OBJ_RELEASE)
 	$(LD) -o $(OUT_RELEASE) $(OBJ_RELEASE) $(LDFLAGS) $(LDFLAGS_RELEASE) $(CFLAGS) $(CFLAGS_RELEASE)
@@ -601,6 +404,6 @@ $(RELEASE_OBJ_DIR)/src/Testing.o : src/Testing.cpp include/Exceptions/Illegal_Mo
 $(RELEASE_OBJ_DIR)/src/Utility.o : src/Utility.cpp include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Utility.cpp -o $(RELEASE_OBJ_DIR)/src/Utility.o
 
-.PHONY : all before_debug before_optimized_debug before_release clean clean_debug clean_optimized_debug clean_release debug optimized_debug release
+.PHONY : all before_debug before_release clean clean_debug clean_release debug release
 
 
