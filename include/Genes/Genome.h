@@ -35,8 +35,8 @@ class Genome
         std::vector<std::unique_ptr<Gene>> genome;
 
         // Regulatory gene locations
-        size_t piece_strength_gene_index;
-        size_t look_ahead_gene_index;
+        static size_t piece_strength_gene_index;
+        static size_t look_ahead_gene_index;
 
         double score_board(const Board& board,
                            const Board& opposite_board,

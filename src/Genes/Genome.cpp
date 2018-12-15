@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 #include "Genes/Genome.h"
 
@@ -23,16 +24,38 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 
+size_t Genome::piece_strength_gene_index = -1;
+size_t Genome::look_ahead_gene_index = -1;
 
 // Creation ex nihilo
 Genome::Genome()
 {
     // Regulator genes
     genome.emplace_back(std::make_unique<Piece_Strength_Gene>());
-    piece_strength_gene_index = genome.size() - 1;
+    if(piece_strength_gene_index < genome.size())
+    {
+        if(piece_strength_gene_index != genome.size() - 1)
+        {
+            throw std::logic_error("Different genomes have different piece strength index values.");
+        }
+    }
+    else
+    {
+        piece_strength_gene_index = genome.size() - 1;
+    }
 
     genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
-    look_ahead_gene_index = genome.size() - 1;
+    if(look_ahead_gene_index < genome.size())
+    {
+        if(look_ahead_gene_index != genome.size() - 1)
+        {
+            throw std::logic_error("Different genomes have different look ahead index values.");
+        }
+    }
+    else
+    {
+        look_ahead_gene_index = genome.size() - 1;
+    }
 
     // Normal genes
     auto psg = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
@@ -51,10 +74,7 @@ Genome::Genome()
 }
 
 // Cloning
-Genome::Genome(const Genome& other) :
-    genome(),
-    piece_strength_gene_index(other.piece_strength_gene_index),
-    look_ahead_gene_index(other.look_ahead_gene_index)
+Genome::Genome(const Genome& other)
 {
     for(const auto& gene : other.genome)
     {
@@ -81,9 +101,6 @@ Genome& Genome::operator=(const Genome& other)
         return *this;
     }
 
-    piece_strength_gene_index = other.piece_strength_gene_index;
-    look_ahead_gene_index = other.look_ahead_gene_index;
-
     genome.clear();
     for(const auto& gene : other.genome)
     {
@@ -96,9 +113,7 @@ Genome& Genome::operator=(const Genome& other)
 }
 
 // Sexual reproduction
-Genome::Genome(const Genome& A, const Genome& B) :
-    piece_strength_gene_index(A.piece_strength_gene_index),
-    look_ahead_gene_index(A.look_ahead_gene_index)
+Genome::Genome(const Genome& A, const Genome& B)
 {
     for(size_t i = 0; i < A.genome.size(); ++i)
     {
