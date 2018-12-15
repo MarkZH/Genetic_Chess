@@ -33,7 +33,9 @@ bool Move::is_legal(const Board& board) const
     assert(Board::inside_board(ending_file, ending_rank));
 
     // Piece-move compatibility
+#ifndef NDEBUG
     auto moving_piece = board.piece_on_square(starting_file, starting_rank);
+#endif
     assert(moving_piece);
     assert(moving_piece->color() == board.whose_turn());
     assert(moving_piece->can_move(this));
@@ -42,7 +44,7 @@ bool Move::is_legal(const Board& board) const
     if(attacked_piece)
     {
         // Cannot capture piece of same color
-        if(moving_piece->color() == attacked_piece->color())
+        if(board.whose_turn() == attacked_piece->color())
         {
             return false;
         }
