@@ -1,4 +1,5 @@
 ID: 265332
+Ancestry: /
 Name: Piece Strength Gene
 B: 33.37
 K: -37.2072
