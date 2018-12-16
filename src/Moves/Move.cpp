@@ -174,17 +174,12 @@ std::string Move::game_record_ending_item(Board board) const
     auto result = board.submit_move(*this);
     std::string appendage;
 
-    if(board.king_is_in_check())
+    if(board.king_is_in_check() && ! result.game_has_ended())
     {
         appendage.push_back('+');
     }
 
-    if(result.game_has_ended())
-    {
-        appendage += result.game_record_annotation();
-    }
-
-    return appendage.substr(String::starts_with(appendage, "+#") ? 1 : 0);
+    return appendage + result.game_record_annotation();
 }
 
 std::string Move::coordinate_move() const
