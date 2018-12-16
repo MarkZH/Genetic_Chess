@@ -12,8 +12,8 @@
 
 namespace String
 {
-    std::vector<std::string> split(const std::string& s,
-                                   const std::string& delim = "",
+    std::vector<std::string> split(std::string s,
+                                   std::string delim = "",
                                    size_t count = std::string::npos);
 
     template<class T>

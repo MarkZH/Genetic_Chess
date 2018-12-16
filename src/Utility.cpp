@@ -18,17 +18,21 @@ namespace String
     }
 }
 
-std::vector<std::string> String::split(const std::string& s, const std::string& delim, size_t count)
+std::vector<std::string> String::split(std::string s, std::string delim, size_t count)
 {
+    if(delim.empty())
+    {
+        s = remove_extra_whitespace(s);
+        delim = " ";
+    }
+
     std::vector<std::string> result;
     size_t start_index = 0;
     size_t end_index = 0;
     size_t split_count = 0;
     while(end_index < s.size() && split_count < count)
     {
-        end_index = (delim.empty() ?
-                     s.find_first_of(whitespace, start_index) :
-                     s.find(delim, start_index));
+        end_index = s.find(delim, start_index);
         result.push_back(s.substr(start_index, end_index-start_index));
         if(end_index == std::string::npos)
         {
@@ -36,7 +40,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
         }
         else
         {
-            start_index = end_index + (delim.empty() ? 1 : delim.size());
+            start_index = end_index + delim.size();
         }
         ++split_count;
     }
@@ -44,23 +48,6 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     if(start_index < s.size())
     {
         result.push_back(s.substr(start_index));
-    }
-
-    if(delim.empty())
-    {
-        auto it = result.begin();
-        while(it != result.end())
-        {
-            if((*it).empty())
-            {
-                it = result.erase(it);
-            }
-            else
-            {
-                (*it) = String::trim_outer_whitespace(*it);
-                ++it;
-            }
-        }
     }
 
     return result;
@@ -99,7 +86,7 @@ std::string String::consolidate_inner_whitespace(const std::string& s)
 
     std::string result;
 
-    while(true)
+    while(start != std::string::npos)
     {
         auto end = s.find_first_of(whitespace, start);
 
@@ -110,11 +97,6 @@ std::string String::consolidate_inner_whitespace(const std::string& s)
         }
         result += s.substr(start, end - start);
         start = s.find_first_not_of(whitespace, end);
-        if(start == std::string::npos)
-        {
-            start = end; // only whitespace left
-            break;
-        }
     }
 
     return initial_whitespace + result + final_whitespace;
@@ -153,7 +135,7 @@ std::string String::strip_block_comment(const std::string& str, char start, char
     auto end_comment_index = str.find(end);
     if(start_comment_index == std::string::npos || end_comment_index == std::string::npos)
     {
-        return consolidate_inner_whitespace(trim_outer_whitespace(str));
+        return remove_extra_whitespace(str);
     }
 
     auto first_part = str.substr(0, start_comment_index);
