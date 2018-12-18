@@ -16,8 +16,7 @@
 
 King_Confinement_Gene::King_Confinement_Gene() :
     friendly_block_score(0.0),
-    enemy_block_score(0.0),
-    maximum_distance(1)
+    enemy_block_score(0.0)
 {
 }
 
@@ -36,7 +35,6 @@ void King_Confinement_Gene::load_properties()
     Gene::load_properties();
     friendly_block_score = properties["Friendly Block Score"];
     enemy_block_score = properties["Enemy Block Score"];
-    maximum_distance = int(properties["Maximum Distance"]);
 }
 
 void King_Confinement_Gene::reset_properties() const
@@ -44,24 +42,19 @@ void King_Confinement_Gene::reset_properties() const
     Gene::reset_properties();
     properties["Friendly Block Score"] = friendly_block_score;
     properties["Enemy Block Score"] = enemy_block_score;
-    properties["Maximum Distance"] = maximum_distance;
 }
 
 void King_Confinement_Gene::gene_specific_mutation()
 {
     make_priority_minimum_zero();
     auto mutation_size = Random::random_laplace(2.0);
-    switch(Random::random_integer(1, 3))
+    switch(Random::random_integer(1, 2))
     {
         case 1:
             friendly_block_score += mutation_size;
             break;
         case 2:
             enemy_block_score += mutation_size;
-            break;
-        case 3:
-            maximum_distance += int(mutation_size);
-            maximum_distance = Math::clamp(maximum_distance, 1, 63);
             break;
         default:
             throw std::logic_error("Bad random value in King Confinement Gene");
@@ -83,9 +76,9 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     const auto& king_square = board.find_king(perspective);
     square_queue.push_back(king_square);
 
-    std::array<int, 64> distance;
-    distance.fill(-1); // never-visited value
-    distance[Board::square_index(king_square.file(), king_square.rank())] = 0;
+    std::array<int, 64> in_queue;
+    in_queue.fill(false);
+    in_queue[Board::square_index(king_square.file(), king_square.rank())] = true;
 
     auto squares_safe_for_king = opposite_board.squares_safe_for_king();
 
@@ -99,8 +92,6 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         auto square_index = Board::square_index(square.file(), square.rank());
 
         auto attacked_by_other = ! squares_safe_for_king[square_index];
-        auto dist = distance[square_index];
-
         auto piece = board.piece_on_square(square.file(), square.rank());
         bool occupied_by_same = piece &&
                                 piece->color() == perspective &&
@@ -119,8 +110,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
             ++free_space_total;
         }
 
-        auto keep_going = (square == king_square) ||
-            (! occupied_by_same && ! attacked_by_other && dist < maximum_distance);
+        auto keep_going = (square == king_square) || (! occupied_by_same && ! attacked_by_other);
 
         // Add surrounding squares to square_queue.
         // always check the squares surrounding the king's current positions, even if
@@ -136,10 +126,10 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
                 for(int new_rank = low_rank; new_rank <= high_rank; ++new_rank)
                 {
                     auto new_index = Board::square_index(new_file, new_rank);
-                    if(distance[new_index] == -1) // never checked
+                    if( ! in_queue[new_index])
                     {
                         square_queue.emplace_back(new_file, new_rank);
-                        distance[new_index] = dist + 1;
+                        in_queue[new_index] = true;
                     }
                 }
             }

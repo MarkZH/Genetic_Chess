@@ -25,7 +25,6 @@ class King_Confinement_Gene : public Gene
     private:
         double friendly_block_score;
         double enemy_block_score;
-        int maximum_distance;
 
         double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
 };

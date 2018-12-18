@@ -41,7 +41,6 @@ Priority: 6.6959
 Name: King Confinement Gene
 Enemy Block Score: -4.38386
 Friendly Block Score: 5.87968
-Maximum Distance: 1
 Priority: 32.0498
 
 Name: King Protection Gene
