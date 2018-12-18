@@ -147,6 +147,9 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                          perspective,
                                          {all_legal_moves.front()}};
 
+    // Pre-loop time to assign to each move for more accurate speed calculations
+    auto setup_time = (time_start - clock.running_time_left())/moves_left;
+
     for(const auto& move : all_legal_moves)
     {
         auto evaluate_start_time = clock.running_time_left();
@@ -242,7 +245,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if( ! recurse) // This move was scored by genome.evaluate().
         {
             ++nodes_evaluated;
-            total_evaluation_time += evaluate_start_time - clock.running_time_left();
+            total_evaluation_time += setup_time + (evaluate_start_time - clock.running_time_left());
         }
     }
 
