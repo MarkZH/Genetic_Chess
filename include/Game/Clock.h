@@ -23,6 +23,7 @@ class Clock
         double time_left(Color color) const;
         size_t moves_to_reset(Color color) const;
         Color running_for() const;
+        double running_time_left() const;
 
     private:
         using fractional_seconds = std::chrono::duration<double>;

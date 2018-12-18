@@ -15,16 +15,16 @@
 
 const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) const
 {
-    auto time_start = clock.time_left(clock.running_for());
+    auto time_start = clock.running_time_left();
     auto moves_left_in_game = size_t(Math::average_moves_left(50, 0.5, board.game_record().size()/2));
     auto moves_to_reset = clock.moves_to_reset(clock.running_for());
     auto moves_left = std::min(moves_left_in_game, moves_to_reset);
-    auto time_to_examine = clock.time_left(clock.running_for())/moves_left;
+    auto time_to_examine = clock.running_time_left()/moves_left;
 
     int move_count = 0;
     int game_count = 0;
 
-    auto time_at_last_cecp_output = clock.time_left(clock.running_for());
+    auto time_at_last_cecp_output = clock.running_time_left();
 
     auto first_move = board.game_record().end();
     if(first_move != board.game_record().begin())
@@ -38,8 +38,8 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
 
     search_tree.reroot(first_move, board.game_record().end());
 
-    auto search_time_start = clock.time_left(clock.running_for());
-    while(time_start - clock.time_left(clock.running_for()) < time_to_examine)
+    auto search_time_start = clock.running_time_left();
+    while(time_start - clock.running_time_left() < time_to_examine)
     {
         auto monte_carlo_board = board;
         Game_Result game_result;
@@ -69,7 +69,7 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
         auto end = monte_carlo_board.game_record().end();
         search_tree.add_search(begin, end, score);
 
-        auto current_time = clock.time_left(clock.running_for());
+        auto current_time = clock.running_time_left();
         if(board.thinking_mode() == CECP &&
            time_at_last_cecp_output - current_time > 0.1)
         {
@@ -85,7 +85,7 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     }
 
     auto best_result = search_tree.best_result();
-    auto current_time = clock.time_left(clock.running_for());
+    auto current_time = clock.running_time_left();
     if(board.thinking_mode() == CECP)
     {
         print_cecp_thinking(time_start - current_time,

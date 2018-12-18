@@ -20,12 +20,12 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     }
 
     nodes_searched = 0;
-    clock_start_time = clock.time_left(clock.running_for());
+    clock_start_time = clock.running_time_left();
     maximum_depth = 0;
 
     nodes_evaluated = 0;
     total_evaluation_time = 0.0;
-    time_at_last_output = clock.time_left(clock.running_for());
+    time_at_last_output = clock.running_time_left();
 
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
@@ -109,7 +109,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const Game_Tree_Node_Result& beta,
                                                    bool still_on_principal_variation) const
 {
-    const auto time_start = clock.time_left(clock.running_for());
+    const auto time_start = clock.running_time_left();
     maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
 
@@ -148,7 +148,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
     for(const auto& move : all_legal_moves)
     {
-        auto evaluate_start_time = clock.time_left(clock.running_for());
+        auto evaluate_start_time = clock.running_time_left();
         ++nodes_searched;
 
         auto next_board = board;
@@ -171,9 +171,9 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             continue;
         }
 
-        double time_left = time_to_examine - (time_start - clock.time_left(clock.running_for()));
+        double time_left = time_to_examine - (time_start - clock.running_time_left());
         double time_allotted_for_this_move = (time_left / moves_left)*speculation_time_factor(next_board);
-        time_allotted_for_this_move = std::min(time_allotted_for_this_move, clock.time_left(clock.running_for()));
+        time_allotted_for_this_move = std::min(time_allotted_for_this_move, clock.running_time_left());
 
         bool recurse;
         if(move_result.game_has_ended())
@@ -226,7 +226,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     output_thinking_cecp(alpha, clock,
                                          depth % 2 == 1 ? perspective : opposite(perspective));
-                    time_at_last_output = clock.time_left(clock.running_for());
+                    time_at_last_output = clock.running_time_left();
                 }
             }
         }
@@ -234,7 +234,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         --moves_left;
         still_on_principal_variation = false; // only the first move is part of the principal variation
 
-        if(clock.time_left(clock.running_for()) < 0)
+        if(clock.running_time_left() < 0)
         {
             break;
         }
@@ -242,7 +242,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if( ! recurse) // This move was scored by genome.evaluate().
         {
             ++nodes_evaluated;
-            total_evaluation_time += evaluate_start_time - clock.time_left(clock.running_for());
+            total_evaluation_time += evaluate_start_time - clock.running_time_left();
         }
     }
 
@@ -265,7 +265,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         score = -(10000.0 - thought.depth() + 1);
     }
 
-    auto time_so_far = clock_start_time - clock.time_left(clock.running_for());
+    auto time_so_far = clock_start_time - clock.running_time_left();
     std::cout << thought.depth() // ply
         << " "
         << int(score) // score in what should be centipawns
@@ -290,7 +290,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
 
 double Minimax_AI::time_since_last_output(const Clock& clock) const
 {
-    return time_at_last_output - clock.time_left(clock.running_for());
+    return time_at_last_output - clock.running_time_left();
 }
 
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
