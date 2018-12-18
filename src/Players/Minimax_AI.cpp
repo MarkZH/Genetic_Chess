@@ -208,7 +208,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            // Record immediate result without looking ahead further
             result = create_result(next_board, perspective, move_result, depth);
         }
 
