@@ -1394,7 +1394,7 @@ bool Board::enough_material_to_checkmate(Color color) const
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto piece = piece_on_square(file, rank);
-            if( ! piece || piece->type() == KING)
+            if( ! piece)
             {
                 continue;
             }
@@ -1404,7 +1404,13 @@ bool Board::enough_material_to_checkmate(Color color) const
                 continue;
             }
 
-            if(piece->type() == QUEEN || piece->type() == ROOK || piece->type() == PAWN)
+            auto type = piece->type();
+            if(type == KING)
+            {
+                continue;
+            }
+
+            if(type == QUEEN || type == ROOK || type == PAWN)
             {
                 return true; // checkmate possible with just queen or rook; pawn can promote
             }
@@ -1415,7 +1421,7 @@ bool Board::enough_material_to_checkmate(Color color) const
                 return true; // checkmate with a knight and any non-king piece on either side is possible
             }
 
-            if(piece->type() == KNIGHT)
+            if(type == KNIGHT)
             {
                 if(bishop_square_color_found != NONE)
                 {
