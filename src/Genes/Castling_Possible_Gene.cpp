@@ -43,8 +43,6 @@ std::string Castling_Possible_Gene::name() const
 
 double Castling_Possible_Gene::score_board(const Board& board, const Board&, size_t depth) const
 {
-    auto normalizing_factor = std::abs(kingside_preference) + std::abs(queenside_preference);
-
     // check if a castling move lies between here and the actual state of the board
     if( ! board.game_record().empty())
     {
@@ -108,6 +106,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&, siz
         }
     }
 
+    auto normalizing_factor = std::abs(kingside_preference) + std::abs(queenside_preference);
     return score/normalizing_factor;
 }
 
