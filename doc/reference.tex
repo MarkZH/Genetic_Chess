@@ -153,7 +153,7 @@ The log-normal probability distribution is given by
 \[P(x) = \frac{1}{xS\sqrt{2\pi}} e^{-\frac{1}{2}{\left(\frac{\ln{x} - M}{S}\right)}^2},\]
 where \(S\) and \(M\) are the standard deviation and mean of the logarithm of the number of moves in a game, respectively. Even though this is a continuous probability distribution, it is a good fit for the length of chess games as can be seen in the plot of the number of moves in a long gene pool run can be seen in Figure~\ref{log-norm-plot}. Instead of using the summation formula above to estimate the number of moves remaining in the game, the result can be approximated with integrals\footnote{Courtesy of Wolfram Alpha: \url{http://www.wolframalpha.com/}} to yield a closed-form expression using function available in native \cpp.
 \begin{align*}
-\sum_{i = n + 1}^\infty P(i)\times{}i &\approx \int_{n+1}^\infty P(t)tdt \\
+\sum_{i = n + 1}^\infty P(i)\times{}i &\approx \int_{n+1}^\infty P(t)t dt \\
 	&= \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty e^{-\frac{1}{2}{\left(\frac{\ln{t} - M}{S}\right)}^2}dt\\
 	&= \frac{1}{2}e^{M + S^2/2}{\left[1 + \textrm{erf}{\left(\frac{M + S^2 - \ln n}{S\sqrt{2}}\right)}\right]}
 \end{align*}
@@ -361,7 +361,7 @@ Time: 16.65 sec   Gene pool file name: pool.txt
  106554      0       0      0       0
  106555      0       0      0       0
  106556      0       0      0       0
- 
+
 Most wins:     16 by ID 96392
 Longest lived: 27 by ID 96392
 

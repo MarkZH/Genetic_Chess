@@ -121,7 +121,7 @@ bool Alan_Turing_AI::is_considerable(const Move& move, const Board& board) const
             return true;
         }
 
-        // A mvoe resulting in checkmate is considerable
+        // A move resulting in checkmate is considerable
         if(result.winner() == board.whose_turn())
         {
             return true;
@@ -196,7 +196,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto piece = board.piece_on_square(file, rank);
-            if(!piece)
+            if( ! piece)
             {
                 continue;
             }
@@ -301,11 +301,11 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     }
                     total_score -= std::sqrt(king_squares);
 
-                    // Castline score
+                    // Castling score
                     if(!board.piece_has_moved(file, rank))
                     {
                         // Queenside castling
-                        if(!board.piece_has_moved('a', rank))
+                        if( ! board.piece_has_moved('a', rank))
                         {
                             total_score += 1.0;
 

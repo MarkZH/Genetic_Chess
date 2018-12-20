@@ -147,10 +147,7 @@ void Piece::add_legal_move(std::unique_ptr<Move> move)
 
 void Piece::add_pawn_moves()
 {
-    // Ranks where pawns can exist
     auto base_rank = (color() == WHITE ? 2 : 7);
-
-    // Pawns cannot make a normal move from this rank without promoting
     auto no_normal_move_rank = (color() == WHITE ? 7 : 2);
     auto direction = (color() == WHITE ? 1 : -1);
     for(char file = 'a'; file <= 'h'; ++file)
