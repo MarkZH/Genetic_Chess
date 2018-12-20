@@ -17,7 +17,7 @@ std::pair<double, int> Game_Tree_Node_Result::value(Color query) const
     if(std::isinf(standardized_score))
     {
         // standardized_score == +infinity means a shallower depth
-        // is better, and vice versa for -infintiy,
+        // is better, and vice versa for -infinity,
         // so make the depth the opposite sign of the score
         return {standardized_score,
                 -Math::sign(standardized_score)*int(depth())};

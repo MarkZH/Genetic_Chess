@@ -775,7 +775,7 @@ bool run_tests()
     auto split_line = String::split(splitting_line);
     if(split_line.size() != expected_split_line.size() || ! std::equal(split_line.begin(), split_line.end(), expected_split_line.begin()))
     {
-        std::cerr << "These lists should match from line splitting:\nExected from String::split(" << splitting_line << ")\n";
+        std::cerr << "These lists should match from line splitting:\nExpected from String::split(" << splitting_line << ")\n";
         for(const auto& thing : expected_split_line)
         {
             std::cerr << thing << ", ";

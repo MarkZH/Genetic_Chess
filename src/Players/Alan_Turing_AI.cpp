@@ -370,7 +370,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     }
                 }
             }
-            else // piece->color() == opposite(perpsective)
+            else // piece->color() == opposite(perspective)
             {
                 if(piece->type() == KING)
                 {

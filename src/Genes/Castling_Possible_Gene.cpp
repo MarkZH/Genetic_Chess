@@ -51,7 +51,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&, siz
 
         if(castling_index <= last_move_index) // castling has occurred in the past of this board
         {
-            if(castling_index + depth > last_move_index) // castling has not occured on the actual board
+            if(castling_index + depth > last_move_index) // castling has not occurred on the actual board
             {
                 return Math::sign(board.game_record()[castling_index]->file_change() > 0 ?
                                   kingside_preference : queenside_preference);
