@@ -48,7 +48,7 @@ std::string Game_Result::game_record_annotation() const
 {
     if(game_has_ended())
     {
-        std::string prefix = "\t";
+        std::string prefix = " ";
         if(String::ends_with(cause, "mates"))
         {
             prefix =  "#" + prefix;
