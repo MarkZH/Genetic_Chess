@@ -50,6 +50,13 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         return *legal_moves.front(); // If there's only one legal move, take it.
     }
 
+    // No useful principal variation if it doesn't include the next possible move
+    // or if the opponent did not make the predicted next move.
+    if(principal_variation.size() < 2 || principal_variation[1] != board.game_record().back())
+    {
+        principal_variation.clear();
+    }
+
     auto time_to_use = time_to_examine(board, clock);
 
     // alpha = highest score found that opponent will allow
