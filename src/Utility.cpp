@@ -63,40 +63,6 @@ bool String::ends_with(const std::string& s, const std::string& ending)
     return (ending.size() <= s.size()) && std::equal(ending.rbegin(), ending.rend(), s.rbegin());
 }
 
-std::string String::consolidate_inner_whitespace(const std::string& s)
-{
-    if(s.empty())
-    {
-        return s;
-    }
-    size_t start = s.find_first_not_of(whitespace);
-    auto initial_whitespace = s.substr(0, start);
-
-    size_t last_non_whitespace = s.find_last_not_of(whitespace);
-    std::string final_whitespace;
-    if(last_non_whitespace != std::string::npos)
-    {
-        final_whitespace = s.substr(last_non_whitespace + 1);
-    }
-
-    std::string result;
-
-    while(start != std::string::npos)
-    {
-        auto end = s.find_first_of(whitespace, start);
-
-        // [start, end) is all non-whitespace
-        if( ! result.empty())
-        {
-            result += " ";
-        }
-        result += s.substr(start, end - start);
-        start = s.find_first_not_of(whitespace, end);
-    }
-
-    return initial_whitespace + result + final_whitespace;
-}
-
 std::string String::trim_outer_whitespace(const std::string& s)
 {
     auto text_start = s.find_first_not_of(whitespace);
@@ -111,7 +77,27 @@ std::string String::trim_outer_whitespace(const std::string& s)
 
 std::string String::remove_extra_whitespace(const std::string& s)
 {
-    return trim_outer_whitespace(consolidate_inner_whitespace(s));
+    auto inside_word = false;
+    std::string result;
+
+    for(auto c : s)
+    {
+        if(contains(whitespace, c))
+        {
+            inside_word = false;
+        }
+        else
+        {
+            if( ! inside_word && ! result.empty())
+            {
+                result.push_back(' ');
+            }
+            inside_word = true;
+            result.push_back(c);
+        }
+    }
+
+    return result;
 }
 
 std::string String::strip_comments(const std::string& str, char comment)

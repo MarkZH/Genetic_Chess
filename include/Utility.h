@@ -26,7 +26,6 @@ namespace String
     bool ends_with(const std::string& s, const std::string& ending);
 
     std::string trim_outer_whitespace(const std::string& s);
-    std::string consolidate_inner_whitespace(const std::string& s);
     std::string remove_extra_whitespace(const std::string& s);
 
     std::string strip_comments(const std::string& str, char comment);
