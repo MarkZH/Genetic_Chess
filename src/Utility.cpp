@@ -102,15 +102,10 @@ std::string String::trim_outer_whitespace(const std::string& s)
     auto text_start = s.find_first_not_of(whitespace);
     if(text_start == std::string::npos)
     {
-        return std::string{};
+        return {};
     }
 
     auto text_end = s.find_last_not_of(whitespace);
-    if(text_end == std::string::npos)
-    {
-        return s.substr(text_start);
-    }
-
     return s.substr(text_start, text_end - text_start + 1);
 }
 
