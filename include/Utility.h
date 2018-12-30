@@ -23,7 +23,6 @@ namespace String
     }
 
     bool starts_with(const std::string& s, const std::string& beginning);
-    bool starts_with(const std::string& s, char beginning);
     bool ends_with(const std::string& s, const std::string& ending);
 
     std::string trim_outer_whitespace(const std::string& s);

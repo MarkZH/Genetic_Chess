@@ -58,11 +58,6 @@ bool String::starts_with(const std::string& s, const std::string& beginning)
     return (beginning.size() <= s.size()) && std::equal(beginning.begin(), beginning.end(), s.begin());
 }
 
-bool String::starts_with(const std::string& s, char beginning)
-{
-    return ( ! s.empty()) && s[0] == beginning;
-}
-
 bool String::ends_with(const std::string& s, const std::string& ending)
 {
     return (ending.size() <= s.size()) && std::equal(ending.rbegin(), ending.rend(), s.rbegin());

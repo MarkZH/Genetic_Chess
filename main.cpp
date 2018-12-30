@@ -374,7 +374,7 @@ void replay_game(const std::string& file_name, int game_number)
         while(std::getline(ifs, line))
         {
             line = String::trim_outer_whitespace(line);
-            if(String::starts_with(line, '['))
+            if(String::starts_with(line, "["))
             {
                 game_headers.push_back(line);
             }
@@ -496,7 +496,7 @@ bool confirm_game_record(const std::string& file_name)
         }
 
         // Start header of new game
-        if(in_game && String::starts_with(line, '['))
+        if(in_game && String::starts_with(line, "["))
         {
             if(expect_fifty_move_draw != String::contains(result.ending_reason(), "50"))
             {
@@ -555,7 +555,7 @@ bool confirm_game_record(const std::string& file_name)
         {
             board = Board(String::split(line, "\"").at(1));
         }
-        else if(String::starts_with(line, '['))
+        else if(String::starts_with(line, "["))
         {
             continue;
         }
@@ -671,7 +671,7 @@ void game_progress_move_count(const std::string& input_file_name, const std::str
     while(std::getline(input, line))
     {
         // Headers at start of new game
-        if(String::starts_with(line, '['))
+        if(String::starts_with(line, "["))
         {
             if(game_moves.empty())
             {
