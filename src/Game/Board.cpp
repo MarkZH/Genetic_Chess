@@ -1315,7 +1315,6 @@ void Board::recreate_move_caches()
     other_attacked_indices.fill(false);
     safe_squares_for_king.fill(true);
 
-
     bool en_passant_legal = false;
     capturing_move_available = false;
     for(char file = 'a'; file <= 'h'; ++file)
