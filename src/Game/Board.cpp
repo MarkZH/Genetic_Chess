@@ -1331,7 +1331,8 @@ void Board::recreate_move_caches()
 
                 for(const auto& move : piece->move_list(file, rank))
                 {
-                    auto blocked = same_direction(move->file_change(), move->rank_change(), blocked_file_direction, blocked_rank_direction);
+                    auto blocked = same_direction(move->file_change(),    move->rank_change(),
+                                                  blocked_file_direction, blocked_rank_direction);
 
                     if( ! blocked && move->is_legal(*this))
                     {
