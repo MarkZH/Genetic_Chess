@@ -77,37 +77,8 @@ Board::Board() :
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {
-    initialize_board_hash();
-
-    for(auto color : {WHITE, BLACK})
-    {
-        int base_rank = (color == WHITE ? 1 : 8);
-        place_piece(piece_instance(ROOK, color),   'a', base_rank);
-        place_piece(piece_instance(KNIGHT, color), 'b', base_rank);
-        place_piece(piece_instance(BISHOP, color), 'c', base_rank);
-        place_piece(piece_instance(QUEEN, color),  'd', base_rank);
-        place_piece(piece_instance(KING, color),   'e', base_rank);
-        place_piece(piece_instance(BISHOP, color), 'f', base_rank);
-        place_piece(piece_instance(KNIGHT, color), 'g', base_rank);
-        place_piece(piece_instance(ROOK, color),   'h', base_rank);
-
-        // Unmoved pieces for castling
-        set_unmoved('a', base_rank); // Rook
-        set_unmoved('e', base_rank); // King
-        set_unmoved('h', base_rank); // Rook
-
-        auto pawn_rank = (base_rank == 1 ? 2 : 7);
-        for(char file = 'a'; file <= 'h'; ++file)
-        {
-            place_piece(piece_instance(PAWN, color), file, pawn_rank);
-        }
-    }
-
-    assert(find_king(WHITE));
-    assert(find_king(BLACK));
-
-    add_board_position_to_repeat_record(); // Count initial position
-    recreate_move_caches();
+    // Standard board setup
+    setup_from_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
 }
 
 Board::Board(const std::string& fen) :
@@ -122,6 +93,11 @@ Board::Board(const std::string& fen) :
     capturing_move_available(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
+{
+    setup_from_fen(fen);
+}
+
+void Board::setup_from_fen(const std::string& fen)
 {
     initialize_board_hash();
 
