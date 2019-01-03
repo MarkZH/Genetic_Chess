@@ -1354,6 +1354,7 @@ void Board::recreate_move_caches()
         }
     }
 
+    // Make sure board hash is correct for valid repeat counts
     if( ! en_passant_legal)
     {
         clear_en_passant_target();
