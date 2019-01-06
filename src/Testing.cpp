@@ -1233,6 +1233,14 @@ bool run_tests()
         }
     }
 
+    auto standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    auto test_starting_fen = Board().fen_status();
+    if(test_starting_fen != standard_starting_fen)
+    {
+        std::cerr << "Incorrect FEN for starting board.\nExpected: " << standard_starting_fen << "\nGot:      " << test_starting_fen << "\n\n";
+        tests_passed = false;
+    }
+
     Board capture_board;
     capture_board.submit_move(capture_board.create_move("b4"));
     capture_board.submit_move(capture_board.create_move("c5"));
