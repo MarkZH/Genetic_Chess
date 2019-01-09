@@ -122,7 +122,7 @@ void gene_pool(const std::string& config_file = "")
         write_generation(pools, i, genome_file_name);
     }
 
-    std::string game_record_file = genome_file_name +  "_games.txt";
+    std::string game_record_file = genome_file_name +  "_games.pgn";
     if(auto ifs = std::ifstream(game_record_file))
     {
         // Use game time from last run of this gene pool
