@@ -768,17 +768,39 @@ void Board::ascii_draw(Color perspective) const
             {
                 std::string piece_symbol;
                 auto piece = piece_on_square(file, rank);
-                char dark_square_fill = ':';
-                char filler = (square_color(file, rank) == WHITE ? ' ' : dark_square_fill);
+                char filler = ' ';
                 if(piece)
                 {
                     auto piece_row = piece->ascii_art(square_row);
                     std::string padding((square_width - piece_row.size())/2, filler);
                     piece_symbol = padding + piece_row + padding;
+                    while(piece_symbol.size() < square_width)
+                    {
+                        piece_symbol.push_back(filler);
+                    }
                 }
                 else
                 {
                     piece_symbol.append(square_width, filler);
+                }
+                if(square_color(file, rank) == BLACK)
+                {
+                    for(auto start : {0, int(piece_symbol.size() - 1)})
+                    {
+                        auto direction = (start == 0 ? 1 : -1);
+                        for(int i = start; i >= 0 && i < int(piece_symbol.size()); i += direction)
+                        {
+                            if(piece_symbol[i] == filler)
+                            {
+                                char dark_square_fill = ':';
+                                piece_symbol[i] = dark_square_fill;
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
                 std::cout << square_vertical_border << piece_symbol;
             }
