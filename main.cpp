@@ -24,7 +24,7 @@
 
 void print_help();
 void replay_game(const std::string& file_name, int game_number);
-bool confirm_game_record(const std::string& file_name);
+bool confirm_game_record(const std::string& file_name, bool verbose);
 void game_progress_move_count(const std::string& game_record_file_name, const std::string& results_file_name);
 int find_last_id(const std::string& filename);
 
@@ -68,7 +68,8 @@ int main(int argc, char *argv[])
             {
                 if(argc >= 3)
                 {
-                    if( ! confirm_game_record(argv[2]))
+                    auto verbose = (argc >= 4 && std::string(argv[2]) == "-v");
+                    if( ! confirm_game_record(argv[verbose ? 3 : 2], verbose))
                     {
                         std::cerr << "Game contains illegal or mismarked moves." << std::endl;
                         return 2;
@@ -469,7 +470,7 @@ void replay_game(const std::string& file_name, int game_number)
     }
 }
 
-bool confirm_game_record(const std::string& file_name)
+bool confirm_game_record(const std::string& file_name, bool verbose)
 {
     auto input = std::ifstream(file_name);
     std::string line;
@@ -559,9 +560,8 @@ bool confirm_game_record(const std::string& file_name)
         {
             continue;
         }
-        else
+        else // Line contains game moves
         {
-            // In game
             in_game = true;
             std::string move_number;
             for(const auto& move : String::split(line))
@@ -606,7 +606,32 @@ bool confirm_game_record(const std::string& file_name)
                         }
                     }
 
+                    if(verbose)
+                    {
+                        std::cout << "Before " << move_number << move << "\n";
+                        board.ascii_draw(WHITE);
+                        std::cerr << "Legal moves:\n";
+                        for(auto legal_move : board.legal_moves())
+                        {
+                            std::cerr << legal_move->coordinate_move() << ", ";
+                        }
+                        std::cerr << std::endl << std::endl;
+                    }
+
                     result = board.submit_move(move_to_submit);
+
+                    if(verbose)
+                    {
+                        std::cout << "After " << move_number << move << "\n";
+                        board.ascii_draw(WHITE);
+                        std::cerr << "Legal moves:\n";
+                        for(auto legal_move : board.legal_moves())
+                        {
+                            std::cerr << legal_move->coordinate_move() << ", ";
+                        }
+                        std::cerr << std::endl << std::endl;
+                    }
+
                     if(move_checks)
                     {
                         if( ! board.king_is_in_check())
@@ -647,9 +672,23 @@ bool confirm_game_record(const std::string& file_name)
                         }
                     }
                 }
-                catch(const Illegal_Move&)
+                catch(const Illegal_Move& error)
                 {
-                    std::cerr << "Move (" << move_number << move << ") is illegal. (line: " << line_number << ")" << std::endl;
+                    board.ascii_draw(WHITE);
+                    std::cerr << "Move (" << move_number << move << ") is illegal: "
+                              << error.what()
+                              << ". (line: " << line_number << ")" << std::endl;
+
+                    if(verbose)
+                    {
+                        std::cerr << "Legal moves:\n";
+                        for(auto legal_move : board.legal_moves())
+                        {
+                            std::cerr << legal_move->coordinate_move() << ", ";
+                        }
+                        std::cerr << std::endl;
+                    }
+
                     return false;
                 }
             }
