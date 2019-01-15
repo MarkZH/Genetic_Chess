@@ -63,34 +63,14 @@ std::array<uint64_t, 64> Board::en_passant_hash_values{};
 std::array<uint64_t, 64> Board::castling_hash_values{};
 uint64_t Board::switch_turn_board_hash; // for whose_turn() hashing
 
-
-Board::Board() :
-    board{},
-    repeat_count_insertion_point{0},
-    turn_color(WHITE),
-    unmoved_positions{},
-    en_passant_target({'\0', 0}),
-    king_location{{ {'\0', 0}, {'\0', 0} }},
-    move_count_start_offset(0),
-    previous_move_captured(false),
-    capturing_move_available(false),
-    castling_index{{size_t(-1), size_t(-1)}},
-    thinking_indicator(NO_THINKING)
-{
-    // Standard board setup
-    setup_from_fen("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
-}
+const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 Board::Board(const std::string& fen) :
     board{},
     repeat_count_insertion_point{0},
-    turn_color(WHITE),
     unmoved_positions{},
-    en_passant_target({'\0', 0}),
-    starting_fen(fen),
-    king_location{{ {'\0', 0}, {'\0', 0} }},
+    starting_fen(fen == standard_starting_fen ? std::string{} : fen),
     previous_move_captured(false),
-    capturing_move_available(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {

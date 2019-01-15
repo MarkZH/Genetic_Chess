@@ -28,8 +28,7 @@ class Pawn_Move;
 class Board
 {
     public:
-        Board();
-        explicit Board(const std::string& fen); // reproduce board from Forsythe-Edwards Notation string
+        explicit Board(const std::string& fen = standard_starting_fen); // reproduce board from Forsythe-Edwards Notation string
 
         Game_Result submit_move(const Move& move);
 
@@ -107,6 +106,7 @@ class Board
         std::array<bool, 64> unmoved_positions;
         Square en_passant_target;
         std::string starting_fen;
+        static const std::string standard_starting_fen;
         std::array<Square, 2> king_location;
         size_t move_count_start_offset;
 
