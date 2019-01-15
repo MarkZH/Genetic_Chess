@@ -689,6 +689,7 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
     remove_piece(file_start, rank_start);
 
     clear_en_passant_target();
+    clear_pinned_squares();
 }
 
 Color Board::whose_turn() const
@@ -1274,6 +1275,12 @@ void Board::clear_en_passant_target()
     make_en_passant_targetable('\0', 0);
 }
 
+void Board::clear_pinned_squares()
+{
+    last_found_pinned_square = {};
+    last_found_pinning_square = {};
+}
+
 bool Board::piece_has_moved(char file, int rank) const
 {
     return ! unmoved_positions[square_index(file, rank)];
@@ -1687,22 +1694,29 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
 
 Square Board::piece_is_pinned(char file, int rank) const
 {
+    if(last_found_pinned_square == Square{file, rank})
+    {
+        return last_found_pinning_square;
+    }
+
+    last_found_pinned_square = {file, rank};
+
     const auto& king_square = find_king(whose_turn());
     auto no_pin = Square{};
 
     if(king_square == Square{file, rank})
     {
-        return no_pin; // king is never pinned
+        return last_found_pinning_square = no_pin; // king is never pinned
     }
 
     if( ! straight_line_move(file, rank, king_square.file(), king_square.rank()))
     {
-        return no_pin;
+        return last_found_pinning_square = no_pin;
     }
 
     if( ! all_empty_between(king_square.file(), king_square.rank(), file, rank))
     {
-        return no_pin;
+        return last_found_pinning_square = no_pin;
     }
 
     auto file_step = Math::sign(file - king_square.file());
@@ -1715,7 +1729,7 @@ Square Board::piece_is_pinned(char file, int rank) const
 
         if( ! inside_board(current_file, current_rank))
         {
-            return no_pin;
+            return last_found_pinning_square = no_pin;
         }
 
         auto attacking_piece = piece_on_square(current_file, current_rank);
@@ -1723,30 +1737,30 @@ Square Board::piece_is_pinned(char file, int rank) const
         {
             if(attacking_piece->color() == whose_turn())
             {
-                return no_pin;
+                return last_found_pinning_square = no_pin;
             }
 
             if(attacking_piece->type() == QUEEN)
             {
-                return {current_file, current_rank};
+                return last_found_pinning_square = {current_file, current_rank};
             }
 
             if(file_step == 0 || rank_step == 0)
             {
                 if(attacking_piece->type() == ROOK)
                 {
-                    return {current_file, current_rank};
+                    return last_found_pinning_square = {current_file, current_rank};
                 }
             }
             else
             {
                 if(attacking_piece->type() == BISHOP)
                 {
-                    return {current_file, current_rank};
+                    return last_found_pinning_square = {current_file, current_rank};
                 }
             }
 
-            return no_pin;
+            return last_found_pinning_square = no_pin;
         }
     }
 }

@@ -108,6 +108,8 @@ class Board
         std::string starting_fen;
         static const std::string standard_starting_fen;
         std::array<Square, 2> king_location;
+        mutable Square last_found_pinning_square;
+        mutable Square last_found_pinned_square;
         size_t move_count_start_offset;
 
         // Information cache for gene reference
@@ -151,6 +153,7 @@ class Board
         std::string board_status() const;
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();
+        void clear_pinned_squares();
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
         void switch_turn();
