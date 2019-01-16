@@ -74,11 +74,6 @@ Board::Board(const std::string& fen) :
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {
-    setup_from_fen(fen);
-}
-
-void Board::setup_from_fen(const std::string& fen)
-{
     initialize_board_hash();
 
     auto fen_parse = String::split(fen);

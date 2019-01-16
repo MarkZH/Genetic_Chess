@@ -145,7 +145,6 @@ class Board
         // Communication channels
         mutable Thinking_Output_Type thinking_indicator;
 
-        void setup_from_fen(const std::string& fen);
         const Piece*& piece_on_square(char file, int rank);
         void remove_piece(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
