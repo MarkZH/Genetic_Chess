@@ -1,6 +1,5 @@
 #include "Players/Monte_Carlo_Search_Tree.h"
 
-#include <map>
 #include <vector>
 #include <iterator>
 #include <algorithm>
