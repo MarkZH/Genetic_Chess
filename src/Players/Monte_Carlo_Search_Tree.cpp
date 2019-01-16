@@ -56,13 +56,9 @@ void Monte_Carlo_Search_Tree::reroot(Move_Iterator begin, Move_Iterator end)
         if(index < next_branch->branches.size())
         {
             next_branch = next_branch->branches[index].get();
+            assert(next_branch != nullptr);
         }
         else
-        {
-            next_branch = nullptr;
-        }
-
-        if( ! next_branch)
         {
             moves.clear();
             results.clear();
