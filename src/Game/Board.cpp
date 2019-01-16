@@ -162,11 +162,11 @@ void Board::setup_from_fen(const std::string& fen)
 
     if(fen_parse[1] == "w")
     {
-        set_turn(WHITE);
+        turn_color = WHITE;
     }
     else if(fen_parse[1] == "b")
     {
-        set_turn(BLACK);
+        turn_color = BLACK;
     }
     else
     {
