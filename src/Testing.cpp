@@ -1201,6 +1201,7 @@ bool run_tests()
         tests_passed = false;
     }
 
+    // Random number generation sample
     int int_width = 10;
     int real_width = 15;
     int norm_width = 15;
