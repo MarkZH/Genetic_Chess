@@ -1201,6 +1201,19 @@ bool run_tests()
         tests_passed = false;
     }
 
+    // Check that pawn-promotin-by-capture doesn't trip Board::ctor() validity rules
+    try
+    {
+        auto pawn_promotion_attack_board = Board("K1k5/3P4/8/8/8/8/8/8 b - - 0 1");
+    }
+    catch(const std::runtime_error&)
+    {
+        std::cerr << "Promoting pawn attacks being counted as attacking king multiple times." << std::endl;
+        tests_passed = false;
+    }
+
+
+
     // Random number generation sample
     int int_width = 10;
     int real_width = 15;

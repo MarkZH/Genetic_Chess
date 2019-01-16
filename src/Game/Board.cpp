@@ -320,6 +320,10 @@ Board::Board(const std::string& fen) :
                     else if(all_empty_between(file, rank, king_square.file(), king_square.rank()))
                     {
                         ++attacker_count;
+
+                        // Move to next piece since pawns can have multiple
+                        // moves with the same start and end squares.
+                        break;
                     }
                 }
             }
