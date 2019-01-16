@@ -27,23 +27,23 @@ before_debug :
 	mkdir -p $(DEBUG_BIN_DIR)
 	mkdir -p $(DEBUG_OBJ_DIR)
 	mkdir -p $(DEBUG_OBJ_DIR)/src
+	mkdir -p $(DEBUG_OBJ_DIR)/src/Players
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Breeding
-	mkdir -p $(DEBUG_OBJ_DIR)/src/Genes
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Exceptions
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Game
+	mkdir -p $(DEBUG_OBJ_DIR)/src/Genes
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Moves
-	mkdir -p $(DEBUG_OBJ_DIR)/src/Players
 
 before_release : 
 	mkdir -p $(RELEASE_BIN_DIR)
 	mkdir -p $(RELEASE_OBJ_DIR)
 	mkdir -p $(RELEASE_OBJ_DIR)/src
+	mkdir -p $(RELEASE_OBJ_DIR)/src/Players
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Breeding
-	mkdir -p $(RELEASE_OBJ_DIR)/src/Genes
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Exceptions
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Game
+	mkdir -p $(RELEASE_OBJ_DIR)/src/Genes
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Moves
-	mkdir -p $(RELEASE_OBJ_DIR)/src/Players
 
 clean : clean_release clean_debug
 
