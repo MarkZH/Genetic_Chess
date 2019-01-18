@@ -48,15 +48,16 @@ void Monte_Carlo_Search_Tree::add_search(Move_Iterator begin,
 
 void Monte_Carlo_Search_Tree::reroot(Move_Iterator begin, Move_Iterator end)
 {
-    auto next_branch = this;
+    std::unique_ptr<Monte_Carlo_Search_Tree> next_branch;
 
     for(auto current = begin; current != end; current = std::next(current))
     {
-        auto index = next_branch->index_of(*current);
-        if(index < next_branch->branches.size())
+        auto read_branch = next_branch ? next_branch.get() : this;
+        auto index = read_branch->index_of(*current);
+        if(index < read_branch->branches.size())
         {
-            next_branch = next_branch->branches[index].get();
-            assert(next_branch != nullptr);
+            next_branch = std::move(read_branch->branches[index]);
+            assert(next_branch);
         }
         else
         {
@@ -68,7 +69,7 @@ void Monte_Carlo_Search_Tree::reroot(Move_Iterator begin, Move_Iterator end)
         }
     }
 
-    if(next_branch != this)
+    if(next_branch)
     {
         moves = next_branch->moves;
         results = next_branch->results;
