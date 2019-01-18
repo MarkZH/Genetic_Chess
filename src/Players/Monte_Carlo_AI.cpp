@@ -82,6 +82,10 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     }
 
     auto best_result = search_tree.best_result();
+    if( ! best_result.first)
+    {
+        best_result.first = choose_random_move(board);
+    }
     auto current_time = clock.running_time_left();
     if(board.thinking_mode() == CECP)
     {

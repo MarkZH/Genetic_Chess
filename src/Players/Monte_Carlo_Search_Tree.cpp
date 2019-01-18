@@ -91,7 +91,14 @@ std::pair<const Move*, double> Monte_Carlo_Search_Tree::best_result() const
         }
     }
 
-    return {moves[best_index], best_score};
+    if(best_index < moves.size())
+    {
+        return {moves[best_index], best_score};
+    }
+    else
+    {
+        return {nullptr, best_score};
+    }
 }
 
 size_t Monte_Carlo_Search_Tree::index_of(const Move* move) const
