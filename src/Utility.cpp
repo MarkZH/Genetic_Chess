@@ -34,14 +34,7 @@ std::vector<std::string> String::split(std::string s, std::string delim, size_t 
     {
         end_index = s.find(delim, start_index);
         result.push_back(s.substr(start_index, end_index-start_index));
-        if(end_index == std::string::npos)
-        {
-            start_index = std::string::npos;
-        }
-        else
-        {
-            start_index = end_index + delim.size();
-        }
+        start_index = end_index + (end_index < s.size() ? delim.size() : 0);
         ++split_count;
     }
 
