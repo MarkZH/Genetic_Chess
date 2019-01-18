@@ -69,7 +69,7 @@ Board::Board(const std::string& fen) :
     board{},
     repeat_count_insertion_point{0},
     unmoved_positions{},
-    starting_fen(fen == standard_starting_fen ? std::string{} : fen),
+    starting_fen(String::remove_extra_whitespace(fen) == standard_starting_fen ? std::string{} : fen),
     previous_move_captured(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
