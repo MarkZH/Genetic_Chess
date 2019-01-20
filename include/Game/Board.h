@@ -28,7 +28,7 @@ class Pawn_Move;
 class Board
 {
     public:
-        explicit Board(const std::string& fen = standard_starting_fen); // reproduce board from Forsythe-Edwards Notation string
+        explicit Board(std::string fen = standard_starting_fen); // reproduce board from Forsythe-Edwards Notation string
 
         Game_Result submit_move(const Move& move);
 

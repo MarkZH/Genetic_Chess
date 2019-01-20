@@ -65,15 +65,20 @@ uint64_t Board::switch_turn_board_hash; // for whose_turn() hashing
 
 const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-Board::Board(const std::string& fen) :
+Board::Board(std::string fen) :
     board{},
     repeat_count_insertion_point{0},
     unmoved_positions{},
-    starting_fen(String::remove_extra_whitespace(fen) == standard_starting_fen ? std::string{} : fen),
     previous_move_captured(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {
+    fen = String::remove_extra_whitespace(fen);
+    if(fen != standard_starting_fen)
+    {
+        starting_fen = fen;
+    }
+
     initialize_board_hash();
 
     auto fen_parse = String::split(fen);
