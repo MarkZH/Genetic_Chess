@@ -1201,7 +1201,7 @@ bool run_tests()
         tests_passed = false;
     }
 
-    // Check that pawn-promotin-by-capture doesn't trip Board::ctor() validity rules
+    // Check that pawn-promotion-by-capture doesn't trip Board::ctor() validity rules
     try
     {
         auto pawn_promotion_attack_board = Board("K1k5/3P4/8/8/8/8/8/8 b - - 0 1");
