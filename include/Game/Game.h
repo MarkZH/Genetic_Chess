@@ -3,8 +3,6 @@
 
 #include <string>
 
-#include "Color.h"
-
 class Player;
 class Board;
 class Game_Result;
