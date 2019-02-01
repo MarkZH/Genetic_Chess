@@ -254,39 +254,39 @@ int main(int argc, char *argv[])
 
 void print_help()
 {
-    std::cout << "\n\nGenetic Chess" << std::endl
-              << "=============" << std::endl << std::endl
-              << "Standalone functions (only first is run if multiple are specified):" << std::endl
-              << "\t-genepool [file name]" << std::endl
-              << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name." << std::endl << std::endl
-              << "\t-replay [filename] [game number]" << std::endl
-              << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time." << std::endl << std::endl
-              << "\t-confirm [filename]" << std::endl
-              << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates." << std::endl << std::endl
-              << "\t-progress" << std::endl
-              << "\t\tParse a file with PGN-style game records and record the number\n\t\tof legal moves as the game progresses." << std::endl << std::endl
-              << "\t-test" << std::endl
-              << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly." << std::endl << std::endl
-              << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying." << std::endl << std::endl
-              << "\t-human" << std::endl
-              << "\t\tSelect a human player for a game." << std::endl << std::endl
-              << "\t-genetic [filename [number]]" << std::endl
-              << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file." << std::endl << std::endl
-              << "\t-random" << std::endl
-              << "\t\tSelect a player that makes random moves for a game." << std::endl << std::endl
-              << "\t-montecarlo" << std::endl
-              << "\t\tSelect a player that evaluates moves by playing random\n\t\tcomplete games." << std::endl << std::endl
-              << "\t-turing" << std::endl
-              << "\t\tSelect a player based on Alan Turing's Turbocomp chess AI." << std::endl << std::endl
-              << "Other game options:" << std::endl << std::endl
-              << "\t-time [number]" << std::endl
-              << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option)." << std::endl << std::endl
-              << "\t-reset_moves [number]" << std::endl
-              << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock adds the initial time every time this\n\t\tnumber of moves is made." << std::endl << std::endl
-              << "\t-increment_time [number]" << std::endl
-              << "\t\tSpecify seconds to add to time after each move." << std::endl << std::endl
-              << "\t-board [FEN string]" << std::endl
-              << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted." << std::endl << std::endl;
+    std::cout << "\n\nGenetic Chess\n"
+              << "=============\n\n"
+              << "Standalone functions (only first is run if multiple are specified):\n\n"
+              << "\t-genepool [file name]\n"
+              << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
+              << "\t-replay [filename] [game number]\n"
+              << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time.\n\n"
+              << "\t-confirm [filename]\n"
+              << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates.\n\n"
+              << "\t-progress\n"
+              << "\t\tParse a file with PGN-style game records and record the number\n\t\tof legal moves as the game progresses.\n\n"
+              << "\t-test\n"
+              << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly.\n\n"
+              << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying.\n\n"
+              << "\t-human\n"
+              << "\t\tSelect a human player for a game.\n\n"
+              << "\t-genetic [filename [number]]\n"
+              << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file.\n\n"
+              << "\t-random\n"
+              << "\t\tSelect a player that makes random moves for a game.\n\n"
+              << "\t-montecarlo\n"
+              << "\t\tSelect a player that evaluates moves by playing random\n\t\tcomplete games.\n\n"
+              << "\t-turing\n"
+              << "\t\tSelect a player based on Alan Turing's Turbocomp chess AI.\n\n"
+              << "Other game options:\n\n"
+              << "\t-time [number]\n"
+              << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option).\n\n"
+              << "\t-reset_moves [number]\n"
+              << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock adds the initial time every time this\n\t\tnumber of moves is made.\n\n"
+              << "\t-increment_time [number]\n"
+              << "\t\tSpecify seconds to add to time after each move.\n\n"
+              << "\t-board [FEN string]\n"
+              << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n";
 }
 
 int find_last_id(const std::string& players_file_name)
