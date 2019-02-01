@@ -65,20 +65,15 @@ uint64_t Board::switch_turn_board_hash; // for whose_turn() hashing
 
 const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
-Board::Board(std::string fen) :
+Board::Board(const std::string& fen) :
     board{},
     repeat_count_insertion_point{0},
     unmoved_positions{},
+    starting_fen(String::remove_extra_whitespace(fen)),
     previous_move_captured(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {
-    fen = String::remove_extra_whitespace(fen);
-    if(fen != standard_starting_fen)
-    {
-        starting_fen = fen;
-    }
-
     initialize_board_hash();
 
     auto fen_parse = String::split(fen);
@@ -290,12 +285,13 @@ Board::Board(std::string fen) :
         add_to_repeat_count(Random::random_unsigned_int64());
     }
 
+    move_count_start_offset = std::stoul(fen_parse.at(5));
+
     if(fen_status() != fen)
     {
         fen_error(fen, "Result: " + fen_status());
     }
 
-    move_count_start_offset = std::stoul(fen_parse.at(5)) - 1;
     recreate_move_caches();
 
     const auto& king_square = find_king(whose_turn());
@@ -418,20 +414,9 @@ bool Board::is_in_legal_moves_list(const Move& move) const
 
 std::string Board::fen_status() const
 {
-    std::string s = board_status() + " ";
-    s.append(std::to_string(moves_since_pawn_or_capture()));
-    s.push_back(' ');
-    if(starting_fen.empty())
-    {
-        s.append(std::to_string(1 + game_record_listing.size()/2));
-    }
-    else
-    {
-        auto move_number = std::stoi(String::split(starting_fen).back()) + game_record_listing.size()/2;
-        s.append(std::to_string(move_number));
-    }
-
-    return s;
+    return board_status() + " " +
+        std::to_string(moves_since_pawn_or_capture()) + " " +
+        std::to_string(move_count_start_offset + game_record_listing.size()/2);
 }
 
 const Move& Board::create_move(char file_start, int rank_start, char file_end, int rank_end, char promote) const
@@ -1096,14 +1081,14 @@ void Board::print_game_record(const Player* white,
     }
 
     auto temp = Board();
-    if( ! starting_fen.empty())
+    if(starting_fen != standard_starting_fen)
     {
         out_stream << "[SetUp \"1\"]\n";
         out_stream << "[FEN \"" << starting_fen << "\"]\n";
         temp = Board(starting_fen);
     }
 
-    auto starting_turn_offset = (temp.whose_turn() == WHITE ? 2 : 3);
+    auto starting_turn_offset = (temp.whose_turn() == WHITE ? 0 : 1);
 
     for(size_t i = 0; i < game_record_listing.size(); ++i)
     {
@@ -1439,12 +1424,7 @@ bool Board::enough_material_to_checkmate(Color color) const
 
 std::string Board::last_move_record() const
 {
-    Board b;
-    if( ! starting_fen.empty())
-    {
-        b = Board(starting_fen);
-    }
-
+    Board b(starting_fen);
     std::string result;
     for(const auto& move : game_record())
     {
