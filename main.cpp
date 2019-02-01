@@ -112,6 +112,7 @@ int main(int argc, char *argv[])
                 double game_time = 0;
                 size_t moves_per_reset = 0;
                 double increment_time = 0;
+                Board board;
 
                 for(int i = 1; i < argc; ++i)
                 {
@@ -188,6 +189,10 @@ int main(int argc, char *argv[])
                     {
                         increment_time = std::stod(argv[++i]);
                     }
+                    else if(opt == "-board")
+                    {
+                        board = Board(argv[++i]);
+                    }
                     else
                     {
                         throw std::runtime_error("Invalid option: " + opt);
@@ -218,6 +223,7 @@ int main(int argc, char *argv[])
                     game_time = outside->game_time();
                     moves_per_reset = outside->reset_moves();
                     increment_time = outside->increment();
+                    outside->initial_board_setup(board);
                     if(outside->ai_color() == WHITE)
                     {
                         black = std::move(outside);
@@ -229,7 +235,7 @@ int main(int argc, char *argv[])
                     }
                 }
 
-                play_game(*white, *black, game_time, moves_per_reset, increment_time, game_file_name);
+                play_game_with_board(*white, *black, game_time, moves_per_reset, increment_time, game_file_name, board);
             }
         }
         else
@@ -278,7 +284,9 @@ void print_help()
               << "\t-reset_moves [number]" << std::endl
               << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock adds the initial time every time this\n\t\tnumber of moves is made." << std::endl << std::endl
               << "\t-increment_time [number]" << std::endl
-              << "\t\tSpecify seconds to add to time after each move." << std::endl << std::endl;
+              << "\t\tSpecify seconds to add to time after each move." << std::endl << std::endl
+              << "\t-board [FEN string]" << std::endl
+              << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted." << std::endl << std::endl;
 }
 
 int find_last_id(const std::string& players_file_name)
