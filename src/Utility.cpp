@@ -34,7 +34,7 @@ std::vector<std::string> String::split(std::string s, std::string delim, size_t 
     {
         end_index = s.find(delim, start_index);
         result.push_back(s.substr(start_index, end_index-start_index));
-        start_index = end_index + (end_index < s.size() ? delim.size() : 0);
+        start_index = std::max(end_index, end_index + delim.size());
         ++split_count;
     }
 
@@ -70,22 +70,19 @@ std::string String::trim_outer_whitespace(const std::string& s)
 
 std::string String::remove_extra_whitespace(const std::string& s)
 {
-    auto inside_word = false;
     std::string result;
 
-    for(auto c : s)
+    for(auto c : trim_outer_whitespace(s))
     {
         if(contains(whitespace, c))
         {
-            inside_word = false;
-        }
-        else
-        {
-            if( ! inside_word && ! result.empty())
+            if(result.back() != ' ')
             {
                 result.push_back(' ');
             }
-            inside_word = true;
+        }
+        else
+        {
             result.push_back(c);
         }
     }
