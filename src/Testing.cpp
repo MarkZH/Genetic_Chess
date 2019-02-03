@@ -746,6 +746,17 @@ bool run_tests()
         tests_passed = false;
     }
 
+    try
+    {
+        original = "   a    }    b    {    c   {   d  }   ";
+        auto bad_input_result = String::strip_block_comment(original, '{', '}');
+        tests_passed = false;
+    }
+    catch(const std::runtime_error&)
+    {
+        // This test should throw an exception.
+    }
+
     std::string search_string = "abcdefg";
     std::string target = "abc";
     if( ! String::starts_with(search_string, target))
