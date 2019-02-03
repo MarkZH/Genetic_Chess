@@ -79,13 +79,13 @@ Board::Board(const std::string& fen) :
     auto fen_parse = String::split(fen);
     if(fen_parse.size() != 6)
     {
-        fen_error(fen, "Wrong number of fields (should be 6)");
+        fen_error("Wrong number of fields (should be 6)");
     }
 
     auto board_parse = String::split(fen_parse.at(0), "/");
     if(board_parse.size() != 8)
     {
-        fen_error(fen, "Board has wrong number of rows (should be 8)");
+        fen_error("Board has wrong number of rows (should be 8)");
     }
 
     for(int rank = 8; rank >= 1; --rank)
@@ -98,14 +98,14 @@ Board::Board(const std::string& fen) :
                 file += symbol - '0';
                 if(file > 'h' + 1)
                 {
-                    fen_error(fen, "Too many squares in rank " + std::to_string(rank));
+                    fen_error("Too many squares in rank " + std::to_string(rank));
                 }
             }
             else
             {
                 if(file > 'h')
                 {
-                    fen_error(fen, "Too many squares in rank " + std::to_string(rank));
+                    fen_error("Too many squares in rank " + std::to_string(rank));
                 }
 
                 Color color = (isupper(symbol) ? WHITE : BLACK);
@@ -129,12 +129,12 @@ Board::Board(const std::string& fen) :
                     case 'K':
                         if(king_location[color])
                         {
-                            fen_error(fen, "More than one " + color_text(color) + " king.");
+                            fen_error("More than one " + color_text(color) + " king.");
                         }
                         place_piece(piece_instance(KING, color), file, rank);
                         break;
                     default:
-                        fen_error(fen, std::string("Invalid symbol in FEN string: ") + symbol);
+                        fen_error(std::string("Invalid symbol in FEN string: ") + symbol);
                 }
                 ++file;
             }
@@ -142,17 +142,17 @@ Board::Board(const std::string& fen) :
 
         if(file != 'h' + 1)
         {
-            fen_error(fen, "Too few squares in rank " + std::to_string(rank));
+            fen_error("Too few squares in rank " + std::to_string(rank));
         }
     }
 
     if( ! find_king(WHITE))
     {
-        fen_error(fen, "White king not in FEN string: " + fen);
+        fen_error("White king not in FEN string: " + fen);
     }
     if( ! find_king(BLACK))
     {
-        fen_error(fen, "Black king not in FEN string: " + fen);
+        fen_error("Black king not in FEN string: " + fen);
     }
 
     if(fen_parse[1] == "w")
@@ -165,14 +165,14 @@ Board::Board(const std::string& fen) :
     }
     else
     {
-        fen_error(fen, "Invalid character for whose turn: " + fen_parse[1]);
+        fen_error("Invalid character for whose turn: " + fen_parse[1]);
     }
 
     auto non_turn_color = opposite(whose_turn());
     const auto& non_turn_king_square = find_king(non_turn_color);
     if( ! safe_for_king(non_turn_king_square.file(), non_turn_king_square.rank(), non_turn_color))
     {
-        fen_error(fen, color_text(opposite(whose_turn())) +
+        fen_error(color_text(opposite(whose_turn())) +
                        " is in check but it is " +
                        color_text(whose_turn()) + "'s turn.");
     }
@@ -182,26 +182,26 @@ Board::Board(const std::string& fen) :
     {
         if( ! String::contains("KQkq-", c))
         {
-            fen_error(fen, "Illegal character in castling section");
+            fen_error("Illegal character in castling section");
         }
     }
 
     if(String::contains(castling_parse, '-') && castling_parse.size() != 1)
     {
-        fen_error(fen, "Castling section contains - and other characters.");
+        fen_error("Castling section contains - and other characters.");
     }
 
     if(String::contains(castling_parse, 'K'))
     {
         if(piece_on_square('h', 1) != piece_instance(ROOK, WHITE))
         {
-            fen_error(fen, "There must be a white rook on h1 to castle kingside.");
+            fen_error("There must be a white rook on h1 to castle kingside.");
         }
         set_unmoved('h', 1);
 
         if(piece_on_square('e', 1) != piece_instance(KING, WHITE))
         {
-            fen_error(fen, "There must be a white king on e1 to castle.");
+            fen_error("There must be a white king on e1 to castle.");
         }
         set_unmoved('e', 1);
     }
@@ -209,13 +209,13 @@ Board::Board(const std::string& fen) :
     {
         if(piece_on_square('a', 1) != piece_instance(ROOK, WHITE))
         {
-            fen_error(fen, "There must be a white rook on a1 to castle queenside.");
+            fen_error("There must be a white rook on a1 to castle queenside.");
         }
         set_unmoved('a', 1);
 
         if(piece_on_square('e', 1) != piece_instance(KING, WHITE))
         {
-            fen_error(fen, "There must be a white king on e1 to castle.");
+            fen_error("There must be a white king on e1 to castle.");
         }
         set_unmoved('e', 1);
     }
@@ -223,13 +223,13 @@ Board::Board(const std::string& fen) :
     {
         if(piece_on_square('h', 8) != piece_instance(ROOK, BLACK))
         {
-            fen_error(fen, "There must be a black rook on h8 to castle kingside.");
+            fen_error("There must be a black rook on h8 to castle kingside.");
         }
         set_unmoved('h', 8);
 
         if(piece_on_square('e', 8) != piece_instance(KING, BLACK))
         {
-            fen_error(fen, "There must be a black king on e8 to castle.");
+            fen_error("There must be a black king on e8 to castle.");
         }
         set_unmoved('e', 8);
     }
@@ -237,13 +237,13 @@ Board::Board(const std::string& fen) :
     {
         if(piece_on_square('a', 8) != piece_instance(ROOK, BLACK))
         {
-            fen_error(fen, "There must be a black rook on a8 to castle kingside.");
+            fen_error("There must be a black rook on a8 to castle kingside.");
         }
         set_unmoved('a', 8);
 
         if(piece_on_square('e', 8) != piece_instance(KING, BLACK))
         {
-            fen_error(fen, "There must be a black king on e8 to castle.");
+            fen_error("There must be a black king on e8 to castle.");
         }
         set_unmoved('e', 8);
     }
@@ -253,26 +253,26 @@ Board::Board(const std::string& fen) :
     {
         if(en_passant_parse.size() != 2)
         {
-            fen_error(fen, "Invalid en passant square.");
+            fen_error("Invalid en passant square.");
         }
 
         make_en_passant_targetable(en_passant_parse[0], en_passant_parse[1] - '0');
 
         if( ! inside_board(en_passant_target.file(), en_passant_target.rank()))
         {
-            fen_error(fen, "Invalid en passant square.");
+            fen_error("Invalid en passant square.");
         }
 
         if(piece_on_square(en_passant_target.file(), en_passant_target.rank()))
         {
-            fen_error(fen, "Piece is not allowed on en passant target square.");
+            fen_error("Piece is not allowed on en passant target square.");
         }
 
         auto last_move_pawn = piece_on_square(en_passant_target.file(),
                                               en_passant_target.rank() + (whose_turn() == WHITE ? -1 : 1));
         if(last_move_pawn != piece_instance(PAWN, opposite(whose_turn())))
         {
-            fen_error(fen, "There must be a pawn past the en passant target square.");
+            fen_error("There must be a pawn past the en passant target square.");
         }
     }
 
@@ -289,7 +289,7 @@ Board::Board(const std::string& fen) :
 
     if(fen_status() != fen)
     {
-        fen_error(fen, "Result: " + fen_status());
+        fen_error("Result: " + fen_status());
     }
 
     recreate_move_caches();
@@ -333,18 +333,18 @@ Board::Board(const std::string& fen) :
 
     if(attacker_count > 2)
     {
-        fen_error(fen, "Too many pieces attacking " + color_text(whose_turn()) + " king.");
+        fen_error("Too many pieces attacking " + color_text(whose_turn()) + " king.");
     }
 
     if(attacking_knight_count > 1)
     {
-        fen_error(fen, "It is impossible for more than one knight to check king.");
+        fen_error("It is impossible for more than one knight to check king.");
     }
 }
 
-void Board::fen_error(const std::string& fen, const std::string& reason) const
+void Board::fen_error(const std::string& reason) const
 {
-    throw std::runtime_error("Bad FEN input: " + fen + "\n" + reason);
+    throw std::runtime_error("Bad FEN input: " + starting_fen + "\n" + reason);
 }
 
 size_t Board::square_index(char file, int rank)
