@@ -775,6 +775,16 @@ bool run_tests()
         tests_passed = false;
     }
 
+    std::string mixed_case = "AbC dEf";
+    std::string lowercase = "abc def";
+    auto lowercase_result = String::lowercase(mixed_case);
+    if(lowercase_result != lowercase)
+    {
+        std::cerr << "String::lowercase() returns incorrect results.\n";
+        std::cerr << "Original: " << mixed_case << "; Got: " << lowercase_result << "; Expected: " << lowercase << std::endl;
+        tests_passed = false;
+    }
+
     std::string splitting_line = "\t a b c d e ";
     std::vector<std::string> expected_split_line = {"a", "b", "c", "d", "e"};
     auto split_line = String::split(splitting_line);

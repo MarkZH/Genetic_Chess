@@ -111,7 +111,7 @@ std::string String::strip_block_comment(const std::string& str, char start, char
 
 std::string String::lowercase(std::string s)
 {
-    std::transform(s.begin(), s.end(), s.begin(), [](char c) -> char { return std::tolower(c); });
+    for(auto& c : s){ c = std::tolower(c); }
     return s;
 }
 
