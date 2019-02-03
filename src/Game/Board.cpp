@@ -56,12 +56,10 @@ const Piece* Board::piece_instance(Piece_Type piece_type, Color color)
     return all_pieces[piece_type][color];
 }
 
-std::mutex Board::hash_lock;
-bool Board::hash_values_initialized = false;
 std::array<std::array<uint64_t, 13>, 64> Board::square_hash_values{};
 std::array<uint64_t, 64> Board::en_passant_hash_values{};
 std::array<uint64_t, 64> Board::castling_hash_values{};
-uint64_t Board::switch_turn_board_hash; // for whose_turn() hashing
+uint64_t Board::switch_turn_board_hash;
 
 const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -1446,8 +1444,10 @@ Thinking_Output_Type Board::thinking_mode() const
 
 void Board::initialize_board_hash()
 {
+    static std::mutex hash_lock;
     std::lock_guard<std::mutex> hash_guard(hash_lock);
 
+    static bool hash_values_initialized = false;
     if(hash_values_initialized)
     {
         return;
