@@ -1102,31 +1102,14 @@ void Board::print_game_record(const Player* white,
         auto next_move = game_record_listing.at(i);
         out_stream << " " << next_move->game_record_item(temp);
 
-        std::string commentary;
         auto current_player = (temp.whose_turn() == WHITE ? white : black);
         if(current_player)
         {
-            commentary = current_player->commentary_for_move(i/2);
-        }
-
-        if( ! commentary.empty())
-        {
-            auto comment_board = temp;
-            out_stream << " { ";
-            for(const auto& variation : String::split(commentary))
+            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(temp));
+            if( ! commentary.empty())
             {
-                try
-                {
-                    const auto& comment_move = comment_board.create_move(variation);
-                    out_stream << comment_move.game_record_item(comment_board) << " ";
-                    comment_board.submit_move(comment_move);
-                }
-                catch(const Illegal_Move&)
-                {
-                    out_stream << variation << " ";
-                }
+                out_stream << " { " << commentary << " }";
             }
-            out_stream << "}";
         }
 
         temp.submit_move(*next_move);

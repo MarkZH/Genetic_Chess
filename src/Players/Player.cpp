@@ -14,9 +14,9 @@ std::string Player::author() const
     return "";
 }
 
-std::string Player::commentary_for_move(size_t) const
+std::string Player::commentary_for_next_move(const Board&) const
 {
-    return "";
+    return {};
 }
 
 void Player::initial_board_setup(Board&) const

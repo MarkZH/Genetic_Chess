@@ -60,10 +60,10 @@ debug : before_debug $(OUT_DEBUG)
 release : before_release $(OUT_RELEASE)
 
 
-$(DEBUG_OBJ_DIR)/main.o : main.cpp include/Breeding/Gene_Pool.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/Move.h include/Players/Alan_Turing_AI.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Minimax_AI.h include/Players/Monte_Carlo_AI.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Testing.h include/Utility.h
+$(DEBUG_OBJ_DIR)/main.o : main.cpp include/Breeding/Gene_Pool.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/Move.h include/Players/Alan_Turing_AI.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Minimax_AI.h include/Players/Monte_Carlo_AI.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Testing.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c main.cpp -o $(DEBUG_OBJ_DIR)/main.o
 
-$(DEBUG_OBJ_DIR)/src/Breeding/Gene_Pool.o : src/Breeding/Gene_Pool.cpp include/Breeding/Gene_Pool.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Breeding/Gene_Pool.o : src/Breeding/Gene_Pool.cpp include/Breeding/Gene_Pool.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Breeding/Gene_Pool.cpp -o $(DEBUG_OBJ_DIR)/src/Breeding/Gene_Pool.o
 
 $(DEBUG_OBJ_DIR)/src/Exceptions/Game_Ended.o : src/Exceptions/Game_Ended.cpp include/Exceptions/Game_Ended.h include/Game/Color.h
@@ -183,7 +183,7 @@ $(DEBUG_OBJ_DIR)/src/Players/CECP_Mediator.o : src/Players/CECP_Mediator.cpp inc
 $(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : src/Players/Game_Tree_Node_Result.cpp include/Game/Color.h include/Players/Game_Tree_Node_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Game_Tree_Node_Result.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
+$(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Genetic_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Human_Player.o : src/Players/Human_Player.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Players/Human_Player.h include/Players/Player.h include/Players/Thinking.h
@@ -219,10 +219,10 @@ $(OUT_DEBUG) : $(OBJ_DEBUG)
 $(OUT_RELEASE) : $(OBJ_RELEASE)
 	$(LD) -o $(OUT_RELEASE) $(OBJ_RELEASE) $(LDFLAGS) $(LDFLAGS_RELEASE) $(CFLAGS) $(CFLAGS_RELEASE)
 
-$(RELEASE_OBJ_DIR)/main.o : main.cpp include/Breeding/Gene_Pool.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/Move.h include/Players/Alan_Turing_AI.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Minimax_AI.h include/Players/Monte_Carlo_AI.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Testing.h include/Utility.h
+$(RELEASE_OBJ_DIR)/main.o : main.cpp include/Breeding/Gene_Pool.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/Move.h include/Players/Alan_Turing_AI.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Human_Player.h include/Players/Minimax_AI.h include/Players/Monte_Carlo_AI.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Testing.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c main.cpp -o $(RELEASE_OBJ_DIR)/main.o
 
-$(RELEASE_OBJ_DIR)/src/Breeding/Gene_Pool.o : src/Breeding/Gene_Pool.cpp include/Breeding/Gene_Pool.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Breeding/Gene_Pool.o : src/Breeding/Gene_Pool.cpp include/Breeding/Gene_Pool.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Breeding/Gene_Pool.cpp -o $(RELEASE_OBJ_DIR)/src/Breeding/Gene_Pool.o
 
 $(RELEASE_OBJ_DIR)/src/Exceptions/Game_Ended.o : src/Exceptions/Game_Ended.cpp include/Exceptions/Game_Ended.h include/Game/Color.h
@@ -342,7 +342,7 @@ $(RELEASE_OBJ_DIR)/src/Players/CECP_Mediator.o : src/Players/CECP_Mediator.cpp i
 $(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o : src/Players/Game_Tree_Node_Result.cpp include/Game/Color.h include/Players/Game_Tree_Node_Result.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Game_Tree_Node_Result.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Game_Tree_Node_Result.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
+$(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o : src/Players/Genetic_AI.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Genome.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Utility.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Genetic_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Genetic_AI.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Human_Player.o : src/Players/Human_Player.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Players/Human_Player.h include/Players/Player.h include/Players/Thinking.h

@@ -45,7 +45,9 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
             principal_variation.clear();
         }
 
-        commentary.push_back(principal_variation);
+        commentary.push_back({commentary.empty() ? 0.0 : commentary.back().corrected_score(board.whose_turn()),
+                              board.whose_turn(),
+                              principal_variation});
 
         return *legal_moves.front(); // If there's only one legal move, take it.
     }
@@ -82,14 +84,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         output_thinking_cecp(result, clock, board.whose_turn());
     }
 
-    if(result.depth() > 1)
-    {
-        commentary.push_back(result.variation);
-    }
-    else
-    {
-        commentary.push_back({});
-    }
+    commentary.push_back(result);
 
     if(result.depth() > 2)
     {
@@ -360,15 +355,33 @@ void Minimax_AI::calculate_centipawn_value()
     value_of_centipawn = std::abs(evaluate(board_with_pawns, {}, WHITE, 0) - evaluate(board_with_no_white_pawns, {}, WHITE, 0)) / 800;
 }
 
-std::string Minimax_AI::commentary_for_move(size_t move_number) const
+std::string Minimax_AI::commentary_for_next_move(const Board& board) const
 {
     std::string result;
-    if(move_number < commentary.size() && !commentary.at(move_number).empty())
+    auto move_number = board.game_record().size()/2;
+    if(move_number < commentary.size() && ! commentary.at(move_number).variation.empty())
     {
-        result = commentary.at(move_number).front()->coordinate_move();
-        for(size_t i = 1; i < commentary.at(move_number).size(); ++i)
+        auto temp_board = board;
+        Game_Result move_result;
+        const auto& comment = commentary.at(move_number);
+        for(auto move : comment.variation)
         {
-            result += " " + commentary.at(move_number).at(i)->coordinate_move();
+            result += move->game_record_item(temp_board) + " ";
+            move_result = temp_board.submit_move(*move);
+        }
+
+        if(comment.variation.size() < 2)
+        {
+            result.clear();
+        }
+
+        if( ! move_result.game_has_ended())
+        {
+            result += String::round_to_decimal(comment.corrected_score(board.whose_turn())/centipawn_value()/100, 2);
+        }
+        else
+        {
+            result = String::trim_outer_whitespace(result);
         }
     }
 

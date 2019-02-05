@@ -4,9 +4,10 @@
 #include "Player.h"
 
 #include <vector>
-#include "Game/Color.h"
 
-struct Game_Tree_Node_Result;
+#include "Game/Color.h"
+#include "Players/Game_Tree_Node_Result.h"
+
 class Board;
 class Clock;
 class Move;
@@ -16,7 +17,7 @@ class Minimax_AI : public Player
 {
     public:
         const Move& choose_move(const Board& board, const Clock& clock) const override;
-        std::string commentary_for_move(size_t move_number) const override;
+        std::string commentary_for_next_move(const Board& board) const override;
 
     protected:
         void calculate_centipawn_value();
@@ -24,7 +25,7 @@ class Minimax_AI : public Player
 
     private:
         mutable std::vector<const Move*> principal_variation;
-        mutable std::vector<std::vector<const Move*>> commentary;
+        mutable std::vector<Game_Tree_Node_Result> commentary;
 
         // Monitor search speed to adapt to different computers/competing workloads
         mutable int nodes_searched;
