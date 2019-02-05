@@ -23,7 +23,7 @@ then
     exit 1
 fi
 
-game_file="${pool_file}_games.txt"
+game_file="${pool_file}_games.pgn"
 opening_file="${game_file}_opening_list.txt"
 octave analysis/gene_plots.m "$pool_file" "$notes_file" &
 octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
