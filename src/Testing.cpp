@@ -816,6 +816,36 @@ bool run_tests()
         tests_passed = false;
     }
 
+    auto small_number = 1.23456;
+    auto small_no_padding = String::round_to_decimal(small_number, 3);
+    if(small_no_padding != "1.234")
+    {
+        std::cerr << "Rounding small number with no zero-padding failed." << std::endl;
+        tests_passed = false;
+    }
+
+    auto small_padding = String::round_to_decimal(small_number, 7);
+    if(small_padding != "1.2345600")
+    {
+        std::cerr << "Rounding small number with zero-padding failed." << std::endl;
+        tests_passed = false;
+    }
+
+    auto large_number = 1.23456e128;
+    auto large_no_padding = String::round_to_decimal(large_number, 3);
+    if(large_no_padding != "1.234e+128")
+    {
+        std::cerr << "Rounding large number with no zero-padding failed." << std::endl;
+        tests_passed = false;
+    }
+
+    auto large_padding = String::round_to_decimal(large_number, 7);
+    if(large_padding != "1.2345600e+128")
+    {
+        std::cerr << "Rounding large number with zero-padding failed." << std::endl;
+        tests_passed = false;
+    }
+
 
     // Log-Norm distribution check
     const double mean_moves = 26.0;
