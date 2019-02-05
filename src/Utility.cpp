@@ -100,7 +100,7 @@ std::string String::strip_block_comment(const std::string& str, char start, char
 {
     auto start_comment_index = str.find(start);
     auto end_comment_index = str.find(end);
-    
+
     if(start_comment_index == std::string::npos || end_comment_index == std::string::npos)
     {
         return remove_extra_whitespace(str);
