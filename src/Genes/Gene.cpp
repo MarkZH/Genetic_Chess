@@ -60,11 +60,6 @@ void Gene::read_from(std::istream& is)
                 throw std::runtime_error("Reading data for wrong gene. Gene is " + name() + ", data is for " + property_data + ".");
             }
         }
-        else if(property_name == "Original Pool")
-        {
-            original_pool = std::stoi(property_data);
-            continue;
-        }
 
         try
         {
@@ -133,7 +128,7 @@ void Gene::print(std::ostream& os) const
     {
         os << name_value.first << ": " << name_value.second << "\n";
     }
-    os << "Original Pool: " << original_pool << "\n\n";
+    os << "\n";
 }
 
 void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
@@ -162,9 +157,4 @@ double Gene::priority() const
 void Gene::make_priority_minimum_zero()
 {
     scoring_priority = std::abs(scoring_priority);
-}
-
-void Gene::set_original_pool(int pool_id)
-{
-    original_pool = pool_id;
 }

@@ -224,7 +224,6 @@ void Genetic_AI::set_origin_pool(int pool_id)
     ancestry.clear();
     ancestry[pool_id] = 1.0;
     max_origin_pool_id = std::max(max_origin_pool_id, pool_id);
-    genome.set_original_pool(pool_id);
 }
 
 void Genetic_AI::read_ancestry(std::istream& is)
