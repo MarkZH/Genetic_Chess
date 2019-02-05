@@ -32,6 +32,8 @@ namespace String
     std::string strip_block_comment(const std::string& str, char start, char end);
 
     std::string lowercase(std::string s);
+
+    std::string round_to_decimal(double number, size_t decimals);
 }
 
 namespace Random

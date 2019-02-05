@@ -9,6 +9,7 @@
 #include <cctype>
 #include <iostream>
 #include <cmath>
+#include <sstream>
 
 namespace String
 {
@@ -119,6 +120,36 @@ std::string String::lowercase(std::string s)
 {
     for(auto& c : s){ c = std::tolower(c); }
     return s;
+}
+
+std::string String::round_to_decimal(double number, size_t decimals)
+{
+    std::ostringstream oss;
+    oss << number;
+    auto result = oss.str();
+    auto decimal_point_index = result.find('.');
+    if(decimal_point_index == std::string::npos)
+    {
+        return result;
+    }
+
+    auto mantissa_end_index = std::min(result.size(), result.find('e'));
+    auto current_decimals = mantissa_end_index - decimal_point_index - 1;
+    if(current_decimals == decimals)
+    {
+        return result;
+    }
+    else if(current_decimals > decimals)
+    {
+        return result.substr(0, decimal_point_index + decimals + 1) +
+               result.substr(mantissa_end_index);
+    }
+    else
+    {
+        return result.substr(0, mantissa_end_index) +
+               std::string(decimals - current_decimals, '0') +
+               result.substr(mantissa_end_index);
+    }
 }
 
 int Random::random_integer(int min, int max)
