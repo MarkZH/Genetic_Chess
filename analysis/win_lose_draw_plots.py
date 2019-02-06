@@ -55,15 +55,15 @@ def main(files):
                         result_type = 6
                     else: # Stalemate
                         result_type = 7
-                elif '. ' in line:
+                elif line and line[0] in '123456789':
                     game_section = True
                     number_of_moves = line.split('. ')[0]
-                elif 'TimeControl' in line:
+                elif line.startswith('[TimeControl'):
                     time = line.split('"')[1]
-                elif 'White:' in line:
-                    white_time_left = line.split()[-2]
-                elif 'Black:' in line:
-                    black_time_left = line.split()[-2]
+                elif line.startswith('[TimeLeftWhite'):
+                    white_time_left = line.split('"')[1]
+                elif line.startswith('[TimeLeftBlack'):
+                    black_time_left = line.split('"')[1]
                 elif game_section and not line.strip():
                     w.write('\t'.join(str(x) for x in [game,
                                                        white_wins,

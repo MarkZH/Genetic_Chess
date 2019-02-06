@@ -1066,6 +1066,8 @@ void Board::print_game_record(const Player* white,
             out_stream << '+' << increment;
         }
         out_stream << "\"]\n";
+        out_stream << "[TimeLeftWhite \"" << game_clock.time_left(WHITE) << "\"]\n"
+                   << "[TimeLeftBlack \"" << game_clock.time_left(BLACK) << "\"]\n";
     }
 
     if( ! result.game_ending_annotation().empty())
@@ -1114,14 +1116,7 @@ void Board::print_game_record(const Player* white,
 
         temp.submit_move(*next_move);
     }
-    out_stream << '\n';
-
-    if(initial_time > 0)
-    {
-        out_stream << "{ Time left: White: " << game_clock.time_left(WHITE) << " }\n"
-                   << "{            Black: " << game_clock.time_left(BLACK) << " }\n\n";
-    }
-    out_stream << '\n';
+    out_stream << "\n\n\n";
 }
 
 std::string Board::board_status() const
