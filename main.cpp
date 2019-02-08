@@ -418,8 +418,8 @@ void replay_game(const std::string& file_name, int game_number)
     bool game_started = false;
     while( ! result.game_has_ended() && std::getline(ifs, line))
     {
-        line = String::strip_block_comment(line, '{', '}');
-        line = String::strip_comments(line, ';');
+        line = String::strip_block_comment(line, "{", "}");
+        line = String::strip_comments(line, ";");
         if(line.empty())
         {
             if(game_started)
@@ -496,8 +496,8 @@ bool confirm_game_record(const std::string& file_name, bool verbose)
     while(std::getline(input, line))
     {
         ++line_number;
-        line = String::strip_block_comment(line, '{', '}');
-        line = String::strip_comments(line, ';');
+        line = String::strip_block_comment(line, "{", "}");
+        line = String::strip_comments(line, ";");
         line = String::remove_extra_whitespace(line);
         if(line.empty())
         {
@@ -747,8 +747,8 @@ void game_progress_move_count(const std::string& input_file_name, const std::str
             continue;
         }
 
-        line = String::strip_block_comment(line, '{', '}');
-        line = String::strip_comments(line, ';');
+        line = String::strip_block_comment(line, "{", "}");
+        line = String::strip_comments(line, ";");
 
         for(const auto& move_record : String::split(line))
         {

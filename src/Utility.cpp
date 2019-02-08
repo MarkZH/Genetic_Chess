@@ -91,29 +91,34 @@ std::string String::remove_extra_whitespace(const std::string& s)
     return result;
 }
 
-std::string String::strip_comments(const std::string& str, char comment)
+std::string String::strip_comments(const std::string& str, const std::string& comment)
 {
     return trim_outer_whitespace(str.substr(0, str.find(comment)));
 }
 
-std::string String::strip_block_comment(const std::string& str, char start, char end)
+std::string String::strip_block_comment(const std::string& str, const std::string& start, const std::string& end)
 {
     auto start_comment_index = str.find(start);
     auto end_comment_index = str.find(end);
 
+    if(start_comment_index == std::string::npos && end_comment_index == std::string::npos)
+    {
+        return trim_outer_whitespace(str);
+    }
+
     if(start_comment_index == std::string::npos || end_comment_index == std::string::npos)
     {
-        return remove_extra_whitespace(str);
+        throw std::runtime_error("\"" + str + "\" is missing a comment delimiter: " + std::string{start} + std::string{end});
     }
 
     if(start_comment_index >= end_comment_index)
     {
-        throw std::runtime_error("\"" + str + "\" contains bad comment delimiters: " + std::string{start} +std::string{end});
+        throw std::runtime_error("\"" + str + "\" contains bad comment delimiters: " + std::string{start} + std::string{end});
     }
 
     auto first_part = str.substr(0, start_comment_index);
-    auto last_part = str.substr(end_comment_index + 1);
-    return strip_block_comment(first_part + " " + last_part, start, end);
+    auto last_part = str.substr(end_comment_index + end.size());
+    return strip_block_comment(trim_outer_whitespace(first_part) + " " + trim_outer_whitespace(last_part), start, end);
 }
 
 std::string String::lowercase(std::string s)
@@ -240,7 +245,7 @@ Configuration_File::Configuration_File(const std::string& file_name)
     std::string line;
     while(std::getline(ifs, line))
     {
-        line = String::strip_comments(line, '#');
+        line = String::strip_comments(line, "#");
         if(line.empty())
         {
             continue;

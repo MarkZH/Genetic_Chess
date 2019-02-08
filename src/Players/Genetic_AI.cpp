@@ -73,7 +73,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
     std::string line;
     while(std::getline(ifs, line))
     {
-        line = String::strip_comments(line, '#');
+        line = String::strip_comments(line, "#");
         if( ! String::starts_with(line, "ID"))
         {
             continue;
@@ -108,7 +108,7 @@ void Genetic_AI::read_from(std::istream& is)
     id_number = -1;
     while(std::getline(is, line))
     {
-        line = String::strip_comments(line, '#');
+        line = String::strip_comments(line, "#");
         if(line.empty())
         {
             continue;
@@ -233,7 +233,7 @@ void Genetic_AI::read_ancestry(std::istream& is)
     std::string line;
     while(std::getline(is, line))
     {
-        line = String::strip_comments(line, '#');
+        line = String::strip_comments(line, "#");
         if(line.empty())
         {
             continue;

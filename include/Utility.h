@@ -28,8 +28,8 @@ namespace String
     std::string trim_outer_whitespace(const std::string& s);
     std::string remove_extra_whitespace(const std::string& s);
 
-    std::string strip_comments(const std::string& str, char comment);
-    std::string strip_block_comment(const std::string& str, char start, char end);
+    std::string strip_comments(const std::string& str, const std::string& comment);
+    std::string strip_block_comment(const std::string& str, const std::string& start, const std::string& end);
 
     std::string lowercase(std::string s);
 

@@ -36,7 +36,7 @@ void Gene::read_from(std::istream& is)
     std::string line;
     while(std::getline(is, line))
     {
-        line = String::strip_comments(line, '#');
+        line = String::strip_comments(line, "#");
         if(line.empty())
         {
             break;

@@ -728,7 +728,7 @@ bool run_tests()
     // String utilities
     std::string original = "   a    #     b";
     std::string expected = "a";
-    std::string result = String::strip_comments(original, '#');
+    std::string result = String::strip_comments(original, "#");
     if(expected != result)
     {
         std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
@@ -738,7 +738,7 @@ bool run_tests()
 
     original = "   a    {    b    }    c   {   d  }   ";
     expected = "a c";
-    result = String::strip_block_comment(original, '{', '}');
+    result = String::strip_block_comment(original, "{", "}");
     if(expected != result)
     {
         std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
@@ -749,12 +749,45 @@ bool run_tests()
     try
     {
         original = "   a    }    b    {    c   {   d  }   ";
-        auto bad_input_result = String::strip_block_comment(original, '{', '}');
+        auto bad_input_result = String::strip_block_comment(original, "{", "}");
         tests_passed = false;
     }
     catch(const std::runtime_error&)
     {
         // This test should throw an exception.
+    }
+
+    try
+    {
+        original = "   a        b    {    c      d     ";
+        auto bad_input_result = String::strip_block_comment(original, "{", "}");
+        tests_passed = false;
+    }
+    catch(const std::runtime_error&)
+    {
+        // This test should throw an exception.
+    }
+
+    original = "a // b";
+    expected = "a";
+    result = String::strip_comments(original, "//");
+    if(expected != result)
+    {
+        std::cerr << "Multicharacter comment delimiter test failed." << std::endl;
+        std::cerr << "\"" << original << " --> \"" << result << "\"" << std::endl;
+        std::cerr << "Expected result: \"" << expected << "\"" << std::endl;
+        tests_passed = false;
+    }
+
+    original = "a /* b  */ c";
+    expected = "a c";
+    result = String::strip_block_comment(original, "/*", "*/");
+    if(expected != result)
+    {
+        std::cerr << "Multicharacter block comment delimiter test failed." << std::endl;
+        std::cerr << "\"" << original << " --> \"" << result << "\"" << std::endl;
+        std::cerr << "Expected result: \"" << expected << "\"" << std::endl;
+        tests_passed = false;
     }
 
     std::string search_string = "abcdefg";
