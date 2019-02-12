@@ -116,7 +116,6 @@ class Board
         std::array<bool, 64> attacked_indices;
         std::array<bool, 64> other_attacked_indices;
         std::array<bool, 64> safe_squares_for_king;
-        bool previous_move_captured;
         bool capturing_move_available;
         std::array<size_t, 2> castling_index;
 

@@ -68,7 +68,6 @@ Board::Board(const std::string& fen) :
     repeat_count_insertion_point{0},
     unmoved_positions{},
     starting_fen(String::remove_extra_whitespace(fen)),
-    previous_move_captured(false),
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {
@@ -666,8 +665,7 @@ const Move& Board::create_move(const std::string& move) const
 
 void Board::make_move(char file_start, int rank_start, char file_end, int rank_end)
 {
-    previous_move_captured = piece_on_square(file_end, rank_end);
-    if(previous_move_captured)
+    if(piece_on_square(file_end, rank_end))
     {
         clear_repeat_count();
     }
@@ -1521,7 +1519,20 @@ uint64_t Board::board_hash() const
 
 bool Board::last_move_captured() const
 {
-    return previous_move_captured;
+    if(game_record_listing.empty() || moves_since_pawn_or_capture() > 0)
+    {
+        return false;
+    }
+
+    auto last_move = game_record_listing.back();
+    if(piece_on_square(last_move->end_file(), last_move->end_rank())->type() == PAWN ||
+       last_move->promotion_piece_symbol())
+    {
+        return last_move->file_change() != 0;
+    }
+
+    // Not a pawn move and moves_since_pawn_or_capture() == 0 ==> capturing move
+    return true;
 }
 
 bool Board::capture_possible() const
