@@ -89,7 +89,8 @@ class Board
 
         // Methods for gene reference
         bool last_move_captured() const;
-        bool capture_possible() const;
+        bool last_move_changed_material() const;
+        bool material_change_possible() const;
         const std::array<bool, 64>& all_square_indices_attacked() const;
         const std::array<bool, 64>& other_square_indices_attacked() const;
         const std::array<bool, 64>& squares_safe_for_king() const;
@@ -116,7 +117,7 @@ class Board
         std::array<bool, 64> attacked_indices;
         std::array<bool, 64> other_attacked_indices;
         std::array<bool, 64> safe_squares_for_king;
-        bool capturing_move_available;
+        bool material_change_move_available;
         std::array<size_t, 2> castling_index;
 
         // Pieces

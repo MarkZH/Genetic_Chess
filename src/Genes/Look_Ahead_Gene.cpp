@@ -21,9 +21,9 @@ void Look_Ahead_Gene::reset_properties() const
     properties["Mean Game Length"] = mean_game_length;
     properties["Game Length Uncertainty"] = game_length_uncertainty;
     properties["Speculation-Default"] = speculation_constants[0];
-    properties["Speculation-Just Captured"] = speculation_constants[1];
-    properties["Speculation-Can Capture"] = speculation_constants[2];
-    properties["Speculation-Recapture"] = speculation_constants[3];
+    properties["Speculation-Just Changed Material"] = speculation_constants[1];
+    properties["Speculation-Can Change Material"] = speculation_constants[2];
+    properties["Speculation-Material Exchange"] = speculation_constants[3];
 }
 
 void Look_Ahead_Gene::load_properties()
@@ -31,9 +31,9 @@ void Look_Ahead_Gene::load_properties()
     mean_game_length = properties["Mean Game Length"];
     game_length_uncertainty = properties["Game Length Uncertainty"];
     speculation_constants[0] = properties["Speculation-Default"];
-    speculation_constants[1] = properties["Speculation-Just Captured"];
-    speculation_constants[2] = properties["Speculation-Can Capture"];
-    speculation_constants[3] = properties["Speculation-Recapture"];
+    speculation_constants[1] = properties["Speculation-Just Changed Material"];
+    speculation_constants[2] = properties["Speculation-Can Change Material"];
+    speculation_constants[3] = properties["Speculation-Material Exchange"];
 }
 
 double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const
@@ -89,8 +89,8 @@ double Look_Ahead_Gene::speculation_time_factor(const Board& board) const
     size_t index = 0;
 
     // Each extra board factor adds another power of two
-    if(board.last_move_captured()) { index += 1; }
-    if(board.capture_possible())   { index += 2; }
+    if(board.last_move_changed_material()) { index += 1; }
+    if(board.material_change_possible())   { index += 2; }
 
     return speculation_constants[index];
 }

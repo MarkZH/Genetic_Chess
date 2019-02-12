@@ -1263,7 +1263,7 @@ void Board::recreate_move_caches()
     safe_squares_for_king.fill(true);
 
     bool en_passant_legal = false;
-    capturing_move_available = false;
+    material_change_move_available = false;
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
@@ -1291,12 +1291,14 @@ void Board::recreate_move_caches()
                             {
                                 rank_adjust = -move->rank_change();
                                 en_passant_legal = true;
-                                capturing_move_available = true;
+                                material_change_move_available = true;
                             }
                             attacked_indices[square_index(move->end_file(),
                                                           move->end_rank() + rank_adjust)] = true;
 
-                            capturing_move_available = capturing_move_available || move_captures(*move);
+                            material_change_move_available = material_change_move_available ||
+                                                             move_captures(*move)||
+                                                             move->promotion_piece_symbol();
                         }
                     }
                     else
@@ -1517,6 +1519,12 @@ uint64_t Board::board_hash() const
     return current_board_hash;
 }
 
+bool Board::last_move_changed_material() const
+{
+    return last_move_captured() ||
+           ( ! game_record_listing.empty() && game_record_listing.back()->promotion_piece_symbol());
+}
+
 bool Board::last_move_captured() const
 {
     if(game_record_listing.empty() || moves_since_pawn_or_capture() > 0)
@@ -1535,9 +1543,9 @@ bool Board::last_move_captured() const
     return true;
 }
 
-bool Board::capture_possible() const
+bool Board::material_change_possible() const
 {
-    return capturing_move_available;
+    return material_change_move_available;
 }
 
 bool Board::move_captures(const Move& move) const

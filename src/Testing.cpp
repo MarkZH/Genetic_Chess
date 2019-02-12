@@ -1347,7 +1347,7 @@ bool run_tests()
     Board capture_board;
     capture_board.submit_move(capture_board.create_move("b4"));
     capture_board.submit_move(capture_board.create_move("c5"));
-    if( ! capture_board.capture_possible())
+    if( ! capture_board.material_change_possible())
     {
         capture_board.ascii_draw(WHITE);
         std::cerr << "This board has a capturing move." << std::endl;
@@ -1362,7 +1362,7 @@ bool run_tests()
         tests_passed = false;
     }
 
-    if(capture_board.capture_possible())
+    if(capture_board.material_change_possible())
     {
         capture_board.ascii_draw(WHITE);
         std::cerr << "This board does not have a capturing move." << std::endl;
