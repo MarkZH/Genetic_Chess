@@ -5,8 +5,7 @@
 
 input_file="$1"
 output_file="${input_file}_offspring_counts.txt"
-grep "\[" "$input_file" |           # Find header lines
-    grep "White\|Black" |  # Find players
+grep "\[White \|\[Black " "$input_file" |  # Find players
     cut -d\" -f2 |         # Cut out name of player
     cut -d' ' -f3 |        # Cut out ID number
     sort -n |              # Sort by number, then
