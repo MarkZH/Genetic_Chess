@@ -56,14 +56,8 @@ void Piece_Strength_Gene::load_properties()
 
 void Piece_Strength_Gene::gene_specific_mutation()
 {
-    for(auto& piece_score : piece_strength)
-    {
-        const double mean_number_of_mutations = 2.0;
-        if(Random::success_probability(mean_number_of_mutations/piece_strength.size()))
-        {
-            piece_score += Random::random_laplace(1.0);
-        }
-    }
+    auto index = Random::random_integer(0, piece_strength.size() - 1);
+    piece_strength[index] += Random::random_laplace(1.0);
 }
 
 double Piece_Strength_Gene::piece_value(Piece_Type type) const
