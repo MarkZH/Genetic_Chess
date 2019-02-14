@@ -263,11 +263,11 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     // Indicate "mate in N moves" where N == thought.depth
     if(thought.is_winning_for(perspective))
     {
-        score = 10000.0 - thought.depth() + 1;
+        score = 10000.0 - thought.depth();
     }
     else if(thought.is_losing_for(perspective))
     {
-        score = -(10000.0 - thought.depth() + 1);
+        score = -(10000.0 - thought.depth());
     }
 
     auto time_so_far = clock_start_time - clock.running_time_left();
