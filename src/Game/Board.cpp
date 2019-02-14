@@ -1536,6 +1536,7 @@ bool Board::last_move_captured() const
     if(piece_on_square(last_move->end_file(), last_move->end_rank())->type() == PAWN ||
        last_move->promotion_piece_symbol())
     {
+        // Check if move was pawn capture
         return last_move->file_change() != 0;
     }
 
