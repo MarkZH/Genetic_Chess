@@ -211,9 +211,7 @@ void Genome::mutate()
 
     // Pick randomly from the list of copies to make sure genes with
     // more components don't lack for mutations.
-    auto mutations = 0;
-    const auto number_of_mutations = 3;
-    while(mutations++ < number_of_mutations)
+    for(auto mutations = 0; mutations < 3; ++mutations)
     {
         genes[Random::random_integer(0, int(genes.size()) - 1)]->mutate();
     }
