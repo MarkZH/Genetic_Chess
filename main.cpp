@@ -223,7 +223,6 @@ int main(int argc, char *argv[])
                     game_time = outside->game_time();
                     moves_per_reset = outside->reset_moves();
                     increment_time = outside->increment();
-                    outside->initial_board_setup(board);
                     if(outside->ai_color() == WHITE)
                     {
                         black = std::move(outside);

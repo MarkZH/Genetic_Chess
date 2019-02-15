@@ -24,9 +24,6 @@ Game_Result play_game(const Player& white,
 {
     Board board;
 
-    white.initial_board_setup(board);
-    black.initial_board_setup(board);
-
     return play_game_with_board(white,
                                 black,
                                 time_in_seconds,
@@ -45,6 +42,9 @@ Game_Result play_game_with_board(const Player& white,
                                  Board& board)
 {
     static std::mutex write_lock;
+
+    white.initial_board_setup(board);
+    black.initial_board_setup(board);
 
     auto stop_for_clock = white.stop_for_local_clock() && black.stop_for_local_clock();
     Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds, stop_for_clock);
