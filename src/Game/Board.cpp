@@ -1025,13 +1025,13 @@ void Board::print_game_record(const Player* white,
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
 
-    auto now = std::chrono::system_clock::now();
-    auto now_c = std::chrono::system_clock::to_time_t(now);
+    auto game_start_time = game_clock.game_start_date_and_time();
+    auto game_start_time_c = std::chrono::system_clock::to_time_t(game_start_time);
     std::tm time_out;
 #ifdef _WIN32
-    localtime_s(&time_out, &now_c);
+    localtime_s(&time_out, &game_start_time_c);
 #elif defined(__linux__)
-    localtime_r(&now_c, &time_out);
+    localtime_r(&game_start_time_c, &time_out);
 #endif
     out_stream << "[Date \"" << std::put_time(&time_out, "%Y.%m.%d") << "\"]\n";
     out_stream << "[Time \"" << std::put_time(&time_out, "%H:%M:%S") << "\"]\n";

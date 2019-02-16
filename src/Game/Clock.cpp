@@ -72,6 +72,7 @@ void Clock::stop()
 void Clock::start()
 {
     time_previous_punch = std::chrono::steady_clock::now();
+    game_start_date_time = std::chrono::system_clock::now();
     clocks_running = true;
 }
 
@@ -119,4 +120,9 @@ void Clock::set_time(Color player, double new_time_seconds) const
 double Clock::running_time_left() const
 {
     return time_left(running_for());
+}
+
+std::chrono::system_clock::time_point Clock::game_start_date_and_time() const
+{
+    return game_start_date_time;
 }

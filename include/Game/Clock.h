@@ -24,6 +24,7 @@ class Clock
         size_t moves_to_reset(Color color) const;
         Color running_for() const;
         double running_time_left() const;
+        std::chrono::system_clock::time_point game_start_date_and_time() const;
 
     private:
         using fractional_seconds = std::chrono::duration<double>;
@@ -41,6 +42,7 @@ class Clock
         size_t move_count_reset;
         bool clocks_running;
         bool local_clock_stoppage;
+        std::chrono::system_clock::time_point game_start_date_time;
 
         // mutable for external adjustment
         mutable std::chrono::steady_clock::time_point time_previous_punch;
