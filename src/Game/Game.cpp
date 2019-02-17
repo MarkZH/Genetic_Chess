@@ -89,9 +89,6 @@ Game_Result play_game_with_board(const Player& white,
                                 &black,
                                 pgn_file_name,
                                 result,
-                                time_in_seconds,
-                                moves_to_reset,
-                                increment_seconds,
                                 game_clock);
 
         return result;
@@ -104,9 +101,6 @@ Game_Result play_game_with_board(const Player& white,
                                 &black,
                                 pgn_file_name,
                                 Game_Result(NONE, error.what()),
-                                time_in_seconds,
-                                moves_to_reset,
-                                increment_seconds,
                                 game_clock);
         throw;
     }

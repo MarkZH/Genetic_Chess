@@ -56,9 +56,6 @@ class Board
                                const Player* black,
                                const std::string& file_name,
                                const Game_Result& result,
-                               double initial_time,
-                               size_t moves_to_reset,
-                               double increment,
                                const Clock& game_clock) const;
 
         std::string last_move_coordinates() const;

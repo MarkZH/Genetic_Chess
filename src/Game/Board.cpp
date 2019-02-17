@@ -1002,9 +1002,6 @@ void Board::print_game_record(const Player* white,
                               const Player* black,
                               const std::string& file_name,
                               const Game_Result& result,
-                              double initial_time,
-                              size_t moves_to_reset,
-                              double increment,
                               const Clock& game_clock) const
 {
     static int game_number = 0;
@@ -1051,17 +1048,17 @@ void Board::print_game_record(const Player* white,
         out_stream << "[Round \"" << game_number++ << "\"]\n";
     }
 
-    if(initial_time > 0)
+    if(game_clock.initial_time() > 0)
     {
         out_stream << "[TimeControl \"";
-        if(moves_to_reset > 0)
+        if(game_clock.moves_to_reset() > 0)
         {
-            out_stream << moves_to_reset << '/';
+            out_stream << game_clock.moves_to_reset() << '/';
         }
-        out_stream << initial_time;
-        if(increment > 0)
+        out_stream << game_clock.initial_time();
+        if(game_clock.increment() > 0)
         {
-            out_stream << '+' << increment;
+            out_stream << '+' << game_clock.increment();
         }
         out_stream << "\"]\n";
         out_stream << "[TimeLeftWhite \"" << game_clock.time_left(WHITE) << "\"]\n"

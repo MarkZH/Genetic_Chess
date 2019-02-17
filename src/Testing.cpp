@@ -260,7 +260,7 @@ bool run_tests()
     catch(const Illegal_Move&)
     {
         perf_board.ascii_draw(WHITE);
-        perf_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        perf_board.print_game_record(nullptr, nullptr, "", {}, Clock{});
         std::cerr << "All moves so far should have been legal." << std::endl;
         tests_passed = false;
     }
@@ -296,7 +296,7 @@ bool run_tests()
     catch(const Illegal_Move&)
     {
         perf_board2.ascii_draw(WHITE);
-        perf_board2.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        perf_board2.print_game_record(nullptr, nullptr, "", {}, Clock{});
         for(const auto& move : moves2)
         {
             std::cout << move << " ";
@@ -318,7 +318,7 @@ bool run_tests()
     catch(const Illegal_Move&)
     {
         perf_board3.ascii_draw(WHITE);
-        perf_board3.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        perf_board3.print_game_record(nullptr, nullptr, "", {}, Clock{});
         for(const auto& move : moves3)
         {
             std::cout << move << " ";
@@ -348,7 +348,7 @@ bool run_tests()
     catch(const Illegal_Move&)
     {
         perf_board4.ascii_draw(WHITE);
-        perf_board4.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        perf_board4.print_game_record(nullptr, nullptr, "", {}, Clock{});
         for(const auto& move : moves4)
         {
             std::cout << move << " ";
@@ -378,7 +378,7 @@ bool run_tests()
     catch(const Illegal_Move&)
     {
         perf_board5.ascii_draw(WHITE);
-        perf_board5.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        perf_board5.print_game_record(nullptr, nullptr, "", {}, Clock{});
         for(const auto& move : moves5)
         {
             std::cout << move << " ";
@@ -402,7 +402,7 @@ bool run_tests()
     catch(const Illegal_Move&)
     {
         perf_board6.ascii_draw(WHITE);
-        perf_board6.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        perf_board6.print_game_record(nullptr, nullptr, "", {}, Clock{});
         for(const auto& move : moves6)
         {
             std::cout << move << " ";
@@ -424,7 +424,7 @@ bool run_tests()
         if(result.winner() != WHITE)
         {
             perf_board7.ascii_draw(WHITE);
-            perf_board7.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+            perf_board7.print_game_record(nullptr, nullptr, "", {}, Clock{});
             std::cerr << "This should be checkmate for white." << std::endl;
             std::cerr << "Allegedly legal moves:\n";
             for(auto move : perf_board7.legal_moves())
@@ -437,7 +437,7 @@ bool run_tests()
     catch(const Illegal_Move&)
     {
         perf_board7.ascii_draw(WHITE);
-        perf_board7.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, Clock{});
+        perf_board7.print_game_record(nullptr, nullptr, "", {}, Clock{});
         for(const auto& move : moves7)
         {
             std::cout << move << " ";
@@ -1040,7 +1040,7 @@ bool run_tests()
     {
         std::cerr << "Last move should have been an error:" << std::endl;
         board.print_game_record(nullptr, nullptr,
-                                "", Game_Result(NONE, ""), 0, 0, 0, Clock());
+                                "", Game_Result(NONE, ""), Clock());
 
         tests_passed = false;
     }
@@ -1173,7 +1173,7 @@ bool run_tests()
     catch(const std::exception&)
     {
         en_passant_check_capture.ascii_draw(WHITE);
-        en_passant_check_capture.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, {});
+        en_passant_check_capture.print_game_record(nullptr, nullptr, "", {}, {});
         std::cerr << "Move exd6 should be legal." << std::endl;
         tests_passed = false;
     }
@@ -1357,7 +1357,7 @@ bool run_tests()
     if( ! capture_board.last_move_captured())
     {
         capture_board.ascii_draw(WHITE);
-        capture_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, {});
+        capture_board.print_game_record(nullptr, nullptr, "", {}, {});
         std::cerr << "The previous move was a capture." << std::endl;
         tests_passed = false;
     }
@@ -1372,7 +1372,7 @@ bool run_tests()
     if(capture_board.last_move_captured())
     {
         capture_board.ascii_draw(WHITE);
-        capture_board.print_game_record(nullptr, nullptr, "", {}, 0, 0, 0, {});
+        capture_board.print_game_record(nullptr, nullptr, "", {}, {});
         std::cerr << "The previous move did not capture." << std::endl;
         tests_passed = false;
     }

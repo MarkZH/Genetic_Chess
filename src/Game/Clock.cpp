@@ -11,24 +11,17 @@ Clock::Clock(double duration_seconds,
              size_t moves_to_reset,
              double increment_seconds,
              bool clock_stops_game) :
+    timers({fractional_seconds(duration_seconds), fractional_seconds(duration_seconds)}),
+    moves_to_reset_clocks({0, 0}),
+    initial_start_time(duration_seconds),
+    increment_time(increment_seconds),
+    move_count_reset(moves_to_reset),
     whose_turn(WHITE),
     use_clock(duration_seconds > 0),
     use_reset(moves_to_reset > 0),
-    move_count_reset(moves_to_reset),
     clocks_running(false),
     local_clock_stoppage(clock_stops_game)
 {
-    timers[WHITE] = fractional_seconds(duration_seconds);
-    timers[BLACK] = fractional_seconds(duration_seconds);
-
-    initial_time[WHITE] = fractional_seconds(duration_seconds);
-    initial_time[BLACK] = fractional_seconds(duration_seconds);
-
-    increment[WHITE] = fractional_seconds(increment_seconds);
-    increment[BLACK] = fractional_seconds(increment_seconds);
-
-    moves[WHITE] = 0;
-    moves[BLACK] = 0;
 }
 
 Game_Result Clock::punch()
@@ -49,15 +42,15 @@ Game_Result Clock::punch()
         return Game_Result(opposite(whose_turn), "Time Forfeiture");
     }
 
-    if(use_reset && (++moves[whose_turn] == move_count_reset))
+    if(use_reset && (++moves_to_reset_clocks[whose_turn] == move_count_reset))
     {
-        timers[whose_turn] += initial_time[whose_turn];
-        moves[whose_turn] = 0;
+        timers[whose_turn] += initial_start_time;
+        moves_to_reset_clocks[whose_turn] = 0;
     }
 
     whose_turn = opposite(whose_turn);
     time_previous_punch = time_this_punch;
-    timers[whose_turn] += increment[whose_turn];
+    timers[whose_turn] += increment_time;
 
     return {};
 }
@@ -98,7 +91,7 @@ size_t Clock::moves_to_reset(Color color) const
 {
     if(use_reset)
     {
-        return move_count_reset - moves[color];
+        return move_count_reset - moves_to_reset_clocks[color];
     }
     else
     {
@@ -125,4 +118,19 @@ double Clock::running_time_left() const
 std::chrono::system_clock::time_point Clock::game_start_date_and_time() const
 {
     return game_start_date_time;
+}
+
+size_t Clock::moves_to_reset() const
+{
+    return move_count_reset;
+}
+
+double Clock::initial_time() const
+{
+    return initial_start_time.count();
+}
+
+double Clock::increment() const
+{
+    return increment_time.count();
 }
