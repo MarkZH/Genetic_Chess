@@ -16,6 +16,7 @@ class Clock
         Clock(double duration_seconds = 0.0,
               size_t moves = 0,
               double increment_seconds = 0.0,
+              Color starting_turn = WHITE,
               bool clock_stops_game = true);
 
         Game_Result punch(); // start/stop both clocks

@@ -47,7 +47,7 @@ Game_Result play_game_with_board(const Player& white,
     black.initial_board_setup(board);
 
     auto stop_for_clock = white.stop_for_local_clock() && black.stop_for_local_clock();
-    Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds, stop_for_clock);
+    Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds, board.whose_turn(), stop_for_clock);
     game_clock.start();
     Game_Result result;
 
