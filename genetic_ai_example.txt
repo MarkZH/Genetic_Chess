@@ -11,10 +11,10 @@ R: 43.506
 Name: Look Ahead Gene
 Game Length Uncertainty: 0.323142
 Mean Game Length: 23.0851
-Speculation-Can Capture: 1.26234
+Speculation-Can Change Material: 1.26234
 Speculation-Default: 0.931131
-Speculation-Just Captured: 1.16217
-Speculation-Recapture: 3.15647
+Speculation-Just Changed Material: 1.16217
+Speculation-Material Exchange: 3.15647
 
 Name: Total Force Gene
 Priority: 1520.26
@@ -61,4 +61,3 @@ Name: Checkmate Material Gene
 Priority: 162.888
 
 END
-
