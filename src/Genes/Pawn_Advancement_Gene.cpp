@@ -27,15 +27,12 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Board&, size
         {
             if(board.piece_on_square(file, rank) == own_pawn)
             {
-                // 1 point per move towards promotion
-                score += std::pow(std::abs(home_rank - rank), 1.0 + non_linearity);
+                score += std::pow(std::abs(home_rank - rank)/5.0, 1.0 + non_linearity)/8;
             }
         }
     }
 
-    // normalize to 8 pawns at the far rank before promotion
-    double normalizer = 8*std::pow(5.0, 1.0 + non_linearity);
-    return score/normalizer;
+    return score;
 }
 
 std::unique_ptr<Gene> Pawn_Advancement_Gene::duplicate() const
