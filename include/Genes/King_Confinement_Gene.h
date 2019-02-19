@@ -19,8 +19,8 @@ class King_Confinement_Gene : public Gene
         std::string name() const override;
 
     protected:
-        void load_properties() override;
-        void reset_properties() const override;
+        void load_properties(const std::map<std::string, double>& properties) override;
+        std::map<std::string, double> list_properties() const override;
 
     private:
         double friendly_block_score;

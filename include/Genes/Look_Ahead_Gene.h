@@ -28,8 +28,8 @@ class Look_Ahead_Gene : public Gene
         double speculation_time_factor(const Board& board) const;
 
     protected:
-        void reset_properties() const override;
-        void load_properties() override;
+        std::map<std::string, double> list_properties() const override;
+        void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
         std::array<double, 4> speculation_constants; // controls over/under-allocation of time

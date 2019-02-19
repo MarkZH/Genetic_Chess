@@ -20,8 +20,8 @@ class Sphere_of_Influence_Gene : public Gene
         std::string name() const override;
 
     protected:
-        void reset_properties() const override;
-        void load_properties() override;
+        std::map<std::string, double> list_properties() const override;
+        void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
         double legal_square_score;

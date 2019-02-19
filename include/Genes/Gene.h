@@ -32,10 +32,8 @@ class Gene
         bool test(const Board& board, double expected_score) const;
 
     protected:
-        mutable std::map<std::string, double> properties; // used to simplify reading/writing from/to files
-
-        virtual void reset_properties() const;
-        virtual void load_properties();
+        virtual std::map<std::string, double> list_properties() const;
+        virtual void load_properties(const std::map<std::string, double>& properties);
 
         void make_priority_minimum_zero();
 

@@ -13,16 +13,18 @@ Piece_Strength_Gene::Piece_Strength_Gene() : piece_strength{}
 {
 }
 
-void Piece_Strength_Gene::reset_properties() const
+std::map<std::string, double> Piece_Strength_Gene::list_properties() const
 {
+    std::map<std::string, double> properties;
     for(auto piece_type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
     {
         auto piece = Board::piece_instance(piece_type, WHITE);
         properties[std::string(1, piece->fen_symbol())] = piece_value(piece);
     }
+    return properties;
 }
 
-void Piece_Strength_Gene::load_properties()
+void Piece_Strength_Gene::load_properties(const std::map<std::string, double>& properties)
 {
     for(const auto& piece_score : properties)
     {

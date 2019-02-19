@@ -45,16 +45,17 @@ std::string Pawn_Advancement_Gene::name() const
     return "Pawn Advancement Gene";
 }
 
-void Pawn_Advancement_Gene::reset_properties() const
+std::map<std::string, double> Pawn_Advancement_Gene::list_properties() const
 {
-    Gene::reset_properties();
+    auto properties = Gene::list_properties();
     properties["Non-linearity"] = non_linearity;
+    return properties;
 }
 
-void Pawn_Advancement_Gene::load_properties()
+void Pawn_Advancement_Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    Gene::load_properties();
-    non_linearity = properties["Non-linearity"];
+    Gene::load_properties(properties);
+    non_linearity = properties.at("Non-linearity");
 }
 
 void Pawn_Advancement_Gene::gene_specific_mutation()

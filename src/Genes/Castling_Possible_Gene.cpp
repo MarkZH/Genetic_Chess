@@ -17,18 +17,19 @@ Castling_Possible_Gene::Castling_Possible_Gene() :
 {
 }
 
-void Castling_Possible_Gene::reset_properties() const
+std::map<std::string, double> Castling_Possible_Gene::list_properties() const
 {
-    Gene::reset_properties();
+    auto properties = Gene::list_properties();
     properties["Kingside Preference"] = kingside_preference;
     properties["Queenside Preference"] = queenside_preference;
+    return properties;
 }
 
-void Castling_Possible_Gene::load_properties()
+void Castling_Possible_Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    Gene::load_properties();
-    kingside_preference = properties["Kingside Preference"];
-    queenside_preference = properties["Queenside Preference"];
+    Gene::load_properties(properties);
+    kingside_preference = properties.at("Kingside Preference");
+    queenside_preference = properties.at("Queenside Preference");
 }
 
 std::unique_ptr<Gene> Castling_Possible_Gene::duplicate() const

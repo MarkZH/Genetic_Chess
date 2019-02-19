@@ -41,12 +41,12 @@ double Mutation_Rate_Gene::score_board(const Board&, const Board&, size_t) const
     return 0.0;
 }
 
-void Mutation_Rate_Gene::reset_properties() const
+std::map<std::string, double> Mutation_Rate_Gene::list_properties() const
 {
-    properties["Mutation Rate"] = mutated_components_per_mutation;
+    return {{"Mutation Rate", mutated_components_per_mutation}};
 }
 
-void Mutation_Rate_Gene::load_properties()
+void Mutation_Rate_Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    mutated_components_per_mutation = properties["Mutation Rate"];
+    mutated_components_per_mutation = properties.at("Mutation Rate");
 }

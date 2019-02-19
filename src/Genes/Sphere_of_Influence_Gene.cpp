@@ -19,20 +19,21 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
 {
 }
 
-void Sphere_of_Influence_Gene::reset_properties() const
+std::map<std::string, double> Sphere_of_Influence_Gene::list_properties() const
 {
-    Gene::reset_properties();
+    auto properties = Gene::list_properties();
     properties["Legal Square Score"] = legal_square_score;
     properties["Illegal Square Score"] = illegal_square_score;
     properties["King Target Factor"] = king_target_factor;
+    return properties;
 }
 
-void Sphere_of_Influence_Gene::load_properties()
+void Sphere_of_Influence_Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    Gene::load_properties();
-    legal_square_score = properties["Legal Square Score"];
-    illegal_square_score = properties["Illegal Square Score"];
-    king_target_factor = properties["King Target Factor"];
+    Gene::load_properties(properties);
+    legal_square_score = properties.at("Legal Square Score");
+    illegal_square_score = properties.at("Illegal Square Score");
+    king_target_factor = properties.at("King Target Factor");
 }
 
 std::unique_ptr<Gene> Sphere_of_Influence_Gene::duplicate() const

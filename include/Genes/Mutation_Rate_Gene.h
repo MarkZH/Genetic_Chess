@@ -18,8 +18,8 @@ class Mutation_Rate_Gene : public Gene
         std::unique_ptr<Gene> duplicate() const override;
 
     protected:
-        void reset_properties() const override;
-        void load_properties() override;
+        std::map<std::string, double> list_properties() const override;
+        void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
         double mutated_components_per_mutation;

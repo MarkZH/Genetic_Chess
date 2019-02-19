@@ -25,8 +25,8 @@ class Piece_Strength_Gene : public Gene
         double piece_value(const Piece* piece) const;
 
     protected:
-        void reset_properties() const override;
-        void load_properties() override;
+        std::map<std::string, double> list_properties() const override;
+        void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
         std::array<double, 6> piece_strength;

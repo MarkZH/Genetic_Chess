@@ -30,18 +30,19 @@ std::string King_Confinement_Gene::name() const
     return "King Confinement Gene";
 }
 
-void King_Confinement_Gene::load_properties()
+void King_Confinement_Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    Gene::load_properties();
-    friendly_block_score = properties["Friendly Block Score"];
-    enemy_block_score = properties["Enemy Block Score"];
+    Gene::load_properties(properties);
+    friendly_block_score = properties.at("Friendly Block Score");
+    enemy_block_score = properties.at("Enemy Block Score");
 }
 
-void King_Confinement_Gene::reset_properties() const
+std::map<std::string, double> King_Confinement_Gene::list_properties() const
 {
-    Gene::reset_properties();
+    auto properties = Gene::list_properties();
     properties["Friendly Block Score"] = friendly_block_score;
     properties["Enemy Block Score"] = enemy_block_score;
+    return properties;
 }
 
 void King_Confinement_Gene::gene_specific_mutation()

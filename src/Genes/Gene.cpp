@@ -13,25 +13,24 @@ Gene::Gene() : scoring_priority(0.0)
 {
 }
 
-void Gene::reset_properties() const
+std::map<std::string, double> Gene::list_properties() const
 {
-    properties["Priority"] = scoring_priority;
+    return {{"Priority", scoring_priority}};
 }
 
-void Gene::load_properties()
+void Gene::load_properties(const std::map<std::string, double>& property_list)
 {
-    scoring_priority = properties["Priority"];
+    scoring_priority = property_list.at("Priority");
 }
 
 size_t Gene::mutatable_components() const
 {
-    reset_properties();
-    return properties.size();
+    return list_properties().size();
 }
 
 void Gene::read_from(std::istream& is)
 {
-    reset_properties();
+    auto properties = list_properties();
 
     std::string line;
     while(std::getline(is, line))
@@ -75,7 +74,7 @@ void Gene::read_from(std::istream& is)
         }
     }
 
-    load_properties();
+    load_properties(properties);
 }
 
 void Gene::read_from(const std::string& file_name)
@@ -122,7 +121,7 @@ double Gene::evaluate(const Board& board, const Board& opposite_board, size_t de
 
 void Gene::print(std::ostream& os) const
 {
-    reset_properties();
+    auto properties = list_properties();
     os << "Name: " << name() << "\n";
     for(const auto& name_value : properties)
     {
