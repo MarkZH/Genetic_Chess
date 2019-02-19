@@ -250,5 +250,5 @@ double Genome::speculation_time_factor(const Board& board) const
 
 double Genome::components_to_mutate() const
 {
-    return static_cast<const Mutation_Rate_Gene*>(genome[mutation_rate_gene_index].get())->mutatable_components();
+    return static_cast<const Mutation_Rate_Gene*>(genome[mutation_rate_gene_index].get())->mutation_count();
 }
