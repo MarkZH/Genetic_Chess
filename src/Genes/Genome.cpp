@@ -24,9 +24,11 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
+#include "Genes/Mutation_Rate_Gene.h"
 
 size_t Genome::piece_strength_gene_index = -1;
 size_t Genome::look_ahead_gene_index = -1;
+size_t Genome::mutation_rate_gene_index = -1;
 
 // Creation ex nihilo
 Genome::Genome()
@@ -56,6 +58,19 @@ Genome::Genome()
     else
     {
         look_ahead_gene_index = genome.size() - 1;
+    }
+
+    genome.emplace_back(std::make_unique<Mutation_Rate_Gene>());
+    if(mutation_rate_gene_index < genome.size())
+    {
+        if(mutation_rate_gene_index != genome.size() - 1)
+        {
+            throw std::logic_error("Different genomes have different mutation rate index values.");
+        }
+    }
+    else
+    {
+        mutation_rate_gene_index = genome.size() - 1;
     }
 
     // Normal genes
@@ -211,7 +226,8 @@ void Genome::mutate()
 
     // Pick randomly from the list of copies to make sure genes with
     // more components don't lack for mutations.
-    for(auto mutations = 0; mutations < 3; ++mutations)
+    auto mutation_count = components_to_mutate();
+    for(auto mutations = 0; mutations < mutation_count; ++mutations)
     {
         genes[Random::random_integer(0, int(genes.size()) - 1)]->mutate();
     }
@@ -230,4 +246,9 @@ double Genome::time_to_examine(const Board& board, const Clock& clock) const
 double Genome::speculation_time_factor(const Board& board) const
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor(board);
+}
+
+double Genome::components_to_mutate() const
+{
+    return static_cast<const Mutation_Rate_Gene*>(genome[mutation_rate_gene_index].get())->mutatable_components();
 }
