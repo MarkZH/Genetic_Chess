@@ -148,11 +148,6 @@ bool Gene::test(const Board& board, double expected_score) const
     return true;
 }
 
-double Gene::priority() const
-{
-    return scoring_priority;
-}
-
 void Gene::make_priority_minimum_zero()
 {
     scoring_priority = std::abs(scoring_priority);
