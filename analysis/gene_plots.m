@@ -56,11 +56,7 @@ speculation_keyword = 'Speculation';
 speculation_figure = figure;
 title('Speculation Constants');
 
-ancestor_prefix = 'Ancestors';
-original_pool_prefix = 'Original';
-
 special_plots = [0, 0, 0];
-file_name_suffixes = {'_piece_strength.png', '_gene_priorities.png', '_speculation.png'};
 
 for yi = 2 : length(data.colheaders) - 2
     this_data = data.data(:, yi);
@@ -98,22 +94,21 @@ for yi = 2 : length(data.colheaders) - 2
     set(leg, 'orientation', 'horizontal');
     legend left;
 
-    conv_window = 100;
-    smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
-    conv_margin = floor(conv_window/2);
-    x_axis = id_list(conv_margin : end - conv_margin);
-    if isempty(findstr(name, ancestor_prefix)) && isempty(findstr(name, original_pool_prefix))
+    ancestor_prefix = 'Ancestors';
+    if isempty(findstr(name, ancestor_prefix))
+        conv_window = 100;
+        smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
+        conv_margin = floor(conv_window/2);
+        x_axis = id_list(conv_margin : end - conv_margin);
         plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
+        print([gene_pool_filename ' gene ' name '.png']);
     else
-        if isempty(findstr(name, original_pool_prefix))
-            ylabel('Fraction of ancestry');
-        end
+        print([gene_pool_filename ' ' name '.png']);
+        continue;
     end
 
-    print([gene_pool_filename '_gene_' name '.png']);
-
     special_plot_index = 0;
-    if ~isempty(findstr(name, piece_strength_prefix)) && isempty(findstr(name, original_pool_prefix))
+    if ~isempty(findstr(name, piece_strength_prefix))
         plot_figure = piece_strength_figure;
         special_plot_index = 1;
     elseif ~isempty(findstr(name, priority_suffix))
@@ -148,6 +143,7 @@ for yi = 2 : length(data.colheaders) - 2
     end
 end
 
+file_name_suffixes = {'piece strength', 'gene priorities', 'speculation'};
 for index = 1 : length(special_plots)
     if ~special_plots(index)
         continue;
@@ -172,5 +168,5 @@ for index = 1 : length(special_plots)
 
     xlabel('ID');
 
-    print([gene_pool_filename file_name_suffixes{index}]);
+    print([gene_pool_filename ' special ' file_name_suffixes{index} '.png']);
 end
