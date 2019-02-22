@@ -220,8 +220,7 @@ void Genome::mutate()
     std::vector<Gene*> genes;
     for(const auto& gene : genome)
     {
-        auto mutatable_components = gene->mutatable_components();
-        genes.insert(genes.end(), mutatable_components, gene.get());
+        genes.insert(genes.end(), gene->mutatable_components(), gene.get());
     }
 
     // Pick randomly from the list of copies to make sure genes with
