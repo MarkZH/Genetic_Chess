@@ -59,6 +59,12 @@ void gene_pool(const std::string& config_file = "")
     const bool oscillating_time = config.as_boolean("oscillating time", "yes", "no");
     double game_time = minimum_game_time;
 
+    if(config.print_unused_parameters())
+    {
+        std::cout << "\nPress enter to continue or " << stop_key << " to quit ..." << std::endl;
+        std::cin.get();
+    }
+
     // Stats (Pool ID --> counts)
     std::vector<int> game_count(gene_pool_count);
     std::array<std::vector<int>, 2> color_wins; // indexed with [Color][pool_index]
@@ -161,8 +167,6 @@ void gene_pool(const std::string& config_file = "")
 
         std::cout << "Done." << std::endl;
     }
-
-    config.print_unused_parameters();
 
     // Signal to pause gene pool
     signal(PAUSE_SIGNAL, pause_gene_pool);

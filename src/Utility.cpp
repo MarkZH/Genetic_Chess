@@ -313,7 +313,7 @@ std::string Configuration_File::standardize_text(const std::string& input)
     return String::lowercase(String::remove_extra_whitespace(input));
 }
 
-void Configuration_File::print_unused_parameters() const
+bool Configuration_File::print_unused_parameters() const
 {
     auto header_printed = false;
     for(const auto& param_value : parameters)
@@ -322,12 +322,14 @@ void Configuration_File::print_unused_parameters() const
         {
             if( ! header_printed)
             {
-                std::cout << "Unused configuration parameters:\n";
+                std::cout << "\nUnused configuration parameters:\n";
                 header_printed = true;
             }
             std::cout << param_value.first << " --> " << param_value.second << std::endl;
         }
     }
+
+    return header_printed;
 }
 
 
