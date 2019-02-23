@@ -377,7 +377,14 @@ std::string Minimax_AI::commentary_for_next_move(const Board& board) const
 
         if( ! move_result.game_has_ended())
         {
-            result += String::round_to_decimal(comment.corrected_score(board.whose_turn())/centipawn_value()/100, 2);
+            auto score = std::to_string(int(comment.corrected_score(board.whose_turn())/centipawn_value())/100.0);
+            auto decimal_point_index = score.find('.');
+            if(decimal_point_index != std::string::npos)
+            {
+                // Truncate to two decimal places
+                score = score.substr(0, decimal_point_index + 3);
+            }
+            result += score;
         }
         else
         {
