@@ -849,6 +849,15 @@ bool run_tests()
         tests_passed = false;
     }
 
+    std::string comma_split_string = ",";
+    auto comma_split = String::split(comma_split_string, ",", 1);
+    if(comma_split.size() != 2 ||
+       ! std::all_of(comma_split.begin(), comma_split.end(), [](const auto& s){ return s.empty(); }))
+    {
+        std::cerr << "The string \"" << comma_split_string << "\" should split into 2 empty strings." << std::endl;
+        tests_passed = false;
+    }
+
     auto small_number = 1.23456;
     auto small_no_padding = String::round_to_decimal(small_number, 3);
     if(small_no_padding != "1.234")

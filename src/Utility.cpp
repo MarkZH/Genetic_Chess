@@ -43,6 +43,10 @@ std::vector<std::string> String::split(std::string s, std::string delim, size_t 
     {
         result.push_back(s.substr(start_index));
     }
+    else if(end_index < s.size())
+    {
+        result.push_back({}); // Original string ended with delimiter
+    }
 
     return result;
 }
