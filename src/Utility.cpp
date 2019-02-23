@@ -246,6 +246,11 @@ double Math::average_moves_left(double mean_moves, double width, size_t moves_so
 Configuration_File::Configuration_File(const std::string& file_name)
 {
     std::ifstream ifs(file_name);
+    if( ! ifs)
+    {
+        throw std::runtime_error("Could not open configuration file: " + file_name);
+    }
+
     std::string line;
     while(std::getline(ifs, line))
     {
@@ -260,7 +265,12 @@ Configuration_File::Configuration_File(const std::string& file_name)
         }
         auto line_split = String::split(line, "=", 1);
         auto parameter = standardize_text(line_split[0]);
-        parameters[parameter] = String::trim_outer_whitespace(line_split[1]);
+        auto value = String::trim_outer_whitespace(line_split[1]);
+        if(value.empty())
+        {
+            throw std::runtime_error("Configuration parameter cannot be empty.\n" + line);
+        }
+        parameters[parameter] = value;
         used[parameter] = false;
     }
 }
