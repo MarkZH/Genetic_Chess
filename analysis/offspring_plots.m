@@ -51,7 +51,6 @@ y = frequency;
 a = (sum((x.^2).*y)*sum(y.*log(y)) - sum(x.*y)*sum(x.*y.*log(y)))/(sum(y)*sum((x.^2).*y) - sum(x.*y)^2);
 b = (sum(y)*sum(x.*y.*log(y)) - sum(x.*y)*sum(y.*log(y)))/(sum(y)*sum((x.^2).*y) - sum(x.*y)^2);
 
-B = -b;
 A = exp(a);
 
 x_fit = (min(x) : (max(x) - min(x))/1000 : max(x));
@@ -59,9 +58,9 @@ y_fit = A*exp(b*x_fit);
 
 plot(x_fit, y_fit, 'LineWidth', 3);
 
-fit_text = {'y = Ae^{-Bx}',
+fit_text = {'y = Ae^{bx}',
             ['A = ' num2str(A)],
-            ['B = ' num2str(B) ' = log(' num2str(exp(B)) ')']};
+            ['b = ' num2str(b) ' = log(' num2str(exp(b)) ')']};
 xl = xlim;
 yl = ylim;
 text(0.6*xl(2), 0.4*yl(2), fit_text);
