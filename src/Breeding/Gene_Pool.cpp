@@ -51,6 +51,8 @@ void gene_pool(const std::string& config_file = "")
     const auto gene_pool_population = size_t(config.as_number("gene pool population"));
     const auto gene_pool_count = size_t(config.as_number("gene pool count"));
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
+    const auto genome_file_name = config.as_text("gene pool file");
+    const int scramble_mutations = 100;
 
     // Oscillating game time
     const double minimum_game_time = config.as_number("minimum game time"); // seconds
@@ -83,19 +85,6 @@ void gene_pool(const std::string& config_file = "")
     std::map<Genetic_AI, int> games_since_last_win;
     std::map<Genetic_AI, int> consecutive_wins;
     std::map<Genetic_AI, size_t> original_pool;
-
-    const int scramble_mutations = 100;
-
-    std::string genome_file_name = config.as_text("gene pool file");
-    if(genome_file_name.empty())
-    {
-        genome_file_name = "gene_pool_record_";
-        for(int i = 0; i < 10; ++i)
-        {
-            genome_file_name += char('a' + Random::random_integer(0, 25));
-        }
-        genome_file_name += ".txt";
-    }
 
     auto pools = load_gene_pool_file(genome_file_name);
     while(pools.size() < gene_pool_count)
