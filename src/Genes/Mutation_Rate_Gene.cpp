@@ -22,7 +22,7 @@ int Mutation_Rate_Gene::mutation_count() const
 {
     // THe larger the fractional component of the mutated_components_per_mutation,
     // the greater the probability of return an extra mutation count.
-    return mutated_components_per_mutation + Random::random_real(0.0, 1.0);
+    return int(mutated_components_per_mutation + Random::random_real(0.0, 1.0));
 }
 
 void Mutation_Rate_Gene::gene_specific_mutation()
