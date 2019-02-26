@@ -5,7 +5,7 @@
 game_file="$1"
 moves=${2:-1} # number of starting moves (default 1)
 paste_dashes=
-for n in $(seq 1 $moves)
+for _ in $(seq 1 "$moves")
 do
     paste_dashes=$paste_dashes'- '
 done
