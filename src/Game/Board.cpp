@@ -145,11 +145,11 @@ Board::Board(const std::string& fen) :
 
     if( ! find_king(WHITE))
     {
-        fen_error("White king not in FEN string: " + fen);
+        fen_error("White king not in FEN string");
     }
     if( ! find_king(BLACK))
     {
-        fen_error("Black king not in FEN string: " + fen);
+        fen_error("Black king not in FEN string");
     }
 
     if(fen_parse[1] == "w")
