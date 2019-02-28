@@ -284,7 +284,7 @@ Board::Board(const std::string& fen) :
 
     move_count_start_offset = std::stoul(fen_parse.at(5));
 
-    if(fen_status() != fen)
+    if(fen_status() != starting_fen)
     {
         fen_error("Result: " + fen_status());
     }

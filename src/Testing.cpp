@@ -104,7 +104,7 @@ bool run_tests()
         {
             auto rook_left  = (rook_left_space > 0 ? std::to_string(rook_left_space) : std::string());
             auto rook_right = (rook_left_space < 7 ? std::to_string(7 - rook_left_space) : std::string());
-            Board board("1k6/" + rook_left + "r" + rook_right + "/8/8/8/8/8/R3K2R w KQ - 0 1");
+            Board board("1k6/" + rook_left + "r" + rook_right + "/8/8/8/8/8/R3K2R w KQ  - 0 1");
 
             char final_file = (castle_side == 'K' ? 'g' : 'c');
 
