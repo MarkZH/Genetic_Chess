@@ -1388,12 +1388,11 @@ bool run_tests()
     for(const auto& line : lines)
     {
         auto perft_test_passed = true;
-        auto line_parts = String::split(line, " ;");
+        auto line_parts = String::split(line, ";");
         auto fen = line_parts.front();
-        std::cout << '[' << ++test_number << '/' << lines.size() << "] " << fen << " // ";
+        std::cout << '[' << ++test_number << '/' << lines.size() << "] " << fen << std::flush;
         auto perft_board = Board(fen);
         auto tests = std::vector<std::string>(line_parts.begin() + 1, line_parts.end());
-        auto sub_test_number = 0;
         for(const auto& test : tests)
         {
             auto depth_leaves = String::split(test);
@@ -1401,23 +1400,26 @@ bool run_tests()
             assert(depth_leaves.front().front() == 'D');
             auto depth = std::stoul(depth_leaves.front().substr(1));
             auto expected_leaves = std::stoul(depth_leaves.back());
-            std::cout << ++sub_test_number << '/' << tests.size() << ": " << std::flush;
             auto leaf_count = move_count(perft_board, depth);
             if(leaf_count != expected_leaves)
             {
-                std::cerr << "\nExpected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
+                std::cerr << "\nError at depth " << depth << std::endl;
+                std::cerr << "Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
                 perft_test_passed = false;
                 tests_passed = false;
                 break;
             }
             else
             {
-                std::cout << "OK! ";
+                std::cout << '.' << std::flush;
             }
         }
-        std::cout << std::endl;
 
-        if( ! perft_test_passed)
+        if(perft_test_passed)
+        {
+            std::cout << " OK!" << std::endl;
+        }
+        else
         {
             break;
         }
