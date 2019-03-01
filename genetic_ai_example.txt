@@ -1,63 +1,68 @@
-ID: 265332
-Ancestry: /
+ID: 198931
+Ancestry: 0 -> 0.135109 / 1 -> 0.168224 / 2 -> 0.696666 / 
+
 Name: Piece Strength Gene
-B: 33.37
-K: -37.2072
-N: 28.6119
-P: -1.24766
-Q: 78.6168
-R: 43.506
+B: 36.3032
+K: 27.6236
+N: 18.1896
+P: 8.84947
+Q: 88.0692
+R: 54.5637
 
 Name: Look Ahead Gene
-Game Length Uncertainty: 0.323142
-Mean Game Length: 23.0851
-Speculation-Can Change Material: 1.26234
-Speculation-Default: 0.931131
-Speculation-Just Changed Material: 1.16217
-Speculation-Material Exchange: 3.15647
+Game Length Uncertainty: 0.42733
+Mean Game Length: 29.6799
+Speculation-Can Change Material: 1.60649
+Speculation-Default: 1.703
+Speculation-Just Changed Material: 3.17729
+Speculation-Material Exchange: 3.89128
+
+Name: Mutation Rate Gene
+Mutation Rate: 1.46461
 
 Name: Total Force Gene
-Priority: 1520.26
+Priority: 1247.41
 
 Name: Freedom to Move Gene
-Priority: 44.4677
+Priority: 91.8634
 
 Name: Pawn Advancement Gene
-Non-linearity: 0.0288423
-Priority: 305.081
+Non-linearity: -0.953465
+Priority: 338.921
 
 Name: Passed Pawn Gene
-Priority: 162.212
+Priority: -180.176
 
 Name: Opponent Pieces Targeted Gene
-Priority: 253.998
+Priority: 264.477
 
 Name: Sphere of Influence Gene
-Illegal Square Score: -3.09776
-King Target Factor: -5.68015
-Legal Square Score: 4.18244
-Priority: 6.6959
+Illegal Square Score: 9.58548
+King Target Factor: 0.391763
+Legal Square Score: 2.54322
+Priority: 282.673
 
 Name: King Confinement Gene
-Enemy Block Score: -4.38386
-Friendly Block Score: 5.87968
-Priority: 32.0498
+Enemy Block Score: -93.6115
+Friendly Block Score: 77.7949
+Priority: 26.2382
 
 Name: King Protection Gene
-Priority: -46.4422
+Priority: -2.01971
 
 Name: Castling Possible Gene
-Kingside Preference: 5.45414
-Priority: 98.4753
-Queenside Preference: 1.49813
+Kingside Preference: 6.3161
+Priority: 86.5724
+Queenside Preference: 7.37047
 
 Name: Stacked Pawns Gene
-Priority: -159.731
+Priority: -210.05
 
 Name: Pawn Islands Gene
-Priority: 28.7794
+Priority: 7.51691
 
 Name: Checkmate Material Gene
-Priority: 162.888
+Priority: -71.8513
 
 END
+
