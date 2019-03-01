@@ -37,7 +37,7 @@
 
 // Declaration to silence warnings
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
-size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix);
+size_t move_count(const Board& board, size_t maximum_depth);
 
 bool run_tests()
 {
@@ -1390,30 +1390,32 @@ bool run_tests()
         auto perft_test_passed = true;
         auto line_parts = String::split(line, " ;");
         auto fen = line_parts.front();
-        std::cout << std::endl << '[' << ++test_number << '/' << lines.size() << "] " << fen << std::endl;
+        std::cout << '[' << ++test_number << '/' << lines.size() << "] " << fen << " // ";
         auto perft_board = Board(fen);
         auto tests = std::vector<std::string>(line_parts.begin() + 1, line_parts.end());
+        auto sub_test_number = 0;
         for(const auto& test : tests)
         {
             auto depth_leaves = String::split(test);
             assert(depth_leaves.size() == 2);
             assert(depth_leaves.front().front() == 'D');
             auto depth = std::stoul(depth_leaves.front().substr(1));
-            auto prefix = "Depth " + std::to_string(depth) + ": ";
             auto expected_leaves = std::stoul(depth_leaves.back());
-            auto leaf_count = move_count(perft_board, depth, prefix);
+            std::cout << ++sub_test_number << '/' << tests.size() << ": " << std::flush;
+            auto leaf_count = move_count(perft_board, depth);
             if(leaf_count != expected_leaves)
             {
-                std::cerr << " Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
+                std::cerr << "\nExpected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
                 perft_test_passed = false;
                 tests_passed = false;
                 break;
             }
             else
             {
-                std::cout << "OK!" << std::endl;
+                std::cout << "OK! ";
             }
         }
+        std::cout << std::endl;
 
         if( ! perft_test_passed)
         {
@@ -1465,7 +1467,7 @@ bool files_are_identical(const std::string& file_name1, const std::string& file_
     return true;
 }
 
-size_t move_count(const Board& board, size_t maximum_depth, const std::string& line_prefix)
+size_t move_count(const Board& board, size_t maximum_depth)
 {
     if(maximum_depth == 0)
     {
@@ -1474,31 +1476,15 @@ size_t move_count(const Board& board, size_t maximum_depth, const std::string& l
 
     if(maximum_depth == 1)
     {
-        if(board.game_record().empty())
-        {
-            std::cout << line_prefix;
-        }
         return board.legal_moves().size();
     }
 
     size_t count = 0;
-    auto first_move_count = board.legal_moves().size();
-    auto current_count = 0;
-    auto total_squares = 20;
     for(auto move : board.legal_moves())
     {
-        if(board.game_record().empty())
-        {
-            std::cout << '\r' << line_prefix << '[';
-            ++current_count;
-            auto squares_to_draw = (total_squares*current_count)/first_move_count;
-            std::cout << std::string(squares_to_draw, '#');
-            std::cout << std::string(total_squares - squares_to_draw, ' ');
-            std::cout << "] " << std::flush;
-        }
         auto next_board = board;
         next_board.submit_move(*move);
-        count += move_count(next_board, maximum_depth - 1, line_prefix);
+        count += move_count(next_board, maximum_depth - 1);
     }
 
     return count;
