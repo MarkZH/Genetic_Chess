@@ -109,6 +109,10 @@ Board::Board(const std::string& fen) :
                 switch(toupper(symbol))
                 {
                     case 'P':
+                        if(rank == 1 || rank == 8)
+                        {
+                            fen_error("Pawns cannot be placed on the home ranks.");
+                        }
                         place_piece(piece_instance(PAWN, color), file, rank);
                         break;
                     case 'R':
