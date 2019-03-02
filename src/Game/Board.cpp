@@ -1296,11 +1296,11 @@ void Board::recreate_move_caches()
                                 }
                                 attacked_indices[square_index(move->end_file(),
                                                               move->end_rank() + rank_adjust)] = true;
-
-                                material_change_move_available = material_change_move_available ||
-                                                                 move_captures(*move)||
-                                                                 move->promotion_piece_symbol();
                             }
+
+                            material_change_move_available = material_change_move_available ||
+                                                             move_captures(*move)||
+                                                             move->promotion_piece_symbol();
                         }
 
                         if( ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
