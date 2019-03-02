@@ -169,7 +169,7 @@ Board::Board(const std::string& fen) :
     const auto& non_turn_king_square = find_king(non_turn_color);
     if( ! safe_for_king(non_turn_king_square.file(), non_turn_king_square.rank(), non_turn_color))
     {
-        fen_error(color_text(opposite(whose_turn())) +
+        fen_error(color_text(non_turn_color) +
                        " is in check but it is " +
                        color_text(whose_turn()) + "'s turn.");
     }
