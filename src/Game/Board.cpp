@@ -1272,52 +1272,54 @@ void Board::recreate_move_caches()
                 auto blocked_file_direction = 2;
                 auto blocked_rank_direction = 3;
 
-                for(const auto& move : piece->move_list(file, rank))
+                for(const auto move : piece->move_list(file, rank))
                 {
                     auto blocked = same_direction(move->file_change(),    move->rank_change(),
                                                   blocked_file_direction, blocked_rank_direction);
+                    auto legal = false;
 
-                    if( ! blocked && move->is_legal(*this))
+                    if( ! blocked)
                     {
-                        legal_moves_cache.push_back(move);
-
-                        if(move->can_capture())
+                        if(move->is_legal(*this))
                         {
-                            auto rank_adjust = 0;
-                            if(move->is_en_passant())
+                            legal = true;
+                            legal_moves_cache.push_back(move);
+
+                            if(move->can_capture())
                             {
-                                rank_adjust = -move->rank_change();
-                                en_passant_legal = true;
-                                material_change_move_available = true;
+                                auto rank_adjust = 0;
+                                if(move->is_en_passant())
+                                {
+                                    rank_adjust = -move->rank_change();
+                                    en_passant_legal = true;
+                                    material_change_move_available = true;
+                                }
+                                attacked_indices[square_index(move->end_file(),
+                                                              move->end_rank() + rank_adjust)] = true;
+
+                                material_change_move_available = material_change_move_available ||
+                                                                 move_captures(*move)||
+                                                                 move->promotion_piece_symbol();
                             }
-                            attacked_indices[square_index(move->end_file(),
-                                                          move->end_rank() + rank_adjust)] = true;
-
-                            material_change_move_available = material_change_move_available ||
-                                                             move_captures(*move)||
-                                                             move->promotion_piece_symbol();
                         }
-                    }
-                    else
-                    {
-                        if(move->can_capture())
+
+                        if( ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
+                            piece_on_square(move->end_file(), move->end_rank())) // piece blocks further moves
                         {
-                            other_attacked_indices[square_index(move->end_file(), move->end_rank())] = true;
+                            blocked_file_direction = move->file_change();
+                            blocked_rank_direction = move->rank_change();
+                        }
+
+                        auto& safe = safe_squares_for_king[square_index(move->end_file(), move->end_rank())];
+                        if(safe)
+                        {
+                            safe = ! move->can_capture();
                         }
                     }
 
-                    auto& safe = safe_squares_for_king[square_index(move->end_file(), move->end_rank())];
-                    if(safe)
+                    if( ! legal && move->can_capture())
                     {
-                        safe = ( blocked || ! move->can_capture());
-                    }
-
-                    if( ! blocked && // new move direction
-                        ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
-                        piece_on_square(move->end_file(), move->end_rank())) // piece blocks further moves
-                    {
-                        blocked_file_direction = move->file_change();
-                        blocked_rank_direction = move->rank_change();
+                        other_attacked_indices[square_index(move->end_file(), move->end_rank())] = true;
                     }
                 }
             }
