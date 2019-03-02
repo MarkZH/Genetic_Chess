@@ -62,9 +62,11 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
         }
     }
 
-    double score_to_add = illegal_square_score;
-    for(const auto& attack_list : {board.other_square_indices_attacked(), board.all_square_indices_attacked()})
+    bool on_illegal_list = true;
+    while(true)
     {
+        const auto& attack_list = (on_illegal_list ? board.other_square_indices_attacked() : board.all_square_indices_attacked());
+        auto score_to_add = (on_illegal_list ? illegal_square_score : legal_square_score);
         for(size_t i = 0; i < attack_list.size(); ++i)
         {
             if(attack_list[i])
@@ -73,7 +75,15 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
             }
         }
 
-        score_to_add = legal_square_score; // now on legal move list
+        if(on_illegal_list)
+        {
+            on_illegal_list = false; // now on legal move list
+        }
+        else
+        {
+            break;
+        }
+
     }
 
     double score = 0;

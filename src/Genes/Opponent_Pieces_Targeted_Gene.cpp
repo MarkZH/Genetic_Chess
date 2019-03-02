@@ -16,7 +16,7 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strengt
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, const Board&, size_t) const
 {
     double score = 0.0;
-    auto squares_attacked = board.all_square_indices_attacked();
+    const auto& squares_attacked = board.all_square_indices_attacked();
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
