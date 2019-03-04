@@ -29,5 +29,7 @@ oscillating time = yes
 
 # The name of the file where the genomes will be recorded.
 # Games will be recorded in a file with "_games.txt" appended
-# to the name.
+# to the name. If the file already exists from a previous run,
+# then the gene pool procedue will pick up from the last
+# stopping point.
 gene pool file = pool.txt
