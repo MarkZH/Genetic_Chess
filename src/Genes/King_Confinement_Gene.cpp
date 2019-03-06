@@ -68,8 +68,6 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     // king from its current positions with unlimited consecutive moves. The
     // boundaries of this area area squares attacked by the other color or occupied
     // by pieces of the same color.
-    //
-    // The more moves it takes to reach a square, the less it adds to the score.
 
     std::vector<Square> square_queue;
     square_queue.reserve(64);
