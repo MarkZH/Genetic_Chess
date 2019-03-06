@@ -50,8 +50,9 @@ std::string Sphere_of_Influence_Gene::name() const
 // the attacking move is legal.
 double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, size_t) const
 {
-    std::array<double, 64> square_score{};
-    std::array<size_t, 64> distance_to_king{};
+    std::array<double, 64> square_score;
+    std::array<size_t, 64> distance_to_king;
+    std::array<bool, 64> has_score{};
     const auto& opponent_king_square = board.find_king(opposite(board.whose_turn()));
     for(char file = 'a'; file <= 'h'; ++file)
     {
@@ -62,35 +63,30 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
         }
     }
 
-    bool on_illegal_list = true;
-    while(true)
+    const auto& legal_attacks = board.all_square_indices_attacked();
+    const auto& illegal_attacks = board.other_square_indices_attacked();
+    for(size_t i = 0; i < square_score.size(); ++i)
     {
-        const auto& attack_list = (on_illegal_list ? board.other_square_indices_attacked() : board.all_square_indices_attacked());
-        auto score_to_add = (on_illegal_list ? illegal_square_score : legal_square_score);
-        for(size_t i = 0; i < attack_list.size(); ++i)
+        if(legal_attacks[i])
         {
-            if(attack_list[i])
-            {
-                square_score[i] = score_to_add;
-            }
+            square_score[i] = legal_square_score;
+            has_score[i] = true;
         }
-
-        if(on_illegal_list)
+        else if(illegal_attacks[i])
         {
-            on_illegal_list = false; // now on legal move list
+            square_score[i] = illegal_square_score;
+            has_score[i] = true;
         }
-        else
-        {
-            break;
-        }
-
     }
 
     double score = 0;
     for(size_t i = 0; i < square_score.size(); ++i)
     {
-        auto king_bonus = king_target_factor/(1 + distance_to_king[i]);
-        score += square_score[i]*(1 + king_bonus);
+        if(has_score[i])
+        {
+            auto king_bonus = king_target_factor/(1 + distance_to_king[i]);
+            score += square_score[i]*(1 + king_bonus);
+        }
     }
 
     // normalizing to make maximum score near 1
