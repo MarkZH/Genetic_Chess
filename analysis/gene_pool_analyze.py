@@ -5,39 +5,51 @@ import sys
 def main(gene_pool_file_name):
     still_alive = dict()
     pool = dict()
+    header_done = False
+    reading_ancestry = False
 
     # Read file for gene names
     with open(gene_pool_file_name) as f:
         for line in f:
             line = line.strip()
+            if not line:
+                reading_ancestry = False
+                continue
             if ':' in line:
                 parameter, value = line.split(':', 1)
-                if parameter == 'ID':
+                if parameter == 'ID' and not header_done:
                     header_line = [parameter]
                 elif parameter == 'Name':
                     current_gene = value.strip()
                 elif parameter == 'Still Alive':
-                    pool_id, ids = value.split(' : ')
+                    pool_id, ids = value.split(':')
                     pool_id = pool_id.strip()
-                    ids = ids.split()
-                    still_alive[pool_id] = ids
-                    for ident in ids:
+                    id_list = ids.split()
+                    still_alive[pool_id] = id_list
+                    for ident in id_list:
                         pool[ident] = pool_id
                 elif parameter == 'Ancestry':
-                    if still_alive:
-                        for pool_id in range(max((int(x) for x in still_alive.keys())) + 1):
-                            header_line.append('Ancestors from Pool ' + str(pool_id))
-                else:
+                    reading_ancestry = True
+                elif reading_ancestry and not header_done:
+                    header_line.append('Ancestors from Pool ' + parameter)
+                elif not header_done:
                     header_line.append(current_gene + ' - ' + parameter)
+            elif line == 'END':
+                header_done = True
 
     # Read gene pool file for data
     output_file_name = gene_pool_file_name + '_parsed.txt'
     with open(gene_pool_file_name) as f, open(output_file_name, 'w') as w:
         data_line = []
         current_gene = ''
+        reading_ancestry = False
         w.write(','.join(header_line + ['Still Alive', 'Original Pool']) + '\n')
         for line in f:
-            line = line.strip()
+            line = line.split('#')[0].strip()
+            if not line:
+                reading_ancestry = False
+                continue
+
             if line == 'END':
                 try:
                     ident = data_line[0]
@@ -61,7 +73,9 @@ def main(gene_pool_file_name):
                 elif parameter == 'Still Alive':
                     continue
                 elif parameter == 'Ancestry':
-                    data_line.extend([x.split('->')[1] for x in value.split('/') if x])
+                    reading_ancestry = True
+                elif reading_ancestry:
+                    data_line.append(value)
                 else:
                     if current_gene:
                         title = current_gene + ' - ' + parameter

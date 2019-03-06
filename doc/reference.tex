@@ -5,6 +5,7 @@
 \usepackage{verbatim}
 \usepackage{amsmath}
 \usepackage{booktabs}
+\usepackage{multicol}
 
 \newcommand{\cpp}{C{\nobreak+}{\nobreak+}}
 
@@ -281,9 +282,12 @@ The gene returns a score of one if the scoring side has enough pieces to checkma
 
 
 \subsection{Genome File Format}
-An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line.
+An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line. The \verb|Ancestry| section is a record of the fraction of a Genetic AI's ancestry comes from each gene pool; this is purely informational and does not affect play.
+\setlength{\columnseprule}{.11pt}
+\def\columnseprulecolor{\color{black}}
+\begin{multicols}{2}
 \verbatiminput{../genetic_ai_example.txt}
-
+\end{multicols}
 
 \section{The Gene Pool: On the Care and Feeding of Chess AIs}
 
