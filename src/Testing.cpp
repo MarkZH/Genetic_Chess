@@ -867,7 +867,7 @@ bool run_tests()
     auto expected_moves_left = 15.2629;
     if(std::abs(moves_left - expected_moves_left) > 1e-4)
     {
-        std::cout << "Log-Norm failed: Expected: " << expected_moves_left
+        std::cerr << "Log-Norm failed: Expected: " << expected_moves_left
                   << " --- Got: " << moves_left << std::endl;
         tests_passed = false;
     }
