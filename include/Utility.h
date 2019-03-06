@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <fstream>
 #include <mutex>
+#include <cmath>
 
 namespace String
 {
@@ -86,6 +87,39 @@ namespace Math
         }
 
         return 0;
+    }
+
+    template<typename Number>
+    Number lower_bound_reflect(Number x, Number low)
+    {
+        return low + std::abs(x - low);
+    }
+
+    template<typename Number>
+    Number upper_bound_reflect(Number x, Number high)
+    {
+        return high - std::abs(high - x);
+    }
+
+    template<typename Number>
+    Number reflect(Number x, Number low, Number high)
+    {
+        if(low > high)
+        {
+            throw std::runtime_error("Bad limits in reflect(): lower bound (" + std::to_string(low) + ") > upper bound (" + std::to_string(high) + ")");
+        }
+
+        if(low == high)
+        {
+            return low;
+        }
+
+        while(x < low || x > high)
+        {
+            x = upper_bound_reflect(lower_bound_reflect(x, low), high);
+        }
+
+        return x;
     }
 }
 

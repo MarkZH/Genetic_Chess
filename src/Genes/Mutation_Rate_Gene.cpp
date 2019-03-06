@@ -28,7 +28,7 @@ int Mutation_Rate_Gene::mutation_count() const
 void Mutation_Rate_Gene::gene_specific_mutation()
 {
     mutated_components_per_mutation += Random::random_laplace(1.0);
-    mutated_components_per_mutation = 1.0 + std::abs(mutated_components_per_mutation - 1.0);
+    mutated_components_per_mutation = Math::lower_bound_reflect(mutated_components_per_mutation, 1.0);
 }
 
 std::unique_ptr<Gene> Mutation_Rate_Gene::duplicate() const
