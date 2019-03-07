@@ -109,17 +109,18 @@ namespace Math
             throw std::runtime_error("Bad limits in reflect(): lower bound (" + std::to_string(low) + ") > upper bound (" + std::to_string(high) + ")");
         }
 
-        if(low == high)
+        if(low < high)
         {
-            return low;
+            while(x < low || x > high)
+            {
+                x = upper_bound_reflect(lower_bound_reflect(x, low), high);
+            }
+
+            return x;
         }
 
-        while(x < low || x > high)
-        {
-            x = upper_bound_reflect(lower_bound_reflect(x, low), high);
-        }
-
-        return x;
+        // low == high
+        return low;
     }
 }
 
