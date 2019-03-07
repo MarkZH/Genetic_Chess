@@ -7,6 +7,7 @@
 
 #include "Players/CECP_Mediator.h"
 #include "Exceptions/Game_Ended.h"
+#include "Utility/Scoped_Stopwatch.h"
 
 std::string Outside_Player::log_file_name = "chess_comm_log.txt";
 std::string Outside_Player::indent = "\t";
