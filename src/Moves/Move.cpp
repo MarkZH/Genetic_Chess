@@ -1,6 +1,7 @@
 #include "Moves/Move.h"
 
 #include <cassert>
+#include <cmath>
 
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
