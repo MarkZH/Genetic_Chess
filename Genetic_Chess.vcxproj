@@ -263,7 +263,11 @@
     <ClCompile Include="src\players\Player.cpp" />
     <ClCompile Include="src\players\Random_AI.cpp" />
     <ClCompile Include="src\Testing.cpp" />
-    <ClCompile Include="src\Utility.cpp" />
+    <ClCompile Include="src\Utility\Configuration_File.cpp" />
+    <ClCompile Include="src\Utility\Math.cpp" />
+    <ClCompile Include="src\Utility\Random.cpp" />
+    <ClCompile Include="src\Utility\Scoped_Stopwatch.cpp" />
+    <ClCompile Include="src\Utility\String.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Breeding\Gene_Pool.h" />
@@ -318,7 +322,11 @@
     <ClInclude Include="include\players\Random_AI.h" />
     <ClInclude Include="include\players\Thinking.h" />
     <ClInclude Include="include\Testing.h" />
-    <ClInclude Include="include\Utility.h" />
+    <ClInclude Include="include\Utility\Configuration_File.h" />
+    <ClInclude Include="include\Utility\Math.h" />
+    <ClInclude Include="include\Utility\Random.h" />
+    <ClInclude Include="include\Utility\Scoped_Stopwatch.h" />
+    <ClInclude Include="include\Utility\String.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
