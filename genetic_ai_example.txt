@@ -48,6 +48,7 @@ Priority: 282.673
 Name: King Confinement Gene
 Enemy Block Score: -93.6115
 Friendly Block Score: 77.7949
+Maximum Square Count: 64
 Priority: 26.2382
 
 Name: King Protection Gene

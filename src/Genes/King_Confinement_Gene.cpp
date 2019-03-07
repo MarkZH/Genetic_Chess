@@ -16,7 +16,8 @@
 
 King_Confinement_Gene::King_Confinement_Gene() :
     friendly_block_score(0.0),
-    enemy_block_score(0.0)
+    enemy_block_score(0.0),
+    maximum_square_count(9.0)
 {
 }
 
@@ -35,6 +36,7 @@ void King_Confinement_Gene::load_properties(const std::map<std::string, double>&
     Gene::load_properties(properties);
     friendly_block_score = properties.at("Friendly Block Score");
     enemy_block_score = properties.at("Enemy Block Score");
+    maximum_square_count = properties.at("Maximum Square Count");
 }
 
 std::map<std::string, double> King_Confinement_Gene::list_properties() const
@@ -42,6 +44,7 @@ std::map<std::string, double> King_Confinement_Gene::list_properties() const
     auto properties = Gene::list_properties();
     properties["Friendly Block Score"] = friendly_block_score;
     properties["Enemy Block Score"] = enemy_block_score;
+    properties["Maximum Square Count"] = maximum_square_count;
     return properties;
 }
 
@@ -49,13 +52,17 @@ void King_Confinement_Gene::gene_specific_mutation()
 {
     make_priority_minimum_zero();
     auto mutation_size = Random::random_laplace(2.0);
-    switch(Random::random_integer(1, 2))
+    switch(Random::random_integer(1, 3))
     {
         case 1:
             friendly_block_score += mutation_size;
             break;
         case 2:
             enemy_block_score += mutation_size;
+            break;
+        case 3:
+            maximum_square_count = Random::random_laplace(4.0);
+            maximum_square_count = Math::reflect(maximum_square_count, 1.0, 64.0);
             break;
         default:
             throw std::logic_error("Bad random value in King Confinement Gene");
@@ -116,6 +123,10 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         // it is not safe (i.e., the king is in check).
         if(keep_going)
         {
+            if(free_space_total >= maximum_square_count)
+            {
+                break;
+            }
             auto left_file = std::max('a', char(square.file() - 1));
             auto right_file = std::min('h', char(square.file() + 1));
             auto low_rank = std::max(1, square.rank() - 1);

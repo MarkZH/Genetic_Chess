@@ -17,6 +17,7 @@ Priority: 1
 Name: King Confinement Gene
 Enemy Block Score: -1
 Friendly Block Score: 4
+Maximum Square Count: 10
 Priority: 1
 
 Name: Castling Possible Gene
