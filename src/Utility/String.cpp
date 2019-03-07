@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <algorithm>
+#include <cctype>
 
 namespace String
 {
