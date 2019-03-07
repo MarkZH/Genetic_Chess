@@ -5,7 +5,9 @@
 #include <cmath>
 
 #include "Genes/Gene.h"
-#include "Utility.h"
+
+#include "Utility/Math.h"
+#include "Utility/Random.h"
 
 class Board;
 

@@ -7,7 +7,9 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
-#include "Utility.h"
+
+#include "Utility/Random.h"
+#include "Utility/Math.h"
 
 Look_Ahead_Gene::Look_Ahead_Gene() :
     speculation_constants{},

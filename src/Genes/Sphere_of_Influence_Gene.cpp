@@ -10,7 +10,7 @@
 #include "Game/Square.h"
 #include "Moves/Move.h"
 
-#include "Utility.h"
+#include "Utility/Random.h"
 
 Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
     legal_square_score(1.0),

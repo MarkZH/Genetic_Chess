@@ -3,7 +3,7 @@
 #include <string>
 
 #include "Game/Color.h"
-#include "Utility.h"
+#include "Utility/String.h"
 
 Game_Result::Game_Result() : victor(NONE), cause()
 {

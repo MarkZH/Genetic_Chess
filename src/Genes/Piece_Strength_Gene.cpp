@@ -7,7 +7,7 @@
 #include "Genes/Gene.h"
 #include "Game/Piece.h"
 #include "Game/Board.h"
-#include "Utility.h"
+#include "Utility/Random.h"
 
 Piece_Strength_Gene::Piece_Strength_Gene() : piece_strength{}
 {

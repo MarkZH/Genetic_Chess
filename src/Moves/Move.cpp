@@ -6,8 +6,6 @@
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
-#include "Utility.h"
-
 
 Move::Move(char file_start, int rank_start,
            char file_end,   int rank_end) :

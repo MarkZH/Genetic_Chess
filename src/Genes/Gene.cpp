@@ -4,10 +4,13 @@
 #include <iostream>
 #include <algorithm>
 #include <map>
+#include <fstream>
 
 #include "Game/Board.h"
 #include "Game/Color.h"
-#include "Utility.h"
+
+#include "Utility/Random.h"
+#include "Utility/String.h"
 
 Gene::Gene() : scoring_priority(0.0)
 {

@@ -8,7 +8,7 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Piece.h"
-#include "Utility.h"
+#include "Utility/Random.h"
 
 Pawn_Advancement_Gene::Pawn_Advancement_Gene() : non_linearity(0.0)
 {

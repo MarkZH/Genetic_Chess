@@ -19,7 +19,7 @@
 
 #include "Exceptions/Illegal_Move.h"
 
-#include "Utility.h"
+#include "Utility/String.h"
 #include "Testing.h"
 
 void print_help();

@@ -11,7 +11,7 @@
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
 
-#include "Utility.h"
+#include "Utility/Math.h"
 
 const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) const
 {

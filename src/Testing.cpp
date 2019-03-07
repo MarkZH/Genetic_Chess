@@ -7,6 +7,7 @@
 #include <thread>
 #include <iomanip>
 #include <cassert>
+#include <algorithm>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -31,7 +32,10 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 
-#include "Utility.h"
+#include "Utility/String.h"
+#include "Utility/Scoped_Stopwatch.h"
+#include "Utility/Random.h"
+#include "Utility/Math.h"
 
 #include "Exceptions/Illegal_Move.h"
 

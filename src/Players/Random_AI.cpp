@@ -5,7 +5,7 @@
 
 #include "Game/Board.h"
 #include "Moves/Move.h"
-#include "Utility.h"
+#include "Utility/Random.h"
 
 class Clock;
 

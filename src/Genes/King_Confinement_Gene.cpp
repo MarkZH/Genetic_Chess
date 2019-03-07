@@ -12,7 +12,8 @@
 #include "Game/Square.h"
 #include "Game/Piece.h"
 
-#include "Utility.h"
+#include "Utility/Random.h"
+#include "Utility/Math.h"
 
 King_Confinement_Gene::King_Confinement_Gene() :
     friendly_block_score(0.0),

@@ -8,7 +8,8 @@
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
 
-#include "Utility.h"
+#include "Utility/String.h"
+#include "Utility/Math.h"
 
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const
 {

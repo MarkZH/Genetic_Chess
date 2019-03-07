@@ -26,7 +26,9 @@
 #include "Exceptions/Illegal_Move.h"
 #include "Exceptions/Promotion_Piece_Needed.h"
 
-#include "Utility.h"
+#include "Utility/Math.h"
+#include "Utility/Random.h"
+#include "Utility/String.h"
 
 // NOTE: The pawn must be created last since it takes pointers to the other pieces
 const Piece Board::white_rook(WHITE, ROOK);

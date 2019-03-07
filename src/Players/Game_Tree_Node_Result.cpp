@@ -4,7 +4,7 @@
 #include <utility>
 
 #include "Game/Color.h"
-#include "Utility.h"
+#include "Utility/Math.h"
 
 double Game_Tree_Node_Result::corrected_score(Color query) const
 {

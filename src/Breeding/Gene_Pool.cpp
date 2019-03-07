@@ -16,7 +16,11 @@
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
 #include "Game/Game_Result.h"
-#include "Utility.h"
+
+#include "Utility/String.h"
+#include "Utility/Configuration_File.h"
+#include "Utility/Math.h"
+#include "Utility/Random.h"
 
 const auto NO_SIGNAL = 0;
 const std::string stop_key = "Ctrl-c";

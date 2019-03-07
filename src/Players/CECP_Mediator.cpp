@@ -9,7 +9,7 @@ class Move;
 #include "Exceptions/Illegal_Move.h"
 #include "Exceptions/Game_Ended.h"
 
-#include "Utility.h"
+#include "Utility/String.h"
 
 CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THINKING)
 {

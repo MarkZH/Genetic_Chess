@@ -1,12 +1,15 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <iostream>
 
 #include "Genes/Genome.h"
 
 #include "Game/Board.h"
 #include "Game/Color.h"
-#include "Utility.h"
+
+#include "Utility/Random.h"
+#include "Utility/String.h"
 
 #include "Genes/Gene.h"
 

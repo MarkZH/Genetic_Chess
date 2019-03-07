@@ -9,7 +9,8 @@
 #include "Game/Color.h"
 #include "Moves/Move.h"
 
-#include "Utility.h"
+#include "Utility/Random.h"
+#include "Utility/Math.h"
 
 Castling_Possible_Gene::Castling_Possible_Gene() :
     kingside_preference(0.5),

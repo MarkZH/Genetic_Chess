@@ -11,7 +11,7 @@ class Clock;
 
 #include "Game/Color.h"
 
-#include "Utility.h"
+#include "Utility/String.h"
 
 int Genetic_AI::next_id = 0;
 int Genetic_AI::max_origin_pool_id = 0;
