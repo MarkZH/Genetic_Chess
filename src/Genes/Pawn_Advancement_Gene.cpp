@@ -20,10 +20,12 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Board&, size
     auto perspective = board.whose_turn();
     auto own_pawn = board.piece_instance(PAWN, perspective);
     int home_rank = (perspective == WHITE ? 2 : 7);
+    int first_rank = (perspective == WHITE ? 3 : 2);
+    int last_rank = (perspective == WHITE ? 7 : 6);
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        for(int rank = 2; rank <= 7; ++rank)
+        for(int rank = first_rank; rank <= last_rank; ++rank)
         {
             if(board.piece_on_square(file, rank) == own_pawn)
             {
