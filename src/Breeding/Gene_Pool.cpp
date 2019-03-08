@@ -36,6 +36,9 @@ const std::string pause_key = "Ctrl-Break";
 static sig_atomic_t signal_activated = NO_SIGNAL;
 static bool gene_pool_paused = false;
 
+using Gene_Pool = std::vector<Genetic_AI>;
+std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
+
 void pause_gene_pool(int signal);
 
 void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);

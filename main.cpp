@@ -290,28 +290,6 @@ void print_help()
 
 int find_last_id(const std::string& players_file_name)
 {
-    auto pools = load_gene_pool_file(players_file_name);
-    int smallest_id = -1;
-    if( ! pools.empty())
-    {
-        smallest_id = pools.front().front().id();
-        for(const auto& pool : pools)
-        {
-            for(const auto& player : pool)
-            {
-                if(player.id() < smallest_id)
-                {
-                    smallest_id = player.id();
-                }
-            }
-        }
-    }
-
-    if(smallest_id != -1)
-    {
-        return smallest_id;
-    }
-
     std::ifstream player_input(players_file_name);
     std::string line;
     int last_player = -1;
@@ -323,52 +301,7 @@ int find_last_id(const std::string& players_file_name)
         }
     }
 
-    // Filter out players with zero wins
-    auto games_file = players_file_name + "_games.txt";
-    std::ifstream games_input(games_file);
-    std::map<int, int> win_count;
-    int best_id = -1;
-    while(std::getline(games_input, line))
-    {
-        int white_id = -1;
-        int black_id = -1;
-        if(String::starts_with(line, "[White"))
-        {
-            white_id = std::stoi(String::split(String::split(line, "\"")[1])[2]);
-        }
-        else if(String::starts_with(line, "[Black"))
-        {
-            black_id = std::stoi(String::split(String::split(line, "\"")[1])[2]);
-        }
-        else if(String::starts_with(line, "[Result"))
-        {
-            auto result_string = String::split(line, "\"")[1];
-            auto winning_id = -1;
-            if(result_string == "1-0")
-            {
-                winning_id = white_id;
-            }
-            else if(result_string == "0-1")
-            {
-                winning_id = black_id;
-            }
-
-            int wins_so_far = ++win_count[winning_id];
-            if(wins_so_far >= 3 && winning_id > best_id)
-            {
-                best_id = winning_id;
-            }
-        }
-    }
-
-    if(best_id == -1)
-    {
-        return last_player;
-    }
-    else
-    {
-        return best_id;
-    }
+    return last_player;
 }
 
 void replay_game(const std::string& file_name, int game_number)
