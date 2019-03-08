@@ -110,6 +110,7 @@ if sys.argv[1] == 'gcc':
             "-pedantic",
             "-Wextra",
             "-Wall",
+            "-Werror",
             "-Iinclude"]
     base_linker_options = ["-pthread", "-fexceptions"]
     linker_options['debug'] = []
@@ -135,6 +136,7 @@ elif sys.argv[1] == 'clang':
             "-pedantic",
             "-Wextra",
             "-Wall",
+            "-Werror",
             "-Iinclude"]
     base_linker_options = ["-pthread", "-fexceptions"]
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
