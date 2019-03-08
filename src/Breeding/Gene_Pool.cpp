@@ -93,6 +93,7 @@ void gene_pool(const std::string& config_file = "")
     std::map<Genetic_AI, int> consecutive_wins;
     std::map<Genetic_AI, size_t> original_pool;
 
+    std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
     while(pools.size() < gene_pool_count)
     {
@@ -471,7 +472,6 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
         return std::vector<Gene_Pool>();
     }
 
-    std::cout << "Loading gene pool file: " << load_file << " ..." << std::endl;
     std::map<int, std::string> still_alive;
     std::string line;
     while(std::getline(ifs, line))
@@ -499,7 +499,6 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
         }
         write_generation(result, index_list.first, ""); // mark AIs from file as already written
     }
-    std::cout << "Done." << std::endl;
 
     return result;
 }
