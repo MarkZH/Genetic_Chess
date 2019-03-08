@@ -356,6 +356,12 @@ size_t Board::square_index(char file, int rank)
     return 8*(file - 'a') + (rank - 1);
 }
 
+Square Board::square_from_index(size_t index)
+{
+    assert(index < 64);
+    return {char('a' + index/8), 1 + int(index%8)};
+}
+
 const Piece*& Board::piece_on_square(char file, int rank)
 {
     return board[square_index(file, rank)];

@@ -565,6 +565,36 @@ bool run_tests()
         std::cerr << "Got: " << fifty_move_result.ending_reason() << "; Expected 50-move limit." << std::endl;
     }
 
+    // Indexing tests
+    std::array<bool, 64> visited{};
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            auto square = Square{file, rank};
+            auto index = Board::square_index(file, rank);
+            if(visited[index])
+            {
+                std::cerr << "Multiple squares result in same index." << std::endl;
+                tests_passed = false;
+            }
+            visited[index] = true;
+            auto indexed_square = Board::square_from_index(index);
+            if(square != indexed_square)
+            {
+                std::cerr << "Incorrect square indexing.\n";
+                std::cerr << file << rank << " --> " << index << " --> " << indexed_square.file() << indexed_square.rank() << std::endl;
+                tests_passed = false;
+            }
+        }
+    }
+
+    if( ! std::all_of(visited.begin(), visited.end(), [](auto x){ return x; }))
+    {
+        std::cerr << "Not all indices visited by iterating through all squares." << std::endl;
+        tests_passed = false;
+    }
+
 
     // Test Genetic_AI file loading
     std::cout << "Testing genome file handling ... " << std::flush;

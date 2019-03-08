@@ -50,43 +50,29 @@ std::string Sphere_of_Influence_Gene::name() const
 // the attacking move is legal.
 double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, size_t) const
 {
-    std::array<double, 64> square_score;
-    std::array<size_t, 64> distance_to_king;
-    std::array<bool, 64> has_score{};
-    const auto& opponent_king_square = board.find_king(opposite(board.whose_turn()));
-    for(char file = 'a'; file <= 'h'; ++file)
-    {
-        for(int rank = 1; rank <= 8; ++rank)
-        {
-            distance_to_king[Board::square_index(file, rank)] =
-                king_distance({file, rank}, opponent_king_square);
-        }
-    }
-
     const auto& legal_attacks = board.all_square_indices_attacked();
     const auto& illegal_attacks = board.other_square_indices_attacked();
-    for(size_t i = 0; i < square_score.size(); ++i)
+    const auto& opponent_king_square = board.find_king(opposite(board.whose_turn()));
+
+    double score = 0;
+    for(size_t i = 0; i < legal_attacks.size(); ++i)
     {
+        double square_score;
         if(legal_attacks[i])
         {
-            square_score[i] = legal_square_score;
-            has_score[i] = true;
+            square_score = legal_square_score;
         }
         else if(illegal_attacks[i])
         {
-            square_score[i] = illegal_square_score;
-            has_score[i] = true;
+            square_score = illegal_square_score;
         }
-    }
-
-    double score = 0;
-    for(size_t i = 0; i < square_score.size(); ++i)
-    {
-        if(has_score[i])
+        else
         {
-            auto king_bonus = king_target_factor/(1 + distance_to_king[i]);
-            score += square_score[i]*(1 + king_bonus);
+            continue;
         }
+
+        auto distance_to_king = king_distance(board.square_from_index(i), opponent_king_square);
+        score += square_score*(1 + king_target_factor/(1 + distance_to_king));
     }
 
     // normalizing to make maximum score near 1
