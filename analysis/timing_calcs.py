@@ -16,12 +16,11 @@ def main(args):
             for line_number, line in enumerate(f):
                 try:
                     name, time = line.split('|')
+                    count, time_sum = timings[name]
                 except ValueError as e:
                     print('ERROR:', line_number, line)
                     print(e)
                     return
-                try:
-                    count, time_sum = timings[name]
                 except KeyError:
                     count = 0
                     time_sum = 0
