@@ -39,10 +39,15 @@ def main(args):
         print('Invalid time unit:', time_unit)
         sys.exit(1)
 
-    print('Average time (' + time_unit + ')|Total time (sec)|Count|Name') # Column Headings
+    print('Average time (' + time_unit + ')|Total time (sec)|Count|Percent Time|Name') # Column Headings
+    total_time = sum(x[1] for x in timings.values())
     for name in timings:
         count, time_sum = timings[name]
-        print(str(multiplier*time_sum/count) + '|' + str(time_sum) + '|' + str(count) + '|' + name)
+        print(str(multiplier*time_sum/count) + '|' +
+              str(time_sum) + '|' +
+              str(count) + '|' +
+              str(100*time_sum/total_time) + '|' +
+              name)
 
 if __name__ == "__main__":
     main(sys.argv[1:])
