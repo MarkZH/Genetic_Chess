@@ -1420,6 +1420,35 @@ bool run_tests()
         std::cin.get();
     }
 
+    // Gene performance
+    auto performance_board = Board("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+    auto opposite_performance_board = performance_board;
+    opposite_performance_board.set_turn(opposite(performance_board.whose_turn()));
+    std::vector<const Gene*> performance_genome = {&castling_possible_gene,
+                                                   &checkmate_material_gene,
+                                                   &freedom_to_move_gene,
+                                                   &king_confinement_gene,
+                                                   &king_protection_gene,
+                                                   &opponent_pieces_targeted_gene,
+                                                   &passed_pawn_gene,
+                                                   &pawn_advancement_gene,
+                                                   &pawn_islands_gene,
+                                                   &sphere_of_influence_gene,
+                                                   &stacked_pawns_gene,
+                                                   &total_force_gene};
+    const auto number_of_tests = 100000;
+    for(int i = 1; i <= number_of_tests; ++i)
+    {
+        auto score = 0.0;
+        for(auto gene : performance_genome)
+        {
+            auto watch = Scoped_Stopwatch(gene->name());
+            score += gene->evaluate(performance_board, opposite_performance_board, 0);
+        }
+    }
+    Scoped_Stopwatch::flush();
+
+
     // Count game tree leaves (perft) to given depth to validate move generation
     // (downloaded from http://www.rocechess.ch/perft.html)
     // (leaves from starting positions also found at https://oeis.org/A048987)

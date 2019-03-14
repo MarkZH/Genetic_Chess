@@ -18,6 +18,7 @@ class Scoped_Stopwatch
         void add_info(const std::string& info);
         void reject(); // do not record time
         double time_so_far() const;
+        static void flush(); // force writing of file
 
     private:
         static std::ofstream out_file;

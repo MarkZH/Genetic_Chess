@@ -62,3 +62,8 @@ double Scoped_Stopwatch::time_so_far() const
     return std::chrono::duration_cast<std::chrono::duration<double>>
                 (end_time - start_time).count();
 }
+
+void Scoped_Stopwatch::flush()
+{
+    out_file.flush();
+}
