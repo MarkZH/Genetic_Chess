@@ -4,6 +4,7 @@
 #include <memory>
 #include <cmath>
 #include <map>
+#include <array>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -12,6 +13,7 @@
 
 Pawn_Advancement_Gene::Pawn_Advancement_Gene() : non_linearity(0.0)
 {
+    recompute_scores_cache();
 }
 
 double Pawn_Advancement_Gene::score_board(const Board& board, const Board&, size_t) const
@@ -29,7 +31,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Board&, size
         {
             if(board.piece_on_square(file, rank) == own_pawn)
             {
-                score += std::pow(std::abs(home_rank - rank)/5.0, 1.0 + non_linearity)/8;
+                score += score_cache[std::abs(home_rank - rank)];
             }
         }
     }
@@ -58,9 +60,19 @@ void Pawn_Advancement_Gene::load_properties(const std::map<std::string, double>&
 {
     Gene::load_properties(properties);
     non_linearity = properties.at("Non-linearity");
+    recompute_scores_cache();
 }
 
 void Pawn_Advancement_Gene::gene_specific_mutation()
 {
     non_linearity += Random::random_laplace(0.01);
+    recompute_scores_cache();
+}
+
+void Pawn_Advancement_Gene::recompute_scores_cache()
+{
+    for(size_t i = 0; i < score_cache.size(); ++i)
+    {
+        score_cache[i] = std::pow(i/5.0, 1.0 + non_linearity)/8;
+    }
 }
