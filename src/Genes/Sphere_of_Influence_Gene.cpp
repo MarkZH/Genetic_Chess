@@ -4,6 +4,7 @@
 #include <array>
 #include <memory>
 #include <map>
+#include <array>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -17,6 +18,7 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
     illegal_square_score(1.0),
     king_target_factor(0.0)
 {
+    recompute_scalar_cache();
 }
 
 std::map<std::string, double> Sphere_of_Influence_Gene::list_properties() const
@@ -34,6 +36,7 @@ void Sphere_of_Influence_Gene::load_properties(const std::map<std::string, doubl
     legal_square_score = properties.at("Legal Square Score");
     illegal_square_score = properties.at("Illegal Square Score");
     king_target_factor = properties.at("King Target Factor");
+    recompute_scalar_cache();
 }
 
 std::unique_ptr<Gene> Sphere_of_Influence_Gene::duplicate() const
@@ -72,11 +75,10 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
         }
 
         auto distance_to_king = king_distance(board.square_from_index(i), opponent_king_square);
-        score += square_score*(1 + king_target_factor/(1 + distance_to_king));
+        score += square_score*scalar_cache[distance_to_king];
     }
 
-    // normalizing to make maximum score near 1
-    return score/(64*(std::abs(legal_square_score) + std::abs(illegal_square_score)));
+    return score;
 }
 
 
@@ -97,5 +99,15 @@ void Sphere_of_Influence_Gene::gene_specific_mutation()
             break;
         default:
             throw std::runtime_error("Bad range in Sphere_of_Influence_Gene::gene_specific_mutation()");
+    }
+
+    recompute_scalar_cache();
+}
+
+void Sphere_of_Influence_Gene::recompute_scalar_cache()
+{
+    for(int king_distance = 0; king_distance < 8; ++king_distance)
+    {
+        scalar_cache[king_distance] = (1 + king_target_factor/(1 + king_distance))/(64*(std::abs(legal_square_score) + std::abs(illegal_square_score)));
     }
 }
