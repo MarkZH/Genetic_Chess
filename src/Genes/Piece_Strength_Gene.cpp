@@ -11,6 +11,7 @@
 
 Piece_Strength_Gene::Piece_Strength_Gene() : piece_strength{}
 {
+    recalculate_normalizing_value();
 }
 
 std::map<std::string, double> Piece_Strength_Gene::list_properties() const
@@ -54,12 +55,25 @@ void Piece_Strength_Gene::load_properties(const std::map<std::string, double>& p
         }
         piece_value(piece) = piece_score.second;
     }
+
+    recalculate_normalizing_value();
 }
 
 void Piece_Strength_Gene::gene_specific_mutation()
 {
     auto index = Random::random_integer(0, int(piece_strength.size()) - 1);
     piece_strength[index] += Random::random_laplace(1.0);
+    recalculate_normalizing_value();
+}
+
+void Piece_Strength_Gene::recalculate_normalizing_value()
+{
+    normalizing_value = 8*std::abs(piece_value(PAWN)) +
+                        2*std::abs(piece_value(ROOK)) +
+                        2*std::abs(piece_value(KNIGHT)) +
+                        2*std::abs(piece_value(BISHOP)) +
+                        1*std::abs(piece_value(QUEEN)) +
+                        1*std::abs(piece_value(KING));
 }
 
 double Piece_Strength_Gene::piece_value(Piece_Type type) const
@@ -82,6 +96,11 @@ double Piece_Strength_Gene::piece_value(const Piece* piece) const
     {
         return piece_value(piece->type());
     }
+}
+
+double Piece_Strength_Gene::normalizer() const
+{
+    return normalizing_value;
 }
 
 std::unique_ptr<Gene> Piece_Strength_Gene::duplicate() const
