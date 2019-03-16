@@ -1436,13 +1436,13 @@ bool run_tests()
                                                    &sphere_of_influence_gene,
                                                    &stacked_pawns_gene,
                                                    &total_force_gene};
-    const auto number_of_tests = 100000;
-    for(int i = 1; i <= number_of_tests; ++i)
+    const auto number_of_tests = 1000000;
+    for(auto gene : performance_genome)
     {
         auto score = 0.0;
-        for(auto gene : performance_genome)
+        auto watch = Scoped_Stopwatch(gene->name() + " (x" + std::to_string(number_of_tests) + ")");
+        for(int i = 1; i <= number_of_tests; ++i)
         {
-            auto watch = Scoped_Stopwatch(gene->name());
             score += gene->evaluate(performance_board, opposite_performance_board, 0);
         }
     }
