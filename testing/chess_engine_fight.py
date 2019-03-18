@@ -2,8 +2,8 @@
 
 import subprocess, os, sys
 
-if len(sys.argv) < 2:
-    print('Must specify file names of 2 chess engines')
+if len(sys.argv) != 3:
+    print('Must specify only the file names of 2 chess engines')
     for i in range(len(sys.argv)):
         print(str(i) + ': ' + sys.argv[i])
     sys.exit(1)
