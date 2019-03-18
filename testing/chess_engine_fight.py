@@ -19,6 +19,9 @@ while True:
     except OSError:
         pass
 
+    if os.path.isfile(game_file):
+        print('Could not delete output file:', game_file)
+
     count += 1
     print('Game #' + str(count))
 
