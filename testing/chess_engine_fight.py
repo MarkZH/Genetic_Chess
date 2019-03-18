@@ -32,13 +32,13 @@ while True:
         print(out.returncode)
         print(out.stdout)
         print(out.stderr)
-        sys.exit()
+        break
 
     result = subprocess.run([checker, '-confirm', game_file])
     if result.returncode != 0:
         print('Found discrepancy. See ' + game_file)
         print('generator = ' + generator)
         print('checker = ' + checker)
-        sys.exit()
+        break
 
     generator, checker = checker, generator
