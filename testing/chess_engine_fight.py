@@ -10,7 +10,7 @@ if len(sys.argv) != 3:
 
 generator = './' + sys.argv[-2]
 checker = './' + sys.argv[-1]
-game_file = 'game.pgn'
+game_file = 'engine_fight.pgn'
 count = 0
 
 while True:
@@ -25,7 +25,7 @@ while True:
     count += 1
     print('Game #' + str(count))
 
-    out = subprocess.run([generator, '-random', '-random'])
+    out = subprocess.run([generator, '-random', '-random', '-game_file', game_file])
     if not os.path.isfile(game_file):
         print('Game file not produced: ' + game_file)
         print('generator = ' + generator)

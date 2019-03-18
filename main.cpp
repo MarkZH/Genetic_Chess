@@ -113,6 +113,7 @@ int main(int argc, char *argv[])
                 size_t moves_per_reset = 0;
                 double increment_time = 0;
                 Board board;
+                std::string game_file_name = "game.pgn";
 
                 for(int i = 1; i < argc; ++i)
                 {
@@ -193,6 +194,10 @@ int main(int argc, char *argv[])
                     {
                         board = Board(argv[++i]);
                     }
+                    else if(opt == "-game_file")
+                    {
+                        game_file_name = argv[++i];
+                    }
                     else
                     {
                         throw std::runtime_error("Invalid option: " + opt);
@@ -214,8 +219,6 @@ int main(int argc, char *argv[])
                         }
                     }
                 }
-
-                std::string game_file_name = "game.pgn";
 
                 if( ! black)
                 {
@@ -285,7 +288,9 @@ void print_help()
               << "\t-increment_time [number]\n"
               << "\t\tSpecify seconds to add to time after each move.\n\n"
               << "\t-board [FEN string]\n"
-              << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n";
+              << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
+              << "\t-game_file [file name]\n"
+              << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. Default is game.pgn.\n\n";
 }
 
 int find_last_id(const std::string& players_file_name)
