@@ -1436,7 +1436,7 @@ bool run_tests()
                                                    &sphere_of_influence_gene,
                                                    &stacked_pawns_gene,
                                                    &total_force_gene};
-    const auto number_of_tests = 1000000;
+    const auto number_of_tests = 1'000'000;
     for(auto gene : performance_genome)
     {
         auto score = 0.0;
