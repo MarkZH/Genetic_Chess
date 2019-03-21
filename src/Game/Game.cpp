@@ -2,7 +2,6 @@
 
 #include <fstream>
 #include <string>
-#include <mutex>
 #include <optional>
 
 #include "Players/Player.h"
@@ -42,8 +41,6 @@ Game_Result play_game_with_board(const Player& white,
                                  const std::string& pgn_file_name,
                                  Board& board)
 {
-    static std::mutex write_lock;
-
     white.initial_board_setup(board);
     black.initial_board_setup(board);
 
@@ -87,8 +84,6 @@ Game_Result play_game_with_board(const Player& white,
     // for Outside_Players communicating with xboard and the like
     white.process_game_ending(result, board);
     black.process_game_ending(result, board);
-
-    std::lock_guard<std::mutex> write_lock_guard(write_lock);
 
     board.print_game_record(&white,
                             &black,

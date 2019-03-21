@@ -1016,6 +1016,9 @@ void Board::print_game_record(const Player* white,
                               const Game_Result& result,
                               const Clock& game_clock) const
 {
+    static std::mutex write_lock;
+    std::lock_guard<std::mutex> write_lock_guard(write_lock);
+
     static int game_number = 0;
     if(game_number == 0)
     {
