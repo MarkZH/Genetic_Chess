@@ -3,6 +3,7 @@
 #include <fstream>
 #include <string>
 #include <mutex>
+#include <optional>
 
 #include "Players/Player.h"
 #include "Game/Board.h"
@@ -49,59 +50,58 @@ Game_Result play_game_with_board(const Player& white,
     auto stop_for_clock = white.stop_for_local_clock() && black.stop_for_local_clock();
     Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds, board.whose_turn(), stop_for_clock);
     game_clock.start();
+
     Game_Result result;
+    std::optional<std::exception> error;
 
     try
     {
-        try
+        while(true)
         {
-            while(true)
+            auto& player = board.whose_turn() == WHITE ? white : black;
+            const auto& move_chosen = player.choose_move(board, game_clock);
+
+            result = game_clock.punch();
+            if(result.game_has_ended())
             {
-                auto& player = board.whose_turn() == WHITE ? white : black;
-                const auto& move_chosen = player.choose_move(board, game_clock);
+                break;
+            }   
 
-                result = game_clock.punch();
-                if(result.game_has_ended())
-                {
-                    break;
-                }
-
-                result = board.submit_move(move_chosen);
-                if(result.game_has_ended())
-                {
-                    break;
-                }
+            result = board.submit_move(move_chosen);
+            if(result.game_has_ended())
+            {
+                break;
             }
         }
-        catch(const Game_Ended& game_error)
-        {
-            // Only occurs for GUI communication errors
-            result = {game_error.winner(), game_error.what()};
-        }
-
-        // for Outside_Players communicating with xboard and the like
-        white.process_game_ending(result, board);
-        black.process_game_ending(result, board);
-
-        std::lock_guard<std::mutex> write_lock_guard(write_lock);
-
-        board.print_game_record(&white,
-                                &black,
-                                pgn_file_name,
-                                result,
-                                game_clock);
-
-        return result;
     }
-    catch(const std::exception& error)
+    catch(const Game_Ended& termination)
     {
-        std::lock_guard<std::mutex> write_lock_guard(write_lock);
-        board.ascii_draw(WHITE);
-        board.print_game_record(&white,
-                                &black,
-                                pgn_file_name,
-                                Game_Result(NONE, error.what()),
-                                game_clock);
-        throw;
+        result = {termination.winner(), termination.what()};
+    }
+    catch(const std::exception& other_error)
+    {
+        result = {NONE, other_error.what()};
+        error = other_error;
+    }
+
+    // for Outside_Players communicating with xboard and the like
+    white.process_game_ending(result, board);
+    black.process_game_ending(result, board);
+
+    std::lock_guard<std::mutex> write_lock_guard(write_lock);
+
+    board.print_game_record(&white,
+                            &black,
+                            pgn_file_name,
+                            result,
+                            game_clock);
+
+    if(error)
+    {
+        throw error.value();
+    }
+    else
+    {
+        return result;
     }
 }
