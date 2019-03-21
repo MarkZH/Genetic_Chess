@@ -29,7 +29,7 @@ std::vector<std::string> String::split(std::string s, std::string delim, size_t 
     while(end_index < s.size() && split_count < count)
     {
         end_index = s.find(delim, start_index);
-        result.push_back(s.substr(start_index, end_index-start_index));
+        result.push_back(s.substr(start_index, end_index - start_index));
         start_index = std::min(end_index, s.size()) + delim.size();
         ++split_count;
     }
