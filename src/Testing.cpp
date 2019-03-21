@@ -892,6 +892,60 @@ bool run_tests()
         tests_passed = false;
     }
 
+    std::string ellipses_split_string = "..a..b..c..d..";
+    std::vector<std::string> ellipses_split_expected = {"", "a", "b", "c", "d", ""};
+    auto ellipses_split_result = String::split(ellipses_split_string, "..");
+    if(ellipses_split_result != ellipses_split_expected)
+    {
+        tests_passed = false;
+        std::cerr << "Incorrect splitp result:\n";
+        std::cerr << ellipses_split_string << " split on .. produced\n";
+        for(auto s : ellipses_split_result)
+        {
+            std::cerr << s << ", ";
+        }
+        std::cerr << "\ninsead of the expected\n";
+        for(auto s : ellipses_split_expected)
+        {
+            std::cerr << s << ", ";
+        }
+    }
+
+    auto ellipses_split_count_result = String::split(ellipses_split_string, "..", 4);
+    std::vector<std::string> ellipses_split_count_expected = {"", "a", "b", "c", "d.."};
+    if(ellipses_split_count_result != ellipses_split_count_expected)
+    {
+        tests_passed = false;
+        std::cerr << "Incorrect splitp result:\n";
+        std::cerr << ellipses_split_string << " split a maximum of 4 times on .. produced\n";
+        for(auto s : ellipses_split_count_result)
+        {
+            std::cerr << s << ", ";
+        }
+        std::cerr << "\ninsead of the expected\n";
+        for(auto s : ellipses_split_count_expected)
+        {
+            std::cerr << s << ", ";
+        }
+    }
+
+    auto ellipses_split_count_full_result = String::split(ellipses_split_string, "..", 5);
+    if(ellipses_split_count_full_result != ellipses_split_expected)
+    {
+        tests_passed = false;
+        std::cerr << "Incorrect splitp result:\n";
+        std::cerr << ellipses_split_string << " split a maximum of 5 times on .. produced\n";
+        for(auto s : ellipses_split_count_full_result)
+        {
+            std::cerr << s << ", ";
+        }
+        std::cerr << "\ninsead of the expected\n";
+        for(auto s : ellipses_split_expected)
+        {
+            std::cerr << s << ", ";
+        }
+    }
+
 
     // Log-Norm distribution check
     const double mean_moves = 26.0;
