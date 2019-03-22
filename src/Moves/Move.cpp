@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <cctype>
 
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
@@ -183,10 +184,17 @@ std::string Move::game_record_ending_item(Board board) const
 
 std::string Move::coordinate_move() const
 {
-    return starting_file
-           + std::to_string(starting_rank)
-           + ending_file
-           + std::to_string(ending_rank);
+    auto p = char(std::tolower(promotion_piece_symbol()));
+    auto result = starting_file
+                  + std::to_string(starting_rank)
+                  + ending_file
+                  + std::to_string(ending_rank);
+    if(p)
+    {
+        result += p;
+    }
+
+    return result;
 }
 
 bool Move::is_en_passant() const

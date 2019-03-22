@@ -36,7 +36,7 @@ class Move
         int rank_change() const;
 
         std::string game_record_item(const Board& board) const;
-        virtual std::string coordinate_move() const;
+        std::string coordinate_move() const;
 
         // Special case functions
         bool is_en_passant() const;
