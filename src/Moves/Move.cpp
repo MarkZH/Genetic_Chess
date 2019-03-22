@@ -8,6 +8,13 @@
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
 
+
+//! Constructs a move with no special rules.
+
+//! \param file_start File of square where move starts.
+//! \param rank_start Rank of square where the move starts.
+//! \param file_end File of square where move ends.
+//! \param rank_end Rank of square where the move ends.
 Move::Move(char file_start, int rank_start,
            char file_end,   int rank_end) :
                starting_file(file_start),
@@ -23,10 +30,23 @@ Move::Move(char file_start, int rank_start,
     assert(file_change() != 0 || rank_change() != 0);
 }
 
+
+//! Modifies the pieces on the board beyond moving the piece and removing captured pieces.
+
+//! The default move has no side effects.
+//! \param board The board upon which the side effects are applied.
 void Move::side_effects(Board&) const
 {
 }
 
+
+//! Checks if a move is legal on a given Board.
+
+//! This method checks for attacking a piece of the same color,
+//! attacking a piece when the move cannot capture, special rules,
+//! and whether the king is in check after the move. It does not
+//! check if there are intervening pieces (see Board::recreate_move_cache()).
+//! \param board The board on which the Move's legality is tested.
 bool Move::is_legal(const Board& board) const
 {
     assert(Board::inside_board(starting_file, starting_rank));
@@ -61,46 +81,61 @@ bool Move::is_legal(const Board& board) const
     return ! board.king_is_in_check_after_move(*this);
 }
 
+//! Returns whether a move is legal according to rules not covered by Move::is_legal().
+
+//! This method is overridden by subclassed moves with
+//! special rules. The standard Move just returns true;
+//! \param board The board on which legality is being checked.
 bool Move::move_specific_legal(const Board&) const
 {
     return true;
 }
 
+//! Returns whether this move is allowed to capture.
 bool Move::can_capture() const
 {
     return able_to_capture;
 }
 
+//! File of square where move starts.
 char Move::start_file() const
 {
     return starting_file;
 }
 
+//! Rank of square where move starts.
 int Move::start_rank() const
 {
     return starting_rank;
 }
 
+//! How far move travels horizontally.
 int Move::file_change() const
 {
     return ending_file - starting_file;
 }
 
+//! How far move travels vertically.
 int Move::rank_change() const
 {
     return ending_rank - starting_rank;
 }
 
+//! File of square where move ends.
 char Move::end_file() const
 {
     return ending_file;
 }
 
+//! Rank of square where move ends.
 int Move::end_rank() const
 {
     return ending_rank;
 }
 
+//! Creates a textual representation of a move suitable for a PGN game record.
+
+//! \param board A Board instance just prior to the move being made.
 std::string Move::game_record_item(const Board& board) const
 {
     return game_record_move_item(board) + game_record_ending_item(board);
@@ -182,6 +217,11 @@ std::string Move::game_record_ending_item(Board board) const
     return appendage + result.game_record_annotation();
 }
 
+//! Returns a textual representation of a move in coordinate notation.
+
+//! The first two characters indicate the starting square, the next two
+//! indicate the ending square, and a final optional character to indicate
+//! a pawn promtion.
 std::string Move::coordinate_move() const
 {
     auto p = char(std::tolower(promotion_piece_symbol()));
@@ -197,16 +237,19 @@ std::string Move::coordinate_move() const
     return result;
 }
 
+//! Indicates whether this move is en passant, which needs special handling elsewhere.
 bool Move::is_en_passant() const
 {
     return is_en_passant_move;
 }
 
+//! Indicates whether this move is a castling move, a fact which needs special handling elsewhere.
 bool Move::is_castling() const
 {
     return is_castling_move;
 }
 
+//! Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.
 char Move::promotion_piece_symbol() const
 {
     return '\0';
