@@ -44,6 +44,11 @@ int main(int argc, char *argv[])
                     gene_pool_config_file_name = argv[2];
                 }
 
+                if(gene_pool_config_file_name.empty())
+                {
+                    throw std::runtime_error("Specify a configuration file to run a gene pool.");
+                }
+
                 gene_pool(gene_pool_config_file_name);
             }
             else if(std::string(argv[1]) == "-replay")

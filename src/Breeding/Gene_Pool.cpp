@@ -49,7 +49,7 @@ void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats);
 void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::vector<std::vector<Genetic_AI>>& ai_lists);
 
 
-void gene_pool(const std::string& config_file = "")
+void gene_pool(const std::string& config_file)
 {
     auto config = Configuration_File(config_file);
 
