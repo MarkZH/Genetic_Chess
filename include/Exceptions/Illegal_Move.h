@@ -7,7 +7,7 @@
 class Illegal_Move : public std::runtime_error
 {
     public:
-        explicit Illegal_Move(const std::string& reason);
+        using std::runtime_error::runtime_error;
 };
 
 #endif // ILLEGAL_MOVE_H
