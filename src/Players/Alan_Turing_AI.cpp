@@ -165,26 +165,9 @@ double Alan_Turing_AI::piece_value(const Piece* piece) const
         return 0.0;
     }
 
-    switch(piece->type())
-    {
-        case PAWN:
-            return 1.0;
-
-        case KNIGHT:
-            return 3.0;
-
-        case BISHOP:
-            return 3.5;
-
-        case ROOK:
-            return 5.0;
-
-        case QUEEN:
-            return 10.0;
-
-        default:
-            return 0.0;
-    }
+    //                        P    R    N    B    Q     K
+    static double values[] = {1.0, 5.0, 3.0, 3.5, 10.0, 0.0};
+    return values[piece->type()];
 }
 
 double Alan_Turing_AI::position_play_value(const Board& board, Color perspective) const

@@ -76,30 +76,8 @@ std::string Piece::pgn_symbol() const
 
 char Piece::fen_symbol() const
 {
-    char symbol;
-    switch(type())
-    {
-        case PAWN:
-            symbol = 'P';
-            break;
-        case ROOK:
-            symbol = 'R';
-            break;
-        case KNIGHT:
-            symbol = 'N';
-            break;
-        case BISHOP:
-            symbol = 'B';
-            break;
-        case QUEEN:
-            symbol = 'Q';
-            break;
-        case KING:
-            symbol = 'K';
-            break;
-        default:
-            throw std::runtime_error("Program bug: Invalid piece type in Piece::fen_symbol(): " + std::to_string(type()));
-    }
+    static auto symbols = "PRNBQK";
+    auto symbol = symbols[type()];
     return (my_color == WHITE ? symbol : std::tolower(symbol));
 }
 
