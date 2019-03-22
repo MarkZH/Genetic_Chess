@@ -11,7 +11,7 @@ void Player::process_game_ending(const Game_Result&, const Board&) const
 
 std::string Player::author() const
 {
-    return "";
+    return {};
 }
 
 std::string Player::commentary_for_next_move(const Board&) const
