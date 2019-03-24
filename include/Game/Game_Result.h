@@ -5,6 +5,7 @@
 
 #include "Color.h"
 
+//! This class represents the result of a game action, primarily whether the game is still ongoing.
 class Game_Result
 {
     public:
