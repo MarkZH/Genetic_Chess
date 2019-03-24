@@ -9,6 +9,7 @@
 class Game_Result;
 class CECP_Mediator;
 
+//! This class represents the dual-clock game timers used in tournament chess.
 class Clock
 {
     public:
