@@ -59,6 +59,7 @@ obj_dest = dict()
 bin_dest = dict()
 operations = dict()
 bins = dict()
+link_dirs = dict()
 
 for target in final_targets:
     options[target] = "$(CFLAGS_" + target.upper() + ") $(LDFLAGS_" + target.upper() + ")"
@@ -68,6 +69,7 @@ for target in final_targets:
     bin_dest[target]= "$(" + target.upper() + "_BIN_DIR)"
 
     out_variable = "$(OUT_" + target.upper() + ")"
+    link_dir_variable = "$(LINK_DIR_" + target.upper() + ")"
     all_objects = "$(OBJ_" + target.upper() + ")"
     operations[out_variable] = [' '.join(["$(LD)",
                                           "-o", out_variable,
@@ -76,14 +78,19 @@ for target in final_targets:
                                           "$(LDFLAGS_" + target.upper() + ")",
                                           "$(CFLAGS)",
                                           "$(CFLAGS_" + target.upper() + ")"])]
-    bins[target] = os.path.join(bin_dest[target], program_name)
-    depends[target] = ['before_' + target, out_variable]
+    link_dirs[target] = os.path.join('bin', target)
+    operations[os.path.join(link_dir_variable, '$(BIN)')] = ['ln -sf -t ' + link_dir_variable + ' `realpath ' + out_variable + '`']
+    depends[os.path.join(link_dir_variable, '$(BIN)')] = [out_variable, 'LINK']
+    bins[target] = os.path.join(bin_dest[target], '$(BIN)')
+    depends[target] = ['before_' + target, out_variable, 'after_' + target]
     depends['before_' + target] = []
     depends[out_variable] = [all_objects]
+    depends['after_' + target] = [os.path.join(link_dir_variable, '$(BIN)')]
     depends['clean'].append('clean_' + target)
     depends['clean_' + target] = []
     operations['clean_' + target] = ["rm -rf " + obj_dest[target] + " " + bin_dest[target]]
 
+depends['LINK'] = []
 depends['.PHONY'] = []
 for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
     if target not in operations:
@@ -93,7 +100,8 @@ for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
 
 options_list = dict()
 linker_options = dict()
-if sys.argv[1] == 'gcc':
+system = sys.argv[1]
+if system == 'gcc':
     compiler = 'g++'
     options_list['debug'] = ["-g"]
     options_list['release'] = ["-O3", "-DNDEBUG"]
@@ -116,7 +124,7 @@ if sys.argv[1] == 'gcc':
     linker_options['debug'] = []
     linker_options['release'] = ['-flto', '-fuse-linker-plugin']
 
-elif sys.argv[1] == 'clang':
+elif system == 'clang':
     compiler = 'clang++'
     options_list['debug'] = ["-g", "-Og", "-fsanitize=undefined", "-fsanitize=integer"]
     options_list['release'] = ["-O3", "-DNDEBUG"]
@@ -145,6 +153,7 @@ elif sys.argv[1] == 'clang':
 obj_dir_written = []
 for target in final_targets:
     operations['before_' + target].append('mkdir -p ' + bin_dest[target])
+    operations['before_' + target].append('mkdir -p $(LINK_DIR_' + target.upper() + ')')
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
         dirpath = dirpath[len(os.getcwd()) + 1 :]
         for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp')]:
@@ -162,6 +171,7 @@ for target in final_targets:
 
 with open("Makefile", 'w') as make_file:
     # Variables
+    make_file.write("BIN = " + program_name + "\n")
     make_file.write("CXX = " + compiler + "\n")
     make_file.write("LD = " + compiler + "\n")
     make_file.write("\n")
@@ -169,9 +179,10 @@ with open("Makefile", 'w') as make_file:
     make_file.write("LDFLAGS = " + " ".join(base_linker_options) + "\n")
     make_file.write("\n")
     for target in final_targets:
-        make_file.write(target.upper() + '_BIN_DIR = bin/' + target + '\n')
+        make_file.write(target.upper() + '_BIN_DIR = bin/' + system + '/' + target + '\n')
         make_file.write("OUT_" + target.upper() + " = " + bins[target] + '\n')
-        make_file.write(target.upper() + '_OBJ_DIR = obj/' + target + '\n')
+        make_file.write("LINK_DIR_" + target.upper() + " = " + link_dirs[target] + '\n')
+        make_file.write(target.upper() + '_OBJ_DIR = obj/' + system + '/' + target + '\n')
         make_file.write('OBJ_' + target.upper() + ' = ')
         make_file.write(' '.join([x for x in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)) if x.endswith('.o') and x.startswith('$(' + target.upper())]))
         make_file.write('\n')
