@@ -11,11 +11,12 @@ class Board;
 class Passed_Pawn_Gene : public Gene
 {
     public:
-        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
-
         std::unique_ptr<Gene> duplicate() const override;
 
         std::string name() const override;
+
+    private:
+        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
 };
 
 #endif // PASSED_PAWN_GENE_H
