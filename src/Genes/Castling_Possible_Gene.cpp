@@ -13,8 +13,8 @@
 #include "Utility/Math.h"
 
 Castling_Possible_Gene::Castling_Possible_Gene() :
-    kingside_preference(0.5),
-    queenside_preference(0.5)
+    kingside_preference(0.0),
+    queenside_preference(0.0)
 {
 }
 
