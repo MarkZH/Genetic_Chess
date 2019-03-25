@@ -14,9 +14,14 @@ class CLock;
 class Piece;
 class Game_Result;
 
-// As described in Turing, Alan M., ``Digital Computers Applied to Games.''
-// Faster Than Thought. B. V. Bowden. London: Sir Isaac Pitman \& Sons, Ltd.,
-// 1953, pgs. 286-297. Print.
+//! An AI player designed by Alan Turing and David Champernowne.
+
+//! Not having a computer on which to run this program, Turing first ran
+//! this chess program using pencil and paper, taking 30 minutes per move.
+//!
+//! Algorithm taken from Turing, Alan M., "Digital Computers Applied to Games."
+//! Faster Than Thought. B. V. Bowden. London: Sir Isaac Pitman \& Sons, Ltd.,
+//! 1953, pgs. 286-297. Print.
 class Alan_Turing_AI : public Player
 {
     public:

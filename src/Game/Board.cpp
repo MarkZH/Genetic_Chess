@@ -45,6 +45,15 @@ const Piece Board::black_queen(BLACK, QUEEN);
 const Piece Board::black_king(BLACK, KING);
 const Piece Board::black_pawn(BLACK, PAWN);
 
+//! Get a representative of the Piece class corresponding to the requested color and type.
+
+//! Since there is no actual difference between, say, two white bishops, there is only
+//! ever one copy of each type of piece and pointers are handed out to all askers. This saves
+//! on copying the other internal data of the pieces (namely Move lists).
+//! \param piece_type The type of the requested piece (PAWN, ROOK, etc.).
+//! \param color The color of the requested piece.
+//!        Passing in NONE to the color parameter results in undefined behavior.
+//! \returns A pointer to the piece requested.
 const Piece* Board::piece_instance(Piece_Type piece_type, Color color)
 {
     static const std::array<std::array<const Piece*, 2>, 6> all_pieces =
@@ -65,6 +74,11 @@ uint64_t Board::switch_turn_board_hash;
 
 const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
+//! Constructs a board according to an FEN string.
+
+//! \param fen An optional text string given in FEN. If no argument is given,
+//!        then the FEN string for the start of a standard chess game is given.
+//! \throws std::runtime_error Thrown if the FEN string does not represent a valid board state.
 Board::Board(const std::string& fen) :
     board{},
     repeat_count_insertion_point{0},
@@ -350,12 +364,23 @@ void Board::fen_error(const std::string& reason) const
     throw std::runtime_error("Bad FEN input: " + starting_fen + "\n" + reason);
 }
 
+//! Calculates the index for a 64-element array that corresponds to the internal piece storage.
+
+//! \param file File of the queried square.
+//! \param rank Rank of the queried square.
+//! \returns Index to an array.
+//! \throws assert_failure Thrown in DEBUG builds if square coordinates are outside of the board.
 size_t Board::square_index(char file, int rank)
 {
     assert(inside_board(file, rank));
     return 8*(file - 'a') + (rank - 1);
 }
 
+//! Calculates the square coordinates corresponding to the 64-element array index.
+
+//! \param index Array index.
+//! \returns Square instance corresponding to index.
+//! \throws assert_failure Thrown in DEBUG builds if index is negative or greater than 64.
 Square Board::square_from_index(size_t index)
 {
     assert(index < 64);
@@ -367,6 +392,11 @@ const Piece*& Board::piece_on_square(char file, int rank)
     return board[square_index(file, rank)];
 }
 
+//! Get the piece on the square indicated by coordinates.
+
+//! \param file File of queried square.
+//! \param rank Rank of queried square.
+//! \returns Pointer to piece on square. May be nullptr if square is emtpy.
 const Piece* Board::piece_on_square(char file, int rank) const
 {
     return board[square_index(file, rank)];
@@ -379,26 +409,54 @@ void Board::set_unmoved(char file, int rank)
     update_board_hash(file, rank);
 }
 
+//! Check that a square coordinate is valid.
+
+//! \param file Square file to check ('a' <= file <= 'h').
+//! \param rank Square rank to check (1 <= rank <= 8)
+//! \returns Whether the coordinates meet the conditions listed in the parameters above.
 bool Board::inside_board(char file, int rank)
 {
     return inside_board(file) && inside_board(rank);
 }
 
+//! Check that a square file is a valid value.
+
+//! \param file Square file to check ('a' <= file <= 'h')
+//! \returns Whether the file meets the condition according to the parameter specification above.
 bool Board::inside_board(char file)
 {
     return file >= 'a' && file <= 'h';
 }
 
+//! Check that a square rank is a valid value.
+
+//! \param file Square rank to check (1 <= file <= 8)
+//! \returns Whether the rank meets the condition according to the parameter specification above.
 bool Board::inside_board(int rank)
 {
     return rank >= 1 && rank <= 8;
 }
 
+//! Returns the color of the square at the input coordinates.
+
+//! This function is useful for Board::enough_material_to_checkmate() since one
+//! condition is that bishops on opposite color squares are sufficient to checkmate,
+//! while bishops on the same color square are not.
+//! \param file Square file.
+//! \param rank Square rank.
+//! \returns Color of square on board ("a1" --> BLACK; "h1" --> WHITE)
 Color Board::square_color(char file, int rank)
 {
     return (file - 'a') % 2 == (rank - 1) % 2 ? BLACK : WHITE;
 }
 
+//! Checks if there are any legal moves from the start sqaure to the end square.
+
+//! \param file_start File of starting square.
+//! \param file_start Rank of starting square.
+//! \param file_start File of ending square.
+//! \param file_start Rank of ending square.
+//! \returns True if there is a legal move between the given squares.
 bool Board::is_legal(char file_start, int rank_start,
                      char file_end,   int rank_end) const
 {
@@ -473,6 +531,13 @@ const Move& Board::create_move(char file_start, int rank_start, char file_end, i
     }
 }
 
+//! Updates the state of the board according to a Player-selected Move.
+
+//! \param move A Move-class instance. This must be an item taken from Board::legal_moves().
+//!        The input move is only checked for legality in DEBUG builds, where illegal moves
+//!        will trip an assert. In RELEASE builds, submitting an illegal move is undefined,
+//!        resulting in anything from an invalid board state to a crash due to segfault.
+//! \returns Returns a Game_Result indicating the result of the move and whether the game has ended.
 Game_Result Board::submit_move(const Move& move)
 {
     update_board(move);
@@ -527,6 +592,11 @@ void Board::update_board(const Move& move)
     add_board_position_to_repeat_record();
 }
 
+//! Creates a Move instance given a text string representation.
+
+//! \param move A string using coordinate notation ("a2b3") or PGN ("Bb3").
+//! \returns A Move instance corresponding to the input string.
+//! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
 const Move& Board::create_move(const std::string& move) const
 {
     const std::string pieces = "RNBQK";
@@ -689,16 +759,27 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
     clear_pinned_squares();
 }
 
+//! Tells which player is due to move.
+
+//! \returns Color of player who is next to move.
 Color Board::whose_turn() const
 {
     return turn_color;
 }
 
+//! Get a list of all legal moves for the current player.
+
+//! \returns A list of pointers to legal moves. Any call to Board::submit_move() must take
+//!          its argument from this list.
 const std::vector<const Move*>& Board::legal_moves() const
 {
     return legal_moves_cache;
 }
 
+//! Prints an ASCII version of the board to a terminal.
+
+//! This is useful for Human_Player on the terminal and debugging.
+//! \param perspective Specifies which side of the board is at the bottom of the screen.
 void Board::ascii_draw(Color perspective) const
 {
     const size_t square_width = 7;
@@ -817,26 +898,49 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     }
 }
 
+//! Find out if the king of the player to move is currently in check.
+
+//! \returns If the current player is in check.
 bool Board::king_is_in_check() const
 {
     return checking_squares.front(); // check whether first entry is valid Square
 }
 
+//! Find out whether the input square is safe for the given king to occupy.
+
+//! A square is not safe for the king if the opposing pieces can attack the square.
+//! \param file File of the queried square.
+//! \param rank Rank of the queried square.
+//! \param king_color The color of the king piece that is under potential attack.
+//! \returns Whether the king would be in check if it was placed on the square in question.
 bool Board::safe_for_king(char file, int rank, Color king_color) const
 {
     return Threat_Generator(file, rank, opposite(king_color), *this).empty();
 }
 
+//! List of all squares and whether they are attacked by currently legal moves.
+
+//! \returns An array of bools with indices given by Board::square_index(). A value of true indicates that the square
+//!          is under attack by the player about to move.
 const std::array<bool, 64>& Board::all_square_indices_attacked() const
 {
     return attacked_indices;
 }
 
+//! List of all squares and whether they are attacked by currently illegal moves.
+
+//! \returns An array of bools with indices given by Board::square_index(). A value of true indicates that the square
+//!          would be under attack by the player about to move except for the move being blocked, the piece being pinned,
+//!          or the current player's king being in check.
 const std::array<bool, 64>& Board::other_square_indices_attacked() const
 {
     return other_attacked_indices;
 }
 
+//! List of squares and whether they are safe for the king of the player not to move to occupy.
+
+//! \returns An array of bools with indices given by Board::square_index(). A value of true indicates
+//!          that the king of the player not moving would be free of check if placed there.
 const std::array<bool, 64>& Board::squares_safe_for_king() const
 {
     return safe_squares_for_king;
@@ -906,6 +1010,10 @@ void Board::refresh_checking_squares()
     }
 }
 
+//! Check if a move will leave the player making the move in check.
+
+//! \param move A possibly legal move to check.
+//! \returns Whether the move under consideration will leave the friendly king in check.
 bool Board::king_is_in_check_after_move(const Move& move) const
 {
     if(piece_on_square(move.start_file(), move.start_rank())->type() == KING)
@@ -1005,11 +1113,21 @@ bool Board::no_legal_moves() const
     return legal_moves().empty();
 }
 
+//! Get the history of moves.
+
+//! \returns The list of moves made on this board.
 const std::vector<const Move*>& Board::game_record() const
 {
     return game_record_listing;
 }
 
+//! Prints the PGN game record with commentary from Players.
+
+//! \param white Pointer to Player playing white to provide commentary for moves. Can be nullptr.
+//! \param black Pointer to Player playing black to provide commentary for moves. Can be nullptr.
+//! \param file_name Name of the text file where the game will be printed. If empty, print to stdout.
+//! \param result The result of the last action (move, clock punch, or outside intervention) in the game.
+//! \param clock The game clock used during the game.
 void Board::print_game_record(const Player* white,
                               const Player* black,
                               const std::string& file_name,
@@ -1205,11 +1323,23 @@ std::string Board::board_status() const
     return s;
 }
 
+//! Prints the last move of the game in coordinate notation.
+
+//! Used to communicate with external chess programs. This is an altnative to
+//! Board::last_move_record() that doesn't need to replay the game to create
+//! the PGN notation move.
+//! \returns Coordinate-style move string ("e2e4").
 std::string Board::last_move_coordinates() const
 {
     return game_record_listing.back()->coordinate_move();
 }
 
+//! Change whose turn it is to move.
+
+//! If the input color is not the current player to move, this is
+//! equivalent to skipping the current player's turn. Otherwise,
+//! there's no effect.
+//! \param color The color of the player who is next to move.
 void Board::set_turn(Color color)
 {
     if(turn_color != color)
@@ -1238,6 +1368,12 @@ void Board::make_en_passant_targetable(char file, int rank)
     update_board_hash(file, rank);
 }
 
+//! Determine whether the indicated square can be a target of an en passant move.
+
+//! The is called by En_Passant::move_specific_legal().
+//! \param file File of the queried square.
+//! \param rank Rank of the queried square.
+//! \returns Whether the square was passed by a pawn double move.
 bool Board::is_en_passant_targetable(char file, int rank) const
 {
     return en_passant_target.file() == file &&
@@ -1255,11 +1391,20 @@ void Board::clear_pinned_squares()
     last_found_pinning_square = {};
 }
 
+//! Indicates whether the queried square has a piece on it that never moved.
+
+//! \param file File of queried square.
+//! \param rank Rank of queried squaer.
+//! \returns If the piece on the square has never moved during the game.
 bool Board::piece_has_moved(char file, int rank) const
 {
     return ! unmoved_positions[square_index(file, rank)];
 }
 
+//! Finds the square on which a king resides.
+
+//! \param color Which king to find.
+//! \returns Square which contains the sought after king.
 const Square& Board::find_king(Color color) const
 {
     assert(piece_on_square(king_location[color].file(), king_location[color].rank()) == piece_instance(KING, color));
@@ -1348,6 +1493,16 @@ void Board::recreate_move_caches()
     }
 }
 
+//! Checks whether there are enough pieces on the board for any possible checkmate.
+
+//! The following piece sets on the board make checkmate possible:
+//! - Any single pawn, rook, or queen,
+//! - At least two bishops (of any color) on oppositely colored squares,
+//! - A bishop and knight (of an color combination),
+//! - Two knights (of any color combination).
+//! \param color If NONE, check both sides for enough material. Otherwise, only check the pieces of one side.
+//! \returns If there are enough pieces on the board to make a checkmate arrangement.
+//!          If the method returns false when called with NONE, this will usually lead to a drawn game.
 bool Board::enough_material_to_checkmate(Color color) const
 {
     bool knight_found = false;
@@ -1411,6 +1566,9 @@ bool Board::enough_material_to_checkmate(Color color) const
     return false;
 }
 
+//! Get last move for dispaly in text-based UIs.
+
+//! \returns Last move on this board in PGN notation
 std::string Board::last_move_record() const
 {
     Board b(starting_fen);
@@ -1424,11 +1582,17 @@ std::string Board::last_move_record() const
     return result;
 }
 
+//! Set the format an engine should output while picking a move.
+
+//! \param mode Which chess engine protocol is being used: CECP or NO_THINKING.
 void Board::set_thinking_mode(Thinking_Output_Type mode) const
 {
     thinking_indicator = mode;
 }
 
+//! Find out what kind of format an engine should output while picking a move.
+
+//! \returns Format of thinking output: CECP or NO_THINKING.
 Thinking_Output_Type Board::thinking_mode() const
 {
     return thinking_indicator;
@@ -1533,12 +1697,22 @@ uint64_t Board::board_hash() const
     return current_board_hash;
 }
 
+//! Report if the last move change the pieces on the board.
+
+//! This is more general than Board::last_move_captured() since it also checks
+//! for pawn promotions.
+//! \returns Whether the last move captured or resulted in a promoted pawn.
 bool Board::last_move_changed_material() const
 {
     return last_move_captured() ||
            ( ! game_record_listing.empty() && game_record_listing.back()->promotion_piece_symbol());
 }
 
+//! Report if the most recent move in the game captured a piece.
+
+//! This method is used by chess engines to decide how interesting a board position is
+//! and how much time to devote to future moves.
+//! \returns Whether the last move captured an opponent's piece.
 bool Board::last_move_captured() const
 {
     if(game_record_listing.empty() || moves_since_pawn_or_capture() > 0)
@@ -1558,11 +1732,21 @@ bool Board::last_move_captured() const
     return true;
 }
 
+//! Check if any currently legal move changes material by capturing or promoting a pawn.
+
+//! This method is used by chess engines to determine how interesting a board position
+//! is and thus how much time to devote to studying future moves.
+//! \returns If any legal move captures or promotes a pawn.
 bool Board::material_change_possible() const
 {
     return material_change_move_available;
 }
 
+//! Determines whether a move captures on the current board.
+
+//! \param move Move to check.
+//! \returns If the move captures an opponent's piece.
+//! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
 bool Board::move_captures(const Move& move) const
 {
     auto attacked_piece = piece_on_square(move.end_file(), move.end_rank());
@@ -1579,6 +1763,16 @@ bool Board::king_multiply_checked() const
     return checking_squares.back(); // See if second entry is valid Square
 }
 
+//! Check whether all of the squares between two squares are empty.
+
+//! This method assumes the squares are along the same rank, file, or diagonal.
+//! \param file_start File of the first square.
+//! \param rank_start Rank of the first square.
+//! \param file_end File of the second square.
+//! \param rank_end Rank of the second square.
+//! \returns Whether all of the intervening squares between the two input squares are unoccupied by pieces.
+//! \throws assertion_failure In DEBUG builds, squares not along the same rank, file, or diagonal
+//!         will trigger an assertion failure. In RELEASE builds, the result is undefined.
 bool Board::all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const
 {
     assert(straight_line_move(file_start, rank_start, file_end, rank_end));
@@ -1687,6 +1881,12 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
     }
 }
 
+//! Determine whether a piece (existing or not) is pinned to the king by an enemy piece.
+
+//! \param file File of queried square.
+//! \param rank Rank of queried square.
+//! \returns Whether a friendly piece would be limited in movement due to a pin by an
+//!          enemy piece.
 Square Board::piece_is_pinned(char file, int rank) const
 {
     if(last_found_pinned_square == Square{file, rank})
@@ -1777,6 +1977,9 @@ size_t Board::current_board_position_repeat_count() const
                       board_hash());
 }
 
+//! The number of moves since the last capture or pawn move.
+
+//! \returns How many moves have been made since the last capturing or pawn move.
 int Board::moves_since_pawn_or_capture() const
 {
     return repeat_count_insertion_point - 1;
@@ -1787,6 +1990,10 @@ void Board::clear_repeat_count()
     repeat_count_insertion_point = 0;
 }
 
+//! Gets the ply move during which a player castled.
+
+//! \param player The color of the player being queried.
+//! \returns The ply count when the player castled, or MAX(size_t) if the player has not castled.
 size_t Board::castling_move_index(Color player) const
 {
     return castling_index[player];
