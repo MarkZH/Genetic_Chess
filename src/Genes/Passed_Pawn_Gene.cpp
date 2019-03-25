@@ -2,8 +2,6 @@
 
 #include <memory>
 #include <string>
-#include <algorithm>
-#include <string>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"

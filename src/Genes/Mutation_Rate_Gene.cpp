@@ -3,6 +3,7 @@
 #include <string>
 #include <memory>
 #include <cmath>
+#include <map>
 
 #include "Genes/Gene.h"
 

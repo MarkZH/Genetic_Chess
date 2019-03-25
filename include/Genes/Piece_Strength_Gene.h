@@ -6,6 +6,7 @@
 #include <string>
 #include <array>
 #include <memory>
+#include <map>
 
 #include "Game/Piece_Types.h"
 

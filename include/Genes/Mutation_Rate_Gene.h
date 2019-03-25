@@ -4,6 +4,8 @@
 #include "Gene.h"
 
 #include <string>
+#include <memory>
+#include <map>
 
 class Mutation_Rate_Gene : public Gene
 {
