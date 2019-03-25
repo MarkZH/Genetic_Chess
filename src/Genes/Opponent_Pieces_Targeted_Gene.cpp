@@ -8,6 +8,9 @@
 #include "Genes/Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 
+//! The Opponent_Pieces_Targeted_Gene constructor requires a Piece_Strength_Gene to reference in score_board().
+
+//! \param piece_strength_gene The source of piece values to weight the importance of various pieces.
 Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene) :
     piece_strength_source(piece_strength_gene)
 {

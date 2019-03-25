@@ -9,6 +9,7 @@
 class Board;
 class Piece_Strength_Gene;
 
+//! The base class of all genes that control the behavior of Genetic AIs.
 class Gene
 {
     public:
@@ -20,10 +21,19 @@ class Gene
 
         void mutate();
         double evaluate(const Board& board, const Board& opposite_board, size_t depth) const;
+
+        //! Copies the gene data and returns a pointer to the new data
+        
+        //! \returns A unique pointer to the copied data.
         virtual std::unique_ptr<Gene> duplicate() const = 0;
+
         size_t mutatable_components() const;
 
+        //! Returns the name of the gene.
+
+        //! \returns A text string with the name of the gene.
         virtual std::string name() const = 0;
+
         void print(std::ostream& os) const;
 
         virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg);

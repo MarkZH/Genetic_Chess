@@ -12,7 +12,7 @@ class Board;
 class Move;
 class Clock;
 
-// All aspects of time control
+//! This gene controls all aspects of time control.
 class Look_Ahead_Gene : public Gene
 {
     public:

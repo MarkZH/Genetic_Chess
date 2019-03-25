@@ -13,7 +13,7 @@
 class Piece;
 class Board;
 
-// Database of the value of piece types
+//! Provides a database of the value of different piece types to be referenced by other Genes.
 class Piece_Strength_Gene : public Gene
 {
     public:

@@ -7,6 +7,7 @@
 #include <memory>
 #include <map>
 
+//! The gene controls how much of the genome mutates per Genome::mutate() event.
 class Mutation_Rate_Gene : public Gene
 {
     public:

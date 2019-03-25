@@ -8,7 +8,7 @@
 
 class Board;
 
-// Counts lines of attack to king
+//! Scores the board based on how many lines of attack to king there are.
 class King_Protection_Gene : public Gene
 {
     public:

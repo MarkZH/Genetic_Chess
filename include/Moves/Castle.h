@@ -8,6 +8,7 @@
 
 class Board;
 
+//! This class represents a castling move in either direction.
 class Castle : public Move
 {
     public:

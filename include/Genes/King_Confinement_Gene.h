@@ -9,7 +9,7 @@
 
 class Board;
 
-// Counts squares accessible to king (escape routes)
+//! Scores the board based on how confined the king is by friendly pieces or opponent attacks.
 class King_Confinement_Gene : public Gene
 {
     public:

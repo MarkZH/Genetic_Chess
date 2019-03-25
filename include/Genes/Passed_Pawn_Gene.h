@@ -8,6 +8,7 @@
 
 class Board;
 
+//! Scores a board based on how many passed pawns (pawns with no opponent pawns ahead of them) a player has.
 class Passed_Pawn_Gene : public Gene
 {
     public:

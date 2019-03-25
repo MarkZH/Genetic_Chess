@@ -12,6 +12,7 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
+//! Creates a gene with no inherent preference for castling in either direction.
 Castling_Possible_Gene::Castling_Possible_Gene() :
     kingside_preference(0.0),
     queenside_preference(0.0)

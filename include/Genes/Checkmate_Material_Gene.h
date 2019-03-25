@@ -8,7 +8,7 @@
 
 class Board;
 
-// Total number of legal moves
+//! Adds or subtracts points from the score based on if the player has enough pieces to checkmate their opponent.
 class Checkmate_Material_Gene : public Gene
 {
     public:

@@ -40,6 +40,11 @@ void Look_Ahead_Gene::load_properties(const std::map<std::string, double>& prope
     speculation_constants[3] = properties.at("Speculation-Material Exchange");
 }
 
+//! How much time to search for the next move.
+
+//! \param board The current board position.
+//! \param clock The game clock.
+//! \returns The total time in seconds to spend on searching for a move.
 double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const
 {
     auto time_left = clock.time_left(board.whose_turn());
@@ -88,6 +93,13 @@ double Look_Ahead_Gene::score_board(const Board&, const Board&, size_t) const
     return 0.0;
 }
 
+//! When searching for a move, determine how much to overcommit on time.
+
+//! With alpha-beta pruning, only a portion of a branch will be searched, so time
+//! will be saved that can be spent on other branches. So, this factor controls
+//! how much extra time to allocate knowing that not all of it will be used.
+//! \param board The current board position.
+//! \returns A factor that gets multiplied by the allocated time to overallocate.
 double Look_Ahead_Gene::speculation_time_factor(const Board& board) const
 {
     size_t index = 0;

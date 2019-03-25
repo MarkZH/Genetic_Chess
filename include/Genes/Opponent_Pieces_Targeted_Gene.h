@@ -9,7 +9,9 @@
 class Piece_Strength_Gene;
 class Board;
 
-// Weighted count of how many opponent's pieces are threatened
+//! Scores a board based on a weighted count of how many opponent's pieces are threatened.
+
+//! The weights are provided by the Piece_Strength_Gene.
 class Opponent_Pieces_Targeted_Gene : public Gene
 {
     public:

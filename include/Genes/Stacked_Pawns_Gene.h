@@ -8,6 +8,7 @@
 
 class Board;
 
+//! Scores a board based on the number of pawns with friendly pawns in front of them.
 class Stacked_Pawns_Gene : public Gene
 {
     public:

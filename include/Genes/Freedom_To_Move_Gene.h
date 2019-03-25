@@ -8,7 +8,7 @@
 
 class Board;
 
-// Total number of legal moves
+//! Scores board based on the number of legal moves.
 class Freedom_To_Move_Gene : public Gene
 {
     public:

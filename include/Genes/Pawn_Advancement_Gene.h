@@ -10,7 +10,10 @@
 
 class Board;
 
-// How close are pawns to promotion?
+//! Scores a board based on how close the pawns are to promotion.
+
+//! This score is modulated by an adjustment that favors the pushing
+//! of either advanced pawns or rear pawns.
 class Pawn_Advancement_Gene : public Gene
 {
     public:

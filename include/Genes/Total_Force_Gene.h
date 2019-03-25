@@ -9,7 +9,9 @@
 class Board;
 class Piece_Strength_Gene;
 
-// Weighted sum of all pieces of a certain color
+//! Scores a board based on the weighted sum of all a player's pieces.
+
+//! The weights are provided by the Piece_Strength_Gene.
 class Total_Force_Gene : public Gene
 {
     public:

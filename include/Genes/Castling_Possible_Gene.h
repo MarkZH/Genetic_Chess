@@ -9,7 +9,7 @@
 
 class Board;
 
-// Adds points to board if castling is possible or already happened
+//! This gene scores a board based of if castling is possible or has already happened.
 class Castling_Possible_Gene : public Gene
 {
     public:
