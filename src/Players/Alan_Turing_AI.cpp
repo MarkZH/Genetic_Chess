@@ -74,7 +74,7 @@ std::string Alan_Turing_AI::name() const
 
 std::string Alan_Turing_AI::author() const
 {
-    return "Alan Turing";
+    return "Alan Turing and David Champernowne";
 }
 
 std::vector<const Move*> Alan_Turing_AI::considerable_moves(const Board& board) const
