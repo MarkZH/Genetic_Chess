@@ -7,13 +7,9 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 
-Freedom_To_Move_Gene::Freedom_To_Move_Gene() :
-    initial_number_of_moves(double(Board().legal_moves().size()))
-{
-}
-
 double Freedom_To_Move_Gene::score_board(const Board& board, const Board&, size_t) const
 {
+    static auto initial_number_of_moves = double(Board().legal_moves().size());
     return board.legal_moves().size()/initial_number_of_moves;
 }
 
