@@ -82,7 +82,6 @@ class Board
         bool enough_material_to_checkmate(Color color = NONE) const;
         bool move_captures(const Move& move) const;
         int moves_since_pawn_or_capture() const;
-        std::string fen_status() const; // current state of board in FEN
 
         // Methods for gene reference
         bool last_move_captured() const;
@@ -156,6 +155,7 @@ class Board
         void switch_turn();
         void set_unmoved(char file, int rank);
         void update_board(const Move& move);
+        std::string fen_status() const; // current state of board in FEN
 
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record();
