@@ -59,7 +59,7 @@ void Gene::read_from(std::istream& is)
             }
             else
             {
-                throw std::runtime_error("Reading data for wrong gene. Gene is " + name() + ", data is for " + property_data + ".");
+                throw_on_invalid_line(line, "Reading data for wrong gene. Gene is " + name() + ", data is for " + property_data + ".");
             }
         }
 
