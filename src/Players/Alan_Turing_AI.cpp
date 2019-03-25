@@ -69,7 +69,7 @@ const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
 
 std::string Alan_Turing_AI::name() const
 {
-    return "Turbocomp";
+    return "Turochamp";
 }
 
 std::string Alan_Turing_AI::author() const
