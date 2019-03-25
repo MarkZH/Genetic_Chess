@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
                 size_t moves_per_reset = 0;
                 double increment_time = 0;
                 Board board;
-                std::string game_file_name = "game.pgn";
+                std::string game_file_name;
 
                 for(int i = 1; i < argc; ++i)
                 {
@@ -295,7 +295,7 @@ void print_help()
               << "\t-board [FEN string]\n"
               << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
               << "\t-game_file [file name]\n"
-              << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. Default is game.pgn.\n\n";
+              << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n";
 }
 
 int find_last_id(const std::string& players_file_name)
