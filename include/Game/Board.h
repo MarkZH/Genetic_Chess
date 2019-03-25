@@ -45,11 +45,9 @@ class Board
         const std::vector<const Move*>& game_record() const;
         std::string last_move_record() const;
 
-        // Communication between players
         void set_thinking_mode(Thinking_Output_Type) const;
         Thinking_Output_Type thinking_mode() const;
 
-        // With commentary
         void print_game_record(const Player* white,
                                const Player* black,
                                const std::string& file_name,
