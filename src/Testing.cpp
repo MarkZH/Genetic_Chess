@@ -1406,30 +1406,6 @@ bool run_tests()
                   << std::setw(uint_width) << Random::random_unsigned_int64() << '\n';
     }
 
-    // FEN input/output
-    for(std::string test : {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", // Start
-                            "rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1", // 1. e4
-                            "rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2",  // 1. ... c5
-                            "rnbqkbnr/pp1ppppp/8/2p1P3/8/8/PPPP1PPP/RNBQKBNR b KQkq - 0 2",  // 2. e5
-                            "rnbqkbnr/pp1pp1pp/8/2p1Pp2/8/8/PPPP1PPP/RNBQKBNR w KQkq f6 0 3"}) // 2. ... f4
-    {
-        auto board_fen = Board(test);
-        if(board_fen.fen_status() != test)
-        {
-            std::cerr << test << " -->\n" << board_fen.fen_status() << "\n\n";
-            board_fen.ascii_draw(WHITE);
-            tests_passed = false;
-        }
-    }
-
-    auto standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    auto test_starting_fen = Board().fen_status();
-    if(test_starting_fen != standard_starting_fen)
-    {
-        std::cerr << "Incorrect FEN for starting board.\nExpected: " << standard_starting_fen << "\nGot:      " << test_starting_fen << "\n\n";
-        tests_passed = false;
-    }
-
     Board capture_board;
     capture_board.submit_move(capture_board.create_move("b4"));
     capture_board.submit_move(capture_board.create_move("c5"));

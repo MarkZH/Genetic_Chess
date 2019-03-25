@@ -42,7 +42,6 @@ class Board
 
         void ascii_draw(Color perspective) const;
 
-        std::string fen_status() const; // current state of board in FEN
         const std::vector<const Move*>& game_record() const;
         std::string last_move_record() const;
 
@@ -83,6 +82,7 @@ class Board
         bool enough_material_to_checkmate(Color color = NONE) const;
         bool move_captures(const Move& move) const;
         int moves_since_pawn_or_capture() const;
+        std::string fen_status() const; // current state of board in FEN
 
         // Methods for gene reference
         bool last_move_captured() const;
