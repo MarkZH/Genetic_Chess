@@ -1,5 +1,6 @@
 #include "Genes/Piece_Strength_Gene.h"
 
+#include <string>
 #include <array>
 #include <memory>
 #include <map>
