@@ -33,7 +33,6 @@ class Board
         Game_Result submit_move(const Move& move);
 
         const Move& create_move(const std::string& move) const;
-        const Move& create_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
 
         bool is_legal(char file_start, int rank_start,
                       char file_end,   int rank_end) const;
@@ -146,6 +145,7 @@ class Board
         const Piece*& piece_on_square(char file, int rank);
         void remove_piece(char file, int rank);
         void make_move(char file_start, int rank_start, char file_end, int rank_end);
+        const Move& create_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
         bool no_legal_moves() const;
         std::string board_status() const;
         void make_en_passant_targetable(char file, int rank);

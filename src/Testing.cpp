@@ -114,7 +114,7 @@ bool run_tests()
 
             try
             {
-                board.create_move('e', 1, final_file, 1);
+                board.create_move(std::string("e1") + final_file + "1");
             }
             catch(const Illegal_Move&)
             {
@@ -164,7 +164,7 @@ bool run_tests()
     Board white_pawn_board("k7/8/8/4p3/3P4/8/8/K7 w - - 0 1");
     try
     {
-        white_pawn_board.create_move('d', 4, 'e', 5);
+        white_pawn_board.create_move("d4e5");
     }
     catch(const Illegal_Move&)
     {
@@ -177,7 +177,7 @@ bool run_tests()
     Board black_pawn_board("k7/8/8/4p3/3P4/8/8/K7 b - - 0 1");
     try
     {
-        black_pawn_board.create_move('e', 5, 'd', 4);
+        black_pawn_board.create_move("e5d4");
     }
     catch(const Illegal_Move&)
     {
