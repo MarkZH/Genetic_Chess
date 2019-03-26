@@ -11,10 +11,11 @@
 
 class Clock;
 
-// For interfacing with outside programs
+//! A class to facilitate interfacing with outside programs.
 class Outside_Player : public Player
 {
     public:
+        //! Returns the color to be controlled by the local AI.
         virtual Color ai_color() const = 0;
 
         double game_time();
@@ -26,11 +27,17 @@ class Outside_Player : public Player
     protected:
         Outside_Player();
 
+        //! Once the game starts, the logged data from different players is indented differently to help distinguish between them.
         static std::string indent;
 
         static void send_command(const std::string& cmd);
         static std::string receive_command();
 
+        //! Wait for a string specifying the move made by an outside player.
+
+        //! \param clock The local game clock is passed in so that it can be adjusted
+        //!        to better match the interaface's clock.
+        //! \returns A text string with the move to be interpretted by Board::create_move();
         virtual std::string receive_move(const Clock& clock) const = 0;
 
         static void log(const std::string& data);

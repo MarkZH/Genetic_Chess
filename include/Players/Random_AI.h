@@ -9,6 +9,7 @@ class Board;
 class Clock;
 class Move;
 
+//! Plays a game by picking a random legal move during its turn.
 class Random_AI : public Player
 {
     public:

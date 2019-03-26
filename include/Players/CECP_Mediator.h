@@ -11,6 +11,9 @@ class Board;
 class Game_Result;
 class Clock;
 
+//! A class to assist in interfacing with a CECP-based external program.
+
+//! Chess Engine Communication Protocol (CECP): https://www.gnu.org/software/xboard/engine-intf.html
 class CECP_Mediator : public Outside_Player
 {
     public:

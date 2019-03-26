@@ -7,6 +7,7 @@ class Move;
 class Board;
 class Clock;
 
+//! A text-based interface for a human to type chess moves at a terminal.
 class Human_Player : public Player
 {
     public:

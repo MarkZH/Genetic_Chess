@@ -80,7 +80,7 @@ std::string Alan_Turing_AI::name() const
 
 //! Credit to Turing and Champerowne.
 
-//! "Alan Turing and David Champernowne"
+//! \returns "Alan Turing and David Champernowne"
 std::string Alan_Turing_AI::author() const
 {
     return "Alan Turing and David Champernowne";

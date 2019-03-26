@@ -11,6 +11,9 @@ class Move;
 
 #include "Utility/String.h"
 
+//! Set up the connection to the outside interface and send configuration data.
+
+//! \param local_player The player on the machine. The name of the player gets sent to the interface.
 CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THINKING)
 {
     std::string expected = "protover 2";
@@ -33,6 +36,11 @@ CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THIN
     }
 }
 
+//! Send the last move the local player made to the interface and wait for the outside player's move.
+
+//! \param board The last move on this board is sent to the interface.
+//! \param clock The game clock is also adjusted to better match the interface's clock.
+//! \throws Game_Ended If the interface sends the "quit" command.
 const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) const
 {
     while(true)
@@ -120,6 +128,9 @@ std::string CECP_Mediator::receive_move(const Clock& clock) const
     }
 }
 
+//! Reports the name of the outside opponent.
+
+//! \returns The opponent's name or "CECP Interface Player" if unknown.
 std::string CECP_Mediator::name() const
 {
     if(received_name.empty())

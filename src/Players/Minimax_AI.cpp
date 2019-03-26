@@ -11,6 +11,14 @@
 #include "Utility/String.h"
 #include "Utility/Math.h"
 
+//! Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
+
+//! The depth of the search is determined by how much time is available.
+//! At first, equal time is allocated to each legal move for examination. Time
+//! is overcommitted with the expectation that not all of the time will be used
+//! due to search cutoffs due to alpha-beta pruning.
+//! \param board The current state of the game.
+//! \param clock The game clock telling how much time is left in the game.
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const
 {
     // Erase data from previous board when starting new game
@@ -310,6 +318,12 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
             board.game_record().end()}};
 }
 
+//! Initial measurement of evaluation speed of the engine.
+
+//! The method Minimax_AI::choose_move() keeps track of the time it takes
+//! and the number of positions it evaluates. But, it needs an accurate
+//! starting value for the first move search. So, this practice move will
+//! update the evaluation speed to a more reasonable starting value.
 void Minimax_AI::calibrate_thinking_speed() const
 {
     evaluation_speed = 100; // very conservative initial guess
@@ -318,9 +332,6 @@ void Minimax_AI::calibrate_thinking_speed() const
     Clock clock(calibration_time, 1, 0.0);
     clock.start();
     choose_move(board, clock);
-    // choose_move() keeps track of the time it takes and the number of positions
-    // it sees, so this practice move will update the positions_per_second to a
-    // more reasonable value.
 }
 
 double Minimax_AI::evaluate(const Board & board, const Game_Result& move_result, Color perspective, size_t depth) const
@@ -349,6 +360,10 @@ double Minimax_AI::centipawn_value() const
     return value_of_centipawn;
 }
 
+//! Approximate the value of 0.01 pawns for reporting scores.
+
+//! \returns A numerical value to normalize the scores returned by board evaluations
+//!          so that the loss of a random pawn changes the score by about 1.0.
 void Minimax_AI::calculate_centipawn_value()
 {
     auto board_with_pawns = Board("4k3/pppppppp/8/8/8/8/PPPPPPPP/4K3 w - - 0 1");
@@ -356,6 +371,9 @@ void Minimax_AI::calculate_centipawn_value()
     value_of_centipawn = std::abs(evaluate(board_with_pawns, {}, WHITE, 0) - evaluate(board_with_no_white_pawns, {}, WHITE, 0)) / 800;
 }
 
+//! Prints the expected future variation and score for the chosen move.
+
+//! \param board The state of the game just prior to the move being commented on.
 std::string Minimax_AI::commentary_for_next_move(const Board& board) const
 {
     std::string result;

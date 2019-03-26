@@ -16,6 +16,7 @@ class Clock;
 int Genetic_AI::next_id = 0;
 int Genetic_AI::max_origin_pool_id = 0;
 
+//! Generate a randomly mutated Genetic_AI
 Genetic_AI::Genetic_AI() :
     genome(),
     id_number(next_id++)
@@ -24,7 +25,11 @@ Genetic_AI::Genetic_AI() :
     calculate_centipawn_value();
 }
 
-// Sexual reproduction
+//! Create a new Genetic_AI via sexual reproduction.
+
+//! The offspring is formed by randomly taking genes from each parent.
+//! \param A The first parent.
+//! \param B The second parent.
 Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     genome(A.genome, B.genome),
     id_number(next_id++)
@@ -40,6 +45,10 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     calculate_centipawn_value();
 }
 
+//! Create a Genetic_AI from information in a text file.
+
+//! \param file_name The name of the text file.
+//! \throws std::runtime_error if the file cannot be opened or if there is an error during reading.
 Genetic_AI::Genetic_AI(const std::string& file_name)
 {
     std::ifstream ifs(file_name);
@@ -54,6 +63,10 @@ Genetic_AI::Genetic_AI(const std::string& file_name)
     calculate_centipawn_value();
 }
 
+//! Create a Genetic_AI from information in an input stream (std::ifstream, std::cin, etc.).
+
+//! \param is Input stream.
+//! \throws std::runtime_error If there is an error during reading.
 Genetic_AI::Genetic_AI(std::istream& is)
 {
     read_from(is);
@@ -62,6 +75,11 @@ Genetic_AI::Genetic_AI(std::istream& is)
     calculate_centipawn_value();
 }
 
+//! Create a Genetic_AI from a text file by searching for a specfic ID.
+
+//! \param file_name The name of the file with the Genetic_AI data.
+//! \param id_in The ID to search for.
+//! \throws std::runtime_error If there is an error during reading.
 Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_in)
 {
     std::ifstream ifs(file_name);
@@ -156,6 +174,9 @@ double Genetic_AI::speculation_time_factor(const Board& board) const
     return genome.speculation_time_factor(board);
 }
 
+//! Apply random mutations to the Genome of the Genetic_AI
+
+//! \param mutation_count The number of mutation actions to apply to the genome. Defaults to 1 if unspecified.
 void Genetic_AI::mutate(int mutation_count)
 {
     for(int i = 0; i < mutation_count; ++i)
@@ -167,6 +188,10 @@ void Genetic_AI::mutate(int mutation_count)
     calculate_centipawn_value();
 }
 
+//! Prints the information defining this AI.
+
+//! The printed information includes the ID number, ancestry information, and genetic data.
+//! \file_name The name of the text file to print to. If empty, print to stdout.
 void Genetic_AI::print(const std::string& file_name) const
 {
     if(file_name.empty())
@@ -180,6 +205,9 @@ void Genetic_AI::print(const std::string& file_name) const
     }
 }
 
+//! Print AI information to the given std::ostream.
+
+//! \param os The stream to be written to.
 void Genetic_AI::print(std::ostream& os) const
 {
     os << "ID: " << id() << '\n';
@@ -194,31 +222,51 @@ void Genetic_AI::print(std::ostream& os) const
     os << "END" << "\n" << std::endl;
 }
 
+//! Reports the name of the AI and ID number.
+
+//! \returns "Genetic AI" plus the ID.
 std::string Genetic_AI::name() const
 {
     return "Genetic AI " + std::to_string(id());
 }
 
+//! Reports the author of this chess engine.
+
+//! \returns "Mark Harrison"
 std::string Genetic_AI::author() const
 {
     return "Mark Harrison";
 }
 
+//! Reports the ID number of the Genetic_AI.
+
+//! \returns The ID number.
 int Genetic_AI::id() const
 {
     return id_number;
 }
 
+//! A comparison function to sort Genetic_AI collections.
+
+//! \param other Another Genetic_AI.
+//! \returns If the other AI should go after this AI.
 bool Genetic_AI::operator<(const Genetic_AI& other) const
 {
     return id() < other.id();
 }
 
+//! An equality function for Genetic_AI instances.
+
+//! \param other Another Genetic_AI.
+//! \returns If this AI and the other AI have the same ID.
 bool Genetic_AI::operator==(const Genetic_AI& other) const
 {
     return id() == other.id();
 }
 
+//! This function identifies the first gene pool into which a newly created Genetic_AI is placed.
+
+//! \param pool_id The ID number of the gene pool.
 void Genetic_AI::set_origin_pool(int pool_id)
 {
     ancestry.clear();
