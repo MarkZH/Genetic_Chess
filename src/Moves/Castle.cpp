@@ -56,5 +56,5 @@ void Castle::side_effects(Board& board) const
 //! \returns "O-O" for kingside castling or "O-O-O" for queenside castling.
 std::string Castle::game_record_move_item(const Board&) const
 {
-    return ending_file == 'g' ? "O-O" : "O-O-O";
+    return file_change() > 0 ? "O-O" : "O-O-O";
 }
