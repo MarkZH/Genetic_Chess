@@ -75,3 +75,6 @@ octave-workspace
 *.bat
 Makefile
 *.tmp
+*.idx
+*.ilg
+*.ind
