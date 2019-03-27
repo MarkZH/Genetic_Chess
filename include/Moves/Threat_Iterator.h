@@ -7,8 +7,7 @@ class Board;
 class Square;
 class Piece;
 
-// The iterator created by Threat_Generator that creates
-// all squares that attack Square{file_start, rank_start}.
+//! The iterator created by Threat_Generator that creates all squares that attack a given target square.
 class Threat_Iterator
 {
     public:

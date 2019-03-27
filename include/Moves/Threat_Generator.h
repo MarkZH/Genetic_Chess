@@ -6,8 +6,7 @@
 
 class Board;
 
-// Generates a list of all squares that that
-// attack Square{file_start, rank_start}.
+//! Generates a list of all squares that that attack a target Square.
 class Threat_Generator
 {
     public:

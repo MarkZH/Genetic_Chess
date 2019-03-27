@@ -5,6 +5,12 @@
 #include "Game/Color.h"
 #include "Game/Piece.h"
 
+//! The constructor finds the first square that attacks the target square.
+
+//! \param target_file_in The file of the square being targeted.
+//! \param target_rank_in The rank of the square being targeted.
+//! \param attack_color The color of pieces that are attacking the target square.
+//! \param reference_board The board on which the action is taking place.
 Threat_Iterator::Threat_Iterator(char target_file_in,
                                  int  target_rank_in,
                                  Color attack_color,
@@ -24,21 +30,35 @@ Threat_Iterator::Threat_Iterator(char target_file_in,
     next_threat();
 }
 
+//! Find the next attacker.
 void Threat_Iterator::operator++()
 {
     next_threat();
 }
 
+//! Dereference operator that reveals the latest attacking square.
+
+//! \returns A Square that has a piece that can attack the target Square.
 Square Threat_Iterator::operator*() const
 {
     return {attacking_file(), attacking_rank()};
 }
 
+//! Check if two iterators are the same.
+
+//! Note: Comparison between iterators from different Threat_Generators is undefined.
+//! \param other The other Threat_Iterator.
+//! \returns Whether the two iterators are the same.
 bool Threat_Iterator::operator==(const Threat_Iterator& other) const
 {
     return hit_count == other.hit_count;
 }
 
+//! Check if two iterators are different.
+
+//! Note: Comparison between iterators from different Threat_Generators is undefined.
+//! \param other The other Threat_Iterator.
+//! \returns Whether the two iterators are different.
 bool Threat_Iterator::operator!=(const Threat_Iterator& other) const
 {
     return ! (*this == other);
@@ -166,6 +186,9 @@ void Threat_Iterator::next_threat()
     convert_to_end_iterator();
 }
 
+//! Create an iterator for Threat_Generator::end().
+
+//! \returns An iterator that compares equal with Threat_Generator::end().
 Threat_Iterator Threat_Iterator::make_end_iterator() const
 {
     auto end = *this;

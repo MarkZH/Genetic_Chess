@@ -1,6 +1,9 @@
 #ifndef SQUARE_H
 #define SQUARE_H
 
+//! \file
+
+//! This class represents a location on the board.
 class Square
 {
     public:
