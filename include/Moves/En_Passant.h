@@ -9,7 +9,7 @@ class Board;
 class En_Passant : public Pawn_Capture
 {
     public:
-        En_Passant(Color color, Direction dir, char file_start, int rank_start);
+        En_Passant(Color color, Direction dir, char file_start);
 
         void side_effects(Board& board) const override;
         bool move_specific_legal(const Board& board) const override;

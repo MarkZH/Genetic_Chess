@@ -159,10 +159,9 @@ void Piece::add_pawn_moves()
             }
         }
 
-        auto en_passant_rank = (color() == WHITE ? 5 : 4);
         for(char file = first_file; file <= last_file; ++file)
         {
-            add_legal_move(std::make_unique<En_Passant>(color(), dir, file, en_passant_rank));
+            add_legal_move(std::make_unique<En_Passant>(color(), dir, file));
         }
 
         for(auto promote : possible_promotions)
