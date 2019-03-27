@@ -8,6 +8,7 @@
 class Board;
 class Piece;
 
+//! When a pawn makes it to the far rank, it can promote to another non-king piece.
 class Pawn_Promotion : public Pawn_Move
 {
     public:
@@ -17,9 +18,10 @@ class Pawn_Promotion : public Pawn_Move
         char promotion_piece_symbol() const override;
 
     protected:
-        const Piece* promote_to;
-
         std::string game_record_move_item(const Board& board) const override;
+
+    private:
+        const Piece* promote_to;
 };
 
 #endif // PAWN_PROMOTION_H
