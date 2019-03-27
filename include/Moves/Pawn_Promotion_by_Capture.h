@@ -6,6 +6,7 @@
 #include "Pawn_Promotion.h"
 #include "Direction.h"
 
+//! A pawn capture on the far rank that also results in a promotion.
 class Pawn_Promotion_by_Capture : public Pawn_Promotion
 {
     public:

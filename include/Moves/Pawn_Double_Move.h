@@ -6,6 +6,7 @@
 
 class Board;
 
+//! A class representing a pawn double move.
 class Pawn_Double_Move : public Pawn_Move
 {
     public:
