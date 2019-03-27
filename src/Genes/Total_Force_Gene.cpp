@@ -10,7 +10,7 @@
 
 //! The Total_Force_Gene constructor requires a Piece_Strength_Gene to reference in score_board().
 
-//! \param piece_strength_gene The source of piece values to weight the importance of various pieces.
+//! \param piece_strength_source_in The source of piece values to weight the importance of various pieces.
 Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source_in) :
     piece_strength_source(piece_strength_source_in)
 {
