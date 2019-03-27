@@ -95,9 +95,9 @@ for yi = 2 : length(data.colheaders) - 2
     legend left;
 
     ancestor_prefix = 'Ancestors';
-    if isempty(findstr(name, ancestor_prefix))
+    if isempty(strfind(name, ancestor_prefix))
         conv_window = 100;
-        smooth_data = conv(this_data, ones(conv_window, 1), 'valid')/conv_window;
+        smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
         conv_margin = floor(conv_window/2);
         x_axis = id_list(conv_margin : end - conv_margin);
         plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
@@ -108,13 +108,13 @@ for yi = 2 : length(data.colheaders) - 2
     end
 
     special_plot_index = 0;
-    if ~isempty(findstr(name, piece_strength_prefix))
+    if ~isempty(strfind(name, piece_strength_prefix))
         plot_figure = piece_strength_figure;
         special_plot_index = 1;
-    elseif ~isempty(findstr(name, priority_suffix))
+    elseif ~isempty(strfind(name, priority_suffix))
         plot_figure = priority_figure;
         special_plot_index = 2;
-    elseif ~isempty(findstr(name, speculation_keyword))
+    elseif ~isempty(strfind(name, speculation_keyword))
         plot_figure = speculation_figure;
         special_plot_index = 3;
     end
@@ -131,7 +131,7 @@ for yi = 2 : length(data.colheaders) - 2
             priority_count = priority_count + 1;
             make_dashed = (priority_count > 7);
         elseif special_plot_index == 3
-            cutoff = findstr('-', name);
+            cutoff = strfind('-', name);
             name = name(cutoff + 2 : end);
         end
 
