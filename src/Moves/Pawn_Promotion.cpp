@@ -20,7 +20,7 @@ void Pawn_Promotion::side_effects(Board& board) const
 
 std::string Pawn_Promotion::game_record_move_item(const Board& board) const
 {
-    return Pawn_Move::game_record_move_item(board) + "=" + promote_to->pgn_symbol();
+    return Pawn_Move::game_record_move_item(board) + "=" + promotion_piece_symbol();
 }
 
 char Pawn_Promotion::promotion_piece_symbol() const

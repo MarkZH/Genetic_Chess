@@ -28,5 +28,5 @@ bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const
 
 std::string Pawn_Promotion_by_Capture::game_record_move_item(const Board& board) const
 {
-    return starting_file + std::string("x") + Pawn_Promotion::game_record_move_item(board);
+    return start_file() + std::string("x") + Pawn_Promotion::game_record_move_item(board);
 }
