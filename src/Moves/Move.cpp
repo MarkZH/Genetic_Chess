@@ -31,8 +31,14 @@ Move::Move(char file_start, int rank_start,
 }
 
 
-//! Modifies the pieces on the board beyond moving the piece and removing captured pieces.
 
+//! Further modifies the state of the board.
+
+//! Side effects are changes to the state of the board beyond the change
+//! in position of the moved piece and captured piece (movement by rook
+//! in castling, marking a square as a en passant target after a double
+//! pawn move, etc.).
+//!
 //! The default move has no side effects.
 //! \param board The board upon which the side effects are applied.
 void Move::side_effects(Board&) const
@@ -141,6 +147,10 @@ std::string Move::game_record_item(const Board& board) const
     return game_record_move_item(board) + game_record_ending_item(board);
 }
 
+//! A textual representation of a move in PGN format without consequences ('+' for check, etc.).
+
+//! \param board The board on which the move is about to be made.
+//! \returns The movement portion of a PGN move entry.
 std::string Move::game_record_move_item(const Board& board) const
 {
     auto original_piece = board.piece_on_square(starting_file, starting_rank);

@@ -7,6 +7,7 @@
 
 #include <string>
 
+//! Pawn captures are special, so they get their own class.
 class Pawn_Capture : public Pawn_Move
 {
     public:

@@ -6,6 +6,18 @@
 #include <string>
 #include <fstream>
 
+//! A tool for timing the execution time of user-chosen sections of code.
+
+//! The Scoped_Stopwatch is designed so that the constructor starts the
+//! timer and the destructor stops it. So, if an instance is created at
+//! the beginning of a function, the timer will stop when the function
+//! exits, however that happens, whether a normal return or a thrown
+//! exception. The stopwatch can also be manually stopped anywhere as well.
+//!
+//! Some care is needed when using this class with very fast sections of
+//! code. The machinery of setting up and writing to a file adds about
+//! 0.1 microseconds to the measured time. Execution times smaller than this
+//! will not get accurate results.
 class Scoped_Stopwatch
 {
     public:

@@ -6,6 +6,7 @@
 
 #include <string>
 
+//! The simplest pawn move: one step forward.
 class Pawn_Move : public Move
 {
     public:

@@ -19,6 +19,10 @@
 #include "Moves/En_Passant.h"
 #include "Moves/Castle.h"
 
+//! Create a piece.
+
+//! \param color_in The color of the piece.
+//! \param type_in The type of piece.
 Piece::Piece(Color color_in, Piece_Type type_in) :
     my_color(color_in),
     my_type(type_in)
@@ -55,6 +59,11 @@ Piece::Piece(Color color_in, Piece_Type type_in) :
     }
 }
 
+//! Return a row of the ASCII art representation of the piece.
+
+//! \param row Which row of the picture to return, with 0 being the top.
+//! \returns One row of text that forms a picture of the piece.
+//! Piece design by VK (?) and taken from http://ascii.co.uk/art/chess.
 std::string Piece::ascii_art(size_t row) const
 {
     if(row >= ascii_art_lines.size())
@@ -64,16 +73,25 @@ std::string Piece::ascii_art(size_t row) const
     return ascii_art_lines[row];
 }
 
+//! The color of the piece.
+
+//! \returns The Color of the player that controls the piece.
 Color Piece::color() const
 {
     return my_color;
 }
 
+//! Get the PGN symbol for the piece.
+
+//! \returns The symbol for the moving piece when writing a game record. A pawn is represented by an empty string.
 std::string Piece::pgn_symbol() const
 {
     return type() == PAWN ? std::string{} : std::string(1, std::toupper(fen_symbol()));
 }
 
+// Get the piece symbol when writing an FEN string.
+
+//! \returns A single character symbol for the piece. Uppercase is white, lowercase is black.
 char Piece::fen_symbol() const
 {
     static auto symbols = "PRNBQK";
@@ -81,6 +99,10 @@ char Piece::fen_symbol() const
     return (my_color == WHITE ? symbol : std::tolower(symbol));
 }
 
+//! Check that a piece is allowed to make a certain move.
+
+//! \param move A pointer to a prospective move.
+//! \returns Whether or not the piece is allowed to move in the manner described by the parameter.
 bool Piece::can_move(const Move* move) const
 {
     return std::find_if(possible_moves.begin(),
@@ -88,11 +110,19 @@ bool Piece::can_move(const Move* move) const
                         [move](const auto& x){ return x.get() == move; }) != possible_moves.end();
 }
 
+//! Get all possibly legal moves of a piece starting from a given square.
+
+//! \param file The file of the starting square.
+//! \param rank The rank of the starting square.
+//! \returns A list of legal moves starting from that square.
 const std::vector<const Move*>& Piece::move_list(char file, int rank) const
 {
     return legal_moves[Board::square_index(file, rank)];
 }
 
+//! Get the type of the piece.
+
+//! \returns The kind of piece, i.e., PAWN, ROOK, etc.
 Piece_Type Piece::type() const
 {
     return my_type;

@@ -5,25 +5,26 @@
 
 class Board;
 
+//! A class to represent the movement of pieces.
 class Move
 {
     public:
         Move(char file_start, int rank_start,
              char file_end,   int rank_end);
         virtual ~Move() = default;
+
+        //! Since Piece instances are static, there is no reason to copy Move instances.
+
+        //! This saves work by preventing all unnecessary copying (which is all copying).
         Move(const Move&) = delete;
+
+        //! Since there's only one instance of every Move that is unique to the Piece that contains it, assignment can only lose information.
         Move& operator=(const Move&) = delete;
 
-        // side effects are changes to the state of the board beyond the change
-        // in position of the moved piece and captured piece (movement by rook
-        // in castling, marking a square as a en passant target after a double
-        // pawn move, etc.)
         virtual void side_effects(Board& board) const;
 
-        // Contains rules for move
         bool is_legal(const Board& board) const;
 
-        // Can this move capture a piece?
         bool can_capture() const;
 
         char start_file() const;
@@ -38,22 +39,28 @@ class Move
         std::string game_record_item(const Board& board) const;
         std::string coordinate_move() const;
 
-        // Special case functions
         bool is_en_passant() const;
         bool is_castling() const;
         virtual char promotion_piece_symbol() const;
 
     protected:
+        //! The file of the square where the move starts.
         char starting_file;
+        //! The rank of the square where the move starts.
         int  starting_rank;
 
+        //! The file of the square where the move ends.
         char ending_file;
+        //! The rank of the square where the move ends.
         int  ending_rank;
 
+        //! Is the move allowed to capture a piece on the end square?
         bool able_to_capture;
+        //! Is this move en passant?
         bool is_en_passant_move;
+        //! Is the move a castling move?
         bool is_castling_move;
-
+            
         virtual std::string game_record_move_item(const Board& board) const;
 
     private:
