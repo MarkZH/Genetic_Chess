@@ -16,6 +16,8 @@ class Castle : public Move
 
         void side_effects(Board& board) const override;
         bool move_specific_legal(const Board& board) const override;
+
+    protected:
         std::string game_record_move_item(const Board&) const override;
 
     private:

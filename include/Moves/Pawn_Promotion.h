@@ -14,11 +14,12 @@ class Pawn_Promotion : public Pawn_Move
         Pawn_Promotion(const Piece* promotion_piece, char file_start);
 
         void side_effects(Board& board) const override;
-        std::string game_record_move_item(const Board& board) const override;
         char promotion_piece_symbol() const override;
 
     protected:
         const Piece* promote_to;
+
+        std::string game_record_move_item(const Board& board) const override;
 };
 
 #endif // PAWN_PROMOTION_H
