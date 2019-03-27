@@ -1,6 +1,6 @@
 #include "Moves/Pawn_Capture.h"
 
-#include <cassert>
+#include <stdexcept>
 
 #include "Moves/Pawn_Move.h"
 #include "Moves/Direction.h"
