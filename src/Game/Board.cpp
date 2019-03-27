@@ -1885,8 +1885,9 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
 
 //! \param file File of queried square.
 //! \param rank Rank of queried square.
-//! \returns Whether a friendly piece would be limited in movement due to a pin by an
-//!          enemy piece.
+//! \returns The Square upon which an enemy piece stands that would pin a friendly
+//!          piece to the king. If no such Square exists, then an invalid square
+//!          is returned (which converts to bool(false) in if() statements).
 Square Board::piece_is_pinned(char file, int rank) const
 {
     if(last_found_pinned_square == Square{file, rank})
