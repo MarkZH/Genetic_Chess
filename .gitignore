@@ -73,5 +73,5 @@ octave-workspace
 *.pdf
 *.sty
 *.bat
-doc/doxygen/latex/Makefile
+Makefile
 *.tmp
