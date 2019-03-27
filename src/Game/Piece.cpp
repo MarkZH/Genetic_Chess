@@ -137,20 +137,19 @@ void Piece::add_standard_legal_move(int file_step, int rank_step)
             char end_file = start_file + file_step;
             int  end_rank = start_rank + rank_step;
 
-            add_legal_move(std::make_unique<Move>(start_file, start_rank,
-                                                  end_file, end_rank));
+            if(Board::inside_board(end_file, end_rank))
+            {
+                add_legal_move(std::make_unique<Move>(start_file, start_rank,
+                                                      end_file, end_rank));
+            }
         }
     }
 }
 
 void Piece::add_legal_move(std::unique_ptr<Move> move)
 {
-    assert(Board::inside_board(move->start_file(), move->start_rank()));
-    if(Board::inside_board(move->end_file(), move->end_rank()))
-    {
-        legal_moves[Board::square_index(move->start_file(), move->start_rank())].push_back(move.get());
-        possible_moves.push_back(std::move(move));
-    }
+    legal_moves[Board::square_index(move->start_file(), move->start_rank())].push_back(move.get());
+    possible_moves.push_back(std::move(move));
 }
 
 void Piece::add_pawn_moves()

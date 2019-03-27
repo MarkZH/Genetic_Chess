@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cmath>
 #include <cctype>
+#include <stdexcept>
 
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
@@ -25,12 +26,24 @@ Move::Move(char file_start, int rank_start,
                is_en_passant_move(false),
                is_castling_move(false)
 {
-    assert(std::abs(file_change()) < 8);
-    assert(std::abs(rank_change()) < 8);
-    assert(file_change() != 0 || rank_change() != 0);
+    if( ! Board::inside_board(starting_file, starting_rank))
+    {
+        throw std::runtime_error(std::string("Invalid starting square: ") + starting_file + std::to_string(starting_rank));
+    }
+
+    if( ! Board::inside_board(ending_file, ending_rank))
+    {
+        throw std::runtime_error(std::string("Invalid ending square: ") + ending_file + std::to_string(ending_rank));
+    }
+
+    if(file_change() == 0 && rank_change() == 0)
+    {
+        throw std::runtime_error(std::string("Zero-distance moves are illegal: ")
+                                 + starting_file + std::to_string(starting_rank)
+                                 + " --> "
+                                 + ending_file + std::to_string(ending_rank));
+    }
 }
-
-
 
 //! Further modifies the state of the board.
 
@@ -55,9 +68,6 @@ void Move::side_effects(Board&) const
 //! \param board The board on which the Move's legality is tested.
 bool Move::is_legal(const Board& board) const
 {
-    assert(Board::inside_board(starting_file, starting_rank));
-    assert(Board::inside_board(ending_file, ending_rank));
-
 #ifndef NDEBUG
     auto moving_piece = board.piece_on_square(starting_file, starting_rank);
 #endif
