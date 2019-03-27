@@ -1467,6 +1467,7 @@ bool run_tests()
                                                    &stacked_pawns_gene,
                                                    &total_force_gene};
     const auto number_of_tests = 1'000'000;
+    std::cout << "Gene speed test ..." << std::endl;
     for(auto gene : performance_genome)
     {
         auto score = 0.0;
@@ -1476,6 +1477,20 @@ bool run_tests()
             score += gene->evaluate(performance_board, opposite_performance_board, 0);
         }
     }
+
+    std::cout << "Board move speed test ..." << std::endl;
+    auto game_watch = Scoped_Stopwatch("Board::submit_move() (x" + std::to_string(number_of_tests) + ")");
+    Board speed_board;
+    for(auto i = 0; i < number_of_tests; ++i)
+    {   
+        auto move = speed_board.legal_moves()[Random::random_integer(0, int(speed_board.legal_moves().size()) - 1)];
+        auto result = speed_board.submit_move(*move);
+        if(result.game_has_ended())
+        {
+            speed_board = Board{};
+        }
+    }
+    game_watch.stop();
     Scoped_Stopwatch::flush();
 
 
