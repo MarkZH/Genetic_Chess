@@ -8,6 +8,7 @@
 //! \param color_in The color of the pawn.
 //! \param file_start The file of the square where the pawn starts.
 //! \param rank_start The rank of the square where the pawn starts.
+//!
 //! The constructor also sets able_to_capture to false.
 Pawn_Move::Pawn_Move(Color color_in, char file_start, int rank_start) :
     Move(file_start, rank_start,

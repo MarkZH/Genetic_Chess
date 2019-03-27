@@ -430,7 +430,7 @@ bool Board::inside_board(char file)
 
 //! Check that a square rank is a valid value.
 
-//! \param file Square rank to check (1 <= file <= 8)
+//! \param rank Square rank to check (1 <= file <= 8)
 //! \returns Whether the rank meets the condition according to the parameter specification above.
 bool Board::inside_board(int rank)
 {
@@ -453,9 +453,9 @@ Color Board::square_color(char file, int rank)
 //! Checks if there are any legal moves from the start sqaure to the end square.
 
 //! \param file_start File of starting square.
-//! \param file_start Rank of starting square.
-//! \param file_start File of ending square.
-//! \param file_start Rank of ending square.
+//! \param rank_start Rank of starting square.
+//! \param file_end File of ending square.
+//! \param rank_end Rank of ending square.
 //! \returns True if there is a legal move between the given squares.
 bool Board::is_legal(char file_start, int rank_start,
                      char file_end,   int rank_end) const
@@ -1127,7 +1127,7 @@ const std::vector<const Move*>& Board::game_record() const
 //! \param black Pointer to Player playing black to provide commentary for moves. Can be nullptr.
 //! \param file_name Name of the text file where the game will be printed. If empty, print to stdout.
 //! \param result The result of the last action (move, clock punch, or outside intervention) in the game.
-//! \param clock The game clock used during the game.
+//! \param game_clock The game clock used during the game.
 void Board::print_game_record(const Player* white,
                               const Player* black,
                               const std::string& file_name,

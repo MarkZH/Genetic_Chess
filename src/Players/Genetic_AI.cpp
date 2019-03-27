@@ -191,7 +191,7 @@ void Genetic_AI::mutate(int mutation_count)
 //! Prints the information defining this AI.
 
 //! The printed information includes the ID number, ancestry information, and genetic data.
-//! \file_name The name of the text file to print to. If empty, print to stdout.
+//! \param file_name The name of the text file to print to. If empty, print to stdout.
 void Genetic_AI::print(const std::string& file_name) const
 {
     if(file_name.empty())

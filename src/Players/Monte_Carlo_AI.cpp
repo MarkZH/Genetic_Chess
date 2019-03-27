@@ -109,6 +109,9 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     return *best_result.first;
 }
 
+//! The name is the same as the algorithm.
+
+//! \returns "Monte Carlo AI"
 std::string Monte_Carlo_AI::name() const
 {
     return "Monte Carlo AI";

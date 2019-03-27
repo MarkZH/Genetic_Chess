@@ -58,7 +58,6 @@ void Move::side_effects(Board&) const
 {
 }
 
-
 //! Checks if a move is legal on a given Board.
 
 //! This method checks for attacking a piece of the same color,
@@ -107,43 +106,57 @@ bool Move::move_specific_legal(const Board&) const
     return true;
 }
 
-//! Returns whether this move is allowed to capture.
+//! Check whether this move can land on an opponent-occupied square.
+
+//! \returns Whether this move is allowed to capture.
 bool Move::can_capture() const
 {
     return able_to_capture;
 }
 
 //! File of square where move starts.
+
+//! \returns The letter label of the starting square.
 char Move::start_file() const
 {
     return starting_file;
 }
 
 //! Rank of square where move starts.
+
+//! \returns The numerical label of the starting square.
 int Move::start_rank() const
 {
     return starting_rank;
 }
 
 //! How far move travels horizontally.
+
+//! \returns The distance in squares between the start and end files.
 int Move::file_change() const
 {
     return ending_file - starting_file;
 }
 
 //! How far move travels vertically.
+
+//! \returns The distance in squares between the start and end ranks.
 int Move::rank_change() const
 {
     return ending_rank - starting_rank;
 }
 
 //! File of square where move ends.
+
+//! \returns The letter label of the ending square.
 char Move::end_file() const
 {
     return ending_file;
 }
 
 //! Rank of square where move ends.
+
+//! \returns The numerical label of the ending square.
 int Move::end_rank() const
 {
     return ending_rank;
@@ -152,6 +165,7 @@ int Move::end_rank() const
 //! Creates a textual representation of a move suitable for a PGN game record.
 
 //! \param board A Board instance just prior to the move being made.
+//! \returns The full PGN record of a move.
 std::string Move::game_record_item(const Board& board) const
 {
     return game_record_move_item(board) + game_record_ending_item(board);
@@ -258,18 +272,24 @@ std::string Move::coordinate_move() const
 }
 
 //! Indicates whether this move is en passant, which needs special handling elsewhere.
+
+//! \returns Whether this is an instance of the En_Passant class.
 bool Move::is_en_passant() const
 {
     return is_en_passant_move;
 }
 
 //! Indicates whether this move is a castling move, a fact which needs special handling elsewhere.
+
+//! \returns Whether this is an instance of the Castle class.
 bool Move::is_castling() const
 {
     return is_castling_move;
 }
 
 //! Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.
+
+//! \returns the PGN symbol of the promotion piece, if any.
 char Move::promotion_piece_symbol() const
 {
     return '\0';

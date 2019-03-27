@@ -55,7 +55,7 @@ size_t Gene::mutatable_components() const
 //! Reads an input stream for gene data.
 
 //! Every line should be one of the following:
-//! - <property> = <value> with optional comments at the end preceded by '#'.
+//! - \<property\> = \<value\> with optional comments at the end preceded by '#'.
 //! - blank
 //! - A commented line starting with a '#'.
 //! \param is An input stream (std::ifstream, std::iostream, or similar).

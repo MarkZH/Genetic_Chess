@@ -12,7 +12,7 @@
 //! \param color_in The color of the capturing pawn.
 //! \param dir The direction of the move horizontally: LEFT or RIGHT.
 //! \param file_start The file of the square where the move starts.
-//! \param file_start The rank of the square where the move starts.
+//! \param rank_start The rank of the square where the move starts.
 Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, char file_start, int rank_start) :
     Pawn_Move(color_in, file_start, rank_start)
 {

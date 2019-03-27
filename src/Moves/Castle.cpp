@@ -52,7 +52,6 @@ void Castle::side_effects(Board& board) const
 
 //! Castling moves have a special notation in PGN.
 
-//! \param board The board on which this move is made (unnecessary for this overloaded method).
 //! \returns "O-O" for kingside castling or "O-O-O" for queenside castling.
 std::string Castle::game_record_move_item(const Board&) const
 {
