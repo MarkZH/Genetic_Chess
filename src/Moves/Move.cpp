@@ -244,14 +244,14 @@ std::string Move::game_record_ending_item(Board board) const
 //! a pawn promtion.
 std::string Move::coordinate_move() const
 {
-    auto p = char(std::tolower(promotion_piece_symbol()));
     auto result = starting_file
                   + std::to_string(starting_rank)
                   + ending_file
                   + std::to_string(ending_rank);
-    if(p)
+
+    if(promotion_piece_symbol())
     {
-        result += p;
+        result += char(std::tolower(promotion_piece_symbol()));
     }
 
     return result;
