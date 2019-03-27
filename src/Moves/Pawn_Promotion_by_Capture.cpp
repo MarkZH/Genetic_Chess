@@ -22,8 +22,7 @@ bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const
     return board.piece_on_square(ending_file, ending_rank); // must capture
 }
 
-std::string Pawn_Promotion_by_Capture::game_record_move_item(const Board&) const
+std::string Pawn_Promotion_by_Capture::game_record_move_item(const Board& board) const
 {
-    return starting_file + std::string("x") + ending_file + std::to_string(ending_rank)
-            + "=" + promote_to->pgn_symbol();
+    return starting_file + std::string("x") + Pawn_Promotion::game_record_move_item(board);
 }
