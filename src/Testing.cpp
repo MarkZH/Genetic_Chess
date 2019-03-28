@@ -1484,8 +1484,8 @@ bool run_tests()
     for(auto i = 0; i < number_of_tests; ++i)
     {   
         auto move = speed_board.legal_moves()[Random::random_integer(0, int(speed_board.legal_moves().size()) - 1)];
-        auto result = speed_board.submit_move(*move);
-        if(result.game_has_ended())
+        auto move_result = speed_board.submit_move(*move);
+        if(move_result.game_has_ended())
         {
             speed_board = Board{};
         }
