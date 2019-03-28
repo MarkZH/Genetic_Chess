@@ -26,8 +26,8 @@ void print_help();
 void replay_game(const std::string& file_name, int game_number);
 bool confirm_game_record(const std::string& file_name, bool verbose);
 void game_progress_move_count(const std::string& game_record_file_name, const std::string& results_file_name);
-int find_last_id(const std::string& filename);
 
+int find_last_id(const std::string& file_name);
 int main(int argc, char *argv[])
 {
     std::ios_base::sync_with_stdio(false);
