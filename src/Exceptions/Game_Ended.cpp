@@ -4,15 +4,16 @@
 #include <string>
 
 #include "Game/Color.h"
+#include "Game/Game_Result.h"
 
 Game_Ended::Game_Ended(Color winner_in,
                        const std::string& message_in) :
     std::runtime_error(message_in),
-    victor(winner_in)
+    game_result(winner_in, message_in)
 {
 }
 
-Color Game_Ended::winner() const
+Game_Result Game_Ended::result() const
 {
-    return victor;
+    return game_result;
 }

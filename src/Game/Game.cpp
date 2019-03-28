@@ -72,7 +72,7 @@ Game_Result play_game_with_board(const Player& white,
     }
     catch(const Game_Ended& termination)
     {
-        result = {termination.winner(), termination.what()};
+        result = termination.result();
     }
     catch(const std::exception& other_error)
     {
