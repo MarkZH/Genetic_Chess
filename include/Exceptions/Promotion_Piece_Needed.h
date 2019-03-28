@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 
+//! An exception thrown in case a human player moves a pawn to the far rank without indicating which piece to promote to.
 class Promotion_Piece_Needed : public std::runtime_error
 {
     public:

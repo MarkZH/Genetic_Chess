@@ -9,10 +9,19 @@
 
 class Move;
 
+//! A structure representing the evaluation of a leaf of the Minimax search of the game tree.
 struct Game_Tree_Node_Result
 {
+    //! The score assigned to the board position.
+
+    //! Victory is scored as positive infinite, defeat as negative infinity,
+    //! and a draw as 0.
     double score;
+
+    //! The perspective from which the score is calculated--for whom a higher score is better.
     Color perspective;
+
+    //! The sequence of moves that lead to the board position being scored.
     std::vector<const Move*> variation;
 
     double corrected_score(Color query) const;

@@ -7,6 +7,13 @@
 
 class Move;
 
+//! Storage for the sampled game tree used by the Monte_Carlo_AI.
+
+//! This is a recursive class in that it contains pointers to
+//! other instances of Monte_Carlo_Tree_Search to represent the
+//! known game tree. Each instance keeps track of how many game
+//! move lists pass through it and how many times that games through
+//! that instances led to victory, defeat, or a draw.
 class Monte_Carlo_Search_Tree
 {
     using Move_Iterator = std::vector<const Move*>::const_iterator;

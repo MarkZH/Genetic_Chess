@@ -13,6 +13,7 @@ class Board;
 class Move;
 class Clock;
 
+//! A software analog to a biological chromosome containing a collection of Gene instances that control the Genetic_AI behavior.
 class Genome
 {
     public:

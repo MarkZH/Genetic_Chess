@@ -8,6 +8,18 @@
 
 class Move;
 
+//! Add a single random game to the game tree.
+
+//! \param begin An iterator (taken from a board.game_record()) to the
+//!        first new move in a randomly played game.
+//! \param end An iterator to the end of a board game record (i.e.,
+//!        board.game_record().end().
+//! \param score The value of the result of the randomly played game.
+//!        Win = 1; Draw = 0; Loss = -1.
+//!
+//! The sequence of moves is fed into the tree such that each subsequent
+//! move gets placed at a lower depth than the previous move. New branches
+//! are created when a novel variation is added to the tree.
 void Monte_Carlo_Search_Tree::add_search(Move_Iterator begin,
                                          Move_Iterator end,
                                          int score)
@@ -46,6 +58,16 @@ void Monte_Carlo_Search_Tree::add_search(Move_Iterator begin,
     }
 }
 
+//! Cut off branches representing moves not taken.
+
+//! \param begin An iterator to a move list representing the first move
+//!        since the player's last move (usually there are two new moves).
+//! \param end An iterator to the end of the new moves
+//!        actual_game_board.game_record().end()).
+//!
+//! In order to save on memory, the branches of the game tree that were
+//! not realized in the actual game are pruned away, often leaving a tree
+//! around 1/400th the original size.
 void Monte_Carlo_Search_Tree::reroot(Move_Iterator begin, Move_Iterator end)
 {
     std::unique_ptr<Monte_Carlo_Search_Tree> next_branch;
@@ -78,6 +100,16 @@ void Monte_Carlo_Search_Tree::reroot(Move_Iterator begin, Move_Iterator end)
     }
 }
 
+//! Find the most probable winning move in the branches
+
+//! \returns A pair consisting of the most probable winning move (defined as
+//!          the maximum of (score)/(visists)) and the average score of
+//!          that move.
+//!
+//! The score of a move is the average score of the endgame results of all the
+//! random games that passed through this branch of the game tree (see add_search()).
+//! The idea is that the more often random games lead to winning outcomes when they pass
+//! through a node, the more likely that node represents a good move.
 std::pair<const Move*, double> Monte_Carlo_Search_Tree::best_result() const
 {
     auto best_score = std::numeric_limits<double>::lowest();
@@ -108,6 +140,11 @@ size_t Monte_Carlo_Search_Tree::index_of(const Move* move) const
     return std::distance(moves.begin(), iter);
 }
 
+//! Calculate the current value of a move.
+
+//! \param move The move being queried.
+//! The value of a move is the average score (see add_search()) of
+//! all random games so far that started with the queried move.
 double Monte_Carlo_Search_Tree::current_score(const Move* move) const
 {
     auto index = index_of(move);

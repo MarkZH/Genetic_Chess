@@ -4,6 +4,7 @@
 #include <string>
 #include <map>
 
+//! A class that reads a text file to allow easy querying of configuration data.
 class Configuration_File
 {
     public:
