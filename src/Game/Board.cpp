@@ -195,74 +195,40 @@ Board::Board(const std::string& fen) :
     }
 
     auto castling_parse = fen_parse.at(2);
-    for(auto c : castling_parse)
-    {
-        if( ! String::contains("KQkq-", c))
-        {
-            fen_error("Illegal character in castling section");
-        }
-    }
-
     if(String::contains(castling_parse, '-') && castling_parse.size() != 1)
     {
-        fen_error("Castling section contains - and other characters.");
+        fen_error("Castling section contains - and other characters: " + castling_parse + ".");
     }
 
-    if(String::contains(castling_parse, 'K'))
+    for(auto c : castling_parse)
     {
-        if(piece_on_square('h', 1) != piece_instance(ROOK, WHITE))
+        if(c == '-')
         {
-            fen_error("There must be a white rook on h1 to castle kingside.");
+            break;
         }
-        set_unmoved('h', 1);
 
-        if(piece_on_square('e', 1) != piece_instance(KING, WHITE))
+        if( ! String::contains("KQkq", c))
         {
-            fen_error("There must be a white king on e1 to castle.");
+            fen_error(std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
         }
-        set_unmoved('e', 1);
-    }
-    if(String::contains(castling_parse, 'Q'))
-    {
-        if(piece_on_square('a', 1) != piece_instance(ROOK, WHITE))
-        {
-            fen_error("There must be a white rook on a1 to castle queenside.");
-        }
-        set_unmoved('a', 1);
 
-        if(piece_on_square('e', 1) != piece_instance(KING, WHITE))
+        Color piece_color = std::isupper(c) ? WHITE : BLACK;
+        int home_rank = std::isupper(c) ? 1 : 8;
+        
+        char rook_file = std::toupper(c) == 'K' ? 'h' : 'a';
+        std::string side = std::toupper(c) == 'K' ? "king" : "queen";
+        
+        if(piece_on_square(rook_file, home_rank) != piece_instance(ROOK, piece_color))
         {
-            fen_error("There must be a white king on e1 to castle.");
+            fen_error("There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_file + std::to_string(home_rank) + " to castle " + side + "side.");
         }
-        set_unmoved('e', 1);
-    }
-    if(String::contains(castling_parse, 'k'))
-    {
-        if(piece_on_square('h', 8) != piece_instance(ROOK, BLACK))
-        {
-            fen_error("There must be a black rook on h8 to castle kingside.");
-        }
-        set_unmoved('h', 8);
+        set_unmoved(rook_file, home_rank);
 
-        if(piece_on_square('e', 8) != piece_instance(KING, BLACK))
+        if(piece_on_square('e', home_rank) != piece_instance(KING, piece_color))
         {
-            fen_error("There must be a black king on e8 to castle.");
+            fen_error("There must be a " + String::lowercase(color_text(piece_color)) + " king on e" + std::to_string(home_rank) + " to castle.");
         }
-        set_unmoved('e', 8);
-    }
-    if(String::contains(castling_parse, 'q'))
-    {
-        if(piece_on_square('a', 8) != piece_instance(ROOK, BLACK))
-        {
-            fen_error("There must be a black rook on a8 to castle kingside.");
-        }
-        set_unmoved('a', 8);
-
-        if(piece_on_square('e', 8) != piece_instance(KING, BLACK))
-        {
-            fen_error("There must be a black king on e8 to castle.");
-        }
-        set_unmoved('e', 8);
+        set_unmoved('e', home_rank);
     }
 
     auto en_passant_parse = fen_parse.at(3);
