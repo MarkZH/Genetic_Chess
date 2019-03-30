@@ -77,23 +77,13 @@ bool Move::is_legal(const Board& board) const
     auto attacked_piece = board.piece_on_square(ending_file, ending_rank);
     if(attacked_piece)
     {
-        if(board.whose_turn() == attacked_piece->color())
-        {
-            return false;
-        }
-
-        if( ! can_capture())
+        if( ! can_capture() || board.whose_turn() == attacked_piece->color())
         {
             return false;
         }
     }
 
-    if( ! move_specific_legal(board))
-    {
-        return false;
-    }
-
-    return ! board.king_is_in_check_after_move(*this);
+    return move_specific_legal(board) && ! board.king_is_in_check_after_move(*this);
 }
 
 //! Returns whether a move is legal according to rules not covered by Move::is_legal().
