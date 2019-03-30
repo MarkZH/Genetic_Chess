@@ -1,6 +1,9 @@
 #ifndef PIECE_TYPES_H
 #define PIECE_TYPES_H
 
+//! \file
+
+//! An enumeration to identify the type of a Piece.
 enum Piece_Type
 {
     PAWN,
