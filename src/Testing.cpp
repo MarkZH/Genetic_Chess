@@ -1482,7 +1482,7 @@ bool run_tests()
     auto game_watch = Scoped_Stopwatch("Board::submit_move() (x" + std::to_string(number_of_tests) + ")");
     Board speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
-    {   
+    {
         auto move = speed_board.legal_moves()[Random::random_integer(0, int(speed_board.legal_moves().size()) - 1)];
         auto move_result = speed_board.submit_move(*move);
         if(move_result.game_has_ended())
