@@ -1491,6 +1491,25 @@ bool run_tests()
         }
     }
     game_watch.stop();
+
+    std::cout << "Board-copy-move speed test ..." << std::endl;
+    auto copy_game_watch = Scoped_Stopwatch("Board::submit_move() with copy (x" + std::to_string(number_of_tests) + ")");
+    Board copy_speed_board;
+    for(auto i = 0; i < number_of_tests; ++i)
+    {
+        auto move = copy_speed_board.legal_moves()[Random::random_integer(0, int(copy_speed_board.legal_moves().size()) - 1)];
+        auto copy = copy_speed_board;
+        auto move_result = copy.submit_move(*move);
+        if(move_result.game_has_ended())
+        {
+            copy_speed_board = Board{};
+        }
+        else
+        {
+            copy_speed_board = copy;
+        }
+    }
+    copy_game_watch.stop();
     Scoped_Stopwatch::flush();
 
 
