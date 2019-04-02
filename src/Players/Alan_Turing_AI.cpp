@@ -216,7 +216,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     if(piece->type() != QUEEN)
                     {
                         Square defending_square{};
-                        for(auto defender : Threat_Generator(file, rank, opposite(perspective), board))
+                        for(auto defender : Threat_Generator(file, rank, perspective, board))
                         {
                             if(defending_square)
                             {
