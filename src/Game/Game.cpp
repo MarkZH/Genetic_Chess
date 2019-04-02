@@ -61,7 +61,7 @@ Game_Result play_game_with_board(const Player& white,
             if(result.game_has_ended())
             {
                 break;
-            }   
+            }
 
             result = board.submit_move(move_chosen);
             if(result.game_has_ended())

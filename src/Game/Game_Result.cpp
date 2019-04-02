@@ -5,7 +5,7 @@
 #include "Game/Color.h"
 #include "Utility/String.h"
 
-//! The default Game_Result indicates that the game has not ended. 
+//! The default Game_Result indicates that the game has not ended.
 Game_Result::Game_Result() : victor(NONE), cause()
 {
 }

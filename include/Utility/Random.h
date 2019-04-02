@@ -21,7 +21,7 @@ namespace Random
     //! \param max The maximum number to return.
     //! \returns A random number in the range [min, max].
     double random_real(double min, double max);
-    
+
     //! Random integral number with inclusive range from a uniform distribution.
 
     //! \param min The minimum number to return.
@@ -35,12 +35,12 @@ namespace Random
     uint64_t random_unsigned_int64();
 
     //! Simulate a fair coin flip.
-    
+
     //! \returns true with probability 50%
     bool coin_flip();
 
     // Simulate a fair trial.
-    
+
     //! \param probability The probability of success.
     //! \returns true with given probability
     bool success_probability(double probability);

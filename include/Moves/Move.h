@@ -60,7 +60,7 @@ class Move
         bool is_en_passant_move;
         //! Is the move a castling move?
         bool is_castling_move;
-            
+
         virtual std::string game_record_move_item(const Board& board) const;
 
     private:

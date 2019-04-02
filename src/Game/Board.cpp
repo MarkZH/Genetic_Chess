@@ -214,10 +214,10 @@ Board::Board(const std::string& fen) :
 
         Color piece_color = std::isupper(c) ? WHITE : BLACK;
         int home_rank = std::isupper(c) ? 1 : 8;
-        
+
         char rook_file = std::toupper(c) == 'K' ? 'h' : 'a';
         std::string side = std::toupper(c) == 'K' ? "king" : "queen";
-        
+
         if(piece_on_square(rook_file, home_rank) != piece_instance(ROOK, piece_color))
         {
             fen_error("There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_file + std::to_string(home_rank) + " to castle " + side + "side.");

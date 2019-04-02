@@ -23,7 +23,7 @@ class Gene
         double evaluate(const Board& board, const Board& opposite_board, size_t depth) const;
 
         //! Copies the gene data and returns a pointer to the new data
-        
+
         //! \returns A unique pointer to the copied data.
         virtual std::unique_ptr<Gene> duplicate() const = 0;
 

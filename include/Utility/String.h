@@ -63,7 +63,7 @@ namespace String
     //! \param comment The marker indicating the start of a comment to be removed.
     //! \returns The same string with everything after the comment marker removed.
     std::string strip_comments(const std::string& str, const std::string& comment);
-    
+
     //! Remove all text between comment indicators.
 
     //! \param str The input string.

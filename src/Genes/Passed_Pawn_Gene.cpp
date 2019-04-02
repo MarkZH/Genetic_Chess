@@ -15,7 +15,7 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&, size_t) c
     auto other_pawn = board.piece_instance(PAWN, opposite(board.whose_turn()));
     auto last_rank = (board.whose_turn() == WHITE ? 8 : 1);
     auto rank_step = (board.whose_turn() == WHITE ? 1 : -1);
-    
+
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 2; rank <= 7; ++rank)
@@ -27,7 +27,7 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&, size_t) c
                 auto left_file  = std::max('a', char(file - 1));
                 auto right_file = std::min('h', char(file + 1));
                 auto score_diff = 1.0/(right_file - left_file + 1);
-                
+
                 for(char pawn_file = left_file; pawn_file <= right_file; ++pawn_file)
                 {
                     for(int pawn_rank = rank + rank_step; pawn_rank != last_rank; pawn_rank += rank_step)
