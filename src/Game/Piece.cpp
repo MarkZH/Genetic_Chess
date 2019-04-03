@@ -19,6 +19,8 @@
 #include "Moves/En_Passant.h"
 #include "Moves/Castle.h"
 
+#include "Utility/String.h"
+
 //! Create a piece.
 
 //! \param color_in The color of the piece.
@@ -277,77 +279,75 @@ void Piece::add_king_moves()
 void Piece::add_pawn_art()
 {
     // ASCII Art http://ascii.co.uk/art/chess (VK)
-    ascii_art_lines.push_back("  _  ");
-    ascii_art_lines.push_back(" ( ) ");
+    ascii_art_lines.push_back("_");
+    ascii_art_lines.push_back("( )");
     ascii_art_lines.push_back("/___\\");
-    if(color() == BLACK)
-    {
-        ascii_art_lines[1].replace(2, 1, "#");
-        ascii_art_lines[2].replace(1, 3, "###");
-    }
+    add_color();
 }
 
 void Piece::add_rook_art()
 {
     // ASCII Art http://ascii.co.uk/art/chess (VK)
-    ascii_art_lines.push_back(" |U| ");
-    ascii_art_lines.push_back(" | | ");
+    ascii_art_lines.push_back("|U|");
+    ascii_art_lines.push_back("| |");
     ascii_art_lines.push_back("/___\\");
-    if(color() == BLACK)
-    {
-        ascii_art_lines[1].replace(2, 1, "#");
-        ascii_art_lines[2].replace(1, 3, "###");
-    }
+    add_color();
 }
 
 void Piece::add_knight_art()
 {
     // ASCII Art http://ascii.co.uk/art/chess (VK)
-    ascii_art_lines.push_back(" /\") ");
-    ascii_art_lines.push_back(" 7 ( ");
+    ascii_art_lines.push_back("/\")");
+    ascii_art_lines.push_back("7 (");
     ascii_art_lines.push_back("/___\\");
-    if(color() == BLACK)
-    {
-        ascii_art_lines[1].replace(2, 1, "#");
-        ascii_art_lines[2].replace(1, 3, "###");
-    }
+    add_color();
 }
 
 void Piece::add_bishop_art()
 {
     // ASCII art http://ascii.co.uk/art/chess (VK)
-    ascii_art_lines.push_back(" (V) ");
-    ascii_art_lines.push_back(" ) ( ");
+    ascii_art_lines.push_back("(V)");
+    ascii_art_lines.push_back(") (");
     ascii_art_lines.push_back("/___\\");
-    if(color() == BLACK)
-    {
-        ascii_art_lines[1].replace(2, 1, "#");
-        ascii_art_lines[2].replace(1, 3, "###");
-    }
+    add_color();
 }
 
 void Piece::add_queen_art()
 {
     // ASCII Art http://ascii.co.uk/art/chess (VK)
-    ascii_art_lines.push_back(" \\^/ ");
-    ascii_art_lines.push_back(" ) ( ");
+    ascii_art_lines.push_back("\\^/");
+    ascii_art_lines.push_back(") (");
     ascii_art_lines.push_back("(___)");
-    if(color() == BLACK)
-    {
-        ascii_art_lines[1].replace(2, 1, "#");
-        ascii_art_lines[2].replace(1, 3, "###");
-    }
+    add_color();
 }
 
 void Piece::add_king_art()
 {
     // ASCII Art http://ascii.co.uk/art/chess (VK)
-    ascii_art_lines.push_back(" \\+/ ");
-    ascii_art_lines.push_back(" | | ");
+    ascii_art_lines.push_back("\\+/");
+    ascii_art_lines.push_back("| |");
     ascii_art_lines.push_back("/___\\");
-    if(color() == BLACK)
+    add_color();
+}
+
+void Piece::add_color()
+{
+    if(color() == WHITE)
     {
-        ascii_art_lines[1].replace(2, 1, "#");
-        ascii_art_lines[2].replace(1, 3, "###");
+        return;
+    }
+
+    for(auto& line : ascii_art_lines)
+    {
+        if(String::contains(line, ' ') || String::contains(line, "___"))
+        {
+            for(auto& c : line)
+            {
+                if(c == ' ' || c == '_')
+                {
+                    c = '#';
+                }
+            }
+        }
     }
 }

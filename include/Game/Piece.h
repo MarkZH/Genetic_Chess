@@ -61,6 +61,7 @@ class Piece
         void add_bishop_art();
         void add_queen_art();
         void add_king_art();
+        void add_color();
 };
 
 #endif // PIECE_H
