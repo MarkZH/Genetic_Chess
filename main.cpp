@@ -60,8 +60,6 @@ int find_last_id(const std::string& file_name);
 //! \returns Zero for normal exit, non-zero for error exits.
 int main(int argc, char *argv[])
 {
-    std::ios_base::sync_with_stdio(false);
-
     try
     {
         if(argc > 1)
