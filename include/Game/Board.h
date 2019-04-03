@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include <array>
-#include <mutex>
 
 #include "Color.h"
 #include "Square.h"
