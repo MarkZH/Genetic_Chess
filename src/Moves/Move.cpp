@@ -285,11 +285,23 @@ char Move::promotion_piece_symbol() const
     return '\0';
 }
 
+//! Adjust the file of the square a move ends on.
+
+//! This is used for Pawn_Move derivitives since that constructor
+//! forces single moves.
+
+//! \param adjust The size of the adjustment.
 void Move::adjust_end_file(int adjust)
 {
     ending_file += adjust;
 }
 
+//! Adjust the rank of the square a move ends on.
+
+//! This is used for Pawn_Move derivitives since that constructor
+//! forces single moves.
+
+//! \param adjust The size of the adjustment.
 void Move::adjust_end_rank(int adjust)
 {
     ending_rank += adjust;
