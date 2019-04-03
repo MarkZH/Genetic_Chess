@@ -1087,6 +1087,12 @@ const std::vector<const Move*>& Board::game_record() const
     return game_record_listing;
 }
 
+template<typename OutputStream, typename DataType>
+void print_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
+{
+    output << "[" << heading << " \"" << data << "\"]\n";
+}
+
 //! Prints the PGN game record with commentary from Players.
 
 //! \param white Pointer to Player playing white to provide commentary for moves. Can be nullptr.
@@ -1113,7 +1119,11 @@ void Board::print_game_record(const Player* white,
         {
             if(String::starts_with(line, "[Round"))
             {
-                ++game_number;
+                auto round_number = std::stoi(String::split(line, "\"").at(1));
+                if(round_number >= game_number)
+                {
+                    game_number = round_number + 1;
+                }
             }
         }
     }
@@ -1129,56 +1139,53 @@ void Board::print_game_record(const Player* white,
 #elif defined(__linux__)
     localtime_r(&game_start_time_c, &time_out);
 #endif
-    out_stream << "[Date \"" << std::put_time(&time_out, "%Y.%m.%d") << "\"]\n";
-    out_stream << "[Time \"" << std::put_time(&time_out, "%H:%M:%S") << "\"]\n";
+    print_game_header_line(out_stream, "Date", std::put_time(&time_out, "%Y.%m.%d"));
+    print_game_header_line(out_stream, "Time", std::put_time(&time_out, "%H:%M:%S"));
 
     if(white && ! white->name().empty())
     {
-        out_stream << "[White \"" << white->name() << "\"]\n";
+        print_game_header_line(out_stream, "White", white->name());
     }
 
     if(black && ! black->name().empty())
     {
-        out_stream << "[Black \"" << black->name() << "\"]\n";
+        print_game_header_line(out_stream, "Black", black->name());
     }
 
-    if(game_number > 0)
-    {
-        out_stream << "[Round \"" << game_number++ << "\"]\n";
-    }
+    print_game_header_line(out_stream, "Round", game_number++);
 
     if(game_clock.initial_time() > 0)
     {
-        out_stream << "[TimeControl \"";
+        std::string time_control_spec;
         if(game_clock.moves_to_reset() > 0)
         {
-            out_stream << game_clock.moves_to_reset() << '/';
+            time_control_spec += std::to_string(game_clock.moves_to_reset()) + '/';
         }
-        out_stream << game_clock.initial_time();
+        time_control_spec += game_clock.initial_time();
         if(game_clock.increment() > 0)
         {
-            out_stream << '+' << game_clock.increment();
+            time_control_spec += '+' + std::to_string(game_clock.increment());
         }
-        out_stream << "\"]\n";
-        out_stream << "[TimeLeftWhite \"" << game_clock.time_left(WHITE) << "\"]\n"
-                   << "[TimeLeftBlack \"" << game_clock.time_left(BLACK) << "\"]\n";
+        print_game_header_line(out_stream, "TimeControl", time_control_spec);
+        print_game_header_line(out_stream, "TimeLeftWhite", game_clock.time_left(WHITE));
+        print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(BLACK));
     }
 
     if( ! result.game_ending_annotation().empty())
     {
-        out_stream << "[Result \"" << result.game_ending_annotation() << "\"]\n";
+        print_game_header_line(out_stream, "Result", result.game_ending_annotation());
     }
 
     if( ! result.ending_reason().empty() && ! String::contains(result.ending_reason(), "mates"))
     {
-        out_stream << "[Termination \"" << result.ending_reason() << "\"]\n";
+        print_game_header_line(out_stream, "Termination", result.ending_reason());
     }
 
     auto temp = Board(starting_fen);
     if(starting_fen != standard_starting_fen)
     {
-        out_stream << "[SetUp \"1\"]\n";
-        out_stream << "[FEN \"" << starting_fen << "\"]\n";
+        print_game_header_line(out_stream, "SetUp", 1);
+        print_game_header_line(out_stream, "FEN", starting_fen);
     }
 
     auto starting_turn_offset = (temp.whose_turn() == WHITE ? 0 : 1);
