@@ -41,7 +41,7 @@ this project.
 4. `bin/release/genetic_chess -genepool gene_pool_config_example.txt`
     * If compiling with Visual Studio, look in x86\Release or x64\Release
       for the compiled program.
-5. About once a day, pause the gene pool with `Ctrl-C` and run
-   `analysis/run_all_plots.sh pool.txt` to generate plots and other data
-   showing the evolution and behavior of the specimens.
+5. About once a day, pause the gene pool with `Ctrl-Z` (Linux) or `Ctrl-Break`
+   (on Windows) and run `analysis/run_all_plots.sh pool.txt 1` to generate
+   plots and other data showing the evolution and behavior of the specimens.
    * This script requires the program `octave` to run.
