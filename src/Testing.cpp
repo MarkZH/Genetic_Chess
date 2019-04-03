@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <cassert>
 #include <algorithm>
+#include <limits>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -1382,30 +1383,6 @@ bool run_tests()
         tests_passed = false;
     }
 
-
-
-    // Random number generation sample
-    int int_width = 10;
-    int real_width = 15;
-    int norm_width = 15;
-    int uint_width = 25;
-    std::cout << std::endl;
-    std::cout << std::setw(int_width) << "Integers"
-              << std::setw(real_width) << "Reals"
-              << std::setw(norm_width) << "Laplace"
-              << std::setw(uint_width) << "Unsigned Ints" << '\n';
-    std::cout << std::setw(int_width) << "+/-1000"
-              << std::setw(real_width) << "[0-2]"
-              << std::setw(norm_width) << "width = 3"
-              << std::setw(uint_width) << "whole range" << '\n';
-    for(int i = 0; i < 10; ++i)
-    {
-        std::cout << std::setw(int_width) << Random::random_integer(-1000, 1000)
-                  << std::setw(real_width) << Random::random_real(0, 2)
-                  << std::setw(norm_width) << Random::random_laplace(3)
-                  << std::setw(uint_width) << Random::random_unsigned_int64() << '\n';
-    }
-
     Board capture_board;
     capture_board.submit_move(capture_board.create_move("b4"));
     capture_board.submit_move(capture_board.create_move("c5"));
@@ -1441,16 +1418,40 @@ bool run_tests()
 
     if(tests_passed)
     {
-        std::cout << "All pre-perft tests passed." << std::endl;
+        std::cout << "All tests passed." << std::endl;
     }
     else
     {
-        std::cout << "Pre-perft tests failed." << std::endl;
-        std::cout << "Press enter to continue with perft test ..." << std::endl;
-        std::cin.get();
+        std::cout << "Tests failed." << std::endl;
     }
 
-    // Gene performance
+    return tests_passed;
+}
+
+void run_speed_tests()
+{
+    std::cout << "Gene scoring speed ..." << std::endl;
+    auto test_genes_file_name = "testing/test_genome.txt";
+
+    auto castling_possible_gene = Castling_Possible_Gene();
+    castling_possible_gene.read_from(test_genes_file_name);
+    auto freedom_to_move_gene = Freedom_To_Move_Gene();
+    auto king_confinement_gene = King_Confinement_Gene();
+    king_confinement_gene.read_from(test_genes_file_name);
+    auto king_protection_gene = King_Protection_Gene();
+    auto piece_strength_gene = Piece_Strength_Gene();
+    piece_strength_gene.read_from(test_genes_file_name);
+    auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
+    auto pawn_advancement_gene = Pawn_Advancement_Gene();
+    pawn_advancement_gene.read_from(test_genes_file_name);
+    auto passed_pawn_gene = Passed_Pawn_Gene();
+    auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
+    sphere_of_influence_gene.read_from(test_genes_file_name);
+    auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
+    auto stacked_pawns_gene = Stacked_Pawns_Gene();
+    auto pawn_islands_gene = Pawn_Islands_Gene();
+    auto checkmate_material_gene = Checkmate_Material_Gene();
+
     auto performance_board = Board("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
     auto opposite_performance_board = performance_board;
     opposite_performance_board.set_turn(opposite(performance_board.whose_turn()));
@@ -1466,20 +1467,22 @@ bool run_tests()
                                                    &sphere_of_influence_gene,
                                                    &stacked_pawns_gene,
                                                    &total_force_gene};
+
     const auto number_of_tests = 1'000'000;
-    std::cout << "Gene speed test ..." << std::endl;
+    std::vector<std::pair<double, std::string>> timing_results;
     for(auto gene : performance_genome)
     {
         auto score = 0.0;
-        auto watch = Scoped_Stopwatch(gene->name() + " (x" + std::to_string(number_of_tests) + ")");
+        auto watch = Scoped_Stopwatch("");
         for(int i = 1; i <= number_of_tests; ++i)
         {
             score += gene->evaluate(performance_board, opposite_performance_board, 0);
         }
+        timing_results.emplace_back(watch.time_so_far(), gene->name());
     }
 
-    std::cout << "Board move speed test ..." << std::endl;
-    auto game_watch = Scoped_Stopwatch("Board::submit_move() (x" + std::to_string(number_of_tests) + ")");
+    std::cout << "Board::submit_move() speed ..." << std::endl;
+    auto game_watch = Scoped_Stopwatch("");
     Board speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
@@ -1490,10 +1493,10 @@ bool run_tests()
             speed_board = Board{};
         }
     }
-    game_watch.stop();
+    timing_results.emplace_back(game_watch.time_so_far(), "Board::submit_move()");
 
-    std::cout << "Board-copy-move speed test ..." << std::endl;
-    auto copy_game_watch = Scoped_Stopwatch("Board::submit_move() with copy (x" + std::to_string(number_of_tests) + ")");
+    std::cout << "Board::submit_move() with copy speed ..." << std::endl;
+    auto copy_game_watch = Scoped_Stopwatch("");
     Board copy_speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
@@ -1509,13 +1512,25 @@ bool run_tests()
             copy_speed_board = copy;
         }
     }
-    copy_game_watch.stop();
-    Scoped_Stopwatch::flush();
+    timing_results.emplace_back(copy_game_watch.time_so_far(), "Board::submit_move() with copy");
 
+    std::sort(timing_results.begin(), timing_results.end());
+    const auto name_width = std::max_element(timing_results.begin(), timing_results.end(),
+                                             [](const auto& x, const auto& y){ return x.second.size() < y.second.size(); })->second.size();
+    std::cout << "\n" << std::setw(name_width) << "Test Item" << "   " << "Time (us)";
+    std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------" << std::endl;
+    for(const auto& result : timing_results)
+    {
+        std::cout << std::setw(name_width) << result.second << " = " << result.first << std::endl;
+    }
+}
 
+bool run_perft_tests()
+{
     // Count game tree leaves (perft) to given depth to validate move generation
     // (downloaded from http://www.rocechess.ch/perft.html)
     // (leaves from starting positions also found at https://oeis.org/A048987)
+
     auto perft_suite_input = std::ifstream("testing/perftsuite.epd");
     std::string input_line;
     std::vector<std::string> lines;
@@ -1533,7 +1548,6 @@ bool run_tests()
     auto perft_timer = Scoped_Stopwatch("");
     for(const auto& line : lines)
     {
-        auto perft_test_passed = true;
         auto line_parts = String::split(line, ";");
         auto fen = line_parts.front();
         std::cout << '[' << ++test_number << '/' << lines.size() << "] " << fen << std::flush;
@@ -1551,9 +1565,7 @@ bool run_tests()
             {
                 std::cerr << "\nError at depth " << depth << std::endl;
                 std::cerr << "Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
-                perft_test_passed = false;
-                tests_passed = false;
-                break;
+                return false;
             }
             else
             {
@@ -1561,29 +1573,36 @@ bool run_tests()
             }
         }
 
-        if(perft_test_passed)
-        {
-            std::cout << " OK!" << std::endl;
-        }
-        else
-        {
-            break;
-        }
+        std::cout << " OK!" << std::endl;
     }
 
     std::cout << "Perft time: " << perft_timer.time_so_far() << std::endl;
+    return true;
+}
 
-
-    if(tests_passed)
+void print_randomness_sample()
+{
+        // Random number generation sample
+    int int_width = 10;
+    int real_width = 15;
+    int norm_width = 15;
+    int uint_width = 30;
+    std::cout << std::endl;
+    std::cout << std::setw(int_width) << "Integers"
+              << std::setw(real_width) << "Reals"
+              << std::setw(norm_width) << "Laplace"
+              << std::setw(uint_width) << "Unsigned Ints" << '\n';
+    std::cout << std::setw(int_width) << "+/-1000"
+              << std::setw(real_width) << "[0,2]"
+              << std::setw(norm_width) << "width = 3"
+              << std::setw(uint_width) << "[0," + std::to_string(std::numeric_limits<uint64_t>::max()) << "]\n";
+    for(int i = 0; i < 10; ++i)
     {
-        std::cout << "All tests passed." << std::endl;
+        std::cout << std::setw(int_width) << Random::random_integer(-1000, 1000)
+                  << std::setw(real_width) << Random::random_real(0, 2)
+                  << std::setw(norm_width) << Random::random_laplace(3)
+                  << std::setw(uint_width) << Random::random_unsigned_int64() << '\n';
     }
-    else
-    {
-        std::cout << "Tests failed." << std::endl;
-    }
-
-    return tests_passed;
 }
 
 bool files_are_identical(const std::string& file_name1, const std::string& file_name2)

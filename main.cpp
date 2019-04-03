@@ -118,6 +118,18 @@ int main(int argc, char *argv[])
             {
                 return run_tests() ? 0 : 1;
             }
+            else if(std::string(argv[1]) == "-speed")
+            {
+                run_speed_tests();
+            }
+            else if(std::string(argv[1]) == "-perft")
+            {
+                return run_perft_tests() ? 0 : 1;
+            }
+            else if(std::string(argv[1]) == "-random_test")
+            {
+                print_randomness_sample();
+            }
             else if(std::string(argv[1]) == "-progress")
             {
                 if(argc < 3)
@@ -302,6 +314,12 @@ void print_help()
               << "\t\tParse a file with PGN-style game records and record the number\n\t\tof legal moves as the game progresses.\n\n"
               << "\t-test\n"
               << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly.\n\n"
+              << "\t-speed\n"
+              << "\t\tRun a speed test for gene scoring and boad move submission.\n\n"
+              << "\t-perft\n"
+              << "\t\tRun a legal move generation test.\n\n"
+              << "\t-random_test\n"
+              << "\t\tGenerate a sample of random numbers for a quick check of quality.\n\n"
               << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying.\n\n"
               << "\t-human\n"
               << "\t\tSelect a human player for a game.\n\n"
