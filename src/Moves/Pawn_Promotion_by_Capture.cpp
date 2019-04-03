@@ -17,10 +17,10 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,
                                                      char file_start) :
     Pawn_Promotion(promotion, file_start)
 {
-    ending_file += (dir == RIGHT ? 1 : -1);
-    if( ! Board::inside_board(ending_file))
+    adjust_end_file(dir == RIGHT ? 1 : -1);
+    if( ! Board::inside_board(end_file()))
     {
-        throw std::runtime_error(std::string("Invalid ending file for pawn promotion by capture: ") + ending_file);
+        throw std::runtime_error(std::string("Invalid ending file for pawn promotion by capture: ") + end_file());
     }
 
     able_to_capture = true;
@@ -32,7 +32,7 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,
 //! \returns Whether there is an opposing piece to capture.
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const
 {
-    return board.piece_on_square(ending_file, ending_rank); // must capture
+    return board.piece_on_square(end_file(), end_rank()); // must capture
 }
 
 //! Combine pawn capture note with a promotion note.

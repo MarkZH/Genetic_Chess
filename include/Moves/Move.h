@@ -44,16 +44,6 @@ class Move
         virtual char promotion_piece_symbol() const;
 
     protected:
-        //! The file of the square where the move starts.
-        char starting_file;
-        //! The rank of the square where the move starts.
-        int  starting_rank;
-
-        //! The file of the square where the move ends.
-        char ending_file;
-        //! The rank of the square where the move ends.
-        int  ending_rank;
-
         //! Is the move allowed to capture a piece on the end square?
         bool able_to_capture;
         //! Is this move en passant?
@@ -61,9 +51,21 @@ class Move
         //! Is the move a castling move?
         bool is_castling_move;
 
+        void adjust_end_file(int adjust);
+        void adjust_end_rank(int adjust);
+
         virtual std::string game_record_move_item(const Board& board) const;
 
     private:
+        //! The file of the square where the move starts.
+        char starting_file;
+        //! The rank of the square where the move starts.
+        int  starting_rank;
+        //! The file of the square where the move ends.
+        char ending_file;
+        //! The rank of the square where the move ends.
+        int  ending_rank;
+
         virtual bool move_specific_legal(const Board& board) const;
 
         std::string game_record_ending_item(Board board) const;

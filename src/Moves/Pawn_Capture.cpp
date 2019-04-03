@@ -18,16 +18,16 @@ Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, char file_start, int r
 {
     if(dir == RIGHT)
     {
-        ending_file += 1;
+        adjust_end_file(1);
     }
     else
     {
-        ending_file -= 1;
+        adjust_end_file(-1);
     }
 
-    if( ! Board::inside_board(ending_file))
+    if( ! Board::inside_board(end_file()))
     {
-        throw std::runtime_error(std::string("Invalid pawn capture ending file: ") + ending_file);
+        throw std::runtime_error(std::string("Invalid pawn capture ending file: ") + end_file());
     }
 
     able_to_capture = true;
@@ -40,7 +40,7 @@ Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, char file_start, int r
 //! \param board The board state just before this move is to be made.
 bool Pawn_Capture::move_specific_legal(const Board& board) const
 {
-    return board.piece_on_square(ending_file, ending_rank); // must capture a piece
+    return board.piece_on_square(end_file(), end_rank()); // must capture a piece
 }
 
 //! Pawn captures are notated by prefixing the move with the capturing pawn's starting file.
@@ -49,5 +49,5 @@ bool Pawn_Capture::move_specific_legal(const Board& board) const
 //! \returns The string representation of a pawn capture.
 std::string Pawn_Capture::game_record_move_item(const Board& board) const
 {
-    return starting_file + Pawn_Move::game_record_move_item(board);
+    return start_file() + Pawn_Move::game_record_move_item(board);
 }

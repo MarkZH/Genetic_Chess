@@ -22,7 +22,7 @@ Pawn_Promotion::Pawn_Promotion(const Piece* promotion_piece, char file_start) :
 void Pawn_Promotion::side_effects(Board& board) const
 {
     Pawn_Move::side_effects(board);
-    board.place_piece(promote_to, ending_file, ending_rank);
+    board.place_piece(promote_to, end_file(), end_rank());
 }
 
 //! Attach an indication of the promotion piece to the normal pawn move record.

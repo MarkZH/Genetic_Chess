@@ -18,30 +18,30 @@
 //! \param rank_end Rank of square where the move ends.
 Move::Move(char file_start, int rank_start,
            char file_end,   int rank_end) :
+               able_to_capture(true),
+               is_en_passant_move(false),
+               is_castling_move(false),
                starting_file(file_start),
                starting_rank(rank_start),
                ending_file(file_end),
-               ending_rank(rank_end),
-               able_to_capture(true),
-               is_en_passant_move(false),
-               is_castling_move(false)
+               ending_rank(rank_end)
 {
-    if( ! Board::inside_board(starting_file, starting_rank))
+    if( ! Board::inside_board(start_file(), start_rank()))
     {
-        throw std::runtime_error(std::string("Invalid starting square: ") + starting_file + std::to_string(starting_rank));
+        throw std::runtime_error(std::string("Invalid starting square: ") + start_file() + std::to_string(start_rank()));
     }
 
-    if( ! Board::inside_board(ending_file, ending_rank))
+    if( ! Board::inside_board(end_file(), end_rank()))
     {
-        throw std::runtime_error(std::string("Invalid ending square: ") + ending_file + std::to_string(ending_rank));
+        throw std::runtime_error(std::string("Invalid ending square: ") + end_file() + std::to_string(end_rank()));
     }
 
     if(file_change() == 0 && rank_change() == 0)
     {
         throw std::runtime_error(std::string("Zero-distance moves are illegal: ")
-                                 + starting_file + std::to_string(starting_rank)
+                                 + start_file() + std::to_string(start_rank())
                                  + " --> "
-                                 + ending_file + std::to_string(ending_rank));
+                                 + end_file() + std::to_string(end_rank()));
     }
 }
 
@@ -68,13 +68,13 @@ void Move::side_effects(Board&) const
 bool Move::is_legal(const Board& board) const
 {
 #ifndef NDEBUG
-    auto moving_piece = board.piece_on_square(starting_file, starting_rank);
+    auto moving_piece = board.piece_on_square(start_file(), start_rank());
 #endif
     assert(moving_piece);
     assert(moving_piece->color() == board.whose_turn());
     assert(moving_piece->can_move(this));
 
-    auto attacked_piece = board.piece_on_square(ending_file, ending_rank);
+    auto attacked_piece = board.piece_on_square(end_file(), end_rank());
     if(attacked_piece)
     {
         if( ! can_capture() || board.whose_turn() == attacked_piece->color())
@@ -125,7 +125,7 @@ int Move::start_rank() const
 //! \returns The distance in squares between the start and end files.
 int Move::file_change() const
 {
-    return ending_file - starting_file;
+    return end_file() - start_file();
 }
 
 //! How far move travels vertically.
@@ -133,7 +133,7 @@ int Move::file_change() const
 //! \returns The distance in squares between the start and end ranks.
 int Move::rank_change() const
 {
-    return ending_rank - starting_rank;
+    return end_rank() - start_rank();
 }
 
 //! File of square where move ends.
@@ -167,7 +167,7 @@ std::string Move::game_record_item(const Board& board) const
 //! \returns The movement portion of a PGN move entry.
 std::string Move::game_record_move_item(const Board& board) const
 {
-    auto original_piece = board.piece_on_square(starting_file, starting_rank);
+    auto original_piece = board.piece_on_square(start_file(), start_rank());
     std::string move_record = original_piece->pgn_symbol();
 
     bool record_file = false;
@@ -180,11 +180,11 @@ std::string Move::game_record_move_item(const Board& board) const
             {
                 continue;
             }
-            if(file_other == starting_file && rank_other == starting_rank)
+            if(file_other == start_file() && rank_other == start_rank())
             {
                 continue;
             }
-            if(file_other == ending_file && rank_other == ending_rank)
+            if(file_other == end_file() && rank_other == end_rank())
             {
                 continue;
             }
@@ -194,14 +194,14 @@ std::string Move::game_record_move_item(const Board& board) const
                 continue;
             }
 
-            if(board.is_legal(file_other, rank_other, ending_file, ending_rank))
+            if(board.is_legal(file_other, rank_other, end_file(), end_rank()))
             {
-                if(file_other != starting_file && ! record_file)
+                if(file_other != start_file() && ! record_file)
                 {
                     record_file = true;
                     continue;
                 }
-                if(rank_other != starting_rank)
+                if(rank_other != start_rank())
                 {
                     record_rank = true;
                 }
@@ -211,19 +211,19 @@ std::string Move::game_record_move_item(const Board& board) const
 
     if(record_file)
     {
-        move_record += starting_file;
+        move_record += start_file();
     }
     if(record_rank)
     {
-        move_record += std::to_string(starting_rank);
+        move_record += std::to_string(start_rank());
     }
 
-    if(board.piece_on_square(ending_file, ending_rank))
+    if(board.piece_on_square(end_file(), end_rank()))
     {
         move_record += 'x';
     }
 
-    move_record += ending_file + std::to_string(ending_rank);
+    move_record += end_file() + std::to_string(end_rank());
 
     return move_record;
 }
@@ -248,10 +248,10 @@ std::string Move::game_record_ending_item(Board board) const
 //! a pawn promtion.
 std::string Move::coordinate_move() const
 {
-    auto result = starting_file
-                  + std::to_string(starting_rank)
-                  + ending_file
-                  + std::to_string(ending_rank);
+    auto result = start_file()
+                  + std::to_string(start_rank())
+                  + end_file()
+                  + std::to_string(end_rank());
 
     if(promotion_piece_symbol())
     {
@@ -283,4 +283,14 @@ bool Move::is_castling() const
 char Move::promotion_piece_symbol() const
 {
     return '\0';
+}
+
+void Move::adjust_end_file(int adjust)
+{
+    ending_file += adjust;
+}
+
+void Move::adjust_end_rank(int adjust)
+{
+    ending_rank += adjust;
 }
