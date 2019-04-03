@@ -7,9 +7,6 @@
 
 #include "Utility/Random.h"
 
-std::ofstream Scoped_Stopwatch::out_file;
-std::mutex Scoped_Stopwatch::write_lock;
-
 //! The constructor starts the stopwatch and takes a name to record.
 
 //! \param name The name of the section of code to be timed. This name
@@ -42,12 +39,10 @@ void Scoped_Stopwatch::stop()
         return;
     }
 
+    static std::mutex write_lock;
     std::lock_guard<std::mutex> write_lock_guard(write_lock);
 
-    if( ! out_file.is_open())
-    {
-        out_file.open("timings-" + std::to_string(Random::random_unsigned_int64()) + ".txt");
-    }
+    static std::ofstream out_file("timings-" + std::to_string(Random::random_unsigned_int64()) + ".txt");
 
     out_file << place_name << "|"
              << std::chrono::duration_cast<std::chrono::duration<double>>
@@ -80,10 +75,4 @@ double Scoped_Stopwatch::time_so_far() const
     auto end_time = std::chrono::steady_clock::now();
     return std::chrono::duration_cast<std::chrono::duration<double>>
                 (end_time - start_time).count();
-}
-
-//! Force any data in the std::ofstream buffer to be written to the file.
-void Scoped_Stopwatch::flush()
-{
-    out_file.flush();
 }

@@ -2,7 +2,6 @@
 #define SCOPED_STOPWATCH_H
 
 #include <chrono>
-#include <mutex>
 #include <string>
 #include <fstream>
 
@@ -30,11 +29,8 @@ class Scoped_Stopwatch
         void add_info(const std::string& info);
         void reject(); // do not record time
         double time_so_far() const;
-        static void flush(); // force writing of file
 
     private:
-        static std::ofstream out_file;
-        static std::mutex write_lock;
         std::string place_name;
         std::chrono::steady_clock::time_point start_time;
         bool stopped;
