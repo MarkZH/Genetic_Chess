@@ -5,6 +5,10 @@
 #include <algorithm>
 #include <cassert>
 #include <limits>
+#include <cmath>
+
+#include "Game/Board.h"
+#include "Utility/Random.h"
 
 class Move;
 
@@ -140,4 +144,75 @@ double Monte_Carlo_Search_Tree::current_score(const Move* move) const
     {
         return 0.0;
     }
+}
+
+//! View a portion of the game tree.
+
+//! \param move Pick which branch to look at based on the next move.
+//! \returns A branch of the game tree that corresponds to the queried move.
+//!          Returns nullptr if no such branch exists.
+const Monte_Carlo_Search_Tree* Monte_Carlo_Search_Tree::subtree(const Move* move) const
+{
+    auto index = index_of(move);
+    if(index < moves.size())
+    {
+        return branches[index].get();
+    }
+    else
+    {
+        return nullptr;
+    }
+
+}
+
+//! Pick the next move to explore while searching the game tree.
+
+//! \param board The current state of the board being searched.
+//! \returns If there are unexplored moves, return a random choice among those,
+//!          otherwise, return a move that is a compromise between moves
+//!          with high value outcomes and moves with little exploration.
+//!
+//! See article at (https://en.wikipedia.org/wiki/Monte_Carlo_tree_search#Exploration_and_exploitation).
+const Move* Monte_Carlo_Search_Tree::next_move(const Board& board) const
+{
+    const Move* chosen_move = board.legal_moves().front();
+    auto unexplored_moves = board.legal_moves().size() - moves.size();
+    if(unexplored_moves == 0)
+    {
+        auto best_score = std::numeric_limits<double>::lowest();
+        auto N = std::accumulate(visits.begin(), visits.end(), 0);
+        for(size_t i = 0; i < moves.size(); ++i)
+        {
+            constexpr auto c = std::sqrt(2);
+            auto score = double(results[i])/visits[i] + c*std::sqrt(std::log(N)/visits[i]);
+            if(score > best_score)
+            {
+                best_score = score;
+                chosen_move = moves[i];
+            }
+        }
+    }
+    else
+    {
+        // Choose a random move that is not in this->moves(),
+        auto explore_choice = Random::random_integer(0, unexplored_moves - 1);
+        auto explore_index = 0;
+        for(auto move : board.legal_moves())
+        {
+            if(index_of(move) > moves.size()) // move not explored
+            {
+                if(explore_choice == explore_index)
+                {
+                    chosen_move = move;
+                    break;
+                }
+                else
+                {
+                    ++explore_index;
+                }
+            }
+        }
+    }
+
+    return chosen_move;
 }

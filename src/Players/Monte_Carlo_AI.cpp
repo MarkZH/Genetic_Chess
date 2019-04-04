@@ -41,6 +41,7 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     }
 
     auto search_time_start = clock.running_time_left();
+    const Monte_Carlo_Search_Tree* current_search_tree = &search_tree;
     while(time_start - clock.running_time_left() < time_to_examine)
     {
         auto monte_carlo_board = board;
@@ -48,8 +49,9 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
         while( ! game_result.game_has_ended())
         {
             ++move_count;
-            auto next_move = choose_random_move(monte_carlo_board);
+            auto next_move = current_search_tree ? current_search_tree->next_move(monte_carlo_board) : choose_random_move(monte_carlo_board);
             game_result = monte_carlo_board.submit_move(*next_move);
+            current_search_tree = current_search_tree ? current_search_tree->subtree(next_move) : nullptr;
         }
         ++game_count;
 

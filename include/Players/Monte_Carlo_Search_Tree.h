@@ -6,6 +6,7 @@
 #include <utility>
 
 class Move;
+class Board;
 
 //! Storage for the sampled game tree used by the Monte_Carlo_AI.
 
@@ -25,6 +26,9 @@ class Monte_Carlo_Search_Tree
         void reroot(const Move* move);
         std::pair<const Move*, double> best_result() const;
         double current_score(const Move* move) const;
+
+        const Monte_Carlo_Search_Tree* subtree(const Move* move) const;
+        const Move* next_move(const Board& board) const;
 
     private:
         std::vector<const Move*> moves;
