@@ -22,7 +22,7 @@ class Monte_Carlo_Search_Tree
         void add_search(Move_Iterator begin,
                         Move_Iterator end,
                         int score);
-        void reroot(Move_Iterator begin, Move_Iterator end);
+        void reroot(const Move* move);
         std::pair<const Move*, double> best_result() const;
         double current_score(const Move* move) const;
 

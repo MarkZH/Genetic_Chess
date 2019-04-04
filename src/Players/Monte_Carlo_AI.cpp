@@ -34,14 +34,11 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
 
     auto time_at_last_cecp_output = clock.running_time_left();
 
-    // Prune game tree with up to 2 previous movces (last opponent move and last self move)
-    auto first_move = board.game_record().end();
-    while(first_move != board.game_record().begin() &&
-          std::distance(first_move, board.game_record().end()) < 2)
+    // Prune game tree according to opponent's last move
+    if( ! board.game_record().empty())
     {
-        first_move = std::prev(first_move);
+        search_tree.reroot(board.game_record().back());
     }
-    search_tree.reroot(first_move, board.game_record().end());
 
     auto search_time_start = clock.running_time_left();
     while(time_start - clock.running_time_left() < time_to_examine)
@@ -94,6 +91,8 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     {
         best_result.first = choose_random_move(board);
     }
+    search_tree.reroot(best_result.first);
+
     auto current_time = clock.running_time_left();
     if(board.thinking_mode() == CECP)
     {

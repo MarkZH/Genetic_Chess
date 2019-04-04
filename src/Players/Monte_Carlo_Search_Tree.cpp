@@ -60,43 +60,27 @@ void Monte_Carlo_Search_Tree::add_search(Move_Iterator begin,
 
 //! Cut off branches representing moves not taken.
 
-//! \param begin An iterator to a move list representing the first move
-//!        since the player's last move (usually there are two new moves).
-//! \param end An iterator to the end of the new moves
-//!        actual_game_board.game_record().end()).
-//!
 //! In order to save on memory, the branches of the game tree that were
 //! not realized in the actual game are pruned away, often leaving a tree
-//! around 1/400th the original size.
-void Monte_Carlo_Search_Tree::reroot(Move_Iterator begin, Move_Iterator end)
+//! around 1/20th the original size.
+//! \param move The last move made in the current game.
+void Monte_Carlo_Search_Tree::reroot(const Move* move)
 {
-    std::unique_ptr<Monte_Carlo_Search_Tree> next_branch;
-
-    for(auto current = begin; current != end; current = std::next(current))
+    auto index = index_of(move);
+    if(index < moves.size())
     {
-        auto read_branch = next_branch ? next_branch.get() : this;
-        auto index = read_branch->index_of(*current);
-        if(index < read_branch->branches.size())
-        {
-            next_branch = std::move(read_branch->branches[index]);
-            assert(next_branch);
-        }
-        else
-        {
-            moves.clear();
-            results.clear();
-            visits.clear();
-            branches.clear();
-            return;
-        }
-    }
-
-    if(next_branch)
-    {
+        auto next_branch = branches[index].get();
         moves = next_branch->moves;
         results = next_branch->results;
         visits = next_branch->visits;
         branches = std::move(next_branch->branches);
+    }
+    else
+    {
+        moves.clear();
+        results.clear();
+        visits.clear();
+        branches.clear();
     }
 }
 
