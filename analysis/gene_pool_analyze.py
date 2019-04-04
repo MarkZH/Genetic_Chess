@@ -81,9 +81,12 @@ def main(gene_pool_file_name):
                         title = current_gene + ' - ' + parameter
                     else:
                         title = parameter
-                    while not header_line[len(data_line)] == title:
-                        data_line.append('0')
-                    data_line.append(value)
+                    index = header_line.index(title)
+                    while index >= len(data_line):
+                        data_line.append('')
+                    if data_line[index]:
+                        raise Exception('Value already found: ' + title + ' for ID ' + str(data_line[0]))
+                    data_line[index] = value
 
 
 if __name__ == '__main__':
