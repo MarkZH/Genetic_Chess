@@ -211,7 +211,7 @@ $(DEBUG_OBJ_DIR)/src/Players/Minimax_AI.o : src/Players/Minimax_AI.cpp include/G
 $(DEBUG_OBJ_DIR)/src/Players/Monte_Carlo_AI.o : src/Players/Monte_Carlo_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Monte_Carlo_AI.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Utility/Math.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Monte_Carlo_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Monte_Carlo_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o : src/Players/Monte_Carlo_Search_Tree.cpp include/Players/Monte_Carlo_Search_Tree.h
+$(DEBUG_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o : src/Players/Monte_Carlo_Search_Tree.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Thinking.h include/Utility/Random.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Monte_Carlo_Search_Tree.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o
 
 $(DEBUG_OBJ_DIR)/src/Players/Outside_Player.o : src/Players/Outside_Player.cpp include/Exceptions/Game_Ended.h include/Game/Color.h include/Game/Game_Result.h include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Thinking.h include/Utility/Scoped_Stopwatch.h
@@ -388,7 +388,7 @@ $(RELEASE_OBJ_DIR)/src/Players/Minimax_AI.o : src/Players/Minimax_AI.cpp include
 $(RELEASE_OBJ_DIR)/src/Players/Monte_Carlo_AI.o : src/Players/Monte_Carlo_AI.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Monte_Carlo_AI.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Utility/Math.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Monte_Carlo_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Monte_Carlo_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o : src/Players/Monte_Carlo_Search_Tree.cpp include/Players/Monte_Carlo_Search_Tree.h
+$(RELEASE_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o : src/Players/Monte_Carlo_Search_Tree.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Players/Monte_Carlo_Search_Tree.h include/Players/Thinking.h include/Utility/Random.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Monte_Carlo_Search_Tree.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Monte_Carlo_Search_Tree.o
 
 $(RELEASE_OBJ_DIR)/src/Players/Outside_Player.o : src/Players/Outside_Player.cpp include/Exceptions/Game_Ended.h include/Game/Color.h include/Game/Game_Result.h include/Players/CECP_Mediator.h include/Players/Outside_Player.h include/Players/Player.h include/Players/Thinking.h include/Utility/Scoped_Stopwatch.h
