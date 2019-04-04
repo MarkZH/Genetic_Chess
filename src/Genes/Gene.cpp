@@ -106,7 +106,22 @@ void Gene::read_from(std::istream& is)
         }
     }
 
-    load_properties(properties);
+    try
+    {
+        load_properties(properties);
+    }
+    catch(const std::out_of_range&)
+    {
+        auto parameters = std::accumulate(properties.begin(),
+                                          properties.end(),
+                                          std::string{},
+                                          [](const auto& so_far, const auto& next)
+                                          {
+                                              return so_far + next.first + "\n";
+                                          });
+
+        throw std::runtime_error("Bad parameter input for " + name() + "\n" + parameters);
+    }
 }
 
 //! Read gene data from a text file.
