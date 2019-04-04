@@ -2,7 +2,6 @@
 #define ILLEGAL_MOVE_H
 
 #include <stdexcept>
-#include <string>
 
 //! An exception indicating an illegal move is being attempted.
 
