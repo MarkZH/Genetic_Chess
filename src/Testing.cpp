@@ -667,7 +667,7 @@ bool run_tests()
     king_confinement_gene.read_from(test_genes_file_name);
     auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
     auto king_confinement_score = (4*(1.0 + 1.0 + 1.0) + // blocked by friendlies (h2, g2, f2)
-                                   (-1)*(1.0 + 1.0))/ // blocked by enemy (e1, e2)
+                                   (-1)*(1.0 + 1.0))/ // blocked by opponent (e1, e2)
                                    (4 + 1)/ // normalizing
                                    (1.0 + 1.0 + 1.0); // free squares (h1, g1, f1)
     tests_passed &= king_confinement_gene.test(king_confinement_board, king_confinement_score);

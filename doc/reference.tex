@@ -248,28 +248,28 @@ The effective formula for the score of this gene can be expressed as
 where the sum is over all squares \(s\) on the board. The function \(legal(s)\) returns~0 if \(s\) is not attacked at all,~1 if the square is attacked by an illegal move, and a genetically determined result if attacked by a legal move. The term \(KTF\) is the king target factor and is a genetically determined weight that adjusts the importance of attacking squares close to the opposing king. The function \(distance(s_1, s_2)\) gives the distance between two squares in king moves and is equal to the maximum of the difference in file or difference in rank between the squares.
 
 \subsubsection{King Confinement Gene}
-This gene tracks the manner in which the king is prevented from moving. In general, a king is safe if it is surrounded by friendly pieces or, failing that, it is free to move around the board when there are enemy pieces near. In scoring a board, this gene tracks the squares the king can reach given unlimited consecutive legal moves up to a genetically determined maximum distance.
+This gene tracks the manner in which the king is prevented from moving. In general, a king is safe if it is surrounded by friendly pieces or, failing that, it is free to move around the board when there are opposing pieces near. In scoring a board, this gene tracks the squares the king can reach given unlimited consecutive legal moves up to a genetically determined maximum distance.
 
 For a more detailed picture, each square potentially reachable by the king is classified into three types given one of three genetically determined scores for each:
 \begin{itemize}
 	\item Free: the king is free to move on to these squares,
 	\item Friendly block: the king is blocked by pieces of the same color, and
-	\item Enemy block: the king is blocked due to the square being attacked by an opponent piece.
+	\item Opponent block: the king is blocked due to the square being attacked by an opponent piece.
 \end{itemize}
-Note that enemy pieces do not block the king since enemy pieces can be captured. Once all reachable squares have been found within a genetically determined maximum distance (measured in king moves), the score is calculated by the following:
-\[S = \frac{W_{friend}\sum_{s \in R}Friend(s) + W_{enemy}\sum_{s \in R}Enemy(s)}{\sum_{s \in R}Free(s)}
+Note that opponent pieces by themselves do not block the king since they can be captured. Once all reachable squares have been found within a genetically determined maximum distance (measured in king moves), the score is calculated by the following:
+\[S = \frac{W_{friendly}\sum_{s \in R}Friend(s) + W_{opponent}\sum_{s \in R}Opponent(s)}{\sum_{s \in R}Free(s)}
 \]
-where \(S\) is the resulting score, \(\sum_{s \in R}\) is a sum over every square \(s\) on the board that is reachable (\(\in R\)) from the current king location, \(W_{friend}\) is the genetically determined weight of squares blocked by friendly pieces, \(W_{enemy}\) is the genetically determined weight of squares blocked by enemy attacks, \(Friend(s)\) returns 1 if the square \(s\) is blocked by a friendly piece and 0 otherwise, \(Enemy(s)\) returns 1 if the square \(s\) is attacked by an enemy piece and 0 otherwise, and \(Free(s)\) returns 1 if the square \(s\) is reachable by the king and 0 otherwise.
+where \(S\) is the resulting score, \(\sum_{s \in R}\) is a sum over every square \(s\) on the board that is reachable (\(\in R\)) from the current king location, \(W_{friend}\) is the genetically determined weight of squares blocked by friendly pieces, \(W_{opponent}\) is the genetically determined weight of squares blocked by opponent attacks, \(Friend(s)\) returns 1 if the square \(s\) is blocked by a friendly piece and 0 otherwise, \(Opponent(s)\) returns 1 if the square \(s\) is attacked by an opposing piece and 0 otherwise, and \(Free(s)\) returns 1 if the square \(s\) is reachable by the king and 0 otherwise.
 
-Usually, the weight \(W_{friend}\) will be positive and \(W_{enemy}\) will be negative. So, a king that is hemmed in by friendly pieces will receive a positive score while a king hemmed in by enemy attacks receives a negative score. In both cases, a greater number of reachable free squares brings the score closer to zero.
+Usually, the weight \(W_{friend}\) will be positive and \(W_{opponent}\) will be negative. So, a king that is hemmed in by friendly pieces will receive a positive score while a king hemmed in by opposing attacks receives a negative score. In both cases, a greater number of reachable free squares brings the score closer to zero. A situation where the king is far from friendly protection and opponent's attacks is neutral.
 
-The priority of this gene is non-negative so as to hasten the evolution of the friend/enemy weights to their proper signs.
+The priority of this gene is non-negative so as to hasten the evolution of the friend/opponent weights to their proper signs.
 
 \subsubsection{King Protection Gene}
 This gene counts the squares that have access to the king by any valid piece movement and are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a less exposed king.
 
 \subsubsection{Castling Possible Gene}
-This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away, the king and rook remaining unmoved, and enemy pieces not attacking. The score can vary based on a genetically determined preference for kingside or queenside castling. Because of these preference values, the priority is non-negative.
+This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away, the king and rook remaining unmoved, and opposing pieces not attacking. The score can vary based on a genetically determined preference for kingside or queenside castling. Because of these preference values, the priority is non-negative.
 
 \subsubsection{Pawn Islands Gene}
 A pawn island is a group of pawns on neighboring files that are isolated from other pawns by empty files, and thus cannot help to defend pawns on other islands. This gene calculates the average number of pawns per island with the assumption that a greater number of islands with fewer pawns each is unwanted.

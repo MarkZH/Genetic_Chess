@@ -1032,7 +1032,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
 
     if(move.is_en_passant())
     {
-        // Check if king is on same row as both pawns and there is an enemy rook or queen on row
+        // Check if king is on same row as both pawns and there is an opposing rook or queen on row
         const auto& king_square = find_king(whose_turn());
         if(king_square.rank() != move.start_rank())
         {
@@ -1852,11 +1852,11 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
     }
 }
 
-//! Determine whether a piece (existing or not) is pinned to the king by an enemy piece.
+//! Determine whether a piece (existing or not) is pinned to the king by an opposing piece.
 
 //! \param file File of queried square.
 //! \param rank Rank of queried square.
-//! \returns The Square upon which an enemy piece stands that would pin a friendly
+//! \returns The Square upon which an opposing piece stands that would pin a friendly
 //!          piece to the king. If no such Square exists, then an invalid square
 //!          is returned (which converts to bool(false) in if() statements).
 Square Board::piece_is_pinned(char file, int rank) const

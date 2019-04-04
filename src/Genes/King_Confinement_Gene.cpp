@@ -17,7 +17,7 @@
 
 King_Confinement_Gene::King_Confinement_Gene() :
     friendly_block_score(0.0),
-    enemy_block_score(0.0),
+    opponent_block_score(0.0),
     maximum_square_count(9.0)
 {
 }
@@ -36,7 +36,7 @@ void King_Confinement_Gene::load_properties(const std::map<std::string, double>&
 {
     Gene::load_properties(properties);
     friendly_block_score = properties.at("Friendly Block Score");
-    enemy_block_score = properties.at("Enemy Block Score");
+    opponent_block_score = properties.at("Opponent Block Score");
     maximum_square_count = properties.at("Maximum Square Count");
 }
 
@@ -44,7 +44,7 @@ std::map<std::string, double> King_Confinement_Gene::list_properties() const
 {
     auto properties = Gene::list_properties();
     properties["Friendly Block Score"] = friendly_block_score;
-    properties["Enemy Block Score"] = enemy_block_score;
+    properties["Opponent Block Score"] = opponent_block_score;
     properties["Maximum Square Count"] = maximum_square_count;
     return properties;
 }
@@ -59,7 +59,7 @@ void King_Confinement_Gene::gene_specific_mutation()
             friendly_block_score += mutation_size;
             break;
         case 2:
-            enemy_block_score += mutation_size;
+            opponent_block_score += mutation_size;
             break;
         case 3:
             maximum_square_count = Random::random_laplace(4.0);
@@ -90,7 +90,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     auto squares_safe_for_king = opposite_board.squares_safe_for_king();
 
     double friendly_block_total = 0.0;
-    double enemy_block_total = 0.0;
+    double opponent_block_total = 0.0;
     int free_space_total = 0;
 
     for(size_t i = 0; i < square_queue.size(); ++i)
@@ -110,7 +110,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         }
         else if(attacked_by_other)
         {
-            enemy_block_total += enemy_block_score;
+            opponent_block_total += opponent_block_score;
         }
         else
         {
@@ -147,6 +147,6 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         }
     }
 
-    auto normalizer = std::abs(friendly_block_score) + std::abs(enemy_block_score);
-    return ((friendly_block_total + enemy_block_total)/free_space_total)/normalizer;
+    auto normalizer = std::abs(friendly_block_score) + std::abs(opponent_block_score);
+    return ((friendly_block_total + opponent_block_total)/free_space_total)/normalizer;
 }
