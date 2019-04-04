@@ -9,7 +9,7 @@
 #include <array>
 #include <mutex>
 #include <algorithm>
-#include <set>
+#include <sstream>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -1154,17 +1154,17 @@ void Board::print_game_record(const Player* white,
 
     if(game_clock.initial_time() > 0)
     {
-        std::string time_control_spec;
+        std::ostringstream time_control_spec;
         if(game_clock.moves_to_reset() > 0)
         {
-            time_control_spec += std::to_string(game_clock.moves_to_reset()) + '/';
+            time_control_spec << game_clock.moves_to_reset() << '/';
         }
-        time_control_spec += game_clock.initial_time();
+        time_control_spec << game_clock.initial_time();
         if(game_clock.increment() > 0)
         {
-            time_control_spec += '+' + std::to_string(game_clock.increment());
+            time_control_spec << '+' << game_clock.increment();
         }
-        print_game_header_line(out_stream, "TimeControl", time_control_spec);
+        print_game_header_line(out_stream, "TimeControl", time_control_spec.str());
         print_game_header_line(out_stream, "TimeLeftWhite", game_clock.time_left(WHITE));
         print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(BLACK));
     }
