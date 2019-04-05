@@ -183,7 +183,7 @@ const Move* Monte_Carlo_Search_Tree::next_move(const Board& board) const
         auto N = std::accumulate(visits.begin(), visits.end(), 0);
         for(size_t i = 0; i < moves.size(); ++i)
         {
-            constexpr auto c = std::sqrt(2);
+            static const auto c = std::sqrt(2);
             auto score = double(results[i])/visits[i] + c*std::sqrt(std::log(N)/visits[i]);
             if(score > best_score)
             {
