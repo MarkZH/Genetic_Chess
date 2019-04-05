@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <iterator>
-#include <algorithm>
+#include <numeric>
 #include <cassert>
 #include <limits>
 #include <cmath>

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <map>
 #include <fstream>
+#include <numeric>
 
 #include "Game/Board.h"
 #include "Game/Color.h"
