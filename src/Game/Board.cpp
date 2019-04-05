@@ -1863,11 +1863,11 @@ Square Board::piece_is_pinned(char file, int rank) const
     auto index = square_index(file, rank);
     if(square_searched_for_pin[index])
     {
-        return pinning_square[index];
+        return pinning_squares[index];
     }
 
     square_searched_for_pin[index] = true;
-    auto& last_found_pinning_square = pinning_square[index];
+    auto& last_found_pinning_square = pinning_squares[index];
 
     const auto& king_square = find_king(whose_turn());
     const static auto no_pin = Square{};

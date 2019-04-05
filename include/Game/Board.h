@@ -109,7 +109,7 @@ class Board
         std::string starting_fen;
         static const std::string standard_starting_fen;
         std::array<Square, 2> king_location;
-        mutable std::array<Square, 64> pinning_square;
+        mutable std::array<Square, 64> pinning_squares;
         mutable std::array<bool, 64> square_searched_for_pin;
         size_t move_count_start_offset;
 
