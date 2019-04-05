@@ -1358,8 +1358,7 @@ void Board::clear_en_passant_target()
 
 void Board::clear_pinned_squares()
 {
-    last_found_pinned_square = {};
-    last_found_pinning_square = {};
+    square_searched_for_pin.fill(false);
 }
 
 //! Indicates whether the queried square has a piece on it that never moved.
@@ -1852,7 +1851,7 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
     }
 }
 
-//! Determine whether a piece (existing or not) is pinned to the king by an opposing piece.
+//! Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.
 
 //! \param file File of queried square.
 //! \param rank Rank of queried square.
@@ -1861,15 +1860,17 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
 //!          is returned (which converts to bool(false) in if() statements).
 Square Board::piece_is_pinned(char file, int rank) const
 {
-    if(last_found_pinned_square == Square{file, rank})
+    auto index = square_index(file, rank);
+    if(square_searched_for_pin[index])
     {
-        return last_found_pinning_square;
+        return pinning_square[index];
     }
 
-    last_found_pinned_square = {file, rank};
+    square_searched_for_pin[index] = true;
+    auto& last_found_pinning_square = pinning_square[index];
 
     const auto& king_square = find_king(whose_turn());
-    auto no_pin = Square{};
+    const static auto no_pin = Square{};
 
     if(king_square == Square{file, rank})
     {
