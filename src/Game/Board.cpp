@@ -1852,7 +1852,7 @@ bool Board::attacks(char origin_file, int origin_rank, char target_file, int tar
     }
 }
 
-//! Determine whether a piece (existing or not) is pinned to the king by an opposing piece.
+//! Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.
 
 //! \param file File of queried square.
 //! \param rank Rank of queried square.
