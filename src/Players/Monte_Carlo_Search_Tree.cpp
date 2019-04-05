@@ -195,7 +195,7 @@ const Move* Monte_Carlo_Search_Tree::next_move(const Board& board) const
     else
     {
         // Choose a random move that is not in this->moves(),
-        auto explore_choice = Random::random_integer(0, unexplored_moves - 1);
+        auto explore_choice = Random::random_integer(0, int(unexplored_moves) - 1);
         auto explore_index = 0;
         for(auto move : board.legal_moves())
         {
