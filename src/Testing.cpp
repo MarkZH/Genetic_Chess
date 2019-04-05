@@ -635,7 +635,19 @@ bool run_tests()
         remove(write_file_name);
         remove(rewrite_file_name);
     }
-    std::cout << "Done." << std::endl;
+
+    auto genetic_ai_example_file_name = "genetic_ai_example.txt";
+    try
+    {
+        auto example_genetic_ai = Genetic_AI(genetic_ai_example_file_name);
+        std::cout << "Done." << std::endl;
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << "\n" << e.what() << std::endl;
+        std::cerr << "Could not load " << genetic_ai_example_file_name << std::endl;
+        tests_passed = false;
+    }
 
 
     // Test individual board-scoring genes
