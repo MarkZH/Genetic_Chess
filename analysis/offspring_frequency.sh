@@ -14,7 +14,6 @@ grep "\[White \|\[Black " "$input_file" |  # Find players
     cut -d" " -f1 |        # Get list of number of children by each AI
     sort -n |              # Sort that list to
     uniq -c |              # count number of time an AI has sired N children
-    column -t -o\; -O2,1 -N"Frequency,Child count" |
-    tee "$output_file"
+    column -t -o\; -O2,1 -N"Frequency,Child count" > "$output_file"
 
 octave ./analysis/offspring_plots.m "$output_file"
