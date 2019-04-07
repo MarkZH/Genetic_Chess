@@ -191,11 +191,6 @@ void gene_pool(const std::string& config_file)
         std::vector<std::future<Game_Result>> results; // map from matchups to winners (half the size of pool)
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
-            auto& white = pool[index];
-            auto& black = pool[index + 1];
-            results.emplace_back(std::async(std::launch::async,
-                                            play_game, white, black, game_time, 0, 0, game_record_file));
-
             // Limit the number of simultaneous games by waiting for earlier games to finish
             // before starting a new one.
             while(true)
@@ -214,6 +209,11 @@ void gene_pool(const std::string& config_file)
                     break;
                 }
             }
+
+            auto& white = pool[index];
+            auto& black = pool[index + 1];
+            results.emplace_back(std::async(std::launch::async,
+                                            play_game, white, black, game_time, 0, 0, game_record_file));
         }
 
         // Get results as they come in
