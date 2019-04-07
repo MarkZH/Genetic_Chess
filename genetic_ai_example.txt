@@ -47,7 +47,6 @@ Priority: 282.673
 
 Name: King Confinement Gene
 Friendly Block Score: 77.7949
-Maximum Square Count: 64
 Opponent Block Score: -93.6115
 Priority: 26.2382
 
@@ -69,4 +68,3 @@ Name: Checkmate Material Gene
 Priority: -71.8513
 
 END
-

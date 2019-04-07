@@ -16,7 +16,6 @@ Priority: 1
 
 Name: King Confinement Gene
 Friendly Block Score: 4
-Maximum Square Count: 10
 Opponent Block Score: -1
 Priority: 1
 
