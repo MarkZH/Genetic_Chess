@@ -84,6 +84,8 @@ Board::Board(const std::string& fen) :
     repeat_count_insertion_point{0},
     unmoved_positions{},
     starting_fen(String::remove_extra_whitespace(fen)),
+    pinning_squares{},
+    square_searched_for_pin{},
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {
