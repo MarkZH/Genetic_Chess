@@ -76,11 +76,10 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     const auto& king_square = board.find_king(perspective);
     square_queue.push_back(king_square);
 
-    std::array<int, 64> in_queue;
-    in_queue.fill(false);
+    std::array<int, 64> in_queue{};
     in_queue[Board::square_index(king_square.file(), king_square.rank())] = true;
 
-    auto squares_safe_for_king = opposite_board.squares_safe_for_king();
+    const auto& squares_safe_for_king = opposite_board.squares_safe_for_king();
 
     double friendly_block_total = 0.0;
     double opponent_block_total = 0.0;
@@ -97,6 +96,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
                                 piece->color() == perspective &&
                                 piece->type() != KING;
 
+        auto keep_going = square == king_square;
         if(occupied_by_same)
         {
             friendly_block_total += friendly_block_score;
@@ -108,9 +108,8 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         else
         {
             ++free_space_total;
+            keep_going = true;
         }
-
-        auto keep_going = (square == king_square) || (! occupied_by_same && ! attacked_by_other);
 
         // Add surrounding squares to square_queue.
         // always check the squares surrounding the king's current positions, even if
