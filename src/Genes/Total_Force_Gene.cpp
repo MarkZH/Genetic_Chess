@@ -26,15 +26,14 @@ double Total_Force_Gene::score_board(const Board& board, const Board&, size_t) c
         {
             auto piece = board.piece_on_square(file, rank);
             if(piece &&
-               piece->color() == board.whose_turn() &&
-               piece->type() != KING) // kings are always on the board, so skip them
+               piece->color() == board.whose_turn())
             {
                 score += piece_strength_source->piece_value(piece);
             }
         }
     }
 
-    return score/(piece_strength_source->normalizer() - piece_strength_source->piece_value(board.piece_instance(KING, WHITE)));
+    return score/piece_strength_source->normalizer();
 }
 
 std::unique_ptr<Gene> Total_Force_Gene::duplicate() const
