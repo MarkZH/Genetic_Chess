@@ -2,6 +2,8 @@
 
 #include <cmath>
 #include <algorithm>
+#include <cassert>
+#include <cstddef>
 
 //! The default constructor creates an invalid square location.
 Square::Square() : square_file('\0'), square_rank(0)
@@ -11,6 +13,12 @@ Square::Square() : square_file('\0'), square_rank(0)
 //! This constructor creates a user-defined square.
 Square::Square(char file_in, int rank_in) : square_file(file_in), square_rank(rank_in)
 {
+}
+
+//! Creates a square from an index given by Board::square_index().
+Square::Square(size_t index) : square_file('a' + index/8), square_rank(1 + index%8)
+{
+    assert(index < 64);
 }
 
 //! The file of the square.

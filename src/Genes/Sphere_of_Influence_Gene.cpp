@@ -74,7 +74,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
             continue;
         }
 
-        auto distance_to_king = king_distance(board.square_from_index(i), opponent_king_square);
+        auto distance_to_king = king_distance(Square{i}, opponent_king_square);
         score += square_score*scalar_cache[distance_to_king];
     }
 

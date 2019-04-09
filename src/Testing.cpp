@@ -580,7 +580,7 @@ bool run_tests()
                 tests_passed = false;
             }
             visited[index] = true;
-            auto indexed_square = Board::square_from_index(index);
+            auto indexed_square = Square(index);
             if(square != indexed_square)
             {
                 std::cerr << "Incorrect square indexing.\n";
