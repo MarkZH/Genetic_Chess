@@ -70,14 +70,16 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     // boundaries of this area area squares attacked by the other color or occupied
     // by pieces of the same color.
 
-    std::vector<Square> square_queue;
-    square_queue.reserve(64);
+    std::array<size_t, 64> square_queue; // list of indices to check
+    square_queue.fill(square_queue.size()); // initially filled with invalid indices
     auto perspective = board.whose_turn();
     const auto& king_square = board.find_king(perspective);
-    square_queue.push_back(king_square);
+    auto king_index = board.square_index(king_square.file(), king_square.rank());
+    square_queue[0] = king_index;
+    size_t queue_insertion_point = 1;
 
-    std::array<int, 64> in_queue{};
-    in_queue[Board::square_index(king_square.file(), king_square.rank())] = true;
+    std::array<bool, 64> in_queue{};
+    in_queue[king_index] = true;
 
     const auto& squares_safe_for_king = opposite_board.squares_safe_for_king();
 
@@ -85,10 +87,14 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
     double opponent_block_total = 0.0;
     int free_space_total = 0;
 
-    for(size_t i = 0; i < square_queue.size(); ++i)
+    for(auto square_index : square_queue)
     {
-        auto square = square_queue[i];
-        auto square_index = Board::square_index(square.file(), square.rank());
+        if(square_index == square_queue.size())
+        {
+            break;
+        }
+
+        auto square = Square{square_index};
 
         auto attacked_by_other = ! squares_safe_for_king[square_index];
         auto piece = board.piece_on_square(square.file(), square.rank());
@@ -96,7 +102,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
                                 piece->color() == perspective &&
                                 piece->type() != KING;
 
-        auto keep_going = square == king_square;
+        auto keep_going = square_index == king_index;
         if(occupied_by_same)
         {
             friendly_block_total += friendly_block_score;
@@ -116,18 +122,28 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
         // it is not safe (i.e., the king is in check).
         if(keep_going)
         {
-            auto left_file = std::max('a', char(square.file() - 1));
-            auto right_file = std::min('h', char(square.file() + 1));
-            auto low_rank = std::max(1, square.rank() - 1);
-            auto high_rank = std::min(8, square.rank() + 1);
-            for(char new_file = left_file; new_file <= right_file; ++new_file)
+            // The index difference between squares on the same rank but adjacent files is 8.
+            for(int file_diff = -8; file_diff <= 8; file_diff += 8)
             {
-                for(int new_rank = low_rank; new_rank <= high_rank; ++new_rank)
+                auto new_base_index = square_index + file_diff;
+
+                // The index difference between squares on the same file but different ranks is 1.
+                for(int rank_diff = -1; rank_diff <= 1; ++rank_diff)
                 {
-                    auto new_index = Board::square_index(new_file, new_rank);
+                    int old_mod = new_base_index%8;
+                    auto new_index = new_base_index + rank_diff;
+                    int new_mod = new_index%8;
+
+                    // Make sure new_index is on board and the rank change didn't
+                    // result in an index on a different file.
+                    if(new_index >= square_queue.size() || rank_diff != new_mod - old_mod)
+                    {
+                        continue;
+                    }
+
                     if( ! in_queue[new_index])
                     {
-                        square_queue.emplace_back(new_file, new_rank);
+                        square_queue[queue_insertion_point++] = new_index;
                         in_queue[new_index] = true;
                     }
                 }
