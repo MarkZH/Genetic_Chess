@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <array>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
@@ -13,12 +14,14 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&, size_t) c
     double score = 0.0;
     auto own_pawn = board.piece_instance(PAWN, board.whose_turn());
     auto other_pawn = board.piece_instance(PAWN, opposite(board.whose_turn()));
-    auto last_rank = (board.whose_turn() == WHITE ? 8 : 1);
+    auto near_rank = (board.whose_turn() == WHITE ? 1 : 8);
+    auto far_rank  = (board.whose_turn() == WHITE ? 7 : 2);
     auto rank_step = (board.whose_turn() == WHITE ? 1 : -1);
+    auto other_pawn_ranks_occupied = std::array<int, 8>{};
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        for(int rank = 2; rank <= 7; ++rank)
+        for(int rank = far_rank ; rank != near_rank; rank -= rank_step)
         {
             auto piece = board.piece_on_square(file, rank);
             if(piece == own_pawn)
@@ -30,15 +33,16 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Board&, size_t) c
 
                 for(char pawn_file = left_file; pawn_file <= right_file; ++pawn_file)
                 {
-                    for(int pawn_rank = rank + rank_step; pawn_rank != last_rank; pawn_rank += rank_step)
+                    auto other_pawn_rank = other_pawn_ranks_occupied[pawn_file - 'a'];
+                    if(other_pawn_rank != 0 && other_pawn_rank != rank)
                     {
-                        if(board.piece_on_square(pawn_file, pawn_rank) == other_pawn)
-                        {
-                            score -= score_diff;
-                            break;
-                        }
+                        score -= score_diff;
                     }
                 }
+            }
+            else if(piece == other_pawn)
+            {
+                other_pawn_ranks_occupied[file - 'a'] = rank;
             }
         }
     }
