@@ -45,17 +45,6 @@ Square::operator bool() const
     return file() != '\0' && rank() != 0;
 }
 
-//! Calculate the minimum number of king moves required to get from one Square to another.
-
-//! \param a A Square.
-//! \param b Another Square.
-//! \returns The mimimum number of moves needed to get a king piece from the first square to the second square.
-int king_distance(const Square& a, const Square& b)
-{
-    return std::max(std::abs(a.file() - b.file()),
-                    std::abs(a.rank() - b.rank()));
-}
-
 //! Check if two squares are the same.
 
 //! \returns Whether two squares have the same file and rank.

@@ -23,9 +23,6 @@ class Square
         int square_rank;
 };
 
-// The distance between two squares in king moves
-int king_distance(const Square& a, const Square& b);
-
 bool operator==(const Square& a, const Square& b);
 bool operator!=(const Square& a, const Square& b);
 

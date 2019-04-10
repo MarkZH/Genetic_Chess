@@ -5,6 +5,7 @@
 #include <memory>
 #include <map>
 #include <array>
+#include <mutex>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -13,11 +14,40 @@
 
 #include "Utility/Random.h"
 
+std::array<std::array<int, 64>, 64> Sphere_of_Influence_Gene::king_distances{};
+bool Sphere_of_Influence_Gene::king_distances_initialized = false;
+
 Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
     legal_square_score(1.0),
     illegal_square_score(1.0),
     king_target_factor(0.0)
 {
+    static std::mutex m;
+    auto lock = std::lock_guard<std::mutex>(m);
+
+    if( ! king_distances_initialized)
+    {
+        for(char file_a = 'a'; file_a <= 'h'; ++file_a)
+        {
+            for(int rank_a = 1; rank_a <= 8; ++rank_a)
+            {
+                for(char file_b = 'a'; file_b <= 'h'; ++file_b)
+                {
+                    for(int rank_b = 1; rank_b <= 8; ++rank_b)
+                    {
+                        auto index_a = Board::square_index(file_a, rank_a);
+                        auto index_b = Board::square_index(file_b, rank_b);
+                        king_distances[index_a][index_b] =
+                            std::max(std::abs(file_a - file_b), std::abs(rank_a - rank_b));
+                    }
+
+                }
+            }
+        }
+
+        king_distances_initialized = true;
+    }
+
     recompute_scalar_cache();
 }
 
@@ -56,6 +86,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
     const auto& legal_attacks = board.all_square_indices_attacked();
     const auto& illegal_attacks = board.other_square_indices_attacked();
     const auto& opponent_king_square = board.find_king(opposite(board.whose_turn()));
+    auto opponent_king_index = board.square_index(opponent_king_square.file(), opponent_king_square.rank());
 
     double score = 0;
     for(size_t i = 0; i < legal_attacks.size(); ++i)
@@ -74,7 +105,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, s
             continue;
         }
 
-        auto distance_to_king = king_distance(Square{i}, opponent_king_square);
+        auto distance_to_king = king_distances[i][opponent_king_index];
         score += square_score*scalar_cache[distance_to_king];
     }
 
