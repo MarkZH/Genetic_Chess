@@ -16,7 +16,7 @@ Square::Square(char file_in, int rank_in) : square_file(file_in), square_rank(ra
 }
 
 //! Creates a square from an index given by Board::square_index().
-Square::Square(size_t index) : square_file('a' + index/8), square_rank(1 + index%8)
+Square::Square(size_t index) : square_file(char('a' + index/8)), square_rank(1 + index%8)
 {
     assert(index < 64);
 }
