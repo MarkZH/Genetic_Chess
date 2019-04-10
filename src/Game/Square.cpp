@@ -1,7 +1,5 @@
 #include "Game/Square.h"
 
-#include <cmath>
-#include <algorithm>
 #include <cassert>
 #include <cstddef>
 
