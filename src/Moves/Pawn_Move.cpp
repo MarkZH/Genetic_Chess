@@ -24,3 +24,8 @@ void Pawn_Move::side_effects(Board& board) const
 {
     board.clear_repeat_count();
 }
+
+std::string Pawn_Move::game_record_move_item(const Board&) const
+{
+    return end_file() + std::to_string(end_rank());
+}

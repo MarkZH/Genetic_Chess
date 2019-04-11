@@ -49,5 +49,5 @@ bool Pawn_Capture::move_specific_legal(const Board& board) const
 //! \returns The string representation of a pawn capture.
 std::string Pawn_Capture::game_record_move_item(const Board& board) const
 {
-    return start_file() + Pawn_Move::game_record_move_item(board);
+    return start_file() + std::string("x") + Pawn_Move::game_record_move_item(board);
 }
