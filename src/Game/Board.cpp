@@ -415,18 +415,14 @@ Color Board::square_color(char file, int rank)
 bool Board::is_legal(char file_start, int rank_start,
                      char file_end,   int rank_end) const
 {
-    for(const auto& move : legal_moves())
-    {
-        if(move->start_file() == file_start &&
-           move->start_rank() == rank_start &&
-           move->end_file() == file_end &&
-           move->end_rank() == rank_end)
-        {
-            return true;
-        }
-    }
-
-    return false;
+    return std::any_of(legal_moves().begin(), legal_moves().end(),
+                       [=](auto move)
+                       {
+                           return move->start_file() == file_start &&
+                                  move->start_rank() == rank_start &&
+                                  move->end_file() == file_end &&
+                                  move->end_rank() == rank_end;
+                       });
 }
 
 bool Board::is_in_legal_moves_list(const Move& move) const
