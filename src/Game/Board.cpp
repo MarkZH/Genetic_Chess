@@ -436,7 +436,79 @@ bool Board::is_in_legal_moves_list(const Move& move) const
 
 std::string Board::fen_status() const
 {
-    return board_status() + " " +
+    std::string s;
+
+    for(int rank = 8; rank >= 1; --rank)
+    {
+        int empty_count = 0;
+        if(rank < 8)
+        {
+            s.push_back('/');
+        }
+
+        for(char file = 'a'; file <= 'h'; ++file)
+        {
+            auto piece = piece_on_square(file, rank);
+            if(!piece)
+            {
+                ++empty_count;
+            }
+            else
+            {
+                if(empty_count > 0)
+                {
+                    s += std::to_string(empty_count);
+                    empty_count = 0;
+                }
+                s.push_back(piece->fen_symbol());
+            }
+        }
+
+        if(empty_count > 0)
+        {
+            s += std::to_string(empty_count);
+        }
+    }
+
+    s.push_back(' ');
+    s.push_back(whose_turn() == WHITE ? 'w' : 'b');
+    s.push_back(' ');
+
+    for(int base_rank : {1, 8})
+    {
+        if(!piece_has_moved('e', base_rank)) // has king moved?
+        {
+            for(char rook_file : {'h', 'a'})
+            {
+                if(!piece_has_moved(rook_file, base_rank)) // have rooks moved
+                {
+                    char mark = (rook_file == 'h' ? 'K' : 'Q');
+                    if(base_rank == 8)
+                    {
+                        mark = std::tolower(mark);
+                    }
+                    s.push_back(mark);
+                }
+            }
+        }
+    }
+    if(s.back() == ' ')
+    {
+        s.push_back('-');
+    }
+    s.push_back(' ');
+
+    if(en_passant_target)
+    {
+        s.push_back(en_passant_target.file());
+        s += std::to_string(en_passant_target.rank());
+    }
+    else
+    {
+        s.push_back('-');
+    }
+
+    return s + " " +
         std::to_string(moves_since_pawn_or_capture()) + " " +
         std::to_string(move_count_start_offset + game_record_listing.size()/2);
 }
@@ -1207,82 +1279,6 @@ void Board::print_game_record(const Player* white,
         temp.submit_move(*next_move);
     }
     out_stream << "\n\n\n";
-}
-
-std::string Board::board_status() const
-{
-    std::string s;
-
-    for(int rank = 8; rank >= 1; --rank)
-    {
-        int empty_count = 0;
-        if(rank < 8)
-        {
-            s.push_back('/');
-        }
-
-        for(char file = 'a'; file <= 'h'; ++file)
-        {
-            auto piece = piece_on_square(file, rank);
-            if( ! piece)
-            {
-                ++empty_count;
-            }
-            else
-            {
-                if(empty_count > 0)
-                {
-                    s.push_back('0' + empty_count);
-                    empty_count = 0;
-                }
-                s.push_back(piece->fen_symbol());
-            }
-        }
-        if(empty_count > 0)
-        {
-            s.push_back('0' + empty_count);
-        }
-    }
-
-    s.push_back(' ');
-    s.push_back(whose_turn() == WHITE ? 'w' : 'b');
-    s.push_back(' ');
-
-    for(int base_rank : {1, 8})
-    {
-        if( ! piece_has_moved('e', base_rank)) // has king moved?
-        {
-            for(char rook_file : {'h', 'a'})
-            {
-                if( ! piece_has_moved(rook_file, base_rank)) // have rooks moved
-                {
-                    char mark = (rook_file == 'h' ? 'K' : 'Q');
-                    if(base_rank == 8)
-                    {
-                        mark = std::tolower(mark);
-                    }
-                    s.push_back(mark);
-                }
-            }
-        }
-    }
-    if(s.back() == ' ')
-    {
-        s.push_back('-');
-    }
-    s.push_back(' ');
-
-    if(en_passant_target)
-    {
-        s.push_back(en_passant_target.file());
-        s.push_back(en_passant_target.rank() + '0');
-    }
-    else
-    {
-        s.push_back('-');
-    }
-
-    return s;
 }
 
 //! Prints the last move of the game in coordinate notation.
