@@ -1148,9 +1148,11 @@ void Board::print_game_record(const Player* white,
     std::lock_guard<std::mutex> write_lock_guard(write_lock);
 
     static int game_number = 0;
-    if(game_number == 0)
+    static std::string last_used_file_name;
+    if(game_number == 0 || file_name != last_used_file_name)
     {
         game_number = 1;
+        last_used_file_name = file_name;
         std::ifstream ifs(file_name);
         std::string line;
         while(std::getline(ifs, line))
