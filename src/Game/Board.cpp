@@ -826,10 +826,8 @@ void Board::ascii_draw(Color perspective) const
     const std::string left_spacer = "   ";
 
     int rank_start = (perspective == WHITE ? 8 : 1);
-    int rank_end = (perspective == WHITE ? 1 : 8);
     int d_rank = (perspective == WHITE ? -1 : 1);
     char file_start = (perspective == WHITE ? 'a' : 'h');
-    char file_end = (perspective == WHITE ? 'h' : 'a');
     int d_file = (perspective == WHITE ? 1 : -1);
 
     for(int rank = rank_start; inside_board(rank); rank += d_rank)
