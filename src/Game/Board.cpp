@@ -832,7 +832,7 @@ void Board::ascii_draw(Color perspective) const
     char file_end = (perspective == WHITE ? 'h' : 'a');
     int d_file = (perspective == WHITE ? 1 : -1);
 
-    for(int rank = rank_start; d_rank*(rank_end - rank) >= 0; rank += d_rank)
+    for(int rank = rank_start; inside_board(rank); rank += d_rank)
     {
         std::cout << left_spacer << horizontal_line;
 
@@ -846,11 +846,11 @@ void Board::ascii_draw(Color perspective) const
             {
                 std::cout << left_spacer;
             }
-            for(char file = file_start; d_file*(file_end - file) >= 0; file += d_file)
+            for(char file = file_start; inside_board(file); file += d_file)
             {
                 std::string piece_symbol;
                 auto piece = piece_on_square(file, rank);
-                char filler = ' ';
+                char filler = square_color(file, rank) == WHITE ? ' ' : ':';
                 if(piece)
                 {
                     auto piece_row = piece->ascii_art(square_row);
@@ -865,25 +865,6 @@ void Board::ascii_draw(Color perspective) const
                 {
                     piece_symbol.append(square_width, filler);
                 }
-                if(square_color(file, rank) == BLACK)
-                {
-                    for(auto start : {0, int(piece_symbol.size() - 1)})
-                    {
-                        auto direction = (start == 0 ? 1 : -1);
-                        for(int i = start; i >= 0 && i < int(piece_symbol.size()); i += direction)
-                        {
-                            if(piece_symbol[i] == filler)
-                            {
-                                char dark_square_fill = ':';
-                                piece_symbol[i] = dark_square_fill;
-                            }
-                            else
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
                 std::cout << square_vertical_border << piece_symbol;
             }
             std::cout << square_vertical_border << "\n";
@@ -892,7 +873,7 @@ void Board::ascii_draw(Color perspective) const
     std::cout << left_spacer << horizontal_line;
 
     std::cout << left_spacer;
-    for(char file = file_start; d_file*(file_end - file) >= 0; file += d_file)
+    for(char file = file_start; inside_board(file); file += d_file)
     {
         std::cout << " " << std::string(square_width/2, ' ')
                   << file
