@@ -199,7 +199,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             recurse = true;
         }
-        else if(depth > 300)
+        else if(depth > 100)
         {
             recurse = false; // prevent stack overflow
         }
