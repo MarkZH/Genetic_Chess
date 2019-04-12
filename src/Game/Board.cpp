@@ -1425,8 +1425,11 @@ void Board::recreate_move_caches()
                                                              move->promotion_piece_symbol();
                         }
 
-                        if( ! (piece->type() == PAWN && move->file_change() != 0) && // pawn captures can't be blocked
-                            piece_on_square(move->end_file(), move->end_rank())) // piece blocks further moves
+                        // If there is a piece on the ending square, farther moves are not possible.
+                        // The check for a promotion piece is needed since the set of pawn promotions
+                        // results in moves with identical beginning and ending squares, which would
+                        // result in the first pawn-promotion-by-capture blocking all the others.
+                        if(piece_on_square(move->end_file(), move->end_rank()) && ! move->promotion_piece_symbol())
                         {
                             blocked_move = move;
                         }
