@@ -150,7 +150,16 @@ void Piece::add_standard_legal_move(int file_step, int rank_step)
 
 void Piece::add_legal_move(std::unique_ptr<Move> move)
 {
-    legal_moves[Board::square_index(move->start_file(), move->start_rank())].push_back(move.get());
+    auto index = Board::square_index(move->start_file(), move->start_rank());
+    legal_moves[index].push_back(move.get());
+
+    // Make list of all capturing moves, excluding all but one type of pawn capture per square.
+    if(move->can_capture()
+       && ! move->is_en_passant()
+       && (move->promotion_piece_symbol() == 'Q' || move->promotion_piece_symbol() == '\0'))
+    {
+        attack_moves[index].push_back(move.get());
+    }
     possible_moves.push_back(std::move(move));
 }
 
@@ -350,4 +359,13 @@ void Piece::add_color()
             }
         }
     }
+}
+
+//! Gives a list of moves that are allowed to capture other pieces.
+
+//! \param file The file of the square where the attacking move starts.
+//! \param rank The rank of the square where the attacking move starts.
+const std::vector<const Move*>& Piece::attacking_moves(char file, int rank) const
+{
+    return attack_moves[Board::square_index(file, rank)];
 }

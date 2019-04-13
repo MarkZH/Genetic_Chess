@@ -11,6 +11,7 @@
 #include "Game/Board.h"
 #include "Game/Square.h"
 #include "Moves/Move.h"
+#include "Game/Color.h"
 
 #include "Utility/Random.h"
 
@@ -81,32 +82,33 @@ std::string Sphere_of_Influence_Gene::name() const
 
 // Count all squares potentially attacked by all pieces with bonus points if
 // the attacking move is legal.
-double Sphere_of_Influence_Gene::score_board(const Board& board, const Board&, size_t) const
+double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    const auto& legal_attacks = board.all_square_indices_attacked();
-    const auto& illegal_attacks = board.other_square_indices_attacked();
-    const auto& opponent_king_square = board.find_king(opposite(board.whose_turn()));
+    const auto& opponent_king_square = board.find_king(opposite(perspective));
     auto opponent_king_index = board.square_index(opponent_king_square.file(), opponent_king_square.rank());
 
     double score = 0;
-    for(size_t i = 0; i < legal_attacks.size(); ++i)
+    for(char file = 'a'; file <= 'h'; ++file)
     {
-        double square_score;
-        if(legal_attacks[i])
+        for(int rank = 1; rank <= 8; ++rank)
         {
-            square_score = legal_square_score;
-        }
-        else if(illegal_attacks[i])
-        {
-            square_score = illegal_square_score;
-        }
-        else
-        {
-            continue;
-        }
+            double square_score;
+            if( ! board.safe_for_king(file, rank, opposite(perspective))) // any piece attacks square
+            {
+                square_score = legal_square_score;
+            }
+            else if(board.blocked_attack(file, rank, perspective)) // There are attacks on this square blocked by other pieces
+            {
+                square_score = illegal_square_score;
+            }
+            else
+            {
+                continue;
+            }
 
-        auto distance_to_king = king_distances[i][opponent_king_index];
-        score += square_score*scalar_cache[distance_to_king];
+            auto distance_to_king = king_distances[board.square_index(file, rank)][opponent_king_index];
+            score += square_score*scalar_cache[distance_to_king];
+        }
     }
 
     return score;

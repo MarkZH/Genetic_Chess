@@ -43,6 +43,10 @@ class Move
         bool is_castling() const;
         virtual char promotion_piece_symbol() const;
 
+        size_t attack_index() const;
+        static size_t attack_index(int file_change, int rank_change);
+        static std::pair<int, int> attack_direction_from_index(size_t index);
+
     protected:
         //! Is the move allowed to capture a piece on the end square?
         bool able_to_capture;

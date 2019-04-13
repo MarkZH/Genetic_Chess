@@ -63,7 +63,7 @@ void King_Confinement_Gene::gene_specific_mutation()
     }
 }
 
-double King_Confinement_Gene::score_board(const Board& board, const Board& opposite_board, size_t) const
+double King_Confinement_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
     // A flood-fill-like algorithm to count the squares that are reachable by the
     // king from its current positions with unlimited consecutive moves. The
@@ -72,7 +72,6 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
 
     std::array<size_t, 64> square_queue; // list of indices to check
     square_queue.fill(square_queue.size()); // initially filled with invalid indices
-    auto perspective = board.whose_turn();
     const auto& king_square = board.find_king(perspective);
     auto king_index = board.square_index(king_square.file(), king_square.rank());
     square_queue[0] = king_index;
@@ -80,8 +79,6 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
 
     std::array<bool, 64> in_queue{};
     in_queue[king_index] = true;
-
-    const auto& squares_safe_for_king = opposite_board.squares_safe_for_king();
 
     double friendly_block_total = 0.0;
     double opponent_block_total = 0.0;
@@ -96,7 +93,7 @@ double King_Confinement_Gene::score_board(const Board& board, const Board& oppos
 
         auto square = Square{square_index};
 
-        auto attacked_by_other = ! squares_safe_for_king[square_index];
+        auto attacked_by_other = ! board.safe_for_king(square.file(), square.rank(), perspective);
         auto piece = board.piece_on_square(square.file(), square.rank());
         bool occupied_by_same = piece &&
                                 piece->color() == perspective &&

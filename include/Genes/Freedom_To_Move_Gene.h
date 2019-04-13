@@ -6,9 +6,14 @@
 #include <string>
 #include <memory>
 
+#include "Game/Color.h"
+
 class Board;
 
-//! Scores board based on the number of legal moves.
+//! Scores board based on the number of attacking moves available.
+
+//! The scoring of this gene counts empty squares and squares occupied
+//! by opposing pieces. It does not take into account check or pins.
 class Freedom_To_Move_Gene : public Gene
 {
     public:
@@ -17,7 +22,8 @@ class Freedom_To_Move_Gene : public Gene
         std::string name() const override;
 
     private:
-        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        size_t attack_count(const Board& board, Color perspective) const;
 };
 
 #endif // FREEDOM_TO_MOVE_GENE_H

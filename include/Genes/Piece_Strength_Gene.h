@@ -8,6 +8,8 @@
 #include <memory>
 #include <map>
 
+
+#include "Game/Color.h"
 #include "Game/Piece_Types.h"
 
 class Piece;
@@ -34,7 +36,7 @@ class Piece_Strength_Gene : public Gene
         std::array<double, 6> piece_strength;
         double normalizing_value;
 
-        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t depth) const override;
         double piece_value(Piece_Type type) const;
         double& piece_value(Piece_Type type);
         void gene_specific_mutation() override;

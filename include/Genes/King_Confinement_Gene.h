@@ -7,6 +7,8 @@
 #include <memory>
 #include <map>
 
+#include "Game/Color.h"
+
 class Board;
 
 //! Scores the board based on how confined the king is by friendly pieces or opponent attacks.
@@ -27,7 +29,7 @@ class King_Confinement_Gene : public Gene
         double friendly_block_score;
         double opponent_block_score;
 
-        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t depth) const override;
 };
 
 #endif // KING_CONFINEMENT_GENE_H

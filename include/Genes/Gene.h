@@ -6,6 +6,8 @@
 #include <iosfwd>
 #include <memory>
 
+#include "Game/Color.h"
+
 class Board;
 class Piece_Strength_Gene;
 
@@ -20,7 +22,7 @@ class Gene
         void read_from(const std::string& file_name);
 
         void mutate();
-        double evaluate(const Board& board, const Board& opposite_board, size_t depth) const;
+        double evaluate(const Board& board, Color perspective, size_t depth) const;
 
         //! Copies the gene data and returns a pointer to the new data
 
@@ -49,7 +51,7 @@ class Gene
     private:
         double scoring_priority;
 
-        virtual double score_board(const Board& board, const Board& opposite_board, size_t depth) const = 0;
+        virtual double score_board(const Board& board, Color perspective, size_t depth) const = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
         virtual void gene_specific_mutation();
 };

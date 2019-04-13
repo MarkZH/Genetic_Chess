@@ -48,6 +48,19 @@ bool run_tests()
 {
     bool tests_passed = true;
 
+    // Move direction indexing
+    for(size_t i = 0; i < 16; ++i)
+    {
+        auto [file_step, rank_step] = Move::attack_direction_from_index(i);
+        auto step_index = Move('e', 4, 'e' + file_step, 4 + rank_step).attack_index();
+        if(step_index != i)
+        {
+            std::cerr << "Direction-index mismatch: " << i << " --> " << file_step << "," << rank_step << " --> " << step_index << std::endl;
+            tests_passed = false;
+        }
+    }
+
+
     // Basic chess rules check
     Board starting_board;
     while(true)
@@ -515,7 +528,7 @@ bool run_tests()
                 continue;
             }
 
-            const auto fifty_move_board_view = fifty_move_board;
+            const auto& fifty_move_board_view = fifty_move_board;
             if(fifty_move_board_view.piece_on_square(move->start_file(), move->start_rank())->type() == PAWN)
             {
                 continue;
@@ -672,7 +685,7 @@ bool run_tests()
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
-    auto freedom_to_move_score = 32.0/20.0;
+    auto freedom_to_move_score = 32.0/18.0;
     tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, freedom_to_move_score);
 
     auto king_confinement_gene = King_Confinement_Gene();
@@ -1428,6 +1441,66 @@ bool run_tests()
         tests_passed = false;
     }
 
+    // More tests found by chess_engine_fight
+    std::string fight_illegal_move;
+    Board fight_board1;
+    for(auto move : String::split("f4 g6 Nf3 h6 d3 c5 b4 a5 bxc5 b5"))
+    {
+        fight_illegal_move = move;
+        fight_board1.submit_move(fight_board1.create_move(move));
+    }
+
+    if(fight_board1.king_is_in_check())
+    {
+        fight_board1.ascii_draw(WHITE);
+        std::cerr << "Board says the " << color_text(fight_board1.whose_turn()) << " king is in check when it is not." << std::endl;
+        tests_passed = false;
+    }
+
+    Board fight_board2;
+    auto fight2_illegal_move = "Kf2";
+    std::string last_move;
+    try
+    {
+        for(auto move : String::split("g3 c5 c3 Nc6 h4 Qb6 b4 c4 Bg2 Nh6 Na3 Rb8 f3 Rg8 Bb2 f6 Nb1 a6 Kf2"))
+        {
+            last_move = move;
+            fight_board2.submit_move(fight_board2.create_move(move));
+            if(move == fight2_illegal_move)
+            {
+                fight_board2.ascii_draw(WHITE);
+                std::cerr << "The last move of this sequence should have been illegal." << std::endl;
+                fight_board2.print_game_record(nullptr, nullptr, "", {}, {});
+                tests_passed = false;
+            }
+        }
+    }
+    catch(const Illegal_Move&)
+    {
+        if(last_move != fight2_illegal_move)
+        {
+            fight_board2.ascii_draw(WHITE);
+            std::cerr << "This move is actually legal: " << last_move << "." << std::endl;
+            fight_board2.print_game_record(nullptr, nullptr, "", {}, {});
+            tests_passed = false;
+        }
+    }
+
+    Board fight_board3;
+    for(auto move : String::split("e4 g5 h3 f6 e5 a6 Rh2 g4 Ne2 g3 f3 d5"))
+    {
+        fight_board3.submit_move(fight_board3.create_move(move));
+    }
+
+    if(fight_board3.king_is_in_check())
+    {
+        fight_board3.ascii_draw(WHITE);
+        fight_board3.print_game_record({}, {}, {}, {}, {});
+        std::cerr << "Board says the " << color_text(fight_board3.whose_turn()) << " king is in check when it is not." << std::endl;
+        tests_passed = false;
+    }
+
+
     if(tests_passed)
     {
         std::cout << "All tests passed." << std::endl;
@@ -1465,8 +1538,6 @@ void run_speed_tests()
     auto checkmate_material_gene = Checkmate_Material_Gene();
 
     auto performance_board = Board("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-    auto opposite_performance_board = performance_board;
-    opposite_performance_board.set_turn(opposite(performance_board.whose_turn()));
     std::vector<const Gene*> performance_genome = {&castling_possible_gene,
                                                    &checkmate_material_gene,
                                                    &freedom_to_move_gene,
@@ -1488,7 +1559,8 @@ void run_speed_tests()
         auto watch = Scoped_Stopwatch("");
         for(int i = 1; i <= number_of_tests; ++i)
         {
-            score += gene->evaluate(performance_board, opposite_performance_board, 0);
+            auto side = performance_board.whose_turn();
+            score += gene->evaluate(performance_board, opposite(side), 0);
         }
         timing_results.emplace_back(watch.time_so_far(), gene->name());
     }

@@ -10,6 +10,7 @@
 #include <mutex>
 #include <algorithm>
 #include <sstream>
+#include <bitset>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -18,8 +19,6 @@
 #include "Game/Piece.h"
 
 #include "Moves/Move.h"
-#include "Moves/Threat_Generator.h"
-#include "Moves/Threat_Iterator.h"
 
 #include "Players/Player.h"
 
@@ -84,8 +83,10 @@ Board::Board(const std::string& fen) :
     repeat_count_insertion_point{0},
     unmoved_positions{},
     starting_fen(String::remove_extra_whitespace(fen)),
-    pinning_squares{},
+    pinned_squares{},
     square_searched_for_pin{},
+    checking_square{},
+    potential_attacks{},
     castling_index{{size_t(-1), size_t(-1)}},
     thinking_indicator(NO_THINKING)
 {
@@ -782,11 +783,14 @@ void Board::make_move(char file_start, int rank_start, char file_end, int rank_e
         clear_repeat_count();
     }
 
-    place_piece(piece_on_square(file_start, rank_start), file_end, rank_end);
+    auto moving_piece = piece_on_square(file_start, rank_start);
+    remove_piece(file_end, rank_end);
     remove_piece(file_start, rank_start);
+    place_piece(moving_piece, file_end, rank_end);
 
     clear_en_passant_target();
     clear_pinned_squares();
+    clear_checking_square();
 }
 
 //! Tells which player is due to move.
@@ -896,7 +900,13 @@ void Board::place_piece(const Piece* piece, char file, int rank)
 {
     update_board_hash(file, rank); // XOR out piece on square
 
+    auto old_piece = piece_on_square(file, rank);
     piece_on_square(file, rank) = piece;
+
+    remove_attacks_from(file, rank, old_piece);
+    update_blocks(file, rank, old_piece, piece);
+    add_attacks_from(file, rank, piece);
+
     unmoved_positions[square_index(file, rank)] = false;
 
     update_board_hash(file, rank); // XOR in new piece on square
@@ -907,12 +917,136 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     }
 }
 
+void Board::add_attacks_from(char file, int rank, const Piece* piece)
+{
+    modify_attacks(file, rank, piece, true);
+}
+
+void Board::modify_attacks(char file, int rank, const Piece* piece, bool adding_attacks)
+{
+    if( ! piece)
+    {
+        return;
+    }
+
+    auto attacking_color = piece->color();
+    auto vulnerable_king = piece_instance(KING, opposite(attacking_color));
+    const Move* blocked_move = nullptr;
+    for(auto attack : piece->attacking_moves(file, rank))
+    {
+        auto attacked_file = attack->end_file();
+        auto attacked_rank = attack->end_rank();
+        auto attacked_index = square_index(attacked_file, attacked_rank);
+
+        if(blocked_move &&
+           same_direction(blocked_move->file_change(),  blocked_move->rank_change(),
+                          attack->file_change(), attack->rank_change()))
+        {
+            blocked_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
+        }
+        else
+        {
+            potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
+
+            blocked_move = nullptr;
+            auto blocking_piece = piece_on_square(attacked_file, attacked_rank);
+            if(blocking_piece && blocking_piece != vulnerable_king)
+            {
+                blocked_move = attack;
+            }
+        }
+    }
+}
+
+void Board::remove_attacks_from(char file, int rank, const Piece* old_piece)
+{
+    modify_attacks(file, rank, old_piece, false);
+}
+
+void Board::update_blocks(char file, int rank, const Piece* old_piece, const Piece* new_piece)
+{
+    // Replacing nothing with nothing changes nothing
+    if( ! old_piece && ! new_piece)
+    {
+        return;
+    }
+
+    // Replacing one piece with another (except for kings)
+    // does not change which moves are blocked. Should only
+    // happen during pawn promotions.
+    if(old_piece && new_piece &&
+       old_piece->type() != KING &&
+       new_piece->type() != KING)
+    {
+        return;
+    }
+
+    // Block moves that previously went through
+    for(auto attacking_color : {WHITE, BLACK})
+    {
+        auto vulnerable_king = piece_instance(KING, opposite(attacking_color));
+        if(new_piece == vulnerable_king)
+        {
+            continue;
+        }
+
+        const auto& attack_direction_list = potential_attacks[attacking_color][square_index(file, rank)];
+        for(size_t index = 0; index < attack_direction_list.size()/2; ++index)
+        {
+            if(attack_direction_list[index])
+            {
+                auto [file_step, rank_step] = Move::attack_direction_from_index(index);
+                auto revealed_attacker = new_piece ? nullptr : piece_on_square(file - file_step, rank - rank_step);
+                if(revealed_attacker && (revealed_attacker->type() == PAWN || revealed_attacker->type() == KING))
+                {
+                    continue; // Pawns, kings, and knights are never blocked
+                }
+
+                auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
+                char target_file = file + file_step;
+                int  target_rank = rank + rank_step;
+                while(inside_board(target_file, target_rank))
+                {
+                    auto target_index = square_index(target_file, target_rank);
+                    potential_attacks[attacking_color][target_index][index] = add_new_attacks;
+                    blocked_attacks[attacking_color][target_index][index] = ! add_new_attacks;
+
+                    auto piece = piece_on_square(target_file, target_rank);
+                    if(piece && piece != vulnerable_king)
+                    {
+                        break;
+                    }
+
+                    target_file += file_step;
+                    target_rank += rank_step;
+                }
+            }
+        }
+    }
+}
+
+//! Get a list of all moves that attack a given square.
+
+//! \param file The file of the square being attacked.
+//! \param rank The rank of the square being attacked.
+//! \param attacking_color The color of pieces doing the attacking.
+const std::bitset<16>& Board::moves_attacking_square(char file, int rank, Color attacking_color) const
+{
+    return potential_attacks[attacking_color][square_index(file, rank)];
+}
+
+const std::bitset<16>& Board::checking_moves() const
+{
+    const auto& king_square = find_king(whose_turn());
+    return moves_attacking_square(king_square.file(), king_square.rank(), opposite(whose_turn()));
+}
+
 //! Find out if the king of the player to move is currently in check.
 
 //! \returns If the current player is in check.
 bool Board::king_is_in_check() const
 {
-    return checking_squares.front(); // check whether first entry is valid Square
+    return checking_moves().any();
 }
 
 //! Find out whether the input square is safe for the given king to occupy.
@@ -924,99 +1058,12 @@ bool Board::king_is_in_check() const
 //! \returns Whether the king would be in check if it was placed on the square in question.
 bool Board::safe_for_king(char file, int rank, Color king_color) const
 {
-    return Threat_Generator(file, rank, opposite(king_color), *this).empty();
+    return moves_attacking_square(file, rank, opposite(king_color)).none();
 }
 
-//! List of all squares and whether they are attacked by currently legal moves.
-
-//! \returns An array of bools with indices given by Board::square_index(). A value of true indicates that the square
-//!          is under attack by the player about to move.
-const std::array<bool, 64>& Board::all_square_indices_attacked() const
+bool Board::blocked_attack(char file, int rank, Color attacking_color) const
 {
-    return attacked_indices;
-}
-
-//! List of all squares and whether they are attacked by currently illegal moves.
-
-//! \returns An array of bools with indices given by Board::square_index(). A value of true indicates that the square
-//!          would be under attack by the player about to move except for the move being blocked, the piece being pinned,
-//!          or the current player's king being in check.
-const std::array<bool, 64>& Board::other_square_indices_attacked() const
-{
-    return other_attacked_indices;
-}
-
-//! List of squares and whether they are safe for the king of the player not to move to occupy.
-
-//! \returns An array of bools with indices given by Board::square_index(). A value of true indicates
-//!          that the king of the player not moving would be free of check if placed there.
-const std::array<bool, 64>& Board::squares_safe_for_king() const
-{
-    return safe_squares_for_king;
-}
-
-void Board::refresh_checking_squares()
-{
-    checking_squares = {};
-    size_t insertion_point = 0;
-    const auto& king_square = find_king(whose_turn());
-
-    if(game_record_listing.empty())
-    {
-        for(auto square : Threat_Generator(king_square.file(), king_square.rank(), opposite(whose_turn()), *this))
-        {
-            checking_squares[insertion_point++] = square;
-        }
-    }
-    else
-    {
-        auto last_move = game_record_listing.back();
-
-        // Moved piece now attacks king
-        if(attacks(last_move->end_file(), last_move->end_rank(), king_square.file(), king_square.rank()))
-        {
-            checking_squares[insertion_point++] = {last_move->end_file(), last_move->end_rank()};
-        }
-
-        // Discovered check
-        if(auto pinning_square = piece_is_pinned(last_move->start_file(), last_move->start_rank()))
-        {
-            // Prevent pawn promotions from registering twice, for example
-            // ...   a8=Q     Q..
-            // P.. -------->  ... Check from queen on a8 and discovered check by queen on a8
-            // k..            k..
-            if(pinning_square != checking_squares.front())
-            {
-                checking_squares[insertion_point++] = pinning_square;
-            }
-        }
-
-        // Discovered check due to en passant
-        if(last_move->is_en_passant())
-        {
-            if(auto pinning_square = piece_is_pinned(last_move->end_file(), last_move->start_rank()))
-            {
-                // Since two pieces are removed, make sure the discovered check isn't recorded twice
-                if(pinning_square != checking_squares.front())
-                {
-                    checking_squares[insertion_point++] = pinning_square;
-                }
-            }
-        }
-
-        // Discovered check by rook due to castling
-        if(last_move->is_castling())
-        {
-            char rook_file = (last_move->file_change() > 0 ? 'f' : 'd');
-
-            // If the non-castling king is on the same rank as the castling king, the check will have
-            // been found by the discovered check block above. Only look for checks along columns.
-            if(king_square.file() == rook_file && all_empty_between(rook_file, last_move->end_rank(), king_square.file(), king_square.rank()))
-            {
-                checking_squares[insertion_point] = {rook_file, last_move->end_rank()};
-            }
-        }
-    }
+    return blocked_attacks[attacking_color][square_index(file, rank)].any();
 }
 
 //! Check if a move will leave the player making the move in check.
@@ -1039,7 +1086,30 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         }
 
         // Checking piece is captured by non-pinned piece
-        if(checking_squares.front() == Square{move.end_file(), move.end_rank()})
+        if( ! checking_square)
+        {
+            const auto& checks = checking_moves();
+            size_t checking_index = 0;
+            while( ! checks[checking_index])
+            {
+                ++checking_index;
+            }
+            auto [file_step, rank_step] = Move::attack_direction_from_index(checking_index);
+            const auto& king_square = find_king(whose_turn());
+
+            char checking_file = king_square.file() - file_step;
+            int  checking_rank = king_square.rank() - rank_step;
+            while( ! piece_on_square(checking_file, checking_rank))
+            {
+                checking_file -= file_step;
+                checking_rank -= rank_step;
+            }
+
+            checking_square = {checking_file, checking_rank};
+        }
+
+        if(checking_square.file() == move.end_file() &&
+           checking_square.rank() == move.end_rank())
         {
             return piece_is_pinned(move.start_file(), move.start_rank());
         }
@@ -1056,19 +1126,20 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         // En passant capture of checking pawn
         if(move.is_en_passant())
         {
-            return (checking_squares.front() != Square{move.end_file(), move.start_rank()}) || piece_is_pinned(move.start_file(), move.start_rank());
+            auto pawn_square = Square{move.end_file(), move.start_rank()};
+            return checking_square != pawn_square || piece_is_pinned(move.start_file(), move.start_rank());
         }
 
         // Nothing is done about the check
         return true;
     }
 
-    if(auto pinning_square = piece_is_pinned(move.start_file(), move.start_rank()))
+    if(piece_is_pinned(move.start_file(), move.start_rank()))
     {
         const auto& king_square = find_king(whose_turn());
 
-        auto pin_direction_file = king_square.file() - pinning_square.file();
-        auto pin_direction_rank = king_square.rank() - pinning_square.rank();
+        auto pin_direction_file = king_square.file() - move.start_file();
+        auto pin_direction_rank = king_square.rank() - move.start_rank();
 
         // If move direction and pin direction are not parallel, the piece will move
         // out of pin and expose the king to check.
@@ -1332,6 +1403,11 @@ void Board::clear_pinned_squares()
     square_searched_for_pin.fill(false);
 }
 
+void Board::clear_checking_square()
+{
+    checking_square = Square{};
+}
+
 //! Indicates whether the queried square has a piece on it that never moved.
 
 //! \param file File of queried square.
@@ -1355,10 +1431,6 @@ const Square& Board::find_king(Color color) const
 void Board::recreate_move_caches()
 {
     legal_moves_cache.clear();
-    refresh_checking_squares();
-    attacked_indices.fill(false);
-    other_attacked_indices.fill(false);
-    safe_squares_for_king.fill(true);
 
     bool en_passant_legal = false;
     material_change_move_available = false;
@@ -1377,29 +1449,15 @@ void Board::recreate_move_caches()
                     auto blocked = blocked_move &&
                                    same_direction(move->file_change(),         move->rank_change(),
                                                   blocked_move->file_change(), blocked_move->rank_change());
-                    auto legal = false;
 
                     if( ! blocked)
                     {
                         blocked_move = nullptr;
                         if(move->is_legal(*this))
                         {
-                            legal = true;
                             legal_moves_cache.push_back(move);
 
-                            if(move->can_capture())
-                            {
-                                auto rank_adjust = 0;
-                                if(move->is_en_passant())
-                                {
-                                    rank_adjust = -move->rank_change();
-                                    en_passant_legal = true;
-                                    material_change_move_available = true;
-                                }
-                                attacked_indices[square_index(move->end_file(),
-                                                              move->end_rank() + rank_adjust)] = true;
-                            }
-
+                            en_passant_legal = en_passant_legal || move->is_en_passant();
                             material_change_move_available = material_change_move_available ||
                                                              move_captures(*move)||
                                                              move->promotion_piece_symbol();
@@ -1413,17 +1471,6 @@ void Board::recreate_move_caches()
                         {
                             blocked_move = move;
                         }
-
-                        auto& safe = safe_squares_for_king[square_index(move->end_file(), move->end_rank())];
-                        if(safe)
-                        {
-                            safe = ! move->can_capture();
-                        }
-                    }
-
-                    if( ! legal && move->can_capture())
-                    {
-                        other_attacked_indices[square_index(move->end_file(), move->end_rank())] = true;
                     }
                 }
             }
@@ -1704,7 +1751,7 @@ bool Board::move_captures(const Move& move) const
 
 bool Board::king_multiply_checked() const
 {
-    return checking_squares.back(); // See if second entry is valid Square
+    return checking_moves().count() > 1;
 }
 
 //! Check whether all of the squares between two squares are empty.
@@ -1772,138 +1819,60 @@ bool Board::same_direction(int file_change_1, int rank_change_1, int file_change
            file_change_1*file_change_2 + rank_change_1*rank_change_2 > 0; // dot product
 }
 
-bool Board::attacks(char origin_file, int origin_rank, char target_file, int target_rank) const
-{
-    auto attacking_piece = piece_on_square(origin_file, origin_rank);
-    if( ! attacking_piece)
-    {
-        return false;
-    }
-
-    auto file_change = std::abs(target_file - origin_file);
-    auto rank_change = std::abs(target_rank - origin_rank);
-
-    if(attacking_piece->type() == KNIGHT)
-    {
-        return file_change*rank_change == 2; // 1x2 or 2x1 move
-    }
-
-    if( ! straight_line_move(origin_file, origin_rank,
-                             target_file, target_rank))
-    {
-        return false;
-    }
-
-    if(attacking_piece->type() == KING)
-    {
-        return std::max(file_change, rank_change) == 1;
-    }
-
-    if(attacking_piece->type() == PAWN)
-    {
-        return file_change*rank_change == 1 && // 1x1 move
-               (attacking_piece->color() == WHITE) == (target_rank > origin_rank);
-    }
-
-    if( ! all_empty_between(origin_file, origin_rank, target_file, target_rank))
-    {
-        return false;
-    }
-
-    if(attacking_piece->type() == QUEEN)
-    {
-        return true;
-    }
-
-    if(file_change == rank_change)
-    {
-        return attacking_piece->type() == BISHOP;
-    }
-    else
-    {
-        return attacking_piece->type() == ROOK;
-    }
-}
-
 //! Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.
 
 //! \param file File of queried square.
 //! \param rank Rank of queried square.
-//! \returns The Square upon which an opposing piece stands that would pin a friendly
-//!          piece to the king. If no such Square exists, then an invalid square
-//!          is returned (which converts to bool(false) in if() statements).
-Square Board::piece_is_pinned(char file, int rank) const
+//! \returns Whether there is an opposing piece (of color opposite(Board::whose_turn()))
+//!          that would pin a piece occupying the queried square to its king. For example,
+//!          if it is White's turn, is there a Black piece that would pin a (possibly non-existant)
+//!          white piece to the white king.
+bool Board::piece_is_pinned(char file, int rank) const
 {
     auto index = square_index(file, rank);
     if(square_searched_for_pin[index])
     {
-        return pinning_squares[index];
+        return pinned_squares[index];
     }
 
     square_searched_for_pin[index] = true;
-    auto& last_found_pinning_square = pinning_squares[index];
+    auto& pin_result = pinned_squares[index];
 
     const auto& king_square = find_king(whose_turn());
-    const static auto no_pin = Square{};
 
     if(king_square == Square{file, rank})
     {
-        return last_found_pinning_square = no_pin; // king is never pinned
+        return pin_result = false; // king is never pinned
     }
 
     if( ! straight_line_move(file, rank, king_square.file(), king_square.rank()))
     {
-        return last_found_pinning_square = no_pin;
+        return pin_result = false;
     }
 
     if( ! all_empty_between(king_square.file(), king_square.rank(), file, rank))
     {
-        return last_found_pinning_square = no_pin;
+        return pin_result = false;
     }
 
     auto file_step = Math::sign(file - king_square.file());
     auto rank_step = Math::sign(rank - king_square.rank());
-
-    for(int step = 1; true; ++step) // loop until outside board or piece found
+    if(potential_attacks[opposite(whose_turn())][square_index(file, rank)][Move::attack_index(-file_step, -rank_step)])
     {
-        char current_file = file + file_step*step;
-        int  current_rank = rank + rank_step*step;
+        // The potential_attacks check guarantees that there is an opposing piece attacking
+        // the queried square in the same direction towards the friendly king. This next check
+        // is to make sure the attacking piece is not a limited range piece--i.e., a pawn or king.
+        char attack_file = file + file_step;
+        int  attack_rank = rank + rank_step;
+        auto attack_piece = piece_on_square(attack_file, attack_rank);
 
-        if( ! inside_board(current_file, current_rank))
-        {
-            return last_found_pinning_square = no_pin;
-        }
-
-        auto attacking_piece = piece_on_square(current_file, current_rank);
-        if(attacking_piece)
-        {
-            if(attacking_piece->color() == whose_turn())
-            {
-                return last_found_pinning_square = no_pin;
-            }
-
-            if(attacking_piece->type() == QUEEN)
-            {
-                return last_found_pinning_square = {current_file, current_rank};
-            }
-
-            if(file_step == 0 || rank_step == 0)
-            {
-                if(attacking_piece->type() == ROOK)
-                {
-                    return last_found_pinning_square = {current_file, current_rank};
-                }
-            }
-            else
-            {
-                if(attacking_piece->type() == BISHOP)
-                {
-                    return last_found_pinning_square = {current_file, current_rank};
-                }
-            }
-
-            return last_found_pinning_square = no_pin;
-        }
+        // attack_piece == nullptr means that the pinning piece is farther away than
+        // one square, which means it can also attack the king beyond the pinned piece.
+        return pin_result = ( ! attack_piece || (attack_piece->type() != PAWN && attack_piece->type() != KING));
+    }
+    else
+    {
+        return pin_result = false;
     }
 }
 

@@ -7,6 +7,7 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
+#include "Game/Color.h"
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
@@ -88,7 +89,7 @@ std::string Look_Ahead_Gene::name() const
     return "Look Ahead Gene";
 }
 
-double Look_Ahead_Gene::score_board(const Board&, const Board&, size_t) const
+double Look_Ahead_Gene::score_board(const Board&, Color, size_t) const
 {
     return 0.0;
 }

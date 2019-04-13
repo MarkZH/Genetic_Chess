@@ -5,7 +5,9 @@
 #include <string>
 
 #include "Game/Board.h"
+#include "Game/Piece.h"
 #include "Genes/Gene.h"
+#include "Game/Color.h"
 #include "Genes/Piece_Strength_Gene.h"
 
 //! The Opponent_Pieces_Targeted_Gene constructor requires a Piece_Strength_Gene to reference in score_board().
@@ -16,20 +18,19 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strengt
 {
 }
 
-double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, const Board&, size_t) const
+double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
     double score = 0.0;
-    const auto& squares_attacked = board.all_square_indices_attacked();
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            if(squares_attacked[Board::square_index(file, rank)])
+            auto piece = board.piece_on_square(file, rank);
+            if(piece && piece->color() != perspective)
             {
-                auto piece = board.piece_on_square(file, rank);
-                if(piece)
-                {
+                if( ! board.safe_for_king(file, rank, opposite(perspective)))
+                {               
                     score += piece_strength_source->piece_value(piece);
                 }
             }

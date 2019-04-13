@@ -8,6 +8,8 @@
 #include <array>
 #include <map>
 
+#include "Game/Color.h"
+
 class Board;
 
 //! Scores a board based on how close the pawns are to promotion.
@@ -31,7 +33,7 @@ class Pawn_Advancement_Gene : public Gene
         double non_linearity;
         std::array<double, 6> score_cache; // precompute scores
 
-        double score_board(const Board& board, const Board& opposite_board, size_t) const override;
+        double score_board(const Board& board, Color perspective, size_t depth) const override;
         void gene_specific_mutation() override;
         void recompute_scores_cache();
 };

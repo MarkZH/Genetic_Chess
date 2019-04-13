@@ -306,3 +306,88 @@ void Move::adjust_end_rank(int adjust)
 {
     ending_rank += adjust;
 }
+
+//! Assigns a unique index to the direction of movement of a possibly capturing move.
+
+//! \returns An unsigned integer in the range [0,15] corresponding to one of
+//!          2 horizontal moves, 2 vertical moves, 4 diagonal moves, and
+//!          8 knight moves.
+size_t Move::attack_index() const
+{
+    return attack_index(file_change(), rank_change());
+}
+
+//! Returns a unique move direction index for a manually specified move. See Move::attack_index().
+
+//! \param file_change The horizontal distance of the move.
+//! \param rank_change The vertical distance of the move.
+//! \returns The same result as a call to Move::attack_index() with the same file_change() and rank_change().
+size_t Move::attack_index(int file_change, int rank_change)
+{
+    size_t result = 0;
+
+    // First bit == knight move or not
+    if(std::abs(rank_change*file_change) == 2) // 1x2 or 2x1
+    {
+        result += 8;
+        result += 4*(file_change > 0);
+        result += 2*(rank_change > 0);
+        result += 1*(std::abs(file_change) > std::abs(rank_change));
+    }
+    else
+    {
+        // Second bit == rook move or not
+        if(rank_change == 0 || file_change == 0)
+        {
+            result += 4;
+            result += 2*(rank_change != 0);
+            result += 1*(rank_change + file_change > 0);
+        }
+        else
+        {
+            // Bishop moves
+            result += 2*(file_change > 0);
+            result += 1*(rank_change > 0);
+        }
+    }
+
+    return result;
+}
+
+//! Returns the movement corresponding to an index given by Move::attack_index().
+
+//! \returns A pair of integers giving the direction of an attacking move.
+std::pair<int, int> Move::attack_direction_from_index(size_t index)
+{
+    if(index & 8)
+    {
+        // Knight move
+        auto file_direction = index & 4 ? 1 : -1;
+        auto rank_direction = index & 2 ? 1 : -1;
+        auto file_step = index & 1 ? 2 : 1;
+        auto rank_step = 3 - file_step;
+        return {file_step*file_direction, rank_step*rank_direction};
+    }
+    else
+    {
+        if(index & 4)
+        {
+            // Rook move
+            if(index & 2)
+            {
+                // Vertical move
+                return {0, (index & 1 ? 1 : -1)};
+            }
+            else
+            {
+                // Horizontal move
+                return {(index & 1 ? 1 : -1), 0};
+            }
+        }
+        else
+        {
+            // Bishop move
+            return {index & 2 ? 1 : -1, index & 1 ? 1 : -1};
+        }
+    }
+}

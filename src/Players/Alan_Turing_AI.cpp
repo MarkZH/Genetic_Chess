@@ -2,13 +2,13 @@
 
 #include <vector>
 #include <cmath>
+#include <bitset>
 
 #include "Game/Board.h"
 #include "Moves/Move.h"
 #include "Game/Piece.h"
 #include "Game/Game_Result.h"
 #include "Game/Color.h"
-#include "Moves/Threat_Generator.h"
 
 //! Turing's algorithm is a depth-3 minimax algorithm with an complex evalutation function.
 
@@ -215,18 +215,10 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     // Non-queen pieces defended
                     if(piece->type() != QUEEN)
                     {
-                        Square defending_square{};
-                        for(auto defender : Threat_Generator(file, rank, perspective, board))
+                        auto defender_count = board.moves_attacking_square(file, rank, perspective).count();
+                        if(defender_count > 0)
                         {
-                            if(defending_square)
-                            {
-                                total_score += 0.5;
-                            }
-                            else
-                            {
-                                total_score += 1.0;
-                                defending_square = defender;
-                            }
+                            total_score += 1.0 + 0.5*(defender_count - 1);
                         }
                     }
                 }

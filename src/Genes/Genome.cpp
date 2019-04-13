@@ -205,12 +205,12 @@ void Genome::read_from(std::istream& is)
     throw std::runtime_error("Reached end of file before END of genome.");
 }
 
-double Genome::score_board(const Board& board, const Board& opposite_board, size_t depth) const
+double Genome::score_board(const Board& board, Color perspective, size_t depth) const
 {
     double score = 0.0;
     for(const auto& gene : genome)
     {
-        score += gene->evaluate(board, opposite_board, depth);
+        score += gene->evaluate(board, perspective, depth);
     }
 
     return score;
@@ -227,13 +227,7 @@ double Genome::score_board(const Board& board, const Board& opposite_board, size
 //!        original board that represents the current state of the game.
 double Genome::evaluate(const Board& board, Color perspective, size_t depth) const
 {
-    auto other_board = board;
-    other_board.set_turn(opposite(board.whose_turn()));
-    const auto& my_board        = (board.whose_turn() == perspective ? board : other_board);
-    const auto& opponents_board = (board.whose_turn() == perspective ? other_board : board);
-
-    return score_board(my_board, opponents_board, depth) -
-           score_board(opponents_board, my_board, depth);
+    return score_board(board, perspective, depth) - score_board(board, opposite(perspective), depth);
 }
 
 //! Apply a random set of mutations to the entire genome.

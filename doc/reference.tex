@@ -226,7 +226,7 @@ This gene sums the strength (according to the Piece Strength Gene) of all the pl
 As noted in Section~\ref{board-score-section} above, the priority of this gene is restricted to be non-negative.
 
 \subsubsection{Freedom to Move Gene}
-This gene counts the number of legal moves available in the current position.
+This gene counts the number of squares under attack by a side that are also not occupied by friendly pieces. This represents how many moves are available without considering whether the king is in check or if any pieces are pinned. This count is divided by the number of squares under attack at the beginning of a game to bring the maximum score near one.
 
 \subsubsection{Pawn Advancement Gene}
 This gene measures the progress of all pawns towards the opposite side of the board. The gene includes a non-linearity term that controls how the position of the moving pawn affects the score as it moves.

@@ -6,6 +6,7 @@
 #include <map>
 
 #include "Genes/Gene.h"
+#include "Game/Color.h"
 
 #include "Utility/Math.h"
 #include "Utility/Random.h"
@@ -42,7 +43,7 @@ std::unique_ptr<Gene> Mutation_Rate_Gene::duplicate() const
     return std::make_unique<Mutation_Rate_Gene>(*this);
 }
 
-double Mutation_Rate_Gene::score_board(const Board&, const Board&, size_t) const
+double Mutation_Rate_Gene::score_board(const Board&, Color, size_t) const
 {
     return 0.0;
 }

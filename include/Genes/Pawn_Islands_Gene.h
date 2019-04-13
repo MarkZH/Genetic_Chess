@@ -6,6 +6,8 @@
 
 #include "Genes/Gene.h"
 
+#include "Game/Color.h"
+
 class Board;
 
 //! Scores a board based on the number of isolated pawn groups a player has.
@@ -17,7 +19,7 @@ class Pawn_Islands_Gene : public Gene
         std::string name() const override;
 
     private:
-        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t depth) const override;
 };
 
 #endif // PAWN_ISLANDS_GENE_H

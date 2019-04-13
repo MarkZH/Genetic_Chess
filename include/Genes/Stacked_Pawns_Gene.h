@@ -1,10 +1,12 @@
 #ifndef STACKED_PAWNS_GENE_H
 #define STACKED_PAWNS_GENE_H
 
+#include "Genes/Gene.h"
+
 #include <memory>
 #include <string>
 
-#include "Genes/Gene.h"
+#include "Game/Color.h"
 
 class Board;
 
@@ -17,7 +19,7 @@ class Stacked_Pawns_Gene : public Gene
         std::string name() const override;
 
     private:
-        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t depth) const override;
 };
 
 #endif // STACKED_PAWNS_GENE_H

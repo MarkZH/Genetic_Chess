@@ -8,6 +8,8 @@
 #include "Genes/Gene.h"
 #include "Game/Piece.h"
 #include "Game/Board.h"
+#include "Game/Color.h"
+
 #include "Utility/Random.h"
 
 //! Initialize the Piece values to zero.
@@ -122,7 +124,7 @@ std::string Piece_Strength_Gene::name() const
     return "Piece Strength Gene";
 }
 
-double Piece_Strength_Gene::score_board(const Board&, const Board&, size_t) const
+double Piece_Strength_Gene::score_board(const Board&, Color, size_t) const
 {
     return 0.0;
 }

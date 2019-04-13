@@ -6,6 +6,8 @@
 #include <memory>
 #include <string>
 
+#include "Game/Color.h"
+
 class Board;
 
 //! Scores a board based on how many passed pawns (pawns with no opponent pawns ahead of them) a player has.
@@ -17,7 +19,7 @@ class Passed_Pawn_Gene : public Gene
         std::string name() const override;
 
     private:
-        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t depth) const override;
 };
 
 #endif // PASSED_PAWN_GENE_H

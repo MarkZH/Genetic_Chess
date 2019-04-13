@@ -44,12 +44,12 @@ std::string Castling_Possible_Gene::name() const
     return "Castling Possible Gene";
 }
 
-double Castling_Possible_Gene::score_board(const Board& board, const Board&, size_t depth) const
+double Castling_Possible_Gene::score_board(const Board& board, Color perspective, size_t depth) const
 {
     // check if a castling move lies between here and the actual state of the board
     if( ! board.game_record().empty())
     {
-        auto castling_index = board.castling_move_index(board.whose_turn());
+        auto castling_index = board.castling_move_index(perspective);
         auto last_move_index = board.game_record().size() - 1;
 
         if(castling_index <= last_move_index) // castling has occurred in the past of this board
@@ -67,7 +67,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Board&, siz
     }
 
     auto king_start_file = 'e';
-    auto base_rank = (board.whose_turn() == WHITE ? 1 : 8);
+    auto base_rank = (perspective == WHITE ? 1 : 8);
     if(board.piece_has_moved(king_start_file, base_rank))
     {
         return 0.0;

@@ -40,9 +40,7 @@ class Genome
         static size_t look_ahead_gene_index;
         static size_t mutation_rate_gene_index;
 
-        double score_board(const Board& board,
-                           const Board& opposite_board,
-                           size_t depth) const;
+        double score_board(const Board& board, Color perspective, size_t depth) const;
         void reset_piece_strength_gene();
         double components_to_mutate() const;
 };

@@ -173,12 +173,12 @@ void Gene::gene_specific_mutation()
 //! Gives a numerical score to the board in the arguments.
 
 //! \param board The state of the board to be evaluated--found at the leaves of the game search tree.
-//! \param opposite_board The same board as the first parameter, but after calling board.set_turn(opposite(board.whose_turn())).
+//! \param perspective For which player the board is being scored.
 //! \param depth The depth of the game search tree at the time of the evaluation.
 //! \returns A numerical score indicating the likelihood that the board in the first argument is winning for board.whose_turn().
-double Gene::evaluate(const Board& board, const Board& opposite_board, size_t depth) const
+double Gene::evaluate(const Board& board, Color perspective, size_t depth) const
 {
-    return scoring_priority*score_board(board, opposite_board, depth);
+    return scoring_priority*score_board(board, perspective, depth);
 }
 
 //! Outputs gene data to a std::ostream in text form.
@@ -212,9 +212,7 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 //! \returns Whether the score returned by Gene::score_board() is withing 1e-6 of the expected value.
 bool Gene::test(const Board& board, double expected_score) const
 {
-    auto other_board = board;
-    other_board.set_turn(opposite(board.whose_turn()));
-    auto result = score_board(board, other_board, 1);
+    auto result = score_board(board, board.whose_turn(), 1);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';

@@ -6,6 +6,7 @@
 #include "Game/Board.h"
 #include "Game/Piece.h"
 #include "Genes/Gene.h"
+#include "Game/Color.h"
 #include "Genes/Piece_Strength_Gene.h"
 
 //! The Total_Force_Gene constructor requires a Piece_Strength_Gene to reference in score_board().
@@ -16,7 +17,7 @@ Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_sou
 {
 }
 
-double Total_Force_Gene::score_board(const Board& board, const Board&, size_t) const
+double Total_Force_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
     double score = 0.0;
 
@@ -26,7 +27,7 @@ double Total_Force_Gene::score_board(const Board& board, const Board&, size_t) c
         {
             auto piece = board.piece_on_square(file, rank);
             if(piece &&
-               piece->color() == board.whose_turn())
+               piece->color() == perspective)
             {
                 score += piece_strength_source->piece_value(piece);
             }

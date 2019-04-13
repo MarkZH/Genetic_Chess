@@ -6,17 +6,18 @@
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
+#include "Game/Color.h"
 
-double Passed_Pawn_Gene::score_board(const Board& board, const Board&, size_t) const
+double Passed_Pawn_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
     // Counts the number of passed pawns. A passed pawn is one with
     // no opposing pawns on the same or adjacent files ahead of it.
     double score = 0.0;
-    auto own_pawn = board.piece_instance(PAWN, board.whose_turn());
-    auto other_pawn = board.piece_instance(PAWN, opposite(board.whose_turn()));
-    auto near_rank = (board.whose_turn() == WHITE ? 1 : 8);
-    auto far_rank  = (board.whose_turn() == WHITE ? 7 : 2);
-    auto rank_step = (board.whose_turn() == WHITE ? 1 : -1);
+    auto own_pawn = board.piece_instance(PAWN, perspective);
+    auto other_pawn = board.piece_instance(PAWN, opposite(perspective));
+    auto near_rank = (perspective == WHITE ? 1 : 8);
+    auto far_rank  = (perspective == WHITE ? 7 : 2);
+    auto rank_step = (perspective == WHITE ? 1 : -1);
     auto other_pawn_ranks_occupied = std::array<int, 8>{};
 
     for(char file = 'a'; file <= 'h'; ++file)

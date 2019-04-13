@@ -6,6 +6,8 @@
 #include <string>
 #include <memory>
 
+#include "Game/Color.h"
+
 class Piece_Strength_Gene;
 class Board;
 
@@ -25,7 +27,7 @@ class Opponent_Pieces_Targeted_Gene : public Gene
     private:
         const Piece_Strength_Gene* piece_strength_source;
 
-        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t depth) const override;
 };
 
 #endif // OPPONENT_PIECES_TARGETED_GENE_H

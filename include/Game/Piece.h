@@ -27,6 +27,7 @@ class Piece
         bool can_move(const Move* move) const;
 
         const std::vector<const Move*>& move_list(char file, int rank) const;
+        const std::vector<const Move*>& attacking_moves(char file, int rank) const;
 
         Piece_Type type() const;
 
@@ -39,6 +40,9 @@ class Piece
 
         // Holds lists of possible legal moves indexed by starting square (using Board::board_index())
         std::array<std::vector<const Move*>, 64> legal_moves;
+
+        // Holds list of all moves that can attack another square
+        std::array<std::vector<const Move*>, 64> attack_moves;
 
         void add_pawn_moves();
         void add_rook_moves();

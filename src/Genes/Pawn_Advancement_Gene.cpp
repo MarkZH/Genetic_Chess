@@ -9,6 +9,8 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Piece.h"
+#include "Game/Color.h"
+
 #include "Utility/Random.h"
 
 Pawn_Advancement_Gene::Pawn_Advancement_Gene() : non_linearity(0.0)
@@ -16,10 +18,9 @@ Pawn_Advancement_Gene::Pawn_Advancement_Gene() : non_linearity(0.0)
     recompute_scores_cache();
 }
 
-double Pawn_Advancement_Gene::score_board(const Board& board, const Board&, size_t) const
+double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
     double score = 0.0;
-    auto perspective = board.whose_turn();
     auto own_pawn = board.piece_instance(PAWN, perspective);
     int home_rank = (perspective == WHITE ? 2 : 7);
     int first_rank = (perspective == WHITE ? 3 : 2);

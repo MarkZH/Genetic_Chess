@@ -6,6 +6,8 @@
 #include <string>
 #include <memory>
 
+#include "Game/Color.h"
+
 class Board;
 class Piece_Strength_Gene;
 
@@ -26,7 +28,7 @@ class Total_Force_Gene : public Gene
         const Piece_Strength_Gene* piece_strength_source;
 
         void gene_specific_mutation() override;
-        double score_board(const Board& board, const Board& opposite_board, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t depth) const override;
 };
 
 #endif // TOTAL_FORCE_GENE_H

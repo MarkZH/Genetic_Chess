@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <array>
+#include <bitset>
 
 #include "Color.h"
 #include "Square.h"
@@ -76,24 +77,23 @@ class Board
         const std::vector<const Move*>& legal_moves() const;
 
         bool safe_for_king(char file, int rank, Color king_color) const;
+        bool blocked_attack(char file, int rank, Color attacking_color) const;
         bool is_en_passant_targetable(char file, int rank) const;
         bool piece_has_moved(char file, int rank) const;
         const Square& find_king(Color color) const;
         bool king_is_in_check() const;
         bool king_is_in_check_after_move(const Move& move) const;
-        Square piece_is_pinned(char file, int rank) const; // returns pinning square or {'\0', 0} if none
+        bool piece_is_pinned(char file, int rank) const;
         bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
         bool enough_material_to_checkmate(Color color = NONE) const;
         bool move_captures(const Move& move) const;
         int moves_since_pawn_or_capture() const;
+        const std::bitset<16>& moves_attacking_square(char file, int rank, Color attacking_color) const;
 
         // Methods for gene reference
         bool last_move_captured() const;
         bool last_move_changed_material() const;
         bool material_change_possible() const;
-        const std::array<bool, 64>& all_square_indices_attacked() const;
-        const std::array<bool, 64>& other_square_indices_attacked() const;
-        const std::array<bool, 64>& squares_safe_for_king() const;
         size_t castling_move_index(Color player) const;
 
         static const Piece* piece_instance(Piece_Type piece_type, Color color);
@@ -109,14 +109,27 @@ class Board
         std::string starting_fen;
         static const std::string standard_starting_fen;
         std::array<Square, 2> king_location;
-        mutable std::array<Square, 64> pinning_squares;
+        mutable std::array<bool, 64> pinned_squares;
         mutable std::array<bool, 64> square_searched_for_pin;
+        mutable Square checking_square;
         size_t move_count_start_offset;
 
+        // Stores the moves that attack a square. The innermost array
+        // is filled with bools indicating the direction the piece attacking
+        // the square moves to reach that square: (from white's perspective)
+        // up, down, left, right, up-left, up-right, down-left, down-right,
+        // 2x1 up-left, 1x2 up-left, 2x1 up-right, 1x2 up-right,
+        // 2x1 down-left, 1x2 down-left, 2x1 down-right, 1x2 down-right
+        std::array<std::array<std::bitset<16>, 64>, 2> potential_attacks; // indexed by [attacker color][square index];
+        std::array<std::array<std::bitset<16>, 64>, 2> blocked_attacks;
+
+        void add_attacks_from(char file, int rank, const Piece* piece);
+        void remove_attacks_from(char file, int rank, const Piece* old_piece);
+        void modify_attacks(char file, int rank, const Piece* piece, bool adding_attacks);
+        void update_blocks(char file, int rank, const Piece* old_piece, const Piece* new_piece);
+        const std::bitset<16>& checking_moves() const;
+
         // Information cache for gene reference
-        std::array<bool, 64> attacked_indices;
-        std::array<bool, 64> other_attacked_indices;
-        std::array<bool, 64> safe_squares_for_king;
         bool material_change_move_available;
         std::array<size_t, 2> castling_index;
 
@@ -137,10 +150,8 @@ class Board
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
-        std::array<Square, 2> checking_squares;
 
         void recreate_move_caches();
-        void refresh_checking_squares();
 
         // Communication channels
         mutable Thinking_Output_Type thinking_indicator;
@@ -153,6 +164,7 @@ class Board
         void make_en_passant_targetable(char file, int rank);
         void clear_en_passant_target();
         void clear_pinned_squares();
+        void clear_checking_square();
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(const Piece* piece, char file, int rank);
         void switch_turn();
@@ -190,7 +202,6 @@ class Board
         static bool straight_line_move(char file_start, int rank_start, char file_end, int rank_end);
         static bool moves_are_parallel(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2);
         static bool same_direction(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2);
-        bool attacks(char origin_file, int origin_rank, char target_file, int target_rank) const;
 
         [[noreturn]] void fen_error(const std::string& reason) const;
 

@@ -258,8 +258,6 @@
     <ClCompile Include="src\moves\Pawn_Move.cpp" />
     <ClCompile Include="src\moves\Pawn_Promotion.cpp" />
     <ClCompile Include="src\moves\Pawn_Promotion_by_Capture.cpp" />
-    <ClCompile Include="src\Moves\Threat_Generator.cpp" />
-    <ClCompile Include="src\Moves\Threat_Iterator.cpp" />
     <ClCompile Include="src\players\Alan_Turing_AI.cpp" />
     <ClCompile Include="src\players\CECP_Mediator.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
@@ -317,8 +315,6 @@
     <ClInclude Include="include\moves\Pawn_Move.h" />
     <ClInclude Include="include\moves\Pawn_Promotion.h" />
     <ClInclude Include="include\moves\Pawn_Promotion_by_Capture.h" />
-    <ClInclude Include="include\Moves\Threat_Generator.h" />
-    <ClInclude Include="include\Moves\Threat_Iterator.h" />
     <ClInclude Include="include\players\Alan_Turing_AI.h" />
     <ClInclude Include="include\players\CECP_Mediator.h" />
     <ClInclude Include="include\players\Game_Tree_Node_Result.h" />

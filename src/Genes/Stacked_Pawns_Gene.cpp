@@ -5,21 +5,22 @@
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
+#include "Game/Color.h"
 
 #include "Genes/Gene.h"
 
-double Stacked_Pawns_Gene::score_board(const Board& board, const Board&, size_t) const
+double Stacked_Pawns_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
     double score = 0.0;
 
+    auto own_pawn = board.piece_instance(PAWN, perspective);
     for(char file = 'a'; file <= 'h'; ++file)
     {
         int pawn_count = 0;
 
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = board.piece_on_square(file, rank);
-            if(piece && piece->type() == PAWN && piece->color() == board.whose_turn())
+            if(board.piece_on_square(file, rank) == own_pawn)
             {
                 ++pawn_count;
             }

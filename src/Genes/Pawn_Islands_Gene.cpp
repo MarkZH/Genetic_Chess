@@ -5,15 +5,16 @@
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
+#include "Game/Color.h"
 
 #include "Genes/Gene.h"
 
-double Pawn_Islands_Gene::score_board(const Board& board, const Board&, size_t) const
+double Pawn_Islands_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
     auto islands = 0;
     auto pawn_count = 0;
     bool on_island = false;
-    auto own_pawn = board.piece_instance(PAWN, board.whose_turn());
+    auto own_pawn = board.piece_instance(PAWN, perspective);
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
