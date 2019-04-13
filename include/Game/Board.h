@@ -47,6 +47,7 @@ class Board
         static Color square_color(char file, int rank);
 
         void ascii_draw(Color perspective) const;
+        std::string fen_status() const; // current state of board in FEN
 
         const std::vector<const Move*>& game_record() const;
         std::string last_move_record() const;
@@ -157,7 +158,6 @@ class Board
         void switch_turn();
         void set_unmoved(char file, int rank);
         void update_board(const Move& move);
-        std::string fen_status() const; // current state of board in FEN
 
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record();

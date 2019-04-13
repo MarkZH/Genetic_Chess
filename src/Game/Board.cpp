@@ -430,6 +430,13 @@ bool Board::is_in_legal_moves_list(const Move& move) const
     return std::find(legal_moves().begin(), legal_moves().end(), &move) != legal_moves().end();
 }
 
+//! Returns the status of the game in FEN.
+
+//! \returns A textual representation of the game state.
+//!
+//! This may slightly differ from the output of other programs
+//! in that the en passant target is only listed if there is a
+//! legal en passant move to be made.
 std::string Board::fen_status() const
 {
     std::string s;
