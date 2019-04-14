@@ -288,7 +288,7 @@ void Piece::add_king_moves()
 void Piece::add_pawn_art()
 {
     // ASCII Art http://ascii.co.uk/art/chess (VK)
-    ascii_art_lines.push_back("_");
+    ascii_art_lines.push_back("");
     ascii_art_lines.push_back("( )");
     ascii_art_lines.push_back("/___\\");
     add_color();
