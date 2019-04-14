@@ -1061,6 +1061,12 @@ bool Board::safe_for_king(char file, int rank, Color king_color) const
     return moves_attacking_square(file, rank, opposite(king_color)).none();
 }
 
+//! Determine if there are any attacks on a square that are blocked by other pieces.
+
+//! \param file The file of the queried square.
+//! \param rank The rank of the queried square.
+//! \param attacking_color The color of the attacking pieces.
+//! \returns Whether there is an attack on the square that is blocked by another piece.
 bool Board::blocked_attack(char file, int rank, Color attacking_color) const
 {
     return blocked_attacks[attacking_color][square_index(file, rank)].any();
