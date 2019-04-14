@@ -71,13 +71,15 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective,
     // by pieces of the same color.
 
     std::array<size_t, 64> square_queue; // list of indices to check
-    square_queue.fill(square_queue.size()); // initially filled with invalid indices
-    const auto& king_square = board.find_king(perspective);
-    auto king_index = board.square_index(king_square.file(), king_square.rank());
-    square_queue[0] = king_index;
-    size_t queue_insertion_point = 1;
+    const size_t invalid_index = 64;
+    square_queue.fill(invalid_index);
+    size_t queue_insertion_point = 0; // where to insert the index of the next square to check
+    std::array<bool, 64> in_queue{}; // track which indices have or will have been checked
 
-    std::array<bool, 64> in_queue{};
+    const auto& king_square = board.find_king(perspective);
+    const auto king_index = board.square_index(king_square.file(), king_square.rank());
+
+    square_queue[queue_insertion_point++] = king_index;
     in_queue[king_index] = true;
 
     double friendly_block_total = 0.0;
@@ -86,38 +88,34 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective,
 
     for(auto square_index : square_queue)
     {
-        if(square_index == square_queue.size())
+        if(square_index == invalid_index)
         {
             break;
         }
 
+        // Always check the squares surrounding the king's current positions, even if
+        // it is not safe (i.e., the king is in check).
+        auto add_surrounding_squares = square_index == king_index;
+
         auto square = Square{square_index};
-
-        auto attacked_by_other = ! board.safe_for_king(square.file(), square.rank(), perspective);
         auto piece = board.piece_on_square(square.file(), square.rank());
-        bool occupied_by_same = piece &&
-                                piece->color() == perspective &&
-                                piece->type() != KING;
 
-        auto keep_going = square_index == king_index;
-        if(occupied_by_same)
+        if(piece && piece->color() == perspective && piece->type() != KING) // Square is blocked by a friendly piece
         {
             friendly_block_total += friendly_block_score;
         }
-        else if(attacked_by_other)
+        else if( ! board.safe_for_king(square.file(), square.rank(), perspective)) // Square is attacked by an opposing piece
         {
             opponent_block_total += opponent_block_score;
         }
         else
         {
             ++free_space_total;
-            keep_going = true;
+            add_surrounding_squares = true;
         }
 
         // Add surrounding squares to square_queue.
-        // always check the squares surrounding the king's current positions, even if
-        // it is not safe (i.e., the king is in check).
-        if(keep_going)
+        if(add_surrounding_squares)
         {
             // The index difference between squares on the same rank but adjacent files is 8.
             for(int file_diff = -8; file_diff <= 8; file_diff += 8)
@@ -133,7 +131,7 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective,
 
                     // Make sure new_index is on board and the rank change didn't
                     // result in an index on a different file.
-                    if(new_index >= square_queue.size() || rank_diff != new_mod - old_mod)
+                    if(new_index >= invalid_index || rank_diff != new_mod - old_mod)
                     {
                         continue;
                     }
