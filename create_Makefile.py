@@ -122,7 +122,7 @@ if system == 'gcc':
             "-Iinclude"]
     base_linker_options = ["-pthread", "-fexceptions"]
     linker_options['debug'] = []
-    linker_options['release'] = ['-flto', '-fuse-linker-plugin']
+    linker_options['release'] = ['-flto']
 
 elif system == 'clang':
     compiler = 'clang++'
