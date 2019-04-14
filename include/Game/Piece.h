@@ -21,7 +21,7 @@ class Piece
 
         std::string pgn_symbol() const;
         char fen_symbol() const;
-        std::string ascii_art(size_t row) const;
+        std::string ascii_art(int row, int square_height) const;
         Color color() const;
 
         bool can_move(const Move* move) const;
@@ -58,6 +58,7 @@ class Piece
         void add_standard_legal_move(int file_step, int rank_step);
 
         std::vector<std::string> ascii_art_lines;
+        static int maximum_piece_height;
 
         void add_pawn_art();
         void add_rook_art();

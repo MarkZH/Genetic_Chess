@@ -816,8 +816,8 @@ const std::vector<const Move*>& Board::legal_moves() const
 //! \param perspective Specifies which side of the board is at the bottom of the screen.
 void Board::ascii_draw(Color perspective) const
 {
-    const size_t square_width = 7;
-    const size_t square_height = 3;
+    const int square_width = 7;
+    const int square_height = 3;
 
     const std::string square_corner = "+";
     const std::string square_horizontal_border = "-";
@@ -828,7 +828,7 @@ void Board::ascii_draw(Color perspective) const
     {
         horizontal_line.append(square_corner);
 
-        for(size_t j = 0; j < square_width; ++j)
+        for(int j = 0; j < square_width; ++j)
         {
             horizontal_line.append(square_horizontal_border);
         }
@@ -845,7 +845,7 @@ void Board::ascii_draw(Color perspective) const
     {
         std::cout << left_spacer << horizontal_line;
 
-        for(size_t square_row = 0; square_row < square_height; ++square_row)
+        for(int square_row = 0; square_row < square_height; ++square_row)
         {
             if(square_row == square_height/2)
             {
@@ -862,7 +862,7 @@ void Board::ascii_draw(Color perspective) const
                 char filler = square_color(file, rank) == WHITE ? ' ' : ':';
                 if(piece)
                 {
-                    auto piece_row = piece->ascii_art(square_row);
+                    auto piece_row = piece->ascii_art(square_row, square_height);
                     std::string padding((square_width - piece_row.size())/2, filler);
                     piece_symbol = padding + piece_row + padding;
                     while(piece_symbol.size() < square_width)
@@ -884,7 +884,7 @@ void Board::ascii_draw(Color perspective) const
     std::cout << left_spacer;
     for(char file = file_start; inside_board(file); file += d_file)
     {
-        std::cout << " " << std::string(square_width/2, ' ')
+        std::cout << " " << std::string(square_width/2 - 1 + square_width%2, ' ')
                   << file
                   << std::string(square_width/2, ' ');
     }

@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cassert>
 #include <array>
+#include <cmath>
 
 #include "Game/Board.h"
 #include "Game/Piece_Types.h"
@@ -20,6 +21,8 @@
 #include "Moves/Castle.h"
 
 #include "Utility/String.h"
+
+int Piece::maximum_piece_height = 0;
 
 //! Create a piece.
 
@@ -66,13 +69,18 @@ Piece::Piece(Color color_in, Piece_Type type_in) :
 //! \param row Which row of the picture to return, with 0 being the top.
 //! \returns One row of text that forms a picture of the piece.
 //! Piece design by VK (?) and taken from http://ascii.co.uk/art/chess.
-std::string Piece::ascii_art(size_t row) const
+std::string Piece::ascii_art(int row, int square_height) const
 {
-    if(row >= ascii_art_lines.size())
+    assert(square_height >= maximum_piece_height);
+
+    int empty_bottom_rows = (square_height - maximum_piece_height)/2;
+    int empty_top_rows = square_height - ascii_art_lines.size() - empty_bottom_rows;
+    int line = row - empty_top_rows;
+    if(0 <= line && line < int(ascii_art_lines.size()))
     {
-        return std::string(ascii_art_lines.front().size(), ' ');
+        return ascii_art_lines[line];
     }
-    return ascii_art_lines[row];
+    return {};
 }
 
 //! The color of the piece.
@@ -288,7 +296,6 @@ void Piece::add_king_moves()
 void Piece::add_pawn_art()
 {
     // ASCII Art http://ascii.co.uk/art/chess (VK)
-    ascii_art_lines.push_back("");
     ascii_art_lines.push_back("( )");
     ascii_art_lines.push_back("/___\\");
     add_color();
@@ -341,6 +348,8 @@ void Piece::add_king_art()
 
 void Piece::add_color()
 {
+    maximum_piece_height = std::max(maximum_piece_height, int(ascii_art_lines.size()));
+
     if(color() == WHITE)
     {
         return;
