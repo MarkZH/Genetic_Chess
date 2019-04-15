@@ -77,6 +77,13 @@ namespace String
     //! \param s The input string.
     //! \returns The same string with all letters replaced by their lowercase versions.
     std::string lowercase(std::string s);
+
+    //! Returns a text version of an integer with thousands separators
+
+    //! \param n The integer.
+    //! \param separator The separator between groups of thousands.
+    //! \returns A text string with thousands separators.
+    std::string format_integer(int n, const std::string& separator);
 }
 
 #endif // STRING_H

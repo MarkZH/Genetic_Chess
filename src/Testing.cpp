@@ -970,6 +970,33 @@ bool run_tests()
         }
     }
 
+    // Number formating
+    std::vector<std::pair<int, std::string>> tests =
+        {{1, "1"},
+         {22, "22"},
+         {333, "333"},
+         {4444, "4,444"},
+         {55555, "55,555"},
+         {666666, "666,666"},
+         {7777777, "7,777,777"},
+         {88888888, "88,888,888"},
+         {999999999, "999,999,999"},
+         {1000000000, "1,000,000,000"}};
+    for(const auto& test : tests)
+    {
+        auto format_result = String::format_integer(test.first, ",");
+        if(format_result != test.second)
+        {
+            std::cerr << "String::format_integer() failed for "
+                      << test.first
+                      << ". Got: "
+                      << format_result
+                      << " instead of "
+                      << test.second << std::endl;
+            tests_passed = false;
+        }
+    }
+
 
     // Log-Norm distribution check
     const double mean_moves = 26.0;
@@ -1627,6 +1654,7 @@ bool run_perft_tests()
               });
 
     auto test_number = 0;
+    auto legal_moves_counted = 0;
     auto perft_timer = Scoped_Stopwatch("");
     for(const auto& line : lines)
     {
@@ -1643,6 +1671,7 @@ bool run_perft_tests()
             auto depth = std::stoul(depth_leaves.front().substr(1));
             auto expected_leaves = std::stoul(depth_leaves.back());
             auto leaf_count = move_count(perft_board, depth);
+            legal_moves_counted += leaf_count;
             if(leaf_count != expected_leaves)
             {
                 std::cerr << "\nError at depth " << depth << std::endl;
@@ -1658,7 +1687,10 @@ bool run_perft_tests()
         std::cout << " OK!" << std::endl;
     }
 
-    std::cout << "Perft time: " << perft_timer.time_so_far() << std::endl;
+    auto time = perft_timer.time_so_far();
+    std::cout << "Perft time: " << time << std::endl;
+    std::cout << "Legal moves counted: " << String::format_integer(legal_moves_counted, ",") << std::endl;
+    std::cout << "Move generation rate: " << legal_moves_counted/time << " moves/second." << std::endl;
     return true;
 }
 

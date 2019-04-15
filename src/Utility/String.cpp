@@ -121,3 +121,19 @@ std::string String::lowercase(std::string s)
     for(auto& c : s){ c = std::tolower(c); }
     return s;
 }
+
+std::string String::format_integer(int n, const std::string& separator)
+{
+    auto s = std::to_string(n);
+    auto index = s.size() % 3;
+    index = (index == 0 ? 3 : index);
+    auto result = s.substr(0, index);
+
+    for( ; index < s.size(); index += 3)
+    {
+        result += separator;
+        result += s.substr(index, 3);
+    }
+
+    return result;
+}
