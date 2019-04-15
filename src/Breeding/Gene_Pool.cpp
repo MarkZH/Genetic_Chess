@@ -106,6 +106,11 @@ void gene_pool(const std::string& config_file)
         pools.push_back({});
     }
 
+    while(pools.size() > gene_pool_count)
+    {
+        pools.pop_back();
+    }
+
     for(size_t i = 0; i < pools.size(); ++i)
     {
         while(pools[i].size() < gene_pool_population)
