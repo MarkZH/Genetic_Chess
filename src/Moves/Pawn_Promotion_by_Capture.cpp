@@ -12,10 +12,11 @@
 //! \param promotion A pointer to the piece that the pawn will promote to.
 //! \param dir The direction of the capture.
 //! \param file_start The horizontal direction of the capture.
-Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(const Piece* promotion,
+Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
+                                                     Color color,
                                                      Direction dir,
                                                      char file_start) :
-    Pawn_Promotion(promotion, file_start)
+    Pawn_Promotion(promotion, color, file_start)
 {
     adjust_end_file(dir == RIGHT ? 1 : -1);
     if( ! Board::inside_board(end_file()))

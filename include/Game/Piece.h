@@ -6,6 +6,7 @@
 #include <memory>
 #include <array>
 
+#include "Game/Board.h"
 #include "Game/Color.h"
 #include "Piece_Types.h"
 
@@ -52,7 +53,22 @@ class Piece
 
         // Add a move to the list that is only legal when starting from a certain square
         // (e.g., castling, pawn double move, promotion, etc.)
-        void add_legal_move(std::unique_ptr<Move> move);
+        template<typename Move_Type, typename ...Parameters>
+        void add_legal_move(Parameters ... parameters)
+        {
+            auto move = std::make_unique<Move_Type>(parameters...);
+            auto index = Board::square_index(move->start_file(), move->start_rank());
+            legal_moves[index].push_back(move.get());
+
+            // Make list of all capturing moves, excluding all but one type of pawn capture per square.
+            if(move->can_capture()
+               && ! move->is_en_passant()
+               && (move->promotion_piece_symbol() == 'Q' || move->promotion_piece_symbol() == '\0'))
+            {
+                attack_moves[index].push_back(move.get());
+            }
+            possible_moves.push_back(std::move(move));
+        }
 
         // Add a move to the list that is legal starting from all squares
         void add_standard_legal_move(int file_step, int rank_step);

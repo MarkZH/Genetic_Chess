@@ -10,9 +10,9 @@
 
 //! \param promotion_piece The piece the pawn will be promoted to.
 //! \param file_start The file of the starting square.
-Pawn_Promotion::Pawn_Promotion(const Piece* promotion_piece, char file_start) :
-    Pawn_Move(promotion_piece->color(), file_start, promotion_piece->color() == WHITE ? 7 : 2),
-    promote_to(promotion_piece)
+Pawn_Promotion::Pawn_Promotion(Piece_Type promotion_piece, Color color, char file_start) :
+    Pawn_Move(color, file_start, color == WHITE ? 7 : 2),
+    promote_to(Board::piece_instance(promotion_piece, color))
 {
 }
 

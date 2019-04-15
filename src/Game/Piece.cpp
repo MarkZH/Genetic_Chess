@@ -149,26 +149,11 @@ void Piece::add_standard_legal_move(int file_step, int rank_step)
 
             if(Board::inside_board(end_file, end_rank))
             {
-                add_legal_move(std::make_unique<Move>(start_file, start_rank,
-                                                      end_file, end_rank));
+                add_legal_move<Move>(start_file, start_rank,
+                                     end_file, end_rank);
             }
         }
     }
-}
-
-void Piece::add_legal_move(std::unique_ptr<Move> move)
-{
-    auto index = Board::square_index(move->start_file(), move->start_rank());
-    legal_moves[index].push_back(move.get());
-
-    // Make list of all capturing moves, excluding all but one type of pawn capture per square.
-    if(move->can_capture()
-       && ! move->is_en_passant()
-       && (move->promotion_piece_symbol() == 'Q' || move->promotion_piece_symbol() == '\0'))
-    {
-        attack_moves[index].push_back(move.get());
-    }
-    possible_moves.push_back(std::move(move));
 }
 
 void Piece::add_pawn_moves()
@@ -180,20 +165,16 @@ void Piece::add_pawn_moves()
     {
         for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
         {
-            add_legal_move(std::make_unique<Pawn_Move>(color(), file, rank));
+            add_legal_move<Pawn_Move>(color(), file, rank);
         }
     }
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        add_legal_move(std::make_unique<Pawn_Double_Move>(color(), file));
+        add_legal_move<Pawn_Double_Move>(color(), file);
     }
 
-    std::vector<const Piece*> possible_promotions;
-    possible_promotions.emplace_back(Board::piece_instance(QUEEN, color()));
-    possible_promotions.emplace_back(Board::piece_instance(KNIGHT, color()));
-    possible_promotions.emplace_back(Board::piece_instance(ROOK, color()));
-    possible_promotions.emplace_back(Board::piece_instance(BISHOP, color()));
+    auto possible_promotions = {QUEEN, KNIGHT, ROOK, BISHOP};
 
     for(auto dir : {RIGHT, LEFT})
     {
@@ -203,20 +184,20 @@ void Piece::add_pawn_moves()
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
             {
-                add_legal_move(std::make_unique<Pawn_Capture>(color(), dir, file, rank));
+                add_legal_move<Pawn_Capture>(color(), dir, file, rank);
             }
         }
 
         for(char file = first_file; file <= last_file; ++file)
         {
-            add_legal_move(std::make_unique<En_Passant>(color(), dir, file));
+            add_legal_move<En_Passant>(color(), dir, file);
         }
 
         for(auto promote : possible_promotions)
         {
             for(auto file = first_file; file <= last_file; ++file)
             {
-                add_legal_move(std::make_unique<Pawn_Promotion_by_Capture>(promote, dir, file));
+                add_legal_move<Pawn_Promotion_by_Capture>(promote, color(), dir, file);
             }
         }
     }
@@ -225,7 +206,7 @@ void Piece::add_pawn_moves()
     {
         for(auto file = 'a'; file <= 'h'; ++file)
         {
-            add_legal_move(std::make_unique<Pawn_Promotion>(promote, file));
+            add_legal_move<Pawn_Promotion>(promote, color(), file);
         }
     }
 }
@@ -289,8 +270,8 @@ void Piece::add_king_moves()
     }
 
     int base_rank = (color() == WHITE ? 1 : 8);
-    add_legal_move(std::make_unique<Castle>(base_rank, LEFT));
-    add_legal_move(std::make_unique<Castle>(base_rank, RIGHT));
+    add_legal_move<Castle>(base_rank, LEFT);
+    add_legal_move<Castle>(base_rank, RIGHT);
 }
 
 void Piece::add_pawn_art()

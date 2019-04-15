@@ -5,6 +5,9 @@
 
 #include <string>
 
+#include "Game/Piece_Types.h"
+#include "Game/Color.h"
+
 class Board;
 class Piece;
 
@@ -12,7 +15,7 @@ class Piece;
 class Pawn_Promotion : public Pawn_Move
 {
     public:
-        Pawn_Promotion(const Piece* promotion_piece, char file_start);
+        Pawn_Promotion(Piece_Type promotion_piece, Color color, char file_start);
 
         void side_effects(Board& board) const override;
         char promotion_piece_symbol() const override;
