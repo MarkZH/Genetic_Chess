@@ -64,6 +64,12 @@ void gene_pool(const std::string& config_file)
     // Oscillating game time
     const double minimum_game_time = config.as_number("minimum game time"); // seconds
     const double maximum_game_time = config.as_number("maximum game time"); // seconds
+    if(maximum_game_time < minimum_game_time)
+    {
+        std::cerr << "Minimum game time = " << minimum_game_time << "\n";
+        std::cerr << "Maximum game time = " << maximum_game_time << "\n";
+        throw std::runtime_error("Maximum game time must be greater than the minimum game time.");
+    }
     double game_time_increment = config.as_number("game time increment"); // seconds
     const bool oscillating_time = config.as_boolean("oscillating time", "yes", "no");
     double game_time = minimum_game_time;
