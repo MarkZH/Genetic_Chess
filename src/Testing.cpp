@@ -611,7 +611,6 @@ bool run_tests()
 
 
     // Test Genetic_AI file loading
-    std::cout << "Testing genome file handling ... " << std::flush;
     auto pool_file_name = "test_gene_pool.txt";
     auto write_file_name = "test_genome_write.txt";
     auto rewrite_file_name = "test_genome_rewrite.txt";
@@ -623,7 +622,7 @@ bool run_tests()
     for(auto& ai : test_pool)
     {
         ai.set_origin_pool(Random::random_integer(0, 9));
-        ai.mutate(1000);
+        ai.mutate(100);
     }
     for(auto& ai : test_pool)
     {
@@ -653,7 +652,6 @@ bool run_tests()
     try
     {
         auto example_genetic_ai = Genetic_AI(genetic_ai_example_file_name);
-        std::cout << "Done." << std::endl;
     }
     catch(const std::exception& e)
     {
