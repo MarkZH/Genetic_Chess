@@ -924,7 +924,7 @@ bool run_tests()
     if(ellipses_split_result != ellipses_split_expected)
     {
         tests_passed = false;
-        std::cerr << "Incorrect splitp result:\n";
+        std::cerr << "Incorrect split result:\n";
         std::cerr << ellipses_split_string << " split on .. produced\n";
         for(auto s : ellipses_split_result)
         {
@@ -942,7 +942,7 @@ bool run_tests()
     if(ellipses_split_count_result != ellipses_split_count_expected)
     {
         tests_passed = false;
-        std::cerr << "Incorrect splitp result:\n";
+        std::cerr << "Incorrect split result:\n";
         std::cerr << ellipses_split_string << " split a maximum of 4 times on .. produced\n";
         for(auto s : ellipses_split_count_result)
         {
@@ -959,7 +959,7 @@ bool run_tests()
     if(ellipses_split_count_full_result != ellipses_split_expected)
     {
         tests_passed = false;
-        std::cerr << "Incorrect splitp result:\n";
+        std::cerr << "Incorrect split result:\n";
         std::cerr << ellipses_split_string << " split a maximum of 5 times on .. produced\n";
         for(auto s : ellipses_split_count_full_result)
         {
