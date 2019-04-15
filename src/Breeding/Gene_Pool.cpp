@@ -173,6 +173,8 @@ void gene_pool(const std::string& config_file)
             game_time_increment = -std::abs(game_time_increment);
         }
 
+        game_time = Math::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
+
         std::cout << "Done." << std::endl;
     }
 
