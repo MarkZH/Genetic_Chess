@@ -353,8 +353,7 @@ void gene_pool(const std::string& config_file)
                                                  search_pool.end(),
                                                  best_compare), best_compare);
         }
-        std::ofstream best_file(genome_file_name + "_best_genome.txt");
-        best_ai.print(best_file);
+        best_ai.print(genome_file_name + "_best_genome.txt");
 
         // Pause gene pool
         if(signal_activated == PAUSE_SIGNAL)
