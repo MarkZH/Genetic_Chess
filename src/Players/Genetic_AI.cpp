@@ -18,7 +18,6 @@ int Genetic_AI::max_origin_pool_id = 0;
 
 //! Generate a randomly mutated Genetic_AI
 Genetic_AI::Genetic_AI() :
-    genome(),
     id_number(next_id++)
 {
     calibrate_thinking_speed();
