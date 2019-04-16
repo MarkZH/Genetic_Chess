@@ -9,7 +9,8 @@
 
 //! Create a pawn capture that also promotes.
 
-//! \param promotion A pointer to the piece that the pawn will promote to.
+//! \param promotion A type of piece the pawn will be promoted to.
+//! \param color The color of the moving pawn.
 //! \param dir The direction of the capture.
 //! \param file_start The horizontal direction of the capture.
 Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
