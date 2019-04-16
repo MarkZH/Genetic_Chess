@@ -286,7 +286,12 @@ The gene returns a score of one if the scoring side has enough pieces to checkma
 An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line. The \verb|Ancestry| section is a record of the fraction of a Genetic AI's ancestry comes from each gene pool; this is purely informational and does not affect play.
 \verbatiminput{../genetic_ai_example.txt}
 
+In genome files that are the output of gene pool runs (see Section~\ref{gene-pool-section}) there will also be lines in the following format:\\\\
+\verb|Still Alive: 2 : 759 849 872 896 899 901 902 903 920 921 922 923 924 925|\\\\
+This line lists the ID numbers (after the second colon) of the AIs that are still alive within gene pool \#2 (the number after the first colon).
+
 \section{The Gene Pool: On the Care and Feeding of Chess AIs}
+\label{gene-pool-section}
 
 In each generation, the players in a gene pool are randomly matched up with each other to play a single game of chess. After the game, the two players mate to produce one offspring by picking each gene randomly from either parent with equal probability (recombination~\cite{recombination-wiki}). The offspring is then subject to a single extra mutation procedure wherein a number genes are individually mutated (that number being controlled by a dedicated gene, see Section~\ref{mutation-rate-gene}). Finally, the offspring replaces the loser in the gene pool. If the game ended in a draw, the player to be replaced by the offspring is picked by coin flip. In the literature, this setup is classified under Evolutionary Strategies~\cite{evolution-strategy-wiki}, more specifically \((N/2+N)\)-ES~\cite{evolution-strategy-glossary}, where \(N\) is the population size after the chess games (half the initial population), \(/2\) refers to two parents producing one offspring through recombination, \(+\) means that the offspring compete with the parents (elitism), and the final \(N\) refers to how many offspring are generated to keep a constant population of \(2N\), half of which are killed off every generation.
 
@@ -300,7 +305,7 @@ During a run, the gene pool can be paused by pressing Ctrl-z in Linux and Ctrl-B
 A gene pool is configured with a text file that is reference in the program starting arguments (see Section~\ref{running}). An explanatory example gene pool configuration file is presented below. All parameters are required to be in the file.
 \verbatiminput{../gene_pool_config_example.txt}
 
-\subsection{Gene Pool Output}
+\subsection{Gene Pool Terminal Output}
 An example of typical output during a gene pool run is shown below. First, some general information about the pool is shown, then the results of the random matchups, thirdly the new makeup of this gene pool in the aftermath of the games, and finally the IDs of the AIs with the most ever wins and the most number of games survived.
 \begin{verbatim}
 Gene pool ID: 0  Gene pool size: 16
@@ -338,7 +343,7 @@ Most wins:     16 by ID 96392
 Longest lived: 27 by ID 96392
 
 \end{verbatim}
-The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, Player 106479 is on a four-game winning streak since it was born (including victories both in this pool and in pool 2 where it was born). Player 106457 has drawn its last two games after its last win. The (\verb|T|) indicates that it is the best AI from another gene pool that has been copied to this pool.
+The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, Player 106479 is on a four-game winning streak since it was born (including victories both in this pool and in pool 2 where it was born). Player 106457 has drawn its last two games after its last win. The (\verb|T|) indicates that the AI is a copy that has been transferred from another pool.
 
 
 \section{Some Consistent Results (in rough order of discovery)}
