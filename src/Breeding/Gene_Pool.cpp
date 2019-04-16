@@ -252,14 +252,7 @@ void gene_pool(const std::string& config_file)
                 if(wins[winning_player] >= most_wins[pool_index])
                 {
                     most_wins[pool_index] = wins[winning_player];
-                    if(most_wins_player.count(pool_index))
-                    {
-                        most_wins_player[pool_index] = winning_player;
-                    }
-                    else
-                    {
-                        most_wins_player.emplace(pool_index, winning_player);
-                    }
+                    most_wins_player.insert_or_assign(pool_index, winning_player);
                 }
             }
             else
@@ -301,14 +294,7 @@ void gene_pool(const std::string& config_file)
             if(games_survived >= most_games_survived[pool_index])
             {
                 most_games_survived[pool_index] = games_survived;
-                if(most_games_survived_player.count(pool_index))
-                {
-                    most_games_survived_player[pool_index] = ai;
-                }
-                else
-                {
-                    most_games_survived_player.emplace(pool_index, ai);
-                }
+                most_games_survived_player.insert_or_assign(pool_index, ai);
             }
         }
 
