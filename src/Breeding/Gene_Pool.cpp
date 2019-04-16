@@ -46,8 +46,6 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
 template<typename Stat_Map>
 void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats);
 
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::vector<std::vector<Genetic_AI>>& ai_lists);
-
 
 void gene_pool(const std::string& config_file)
 {
@@ -513,22 +511,4 @@ void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats)
         }
     }
     stats = new_stats;
-}
-
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, std::vector<std::vector<Genetic_AI>>& ai_lists)
-{
-    for(size_t i = 0; i < pools.size(); ++i)
-    {
-        const auto& pool = pools[i];
-        auto& ai_list = ai_lists[i];
-        std::vector<Genetic_AI> new_ai_list;
-        for(const auto& ai : ai_list)
-        {
-            if(std::find(pool.begin(), pool.end(), ai) != pool.end())
-            {
-                new_ai_list.push_back(ai);
-            }
-        }
-        ai_list = new_ai_list;
-    }
 }
