@@ -1690,7 +1690,7 @@ bool run_perft_tests()
     auto time = perft_timer.time_so_far();
     std::cout << "Perft time: " << time << std::endl;
     std::cout << "Legal moves counted: " << String::format_integer(legal_moves_counted, ",") << std::endl;
-    std::cout << "Move generation rate: " << legal_moves_counted/time << " moves/second." << std::endl;
+    std::cout << "Move generation rate: " << String::format_integer(int(legal_moves_counted/time), ",") << " moves/second." << std::endl;
     return true;
 }
 
