@@ -1654,7 +1654,7 @@ bool run_perft_tests()
               });
 
     auto test_number = 0;
-    auto legal_moves_counted = 0;
+    size_t legal_moves_counted = 0;
     auto perft_timer = Scoped_Stopwatch("");
     for(const auto& line : lines)
     {

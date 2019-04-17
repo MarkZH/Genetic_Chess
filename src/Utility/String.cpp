@@ -124,6 +124,18 @@ std::string String::lowercase(std::string s)
 
 std::string String::format_integer(int n, const std::string& separator)
 {
+    if(n < 0)
+    {
+        return '-' + format_integer(size_t(-n), separator);
+    }
+    else
+    {
+        return format_integer(size_t(n), separator);
+    }
+}
+
+std::string String::format_integer(size_t n, const std::string& separator)
+{
     auto s = std::to_string(n);
     auto index = s.size() % 3;
     index = (index == 0 ? 3 : index);

@@ -79,7 +79,7 @@ std::string Piece::ascii_art(int row, int square_height) const
     assert(square_height >= maximum_piece_height);
 
     int empty_bottom_rows = (square_height - maximum_piece_height)/2;
-    int empty_top_rows = square_height - ascii_art_lines.size() - empty_bottom_rows;
+    int empty_top_rows = square_height - int(ascii_art_lines.size()) - empty_bottom_rows;
     int line = row - empty_top_rows;
     if(0 <= line && line < int(ascii_art_lines.size()))
     {

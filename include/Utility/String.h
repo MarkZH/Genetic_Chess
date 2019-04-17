@@ -84,6 +84,13 @@ namespace String
     //! \param separator The separator between groups of thousands.
     //! \returns A text string with thousands separators.
     std::string format_integer(int n, const std::string& separator);
+
+    //! Returns a text version of an integer with thousands separators
+
+    //! \param n The unsigned integer.
+    //! \param separator The separator between groups of thousands.
+    //! \returns A text string with thousands separators.
+    std::string format_integer(size_t n, const std::string& separator);
 }
 
 #endif // STRING_H
