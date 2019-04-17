@@ -113,9 +113,8 @@ void gene_pool(const std::string& config_file)
     {
         while(pools[i].size() < gene_pool_population)
         {
-            pools[i].push_back(Genetic_AI());
+            pools[i].push_back(Genetic_AI(scramble_mutations));
             pools[i].back().set_origin_pool(int(i));
-            pools[i].back().mutate(scramble_mutations);
         }
 
         while(pools[i].size() > gene_pool_population)
@@ -319,10 +318,17 @@ void gene_pool(const std::string& config_file)
         }
         std::cout << std::endl;
 
-        std::cout << "Most wins:     " << most_wins[pool_index]
-                  << " by ID " << most_wins_player[pool_index].id() << std::endl;
-        std::cout <<   "Longest lived: " << most_games_survived[pool_index]
-                  << " by ID " << most_games_survived_player[pool_index].id() << std::endl;
+        if(most_wins.count(pool_index) > 0)
+        {
+            std::cout << "Most wins:     " << most_wins.at(pool_index)
+                      << " by ID " << most_wins_player.at(pool_index).id() << std::endl;
+        }
+
+        if(most_games_survived.count(pool_index) > 0)
+        {
+            std::cout << "Longest lived: " << most_games_survived.at(pool_index)
+                      << " by ID " << most_games_survived_player.at(pool_index).id() << std::endl;
+        }
 
         // Record best AI from all pools.
         auto best_ai = pool.front();
