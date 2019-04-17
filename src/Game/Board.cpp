@@ -1920,3 +1920,25 @@ size_t Board::castling_move_index(Color player) const
 {
     return castling_index[player];
 }
+
+//! Create a copy of the board with a random pawn removed.
+
+//! \throws Debug assertion failure if there are no pawns on the board.
+Board Board::without_random_pawn() const
+{
+    assert(std::any_of(board.begin(), board.end(), [](auto p) { return p->type() == PAWN; }));
+
+    auto result = *this;
+    while(true)
+    {
+        auto square = Square(Random::random_integer(0, 63));
+        auto piece = result.piece_on_square(square.file(), square.rank());
+        if(piece && piece->type() == PAWN)
+        {
+            result.remove_piece(square.file(), square.rank());
+            break;
+        }
+    }
+    
+    return result;
+}

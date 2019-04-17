@@ -96,6 +96,8 @@ class Board
         bool material_change_possible() const;
         size_t castling_move_index(Color player) const;
 
+        Board without_random_pawn() const;
+
         static const Piece* piece_instance(Piece_Type piece_type, Color color);
 
     private:

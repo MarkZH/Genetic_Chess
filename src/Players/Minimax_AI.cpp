@@ -1,6 +1,7 @@
 #include "Players/Minimax_AI.h"
 
 #include <iostream>
+#include <string>
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Game/Board.h"
@@ -10,6 +11,7 @@
 
 #include "Utility/String.h"
 #include "Utility/Math.h"
+#include "Utility/Random.h"
 
 //! Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
 
@@ -366,9 +368,34 @@ double Minimax_AI::centipawn_value() const
 //!          so that the loss of a random pawn changes the score by about 1.0.
 void Minimax_AI::calculate_centipawn_value()
 {
-    auto board_with_pawns = Board("4k3/pppppppp/8/8/8/8/PPPPPPPP/4K3 w - - 0 1");
-    auto board_with_no_white_pawns = Board("4k3/pppppppp/8/8/8/8/8/4K3 w - - 0 1");
-    value_of_centipawn = std::abs(evaluate(board_with_pawns, {}, WHITE, 0) - evaluate(board_with_no_white_pawns, {}, WHITE, 0)) / 800;
+    auto sum_of_diffs = 0.0;
+    const auto total_count = 100;
+    for(int count = 0; count < total_count; ++count)
+    {
+        while(true)
+        {
+            Board board;
+            auto board_is_good = true;
+            for(int move = 0; move < 40; ++move)
+            {
+                const auto& move_list = board.legal_moves();
+                auto next_move = move_list[Random::random_integer(0, int(move_list.size()) - 1)];
+                if(board.submit_move(*next_move).game_has_ended() || board.fen_status().find_first_of("pP") == std::string::npos)
+                {
+                    board_is_good = false;
+                    break;
+                }
+            }
+
+            if(board_is_good)
+            {
+                sum_of_diffs += std::abs(evaluate(board, {}, WHITE, 0) - evaluate(board.without_random_pawn(), {}, WHITE, 0));
+                break;
+            }
+        }
+    }
+    
+    value_of_centipawn = sum_of_diffs/total_count/100;
 }
 
 //! Prints the expected future variation and score for the chosen move.
