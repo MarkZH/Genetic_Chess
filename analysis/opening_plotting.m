@@ -61,20 +61,16 @@ print([raw_data '_opening_moves_plot_lin.png']);
 
 
 
-all_data = importdata([raw_data, '_all_opening_data.txt'], ',');
+top_rate_data = importdata([raw_data, '_top_opening_rate_data.txt'], ',');
 
 figure;
 hold all;
 window = 1000;
-end_rate_all_data = sum(all_data.data(end-window:end, :));
 
-[~, top_rate_indices] = sort(end_rate_all_data, 'descend');
-top10_rate_indices = top_rate_indices(1:10);
-
-for col = top10_rate_indices
-    plot(movsum(all_data.data(:, col), window, 'EndPoints', 'discard'), ...
+for col = 1 : size(top_rate_data.data, 2)
+    plot(movsum(top_rate_data.data(:, col), window, 'EndPoints', 'discard'), ...
          'LineWidth', 3, ...
-         'displayname', all_data.colheaders{col});
+         'displayname', top_rate_data.colheaders{col});
 end
 
 for index = 1:length(game_marks)
