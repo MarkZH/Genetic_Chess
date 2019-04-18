@@ -34,10 +34,13 @@ size_t Freedom_To_Move_Gene::attack_count(const Board& board, Color perspective)
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = board.piece_on_square(file, rank);
-            if( ! piece ||  piece->color() != perspective)
+            if(board.moves_attacking_square(file, rank, perspective).any())
             {
-                count += board.moves_attacking_square(file, rank, perspective).count();
+                auto piece = board.piece_on_square(file, rank);
+                if( ! piece ||  piece->color() != perspective)
+                {
+                    count += board.moves_attacking_square(file, rank, perspective).count();
+                }
             }
         }
     }
