@@ -32,6 +32,7 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
+#include "Genes/Null_Gene.h"
 
 #include "Utility/String.h"
 #include "Utility/Scoped_Stopwatch.h"
@@ -1561,6 +1562,7 @@ void run_speed_tests()
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto checkmate_material_gene = Checkmate_Material_Gene();
+    auto null_gene = Null_Gene();
 
     auto performance_board = Board("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
     std::vector<const Gene*> performance_genome = {&castling_possible_gene,
@@ -1574,7 +1576,8 @@ void run_speed_tests()
                                                    &pawn_islands_gene,
                                                    &sphere_of_influence_gene,
                                                    &stacked_pawns_gene,
-                                                   &total_force_gene};
+                                                   &total_force_gene,
+                                                   &null_gene};
 
     const auto number_of_tests = 1'000'000;
     std::vector<std::pair<double, std::string>> timing_results;

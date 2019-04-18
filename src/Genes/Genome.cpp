@@ -28,6 +28,7 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Mutation_Rate_Gene.h"
+#include "Genes/Null_Gene.h"
 
 size_t Genome::piece_strength_gene_index = -1;
 size_t Genome::look_ahead_gene_index = -1;
@@ -91,6 +92,7 @@ Genome::Genome()
     genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
     genome.emplace_back(std::make_unique<Pawn_Islands_Gene>());
     genome.emplace_back(std::make_unique<Checkmate_Material_Gene>());
+    genome.emplace_back(std::make_unique<Null_Gene>());
 }
 
 //! Clone a genome
