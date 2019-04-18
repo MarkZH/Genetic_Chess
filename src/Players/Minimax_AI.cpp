@@ -369,33 +369,40 @@ double Minimax_AI::centipawn_value() const
 void Minimax_AI::calculate_centipawn_value()
 {
     auto sum_of_diffs = 0.0;
-    const auto total_count = 100;
-    for(int count = 0; count < total_count; ++count)
+    auto count = 0;
+    while(true)
     {
-        while(true)
+        Board board;
+        auto board_is_good = true;
+        for(int move = 0; move < 40; ++move)
         {
-            Board board;
-            auto board_is_good = true;
-            for(int move = 0; move < 40; ++move)
-            {
-                const auto& move_list = board.legal_moves();
-                auto next_move = move_list[Random::random_integer(0, int(move_list.size()) - 1)];
-                if(board.submit_move(*next_move).game_has_ended() || board.fen_status().find_first_of("pP") == std::string::npos)
-                {
-                    board_is_good = false;
-                    break;
-                }
-            }
+            const auto& move_list = board.legal_moves();
+            auto next_move = move_list[Random::random_integer(0, int(move_list.size()) - 1)];
 
-            if(board_is_good)
+            if(board.submit_move(*next_move).game_has_ended() || board.fen_status().find_first_of("pP") == std::string::npos)
             {
-                sum_of_diffs += std::abs(evaluate(board, {}, WHITE, 0) - evaluate(board.without_random_pawn(), {}, WHITE, 0));
+                board_is_good = false;
+                break;
+            }
+        }
+
+        if(board_is_good)
+        {
+            ++count;
+            auto board_without_pawn = board.without_random_pawn();
+            auto original_board_result = evaluate(board, {}, WHITE, 0);
+            auto minus_pawn_result = evaluate(board_without_pawn, {}, WHITE, 0);
+            auto diff = std::abs(original_board_result - minus_pawn_result);
+            sum_of_diffs += diff;
+
+            if(count > 100 && diff < 0.01*sum_of_diffs)
+            {
                 break;
             }
         }
     }
-    
-    value_of_centipawn = sum_of_diffs/total_count/100;
+
+    value_of_centipawn = sum_of_diffs/count/100;
 }
 
 //! Prints the expected future variation and score for the chosen move.
