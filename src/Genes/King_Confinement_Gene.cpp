@@ -147,5 +147,5 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective,
     }
 
     auto normalizer = std::abs(friendly_block_score) + std::abs(opponent_block_score);
-    return ((friendly_block_total + opponent_block_total)/free_space_total)/normalizer;
+    return (friendly_block_total + opponent_block_total)/(1 + free_space_total)/normalizer;
 }
