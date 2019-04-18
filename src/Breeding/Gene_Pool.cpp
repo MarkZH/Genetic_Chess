@@ -445,7 +445,7 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
         last_file_name = genome_file_name;
     }
 
-    auto pool = pools.at(pool_index);
+    const auto& pool = pools.at(pool_index);
     for(const auto& ai : pool)
     {
         if( ! written_before[ai])
