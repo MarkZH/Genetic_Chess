@@ -502,7 +502,8 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
             }
         }
 
-        std::vector<Gene_Pool> result(still_alive.size());
+        auto largest_pool_number = still_alive.rbegin()->first;
+        std::vector<Gene_Pool> result(largest_pool_number + 1);
         for(const auto& index_list : still_alive)
         {
             line = pool_lines[index_list.first];
