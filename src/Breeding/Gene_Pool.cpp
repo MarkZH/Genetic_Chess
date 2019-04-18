@@ -477,6 +477,8 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
 
 std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
 {
+    class Bad_Still_Alive_Line{};
+
     std::string line;
     int line_number = 0;
 
@@ -498,17 +500,24 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
             ++line_number;
             if(String::contains(line, "Still Alive"))
             {
-                auto parse = String::split(line, ":", 2);
-                auto pool_number_string = parse.at(1);
-                size_t conversion_character_count;
-                auto pool_number = std::stoi(pool_number_string, &conversion_character_count);
-                if( ! String::trim_outer_whitespace(pool_number_string.substr(conversion_character_count)).empty())
+                try
                 {
-                    throw std::exception(); // The pool number string has more characters beyond the gene pool number.
+                    auto parse = String::split(line, ":", 2);
+                    auto pool_number_string = parse.at(1);
+                    size_t conversion_character_count;
+                    auto pool_number = std::stoi(pool_number_string, &conversion_character_count);
+                    if( ! String::trim_outer_whitespace(pool_number_string.substr(conversion_character_count)).empty())
+                    {
+                        throw Bad_Still_Alive_Line(); // The pool number string has more characters beyond the gene pool number.
+                    }
+                    still_alive[pool_number] = parse.at(2);
+                    pool_line_numbers[pool_number] = line_number;
+                    pool_lines[pool_number] = line;
                 }
-                still_alive[pool_number] = parse.at(2);
-                pool_line_numbers[pool_number] = line_number;
-                pool_lines[pool_number] = line;
+                catch(const std::exception& e)
+                {
+                    throw Bad_Still_Alive_Line();
+                }
             }
         }
 
@@ -520,7 +529,16 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
             line_number = pool_line_numbers[index_list.first];
             for(const auto& number_string : String::split(index_list.second))
             {
-                auto index = std::stoi(number_string);
+                int index;
+                try
+                {
+                    index = std::stoi(number_string);
+                }
+                catch(const std::exception& e)
+                {
+                    throw Bad_Still_Alive_Line();
+                }
+
                 result[index_list.first].emplace_back(load_file, index);
             }
             write_generation(result, index_list.first, ""); // mark AIs from file as already written
@@ -528,12 +546,10 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
 
         return result;
     }
-    catch(const std::exception&)
+    catch(const Bad_Still_Alive_Line&)
     {
         throw std::runtime_error("Invalid \"Still Alive\" line (line# " +
-                                 std::to_string(line_number) +
-                                 "): "
-                                 + line);
+                                 std::to_string(line_number) + "): " + line);
     }
 }
 
