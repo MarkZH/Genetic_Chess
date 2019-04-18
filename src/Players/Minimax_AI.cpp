@@ -13,6 +13,10 @@
 #include "Utility/Math.h"
 #include "Utility/Random.h"
 
+Minimax_AI::Minimax_AI() : value_of_centipawn_calculated(false)
+{
+}
+
 //! Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
 
 //! The depth of the search is determined by how much time is available.
@@ -359,6 +363,12 @@ double Minimax_AI::evaluate(const Board & board, const Game_Result& move_result,
 
 double Minimax_AI::centipawn_value() const
 {
+    if( ! value_of_centipawn_calculated)
+    {
+        calculate_centipawn_value();
+        value_of_centipawn_calculated = true;
+    }
+
     return value_of_centipawn;
 }
 
@@ -366,7 +376,7 @@ double Minimax_AI::centipawn_value() const
 
 //! \returns A numerical value to normalize the scores returned by board evaluations
 //!          so that the loss of a random pawn changes the score by about 1.0.
-void Minimax_AI::calculate_centipawn_value()
+void Minimax_AI::calculate_centipawn_value() const
 {
     auto sum_of_diffs = 0.0;
     auto count = 0;

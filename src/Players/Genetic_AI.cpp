@@ -22,7 +22,6 @@ Genetic_AI::Genetic_AI(int mutation_count) :
 {
     mutate(mutation_count);
     calibrate_thinking_speed();
-    calculate_centipawn_value();
 }
 
 //! Create a new Genetic_AI via sexual reproduction.
@@ -42,7 +41,6 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     }
 
     calibrate_thinking_speed();
-    calculate_centipawn_value();
 }
 
 //! Create a Genetic_AI from information in a text file.
@@ -60,7 +58,6 @@ Genetic_AI::Genetic_AI(const std::string& file_name)
     read_from(ifs);
 
     calibrate_thinking_speed();
-    calculate_centipawn_value();
 }
 
 //! Create a Genetic_AI from information in an input stream (std::ifstream, std::cin, etc.).
@@ -72,7 +69,6 @@ Genetic_AI::Genetic_AI(std::istream& is)
     read_from(is);
 
     calibrate_thinking_speed();
-    calculate_centipawn_value();
 }
 
 //! Create a Genetic_AI from a text file by searching for a specfic ID.
@@ -109,7 +105,6 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
             genome.read_from(ifs);
 
             calibrate_thinking_speed();
-            calculate_centipawn_value();
 
             next_id = std::max(next_id, id_number + 1);
 
@@ -185,7 +180,6 @@ void Genetic_AI::mutate(int mutation_count)
     }
 
     calibrate_thinking_speed();
-    calculate_centipawn_value();
 }
 
 //! Prints the information defining this AI.
