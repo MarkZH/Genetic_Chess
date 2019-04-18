@@ -57,7 +57,12 @@ void gene_pool(const std::string& config_file)
     const auto gene_pool_count = size_t(config.as_number("gene pool count"));
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
     const auto genome_file_name = config.as_text("gene pool file");
-    const int scramble_mutations = 100;
+    if(genome_file_name.empty())
+    {
+        throw std::runtime_error("Gene pool file cannot be empty.");
+    }
+
+    const int scramble_mutations = 100; // initial number of mutations when creating a new Genetic AI
 
     // Oscillating game time
     const double minimum_game_time = config.as_number("minimum game time"); // seconds
@@ -443,6 +448,11 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
         ofs.close();
         ofs.open(genome_file_name, std::ios::app);
         last_file_name = genome_file_name;
+    }
+
+    if( ! genome_file_name.empty() && ! ofs)
+    {
+        throw std::runtime_error("Could not write to file:" + genome_file_name);
     }
 
     const auto& pool = pools.at(pool_index);
