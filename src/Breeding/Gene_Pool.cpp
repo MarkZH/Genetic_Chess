@@ -210,7 +210,8 @@ void gene_pool(const std::string& config_file)
                                                        [](const auto& r)
                                                        { return r.wait_for(std::chrono::seconds(0)) != std::future_status::ready; });
 
-                if(in_progress_games >= maximum_simultaneous_games)
+                if(gene_pool_population > 2*maximum_simultaneous_games &&
+                   in_progress_games >= maximum_simultaneous_games)
                 {
                     std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 }
