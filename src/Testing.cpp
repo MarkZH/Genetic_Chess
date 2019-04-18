@@ -692,14 +692,14 @@ bool run_tests()
     auto king_confinement_score = (4*(1.0 + 1.0 + 1.0) + // blocked by friendlies (h2, g2, f2)
                                    (-1)*(1.0 + 1.0))/ // blocked by opponent (e1, e2)
                                    (4 + 1)/ // normalizing
-                                   (1.0 + 1.0 + 1.0); // free squares (h1, g1, f1)
+                                   (1 + (1 + 1 + 1)); // free squares (h1, g1, f1)
     tests_passed &= king_confinement_gene.test(king_confinement_board, king_confinement_score);
 
     auto king_confined_by_pawns_board = Board("k7/8/8/8/8/pppppppp/8/K7 w - - 0 1");
     auto king_confined_by_pawns_score = (4*(0.0) + // no friendly blockers
                                          (-1)*(8.0))/ // blocked by pawn attacks on second rank
                                          (4 + 1)/ // normalizing
-                                         (8.0); // free squares (a1-h1)
+                                         (1 + 8); // free squares (a1-h1)
     tests_passed &= king_confinement_gene.test(king_confined_by_pawns_board, king_confined_by_pawns_score);
 
     auto king_protection_gene = King_Protection_Gene();
