@@ -1926,7 +1926,7 @@ size_t Board::castling_move_index(Color player) const
 //! \throws Debug assertion failure if there are no pawns on the board.
 Board Board::without_random_pawn() const
 {
-    assert(std::any_of(board.begin(), board.end(), [](auto p) { return p->type() == PAWN; }));
+    assert(std::any_of(board.begin(), board.end(), [](auto p) { return p && p->type() == PAWN; }));
 
     auto result = *this;
     while(true)
@@ -1939,6 +1939,6 @@ Board Board::without_random_pawn() const
             break;
         }
     }
-    
+
     return result;
 }
