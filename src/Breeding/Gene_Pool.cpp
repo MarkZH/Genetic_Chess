@@ -12,6 +12,7 @@
 #include <thread>
 #include <chrono>
 #include <array>
+#include <cstdio>
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
@@ -349,7 +350,13 @@ void gene_pool(const std::string& config_file)
                                                  search_pool.end(),
                                                  best_compare), best_compare);
         }
-        best_ai.print(genome_file_name + "_best_genome.txt");
+        auto best_file_name = genome_file_name + "_best_genome.txt";
+        if(remove(best_file_name.c_str()) != 0)
+        {
+            auto error_intro = "\n### Could not delete best genome file(" + best_file_name + ")";
+            perror(error_intro.c_str());
+        }
+        best_ai.print(best_file_name);
 
         // Pause gene pool
         if(signal_activated == PAUSE_SIGNAL)
