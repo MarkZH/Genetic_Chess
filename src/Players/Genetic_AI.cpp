@@ -18,6 +18,8 @@ int Genetic_AI::next_id = 0;
 int Genetic_AI::max_origin_pool_id = 0;
 
 //! Generate a randomly mutated Genetic_AI
+
+//! \param mutation_count The number of genome mutations to apply to the AI after construction.
 Genetic_AI::Genetic_AI(int mutation_count) :
     id_number(next_id++)
 {

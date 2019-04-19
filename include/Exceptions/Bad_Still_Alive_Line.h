@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 
+//! An exception that is thrown when a malformed "Still Alive" line is encountered in a gene pool file.
 class Bad_Still_Alive_Line : public std::runtime_error
 {
     public:
