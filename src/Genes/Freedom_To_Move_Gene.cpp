@@ -12,9 +12,8 @@
 
 double Freedom_To_Move_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    static auto initial_score = double(attack_count(Board(), WHITE));
-
-    return attack_count(board, perspective)/initial_score;
+    static auto initial_score = double(Board().attack_count(WHITE));
+    return board.attack_count(perspective)/initial_score;
 }
 
 std::unique_ptr<Gene> Freedom_To_Move_Gene::duplicate() const
@@ -27,9 +26,9 @@ std::string Freedom_To_Move_Gene::name() const
     return "Freedom to Move Gene";
 }
 
-size_t Freedom_To_Move_Gene::attack_count(const Board& board, Color perspective) const
+int Freedom_To_Move_Gene::attack_count_scan(const Board& board, Color perspective) const
 {
-    size_t count = 0;
+    int count = 0;
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)
@@ -46,4 +45,10 @@ size_t Freedom_To_Move_Gene::attack_count(const Board& board, Color perspective)
     }
 
     return count;
+}
+
+bool Freedom_To_Move_Gene::verify(const Board& board) const
+{
+    return board.attack_count(WHITE) == attack_count_scan(board, WHITE) &&
+           board.attack_count(BLACK) == attack_count_scan(board, BLACK);
 }

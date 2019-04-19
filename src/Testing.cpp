@@ -687,6 +687,24 @@ bool run_tests()
     auto freedom_to_move_score = 32.0/18.0;
     tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, freedom_to_move_score);
 
+    Board freedom_to_move_punishment_board;
+    for(auto move_count = 0; move_count < 1'000'000; ++move_count)
+    {
+        if( ! freedom_to_move_gene.verify(freedom_to_move_punishment_board))
+        {
+            std::cerr << "Attack count discrepancy." << std::endl;
+            tests_passed = false;
+            break;
+        }
+
+        const auto& moves = freedom_to_move_punishment_board.legal_moves();
+        auto move = moves[Random::random_integer(0, moves.size() - 1)];
+        if(freedom_to_move_punishment_board.submit_move(*move).game_has_ended())
+        {
+            freedom_to_move_punishment_board = Board();
+        }
+    }
+
     auto king_confinement_gene = King_Confinement_Gene();
     king_confinement_gene.read_from(test_genes_file_name);
     auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");

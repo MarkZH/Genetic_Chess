@@ -88,6 +88,7 @@ Board::Board(const std::string& fen) :
     checking_square{},
     potential_attacks{},
     castling_index{{size_t(-1), size_t(-1)}},
+    attack_counts{},
     thinking_indicator(NO_THINKING)
 {
     initialize_board_hash();
@@ -907,6 +908,20 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     update_blocks(file, rank, old_piece, piece);
     add_attacks_from(file, rank, piece);
 
+    if(old_piece &&
+       ( ! piece || piece->color() != old_piece->color()) &&
+       moves_attacking_square(file, rank, old_piece->color()).any())
+    {
+        attack_counts[old_piece->color()] += moves_attacking_square(file, rank, old_piece->color()).count();
+    }
+
+    if(piece &&
+       ( ! old_piece || piece->color() != old_piece->color()) &&
+       moves_attacking_square(file, rank, piece->color()).any())
+    {
+        attack_counts[piece->color()] -= moves_attacking_square(file, rank, piece->color()).count();
+    }
+
     unmoved_positions[square_index(file, rank)] = false;
 
     update_board_hash(file, rank); // XOR in new piece on square
@@ -915,6 +930,11 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     {
         king_location[piece->color()] = {file, rank};
     }
+}
+
+int Board::attack_count(Color attacking_color) const
+{
+    return attack_counts[attacking_color];
 }
 
 void Board::add_attacks_from(char file, int rank, const Piece* piece)
@@ -937,6 +957,7 @@ void Board::modify_attacks(char file, int rank, const Piece* piece, bool adding_
         auto attacked_file = attack->end_file();
         auto attacked_rank = attack->end_rank();
         auto attacked_index = square_index(attacked_file, attacked_rank);
+        auto attack_count_diff = adding_attacks ? 1 : -1;
 
         if(blocked_move &&
            same_direction(blocked_move->file_change(),  blocked_move->rank_change(),
@@ -946,10 +967,15 @@ void Board::modify_attacks(char file, int rank, const Piece* piece, bool adding_
         }
         else
         {
-            potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
-
             blocked_move = nullptr;
             auto blocking_piece = piece_on_square(attacked_file, attacked_rank);
+
+            potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
+            if( ! blocking_piece || blocking_piece->color() != attacking_color)
+            {
+                attack_counts[attacking_color] += attack_count_diff;
+            }
+
             if(blocking_piece && blocking_piece != vulnerable_king)
             {
                 blocked_move = attack;
@@ -1003,15 +1029,21 @@ void Board::update_blocks(char file, int rank, const Piece* old_piece, const Pie
                 }
 
                 auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
+                auto attack_count_diff = add_new_attacks ? 1 : -1;
                 char target_file = file + file_step;
                 int  target_rank = rank + rank_step;
                 while(inside_board(target_file, target_rank))
                 {
                     auto target_index = square_index(target_file, target_rank);
+                    auto piece = piece_on_square(target_file, target_rank);
+                    if(( ! piece || piece->color() != attacking_color) && (potential_attacks[attacking_color][target_index][index] != add_new_attacks))
+                    {
+                        attack_counts[attacking_color] += attack_count_diff;
+                    }
+
                     potential_attacks[attacking_color][target_index][index] = add_new_attacks;
                     blocked_attacks[attacking_color][target_index][index] = ! add_new_attacks;
 
-                    auto piece = piece_on_square(target_file, target_rank);
                     if(piece && piece != vulnerable_king)
                     {
                         break;

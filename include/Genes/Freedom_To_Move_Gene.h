@@ -21,9 +21,12 @@ class Freedom_To_Move_Gene : public Gene
 
         std::string name() const override;
 
+        bool verify(const Board& board) const;
+
     private:
         double score_board(const Board& board, Color perspective, size_t depth) const override;
-        size_t attack_count(const Board& board, Color perspective) const;
+
+        int attack_count_scan(const Board& board, Color perspective) const;
 };
 
 #endif // FREEDOM_TO_MOVE_GENE_H
