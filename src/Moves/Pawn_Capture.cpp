@@ -16,14 +16,7 @@
 Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, char file_start, int rank_start) :
     Pawn_Move(color_in, file_start, rank_start)
 {
-    if(dir == RIGHT)
-    {
-        adjust_end_file(1);
-    }
-    else
-    {
-        adjust_end_file(-1);
-    }
+    adjust_end_file(dir == RIGHT ? 1 : -1);
 
     if( ! Board::inside_board(end_file()))
     {
