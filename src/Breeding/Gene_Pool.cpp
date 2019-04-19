@@ -61,10 +61,6 @@ void gene_pool(const std::string& config_file)
     const auto gene_pool_count = size_t(config.as_number("gene pool count"));
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
     const auto genome_file_name = config.as_text("gene pool file");
-    if(genome_file_name.empty())
-    {
-        throw std::runtime_error("Gene pool file cannot be empty.");
-    }
 
     const int scramble_mutations = 100; // initial number of mutations when creating a new Genetic AI
 
