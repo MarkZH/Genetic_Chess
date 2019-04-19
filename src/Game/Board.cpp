@@ -1003,17 +1003,17 @@ void Board::update_blocks(char file, int rank, const Piece* old_piece, const Pie
         return;
     }
 
-    // Replacing one piece with another (except for kings)
-    // does not change which moves are blocked. Should only
-    // happen during pawn promotions.
-    if(old_piece && new_piece &&
-       old_piece->type() != KING &&
-       new_piece->type() != KING)
+    // Replacing one piece with another does not change which
+    // moves are blocked. Only happens during pawn promotions.
+    if(old_piece && new_piece)
     {
         return;
     }
 
-    // Block moves that previously went through
+    auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
+    auto attack_count_diff = add_new_attacks ? 1 : -1;
+    auto origin_square_index = square_index(file, rank);
+
     for(auto attacking_color : {WHITE, BLACK})
     {
         auto vulnerable_king = piece_instance(KING, opposite(attacking_color));
@@ -1022,20 +1022,18 @@ void Board::update_blocks(char file, int rank, const Piece* old_piece, const Pie
             continue;
         }
 
-        const auto& attack_direction_list = potential_attacks[attacking_color][square_index(file, rank)];
+        const auto& attack_direction_list = potential_attacks[attacking_color][origin_square_index];
         for(size_t index = 0; index < attack_direction_list.size()/2; ++index) // /2 to exclude knight moves, which are never blocked
         {
             if(attack_direction_list[index])
             {
                 auto [file_step, rank_step] = Move::attack_direction_from_index(index);
-                auto revealed_attacker = new_piece ? nullptr : piece_on_square(file - file_step, rank - rank_step);
+                auto revealed_attacker = piece_on_square(file - file_step, rank - rank_step);
                 if(revealed_attacker && (revealed_attacker->type() == PAWN || revealed_attacker->type() == KING))
                 {
                     continue; // Pawns and kings are never blocked
                 }
 
-                auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
-                auto attack_count_diff = add_new_attacks ? 1 : -1;
                 char target_file = file + file_step;
                 int  target_rank = rank + rank_step;
                 while(inside_board(target_file, target_rank))
