@@ -1023,7 +1023,7 @@ void Board::update_blocks(char file, int rank, const Piece* old_piece, const Pie
         }
 
         const auto& attack_direction_list = potential_attacks[attacking_color][square_index(file, rank)];
-        for(size_t index = 0; index < attack_direction_list.size()/2; ++index)
+        for(size_t index = 0; index < attack_direction_list.size()/2; ++index) // /2 to exclude knight moves, which are never blocked
         {
             if(attack_direction_list[index])
             {
@@ -1031,7 +1031,7 @@ void Board::update_blocks(char file, int rank, const Piece* old_piece, const Pie
                 auto revealed_attacker = new_piece ? nullptr : piece_on_square(file - file_step, rank - rank_step);
                 if(revealed_attacker && (revealed_attacker->type() == PAWN || revealed_attacker->type() == KING))
                 {
-                    continue; // Pawns, kings, and knights are never blocked
+                    continue; // Pawns and kings are never blocked
                 }
 
                 auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
