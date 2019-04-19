@@ -932,6 +932,12 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     }
 }
 
+//! Returns the number of attacking moves available.
+
+//! The method is used in the Freedom_To_Move_Gene::score_board() method.
+//! \param attacking_color The color of pieces doing the attacking.
+//! \returns The number of attacking moves excepting those that attack pieces
+//!          of the same color.
 int Board::attack_count(Color attacking_color) const
 {
     return attack_counts[attacking_color];
