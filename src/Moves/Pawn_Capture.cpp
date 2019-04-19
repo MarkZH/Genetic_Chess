@@ -27,7 +27,7 @@ Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, char file_start, int r
 
     if( ! Board::inside_board(end_file()))
     {
-        throw std::runtime_error(std::string("Invalid pawn capture ending file: ") + end_file());
+        throw std::invalid_argument(std::string("Invalid pawn capture ending file: ") + end_file());
     }
 
     able_to_capture = true;

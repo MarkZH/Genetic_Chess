@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <fstream>
-#include <stdexcept>
 #include <map>
 #include <algorithm>
 
@@ -12,6 +11,8 @@ class Clock;
 #include "Game/Color.h"
 
 #include "Utility/String.h"
+
+#include "Exceptions/Genetic_AI_Creation_Error.h"
 
 int Genetic_AI::next_id = 0;
 int Genetic_AI::max_origin_pool_id = 0;
@@ -46,13 +47,13 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
 //! Create a Genetic_AI from information in a text file.
 
 //! \param file_name The name of the text file.
-//! \throws std::runtime_error if the file cannot be opened or if there is an error during reading.
+//! \throws Genetic_AI_Creation_Error if the file cannot be opened or if there is an error during reading.
 Genetic_AI::Genetic_AI(const std::string& file_name)
 {
     std::ifstream ifs(file_name);
     if( ! ifs)
     {
-        throw std::runtime_error("Could not read: " + file_name);
+        throw Genetic_AI_Creation_Error("Could not read: " + file_name);
     }
 
     read_from(ifs);
@@ -63,7 +64,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name)
 //! Create a Genetic_AI from information in an input stream (std::ifstream, std::cin, etc.).
 
 //! \param is Input stream.
-//! \throws std::runtime_error If there is an error during reading.
+//! \throws Genetic_AI_Creation_Error If there is an error during reading.
 Genetic_AI::Genetic_AI(std::istream& is)
 {
     read_from(is);
@@ -75,13 +76,13 @@ Genetic_AI::Genetic_AI(std::istream& is)
 
 //! \param file_name The name of the file with the Genetic_AI data.
 //! \param id_in The ID to search for.
-//! \throws std::runtime_error If there is an error during reading.
+//! \throws Genetic_AI_Creation_Error If there is an error during reading.
 Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_in)
 {
     std::ifstream ifs(file_name);
     if( ! ifs)
     {
-        throw std::runtime_error("Could not read: " + file_name);
+        throw Genetic_AI_Creation_Error("Could not read: " + file_name);
     }
 
     std::string line;
@@ -96,7 +97,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
         auto param_value = String::split(line, ":", 1);
         if(param_value.size() != 2 || String::trim_outer_whitespace(param_value[0]) != "ID")
         {
-            throw std::runtime_error("Bad ID line: " + line);
+            throw Genetic_AI_Creation_Error("Bad ID line: " + line);
         }
 
         if(id_in == std::stoi(param_value[1]))
@@ -112,7 +113,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
         }
     }
 
-    throw std::runtime_error("Could not locate ID " + std::to_string(id_in) + " inside file " + file_name);
+    throw Genetic_AI_Creation_Error("Could not locate ID " + std::to_string(id_in) + " inside file " + file_name);
 }
 
 void Genetic_AI::read_from(std::istream& is)
@@ -132,20 +133,20 @@ void Genetic_AI::read_from(std::istream& is)
             auto param_value = String::split(line, ":", 1);
             if(param_value.size() != 2 || String::trim_outer_whitespace(param_value[0]) != "ID")
             {
-                throw std::runtime_error("Bad ID line: " + line);
+                throw Genetic_AI_Creation_Error("Bad ID line: " + line);
             }
             id_number = std::stoi(param_value[1]);
             break;
         }
         else
         {
-            throw std::runtime_error("Invalid Genetic_AI line: " + line);
+            throw Genetic_AI_Creation_Error("Invalid Genetic_AI line: " + line);
         }
     }
 
     if( ! is)
     {
-        throw std::runtime_error("Incomplete Genetic_AI spec in file for ID " + std::to_string(id_number));
+        throw Genetic_AI_Creation_Error("Incomplete Genetic_AI spec in file for ID " + std::to_string(id_number));
     }
 
     read_ancestry(is);
@@ -274,7 +275,7 @@ void Genetic_AI::read_ancestry(std::istream& is)
 
         if(line != "Ancestry:")
         {
-            throw std::runtime_error("Missing ancestry data " + id_string);
+            throw Genetic_AI_Creation_Error("Missing ancestry data " + id_string);
         }
 
         break;
@@ -291,12 +292,19 @@ void Genetic_AI::read_ancestry(std::istream& is)
         auto pool_fraction = String::split(line, ":");
         if(pool_fraction.size() != 2)
         {
-            throw std::runtime_error("Malformed ancestry line " + id_string + ": " + line);
+            throw Genetic_AI_Creation_Error("Bad ancestry line " + id_string + ": " + line);
         }
 
-        auto pool = std::stoi(pool_fraction[0]);
-        auto fraction = std::stod(pool_fraction[1]);
-        ancestry[pool] = fraction;
-        max_origin_pool_id = std::max(max_origin_pool_id, pool);
+        try
+        {
+            auto pool = std::stoi(pool_fraction[0]);
+            auto fraction = std::stod(pool_fraction[1]);
+            ancestry[pool] = fraction;
+            max_origin_pool_id = std::max(max_origin_pool_id, pool);
+        }
+        catch(const std::exception&)
+        {
+            throw Genetic_AI_Creation_Error("Bad ancesry line " + id_string + ": " + line);
+        }
     }
 }

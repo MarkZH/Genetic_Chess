@@ -829,7 +829,7 @@ bool run_tests()
         auto bad_input_result = String::strip_block_comment(original, "{", "}");
         tests_passed = false;
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
         // This test should throw an exception.
     }
@@ -840,7 +840,7 @@ bool run_tests()
         auto bad_input_result = String::strip_block_comment(original, "{", "}");
         tests_passed = false;
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
         // This test should throw an exception.
     }
@@ -1294,8 +1294,9 @@ bool run_tests()
         std::cerr << "Illegal board created with too many pieces attacking black king." << std::endl;
         tests_passed = false;
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
+        // The board constructor should throw an exception.
     }
 
     try
@@ -1305,8 +1306,9 @@ bool run_tests()
         std::cerr << "Illegal board created with too many knights attacking black king." << std::endl;
         tests_passed = false;
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
+        // The board constructor should throw an exception.
     }
 
 
@@ -1446,7 +1448,7 @@ bool run_tests()
     {
         auto pawn_promotion_attack_board = Board("K1k5/3P4/8/8/8/8/8/8 b - - 0 1");
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
         std::cerr << "Promoting pawn attacks being counted as attacking king multiple times." << std::endl;
         tests_passed = false;

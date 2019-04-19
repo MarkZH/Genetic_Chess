@@ -22,7 +22,7 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
     adjust_end_file(dir == RIGHT ? 1 : -1);
     if( ! Board::inside_board(end_file()))
     {
-        throw std::runtime_error(std::string("Invalid ending file for pawn promotion by capture: ") + end_file());
+        throw std::invalid_argument(std::string("Invalid ending file for pawn promotion by capture: ") + end_file());
     }
 
     able_to_capture = true;

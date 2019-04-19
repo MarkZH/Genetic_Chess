@@ -23,6 +23,9 @@
 #include "Utility/Math.h"
 #include "Utility/Random.h"
 
+#include "Exceptions/Bad_Still_Alive_Line.h"
+#include "Exceptions/Genetic_AI_Creation_Error.h"
+
 const auto NO_SIGNAL = 0;
 const std::string stop_key = "Ctrl-c";
 
@@ -72,7 +75,7 @@ void gene_pool(const std::string& config_file)
     {
         std::cerr << "Minimum game time = " << minimum_game_time << "\n";
         std::cerr << "Maximum game time = " << maximum_game_time << "\n";
-        throw std::runtime_error("Maximum game time must be greater than the minimum game time.");
+        throw std::invalid_argument("Maximum game time must be greater than the minimum game time.");
     }
     double game_time_increment = config.as_number("game time increment"); // seconds
     const bool oscillating_time = config.as_boolean("oscillating time", "yes", "no");
@@ -484,80 +487,68 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
 
 std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
 {
-    class Bad_Still_Alive_Line{};
-
     std::string line;
     int line_number = 0;
 
-    try
+    std::ifstream ifs(load_file);
+    if( ! ifs)
     {
-        std::ifstream ifs(load_file);
-        if( ! ifs)
-        {
-            std::cout << "Could not open file: " << load_file << std::endl;
-            std::cout << "Starting with empty gene pool." << std::endl;
-            return std::vector<Gene_Pool>();
-        }
+        std::cout << "Could not open file: " << load_file << std::endl;
+        std::cout << "Starting with empty gene pool." << std::endl;
+        return std::vector<Gene_Pool>();
+    }
 
-        std::map<int, std::string> still_alive;
-        std::map<int, int> pool_line_numbers;
-        std::map<int, std::string> pool_lines;
-        while(std::getline(ifs, line))
+    std::map<int, std::string> still_alive;
+    std::map<int, int> pool_line_numbers;
+    std::map<int, std::string> pool_lines;
+    while(std::getline(ifs, line))
+    {
+        ++line_number;
+        if(String::contains(line, "Still Alive"))
         {
-            ++line_number;
-            if(String::contains(line, "Still Alive"))
+            try
             {
-                try
+                auto parse = String::split(line, ":", 2);
+                auto pool_number_string = parse.at(1);
+                size_t conversion_character_count;
+                auto pool_number = std::stoi(pool_number_string, &conversion_character_count);
+                if( ! String::trim_outer_whitespace(pool_number_string.substr(conversion_character_count)).empty())
                 {
-                    auto parse = String::split(line, ":", 2);
-                    auto pool_number_string = parse.at(1);
-                    size_t conversion_character_count;
-                    auto pool_number = std::stoi(pool_number_string, &conversion_character_count);
-                    if( ! String::trim_outer_whitespace(pool_number_string.substr(conversion_character_count)).empty())
-                    {
-                        throw Bad_Still_Alive_Line(); // The pool number string has more characters beyond the gene pool number.
-                    }
-                    still_alive[pool_number] = parse.at(2);
-                    pool_line_numbers[pool_number] = line_number;
-                    pool_lines[pool_number] = line;
+                    throw std::exception(); // The pool number string has more characters beyond the gene pool number.
                 }
-                catch(const std::exception& e)
-                {
-                    throw Bad_Still_Alive_Line();
-                }
+                still_alive[pool_number] = parse.at(2);
+                pool_line_numbers[pool_number] = line_number;
+                pool_lines[pool_number] = line;
+            }
+            catch(const std::exception&)
+            {
+                throw Bad_Still_Alive_Line(line_number, line);
             }
         }
+    }
 
-        auto largest_pool_number = still_alive.rbegin()->first;
-        std::vector<Gene_Pool> result(largest_pool_number + 1);
-        for(const auto& index_list : still_alive)
+    auto largest_pool_number = still_alive.rbegin()->first;
+    std::vector<Gene_Pool> result(largest_pool_number + 1);
+    for(const auto& index_list : still_alive)
+    {
+        line = pool_lines[index_list.first];
+        line_number = pool_line_numbers[index_list.first];
+        for(const auto& number_string : String::split(index_list.second))
         {
-            line = pool_lines[index_list.first];
-            line_number = pool_line_numbers[index_list.first];
-            for(const auto& number_string : String::split(index_list.second))
+            try
             {
-                int index;
-                try
-                {
-                    index = std::stoi(number_string);
-                }
-                catch(const std::exception& e)
-                {
-                    throw Bad_Still_Alive_Line();
-                }
-
+                int index = std::stoi(number_string);
                 result[index_list.first].emplace_back(load_file, index);
             }
-            write_generation(result, index_list.first, ""); // mark AIs from file as already written
+            catch(const std::invalid_argument&)
+            {
+                throw Bad_Still_Alive_Line(line_number, line);
+            }
         }
+        write_generation(result, index_list.first, ""); // mark AIs from file as already written
+    }
 
-        return result;
-    }
-    catch(const Bad_Still_Alive_Line&)
-    {
-        throw std::runtime_error("Invalid \"Still Alive\" line (line# " +
-                                 std::to_string(line_number) + "): " + line);
-    }
+    return result;
 }
 
 template<typename Stat_Map>

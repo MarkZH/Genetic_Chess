@@ -92,7 +92,7 @@ namespace Math
     {
         if(low > high)
         {
-            throw std::runtime_error("Bad limits in reflect(): lower bound (" + std::to_string(low) + ") > upper bound (" + std::to_string(high) + ")");
+            throw std::invalid_argument("Bad limits in reflect(): lower bound (" + std::to_string(low) + ") > upper bound (" + std::to_string(high) + ")");
         }
 
         if(low < high)

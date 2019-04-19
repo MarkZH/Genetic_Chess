@@ -77,7 +77,7 @@ const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPP
 
 //! \param fen An optional text string given in FEN. If no argument is given,
 //!        then the FEN string for the start of a standard chess game is given.
-//! \throws std::runtime_error Thrown if the FEN string does not represent a valid board state.
+//! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
 Board::Board(const std::string& fen) :
     board{},
     repeat_count_insertion_point{0},
@@ -329,7 +329,7 @@ Board::Board(const std::string& fen) :
 
 void Board::fen_error(const std::string& reason) const
 {
-    throw std::runtime_error("Bad FEN input: " + starting_fen + "\n" + reason);
+    throw std::invalid_argument("Bad FEN input: " + starting_fen + "\n" + reason);
 }
 
 //! Calculates the index for a 64-element array that corresponds to the internal piece storage.

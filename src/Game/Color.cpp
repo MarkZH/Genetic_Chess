@@ -28,6 +28,6 @@ std::string color_text(Color color)
         case WHITE: return "White";
         case BLACK: return "Black";
         case NONE:  return "None";
-        default: throw std::runtime_error("Invalid color in argument of color_text().");
+        default: throw std::invalid_argument("Invalid color in argument of color_text().");
     }
 }
