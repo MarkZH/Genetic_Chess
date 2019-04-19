@@ -249,15 +249,6 @@ bool Genetic_AI::operator<(const Genetic_AI& other) const
     return id() < other.id();
 }
 
-//! An equality function for Genetic_AI instances.
-
-//! \param other Another Genetic_AI.
-//! \returns If this AI and the other AI have the same ID.
-bool Genetic_AI::operator==(const Genetic_AI& other) const
-{
-    return id() == other.id();
-}
-
 //! This function identifies the first gene pool into which a newly created Genetic_AI is placed.
 
 //! \param pool_id The ID number of the gene pool.
