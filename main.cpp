@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 
                 if(gene_pool_config_file_name.empty())
                 {
-                    throw std::runtime_error("Specify a configuration file to run a gene pool.");
+                    throw std::invalid_argument("Specify a configuration file to run a gene pool.");
                 }
 
                 gene_pool(gene_pool_config_file_name);
@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
             {
                 if(argc < 3)
                 {
-                    throw std::runtime_error("Specify a file name for input.");
+                    throw std::invalid_argument("Specify a file name for input.");
                 }
 
                 auto input_file_name = std::string(argv[2]);
@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
                     }
                     else
                     {
-                        throw std::runtime_error("Invalid option: " + opt);
+                        throw std::invalid_argument("Invalid option: " + opt);
                     }
 
                     if(latest)
@@ -259,7 +259,7 @@ int main(int argc, char *argv[])
                         }
                         else
                         {
-                            throw std::runtime_error("More than two players specified.");
+                            throw std::invalid_argument("More than two players specified.");
                         }
                     }
                 }

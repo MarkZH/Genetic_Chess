@@ -31,34 +31,12 @@ std::map<std::string, double> Piece_Strength_Gene::list_properties() const
 
 void Piece_Strength_Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    for(const auto& piece_score : properties)
-    {
-        Piece_Type piece;
-        switch(piece_score.first[0])
-        {
-            case 'P':
-                piece = PAWN;
-                break;
-            case 'R':
-                piece = ROOK;
-                break;
-            case 'N':
-                piece = KNIGHT;
-                break;
-            case 'B':
-                piece = BISHOP;
-                break;
-            case 'Q':
-                piece = QUEEN;
-                break;
-            case 'K':
-                piece = KING;
-                break;
-            default:
-                throw std::runtime_error("Unrecognized piece type: " + piece_score.first);
-        }
-        piece_value(piece) = piece_score.second;
-    }
+    piece_value(PAWN)   = properties.at("P");
+    piece_value(ROOK)   = properties.at("R");
+    piece_value(KNIGHT) = properties.at("N");
+    piece_value(BISHOP) = properties.at("B");
+    piece_value(QUEEN)  = properties.at("Q");
+    piece_value(KING)   = properties.at("K");
 
     recalculate_normalizing_value();
 }

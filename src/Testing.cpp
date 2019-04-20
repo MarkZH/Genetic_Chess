@@ -32,6 +32,7 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
+#include "Genes/Null_Gene.h"
 
 #include "Utility/String.h"
 #include "Utility/Scoped_Stopwatch.h"
@@ -667,7 +668,7 @@ bool run_tests()
     auto castling_possible_gene = Castling_Possible_Gene();
     castling_possible_gene.read_from(test_genes_file_name);
     auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
-    auto white_castling_score = 0.8*(4.0/5.0) + 0.2*(5.0/6.0); // maximum score with and without actually castling
+    auto white_castling_score = 0.8*(5.0/6.0) + 0.2*(6.0/7.0); // maximum score with and without actually castling
     tests_passed &= castling_possible_gene.test(castling_board, white_castling_score);
 
     castling_board.submit_move(castling_board.create_move("O-O"));
@@ -675,7 +676,7 @@ bool run_tests()
     tests_passed &= castling_possible_gene.test(castling_board, 1.0); // full score for kingside castling
 
     castling_board.set_turn(BLACK);
-    auto black_castling_score = 0.2*(3.0/6.0); // castling possible
+    auto black_castling_score = 0.2*(5.0/7.0); // castling possible
     tests_passed &= castling_possible_gene.test(castling_board, black_castling_score);
 
     castling_board.submit_move(castling_board.create_move("Nc6"));
@@ -685,6 +686,24 @@ bool run_tests()
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
     auto freedom_to_move_score = 32.0/18.0;
     tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, freedom_to_move_score);
+
+    Board freedom_to_move_punishment_board;
+    for(auto move_count = 0; move_count < 1'000'000; ++move_count)
+    {
+        if( ! freedom_to_move_gene.verify(freedom_to_move_punishment_board))
+        {
+            std::cerr << "Attack count discrepancy." << std::endl;
+            tests_passed = false;
+            break;
+        }
+
+        const auto& moves = freedom_to_move_punishment_board.legal_moves();
+        auto move = moves[Random::random_integer(0, moves.size() - 1)];
+        if(freedom_to_move_punishment_board.submit_move(*move).game_has_ended())
+        {
+            freedom_to_move_punishment_board = Board();
+        }
+    }
 
     auto king_confinement_gene = King_Confinement_Gene();
     king_confinement_gene.read_from(test_genes_file_name);
@@ -810,7 +829,7 @@ bool run_tests()
         auto bad_input_result = String::strip_block_comment(original, "{", "}");
         tests_passed = false;
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
         // This test should throw an exception.
     }
@@ -821,7 +840,7 @@ bool run_tests()
         auto bad_input_result = String::strip_block_comment(original, "{", "}");
         tests_passed = false;
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
         // This test should throw an exception.
     }
@@ -1275,8 +1294,9 @@ bool run_tests()
         std::cerr << "Illegal board created with too many pieces attacking black king." << std::endl;
         tests_passed = false;
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
+        // The board constructor should throw an exception.
     }
 
     try
@@ -1286,8 +1306,9 @@ bool run_tests()
         std::cerr << "Illegal board created with too many knights attacking black king." << std::endl;
         tests_passed = false;
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
+        // The board constructor should throw an exception.
     }
 
 
@@ -1427,7 +1448,7 @@ bool run_tests()
     {
         auto pawn_promotion_attack_board = Board("K1k5/3P4/8/8/8/8/8/8 b - - 0 1");
     }
-    catch(const std::runtime_error&)
+    catch(const std::invalid_argument&)
     {
         std::cerr << "Promoting pawn attacks being counted as attacking king multiple times." << std::endl;
         tests_passed = false;
@@ -1561,6 +1582,7 @@ void run_speed_tests()
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto checkmate_material_gene = Checkmate_Material_Gene();
+    auto null_gene = Null_Gene();
 
     auto performance_board = Board("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
     std::vector<const Gene*> performance_genome = {&castling_possible_gene,
@@ -1574,7 +1596,8 @@ void run_speed_tests()
                                                    &pawn_islands_gene,
                                                    &sphere_of_influence_gene,
                                                    &stacked_pawns_gene,
-                                                   &total_force_gene};
+                                                   &total_force_gene,
+                                                   &null_gene};
 
     const auto number_of_tests = 1'000'000;
     std::vector<std::pair<double, std::string>> timing_results;

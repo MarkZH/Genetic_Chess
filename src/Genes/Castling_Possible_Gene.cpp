@@ -80,17 +80,13 @@ double Castling_Possible_Gene::score_board(const Board& board, Color perspective
     {
         auto preference = (rook_file == 'h' ? kingside_preference : queenside_preference);
         int files_to_clear = std::abs(rook_file - king_start_file) - 1;
-        double score_per_clear_square = preference/(files_to_clear + 3);
 
-        auto king_end_file = (rook_file == 'a' ? 'c' : 'g');
-
-        // Score if castling is currently legal (all intermediate pieces removed
-        // and no attacking pieces preventing move).
-        if(board.is_legal(king_start_file, base_rank, king_end_file, base_rank))
-        {
-            score += score_per_clear_square*(files_to_clear + 2); // just below full preference score
-            continue;
-        }
+        // Factors to count: 1) Rook not moved
+        //                   2,3) squares king crosses are not attacked
+        //                   4,5) empty squares between king and rook
+        //                   6) extra empty square for queenside castling
+        //                   +1) Only get full marks for actually castling.
+        double score_per_clear_square = preference/(files_to_clear + 4);
 
         if( ! board.piece_has_moved(rook_file, base_rank))
         {
@@ -104,6 +100,11 @@ double Castling_Possible_Gene::score_board(const Board& board, Color perspective
                 if( ! board.piece_on_square(file, base_rank))
                 {
                     score += score_per_clear_square;
+
+                    if(std::abs(king_start_file - file) <= 2 && board.safe_for_king(file, base_rank, perspective))
+                    {
+                        score += score_per_clear_square;
+                    }
                 }
             }
         }

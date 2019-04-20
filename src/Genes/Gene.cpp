@@ -13,6 +13,8 @@
 #include "Utility/Random.h"
 #include "Utility/String.h"
 
+#include "Exceptions/Genetic_AI_Creation_Error.h"
+
 //! Creates a gene with neutral behavior.
 Gene::Gene() : scoring_priority(0.0)
 {
@@ -60,7 +62,7 @@ size_t Gene::mutatable_components() const
 //! - blank
 //! - A commented line starting with a '#'.
 //! \param is An input stream (std::ifstream, std::iostream, or similar).
-//! \throws std::runtime_error If there is an invalid line or an unexpected property
+//! \throws Genetic_AI_Creation_Error If there is an invalid line or an unexpected property
 void Gene::read_from(std::istream& is)
 {
     auto properties = list_properties();
@@ -111,7 +113,7 @@ void Gene::read_from(std::istream& is)
     {
         load_properties(properties);
     }
-    catch(const std::out_of_range&)
+    catch(const std::out_of_range& err)
     {
         auto parameters = std::accumulate(properties.begin(),
                                           properties.end(),
@@ -121,7 +123,7 @@ void Gene::read_from(std::istream& is)
                                               return so_far + next.first + "\n";
                                           });
 
-        throw std::runtime_error("Bad parameter input for " + name() + "\n" + parameters);
+        throw Genetic_AI_Creation_Error("Bad parameter input for " + name() + "\n" + parameters + "\n" + err.what());
     }
 }
 
@@ -147,13 +149,13 @@ void Gene::read_from(const std::string& file_name)
         }
     }
 
-    throw std::runtime_error(name() + " not found in " + file_name);
+    throw Genetic_AI_Creation_Error(name() + " not found in " + file_name);
 }
 
 
 void Gene::throw_on_invalid_line(const std::string& line, const std::string& reason) const
 {
-    throw std::runtime_error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
+    throw Genetic_AI_Creation_Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
 }
 
 //! Applies a random mutation to the priority of a gene as well as any details in derived genes.

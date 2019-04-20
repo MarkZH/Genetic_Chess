@@ -12,7 +12,6 @@
 #include "Utility/String.h"
 
 #include "Genes/Gene.h"
-
 #include "Genes/Total_Force_Gene.h"
 #include "Genes/Freedom_To_Move_Gene.h"
 #include "Genes/Pawn_Advancement_Gene.h"
@@ -28,6 +27,9 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Mutation_Rate_Gene.h"
+#include "Genes/Null_Gene.h"
+
+#include "Exceptions/Genetic_AI_Creation_Error.h"
 
 size_t Genome::piece_strength_gene_index = -1;
 size_t Genome::look_ahead_gene_index = -1;
@@ -42,7 +44,7 @@ Genome::Genome()
     {
         if(piece_strength_gene_index != genome.size() - 1)
         {
-            throw std::logic_error("Different genomes have different piece strength index values.");
+            throw Genetic_AI_Creation_Error("Different genomes have different piece strength index values.");
         }
     }
     else
@@ -55,7 +57,7 @@ Genome::Genome()
     {
         if(look_ahead_gene_index != genome.size() - 1)
         {
-            throw std::logic_error("Different genomes have different look ahead index values.");
+            throw Genetic_AI_Creation_Error("Different genomes have different look ahead index values.");
         }
     }
     else
@@ -68,7 +70,7 @@ Genome::Genome()
     {
         if(mutation_rate_gene_index != genome.size() - 1)
         {
-            throw std::logic_error("Different genomes have different mutation rate index values.");
+            throw Genetic_AI_Creation_Error("Different genomes have different mutation rate index values.");
         }
     }
     else
@@ -91,6 +93,7 @@ Genome::Genome()
     genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
     genome.emplace_back(std::make_unique<Pawn_Islands_Gene>());
     genome.emplace_back(std::make_unique<Checkmate_Material_Gene>());
+    genome.emplace_back(std::make_unique<Null_Gene>());
 }
 
 //! Clone a genome
@@ -175,7 +178,7 @@ void Genome::read_from(std::istream& is)
         auto line_split = String::split(line, ":", 1);
         if(line_split.size() != 2)
         {
-            throw std::runtime_error("No colon in parameter line: " + line);
+            throw Genetic_AI_Creation_Error("No colon in parameter line: " + line);
         }
         if(String::trim_outer_whitespace(line_split[0]) == "Name")
         {
@@ -193,16 +196,16 @@ void Genome::read_from(std::istream& is)
 
             if( ! gene_found)
             {
-                throw std::runtime_error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
+                throw Genetic_AI_Creation_Error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
             }
         }
         else
         {
-            throw std::runtime_error("Bad line in genome file (expected Name): " + line);
+            throw Genetic_AI_Creation_Error("Bad line in genome file (expected Name): " + line);
         }
     }
 
-    throw std::runtime_error("Reached end of file before END of genome.");
+    throw Genetic_AI_Creation_Error("Reached end of file before END of genome.");
 }
 
 double Genome::score_board(const Board& board, Color perspective, size_t depth) const

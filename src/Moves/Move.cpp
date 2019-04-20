@@ -28,20 +28,20 @@ Move::Move(char file_start, int rank_start,
 {
     if( ! Board::inside_board(start_file(), start_rank()))
     {
-        throw std::runtime_error(std::string("Invalid starting square: ") + start_file() + std::to_string(start_rank()));
+        throw std::invalid_argument(std::string("Invalid starting square: ") + start_file() + std::to_string(start_rank()));
     }
 
     if( ! Board::inside_board(end_file(), end_rank()))
     {
-        throw std::runtime_error(std::string("Invalid ending square: ") + end_file() + std::to_string(end_rank()));
+        throw std::invalid_argument(std::string("Invalid ending square: ") + end_file() + std::to_string(end_rank()));
     }
 
     if(file_change() == 0 && rank_change() == 0)
     {
-        throw std::runtime_error(std::string("Zero-distance moves are illegal: ")
-                                 + start_file() + std::to_string(start_rank())
-                                 + " --> "
-                                 + end_file() + std::to_string(end_rank()));
+        throw std::invalid_argument(std::string("Zero-distance moves are illegal: ")
+                                    + start_file() + std::to_string(start_rank())
+                                    + " --> "
+                                    + end_file() + std::to_string(end_rank()));
     }
 }
 

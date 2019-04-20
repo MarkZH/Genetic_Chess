@@ -60,7 +60,7 @@ Piece::Piece(Color color_in, Piece_Type type_in) :
             add_king_art();
             break;
         default:
-            throw std::runtime_error("Program bug: Invalid piece type in Piece(): " + std::to_string(type()));
+            throw std::invalid_argument("Program bug: Invalid piece type in Piece(): " + std::to_string(type()));
     }
 }
 

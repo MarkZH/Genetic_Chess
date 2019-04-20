@@ -38,7 +38,6 @@ class Genetic_AI : public Minimax_AI
         void set_origin_pool(int pool_id);
 
         bool operator<(const Genetic_AI& other) const;
-        bool operator==(const Genetic_AI& other) const;
 
     private:
         Genome genome;

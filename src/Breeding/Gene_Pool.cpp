@@ -12,6 +12,7 @@
 #include <thread>
 #include <chrono>
 #include <array>
+#include <cstdio>
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
@@ -21,6 +22,9 @@
 #include "Utility/Configuration_File.h"
 #include "Utility/Math.h"
 #include "Utility/Random.h"
+
+#include "Exceptions/Bad_Still_Alive_Line.h"
+#include "Exceptions/Genetic_AI_Creation_Error.h"
 
 const auto NO_SIGNAL = 0;
 const std::string stop_key = "Ctrl-c";
@@ -57,7 +61,8 @@ void gene_pool(const std::string& config_file)
     const auto gene_pool_count = size_t(config.as_number("gene pool count"));
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
     const auto genome_file_name = config.as_text("gene pool file");
-    const int scramble_mutations = 100;
+
+    const int scramble_mutations = 100; // initial number of mutations when creating a new Genetic AI
 
     // Oscillating game time
     const double minimum_game_time = config.as_number("minimum game time"); // seconds
@@ -66,7 +71,7 @@ void gene_pool(const std::string& config_file)
     {
         std::cerr << "Minimum game time = " << minimum_game_time << "\n";
         std::cerr << "Maximum game time = " << maximum_game_time << "\n";
-        throw std::runtime_error("Maximum game time must be greater than the minimum game time.");
+        throw std::invalid_argument("Maximum game time must be greater than the minimum game time.");
     }
     double game_time_increment = config.as_number("game time increment"); // seconds
     const bool oscillating_time = config.as_boolean("oscillating time", "yes", "no");
@@ -210,7 +215,8 @@ void gene_pool(const std::string& config_file)
                                                        [](const auto& r)
                                                        { return r.wait_for(std::chrono::seconds(0)) != std::future_status::ready; });
 
-                if(in_progress_games >= maximum_simultaneous_games)
+                if(gene_pool_population > 2*maximum_simultaneous_games &&
+                   in_progress_games >= maximum_simultaneous_games)
                 {
                     std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 }
@@ -343,7 +349,13 @@ void gene_pool(const std::string& config_file)
                                                  search_pool.end(),
                                                  best_compare), best_compare);
         }
-        best_ai.print(genome_file_name + "_best_genome.txt");
+        auto best_file_name = genome_file_name + "_best_genome.txt";
+        if(remove(best_file_name.c_str()) != 0)
+        {
+            auto error_intro = "\n### Could not delete best genome file(" + best_file_name + ")";
+            perror(error_intro.c_str());
+        }
+        best_ai.print(best_file_name);
 
         // Pause gene pool
         if(signal_activated == PAUSE_SIGNAL)
@@ -444,7 +456,12 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
         last_file_name = genome_file_name;
     }
 
-    auto pool = pools.at(pool_index);
+    if( ! genome_file_name.empty() && ! ofs)
+    {
+        throw std::runtime_error("Could not write to file:" + genome_file_name);
+    }
+
+    const auto& pool = pools.at(pool_index);
     for(const auto& ai : pool)
     {
         if( ! written_before[ai])
@@ -469,23 +486,23 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
     std::string line;
     int line_number = 0;
 
-    try
+    std::ifstream ifs(load_file);
+    if( ! ifs)
     {
-        std::ifstream ifs(load_file);
-        if( ! ifs)
-        {
-            std::cout << "Could not open file: " << load_file << std::endl;
-            std::cout << "Starting with empty gene pool." << std::endl;
-            return std::vector<Gene_Pool>();
-        }
+        std::cout << "Could not open file: " << load_file << std::endl;
+        std::cout << "Starting with empty gene pool." << std::endl;
+        return std::vector<Gene_Pool>();
+    }
 
-        std::map<int, std::string> still_alive;
-        std::map<int, int> pool_line_numbers;
-        std::map<int, std::string> pool_lines;
-        while(std::getline(ifs, line))
+    std::map<int, std::string> still_alive;
+    std::map<int, int> pool_line_numbers;
+    std::map<int, std::string> pool_lines;
+    while(std::getline(ifs, line))
+    {
+        ++line_number;
+        if(String::contains(line, "Still Alive"))
         {
-            ++line_number;
-            if(String::contains(line, "Still Alive"))
+            try
             {
                 auto parse = String::split(line, ":", 2);
                 auto pool_number_string = parse.at(1);
@@ -499,30 +516,35 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
                 pool_line_numbers[pool_number] = line_number;
                 pool_lines[pool_number] = line;
             }
-        }
-
-        std::vector<Gene_Pool> result(still_alive.size());
-        for(const auto& index_list : still_alive)
-        {
-            line = pool_lines[index_list.first];
-            line_number = pool_line_numbers[index_list.first];
-            for(const auto& number_string : String::split(index_list.second))
+            catch(const std::exception&)
             {
-                auto index = std::stoi(number_string);
-                result[index_list.first].push_back(Genetic_AI(load_file, index));
+                throw Bad_Still_Alive_Line(line_number, line);
             }
-            write_generation(result, index_list.first, ""); // mark AIs from file as already written
         }
+    }
 
-        return result;
-    }
-    catch(const std::exception&)
+    auto largest_pool_number = still_alive.rbegin()->first;
+    std::vector<Gene_Pool> result(largest_pool_number + 1);
+    for(const auto& index_list : still_alive)
     {
-        throw std::runtime_error("Invalid \"Still Alive\" line (line# " +
-                                 std::to_string(line_number) +
-                                 "): "
-                                 + line);
+        line = pool_lines[index_list.first];
+        line_number = pool_line_numbers[index_list.first];
+        for(const auto& number_string : String::split(index_list.second))
+        {
+            try
+            {
+                int index = std::stoi(number_string);
+                result[index_list.first].emplace_back(load_file, index);
+            }
+            catch(const std::invalid_argument&)
+            {
+                throw Bad_Still_Alive_Line(line_number, line);
+            }
+        }
+        write_generation(result, index_list.first, ""); // mark AIs from file as already written
     }
+
+    return result;
 }
 
 template<typename Stat_Map>

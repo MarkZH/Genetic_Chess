@@ -77,7 +77,7 @@ const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPP
 
 //! \param fen An optional text string given in FEN. If no argument is given,
 //!        then the FEN string for the start of a standard chess game is given.
-//! \throws std::runtime_error Thrown if the FEN string does not represent a valid board state.
+//! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
 Board::Board(const std::string& fen) :
     board{},
     repeat_count_insertion_point{0},
@@ -88,6 +88,7 @@ Board::Board(const std::string& fen) :
     checking_square{},
     potential_attacks{},
     castling_index{{size_t(-1), size_t(-1)}},
+    attack_counts{},
     thinking_indicator(NO_THINKING)
 {
     initialize_board_hash();
@@ -328,7 +329,7 @@ Board::Board(const std::string& fen) :
 
 void Board::fen_error(const std::string& reason) const
 {
-    throw std::runtime_error("Bad FEN input: " + starting_fen + "\n" + reason);
+    throw std::invalid_argument("Bad FEN input: " + starting_fen + "\n" + reason);
 }
 
 //! Calculates the index for a 64-element array that corresponds to the internal piece storage.
@@ -907,6 +908,20 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     update_blocks(file, rank, old_piece, piece);
     add_attacks_from(file, rank, piece);
 
+    if(old_piece &&
+       ( ! piece || piece->color() != old_piece->color()) &&
+       moves_attacking_square(file, rank, old_piece->color()).any())
+    {
+        attack_counts[old_piece->color()] += moves_attacking_square(file, rank, old_piece->color()).count();
+    }
+
+    if(piece &&
+       ( ! old_piece || piece->color() != old_piece->color()) &&
+       moves_attacking_square(file, rank, piece->color()).any())
+    {
+        attack_counts[piece->color()] -= moves_attacking_square(file, rank, piece->color()).count();
+    }
+
     unmoved_positions[square_index(file, rank)] = false;
 
     update_board_hash(file, rank); // XOR in new piece on square
@@ -915,6 +930,17 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     {
         king_location[piece->color()] = {file, rank};
     }
+}
+
+//! Returns the number of attacking moves available.
+
+//! The method is used in the Freedom_To_Move_Gene::score_board() method.
+//! \param attacking_color The color of pieces doing the attacking.
+//! \returns The number of attacking moves excepting those that attack pieces
+//!          of the same color.
+int Board::attack_count(Color attacking_color) const
+{
+    return attack_counts[attacking_color];
 }
 
 void Board::add_attacks_from(char file, int rank, const Piece* piece)
@@ -937,6 +963,7 @@ void Board::modify_attacks(char file, int rank, const Piece* piece, bool adding_
         auto attacked_file = attack->end_file();
         auto attacked_rank = attack->end_rank();
         auto attacked_index = square_index(attacked_file, attacked_rank);
+        auto attack_count_diff = adding_attacks ? 1 : -1;
 
         if(blocked_move &&
            same_direction(blocked_move->file_change(),  blocked_move->rank_change(),
@@ -946,10 +973,15 @@ void Board::modify_attacks(char file, int rank, const Piece* piece, bool adding_
         }
         else
         {
-            potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
-
             blocked_move = nullptr;
             auto blocking_piece = piece_on_square(attacked_file, attacked_rank);
+
+            potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
+            if( ! blocking_piece || blocking_piece->color() != attacking_color)
+            {
+                attack_counts[attacking_color] += attack_count_diff;
+            }
+
             if(blocking_piece && blocking_piece != vulnerable_king)
             {
                 blocked_move = attack;
@@ -971,17 +1003,17 @@ void Board::update_blocks(char file, int rank, const Piece* old_piece, const Pie
         return;
     }
 
-    // Replacing one piece with another (except for kings)
-    // does not change which moves are blocked. Should only
-    // happen during pawn promotions.
-    if(old_piece && new_piece &&
-       old_piece->type() != KING &&
-       new_piece->type() != KING)
+    // Replacing one piece with another does not change which
+    // moves are blocked. Only happens during pawn promotions.
+    if(old_piece && new_piece)
     {
         return;
     }
 
-    // Block moves that previously went through
+    auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
+    auto attack_count_diff = add_new_attacks ? 1 : -1;
+    auto origin_square_index = square_index(file, rank);
+
     for(auto attacking_color : {WHITE, BLACK})
     {
         auto vulnerable_king = piece_instance(KING, opposite(attacking_color));
@@ -990,28 +1022,32 @@ void Board::update_blocks(char file, int rank, const Piece* old_piece, const Pie
             continue;
         }
 
-        const auto& attack_direction_list = potential_attacks[attacking_color][square_index(file, rank)];
-        for(size_t index = 0; index < attack_direction_list.size()/2; ++index)
+        const auto& attack_direction_list = potential_attacks[attacking_color][origin_square_index];
+        for(size_t index = 0; index < attack_direction_list.size()/2; ++index) // /2 to exclude knight moves, which are never blocked
         {
             if(attack_direction_list[index])
             {
                 auto [file_step, rank_step] = Move::attack_direction_from_index(index);
-                auto revealed_attacker = new_piece ? nullptr : piece_on_square(file - file_step, rank - rank_step);
+                auto revealed_attacker = piece_on_square(file - file_step, rank - rank_step);
                 if(revealed_attacker && (revealed_attacker->type() == PAWN || revealed_attacker->type() == KING))
                 {
-                    continue; // Pawns, kings, and knights are never blocked
+                    continue; // Pawns and kings are never blocked
                 }
 
-                auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
                 char target_file = file + file_step;
                 int  target_rank = rank + rank_step;
                 while(inside_board(target_file, target_rank))
                 {
                     auto target_index = square_index(target_file, target_rank);
+                    auto piece = piece_on_square(target_file, target_rank);
+                    if(( ! piece || piece->color() != attacking_color) && (potential_attacks[attacking_color][target_index][index] != add_new_attacks))
+                    {
+                        attack_counts[attacking_color] += attack_count_diff;
+                    }
+
                     potential_attacks[attacking_color][target_index][index] = add_new_attacks;
                     blocked_attacks[attacking_color][target_index][index] = ! add_new_attacks;
 
-                    auto piece = piece_on_square(target_file, target_rank);
                     if(piece && piece != vulnerable_king)
                     {
                         break;

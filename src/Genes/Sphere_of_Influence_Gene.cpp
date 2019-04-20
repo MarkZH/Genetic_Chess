@@ -128,10 +128,10 @@ void Sphere_of_Influence_Gene::gene_specific_mutation()
             illegal_square_score += Random::random_laplace(0.5);
             break;
         case 3:
-            king_target_factor += Random::random_laplace(0.5);
+            king_target_factor += Random::random_laplace(0.1);
             break;
         default:
-            throw std::runtime_error("Bad range in Sphere_of_Influence_Gene::gene_specific_mutation()");
+            throw std::logic_error("Bad range in Sphere_of_Influence_Gene::gene_specific_mutation()");
     }
 
     recompute_scalar_cache();

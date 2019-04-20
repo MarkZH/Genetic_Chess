@@ -21,7 +21,7 @@ def parse_opening_list(filename):
 
     for data in [[top10, '_top_opening_data.txt'], [top10_rate, '_top_opening_rate_data.txt']]:
         with open(filename + data[1] , 'w') as out:
-            out.write(','.join(top10) + '\n')
+            out.write(','.join(data[0]) + '\n')
             for opening in openings:
                 marker = ['1' if x == opening else '0' for x in data[0]]
                 out.write(','.join(marker) + '\n')

@@ -95,6 +95,7 @@ class Board
         bool last_move_changed_material() const;
         bool material_change_possible() const;
         size_t castling_move_index(Color player) const;
+        int attack_count(Color attacker) const;
 
         Board without_random_pawn() const;
 
@@ -134,6 +135,7 @@ class Board
         // Information cache for gene reference
         bool material_change_move_available;
         std::array<size_t, 2> castling_index;
+        std::array<int, 2> attack_counts;
 
         // Pieces
         static const Piece white_rook;
