@@ -20,19 +20,23 @@ Pawn_Advancement_Gene::Pawn_Advancement_Gene() : non_linearity(0.0)
 
 double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    double score = 0.0;
     auto own_pawn = board.piece_instance(PAWN, perspective);
-    int home_rank = (perspective == WHITE ? 2 : 7);
-    int first_rank = (perspective == WHITE ? 3 : 2);
-    int last_rank = (perspective == WHITE ? 7 : 6);
 
+    // Skip starting rank since those get zero score.
+    int first_rank = (perspective == WHITE ? 3 : 6);
+    int last_rank = (perspective == WHITE ? 7 : 2);
+    int rank_step = (perspective == WHITE ? 1 : -1);
+
+    double score = 0.0;
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        for(int rank = first_rank; rank <= last_rank; ++rank)
+        auto steps = 0;
+        for(int rank = first_rank; rank <= last_rank; rank += rank_step)
         {
+            ++steps;
             if(board.piece_on_square(file, rank) == own_pawn)
             {
-                score += score_cache[std::abs(home_rank - rank)];
+                score += score_cache[steps];
             }
         }
     }
