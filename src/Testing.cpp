@@ -1601,6 +1601,7 @@ void run_speed_tests()
 
     const auto number_of_tests = 1'000'000;
     std::vector<std::pair<double, std::string>> timing_results;
+    auto all_genes_watch = Scoped_Stopwatch("");
     for(auto gene : performance_genome)
     {
         auto score = 0.0;
@@ -1612,6 +1613,7 @@ void run_speed_tests()
         }
         timing_results.emplace_back(watch.time_so_far(), gene->name());
     }
+    timing_results.emplace_back(all_genes_watch.time_so_far(), "Complete gene scoring");
 
     std::cout << "Board::submit_move() speed ..." << std::endl;
     auto game_watch = Scoped_Stopwatch("");
