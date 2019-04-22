@@ -687,8 +687,13 @@ bool run_tests()
     auto freedom_to_move_score = 32.0/18.0;
     tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, freedom_to_move_score);
 
+    #ifdef NDEBUG
+    auto test_move_count = 1'000'000;
+    #else
+    auto test_move_count = 1'000; // Debug build is approximately 1,000x slower.
+    #endif // NDEBUG
     Board freedom_to_move_punishment_board;
-    for(auto move_count = 0; move_count < 1'000'000; ++move_count)
+    for(auto move_count = 0; move_count < test_move_count; ++move_count)
     {
         if( ! freedom_to_move_gene.verify(freedom_to_move_punishment_board))
         {
@@ -1580,7 +1585,13 @@ void run_speed_tests()
                                                    &total_force_gene,
                                                    &null_gene};
 
+    #ifdef NDEBUG
     const auto number_of_tests = 1'000'000;
+    const auto time_unit = "us";
+    #else
+    const auto number_of_tests = 1'000;
+    const auto time_unit = "ms";
+    #endif // NDEBUG
     std::vector<std::pair<double, std::string>> timing_results;
     auto all_genes_watch = Scoped_Stopwatch("");
     for(auto gene : performance_genome)
@@ -1632,7 +1643,7 @@ void run_speed_tests()
     std::sort(timing_results.begin(), timing_results.end());
     const auto name_width = std::max_element(timing_results.begin(), timing_results.end(),
                                              [](const auto& x, const auto& y){ return x.second.size() < y.second.size(); })->second.size();
-    std::cout << "\n" << std::setw(name_width) << "Test Item" << "   " << "Time (us)";
+    std::cout << "\n" << std::setw(name_width) << "Test Item" << "   " << "Time (" << time_unit << ")";
     std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------" << std::endl;
     for(const auto& result : timing_results)
     {
