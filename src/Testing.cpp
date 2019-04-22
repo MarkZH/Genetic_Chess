@@ -1031,25 +1031,6 @@ bool run_tests()
     }
 
 
-    if(Math::lower_bound_reflect(1, 3) != 5)
-    {
-        std::cerr << "Lower bound reflect gives incorrect answer." << std::endl;
-        tests_passed = false;
-    }
-
-    if(Math::upper_bound_reflect(10, 4) != -2)
-    {
-        std::cerr << "Upper bound reflect gives incorrect answer." << std::endl;
-        tests_passed = false;
-    }
-
-    if(Math::reflect(20, 30, 34) != 32)
-    {
-        std::cerr << "Reflect gives incorrect answer." << std::endl;
-        tests_passed = false;
-    }
-
-
     // Clock time reset test
     auto time = 30;
     double expected_time_after_reset = 0.0;

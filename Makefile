@@ -136,7 +136,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o : src/Genes/King_Protection_Ge
 $(DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : src/Genes/Look_Ahead_Gene.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Look_Ahead_Gene.h include/Players/Thinking.h include/Utility/Math.h include/Utility/Random.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Genes/Look_Ahead_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/Mutation_Rate_Gene.o : src/Genes/Mutation_Rate_Gene.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Mutation_Rate_Gene.h include/Utility/Math.h include/Utility/Random.h
+$(DEBUG_OBJ_DIR)/src/Genes/Mutation_Rate_Gene.o : src/Genes/Mutation_Rate_Gene.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Mutation_Rate_Gene.h include/Utility/Random.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Genes/Mutation_Rate_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/Mutation_Rate_Gene.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Null_Gene.o : src/Genes/Null_Gene.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Null_Gene.h
@@ -313,7 +313,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o : src/Genes/King_Protection_
 $(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : src/Genes/Look_Ahead_Gene.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Gene.h include/Genes/Look_Ahead_Gene.h include/Players/Thinking.h include/Utility/Math.h include/Utility/Random.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Genes/Look_Ahead_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/Mutation_Rate_Gene.o : src/Genes/Mutation_Rate_Gene.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Mutation_Rate_Gene.h include/Utility/Math.h include/Utility/Random.h
+$(RELEASE_OBJ_DIR)/src/Genes/Mutation_Rate_Gene.o : src/Genes/Mutation_Rate_Gene.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Mutation_Rate_Gene.h include/Utility/Random.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Genes/Mutation_Rate_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/Mutation_Rate_Gene.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Null_Gene.o : src/Genes/Null_Gene.cpp include/Game/Color.h include/Genes/Gene.h include/Genes/Null_Gene.h

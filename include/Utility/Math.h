@@ -58,56 +58,6 @@ namespace Math
 
         return 0;
     }
-
-    //! If a number is lower than the bound, reflect the number to the other side of the bound.
-
-    //! \param x The input number.
-    //! \param low The lower bound.
-    //! \returns A number that is the same distance from the lower bound, but on the correct side.
-    template<typename Number>
-    Number lower_bound_reflect(Number x, Number low)
-    {
-        return low + std::abs(x - low);
-    }
-
-    //! If a number is higher than the bound, reflect the number to the other side of the bound.
-
-    //! \param x The input number.
-    //! \param high The upper bound.
-    //! \returns A number that is the same distance from the upper bound, but on the correct side.
-    template<typename Number>
-    Number upper_bound_reflect(Number x, Number high)
-    {
-        return high - std::abs(high - x);
-    }
-
-    //! Repeatedly calls upper_bound_reflect() and lower_bound_reflect() until the number is in the correct range.
-
-    //! \param x The input number.
-    //! \param low The lower bound.
-    //! \param high The upper bound.
-    //! \returns A number between the upper and lower bound.
-    template<typename Number>
-    Number reflect(Number x, Number low, Number high)
-    {
-        if(low > high)
-        {
-            throw std::invalid_argument("Bad limits in reflect(): lower bound (" + std::to_string(low) + ") > upper bound (" + std::to_string(high) + ")");
-        }
-
-        if(low < high)
-        {
-            while(x < low || x > high)
-            {
-                x = upper_bound_reflect(lower_bound_reflect(x, low), high);
-            }
-
-            return x;
-        }
-
-        // low == high
-        return low;
-    }
 }
 
 #endif // MATH_H
