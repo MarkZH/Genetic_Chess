@@ -30,7 +30,7 @@ class Pawn_Move;
 //! 3-fold repetition, 50-move draw status, and legal moves.
 //!
 //! Some abbreviation definitions:
-//! - FEN: Forsyth-Edwards notation: a succinct format for encoding the state of a board in text. (https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
+//! - FEN: Forsyth-Edwards Notation: a succinct format for encoding the state of a board in text. (https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation)
 //! - PGN: Portable Game Notation: the standard way of recording moves in a game. (https://en.wikipedia.org/wiki/Portable_Game_Notation)
 class Board
 {
