@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <cassert>
 #include <array>
-#include <cmath>
 
 #include "Game/Board.h"
 #include "Game/Piece_Types.h"
