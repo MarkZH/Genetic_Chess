@@ -342,14 +342,11 @@ void Piece::add_color()
 
     for(auto& line : ascii_art_lines)
     {
-        if(String::contains(line, ' ') || String::contains(line, "___"))
+        for(auto& c : line)
         {
-            for(auto& c : line)
+            if(c == ' ' || c == '_')
             {
-                if(c == ' ' || c == '_')
-                {
-                    c = '#';
-                }
+                c = '#';
             }
         }
     }
