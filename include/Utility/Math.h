@@ -3,8 +3,7 @@
 
 #include <limits>
 #include <algorithm>
-#include <cmath>
-#include <stdexcept>
+#include <cassert>
 
 //! Provides a collection of useful math functions.
 namespace Math
@@ -36,6 +35,7 @@ namespace Math
     template<typename Number>
     Number clamp(Number n, Number low, Number high)
     {
+        assert(low <= high);
         return std::min(std::max(n, low), high);
     }
 
