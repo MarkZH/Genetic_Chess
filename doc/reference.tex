@@ -9,7 +9,6 @@
 
 \newcommand{\cpp}{C{\nobreak+}{\nobreak+}}
 
-% chktex-file 36
 \newcommand{\code}[1]{\small\textsf{#1}}
 
 \renewcommand{\_}{\allowbreak\textunderscore\allowbreak}
@@ -205,7 +204,7 @@ The speculation constant has four possible values depending on whether
 The names in parentheses are the labels used in the source code and genome analysis plots. These board qualities were chosen since material changes can very rapidly change the evaluation of boards, requiring further examination until the board reaches a less volatile state. Capturing a piece or promoting a pawn is only good if it doesn't result in a greater loss in subsequent moves. This is the problem that is usually solved in other chess engines by a quiescence search, in which all interesting\footnote{Meaning, captures that aren't immediately losing.} capturing moves are performed on a board before it is scored, thereby only scoring stable, ``quiescent'' board states~\cite{quiescence-ref}.
 
 \subsubsection{Mutation Rate Gene}\label{mutation-rate-gene}
-This gene controls how many randomly chosen genes get mutated every time there's a call to \code{Genome::mutate~()}. The unique aspect of this gene is that it is the only one that does not change the behavior of the AI during its lifespan. Mutations only occur upon birth, so this gene only controls how the offspring of the containing AI are modified. There is a risk that a moderately successful AI will shutdown mutation to preserve a currently winning genome. Thus, the minimum number of mutations is one.
+This gene controls how many randomly chosen genes get mutated every time there's a call to \code{Genome::mutate()}. The unique aspect of this gene is that it is the only one that does not change the behavior of the AI during its lifespan. Mutations only occur upon birth, so this gene only controls how the offspring of the containing AI are modified. There is a risk that a moderately successful AI will shutdown mutation to preserve a currently winning genome. Thus, the minimum number of mutations is one.
 
 \subsection{Board-Scoring Genes}\label{board-score-section}
 
