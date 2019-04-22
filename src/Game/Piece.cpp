@@ -119,9 +119,8 @@ char Piece::fen_symbol() const
 //! \returns Whether or not the piece is allowed to move in the manner described by the parameter.
 bool Piece::can_move(const Move* move) const
 {
-    return std::find_if(possible_moves.begin(),
-                        possible_moves.end(),
-                        [move](const auto& x){ return x.get() == move; }) != possible_moves.end();
+    const auto& moves = move_list(move->start_file(), move->start_rank());
+    return std::find(moves.begin(), moves.end(), move) != moves.end();
 }
 
 //! Get all possibly legal moves of a piece starting from a given square.
