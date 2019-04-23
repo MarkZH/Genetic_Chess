@@ -1,70 +1,74 @@
-ID: 198931
+ID: 141490
 Ancestry:
-0: 0.135109
-1: 0.168224
-2: 0.696666
+0: 0.380553
+1: 0.0356146
+2: 0.583832
 
 Name: Piece Strength Gene
-B: 36.3032
-K: 27.6236
-N: 18.1896
-P: 8.84947
-Q: 88.0692
-R: 54.5637
+B: 17.6124
+K: -20.8854
+N: 14.1965
+P: 4.20563
+Q: 49.0129
+R: 27.6978
 
 Name: Look Ahead Gene
-Game Length Uncertainty: 0.42733
-Mean Game Length: 29.6799
-Speculation-Can Change Material: 1.60649
-Speculation-Default: 1.703
-Speculation-Just Changed Material: 3.17729
-Speculation-Material Exchange: 3.89128
+Game Length Uncertainty: 0.47594
+Mean Game Length: 24.1568
+Speculation-Can Change Material: 1.54612
+Speculation-Default: 1.8168
+Speculation-Just Changed Material: 1.59222
+Speculation-Material Exchange: 4.27498
 
 Name: Mutation Rate Gene
-Mutation Rate: 1.46461
+Mutation Rate: 2.35148
 
 Name: Total Force Gene
-Priority: 1247.41
+Priority: 1101.09
 
 Name: Freedom to Move Gene
-Priority: 91.8634
+Priority: 52.8269
 
 Name: Pawn Advancement Gene
-Non-linearity: -0.953465
-Priority: 338.921
+Non-linearity: -0.288231
+Priority: 306.659
 
 Name: Passed Pawn Gene
-Priority: -180.176
+Priority: -1.9504
 
 Name: Opponent Pieces Targeted Gene
-Priority: 264.477
+Priority: 132.21
 
 Name: Sphere of Influence Gene
-Illegal Square Score: 9.58548
-King Target Factor: 0.391763
-Legal Square Score: 2.54322
-Priority: 282.673
+Illegal Square Score: 4.36788
+King Target Factor: -3.4612
+Legal Square Score: 14.6899
+Priority: 405.079
 
 Name: King Confinement Gene
-Friendly Block Score: 77.7949
-Opponent Block Score: -93.6115
-Priority: 26.2382
+Friendly Block Score: 17.1207
+Opponent Block Score: -3.78252
+Priority: 63.1721
 
 Name: King Protection Gene
-Priority: -2.01971
+Priority: -9.15147
 
 Name: Castling Possible Gene
-Kingside Preference: 6.3161
-Priority: 86.5724
-Queenside Preference: 7.37047
+Kingside Preference: 0.185913
+Priority: 109.817
+Queenside Preference: 0.325724
 
 Name: Stacked Pawns Gene
-Priority: -210.05
+Priority: -224.26
 
 Name: Pawn Islands Gene
-Priority: 7.51691
+Priority: -25.7995
 
 Name: Checkmate Material Gene
-Priority: -71.8513
+Priority: 72.0995
+
+Name: Null Gene
+Priority: -403.524
 
 END
+
