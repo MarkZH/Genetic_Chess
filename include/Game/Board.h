@@ -6,8 +6,8 @@
 #include <array>
 #include <bitset>
 
-#include "Color.h"
-#include "Square.h"
+#include "Game/Color.h"
+#include "Game/Square.h"
 #include "Game/Piece_Types.h"
 #include "Players/Thinking.h"
 

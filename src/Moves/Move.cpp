@@ -4,6 +4,7 @@
 #include <cmath>
 #include <cctype>
 #include <stdexcept>
+#include <utility>
 
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
