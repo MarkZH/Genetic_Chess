@@ -21,7 +21,7 @@
 
 #include "Utility/String.h"
 
-int Piece::maximum_piece_height = 0;
+size_t Piece::maximum_piece_height = 0;
 
 //! Create a piece.
 
@@ -73,14 +73,14 @@ Piece::Piece(Color color_in, Piece_Type type_in) :
 //! \throws Debug assert fail if the square height is smaller than the piece height.
 //!
 //! Piece design by VK (?) and taken from http://ascii.co.uk/art/chess.
-std::string Piece::ascii_art(int row, int square_height) const
+std::string Piece::ascii_art(size_t row, size_t square_height) const
 {
     assert(square_height >= maximum_piece_height);
 
-    int empty_bottom_rows = (square_height - maximum_piece_height)/2;
-    int empty_top_rows = square_height - int(ascii_art_lines.size()) - empty_bottom_rows;
-    int line = row - empty_top_rows;
-    if(0 <= line && line < int(ascii_art_lines.size()))
+    auto empty_bottom_rows = (square_height - maximum_piece_height)/2;
+    auto empty_top_rows = square_height - ascii_art_lines.size() - empty_bottom_rows;
+    auto line = row - empty_top_rows;
+    if(line < ascii_art_lines.size())
     {
         return ascii_art_lines[line];
     }
@@ -332,7 +332,7 @@ void Piece::add_king_art()
 
 void Piece::add_color()
 {
-    maximum_piece_height = std::max(maximum_piece_height, int(ascii_art_lines.size()));
+    maximum_piece_height = std::max(maximum_piece_height, ascii_art_lines.size());
 
     if(color() == WHITE)
     {

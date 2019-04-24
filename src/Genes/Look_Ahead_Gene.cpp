@@ -59,7 +59,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
 
 void Look_Ahead_Gene::gene_specific_mutation()
 {
-    auto choice = Random::random_integer(1, 6);
+    auto choice = size_t(Random::random_integer(1, 6));
     switch(choice)
     {
         case 1:
@@ -71,7 +71,7 @@ void Look_Ahead_Gene::gene_specific_mutation()
             game_length_uncertainty = std::abs(game_length_uncertainty);
             break;
         default:
-            assert(choice >= 3 && size_t(choice) < speculation_constants.size() + 3);
+            assert(choice >= 3 && choice - 3 < speculation_constants.size());
             auto& spec = speculation_constants[choice - 3];
             spec += Random::random_laplace(0.1);
             spec = std::abs(spec);

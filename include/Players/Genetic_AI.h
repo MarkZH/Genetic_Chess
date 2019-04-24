@@ -35,7 +35,7 @@ class Genetic_AI : public Minimax_AI
         void print(std::ostream& file) const;
 
         int id() const;
-        void set_origin_pool(int pool_id);
+        void set_origin_pool(size_t pool_id);
 
         bool operator<(const Genetic_AI& other) const;
 
@@ -43,10 +43,10 @@ class Genetic_AI : public Minimax_AI
         Genome genome;
 
         static int next_id;
-        static int max_origin_pool_id;
+        static size_t max_origin_pool_id;
 
         int id_number;
-        std::map<int, double> ancestry; // record mix of parents' original gene pool ancestry
+        std::map<size_t, double> ancestry; // record mix of parents' original gene pool ancestry
 
         void read_from(std::istream& is);
         void read_ancestry(std::istream& is);

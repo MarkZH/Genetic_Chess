@@ -30,7 +30,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective,
     double score = 0.0;
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        auto steps = 0;
+        size_t steps = 0;
         for(int rank = first_rank; rank <= last_rank; rank += rank_step)
         {
             ++steps;

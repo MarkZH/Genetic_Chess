@@ -15,7 +15,7 @@ class Clock;
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
 int Genetic_AI::next_id = 0;
-int Genetic_AI::max_origin_pool_id = 0;
+size_t Genetic_AI::max_origin_pool_id = 0;
 
 //! Generate a randomly mutated Genetic_AI
 
@@ -38,7 +38,7 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
 {
     auto A_parents = A.ancestry;
     auto B_parents = B.ancestry;
-    for(auto i = 0; i <= max_origin_pool_id; ++i)
+    for(size_t i = 0; i <= max_origin_pool_id; ++i)
     {
         ancestry[i] = (A_parents[i] + B_parents[i])/2;
     }
@@ -121,7 +121,6 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
 void Genetic_AI::read_from(std::istream& is)
 {
     std::string line;
-    id_number = -1;
     while(std::getline(is, line))
     {
         line = String::strip_comments(line, "#");
@@ -209,7 +208,7 @@ void Genetic_AI::print(std::ostream& os) const
 {
     os << "ID: " << id() << '\n';
     os << "Ancestry:\n";
-    for(auto i = 0; i <= max_origin_pool_id; ++i)
+    for(size_t i = 0; i <= max_origin_pool_id; ++i)
     {
         auto fraction = (ancestry.count(i) > 0 ? ancestry.at(i) : 0.0);
         os << i << ": " << fraction << "\n";
@@ -255,7 +254,7 @@ bool Genetic_AI::operator<(const Genetic_AI& other) const
 //! This function identifies the first gene pool into which a newly created Genetic_AI is placed.
 
 //! \param pool_id The ID number of the gene pool.
-void Genetic_AI::set_origin_pool(int pool_id)
+void Genetic_AI::set_origin_pool(size_t pool_id)
 {
     ancestry.clear();
     ancestry[pool_id] = 1.0;
@@ -299,7 +298,7 @@ void Genetic_AI::read_ancestry(std::istream& is)
 
         try
         {
-            auto pool = std::stoi(pool_fraction[0]);
+            auto pool = std::stoul(pool_fraction[0]);
             auto fraction = std::stod(pool_fraction[1]);
             ancestry[pool] = fraction;
             max_origin_pool_id = std::max(max_origin_pool_id, pool);

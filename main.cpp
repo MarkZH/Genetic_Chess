@@ -443,7 +443,7 @@ void replay_game(const std::string& file_name, int game_number)
                 }
 
                 std::cout << "Enter \"y\" to play game from here: " << std::endl;
-                char response = std::cin.get();
+                auto response = std::cin.get();
                 if(std::tolower(response) == 'y')
                 {
                     play_game_with_board(Human_Player(),

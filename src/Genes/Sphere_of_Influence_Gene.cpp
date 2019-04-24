@@ -15,7 +15,7 @@
 
 #include "Utility/Random.h"
 
-std::array<std::array<int, 64>, 64> Sphere_of_Influence_Gene::king_distances{};
+std::array<std::array<size_t, 64>, 64> Sphere_of_Influence_Gene::king_distances{};
 bool Sphere_of_Influence_Gene::king_distances_initialized = false;
 
 Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
@@ -39,7 +39,7 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
                         auto index_a = Board::square_index(file_a, rank_a);
                         auto index_b = Board::square_index(file_b, rank_b);
                         king_distances[index_a][index_b] =
-                            std::max(std::abs(file_a - file_b), std::abs(rank_a - rank_b));
+                            size_t(std::max(std::abs(file_a - file_b), std::abs(rank_a - rank_b)));
                     }
 
                 }
@@ -139,7 +139,7 @@ void Sphere_of_Influence_Gene::gene_specific_mutation()
 
 void Sphere_of_Influence_Gene::recompute_scalar_cache()
 {
-    for(int king_distance = 0; king_distance < 8; ++king_distance)
+    for(size_t king_distance = 0; king_distance < 8; ++king_distance)
     {
         scalar_cache[king_distance] = (1 + king_target_factor/(1 + king_distance))/(64*(std::abs(legal_square_score) + std::abs(illegal_square_score)));
     }

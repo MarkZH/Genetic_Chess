@@ -34,7 +34,7 @@ double Passed_Pawn_Gene::score_board(const Board& board, Color perspective, size
 
                 for(char pawn_file = left_file; pawn_file <= right_file; ++pawn_file)
                 {
-                    auto other_pawn_rank = other_pawn_ranks_occupied[pawn_file - 'a'];
+                    auto other_pawn_rank = other_pawn_ranks_occupied[size_t(pawn_file - 'a')];
                     if(other_pawn_rank != 0 && other_pawn_rank != rank)
                     {
                         score -= score_diff;
@@ -43,7 +43,7 @@ double Passed_Pawn_Gene::score_board(const Board& board, Color perspective, size
             }
             else if(piece == other_pawn)
             {
-                other_pawn_ranks_occupied[file - 'a'] = rank;
+                other_pawn_ranks_occupied[size_t(file - 'a')] = rank;
             }
         }
     }

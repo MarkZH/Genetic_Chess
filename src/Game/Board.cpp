@@ -108,7 +108,7 @@ Board::Board(const std::string& fen) :
     for(int rank = 8; rank >= 1; --rank)
     {
         char file = 'a';
-        for(const auto& symbol : board_parse.at(8-rank))
+        for(const auto& symbol : board_parse.at(size_t(8-rank)))
         {
             if(isdigit(symbol))
             {
@@ -341,7 +341,7 @@ void Board::fen_error(const std::string& reason) const
 size_t Board::square_index(char file, int rank)
 {
     assert(inside_board(file, rank));
-    return 8*(file - 'a') + (rank - 1);
+    return size_t(8*(file - 'a') + (rank - 1));
 }
 
 const Piece*& Board::piece_on_square(char file, int rank)
@@ -817,19 +817,19 @@ const std::vector<const Move*>& Board::legal_moves() const
 //! \param perspective Specifies which side of the board is at the bottom of the screen.
 void Board::ascii_draw(Color perspective) const
 {
-    const int square_width = 7;
-    const int square_height = 3;
+    const size_t square_width = 7;
+    const size_t square_height = 3;
 
     const std::string square_corner = "+";
     const std::string square_horizontal_border = "-";
     const std::string square_vertical_border = "|";
 
     std::string horizontal_line;
-    for(int i = 0; i < 8; ++i)
+    for(size_t i = 0; i < 8; ++i)
     {
         horizontal_line.append(square_corner);
 
-        for(int j = 0; j < square_width; ++j)
+        for(size_t j = 0; j < square_width; ++j)
         {
             horizontal_line.append(square_horizontal_border);
         }
@@ -846,7 +846,7 @@ void Board::ascii_draw(Color perspective) const
     {
         std::cout << left_spacer << horizontal_line;
 
-        for(int square_row = 0; square_row < square_height; ++square_row)
+        for(size_t square_row = 0; square_row < square_height; ++square_row)
         {
             if(square_row == square_height/2)
             {
@@ -930,6 +930,13 @@ void Board::place_piece(const Piece* piece, char file, int rank)
     {
         king_location[piece->color()] = {file, rank};
     }
+
+    // Make sure the attack count did not drop below zero.
+    // Unsigned wraparound would result in an absurdly large
+    // number, so check against an impossible number of attacks.
+    // Namely, the sum of all squares being attacked from every
+    // possible direction.
+    assert(std::all_of(attack_counts.begin(), attack_counts.end(), [](auto n) { return n <= 16*64; }));
 }
 
 //! Returns the number of attacking moves available.
@@ -938,7 +945,7 @@ void Board::place_piece(const Piece* piece, char file, int rank)
 //! \param attacking_color The color of pieces doing the attacking.
 //! \returns The number of attacking moves excepting those that attack pieces
 //!          of the same color.
-int Board::attack_count(Color attacking_color) const
+size_t Board::attack_count(Color attacking_color) const
 {
     return attack_counts[attacking_color];
 }
@@ -1346,7 +1353,7 @@ void Board::print_game_record(const Player* white,
         print_game_header_line(out_stream, "FEN", starting_fen);
     }
 
-    auto starting_turn_offset = (temp.whose_turn() == WHITE ? 0 : 1);
+    auto starting_turn_offset = size_t(temp.whose_turn() == WHITE ? 0 : 1);
 
     for(size_t i = 0; i < game_record_listing.size(); ++i)
     {
@@ -1928,7 +1935,7 @@ void Board::add_to_repeat_count(uint64_t new_hash)
     repeat_count[repeat_count_insertion_point++] = new_hash;
 }
 
-size_t Board::current_board_position_repeat_count() const
+int Board::current_board_position_repeat_count() const
 {
     return std::count(repeat_count.begin(),
                       repeat_count.begin() + repeat_count_insertion_point,

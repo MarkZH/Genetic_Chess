@@ -26,9 +26,9 @@ std::string Freedom_To_Move_Gene::name() const
     return "Freedom to Move Gene";
 }
 
-int Freedom_To_Move_Gene::attack_count_scan(const Board& board, Color perspective) const
+size_t Freedom_To_Move_Gene::attack_count_scan(const Board& board, Color perspective) const
 {
-    int count = 0;
+    size_t count = 0;
     for(char file = 'a'; file <= 'h'; ++file)
     {
         for(int rank = 1; rank <= 8; ++rank)

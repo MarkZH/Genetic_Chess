@@ -69,7 +69,7 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
             score = -1;
         }
 
-        auto begin = monte_carlo_board.game_record().begin() + board.game_record().size();
+        auto begin = monte_carlo_board.game_record().begin() + int(board.game_record().size());
         auto end = monte_carlo_board.game_record().end();
         search_tree.add_search(begin, end, score);
 

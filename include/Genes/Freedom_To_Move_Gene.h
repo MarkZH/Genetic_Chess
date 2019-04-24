@@ -26,7 +26,7 @@ class Freedom_To_Move_Gene : public Gene
     private:
         double score_board(const Board& board, Color perspective, size_t depth) const override;
 
-        int attack_count_scan(const Board& board, Color perspective) const;
+        size_t attack_count_scan(const Board& board, Color perspective) const;
 };
 
 #endif // FREEDOM_TO_MOVE_GENE_H

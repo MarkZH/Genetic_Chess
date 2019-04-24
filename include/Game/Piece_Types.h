@@ -4,7 +4,7 @@
 //! \file
 
 //! An enumeration to identify the type of a Piece.
-enum Piece_Type
+enum Piece_Type : unsigned
 {
     PAWN,
     ROOK,

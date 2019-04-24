@@ -623,7 +623,7 @@ bool run_tests()
     for(int i = 0; i < 10; ++i)
     {
         test_pool.emplace_back(100); // Add AI with 100 mutations
-        test_pool.back().set_origin_pool(Random::random_integer(0, 9));
+        test_pool.back().set_origin_pool(Random::random_index(9));
     }
     for(auto& ai : test_pool)
     {
@@ -1038,10 +1038,10 @@ bool run_tests()
     // Clock time reset test
     auto time = 30;
     double expected_time_after_reset = 0.0;
-    auto moves_to_reset = 40;
+    size_t moves_to_reset = 40;
     auto clock = Clock(time, moves_to_reset);
     clock.start();
-    for(int i = 0; i < 2*moves_to_reset; ++i)
+    for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
         expected_time_after_reset = clock.time_left(BLACK) + time;
@@ -1059,7 +1059,7 @@ bool run_tests()
     auto clock2 = Clock(time, 0, increment);
     clock2.start();
     double expected_time = time;
-    for(int i = 0; i < 2*moves_to_reset; ++i)
+    for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
         clock2.punch();

@@ -56,7 +56,7 @@ void gene_pool(const std::string& config_file)
     auto config = Configuration_File(config_file);
 
     // Environment variables
-    const auto maximum_simultaneous_games = config.as_number("maximum simultaneous games");
+    const auto maximum_simultaneous_games = size_t(config.as_number("maximum simultaneous games"));
     const auto gene_pool_population = size_t(config.as_number("gene pool population"));
     const auto gene_pool_count = size_t(config.as_number("gene pool count"));
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
@@ -84,7 +84,7 @@ void gene_pool(const std::string& config_file)
     }
 
     // Stats (Pool ID --> counts)
-    std::vector<int> game_count(gene_pool_count);
+    std::vector<size_t> game_count(gene_pool_count);
     std::array<std::vector<int>, 2> color_wins; // indexed with [Color][pool_index]
     color_wins.fill(std::vector<int>(gene_pool_population, 0));
     std::vector<int> draw_count(gene_pool_count);
@@ -119,7 +119,7 @@ void gene_pool(const std::string& config_file)
         while(pools[i].size() < gene_pool_population)
         {
             pools[i].push_back(Genetic_AI(scramble_mutations));
-            pools[i].back().set_origin_pool(int(i));
+            pools[i].back().set_origin_pool(i);
         }
 
         while(pools[i].size() > gene_pool_population)
@@ -210,10 +210,10 @@ void gene_pool(const std::string& config_file)
             // before starting a new one.
             while(true)
             {
-                auto in_progress_games = std::count_if(results.begin(),
-                                                       results.end(),
-                                                       [](const auto& r)
-                                                       { return r.wait_for(std::chrono::seconds(0)) != std::future_status::ready; });
+                auto in_progress_games = size_t(std::count_if(results.begin(),
+                                                              results.end(),
+                                                              [](const auto& r)
+                                                              { return r.wait_for(std::chrono::seconds(0)) != std::future_status::ready; }));
 
                 if(gene_pool_population > 2*maximum_simultaneous_games &&
                    in_progress_games >= maximum_simultaneous_games)
@@ -385,7 +385,7 @@ void gene_pool(const std::string& config_file)
         }
         game_time = Math::clamp(game_time, minimum_game_time, maximum_game_time);
 
-        game_count[pool_index] += int(results.size());
+        game_count[pool_index] += results.size();
 
         // Transfer best players between gene pools to keep pools
         // from stagnating or amplifying pathological behavior
@@ -484,7 +484,7 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
 std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
 {
     std::string line;
-    int line_number = 0;
+    size_t line_number = 0;
 
     std::ifstream ifs(load_file);
     if( ! ifs)
@@ -494,9 +494,9 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
         return std::vector<Gene_Pool>();
     }
 
-    std::map<int, std::string> still_alive;
-    std::map<int, int> pool_line_numbers;
-    std::map<int, std::string> pool_lines;
+    std::map<size_t, std::string> still_alive;
+    std::map<size_t, size_t> pool_line_numbers;
+    std::map<size_t, std::string> pool_lines;
     while(std::getline(ifs, line))
     {
         ++line_number;
@@ -507,7 +507,7 @@ std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
                 auto parse = String::split(line, ":", 2);
                 auto pool_number_string = parse.at(1);
                 size_t conversion_character_count;
-                auto pool_number = std::stoi(pool_number_string, &conversion_character_count);
+                auto pool_number = std::stoul(pool_number_string, &conversion_character_count);
                 if( ! String::trim_outer_whitespace(pool_number_string.substr(conversion_character_count)).empty())
                 {
                     throw std::exception(); // The pool number string has more characters beyond the gene pool number.

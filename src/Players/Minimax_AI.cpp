@@ -320,7 +320,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
 {
     return {evaluate(board, move_result, perspective, depth),
             perspective,
-            {board.game_record().end() - depth,
+            {board.game_record().end() - int(depth),
             board.game_record().end()}};
 }
 

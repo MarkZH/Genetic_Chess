@@ -95,7 +95,7 @@ class Board
         bool last_move_changed_material() const;
         bool material_change_possible() const;
         size_t castling_move_index(Color player) const;
-        int attack_count(Color attacker) const;
+        size_t attack_count(Color attacker) const;
 
         Board without_random_pawn() const;
 
@@ -104,7 +104,7 @@ class Board
     private:
         std::array<const Piece*, 64> board;
         std::array<uint64_t, 101> repeat_count;
-        int repeat_count_insertion_point;
+        size_t repeat_count_insertion_point;
         Color turn_color;
         std::vector<const Move*> game_record_listing;
         std::array<bool, 64> unmoved_positions;
@@ -135,7 +135,7 @@ class Board
         // Information cache for gene reference
         bool material_change_move_available;
         std::array<size_t, 2> castling_index;
-        std::array<int, 2> attack_counts;
+        std::array<size_t, 2> attack_counts;
 
         // Pieces
         static const Piece white_rook;
@@ -178,7 +178,7 @@ class Board
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record();
         void add_to_repeat_count(uint64_t new_hash);
-        size_t current_board_position_repeat_count() const;
+        int current_board_position_repeat_count() const;
         void clear_repeat_count();
 
         // Zobrist hashing
