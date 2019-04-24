@@ -47,7 +47,7 @@ namespace Random
 
     //! Shuffles the order of a list.
 
-    //! \param[out] list An sequential collection of items whose order will be shuffled after the call.
+    //! \param[out] list A sequential collection of items whose order will be shuffled after the call.
     template<class List>
     void shuffle(List& list)
     {
