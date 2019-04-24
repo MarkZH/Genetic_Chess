@@ -627,12 +627,11 @@ bool run_tests()
     }
     for(auto& ai : test_pool)
     {
-        ai = Genetic_AI(ai, test_pool[Random::random_integer(0, 9)]); // test ancestry writing/parsing
+        ai = Genetic_AI(ai, Random::random_element(test_pool)); // test ancestry writing/parsing
         ai.print(pool_file_name);
     }
 
-    auto index = Random::random_integer(0, int(test_pool.size()) - 1);
-    const auto& test_ai = test_pool[index];
+    const auto& test_ai = Random::random_element(test_pool);
     test_ai.print(write_file_name);
     auto read_ai = Genetic_AI(pool_file_name, test_ai.id());
     read_ai.print(rewrite_file_name);
@@ -703,7 +702,7 @@ bool run_tests()
         }
 
         const auto& moves = freedom_to_move_punishment_board.legal_moves();
-        auto move = moves[Random::random_integer(0, moves.size() - 1)];
+        auto move = Random::random_element(moves);
         if(freedom_to_move_punishment_board.submit_move(*move).game_has_ended())
         {
             freedom_to_move_punishment_board = Board();
@@ -1612,7 +1611,7 @@ void run_speed_tests()
     Board speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
-        auto move = speed_board.legal_moves()[Random::random_integer(0, int(speed_board.legal_moves().size()) - 1)];
+        auto move = Random::random_element(speed_board.legal_moves());
         auto move_result = speed_board.submit_move(*move);
         if(move_result.game_has_ended())
         {
@@ -1626,7 +1625,7 @@ void run_speed_tests()
     Board copy_speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
-        auto move = copy_speed_board.legal_moves()[Random::random_integer(0, int(copy_speed_board.legal_moves().size()) - 1)];
+        auto move = Random::random_element(copy_speed_board.legal_moves());
         auto copy = copy_speed_board;
         auto move_result = copy.submit_move(*move);
         if(move_result.game_has_ended())

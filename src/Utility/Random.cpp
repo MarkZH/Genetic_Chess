@@ -10,6 +10,14 @@ int Random::random_integer(int min, int max)
     return dist(generator, uid::param_type{min, max});
 }
 
+size_t Random::random_index(size_t max)
+{
+    thread_local static std::mt19937_64 generator(std::random_device{}());
+    using uid = std::uniform_int_distribution<size_t>;
+    thread_local static auto dist = uid{};
+    return dist(generator, uid::param_type{0, max});
+}
+
 double Random::random_laplace(double width)
 {
     thread_local static std::mt19937_64 generator(std::random_device{}());

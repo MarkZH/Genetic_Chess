@@ -29,6 +29,12 @@ namespace Random
     //! \returns A random number in the range [min, max].
     int random_integer(int min, int max);
 
+    //! Random unsigned integer with inclusive range from a uniform distribution.
+
+    //! \param max The maximum number to return.
+    //! \returns A random number in the range [0, max].
+    size_t random_index(size_t max);
+
     //! Random 64-bit unsigned integer.
 
     //! \returns a random 64-bit integer with uniform probability.
@@ -53,6 +59,15 @@ namespace Random
     {
         thread_local static std::mt19937_64 generator(std::random_device{}());
         std::shuffle(list.begin(), list.end(), generator);
+    }
+
+    //! Select random element from random-access container.
+
+    //! \param list A collection of items that allows for access by an index.
+    template<typename Container>
+    typename Container::const_reference random_element(const Container& container)
+    {
+        return container.at(random_index(container.size() - 1));
     }
 }
 

@@ -1967,7 +1967,7 @@ Board Board::without_random_pawn() const
     auto result = *this;
     while(true)
     {
-        auto square = Square(Random::random_integer(0, 63));
+        auto square = Square(Random::random_index(63));
         auto piece = result.piece_on_square(square.file(), square.rank());
         if(piece && piece->type() == PAWN)
         {

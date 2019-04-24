@@ -23,8 +23,7 @@ const Move& Random_AI::choose_move(const Board& board, const Clock&) const
 //! \param board The current board. The move is a random entry from board.legal_moves().
 const Move* Random_AI::choose_random_move(const Board& board) const
 {
-    const auto& moves = board.legal_moves();
-    return moves[Random::random_integer(0, int(moves.size()) - 1)];
+    return Random::random_element(board.legal_moves());
 }
 
 std::string Random_AI::name() const

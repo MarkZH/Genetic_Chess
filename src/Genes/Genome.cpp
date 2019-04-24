@@ -251,7 +251,7 @@ void Genome::mutate()
     auto mutation_count = components_to_mutate();
     for(auto mutations = 0; mutations < mutation_count; ++mutations)
     {
-        genes[Random::random_integer(0, int(genes.size()) - 1)]->mutate();
+        genes[Random::random_index(genes.size() - 1)]->mutate();
     }
 }
 
