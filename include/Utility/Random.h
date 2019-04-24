@@ -63,7 +63,7 @@ namespace Random
 
     //! Select random element from random-access container.
 
-    //! \param list A collection of items that allows for access by an index.
+    //! \param container A collection of items that allows for access by an index.
     template<typename Container>
     typename Container::const_reference random_element(const Container& container)
     {
