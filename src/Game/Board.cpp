@@ -1899,11 +1899,6 @@ bool Board::piece_is_pinned(char file, int rank) const
         return pin_result = false;
     }
 
-    if( ! all_empty_between(king_square.file(), king_square.rank(), file, rank))
-    {
-        return pin_result = false;
-    }
-
     auto file_step = Math::sign(file - king_square.file());
     auto rank_step = Math::sign(rank - king_square.rank());
     if(potential_attacks[opposite(whose_turn())][square_index(file, rank)][Move::attack_index(-file_step, -rank_step)])
@@ -1917,7 +1912,8 @@ bool Board::piece_is_pinned(char file, int rank) const
 
         // attack_piece == nullptr means that the pinning piece is farther away than
         // one square, which means it can also attack the king beyond the pinned piece.
-        return pin_result = ( ! attack_piece || (attack_piece->type() != PAWN && attack_piece->type() != KING));
+        return pin_result = ( ! attack_piece || (attack_piece->type() != PAWN && attack_piece->type() != KING)) &&
+                            all_empty_between(king_square.file(), king_square.rank(), file, rank);
     }
     else
     {
