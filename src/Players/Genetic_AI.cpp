@@ -298,7 +298,11 @@ void Genetic_AI::read_ancestry(std::istream& is)
 
         try
         {
+            #ifdef __linux__
+            auto pool = std::stoul(pool_fraction[0]);
+            #else
             auto pool = std::stoull(pool_fraction[0]);
+            #endif
             auto fraction = std::stod(pool_fraction[1]);
             ancestry[pool] = fraction;
             max_origin_pool_id = std::max(max_origin_pool_id, pool);
