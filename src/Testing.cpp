@@ -1321,7 +1321,7 @@ bool run_tests()
         tests_passed = false;
     }
 
-    // check that square colors are correct
+    // Check that square colors are correct
     auto current_color = WHITE;
     for(char file = 'a'; file <= 'h'; ++file)
     {
