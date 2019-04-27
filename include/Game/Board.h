@@ -87,7 +87,7 @@ class Board
         bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
         bool enough_material_to_checkmate(Color color = NONE) const;
         bool move_captures(const Move& move) const;
-        int moves_since_pawn_or_capture() const;
+        size_t moves_since_pawn_or_capture() const;
         const std::bitset<16>& moves_attacking_square(char file, int rank, Color attacking_color) const;
 
         // Methods for gene reference
@@ -178,7 +178,7 @@ class Board
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record();
         void add_to_repeat_count(uint64_t new_hash);
-        int current_board_position_repeat_count() const;
+        ptrdiff_t current_board_position_repeat_count() const;
         void clear_repeat_count();
 
         // Zobrist hashing

@@ -1931,7 +1931,7 @@ void Board::add_to_repeat_count(uint64_t new_hash)
     repeat_count[repeat_count_insertion_point++] = new_hash;
 }
 
-int Board::current_board_position_repeat_count() const
+ptrdiff_t Board::current_board_position_repeat_count() const
 {
     return std::count(repeat_count.begin(),
                       repeat_count.begin() + repeat_count_insertion_point,
@@ -1941,7 +1941,7 @@ int Board::current_board_position_repeat_count() const
 //! The number of moves since the last capture or pawn move.
 
 //! \returns How many moves have been made since the last capturing or pawn move.
-int Board::moves_since_pawn_or_capture() const
+size_t Board::moves_since_pawn_or_capture() const
 {
     return repeat_count_insertion_point - 1;
 }
