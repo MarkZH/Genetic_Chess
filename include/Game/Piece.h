@@ -33,8 +33,9 @@ class Piece
         const std::vector<const Move*>& attacking_moves(Square square) const;
 
     private:
-        unsigned int piece_code;
-        static const unsigned int invalid_code;
+        using piece_code_t = unsigned int;
+        piece_code_t piece_code;
+        static const piece_code_t invalid_code;
 
         friend bool operator==(Piece a, Piece b);
 };

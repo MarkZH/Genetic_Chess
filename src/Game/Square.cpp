@@ -35,7 +35,7 @@ Square Square_Iterator::end() const
     return Square{};
 }
 
-unsigned int Square::invalid_index = 64;
+const Square::square_index_t Square::invalid_index = 64;
 
 //! The default constructor creates an invalid square location.
 Square::Square() : square_index(invalid_index)
@@ -73,7 +73,7 @@ int Square::rank() const
 //! The index of the square.
 
 //! \returns An unsigned integer index.
-size_t Square::index() const
+Square::square_index_t Square::index() const
 {
     return square_index;
 }
@@ -120,7 +120,7 @@ bool Square::is_set() const
 Square& Square::operator+=(const Square_Difference& diff)
 {
     assert(std::abs(diff.file_change) < 8 && std::abs(diff.rank_change) < 8);
-    auto new_rank_index = square_index + diff.rank_change;
+    square_index_t new_rank_index = square_index + diff.rank_change;
     if(new_rank_index/8 != square_index/8) // make sure file did not change (happens if new square is off the board vertically)
     {
         square_index = invalid_index;

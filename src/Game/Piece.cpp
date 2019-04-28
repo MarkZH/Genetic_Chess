@@ -360,7 +360,7 @@ namespace
     }
 }
 
-const unsigned int Piece::invalid_code = 99;
+const Piece::piece_code_t Piece::invalid_code = 99;
 
 //! Create an invalid piece that can represent an unoccupied space on a Board.
 Piece::Piece() : piece_code(invalid_code)

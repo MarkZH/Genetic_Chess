@@ -23,13 +23,16 @@ struct Square_Iterator;
 //! This class represents a location on the board.
 class Square
 {
+    private:
+        using square_index_t = unsigned int;
+
     public:
         Square();
         Square(char file, int rank);
 
         char file() const;
         int rank() const;
-        size_t index() const;
+        square_index_t index() const;
         std::string string() const;
         Color color() const;
 
@@ -47,8 +50,8 @@ class Square
         static Square_Iterator all_squares();
 
     private:
-        unsigned int square_index;
-        static unsigned int invalid_index;
+        square_index_t square_index;
+        static const square_index_t invalid_index;
 };
 
 bool operator==(Square a, Square b);
