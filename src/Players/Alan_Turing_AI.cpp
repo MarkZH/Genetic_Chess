@@ -146,21 +146,18 @@ double Alan_Turing_AI::material_value(const Board& board, Color perspective) con
     double player_score = 0.0;
     double opponent_score = 0.0;
 
-    for(char file = 'a'; file <= 'h'; ++file)
+    for(auto square : Square::all_squares())
     {
-        for(int rank = 1; rank <= 8; ++rank)
+        auto piece = board.piece_on_square(square);
+        if(piece)
         {
-            auto piece = board.piece_on_square({file, rank});
-            if(piece)
+            if(piece->color() == perspective)
             {
-                if(piece->color() == perspective)
-                {
-                    player_score += piece_value(piece);
-                }
-                else
-                {
-                    opponent_score += piece_value(piece);
-                }
+                player_score += piece_value(piece);
+            }
+            else
+            {
+                opponent_score += piece_value(piece);
             }
         }
     }
@@ -184,191 +181,189 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
 {
     double total_score = 0.0;
 
-    for(char file = 'a'; file <= 'h'; ++file)
+    for(auto square : Square::all_squares())
     {
-        for(int rank = 1; rank <= 8; ++rank)
+        auto piece = board.piece_on_square(square);
+        if( ! piece)
         {
-            auto square = Square{file, rank};
-            auto piece = board.piece_on_square(square);
-            if( ! piece)
-            {
-                continue;
-            }
+            continue;
+        }
 
-            if(piece->color() == perspective)
+        if(piece->color() == perspective)
+        {
+            if(piece->type() == QUEEN || piece->type() == ROOK || piece->type() == BISHOP || piece->type() == KNIGHT)
             {
-                if(piece->type() == QUEEN || piece->type() == ROOK || piece->type() == BISHOP || piece->type() == KNIGHT)
+                // Number of moves score
+                double move_score = 0.0;
+                for(auto move : board.legal_moves())
                 {
-                    // Number of moves score
-                    double move_score = 0.0;
-                    for(auto move : board.legal_moves())
+                    if(move->start() == square)
                     {
-                        if(move->start() == square)
+                        move_score += 1.0;
+                        if(board.move_captures(*move))
                         {
                             move_score += 1.0;
-                            if(board.move_captures(*move))
-                            {
-                                move_score += 1.0;
-                            }
-                        }
-                    }
-                    total_score += std::sqrt(move_score);
-
-                    // Non-queen pieces defended
-                    if(piece->type() != QUEEN)
-                    {
-                        auto defender_count = board.moves_attacking_square(square, perspective).count();
-                        if(defender_count > 0)
-                        {
-                            total_score += 1.0 + 0.5*(defender_count - 1);
                         }
                     }
                 }
-                else if(piece->type() == KING)
+                total_score += std::sqrt(move_score);
+
+                // Non-queen pieces defended
+                if(piece->type() != QUEEN)
                 {
-                    // King move scores
-                    double move_score = 0.0;
-                    double castling_moves = 0.0;
-                    for(auto move : board.legal_moves())
+                    auto defender_count = board.moves_attacking_square(square, perspective).count();
+                    if(defender_count > 0)
                     {
-                        if(move->start() != square)
+                        total_score += 1.0 + 0.5*(defender_count - 1);
+                    }
+                }
+            }
+            else if(piece->type() == KING)
+            {
+                // King move scores
+                double move_score = 0.0;
+                double castling_moves = 0.0;
+                for(auto move : board.legal_moves())
+                {
+                    if(move->start() != square)
+                    {
+                        continue;
+                    }
+
+                    if(move->is_castling())
+                    {
+                        castling_moves += 1.0;
+                    }
+                    else
+                    {
+                        move_score += 1.0;
+                    }
+                }
+                total_score += std::sqrt(move_score) + castling_moves;
+
+                // King vulnerability (count number of queen moves from king square and subtract)
+                double king_squares = 0.0;
+                for(int file_step = -1; file_step <= 1; ++file_step)
+                {
+                    for(int rank_step = -1; rank_step <= 1; ++rank_step)
+                    {
+                        if(file_step == 0 && rank_step == 0)
                         {
                             continue;
                         }
 
-                        if(move->is_castling())
+                        auto step = Square_Difference{file_step, rank_step};
+                        for(auto attack = square + step; attack.inside_board(); attack += step)
                         {
-                            castling_moves += 1.0;
-                        }
-                        else
-                        {
-                            move_score += 1.0;
-                        }
-                    }
-                    total_score += std::sqrt(move_score) + castling_moves;
-
-                    // King vulnerability (count number of queen moves from king square and subtract)
-                    double king_squares = 0.0;
-                    for(int file_step = -1; file_step <= 1; ++file_step)
-                    {
-                        for(int rank_step = -1; rank_step <= 1; ++rank_step)
-                        {
-                            if(file_step == 0 && rank_step == 0)
+                            auto other_piece = board.piece_on_square(attack);
+                            if( ! other_piece)
                             {
-                                continue;
+                                king_squares += 1.0;
                             }
-
-                            auto step = Square_Difference{file_step, rank_step};
-                            for(auto attack = square + step; attack.inside_board(); attack += step)
+                            else
                             {
-                                auto other_piece = board.piece_on_square(attack);
-                                if( ! other_piece)
+                                if(other_piece->color() != perspective)
                                 {
                                     king_squares += 1.0;
                                 }
-                                else
-                                {
-                                    if(other_piece->color() != perspective)
-                                    {
-                                        king_squares += 1.0;
-                                    }
 
-                                    break;
-                                }
+                                break;
                             }
                         }
                     }
-                    total_score -= std::sqrt(king_squares);
+                }
+                total_score -= std::sqrt(king_squares);
 
-                    // Castling score
-                    if(!board.piece_has_moved(square))
-                    {
-                        // Queenside castling
-                        if( ! board.piece_has_moved({'a', rank}))
-                        {
-                            total_score += 1.0;
-
-                            // Can castle on next move
-                            if(board.all_empty_between({'a', rank}, square))
-                            {
-                                total_score += 1.0;
-                            }
-                        }
-
-                        // Kingside castling
-                        if(!board.piece_has_moved({'h', rank}))
-                        {
-                            total_score += 1.0;
-
-                            // Can castle on next move
-                            if(board.all_empty_between({'h', rank}, square))
-                            {
-                                total_score += 1.0;
-                            }
-                        }
-                    }
-
-                    // Last move was castling
-                    if(board.castling_move_index(perspective) < board.game_record().size())
+                // Castling score
+                if(!board.piece_has_moved(square))
+                {
+                    // Queenside castling
+                    auto queenside_rook = Square{'a', square.rank()};
+                    if( ! board.piece_has_moved(queenside_rook))
                     {
                         total_score += 1.0;
+
+                        // Can castle on next move
+                        if(board.all_empty_between(queenside_rook, square))
+                        {
+                            total_score += 1.0;
+                        }
+                    }
+
+                    // Kingside castling
+                    auto kingside_rook = Square{'h', square.rank()};
+                    if(!board.piece_has_moved(kingside_rook))
+                    {
+                        total_score += 1.0;
+
+                        // Can castle on next move
+                        if(board.all_empty_between(kingside_rook, square))
+                        {
+                            total_score += 1.0;
+                        }
                     }
                 }
-                else if(piece->type() == PAWN)
+
+                // Last move was castling
+                if(board.castling_move_index(perspective) < board.game_record().size())
                 {
-                    // Pawn advancement
-                    auto base_rank = (perspective == WHITE ? 2 : 7);
-                    total_score += 0.2*std::abs(base_rank - rank);
-
-                    // Pawn defended
-                    auto pawn_defended = false;
-                    for(auto piece_type :{QUEEN, ROOK, BISHOP, KNIGHT, KING})
-                    {
-                        if(pawn_defended)
-                        {
-                            break;
-                        }
-
-                        auto defending_piece = board.piece_instance(piece_type, perspective);
-                        for(auto move : defending_piece->move_list(square))
-                        {
-                            if(defending_piece == board.piece_on_square(move->end()))
-                            {
-                                if(piece_type == KNIGHT || board.all_empty_between(square, move->end()))
-                                {
-                                    pawn_defended = true;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-
-                    if(pawn_defended)
-                    {
-                        total_score += 0.3;
-                    }
+                    total_score += 1.0;
                 }
             }
-            else // piece->color() == opposite(perspective)
+            else if(piece->type() == PAWN)
             {
-                if(piece->type() == KING)
+                // Pawn advancement
+                auto base_rank = (perspective == WHITE ? 2 : 7);
+                total_score += 0.2*std::abs(base_rank - square.rank());
+
+                // Pawn defended
+                auto pawn_defended = false;
+                for(auto piece_type :{QUEEN, ROOK, BISHOP, KNIGHT, KING})
                 {
-                    auto temp_board = board;
-                    temp_board.set_turn(opposite(perspective));
-                    if(temp_board.king_is_in_check())
+                    if(pawn_defended)
                     {
-                        total_score += 0.5;
+                        break;
                     }
-                    else
+
+                    auto defending_piece = board.piece_instance(piece_type, perspective);
+                    for(auto move : defending_piece->move_list(square))
                     {
-                        temp_board.set_turn(perspective);
-                        for(auto move : temp_board.legal_moves())
+                        if(defending_piece == board.piece_on_square(move->end()))
                         {
-                            auto temp_temp_board = temp_board;
-                            if(temp_temp_board.submit_move(*move).winner() != NONE)
+                            if(piece_type == KNIGHT || board.all_empty_between(square, move->end()))
                             {
-                                total_score += 1.0;
+                                pawn_defended = true;
+                                break;
                             }
+                        }
+                    }
+                }
+
+                if(pawn_defended)
+                {
+                    total_score += 0.3;
+                }
+            }
+        }
+        else // piece->color() == opposite(perspective)
+        {
+            if(piece->type() == KING)
+            {
+                auto temp_board = board;
+                temp_board.set_turn(opposite(perspective));
+                if(temp_board.king_is_in_check())
+                {
+                    total_score += 0.5;
+                }
+                else
+                {
+                    temp_board.set_turn(perspective);
+                    for(auto move : temp_board.legal_moves())
+                    {
+                        auto temp_temp_board = temp_board;
+                        if(temp_temp_board.submit_move(*move).winner() != NONE)
+                        {
+                            total_score += 1.0;
                         }
                     }
                 }
