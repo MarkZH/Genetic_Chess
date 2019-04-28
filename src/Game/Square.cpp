@@ -174,7 +174,7 @@ bool Square::inside_board(char file, int rank)
 }
 
 Square_Iterator Square::all_squares()
-{ 
+{
     return {};
 }
 

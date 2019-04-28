@@ -25,7 +25,7 @@ def main(args):
                     count = 0
                     time_sum = 0
                 timings[name] = (count + 1, time_sum + float(time))
-    
+
     if time_unit == 'sec':
         multiplier = 1
     elif time_unit == 'msec':

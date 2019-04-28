@@ -1354,7 +1354,7 @@ bool run_tests()
             }
         }
     }
-    
+
     // Check square iteration
     std::array<bool, 64> squares_visited{};
     for(auto square : Square::all_squares())
