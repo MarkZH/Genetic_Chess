@@ -44,7 +44,7 @@ bool Castle::move_specific_legal(const Board& board) const
 //! \param board The board on which the move is being made.
 void Castle::side_effects(Board& board) const
 {
-    board.make_move(rook_move.start(), rook_move.end());
+    board.move_piece(rook_move);
     board.castling_index[board.whose_turn()] = board.game_record().size() - 1;
 }
 

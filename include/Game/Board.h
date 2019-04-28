@@ -133,7 +133,7 @@ class Board
 
         Piece& piece_on_square(Square square);
         void remove_piece(Square square);
-        void make_move(Square start, Square rank);
+        void move_piece(const Move& move);
         const Move& create_move(Square start, Square rank, char promote = 0) const;
         bool no_legal_moves() const;
         void make_en_passant_targetable(Square square);

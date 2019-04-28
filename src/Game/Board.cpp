@@ -483,9 +483,9 @@ Game_Result Board::submit_move(const Move& move)
 void Board::update_board(const Move& move)
 {
     assert(is_in_legal_moves_list(move));
-    game_record_listing.push_back(&move);
 
-    make_move(move.start(), move.end());
+    game_record_listing.push_back(&move);
+    move_piece(move);
     move.side_effects(*this);
 
     switch_turn();
@@ -644,17 +644,17 @@ const Move& Board::create_move(const std::string& move) const
     throw Illegal_Move("Malformed move: " + move);
 }
 
-void Board::make_move(Square start, Square end)
+void Board::move_piece(const Move& move)
 {
-    if(piece_on_square(end))
+    if(piece_on_square(move.end()))
     {
+        remove_piece(move.end());
         clear_repeat_count();
     }
 
-    auto moving_piece = piece_on_square(start);
-    remove_piece(end);
-    remove_piece(start);
-    place_piece(moving_piece, end);
+    auto moving_piece = piece_on_square(move.start());
+    remove_piece(move.start());
+    place_piece(moving_piece, move.end());
 
     clear_en_passant_target();
     clear_pinned_squares();
