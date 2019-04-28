@@ -1276,25 +1276,27 @@ bool run_tests()
     try
     {
         auto too_many_attackers_board = Board("1k1R4/2P5/KR5q/8/8/8/8/8 b - - 0 1");
+
+        // Should not reach here. Board ctor should have thrown an exception.
         too_many_attackers_board.ascii_draw(WHITE);
         std::cerr << "Illegal board created with too many pieces attacking black king." << std::endl;
         tests_passed = false;
     }
     catch(const std::invalid_argument&)
     {
-        // The board constructor should throw an exception.
     }
 
     try
     {
         auto too_many_knight_attackers_board = Board("k7/2N5/1N6/8/8/8/8/7K b - - 0 1");
+
+        // Should not reach here. Board ctor should have thrown an exception.
         too_many_knight_attackers_board.ascii_draw(WHITE);
         std::cerr << "Illegal board created with too many knights attacking black king." << std::endl;
         tests_passed = false;
     }
     catch(const std::invalid_argument&)
     {
-        // The board constructor should throw an exception.
     }
 
 

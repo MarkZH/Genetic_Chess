@@ -282,53 +282,20 @@ Board::Board(const std::string& fen) :
         fen_error("Result: " + fen_status());
     }
 
-    recreate_move_caches();
-
     const auto& king_square = find_king(whose_turn());
-    auto attacker_count = 0;
-    auto attacking_knight_count = 0;
-    for(char file = 'a'; file <= 'h'; ++file)
-    {
-        for(int rank = 1; rank <= 8; ++rank)
-        {
-            auto square = Square{file, rank};
-            auto piece = piece_on_square(square);
-            if( ! piece || piece->color() == whose_turn())
-            {
-                continue;
-            }
-
-            for(auto move : piece->attacking_moves(square))
-            {
-                if(move->end() == king_square)
-                {
-                    if(piece->type() == KNIGHT)
-                    {
-                        ++attacker_count;
-                        ++attacking_knight_count;
-                    }
-                    else if(all_empty_between(square, king_square))
-                    {
-                        ++attacker_count;
-
-                        // Move to next piece since pawns can have multiple
-                        // moves with the same start and end squares.
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    if(attacker_count > 2)
+    const auto& attacks_on_king = moves_attacking_square(king_square, opposite(whose_turn()));
+    if(attacks_on_king.count() > 2)
     {
         fen_error("Too many pieces attacking " + color_text(whose_turn()) + " king.");
     }
 
-    if(attacking_knight_count > 1)
+    // Count knight attacks
+    if((attacks_on_king >> 8).count() > 1)
     {
         fen_error("It is impossible for more than one knight to check king.");
     }
+
+    recreate_move_caches();
 }
 
 void Board::fen_error(const std::string& reason) const
