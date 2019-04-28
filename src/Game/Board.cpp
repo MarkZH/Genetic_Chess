@@ -1701,18 +1701,17 @@ bool Board::piece_is_pinned(Square square) const
         return pin_result = false;
     }
 
-    auto step_index = Move::attack_index(king_square - square);
-    if(potential_attacks[opposite(whose_turn())][square.index()][step_index])
+    auto diff = king_square - square;
+    if(potential_attacks[opposite(whose_turn())][square.index()][Move::attack_index(diff)])
     {
         // The potential_attacks check guarantees that there is an opposing piece attacking
         // the queried square in the same direction towards the friendly king. This next check
         // is to make sure the attacking piece is not a limited range piece--i.e., a pawn or king.
-        auto attack_square = square - Move::attack_direction_from_index(step_index);
-        auto attack_piece = piece_on_square(attack_square);
-
-        // attack_piece == nullptr means that the pinning piece is farther away than
-        // one square, which means it can also attack the king beyond the pinned piece.
-        return pin_result = ( ! attack_piece || (attack_piece.type() != PAWN && attack_piece.type() != KING)) &&
+        // Even if there is no piece on the queried square, it will still return a type,
+        // just not a type that matches any of those defined in Piece_Types.h.
+        auto attacker = piece_on_square(square - diff.step()).type();
+        return pin_result = attacker != PAWN &&
+                            attacker != KING &&
                             all_empty_between(king_square, square);
     }
     else
