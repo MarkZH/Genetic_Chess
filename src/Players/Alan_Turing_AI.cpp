@@ -318,30 +318,22 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                 auto base_rank = (perspective == WHITE ? 2 : 7);
                 total_score += 0.2*std::abs(base_rank - square.rank());
 
-                // Pawn defended
-                auto pawn_defended = false;
-                for(auto piece_type :{QUEEN, ROOK, BISHOP, KNIGHT, KING})
+                // Pawn defended by non-pawns
+                auto defender_count = board.moves_attacking_square(square, perspective).count();
+                auto rank_change = perspective == WHITE ? -1 : 1;
+                for(auto file_change : {-1, 1})
                 {
-                    if(pawn_defended)
+                    auto new_square = square + Square_Difference{file_change, rank_change};
+                    if(new_square.inside_board())
                     {
-                        break;
-                    }
-
-                    auto defending_piece = Piece{perspective, piece_type};
-                    for(auto move : defending_piece.move_list(square))
-                    {
-                        if(defending_piece == board.piece_on_square(move->end()))
+                        if(board.piece_on_square(new_square) == piece)
                         {
-                            if(piece_type == KNIGHT || board.all_empty_between(square, move->end()))
-                            {
-                                pawn_defended = true;
-                                break;
-                            }
+                            --defender_count;
                         }
                     }
                 }
 
-                if(pawn_defended)
+                if(defender_count > 0)
                 {
                     total_score += 0.3;
                 }
