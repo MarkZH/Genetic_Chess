@@ -10,12 +10,10 @@
 //! \param base_rank The back rank of the player: 1 for white, 8 for black.
 //! \param direction The direction of the king's move: LEFT for queenside, RIGHT for king side.
 Castle::Castle(int base_rank, Direction direction) :
-    Move('e',
-         base_rank,
-         (direction == RIGHT ? 'g' : 'c'),
-         base_rank),
-    rook_starting_file(direction == RIGHT ? 'h' : 'a'),
-    rook_ending_file(direction == RIGHT ? 'f' : 'd')
+    Move({'e', base_rank},
+         {(direction == RIGHT ? 'g' : 'c'), base_rank}),
+    rook_move({(direction == RIGHT ? 'h' : 'a'), base_rank},
+              {(direction == RIGHT ? 'f' : 'd'), base_rank})
 {
     able_to_capture = false;
     is_castling_move = true;
@@ -32,12 +30,12 @@ Castle::Castle(int base_rank, Direction direction) :
 //! \returns Whether the current board position allows for castling.
 bool Castle::move_specific_legal(const Board& board) const
 {
-    auto skipped_file = (start_file() + end_file())/2;
-    return     ! board.piece_has_moved(start_file(), start_rank())
-            && ! board.piece_has_moved(rook_starting_file, start_rank())
+    char skipped_file = (start().file() + end().file())/2;
+    return     ! board.piece_has_moved(start())
+            && ! board.piece_has_moved(rook_move.start())
             && ! board.king_is_in_check()
-            && board.all_empty_between(start_file(), start_rank(), rook_starting_file, start_rank())
-            && board.safe_for_king(skipped_file, start_rank(), board.whose_turn());
+            && board.all_empty_between(start(), rook_move.start())
+            && board.safe_for_king({skipped_file, start().rank()}, board.whose_turn());
 }
 
 //! Moves the rook to its final square.
@@ -46,7 +44,7 @@ bool Castle::move_specific_legal(const Board& board) const
 //! \param board The board on which the move is being made.
 void Castle::side_effects(Board& board) const
 {
-    board.make_move(rook_starting_file, start_rank(), rook_ending_file, start_rank()); // move Rook
+    board.make_move(rook_move.start(), rook_move.end());
     board.castling_index[board.whose_turn()] = board.game_record().size() - 1;
 }
 

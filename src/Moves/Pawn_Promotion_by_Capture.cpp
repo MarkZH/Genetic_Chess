@@ -20,9 +20,9 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
     Pawn_Promotion(promotion, color, file_start)
 {
     adjust_end_file(dir == RIGHT ? 1 : -1);
-    if( ! Board::inside_board(end_file()))
+    if( ! end().inside_board())
     {
-        throw std::invalid_argument(std::string("Invalid ending file for pawn promotion by capture: ") + end_file());
+        throw std::invalid_argument(std::string("Invalid ending file for pawn promotion by capture: ") + end().file());
     }
 
     able_to_capture = true;
@@ -34,7 +34,7 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
 //! \returns Whether there is an opposing piece to capture.
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const
 {
-    return board.piece_on_square(end_file(), end_rank()); // must capture
+    return board.piece_on_square(end()); // must capture
 }
 
 //! Combine pawn capture note with a promotion note.
@@ -43,5 +43,5 @@ bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const
 //! \returns A textual record of a capture and a promotion.
 std::string Pawn_Promotion_by_Capture::game_record_move_item(const Board& board) const
 {
-    return start_file() + std::string("x") + Pawn_Promotion::game_record_move_item(board);
+    return start().file() + std::string("x") + Pawn_Promotion::game_record_move_item(board);
 }

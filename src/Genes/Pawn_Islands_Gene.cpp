@@ -21,7 +21,7 @@ double Pawn_Islands_Gene::score_board(const Board& board, Color perspective, siz
         bool own_pawn_found = false;
         for(int rank = 2; rank <= 7; ++rank)
         {
-            if(board.piece_on_square(file, rank) == own_pawn)
+            if(board.piece_on_square({file, rank}) == own_pawn)
             {
                 own_pawn_found = true;
                 ++pawn_count;

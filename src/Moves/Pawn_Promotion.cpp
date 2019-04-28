@@ -23,7 +23,7 @@ Pawn_Promotion::Pawn_Promotion(Piece_Type promotion_piece, Color color, char fil
 void Pawn_Promotion::side_effects(Board& board) const
 {
     Pawn_Move::side_effects(board);
-    board.place_piece(promote_to, end_file(), end_rank());
+    board.place_piece(promote_to, end());
 }
 
 //! Attach an indication of the promotion piece to the normal pawn move record.

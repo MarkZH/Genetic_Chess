@@ -91,7 +91,7 @@ $(DEBUG_OBJ_DIR)/src/Exceptions/Game_Ended.o : src/Exceptions/Game_Ended.cpp inc
 $(DEBUG_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o : src/Exceptions/Promotion_Piece_Needed.cpp include/Exceptions/Promotion_Piece_Needed.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Exceptions/Promotion_Piece_Needed.cpp -o $(DEBUG_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o
 
-$(DEBUG_OBJ_DIR)/src/Game/Board.o : src/Game/Board.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Player.h include/Players/Thinking.h include/Utility/Math.h include/Utility/Random.h include/Utility/String.h
+$(DEBUG_OBJ_DIR)/src/Game/Board.o : src/Game/Board.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Player.h include/Players/Thinking.h include/Utility/Random.h include/Utility/String.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Game/Board.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Board.o
 
 $(DEBUG_OBJ_DIR)/src/Game/Clock.o : src/Game/Clock.cpp include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h
@@ -109,7 +109,7 @@ $(DEBUG_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Game/
 $(DEBUG_OBJ_DIR)/src/Game/Piece.o : src/Game/Piece.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Castle.h include/Moves/Direction.h include/Moves/En_Passant.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Players/Thinking.h include/Utility/String.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Game/Piece.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Piece.o
 
-$(DEBUG_OBJ_DIR)/src/Game/Square.o : src/Game/Square.cpp include/Game/Square.h
+$(DEBUG_OBJ_DIR)/src/Game/Square.o : src/Game/Square.cpp include/Game/Color.h include/Game/Square.h include/Utility/Math.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Game/Square.cpp -o $(DEBUG_OBJ_DIR)/src/Game/Square.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h include/Moves/Move.h include/Players/Thinking.h include/Utility/Math.h include/Utility/Random.h
@@ -268,7 +268,7 @@ $(RELEASE_OBJ_DIR)/src/Exceptions/Game_Ended.o : src/Exceptions/Game_Ended.cpp i
 $(RELEASE_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o : src/Exceptions/Promotion_Piece_Needed.cpp include/Exceptions/Promotion_Piece_Needed.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Exceptions/Promotion_Piece_Needed.cpp -o $(RELEASE_OBJ_DIR)/src/Exceptions/Promotion_Piece_Needed.o
 
-$(RELEASE_OBJ_DIR)/src/Game/Board.o : src/Game/Board.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Player.h include/Players/Thinking.h include/Utility/Math.h include/Utility/Random.h include/Utility/String.h
+$(RELEASE_OBJ_DIR)/src/Game/Board.o : src/Game/Board.cpp include/Exceptions/Illegal_Move.h include/Exceptions/Promotion_Piece_Needed.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Move.h include/Players/Player.h include/Players/Thinking.h include/Utility/Random.h include/Utility/String.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Game/Board.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Board.o
 
 $(RELEASE_OBJ_DIR)/src/Game/Clock.o : src/Game/Clock.cpp include/Game/Clock.h include/Game/Color.h include/Game/Game_Result.h
@@ -286,7 +286,7 @@ $(RELEASE_OBJ_DIR)/src/Game/Game_Result.o : src/Game/Game_Result.cpp include/Gam
 $(RELEASE_OBJ_DIR)/src/Game/Piece.o : src/Game/Piece.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Piece_Types.h include/Game/Square.h include/Moves/Castle.h include/Moves/Direction.h include/Moves/En_Passant.h include/Moves/Move.h include/Moves/Pawn_Capture.h include/Moves/Pawn_Double_Move.h include/Moves/Pawn_Move.h include/Moves/Pawn_Promotion.h include/Moves/Pawn_Promotion_by_Capture.h include/Players/Thinking.h include/Utility/String.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Game/Piece.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Piece.o
 
-$(RELEASE_OBJ_DIR)/src/Game/Square.o : src/Game/Square.cpp include/Game/Square.h
+$(RELEASE_OBJ_DIR)/src/Game/Square.o : src/Game/Square.cpp include/Game/Color.h include/Game/Square.h include/Utility/Math.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Game/Square.cpp -o $(RELEASE_OBJ_DIR)/src/Game/Square.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Castling_Possible_Gene.o : src/Genes/Castling_Possible_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece_Types.h include/Game/Square.h include/Genes/Castling_Possible_Gene.h include/Genes/Gene.h include/Moves/Move.h include/Players/Thinking.h include/Utility/Math.h include/Utility/Random.h

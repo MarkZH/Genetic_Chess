@@ -8,6 +8,7 @@
 
 #include "Game/Board.h"
 #include "Game/Piece_Types.h"
+#include "Game/Square.h"
 
 #include "Moves/Move.h"
 #include "Moves/Direction.h"
@@ -119,18 +120,17 @@ char Piece::fen_symbol() const
 //! \returns Whether or not the piece is allowed to move in the manner described by the parameter.
 bool Piece::can_move(const Move* move) const
 {
-    const auto& moves = move_list(move->start_file(), move->start_rank());
+    const auto& moves = move_list(move->start());
     return std::find(moves.begin(), moves.end(), move) != moves.end();
 }
 
 //! Get all possibly legal moves of a piece starting from a given square.
 
-//! \param file The file of the starting square.
-//! \param rank The rank of the starting square.
+//! \param square The square where the moves should start.
 //! \returns A list of legal moves starting from that square.
-const std::vector<const Move*>& Piece::move_list(char file, int rank) const
+const std::vector<const Move*>& Piece::move_list(Square square) const
 {
-    return legal_moves[Board::square_index(file, rank)];
+    return legal_moves[square.index()];
 }
 
 //! Get the type of the piece.
@@ -143,18 +143,13 @@ Piece_Type Piece::type() const
 
 void Piece::add_standard_legal_move(int file_step, int rank_step)
 {
-    for(char start_file = 'a'; start_file <= 'h'; ++start_file)
+    for(auto start : Square::all_squares())
     {
-        for(int start_rank = 1; start_rank <= 8; ++start_rank)
-        {
-            char end_file = start_file + file_step;
-            int  end_rank = start_rank + rank_step;
+        auto end = start + Square_Difference{ file_step, rank_step };
 
-            if(Board::inside_board(end_file, end_rank))
-            {
-                add_legal_move<Move>(start_file, start_rank,
-                                     end_file, end_rank);
-            }
+        if(end.inside_board())
+        {
+            add_legal_move<Move>(start, end);
         }
     }
 }
@@ -353,9 +348,8 @@ void Piece::add_color()
 
 //! Gives a list of moves that are allowed to capture other pieces.
 
-//! \param file The file of the square where the attacking move starts.
-//! \param rank The rank of the square where the attacking move starts.
-const std::vector<const Move*>& Piece::attacking_moves(char file, int rank) const
+//! \param square The square where the attacking moves start.
+const std::vector<const Move*>& Piece::attacking_moves(Square square) const
 {
-    return attack_moves[Board::square_index(file, rank)];
+    return attack_moves[square.index()];
 }

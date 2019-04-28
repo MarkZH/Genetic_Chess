@@ -21,16 +21,12 @@ double Total_Force_Gene::score_board(const Board& board, Color perspective, size
 {
     double score = 0.0;
 
-    for(char file = 'a'; file <= 'h'; ++file)
+    for(auto square : Square::all_squares())
     {
-        for(int rank = 1; rank <= 8; ++rank)
+        auto piece = board.piece_on_square(square);
+        if(piece && piece->color() == perspective)
         {
-            auto piece = board.piece_on_square(file, rank);
-            if(piece &&
-               piece->color() == perspective)
-            {
-                score += piece_strength_source->piece_value(piece);
-            }
+            score += piece_strength_source->piece_value(piece);
         }
     }
 

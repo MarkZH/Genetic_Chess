@@ -27,8 +27,8 @@ class Piece
 
         bool can_move(const Move* move) const;
 
-        const std::vector<const Move*>& move_list(char file, int rank) const;
-        const std::vector<const Move*>& attacking_moves(char file, int rank) const;
+        const std::vector<const Move*>& move_list(Square square) const;
+        const std::vector<const Move*>& attacking_moves(Square square) const;
 
         Piece_Type type() const;
 
@@ -57,7 +57,7 @@ class Piece
         void add_legal_move(Parameters ... parameters)
         {
             auto move = std::make_unique<Move_Type>(parameters...);
-            auto index = Board::square_index(move->start_file(), move->start_rank());
+            auto index = move->start().index();
             legal_moves[index].push_back(move.get());
 
             // Make list of all capturing moves, excluding all but one type of pawn capture per square.

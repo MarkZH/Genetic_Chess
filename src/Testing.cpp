@@ -9,6 +9,7 @@
 #include <cassert>
 #include <algorithm>
 #include <limits>
+#include <utility>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -52,11 +53,12 @@ bool run_tests()
     // Move direction indexing
     for(size_t i = 0; i < 16; ++i)
     {
-        auto [file_step, rank_step] = Move::attack_direction_from_index(i);
-        auto step_index = Move('e', 4, 'e' + file_step, 4 + rank_step).attack_index();
+        auto step = Move::attack_direction_from_index(i);
+        auto start = Square{'e', 4};
+        auto step_index = Move(start, start + step).attack_index();
         if(step_index != i)
         {
-            std::cerr << "Direction-index mismatch: " << i << " --> " << file_step << "," << rank_step << " --> " << step_index << std::endl;
+            std::cerr << "Direction-index mismatch: " << i << " --> " << step.file_change << "," << step.rank_change << " --> " << step_index << std::endl;
             tests_passed = false;
         }
     }
@@ -234,7 +236,7 @@ bool run_tests()
 
     // Pinned piece test
     auto pin_board = Board("k1KRr3/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! pin_board.piece_is_pinned('d', 8))
+    if( ! pin_board.piece_is_pinned({'d', 8}))
     {
         pin_board.ascii_draw(WHITE);
         std::cerr << "Rook at d4 should register as pinned." << std::endl;
@@ -242,7 +244,7 @@ bool run_tests()
     }
 
     auto no_pin_board = Board("k1KRRr2/8/8/8/8/8/8/8 w - - 0 1");
-    if(no_pin_board.piece_is_pinned('d', 8))
+    if(no_pin_board.piece_is_pinned({'d', 8}))
     {
         no_pin_board.ascii_draw(WHITE);
         std::cerr << "Rook at d4 should not register as pinned." << std::endl;
@@ -530,7 +532,7 @@ bool run_tests()
             }
 
             const auto& fifty_move_board_view = fifty_move_board;
-            if(fifty_move_board_view.piece_on_square(move->start_file(), move->start_rank())->type() == PAWN)
+            if(fifty_move_board_view.piece_on_square(move->start())->type() == PAWN)
             {
                 continue;
             }
@@ -587,18 +589,17 @@ bool run_tests()
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto square = Square{file, rank};
-            auto index = Board::square_index(file, rank);
-            if(visited[index])
+            if(visited[square.index()])
             {
                 std::cerr << "Multiple squares result in same index." << std::endl;
                 tests_passed = false;
             }
-            visited[index] = true;
-            auto indexed_square = Square(index);
+            visited[square.index()] = true;
+            auto indexed_square = Square(square.file(), square.rank());
             if(square != indexed_square)
             {
                 std::cerr << "Incorrect square indexing.\n";
-                std::cerr << file << rank << " --> " << index << " --> " << indexed_square.file() << indexed_square.rank() << std::endl;
+                std::cerr << file << rank << " --> " << square.index() << " --> " << indexed_square.file() << indexed_square.rank() << std::endl;
                 tests_passed = false;
             }
         }
@@ -1328,7 +1329,7 @@ bool run_tests()
         current_color = opposite(current_color);
         for(int rank = 1; rank <= 8; ++rank)
         {
-            if(Board::square_color(file, rank) != current_color)
+            if(Square{file, rank}.color() != current_color)
             {
                 std::cerr << "Wrong color for square " << file << rank
                           << ". Should be " << color_text(current_color) << '\n';
@@ -1337,6 +1338,39 @@ bool run_tests()
             current_color = opposite(current_color);
         }
     }
+
+
+    // Check that Square arithmetic works
+    for(auto a : Square::all_squares())
+    {
+        for(auto b : Square::all_squares())
+        {
+            if(a + (b - a) != b)
+            {
+                std::cerr << "Square arithetic problem: " << a.string()
+                    << " + (" << b.string() << " - " << a.string()
+                    << ") != " << b.string() << std::endl;
+                tests_passed = false;
+            }
+        }
+    }
+    
+    // Check square iteration
+    std::array<bool, 64> squares_visited{};
+    for(auto square : Square::all_squares())
+    {
+        if(squares_visited[square.index()])
+        {
+            std::cerr << "Sqaure " << square.string() << " already visited." << std::endl;
+            tests_passed = false;
+        }
+    }
+    if(std::any_of(squares_visited.begin(), squares_visited.end(), [](auto tf) {return tf; }))
+    {
+        std::cerr << "Square iterator missed some squares." << std::endl;
+        tests_passed = false;
+    }
+
 
 
     // Enough material to checkmate

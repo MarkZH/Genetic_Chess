@@ -21,7 +21,7 @@ En_Passant::En_Passant(Color color, Direction dir, char file_start) :
 //! \returns Whether the end square is a valid en passant target.
 bool En_Passant::move_specific_legal(const Board& board) const
 {
-    return board.is_en_passant_targetable(end_file(), end_rank());
+    return board.is_en_passant_targetable(end());
 }
 
 //! Implement capturing the pawn on the square to the side of the starting square.
@@ -29,6 +29,6 @@ bool En_Passant::move_specific_legal(const Board& board) const
 //! \param board The board on which the capture is occurring.
 void En_Passant::side_effects(Board& board) const
 {
-    board.remove_piece(end_file(), start_rank());
+    board.remove_piece({end().file(), start().rank()});
     Pawn_Move::side_effects(board);
 }

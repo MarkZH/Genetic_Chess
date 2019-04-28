@@ -6,6 +6,7 @@
 #include <cassert>
 #include <limits>
 #include <cmath>
+#include <utility>
 
 #include "Game/Board.h"
 #include "Utility/Random.h"

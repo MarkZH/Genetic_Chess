@@ -41,11 +41,9 @@ class Board
 
         const Move& create_move(const std::string& move) const;
 
-        bool is_legal(char file_start, int rank_start,
-                      char file_end,   int rank_end) const;
+        bool is_legal(Square start, Square end) const;
 
         Color whose_turn() const;
-        static Color square_color(char file, int rank);
 
         void ascii_draw(Color perspective) const;
         std::string fen_status() const; // current state of board in FEN
@@ -66,29 +64,23 @@ class Board
 
         void set_turn(Color color);
 
-        static bool inside_board(char file, int rank);
-        static bool inside_board(char file);
-        static bool inside_board(int rank);
-
-        static size_t square_index(char file, int rank);
-
-        const Piece* piece_on_square(char file, int rank) const;
+        const Piece* piece_on_square(Square square) const;
 
         const std::vector<const Move*>& legal_moves() const;
 
-        bool safe_for_king(char file, int rank, Color king_color) const;
-        bool blocked_attack(char file, int rank, Color attacking_color) const;
-        bool is_en_passant_targetable(char file, int rank) const;
-        bool piece_has_moved(char file, int rank) const;
-        const Square& find_king(Color color) const;
+        bool safe_for_king(Square square, Color king_color) const;
+        bool blocked_attack(Square square, Color attacking_color) const;
+        bool is_en_passant_targetable(Square square) const;
+        bool piece_has_moved(Square square) const;
+        Square find_king(Color color) const;
         bool king_is_in_check() const;
         bool king_is_in_check_after_move(const Move& move) const;
-        bool piece_is_pinned(char file, int rank) const;
-        bool all_empty_between(char file_start, int rank_start, char file_end, int rank_end) const;
+        bool piece_is_pinned(Square square) const;
+        bool all_empty_between(Square start, Square end) const;
         bool enough_material_to_checkmate(Color color = NONE) const;
         bool move_captures(const Move& move) const;
         size_t moves_since_pawn_or_capture() const;
-        const std::bitset<16>& moves_attacking_square(char file, int rank, Color attacking_color) const;
+        const std::bitset<16>& moves_attacking_square(Square square, Color attacking_color) const;
 
         // Methods for gene reference
         bool last_move_captured() const;
@@ -126,10 +118,10 @@ class Board
         std::array<std::array<std::bitset<16>, 64>, 2> potential_attacks; // indexed by [attacker color][square index];
         std::array<std::array<std::bitset<16>, 64>, 2> blocked_attacks;
 
-        void add_attacks_from(char file, int rank, const Piece* piece);
-        void remove_attacks_from(char file, int rank, const Piece* old_piece);
-        void modify_attacks(char file, int rank, const Piece* piece, bool adding_attacks);
-        void update_blocks(char file, int rank, const Piece* old_piece, const Piece* new_piece);
+        void add_attacks_from(Square square, const Piece* piece);
+        void remove_attacks_from(Square square, const Piece* old_piece);
+        void modify_attacks(Square square, const Piece* piece, bool adding_attacks);
+        void update_blocks(Square square, const Piece* old_piece, const Piece* new_piece);
         const std::bitset<16>& checking_moves() const;
 
         // Information cache for gene reference
@@ -160,19 +152,19 @@ class Board
         // Communication channels
         mutable Thinking_Output_Type thinking_indicator;
 
-        const Piece*& piece_on_square(char file, int rank);
-        void remove_piece(char file, int rank);
-        void make_move(char file_start, int rank_start, char file_end, int rank_end);
-        const Move& create_move(char file_start, int rank_start, char file_end, int rank_end, char promote = 0) const;
+        const Piece*& piece_on_square(Square square);
+        void remove_piece(Square square);
+        void make_move(Square start, Square rank);
+        const Move& create_move(Square start, Square rank, char promote = 0) const;
         bool no_legal_moves() const;
-        void make_en_passant_targetable(char file, int rank);
+        void make_en_passant_targetable(Square square);
         void clear_en_passant_target();
         void clear_pinned_squares();
         void clear_checking_square();
         bool is_in_legal_moves_list(const Move& move) const;
-        void place_piece(const Piece* piece, char file, int rank);
+        void place_piece(const Piece* piece, Square square);
         void switch_turn();
-        void set_unmoved(char file, int rank);
+        void set_unmoved(Square square);
         void update_board(const Move& move);
 
         // Track threefold repetition and fifty-move rule
@@ -194,8 +186,8 @@ class Board
         static std::array<uint64_t, 64> en_passant_hash_values;
         static std::array<uint64_t, 64> castling_hash_values;
 
-        void update_board_hash(char file, int rank);
-        uint64_t square_hash(char file, int rank) const;
+        void update_board_hash(Square square);
+        uint64_t square_hash(Square square) const;
         static size_t square_hash_index(const Piece* piece);
 
         // Whose turn?
@@ -203,9 +195,9 @@ class Board
         void update_whose_turn_hash();
 
         bool king_multiply_checked() const;
-        static bool straight_line_move(char file_start, int rank_start, char file_end, int rank_end);
-        static bool moves_are_parallel(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2);
-        static bool same_direction(int file_change_1, int rank_change_1, int file_change_2, int rank_change_2);
+        static bool straight_line_move(Square start, Square rank);
+        static bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2);
+        static bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2);
 
         [[noreturn]] void fen_error(const std::string& reason) const;
 

@@ -20,7 +20,7 @@ double Stacked_Pawns_Gene::score_board(const Board& board, Color perspective, si
 
         for(int rank = 2; rank <= 7; ++rank)
         {
-            if(board.piece_on_square(file, rank) == own_pawn)
+            if(board.piece_on_square({file, rank}) == own_pawn)
             {
                 ++pawn_count;
             }

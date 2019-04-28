@@ -3,6 +3,7 @@
 #include <vector>
 #include <cmath>
 #include <bitset>
+#include <utility>
 
 #include "Game/Board.h"
 #include "Moves/Move.h"
@@ -106,20 +107,20 @@ bool Alan_Turing_AI::is_considerable(const Move& move, const Board& board) const
     if(board.last_move_captured() && board.move_captures(move))
     {
         auto last_move = board.game_record().back();
-        if(last_move->end_file() == move.end_file() && last_move->end_rank() == move.end_rank())
+        if(last_move->end() == move.end())
         {
             return true;
         }
     }
 
-    auto attacking_piece = board.piece_on_square(move.start_file(), move.start_rank());
-    auto attacked_piece = board.piece_on_square(move.end_file(), move.end_rank());
+    auto attacking_piece = board.piece_on_square(move.start());
+    auto attacked_piece = board.piece_on_square(move.end());
     if(attacked_piece)
     {
         // Capturing an undefended piece is considerable
         auto temp_board = board;
         auto result = temp_board.submit_move(move);
-        if(temp_board.safe_for_king(move.end_file(), move.end_rank(), attacking_piece->color()))
+        if(temp_board.safe_for_king(move.end(), attacking_piece->color()))
         {
             return true;
         }
@@ -149,7 +150,7 @@ double Alan_Turing_AI::material_value(const Board& board, Color perspective) con
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = board.piece_on_square(file, rank);
+            auto piece = board.piece_on_square({file, rank});
             if(piece)
             {
                 if(piece->color() == perspective)
@@ -187,7 +188,8 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
     {
         for(int rank = 1; rank <= 8; ++rank)
         {
-            auto piece = board.piece_on_square(file, rank);
+            auto square = Square{file, rank};
+            auto piece = board.piece_on_square(square);
             if( ! piece)
             {
                 continue;
@@ -201,7 +203,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     double move_score = 0.0;
                     for(auto move : board.legal_moves())
                     {
-                        if(move->start_file() == file && move->start_rank() == rank)
+                        if(move->start() == square)
                         {
                             move_score += 1.0;
                             if(board.move_captures(*move))
@@ -215,7 +217,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     // Non-queen pieces defended
                     if(piece->type() != QUEEN)
                     {
-                        auto defender_count = board.moves_attacking_square(file, rank, perspective).count();
+                        auto defender_count = board.moves_attacking_square(square, perspective).count();
                         if(defender_count > 0)
                         {
                             total_score += 1.0 + 0.5*(defender_count - 1);
@@ -229,7 +231,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     double castling_moves = 0.0;
                     for(auto move : board.legal_moves())
                     {
-                        if(move->start_file() != file || move->start_rank() != rank)
+                        if(move->start() != square)
                         {
                             continue;
                         }
@@ -256,17 +258,10 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                                 continue;
                             }
 
-                            for(int steps = 1; steps <= 7; ++steps)
+                            auto step = Square_Difference{file_step, rank_step};
+                            for(auto attack = square + step; attack.inside_board(); attack += step)
                             {
-                                char attack_file = file + steps*file_step;
-                                int  attack_rank = rank + steps*rank_step;
-
-                                if(!board.inside_board(attack_file, attack_rank))
-                                {
-                                    break;
-                                }
-
-                                auto other_piece = board.piece_on_square(attack_file, attack_rank);
+                                auto other_piece = board.piece_on_square(attack);
                                 if( ! other_piece)
                                 {
                                     king_squares += 1.0;
@@ -286,27 +281,27 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     total_score -= std::sqrt(king_squares);
 
                     // Castling score
-                    if(!board.piece_has_moved(file, rank))
+                    if(!board.piece_has_moved(square))
                     {
                         // Queenside castling
-                        if( ! board.piece_has_moved('a', rank))
+                        if( ! board.piece_has_moved({'a', rank}))
                         {
                             total_score += 1.0;
 
                             // Can castle on next move
-                            if(board.all_empty_between('a', rank, file, rank))
+                            if(board.all_empty_between({'a', rank}, square))
                             {
                                 total_score += 1.0;
                             }
                         }
 
                         // Kingside castling
-                        if(!board.piece_has_moved('h', rank))
+                        if(!board.piece_has_moved({'h', rank}))
                         {
                             total_score += 1.0;
 
                             // Can castle on next move
-                            if(board.all_empty_between('h', rank, file, rank))
+                            if(board.all_empty_between({'h', rank}, square))
                             {
                                 total_score += 1.0;
                             }
@@ -335,11 +330,11 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                         }
 
                         auto defending_piece = board.piece_instance(piece_type, perspective);
-                        for(auto move : defending_piece->move_list(file, rank))
+                        for(auto move : defending_piece->move_list(square))
                         {
-                            if(defending_piece == board.piece_on_square(move->end_file(), move->end_rank()))
+                            if(defending_piece == board.piece_on_square(move->end()))
                             {
-                                if(piece_type == KNIGHT || board.all_empty_between(file, rank, move->end_file(), move->end_rank()))
+                                if(piece_type == KNIGHT || board.all_empty_between(square, move->end()))
                                 {
                                     pawn_defended = true;
                                     break;

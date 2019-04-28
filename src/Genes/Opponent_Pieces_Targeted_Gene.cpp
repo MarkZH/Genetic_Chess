@@ -22,17 +22,14 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
 {
     double score = 0.0;
 
-    for(char file = 'a'; file <= 'h'; ++file)
+    for(auto square : Square::all_squares())
     {
-        for(int rank = 1; rank <= 8; ++rank)
+        auto piece = board.piece_on_square(square);
+        if(piece && piece->color() != perspective)
         {
-            auto piece = board.piece_on_square(file, rank);
-            if(piece && piece->color() != perspective)
+            if(!board.safe_for_king(square, opposite(perspective)))
             {
-                if( ! board.safe_for_king(file, rank, opposite(perspective)))
-                {               
-                    score += piece_strength_source->piece_value(piece);
-                }
+                score += piece_strength_source->piece_value(piece);
             }
         }
     }

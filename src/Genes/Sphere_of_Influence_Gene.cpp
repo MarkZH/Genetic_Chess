@@ -28,21 +28,15 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
 
     if( ! king_distances_initialized)
     {
-        for(char file_a = 'a'; file_a <= 'h'; ++file_a)
+        for(auto square_a : Square::all_squares())
         {
-            for(int rank_a = 1; rank_a <= 8; ++rank_a)
+            for(auto square_b : Square::all_squares())
             {
-                for(char file_b = 'a'; file_b <= 'h'; ++file_b)
-                {
-                    for(int rank_b = 1; rank_b <= 8; ++rank_b)
-                    {
-                        auto index_a = Board::square_index(file_a, rank_a);
-                        auto index_b = Board::square_index(file_b, rank_b);
-                        king_distances[index_a][index_b] =
-                            size_t(std::max(std::abs(file_a - file_b), std::abs(rank_a - rank_b)));
-                    }
-
-                }
+                // The "king distance" between two squares is the minimum number
+                // of moves a king needs to get from one square to the other.
+                auto diff = square_a - square_b;
+                king_distances[square_a.index()][square_b.index()] =
+                    size_t(std::max(std::abs(diff.file_change), std::abs(diff.rank_change)));
             }
         }
 
@@ -85,30 +79,27 @@ std::string Sphere_of_Influence_Gene::name() const
 double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
     const auto& opponent_king_square = board.find_king(opposite(perspective));
-    auto opponent_king_index = board.square_index(opponent_king_square.file(), opponent_king_square.rank());
+    auto opponent_king_index = opponent_king_square.index();
 
     double score = 0;
-    for(char file = 'a'; file <= 'h'; ++file)
+    for(auto square : Square::all_squares())
     {
-        for(int rank = 1; rank <= 8; ++rank)
+        double square_score;
+        if(!board.safe_for_king(square, opposite(perspective))) // any piece attacks square
         {
-            double square_score;
-            if( ! board.safe_for_king(file, rank, opposite(perspective))) // any piece attacks square
-            {
-                square_score = legal_square_score;
-            }
-            else if(board.blocked_attack(file, rank, perspective)) // There are attacks on this square blocked by other pieces
-            {
-                square_score = illegal_square_score;
-            }
-            else
-            {
-                continue;
-            }
-
-            auto distance_to_king = king_distances[board.square_index(file, rank)][opponent_king_index];
-            score += square_score*scalar_cache[distance_to_king];
+            square_score = legal_square_score;
         }
+        else if(board.blocked_attack(square, perspective)) // There are attacks on this square blocked by other pieces
+        {
+            square_score = illegal_square_score;
+        }
+        else
+        {
+            continue;
+        }
+
+        auto distance_to_king = king_distances[square.index()][opponent_king_index];
+        score += square_score * scalar_cache[distance_to_king];
     }
 
     return score;

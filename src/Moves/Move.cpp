@@ -4,45 +4,38 @@
 #include <cmath>
 #include <cctype>
 #include <stdexcept>
-#include <utility>
 
 #include "Game/Board.h"
+#include "Game/Square.h"
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
 
 
 //! Constructs a move with no special rules.
 
-//! \param file_start File of square where move starts.
-//! \param rank_start Rank of square where the move starts.
-//! \param file_end File of square where move ends.
-//! \param rank_end Rank of square where the move ends.
-Move::Move(char file_start, int rank_start,
-           char file_end,   int rank_end) :
+//! \param start The Square where move starts.
+//! \param end   The Square where move ends.
+Move::Move(Square start, Square end) :
                able_to_capture(true),
                is_en_passant_move(false),
                is_castling_move(false),
-               starting_file(file_start),
-               starting_rank(rank_start),
-               ending_file(file_end),
-               ending_rank(rank_end)
+               origin(start),
+               destination(end)
 {
-    if( ! Board::inside_board(start_file(), start_rank()))
+    if( ! start.inside_board())
     {
-        throw std::invalid_argument(std::string("Invalid starting square: ") + start_file() + std::to_string(start_rank()));
+        throw std::invalid_argument(std::string("Invalid starting square: ") + start.string());
     }
 
-    if( ! Board::inside_board(end_file(), end_rank()))
+    if( ! end.inside_board())
     {
-        throw std::invalid_argument(std::string("Invalid ending square: ") + end_file() + std::to_string(end_rank()));
+        throw std::invalid_argument(std::string("Invalid ending square: ") + end.string());
     }
 
     if(file_change() == 0 && rank_change() == 0)
     {
         throw std::invalid_argument(std::string("Zero-distance moves are illegal: ")
-                                    + start_file() + std::to_string(start_rank())
-                                    + " --> "
-                                    + end_file() + std::to_string(end_rank()));
+                                    + start.string() + " --> " + end.string());
     }
 }
 
@@ -69,13 +62,13 @@ void Move::side_effects(Board&) const
 bool Move::is_legal(const Board& board) const
 {
 #ifndef NDEBUG
-    auto moving_piece = board.piece_on_square(start_file(), start_rank());
+    auto moving_piece = board.piece_on_square(start());
 #endif
     assert(moving_piece);
     assert(moving_piece->color() == board.whose_turn());
     assert(moving_piece->can_move(this));
 
-    auto attacked_piece = board.piece_on_square(end_file(), end_rank());
+    auto attacked_piece = board.piece_on_square(end());
     if(attacked_piece)
     {
         if( ! can_capture() || board.whose_turn() == attacked_piece->color())
@@ -105,28 +98,32 @@ bool Move::can_capture() const
     return able_to_capture;
 }
 
-//! File of square where move starts.
-
-//! \returns The letter label of the starting square.
-char Move::start_file() const
+//! The Square the Move originates from.
+Square Move::start() const
 {
-    return starting_file;
+    return origin;
 }
 
-//! Rank of square where move starts.
-
-//! \returns The numerical label of the starting square.
-int Move::start_rank() const
+//! The Square the Move ends on.
+Square Move::end() const
 {
-    return starting_rank;
+    return destination;
 }
 
+//! The total movement of a move.
+
+//! \returns A pair of integers indicating the two-dimensional movement.
+//!          Equivalent to std::make_pair(file_change(), rank_change()).
+Square_Difference Move::movement() const
+{
+    return end() - start();
+}
 //! How far move travels horizontally.
 
 //! \returns The distance in squares between the start and end files.
 int Move::file_change() const
 {
-    return end_file() - start_file();
+    return end().file() - start().file();
 }
 
 //! How far move travels vertically.
@@ -134,23 +131,7 @@ int Move::file_change() const
 //! \returns The distance in squares between the start and end ranks.
 int Move::rank_change() const
 {
-    return end_rank() - start_rank();
-}
-
-//! File of square where move ends.
-
-//! \returns The letter label of the ending square.
-char Move::end_file() const
-{
-    return ending_file;
-}
-
-//! Rank of square where move ends.
-
-//! \returns The numerical label of the ending square.
-int Move::end_rank() const
-{
-    return ending_rank;
+    return end().rank() - start().rank();
 }
 
 //! Creates a textual representation of a move suitable for a PGN game record.
@@ -168,63 +149,57 @@ std::string Move::game_record_item(const Board& board) const
 //! \returns The movement portion of a PGN move entry.
 std::string Move::game_record_move_item(const Board& board) const
 {
-    auto original_piece = board.piece_on_square(start_file(), start_rank());
+    auto original_piece = board.piece_on_square(start());
     std::string move_record = original_piece->pgn_symbol();
 
     bool record_file = false;
     bool record_rank = false;
-    for(char file_other = 'a'; file_other <= 'h'; ++file_other)
+    for(auto other_square : Square::all_squares())
     {
-        for(int rank_other = 1; rank_other <= 8; ++rank_other)
+        if(!board.piece_on_square(other_square))
         {
-            if( ! board.piece_on_square(file_other, rank_other))
-            {
-                continue;
-            }
-            if(file_other == start_file() && rank_other == start_rank())
-            {
-                continue;
-            }
-            if(file_other == end_file() && rank_other == end_rank())
-            {
-                continue;
-            }
-            auto new_piece = board.piece_on_square(file_other, rank_other);
-            if(original_piece != new_piece)
-            {
-                continue;
-            }
+            continue;
+        }
+        if(other_square == start() || other_square == end())
+        {
+            continue;
+        }
 
-            if(board.is_legal(file_other, rank_other, end_file(), end_rank()))
+        auto new_piece = board.piece_on_square(other_square);
+        if(original_piece != new_piece)
+        {
+            continue;
+        }
+
+        if(board.is_legal(other_square, end()))
+        {
+            if(other_square.file() != start().file() && !record_file)
             {
-                if(file_other != start_file() && ! record_file)
-                {
-                    record_file = true;
-                    continue;
-                }
-                if(rank_other != start_rank())
-                {
-                    record_rank = true;
-                }
+                record_file = true;
+                continue;
+            }
+            if(other_square.rank() != start().rank())
+            {
+                record_rank = true;
             }
         }
     }
 
     if(record_file)
     {
-        move_record += start_file();
+        move_record += start().file();
     }
     if(record_rank)
     {
-        move_record += std::to_string(start_rank());
+        move_record += std::to_string(start().rank());
     }
 
-    if(board.piece_on_square(end_file(), end_rank()))
+    if(board.piece_on_square(end()))
     {
         move_record += 'x';
     }
 
-    move_record += end_file() + std::to_string(end_rank());
+    move_record += end().string();
 
     return move_record;
 }
@@ -249,10 +224,7 @@ std::string Move::game_record_ending_item(Board board) const
 //! a pawn promtion.
 std::string Move::coordinate_move() const
 {
-    auto result = start_file()
-                  + std::to_string(start_rank())
-                  + end_file()
-                  + std::to_string(end_rank());
+    auto result = start().string() + end().string();
 
     if(promotion_piece_symbol())
     {
@@ -294,7 +266,7 @@ char Move::promotion_piece_symbol() const
 //! \param adjust The size of the adjustment.
 void Move::adjust_end_file(int adjust)
 {
-    ending_file += adjust;
+    destination += Square_Difference{adjust, 0};
 }
 
 //! Adjust the rank of the square a move ends on.
@@ -305,7 +277,7 @@ void Move::adjust_end_file(int adjust)
 //! \param adjust The size of the adjustment.
 void Move::adjust_end_rank(int adjust)
 {
-    ending_rank += adjust;
+    destination += Square_Difference{0, adjust};
 }
 
 //! Assigns a unique index to the direction of movement of a possibly capturing move.
@@ -315,40 +287,39 @@ void Move::adjust_end_rank(int adjust)
 //!          8 knight moves.
 size_t Move::attack_index() const
 {
-    return attack_index(file_change(), rank_change());
+    return attack_index(movement());
 }
 
 //! Returns a unique move direction index for a manually specified move. See Move::attack_index().
 
-//! \param file_change The horizontal distance of the move.
-//! \param rank_change The vertical distance of the move.
+//! \param change A pair of integers representing the difference between two Squares.
 //! \returns The same result as a call to Move::attack_index() with the same file_change() and rank_change().
-size_t Move::attack_index(int file_change, int rank_change)
+size_t Move::attack_index(const Square_Difference& move)
 {
     size_t result = 0;
 
     // First bit == knight move or not
-    if(std::abs(rank_change*file_change) == 2) // 1x2 or 2x1
+    if(std::abs(move.rank_change*move.file_change) == 2) // 1x2 or 2x1
     {
         result += 8;
-        result += 4*(file_change > 0);
-        result += 2*(rank_change > 0);
-        result += 1*(std::abs(file_change) > std::abs(rank_change));
+        result += 4*(move.file_change > 0);
+        result += 2*(move.rank_change > 0);
+        result += 1*(std::abs(move.file_change) > std::abs(move.rank_change));
     }
     else
     {
         // Second bit == rook move or not
-        if(rank_change == 0 || file_change == 0)
+        if(move.rank_change == 0 || move.file_change == 0)
         {
             result += 4;
-            result += 2*(rank_change != 0);
-            result += 1*(rank_change + file_change > 0);
+            result += 2*(move.rank_change != 0);
+            result += 1*(move.rank_change + move.file_change > 0);
         }
         else
         {
             // Bishop moves
-            result += 2*(file_change > 0);
-            result += 1*(rank_change > 0);
+            result += 2*(move.file_change > 0);
+            result += 1*(move.rank_change > 0);
         }
     }
 
@@ -358,7 +329,7 @@ size_t Move::attack_index(int file_change, int rank_change)
 //! Returns the movement corresponding to an index given by Move::attack_index().
 
 //! \returns A pair of integers giving the direction of an attacking move.
-std::pair<int, int> Move::attack_direction_from_index(size_t index)
+Square_Difference Move::attack_direction_from_index(size_t index)
 {
     if(index & 8)
     {

@@ -4,7 +4,6 @@
 #include <array>
 #include <memory>
 #include <map>
-#include <algorithm>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -70,41 +69,37 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective,
     // boundaries of this area area squares attacked by the other color or occupied
     // by pieces of the same color.
 
-    std::array<size_t, 64> square_queue; // list of indices to check
-    const size_t invalid_index = 64;
-    square_queue.fill(invalid_index);
+    std::array<Square, 64> square_queue{}; // list of indices to check
     size_t queue_insertion_point = 0; // where to insert the index of the next square to check
     std::array<bool, 64> in_queue{}; // track which indices have or will have been checked
 
     const auto& king_square = board.find_king(perspective);
-    const auto king_index = board.square_index(king_square.file(), king_square.rank());
 
-    square_queue[queue_insertion_point++] = king_index;
-    in_queue[king_index] = true;
+    square_queue[queue_insertion_point++] = king_square;
+    in_queue[king_square.index()] = true;
 
     double friendly_block_total = 0.0;
     double opponent_block_total = 0.0;
     int free_space_total = 0;
 
-    for(auto square_index : square_queue)
+    for(auto square : square_queue)
     {
-        if(square_index == invalid_index)
+        if( ! square.is_set())
         {
             break;
         }
 
         // Always check the squares surrounding the king's current positions, even if
         // it is not safe (i.e., the king is in check).
-        auto add_surrounding_squares = square_index == king_index;
+        auto add_surrounding_squares = square == king_square;
 
-        auto square = Square{square_index};
-        auto piece = board.piece_on_square(square.file(), square.rank());
+        auto piece = board.piece_on_square(square);
 
         if(piece && piece->color() == perspective && piece->type() != KING) // Square is blocked by a friendly piece
         {
             friendly_block_total += friendly_block_score;
         }
-        else if( ! board.safe_for_king(square.file(), square.rank(), perspective)) // Square is attacked by an opposing piece
+        else if( ! board.safe_for_king(square, perspective)) // Square is attacked by an opposing piece
         {
             opponent_block_total += opponent_block_score;
         }
@@ -117,29 +112,15 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective,
         // Add surrounding squares to square_queue.
         if(add_surrounding_squares)
         {
-            // The index difference between squares on the same rank but adjacent files is 8.
-            for(int file_diff = -8; file_diff <= 8; file_diff += 8)
+            for(auto file_step = -1; file_step <= 1; ++file_step)
             {
-                auto new_base_index = square_index + file_diff;
-
-                // The index difference between squares on the same file but different ranks is 1.
-                for(int rank_diff = -1; rank_diff <= 1; ++rank_diff)
+                for(auto rank_step = -1; rank_step <= 1; ++rank_step)
                 {
-                    int old_mod = new_base_index%8;
-                    auto new_index = new_base_index + rank_diff;
-                    int new_mod = new_index%8;
-
-                    // Make sure new_index is on board and the rank change didn't
-                    // result in an index on a different file.
-                    if(new_index >= invalid_index || rank_diff != new_mod - old_mod)
+                    auto new_square = square + Square_Difference{file_step, rank_step};
+                    if(new_square.inside_board() && ! in_queue[new_square.index()])
                     {
-                        continue;
-                    }
-
-                    if( ! in_queue[new_index])
-                    {
-                        square_queue[queue_insertion_point++] = new_index;
-                        in_queue[new_index] = true;
+                        square_queue[queue_insertion_point++] = new_square;
+                        in_queue[new_square.index()] = true;
                     }
                 }
             }

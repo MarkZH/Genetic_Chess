@@ -11,8 +11,8 @@
 //!
 //! The constructor also sets able_to_capture to false.
 Pawn_Move::Pawn_Move(Color color_in, char file_start, int rank_start) :
-    Move(file_start, rank_start,
-         file_start, rank_start + (color_in == WHITE ? 1 : -1))
+    Move({file_start, rank_start},
+         {file_start, rank_start + (color_in == WHITE ? 1 : -1)})
 {
     able_to_capture = false;
 }
@@ -27,5 +27,5 @@ void Pawn_Move::side_effects(Board& board) const
 
 std::string Pawn_Move::game_record_move_item(const Board&) const
 {
-    return end_file() + std::to_string(end_rank());
+    return end().string();
 }

@@ -34,7 +34,7 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective,
         for(int rank = first_rank; rank <= last_rank; rank += rank_step)
         {
             ++steps;
-            if(board.piece_on_square(file, rank) == own_pawn)
+            if(board.piece_on_square({file, rank}) == own_pawn)
             {
                 score += score_cache[steps];
             }

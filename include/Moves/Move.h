@@ -3,14 +3,15 @@
 
 #include <string>
 
+#include "Game/Square.h"
+
 class Board;
 
 //! A class to represent the movement of pieces.
 class Move
 {
     public:
-        Move(char file_start, int rank_start,
-             char file_end,   int rank_end);
+        Move(Square start, Square end);
         virtual ~Move() = default;
 
         //! Since Piece instances are static, there is no reason to copy Move instances.
@@ -27,12 +28,10 @@ class Move
 
         bool can_capture() const;
 
-        char start_file() const;
-        int  start_rank() const;
+        Square start() const;
+        Square end() const;
 
-        char end_file() const;
-        int  end_rank() const;
-
+        Square_Difference movement() const;
         int file_change() const;
         int rank_change() const;
 
@@ -44,8 +43,8 @@ class Move
         virtual char promotion_piece_symbol() const;
 
         size_t attack_index() const;
-        static size_t attack_index(int file_change, int rank_change);
-        static std::pair<int, int> attack_direction_from_index(size_t index);
+        static size_t attack_index(const Square_Difference& move);
+        static Square_Difference attack_direction_from_index(size_t index);
 
     protected:
         //! Is the move allowed to capture a piece on the end square?
@@ -61,14 +60,8 @@ class Move
         virtual std::string game_record_move_item(const Board& board) const;
 
     private:
-        //! The file of the square where the move starts.
-        char starting_file;
-        //! The rank of the square where the move starts.
-        int  starting_rank;
-        //! The file of the square where the move ends.
-        char ending_file;
-        //! The rank of the square where the move ends.
-        int  ending_rank;
+        Square origin;
+        Square destination;
 
         virtual bool move_specific_legal(const Board& board) const;
 

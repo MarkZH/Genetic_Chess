@@ -29,17 +29,14 @@ std::string Freedom_To_Move_Gene::name() const
 size_t Freedom_To_Move_Gene::attack_count_scan(const Board& board, Color perspective) const
 {
     size_t count = 0;
-    for(char file = 'a'; file <= 'h'; ++file)
+    for(auto square : Square::all_squares())
     {
-        for(int rank = 1; rank <= 8; ++rank)
+        if(board.moves_attacking_square(square, perspective).any())
         {
-            if(board.moves_attacking_square(file, rank, perspective).any())
+            auto piece = board.piece_on_square(square);
+            if(!piece || piece->color() != perspective)
             {
-                auto piece = board.piece_on_square(file, rank);
-                if( ! piece ||  piece->color() != perspective)
-                {
-                    count += board.moves_attacking_square(file, rank, perspective).count();
-                }
+                count += board.moves_attacking_square(square, perspective).count();
             }
         }
     }

@@ -26,17 +26,10 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective, 
                 continue;
             }
 
-            for(int steps = 1; steps <= 7; ++steps)
+            auto step = Square_Difference{file_step, rank_step};
+            for(auto square = king_square + step; square.inside_board(); square += step)
             {
-                char file = king_square.file() + steps*file_step;
-                int  rank = king_square.rank() + steps*rank_step;
-
-                if( ! board.inside_board(file, rank))
-                {
-                    break;
-                }
-
-                if(board.piece_on_square(file, rank))
+                if(board.piece_on_square(square))
                 {
                     break;
                 }
@@ -57,15 +50,15 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective, 
         {
             for(auto rank_direction : {-1, 1})
             {
-                char file = king_square.file() + file_direction*file_step;
-                int  rank = king_square.rank() + rank_direction*rank_step;
+                auto square = king_square + Square_Difference{file_direction*file_step,
+                                                              rank_direction*rank_step};
 
-                if( ! board.inside_board(file, rank))
+                if( ! square.inside_board())
                 {
                     continue;
                 }
 
-                if( ! board.piece_on_square(file, rank))
+                if( ! board.piece_on_square(square))
                 {
                     ++square_count;
                 }

@@ -24,8 +24,7 @@ class Castle : public Move
         std::string game_record_move_item(const Board&) const override;
 
     private:
-        char rook_starting_file;
-        char rook_ending_file;
+        Move rook_move;
 };
 
 #endif // CASTLE_H
