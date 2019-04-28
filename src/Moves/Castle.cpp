@@ -30,12 +30,11 @@ Castle::Castle(int base_rank, Direction direction) :
 //! \returns Whether the current board position allows for castling.
 bool Castle::move_specific_legal(const Board& board) const
 {
-    char skipped_file = (start().file() + end().file())/2;
     return     ! board.piece_has_moved(start())
             && ! board.piece_has_moved(rook_move.start())
             && ! board.king_is_in_check()
-            && board.all_empty_between(start(), rook_move.start())
-            && board.safe_for_king({skipped_file, start().rank()}, board.whose_turn());
+            && board.safe_for_king(rook_move.end(), board.whose_turn())
+            && board.all_empty_between(start(), rook_move.start());
 }
 
 //! Moves the rook to its final square.
