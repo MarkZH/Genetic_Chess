@@ -24,10 +24,16 @@ Square_Difference Square_Difference::step() const
 }
 
 //! Return the first square when iterating all squares
-Square Square_Iterator::begin() const{ return Square{'a', 1}; }
+Square Square_Iterator::begin() const
+{
+    return Square{'a', 1};
+}
 
 //! Return an invalid Square to end iteration
-Square Square_Iterator::end() const { return Square{}; }
+Square Square_Iterator::end() const
+{
+    return Square{};
+}
 
 unsigned int Square::invalid_index = 64;
 
