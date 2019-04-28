@@ -3,7 +3,7 @@ CXX = g++
 LD = g++
 
 CFLAGS = -std=c++17 -Wshadow -Wcast-align -Wundef -Wfloat-equal -Wunreachable-code -Wzero-as-null-pointer-constant -Wmain -pedantic -Wextra -Wall -Werror -Iinclude
-LDFLAGS = -pthread -fexceptions
+LDFLAGS = -pthread
 
 RELEASE_BIN_DIR = bin/gcc/release
 OUT_RELEASE = $(RELEASE_BIN_DIR)/$(BIN)

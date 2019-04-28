@@ -120,7 +120,7 @@ if system == 'gcc':
             "-Wall",
             "-Werror",
             "-Iinclude"]
-    base_linker_options = ["-pthread", "-fexceptions"]
+    base_linker_options = ["-pthread"]
     linker_options['debug'] = []
     linker_options['release'] = ['-flto']
 
@@ -146,7 +146,7 @@ elif system == 'clang':
             "-Wall",
             "-Werror",
             "-Iinclude"]
-    base_linker_options = ["-pthread", "-fexceptions"]
+    base_linker_options = ["-pthread"]
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     linker_options['release'] = ['-flto']
 
