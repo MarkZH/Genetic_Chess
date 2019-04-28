@@ -796,7 +796,7 @@ void Board::place_piece(Piece piece, Square square)
 
     if(piece && piece.type() == KING)
     {
-        king_location[piece.color()] = {square};
+        king_location[piece.color()] = square;
     }
 
     // Make sure the attack count did not drop below zero.
