@@ -4,6 +4,7 @@
 
 #include "Game/Piece.h"
 #include "Game/Board.h"
+#include "Game/Square.h"
 #include "Moves/Pawn_Promotion.h"
 #include "Moves/Direction.h"
 

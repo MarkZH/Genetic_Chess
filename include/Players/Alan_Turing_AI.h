@@ -35,7 +35,7 @@ class Alan_Turing_AI : public Player
         bool is_considerable(const Move& move, const Board& board) const;
 
         double material_value(const Board& board, Color perspective) const;
-        double piece_value(const Piece* piece) const;
+        double piece_value(Piece piece) const;
 
         double position_play_value(const Board& board, Color perspective) const;
 

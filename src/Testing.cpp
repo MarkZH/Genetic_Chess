@@ -14,8 +14,9 @@
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
-#include "Moves/Move.h"
 #include "Game/Piece.h"
+#include "Game/Square.h"
+#include "Moves/Move.h"
 
 #include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
@@ -532,7 +533,7 @@ bool run_tests()
             }
 
             const auto& fifty_move_board_view = fifty_move_board;
-            if(fifty_move_board_view.piece_on_square(move->start())->type() == PAWN)
+            if(fifty_move_board_view.piece_on_square(move->start()).type() == PAWN)
             {
                 continue;
             }

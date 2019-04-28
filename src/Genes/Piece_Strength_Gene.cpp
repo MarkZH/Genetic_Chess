@@ -23,8 +23,8 @@ std::map<std::string, double> Piece_Strength_Gene::list_properties() const
     std::map<std::string, double> properties;
     for(auto piece_type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
     {
-        auto piece = Board::piece_instance(piece_type, WHITE);
-        properties[std::string(1, piece->fen_symbol())] = piece_value(piece);
+        auto piece = Piece{WHITE, piece_type};
+        properties[std::string(1, piece.fen_symbol())] = piece_value(piece);
     }
     return properties;
 }
@@ -72,7 +72,7 @@ double& Piece_Strength_Gene::piece_value(Piece_Type type)
 
 //! \param piece A pointer to a Piece. A nullptr represents no piece (as from an empty square).
 //! \returns A numerical value of the Piece.
-double Piece_Strength_Gene::piece_value(const Piece* piece) const
+double Piece_Strength_Gene::piece_value(Piece piece) const
 {
     if( ! piece)
     {
@@ -80,7 +80,7 @@ double Piece_Strength_Gene::piece_value(const Piece* piece) const
     }
     else
     {
-        return piece_value(piece->type());
+        return piece_value(piece.type());
     }
 }
 

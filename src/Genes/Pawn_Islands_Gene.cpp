@@ -14,7 +14,7 @@ double Pawn_Islands_Gene::score_board(const Board& board, Color perspective, siz
     auto islands = 0;
     auto pawn_count = 0;
     bool on_island = false;
-    auto own_pawn = board.piece_instance(PAWN, perspective);
+    auto own_pawn = Piece{perspective, PAWN};
 
     for(char file = 'a'; file <= 'h'; ++file)
     {

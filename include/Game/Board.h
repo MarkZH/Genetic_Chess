@@ -8,14 +8,12 @@
 
 #include "Game/Color.h"
 #include "Game/Square.h"
-#include "Game/Piece_Types.h"
+#include "Game/Piece.h"
 #include "Players/Thinking.h"
 
 class Clock;
 class Game_Result;
 class Player;
-
-class Piece;
 
 class Move;
 class Castle;
@@ -64,7 +62,7 @@ class Board
 
         void set_turn(Color color);
 
-        const Piece* piece_on_square(Square square) const;
+        Piece piece_on_square(Square square) const;
 
         const std::vector<const Move*>& legal_moves() const;
 
@@ -91,10 +89,8 @@ class Board
 
         Board without_random_pawn() const;
 
-        static const Piece* piece_instance(Piece_Type piece_type, Color color);
-
     private:
-        std::array<const Piece*, 64> board;
+        std::array<Piece, 64> board;
         std::array<uint64_t, 101> repeat_count;
         size_t repeat_count_insertion_point;
         Color turn_color;
@@ -118,31 +114,16 @@ class Board
         std::array<std::array<std::bitset<16>, 64>, 2> potential_attacks; // indexed by [attacker color][square index];
         std::array<std::array<std::bitset<16>, 64>, 2> blocked_attacks;
 
-        void add_attacks_from(Square square, const Piece* piece);
-        void remove_attacks_from(Square square, const Piece* old_piece);
-        void modify_attacks(Square square, const Piece* piece, bool adding_attacks);
-        void update_blocks(Square square, const Piece* old_piece, const Piece* new_piece);
+        void add_attacks_from(Square square, Piece piece);
+        void remove_attacks_from(Square square, Piece old_piece);
+        void modify_attacks(Square square, Piece piece, bool adding_attacks);
+        void update_blocks(Square square, Piece old_piece, Piece new_piece);
         const std::bitset<16>& checking_moves() const;
 
         // Information cache for gene reference
         bool material_change_move_available;
         std::array<size_t, 2> castling_index;
         std::array<size_t, 2> attack_counts;
-
-        // Pieces
-        static const Piece white_rook;
-        static const Piece white_knight;
-        static const Piece white_bishop;
-        static const Piece white_queen;
-        static const Piece white_king;
-        static const Piece white_pawn;
-
-        static const Piece black_rook;
-        static const Piece black_knight;
-        static const Piece black_bishop;
-        static const Piece black_queen;
-        static const Piece black_king;
-        static const Piece black_pawn;
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
@@ -152,7 +133,7 @@ class Board
         // Communication channels
         mutable Thinking_Output_Type thinking_indicator;
 
-        const Piece*& piece_on_square(Square square);
+        Piece& piece_on_square(Square square);
         void remove_piece(Square square);
         void make_move(Square start, Square rank);
         const Move& create_move(Square start, Square rank, char promote = 0) const;
@@ -162,7 +143,7 @@ class Board
         void clear_pinned_squares();
         void clear_checking_square();
         bool is_in_legal_moves_list(const Move& move) const;
-        void place_piece(const Piece* piece, Square square);
+        void place_piece(Piece piece, Square square);
         void switch_turn();
         void set_unmoved(Square square);
         void update_board(const Move& move);
@@ -188,7 +169,7 @@ class Board
 
         void update_board_hash(Square square);
         uint64_t square_hash(Square square) const;
-        static size_t square_hash_index(const Piece* piece);
+        static size_t square_hash_index(Piece piece);
 
         // Whose turn?
         static uint64_t switch_turn_board_hash;

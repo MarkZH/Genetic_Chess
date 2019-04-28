@@ -6,10 +6,12 @@
 #include <utility>
 
 #include "Game/Board.h"
-#include "Moves/Move.h"
 #include "Game/Piece.h"
 #include "Game/Game_Result.h"
 #include "Game/Color.h"
+#include "Game/Square.h"
+
+#include "Moves/Move.h"
 
 //! Turing's algorithm is a depth-3 minimax algorithm with an complex evalutation function.
 
@@ -120,7 +122,7 @@ bool Alan_Turing_AI::is_considerable(const Move& move, const Board& board) const
         // Capturing an undefended piece is considerable
         auto temp_board = board;
         auto result = temp_board.submit_move(move);
-        if(temp_board.safe_for_king(move.end(), attacking_piece->color()))
+        if(temp_board.safe_for_king(move.end(), attacking_piece.color()))
         {
             return true;
         }
@@ -151,7 +153,7 @@ double Alan_Turing_AI::material_value(const Board& board, Color perspective) con
         auto piece = board.piece_on_square(square);
         if(piece)
         {
-            if(piece->color() == perspective)
+            if(piece.color() == perspective)
             {
                 player_score += piece_value(piece);
             }
@@ -165,7 +167,7 @@ double Alan_Turing_AI::material_value(const Board& board, Color perspective) con
     return player_score/opponent_score;
 }
 
-double Alan_Turing_AI::piece_value(const Piece* piece) const
+double Alan_Turing_AI::piece_value(Piece piece) const
 {
     if(!piece)
     {
@@ -174,7 +176,7 @@ double Alan_Turing_AI::piece_value(const Piece* piece) const
 
     //                        P    R    N    B    Q     K
     static double values[] = {1.0, 5.0, 3.0, 3.5, 10.0, 0.0};
-    return values[piece->type()];
+    return values[piece.type()];
 }
 
 double Alan_Turing_AI::position_play_value(const Board& board, Color perspective) const
@@ -189,9 +191,9 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
             continue;
         }
 
-        if(piece->color() == perspective)
+        if(piece.color() == perspective)
         {
-            if(piece->type() == QUEEN || piece->type() == ROOK || piece->type() == BISHOP || piece->type() == KNIGHT)
+            if(piece.type() == QUEEN || piece.type() == ROOK || piece.type() == BISHOP || piece.type() == KNIGHT)
             {
                 // Number of moves score
                 double move_score = 0.0;
@@ -209,7 +211,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                 total_score += std::sqrt(move_score);
 
                 // Non-queen pieces defended
-                if(piece->type() != QUEEN)
+                if(piece.type() != QUEEN)
                 {
                     auto defender_count = board.moves_attacking_square(square, perspective).count();
                     if(defender_count > 0)
@@ -218,7 +220,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     }
                 }
             }
-            else if(piece->type() == KING)
+            else if(piece.type() == KING)
             {
                 // King move scores
                 double move_score = 0.0;
@@ -262,7 +264,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                             }
                             else
                             {
-                                if(other_piece->color() != perspective)
+                                if(other_piece.color() != perspective)
                                 {
                                     king_squares += 1.0;
                                 }
@@ -310,7 +312,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                     total_score += 1.0;
                 }
             }
-            else if(piece->type() == PAWN)
+            else if(piece.type() == PAWN)
             {
                 // Pawn advancement
                 auto base_rank = (perspective == WHITE ? 2 : 7);
@@ -325,8 +327,8 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                         break;
                     }
 
-                    auto defending_piece = board.piece_instance(piece_type, perspective);
-                    for(auto move : defending_piece->move_list(square))
+                    auto defending_piece = Piece{perspective, piece_type};
+                    for(auto move : defending_piece.move_list(square))
                     {
                         if(defending_piece == board.piece_on_square(move->end()))
                         {
@@ -347,7 +349,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
         }
         else // piece->color() == opposite(perspective)
         {
-            if(piece->type() == KING)
+            if(piece.type() == KING)
             {
                 auto temp_board = board;
                 temp_board.set_turn(opposite(perspective));

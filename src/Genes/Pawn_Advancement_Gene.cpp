@@ -20,7 +20,7 @@ Pawn_Advancement_Gene::Pawn_Advancement_Gene() : non_linearity(0.0)
 
 double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    auto own_pawn = board.piece_instance(PAWN, perspective);
+    auto own_pawn = Piece{perspective, PAWN};
 
     // Skip starting rank since those get zero score.
     int first_rank = (perspective == WHITE ? 3 : 6);

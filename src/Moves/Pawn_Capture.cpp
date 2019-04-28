@@ -6,6 +6,7 @@
 #include "Moves/Direction.h"
 #include "Game/Piece.h"
 #include "Game/Board.h"
+#include "Game/Square.h"
 
 //! Pawn captures are identified by the color of the pawn, the direction of the capture, and the starting square.
 

@@ -13,7 +13,7 @@
 //! \param file_start The file of the starting square.
 Pawn_Promotion::Pawn_Promotion(Piece_Type promotion_piece, Color color, char file_start) :
     Pawn_Move(color, file_start, color == WHITE ? 7 : 2),
-    promote_to(Board::piece_instance(promotion_piece, color))
+    promote_to{color, promotion_piece}
 {
 }
 
@@ -39,5 +39,5 @@ std::string Pawn_Promotion::game_record_move_item(const Board& board) const
 //! \returns PGN symbol of the new piece.
 char Pawn_Promotion::promotion_piece_symbol() const
 {
-    return promote_to->pgn_symbol().front();
+    return promote_to.pgn_symbol().front();
 }

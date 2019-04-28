@@ -13,7 +13,7 @@ double Stacked_Pawns_Gene::score_board(const Board& board, Color perspective, si
 {
     double score = 0.0;
 
-    auto own_pawn = board.piece_instance(PAWN, perspective);
+    auto own_pawn = Piece{perspective, PAWN};
     for(char file = 'a'; file <= 'h'; ++file)
     {
         int pawn_count = 0;

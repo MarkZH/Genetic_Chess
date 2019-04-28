@@ -13,8 +13,8 @@ double Passed_Pawn_Gene::score_board(const Board& board, Color perspective, size
     // Counts the number of passed pawns. A passed pawn is one with
     // no opposing pawns on the same or adjacent files ahead of it.
     double score = 0.0;
-    auto own_pawn = board.piece_instance(PAWN, perspective);
-    auto other_pawn = board.piece_instance(PAWN, opposite(perspective));
+    auto own_pawn = Piece{perspective, PAWN};
+    auto other_pawn = Piece{opposite(perspective), PAWN};
     auto near_rank = (perspective == WHITE ? 1 : 8);
     auto far_rank  = (perspective == WHITE ? 7 : 2);
     auto rank_step = (perspective == WHITE ? 1 : -1);

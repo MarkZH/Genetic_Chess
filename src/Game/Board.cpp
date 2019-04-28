@@ -29,43 +29,6 @@
 #include "Utility/Random.h"
 #include "Utility/String.h"
 
-// NOTE: The pawn must be created last since it takes pointers to the other pieces
-const Piece Board::white_rook(WHITE, ROOK);
-const Piece Board::white_knight(WHITE, KNIGHT);
-const Piece Board::white_bishop(WHITE, BISHOP);
-const Piece Board::white_queen(WHITE, QUEEN);
-const Piece Board::white_king(WHITE, KING);
-const Piece Board::white_pawn(WHITE, PAWN);
-
-const Piece Board::black_rook(BLACK, ROOK);
-const Piece Board::black_knight(BLACK, KNIGHT);
-const Piece Board::black_bishop(BLACK, BISHOP);
-const Piece Board::black_queen(BLACK, QUEEN);
-const Piece Board::black_king(BLACK, KING);
-const Piece Board::black_pawn(BLACK, PAWN);
-
-//! Get a representative of the Piece class corresponding to the requested color and type.
-
-//! Since there is no actual difference between, say, two white bishops, there is only
-//! ever one copy of each type of piece and pointers are handed out to all askers. This saves
-//! on copying the other internal data of the pieces (namely Move lists).
-//! \param piece_type The type of the requested piece (PAWN, ROOK, etc.).
-//! \param color The color of the requested piece.
-//!        Passing in NONE to the color parameter results in undefined behavior.
-//! \returns A pointer to the piece requested.
-const Piece* Board::piece_instance(Piece_Type piece_type, Color color)
-{
-    static const std::array<std::array<const Piece*, 2>, 6> all_pieces =
-        {{{{&white_pawn,   &black_pawn  }},
-          {{&white_rook,   &black_rook  }},
-          {{&white_knight, &black_knight}},
-          {{&white_bishop, &black_bishop}},
-          {{&white_queen,  &black_queen }},
-          {{&white_king,   &black_king  }}}};
-
-    return all_pieces[piece_type][color];
-}
-
 std::array<std::array<uint64_t, 13>, 64> Board::square_hash_values{};
 std::array<uint64_t, 64> Board::en_passant_hash_values{};
 std::array<uint64_t, 64> Board::castling_hash_values{};
@@ -133,26 +96,26 @@ Board::Board(const std::string& fen) :
                         {
                             fen_error("Pawns cannot be placed on the home ranks.");
                         }
-                        place_piece(piece_instance(PAWN, color), {file, rank});
+                        place_piece({color, PAWN}, {file, rank});
                         break;
                     case 'R':
-                        place_piece(piece_instance(ROOK, color), {file, rank});
+                        place_piece({color, ROOK}, {file, rank});
                         break;
                     case 'N':
-                        place_piece(piece_instance(KNIGHT, color), {file, rank});
+                        place_piece({color, KNIGHT}, {file, rank});
                         break;
                     case 'B':
-                        place_piece(piece_instance(BISHOP, color), {file, rank});
+                        place_piece({color, BISHOP}, {file, rank});
                         break;
                     case 'Q':
-                        place_piece(piece_instance(QUEEN, color), {file, rank});
+                        place_piece({color, QUEEN}, {file, rank});
                         break;
                     case 'K':
                         if(king_location[color].is_set())
                         {
                             fen_error("More than one " + color_text(color) + " king.");
                         }
-                        place_piece(piece_instance(KING, color), {file, rank});
+                        place_piece({color, KING}, {file, rank});
                         break;
                     default:
                         fen_error(std::string("Invalid symbol in FEN string: ") + symbol);
@@ -217,13 +180,13 @@ Board::Board(const std::string& fen) :
             auto king_square = Square{'e', rook_square.rank()};
             std::string side = std::toupper(c) == 'K' ? "king" : "queen";
 
-            if(piece_on_square(rook_square) != piece_instance(ROOK, piece_color))
+            if(piece_on_square(rook_square) != Piece{piece_color, ROOK})
             {
                 fen_error("There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.string() + " to castle " + side + "side.");
             }
             set_unmoved(rook_square);
 
-            if(piece_on_square(king_square) != piece_instance(KING, piece_color))
+            if(piece_on_square(king_square) != Piece{piece_color, KING})
             {
                 fen_error("There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.string() + " to castle.");
             }
@@ -252,7 +215,7 @@ Board::Board(const std::string& fen) :
         }
 
         auto last_move_pawn = piece_on_square(en_passant_target + Square_Difference{0, whose_turn() == WHITE ? -1 : 1});;
-        if(last_move_pawn != piece_instance(PAWN, opposite(whose_turn())))
+        if(last_move_pawn != Piece{opposite(whose_turn()), PAWN})
         {
             fen_error("There must be a pawn past the en passant target square.");
         }
@@ -303,7 +266,7 @@ void Board::fen_error(const std::string& reason) const
     throw std::invalid_argument("Bad FEN input: " + starting_fen + "\n" + reason);
 }
 
-const Piece*& Board::piece_on_square(Square square)
+Piece& Board::piece_on_square(Square square)
 {
     return board[square.index()];
 }
@@ -312,7 +275,7 @@ const Piece*& Board::piece_on_square(Square square)
 
 //! \param square The queried square.
 //! \returns Pointer to piece on square. May be nullptr if square is emtpy.
-const Piece* Board::piece_on_square(Square square) const
+Piece Board::piece_on_square(Square square) const
 {
     return board[square.index()];
 }
@@ -377,7 +340,7 @@ std::string Board::fen_status() const
                     s += std::to_string(empty_count);
                     empty_count = 0;
                 }
-                s.push_back(piece->fen_symbol());
+                s.push_back(piece.fen_symbol());
             }
         }
 
@@ -653,7 +616,7 @@ const Move& Board::create_move(const std::string& move) const
                 auto square = Square{file, rank};
                 auto piece = piece_on_square(square);
                 if(piece &&
-                   piece->pgn_symbol() == piece_symbol &&
+                   piece.pgn_symbol() == piece_symbol &&
                    is_legal(square, ending_square))
                 {
                     if(starting_file == 0 || starting_rank == 0)
@@ -768,7 +731,7 @@ void Board::ascii_draw(Color perspective) const
                 char filler = square.color() == WHITE ? ' ' : ':';
                 if(piece)
                 {
-                    auto piece_row = piece->ascii_art(square_row, square_height);
+                    auto piece_row = piece.ascii_art(square_row, square_height);
                     std::string padding((square_width - piece_row.size())/2, filler);
                     piece_symbol = padding + piece_row + padding;
                     while(piece_symbol.size() < square_width)
@@ -799,10 +762,10 @@ void Board::ascii_draw(Color perspective) const
 
 void Board::remove_piece(Square square)
 {
-    place_piece(nullptr, square);
+    place_piece({}, square);
 }
 
-void Board::place_piece(const Piece* piece, Square square)
+void Board::place_piece(Piece piece, Square square)
 {
     update_board_hash(square); // XOR out piece on square
 
@@ -814,26 +777,26 @@ void Board::place_piece(const Piece* piece, Square square)
     add_attacks_from(square, piece);
 
     if(old_piece &&
-       ( ! piece || piece->color() != old_piece->color()) &&
-       moves_attacking_square(square, old_piece->color()).any())
+       ( ! piece || piece.color() != old_piece.color()) &&
+       moves_attacking_square(square, old_piece.color()).any())
     {
-        attack_counts[old_piece->color()] += moves_attacking_square(square, old_piece->color()).count();
+        attack_counts[old_piece.color()] += moves_attacking_square(square, old_piece.color()).count();
     }
 
     if(piece &&
-       ( ! old_piece || piece->color() != old_piece->color()) &&
-       moves_attacking_square(square, piece->color()).any())
+       ( ! old_piece || piece.color() != old_piece.color()) &&
+       moves_attacking_square(square, piece.color()).any())
     {
-        attack_counts[piece->color()] -= moves_attacking_square(square, piece->color()).count();
+        attack_counts[piece.color()] -= moves_attacking_square(square, piece.color()).count();
     }
 
     unmoved_positions[square.index()] = false;
 
     update_board_hash(square); // XOR in new piece on square
 
-    if(piece && piece->type() == KING)
+    if(piece && piece.type() == KING)
     {
-        king_location[piece->color()] = {square};
+        king_location[piece.color()] = {square};
     }
 
     // Make sure the attack count did not drop below zero.
@@ -855,22 +818,22 @@ size_t Board::attack_count(Color attacking_color) const
     return attack_counts[attacking_color];
 }
 
-void Board::add_attacks_from(Square square, const Piece* piece)
+void Board::add_attacks_from(Square square, Piece piece)
 {
     modify_attacks(square, piece, true);
 }
 
-void Board::modify_attacks(Square square, const Piece* piece, bool adding_attacks)
+void Board::modify_attacks(Square square, Piece piece, bool adding_attacks)
 {
     if( ! piece)
     {
         return;
     }
 
-    auto attacking_color = piece->color();
-    auto vulnerable_king = piece_instance(KING, opposite(attacking_color));
+    auto attacking_color = piece.color();
+    auto vulnerable_king = Piece{opposite(attacking_color), KING};
     const Move* blocked_move = nullptr;
-    for(auto attack : piece->attacking_moves(square))
+    for(auto attack : piece.attacking_moves(square))
     {
         auto attacked_square = attack->end();
         auto attacked_index = attacked_square.index();
@@ -886,7 +849,7 @@ void Board::modify_attacks(Square square, const Piece* piece, bool adding_attack
             auto blocking_piece = piece_on_square(attacked_square);
 
             potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
-            if( ! blocking_piece || blocking_piece->color() != attacking_color)
+            if( ! blocking_piece || blocking_piece.color() != attacking_color)
             {
                 attack_counts[attacking_color] += attack_count_diff;
             }
@@ -899,12 +862,12 @@ void Board::modify_attacks(Square square, const Piece* piece, bool adding_attack
     }
 }
 
-void Board::remove_attacks_from(Square square, const Piece* old_piece)
+void Board::remove_attacks_from(Square square, Piece old_piece)
 {
     modify_attacks(square, old_piece, false);
 }
 
-void Board::update_blocks(Square square, const Piece* old_piece, const Piece* new_piece)
+void Board::update_blocks(Square square, Piece old_piece, Piece new_piece)
 {
     // Replacing nothing with nothing changes nothing
     if( ! old_piece && ! new_piece)
@@ -925,7 +888,7 @@ void Board::update_blocks(Square square, const Piece* old_piece, const Piece* ne
 
     for(auto attacking_color : {WHITE, BLACK})
     {
-        auto vulnerable_king = piece_instance(KING, opposite(attacking_color));
+        auto vulnerable_king = Piece{opposite(attacking_color), KING};
         if(new_piece == vulnerable_king)
         {
             continue;
@@ -938,7 +901,7 @@ void Board::update_blocks(Square square, const Piece* old_piece, const Piece* ne
             {
                 auto step = Move::attack_direction_from_index(index);
                 auto revealed_attacker = piece_on_square(square - step);
-                if(revealed_attacker && (revealed_attacker->type() == PAWN || revealed_attacker->type() == KING))
+                if(revealed_attacker && (revealed_attacker.type() == PAWN || revealed_attacker.type() == KING))
                 {
                     continue; // Pawns and kings are never blocked
                 }
@@ -947,7 +910,7 @@ void Board::update_blocks(Square square, const Piece* old_piece, const Piece* ne
                 {
                     auto target_index = target_square.index();
                     auto piece = piece_on_square(target_square);
-                    if(( ! piece || piece->color() != attacking_color) && (potential_attacks[attacking_color][target_index][index] != add_new_attacks))
+                    if(( ! piece || piece.color() != attacking_color) && (potential_attacks[attacking_color][target_index][index] != add_new_attacks))
                     {
                         attack_counts[attacking_color] += attack_count_diff;
                     }
@@ -1014,7 +977,7 @@ bool Board::blocked_attack(Square square, Color attacking_color) const
 //! \returns Whether the move under consideration will leave the friendly king in check.
 bool Board::king_is_in_check_after_move(const Move& move) const
 {
-    if(piece_on_square(move.start())->type() == KING)
+    if(piece_on_square(move.start()).type() == KING)
     {
         return ! safe_for_king(move.end(), whose_turn());
     }
@@ -1111,12 +1074,12 @@ bool Board::king_is_in_check_after_move(const Move& move) const
                     return false;
                 }
 
-                if(piece->color() == whose_turn())
+                if(piece.color() == whose_turn())
                 {
                     return false;
                 }
 
-                return piece->type() == ROOK || piece->type() == QUEEN;
+                return piece.type() == ROOK || piece.type() == QUEEN;
             }
         }
     }
@@ -1356,7 +1319,7 @@ bool Board::piece_has_moved(Square square) const
 //! \returns Square which contains the sought after king.
 Square Board::find_king(Color color) const
 {
-    assert(piece_on_square(king_location[color]) == piece_instance(KING, color));
+    assert(piece_on_square(king_location[color]) == Piece(color, KING));
     return king_location[color];
 }
 
@@ -1369,12 +1332,12 @@ void Board::recreate_move_caches()
     for(auto square : Square::all_squares())
     {
         auto piece = piece_on_square(square);
-        if(piece && piece->color() == whose_turn())
+        if(piece && piece.color() == whose_turn())
         {
             // invalid direction
             const Move* blocked_move = nullptr;
 
-            for(const auto move : piece->move_list(square))
+            for(const auto move : piece.move_list(square))
             {
                 auto blocked = blocked_move && same_direction(move->movement(), blocked_move->movement());
 
@@ -1434,12 +1397,12 @@ bool Board::enough_material_to_checkmate(Color color) const
             continue;
         }
 
-        if(color != NONE && piece->color() != color)
+        if(color != NONE && piece.color() != color)
         {
             continue;
         }
 
-        auto type = piece->type();
+        auto type = piece.type();
         if(type == KING)
         {
             continue;
@@ -1536,12 +1499,12 @@ void Board::initialize_board_hash()
         {
             for(auto piece_type : { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING })
             {
-                auto hash_index = square_hash_index(piece_instance(piece_type, piece_color));
+                auto hash_index = square_hash_index(Piece{piece_color, piece_type});
                 square_hash_values[index][hash_index] = Random::random_unsigned_int64();
             }
         }
 
-        square_hash_values[index][square_hash_index(nullptr)] = Random::random_unsigned_int64();
+        square_hash_values[index][square_hash_index({})] = Random::random_unsigned_int64();
     }
     current_board_hash = 0;
     for(auto square : Square::all_squares())
@@ -1573,7 +1536,7 @@ uint64_t Board::square_hash(Square square) const
     auto index = square.index();
     auto result = square_hash_values[index][square_hash_index(piece)];
     if(piece &&
-       piece->type() == ROOK &&
+       piece.type() == ROOK &&
        ! piece_has_moved(square) &&
        ! piece_has_moved({'e', square.rank()}))
     {
@@ -1588,11 +1551,11 @@ uint64_t Board::square_hash(Square square) const
     return result;
 }
 
-size_t Board::square_hash_index(const Piece* piece)
+size_t Board::square_hash_index(Piece piece)
 {
     if(piece)
     {
-        return piece->type() + (piece->color()*6); // 6 == number of piece types
+        return piece.type() + (piece.color()*6); // 6 == number of piece types
     }
     else
     {
@@ -1629,7 +1592,7 @@ bool Board::last_move_captured() const
     }
 
     auto last_move = game_record_listing.back();
-    if(piece_on_square(last_move->end())->type() == PAWN ||
+    if(piece_on_square(last_move->end()).type() == PAWN ||
        last_move->promotion_piece_symbol())
     {
         // Check if move was pawn capture
@@ -1661,7 +1624,7 @@ bool Board::move_captures(const Move& move) const
 
     // Assert move is actually legal
     assert(is_in_legal_moves_list(move));
-    assert( ! attacked_piece || (move.can_capture() && attacked_piece->color() == opposite(whose_turn())));
+    assert( ! attacked_piece || (move.can_capture() && attacked_piece.color() == opposite(whose_turn())));
 
     return attacked_piece || move.is_en_passant();
 }
@@ -1764,7 +1727,7 @@ bool Board::piece_is_pinned(Square square) const
 
         // attack_piece == nullptr means that the pinning piece is farther away than
         // one square, which means it can also attack the king beyond the pinned piece.
-        return pin_result = ( ! attack_piece || (attack_piece->type() != PAWN && attack_piece->type() != KING)) &&
+        return pin_result = ( ! attack_piece || (attack_piece.type() != PAWN && attack_piece.type() != KING)) &&
                             all_empty_between(king_square, square);
     }
     else
@@ -1817,14 +1780,14 @@ size_t Board::castling_move_index(Color player) const
 //! \throws Debug assertion failure if there are no pawns on the board.
 Board Board::without_random_pawn() const
 {
-    assert(std::any_of(board.begin(), board.end(), [](auto p) { return p && p->type() == PAWN; }));
+    assert(std::any_of(board.begin(), board.end(), [](auto p) { return p && p.type() == PAWN; }));
 
     auto result = *this;
     while(true)
     {
         auto square = Square(Random::random_integer('a', 'h'), Random::random_integer(1, 8));
         auto piece = result.piece_on_square(square);
-        if(piece && piece->type() == PAWN)
+        if(piece && piece.type() == PAWN)
         {
             result.remove_piece(square);
             return result;

@@ -25,7 +25,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
     for(auto square : Square::all_squares())
     {
         auto piece = board.piece_on_square(square);
-        if(piece && piece->color() != perspective)
+        if(piece && piece.color() != perspective)
         {
             if(!board.safe_for_king(square, opposite(perspective)))
             {

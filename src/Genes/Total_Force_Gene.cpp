@@ -24,7 +24,7 @@ double Total_Force_Gene::score_board(const Board& board, Color perspective, size
     for(auto square : Square::all_squares())
     {
         auto piece = board.piece_on_square(square);
-        if(piece && piece->color() == perspective)
+        if(piece && piece.color() == perspective)
         {
             score += piece_strength_source->piece_value(piece);
         }

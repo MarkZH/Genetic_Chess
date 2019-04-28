@@ -25,7 +25,7 @@ class Piece_Strength_Gene : public Gene
 
         std::string name() const override;
 
-        double piece_value(const Piece* piece) const;
+        double piece_value(Piece piece) const;
         double normalizer() const;
 
     protected:

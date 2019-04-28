@@ -95,7 +95,7 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective,
 
         auto piece = board.piece_on_square(square);
 
-        if(piece && piece->color() == perspective && piece->type() != KING) // Square is blocked by a friendly piece
+        if(piece && piece.color() == perspective && piece.type() != KING) // Square is blocked by a friendly piece
         {
             friendly_block_total += friendly_block_score;
         }

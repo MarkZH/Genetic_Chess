@@ -65,13 +65,13 @@ bool Move::is_legal(const Board& board) const
     auto moving_piece = board.piece_on_square(start());
 #endif
     assert(moving_piece);
-    assert(moving_piece->color() == board.whose_turn());
-    assert(moving_piece->can_move(this));
+    assert(moving_piece.color() == board.whose_turn());
+    assert(moving_piece.can_move(this));
 
     auto attacked_piece = board.piece_on_square(end());
     if(attacked_piece)
     {
-        if( ! can_capture() || board.whose_turn() == attacked_piece->color())
+        if( ! can_capture() || board.whose_turn() == attacked_piece.color())
         {
             return false;
         }
@@ -150,7 +150,7 @@ std::string Move::game_record_item(const Board& board) const
 std::string Move::game_record_move_item(const Board& board) const
 {
     auto original_piece = board.piece_on_square(start());
-    std::string move_record = original_piece->pgn_symbol();
+    std::string move_record = original_piece.pgn_symbol();
 
     bool record_file = false;
     bool record_rank = false;

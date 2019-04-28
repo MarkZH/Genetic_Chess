@@ -7,9 +7,9 @@
 
 #include "Game/Piece_Types.h"
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 class Board;
-class Piece;
 
 //! When a pawn makes it to the far rank, it can promote to another non-king piece.
 class Pawn_Promotion : public Pawn_Move
@@ -24,7 +24,7 @@ class Pawn_Promotion : public Pawn_Move
         std::string game_record_move_item(const Board& board) const override;
 
     private:
-        const Piece* promote_to;
+        const Piece promote_to;
 };
 
 #endif // PAWN_PROMOTION_H
