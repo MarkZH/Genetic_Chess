@@ -351,19 +351,17 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
         {
             if(piece.type() == KING)
             {
-                auto temp_board = board;
-                temp_board.set_turn(opposite(perspective));
-                if(temp_board.king_is_in_check())
+                auto opponent = opposite(perspective);
+                if( ! board.safe_for_king(board.find_king(opponent), opponent))
                 {
                     total_score += 0.5;
                 }
                 else
                 {
-                    temp_board.set_turn(perspective);
-                    for(auto move : temp_board.legal_moves())
+                    for(auto move : board.legal_moves())
                     {
-                        auto temp_temp_board = temp_board;
-                        if(temp_temp_board.submit_move(*move).winner() != NONE)
+                        auto temp_board = board;
+                        if(temp_board.submit_move(*move).winner() != NONE)
                         {
                             total_score += 1.0;
                         }

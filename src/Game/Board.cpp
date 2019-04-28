@@ -1246,21 +1246,6 @@ std::string Board::last_move_coordinates() const
     return game_record_listing.back()->coordinate_move();
 }
 
-//! Change whose turn it is to move.
-
-//! If the input color is not the current player to move, this is
-//! equivalent to skipping the current player's turn. Otherwise,
-//! there's no effect.
-//! \param color The color of the player who is next to move.
-void Board::set_turn(Color color)
-{
-    if(turn_color != color)
-    {
-        clear_en_passant_target();
-        switch_turn();
-    }
-}
-
 void Board::switch_turn()
 {
     turn_color = opposite(turn_color);

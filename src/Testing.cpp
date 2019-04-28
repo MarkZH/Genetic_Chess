@@ -97,7 +97,7 @@ bool run_tests()
             break;
         }
 
-        starting_board.set_turn(BLACK);
+        starting_board.submit_move(starting_board.create_move("e4"));
     }
 
     Board second_move_board;
@@ -670,23 +670,21 @@ bool run_tests()
     castling_possible_gene.read_from(test_genes_file_name);
     auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
     auto white_castling_score = 0.8*(5.0/6.0) + 0.2*(6.0/7.0); // maximum score with and without actually castling
-    tests_passed &= castling_possible_gene.test(castling_board, white_castling_score);
+    tests_passed &= castling_possible_gene.test(castling_board, WHITE, white_castling_score);
 
     castling_board.submit_move(castling_board.create_move("O-O"));
-    castling_board.set_turn(WHITE);
-    tests_passed &= castling_possible_gene.test(castling_board, 1.0); // full score for kingside castling
+    tests_passed &= castling_possible_gene.test(castling_board, WHITE, 1.0); // full score for kingside castling
 
-    castling_board.set_turn(BLACK);
     auto black_castling_score = 0.2*(5.0/7.0); // castling possible
-    tests_passed &= castling_possible_gene.test(castling_board, black_castling_score);
+    tests_passed &= castling_possible_gene.test(castling_board, BLACK, black_castling_score);
 
     castling_board.submit_move(castling_board.create_move("Nc6"));
-    tests_passed &= castling_possible_gene.test(castling_board, 0.0); // castling no longer relevant
+    tests_passed &= castling_possible_gene.test(castling_board, WHITE, 0.0); // castling no longer relevant
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
     auto freedom_to_move_score = 32.0/18.0;
-    tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, freedom_to_move_score);
+    tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, WHITE, freedom_to_move_score);
 
     #ifdef NDEBUG
     auto test_move_count = 1'000'000;
@@ -718,21 +716,21 @@ bool run_tests()
                                    (-1)*(1.0 + 1.0))/ // blocked by opponent (e1, e2)
                                    (4 + 1)/ // normalizing
                                    (1 + (1 + 1 + 1)); // free squares (h1, g1, f1)
-    tests_passed &= king_confinement_gene.test(king_confinement_board, king_confinement_score);
+    tests_passed &= king_confinement_gene.test(king_confinement_board, WHITE, king_confinement_score);
 
     auto king_confined_by_pawns_board = Board("k7/8/8/8/8/pppppppp/8/K7 w - - 0 1");
     auto king_confined_by_pawns_score = (4*(0.0) + // no friendly blockers
                                          (-1)*(8.0))/ // blocked by pawn attacks on second rank
                                          (4 + 1)/ // normalizing
                                          (1 + 8); // free squares (a1-h1)
-    tests_passed &= king_confinement_gene.test(king_confined_by_pawns_board, king_confined_by_pawns_score);
+    tests_passed &= king_confinement_gene.test(king_confined_by_pawns_board, WHITE, king_confined_by_pawns_score);
 
     auto king_protection_gene = King_Protection_Gene();
     auto king_protection_board = king_confinement_board;
     auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
     auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
     auto king_protection_score = double(max_square_count - square_count)/max_square_count;
-    tests_passed &= king_protection_gene.test(king_protection_board, king_protection_score);
+    tests_passed &= king_protection_gene.test(king_protection_board, WHITE, king_protection_score);
 
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
@@ -741,22 +739,22 @@ bool run_tests()
     auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
     auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
     auto opponent_pieces_targeted_score = (16 + 8 + 4 + 2 + 1)/piece_strength_normalizer;
-    tests_passed &= opponent_pieces_targeted_gene.test(opponent_pieces_targeted_board, opponent_pieces_targeted_score);
+    tests_passed &= opponent_pieces_targeted_gene.test(opponent_pieces_targeted_board, WHITE, opponent_pieces_targeted_score);
 
     auto pawn_advancement_gene = Pawn_Advancement_Gene();
     pawn_advancement_gene.read_from(test_genes_file_name);
     auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
     auto pawn_advancement_score = (std::pow(1, 1.2) + std::pow(2, 1.2) + std::pow(3, 1.2) + std::pow(4, 1.2) + std::pow(5, 1.2))/(8*std::pow(5, 1.2));
-    tests_passed &= pawn_advancement_gene.test(pawn_advancement_board, pawn_advancement_score);
+    tests_passed &= pawn_advancement_gene.test(pawn_advancement_board, WHITE, pawn_advancement_score);
 
     auto passed_pawn_gene = Passed_Pawn_Gene();
     auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P4/8/8/8 w - - 0 1");
     auto passed_pawn_score = (1.0 + 2.0/3.0)/8;
-    tests_passed &= passed_pawn_gene.test(passed_pawn_board, passed_pawn_score);
+    tests_passed &= passed_pawn_gene.test(passed_pawn_board, WHITE, passed_pawn_score);
 
     passed_pawn_board.submit_move(passed_pawn_board.create_move("Kd8"));
     passed_pawn_score = (2.0/3.0)/8;
-    tests_passed &= passed_pawn_gene.test(passed_pawn_board, passed_pawn_score);
+    tests_passed &= passed_pawn_gene.test(passed_pawn_board, BLACK, passed_pawn_score);
 
     auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
     sphere_of_influence_gene.read_from(test_genes_file_name);
@@ -787,24 +785,23 @@ bool run_tests()
     // ........    .4......         .5......
     // ........    44......         66......
     // K.......    K4......         K7......
-    tests_passed &= sphere_of_influence_gene.test(sphere_of_influence_board, sphere_of_influence_score);
+    tests_passed &= sphere_of_influence_gene.test(sphere_of_influence_board, WHITE, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    tests_passed &= total_force_gene.test(Board(), 1.0);
+    tests_passed &= total_force_gene.test(Board(), WHITE, 1.0);
 
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
-    tests_passed &= stacked_pawns_gene.test(stacked_pawns_board, -3.0/6);
+    tests_passed &= stacked_pawns_gene.test(stacked_pawns_board, WHITE, -3.0/6);
 
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-    tests_passed &= pawn_islands_gene.test(pawn_islands_board, (6.0/3)/8);
+    tests_passed &= pawn_islands_gene.test(pawn_islands_board, WHITE, (6.0/3)/8);
 
     auto checkmate_material_gene = Checkmate_Material_Gene();
     auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
-    tests_passed &= checkmate_material_gene.test(checkmate_material_board, 1.0); // white can checkmate
-    checkmate_material_board.submit_move(*checkmate_material_board.legal_moves().front());
-    tests_passed &= checkmate_material_gene.test(checkmate_material_board, 0.0); // black cannot
+    tests_passed &= checkmate_material_gene.test(checkmate_material_board, WHITE, 1.0); // white can checkmate
+    tests_passed &= checkmate_material_gene.test(checkmate_material_board, BLACK, 0.0); // black cannot
 
 
 

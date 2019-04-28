@@ -212,9 +212,9 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 //! \param board The board upon which the test takes place.
 //! \param expected_score The expected score returned by Gene::score_board().
 //! \returns Whether the score returned by Gene::score_board() is withing 1e-6 of the expected value.
-bool Gene::test(const Board& board, double expected_score) const
+bool Gene::test(const Board& board, Color perspective, double expected_score) const
 {
-    auto result = score_board(board, board.whose_turn(), 1);
+    auto result = score_board(board, perspective, 1);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';

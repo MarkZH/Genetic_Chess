@@ -60,8 +60,6 @@ class Board
 
         std::string last_move_coordinates() const;
 
-        void set_turn(Color color);
-
         Piece piece_on_square(Square square) const;
 
         const std::vector<const Move*>& legal_moves() const;
