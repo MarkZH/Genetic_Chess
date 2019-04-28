@@ -34,7 +34,7 @@ size_t Freedom_To_Move_Gene::attack_count_scan(const Board& board, Color perspec
         if(board.moves_attacking_square(square, perspective).any())
         {
             auto piece = board.piece_on_square(square);
-            if(!piece || piece.color() != perspective)
+            if( ! piece || piece.color() != perspective)
             {
                 count += board.moves_attacking_square(square, perspective).count();
             }

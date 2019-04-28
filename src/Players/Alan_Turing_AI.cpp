@@ -169,7 +169,7 @@ double Alan_Turing_AI::material_value(const Board& board, Color perspective) con
 
 double Alan_Turing_AI::piece_value(Piece piece) const
 {
-    if(!piece)
+    if( ! piece)
     {
         return 0.0;
     }
@@ -277,7 +277,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                 total_score -= std::sqrt(king_squares);
 
                 // Castling score
-                if(!board.piece_has_moved(square))
+                if( ! board.piece_has_moved(square))
                 {
                     // Queenside castling
                     auto queenside_rook = Square{'a', square.rank()};
@@ -294,7 +294,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
 
                     // Kingside castling
                     auto kingside_rook = Square{'h', square.rank()};
-                    if(!board.piece_has_moved(kingside_rook))
+                    if( ! board.piece_has_moved(kingside_rook))
                     {
                         total_score += 1.0;
 

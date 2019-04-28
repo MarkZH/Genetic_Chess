@@ -156,7 +156,7 @@ std::string Move::game_record_move_item(const Board& board) const
     bool record_rank = false;
     for(auto other_square : Square::all_squares())
     {
-        if(!board.piece_on_square(other_square))
+        if( ! board.piece_on_square(other_square))
         {
             continue;
         }
@@ -173,7 +173,7 @@ std::string Move::game_record_move_item(const Board& board) const
 
         if(board.is_legal(other_square, end()))
         {
-            if(other_square.file() != start().file() && !record_file)
+            if(other_square.file() != start().file() && ! record_file)
             {
                 record_file = true;
                 continue;

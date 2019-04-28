@@ -329,7 +329,7 @@ std::string Board::fen_status() const
         for(char file = 'a'; file <= 'h'; ++file)
         {
             auto piece = piece_on_square({file, rank});
-            if(!piece)
+            if( ! piece)
             {
                 ++empty_count;
             }
@@ -356,11 +356,11 @@ std::string Board::fen_status() const
 
     for(int base_rank : {1, 8})
     {
-        if(!piece_has_moved({'e', base_rank})) // has king moved?
+        if( ! piece_has_moved({'e', base_rank})) // has king moved?
         {
             for(char rook_file : {'h', 'a'})
             {
-                if(!piece_has_moved({rook_file, base_rank})) // have rooks moved
+                if( ! piece_has_moved({rook_file, base_rank})) // have rooks moved
                 {
                     char mark = (rook_file == 'h' ? 'K' : 'Q');
                     if(base_rank == 8)
@@ -1326,7 +1326,7 @@ void Board::recreate_move_caches()
             {
                 auto blocked = blocked_move && same_direction(move->movement(), blocked_move->movement());
 
-                if(!blocked)
+                if( ! blocked)
                 {
                     blocked_move = nullptr;
                     if(move->is_legal(*this))
@@ -1343,7 +1343,7 @@ void Board::recreate_move_caches()
                     // The check for a promotion piece is needed since the set of pawn promotions
                     // results in moves with identical beginning and ending squares, which would
                     // result in the first pawn-promotion-by-capture blocking all the others.
-                    if(piece_on_square(move->end()) && !move->promotion_piece_symbol())
+                    if(piece_on_square(move->end()) && ! move->promotion_piece_symbol())
                     {
                         blocked_move = move;
                     }
@@ -1377,7 +1377,7 @@ bool Board::enough_material_to_checkmate(Color color) const
     for(auto square : Square::all_squares())
     {
         auto piece = piece_on_square(square);
-        if(!piece)
+        if( ! piece)
         {
             continue;
         }

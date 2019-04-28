@@ -85,7 +85,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
     for(auto square : Square::all_squares())
     {
         double square_score;
-        if(!board.safe_for_king(square, opposite(perspective))) // any piece attacks square
+        if( ! board.safe_for_king(square, opposite(perspective))) // any piece attacks square
         {
             square_score = legal_square_score;
         }
