@@ -79,7 +79,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
     const auto& opponent_king_square = board.find_king(opposite(perspective));
     auto opponent_king_index = opponent_king_square.index();
 
-    double score = 0;
+    double score = 0.0;
     for(auto square : Square::all_squares())
     {
         double square_score;
