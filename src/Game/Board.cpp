@@ -71,7 +71,7 @@ Board::Board(const std::string& fen) :
     for(int rank = 8; rank >= 1; --rank)
     {
         char file = 'a';
-        for(const auto& symbol : board_parse.at(size_t(8-rank)))
+        for(auto symbol : board_parse.at(size_t(8-rank)))
         {
             if(isdigit(symbol))
             {
