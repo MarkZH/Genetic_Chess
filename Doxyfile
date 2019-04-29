@@ -864,7 +864,6 @@ FILE_PATTERNS          = *.c \
                          *.php5 \
                          *.phtml \
                          *.inc \
-                         *.m \
                          *.markdown \
                          *.md \
                          *.mm \
