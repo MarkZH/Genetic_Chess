@@ -4,8 +4,6 @@
 #include <array>
 #include <memory>
 #include <map>
-#include <array>
-#include <mutex>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
