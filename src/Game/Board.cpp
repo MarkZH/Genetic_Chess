@@ -1484,12 +1484,12 @@ void Board::initialize_board_hash()
         {
             for(auto piece_type : { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING })
             {
-                auto hash_index = square_hash_index(Piece{piece_color, piece_type});
+                auto hash_index = Piece{piece_color, piece_type}.index();
                 square_hash_values[index][hash_index] = Random::random_unsigned_int64();
             }
         }
 
-        square_hash_values[index][square_hash_index({})] = Random::random_unsigned_int64();
+        square_hash_values[index][Piece{}.index()] = Random::random_unsigned_int64();
     }
     current_board_hash = 0;
     for(auto square : Square::all_squares())
@@ -1519,7 +1519,7 @@ uint64_t Board::square_hash(Square square) const
 
     auto piece = piece_on_square(square);
     auto index = square.index();
-    auto result = square_hash_values[index][square_hash_index(piece)];
+    auto result = square_hash_values[index][piece.index()];
     if(piece &&
        piece.type() == ROOK &&
        ! piece_has_moved(square) &&
@@ -1534,18 +1534,6 @@ uint64_t Board::square_hash(Square square) const
     }
 
     return result;
-}
-
-size_t Board::square_hash_index(Piece piece)
-{
-    if(piece)
-    {
-        return piece.type() + (piece.color()*6); // 6 == number of piece types
-    }
-    else
-    {
-        return square_hash_values.front().size() - 1; // last value for empty square
-    }
 }
 
 uint64_t Board::board_hash() const

@@ -167,7 +167,6 @@ class Board
 
         void update_board_hash(Square square);
         uint64_t square_hash(Square square) const;
-        static size_t square_hash_index(Piece piece);
 
         // Whose turn?
         static uint64_t switch_turn_board_hash;

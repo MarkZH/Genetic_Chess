@@ -15,6 +15,9 @@ class Square;
 //! Possible moves are stored within each piece.
 class Piece
 {
+    private:
+        using piece_code_t = unsigned int;
+
     public:
         Piece();
         Piece(Color color, Piece_Type type);
@@ -26,6 +29,7 @@ class Piece
         Color color() const;
         Piece_Type type() const;
         operator bool() const;
+        piece_code_t index() const;
 
         bool can_move(const Move* move) const;
 
@@ -33,7 +37,6 @@ class Piece
         const std::vector<const Move*>& attacking_moves(Square square) const;
 
     private:
-        using piece_code_t = unsigned int;
         piece_code_t piece_code;
         static const piece_code_t invalid_code;
 

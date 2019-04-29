@@ -360,7 +360,7 @@ namespace
     }
 }
 
-const Piece::piece_code_t Piece::invalid_code = 99;
+const Piece::piece_code_t Piece::invalid_code = Piece{BLACK, KING}.index() + 1;
 
 //! Create an invalid piece that can represent an unoccupied space on a Board.
 Piece::Piece() : piece_code(invalid_code)
@@ -478,6 +478,11 @@ Piece::operator bool() const
     return piece_code != invalid_code;
 }
 
+//! Returns an unsigned integer useful for indexing arrays.
+Piece::piece_code_t Piece::index() const
+{
+    return piece_code;
+}
 
 //! Gives a list of moves that are allowed to capture other pieces.
 
