@@ -25,7 +25,7 @@ this project.
 3. `bin/release/genetic_chess -genetic genetic_ai_example.txt -human`
     * or, if you want to play white: `bin/genetic_chess -human -genetic
       genetic_ai_example.txt`
-    * If compiling with Visual Studio, look in x86\Release or x64\Release
+    * If compiling with Visual Studio, look in x86/Release or x64/Release
       for the compiled program.
 4. Do not expect to be impressed by the quality of play.
 
@@ -39,7 +39,7 @@ this project.
    games to a number less than or equal to the number of processors on your
    computer.
 4. `bin/release/genetic_chess -genepool gene_pool_config_example.txt`
-    * If compiling with Visual Studio, look in x86\Release or x64\Release
+    * If compiling with Visual Studio, look in x86/Release or x64/Release
       for the compiled program.
 5. About once a day, pause the gene pool with `Ctrl-Z` (Linux) or `Ctrl-Break`
    (on Windows) and run `analysis/run_all_plots.sh pool.txt 1` to generate
