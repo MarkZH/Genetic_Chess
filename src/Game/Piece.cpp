@@ -369,8 +369,8 @@ Piece::Piece() : piece_code(invalid_code)
 
 //! Create a piece.
 
-//! \param color_in The color of the piece.
-//! \param type_in The type of piece.
+//! \param color The color of the piece.
+//! \param type The type of piece.
 Piece::Piece(Color color, Piece_Type type) :
     piece_code((type << 1) | color)
 {
@@ -455,8 +455,7 @@ bool Piece::can_move(const Move* move) const
 
 //! Get all possibly legal moves of a piece starting from a given square.
 
-//! \param file The file of the starting square.
-//! \param rank The rank of the starting square.
+//! \param square The square where the moves start.
 //! \returns A list of legal moves starting from that square.
 const std::vector<const Move*>& Piece::move_list(Square square) const
 {

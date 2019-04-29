@@ -140,12 +140,16 @@ Square& Square::operator-=(const Square_Difference& diff)
     return *this += -diff;
 }
 
+//! Go to the next Square when iterating over Square::all_squares().
 Square& Square::operator++()
 {
     ++square_index;
     return *this;
 }
 
+//! The Square is its own iterator, so dereferencing returns itself.
+
+//! See Square::all_squares().
 Square Square::operator*() const
 {
     return *this;
@@ -179,6 +183,24 @@ bool Square::inside_board(char file, int rank)
     return inside_board(file) && inside_board(rank);
 }
 
+//! Returns a pseudo-container than can iterator over all square on a Board.
+
+//! The primary use of this method is to replace
+//! \code{cpp}
+//!     for(char file = 'a'; file <= 'h'; ++file)
+//!     {
+//!         for(int rank = 1; rank <= 8; ++rank)
+//!         {
+//!             // ...
+//! \endcode
+//! with
+//! \code{cpp}
+//!     for(auto square : Square::all_squares())
+//!     {
+//!         // ...
+//! \endcode
+//!
+//! Use when the order of Square iteration doesn't matter.
 Square_Iterator Square::all_squares()
 {
     return {};

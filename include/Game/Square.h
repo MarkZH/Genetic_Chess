@@ -11,7 +11,10 @@
 //! A container for offsets between squares.
 struct Square_Difference
 {
+    //! The horizontal distance between two squares.
     int file_change;
+
+    //! The vertical distance between two squares.
     int rank_change;
 
     Square_Difference operator-() const;
@@ -38,8 +41,6 @@ class Square
 
         Square& operator+=(const Square_Difference& diff);
         Square& operator-=(const Square_Difference& diff);
-        Square& operator++();
-        Square operator*() const;
 
         static bool inside_board(char file);
         static bool inside_board(int  rank);
@@ -47,6 +48,9 @@ class Square
         bool inside_board() const;
         bool is_set() const;
 
+        // Iterating methods
+        Square& operator++();
+        Square operator*() const;
         static Square_Iterator all_squares();
 
     private:
@@ -61,6 +65,10 @@ Square operator+(Square s, const Square_Difference& diff);
 Square operator-(Square s, const Square_Difference& diff);
 Square_Difference operator-(Square a, Square b);
 
+//! A pseudo-container for iterating over all squares of a Board.
+
+//! The iteration happens in an unspecified order to allow
+//! for optimization.
 struct Square_Iterator
 {
     Square begin() const;

@@ -292,7 +292,7 @@ size_t Move::attack_index() const
 
 //! Returns a unique move direction index for a manually specified move. See Move::attack_index().
 
-//! \param change A pair of integers representing the difference between two Squares.
+//! \param move The difference between two Squares.
 //! \returns The same result as a call to Move::attack_index() with the same file_change() and rank_change().
 size_t Move::attack_index(const Square_Difference& move)
 {

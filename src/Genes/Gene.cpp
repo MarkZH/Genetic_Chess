@@ -210,6 +210,7 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 //! Tests the board-scoring method of the Gene.
 
 //! \param board The board upon which the test takes place.
+//! \param perspective The player for whom the score is being calculated.
 //! \param expected_score The expected score returned by Gene::score_board().
 //! \returns Whether the score returned by Gene::score_board() is withing 1e-6 of the expected value.
 bool Gene::test(const Board& board, Color perspective, double expected_score) const
