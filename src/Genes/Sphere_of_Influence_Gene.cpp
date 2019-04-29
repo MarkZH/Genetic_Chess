@@ -15,34 +15,32 @@
 
 #include "Utility/Random.h"
 
-std::array<std::array<size_t, 64>, 64> Sphere_of_Influence_Gene::king_distances{};
-bool Sphere_of_Influence_Gene::king_distances_initialized = false;
+namespace
+{
+    const static auto king_distances =
+        []()
+        {
+            std::array<std::array<size_t, 64>, 64> result;
+            for(auto square_a : Square::all_squares())
+            {
+                for(auto square_b : Square::all_squares())
+                {
+                    // The "king distance" between two squares is the minimum number
+                    // of moves a king needs to get from one square to the other.
+                    auto diff = square_a - square_b;
+                    result[square_a.index()][square_b.index()] =
+                        size_t(std::max(std::abs(diff.file_change), std::abs(diff.rank_change)));
+                }
+            }
+            return result;
+        }();
+}
 
 Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
     legal_square_score(1.0),
     illegal_square_score(1.0),
     king_target_factor(0.0)
 {
-    static std::mutex m;
-    auto lock = std::lock_guard<std::mutex>(m);
-
-    if( ! king_distances_initialized)
-    {
-        for(auto square_a : Square::all_squares())
-        {
-            for(auto square_b : Square::all_squares())
-            {
-                // The "king distance" between two squares is the minimum number
-                // of moves a king needs to get from one square to the other.
-                auto diff = square_a - square_b;
-                king_distances[square_a.index()][square_b.index()] =
-                    size_t(std::max(std::abs(diff.file_change), std::abs(diff.rank_change)));
-            }
-        }
-
-        king_distances_initialized = true;
-    }
-
     recompute_scalar_cache();
 }
 
