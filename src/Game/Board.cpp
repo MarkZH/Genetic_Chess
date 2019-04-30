@@ -29,10 +29,46 @@
 #include "Utility/Random.h"
 #include "Utility/String.h"
 
-std::array<std::array<uint64_t, 13>, 64> Board::square_hash_values{};
-std::array<uint64_t, 64> Board::en_passant_hash_values{};
-std::array<uint64_t, 64> Board::castling_hash_values{};
-uint64_t Board::switch_turn_board_hash;
+namespace
+{
+    const auto square_hash_values =
+    []()
+    {
+        std::array<std::array<uint64_t, 13>, 64> hash_cache;
+        for(auto& square_indexed_row : hash_cache)
+        {
+            for(auto& piece_indexed_random_int : square_indexed_row)
+            {
+                piece_indexed_random_int = Random::random_unsigned_int64();
+            }
+        }
+        return hash_cache;
+    }();
+
+    const auto en_passant_hash_values =
+    []()
+    {
+        std::array<uint64_t, 64> en_passant_hash_cache;
+        for(auto& square_indexed_random_int : en_passant_hash_cache)
+        {
+            square_indexed_random_int = Random::random_unsigned_int64();
+        }
+        return en_passant_hash_cache;
+    }();
+
+    const auto castling_hash_values =
+    []()
+    {
+        std::array<uint64_t, 64> castling_hash_cache;
+        for(auto& square_indexed_random_int : castling_hash_cache)
+        {
+            square_indexed_random_int = Random::random_unsigned_int64();
+        }
+        return castling_hash_cache;
+    }();
+
+    const uint64_t switch_turn_board_hash = Random::random_unsigned_int64();
+}
 
 const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
@@ -54,8 +90,6 @@ Board::Board(const std::string& fen) :
     attack_counts{},
     thinking_indicator(NO_THINKING)
 {
-    initialize_board_hash();
-
     auto fen_parse = String::split(fen);
     if(fen_parse.size() != 6)
     {
@@ -1459,45 +1493,6 @@ void Board::set_thinking_mode(Thinking_Output_Type mode) const
 Thinking_Output_Type Board::thinking_mode() const
 {
     return thinking_indicator;
-}
-
-void Board::initialize_board_hash()
-{
-    static std::mutex hash_lock;
-    std::lock_guard<std::mutex> hash_guard(hash_lock);
-
-    static bool hash_values_initialized = false;
-    if(hash_values_initialized)
-    {
-        return;
-    }
-
-    switch_turn_board_hash = Random::random_unsigned_int64();
-
-    for(auto square : Square::all_squares())
-    {
-        auto index = square.index();
-        en_passant_hash_values[index] = Random::random_unsigned_int64();
-        castling_hash_values[index] = Random::random_unsigned_int64();
-
-        for(auto piece_color : { BLACK, WHITE })
-        {
-            for(auto piece_type : { PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING })
-            {
-                auto hash_index = Piece{piece_color, piece_type}.index();
-                square_hash_values[index][hash_index] = Random::random_unsigned_int64();
-            }
-        }
-
-        square_hash_values[index][Piece{}.index()] = Random::random_unsigned_int64();
-    }
-    current_board_hash = 0;
-    for(auto square : Square::all_squares())
-    {
-        current_board_hash ^= square_hash(square);
-    }
-
-    hash_values_initialized = true;
 }
 
 void Board::update_board_hash(Square square)

@@ -155,21 +155,10 @@ class Board
         // Zobrist hashing
         uint64_t current_board_hash;
 
-        void initialize_board_hash();
         uint64_t board_hash() const;
-
-        // Hash values for squares (static so copying isn't necessary)
-            // [square_index()][square_hash_index()] --> [piece_hash] (13 == number of piece types (black and white) + empty)
-        static std::array<std::array<uint64_t, 13>, 64> square_hash_values;
-            // indexed by square_index()
-        static std::array<uint64_t, 64> en_passant_hash_values;
-        static std::array<uint64_t, 64> castling_hash_values;
 
         void update_board_hash(Square square);
         uint64_t square_hash(Square square) const;
-
-        // Whose turn?
-        static uint64_t switch_turn_board_hash;
         void update_whose_turn_hash();
 
         bool king_multiply_checked() const;
