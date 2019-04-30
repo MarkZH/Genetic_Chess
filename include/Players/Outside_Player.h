@@ -47,8 +47,8 @@ class Outside_Player : public Player
         void set_increment(double increment);
 
     private:
-        static std::string log_file_name;
-        static Scoped_Stopwatch running_time;
+        static const std::string log_file_name;
+        static const Scoped_Stopwatch running_time;
 
         double starting_game_time;
         size_t moves_to_reset_clock;
