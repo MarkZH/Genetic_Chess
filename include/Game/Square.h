@@ -65,6 +65,10 @@ Square operator+(Square s, const Square_Difference& diff);
 Square operator-(Square s, const Square_Difference& diff);
 Square_Difference operator-(Square a, Square b);
 
+bool straight_line_move(Square start, Square rank);
+bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2);
+bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2);
+
 //! A pseudo-container for iterating over all squares of a Board.
 
 //! The iteration happens in an unspecified order to allow

@@ -1634,31 +1634,6 @@ bool Board::all_empty_between(Square start, Square end) const
     return true;
 }
 
-bool Board::straight_line_move(Square start, Square end)
-{
-    auto move = end - start;
-    if(move.file_change == 0 || move.rank_change == 0)
-    {
-        return true;
-    }
-
-    return std::abs(move.file_change) == std::abs(move.rank_change);
-}
-
-bool Board::moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2)
-{
-    // Think of the determinant of a 2x2 matrix with the two moves as column vectors.
-    // Parallel (including anti-parallel) vectors are not linearly independent, so
-    // the determinant of the matrix is zero.
-    return move_1.file_change*move_2.rank_change == move_2.file_change*move_1.rank_change;
-}
-
-bool Board::same_direction(const Square_Difference& move_1, const Square_Difference& move_2)
-{
-    return moves_are_parallel(move_1, move_2) &&
-           move_1.file_change*move_2.file_change + move_1.rank_change*move_2.rank_change > 0; // dot product
-}
-
 //! Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.
 
 //! \param square The queried square.

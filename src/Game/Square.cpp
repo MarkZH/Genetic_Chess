@@ -252,3 +252,38 @@ Square_Difference operator-(Square a, Square b)
     assert(a.inside_board() && b.inside_board());
     return {a.file() - b.file(), a.rank() - b.rank()};
 }
+
+//! Returns whether a rook or bishop could move from one square to antother in one move.
+bool straight_line_move(Square start, Square end)
+{
+    auto move = end - start;
+    if(move.file_change == 0 || move.rank_change == 0)
+    {
+        return true;
+    }
+
+    return std::abs(move.file_change) == std::abs(move.rank_change);
+}
+
+//! Returns whether two Square_Differences are in the exact same or exact opposite directions.
+
+//! For example, (2, 2) is parallel to (3, 3) and (-1, -1)
+//!
+//! Note: A difference of (0, 0) is parallel with every possible other difference.
+bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2)
+{
+    // Think of the determinant of a 2x2 matrix with the two moves as column vectors.
+    // Parallel (including anti-parallel) vectors are not linearly independent, so
+    // the determinant of the matrix is zero.
+    return move_1.file_change*move_2.rank_change == move_2.file_change*move_1.rank_change;
+}
+
+//! Returns whether two Square_Differences are parallel in the same direction.
+
+//! For example, (2, 2) and (-1, -1) are parallel but not in the same direction,
+//! whereas (2, 2) and (1, 1) are parallel and in the same direction.
+bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2)
+{
+    return moves_are_parallel(move_1, move_2) &&
+           move_1.file_change*move_2.file_change + move_1.rank_change*move_2.rank_change > 0; // dot product
+}

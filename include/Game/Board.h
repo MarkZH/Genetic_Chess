@@ -173,9 +173,6 @@ class Board
         void update_whose_turn_hash();
 
         bool king_multiply_checked() const;
-        static bool straight_line_move(Square start, Square rank);
-        static bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2);
-        static bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2);
 
         [[noreturn]] void fen_error(const std::string& reason) const;
 
