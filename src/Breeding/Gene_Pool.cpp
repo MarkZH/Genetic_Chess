@@ -26,21 +26,25 @@
 #include "Exceptions/Bad_Still_Alive_Line.h"
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
-const auto NO_SIGNAL = 0;
-const std::string stop_key = "Ctrl-c";
+namespace
+{
+    const auto NO_SIGNAL = 0;
+    const std::string stop_key = "Ctrl-c";
 
-#ifdef __linux__
-const auto PAUSE_SIGNAL = SIGTSTP;
-const std::string pause_key = "Ctrl-z";
-#elif defined(_WIN32)
-const auto PAUSE_SIGNAL = SIGBREAK;
-const std::string pause_key = "Ctrl-Break";
-#endif
+    #ifdef __linux__
+    const auto PAUSE_SIGNAL = SIGTSTP;
+    const std::string pause_key = "Ctrl-z";
+    #elif defined(_WIN32)
+    const auto PAUSE_SIGNAL = SIGBREAK;
+    const std::string pause_key = "Ctrl-Break";
+    #endif
 
-static sig_atomic_t signal_activated = NO_SIGNAL;
-static bool gene_pool_paused = false;
+    sig_atomic_t signal_activated = NO_SIGNAL;
+    bool gene_pool_paused = false;
 
-using Gene_Pool = std::vector<Genetic_AI>;
+    using Gene_Pool = std::vector<Genetic_AI>;
+}
+
 std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
 
 void pause_gene_pool(int signal);
@@ -49,7 +53,6 @@ void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, co
 
 template<typename Stat_Map>
 void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats);
-
 
 void gene_pool(const std::string& config_file)
 {
