@@ -15,7 +15,7 @@ class Clock
     public:
         // Game clock settings: total time, moves to reset clock, time increment per move
         Clock(double duration_seconds = 0.0,
-              size_t moves = 0,
+              size_t moves_to_reset = 0,
               double increment_seconds = 0.0,
               Color starting_turn = WHITE,
               bool clock_stops_game = true);
