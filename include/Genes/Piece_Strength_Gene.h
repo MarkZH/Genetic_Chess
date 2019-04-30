@@ -10,7 +10,7 @@
 
 
 #include "Game/Color.h"
-#include "Game/Piece_Types.h"
+#include "Game/Piece.h"
 
 class Piece;
 class Board;

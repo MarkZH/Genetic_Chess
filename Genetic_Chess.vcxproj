@@ -291,7 +291,6 @@
     <ClInclude Include="include\game\Game.h" />
     <ClInclude Include="include\game\Game_Result.h" />
     <ClInclude Include="include\Game\Piece.h" />
-    <ClInclude Include="include\Game\Piece_Types.h" />
     <ClInclude Include="include\game\Square.h" />
     <ClInclude Include="include\genes\Castling_Possible_Gene.h" />
     <ClInclude Include="include\Genes\Checkmate_Material_Gene.h" />

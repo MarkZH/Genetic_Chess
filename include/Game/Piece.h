@@ -5,10 +5,20 @@
 #include <vector>
 
 #include "Game/Color.h"
-#include "Piece_Types.h"
 
 class Move;
 class Square;
+
+//! An enumeration to identify the type of a Piece.
+enum Piece_Type : unsigned
+{
+    PAWN,
+    ROOK,
+    KNIGHT,
+    BISHOP,
+    QUEEN,
+    KING
+};
 
 //! A class to represent chess pieces.
 

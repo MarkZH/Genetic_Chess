@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "Game/Piece_Types.h"
+#include "Game/Piece.h"
 #include "Game/Color.h"
 #include "Game/Piece.h"
 

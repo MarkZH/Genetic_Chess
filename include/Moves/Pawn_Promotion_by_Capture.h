@@ -5,7 +5,7 @@
 
 #include "Pawn_Promotion.h"
 
-#include "Game/Piece_Types.h"
+#include "Game/Piece.h"
 #include "Game/Color.h"
 #include "Direction.h"
 
