@@ -15,7 +15,7 @@
 
 namespace
 {
-    const static auto king_distances =
+    const auto king_distances =
         []()
         {
             std::array<std::array<size_t, 64>, 64> result;
