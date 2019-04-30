@@ -14,12 +14,10 @@ class Move
         Move(Square start, Square end);
         virtual ~Move() = default;
 
-        //! Since Piece instances are static, there is no reason to copy Move instances.
-
         //! This saves work by preventing all unnecessary copying (which is all copying).
         Move(const Move&) = delete;
 
-        //! Since there's only one instance of every Move that is unique to the Piece that contains it, assignment can only lose information.
+        //! Since there's only one instance of every Move, assignment can only lose information.
         Move& operator=(const Move&) = delete;
 
         virtual void side_effects(Board& board) const;
