@@ -43,16 +43,16 @@ namespace
     bool gene_pool_paused = false;
 
     using Gene_Pool = std::vector<Genetic_AI>;
+
+    std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
+
+    void pause_gene_pool(int signal);
+
+    void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
+
+    template<typename Stat_Map>
+    void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats);
 }
-
-std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
-
-void pause_gene_pool(int signal);
-
-void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
-
-template<typename Stat_Map>
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats);
 
 void gene_pool(const std::string& config_file)
 {
@@ -426,140 +426,143 @@ void gene_pool(const std::string& config_file)
     }
 }
 
-void pause_gene_pool(int signal)
+namespace
 {
-    // Second time signal activated
-    if(signal == signal_activated)
+    void pause_gene_pool(int signal)
     {
-        signal_activated = NO_SIGNAL;
+        // Second time signal activated
+        if(signal == signal_activated)
+        {
+            signal_activated = NO_SIGNAL;
+            if( ! gene_pool_paused)
+            {
+                std::cout << "\nNo longer pausing." << std::endl;
+            }
+            return;
+        }
+
+        signal_activated = signal;
+
         if( ! gene_pool_paused)
         {
-            std::cout << "\nNo longer pausing." << std::endl;
+            std::cout << "\nWaiting for games to end and be recorded before pausing ..." << std::endl;
         }
-        return;
     }
 
-    signal_activated = signal;
-
-    if( ! gene_pool_paused)
+    void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
     {
-        std::cout << "\nWaiting for games to end and be recorded before pausing ..." << std::endl;
-    }
-}
-
-void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
-{
-    static std::map<Genetic_AI, bool> written_before;
-    static std::string last_file_name;
-    static std::ofstream ofs;
-    if(last_file_name != genome_file_name)
-    {
-        ofs.close();
-        ofs.open(genome_file_name, std::ios::app);
-        last_file_name = genome_file_name;
-    }
-
-    if( ! genome_file_name.empty() && ! ofs)
-    {
-        throw std::runtime_error("Could not write to file:" + genome_file_name);
-    }
-
-    const auto& pool = pools.at(pool_index);
-    for(const auto& ai : pool)
-    {
-        if( ! written_before[ai])
+        static std::map<Genetic_AI, bool> written_before;
+        static std::string last_file_name;
+        static std::ofstream ofs;
+        if(last_file_name != genome_file_name)
         {
-            ai.print(ofs);
-            written_before[ai] = true;
+            ofs.close();
+            ofs.open(genome_file_name, std::ios::app);
+            last_file_name = genome_file_name;
         }
-    }
 
-    ofs << "\nStill Alive: " << pool_index << " : ";
-    for(const auto& ai : pool)
-    {
-        ofs << ai.id() << " ";
-    }
-    ofs << "\n\n" << std::flush;
-
-    purge_dead_from_map(pools, written_before);
-}
-
-std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
-{
-    std::string line;
-    size_t line_number = 0;
-
-    std::ifstream ifs(load_file);
-    if( ! ifs)
-    {
-        std::cout << "Could not open file: " << load_file << std::endl;
-        std::cout << "Starting with empty gene pool." << std::endl;
-        return std::vector<Gene_Pool>();
-    }
-
-    std::map<size_t, std::string> still_alive;
-    std::map<size_t, size_t> pool_line_numbers;
-    std::map<size_t, std::string> pool_lines;
-    while(std::getline(ifs, line))
-    {
-        ++line_number;
-        if(String::contains(line, "Still Alive"))
+        if( ! genome_file_name.empty() && ! ofs)
         {
-            try
-            {
-                auto parse = String::split(line, ":", 2);
-                auto pool_number_string = parse.at(1);
-                size_t conversion_character_count;
-                auto pool_number = std::stoul(pool_number_string, &conversion_character_count);
-                if( ! String::trim_outer_whitespace(pool_number_string.substr(conversion_character_count)).empty())
-                {
-                    throw std::exception(); // The pool number string has more characters beyond the gene pool number.
-                }
-                still_alive[pool_number] = parse.at(2);
-                pool_line_numbers[pool_number] = line_number;
-                pool_lines[pool_number] = line;
-            }
-            catch(const std::exception&)
-            {
-                throw Bad_Still_Alive_Line(line_number, line);
-            }
+            throw std::runtime_error("Could not write to file:" + genome_file_name);
         }
-    }
 
-    auto largest_pool_number = still_alive.rbegin()->first;
-    std::vector<Gene_Pool> result(largest_pool_number + 1);
-    for(const auto& index_list : still_alive)
-    {
-        line = pool_lines[index_list.first];
-        line_number = pool_line_numbers[index_list.first];
-        for(const auto& number_string : String::split(index_list.second))
-        {
-            try
-            {
-                int index = std::stoi(number_string);
-                result[index_list.first].emplace_back(load_file, index);
-            }
-            catch(const std::invalid_argument&)
-            {
-                throw Bad_Still_Alive_Line(line_number, line);
-            }
-        }
-        write_generation(result, index_list.first, ""); // mark AIs from file as already written
-    }
-
-    return result;
-}
-
-template<typename Stat_Map>
-void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats)
-{
-    Stat_Map new_stats;
-    for(const auto& pool : pools)
-    {
+        const auto& pool = pools.at(pool_index);
         for(const auto& ai : pool)
         {
-            new_stats[ai] = stats[ai];
+            if( ! written_before[ai])
+            {
+                ai.print(ofs);
+                written_before[ai] = true;
+            }
         }
+
+        ofs << "\nStill Alive: " << pool_index << " : ";
+        for(const auto& ai : pool)
+        {
+            ofs << ai.id() << " ";
+        }
+        ofs << "\n\n" << std::flush;
+
+        purge_dead_from_map(pools, written_before);
     }
-    stats = new_stats;
+
+    std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
+    {
+        std::string line;
+        size_t line_number = 0;
+
+        std::ifstream ifs(load_file);
+        if( ! ifs)
+        {
+            std::cout << "Could not open file: " << load_file << std::endl;
+            std::cout << "Starting with empty gene pool." << std::endl;
+            return std::vector<Gene_Pool>();
+        }
+
+        std::map<size_t, std::string> still_alive;
+        std::map<size_t, size_t> pool_line_numbers;
+        std::map<size_t, std::string> pool_lines;
+        while(std::getline(ifs, line))
+        {
+            ++line_number;
+            if(String::contains(line, "Still Alive"))
+            {
+                try
+                {
+                    auto parse = String::split(line, ":", 2);
+                    auto pool_number_string = parse.at(1);
+                    size_t conversion_character_count;
+                    auto pool_number = std::stoul(pool_number_string, &conversion_character_count);
+                    if( ! String::trim_outer_whitespace(pool_number_string.substr(conversion_character_count)).empty())
+                    {
+                        throw std::exception(); // The pool number string has more characters beyond the gene pool number.
+                    }
+                    still_alive[pool_number] = parse.at(2);
+                    pool_line_numbers[pool_number] = line_number;
+                    pool_lines[pool_number] = line;
+                }
+                catch(const std::exception&)
+                {
+                    throw Bad_Still_Alive_Line(line_number, line);
+                }
+            }
+        }
+
+        auto largest_pool_number = still_alive.rbegin()->first;
+        std::vector<Gene_Pool> result(largest_pool_number + 1);
+        for(const auto& index_list : still_alive)
+        {
+            line = pool_lines[index_list.first];
+            line_number = pool_line_numbers[index_list.first];
+            for(const auto& number_string : String::split(index_list.second))
+            {
+                try
+                {
+                    int index = std::stoi(number_string);
+                    result[index_list.first].emplace_back(load_file, index);
+                }
+                catch(const std::invalid_argument&)
+                {
+                    throw Bad_Still_Alive_Line(line_number, line);
+                }
+            }
+            write_generation(result, index_list.first, ""); // mark AIs from file as already written
+        }
+
+        return result;
+    }
+
+    template<typename Stat_Map>
+    void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats)
+    {
+        Stat_Map new_stats;
+        for(const auto& pool : pools)
+        {
+            for(const auto& ai : pool)
+            {
+                new_stats[ai] = stats[ai];
+            }
+        }
+        stats = new_stats;
+    }
 }

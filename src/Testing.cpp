@@ -43,9 +43,11 @@
 
 #include "Exceptions/Illegal_Move.h"
 
-// Declaration to silence warnings
-bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
-size_t move_count(const Board& board, size_t maximum_depth);
+namespace
+{
+    bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
+    size_t move_count(const Board& board, size_t maximum_depth);
+}
 
 bool run_tests()
 {
@@ -1769,54 +1771,57 @@ void print_randomness_sample()
     }
 }
 
-bool files_are_identical(const std::string& file_name1, const std::string& file_name2)
+namespace
 {
-    std::ifstream file1(file_name1);
-    std::ifstream file2(file_name2);
-    int line_count = 0;
-
-    while(true)
+    bool files_are_identical(const std::string& file_name1, const std::string& file_name2)
     {
-        std::string line1, line2;
-        std::getline(file1, line1);
-        std::getline(file2, line2);
-        ++line_count;
+        std::ifstream file1(file_name1);
+        std::ifstream file2(file_name2);
+        int line_count = 0;
 
-        if(line1 != line2)
+        while(true)
         {
-            std::cerr << "Mismatch at line " << line_count << ":\n";
-            std::cerr << line1 << " != " << line2 << "\n";
-            return false;
+            std::string line1, line2;
+            std::getline(file1, line1);
+            std::getline(file2, line2);
+            ++line_count;
+
+            if(line1 != line2)
+            {
+                std::cerr << "Mismatch at line " << line_count << ":\n";
+                std::cerr << line1 << " != " << line2 << "\n";
+                return false;
+            }
+
+            if( ! file1 && ! file2)
+            {
+                break;
+            }
         }
 
-        if( ! file1 && ! file2)
+        return true;
+    }
+
+    size_t move_count(const Board& board, size_t maximum_depth)
+    {
+        if(maximum_depth == 0)
         {
-            break;
+            return 1;
         }
+
+        if(maximum_depth == 1)
+        {
+            return board.legal_moves().size();
+        }
+
+        size_t count = 0;
+        for(auto move : board.legal_moves())
+        {
+            auto next_board = board;
+            next_board.submit_move(*move);
+            count += move_count(next_board, maximum_depth - 1);
+        }
+
+        return count;
     }
-
-    return true;
-}
-
-size_t move_count(const Board& board, size_t maximum_depth)
-{
-    if(maximum_depth == 0)
-    {
-        return 1;
-    }
-
-    if(maximum_depth == 1)
-    {
-        return board.legal_moves().size();
-    }
-
-    size_t count = 0;
-    for(auto move : board.legal_moves())
-    {
-        auto next_board = board;
-        next_board.submit_move(*move);
-        count += move_count(next_board, maximum_depth - 1);
-    }
-
-    return count;
 }
