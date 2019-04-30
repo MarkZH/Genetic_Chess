@@ -49,8 +49,6 @@ class Piece
     private:
         piece_code_t piece_code;
         static const piece_code_t invalid_code;
-
-        friend bool operator==(Piece a, Piece b);
 };
 
 bool operator==(Piece a, Piece b);

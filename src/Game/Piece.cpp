@@ -499,7 +499,7 @@ const std::vector<const Move*>& Piece::attacking_moves(Square square) const
 //! \returns Whether the two pieces are the same type and color
 bool operator==(Piece a, Piece b)
 {
-    return a.piece_code == b.piece_code;
+    return a.index() == b.index();
 }
 
 //! Check two pieces for inequality
