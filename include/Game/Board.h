@@ -116,6 +116,8 @@ class Board
         void remove_attacks_from(Square square, Piece old_piece);
         void modify_attacks(Square square, Piece piece, bool adding_attacks);
         void update_blocks(Square square, Piece old_piece, Piece new_piece);
+        void adjust_attack_counts(Piece piece1, Piece piece2, Square square);
+        void adjust_attack_counts_common(Piece piece1, Piece piece2, Square square, int multiplier);
         const std::bitset<16>& checking_moves() const;
 
         // Information cache for gene reference

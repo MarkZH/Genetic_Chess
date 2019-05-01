@@ -802,6 +802,20 @@ void Board::remove_piece(Square square)
     place_piece({}, square);
 }
 
+void Board::adjust_attack_counts_common(Piece piece1, Piece piece2, Square square, int multiplier)
+{
+    if(piece1 && ! (piece2 && piece2.color() == piece1.color()))
+    {
+        attack_counts[piece1.color()] += multiplier*moves_attacking_square(square, piece1.color()).count();
+    }
+}
+
+void Board::adjust_attack_counts(Piece removed_piece, Piece moved_piece, Square square)
+{
+    adjust_attack_counts_common(removed_piece, moved_piece, square,  1);
+    adjust_attack_counts_common(moved_piece, removed_piece, square, -1);
+}
+
 void Board::place_piece(Piece piece, Square square)
 {
     update_board_hash(square); // XOR out piece on square
@@ -812,20 +826,7 @@ void Board::place_piece(Piece piece, Square square)
     remove_attacks_from(square, old_piece);
     update_blocks(square, old_piece, piece);
     add_attacks_from(square, piece);
-
-    if(old_piece &&
-       ( ! piece || piece.color() != old_piece.color()) &&
-       moves_attacking_square(square, old_piece.color()).any())
-    {
-        attack_counts[old_piece.color()] += moves_attacking_square(square, old_piece.color()).count();
-    }
-
-    if(piece &&
-       ( ! old_piece || piece.color() != old_piece.color()) &&
-       moves_attacking_square(square, piece.color()).any())
-    {
-        attack_counts[piece.color()] -= moves_attacking_square(square, piece.color()).count();
-    }
+    adjust_attack_counts(old_piece, piece, square);
 
     unmoved_positions[square.index()] = false;
 
