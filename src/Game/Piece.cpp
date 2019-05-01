@@ -396,6 +396,7 @@ Piece::Piece(Color color, Piece_Type type) :
 //! Piece design by VK (?) and taken from http://ascii.co.uk/art/chess.
 std::string Piece::ascii_art(size_t row, size_t square_height) const
 {
+    assert(*this);
     assert(square_height >= maximum_piece_height);
 
     auto& art = ascii_art_lines[color()][type()];
