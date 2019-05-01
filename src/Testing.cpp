@@ -67,6 +67,36 @@ bool run_tests()
     }
 
 
+    // Square indexing tests
+    std::array<bool, 64> visited{};
+    for(char file = 'a'; file <= 'h'; ++file)
+    {
+        for(int rank = 1; rank <= 8; ++rank)
+        {
+            auto square = Square{file, rank};
+            if(visited[square.index()])
+            {
+                std::cerr << "Multiple squares result in same index." << std::endl;
+                tests_passed = false;
+            }
+            visited[square.index()] = true;
+            auto indexed_square = Square(square.file(), square.rank());
+            if(square != indexed_square)
+            {
+                std::cerr << "Incorrect square indexing.\n";
+                std::cerr << file << rank << " --> " << square.index() << " --> " << indexed_square.file() << indexed_square.rank() << std::endl;
+                tests_passed = false;
+            }
+        }
+    }
+
+    if( ! std::all_of(visited.begin(), visited.end(), [](auto x){ return x; }))
+    {
+        std::cerr << "Not all indices visited by iterating through all squares." << std::endl;
+        tests_passed = false;
+    }
+
+
     // Piece construction tests
     for(auto type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
     {
@@ -599,35 +629,6 @@ bool run_tests()
         tests_passed = false;
         std::cerr << "Error in 50-move stalemate test." << std::endl;
         std::cerr << "Got: " << fifty_move_result.ending_reason() << "; Expected 50-move limit." << std::endl;
-    }
-
-    // Indexing tests
-    std::array<bool, 64> visited{};
-    for(char file = 'a'; file <= 'h'; ++file)
-    {
-        for(int rank = 1; rank <= 8; ++rank)
-        {
-            auto square = Square{file, rank};
-            if(visited[square.index()])
-            {
-                std::cerr << "Multiple squares result in same index." << std::endl;
-                tests_passed = false;
-            }
-            visited[square.index()] = true;
-            auto indexed_square = Square(square.file(), square.rank());
-            if(square != indexed_square)
-            {
-                std::cerr << "Incorrect square indexing.\n";
-                std::cerr << file << rank << " --> " << square.index() << " --> " << indexed_square.file() << indexed_square.rank() << std::endl;
-                tests_passed = false;
-            }
-        }
-    }
-
-    if( ! std::all_of(visited.begin(), visited.end(), [](auto x){ return x; }))
-    {
-        std::cerr << "Not all indices visited by iterating through all squares." << std::endl;
-        tests_passed = false;
     }
 
 
