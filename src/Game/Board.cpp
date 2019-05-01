@@ -34,6 +34,7 @@ namespace
     const auto square_hash_values =
     []()
     {
+        // One entry for each piece on each square (including no piece)
         std::array<std::array<uint64_t, 13>, 64> hash_cache;
         for(auto& square_indexed_row : hash_cache)
         {
@@ -48,10 +49,11 @@ namespace
     const auto en_passant_hash_values =
     []()
     {
-        std::array<uint64_t, 64> en_passant_hash_cache;
-        for(auto& square_indexed_random_int : en_passant_hash_cache)
+        // One entry for each file
+        std::array<uint64_t, 8> en_passant_hash_cache;
+        for(auto& file_indexed_random_int : en_passant_hash_cache)
         {
-            square_indexed_random_int = Random::random_unsigned_int64();
+            file_indexed_random_int = Random::random_unsigned_int64();
         }
         return en_passant_hash_cache;
     }();
@@ -59,10 +61,11 @@ namespace
     const auto castling_hash_values =
     []()
     {
-        std::array<uint64_t, 64> castling_hash_cache;
-        for(auto& square_indexed_random_int : castling_hash_cache)
+        // One entry for each rook
+        std::array<uint64_t, 4> castling_hash_cache;
+        for(auto& n : castling_hash_cache)
         {
-            square_indexed_random_int = Random::random_unsigned_int64();
+            n = Random::random_unsigned_int64();
         }
         return castling_hash_cache;
     }();
@@ -1521,12 +1524,15 @@ uint64_t Board::square_hash(Square square) const
        ! piece_has_moved(square) &&
        ! piece_has_moved({'e', square.rank()}))
     {
-        result ^= castling_hash_values[index];
+        auto on_first_rank = (index%8 == 0);
+        auto on_first_file = (index/8 == 0);
+        result ^= castling_hash_values[2*on_first_file + on_first_rank];
     }
 
     if( ! piece && is_en_passant_targetable(square))
     {
-        result = en_passant_hash_values[index];
+        auto file_index = index/8;
+        result = en_passant_hash_values[file_index];
     }
 
     return result;
