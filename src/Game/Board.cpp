@@ -1295,7 +1295,11 @@ void Board::make_en_passant_targetable(Square square)
     }
 
     en_passant_target = square;
-    update_board_hash(square);
+
+    if(square.is_set())
+    {
+        update_board_hash(square);
+    }
 }
 
 //! Determine whether the indicated square can be a target of an en passant move.
@@ -1507,10 +1511,7 @@ void Board::update_whose_turn_hash()
 
 uint64_t Board::square_hash(Square square) const
 {
-    if( ! square.inside_board())
-    {
-        return 0; // do nothing for squares outside of board (e.g., clear_en_passant_target()).
-    }
+    assert(square.inside_board());
 
     auto piece = piece_on_square(square);
     auto index = square.index();
