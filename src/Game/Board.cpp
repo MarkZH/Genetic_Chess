@@ -828,7 +828,22 @@ void Board::place_piece(Piece piece, Square square)
     add_attacks_from(square, piece);
     adjust_attack_counts(old_piece, piece, square);
 
+    auto update_rook_hashes = old_piece && old_piece.type() == KING && unmoved_positions[square.index()];
+    if(update_rook_hashes)
+    {
+        // XOR out castling rights on rook squares
+        update_board_hash({'a', square.rank()});
+        update_board_hash({'h', square.rank()});
+    }
+
     unmoved_positions[square.index()] = false;
+    
+    if(update_rook_hashes)
+    {
+        // XOR in hashes with no castling rights
+        update_board_hash({'a', square.rank()});
+        update_board_hash({'h', square.rank()});
+    }
 
     update_board_hash(square); // XOR in new piece on square
 

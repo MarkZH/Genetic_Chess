@@ -1044,6 +1044,36 @@ bool run_tests()
     }
 
 
+    // Board hash with castling tests
+    auto castling_hash_board = Board("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
+
+    // Lose all castling rights due to king moving
+    auto just_kings_move_board = castling_hash_board;
+    for(auto move : {"Ke2", "Ke7", "Ke1", "Ke8"})
+    {
+        just_kings_move_board.submit_move(just_kings_move_board.create_move(move));
+    }
+    
+    // Lose all castling rights due to rooks moving
+    auto just_rooks_move_board = castling_hash_board;
+    for(auto move : {"Ra2", "Ra7", "Ra1", "Ra8", "Rh2", "Rh7", "Rh1", "Rh8"})
+    {
+        just_rooks_move_board.submit_move(just_rooks_move_board.create_move(move));
+    }
+
+    if(just_kings_move_board.board_hash() != just_rooks_move_board.board_hash())
+    {
+        std::cerr << "Board hashes differ after castling-canceling moves." << std::endl;
+        tests_passed = false;
+    }
+
+    if(castling_hash_board.board_hash() == just_kings_move_board.board_hash())
+    {
+        std::cerr << "Board hashes should be different after castling rights are gone." << std::endl;
+        tests_passed = false;
+    }
+
+
     // Test Genetic_AI file loading
     auto pool_file_name = "test_gene_pool.txt";
     auto write_file_name = "test_genome_write.txt";

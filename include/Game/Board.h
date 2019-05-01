@@ -77,6 +77,7 @@ class Board
         bool move_captures(const Move& move) const;
         size_t moves_since_pawn_or_capture() const;
         const std::bitset<16>& moves_attacking_square(Square square, Color attacking_color) const;
+        uint64_t board_hash() const;
 
         // Methods for gene reference
         bool last_move_captured() const;
@@ -154,10 +155,8 @@ class Board
         ptrdiff_t current_board_position_repeat_count() const;
         void clear_repeat_count();
 
-        // Zobrist hashing
+        // Zobrist hashing (implementation of threefold/fifty-move tracking)
         uint64_t current_board_hash;
-
-        uint64_t board_hash() const;
 
         void update_board_hash(Square square);
         uint64_t square_hash(Square square) const;
