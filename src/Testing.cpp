@@ -67,6 +67,22 @@ bool run_tests()
     }
 
 
+    // Piece construction tests
+    for(auto type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
+    {
+        for(auto color : {BLACK, WHITE})
+        {
+            auto piece = Piece{color, type};
+            auto piece2 = Piece{piece.color(), piece.type()};
+            if(piece != piece2)
+            {
+                std::cerr << "Inconsistent construction for " << piece.fen_symbol() << " --> " << piece2.fen_symbol() << std::endl;
+                tests_passed = false;
+            }
+        }
+    }
+
+
     // Basic chess rules check
     Board starting_board;
     while(true)
