@@ -1053,7 +1053,7 @@ bool run_tests()
     {
         just_kings_move_board.submit_move(just_kings_move_board.create_move(move));
     }
-    
+
     // Lose all castling rights due to rooks moving
     auto just_rooks_move_board = castling_hash_board;
     for(auto move : {"Ra2", "Ra7", "Ra1", "Ra8", "Rh2", "Rh7", "Rh1", "Rh8"})

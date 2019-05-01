@@ -837,7 +837,7 @@ void Board::place_piece(Piece piece, Square square)
     }
 
     unmoved_positions[square.index()] = false;
-    
+
     if(update_rook_hashes)
     {
         // XOR in hashes with no castling rights
