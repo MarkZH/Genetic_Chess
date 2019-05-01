@@ -1665,11 +1665,8 @@ bool Board::piece_is_pinned(Square square) const
         // The potential_attacks check guarantees that there is an opposing piece attacking
         // the queried square in the same direction towards the friendly king. This next check
         // is to make sure the attacking piece is not a limited range piece--i.e., a pawn or king.
-        // Even if there is no piece on the queried square, it will still return a type,
-        // just not a type that matches any of those defined in Piece.h.
-        auto attacker = piece_on_square(square - diff.step()).type();
-        return pin_result = attacker != PAWN &&
-                            attacker != KING &&
+        auto attacker = piece_on_square(square - diff.step());
+        return pin_result = ( ! attacker || (attacker.type() != PAWN && attacker.type() != KING)) &&
                             all_empty_between(king_square, square);
     }
     else
