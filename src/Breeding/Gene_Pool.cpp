@@ -285,9 +285,6 @@ void gene_pool(const std::string& config_file)
             std::cout << std::endl;
         }
 
-        std::sort(pool.begin(), pool.end());
-        write_generation(pools, pool_index, genome_file_name);
-
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
         purge_dead_from_map(pools, games_since_last_win);
@@ -360,19 +357,6 @@ void gene_pool(const std::string& config_file)
         }
         best_ai.print(best_file_name);
 
-        // Pause gene pool
-        if(signal_activated == PAUSE_SIGNAL)
-        {
-            gene_pool_paused = true;
-            std::cout << "\nGene pool paused. Press " << pause_key << " to continue" << std::endl;
-            std::cout << "or " << stop_key << " to quit." << std::endl;
-            while(signal_activated == PAUSE_SIGNAL)
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            gene_pool_paused = false;
-        }
-
         // Update game time
         game_time += game_time_increment;
         if(game_time > maximum_game_time || game_time < minimum_game_time)
@@ -422,6 +406,22 @@ void gene_pool(const std::string& config_file)
             }
 
             previous_mod = this_mod;
+        }
+
+        std::sort(pool.begin(), pool.end());
+        write_generation(pools, pool_index, genome_file_name);
+
+        // Pause gene pool
+        if(signal_activated == PAUSE_SIGNAL)
+        {
+            gene_pool_paused = true;
+            std::cout << "\nGene pool paused. Press " << pause_key << " to continue" << std::endl;
+            std::cout << "or " << stop_key << " to quit." << std::endl;
+            while(signal_activated == PAUSE_SIGNAL)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            gene_pool_paused = false;
         }
     }
 }
