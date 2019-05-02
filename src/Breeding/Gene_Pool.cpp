@@ -141,6 +141,49 @@ void gene_pool(const std::string& config_file)
         write_generation(pools, i, genome_file_name);
     }
 
+    size_t starting_pool = 0;
+    if(auto genome_file = std::ifstream(genome_file_name))
+    {
+        std::string line;
+        size_t line_number = 0;
+        auto previous_line_was_still_alive = false;
+        while(std::getline(genome_file, line))
+        {
+            line = String::trim_outer_whitespace(line);
+            ++line_number;
+            if(line.empty())
+            {
+                continue;
+            }
+
+            if(String::starts_with(line, "Still Alive"))
+            {
+                if(previous_line_was_still_alive)
+                {
+                    continue; // Still alive line was written after loading a previous session
+                }
+
+                try
+                {
+                    auto alive_split = String::split(line, ":");
+                    auto pool_number = std::stoi(alive_split.at(1));
+                    game_count.at(pool_number) += String::split(alive_split.at(2)).size()/2;
+                    starting_pool = (pool_number + 1) % gene_pool_count;
+                }
+                catch(const std::exception& e)
+                {
+                    throw Bad_Still_Alive_Line(line_number, line);
+                }
+
+                previous_line_was_still_alive = true;
+            }
+            else
+            {
+                previous_line_was_still_alive = false;
+            }
+        }
+    }
+
     std::string game_record_file = genome_file_name +  "_games.pgn";
     if(auto ifs = std::ifstream(game_record_file))
     {
@@ -186,7 +229,7 @@ void gene_pool(const std::string& config_file)
     // Signal to pause gene pool
     signal(PAUSE_SIGNAL, pause_gene_pool);
 
-    for(size_t pool_index = 0; true; pool_index = (pool_index + 1) % pools.size()) // run forever
+    for(size_t pool_index = starting_pool; true; pool_index = (pool_index + 1) % pools.size()) // run forever
     {
         auto& pool = pools[pool_index];
 
