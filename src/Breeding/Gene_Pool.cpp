@@ -328,6 +328,8 @@ void gene_pool(const std::string& config_file)
             std::cout << std::endl;
         }
 
+        std::sort(pool.begin(), pool.end());
+
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
         purge_dead_from_map(pools, games_since_last_win);
