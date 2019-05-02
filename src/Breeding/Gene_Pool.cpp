@@ -13,6 +13,7 @@
 #include <chrono>
 #include <array>
 #include <cstdio>
+#include <mutex>
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
@@ -28,7 +29,6 @@
 
 namespace
 {
-    const auto NO_SIGNAL = 0;
     const std::string stop_key = "Ctrl-c";
 
     #ifdef __linux__
@@ -39,14 +39,14 @@ namespace
     const std::string pause_key = "Ctrl-Break";
     #endif
 
-    sig_atomic_t signal_activated = NO_SIGNAL;
     bool gene_pool_paused = false;
+    std::mutex pause_mutex;
 
     using Gene_Pool = std::vector<Genetic_AI>;
 
     std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
 
-    void pause_gene_pool(int signal);
+    void pause_gene_pool(int);
 
     void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
 
@@ -457,41 +457,51 @@ void gene_pool(const std::string& config_file)
         write_generation(pools, pool_index, genome_file_name);
 
         // Pause gene pool
-        if(signal_activated == PAUSE_SIGNAL)
+        gene_pool_paused = true;
+        if(pause_mutex.try_lock())
         {
-            gene_pool_paused = true;
+            pause_mutex.unlock();
+        }
+        else
+        {
             std::cout << "\nGene pool paused. Press " << pause_key << " to continue" << std::endl;
             std::cout << "or " << stop_key << " to quit." << std::endl;
-            while(signal_activated == PAUSE_SIGNAL)
-            {
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            gene_pool_paused = false;
+
+            auto pause_lock = std::lock_guard<std::mutex>(pause_mutex);
         }
+        gene_pool_paused = false;
     }
 }
 
 namespace
 {
-    void pause_gene_pool(int signal)
+    void pause_gene_pool(int)
     {
-        // Second time signal activated
-        if(signal == signal_activated)
+        static auto this_function_has_lock = false;
+
+        if( ! pause_mutex.try_lock())
         {
-            signal_activated = NO_SIGNAL;
-            if( ! gene_pool_paused)
+            if(this_function_has_lock)
             {
-                std::cout << "\nNo longer pausing." << std::endl;
+                if( ! gene_pool_paused)
+                {
+                    std::cout << "\nNo longer pausing." << std::endl;
+                }
+
+                this_function_has_lock = false;
+                pause_mutex.unlock();
+                return;
             }
-            return;
+            else
+            {
+                // Wait for the if(pause_mutex.try_lock()){pause_mutex.unlock();} block
+                // in the gene_pool() function above to complete.
+                pause_mutex.lock();
+            }
         }
 
-        signal_activated = signal;
-
-        if( ! gene_pool_paused)
-        {
-            std::cout << "\nWaiting for games to end and be recorded before pausing ..." << std::endl;
-        }
+        this_function_has_lock = true;
+        std::cout << "\nWaiting for games to end and be recorded before pausing ..." << std::endl;
     }
 
     void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
