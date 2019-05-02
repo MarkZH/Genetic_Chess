@@ -170,7 +170,7 @@ void gene_pool(const std::string& config_file)
                     game_count.at(pool_number) += String::split(alive_split.at(2)).size()/2;
                     starting_pool = (pool_number + 1) % gene_pool_count;
                 }
-                catch(const std::exception& e)
+                catch(const std::exception&)
                 {
                     throw Bad_Still_Alive_Line(line_number, line);
                 }
