@@ -423,7 +423,7 @@ void gene_pool(const std::string& config_file)
         // from stagnating or amplifying pathological behavior
         if(pools.size() > 1 && pool_index == pools.size() - 1) // all pools have equal number of games
         {
-            static size_t previous_mod = 0;
+            static size_t previous_mod = (game_count[pool_index] - results.size()) % pool_swap_interval;
             auto this_mod = game_count[pool_index] % pool_swap_interval;
             if(this_mod < previous_mod)
             {
