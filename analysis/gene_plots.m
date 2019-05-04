@@ -126,6 +126,9 @@ for yi = 2 : length(data.colheaders) - 2
         make_dashed = false;
         if special_plot_index == 1
             name = name(end);
+            if name == 'Q'
+                queen_score = smooth_data(end);
+            end
         elseif special_plot_index == 2
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
@@ -155,6 +158,22 @@ for index = 1 : length(special_plots)
 
     if special_plots(index) == speculation_figure
         plot(xlim, [1 1], 'k'); % default speculation constant
+    elseif special_plots(index) == piece_strength_figure
+        yl = ylim;
+        xl = xlim;
+        for level = -10:10
+            % width = fraction of full horizontal plot width
+            if mod(abs(level),5) == 0
+                width = 0.1;
+            else
+                width = 0.05;
+            end
+            tick_height = queen_score*(level/10);
+            if tick_height < yl(1) || tick_height > yl(2)
+                continue;
+            end
+            plot(xl(2)*[1-width 1], tick_height*[1 1], 'k');
+        end
     end
 
     for id_index = 1:length(id_marks)
