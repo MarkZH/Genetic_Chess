@@ -43,7 +43,7 @@ fit_text = {'y = A(1/2)^{x}',
             ['A = ' num2str(A) ' = # games = # offspring']};
 xl = xlim;
 yl = ylim;
-text(0.6*xl(2), 0.4*yl(2), fit_text);
+fit_box = text(0.6*xl(2), 0.4*yl(2), fit_text);
 
 leg = legend('show');
 xlabel(data.colheaders(1));
@@ -52,4 +52,5 @@ title('Offspring Count');
 
 print([raw_data_file_name '_offspring_plot.png']);
 set(gca, 'yscale', 'log');
+set(fit_box, 'position', [0.6*xl(2), 0.01*yl(2)]);
 print([raw_data_file_name '_offspring_plot_log.png']);
