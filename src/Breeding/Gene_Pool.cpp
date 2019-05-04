@@ -397,7 +397,7 @@ void gene_pool(const std::string& config_file)
         auto best_file_name = genome_file_name + "_best_genome.txt";
         if(remove(best_file_name.c_str()) != 0)
         {
-            auto error_intro = "\n### Could not delete best genome file(" + best_file_name + ")";
+            auto error_intro = "\n### Could not delete best genome file (" + best_file_name + ")";
             perror(error_intro.c_str());
         }
         best_ai.print(best_file_name);
