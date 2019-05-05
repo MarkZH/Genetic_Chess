@@ -299,7 +299,9 @@ In this procedure, some the genes of losing players are passed on and are only s
 
 One final means of preventing gene pool stagnation and preserving genetic diversity is the use of multiple gene pools. Each gene pool evolves separately for a long time, allowing each to genetically diverge. Then, every once in a long while (the time being user-specified), the best player from each pool is transferred to the next pool over. Thus, the best genes are further spread afield so that they can be tested against a wide range of opponents. A useful measure of a pool's relative strength is how long its best player survives when it enters a new pool.
 
-During a run, the gene pool can be paused by pressing Ctrl-z in Linux and Ctrl-Break in Windows (the Break key usually next to the Insert and Print Screen keys). After the key press, the currently running games will finish and the results recorded before pausing. Pressing Ctrl-c on any system exits the program immediately without waiting for current games to finish. To exit the program after the current round of games finish, pause first, then exit with Ctrl-c.
+On Linux, the gene pool can be paused by pressing Ctrl-z. After the key press, the currently running games will finish and the results recorded before pausing. Pressing Ctrl-c exits the program immediately without waiting for current games to finish. To exit the program after the current round of games finish, pause first with Ctrl-z, then exit with Ctrl-c.
+
+On Windows, pressing Ctrl-c exits the program after the current round of games is finished and recorded. Pressing Ctrl-c twice ends the program immediately without waiting for current games to finish.
 
 \subsection{Gene Pool Configuration File}
 A gene pool is configured with a text file that is reference in the program starting arguments (see Section~\ref{running}). An explanatory example gene pool configuration file is presented below. All parameters are required to be in the file.
