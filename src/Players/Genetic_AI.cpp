@@ -300,8 +300,10 @@ void Genetic_AI::read_ancestry(std::istream& is)
         {
             #ifdef __linux__
             auto pool = std::stoul(pool_fraction[0]);
-            #else
+            #elif defined(_WIN64)
             auto pool = std::stoull(pool_fraction[0]);
+            #else
+            unsigned int pool = std::stoi(pool_fraction[0]);
             #endif
             auto fraction = std::stod(pool_fraction[1]);
             ancestry[pool] = fraction;
