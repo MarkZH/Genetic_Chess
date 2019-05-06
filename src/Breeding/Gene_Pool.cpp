@@ -13,7 +13,10 @@
 #include <chrono>
 #include <array>
 #include <cstdio>
+
+#ifndef _WIN32
 #include <mutex>
+#endif // _WIN32
 
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
@@ -31,14 +34,14 @@ namespace
 {
     const std::string stop_key = "Ctrl-c";
 
-    #ifdef __linux__
+    #ifdef _WIN32
+    const auto PAUSE_SIGNAL = SIGINT;
+    auto quit_gene_pool = false;
+    #else
     const auto PAUSE_SIGNAL = SIGTSTP;
     const std::string pause_key = "Ctrl-z";
-    #elif defined(_WIN32)
-    const auto PAUSE_SIGNAL = SIGINT;
-    #endif
-
     std::mutex pause_mutex;
+    #endif
 
     using Gene_Pool = std::vector<Genetic_AI>;
 
@@ -242,7 +245,7 @@ void gene_pool(const std::string& config_file)
                   << "   Gene pool file name: " << genome_file_name << "\n\n";
 
         #ifdef _WIN32
-        std::cout << "Quit after this round: " << stop_key << "\n" << std::endl;
+        std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
         #else
         std::cout << "Pause: " << pause_key << "    Abort: " << stop_key << "\n" << std::endl;
         #endif // _WIN32
@@ -459,18 +462,21 @@ void gene_pool(const std::string& config_file)
         write_generation(pools, pool_index, genome_file_name);
 
         // Pause gene pool
+        #ifdef _WIN32
+        if(quit_gene_pool)
+        {
+            std::cout << "Done." << std::endl;
+            break;
+        }
+        #else
         auto gene_pool_pause_lock = std::unique_lock(pause_mutex, std::try_to_lock);
         if( ! gene_pool_pause_lock.owns_lock())
         {
-            #ifdef _WIN32
-            std::cout << "Done." << std::endl;
-            break;
-            #else
             std::cout << "\nGene pool paused. Press " << pause_key << " to continue" << std::endl;
             std::cout << "or " << stop_key << " to quit." << std::endl;
             gene_pool_pause_lock.lock();
-            #endif // _WIN32
         }
+        #endif // _WIN32
     }
 }
 
@@ -478,25 +484,23 @@ namespace
 {
     void pause_gene_pool(int)
     {
-        static auto pause_lock = std::unique_lock<std::mutex>(pause_mutex, std::defer_lock);
+        #ifdef _WIN32
+        quit_gene_pool = true;
+        std::cout << "\nQuitting program after current games are finished ..." << std::endl;
+        #else
+        static auto pause_lock = std::unique_lock(pause_mutex, std::defer_lock);
 
         if(pause_lock.owns_lock())
         {
-            #ifndef _WIN32
             pause_lock.unlock();
-            std::cout << "\nResuming." << std::endl;
-            #endif
+            std::cout << "\nResuming ..." << std::endl;
         }
         else
         {
             pause_lock.lock();
-            #ifdef _WIN32
-            auto action = "quitting";
-            #else
-            auto action = "pausing";
-            #endif // _WIN32
-            std::cout << "\nWaiting for games to end and be recorded before " << action << " ..." << std::endl;
+            std::cout << "\nWaiting for games to end and be recorded before pausing ..." << std::endl;
         }
+        #endif // _WIN32
     }
 
     void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
