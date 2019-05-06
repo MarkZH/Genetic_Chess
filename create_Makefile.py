@@ -101,54 +101,40 @@ for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
 options_list = dict()
 linker_options = dict()
 system = sys.argv[1]
+base_options = [
+        "-std=c++17",
+        "-Wshadow",
+        "-Wcast-align",
+        "-Wundef",
+        "-Wfloat-equal",
+        "-Wunreachable-code",
+        "-pedantic",
+        "-Wextra",
+        "-Wall",
+        "-Werror",
+        "-Iinclude"]
+base_linker_options = ["-pthread"]
+linker_options['debug'] = []
+linker_options['release'] = ['-flto']
+options_list['debug'] = ["-g"]
+options_list['release'] = ["-O3", "-DNDEBUG"]
+
 if system == 'gcc':
     compiler = 'g++'
-    options_list['debug'] = ["-g"]
-    options_list['release'] = ["-O3", "-DNDEBUG"]
-
-    base_options = [
-            "-std=c++17",
-            "-Wshadow",
-            "-Wcast-align",
-            "-Wundef",
-            "-Wfloat-equal",
-            "-Wunreachable-code",
-            "-Wzero-as-null-pointer-constant",
-            "-Wmain",
-            "-pedantic",
-            "-Wextra",
-            "-Wall",
-            "-Werror",
-            "-Iinclude"]
-    base_linker_options = ["-pthread"]
-    linker_options['debug'] = []
-    linker_options['release'] = ['-flto']
+    base_options.extend([
+        "-Wzero-as-null-pointer-constant",
+        "-Wmain"])
 
 elif system == 'clang':
     compiler = 'clang++'
-    options_list['debug'] = ["-g", "-Og", "-fsanitize=undefined", "-fsanitize=integer"]
-    options_list['release'] = ["-O3", "-DNDEBUG"]
-
-    base_options = [
-            "-std=c++17",
+    linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
+    options_list['debug'].extend(["-Og"] + linker_options['debug'])
+    base_options.extend([
             "-Wnon-virtual-dtor",
-            "-Wshadow",
             "-Wredundant-decls",
-            "-Wcast-align",
-            "-Wundef",
-            "-Wfloat-equal",
-            "-Wunreachable-code",
             "-Wmissing-declarations",
             "-Wmissing-include-dirs",
-            "-Wswitch",
-            "-pedantic",
-            "-Wextra",
-            "-Wall",
-            "-Werror",
-            "-Iinclude"]
-    base_linker_options = ["-pthread"]
-    linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
-    linker_options['release'] = ['-flto']
+            "-Wswitch"])
 
 obj_dir_written = []
 for target in final_targets:
@@ -175,7 +161,7 @@ with open("Makefile", 'w') as make_file:
     make_file.write("CXX = " + compiler + "\n")
     make_file.write("LD = " + compiler + "\n")
     make_file.write("\n")
-    make_file.write("CFLAGS = " + " ".join(base_options) + "\n")
+    make_file.write("CFLAGS = " + " ".join(sorted(base_options, key=lambda s : s.lower())) + "\n")
     make_file.write("LDFLAGS = " + " ".join(base_linker_options) + "\n")
     make_file.write("\n")
     for target in final_targets:
