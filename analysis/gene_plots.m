@@ -46,6 +46,7 @@ xaxis = xaxis_list{1};
 piece_strength_prefix = 'Piece Strength Gene';
 piece_strength_figure = figure;
 title('Piece Strength Evolution');
+max_piece_score = -inf;
 
 priority_figure = figure;
 priority_suffix = ' Gene - Priority';
@@ -126,9 +127,7 @@ for yi = 2 : length(data.colheaders) - 2
         make_dashed = false;
         if special_plot_index == 1
             name = name(end);
-            if name == 'Q'
-                queen_score = smooth_data(end);
-            end
+            max_piece_score = max(abs(smooth_data(end)), max_piece_score);
         elseif special_plot_index == 2
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
@@ -168,7 +167,7 @@ for index = 1 : length(special_plots)
             else
                 width = 0.05;
             end
-            tick_height = queen_score*(level/10);
+            tick_height = max_piece_score*(level/10);
             if tick_height < yl(1) || tick_height > yl(2)
                 continue;
             end
