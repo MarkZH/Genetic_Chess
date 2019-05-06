@@ -15,8 +15,20 @@
 
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
-//! Creates a gene with neutral behavior.
-Gene::Gene() : scoring_priority(0.0)
+//! Instantiate the basic parts of the abstract class Gene.
+
+//! \param non_negative_priority Specifies whether the scoring priority should be restricted
+//!        to values greater than or equal to zero.
+//!
+//! For some genes, having the priority vary across positive and negative numbers
+//! slows down evolution because it has some other multiplicative factor that can
+//! also take on negative or positive values. For example, the Total_Force_Gene priority
+//! is effectively multliplied by the scores from the Piece_Strength_Gene. Since switching
+//! the sign of both leads to the same behavior, making the priority non-negative cuts
+//! off the redundant half of the search space.
+Gene::Gene(bool non_negative_priority) :
+    scoring_priority(0.0),
+    priority_is_non_negative(non_negative_priority)
 {
 }
 
@@ -158,11 +170,22 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
     throw Genetic_AI_Creation_Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
 }
 
-//! Applies a random mutation to the priority of a gene as well as any details in derived genes.
+//! Applies a random mutation to the priority or other aspect of a gene.
 void Gene::mutate()
 {
-    scoring_priority += Random::random_laplace(10.0);
-    gene_specific_mutation();
+    auto priority_probability = list_properties().count("Priority")/double(list_properties().size());
+    if(Random::success_probability(priority_probability))
+    {
+        scoring_priority += Random::random_laplace(10.0);
+        if(priority_is_non_negative)
+        {
+            scoring_priority = std::abs(scoring_priority);
+        }
+    }
+    else
+    {
+        gene_specific_mutation();
+    }
 }
 
 //! A method overridden by derived genes to mutate more specific gene components.
@@ -223,17 +246,4 @@ bool Gene::test(const Board& board, Color perspective, double expected_score) co
     }
 
     return true;
-}
-
-//! If a mutation causes the priority of a gene to become negative, reverse the sign.
-
-//! For some genes, having the priority vary across positive and negative numbers
-//! slows down evolution because it has some other multiplicative factor that can
-//! also take on negative or positive values. For example, the Total_Force_Gene priority
-//! is effectively multliplied by the scores from the Piece_Strength_Gene. Since switching
-//! the sign of both leads to the same behavior, making the priority non-negative cuts
-//! off the redundant half of the search space.
-void Gene::make_priority_minimum_zero()
-{
-    scoring_priority = std::abs(scoring_priority);
 }

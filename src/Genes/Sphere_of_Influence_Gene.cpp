@@ -35,6 +35,7 @@ namespace
 }
 
 Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() :
+    Gene(true),
     legal_square_score(1.0),
     illegal_square_score(1.0),
     king_target_factor(0.0)
@@ -104,8 +105,6 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
 
 void Sphere_of_Influence_Gene::gene_specific_mutation()
 {
-    make_priority_minimum_zero();
-
     switch(Random::random_integer(1, 3))
     {
         case 1:

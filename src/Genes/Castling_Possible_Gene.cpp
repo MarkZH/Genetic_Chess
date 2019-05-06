@@ -14,6 +14,7 @@
 
 //! Creates a gene with no inherent preference for castling in either direction.
 Castling_Possible_Gene::Castling_Possible_Gene() :
+    Gene(true),
     kingside_preference(0.0),
     queenside_preference(0.0)
 {
@@ -115,8 +116,6 @@ double Castling_Possible_Gene::score_board(const Board& board, Color perspective
 
 void Castling_Possible_Gene::gene_specific_mutation()
 {
-    make_priority_minimum_zero();
-
     if(Random::coin_flip())
     {
         kingside_preference += Random::random_laplace(0.1);

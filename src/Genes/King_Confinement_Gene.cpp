@@ -15,6 +15,7 @@
 #include "Utility/Math.h"
 
 King_Confinement_Gene::King_Confinement_Gene() :
+    Gene(true),
     friendly_block_score(0.0),
     opponent_block_score(0.0)
 {
@@ -47,7 +48,6 @@ std::map<std::string, double> King_Confinement_Gene::list_properties() const
 
 void King_Confinement_Gene::gene_specific_mutation()
 {
-    make_priority_minimum_zero();
     auto mutation_size = Random::random_laplace(2.0);
     switch(Random::random_integer(1, 2))
     {

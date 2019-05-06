@@ -13,6 +13,7 @@
 
 //! \param piece_strength_source_in The source of piece values to weight the importance of various pieces.
 Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source_in) :
+    Gene(true),
     piece_strength_source(piece_strength_source_in)
 {
 }
@@ -46,9 +47,4 @@ std::string Total_Force_Gene::name() const
 void Total_Force_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* psg)
 {
     piece_strength_source = psg;
-}
-
-void Total_Force_Gene::gene_specific_mutation()
-{
-    make_priority_minimum_zero();
 }

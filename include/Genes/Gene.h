@@ -15,7 +15,7 @@ class Piece_Strength_Gene;
 class Gene
 {
     public:
-        Gene();
+        Gene(bool non_negative_priority = false);
         virtual ~Gene() = default;
 
         void read_from(std::istream& is);
@@ -46,10 +46,9 @@ class Gene
         virtual std::map<std::string, double> list_properties() const;
         virtual void load_properties(const std::map<std::string, double>& properties);
 
-        void make_priority_minimum_zero();
-
     private:
         double scoring_priority;
+        bool priority_is_non_negative;
 
         virtual double score_board(const Board& board, Color perspective, size_t depth) const = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
