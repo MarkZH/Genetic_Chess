@@ -1554,6 +1554,9 @@ uint64_t Board::square_hash(Square square) const
     return result;
 }
 
+//! Returns the Zobrist hash of the current state of the board.
+
+//! See https://en.wikipedia.org/wiki/Zobrist_hashing for details.
 uint64_t Board::board_hash() const
 {
     return current_board_hash;
