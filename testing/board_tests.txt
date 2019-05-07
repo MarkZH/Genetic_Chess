@@ -1,0 +1,89 @@
+# Basic rules check
+move count | start | | 20
+move count | start | e4 | 20
+
+# Castling with attacking piece
+all moves legal  |1k6/r7/8/8/8/8/8/R3K2R w KQ   - 0 1 |O-O
+all moves legal  |1k6/r7/8/8/8/8/8/R3K2R w KQ   - 0 1 |O-O-O
+all moves legal  |1k6/1r6/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O
+all moves legal  |1k6/1r6/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O-O
+all moves legal  |1k6/2r5/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O
+last move illegal|1k6/2r5/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O-O
+all moves legal  |1k6/3r4/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O
+last move illegal|1k6/3r4/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O-O
+last move illegal|1k6/4r3/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O
+last move illegal|1k6/4r3/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O-O
+last move illegal|1k6/5r2/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O
+all moves legal  |1k6/5r2/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O-O
+last move illegal|1k6/6r1/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O
+all moves legal  |1k6/6r1/8/8/8/8/8/R3K2R w KQ  - 0 1 |O-O-O
+all moves legal  |1k6/7r/8/8/8/8/8/R3K2R w KQ   - 0 1 |O-O
+all moves legal  |1k6/7r/8/8/8/8/8/R3K2R w KQ   - 0 1 |O-O-O
+
+# Pawn captures
+all moves legal | k7/8/8/4p3/3P4/8/8/K7 w - - 0 1 | d4e5
+all moves legal | k7/8/8/4p3/3P4/8/8/K7 b - - 0 1 | e5d4
+
+# Generating moves with side effects
+last move illegal | 2k5/P7/K7/8/8/8/8/8 w - - 0 1 | a8=Q Kb8
+
+# Pinned pieces tests
+pinned piece      | k1KRr3/8/8/8/8/8/8/8 w - - 0 1 | d8 true
+pinned piece      | k1KRRr2/8/8/8/8/8/8/8 w - - 0 1 | d8 false
+last move illegal | K7/8/8/8/kpP4R/8/8/8 b - c3 0 1 | b4c3
+
+# Moves from perft boards
+all moves legal   | start | c3 a6 Qa4
+last move illegal | start | c3 a6 Qa4 d5
+all moves legal   | start | c3 d6 Qa4 Nc6
+all moves legal   | start | d3 c6 Bd2 Qa5 Bb4
+all moves legal   | start | e3 a6 Qe2
+all moves legal   | r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1 | Kf1 Nc4 Bd1
+all moves legal   | 8/Pk6/8/8/8/8/6Kp/8 b - - 0 1 | Ka6 Kf1 h1=B a8=Q Bxa8
+move count | n1n5/PPPk4/8/8/8/8/4Kppp/5N1N w - - 0 1 | bxa8=Q Nd6 Qb7 gxh1=Q c8=Q | 0 # Checkmate for white
+move count | 8/6k1/4b3/8/3N2p1/8/6q1/4n1K1 w - - 10 120 | | 0 # checkmate for black
+
+# More specific checks on board
+# Most of these tests were created to address specific
+# problems found while programmming.
+
+# Move ambiguity check
+last move illegal | start | Nc3 a6 Nf3 b6 Ne4 c6 Ng5
+
+# Unambiguous move check
+all moves legal | start | Ng1h3
+
+# En passant pin
+last move illegal | 7k/4p3/8/2KP3r/8/8/8/8 b - - 0 1 | e5 dxe6
+
+all moves legal | 8/6K1/2k5/5n2/8/8/8/5R2 w - - 0 1 | Rxf5
+all moves legal | 7R/8/8/8/1K2p2q/8/5P2/3k4 w - - 0 1 | f4 exf3 Rxh4
+all moves legal | 8/8/5r2/8/8/8/8/R3K1k1 w Q - 0 1 | O-O-O Rf1
+move count | Q6r/4k3/8/8/8/5b2/8/7K w - - 0 1 | | 1
+all moves legal | Q6r/4k3/8/8/8/5b2/8/7K w - - 0 1 | h1g1
+all moves legal | k7/8/8/3pP3/2K5/8/8/8 w - d6 0 1 | exd6
+
+all moves legal | K1k5/3P4/8/8/8/8/8/8 b - - 0 1 | # Check Board ctor not tripped by multiple pawn captures
+
+# Invalid boards
+invalid board | 1k1R4/2P5/KR5q/8/8/8/8/8 b - - 0 1 # Too many attackers
+invalid board | k7/2N5/1N6/8/8/8/8/7K b - - 0 1 # Too many knights attacking
+
+# Enough material to checkmate
+checkmate material | k1K5/8/8/8/8/8/8/8 w - - 0 1 | false
+checkmate material | k7/8/8/3pP3/4B3/8/8/7K w - d6 0 1 | true
+checkmate material | k1KQ4/8/8/8/8/8/8/8 w - - 0 1 | true
+checkmate material | k1KBB3/8/8/8/8/8/8/8 w - - 0 1 | true
+checkmate material | k1KB1B2/8/8/8/8/8/8/8 w - - 0 1 | false
+checkmate material | k1KBb3/8/8/8/8/8/8/8 w - - 0 1 | true
+checkmate material | k1KB1b2/8/8/8/8/8/8/8 w - - 0 1 | false
+checkmate material | k1KNn3/8/8/8/8/8/8/8 w - - 0 1 | true
+checkmate material | k1KNN3/8/8/8/8/8/8/8 w - - 0 1 | true
+checkmate material | k1KNB3/8/8/8/8/8/8/8 w - - 0 1 | true
+checkmate material | k1KnB3/8/8/8/8/8/8/8 w - - 0 1 | true
+checkmate material | k1KBn3/8/8/8/8/8/8/8 w - - 0 1 | true
+
+# More tests found by chess engine fight
+last move illegal | start | g3 c5 c3 Nc6 h4 Qb6 b4 c4 Bg2 Nh6 Na3 Rb8 f3 Rg8 Bb2 f6 Nb1 a6 Kf2
+king in check | start | f4 g6 Nf3 h6 d3 c5 b4 a5 bxc5 b5 | false
+king in check | start | e4 g5 h3 f6 e5 a6 Rh2 g4 Ne2 g3 f3 d5 | false

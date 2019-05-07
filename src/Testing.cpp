@@ -47,6 +47,9 @@ namespace
 {
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
     size_t move_count(const Board& board, size_t maximum_depth);
+    bool run_board_tests(const std::string& file_name);
+    bool all_moves_legal(Board& board, const std::vector<std::string>& moves);
+    bool move_is_illegal(Board& board, const std::string& moves);
 }
 
 bool run_tests()
@@ -163,424 +166,6 @@ bool run_tests()
     }
 
 
-    // Basic chess rules check
-    Board starting_board;
-    while(true)
-    {
-        auto starting_move_count = starting_board.legal_moves().size();
-        size_t correct_move_count = 20;
-        if(starting_move_count != correct_move_count)
-        {
-            std::cerr << "Wrong number of legal moves at beginning of game. Got " << starting_move_count
-                      << ", should be " << correct_move_count << std::endl;
-            std::cerr << "Legal moves found:" << std::endl;
-            auto move_count = 0;
-            for(const auto& move : starting_board.legal_moves())
-            {
-                std::cerr << ++move_count << ". " << move->game_record_item(starting_board) << std::endl;
-            }
-
-            if(move_count == 0)
-            {
-                std::cout << "No legal moves found.\n";
-            }
-
-            starting_board.ascii_draw(WHITE);
-
-            tests_passed = false;
-        }
-
-        if(starting_board.whose_turn() == BLACK)
-        {
-            break;
-        }
-
-        starting_board.submit_move(starting_board.create_move("e4"));
-    }
-
-    Board second_move_board;
-    second_move_board.submit_move(second_move_board.create_move("e4"));
-    auto second_move_count = second_move_board.legal_moves().size();
-    size_t correct_second_move_count = 20;
-    if(second_move_count != correct_second_move_count)
-    {
-        std::cerr << "Wrong number of legal moves at beginning of game. Got " << second_move_count
-                  << ", should be " << correct_second_move_count << std::endl;
-        std::cerr << "Legal moves found:" << std::endl;
-        auto move_count = 0;
-        for(const auto& move : second_move_board.legal_moves())
-        {
-            std::cerr << ++move_count << ". " << move->game_record_item(second_move_board) << std::endl;
-        }
-        second_move_board.ascii_draw(WHITE);
-
-        tests_passed = false;
-    }
-
-    // Castling with attacking piece
-    for(auto castle_side : std::string("KQ"))
-    {
-        for(int rook_left_space = 0; rook_left_space < 8; ++rook_left_space)
-        {
-            auto rook_left  = (rook_left_space > 0 ? std::to_string(rook_left_space) : std::string());
-            auto rook_right = (rook_left_space < 7 ? std::to_string(7 - rook_left_space) : std::string());
-            Board board("1k6/" + rook_left + "r" + rook_right + "/8/8/8/8/8/R3K2R w KQ  - 0 1");
-
-            char final_file = (castle_side == 'K' ? 'g' : 'c');
-
-            try
-            {
-                board.create_move(std::string("e1") + final_file + "1");
-            }
-            catch(const Illegal_Move&)
-            {
-                if(castle_side == 'K')
-                {
-                    if(rook_left_space >= 4 && rook_left_space <= 6)
-                    {
-                        continue;
-                    }
-                }
-                else
-                {
-                    if(rook_left_space >= 2 && rook_left_space <= 4)
-                    {
-                        continue;
-                    }
-                }
-
-                board.ascii_draw(WHITE);
-                std::cout << std::string(1, castle_side) + "-castle should be legal here." << std::endl;
-                tests_passed = false;
-            }
-
-            if(castle_side == 'K')
-            {
-                if(rook_left_space < 4 || rook_left_space > 6)
-                {
-                    continue;
-                }
-            }
-            else
-            {
-                if(rook_left_space < 2 || rook_left_space > 4)
-                {
-                    continue;
-                }
-            }
-
-            board.ascii_draw(WHITE);
-            std::cout << std::string(1, castle_side) + "-castle should be illegal here." << std::endl;
-            tests_passed = false;
-        }
-    }
-
-
-    // Test pawn captures
-    Board white_pawn_board("k7/8/8/4p3/3P4/8/8/K7 w - - 0 1");
-    try
-    {
-        white_pawn_board.create_move("d4e5");
-    }
-    catch(const Illegal_Move&)
-    {
-        white_pawn_board.ascii_draw(WHITE);
-        std::cerr << "Number of legal moves = " << white_pawn_board.legal_moves().size() << std::endl;
-        std::cerr << "Pawn capture by white should be legal." << std::endl;
-        tests_passed = false;
-    }
-
-    Board black_pawn_board("k7/8/8/4p3/3P4/8/8/K7 b - - 0 1");
-    try
-    {
-        black_pawn_board.create_move("e5d4");
-    }
-    catch(const Illegal_Move&)
-    {
-        black_pawn_board.ascii_draw(WHITE);
-        std::cerr << "Number of legal moves = " << black_pawn_board.legal_moves().size() << std::endl;
-        std::cerr << "Pawn capture by white should be legal." << std::endl;
-        tests_passed = false;
-    }
-
-
-    // Prove there was a problem with generating moves before move
-    // side effects are applied to a board.
-
-    //   abcdefgh
-    // 8 ..k.....
-    // 7 P.......
-    // 6 K.......
-    // White pawn to promote to Queen
-    auto side_effects_board = Board("2k5/P7/K7/8/8/8/8/8 w - - 0 1");
-    side_effects_board.submit_move(side_effects_board.create_move("a8=Q"));
-    std::string bad_move = "Kb8";
-    auto illegal_move_made = true;
-    try
-    {
-        side_effects_board.create_move(bad_move);
-    }
-    catch(const Illegal_Move&)
-    {
-        illegal_move_made = false;
-    }
-
-    if(illegal_move_made)
-    {
-        side_effects_board.ascii_draw(WHITE);
-        std::cerr << bad_move << " should not be legal here." << std::endl;
-        tests_passed = false;
-    }
-
-
-    // Pinned piece test
-    auto pin_board = Board("k1KRr3/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! pin_board.piece_is_pinned({'d', 8}))
-    {
-        pin_board.ascii_draw(WHITE);
-        std::cerr << "Rook at d4 should register as pinned." << std::endl;
-        tests_passed = false;
-    }
-
-    auto no_pin_board = Board("k1KRRr2/8/8/8/8/8/8/8 w - - 0 1");
-    if(no_pin_board.piece_is_pinned({'d', 8}))
-    {
-        no_pin_board.ascii_draw(WHITE);
-        std::cerr << "Rook at d4 should not register as pinned." << std::endl;
-        tests_passed = false;
-    }
-
-    auto en_passant_pin_board = Board("K7/8/8/8/kpP4R/8/8/8 b - c3 0 1");
-    auto move_string = "b4c3";
-    auto move_is_legal = true;
-    try
-    {
-        en_passant_pin_board.create_move(move_string);
-    }
-    catch(const Illegal_Move&)
-    {
-        move_is_legal = false;
-    }
-
-    if(move_is_legal)
-    {
-        en_passant_pin_board.ascii_draw(WHITE);
-        std::cerr << "En passant capture by black (" << move_string << ") should not be legal here." << std::endl;
-        tests_passed = false;
-    }
-
-    Board perf_board;
-    try
-    {
-        for(const auto& move : {"c3", "a6", "Qa4"})
-        {
-            perf_board.submit_move(perf_board.create_move(move));
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        perf_board.ascii_draw(WHITE);
-        perf_board.print_game_record(nullptr, nullptr, "", {}, Clock{});
-        std::cerr << "All moves so far should have been legal." << std::endl;
-        tests_passed = false;
-    }
-
-    bool legal_move = true;
-    auto illegal_move = "d5";
-    try
-    {
-        perf_board.submit_move(perf_board.create_move(illegal_move));
-    }
-    catch(const Illegal_Move&)
-    {
-        legal_move = false;
-    }
-
-    if(legal_move)
-    {
-        perf_board.ascii_draw(WHITE);
-        std::cout << "Last move (" << illegal_move << ") should have been illegal." << std::endl;
-        tests_passed = false;
-    }
-
-
-    Board perf_board2;
-    auto moves2 = {"c3", "d6", "Qa4", "Nc6"};
-    try
-    {
-        for(const auto& move : moves2)
-        {
-            perf_board2.submit_move(perf_board2.create_move(move));
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        perf_board2.ascii_draw(WHITE);
-        perf_board2.print_game_record(nullptr, nullptr, "", {}, Clock{});
-        for(const auto& move : moves2)
-        {
-            std::cout << move << " ";
-        }
-        std::cout << std::endl;
-        std::cerr << "All moves so far should have been legal." << std::endl;
-        tests_passed = false;
-    }
-
-    Board perf_board3;
-    std::vector<std::string> moves3 = {"d3", "c6", "Bd2", "Qa5", "Bb4"};
-    try
-    {
-        for(const auto& move : moves3)
-        {
-            perf_board3.submit_move(perf_board3.create_move(move));
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        perf_board3.ascii_draw(WHITE);
-        perf_board3.print_game_record(nullptr, nullptr, "", {}, Clock{});
-        for(const auto& move : moves3)
-        {
-            std::cout << move << " ";
-        }
-        std::cout << std::endl;
-        std::cerr << "All moves so far should have been legal." << std::endl;
-        tests_passed = false;
-    }
-
-    Board perf_board4;
-    std::vector<std::string> moves4 = {"e3", "a6", "Qe2"};
-    try
-    {
-        Game_Result result;
-        for(const auto& move : moves4)
-        {
-            result = perf_board4.submit_move(perf_board4.create_move(move));
-        }
-
-        if(result.game_has_ended())
-        {
-            perf_board4.ascii_draw(WHITE);
-            std::cerr << "This is not " << result.ending_reason() << "." << std::endl;
-            tests_passed = false;
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        perf_board4.ascii_draw(WHITE);
-        perf_board4.print_game_record(nullptr, nullptr, "", {}, Clock{});
-        for(const auto& move : moves4)
-        {
-            std::cout << move << " ";
-        }
-        std::cout << std::endl;
-        std::cerr << "All moves so far should have been legal." << std::endl;
-        tests_passed = false;
-    }
-
-    Board perf_board5("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
-    std::vector<std::string> moves5 = {"Kf1", "Nc4", "Bd1"};
-    try
-    {
-        Game_Result result;
-        for(const auto& move : moves5)
-        {
-            result = perf_board5.submit_move(perf_board5.create_move(move));
-        }
-
-        if(result.game_has_ended())
-        {
-            perf_board5.ascii_draw(WHITE);
-            std::cerr << "This is not " << result.ending_reason() << "." << std::endl;
-            tests_passed = false;
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        perf_board5.ascii_draw(WHITE);
-        perf_board5.print_game_record(nullptr, nullptr, "", {}, Clock{});
-        for(const auto& move : moves5)
-        {
-            std::cout << move << " ";
-        }
-        std::cout << std::endl;
-        std::cerr << "All moves so far should have been legal." << std::endl;
-        tests_passed = false;
-    }
-
-
-    Board perf_board6("8/Pk6/8/8/8/8/6Kp/8 b - - 0 1");
-    std::vector<std::string> moves6 = {"Ka6", "Kf1", "h1=B", "a8=Q", "Bxa8"};
-    try
-    {
-        Game_Result result;
-        for(const auto& move : moves6)
-        {
-            result = perf_board6.submit_move(perf_board6.create_move(move));
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        perf_board6.ascii_draw(WHITE);
-        perf_board6.print_game_record(nullptr, nullptr, "", {}, Clock{});
-        for(const auto& move : moves6)
-        {
-            std::cout << move << " ";
-        }
-        std::cout << std::endl;
-        std::cerr << "All moves so far should have been legal." << std::endl;
-        tests_passed = false;
-    }
-
-    Board perf_board7("n1n5/PPPk4/8/8/8/8/4Kppp/5N1N w - - 0 1");
-    std::vector<std::string> moves7 = {"bxa8=Q", "Nd6", "Qb7", "gxh1=Q", "c8=Q"};
-    try
-    {
-        Game_Result result;
-        for(const auto& move : moves7)
-        {
-            result = perf_board7.submit_move(perf_board7.create_move(move));
-        }
-        if(result.winner() != WHITE)
-        {
-            perf_board7.ascii_draw(WHITE);
-            perf_board7.print_game_record(nullptr, nullptr, "", {}, Clock{});
-            std::cerr << "This should be checkmate for white." << std::endl;
-            std::cerr << "Allegedly legal moves:\n";
-            for(auto move : perf_board7.legal_moves())
-            {
-                std::cerr << move->game_record_item(perf_board7) << std::endl;
-            }
-            tests_passed = false;
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        perf_board7.ascii_draw(WHITE);
-        perf_board7.print_game_record(nullptr, nullptr, "", {}, Clock{});
-        for(const auto& move : moves7)
-        {
-            std::cout << move << " ";
-        }
-        std::cout << std::endl;
-        std::cerr << "All moves so far should have been legal." << std::endl;
-        tests_passed = false;
-    }
-
-    Board perf_board8("8/6k1/4b3/8/3N2p1/8/6q1/4n1K1 w - - 10 120");
-    if(perf_board8.legal_moves().size() > 0)
-    {
-        perf_board8.ascii_draw(WHITE);
-        std::cerr << "This should be checkmate for black." << std::endl;
-        std::cerr << "Allegedly legal moves:\n";
-        for(auto move : perf_board8.legal_moves())
-        {
-            std::cerr << move->game_record_item(perf_board8) << std::endl;
-        }
-        tests_passed = false;
-    }
-
-
     // Threefold repetition rule test
     auto repeat_board = Board();
     Game_Result repeat_result;
@@ -682,275 +267,13 @@ bool run_tests()
     }
 
 
-    // More specific checks on board
-    // Most of these tests were created to address specific
-    // problems found while programmming.
-
-    // Move ambiguity check
-    Board board;
-    bool ambiguous_move_caught = false;
-    try
+    if( ! run_board_tests("testing/board_tests.txt"))
     {
-        for(auto move : {"Nc3", "a1",
-                         "Nf3", "b1",
-                         "Ne4", "c1",
-                         "Ng5"})
-        {
-            board.submit_move(board.create_move(move));
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        ambiguous_move_caught = true;
-    }
-
-    if( ! ambiguous_move_caught)
-    {
-        std::cerr << "Last move should have been an error:" << std::endl;
-        board.print_game_record(nullptr, nullptr,
-                                "", Game_Result(NONE, ""), Clock());
-
-        tests_passed = false;
-    }
-
-    // Unambiguous move check
-    Board unambiguous;
-    std::string unambiguous_move = "Ng1h3";
-    try
-    {
-        unambiguous.create_move(unambiguous_move);
-    }
-    catch(const Illegal_Move&)
-    {
-        unambiguous.ascii_draw(WHITE);
-        std::cerr << "Unambiguous move (" << unambiguous_move << ") deemed illegal." << std::endl;
-        tests_passed = false;
-    }
-
-    Board en_passant_pin("7k/4p3/8/2KP3r/8/8/8/8 b - - 0 1");
-    en_passant_pin.submit_move(en_passant_pin.create_move("e5"));
-    try
-    {
-        en_passant_pin.submit_move(en_passant_pin.create_move("dxe6"));
-        en_passant_pin.ascii_draw(WHITE);
-        std::cerr << "Last move (" << en_passant_pin.last_move_record() << ") should have been illegal." << std::endl;
-        tests_passed = false;
-    }
-    catch(const Illegal_Move&)
-    {
-    }
-
-    Board threat_iterator_bug("8/6K1/2k5/5n2/8/8/8/5R2 w - - 0 1");
-    auto test_move_text = "Rxf5";
-    try
-    {
-        threat_iterator_bug.create_move(test_move_text);
-    }
-    catch(const Illegal_Move&)
-    {
-        threat_iterator_bug.ascii_draw(WHITE);
-        std::cerr << test_move_text << " should have been legal." << std::endl;
-        tests_passed = false;
-    }
-
-    Board en_passant_pin_capture("7R/8/8/8/1K2p2q/8/5P2/3k4 w - - 0 1");
-    try
-    {
-        for(auto move : {"f4", "exf3", "Rxh4"})
-        {
-            en_passant_pin_capture.submit_move(en_passant_pin_capture.create_move(move));
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        en_passant_pin_capture.ascii_draw(WHITE);
-        std::cerr << "Capturing the queen with the rook should be possible here." << std::endl;
-        tests_passed = false;
-    }
-
-    Board castling_double_pin("8/8/5r2/8/8/8/8/R3K1k1 w Q - 0 1");
-    try
-    {
-        for(auto move : {"O-O-O", "Rf1"})
-        {
-            castling_double_pin.submit_move(castling_double_pin.create_move(move));
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        castling_double_pin.ascii_draw(WHITE);
-        std::cerr << "Blocking check with rook should be legal here." << std::endl;
-        tests_passed = false;
-    }
-
-    auto multiple_check_board = Board("Q6r/4k3/8/8/8/5b2/8/7K w - - 0 1");
-    auto multi_check_list = multiple_check_board.legal_moves();
-    if(multi_check_list.size() != 1 || multi_check_list.front()->coordinate_move() != "h1g1")
-    {
-        multiple_check_board.ascii_draw(WHITE);
-        std::cerr << "Only Kg1 should be legal here." << std::endl;
-        std::cerr << "Legal moves found:";
-        for(auto move : multi_check_list)
-        {
-            std::cerr << " " << move->game_record_item(multiple_check_board);
-        }
-        std::cerr << std::endl;
-
-        tests_passed = false;
-    }
-
-    try
-    {
-        auto too_many_attackers_board = Board("1k1R4/2P5/KR5q/8/8/8/8/8 b - - 0 1");
-
-        // Should not reach here. Board ctor should have thrown an exception.
-        too_many_attackers_board.ascii_draw(WHITE);
-        std::cerr << "Illegal board created with too many pieces attacking black king." << std::endl;
-        tests_passed = false;
-    }
-    catch(const std::invalid_argument&)
-    {
-    }
-
-    try
-    {
-        auto too_many_knight_attackers_board = Board("k7/2N5/1N6/8/8/8/8/7K b - - 0 1");
-
-        // Should not reach here. Board ctor should have thrown an exception.
-        too_many_knight_attackers_board.ascii_draw(WHITE);
-        std::cerr << "Illegal board created with too many knights attacking black king." << std::endl;
-        tests_passed = false;
-    }
-    catch(const std::invalid_argument&)
-    {
-    }
-
-
-    // En passant check-rescue
-    auto en_passant_check = Board("k7/8/8/3pP3/4B3/8/8/7K w - d6 0 1");
-    en_passant_check.submit_move(en_passant_check.create_move("exd6"));
-    if( ! en_passant_check.king_is_in_check())
-    {
-        en_passant_check.ascii_draw(WHITE);
-        std::cerr << "King should be in check." << std::endl;
-        tests_passed = false;
-    }
-
-    // En passant discovered check
-    auto en_passant_check_capture = Board("k7/8/8/3pP3/2K5/8/8/8 w - d6 0 1");
-    try
-    {
-        en_passant_check_capture.create_move("exd6");
-    }
-    catch(const std::exception&)
-    {
-        en_passant_check_capture.ascii_draw(WHITE);
-        en_passant_check_capture.print_game_record(nullptr, nullptr, "", {}, {});
-        std::cerr << "Move exd6 should be legal." << std::endl;
         tests_passed = false;
     }
 
 
-    // Enough material to checkmate
-    auto only_kings = Board("k1K5/8/8/8/8/8/8/8 w - - 0 1");
-    if(only_kings.enough_material_to_checkmate())
-    {
-        std::cerr << "This board cannot result in checkmate." << std::endl;
-        only_kings.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto one_queen = Board("k1KQ4/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! one_queen.enough_material_to_checkmate())
-    {
-        std::cerr << "This board could result in checkmate." << std::endl;
-        one_queen.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto opposite_color_bishops = Board("k1KBB3/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! opposite_color_bishops.enough_material_to_checkmate())
-    {
-        std::cerr << "This board could result in checkmate." << std::endl;
-        opposite_color_bishops.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto same_color_bishops = Board("k1KB1B2/8/8/8/8/8/8/8 w - - 0 1");
-    if(same_color_bishops.enough_material_to_checkmate())
-    {
-        std::cerr << "This board cannot result in checkmate." << std::endl;
-        same_color_bishops.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto opposite_color_bishops_opposing_sides = Board("k1KBb3/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! opposite_color_bishops_opposing_sides.enough_material_to_checkmate())
-    {
-        std::cerr << "This board could result in checkmate." << std::endl;
-        opposite_color_bishops_opposing_sides.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto same_color_bishops_opposing_sides = Board("k1KB1b2/8/8/8/8/8/8/8 w - - 0 1");
-    if(same_color_bishops_opposing_sides.enough_material_to_checkmate())
-    {
-        std::cerr << "This board cannot result in checkmate." << std::endl;
-        same_color_bishops_opposing_sides.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto two_knights = Board("k1KNn3/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! two_knights.enough_material_to_checkmate())
-    {
-        std::cerr << "This board could result in checkmate." << std::endl;
-        two_knights.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto two_knights_same_side = Board("k1KNN3/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! two_knights_same_side.enough_material_to_checkmate())
-    {
-        std::cerr << "This board could result in checkmate." << std::endl;
-        two_knights_same_side.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto knight_bishop_same_side = Board("k1KNB3/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! knight_bishop_same_side.enough_material_to_checkmate())
-    {
-        std::cerr << "This board could result in checkmate." << std::endl;
-        knight_bishop_same_side.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto knight_bishop_opposing_sides = Board("k1KnB3/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! knight_bishop_opposing_sides.enough_material_to_checkmate())
-    {
-        std::cerr << "This board could result in checkmate." << std::endl;
-        knight_bishop_opposing_sides.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    auto knight_bishop_opposing_sides_bishop_first = Board("k1KBn3/8/8/8/8/8/8/8 w - - 0 1");
-    if( ! knight_bishop_opposing_sides_bishop_first.enough_material_to_checkmate())
-    {
-        std::cerr << "This board could result in checkmate." << std::endl;
-        knight_bishop_opposing_sides_bishop_first.ascii_draw(WHITE);
-        tests_passed = false;
-    }
-
-    // Check that pawn-promotion-by-capture doesn't trip Board::ctor() validity rules
-    try
-    {
-        auto pawn_promotion_attack_board = Board("K1k5/3P4/8/8/8/8/8/8 b - - 0 1");
-    }
-    catch(const std::invalid_argument&)
-    {
-        std::cerr << "Promoting pawn attacks being counted as attacking king multiple times." << std::endl;
-        tests_passed = false;
-    }
-
+    // Last move captured/changed material tests
     Board capture_board;
     capture_board.submit_move(capture_board.create_move("b4"));
     capture_board.submit_move(capture_board.create_move("c5"));
@@ -981,65 +304,6 @@ bool run_tests()
         capture_board.ascii_draw(WHITE);
         capture_board.print_game_record(nullptr, nullptr, "", {}, {});
         std::cerr << "The previous move did not capture." << std::endl;
-        tests_passed = false;
-    }
-
-    // More tests found by chess_engine_fight
-    std::string fight_illegal_move;
-    Board fight_board1;
-    for(auto move : String::split("f4 g6 Nf3 h6 d3 c5 b4 a5 bxc5 b5"))
-    {
-        fight_illegal_move = move;
-        fight_board1.submit_move(fight_board1.create_move(move));
-    }
-
-    if(fight_board1.king_is_in_check())
-    {
-        fight_board1.ascii_draw(WHITE);
-        std::cerr << "Board says the " << color_text(fight_board1.whose_turn()) << " king is in check when it is not." << std::endl;
-        tests_passed = false;
-    }
-
-    Board fight_board2;
-    auto fight2_illegal_move = "Kf2";
-    std::string last_move;
-    try
-    {
-        for(auto move : String::split("g3 c5 c3 Nc6 h4 Qb6 b4 c4 Bg2 Nh6 Na3 Rb8 f3 Rg8 Bb2 f6 Nb1 a6 Kf2"))
-        {
-            last_move = move;
-            fight_board2.submit_move(fight_board2.create_move(move));
-            if(move == fight2_illegal_move)
-            {
-                fight_board2.ascii_draw(WHITE);
-                std::cerr << "The last move of this sequence should have been illegal." << std::endl;
-                fight_board2.print_game_record(nullptr, nullptr, "", {}, {});
-                tests_passed = false;
-            }
-        }
-    }
-    catch(const Illegal_Move&)
-    {
-        if(last_move != fight2_illegal_move)
-        {
-            fight_board2.ascii_draw(WHITE);
-            std::cerr << "This move is actually legal: " << last_move << "." << std::endl;
-            fight_board2.print_game_record(nullptr, nullptr, "", {}, {});
-            tests_passed = false;
-        }
-    }
-
-    Board fight_board3;
-    for(auto move : String::split("e4 g5 h3 f6 e5 a6 Rh2 g4 Ne2 g3 f3 d5"))
-    {
-        fight_board3.submit_move(fight_board3.create_move(move));
-    }
-
-    if(fight_board3.king_is_in_check())
-    {
-        fight_board3.ascii_draw(WHITE);
-        fight_board3.print_game_record({}, {}, {}, {}, {});
-        std::cerr << "Board says the " << color_text(fight_board3.whose_turn()) << " king is in check when it is not." << std::endl;
         tests_passed = false;
     }
 
@@ -1880,5 +1144,190 @@ namespace
         }
 
         return count;
+    }
+
+    bool run_board_tests(const std::string& file_name)
+    {
+        auto input = std::ifstream(file_name);
+        assert(input);
+        std::string line;
+        auto all_tests_passed = true;
+
+        while(std::getline(input, line))
+        {
+            line = String::strip_comments(line, "#");
+            if(line.empty())
+            {
+                continue;
+            }
+
+            auto test_passed = true;
+            auto specification = String::split(line, "|");
+            auto test_type = String::lowercase(String::remove_extra_whitespace(specification.at(0)));
+            auto board_fen = String::remove_extra_whitespace(specification.at(1));
+
+            try
+            {
+                auto board = board_fen == "start" ? Board{} : Board(board_fen);
+                if(test_type == "invalid board")
+                {
+                    std::cout << "FAILED" << std::endl;
+                    board.ascii_draw(WHITE);
+                    std::cout << "This board should not be valid.";
+                    test_passed = false;
+                }
+                else
+                {
+                    auto moves = String::split(specification.at(2));
+                    if(moves.front().empty())
+                    {
+                        moves.clear();
+                    }
+
+                    if(test_type == "all moves legal")
+                    {
+                        if(!all_moves_legal(board, moves))
+                        {
+                            test_passed = false;
+                        }
+                    }
+                    else if(test_type == "last move illegal")
+                    {
+                        assert(moves.size() > 0);
+                        auto last_move = moves.back();
+                        moves.pop_back();
+                        if( ! (all_moves_legal(board, moves) && move_is_illegal(board, last_move)))
+                        {
+                            test_passed = false;
+                        }
+                    }
+                    else if(test_type == "pinned piece")
+                    {
+                        assert(moves.size() == 2);
+                        auto square = String::remove_extra_whitespace(String::lowercase(moves.front()));
+                        assert(moves.front().size() == 2);
+                        auto expected_result = String::remove_extra_whitespace(String::lowercase(moves.back()));
+                        assert(moves.back() == "true" || moves.back() == "false");
+                        if(board.piece_is_pinned(Square(square.front(), square.back() - '0')) != (expected_result == "true"))
+                        {
+                            std::cout << "FAILED" << std::endl;
+                            board.ascii_draw(WHITE);
+                            std::cout << "Expected result of " << square << " being pinned: " << expected_result << std::endl;
+                            test_passed = false;
+                        }
+                    }
+                    else if(test_type == "move count")
+                    {
+                        assert(specification.size() == 4);
+                        auto expected_count = std::stoi(specification.back());
+
+                        if( ! (all_moves_legal(board, moves) || board.legal_moves().size() != expected_count))
+                        {
+                            std::cout << "FAILED" << std::endl;
+                            board.ascii_draw(WHITE);
+                            std::cout << "Legal moves counted: " << board.legal_moves().size() << "; Expected: " << expected_count << std::endl;
+                            test_passed = false;
+                        }
+                    }
+                    else if(test_type == "checkmate material")
+                    {
+                        assert(moves.front() == "true" || moves.front() == "false");
+                        auto expected_result = (moves.front() == "true");
+                        if(board.enough_material_to_checkmate() != expected_result)
+                        {
+                            std::cout << "FAILED" << std::endl;
+                            board.ascii_draw(WHITE);
+                            std::cout << "This board does" << (expected_result ? "" : "not") << " have enough material to checkmate." << std::endl;
+                            test_passed = false;
+                        }
+                    }
+                    else if(test_type == "king in check")
+                    {
+                        assert(specification.size() == 4);
+                        auto expected_answer = String::lowercase(String::remove_extra_whitespace(specification.back()));
+                        assert(expected_answer == "true" || expected_answer == "false");
+                        auto expected_result = expected_answer == "true";
+                        if( ! all_moves_legal(board, moves) || board.king_is_in_check() != expected_result)
+                        {
+                            std::cout << "FAILED" << std::endl;
+                            board.ascii_draw(WHITE);
+                            std::cout << "King is "
+                                      << (expected_result ? "not " : "")
+                                      << "in check when it should "
+                                      << (expected_result ? "" : "not ")
+                                      << "be in check." << std::endl;
+                        }
+                    }
+                    else
+                    {
+                        std::cout << "Bad test: " << test_type << std::endl;
+                        return false;
+                    }
+                }
+            }
+            catch(std::invalid_argument&)
+            {
+                if(test_type != "invalid board")
+                {
+                    std::cout << "This should be a valid board." << std::endl;
+                    test_passed = false;
+                }
+            }
+
+            if( ! test_passed)
+            {
+                std::cout << line << std::endl;
+            }
+            all_tests_passed = all_tests_passed && test_passed;
+        }
+
+        return all_tests_passed;
+    }
+
+    bool all_moves_legal(Board& board, const std::vector<std::string>& moves)
+    {
+        try
+        {
+            auto game_has_ended = false;
+            for(const auto& move : moves)
+            {
+                if(game_has_ended)
+                {
+                    throw Illegal_Move("");
+                }
+
+                game_has_ended = board.submit_move(board.create_move(move)).game_has_ended();
+            }
+
+            return true;
+        }
+        catch(const Illegal_Move&)
+        {
+            std::cout << "FAILED" << std::endl;
+            board.ascii_draw(WHITE);
+            board.print_game_record({}, {}, {}, {}, {});
+            std::cerr << "All of these moves should have been legal:";
+            for(const auto& move : moves)
+            {
+                std::cout << " " << move;
+            }
+            return false;
+        }
+    }
+
+    bool move_is_illegal(Board& board, const std::string& move)
+    {
+        try
+        {
+            board.create_move(move);
+            std::cout << "FAILED" << std::endl;
+            board.ascii_draw(WHITE);
+            std::cerr << "This move should have been illegal: " << move;
+            return false;
+        }
+        catch(const Illegal_Move&)
+        {
+            return true;
+        }
     }
 }
