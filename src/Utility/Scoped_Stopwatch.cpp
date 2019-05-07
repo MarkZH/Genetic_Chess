@@ -40,7 +40,7 @@ void Scoped_Stopwatch::stop()
     }
 
     static std::mutex write_lock;
-    std::lock_guard<std::mutex> write_lock_guard(write_lock);
+    auto write_lock_guard = std::lock_guard(write_lock);
 
     static std::ofstream out_file("timings-" + std::to_string(Random::random_unsigned_int64()) + ".txt");
 

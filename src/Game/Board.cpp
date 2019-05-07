@@ -1173,7 +1173,7 @@ void Board::print_game_record(const Player* white,
                               const Clock& game_clock) const
 {
     static std::mutex write_lock;
-    std::lock_guard<std::mutex> write_lock_guard(write_lock);
+    auto write_lock_guard = std::lock_guard(write_lock);
 
     static int game_number = 0;
     static std::string last_used_file_name;
