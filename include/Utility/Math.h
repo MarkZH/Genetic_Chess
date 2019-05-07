@@ -15,7 +15,7 @@ namespace Math
     const auto lose_score = -win_score;
 
     //! Computes an estimate of the number of moves left in a game assuming a log-normal distribution.
-
+    //
     //! \param mean_moves The average number of moves in a game. More specifically, exp(u) where
     //!        u is the mean of the logarithm of the distribution of the number of moves.
     //! \param width The width of the distribution. More specifically, the standard deviation of the
@@ -27,7 +27,7 @@ namespace Math
     double average_moves_left(double mean_moves, double width, size_t moves_so_far);
 
     //! Clamps a number to a given range.
-
+    //
     //! \param n The input number for the range check.
     //! \param low The lower bound of the range.
     //! \param high The upper bound of the range.
@@ -41,7 +41,7 @@ namespace Math
     }
 
     //! Returns the sign of the number.
-
+    //
     //! \param x The input nuber.
     //! \returns +1 for positive numbers, -1 for negative, and 0 otherwise.
     template<typename Number>

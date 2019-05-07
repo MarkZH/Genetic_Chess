@@ -10,7 +10,7 @@
 #include "Utility/String.h"
 
 //! Read in a text file and organize the configuration data.
-
+//
 //! \param file_name The name of the text file to be read.
 //!
 //! The file is read line-by-line and expects all configuration data in
@@ -51,7 +51,7 @@ Configuration_File::Configuration_File(const std::string& file_name)
 }
 
 //! Return string data as found in the file.
-
+//
 //! \param parameter The configuration parameter sought.
 //! \returns The string data with leading and trailing whitespace removed.
 //! \throws std::runtime_error If the named parameter was not found in the file.
@@ -73,7 +73,7 @@ std::string Configuration_File::as_text(const std::string& parameter) const
 }
 
 //! Return numerical data from the configuration file.
-
+//
 //! \param parameter The configuration parameter sought.
 //! \returns The data in the file converted to a floating point (double) number.
 //! \throws std::runtime_error If the named parameter was not found in the file or
@@ -91,7 +91,7 @@ double Configuration_File::as_number(const std::string& parameter) const
 }
 
 //! Return true/false data from the configuration file.
-
+//
 //! \param parameter The configuration parameter sought.
 //! \param affirmative The case-insensitive value corresponding to true.
 //! \param negative The case-insensitive value corresponding to false.
@@ -122,7 +122,7 @@ std::string Configuration_File::standardize_text(const std::string& input)
 }
 
 //! If any values in a configuration file are not used, print them to stdout.
-
+//
 //! \returns Whether or not there were any unused parameters in the configuration file.
 bool Configuration_File::print_unused_parameters() const
 {

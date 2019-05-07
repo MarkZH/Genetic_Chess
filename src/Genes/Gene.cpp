@@ -16,7 +16,7 @@
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
 //! Instantiate the basic parts of the abstract class Gene.
-
+//
 //! \param non_negative_priority Specifies whether the scoring priority should be restricted
 //!        to values greater than or equal to zero.
 //!
@@ -33,7 +33,7 @@ Gene::Gene(bool non_negative_priority) :
 }
 
 //! Returns a structure relating a gene property to a numerical value.
-
+//
 //! By default, the only property a gene has is "Priority," a multiplicative factor
 //! that controls how influential a gene's score is to the overall evaulation of a
 //! board position. This method is overridden by derived Gene classes to either augment
@@ -45,7 +45,7 @@ std::map<std::string, double> Gene::list_properties() const
 }
 
 //! Reads a properties data structure and loads the data into itself.
-
+//
 //! This method is the counterpart to Gene::list_properties() in that it
 //! reads the same data structure as the one produced by Gene::list_properties().
 //! This means that this method is also overridden by derived Genes that have
@@ -58,7 +58,7 @@ void Gene::load_properties(const std::map<std::string, double>& property_list)
 }
 
 //! Tells how many mutatable components are present in a gene.
-
+//
 //! The more components a gene has, the more likely it will be mutated by a call
 //! to Genome::mutate().
 //! \returns How many individually mutatable components exist in a gene.
@@ -68,7 +68,7 @@ size_t Gene::mutatable_components() const
 }
 
 //! Reads an input stream for gene data.
-
+//
 //! Every line should be one of the following:
 //! - \<property\> = \<value\> with optional comments at the end preceded by '#'.
 //! - blank
@@ -140,7 +140,7 @@ void Gene::read_from(std::istream& is)
 }
 
 //! Read gene data from a text file.
-
+//
 //! The method creates an input stream from the text file and passes it to the
 //! other Gene::read_from().
 void Gene::read_from(const std::string& file_name)
@@ -189,14 +189,14 @@ void Gene::mutate()
 }
 
 //! A method overridden by derived genes to mutate more specific gene components.
-
+//
 //! By default, this method does nothing.
 void Gene::gene_specific_mutation()
 {
 }
 
 //! Gives a numerical score to the board in the arguments.
-
+//
 //! \param board The state of the board to be evaluated--found at the leaves of the game search tree.
 //! \param perspective For which player the board is being scored.
 //! \param depth The depth of the game search tree at the time of the evaluation.
@@ -207,7 +207,7 @@ double Gene::evaluate(const Board& board, Color perspective, size_t depth) const
 }
 
 //! Outputs gene data to a std::ostream in text form.
-
+//
 //! \param os An output stream (std::ofstream, std::cout, etc.)
 void Gene::print(std::ostream& os) const
 {
@@ -221,7 +221,7 @@ void Gene::print(std::ostream& os) const
 }
 
 //! Gives the gene the new location of the Piece Strength Gene.
-
+//
 //! When a Genome is copied or assigned to, the Genes that reference
 //! the Piece_Strength_Gene need to be told the location of the new
 //! copy. For all other genes, this does nothing.
@@ -231,7 +231,7 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 }
 
 //! Tests the board-scoring method of the Gene.
-
+//
 //! \param board The board upon which the test takes place.
 //! \param perspective The player for whom the score is being calculated.
 //! \param expected_score The expected score returned by Gene::score_board().

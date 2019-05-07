@@ -23,7 +23,7 @@ class Pawn_Double_Move;
 class Pawn_Move;
 
 //! This class represents the physical chess board.
-
+//
 //! Each instance contains data to track the position of pieces, move history,
 //! 3-fold repetition, 50-move draw status, and legal moves.
 //!

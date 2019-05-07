@@ -42,7 +42,7 @@ double Math::average_moves_left(double mean_moves, double width, size_t moves_so
 }
 
 //! Convert a std::string to a size_t for multiple platforms.
-
+//
 //! \param s The input string containing a number.
 //! \returns An unsigned integer of the same type as size_t.
 //! \throws std::invalid_argument if no conversion could be made.

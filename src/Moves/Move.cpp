@@ -12,7 +12,7 @@
 
 
 //! Constructs a move with no special rules.
-
+//
 //! \param start The Square where move starts.
 //! \param end   The Square where move ends.
 Move::Move(Square start, Square end) :
@@ -40,7 +40,7 @@ Move::Move(Square start, Square end) :
 }
 
 //! Further modifies the state of the board.
-
+//
 //! Side effects are changes to the state of the board beyond the change
 //! in position of the moved piece and captured piece (movement by rook
 //! in castling, marking a square as a en passant target after a double
@@ -53,7 +53,7 @@ void Move::side_effects(Board&) const
 }
 
 //! Checks if a move is legal on a given Board.
-
+//
 //! This method checks for attacking a piece of the same color,
 //! attacking a piece when the move cannot capture, special rules,
 //! and whether the king is in check after the move. It does not
@@ -81,7 +81,7 @@ bool Move::is_legal(const Board& board) const
 }
 
 //! Returns whether a move is legal according to rules not covered by Move::is_legal().
-
+//
 //! This method is overridden by subclassed moves with
 //! special rules. The standard Move just returns true;
 //! \param board The board on which legality is being checked.
@@ -91,7 +91,7 @@ bool Move::move_specific_legal(const Board&) const
 }
 
 //! Check whether this move can land on an opponent-occupied square.
-
+//
 //! \returns Whether this move is allowed to capture.
 bool Move::can_capture() const
 {
@@ -111,7 +111,7 @@ Square Move::end() const
 }
 
 //! The total movement of a move.
-
+//
 //! \returns A pair of integers indicating the two-dimensional movement.
 //!          Equivalent to std::make_pair(file_change(), rank_change()).
 Square_Difference Move::movement() const
@@ -119,7 +119,7 @@ Square_Difference Move::movement() const
     return end() - start();
 }
 //! How far move travels horizontally.
-
+//
 //! \returns The distance in squares between the start and end files.
 int Move::file_change() const
 {
@@ -127,7 +127,7 @@ int Move::file_change() const
 }
 
 //! How far move travels vertically.
-
+//
 //! \returns The distance in squares between the start and end ranks.
 int Move::rank_change() const
 {
@@ -135,7 +135,7 @@ int Move::rank_change() const
 }
 
 //! Creates a textual representation of a move suitable for a PGN game record.
-
+//
 //! \param board A Board instance just prior to the move being made.
 //! \returns The full PGN record of a move.
 std::string Move::game_record_item(const Board& board) const
@@ -144,7 +144,7 @@ std::string Move::game_record_item(const Board& board) const
 }
 
 //! A textual representation of a move in PGN format without consequences ('+' for check, etc.).
-
+//
 //! \param board The board on which the move is about to be made.
 //! \returns The movement portion of a PGN move entry.
 std::string Move::game_record_move_item(const Board& board) const
@@ -218,7 +218,7 @@ std::string Move::game_record_ending_item(Board board) const
 }
 
 //! Returns a textual representation of a move in coordinate notation.
-
+//
 //! The first two characters indicate the starting square, the next two
 //! indicate the ending square, and a final optional character to indicate
 //! a pawn promtion.
@@ -235,7 +235,7 @@ std::string Move::coordinate_move() const
 }
 
 //! Indicates whether this move is en passant, which needs special handling elsewhere.
-
+//
 //! \returns Whether this is an instance of the En_Passant class.
 bool Move::is_en_passant() const
 {
@@ -243,7 +243,7 @@ bool Move::is_en_passant() const
 }
 
 //! Indicates whether this move is a castling move, a fact which needs special handling elsewhere.
-
+//
 //! \returns Whether this is an instance of the Castle class.
 bool Move::is_castling() const
 {
@@ -251,7 +251,7 @@ bool Move::is_castling() const
 }
 
 //! Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.
-
+//
 //! \returns the PGN symbol of the promotion piece, if any.
 char Move::promotion_piece_symbol() const
 {
@@ -259,10 +259,10 @@ char Move::promotion_piece_symbol() const
 }
 
 //! Adjust the file of the square a move ends on.
-
+//
 //! This is used for Pawn_Move derivitives since that constructor
 //! forces single moves.
-
+//
 //! \param adjust The size of the adjustment.
 void Move::adjust_end_file(int adjust)
 {
@@ -270,10 +270,10 @@ void Move::adjust_end_file(int adjust)
 }
 
 //! Adjust the rank of the square a move ends on.
-
+//
 //! This is used for Pawn_Move derivitives since that constructor
 //! forces single moves.
-
+//
 //! \param adjust The size of the adjustment.
 void Move::adjust_end_rank(int adjust)
 {
@@ -281,7 +281,7 @@ void Move::adjust_end_rank(int adjust)
 }
 
 //! Assigns a unique index to the direction of movement of a possibly capturing move.
-
+//
 //! \returns An unsigned integer in the range [0,15] corresponding to one of
 //!          2 horizontal moves, 2 vertical moves, 4 diagonal moves, and
 //!          8 knight moves.
@@ -291,7 +291,7 @@ size_t Move::attack_index() const
 }
 
 //! Returns a unique move direction index for a manually specified move. See Move::attack_index().
-
+//
 //! \param move The difference between two Squares.
 //! \returns The same result as a call to Move::attack_index() with the same file_change() and rank_change().
 size_t Move::attack_index(const Square_Difference& move)
@@ -327,7 +327,7 @@ size_t Move::attack_index(const Square_Difference& move)
 }
 
 //! Returns the movement corresponding to an index given by Move::attack_index().
-
+//
 //! \returns A pair of integers giving the direction of an attacking move.
 Square_Difference Move::attack_direction_from_index(size_t index)
 {

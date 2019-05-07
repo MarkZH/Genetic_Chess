@@ -25,14 +25,14 @@ class Gene
         double evaluate(const Board& board, Color perspective, size_t depth) const;
 
         //! Copies the gene data and returns a pointer to the new data
-
+        //
         //! \returns A unique pointer to the copied data.
         virtual std::unique_ptr<Gene> duplicate() const = 0;
 
         size_t mutatable_components() const;
 
         //! Returns the name of the gene.
-
+        //
         //! \returns A text string with the name of the gene.
         virtual std::string name() const = 0;
 

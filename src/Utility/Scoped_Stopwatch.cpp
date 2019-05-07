@@ -8,7 +8,7 @@
 #include "Utility/Random.h"
 
 //! The constructor starts the stopwatch and takes a name to record.
-
+//
 //! \param name The name of the section of code to be timed. This name
 //!        will be written to the output file. If empty, nothing will
 //!        be written to file. Other methods can be used for displaying
@@ -53,7 +53,7 @@ void Scoped_Stopwatch::stop()
 }
 
 //! Add on to the name provided in the constructor.
-
+//
 //! This can be useful for code with branches to label which
 //! branch a given execution took.
 void Scoped_Stopwatch::add_info(const std::string& info)
@@ -68,7 +68,7 @@ void Scoped_Stopwatch::reject()
 }
 
 //! Find out how much time as elapsed since the stopwatch started.
-
+//
 //! \returns Time in seconds.
 double Scoped_Stopwatch::time_so_far() const
 {

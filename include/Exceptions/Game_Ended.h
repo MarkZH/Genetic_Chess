@@ -8,7 +8,7 @@
 #include "Game/Game_Result.h"
 
 //! An exception class that is thrown for irregular game endings.
-
+//
 //! An irregular game ending means one not caused by submitting a
 //! game-ending move to a Board or punching a game Clock with time
 //! exprired.

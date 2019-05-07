@@ -10,7 +10,7 @@ class Game_Result;
 //! \file
 
 //! Play a game with a new board in the default starting state.
-
+//
 //! \param white The player with the white pieces.
 //! \param black The player with the black pieces.
 //! \param time_in_seconds The initial time in seconds on the game clocks.
@@ -28,7 +28,7 @@ Game_Result play_game(const Player& white,
                       const std::string& pgn_file_name);
 
 //! Play a game with a supplied board.
-
+//
 //! \param white The player with the white pieces.
 //! \param black The player with the black pieces.
 //! \param time_in_seconds The initial time in seconds on the game clocks.

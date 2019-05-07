@@ -14,7 +14,7 @@ class Board;
 class Clock;
 
 //! This classes uses evolutionary algorithms to learn how to play chess.
-
+//
 //! This is the player for which this program is named.
 class Genetic_AI : public Minimax_AI
 {

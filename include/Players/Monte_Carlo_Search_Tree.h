@@ -9,7 +9,7 @@ class Move;
 class Board;
 
 //! Storage for the sampled game tree used by the Monte_Carlo_AI.
-
+//
 //! This is a recursive class in that it contains pointers to
 //! other instances of Monte_Carlo_Tree_Search to represent the
 //! known game tree. Each instance keeps track of how many game

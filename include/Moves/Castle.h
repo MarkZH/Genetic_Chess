@@ -9,7 +9,7 @@
 class Board;
 
 //! This class represents a castling move in either direction.
-
+//
 //! The only move that has two pieces change positions; hence the
 //! special is_castling() method.
 class Castle : public Move

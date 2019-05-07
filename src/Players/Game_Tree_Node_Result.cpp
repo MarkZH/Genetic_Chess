@@ -7,7 +7,7 @@
 #include "Utility/Math.h"
 
 //! Gives the score of the board position from the indicated side.
-
+//
 //! The score is calculated in a way that opposite perspective scores
 //! have opposite sign.
 //! \param query The color of the player for whom the value of the board is sought.
@@ -17,7 +17,7 @@ double Game_Tree_Node_Result::corrected_score(Color query) const
 }
 
 //! Creates a quantity that can be compared with other Game_Tree_Node_Results
-
+//
 //! The quanity considers both the score and the depth in the following steps:
 //! 1. If the quantity respresents a win, then it compares greater than any non-win result.
 //! 2. If the quantity it compares to is also a win, then the shallower depth (faster win) is preferred.
@@ -44,7 +44,7 @@ std::pair<double, int> Game_Tree_Node_Result::value(Color query) const
 }
 
 //! The depth in the game tree where this result was calculated.
-
+//
 //! \returns The number of moves from the original board needed to reach
 //!          the evaluated board.
 size_t Game_Tree_Node_Result::depth() const
@@ -53,7 +53,7 @@ size_t Game_Tree_Node_Result::depth() const
 }
 
 //! Determine whether the result represents a winning endgame for a player.
-
+//
 //! \param query The player for whom the result may be a win.
 bool Game_Tree_Node_Result::is_winning_for(Color query) const
 {
@@ -61,7 +61,7 @@ bool Game_Tree_Node_Result::is_winning_for(Color query) const
 }
 
 //! Determine whether the result represents a losing endgame for a player.
-
+//
 //! \param query The player for whom the result may be a loss.
 bool Game_Tree_Node_Result::is_losing_for(Color query) const
 {

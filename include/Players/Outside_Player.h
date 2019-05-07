@@ -34,7 +34,7 @@ class Outside_Player : public Player
         static std::string receive_command();
 
         //! Wait for a string specifying the move made by an outside player.
-
+        //
         //! \param clock The local game clock is passed in so that it can be adjusted
         //!        to better match the interaface's clock.
         //! \returns A text string with the move to be interpretted by Board::create_move();

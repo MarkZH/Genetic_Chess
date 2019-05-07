@@ -6,7 +6,7 @@
 #include <fstream>
 
 //! A tool for timing the execution time of user-chosen sections of code.
-
+//
 //! The Scoped_Stopwatch is designed so that the constructor starts the
 //! timer and the destructor stops it. So, if an instance is created at
 //! the beginning of a function, the timer will stop when the function

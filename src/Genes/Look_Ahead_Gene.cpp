@@ -42,7 +42,7 @@ void Look_Ahead_Gene::load_properties(const std::map<std::string, double>& prope
 }
 
 //! How much time to search for the next move.
-
+//
 //! \param board The current board position.
 //! \param clock The game clock.
 //! \returns The total time in seconds to spend on searching for a move.
@@ -95,7 +95,7 @@ double Look_Ahead_Gene::score_board(const Board&, Color, size_t) const
 }
 
 //! When searching for a move, determine how much to overcommit on time.
-
+//
 //! With alpha-beta pruning, only a portion of a branch will be searched, so time
 //! will be saved that can be spent on other branches. So, this factor controls
 //! how much extra time to allocate knowing that not all of it will be used.

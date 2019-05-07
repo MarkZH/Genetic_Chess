@@ -28,32 +28,32 @@
 void print_help();
 
 //! Step through a game record, displaying each move as ASCII art on the terminal.
-
+//
 //! \param file_name The name of the file with the PGN game record.
 //! \param game_number The ID number of the game (as indicated by the Round header) to replay.
 //!        If game_number is -1, replay the first game in the file.
 void replay_game(const std::string& file_name, int game_number);
 
 //! Confirm that all moves in a PGN game record are legal moves.
-
+//
 //! \param file_name The name of the file with the PGN game records. All games will be examined.
 //! \param verbose If true, print extra information before and after each move (draw the board state and list legal moves).
 bool confirm_game_record(const std::string& file_name, bool verbose);
 
 //! An experimental feature that tries to correlate the number of legal moves with progress through the game.
-
+//
 //! \param game_record_file_name A file with a set of PGN game records.
 //! \param results_file_name Where the results of the correlation will be written.
 void game_progress_move_count(const std::string& game_record_file_name, const std::string& results_file_name);
 
 //! Find the last ID of a Genetic_AI in a gene pool file.
-
+//
 //! \param file_name The name of the file with Genetic_AI data.
 //! \returns The numerical ID of the last AI in the file.
 int find_last_id(const std::string& file_name);
 
 //! The starting point for the whole program.
-
+//
 //! \param argc The number of command-line arguments.
 //! \param argv The command-line arguments. See print_help() (or run the program
 //!        with no arguments) for a listing of all the options.

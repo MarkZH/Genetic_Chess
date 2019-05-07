@@ -15,7 +15,7 @@ class Piece;
 class Game_Result;
 
 //! An AI player designed by Alan Turing and David Champernowne.
-
+//
 //! Not having a computer on which to run this program, Turing first ran
 //! this chess program using pencil and paper, taking 30 minutes per move.
 //!

@@ -69,7 +69,7 @@ double& Piece_Strength_Gene::piece_value(Piece_Type type)
 }
 
 //! This method is queried by other Genes to determine the value of various Pieces.
-
+//
 //! \param piece A pointer to a Piece. A nullptr represents no piece (as from an empty square).
 //! \returns A numerical value of the Piece.
 double Piece_Strength_Gene::piece_value(Piece piece) const
@@ -85,7 +85,7 @@ double Piece_Strength_Gene::piece_value(Piece piece) const
 }
 
 //! Returns the total value of the pieces on the board at the start of a standard game.
-
+//
 //! \returns A value used by other Genes to normalize their scores.
 double Piece_Strength_Gene::normalizer() const
 {

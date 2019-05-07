@@ -16,7 +16,7 @@ class Player
         virtual ~Player() = default;
 
         //! The player chooses the next move in the game.
-
+        //
         //! The classes derived from Player implement the various algorithms for
         //! choosing moves here.
         //! \param board The current board position. The players choose the move from board.legal_moves().
@@ -24,7 +24,7 @@ class Player
         virtual const Move& choose_move(const Board& board, const Clock& clock) const = 0;
 
         //! The name of the player.
-
+        //
         //! \returns The name of the individual player. This may have specific details like ID numbers
         //!          or the name of a human player.
         virtual std::string name() const = 0;

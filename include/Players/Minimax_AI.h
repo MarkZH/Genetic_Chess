@@ -14,7 +14,7 @@ class Move;
 class Game_Result;
 
 //! This Player uses a variable-depth minimax algorithm with alpha-beta pruning.
-
+//
 //! Minimax algorithm: https://en.wikipedia.org/wiki/Minimax
 //! Alpha-beta pruning: https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
 class Minimax_AI : public Player

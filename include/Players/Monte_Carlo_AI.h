@@ -12,7 +12,7 @@ class Clock;
 class Move;
 
 //! This player picks a move by randomly sampling the game tree.
-
+//
 //! This AI plays multiple random games to completion and then picks
 //! the move that most often leads to victory.
 //!

@@ -8,7 +8,7 @@
 #include "Game/Game_Result.h"
 
 //! Constructs a game clock for timing games.
-
+//
 //! \param duration_seconds The initial amount of time on the clock.
 //!        If this is zero, then the clock is inactive and will not stop the game.
 //! \param moves_to_reset The number of moves before the clocks are reset to the initial time.
@@ -75,7 +75,7 @@ void Clock::stop()
 }
 
 //! Start the moving player's clock at the start of a game.
-
+//
 //! This method also records the start time of the game for use in Board::print_game_record().
 void Clock::start()
 {
@@ -85,7 +85,7 @@ void Clock::start()
 }
 
 //! Returns the amount of time left for the given player.
-
+//
 //! \param color The color of the player whose time is being queried.
 double Clock::time_left(Color color) const
 {
@@ -105,7 +105,7 @@ double Clock::time_left(Color color) const
 }
 
 //! The number of moves left before the clocks reset to the initial time.
-
+//
 //! \param color The color of the player being queried.
 size_t Clock::moves_to_reset(Color color) const
 {
@@ -126,7 +126,7 @@ Color Clock::running_for() const
 }
 
 //! Adjust the time on the clocks.
-
+//
 //! \param player Indicates which clock to adjust.
 //! \param new_time_seconds The new amount of time left on that clock.
 //! This method is used by the Players derived from Outside_Player to adjust

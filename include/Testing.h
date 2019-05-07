@@ -4,7 +4,7 @@
 //! \file
 
 //! Run through a battery of tests to verify the operation of most of the program.
-
+//
 //! \returns True if all tests passed
 bool run_tests();
 
@@ -12,7 +12,7 @@ bool run_tests();
 void run_speed_tests();
 
 //! Run a timed test of legal move generation to check that chess rules are implemented correctly.
-
+//
 //! \returns True if all tests pass.
 bool run_perft_tests();
 

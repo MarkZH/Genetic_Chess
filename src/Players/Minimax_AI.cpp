@@ -18,7 +18,7 @@ Minimax_AI::Minimax_AI() : value_of_centipawn_calculated(false)
 }
 
 //! Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
-
+//
 //! The depth of the search is determined by how much time is available.
 //! At first, equal time is allocated to each legal move for examination. Time
 //! is overcommitted with the expectation that not all of the time will be used
@@ -325,7 +325,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
 }
 
 //! Initial measurement of evaluation speed of the engine.
-
+//
 //! The method Minimax_AI::choose_move() keeps track of the time it takes
 //! and the number of positions it evaluates. But, it needs an accurate
 //! starting value for the first move search. So, this practice move will
@@ -373,7 +373,7 @@ double Minimax_AI::centipawn_value() const
 }
 
 //! Approximate the value of 0.01 pawns for reporting scores.
-
+//
 //! \returns A numerical value to normalize the scores returned by board evaluations
 //!          so that the loss of a random pawn changes the score by about 1.0.
 void Minimax_AI::calculate_centipawn_value() const
@@ -414,7 +414,7 @@ void Minimax_AI::calculate_centipawn_value() const
 }
 
 //! Prints the expected future variation and score for the chosen move.
-
+//
 //! \param board The state of the game just prior to the move being commented on.
 std::string Minimax_AI::commentary_for_next_move(const Board& board) const
 {

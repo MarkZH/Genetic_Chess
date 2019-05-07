@@ -11,7 +11,7 @@ Game_Result::Game_Result() : victor(NONE), cause()
 }
 
 //! This constructor creates a Game_Result indicating that the game has ended.
-
+//
 //! \param winner The color of the player that has won, or NONE if a draw.
 //! \param reason Explanation of why the game ended.
 Game_Result::Game_Result(Color winner,

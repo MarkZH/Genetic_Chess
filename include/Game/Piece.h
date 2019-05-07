@@ -21,7 +21,7 @@ enum Piece_Type : unsigned
 };
 
 //! A class to represent chess pieces.
-
+//
 //! Possible moves are stored within each piece.
 class Piece
 {

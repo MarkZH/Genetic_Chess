@@ -8,7 +8,7 @@
 namespace Random
 {
     //! Random number with Laplace distribution (double-sided exponential) and mean of zero
-
+    //
     //! \param width The inverse of the rate of drop-off as one gets further from zero.
     //! \returns A random number from a zero-centered Laplace distribution.
     //!
@@ -16,32 +16,32 @@ namespace Random
     double random_laplace(double width);
 
     //! Random floating point number with inclusive range from a uniform distribution.
-
+    //
     //! \param min The minimum number to return.
     //! \param max The maximum number to return.
     //! \returns A random number in the range [min, max].
     double random_real(double min, double max);
 
     //! Random integral number with inclusive range from a uniform distribution.
-
+    //
     //! \param min The minimum number to return.
     //! \param max The maximum number to return.
     //! \returns A random number in the range [min, max].
     int random_integer(int min, int max);
 
     //! Random unsigned integer with inclusive range from a uniform distribution.
-
+    //
     //! \param max The maximum number to return.
     //! \returns A random number in the range [0, max].
     size_t random_index(size_t max);
 
     //! Random 64-bit unsigned integer.
-
+    //
     //! \returns a random 64-bit integer with uniform probability.
     uint64_t random_unsigned_int64();
 
     //! Simulate a fair coin flip.
-
+    //
     //! \returns true with probability 50%
     bool coin_flip();
 
@@ -52,7 +52,7 @@ namespace Random
     bool success_probability(double probability);
 
     //! Shuffles the order of a list.
-
+    //
     //! \param[out] list A sequential collection of items whose order will be shuffled after the call.
     template<class List>
     void shuffle(List& list)
@@ -62,7 +62,7 @@ namespace Random
     }
 
     //! Select random element from random-access container.
-
+    //
     //! \param container A collection of items that allows for access by an index.
     template<typename Container>
     typename Container::const_reference random_element(const Container& container)
