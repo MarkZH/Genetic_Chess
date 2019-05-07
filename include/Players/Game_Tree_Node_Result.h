@@ -14,7 +14,7 @@ struct Game_Tree_Node_Result
 {
     //! The score assigned to the board position.
 
-    //! Victory is scored as positive infinite, defeat as negative infinity,
+    //! Victory is scored as positive infinity, defeat as negative infinity,
     //! and a draw as 0.
     double score;
 
