@@ -11,6 +11,7 @@
 #include <future>
 #include <thread>
 #include <chrono>
+using namespace std::chrono_literals;
 #include <array>
 #include <cstdio>
 
@@ -264,12 +265,12 @@ void gene_pool(const std::string& config_file)
                 auto in_progress_games = size_t(std::count_if(results.begin(),
                                                               results.end(),
                                                               [](const auto& r)
-                                                              { return r.wait_for(std::chrono::seconds(0)) != std::future_status::ready; }));
+                                                              { return r.wait_for(0s) != std::future_status::ready; }));
 
                 if(gene_pool_population > 2*maximum_simultaneous_games &&
                    in_progress_games >= maximum_simultaneous_games)
                 {
-                    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                    std::this_thread::sleep_for(100ms);
                 }
                 else
                 {

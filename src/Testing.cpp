@@ -10,6 +10,8 @@
 #include <algorithm>
 #include <limits>
 #include <utility>
+#include <chrono>
+using namespace std::chrono_literals;
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -771,7 +773,7 @@ bool run_tests()
     clock.start();
     for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        std::this_thread::sleep_for(5ms);
         expected_time_after_reset = clock.time_left(BLACK) + time;
         clock.punch();
     }
@@ -789,7 +791,7 @@ bool run_tests()
     double expected_time = time;
     for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
-        std::this_thread::sleep_for(std::chrono::milliseconds(5));
+        std::this_thread::sleep_for(5ms);
         clock2.punch();
         if(i % 2 == 1) // only on black moves
         {

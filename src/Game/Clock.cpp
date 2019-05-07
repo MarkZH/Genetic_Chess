@@ -2,6 +2,7 @@
 
 #include <array>
 #include <chrono>
+using namespace std::chrono_literals;
 #include <cassert>
 #include <limits>
 
@@ -47,7 +48,7 @@ Game_Result Clock::punch()
     }
 
     timers[whose_turn] -= (time_this_punch - time_previous_punch);
-    if(local_clock_stoppage && timers[whose_turn] < std::chrono::seconds(0))
+    if(local_clock_stoppage && timers[whose_turn] < 0s)
     {
         stop();
         return Game_Result(opposite(whose_turn), "Time Forfeiture");
