@@ -1,3 +1,6 @@
+# Test format: Test name | Board FEN | Move list | Expected answer
+# The last two entries are optional depending on the test.
+
 # Basic rules check
 move count | start | | 20
 move count | start | e4 | 20
