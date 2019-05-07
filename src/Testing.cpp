@@ -1100,7 +1100,7 @@ namespace
         std::ifstream file2(file_name2);
         int line_count = 0;
 
-        while(true)
+        while(file1 && file2)
         {
             std::string line1, line2;
             std::getline(file1, line1);
@@ -1113,14 +1113,9 @@ namespace
                 std::cerr << line1 << " != " << line2 << "\n";
                 return false;
             }
-
-            if( ! file1 && ! file2)
-            {
-                break;
-            }
         }
 
-        return true;
+        return ! file1 && ! file2; // both reached end-of-file
     }
 
     size_t move_count(const Board& board, size_t maximum_depth)
