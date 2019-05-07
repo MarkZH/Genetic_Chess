@@ -40,3 +40,20 @@ double Math::average_moves_left(double mean_moves, double width, size_t moves_so
 
     return expected_mean - moves_so_far;
 }
+
+//! Convert a std::string to a size_t for multiple platforms.
+
+//! \param s The input string containing a number.
+//! \returns An unsigned integer of the same type as size_t.
+//! \throws std::invalid_argument if no conversion could be made.
+//! \throws std::out_of_range if the number in the string cannot fit in a size_t.
+size_t Math::string_to_size_t(const std::string& s)
+{
+    #ifdef __linux__
+    return std::stoul(s);
+    #elif defined(_WIN64)
+    return std:stoull(s);
+    #else
+    return std::stoi(s);
+    #endif
+}

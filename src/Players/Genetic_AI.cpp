@@ -11,6 +11,7 @@ class Clock;
 #include "Game/Color.h"
 
 #include "Utility/String.h"
+#include "Utility/Math.h"
 
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
@@ -298,13 +299,7 @@ void Genetic_AI::read_ancestry(std::istream& is)
 
         try
         {
-            #ifdef __linux__
-            auto pool = std::stoul(pool_fraction[0]);
-            #elif defined(_WIN64)
-            auto pool = std::stoull(pool_fraction[0]);
-            #else
-            unsigned int pool = std::stoi(pool_fraction[0]);
-            #endif
+            auto pool = Math::string_to_size_t(pool_fraction[0]);
             auto fraction = std::stod(pool_fraction[1]);
             ancestry[pool] = fraction;
             max_origin_pool_id = std::max(max_origin_pool_id, pool);

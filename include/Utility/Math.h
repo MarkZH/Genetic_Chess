@@ -4,6 +4,7 @@
 #include <limits>
 #include <algorithm>
 #include <cassert>
+#include <string>
 
 //! Provides a collection of useful math functions.
 namespace Math
@@ -58,6 +59,8 @@ namespace Math
 
         return 0;
     }
+
+    size_t string_to_size_t(const std::string& s);
 }
 
 #endif // MATH_H
