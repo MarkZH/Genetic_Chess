@@ -1156,124 +1156,124 @@ namespace
                 continue;
             }
 
-            auto test_passed = true;
             auto specification = String::split(line, "|");
+            assert(specification.size() >= 2);
+
             auto test_type = String::lowercase(String::remove_extra_whitespace(specification.at(0)));
             auto board_fen = String::remove_extra_whitespace(specification.at(1));
-
-            try
+            if(board_fen == "start")
             {
-                auto board = board_fen == "start" ? Board{} : Board(board_fen);
-                if(test_type == "invalid board")
+                board_fen = Board{}.fen_status();
+            }
+
+            if(test_type == "invalid board")
+            {
+                try
                 {
-                    std::cout << "FAILED" << std::endl;
+                    auto board = Board(board_fen);
+
+                    // Previous line should have thrown, so getting here is an error.
                     board.ascii_draw(WHITE);
-                    std::cout << "This board should not be valid.";
-                    test_passed = false;
+                    std::cout << "This board should not be valid." << std::endl;
+                    std::cout << line << " -- FAILED" << std::endl;
+                    all_tests_passed = false;
                 }
-                else
+                catch(const std::invalid_argument&)
                 {
-                    auto moves = String::split(specification.at(2));
-                    if(moves.front().empty())
-                    {
-                        moves.clear();
-                    }
+                    // Test passed
+                }
 
-                    if(test_type == "all moves legal")
-                    {
-                        if(!all_moves_legal(board, moves))
-                        {
-                            test_passed = false;
-                        }
-                    }
-                    else if(test_type == "last move illegal")
-                    {
-                        assert(moves.size() > 0);
-                        auto last_move = moves.back();
-                        moves.pop_back();
-                        if( ! (all_moves_legal(board, moves) && move_is_illegal(board, last_move)))
-                        {
-                            test_passed = false;
-                        }
-                    }
-                    else if(test_type == "pinned piece")
-                    {
-                        assert(moves.size() == 2);
-                        auto square = String::remove_extra_whitespace(String::lowercase(moves.front()));
-                        assert(moves.front().size() == 2);
-                        auto expected_result = String::remove_extra_whitespace(String::lowercase(moves.back()));
-                        assert(moves.back() == "true" || moves.back() == "false");
-                        if(board.piece_is_pinned(Square(square.front(), square.back() - '0')) != (expected_result == "true"))
-                        {
-                            std::cout << "FAILED" << std::endl;
-                            board.ascii_draw(WHITE);
-                            std::cout << "Expected result of " << square << " being pinned: " << expected_result << std::endl;
-                            test_passed = false;
-                        }
-                    }
-                    else if(test_type == "move count")
-                    {
-                        assert(specification.size() == 4);
-                        auto expected_count = std::stoi(specification.back());
+                continue;
+            }
 
-                        if( ! (all_moves_legal(board, moves) || board.legal_moves().size() != expected_count))
-                        {
-                            std::cout << "FAILED" << std::endl;
-                            board.ascii_draw(WHITE);
-                            std::cout << "Legal moves counted: " << board.legal_moves().size() << "; Expected: " << expected_count << std::endl;
-                            test_passed = false;
-                        }
-                    }
-                    else if(test_type == "checkmate material")
-                    {
-                        assert(moves.front() == "true" || moves.front() == "false");
-                        auto expected_result = (moves.front() == "true");
-                        if(board.enough_material_to_checkmate() != expected_result)
-                        {
-                            std::cout << "FAILED" << std::endl;
-                            board.ascii_draw(WHITE);
-                            std::cout << "This board does" << (expected_result ? "" : "not") << " have enough material to checkmate." << std::endl;
-                            test_passed = false;
-                        }
-                    }
-                    else if(test_type == "king in check")
-                    {
-                        assert(specification.size() == 4);
-                        auto expected_answer = String::lowercase(String::remove_extra_whitespace(specification.back()));
-                        assert(expected_answer == "true" || expected_answer == "false");
-                        auto expected_result = expected_answer == "true";
-                        if( ! all_moves_legal(board, moves) || board.king_is_in_check() != expected_result)
-                        {
-                            std::cout << "FAILED" << std::endl;
-                            board.ascii_draw(WHITE);
-                            std::cout << "King is "
-                                      << (expected_result ? "not " : "")
-                                      << "in check when it should "
-                                      << (expected_result ? "" : "not ")
-                                      << "be in check." << std::endl;
-                        }
-                    }
-                    else
-                    {
-                        std::cout << "Bad test: " << test_type << std::endl;
-                        return false;
-                    }
+            assert(specification.size() >= 3);
+            auto test_passed = true;
+            auto board = Board{board_fen};
+            auto moves = String::split(specification.at(2));
+
+            if(test_type == "all moves legal")
+            {
+                if( ! all_moves_legal(board, moves))
+                {
+                    test_passed = false;
                 }
             }
-            catch(std::invalid_argument&)
+            else if(test_type == "last move illegal")
             {
-                if(test_type != "invalid board")
+                assert(moves.size() > 0);
+                auto last_move = moves.back();
+                moves.pop_back();
+                if( ! (all_moves_legal(board, moves) && move_is_illegal(board, last_move)))
                 {
-                    std::cout << "This should be a valid board." << std::endl;
                     test_passed = false;
                 }
+            }
+            else if(test_type == "pinned piece")
+            {
+                assert(moves.size() == 2);
+                assert(moves.front().size() == 2);
+
+                auto square = String::remove_extra_whitespace(String::lowercase(moves.front()));
+                auto expected_result = String::remove_extra_whitespace(String::lowercase(moves.back()));
+
+                assert(expected_result == "true" || expected_result == "false");
+                if(board.piece_is_pinned(Square(square.front(), square.back() - '0')) != (expected_result == "true"))
+                {
+                    board.ascii_draw(WHITE);
+                    std::cout << "Expected result of " << square << " being pinned: " << expected_result << std::endl;
+                    test_passed = false;
+                }
+            }
+            else if(test_type == "move count")
+            {
+                assert(specification.size() == 4);
+                auto expected_count = std::stoi(specification.back());
+
+                if( ! all_moves_legal(board, moves) || board.legal_moves().size() != expected_count)
+                {
+                    board.ascii_draw(WHITE);
+                    std::cout << "Legal moves counted: " << board.legal_moves().size() << "; Expected: " << expected_count << std::endl;
+                    test_passed = false;
+                }
+            }
+            else if(test_type == "checkmate material")
+            {
+                assert(moves.front() == "true" || moves.front() == "false");
+                auto expected_result = (moves.front() == "true");
+                if(board.enough_material_to_checkmate() != expected_result)
+                {
+                    board.ascii_draw(WHITE);
+                    std::cout << "This board does" << (expected_result ? "" : "not") << " have enough material to checkmate." << std::endl;
+                    test_passed = false;
+                }
+            }
+            else if(test_type == "king in check")
+            {
+                assert(specification.size() == 4);
+                auto expected_answer = String::lowercase(String::remove_extra_whitespace(specification.back()));
+                assert(expected_answer == "true" || expected_answer == "false");
+                auto expected_result = expected_answer == "true";
+                if( ! all_moves_legal(board, moves) || board.king_is_in_check() != expected_result)
+                {
+                    board.ascii_draw(WHITE);
+                    std::cout << "King is "
+                                << (expected_result ? "not " : "")
+                                << "in check when it should "
+                                << (expected_result ? "" : "not ")
+                                << "be in check." << std::endl;
+                }
+            }
+            else
+            {
+                std::cout << "Bad test: " << test_type << std::endl;
+                test_passed = false;
             }
 
             if( ! test_passed)
             {
-                std::cout << line << std::endl;
+                std::cout << line << " -- FAILED" << std::endl;
+                all_tests_passed = false;
             }
-            all_tests_passed = all_tests_passed && test_passed;
         }
 
         return all_tests_passed;
@@ -1286,6 +1286,11 @@ namespace
             auto game_has_ended = false;
             for(const auto& move : moves)
             {
+                if(move.empty())
+                {
+                    continue;
+                }
+
                 if(game_has_ended)
                 {
                     throw Illegal_Move("");
@@ -1298,14 +1303,14 @@ namespace
         }
         catch(const Illegal_Move&)
         {
-            std::cout << "FAILED" << std::endl;
             board.ascii_draw(WHITE);
             board.print_game_record({}, {}, {}, {}, {});
-            std::cerr << "All of these moves should have been legal:";
+            std::cout << "All of these moves should have been legal:";
             for(const auto& move : moves)
             {
                 std::cout << " " << move;
             }
+            std::cout << std::endl;
             return false;
         }
     }
@@ -1315,13 +1320,15 @@ namespace
         try
         {
             board.create_move(move);
-            std::cout << "FAILED" << std::endl;
+
+            // The previous line should have thrown an Illegal_Move exception.
             board.ascii_draw(WHITE);
-            std::cerr << "This move should have been illegal: " << move;
+            std::cout << "This move should have been illegal: " << move << std::endl;
             return false;
         }
         catch(const Illegal_Move&)
         {
+            // Illegal move detected. Success!
             return true;
         }
     }
