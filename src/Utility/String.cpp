@@ -22,6 +22,11 @@ std::vector<std::string> String::split(std::string s, std::string delim, size_t 
         delim = " ";
     }
 
+    if(s.empty())
+    {
+        return {};
+    }
+
     std::vector<std::string> result;
     size_t start_index = 0;
     size_t end_index = 0;
