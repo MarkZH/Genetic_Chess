@@ -132,20 +132,12 @@ int main(int argc, char *argv[])
             }
             else if(std::string(argv[1]) == "-progress")
             {
-                if(argc < 3)
+                if(argc < 4)
                 {
-                    throw std::invalid_argument("Specify a file name for input.");
+                    throw std::invalid_argument("Specify a file name for input and a file name for output.");
                 }
 
-                auto input_file_name = std::string(argv[2]);
-
-                std::string output_file_name;
-                if(argc >= 4)
-                {
-                    output_file_name = argv[3];
-                }
-
-                game_progress_move_count(input_file_name, output_file_name);
+                game_progress_move_count(argv[2], argv[3]);
             }
             else
             {
@@ -309,7 +301,7 @@ void print_help()
               << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time.\n\n"
               << "\t-confirm [filename]\n"
               << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates.\n\n"
-              << "\t-progress\n"
+              << "\t-progress [input pgn file name] [output file name]\n"
               << "\t\tParse a file with PGN-style game records and record the number\n\t\tof legal moves as the game progresses.\n\n"
               << "\t-test\n"
               << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly.\n\n"
@@ -696,16 +688,19 @@ bool confirm_game_record(const std::string& file_name, bool verbose)
 void game_progress_move_count(const std::string& input_file_name, const std::string& output_file_name)
 {
     auto input = std::ifstream(input_file_name);
-    auto output_file = std::ofstream(output_file_name);
-    std::ostream& output = output_file ? output_file : std::cout;
+    auto output = std::ofstream(output_file_name);
 
     std::string line;
     std::vector<std::string> game_moves;
     auto game_count = 0;
-    while(std::getline(input, line))
+    while(std::getline(input, line) || ! game_moves.empty())
     {
-        // Headers at start of new game
-        if(String::starts_with(line, "["))
+        line = String::strip_block_comment(line, "[", "]");
+        line = String::strip_block_comment(line, "{", "}");
+        line = String::strip_comments(line, ";");
+
+        // Blank lines only occur between games
+        if(line.empty())
         {
             if(game_moves.empty())
             {
@@ -728,14 +723,6 @@ void game_progress_move_count(const std::string& input_file_name, const std::str
             game_moves.clear();
             continue;
         }
-
-        if(line.empty() || ! std::isdigit(line.front()))
-        {
-            continue;
-        }
-
-        line = String::strip_block_comment(line, "{", "}");
-        line = String::strip_comments(line, ";");
 
         for(const auto& move_record : String::split(line))
         {
