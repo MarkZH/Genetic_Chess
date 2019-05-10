@@ -154,3 +154,14 @@ std::string String::format_integer(size_t n, const std::string& separator)
 
     return result;
 }
+
+size_t String::string_to_size_t(const std::string& s)
+{
+    #ifdef __linux__
+    return std::stoul(s);
+    #elif defined(_WIN64)
+    return std::stoull(s);
+    #else
+    return std::stoi(s);
+    #endif
+}

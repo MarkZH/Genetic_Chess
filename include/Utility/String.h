@@ -91,6 +91,14 @@ namespace String
     //! \param separator The separator between groups of thousands.
     //! \returns A text string with thousands separators.
     std::string format_integer(size_t n, const std::string& separator);
+
+    //! Convert a std::string to a size_t for multiple platforms.
+    //
+    //! \param s The input string containing a number.
+    //! \returns An unsigned integer of the same type as size_t.
+    //! \throws std::invalid_argument if no conversion could be made.
+    //! \throws std::out_of_range if the number in the string cannot fit in a size_t.
+    size_t string_to_size_t(const std::string& s);
 }
 
 #endif // STRING_H

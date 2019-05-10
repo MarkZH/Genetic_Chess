@@ -260,11 +260,7 @@ Board::Board(const std::string& fen) :
 
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
-    #ifdef __linux__
-    auto fifty_move_count_input = std::stoul(fen_parse.at(4));
-    #else
-    auto fifty_move_count_input = std::stoull(fen_parse.at(4));
-    #endif
+    auto fifty_move_count_input = String::string_to_size_t(fen_parse.at(4));
     if(fifty_move_count_input > 100)
     {
         fen_error("Halfmove clock value too large.");
@@ -275,7 +271,7 @@ Board::Board(const std::string& fen) :
         add_to_repeat_count(Random::random_unsigned_int64());
     }
 
-    move_count_start_offset = std::stoul(fen_parse.at(5));
+    move_count_start_offset = String::string_to_size_t(fen_parse.at(5));
 
     if(fen_status() != starting_fen)
     {

@@ -59,8 +59,6 @@ namespace Math
 
         return 0;
     }
-
-    size_t string_to_size_t(const std::string& s);
 }
 
 #endif // MATH_H
