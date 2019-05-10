@@ -103,6 +103,7 @@ linker_options = dict()
 system = sys.argv[1]
 base_options = [
         "-std=c++17",
+        "-fno-rtti",
         "-Wshadow",
         "-Wcast-align",
         "-Wundef",
