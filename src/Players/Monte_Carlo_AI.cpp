@@ -23,7 +23,17 @@
 //! \param clock The game clock.
 const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) const
 {
-    auto time_start = clock.running_time_left();
+    // Prune game tree according to opponent's last move
+    auto first_prune_index = board.game_record().size() - 2;
+    if(first_prune_index >= board.game_record().size())
+    {
+        first_prune_index = 0;
+    }
+    for(auto i = first_prune_index; i < board.game_record().size(); ++i)
+    {
+        search_tree.reroot(board.game_record().at(i));
+    }
+
     auto moves_left_in_game = size_t(Math::average_moves_left(50, 0.5, board.game_record().size()/2));
     auto moves_to_reset = clock.moves_to_reset(clock.running_for());
     auto moves_left = std::min(moves_left_in_game, moves_to_reset);
@@ -34,15 +44,11 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
 
     auto time_at_last_cecp_output = clock.running_time_left();
 
-    // Prune game tree according to opponent's last move
-    if( ! board.game_record().empty())
-    {
-        search_tree.reroot(board.game_record().back());
-    }
-
     auto search_time_start = clock.running_time_left();
     const Monte_Carlo_Search_Tree* current_search_tree = &search_tree;
-    while(time_start - clock.running_time_left() < time_to_examine)
+    auto time_start = clock.running_time_left();
+    while(clock.running_time_left() > 0.001 &&
+          time_start - clock.running_time_left() < time_to_examine)
     {
         auto monte_carlo_board = board;
         Game_Result game_result;
@@ -93,7 +99,6 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     {
         best_result.first = choose_random_move(board);
     }
-    search_tree.reroot(best_result.first);
 
     auto current_time = clock.running_time_left();
     if(board.thinking_mode() == CECP)
