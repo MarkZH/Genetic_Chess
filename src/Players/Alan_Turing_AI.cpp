@@ -237,7 +237,7 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
 
                     if(move->is_castling())
                     {
-                        castling_moves += 1.0;
+                        castling_moves = 1.0;
                     }
                     else
                     {
@@ -248,69 +248,56 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
 
                 // King vulnerability (count number of queen moves from king square and subtract)
                 double king_squares = 0.0;
-                for(int file_step = -1; file_step <= 1; ++file_step)
+                const Move* blocked_attack = nullptr;
+                for(auto attack : Piece{perspective, QUEEN}.attacking_moves(square))
                 {
-                    for(int rank_step = -1; rank_step <= 1; ++rank_step)
+                    if(blocked_attack && same_direction(attack->movement(), blocked_attack->movement()))
                     {
-                        if(file_step == 0 && rank_step == 0)
+                        continue;
+                    }
+                    else
+                    {
+                        blocked_attack = nullptr;
+                    }
+
+                    auto other_piece = board.piece_on_square(attack->end());
+                    if( ! other_piece)
+                    {
+                        king_squares += 1.0;
+                    }
+                    else
+                    {
+                        if(other_piece.color() != perspective)
                         {
-                            continue;
+                            king_squares += 1.0;
                         }
 
-                        auto step = Square_Difference{file_step, rank_step};
-                        for(auto attack = square + step; attack.inside_board(); attack += step)
-                        {
-                            auto other_piece = board.piece_on_square(attack);
-                            if( ! other_piece)
-                            {
-                                king_squares += 1.0;
-                            }
-                            else
-                            {
-                                if(other_piece.color() != perspective)
-                                {
-                                    king_squares += 1.0;
-                                }
-
-                                break;
-                            }
-                        }
+                        blocked_attack = attack;
                     }
                 }
                 total_score -= std::sqrt(king_squares);
 
                 // Castling score
+                auto castling_possible_score = 0.0;
                 if( ! board.piece_has_moved(square))
                 {
                     // Queenside castling
-                    auto queenside_rook = Square{'a', square.rank()};
-                    if( ! board.piece_has_moved(queenside_rook))
+                    for(auto rook_file : {'a', 'h'})
                     {
-                        total_score += 1.0;
-
-                        // Can castle on next move
-                        if(board.all_empty_between(queenside_rook, square))
+                        auto rook_square = Square{rook_file, square.rank()};
+                        if( ! board.piece_has_moved(rook_square))
                         {
-                            total_score += 1.0;
-                        }
-                    }
-
-                    // Kingside castling
-                    auto kingside_rook = Square{'h', square.rank()};
-                    if( ! board.piece_has_moved(kingside_rook))
-                    {
-                        total_score += 1.0;
-
-                        // Can castle on next move
-                        if(board.all_empty_between(kingside_rook, square))
-                        {
-                            total_score += 1.0;
+                            castling_possible_score = 1.0;
+                            break;
                         }
                     }
                 }
+                total_score += castling_possible_score;
 
                 // Last move was castling
-                if(board.castling_move_index(perspective) < board.game_record().size())
+                auto castling_index_check = board.game_record().size() - (perspective == board.whose_turn() ? 2 : 1);
+                if(board.game_record().size() > castling_index_check &&
+                   board.castling_move_index(perspective) == castling_index_check)
                 {
                     total_score += 1.0;
                 }
