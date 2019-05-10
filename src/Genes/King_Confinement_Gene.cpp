@@ -12,7 +12,6 @@
 #include "Game/Piece.h"
 
 #include "Utility/Random.h"
-#include "Utility/Math.h"
 
 King_Confinement_Gene::King_Confinement_Gene() :
     Gene(true),
