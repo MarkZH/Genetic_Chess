@@ -4,7 +4,7 @@
 #include "Players/Player.h"
 
 #include <vector>
-#include <utility>
+#include <tuple>
 
 #include "Game/Color.h"
 
@@ -39,15 +39,17 @@ class Alan_Turing_AI : public Player
 
         double position_play_value(const Board& board, Color perspective) const;
 
-        std::pair<double, double> score_board(const Board& board,
-                                              Color perspective,
-                                              const Game_Result& move_result) const;
+        std::tuple<double, double, int> score_board(const Board& board,
+                                                    Color perspective,
+                                                    const Game_Result& move_result,
+                                                    int depth) const;
 
         // Returns a pair of values consiting of the material value and the position value
         // of a board in that order.
-        std::pair<double, double> position_value(const Board& board,
-                                                 Color perspective,
-                                                 const Game_Result& move_result) const;
+        std::tuple<double, double, int> position_value(const Board& board,
+                                                       Color perspective,
+                                                       const Game_Result& move_result,
+                                                       int depth) const;
 };
 
 #endif // ALAN_TURING_AI_H

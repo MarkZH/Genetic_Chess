@@ -3,7 +3,7 @@
 #include <vector>
 #include <cmath>
 #include <bitset>
-#include <utility>
+#include <tuple>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
@@ -19,38 +19,41 @@
 const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
 {
     // Every possible first move is considerable
-    std::pair<double, double> best_first_move_score = {-1001.0, -1001.0}; // maximize
+    const auto worst_score_start = std::make_tuple(1001.0, 1001.0, 0);
+    const auto best_score_start  = std::make_tuple(-1001.0, -1001.0, 0);
+
+    auto best_first_move_score = best_score_start; // maximize
     auto best_first_move = board.legal_moves().front();
     for(auto first_move : board.legal_moves())
     {
         auto first_board = board;
         auto first_move_result = first_board.submit_move(*first_move);
-        std::pair<double, double> first_move_score;
+        std::tuple<double, double, int> first_move_score;
         if(first_move_result.game_has_ended())
         {
-            first_move_score = position_value(first_board, board.whose_turn(), first_move_result);
+            first_move_score = position_value(first_board, board.whose_turn(), first_move_result, 1);
         }
         else
         {
             // Every possible reply is considerable
-            std::pair<double, double> worst_second_move_score = {1001.0, 1001.0}; // minimize
+            auto worst_second_move_score = worst_score_start; // minimize
             for(auto second_move : first_board.legal_moves())
             {
                 auto second_board = first_board;
-                std::pair<double, double> second_move_score;
+                std::tuple<double, double, int> second_move_score;
                 auto second_move_result = second_board.submit_move(*second_move);
                 if(second_move_result.game_has_ended())
                 {
-                    second_move_score = position_value(second_board, board.whose_turn(), second_move_result);
+                    second_move_score = position_value(second_board, board.whose_turn(), second_move_result, 2);
                 }
                 else
                 {
-                    std::pair<double, double> best_third_move_score = {-1001.0, -1001.0}; // maximize
+                    auto best_third_move_score = best_score_start; // maximize
                     for(auto third_move : second_board.legal_moves())
                     {
                         auto third_board = second_board;
                         auto third_move_result = third_board.submit_move(*third_move);
-                        auto third_move_score = position_value(third_board, board.whose_turn(), third_move_result);
+                        auto third_move_score = position_value(third_board, board.whose_turn(), third_move_result, 3);
                         best_third_move_score = std::max(best_third_move_score, third_move_score);
                     }
 
@@ -366,9 +369,12 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
     return total_score;
 }
 
-std::pair<double, double> Alan_Turing_AI::position_value(const Board& board, Color perspective, const Game_Result& move_result) const
+std::tuple<double, double, int> Alan_Turing_AI::position_value(const Board& board,
+                                                               Color perspective,
+                                                               const Game_Result& move_result,
+                                                               int depth) const
 {
-    auto best_score = score_board(board, perspective, move_result);
+    auto best_score = score_board(board, perspective, move_result, depth);
     if(move_result.game_has_ended())
     {
         return best_score;
@@ -383,30 +389,39 @@ std::pair<double, double> Alan_Turing_AI::position_value(const Board& board, Col
         {
             auto temp_board = board;
             auto result = temp_board.submit_move(*move);
-            best_score = std::max(best_score, score_board(temp_board, perspective, result));
+            best_score = std::max(best_score, score_board(temp_board, perspective, result, depth + 1));
         }
     }
 
     return best_score;
 }
 
-std::pair<double, double> Alan_Turing_AI::score_board(const Board& board, Color perspective, const Game_Result& move_result) const
+std::tuple<double, double, int> Alan_Turing_AI::score_board(const Board& board,
+                                                            Color perspective,
+                                                            const Game_Result& move_result,
+                                                            int depth) const
 {
     if(move_result.game_has_ended())
     {
         if(move_result.winner() == perspective)
         {
-            return {1000.0, 1000.0};
+            // An earlier win is preferable to a later win,
+            // so use the negative value of the depth.
+            return {1000.0, 1000.0, -depth};
         }
         else if(move_result.winner() == opposite(perspective))
         {
-            return {-1000.0, -1000.0};
+            // A later loss is preferable to an earlier loss,
+            // so use the positive value of the depth.
+            return {-1000.0, -1000.0, depth};
         }
         else
         {
-            return {0.0, 0.0};
+            // Draw depth does not matter.
+            return {0.0, 0.0, 0};
         }
     }
 
-    return std::make_pair(material_value(board, perspective), position_play_value(board, perspective));
+    // Depth does not matter for other moves.
+    return {material_value(board, perspective), position_play_value(board, perspective), 0};
 }
