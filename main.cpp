@@ -24,33 +24,36 @@
 
 //! \file
 
-//! Print the command-line options for this program.
-void print_help();
+namespace
+{
+    //! Print the command-line options for this program.
+    void print_help();
 
-//! Step through a game record, displaying each move as ASCII art on the terminal.
-//
-//! \param file_name The name of the file with the PGN game record.
-//! \param game_number The ID number of the game (as indicated by the Round header) to replay.
-//!        If game_number is -1, replay the first game in the file.
-void replay_game(const std::string& file_name, int game_number);
+    //! Step through a game record, displaying each move as ASCII art on the terminal.
+    //
+    //! \param file_name The name of the file with the PGN game record.
+    //! \param game_number The ID number of the game (as indicated by the Round header) to replay.
+    //!        If game_number is -1, replay the first game in the file.
+    void replay_game(const std::string& file_name, int game_number);
 
-//! Confirm that all moves in a PGN game record are legal moves.
-//
-//! \param file_name The name of the file with the PGN game records. All games will be examined.
-//! \param verbose If true, print extra information before and after each move (draw the board state and list legal moves).
-bool confirm_game_record(const std::string& file_name, bool verbose);
+    //! Confirm that all moves in a PGN game record are legal moves.
+    //
+    //! \param file_name The name of the file with the PGN game records. All games will be examined.
+    //! \param verbose If true, print extra information before and after each move (draw the board state and list legal moves).
+    bool confirm_game_record(const std::string& file_name, bool verbose);
 
-//! An experimental feature that tries to correlate the number of legal moves with progress through the game.
-//
-//! \param game_record_file_name A file with a set of PGN game records.
-//! \param results_file_name Where the results of the correlation will be written.
-void game_progress_move_count(const std::string& game_record_file_name, const std::string& results_file_name);
+    //! An experimental feature that tries to correlate the number of legal moves with progress through the game.
+    //
+    //! \param game_record_file_name A file with a set of PGN game records.
+    //! \param results_file_name Where the results of the correlation will be written.
+    void game_progress_move_count(const std::string& game_record_file_name, const std::string& results_file_name);
 
-//! Find the last ID of a Genetic_AI in a gene pool file.
-//
-//! \param file_name The name of the file with Genetic_AI data.
-//! \returns The numerical ID of the last AI in the file.
-int find_last_id(const std::string& file_name);
+    //! Find the last ID of a Genetic_AI in a gene pool file.
+    //
+    //! \param file_name The name of the file with Genetic_AI data.
+    //! \returns The numerical ID of the last AI in the file.
+    int find_last_id(const std::string& file_name);
+}
 
 //! The starting point for the whole program.
 //
@@ -291,445 +294,448 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-void print_help()
+namespace
 {
-    std::cout << "\n\nGenetic Chess\n"
-              << "=============\n\n"
-              << "Standalone functions (only first is run if multiple are specified):\n\n"
-              << "\t-genepool [file name]\n"
-              << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
-              << "\t-replay [filename] [game number]\n"
-              << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time.\n\n"
-              << "\t-confirm [filename]\n"
-              << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates.\n\n"
-              << "\t-progress [input pgn file name] [output file name]\n"
-              << "\t\tParse a file with PGN-style game records and record the number\n\t\tof legal moves as the game progresses.\n\n"
-              << "\t-test\n"
-              << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly.\n\n"
-              << "\t-speed\n"
-              << "\t\tRun a speed test for gene scoring and boad move submission.\n\n"
-              << "\t-perft\n"
-              << "\t\tRun a legal move generation test.\n\n"
-              << "\t-random_test\n"
-              << "\t\tGenerate a sample of random numbers for a quick check of quality.\n\n"
-              << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying.\n\n"
-              << "\t-human\n"
-              << "\t\tSelect a human player for a game.\n\n"
-              << "\t-genetic [filename [number]]\n"
-              << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file.\n\n"
-              << "\t-random\n"
-              << "\t\tSelect a player that makes random moves for a game.\n\n"
-              << "\t-montecarlo\n"
-              << "\t\tSelect a player that evaluates moves by playing random\n\t\tcomplete games.\n\n"
-              << "\t-turing\n"
-              << "\t\tSelect a player based on Alan Turing's Turbocomp chess AI.\n\n"
-              << "Other game options:\n\n"
-              << "\t-time [number]\n"
-              << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option).\n\n"
-              << "\t-reset_moves [number]\n"
-              << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock adds the initial time every time this\n\t\tnumber of moves is made.\n\n"
-              << "\t-increment_time [number]\n"
-              << "\t\tSpecify seconds to add to time after each move.\n\n"
-              << "\t-board [FEN string]\n"
-              << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
-              << "\t-game_file [file name]\n"
-              << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n";
-}
-
-int find_last_id(const std::string& players_file_name)
-{
-    std::ifstream player_input(players_file_name);
-    std::string line;
-    int last_player = -1;
-    while(std::getline(player_input, line))
+    void print_help()
     {
-        if(String::starts_with(line, "ID:"))
-        {
-            last_player = std::stoi(String::split(line).back());
-        }
+        std::cout << "\n\nGenetic Chess\n"
+                << "=============\n\n"
+                << "Standalone functions (only first is run if multiple are specified):\n\n"
+                << "\t-genepool [file name]\n"
+                << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
+                << "\t-replay [filename] [game number]\n"
+                << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time.\n\n"
+                << "\t-confirm [filename]\n"
+                << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates.\n\n"
+                << "\t-progress [input pgn file name] [output file name]\n"
+                << "\t\tParse a file with PGN-style game records and record the number\n\t\tof legal moves as the game progresses.\n\n"
+                << "\t-test\n"
+                << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly.\n\n"
+                << "\t-speed\n"
+                << "\t\tRun a speed test for gene scoring and boad move submission.\n\n"
+                << "\t-perft\n"
+                << "\t\tRun a legal move generation test.\n\n"
+                << "\t-random_test\n"
+                << "\t\tGenerate a sample of random numbers for a quick check of quality.\n\n"
+                << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying.\n\n"
+                << "\t-human\n"
+                << "\t\tSelect a human player for a game.\n\n"
+                << "\t-genetic [filename [number]]\n"
+                << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file.\n\n"
+                << "\t-random\n"
+                << "\t\tSelect a player that makes random moves for a game.\n\n"
+                << "\t-montecarlo\n"
+                << "\t\tSelect a player that evaluates moves by playing random\n\t\tcomplete games.\n\n"
+                << "\t-turing\n"
+                << "\t\tSelect a player based on Alan Turing's Turbocomp chess AI.\n\n"
+                << "Other game options:\n\n"
+                << "\t-time [number]\n"
+                << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option).\n\n"
+                << "\t-reset_moves [number]\n"
+                << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock adds the initial time every time this\n\t\tnumber of moves is made.\n\n"
+                << "\t-increment_time [number]\n"
+                << "\t\tSpecify seconds to add to time after each move.\n\n"
+                << "\t-board [FEN string]\n"
+                << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
+                << "\t-game_file [file name]\n"
+                << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n";
     }
 
-    return last_player;
-}
-
-void replay_game(const std::string& file_name, int game_number)
-{
-    std::ifstream ifs(file_name);
-    std::vector<std::string> game_headers;
-    std::string line;
-    if(game_number >= 0)
+    int find_last_id(const std::string& players_file_name)
     {
-        // fast forward to indicated game
-        while(std::getline(ifs, line))
+        std::ifstream player_input(players_file_name);
+        std::string line;
+        int last_player = -1;
+        while(std::getline(player_input, line))
         {
-            line = String::trim_outer_whitespace(line);
-            if(String::starts_with(line, "["))
+            if(String::starts_with(line, "ID:"))
             {
-                game_headers.push_back(line);
+                last_player = std::stoi(String::split(line).back());
             }
-            else
+        }
+
+        return last_player;
+    }
+
+    void replay_game(const std::string& file_name, int game_number)
+    {
+        std::ifstream ifs(file_name);
+        std::vector<std::string> game_headers;
+        std::string line;
+        if(game_number >= 0)
+        {
+            // fast forward to indicated game
+            while(std::getline(ifs, line))
             {
-                game_headers.clear();
+                line = String::trim_outer_whitespace(line);
+                if(String::starts_with(line, "["))
+                {
+                    game_headers.push_back(line);
+                }
+                else
+                {
+                    game_headers.clear();
+                }
+
+                if(String::starts_with(line, "[Round"))
+                {
+                    auto number = std::stoi(String::split(line, "\"")[1]);
+                    if(number == game_number)
+                    {
+                        break;
+                    }
+                }
             }
 
-            if(String::starts_with(line, "[Round"))
+            if( ! ifs)
             {
-                auto number = std::stoi(String::split(line, "\"")[1]);
-                if(number == game_number)
+                std::cout << "No game with ID number " << game_number << " found." << std::endl;
+            }
+
+            for(const auto& header : game_headers)
+            {
+                std::cout << header << std::endl;
+            }
+        }
+
+        Board board;
+        Game_Result result;
+        bool game_started = false;
+        while( ! result.game_has_ended() && std::getline(ifs, line))
+        {
+            line = String::strip_block_comment(line, "{", "}");
+            line = String::strip_comments(line, ";");
+            if(line.empty())
+            {
+                if(game_started)
                 {
                     break;
                 }
-            }
-        }
-
-        if( ! ifs)
-        {
-            std::cout << "No game with ID number " << game_number << " found." << std::endl;
-        }
-
-        for(const auto& header : game_headers)
-        {
-            std::cout << header << std::endl;
-        }
-    }
-
-    Board board;
-    Game_Result result;
-    bool game_started = false;
-    while( ! result.game_has_ended() && std::getline(ifs, line))
-    {
-        line = String::strip_block_comment(line, "{", "}");
-        line = String::strip_comments(line, ";");
-        if(line.empty())
-        {
-            if(game_started)
-            {
-                break;
-            }
-            else
-            {
-                continue;
-            }
-        }
-        if(line[0] == '[') // header lines
-        {
-            std::cout << line << std::endl;
-            continue;
-        }
-
-        for(const auto& s : String::split(line))
-        {
-            try
-            {
-                result = board.submit_move(board.create_move(s));
-
-                board.ascii_draw(WHITE);
-                game_started = true;
-                std::cout << "Last move: ";
-                std::cout << (board.game_record().size() + 1)/2 << ". ";
-                std::cout << (board.whose_turn() == WHITE ? "... " : "");
-                std::cout << board.game_record().back()->coordinate_move() << std::endl;
-                if(result.game_has_ended())
-                {
-                    std::cout << result.ending_reason() << std::endl;
-                    break;
-                }
-
-                std::cout << "Enter \"y\" to play game from here: " << std::endl;
-                auto response = std::cin.get();
-                if(std::tolower(response) == 'y')
-                {
-                    play_game_with_board(Human_Player(),
-                                         Human_Player(),
-                                         0,
-                                         0,
-                                         0,
-                                         file_name + "_continued.pgn",
-                                         board);
-                     break;
-                }
-            }
-            catch(const Illegal_Move&)
-            {
-                std::cout << "Ignoring: " << s << std::endl;
-                continue;
-            }
-        }
-    }
-}
-
-bool confirm_game_record(const std::string& file_name, bool verbose)
-{
-    auto input = std::ifstream(file_name);
-    std::string line;
-    auto line_number = 0;
-    auto last_move_line_number = 0;
-
-    auto expected_winner = NONE;
-    auto expect_checkmate = true;
-    auto expect_fifty_move_draw = false;
-    auto expect_threefold_draw = false;
-    auto in_game = false;
-    Board board;
-    Game_Result result;
-
-    while(std::getline(input, line))
-    {
-        ++line_number;
-        line = String::strip_block_comment(line, "{", "}");
-        line = String::strip_comments(line, ";");
-        line = String::remove_extra_whitespace(line);
-        if(line.empty())
-        {
-            continue;
-        }
-
-        // Start header of new game
-        if(in_game && String::starts_with(line, "["))
-        {
-            if(expect_fifty_move_draw != String::contains(result.ending_reason(), "50"))
-            {
-                std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
-                return false;
-            }
-            if(expect_threefold_draw != String::contains(result.ending_reason(), "fold"))
-            {
-                std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
-                return false;
-            }
-
-            expected_winner = NONE;
-            expect_checkmate = true;
-            expect_fifty_move_draw = false;
-            expect_threefold_draw = false;
-            in_game = false;
-            board = Board();
-            result = {};
-        }
-
-        if(String::starts_with(line, "[Result"))
-        {
-            if(String::contains(line, "1-0"))
-            {
-                expected_winner = WHITE;
-            }
-            else if(String::contains(line, "0-1"))
-            {
-                expected_winner = BLACK;
-            }
-            else if(String::contains(line, "1/2-1/2"))
-            {
-                expected_winner = NONE;
-                expect_checkmate = false;
-            }
-            else
-            {
-                std::cerr << "Malformed Result: " << line << " (line: " << line_number << ")" << std::endl;
-                return false;
-            }
-        }
-        else if(String::starts_with(line, "[Termination"))
-        {
-            expect_checkmate = false;
-            if(String::contains(line, "fold"))
-            {
-                expect_threefold_draw = true;
-            }
-            else if(String::contains(line, "50"))
-            {
-                expect_fifty_move_draw = true;
-            }
-        }
-        else if(String::starts_with(line, "[FEN"))
-        {
-            board = Board(String::split(line, "\"").at(1));
-        }
-        else if(String::starts_with(line, "["))
-        {
-            continue;
-        }
-        else // Line contains game moves
-        {
-            in_game = true;
-            std::string move_number;
-            for(const auto& move : String::split(line))
-            {
-                if(move.back() == '.')
-                {
-                    move_number = move + ' ';
-                    continue;
-                }
-
-                if(board.whose_turn() == BLACK)
-                {
-                    move_number += "... ";
-                }
-
-                if((move == "1/2-1/2" && expected_winner != NONE) ||
-                   (move == "1-0" && expected_winner != WHITE) ||
-                   (move == "0-1" && expected_winner != BLACK))
-                {
-                    std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")" << std::endl;
-                    return false;
-                }
-
-                if(move == "1/2-1/2" || move == "1-0" || move == "0-1")
+                else
                 {
                     continue;
                 }
+            }
+            if(line[0] == '[') // header lines
+            {
+                std::cout << line << std::endl;
+                continue;
+            }
 
+            for(const auto& s : String::split(line))
+            {
                 try
                 {
-                    auto move_checkmates = move.back() == '#';
-                    auto move_checks = move_checkmates || move.back() == '+';
-                    auto& move_to_submit = board.create_move(move);
-                    last_move_line_number = line_number;
-                    if(String::contains(move, 'x')) // check that move captures
+                    result = board.submit_move(board.create_move(s));
+
+                    board.ascii_draw(WHITE);
+                    game_started = true;
+                    std::cout << "Last move: ";
+                    std::cout << (board.game_record().size() + 1)/2 << ". ";
+                    std::cout << (board.whose_turn() == WHITE ? "... " : "");
+                    std::cout << board.game_record().back()->coordinate_move() << std::endl;
+                    if(result.game_has_ended())
                     {
-                        const Board& temp = board; // to prevent use of non-const private overload
-                        if( ! temp.piece_on_square(move_to_submit.end()) && ! move_to_submit.is_en_passant())
-                        {
-                            std::cerr << "Move: " << move_number << move << " indicates capture but does not capture. (line: " << line_number << ")" << std::endl;
-                            return false;
-                        }
+                        std::cout << result.ending_reason() << std::endl;
+                        break;
                     }
 
-                    if(verbose)
+                    std::cout << "Enter \"y\" to play game from here: " << std::endl;
+                    auto response = std::cin.get();
+                    if(std::tolower(response) == 'y')
                     {
-                        std::cout << "Before " << move_number << move << "\n";
-                        board.ascii_draw(WHITE);
-                        std::cerr << "Legal moves:\n";
-                        for(auto legal_move : board.legal_moves())
-                        {
-                            std::cerr << legal_move->coordinate_move() << ", ";
-                        }
-                        std::cerr << std::endl << std::endl;
-                    }
-
-                    result = board.submit_move(move_to_submit);
-
-                    if(verbose)
-                    {
-                        std::cout << "After " << move_number << move << "\n";
-                        board.ascii_draw(WHITE);
-                        std::cerr << "Legal moves:\n";
-                        for(auto legal_move : board.legal_moves())
-                        {
-                            std::cerr << legal_move->coordinate_move() << ", ";
-                        }
-                        std::cerr << std::endl << std::endl;
-                    }
-
-                    if(move_checks)
-                    {
-                        if( ! board.king_is_in_check())
-                        {
-                            std::cerr << "Move (" << move_number << move << ") indicates check but does not check. (line: " << line_number << ")" << std::endl;
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if(board.king_is_in_check())
-                        {
-                            std::cerr << "Move (" << move_number << move << ") indicates no check but does check. (line: " << line_number << ")" << std::endl;
-                            return false;
-                        }
-                    }
-
-                    if(move_checkmates)
-                    {
-                        if(result.winner() != opposite(board.whose_turn()))
-                        {
-                            std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate. (line: " << line_number << ")" << std::endl;
-                            return false;
-                        }
-
-                        if( ! expect_checkmate)
-                        {
-                            std::cerr << "Game ends in checkmate, but this is not indicated in headers. (line: " << line_number << ")" << std::endl;
-                            return false;
-                        }
-                    }
-                    else
-                    {
-                        if(result.winner() != NONE)
-                        {
-                            std::cerr << "Move (" << move_number << move << ") does not indicate checkmate, but move does checkmate. (line: " << line_number << ")" << std::endl;
-                            return false;
-                        }
+                        play_game_with_board(Human_Player(),
+                                            Human_Player(),
+                                            0,
+                                            0,
+                                            0,
+                                            file_name + "_continued.pgn",
+                                            board);
+                        break;
                     }
                 }
-                catch(const Illegal_Move& error)
+                catch(const Illegal_Move&)
                 {
-                    board.ascii_draw(WHITE);
-                    std::cerr << "Move (" << move_number << move << ") is illegal: "
-                              << error.what()
-                              << ". (line: " << line_number << ")" << std::endl;
-
-                    if(verbose)
-                    {
-                        std::cerr << "Legal moves:\n";
-                        for(auto legal_move : board.legal_moves())
-                        {
-                            std::cerr << legal_move->coordinate_move() << ", ";
-                        }
-                        std::cerr << std::endl;
-                    }
-
-                    return false;
+                    std::cout << "Ignoring: " << s << std::endl;
+                    continue;
                 }
             }
         }
     }
 
-    return true;
-}
-
-void game_progress_move_count(const std::string& input_file_name, const std::string& output_file_name)
-{
-    auto input = std::ifstream(input_file_name);
-    auto output = std::ofstream(output_file_name);
-
-    std::string line;
-    std::vector<std::string> game_moves;
-    auto game_count = 0;
-    while(std::getline(input, line) || ! game_moves.empty())
+    bool confirm_game_record(const std::string& file_name, bool verbose)
     {
-        line = String::strip_block_comment(line, "[", "]");
-        line = String::strip_block_comment(line, "{", "}");
-        line = String::strip_comments(line, ";");
+        auto input = std::ifstream(file_name);
+        std::string line;
+        auto line_number = 0;
+        auto last_move_line_number = 0;
 
-        // Blank lines only occur between games
-        if(line.empty())
+        auto expected_winner = NONE;
+        auto expect_checkmate = true;
+        auto expect_fifty_move_draw = false;
+        auto expect_threefold_draw = false;
+        auto in_game = false;
+        Board board;
+        Game_Result result;
+
+        while(std::getline(input, line))
         {
-            if(game_moves.empty())
+            ++line_number;
+            line = String::strip_block_comment(line, "{", "}");
+            line = String::strip_comments(line, ";");
+            line = String::remove_extra_whitespace(line);
+            if(line.empty())
             {
                 continue;
             }
 
-            std::cout << "\rGame count: " << ++game_count << std::flush;
-
-            // Output result
-            Board board;
-            auto move_index = 0;
-            for(const auto& move_record : game_moves)
+            // Start header of new game
+            if(in_game && String::starts_with(line, "["))
             {
-                board.submit_move(board.create_move(move_record));
-                output << ++move_index << '\t'
-                       << game_moves.size() << '\t'
-                       << board.legal_moves().size() << '\n';
+                if(expect_fifty_move_draw != String::contains(result.ending_reason(), "50"))
+                {
+                    std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
+                    return false;
+                }
+                if(expect_threefold_draw != String::contains(result.ending_reason(), "fold"))
+                {
+                    std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
+                    return false;
+                }
+
+                expected_winner = NONE;
+                expect_checkmate = true;
+                expect_fifty_move_draw = false;
+                expect_threefold_draw = false;
+                in_game = false;
+                board = Board();
+                result = {};
             }
 
-            game_moves.clear();
-            continue;
+            if(String::starts_with(line, "[Result"))
+            {
+                if(String::contains(line, "1-0"))
+                {
+                    expected_winner = WHITE;
+                }
+                else if(String::contains(line, "0-1"))
+                {
+                    expected_winner = BLACK;
+                }
+                else if(String::contains(line, "1/2-1/2"))
+                {
+                    expected_winner = NONE;
+                    expect_checkmate = false;
+                }
+                else
+                {
+                    std::cerr << "Malformed Result: " << line << " (line: " << line_number << ")" << std::endl;
+                    return false;
+                }
+            }
+            else if(String::starts_with(line, "[Termination"))
+            {
+                expect_checkmate = false;
+                if(String::contains(line, "fold"))
+                {
+                    expect_threefold_draw = true;
+                }
+                else if(String::contains(line, "50"))
+                {
+                    expect_fifty_move_draw = true;
+                }
+            }
+            else if(String::starts_with(line, "[FEN"))
+            {
+                board = Board(String::split(line, "\"").at(1));
+            }
+            else if(String::starts_with(line, "["))
+            {
+                continue;
+            }
+            else // Line contains game moves
+            {
+                in_game = true;
+                std::string move_number;
+                for(const auto& move : String::split(line))
+                {
+                    if(move.back() == '.')
+                    {
+                        move_number = move + ' ';
+                        continue;
+                    }
+
+                    if(board.whose_turn() == BLACK)
+                    {
+                        move_number += "... ";
+                    }
+
+                    if((move == "1/2-1/2" && expected_winner != NONE) ||
+                    (move == "1-0" && expected_winner != WHITE) ||
+                    (move == "0-1" && expected_winner != BLACK))
+                    {
+                        std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")" << std::endl;
+                        return false;
+                    }
+
+                    if(move == "1/2-1/2" || move == "1-0" || move == "0-1")
+                    {
+                        continue;
+                    }
+
+                    try
+                    {
+                        auto move_checkmates = move.back() == '#';
+                        auto move_checks = move_checkmates || move.back() == '+';
+                        auto& move_to_submit = board.create_move(move);
+                        last_move_line_number = line_number;
+                        if(String::contains(move, 'x')) // check that move captures
+                        {
+                            const Board& temp = board; // to prevent use of non-const private overload
+                            if( ! temp.piece_on_square(move_to_submit.end()) && ! move_to_submit.is_en_passant())
+                            {
+                                std::cerr << "Move: " << move_number << move << " indicates capture but does not capture. (line: " << line_number << ")" << std::endl;
+                                return false;
+                            }
+                        }
+
+                        if(verbose)
+                        {
+                            std::cout << "Before " << move_number << move << "\n";
+                            board.ascii_draw(WHITE);
+                            std::cerr << "Legal moves:\n";
+                            for(auto legal_move : board.legal_moves())
+                            {
+                                std::cerr << legal_move->coordinate_move() << ", ";
+                            }
+                            std::cerr << std::endl << std::endl;
+                        }
+
+                        result = board.submit_move(move_to_submit);
+
+                        if(verbose)
+                        {
+                            std::cout << "After " << move_number << move << "\n";
+                            board.ascii_draw(WHITE);
+                            std::cerr << "Legal moves:\n";
+                            for(auto legal_move : board.legal_moves())
+                            {
+                                std::cerr << legal_move->coordinate_move() << ", ";
+                            }
+                            std::cerr << std::endl << std::endl;
+                        }
+
+                        if(move_checks)
+                        {
+                            if( ! board.king_is_in_check())
+                            {
+                                std::cerr << "Move (" << move_number << move << ") indicates check but does not check. (line: " << line_number << ")" << std::endl;
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if(board.king_is_in_check())
+                            {
+                                std::cerr << "Move (" << move_number << move << ") indicates no check but does check. (line: " << line_number << ")" << std::endl;
+                                return false;
+                            }
+                        }
+
+                        if(move_checkmates)
+                        {
+                            if(result.winner() != opposite(board.whose_turn()))
+                            {
+                                std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate. (line: " << line_number << ")" << std::endl;
+                                return false;
+                            }
+
+                            if( ! expect_checkmate)
+                            {
+                                std::cerr << "Game ends in checkmate, but this is not indicated in headers. (line: " << line_number << ")" << std::endl;
+                                return false;
+                            }
+                        }
+                        else
+                        {
+                            if(result.winner() != NONE)
+                            {
+                                std::cerr << "Move (" << move_number << move << ") does not indicate checkmate, but move does checkmate. (line: " << line_number << ")" << std::endl;
+                                return false;
+                            }
+                        }
+                    }
+                    catch(const Illegal_Move& error)
+                    {
+                        board.ascii_draw(WHITE);
+                        std::cerr << "Move (" << move_number << move << ") is illegal: "
+                                << error.what()
+                                << ". (line: " << line_number << ")" << std::endl;
+
+                        if(verbose)
+                        {
+                            std::cerr << "Legal moves:\n";
+                            for(auto legal_move : board.legal_moves())
+                            {
+                                std::cerr << legal_move->coordinate_move() << ", ";
+                            }
+                            std::cerr << std::endl;
+                        }
+
+                        return false;
+                    }
+                }
+            }
         }
 
-        for(const auto& move_record : String::split(line))
+        return true;
+    }
+
+    void game_progress_move_count(const std::string& input_file_name, const std::string& output_file_name)
+    {
+        auto input = std::ifstream(input_file_name);
+        auto output = std::ofstream(output_file_name);
+
+        std::string line;
+        std::vector<std::string> game_moves;
+        auto game_count = 0;
+        while(std::getline(input, line) || ! game_moves.empty())
         {
-            if( ! std::isdigit(move_record.front()))
+            line = String::strip_block_comment(line, "[", "]");
+            line = String::strip_block_comment(line, "{", "}");
+            line = String::strip_comments(line, ";");
+
+            // Blank lines only occur between games
+            if(line.empty())
             {
-                game_moves.push_back(move_record);
+                if(game_moves.empty())
+                {
+                    continue;
+                }
+
+                std::cout << "\rGame count: " << ++game_count << std::flush;
+
+                // Output result
+                Board board;
+                auto move_index = 0;
+                for(const auto& move_record : game_moves)
+                {
+                    board.submit_move(board.create_move(move_record));
+                    output << ++move_index << '\t'
+                        << game_moves.size() << '\t'
+                        << board.legal_moves().size() << '\n';
+                }
+
+                game_moves.clear();
+                continue;
+            }
+
+            for(const auto& move_record : String::split(line))
+            {
+                if( ! std::isdigit(move_record.front()))
+                {
+                    game_moves.push_back(move_record);
+                }
             }
         }
     }
