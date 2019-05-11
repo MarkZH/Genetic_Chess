@@ -131,28 +131,23 @@ std::string String::format_integer(int n, const std::string& separator)
 {
     if(n < 0)
     {
-        return '-' + format_integer(size_t(-n), separator);
+        return '-' + format_integer(-n, separator);
     }
     else
     {
-        return format_integer(size_t(n), separator);
+        auto s = std::to_string(n);
+        auto index = s.size() % 3;
+        index = (index == 0 ? 3 : index);
+        auto result = s.substr(0, index);
+
+        for( ; index < s.size(); index += 3)
+        {
+            result += separator;
+            result += s.substr(index, 3);
+        }
+
+        return result;
     }
-}
-
-std::string String::format_integer(size_t n, const std::string& separator)
-{
-    auto s = std::to_string(n);
-    auto index = s.size() % 3;
-    index = (index == 0 ? 3 : index);
-    auto result = s.substr(0, index);
-
-    for( ; index < s.size(); index += 3)
-    {
-        result += separator;
-        result += s.substr(index, 3);
-    }
-
-    return result;
 }
 
 size_t String::string_to_size_t(const std::string& s)
