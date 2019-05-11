@@ -12,6 +12,7 @@
 #include <utility>
 #include <chrono>
 using namespace std::chrono_literals;
+#include <string>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
