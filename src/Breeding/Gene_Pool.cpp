@@ -168,7 +168,7 @@ void gene_pool(const std::string& config_file)
                 try
                 {
                     auto alive_split = String::split(line, ":");
-                    auto pool_number = std::stoi(alive_split.at(1));
+                    auto pool_number = String::string_to_size_t(alive_split.at(1));
                     game_count.at(pool_number) += String::split(alive_split.at(2)).size()/2;
                     starting_pool = (pool_number + 1) % gene_pool_count;
                 }
