@@ -48,6 +48,104 @@ using namespace std::chrono_literals;
 
 namespace
 {
+    // If expected_result is false, set all_tests_passed to false and print the
+    // fail_message to std::cerr. Otherwise, do nothing.
+    bool test_result(bool& all_tests_passed, bool expected_result, const std::string& fail_message);
+
+    void print()
+    {
+    }
+
+    template<typename Argument_Type>
+    void print(const Argument_Type& arg)
+    {
+        std::cerr << "'" << arg << "'" << std::endl;
+    }
+
+    template<typename First_Argument_Type, typename ...Rest_Argument_Types>
+    void print(const First_Argument_Type& first, const Rest_Argument_Types& ... rest)
+    {
+        std::cerr << "'" << first << "', ";
+        print(rest...);
+    }
+
+    // Run the callable f on the arguments. If the result of the argument is not
+    // equal to the expecte result, set all_tests_passed to false and print
+    // an error message. Otherwise, do nothing.
+    template<typename ...Argument_Types, typename Result_Type, typename Function>
+    void test_function(bool& tests_passed, const std::string& test_name, const Result_Type& expected_result, Function f, const Argument_Types& ... arguments)
+    {
+        auto result = f(arguments...);
+        if(result != expected_result)
+        {
+            std::cerr << test_name << " failed. Expected result: '" << expected_result << "'; Got: '" << result << "'" << std::endl;
+            std::cerr << "Arguments: ";
+            print(arguments...);
+            tests_passed = false;
+        }
+    }
+
+    // A specialization of the test_function() template that handles
+    // functions that return a std::vector<std::string>.
+    template<typename ...Argument_Types, typename Function>
+    void test_function(bool& tests_passed, const std::string& test_name, const std::vector<std::string>& expected_result, Function f, const Argument_Types& ... arguments)
+    {
+        auto result = f(arguments...);
+        if(result != expected_result)
+        {
+            std::cerr << test_name << " failed. Expected result: '";
+            for(const auto& s : expected_result)
+            {
+                std::cerr << s << ", ";
+            }
+            std::cerr << "'; Got: '";
+            for(const auto& s : result)
+            {
+                std::cerr << s << ", ";
+            }
+            std::cerr << "'\nArguments: ";
+            print(arguments...);
+            tests_passed = false;
+        }
+    }
+
+    // Equivalent to test_function(), but checks that the callable f does not throw
+    // with arguments.
+    template<typename ...Argument_Types, typename Function>
+    void function_should_not_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments)
+    {
+        try
+        {
+            f(arguments...);
+        }
+        catch(const std::exception& error)
+        {
+            std::cerr << test_name << " failed. Function should not have thrown." << std::endl;
+            std::cerr << "Arguments: ";
+            print(arguments...);
+            std:: cerr << error.what() << std::endl;
+            tests_passed = false;
+        }
+    }
+
+    // Equivalent to test_function(), but checks that the callable f does throw
+    // with arguments.
+    template<typename ...Argument_Types, typename Function>
+    void function_should_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments)
+    {
+        try
+        {
+            f(arguments...);
+            std::cerr << test_name << " failed. Function should have thrown." << std::endl;
+            std::cerr << "Arguments: ";
+            print(arguments...);
+            tests_passed = false;
+        }
+        catch(const std::exception&)
+        {
+        }
+    }
+
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
     size_t move_count(const Board& board, size_t maximum_depth);
     bool run_board_tests(const std::string& file_name);
@@ -65,11 +163,7 @@ bool run_tests()
         auto step = Move::attack_direction_from_index(i);
         auto start = Square{'e', 4};
         auto step_index = Move(start, start + step).attack_index();
-        if(step_index != i)
-        {
-            std::cerr << "Direction-index mismatch: " << i << " --> " << step.file_change << "," << step.rank_change << " --> " << step_index << std::endl;
-            tests_passed = false;
-        }
+        test_result(tests_passed, step_index == i, "Direction-index mismatch: " + std::to_string(i));
     }
 
 
@@ -80,27 +174,13 @@ bool run_tests()
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto square = Square{file, rank};
-            if(visited[square.index()])
-            {
-                std::cerr << "Multiple squares result in same index." << std::endl;
-                tests_passed = false;
-            }
+            test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.string());
             visited[square.index()] = true;
             auto indexed_square = Square(square.file(), square.rank());
-            if(square != indexed_square)
-            {
-                std::cerr << "Incorrect square indexing.\n";
-                std::cerr << file << rank << " --> " << square.index() << " --> " << indexed_square.file() << indexed_square.rank() << std::endl;
-                tests_passed = false;
-            }
+            test_result(tests_passed, square == indexed_square, "Incorrect square indexing: " + square.string() + " --> " + indexed_square.string());
         }
     }
-
-    if( ! std::all_of(visited.begin(), visited.end(), [](auto x){ return x; }))
-    {
-        std::cerr << "Not all indices visited by iterating through all squares." << std::endl;
-        tests_passed = false;
-    }
+    test_result(tests_passed, std::all_of(visited.begin(), visited.end(), [](auto x){ return x; }), "Not all indices visited by iterating through all squares.");
 
 
     // Piece construction tests
@@ -110,11 +190,7 @@ bool run_tests()
         {
             auto piece = Piece{color, type};
             auto piece2 = Piece{piece.color(), piece.type()};
-            if(piece != piece2)
-            {
-                std::cerr << "Inconsistent construction for " << piece.fen_symbol() << " --> " << piece2.fen_symbol() << std::endl;
-                tests_passed = false;
-            }
+            test_result(tests_passed, piece == piece2, std::string("Inconsistent construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
         }
     }
 
@@ -126,12 +202,8 @@ bool run_tests()
         current_color = opposite(current_color);
         for(int rank = 1; rank <= 8; ++rank)
         {
-            if(Square{file, rank}.color() != current_color)
-            {
-                std::cerr << "Wrong color for square " << file << rank
-                          << ". Should be " << color_text(current_color) << '\n';
-                tests_passed = false;
-            }
+            auto square = Square{file, rank};
+            test_result(tests_passed, square.color() == current_color, "Wrong color for square " + square.color());
             current_color = opposite(current_color);
         }
     }
@@ -142,13 +214,9 @@ bool run_tests()
     {
         for(auto b : Square::all_squares())
         {
-            if(a + (b - a) != b)
-            {
-                std::cerr << "Square arithetic problem: " << a.string()
-                    << " + (" << b.string() << " - " << a.string()
-                    << ") != " << b.string() << std::endl;
-                tests_passed = false;
-            }
+            test_result(tests_passed, a + (b - a) == b,
+                "Square arithetic problem: " +
+                a.string() + " + (" + b.string() + " - " + a.string() + ") != " + b.string());
         }
     }
 
@@ -156,17 +224,10 @@ bool run_tests()
     std::array<bool, 64> squares_visited{};
     for(auto square : Square::all_squares())
     {
-        if(squares_visited[square.index()])
-        {
-            std::cerr << "Sqaure " << square.string() << " already visited." << std::endl;
-            tests_passed = false;
-        }
+        test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.string() + " already visited.");
+        squares_visited[square.index()] = true;
     }
-    if(std::any_of(squares_visited.begin(), squares_visited.end(), [](auto tf) {return tf; }))
-    {
-        std::cerr << "Square iterator missed some squares." << std::endl;
-        tests_passed = false;
-    }
+    test_result(tests_passed, std::all_of(squares_visited.begin(), squares_visited.end(), [](auto tf) {return tf; }), "Square iterator missed some squares.");
 
 
     // Threefold repetition rule test
@@ -184,25 +245,11 @@ bool run_tests()
             repeat_result = repeat_board.submit_move(repeat_board.create_move(move));
             if(repeat_result.game_has_ended())
             {
-                if(repeat_move_count < 8)
-                {
-                    tests_passed = false;
-                    std::cerr << "Threefold repetition triggered early." << std::endl;
-                }
+                test_result(tests_passed, repeat_move_count == 8, "Threefold repetition triggered early.");
             }
         }
     }
-
-    if( ! repeat_result.game_has_ended())
-    {
-        tests_passed = false;
-        std::cerr << "Threefold stalemate not triggered." << std::endl;
-    }
-    else if(repeat_result.ending_reason() != "Threefold repetition")
-    {
-        tests_passed = false;
-        std::cerr << "Wrong game ending. Got " << repeat_result.ending_reason() << "; Expected Threefold Repetition." << std::endl;
-    }
+    test_result(tests_passed, repeat_result.ending_reason() == "Threefold repetition", "Threefold stalemate not triggered.");
 
 
     // Fifty-move stalemate test (100 plies with no capture or pawn movement)
@@ -239,13 +286,7 @@ bool run_tests()
                     continue;
                 }
 
-                if(move_counter < 100)
-                {
-                    tests_passed = false;
-                    std::cerr << "Fifty-move statlemate triggered early." << std::endl;
-                    std::cout << result.ending_reason() << std::endl;
-                    break;
-                }
+                test_result(tests_passed, move_counter == 100, "Fifty-move stalemate triggered early.");
             }
 
             fifty_move_result = fifty_move_board.submit_move(*move);
@@ -253,62 +294,26 @@ bool run_tests()
             break;
         }
 
-        if( ! move_chosen)
-        {
-            tests_passed = false;
-            std::cerr << "Unable to choose next move (moves made = " << move_counter << ")." << std::endl;
-            fifty_move_board.ascii_draw(WHITE);
-            break;
-        }
+        test_result(tests_passed, move_chosen, "Unable to choose next move (moves made = " + std::to_string(move_counter) + ").");
     }
-
-    if(fifty_move_result.ending_reason() != "50-move limit")
-    {
-        tests_passed = false;
-        std::cerr << "Error in 50-move stalemate test." << std::endl;
-        std::cerr << "Got: " << fifty_move_result.ending_reason() << "; Expected 50-move limit." << std::endl;
-    }
+    test_result(tests_passed, fifty_move_result.ending_reason() == "50-move limit", "50-move draw test result: Got: " + fifty_move_result.ending_reason() + " instead.");
 
 
-    if( ! run_board_tests("testing/board_tests.txt"))
-    {
-        tests_passed = false;
-    }
+    test_result(tests_passed, run_board_tests("testing/board_tests.txt"), "");
 
 
     // Last move captured/changed material tests
     Board capture_board;
     capture_board.submit_move(capture_board.create_move("b4"));
     capture_board.submit_move(capture_board.create_move("c5"));
-    if( ! capture_board.material_change_possible())
-    {
-        capture_board.ascii_draw(WHITE);
-        std::cerr << "This board has a capturing move." << std::endl;
-        tests_passed = false;
-    }
-    capture_board.submit_move(capture_board.create_move("bxc5"));
-    if( ! capture_board.last_move_captured())
-    {
-        capture_board.ascii_draw(WHITE);
-        capture_board.print_game_record(nullptr, nullptr, "", {}, {});
-        std::cerr << "The previous move was a capture." << std::endl;
-        tests_passed = false;
-    }
+    test_function(tests_passed, "Material change possible", true, [&capture_board](){ return capture_board.material_change_possible(); });
 
-    if(capture_board.material_change_possible())
-    {
-        capture_board.ascii_draw(WHITE);
-        std::cerr << "This board does not have a capturing move." << std::endl;
-        tests_passed = false;
-    }
+    capture_board.submit_move(capture_board.create_move("bxc5"));
+    test_function(tests_passed, "Last move captured", true, [&capture_board](){ return capture_board.last_move_captured(); });
+    test_function(tests_passed, "Material change not possible", false, [&capture_board](){ return capture_board.material_change_possible(); });
+
     capture_board.submit_move(capture_board.create_move("h5"));
-    if(capture_board.last_move_captured())
-    {
-        capture_board.ascii_draw(WHITE);
-        capture_board.print_game_record(nullptr, nullptr, "", {}, {});
-        std::cerr << "The previous move did not capture." << std::endl;
-        tests_passed = false;
-    }
+    test_function(tests_passed, "Last move did not capture", false, [&capture_board](){ return capture_board.last_move_captured(); });
 
 
     // Board hash with castling tests
@@ -328,17 +333,10 @@ bool run_tests()
         just_rooks_move_board.submit_move(just_rooks_move_board.create_move(move));
     }
 
-    if(just_kings_move_board.board_hash() != just_rooks_move_board.board_hash())
-    {
-        std::cerr << "Board hashes differ after castling-canceling moves." << std::endl;
-        tests_passed = false;
-    }
-
-    if(castling_hash_board.board_hash() == just_kings_move_board.board_hash())
-    {
-        std::cerr << "Board hashes should be different after castling rights are gone." << std::endl;
-        tests_passed = false;
-    }
+    test_function(tests_passed, "Board hash after no-castle", true,
+        [&](){ return just_kings_move_board.board_hash() == just_rooks_move_board.board_hash(); });
+    test_function(tests_passed, "Boards with different castling rights", false,
+        [&](){ return just_kings_move_board.board_hash() == castling_hash_board.board_hash(); });
 
 
     // Test Genetic_AI file loading
@@ -366,29 +364,14 @@ bool run_tests()
     auto read_ai = Genetic_AI(pool_file_name, test_ai.id());
     read_ai.print(rewrite_file_name);
 
-    if( ! files_are_identical(write_file_name, rewrite_file_name))
-    {
-        std::cerr << "Genome loaded from gene pool file not preserved." << std::endl;
-        tests_passed = false;
-    }
-    else
+    if(test_result(tests_passed, files_are_identical(write_file_name, rewrite_file_name), "Genome loaded from gene pool file not preserved."))
     {
         remove(pool_file_name);
         remove(write_file_name);
         remove(rewrite_file_name);
     }
 
-    auto genetic_ai_example_file_name = "genetic_ai_example.txt";
-    try
-    {
-        auto example_genetic_ai = Genetic_AI(genetic_ai_example_file_name);
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << "\n" << e.what() << std::endl;
-        std::cerr << "Could not load " << genetic_ai_example_file_name << std::endl;
-        tests_passed = false;
-    }
+    function_should_not_throw(tests_passed, "Genetic_AI ctor", [=](){ Genetic_AI{"genetic_ai_example.txt"};});
 
 
     // Test individual board-scoring genes
@@ -398,21 +381,21 @@ bool run_tests()
     castling_possible_gene.read_from(test_genes_file_name);
     auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
     auto white_castling_score = 0.8*(5.0/6.0) + 0.2*(6.0/7.0); // maximum score with and without actually castling
-    tests_passed &= castling_possible_gene.test(castling_board, WHITE, white_castling_score);
+    castling_possible_gene.test(tests_passed, castling_board, WHITE, white_castling_score);
 
     castling_board.submit_move(castling_board.create_move("O-O"));
-    tests_passed &= castling_possible_gene.test(castling_board, WHITE, 1.0); // full score for kingside castling
+    castling_possible_gene.test(tests_passed, castling_board, WHITE, 1.0); // full score for kingside castling
 
     auto black_castling_score = 0.2*(5.0/7.0); // castling possible
-    tests_passed &= castling_possible_gene.test(castling_board, BLACK, black_castling_score);
+    castling_possible_gene.test(tests_passed, castling_board, BLACK, black_castling_score);
 
     castling_board.submit_move(castling_board.create_move("Nc6"));
-    tests_passed &= castling_possible_gene.test(castling_board, WHITE, 0.0); // castling no longer relevant
+    castling_possible_gene.test(tests_passed, castling_board, WHITE, 0.0); // castling no longer relevant
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
     auto freedom_to_move_score = 32.0/18.0;
-    tests_passed &= freedom_to_move_gene.test(freedom_to_move_board, WHITE, freedom_to_move_score);
+    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, WHITE, freedom_to_move_score);
 
     #ifdef NDEBUG
     auto test_move_count = 1'000'000;
@@ -422,12 +405,7 @@ bool run_tests()
     Board freedom_to_move_punishment_board;
     for(auto move_count = 0; move_count < test_move_count; ++move_count)
     {
-        if( ! freedom_to_move_gene.verify(freedom_to_move_punishment_board))
-        {
-            std::cerr << "Attack count discrepancy." << std::endl;
-            tests_passed = false;
-            break;
-        }
+        test_result(tests_passed, freedom_to_move_gene.verify(freedom_to_move_punishment_board), "Attack count discrepancy.");
 
         const auto& moves = freedom_to_move_punishment_board.legal_moves();
         auto move = Random::random_element(moves);
@@ -444,21 +422,21 @@ bool run_tests()
                                    (-1)*(1.0 + 1.0))/ // blocked by opponent (e1, e2)
                                    (4 + 1)/ // normalizing
                                    (1 + (1 + 1 + 1)); // free squares (h1, g1, f1)
-    tests_passed &= king_confinement_gene.test(king_confinement_board, WHITE, king_confinement_score);
+    king_confinement_gene.test(tests_passed, king_confinement_board, WHITE, king_confinement_score);
 
     auto king_confined_by_pawns_board = Board("k7/8/8/8/8/pppppppp/8/K7 w - - 0 1");
     auto king_confined_by_pawns_score = (4*(0.0) + // no friendly blockers
                                          (-1)*(8.0))/ // blocked by pawn attacks on second rank
                                          (4 + 1)/ // normalizing
                                          (1 + 8); // free squares (a1-h1)
-    tests_passed &= king_confinement_gene.test(king_confined_by_pawns_board, WHITE, king_confined_by_pawns_score);
+    king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, WHITE, king_confined_by_pawns_score);
 
     auto king_protection_gene = King_Protection_Gene();
     auto king_protection_board = king_confinement_board;
     auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
     auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
     auto king_protection_score = double(max_square_count - square_count)/max_square_count;
-    tests_passed &= king_protection_gene.test(king_protection_board, WHITE, king_protection_score);
+    king_protection_gene.test(tests_passed, king_protection_board, WHITE, king_protection_score);
 
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
@@ -467,22 +445,22 @@ bool run_tests()
     auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
     auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
     auto opponent_pieces_targeted_score = (16 + 8 + 4 + 2 + 1)/piece_strength_normalizer;
-    tests_passed &= opponent_pieces_targeted_gene.test(opponent_pieces_targeted_board, WHITE, opponent_pieces_targeted_score);
+    opponent_pieces_targeted_gene.test(tests_passed, opponent_pieces_targeted_board, WHITE, opponent_pieces_targeted_score);
 
     auto pawn_advancement_gene = Pawn_Advancement_Gene();
     pawn_advancement_gene.read_from(test_genes_file_name);
     auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
     auto pawn_advancement_score = (std::pow(1, 1.2) + std::pow(2, 1.2) + std::pow(3, 1.2) + std::pow(4, 1.2) + std::pow(5, 1.2))/(8*std::pow(5, 1.2));
-    tests_passed &= pawn_advancement_gene.test(pawn_advancement_board, WHITE, pawn_advancement_score);
+    pawn_advancement_gene.test(tests_passed, pawn_advancement_board, WHITE, pawn_advancement_score);
 
     auto passed_pawn_gene = Passed_Pawn_Gene();
     auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P4/8/8/8 w - - 0 1");
     auto passed_pawn_score = (1.0 + 2.0/3.0)/8;
-    tests_passed &= passed_pawn_gene.test(passed_pawn_board, WHITE, passed_pawn_score);
+    passed_pawn_gene.test(tests_passed, passed_pawn_board, WHITE, passed_pawn_score);
 
     passed_pawn_board.submit_move(passed_pawn_board.create_move("Kd8"));
     passed_pawn_score = (2.0/3.0)/8;
-    tests_passed &= passed_pawn_gene.test(passed_pawn_board, BLACK, passed_pawn_score);
+    passed_pawn_gene.test(tests_passed, passed_pawn_board, BLACK, passed_pawn_score);
 
     auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
     sphere_of_influence_gene.read_from(test_genes_file_name);
@@ -513,216 +491,43 @@ bool run_tests()
     // ........    .4......         .5......
     // ........    44......         66......
     // K.......    K4......         K7......
-    tests_passed &= sphere_of_influence_gene.test(sphere_of_influence_board, WHITE, sphere_of_influence_score);
+    sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, WHITE, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    tests_passed &= total_force_gene.test(Board(), WHITE, 1.0);
+    total_force_gene.test(tests_passed, Board(), WHITE, 1.0);
 
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
-    tests_passed &= stacked_pawns_gene.test(stacked_pawns_board, WHITE, -3.0/6);
+    stacked_pawns_gene.test(tests_passed, stacked_pawns_board, WHITE, -3.0/6);
 
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-    tests_passed &= pawn_islands_gene.test(pawn_islands_board, WHITE, (6.0/3)/8);
+    pawn_islands_gene.test(tests_passed, pawn_islands_board, WHITE, (6.0/3)/8);
 
     auto checkmate_material_gene = Checkmate_Material_Gene();
     auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
-    tests_passed &= checkmate_material_gene.test(checkmate_material_board, WHITE, 1.0); // white can checkmate
-    tests_passed &= checkmate_material_gene.test(checkmate_material_board, BLACK, 0.0); // black cannot
+    checkmate_material_gene.test(tests_passed, checkmate_material_board, WHITE, 1.0); // white can checkmate
+    checkmate_material_gene.test(tests_passed, checkmate_material_board, BLACK, 0.0); // black cannot
 
+    test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
+    test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");
 
+    function_should_throw(tests_passed, "Bad block comments", String::strip_block_comment, "   a    }    b    {    c   {   d  }   ", "{", "}");
+    function_should_throw(tests_passed, "Bad block comments", String::strip_block_comment, "   a        b    {    c      d     ", "{", "}");
 
-    // String commenting tests
-    std::string original = "   a    #     b";
-    std::string expected = "a";
-    std::string result = String::strip_comments(original, "#");
-    if(expected != result)
-    {
-        std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
-        std::cerr << "Expected result: \"" << expected << "\"" << std::endl;
-        tests_passed = false;
-    }
+    test_function(tests_passed, "Strip multicharacter comment", "a", String::strip_comments, "a // b", "//");
+    test_function(tests_passed, "Multicharacter block comment", "a c", String::strip_block_comment, "a /* b  */ c", "/*", "*/");
+    test_function(tests_passed, "String::starts_with()", true, String::starts_with, "abcdefg", "abc");
+    test_function(tests_passed, "String::starts_with()", false, String::starts_with, "abcdefg", "abd");
+    test_function(tests_passed, "String::ends_with()", true, String::ends_with, "abcdefg", "efg");
+    test_function(tests_passed, "String::ends_with()", false, String::ends_with, "abcdefg", "efh");
+    test_function(tests_passed, "String::lowercase()", "abc def", String::lowercase, "AbC dEf");
 
-    original = "   a    {    b    }    c   {   d  }   ";
-    expected = "a c";
-    result = String::strip_block_comment(original, "{", "}");
-    if(expected != result)
-    {
-        std::cerr << "\"" << original << "\" --> \"" << result << "\"" << std::endl;
-        std::cerr << "Expected result: \"" << expected << "\"" << std::endl;
-        tests_passed = false;
-    }
-
-    try
-    {
-        original = "   a    }    b    {    c   {   d  }   ";
-        auto bad_input_result = String::strip_block_comment(original, "{", "}");
-        tests_passed = false;
-    }
-    catch(const std::invalid_argument&)
-    {
-        // This test should throw an exception.
-    }
-
-    try
-    {
-        original = "   a        b    {    c      d     ";
-        auto bad_input_result = String::strip_block_comment(original, "{", "}");
-        tests_passed = false;
-    }
-    catch(const std::invalid_argument&)
-    {
-        // This test should throw an exception.
-    }
-
-    original = "a // b";
-    expected = "a";
-    result = String::strip_comments(original, "//");
-    if(expected != result)
-    {
-        std::cerr << "Multicharacter comment delimiter test failed." << std::endl;
-        std::cerr << "\"" << original << " --> \"" << result << "\"" << std::endl;
-        std::cerr << "Expected result: \"" << expected << "\"" << std::endl;
-        tests_passed = false;
-    }
-
-    original = "a /* b  */ c";
-    expected = "a c";
-    result = String::strip_block_comment(original, "/*", "*/");
-    if(expected != result)
-    {
-        std::cerr << "Multicharacter block comment delimiter test failed." << std::endl;
-        std::cerr << "\"" << original << " --> \"" << result << "\"" << std::endl;
-        std::cerr << "Expected result: \"" << expected << "\"" << std::endl;
-        tests_passed = false;
-    }
-
-
-    // String::ends_with()/starts_with() tests
-    std::string search_string = "abcdefg";
-    std::string target = "abc";
-    if( ! String::starts_with(search_string, target))
-    {
-        std::cerr << "\"" << target << "\" not found at beginning of " << search_string << std::endl;
-        tests_passed = false;
-    }
-
-    std::string wrong_target = "abd";
-    if(String::starts_with(search_string, wrong_target))
-    {
-        std::cerr << "\"" << wrong_target << "\" erroneously found at beginning of " << search_string << std::endl;
-        tests_passed = false;
-    }
-
-    std::string end_target = "efg";
-    if( ! String::ends_with(search_string, end_target))
-    {
-        std::cerr << "\"" << end_target << "\" not found at end of " << search_string << std::endl;
-        tests_passed = false;
-    }
-
-    std::string wrong_end_target = "efh";
-    if(String::ends_with(search_string, wrong_end_target))
-    {
-        std::cerr << "\"" << wrong_end_target << "\" erroneously found at end of " << search_string << std::endl;
-        tests_passed = false;
-    }
-
-    std::string mixed_case = "AbC dEf";
-    std::string lowercase = "abc def";
-    auto lowercase_result = String::lowercase(mixed_case);
-    if(lowercase_result != lowercase)
-    {
-        std::cerr << "String::lowercase() returns incorrect results.\n";
-        std::cerr << "Original: " << mixed_case << "; Got: " << lowercase_result << "; Expected: " << lowercase << std::endl;
-        tests_passed = false;
-    }
-
-
-    // String splitting tests
-    std::string splitting_line = "\t a b c d e ";
-    std::vector<std::string> expected_split_line = {"a", "b", "c", "d", "e"};
-    auto split_line = String::split(splitting_line);
-    if(split_line.size() != expected_split_line.size() || ! std::equal(split_line.begin(), split_line.end(), expected_split_line.begin()))
-    {
-        std::cerr << "These lists should match from line splitting:\nExpected from String::split(" << splitting_line << ")\n";
-        for(const auto& thing : expected_split_line)
-        {
-            std::cerr << thing << ", ";
-        }
-        std::cerr << "\nReturned by String::split()\n";
-        for(const auto& thing : split_line)
-        {
-            std::cerr << thing << ", ";
-        }
-        std::cerr << std::endl;
-
-        tests_passed = false;
-    }
-
-    std::string comma_split_string = ",";
-    auto comma_split = String::split(comma_split_string, ",", 1);
-    if(comma_split.size() != 2 ||
-       ! std::all_of(comma_split.begin(), comma_split.end(), [](const auto& s){ return s.empty(); }))
-    {
-        std::cerr << "The string \"" << comma_split_string << "\" should split into 2 empty strings." << std::endl;
-        tests_passed = false;
-    }
-
-    std::string ellipses_split_string = "..a..b..c..d..";
-    std::vector<std::string> ellipses_split_expected = {"", "a", "b", "c", "d", ""};
-    auto ellipses_split_result = String::split(ellipses_split_string, "..");
-    if(ellipses_split_result != ellipses_split_expected)
-    {
-        tests_passed = false;
-        std::cerr << "Incorrect split result:\n";
-        std::cerr << ellipses_split_string << " split on .. produced\n";
-        for(auto s : ellipses_split_result)
-        {
-            std::cerr << s << ", ";
-        }
-        std::cerr << "\ninsead of the expected\n";
-        for(auto s : ellipses_split_expected)
-        {
-            std::cerr << s << ", ";
-        }
-    }
-
-    auto ellipses_split_count_result = String::split(ellipses_split_string, "..", 4);
-    std::vector<std::string> ellipses_split_count_expected = {"", "a", "b", "c", "d.."};
-    if(ellipses_split_count_result != ellipses_split_count_expected)
-    {
-        tests_passed = false;
-        std::cerr << "Incorrect split result:\n";
-        std::cerr << ellipses_split_string << " split a maximum of 4 times on .. produced\n";
-        for(auto s : ellipses_split_count_result)
-        {
-            std::cerr << s << ", ";
-        }
-        std::cerr << "\ninsead of the expected\n";
-        for(auto s : ellipses_split_count_expected)
-        {
-            std::cerr << s << ", ";
-        }
-    }
-
-    auto ellipses_split_count_full_result = String::split(ellipses_split_string, "..", 5);
-    if(ellipses_split_count_full_result != ellipses_split_expected)
-    {
-        tests_passed = false;
-        std::cerr << "Incorrect split result:\n";
-        std::cerr << ellipses_split_string << " split a maximum of 5 times on .. produced\n";
-        for(auto s : ellipses_split_count_full_result)
-        {
-            std::cerr << s << ", ";
-        }
-        std::cerr << "\ninsead of the expected\n";
-        for(auto s : ellipses_split_expected)
-        {
-            std::cerr << s << ", ";
-        }
-    }
+    test_function(tests_passed, "String::split()", {"a", "b", "c", "d", "e"}, String::split, "\t a b c d e ", "", -1);
+    test_function(tests_passed, "Split on comma", {"", ""}, String::split, ",", ",", 1);
+    test_function(tests_passed, "Ellipses split", {"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", -1);
+    test_function(tests_passed, "Ellipses split", {"", "a", "b", "c", "d.."}, String::split, "..a..b..c..d..", "..", 4);
+    test_function(tests_passed, "Ellipses split", {"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", 5);
 
     // Number formating
     std::vector<std::pair<int, std::string>> tests =
@@ -738,17 +543,7 @@ bool run_tests()
          {1000000000, "1,000,000,000"}};
     for(const auto& test : tests)
     {
-        auto format_result = String::format_integer(test.first, ",");
-        if(format_result != test.second)
-        {
-            std::cerr << "String::format_integer() failed for "
-                      << test.first
-                      << ". Got: "
-                      << format_result
-                      << " instead of "
-                      << test.second << std::endl;
-            tests_passed = false;
-        }
+        test_function(tests_passed, "Format integer", test.second, String::format_integer, test.first, ",");
     }
 
 
@@ -758,12 +553,9 @@ bool run_tests()
     const size_t moves_so_far = 22;
     auto moves_left = Math::average_moves_left(mean_moves, width, moves_so_far);
     auto expected_moves_left = 15.2629;
-    if(std::abs(moves_left - expected_moves_left) > 1e-4)
-    {
-        std::cerr << "Log-Norm failed: Expected: " << expected_moves_left
-                  << " --- Got: " << moves_left << std::endl;
-        tests_passed = false;
-    }
+    test_result(tests_passed, std::abs(moves_left - expected_moves_left) < 1e-4,
+                std::string("Log-Norm failed: Expected: ") + std::to_string(expected_moves_left) +
+                " --- Got: " + std::to_string(moves_left));
 
 
     // Clock time reset test
@@ -779,11 +571,9 @@ bool run_tests()
         clock.punch();
     }
     clock.stop();
-    if(std::abs(clock.time_left(BLACK) - expected_time_after_reset) > 0.2)
-    {
-        std::cerr << "Clock reset incorrect: time left for black is " << clock.time_left(BLACK) << " sec. Should be " << expected_time_after_reset << "sec." << std::endl;
-        tests_passed = false;
-    }
+    test_result(tests_passed, std::abs(clock.time_left(BLACK) - expected_time_after_reset) < 0.2,
+                "Clock reset incorrect: time left for black is " + std::to_string(clock.time_left(BLACK)) + " sec." +
+                " Should be " + std::to_string(expected_time_after_reset) + "sec.");
 
     // Clock time increment test
     auto increment = 5;
@@ -800,11 +590,10 @@ bool run_tests()
         }
     }
     clock2.stop();
-    if(std::abs(clock2.time_left(BLACK) - expected_time) > 0.2)
-    {
-        std::cerr << "Clock increment incorrect: time left for black is " << clock2.time_left(BLACK) << " sec. Should be " << expected_time << "sec." << std::endl;
-        tests_passed = false;
-    }
+    test_result(tests_passed, std::abs(clock2.time_left(BLACK) - expected_time) < 0.2,
+                std::string("Clock increment incorrect: time left for black is ") + std::to_string(clock2.time_left(BLACK)) + " sec." +
+                " Should be " + std::to_string(expected_time) + "sec.");
+
 
     // Minimax scoring comparison tests
     Game_Tree_Node_Result r1 = {10,
@@ -814,17 +603,8 @@ bool run_tests()
                                 BLACK,
                                 {nullptr, nullptr, nullptr}};
 
-    if(r2.value(WHITE) > r1.value(WHITE))
-    {
-        std::cerr << "1. Error in comparing Game Tree Node Results." << std::endl;
-        tests_passed = false;
-    }
-
-    if(r1.value(BLACK) > r2.value(BLACK))
-    {
-        std::cerr << "2. Error in comparing Game Tree Node Results." << std::endl;
-        tests_passed = false;
-    }
+    test_result(tests_passed, r2.value(WHITE) < r1.value(WHITE), "1. Error in comparing Game Tree Node Results.");
+    test_result(tests_passed, r1.value(BLACK) < r2.value(BLACK), "2. Error in comparing Game Tree Node Results.");
 
     Game_Tree_Node_Result alpha_start = {Math::lose_score,
                                          WHITE,
@@ -833,18 +613,8 @@ bool run_tests()
     Game_Tree_Node_Result beta_start = {Math::win_score,
                                         WHITE,
                                         {}};
-    if(alpha_start.value(WHITE) > beta_start.value(WHITE))
-    {
-        std::cerr << "3. Error in comparing Game Tree Node Results." << std::endl;
-        tests_passed = false;
-    }
-
-    if(alpha_start.value(BLACK) <= beta_start.value(BLACK))
-    {
-        std::cerr << "4. Error in comparing Game Tree Node Results." << std::endl;
-        tests_passed = false;
-    }
-
+    test_result(tests_passed, alpha_start.value(WHITE) < beta_start.value(WHITE), "3. Error in comparing Game Tree Node Results.");
+    test_result(tests_passed, alpha_start.value(BLACK) > beta_start.value(BLACK), "4. Error in comparing Game Tree Node Results.");
 
     Game_Tree_Node_Result white_win4 = {Math::win_score,
                                         WHITE,
@@ -855,41 +625,19 @@ bool run_tests()
                                         {nullptr, nullptr, nullptr,
                                          nullptr, nullptr, nullptr,
                                          nullptr}};
-    if(white_win6.value(WHITE) > white_win4.value(WHITE))
-    {
-        std::cerr << "Later win preferred over earlier win." << std::endl;
-        tests_passed = false;
-    }
-
-    if(white_win4.value(BLACK) > white_win6.value(BLACK))
-    {
-        std::cerr << "Earlier loss preferred over later win." << std::endl;
-        tests_passed = false;
-    }
+    test_result(tests_passed, white_win6.value(WHITE) < white_win4.value(WHITE), "Later win preferred over earlier win.");
+    test_result(tests_passed, white_win4.value(BLACK) < white_win6.value(BLACK), "Earlier loss preferred over later win.");
 
     Game_Tree_Node_Result black_loss6 = {Math::lose_score,
                                          BLACK,
                                          {nullptr, nullptr, nullptr,
                                           nullptr, nullptr, nullptr,
                                           nullptr}};
-    if(white_win6.value(WHITE) != black_loss6.value(WHITE) ||
-       white_win6.value(BLACK) != black_loss6.value(BLACK))
-    {
-        std::cerr << "White win in 6 not equal to black loss in 6." << std::endl;
-        tests_passed = false;
-    }
+    test_result(tests_passed, white_win6.value(WHITE) == black_loss6.value(WHITE), "1. White win in 6 not equal to black loss in 6.");
+    test_result(tests_passed, white_win6.value(BLACK) == black_loss6.value(BLACK), "2. White win in 6 not equal to black loss in 6.");
 
-    if( ! black_loss6.is_winning_for(WHITE))
-    {
-        std::cerr << "Black loss in 6 returns false for is_winning_for(WHITE)." << std::endl;
-        tests_passed = false;
-    }
-
-    if( ! black_loss6.is_losing_for(BLACK))
-    {
-        std::cerr << "Black loss in 6 returns false for is_losing_for(BLACK)." << std::endl;
-        tests_passed = false;
-    }
+    test_result(tests_passed, black_loss6.is_winning_for(WHITE), "Black loss in 6 returns false for is_winning_for(WHITE).");
+    test_result(tests_passed, black_loss6.is_losing_for(BLACK), "Black loss in 6 returns false for is_losing_for(BLACK).");
 
 
     if(tests_passed)
@@ -1097,6 +845,17 @@ void print_randomness_sample()
 
 namespace
 {
+    bool test_result(bool& all_tests_passed, bool expected_result, const std::string& fail_message)
+    {
+        if( ! expected_result)
+        {
+            all_tests_passed = false;
+            std::cerr << fail_message << std::endl;
+        }
+
+        return expected_result;
+    }
+
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2)
     {
         std::ifstream file1(file_name1);
@@ -1171,21 +930,7 @@ namespace
 
             if(test_type == "invalid board")
             {
-                try
-                {
-                    auto board = Board(board_fen);
-
-                    // Previous line should have thrown, so getting here is an error.
-                    board.ascii_draw(WHITE);
-                    std::cout << "This board should not be valid." << std::endl;
-                    std::cout << line << " -- FAILED" << std::endl;
-                    all_tests_passed = false;
-                }
-                catch(const std::invalid_argument&)
-                {
-                    // Test passed
-                }
-
+                function_should_throw(all_tests_passed, test_type, [=](){ Board{board_fen}; });
                 continue;
             }
 
@@ -1196,20 +941,14 @@ namespace
 
             if(test_type == "all moves legal")
             {
-                if( ! all_moves_legal(board, moves))
-                {
-                    test_passed = false;
-                }
+                test_result(test_passed, all_moves_legal(board, moves), "");
             }
             else if(test_type == "last move illegal")
             {
                 assert(moves.size() > 0);
                 auto last_move = moves.back();
                 moves.pop_back();
-                if( ! (all_moves_legal(board, moves) && move_is_illegal(board, last_move)))
-                {
-                    test_passed = false;
-                }
+                test_result(test_passed, all_moves_legal(board, moves) && move_is_illegal(board, last_move), "");
             }
             else if(test_type == "pinned piece")
             {
@@ -1220,35 +959,23 @@ namespace
                 auto expected_result = String::remove_extra_whitespace(String::lowercase(moves.back()));
 
                 assert(expected_result == "true" || expected_result == "false");
-                if(board.piece_is_pinned(Square(square.front(), square.back() - '0')) != (expected_result == "true"))
-                {
-                    board.ascii_draw(WHITE);
-                    std::cout << "Expected result of " << square << " being pinned: " << expected_result << std::endl;
-                    test_passed = false;
-                }
+                auto expected_bool = (expected_result == "true");
+                test_result(test_passed, board.piece_is_pinned(Square(square.front(), square.back() - '0')) == expected_bool,
+                            "Expected result of " + square + " being pinned: " + expected_result);
             }
             else if(test_type == "move count")
             {
                 assert(specification.size() == 4);
                 auto expected_count = String::string_to_size_t(specification.back());
-
-                if( ! all_moves_legal(board, moves) || board.legal_moves().size() != expected_count)
-                {
-                    board.ascii_draw(WHITE);
-                    std::cout << "Legal moves counted: " << board.legal_moves().size() << "; Expected: " << expected_count << std::endl;
-                    test_passed = false;
-                }
+                test_result(test_passed, all_moves_legal(board, moves) && board.legal_moves().size() == expected_count,
+                            "Legal moves counted: " + std::to_string(board.legal_moves().size()) + "; Expected: " + std::to_string(expected_count));
             }
             else if(test_type == "checkmate material")
             {
                 assert(moves.front() == "true" || moves.front() == "false");
                 auto expected_result = (moves.front() == "true");
-                if(board.enough_material_to_checkmate() != expected_result)
-                {
-                    board.ascii_draw(WHITE);
-                    std::cout << "This board does" << (expected_result ? "" : "not") << " have enough material to checkmate." << std::endl;
-                    test_passed = false;
-                }
+                test_result(test_passed, board.enough_material_to_checkmate() == expected_result,
+                            std::string("This board does") + (expected_result ? "" : "not") + " have enough material to checkmate.");
             }
             else if(test_type == "king in check")
             {
@@ -1256,27 +983,19 @@ namespace
                 auto expected_answer = String::lowercase(String::remove_extra_whitespace(specification.back()));
                 assert(expected_answer == "true" || expected_answer == "false");
                 auto expected_result = expected_answer == "true";
-                if( ! all_moves_legal(board, moves) || board.king_is_in_check() != expected_result)
-                {
-                    board.ascii_draw(WHITE);
-                    std::cout << "King is "
-                                << (expected_result ? "not " : "")
-                                << "in check when it should "
-                                << (expected_result ? "" : "not ")
-                                << "be in check." << std::endl;
-                }
+                test_result(test_passed, all_moves_legal(board, moves) && board.king_is_in_check() == expected_result,
+                            std::string("King is ") +
+                                (expected_result ? "not " : "") +
+                                "in check when it should " +
+                                (expected_result ? "" : "not ") +
+                                "be in check.");
             }
             else
             {
-                std::cout << "Bad test: " << test_type << std::endl;
-                test_passed = false;
+                test_result(test_passed, false, "Bad test: " + test_type);
             }
 
-            if( ! test_passed)
-            {
-                std::cout << line << " -- FAILED" << std::endl;
-                all_tests_passed = false;
-            }
+            test_result(all_tests_passed, test_passed, line + " -- FAILED");
         }
 
         return all_tests_passed;
@@ -1284,55 +1003,29 @@ namespace
 
     bool all_moves_legal(Board& board, const std::vector<std::string>& moves)
     {
-        try
+        bool result = true;
+        auto game_has_ended = false;
+        for(const auto& move : moves)
         {
-            auto game_has_ended = false;
-            for(const auto& move : moves)
-            {
-                if(move.empty())
+            function_should_not_throw(result, move + " should be legal",
+                [&]()
                 {
-                    continue;
-                }
+                    if(game_has_ended)
+                    {
+                        throw Illegal_Move("");
+                    }
 
-                if(game_has_ended)
-                {
-                    throw Illegal_Move("");
-                }
-
-                game_has_ended = board.submit_move(board.create_move(move)).game_has_ended();
-            }
-
-            return true;
+                    game_has_ended = board.submit_move(board.create_move(move)).game_has_ended();
+                });
         }
-        catch(const Illegal_Move&)
-        {
-            board.ascii_draw(WHITE);
-            board.print_game_record({}, {}, {}, {}, {});
-            std::cout << "All of these moves should have been legal:";
-            for(const auto& move : moves)
-            {
-                std::cout << " " << move;
-            }
-            std::cout << std::endl;
-            return false;
-        }
+
+        return result;
     }
 
     bool move_is_illegal(Board& board, const std::string& move)
     {
-        try
-        {
-            board.create_move(move);
-
-            // The previous line should have thrown an Illegal_Move exception.
-            board.ascii_draw(WHITE);
-            std::cout << "This move should have been illegal: " << move << std::endl;
-            return false;
-        }
-        catch(const Illegal_Move&)
-        {
-            // Illegal move detected. Success!
-            return true;
-        }
+        bool result = true;
+        function_should_throw(result, move + "should be illegal", [&](){ board.create_move(move); });
+        return result;
     }
 }

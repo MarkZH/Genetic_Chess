@@ -40,7 +40,7 @@ class Gene
 
         virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg);
 
-        bool test(const Board& board, Color perspective, double expected_score) const;
+        void test(bool& test_variable, const Board& board, Color perspective, double expected_score) const;
 
     protected:
         virtual std::map<std::string, double> list_properties() const;

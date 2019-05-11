@@ -232,18 +232,17 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 
 //! Tests the board-scoring method of the Gene.
 //
+//! \param[out] test_variable If the test fails, this parameter is set to false. Otherwise, it keeps
+//!        its original value.
 //! \param board The board upon which the test takes place.
 //! \param perspective The player for whom the score is being calculated.
 //! \param expected_score The expected score returned by Gene::score_board().
-//! \returns Whether the score returned by Gene::score_board() is withing 1e-6 of the expected value.
-bool Gene::test(const Board& board, Color perspective, double expected_score) const
+void Gene::test(bool& test_variable, const Board& board, Color perspective, double expected_score) const
 {
     auto result = score_board(board, perspective, 1);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';
-        return false;
+        test_variable = false;
     }
-
-    return true;
 }
