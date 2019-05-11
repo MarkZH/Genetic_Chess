@@ -64,7 +64,8 @@ int main(int argc, char *argv[])
     {
         if(argc > 1)
         {
-            if(std::string(argv[1]) == "-genepool")
+            std::string option = argv[1];
+            if(option == "-genepool")
             {
                 std::string gene_pool_config_file_name;
                 if(argc > 2)
@@ -79,7 +80,7 @@ int main(int argc, char *argv[])
 
                 gene_pool(gene_pool_config_file_name);
             }
-            else if(std::string(argv[1]) == "-replay")
+            else if(option == "-replay")
             {
                 if(argc > 2)
                 {
@@ -97,7 +98,7 @@ int main(int argc, char *argv[])
                     return 1;
                 }
             }
-            else if(std::string(argv[1]) == "-confirm")
+            else if(option == "-confirm")
             {
                 if(argc >= 3)
                 {
@@ -114,23 +115,23 @@ int main(int argc, char *argv[])
                     return 1;
                 }
             }
-            else if(std::string(argv[1]) == "-test")
+            else if(option == "-test")
             {
                 return run_tests() ? 0 : 1;
             }
-            else if(std::string(argv[1]) == "-speed")
+            else if(option == "-speed")
             {
                 run_speed_tests();
             }
-            else if(std::string(argv[1]) == "-perft")
+            else if(option == "-perft")
             {
                 return run_perft_tests() ? 0 : 1;
             }
-            else if(std::string(argv[1]) == "-random_test")
+            else if(option == "-random_test")
             {
                 print_randomness_sample();
             }
-            else if(std::string(argv[1]) == "-progress")
+            else if(option == "-progress")
             {
                 if(argc < 4)
                 {
