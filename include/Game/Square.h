@@ -24,6 +24,9 @@ struct Square_Difference
 struct Square_Iterator;
 
 //! This class represents a location on the board.
+//
+//! It does not represent a physical square on which a Piece is placed.
+//! It is more like a coordinate specifying a location.
 class Square
 {
     private:
