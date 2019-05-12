@@ -798,11 +798,19 @@ void Board::remove_piece(Square square)
     place_piece({}, square);
 }
 
-void Board::adjust_attack_counts_common(Piece piece1, Piece piece2, Square square, int multiplier)
+void Board::adjust_attack_counts_common(Piece piece1, Piece piece2, Square square, int adding_or_substracting)
 {
-    if(piece1 && ! (piece2 && piece2.color() == piece1.color()))
+    assert(std::abs(adding_or_substracting) == 1);
+
+    // piece1 is the piece for which the attacks are being adjusted based
+    // upon the precense of piece2. The Freedom To Move Gene does not count
+    // attacks on a piece of the same color as an attack. So, if a piece of
+    // the same color is removed, the attacked square is added to the count.
+    // If a piece is placed on a square that is attacked by the same color,
+    // then the attack count for that color is decrimented.
+    if(piece1 && ( ! piece2 || piece2.color() != piece1.color()))
     {
-        attack_counts[piece1.color()] += multiplier*moves_attacking_square(square, piece1.color()).count();
+        attack_counts[piece1.color()] += adding_or_substracting*moves_attacking_square(square, piece1.color()).count();
     }
 }
 
