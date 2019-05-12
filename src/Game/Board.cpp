@@ -890,11 +890,11 @@ void Board::modify_attacks(Square square, Piece piece, bool adding_attacks)
     auto attacking_color = piece.color();
     auto vulnerable_king = Piece{opposite(attacking_color), KING};
     const Move* blocked_move = nullptr;
+    auto attack_count_diff = adding_attacks ? 1 : -1;
     for(auto attack : piece.attacking_moves(square))
     {
         auto attacked_square = attack->end();
         auto attacked_index = attacked_square.index();
-        auto attack_count_diff = adding_attacks ? 1 : -1;
 
         if(blocked_move && same_direction(blocked_move->movement(), attack->movement()))
         {
