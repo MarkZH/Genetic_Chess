@@ -792,8 +792,8 @@ bool run_perft_tests()
             auto depth_leaves = String::split(test);
             assert(depth_leaves.size() == 2);
             assert(depth_leaves.front().front() == 'D');
-            auto depth = std::stoul(depth_leaves.front().substr(1));
-            auto expected_leaves = std::stoul(depth_leaves.back());
+            auto depth = String::string_to_size_t(depth_leaves.front().substr(1));
+            auto expected_leaves = String::string_to_size_t(depth_leaves.back());
             auto leaf_count = move_count(perft_board, depth);
             legal_moves_counted += leaf_count;
             if(leaf_count != expected_leaves)
