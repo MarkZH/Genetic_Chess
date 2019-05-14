@@ -764,6 +764,7 @@ bool run_perft_tests()
     // (downloaded from http://www.rocechess.ch/perft.html)
     // (leaves from starting positions also found at https://oeis.org/A048987)
 
+    std::vector<int> tests_failed;
     auto perft_suite_input = std::ifstream("testing/perftsuite.epd");
     std::string input_line;
     std::vector<std::string> lines;
@@ -782,6 +783,7 @@ bool run_perft_tests()
     auto perft_timer = Scoped_Stopwatch("");
     for(const auto& line : lines)
     {
+        auto time_at_start = perft_timer.time_so_far();
         auto line_parts = String::split(line, ";");
         auto fen = line_parts.front();
         std::cout << '[' << ++test_number << '/' << lines.size() << "] " << fen << std::flush;
@@ -798,9 +800,9 @@ bool run_perft_tests()
             legal_moves_counted += leaf_count;
             if(leaf_count != expected_leaves)
             {
-                std::cerr << "\nError at depth " << depth << std::endl;
-                std::cerr << "Expected: " << expected_leaves << ", Got: " << leaf_count << std::endl;
-                return false;
+                std::cout << 'x';
+                tests_failed.push_back(test_number);
+                break;
             }
             else
             {
@@ -808,14 +810,29 @@ bool run_perft_tests()
             }
         }
 
-        std::cout << " OK! " << perft_timer.time_so_far() << std::endl;
+        std::cout << " ";
+        if(tests_failed.empty() || tests_failed.back() != test_number)
+        {
+            std::cout << "OK! ";
+        }
+        auto time_at_end = perft_timer.time_so_far();
+        std::cout << time_at_end - time_at_start << " / " << time_at_end << std::endl;
     }
 
     auto time = perft_timer.time_so_far();
     std::cout << "Perft time: " << time << " seconds" << std::endl;
     std::cout << "Legal moves counted: " << String::format_integer(int(legal_moves_counted), ",") << std::endl;
     std::cout << "Move generation rate: " << String::format_integer(int(legal_moves_counted/time), ",") << " moves/second." << std::endl;
-    return true;
+    if( ! tests_failed.empty())
+    {
+        std::cout << "Test" << (tests_failed.size() > 1 ? "s" : "") << " failed: ";
+        for(auto t : tests_failed)
+        {
+            std::cout << t << " ";
+        }
+        std::cout << std::endl;
+    }
+    return tests_failed.empty();
 }
 
 void print_randomness_sample()
