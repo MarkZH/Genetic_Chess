@@ -1542,7 +1542,7 @@ uint64_t Board::square_hash(Square square) const
     if(piece &&
        piece.type() == ROOK &&
        ! piece_has_moved(square) &&
-       ! piece_has_moved(find_king(piece.color())))
+       ! piece_has_moved(king_location[piece.color()]))
     {
         auto on_first_rank = (index%8 == 0);
         auto on_first_file = (index/8 == 0);
