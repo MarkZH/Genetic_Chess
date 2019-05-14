@@ -808,7 +808,7 @@ bool run_perft_tests()
             }
         }
 
-        std::cout << " OK!" << std::endl;
+        std::cout << " OK! " << perft_timer.time_so_far() << std::endl;
     }
 
     auto time = perft_timer.time_so_far();
