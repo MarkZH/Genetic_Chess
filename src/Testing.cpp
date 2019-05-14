@@ -850,7 +850,7 @@ namespace
         if( ! expected_result)
         {
             all_tests_passed = false;
-            std::cerr << fail_message << std::endl;
+            std::cerr << fail_message << std::endl << std::endl;
         }
 
         return expected_result;
@@ -1025,7 +1025,7 @@ namespace
     bool move_is_illegal(Board& board, const std::string& move)
     {
         bool result = true;
-        function_should_throw(result, move + "should be illegal", [&](){ board.create_move(move); });
+        function_should_throw(result, move + " should be illegal", [&](){ board.create_move(move); });
         return result;
     }
 }
