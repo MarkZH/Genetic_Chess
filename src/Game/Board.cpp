@@ -1380,7 +1380,7 @@ void Board::recreate_move_caches()
         auto piece = piece_on_square(square);
         if(piece && piece.color() == whose_turn())
         {
-            // invalid direction
+            // Invalid direction
             const Move* blocked_move = nullptr;
 
             for(const auto move : piece.move_list(square))
