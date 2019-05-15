@@ -40,7 +40,7 @@ namespace
     void add_queen_art(indexed_art_array& out, Color color);
     void add_king_art(indexed_art_array& out, Color color);
 
-    const indexed_art_array ascii_art_lines =
+    const auto ascii_art_lines =
         []()
         {
             indexed_art_array result;
@@ -58,7 +58,7 @@ namespace
             return result;
         }();
 
-    const size_t maximum_piece_height =
+    const auto maximum_piece_height =
         []()
         {
             size_t max_height = 0;
@@ -73,7 +73,7 @@ namespace
             return max_height;
         }();
 
-    const indexed_move_array legal_moves =
+    const auto legal_moves =
         []()
         {
             indexed_move_array result;
@@ -112,7 +112,7 @@ namespace
         }();
 
 
-    const indexed_move_array attack_moves =
+    const auto attack_moves =
         []()
         {
             indexed_move_array result;
