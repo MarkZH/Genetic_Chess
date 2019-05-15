@@ -399,7 +399,7 @@ std::string Piece::ascii_art(size_t row, size_t square_height) const
     assert(*this);
     assert(square_height >= maximum_piece_height);
 
-    auto& art = ascii_art_lines[color()][type()];
+    const auto& art = ascii_art_lines[color()][type()];
     auto empty_bottom_rows = (square_height - maximum_piece_height)/2;
     auto empty_top_rows = square_height - art.size() - empty_bottom_rows;
     auto line = row - empty_top_rows;
