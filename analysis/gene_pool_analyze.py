@@ -5,9 +5,10 @@ import sys
 def main(gene_pool_file_name):
     still_alive = dict()
     pool = dict()
-    header_done = False
+    header_line = []
 
-    # Read file for gene names and gene pool associations
+    # Read gene file for gene names
+    current_gene = ''
     with open(gene_pool_file_name) as f:
         for line in f:
             line = line.strip()
@@ -15,21 +16,32 @@ def main(gene_pool_file_name):
                 continue
             if ':' in line:
                 parameter, value = line.split(':', 1)
-                if parameter == 'ID' and not header_done:
-                    header_line = [parameter]
+                parameter = parameter.strip()
+                if parameter == 'Still Alive':
+                    continue
+                elif parameter == 'ID':
+                    header_line.append(parameter)
                 elif parameter == 'Name':
                     current_gene = value.strip()
-                elif parameter == 'Still Alive':
-                    pool_id, ids = value.split(':')
-                    pool_id = pool_id.strip()
-                    id_list = ids.split()
-                    still_alive[pool_id] = id_list
-                    for ident in id_list:
-                        pool[ident] = pool_id
-                elif not header_done:
+                else:
                     header_line.append(current_gene + ' - ' + parameter)
             elif line == 'END':
-                header_done = True
+                break
+            else:
+                raise Exception('Unknown line format: ' + line)
+
+    # Read file for gene pool associations
+    with open(gene_pool_file_name) as f:
+        for line in f:
+            line = line.strip()
+            if not line.startswith('Still Alive'):
+                continue
+            _, pool_id, ids = line.split(':', 2)
+            pool_id = pool_id.strip()
+            id_list = ids.split()
+            still_alive[pool_id] = id_list
+            for ident in id_list:
+                pool[ident] = pool_id
 
     # Read gene pool file for data
     output_file_name = gene_pool_file_name + '_parsed.txt'
