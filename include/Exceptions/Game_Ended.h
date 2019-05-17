@@ -11,7 +11,7 @@
 //
 //! An irregular game ending means one not caused by submitting a
 //! game-ending move to a Board or punching a game Clock with time
-//! exprired.
+//! expired.
 class Game_Ended : public std::runtime_error
 {
     public:
