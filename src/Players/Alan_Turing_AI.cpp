@@ -278,7 +278,6 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                 total_score -= std::sqrt(king_squares);
 
                 // Castling score
-                auto castling_possible_score = 0.0;
                 if( ! board.piece_has_moved(square))
                 {
                     for(auto rook_file : {'a', 'h'})
@@ -286,12 +285,11 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                         auto rook_square = Square{rook_file, square.rank()};
                         if( ! board.piece_has_moved(rook_square))
                         {
-                            castling_possible_score = 1.0;
+                            total_score += 1.0;
                             break;
                         }
                     }
                 }
-                total_score += castling_possible_score;
 
                 // Last move was castling
                 auto castling_index_check = board.game_record().size() - (perspective == board.whose_turn() ? 2 : 1);
