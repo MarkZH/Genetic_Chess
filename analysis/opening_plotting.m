@@ -65,7 +65,8 @@ top_rate_data = importdata([raw_data, '_top_opening_rate_data.txt'], ',');
 
 figure;
 hold all;
-window = 1000;
+window = min(1000, floor(0.1*size(top_rate_data.data, 1)));
+disp(window);
 
 for col = 1 : size(top_rate_data.data, 2)
     plot(movsum(top_rate_data.data(:, col), window, 'EndPoints', 'discard'), ...
