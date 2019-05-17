@@ -42,7 +42,7 @@ Game_Result play_game(Board board,
             result = game_clock.punch();
             if( ! result.game_has_ended())
             {
-                result = board.submit_move(move_chosen);;
+                result = board.submit_move(move_chosen);
             }
         }
     }
