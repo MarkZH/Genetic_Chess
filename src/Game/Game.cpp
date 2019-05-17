@@ -14,31 +14,13 @@
 #include "Exceptions/Game_Ended.h"
 
 // Play single game, return color of winner
-Game_Result play_game(const Player& white,
+Game_Result play_game(Board board,
+                      const Player& white,
                       const Player& black,
                       double time_in_seconds,
                       size_t moves_to_reset,
                       double increment_seconds,
                       const std::string& pgn_file_name)
-{
-    Board board;
-
-    return play_game_with_board(white,
-                                black,
-                                time_in_seconds,
-                                moves_to_reset,
-                                increment_seconds,
-                                pgn_file_name,
-                                board);
-}
-
-Game_Result play_game_with_board(const Player& white,
-                                 const Player& black,
-                                 double time_in_seconds,
-                                 size_t moves_to_reset,
-                                 double increment_seconds,
-                                 const std::string& pgn_file_name,
-                                 Board& board)
 {
     white.initial_board_setup(board);
     black.initial_board_setup(board);

@@ -277,7 +277,7 @@ int main(int argc, char *argv[])
                     }
                 }
 
-                play_game_with_board(*white, *black, game_time, moves_per_reset, increment_time, game_file_name, board);
+                play_game(board, *white, *black, game_time, moves_per_reset, increment_time, game_file_name);
             }
         }
         else
@@ -444,13 +444,13 @@ namespace
                     auto response = std::cin.get();
                     if(std::tolower(response) == 'y')
                     {
-                        play_game_with_board(Human_Player(),
-                                            Human_Player(),
-                                            0,
-                                            0,
-                                            0,
-                                            file_name + "_continued.pgn",
-                                            board);
+                        play_game(board,
+                                  Human_Player(),
+                                  Human_Player(),
+                                  0,
+                                  0,
+                                  0,
+                                  file_name + "_continued.pgn");
                         break;
                     }
                 }
