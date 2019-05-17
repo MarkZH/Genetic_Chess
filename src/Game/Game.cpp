@@ -34,21 +34,15 @@ Game_Result play_game(Board board,
 
     try
     {
-        while(true)
+        while( ! result.game_has_ended())
         {
             auto& player = board.whose_turn() == WHITE ? white : black;
             const auto& move_chosen = player.choose_move(board, game_clock);
 
             result = game_clock.punch();
-            if(result.game_has_ended())
+            if( ! result.game_has_ended())
             {
-                break;
-            }
-
-            result = board.submit_move(move_chosen);
-            if(result.game_has_ended())
-            {
-                break;
+                result = board.submit_move(move_chosen);;
             }
         }
     }
