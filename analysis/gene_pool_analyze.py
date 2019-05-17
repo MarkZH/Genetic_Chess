@@ -8,7 +8,7 @@ def main(gene_pool_file_name):
     header_done = False
     reading_ancestry = False
 
-    # Read file for gene names
+    # Read file for gene names and gene pool associations
     with open(gene_pool_file_name) as f:
         for line in f:
             line = line.strip()
@@ -80,7 +80,7 @@ def main(gene_pool_file_name):
                     if current_gene:
                         title = current_gene + ' - ' + parameter
                     else:
-                        title = parameter
+                        title = parameter #ID
                     index = header_line.index(title)
                     while index >= len(data_line):
                         data_line.append('')
