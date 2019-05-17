@@ -59,6 +59,7 @@ title('Speculation Constants');
 
 special_plots = [0, 0, 0];
 
+% Plot evolution of individual genes
 for yi = 2 : length(data.colheaders) - 2
     this_data = data.data(:, yi);
     name_list = data.colheaders(yi);
@@ -145,6 +146,7 @@ for yi = 2 : length(data.colheaders) - 2
     end
 end
 
+% Create special summary plots
 file_name_suffixes = {'piece strength', 'gene priorities', 'speculation'};
 for index = 1 : length(special_plots)
     if ~special_plots(index)
