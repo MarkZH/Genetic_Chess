@@ -281,7 +281,6 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                 auto castling_possible_score = 0.0;
                 if( ! board.piece_has_moved(square))
                 {
-                    // Queenside castling
                     for(auto rook_file : {'a', 'h'})
                     {
                         auto rook_square = Square{rook_file, square.rank()};
