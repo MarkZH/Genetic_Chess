@@ -2,6 +2,7 @@
 
 #include <string>
 #include <optional>
+#include <stdexcept>
 
 #include "Players/Player.h"
 #include "Game/Board.h"
@@ -10,7 +11,6 @@
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
 
-#include "Players/Thinking.h"
 #include "Exceptions/Game_Ended.h"
 
 // Play single game, return color of winner
