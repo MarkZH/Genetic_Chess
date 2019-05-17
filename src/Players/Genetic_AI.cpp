@@ -207,7 +207,7 @@ void Genetic_AI::print(const std::string& file_name) const
 void Genetic_AI::print(std::ostream& os) const
 {
     os << "ID: " << id() << '\n';
-    os << "Ancestry:\n";
+    os << "Name: Ancestry\n";
     for(size_t i = 0; i <= max_origin_pool_id; ++i)
     {
         auto fraction = (ancestry.count(i) > 0 ? ancestry.at(i) : 0.0);
@@ -274,7 +274,7 @@ void Genetic_AI::read_ancestry(std::istream& is)
             continue;
         }
 
-        if(line != "Ancestry:")
+        if(line != "Name: Ancestry")
         {
             throw Genetic_AI_Creation_Error("Missing ancestry data " + id_string);
         }

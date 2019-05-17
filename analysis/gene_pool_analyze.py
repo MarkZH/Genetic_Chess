@@ -6,14 +6,12 @@ def main(gene_pool_file_name):
     still_alive = dict()
     pool = dict()
     header_done = False
-    reading_ancestry = False
 
     # Read file for gene names and gene pool associations
     with open(gene_pool_file_name) as f:
         for line in f:
             line = line.strip()
             if not line:
-                reading_ancestry = False
                 continue
             if ':' in line:
                 parameter, value = line.split(':', 1)
@@ -28,10 +26,6 @@ def main(gene_pool_file_name):
                     still_alive[pool_id] = id_list
                     for ident in id_list:
                         pool[ident] = pool_id
-                elif parameter == 'Ancestry':
-                    reading_ancestry = True
-                elif reading_ancestry and not header_done:
-                    header_line.append('Ancestors from Pool ' + parameter)
                 elif not header_done:
                     header_line.append(current_gene + ' - ' + parameter)
             elif line == 'END':
@@ -42,12 +36,10 @@ def main(gene_pool_file_name):
     with open(gene_pool_file_name) as f, open(output_file_name, 'w') as w:
         data_line = []
         current_gene = ''
-        reading_ancestry = False
         w.write(','.join(header_line + ['Still Alive', 'Original Pool']) + '\n')
         for line in f:
             line = line.split('#')[0].strip()
             if not line:
-                reading_ancestry = False
                 continue
 
             if line == 'END':
@@ -72,10 +64,6 @@ def main(gene_pool_file_name):
                     current_gene = value
                 elif parameter == 'Still Alive':
                     continue
-                elif parameter == 'Ancestry':
-                    reading_ancestry = True
-                elif reading_ancestry:
-                    data_line.append(value)
                 else:
                     if current_gene:
                         title = current_gene + ' - ' + parameter
