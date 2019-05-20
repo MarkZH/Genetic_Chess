@@ -253,7 +253,7 @@ Square_Difference operator-(Square a, Square b)
     return {a.file() - b.file(), a.rank() - b.rank()};
 }
 
-//! Returns whether a rook or bishop could move from one square to antother in one move.
+//! Returns whether a rook or bishop could move from one square to another in one move.
 bool straight_line_move(Square start, Square end)
 {
     auto move = end - start;
