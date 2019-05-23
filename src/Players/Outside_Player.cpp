@@ -10,8 +10,6 @@
 #include "Utility/Scoped_Stopwatch.h"
 
 std::string Outside_Player::indent = "\t";
-const std::string Outside_Player::log_file_name = "chess_comm_log.txt";
-const Scoped_Stopwatch Outside_Player::running_time("");
 
 //! Initialize communication with an outside program.
 //
@@ -65,7 +63,9 @@ std::string Outside_Player::receive_command()
 //! \param data A text string to write.
 void Outside_Player::log(const std::string& data)
 {
-    std::ofstream(log_file_name, std::ios::app) << running_time.time_so_far() << indent << data << std::endl;
+    static const Scoped_Stopwatch running_time("");
+    static const auto log_file_name = "chess_comm_log.txt";
+    std::ofstream(log_file_name, std::ios::app) << indent << data << " -- " << running_time.time_so_far() << std::endl;
 }
 
 //! Output the given string to the outside interface.
