@@ -533,11 +533,11 @@ void Board::update_board(const Move& move)
 //! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
 const Move& Board::create_move(const std::string& move) const
 {
-    const std::string pieces = "RNBQK";
-    const std::string valid_files = "abcdefgh";
-    const std::string valid_rows = "12345678";
-    const std::string castling = "O";
-    const std::string valid_characters = pieces + valid_files + valid_rows + castling;
+    static const std::string pieces = "RNBQK";
+    static const std::string valid_files = "abcdefgh";
+    static const std::string valid_rows = "12345678";
+    static const std::string castling = "O";
+    static const std::string valid_characters = pieces + valid_files + valid_rows + castling;
 
     std::string validated;
     char promoted_piece = 0;
