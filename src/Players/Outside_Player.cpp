@@ -9,6 +9,7 @@
 #include "Players/CECP_Mediator.h"
 #include "Exceptions/Game_Ended.h"
 #include "Utility/Scoped_Stopwatch.h"
+#include "Utility/String.h"
 
 std::string Outside_Player::indent = "\t";
 
@@ -56,6 +57,12 @@ std::string Outside_Player::receive_command()
     std::string result;
     std::getline(std::cin, result);
     log("RECEIVING: " + result);
+    if(String::remove_extra_whitespace(result).empty())
+    {
+        log("Got empty input from GUI. Shutting down.");
+        result = "quit";
+    }
+
     if(result == "quit")
     {
         throw Game_Ended(NONE, "Told to quit");
