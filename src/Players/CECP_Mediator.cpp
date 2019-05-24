@@ -17,9 +17,7 @@ class Move;
 //! Set up the connection to the outside interface and send configuration data.
 //
 //! \param local_player The player on the machine. The name of the player gets sent to the interface.
-CECP_Mediator::CECP_Mediator(const Player& local_player) :
-    thinking_mode(NO_THINKING),
-    last_ponder_command(std::async(std::launch::async, [](){return std::string{}; }))
+CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THINKING)
 {
     std::string expected = "protover 2";
     if(receive_cecp_command(false) == expected)
