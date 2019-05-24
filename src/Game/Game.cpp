@@ -65,7 +65,7 @@ Game_Result play_game(Board board,
     white.process_game_ending(result, board);
     black.process_game_ending(result, board);
 
-    if(white.print_game_to_stdout() && black.print_game_to_stdout())
+    if( ! pgn_file_name.empty() || (white.print_game_to_stdout() && black.print_game_to_stdout()))
     {
         board.print_game_record(&white,
                                 &black,
