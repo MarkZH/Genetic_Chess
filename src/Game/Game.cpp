@@ -36,7 +36,10 @@ Game_Result play_game(Board board,
     {
         while( ! result.game_has_ended())
         {
-            auto& player = board.whose_turn() == WHITE ? white : black;
+            auto& player  = board.whose_turn() == WHITE ? white : black;
+            auto& thinker = board.whose_turn() == WHITE ? black : white;
+
+            thinker.ponder(board, game_clock);
             const auto& move_chosen = player.choose_move(board, game_clock);
 
             result = game_clock.punch();
@@ -44,6 +47,8 @@ Game_Result play_game(Board board,
             {
                 result = board.submit_move(move_chosen);
             }
+
+            board.choose_move_at_leisure();
         }
     }
     catch(const Game_Ended& termination)
@@ -60,11 +65,14 @@ Game_Result play_game(Board board,
     white.process_game_ending(result, board);
     black.process_game_ending(result, board);
 
-    board.print_game_record(&white,
-                            &black,
-                            pgn_file_name,
-                            result,
-                            game_clock);
+    if(white.print_game_to_stdout() && black.print_game_to_stdout())
+    {
+        board.print_game_record(&white,
+                                &black,
+                                pgn_file_name,
+                                result,
+                                game_clock);
+    }
 
     if(error)
     {

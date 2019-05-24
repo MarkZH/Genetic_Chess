@@ -23,6 +23,7 @@ class Outside_Player : public Player
         double increment();
 
         bool stop_for_local_clock() const override;
+        bool print_game_to_stdout() const override;
 
     protected:
         Outside_Player();

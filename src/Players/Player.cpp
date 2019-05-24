@@ -15,6 +15,10 @@ void Player::process_game_ending(const Game_Result&, const Board&) const
 {
 }
 
+void Player::ponder(const Board&, const Clock&) const
+{
+}
+
 //! Report the creator of the chess engine.
 //
 //! \returns The programmer who wrote the chess engine.
@@ -49,6 +53,11 @@ void Player::initial_board_setup(Board&) const
 //! game clock.
 //! \returns The player's preference for giving the local clock ultimate control over ending the game.
 bool Player::stop_for_local_clock() const
+{
+    return true;
+}
+
+bool Player::print_game_to_stdout() const
 {
     return true;
 }

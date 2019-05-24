@@ -5,6 +5,7 @@
 #include <string>
 #include <array>
 #include <bitset>
+#include <atomic>
 
 #include "Game/Color.h"
 #include "Game/Square.h"
@@ -49,8 +50,11 @@ class Board
         const std::vector<const Move*>& game_record() const;
         std::string last_move_record() const;
 
-        void set_thinking_mode(Thinking_Output_Type) const;
-        Thinking_Output_Type thinking_mode() const;
+        static void set_thinking_mode(Thinking_Output_Type);
+        static Thinking_Output_Type thinking_mode();
+        static void pick_move_now();
+        static bool must_pick_move_now();
+        static void choose_move_at_leisure();
 
         void print_game_record(const Player* white,
                                const Player* black,
@@ -132,7 +136,8 @@ class Board
         void recreate_move_caches();
 
         // Communication channels
-        mutable Thinking_Output_Type thinking_indicator;
+        static std::atomic<Thinking_Output_Type> thinking_indicator;
+        static std::atomic_bool move_immediately;
 
         Piece& piece_on_square(Square square);
         void remove_piece(Square square);

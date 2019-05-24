@@ -1,5 +1,8 @@
 #include "Players/CECP_Mediator.h"
 
+#include <string>
+#include <future>
+
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
@@ -14,10 +17,12 @@ class Move;
 //! Set up the connection to the outside interface and send configuration data.
 //
 //! \param local_player The player on the machine. The name of the player gets sent to the interface.
-CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THINKING)
+CECP_Mediator::CECP_Mediator(const Player& local_player) :
+    thinking_mode(NO_THINKING),
+    last_ponder_command(std::async(std::launch::async, [](){return std::string{}; }))
 {
     std::string expected = "protover 2";
-    if(receive_cecp_command() == expected)
+    if(receive_cecp_command(false) == expected)
     {
         log("as expected, setting options");
         send_command("feature "
@@ -27,6 +32,7 @@ CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THIN
                      "reuse=0 "
                      "myname=\"" + local_player.name() + "\" "
                      "name=1 "
+                     "ping=1 "
                      "done=1");
     }
     else
@@ -73,7 +79,7 @@ Color CECP_Mediator::ai_color() const
 {
     while(true)
     {
-        auto cmd = receive_cecp_command();
+        auto cmd = receive_cecp_command(false);
         if(cmd == "white" || cmd == "go")
         {
             indent += "\t";
@@ -92,7 +98,7 @@ std::string CECP_Mediator::receive_move(const Clock& clock) const
 {
     while(true)
     {
-        auto move = receive_cecp_command();
+        auto move = receive_cecp_command(false);
         if(String::starts_with(move, "usermove"))
         {
             auto data = String::split(move, " ")[1];
@@ -128,6 +134,11 @@ std::string CECP_Mediator::receive_move(const Clock& clock) const
     }
 }
 
+void CECP_Mediator::ponder(const Board& board, const Clock& clock) const
+{
+    last_ponder_command = std::async(std::launch::async, &CECP_Mediator::ponder_method, this, board, clock);
+}
+
 //! Reports the name of the outside opponent.
 //
 //! \returns The opponent's name or "CECP Interface Player" if unknown.
@@ -159,7 +170,7 @@ void CECP_Mediator::receive_clock_specs()
 {
     while(true)
     {
-        auto response = receive_cecp_command();
+        auto response = receive_cecp_command(false);
         if(String::starts_with(response, "level"))
         {
             log("got time specs: " + response);
@@ -201,11 +212,15 @@ void CECP_Mediator::receive_clock_specs()
     log("done with time specs");
 }
 
-std::string CECP_Mediator::receive_cecp_command() const
+std::string CECP_Mediator::receive_cecp_command(bool while_pondering) const
 {
+    auto last_command = ( ! while_pondering && last_ponder_command.valid()) ? last_ponder_command.get() : std::string{};
+
     while(true)
     {
-        auto command = receive_command();
+        auto command = last_command.empty() ? receive_command() : last_command;
+        last_command.clear();
+
         if(String::starts_with(command, "name"))
         {
             received_name = String::split(command, " ", 1)[1];
@@ -220,6 +235,11 @@ std::string CECP_Mediator::receive_cecp_command() const
         {
             thinking_mode = NO_THINKING;
             log("turning off thinking output for CECP");
+        }
+        else if(String::starts_with(command, "ping"))
+        {
+            command[1] = 'o'; // change "ping" to "pong"
+            send_command(command);
         }
         else
         {
@@ -239,10 +259,38 @@ void CECP_Mediator::wait_for_quit() const
     {
         while(true)
         {
-            receive_cecp_command();
+            receive_cecp_command(false);
         }
     }
     catch(const std::runtime_error&)
     {
+    }
+}
+
+std::string CECP_Mediator::ponder_method(const Board& board, const Clock&) const
+{
+    while(true)
+    {
+        auto command = receive_cecp_command(true);
+        if(command == "post")
+        {
+            log("turning on thinking output for CECP");
+            board.set_thinking_mode(CECP);
+        }
+        else if(command == "nopost")
+        {
+            log("turning off thinking output for CECP");
+            board.set_thinking_mode(NO_THINKING);
+        }
+        else if(command == "?")
+        {
+            log("Forcing move choice");
+            board.pick_move_now();
+        }
+        else
+        {
+            log("Ending Pondering");
+            return command;
+        }
     }
 }

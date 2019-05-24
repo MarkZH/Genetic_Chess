@@ -254,7 +254,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         --moves_left;
         still_on_principal_variation = false; // only the first move is part of the principal variation
 
-        if(clock.running_time_left() < 0)
+        if(clock.running_time_left() < 0 || board.must_pick_move_now())
         {
             break;
         }

@@ -12,6 +12,7 @@
 #include <sstream>
 #include <bitset>
 #include <cmath>
+#include <atomic>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -74,6 +75,8 @@ namespace
 }
 
 const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+std::atomic<Thinking_Output_Type> Board::thinking_indicator = NO_THINKING;
+std::atomic_bool Board::move_immediately = false;
 
 //! Constructs a board according to an FEN string.
 //
@@ -90,8 +93,7 @@ Board::Board(const std::string& fen) :
     checking_square{},
     potential_attacks{},
     castling_index{{size_t(-1), size_t(-1)}},
-    attack_counts{},
-    thinking_indicator(NO_THINKING)
+    attack_counts{}
 {
     auto fen_parse = String::split(fen);
     if(fen_parse.size() != 6)
@@ -1509,7 +1511,7 @@ std::string Board::last_move_record() const
 //! Set the format an engine should output while picking a move.
 //
 //! \param mode Which chess engine protocol is being used: CECP or NO_THINKING.
-void Board::set_thinking_mode(Thinking_Output_Type mode) const
+void Board::set_thinking_mode(Thinking_Output_Type mode)
 {
     thinking_indicator = mode;
 }
@@ -1517,9 +1519,24 @@ void Board::set_thinking_mode(Thinking_Output_Type mode) const
 //! Find out what kind of format an engine should output while picking a move.
 //
 //! \returns Format of thinking output: CECP or NO_THINKING.
-Thinking_Output_Type Board::thinking_mode() const
+Thinking_Output_Type Board::thinking_mode()
 {
     return thinking_indicator;
+}
+
+void Board::pick_move_now()
+{
+    move_immediately = true;
+}
+
+void Board::choose_move_at_leisure()
+{
+    move_immediately = false;
+}
+
+bool Board::must_pick_move_now()
+{
+    return move_immediately;
 }
 
 void Board::update_board_hash(Square square)

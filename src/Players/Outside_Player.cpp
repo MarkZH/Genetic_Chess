@@ -149,3 +149,8 @@ bool Outside_Player::stop_for_local_clock() const
 {
     return false;
 }
+
+bool Outside_Player::print_game_to_stdout() const
+{
+    return false;
+}

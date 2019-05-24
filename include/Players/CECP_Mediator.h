@@ -6,6 +6,7 @@
 #include "Thinking.h"
 
 #include <string>
+#include <future>
 
 class Board;
 class Game_Result;
@@ -21,6 +22,7 @@ class CECP_Mediator : public Outside_Player
 
         const Move& choose_move(const Board& b, const Clock& clock) const override;
         std::string receive_move(const Clock& clock) const override;
+        void ponder(const Board& board, const Clock& clock) const override;
 
         Color ai_color() const override;
         void process_game_ending(const Game_Result& ending, const Board& board) const override;
@@ -34,10 +36,12 @@ class CECP_Mediator : public Outside_Player
         mutable std::string received_name;
         mutable Thinking_Output_Type thinking_mode;
         mutable std::string received_move_text;
+        mutable std::future<std::string> last_ponder_command;
 
         void receive_clock_specs() override;
-        std::string receive_cecp_command() const;
+        std::string receive_cecp_command(bool while_pondering) const;
         void wait_for_quit() const;
+        std::string ponder_method(const Board& board, const Clock& clock) const;
 };
 
 #endif // CECP_MEDIATOR_H

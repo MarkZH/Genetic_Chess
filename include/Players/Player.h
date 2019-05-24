@@ -23,6 +23,12 @@ class Player
         //! \param clock The game clock--allowing the player to decide how much time to spend choosing a move.
         virtual const Move& choose_move(const Board& board, const Clock& clock) const = 0;
 
+        //! Think when it is not the Player's turn to move
+        //
+        //! \param board The board to ponder on (just after this player's last move).
+        //! \param clock The game clock for guessing how much time the opponent will use.
+        virtual void ponder(const Board& board, const Clock& clock) const;
+
         //! The name of the player.
         //
         //! \returns The name of the individual player. This may have specific details like ID numbers
@@ -36,6 +42,7 @@ class Player
 
         virtual void initial_board_setup(Board& board) const;
         virtual bool stop_for_local_clock() const;
+        virtual bool print_game_to_stdout() const;
 };
 
 #endif // PLAYER_H
