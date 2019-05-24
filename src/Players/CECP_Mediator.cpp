@@ -80,13 +80,13 @@ Color CECP_Mediator::ai_color() const
         auto cmd = receive_cecp_command(false);
         if(cmd == "white" || cmd == "go")
         {
-            indent += "\t";
+            indent = "\t\t";
             return WHITE;
         }
         else if(String::starts_with(cmd, "usermove"))
         {
             first_move = String::split(cmd, " ")[1];
-            indent += "\t\t\t";
+            indent = "\t\t\t";
             return BLACK;
         }
     }
