@@ -218,29 +218,29 @@ int main(int argc, char *argv[])
                     {
                         latest = std::make_unique<Alan_Turing_AI>();
                     }
-                    else if(opt == "-time")
+                    else if(opt == "-time" && i + 1 < argc)
                     {
                         game_time = std::stod(argv[++i]);
                     }
-                    else if(opt == "-reset_moves")
+                    else if(opt == "-reset_moves" && i + 1 < argc)
                     {
-                        moves_per_reset = std::stoul(argv[++i]);
+                        moves_per_reset = String::string_to_size_t(argv[++i]);
                     }
-                    else if(opt == "-increment_time")
+                    else if(opt == "-increment_time" && i + 1 < argc)
                     {
                         increment_time = std::stod(argv[++i]);
                     }
-                    else if(opt == "-board")
+                    else if(opt == "-board" && i + 1 < argc)
                     {
                         board = Board(argv[++i]);
                     }
-                    else if(opt == "-game_file")
+                    else if(opt == "-game_file" && i + 1 < argc)
                     {
                         game_file_name = argv[++i];
                     }
                     else
                     {
-                        throw std::invalid_argument("Invalid option: " + opt);
+                        throw std::invalid_argument("Invalid or incomplete option: " + opt);
                     }
 
                     if(latest)
