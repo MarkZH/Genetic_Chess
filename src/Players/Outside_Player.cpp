@@ -42,6 +42,11 @@ Outside_Player::Outside_Player() :
 {
 }
 
+Outside_Player::~Outside_Player()
+{
+    log("Shutting down.");
+}
+
 //! Wait for a command from the outside interface and pass it on to derived class instances.
 //
 //! \returns The command from the outside interface if not "quit".

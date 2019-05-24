@@ -15,6 +15,8 @@ class Clock;
 class Outside_Player : public Player
 {
     public:
+        ~Outside_Player() override;
+
         //! Returns the color to be controlled by the local AI.
         virtual Color ai_color() const = 0;
 
