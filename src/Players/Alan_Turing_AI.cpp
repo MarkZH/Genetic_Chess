@@ -51,6 +51,11 @@ const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
                     auto best_third_move_score = best_score_start; // maximize
                     for(auto third_move : second_board.legal_moves())
                     {
+                        if(board.must_pick_move_now())
+                        {
+                            return *best_first_move;
+                        }
+
                         auto third_board = second_board;
                         auto third_move_result = third_board.submit_move(*third_move);
                         auto third_move_score = position_value(third_board, board.whose_turn(), third_move_result, 3);

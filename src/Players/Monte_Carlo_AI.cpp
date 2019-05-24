@@ -48,7 +48,8 @@ const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) 
     const Monte_Carlo_Search_Tree* current_search_tree = &search_tree;
     auto time_start = clock.running_time_left();
     while(clock.running_time_left() > 0.001 &&
-          time_start - clock.running_time_left() < time_to_examine)
+          time_start - clock.running_time_left() < time_to_examine &&
+          ! board.must_pick_move_now())
     {
         auto monte_carlo_board = board;
         Game_Result game_result;
