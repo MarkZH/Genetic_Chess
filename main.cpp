@@ -722,8 +722,8 @@ namespace
                 {
                     board.submit_move(board.create_move(move_record));
                     output << ++move_index << '\t'
-                        << game_moves.size() << '\t'
-                        << board.legal_moves().size() << '\n';
+                           << game_moves.size() << '\t'
+                           << board.legal_moves().size() << '\n';
                 }
 
                 game_moves.clear();
