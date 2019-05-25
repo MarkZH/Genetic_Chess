@@ -1205,14 +1205,12 @@ void Board::print_game_record(const Player* white,
     print_game_header_line(out_stream, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
     print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
-    if(white && ! white->name().empty())
+    for(auto player : {white, black})
     {
-        print_game_header_line(out_stream, "White", white->name());
-    }
-
-    if(black && ! black->name().empty())
-    {
-        print_game_header_line(out_stream, "Black", black->name());
+        if(player && ! player->name().empty())
+        {
+            print_game_header_line(out_stream, player == white ? "White" : "Black", player->name());
+        }
     }
 
     print_game_header_line(out_stream, "Round", game_number++);
