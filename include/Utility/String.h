@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <chrono>
 
 //! A collection of useful functions for dealing with text strings.
 namespace String
@@ -92,6 +93,9 @@ namespace String
     //! \throws std::invalid_argument if no conversion could be made.
     //! \throws std::out_of_range if the number in the string cannot fit in a size_t.
     size_t string_to_size_t(const std::string& s);
+
+    std::string date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
+                                     const std::string& format);
 }
 
 #endif // STRING_H

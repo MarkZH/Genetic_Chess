@@ -4,7 +4,7 @@
 #include <fstream>
 #include <memory>
 #include <string>
-#include <iomanip>
+#include <chrono>
 
 #include "Players/CECP_Mediator.h"
 #include "Exceptions/Game_Ended.h"
@@ -76,9 +76,12 @@ std::string Outside_Player::receive_command()
 //! \param data A text string to write.
 void Outside_Player::log(const std::string& data)
 {
-    static const Scoped_Stopwatch running_time("");
     static const auto log_file_name = "chess_comm_log.txt";
-    std::ofstream(log_file_name, std::ios::app) << std::setw(12) << running_time.time_so_far() << indent << data << std::endl;
+    std::ofstream(log_file_name, std::ios::app)
+        << String::date_and_time_format(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S --")
+        << indent
+        << data
+        << std::endl;
 }
 
 //! Output the given string to the outside interface.

@@ -5,6 +5,9 @@
 #include <stdexcept>
 #include <algorithm>
 #include <cctype>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
 
 namespace String
 {
@@ -159,4 +162,19 @@ size_t String::string_to_size_t(const std::string& s)
     #else
     return std::stoi(s);
     #endif
+}
+
+std::string String::date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
+                                         const std::string& format)
+{
+    auto time_c = std::chrono::system_clock::to_time_t(point_in_time);
+    std::tm time_out;
+#ifdef _WIN32
+    localtime_s(&time_out, &time_c);
+#elif defined(__linux__)
+    localtime_r(&time_c, &time_out);
+#endif
+    auto ss = std::ostringstream{};
+    ss << std::put_time(&time_out, format.c_str());
+    return ss.str();
 }

@@ -1,9 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <cctype>
-#include <chrono>
-#include <ctime>
-#include <iomanip>
 #include <cassert>
 #include <stdexcept>
 #include <array>
@@ -1205,16 +1202,8 @@ void Board::print_game_record(const Player* white,
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
 
-    auto game_start_time = game_clock.game_start_date_and_time();
-    auto game_start_time_c = std::chrono::system_clock::to_time_t(game_start_time);
-    std::tm time_out;
-#ifdef _WIN32
-    localtime_s(&time_out, &game_start_time_c);
-#elif defined(__linux__)
-    localtime_r(&game_start_time_c, &time_out);
-#endif
-    print_game_header_line(out_stream, "Date", std::put_time(&time_out, "%Y.%m.%d"));
-    print_game_header_line(out_stream, "Time", std::put_time(&time_out, "%H:%M:%S"));
+    print_game_header_line(out_stream, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
+    print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
     if(white && ! white->name().empty())
     {
