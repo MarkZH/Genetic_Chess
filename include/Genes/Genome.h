@@ -20,7 +20,7 @@ class Genome
         Genome(); // random settings on all genes
         Genome(const Genome& other); // clone
         Genome(const Genome& mother, const Genome& father); // randomly combine from parents
-        Genome& operator=(const Genome& other);
+        Genome& operator=(Genome other);
 
         void read_from(std::istream& is);
 

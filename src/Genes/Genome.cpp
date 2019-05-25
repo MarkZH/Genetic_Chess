@@ -2,6 +2,7 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <algorithm>
 
 #include "Genes/Genome.h"
 
@@ -121,19 +122,9 @@ void Genome::reset_piece_strength_gene()
 //! Inject another genome's data into this one (i.e., assignment operator)
 //
 //! \param other The originating genome.
-Genome& Genome::operator=(const Genome& other)
+Genome& Genome::operator=(Genome other)
 {
-    if(this == &other)
-    {
-        return *this;
-    }
-
-    genome.clear();
-    for(const auto& gene : other.genome)
-    {
-        genome.emplace_back(gene->duplicate());
-    }
-
+    std::swap(genome, other.genome);
     reset_piece_strength_gene();
 
     return *this;
