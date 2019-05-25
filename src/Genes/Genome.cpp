@@ -102,11 +102,12 @@ Genome::Genome()
 //! \param other The originating genome.
 Genome::Genome(const Genome& other)
 {
-    for(const auto& gene : other.genome)
-    {
-        genome.emplace_back(gene->duplicate());
-    }
-
+    std::transform(other.genome.begin(), other.genome.end(),
+                   std::back_inserter(genome),
+                   [](const auto& gene)
+                   {
+                       return gene->duplicate();
+                   });
     reset_piece_strength_gene();
 }
 
