@@ -289,13 +289,7 @@ namespace
 
         for(auto& line : out[color][type])
         {
-            for(auto& c : line)
-            {
-                if(c == ' ' || c == '_')
-                {
-                    c = '#';
-                }
-            }
+            std::replace_if(line.begin(), line.end(), [](auto c){ return c == ' ' || c == '_'; }, '#');
         }
     }
 
