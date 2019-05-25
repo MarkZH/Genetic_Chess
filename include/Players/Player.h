@@ -42,6 +42,11 @@ class Player
 
         virtual void initial_board_setup(Board& board) const;
         virtual bool stop_for_local_clock() const;
+
+        //! Decides whether the record of a game should be printed to stdout if no file name is provided.
+        //
+        //! \returns For local AIs, this returns true. For a Player that communicates with GUIs through stdout,
+        //!          (e.g., CECP_Mediator or anything else derived from Outside_Player), this returns false.
         virtual bool print_game_to_stdout() const;
 };
 

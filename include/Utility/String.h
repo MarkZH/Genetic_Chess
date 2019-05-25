@@ -94,6 +94,11 @@ namespace String
     //! \throws std::out_of_range if the number in the string cannot fit in a size_t.
     size_t string_to_size_t(const std::string& s);
 
+    //! Create a text string of the given time point in the given format
+    //
+    //! \param point_in_time The time point to convert.
+    //! \param format The format of the date/time data (see docs for std::put_time).
+    //! \returns A formatted text string of the date and/or time.
     std::string date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
                                      const std::string& format);
 }

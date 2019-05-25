@@ -1513,16 +1513,19 @@ Thinking_Output_Type Board::thinking_mode()
     return thinking_indicator;
 }
 
+//! Force the Player that is currently choosing a move to stop thinking and immediately make a move.
 void Board::pick_move_now()
 {
     move_immediately = true;
 }
 
+//! Allow the Player to take any amount of time to choose a move.
 void Board::choose_move_at_leisure()
 {
     move_immediately = false;
 }
 
+//! Check whether a Player should stop thinking and immediately move.
 bool Board::must_pick_move_now()
 {
     return move_immediately;
