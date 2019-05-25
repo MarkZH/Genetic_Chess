@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <algorithm>
+#include <numeric>
 
 #include "Game/Board.h"
 #include "Game/Color.h"
@@ -202,13 +203,11 @@ void Genome::read_from(std::istream& is)
 
 double Genome::score_board(const Board& board, Color perspective, size_t depth) const
 {
-    double score = 0.0;
-    for(const auto& gene : genome)
-    {
-        score += gene->evaluate(board, perspective, depth);
-    }
-
-    return score;
+    return std::accumulate(genome.begin(), genome.end(), 0.0,
+                           [&](auto& sum, const auto& gene)
+                           {
+                               return sum + gene->evaluate(board, perspective, depth);
+                           });
 }
 
 //! Evaluate a board position and return a numerical value.
