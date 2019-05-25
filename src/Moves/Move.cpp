@@ -334,9 +334,9 @@ Square_Difference Move::attack_direction_from_index(size_t index)
     if(index & 8)
     {
         // Knight move
-        auto file_direction = index & 4 ? 1 : -1;
-        auto rank_direction = index & 2 ? 1 : -1;
-        auto file_step = index & 1 ? 2 : 1;
+        auto file_direction = (index & 4) ? 1 : -1;
+        auto rank_direction = (index & 2) ? 1 : -1;
+        auto file_step =( index & 1) ? 2 : 1;
         auto rank_step = 3 - file_step;
         return {file_step*file_direction, rank_step*rank_direction};
     }
@@ -348,18 +348,18 @@ Square_Difference Move::attack_direction_from_index(size_t index)
             if(index & 2)
             {
                 // Vertical move
-                return {0, (index & 1 ? 1 : -1)};
+                return {0, (index & 1) ? 1 : -1};
             }
             else
             {
                 // Horizontal move
-                return {(index & 1 ? 1 : -1), 0};
+                return {(index & 1) ? 1 : -1, 0};
             }
         }
         else
         {
             // Bishop move
-            return {index & 2 ? 1 : -1, index & 1 ? 1 : -1};
+            return {(index & 2) ? 1 : -1, (index & 1) ? 1 : -1};
         }
     }
 }
