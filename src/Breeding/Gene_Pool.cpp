@@ -437,12 +437,11 @@ void gene_pool(const std::string& config_file)
                 // Replace player with least wins in each pool with clone of winner from pool to left
                 std::cout << std::endl;
                 std::vector<Genetic_AI> winners;
-                for(const auto& source_pool : pools)
-                {
-                    winners.push_back(*std::max_element(source_pool.begin(),
-                                                        source_pool.end(),
-                                                        best_compare));
-                }
+                std::transform(pools.begin(), pools.end(), std::back_inserter(winners),
+                               [best_compare](const auto& source_pool)
+                               {
+                                   return *std::max_element(source_pool.begin(), source_pool.end(), best_compare);
+                               });
 
                 for(size_t source_pool_index = 0; source_pool_index < pools.size(); ++source_pool_index)
                 {
