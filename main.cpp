@@ -2,6 +2,7 @@
 #include <memory>
 #include <fstream>
 #include <cctype>
+#include <algorithm>
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -730,13 +731,12 @@ namespace
                 continue;
             }
 
-            for(const auto& move_record : String::split(line))
-            {
-                if( ! std::isdigit(move_record.front()))
-                {
-                    game_moves.push_back(move_record);
-                }
-            }
+            auto moves = String::split(line);
+            std::copy_if(moves.begin(), moves.end(), std::back_inserter(game_moves),
+                         [](const auto& move_record)
+                         {
+                             return ! std::isdigit(move_record.front());
+                         });
         }
     }
 }
