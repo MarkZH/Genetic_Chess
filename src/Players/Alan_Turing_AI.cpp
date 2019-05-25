@@ -4,6 +4,7 @@
 #include <cmath>
 #include <bitset>
 #include <tuple>
+#include <algorithm>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
@@ -100,14 +101,8 @@ std::string Alan_Turing_AI::author() const
 std::vector<const Move*> Alan_Turing_AI::considerable_moves(const Board& board) const
 {
     std::vector<const Move*> result;
-    for(auto move : board.legal_moves())
-    {
-        if(is_considerable(*move, board))
-        {
-            result.push_back(move);
-        }
-    }
-
+    std::copy_if(board.legal_moves().begin(), board.legal_moves().end(), std::back_inserter(result),
+                 [this, &board](auto move){ return is_considerable(*move, board); });
     return result;
 }
 
