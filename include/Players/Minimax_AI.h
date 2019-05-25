@@ -25,7 +25,7 @@ class Minimax_AI : public Player
         std::string commentary_for_next_move(const Board& board) const override;
 
     protected:
-        void calibrate_thinking_speed() const;
+        void recalibrate_self() const;
 
     private:
         mutable std::vector<const Move*> principal_variation;
@@ -79,9 +79,9 @@ class Minimax_AI : public Player
         double time_since_last_output(const Clock& clock) const;
 
         mutable double value_of_centipawn;
-        mutable bool value_of_centipawn_calculated;
 
         void calculate_centipawn_value() const;
+        void calibrate_thinking_speed() const;
 };
 
 #endif // MINIMAX_AI_H

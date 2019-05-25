@@ -24,7 +24,7 @@ Genetic_AI::Genetic_AI(int mutation_count) :
     id_number(next_id++)
 {
     mutate(mutation_count);
-    calibrate_thinking_speed();
+    recalibrate_self();
 }
 
 //! Create a new Genetic_AI via sexual reproduction.
@@ -43,7 +43,7 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
         ancestry[i] = (A_parents[i] + B_parents[i])/2;
     }
 
-    calibrate_thinking_speed();
+    recalibrate_self();
 }
 
 //! Create a Genetic_AI from information in a text file.
@@ -60,7 +60,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name)
 
     read_from(ifs);
 
-    calibrate_thinking_speed();
+    recalibrate_self();
 }
 
 //! Create a Genetic_AI from information in an input stream (std::ifstream, std::cin, etc.).
@@ -71,7 +71,7 @@ Genetic_AI::Genetic_AI(std::istream& is)
 {
     read_from(is);
 
-    calibrate_thinking_speed();
+    recalibrate_self();
 }
 
 //! Create a Genetic_AI from a text file by searching for a specfic ID.
@@ -107,7 +107,7 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
             read_ancestry(ifs);
             genome.read_from(ifs);
 
-            calibrate_thinking_speed();
+            recalibrate_self();
 
             next_id = std::max(next_id, id_number + 1);
 
@@ -181,7 +181,7 @@ void Genetic_AI::mutate(int mutation_count)
         genome.mutate();
     }
 
-    calibrate_thinking_speed();
+    recalibrate_self();
 }
 
 //! Prints the information defining this AI.

@@ -13,7 +13,7 @@
 #include "Utility/Math.h"
 #include "Utility/Random.h"
 
-Minimax_AI::Minimax_AI() : value_of_centipawn_calculated(false)
+Minimax_AI::Minimax_AI()
 {
 }
 
@@ -363,12 +363,6 @@ double Minimax_AI::evaluate(const Board & board, const Game_Result& move_result,
 
 double Minimax_AI::centipawn_value() const
 {
-    if( ! value_of_centipawn_calculated)
-    {
-        calculate_centipawn_value();
-        value_of_centipawn_calculated = true;
-    }
-
     return value_of_centipawn;
 }
 
@@ -454,4 +448,10 @@ std::string Minimax_AI::commentary_for_next_move(const Board& board) const
     }
 
     return result;
+}
+
+void Minimax_AI::recalibrate_self() const
+{
+    calibrate_thinking_speed();
+    calculate_centipawn_value();
 }
