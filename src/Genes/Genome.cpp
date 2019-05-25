@@ -204,7 +204,7 @@ void Genome::read_from(std::istream& is)
 double Genome::score_board(const Board& board, Color perspective, size_t depth) const
 {
     return std::accumulate(genome.begin(), genome.end(), 0.0,
-                           [&](auto& sum, const auto& gene)
+                           [&](auto sum, const auto& gene)
                            {
                                return sum + gene->evaluate(board, perspective, depth);
                            });
