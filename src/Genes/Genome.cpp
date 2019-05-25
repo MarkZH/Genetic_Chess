@@ -1,10 +1,10 @@
+#include "Genes/Genome.h"
+
 #include <string>
 #include <vector>
 #include <stdexcept>
 #include <iostream>
 #include <algorithm>
-
-#include "Genes/Genome.h"
 
 #include "Game/Board.h"
 #include "Game/Color.h"
