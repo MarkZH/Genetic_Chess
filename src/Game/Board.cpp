@@ -963,7 +963,7 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece)
                     continue; // Pawns and kings are never blocked
                 }
 
-                for(auto target_square = square + step; target_square.inside_board(); target_square += step)
+                for(auto target_square : Square::square_line_from(square, step))
                 {
                     auto target_index = target_square.index();
                     auto piece = piece_on_square(target_square);
@@ -1058,12 +1058,8 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             }
             auto step = Move::attack_direction_from_index(checking_index);
             const auto& king_square = find_king(whose_turn());
-
-            checking_square = king_square - step;
-            while( ! piece_on_square(checking_square))
-            {
-                checking_square -= step;
-            }
+            auto squares = Square::square_line_from(king_square, -step);
+            checking_square = *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
         }
 
         if(checking_square == move.end())
@@ -1115,7 +1111,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         auto attacking_file = move.start().file();
         auto attacked_file = move.end().file();
         auto passed_pawns = 0;
-        for(auto square = king_square + step; square.inside_board(); square += step)
+        for(auto square : Square::square_line_from(king_square, step))
         {
             if(square.file() == attacked_file || square.file() == attacking_file)
             {
@@ -1363,8 +1359,6 @@ void Board::recreate_move_caches()
 {
     legal_moves_cache.clear();
 
-    bool en_passant_legal = false;
-    material_change_move_available = false;
     for(auto square : Square::all_squares())
     {
         auto piece = piece_on_square(square);
@@ -1383,11 +1377,6 @@ void Board::recreate_move_caches()
                     if(move->is_legal(*this))
                     {
                         legal_moves_cache.push_back(move);
-
-                        en_passant_legal = en_passant_legal || move->is_en_passant();
-                        material_change_move_available = material_change_move_available ||
-                                                         move_captures(*move) ||
-                                                         move->promotion_piece_symbol();
                     }
 
                     // If there is a piece on the ending square, farther moves are not possible.
@@ -1404,10 +1393,19 @@ void Board::recreate_move_caches()
     }
 
     // Make sure board hash is correct for valid repeat counts
-    if( ! en_passant_legal)
+    if(std::none_of(legal_moves_cache.begin(),
+                    legal_moves_cache.end(),
+                    [](auto move) { return move->is_en_passant(); }))
     {
         clear_en_passant_target();
     }
+
+    material_change_move_available = std::any_of(legal_moves_cache.begin(),
+                                                 legal_moves_cache.end(),
+                                                 [this](auto move)
+                                                 {
+                                                     return move_captures(*move) || move->promotion_piece_symbol();
+                                                 });
 }
 
 //! Checks whether there are enough pieces on the board for any possible checkmate.
@@ -1651,20 +1649,8 @@ bool Board::king_multiply_checked() const
 bool Board::all_empty_between(Square start, Square end) const
 {
     assert(straight_line_move(start, end));
-
-    auto step = (end - start).step();
-
-    for(auto square = start + step; square != end; square += step)
-    {
-        assert(square.inside_board());
-
-        if(piece_on_square(square))
-        {
-            return false;
-        }
-    }
-
-    return true;
+    auto squares = Square::squares_between(start, end);
+    return std::all_of(squares.begin(), squares.end(), [this](auto square) { return ! piece_on_square(square); });
 }
 
 //! Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.

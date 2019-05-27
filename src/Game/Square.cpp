@@ -24,15 +24,15 @@ Square_Difference Square_Difference::step() const
 }
 
 //! Return the first square when iterating all squares
-Square Square_Iterator::begin() const
+All_Squares_Iterator All_Squares::begin() const
 {
-    return Square{'a', 1};
+    return All_Squares_Iterator({'a', 1});
 }
 
 //! Return an invalid Square to end iteration
-Square Square_Iterator::end() const
+All_Squares_Iterator All_Squares::end() const
 {
-    return Square{};
+    return {{}};
 }
 
 const Square::square_index_t Square::invalid_index = 64;
@@ -147,14 +147,6 @@ Square& Square::operator++()
     return *this;
 }
 
-//! The Square is its own iterator, so dereferencing returns itself.
-//
-//! See Square::all_squares().
-Square Square::operator*() const
-{
-    return *this;
-}
-
 //! Check that a square file is a valid value.
 //
 //! \param file Square file to check ('a' <= file <= 'h')
@@ -201,9 +193,34 @@ bool Square::inside_board(char file, int rank)
 //! \endcode
 //!
 //! Use when the order of Square iteration doesn't matter.
-Square_Iterator Square::all_squares()
+All_Squares Square::all_squares()
 {
     return {};
+}
+
+//! Create a container of Squares between--but not including--two squares.
+//
+//! \param a A square that borders the collection but is not included.
+//! \param b Another square that borders the collection but is not included.
+//! \returns A Squares_in_a_Line instance for use in a range-for loop or \<algorithms\>.
+//
+//! This structure only works if the Squares in the arguments are along a common
+//! row, column, or diagonal.
+Squares_in_a_Line Square::squares_between(Square a, Square b)
+{
+    return Squares_in_a_Line(a, b);
+}
+
+//! Create a container of Squares along a line specified by a Square and a direction.
+//
+//! \param origin A square that starts a line of Squares but is not included in the collection.
+//! \param direction The direction that the line should proceed along. There is no restriction
+//!        on the direction or length of the difference. A knight move is valid.
+//
+//! The end of the collection is when the squares leave the Board.
+Squares_in_a_Line Square::square_line_from(Square origin, Square_Difference direction)
+{
+    return Squares_in_a_Line(origin, direction);
 }
 
 //! Check if two squares are the same.
@@ -286,4 +303,102 @@ bool same_direction(const Square_Difference& move_1, const Square_Difference& mo
 {
     return moves_are_parallel(move_1, move_2) &&
            move_1.file_change*move_2.file_change + move_1.rank_change*move_2.rank_change > 0; // dot product
+}
+
+//! Construct the collection of in-line Squares.
+//
+//! \param start The start of the line of squares (not included in the collection).
+//! \param square_step The direction of the line extending away from start.
+Square_Line_Iterator::Square_Line_Iterator(Square start, const Square_Difference & square_step) :
+    current_square(start),
+    step(square_step)
+{
+}
+
+//! Advance the iterator to the next Square in the line.
+Square_Line_Iterator& Square_Line_Iterator::operator++()
+{
+    current_square += step;
+    return *this;
+}
+
+//! Iterators are equal if they refer to the same square.
+bool Square_Line_Iterator::operator==(const Square_Line_Iterator& other) const
+{
+    return current_square == other.current_square;
+}
+
+//! Iterators are different if they refer to different squares.
+bool Square_Line_Iterator::operator!=(const Square_Line_Iterator& other) const
+{
+    return ! (*this == other);
+}
+
+//! Get the Square referred to by the iterator.
+Square Square_Line_Iterator::operator*() const
+{
+    return current_square;
+}
+
+//! Create a collection of Squares between--but not including--the parameter Squares.
+//
+//! \param first_border A Square that borders the collection.
+//! \param second_border Another Square that borders the collection.
+//
+//! The parameter Squares must be along a common row, column, or diagonal.
+Squares_in_a_Line::Squares_in_a_Line(Square first_border, Square second_border) :
+    border1(first_border),
+    border2(second_border),
+    step((second_border - first_border).step())
+{
+}
+
+//! Create a collections of Squares along a line starting at--but not including--a Square.
+//
+//! \param origin The start of the line of Squares.
+//! \param square_step The direction the line proceeds. There are no restrictions on the
+//!        direction or step size.
+Squares_in_a_Line::Squares_in_a_Line(Square origin, const Square_Difference& square_step) :
+    border1(origin),
+    border2{},
+    step(square_step)
+{
+}
+
+//! Start the Square-line collection.
+Square_Line_Iterator Squares_in_a_Line::begin()
+{
+    return Square_Line_Iterator(border1 + step, step);
+}
+
+//! End the Square-line collection.
+Square_Line_Iterator Squares_in_a_Line::end()
+{
+    return {border2, step};
+}
+
+//! Create an iterator referring to a square.
+//
+//! \param start The square the iterator will refer to.
+All_Squares_Iterator::All_Squares_Iterator(Square start) : current_square(start)
+{
+}
+
+//! Go to the next Square along the line.
+All_Squares_Iterator& All_Squares_Iterator::operator++()
+{
+    ++current_square;
+    return *this;
+}
+
+//! Iterators are equal when they refer to the same Square.
+bool All_Squares_Iterator::operator!=(const All_Squares_Iterator& other) const
+{
+    return current_square != other.current_square;
+}
+
+//! Get the Square referred to by the iterator.
+Square All_Squares_Iterator::operator*() const
+{
+    return current_square;
 }

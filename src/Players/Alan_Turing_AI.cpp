@@ -5,6 +5,7 @@
 #include <bitset>
 #include <tuple>
 #include <algorithm>
+#include <numeric>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
@@ -337,14 +338,13 @@ double Alan_Turing_AI::position_play_value(const Board& board, Color perspective
                 }
                 else
                 {
-                    for(auto move : board.legal_moves())
-                    {
-                        auto temp_board = board;
-                        if(temp_board.submit_move(*move).winner() != NONE)
-                        {
-                            total_score += 1.0;
-                        }
-                    }
+                    total_score += std::count_if(board.legal_moves().begin(),
+                                                 board.legal_moves().end(),
+                                                 [board](auto move)
+                                                 {
+                                                     auto new_board = board;
+                                                     return new_board.submit_move(*move).winner() != NONE;
+                                                 });
                 }
             }
         }

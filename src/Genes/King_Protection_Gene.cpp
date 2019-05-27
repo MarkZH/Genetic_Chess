@@ -27,7 +27,7 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective, 
             }
 
             auto step = Square_Difference{file_step, rank_step};
-            for(auto square = king_square + step; square.inside_board(); square += step)
+            for(auto square : Square::square_line_from(king_square, step))
             {
                 if(board.piece_on_square(square))
                 {
