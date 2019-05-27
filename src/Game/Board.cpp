@@ -199,13 +199,13 @@ Board::Board(const std::string& fen) :
     auto castling_parse = fen_parse.at(2);
     if(castling_parse != "-")
     {
+        if(String::contains(castling_parse, '-'))
+        {
+            fen_error("Castling section contains - and other characters: " + castling_parse + ".");
+        }
+
         for(auto c : castling_parse)
         {
-            if(c == '-')
-            {
-                fen_error("Castling section contains - and other characters: " + castling_parse + ".");
-            }
-
             if( ! String::contains("KQkq", c))
             {
                 fen_error(std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
