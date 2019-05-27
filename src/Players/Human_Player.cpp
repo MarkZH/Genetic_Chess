@@ -7,6 +7,8 @@
 #include "Game/Board.h"
 #include "Game/Clock.h"
 
+#include "Utility/String.h"
+
 class Move;
 
 #include "Exceptions/Illegal_Move.h"
@@ -68,10 +70,15 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
             }
             catch(const Promotion_Piece_Needed&)
             {
-                std::cout << "What should the pawn be promoted to?\n";
-                std::cout << "Choice: [B N R Q]: ";
-                std::string promote;
-                std::getline(std::cin, promote);
+                const std::string choices = "BNRQ";
+                std::string promote = "--";
+                while(promote.size() != 1 || ! String::contains(String::lowercase(choices), String::lowercase(promote)))
+                {
+                    std::cout << "What should the pawn be promoted to?\n";
+                    std::cout << "Choice: [" << choices << "]: ";
+                    std::getline(std::cin, promote);
+                    promote = String::trim_outer_whitespace(promote);
+                }
                 return board.create_move(move + promote);
             }
         }
