@@ -336,7 +336,7 @@ Square_Difference Move::attack_direction_from_index(size_t index)
         // Knight move
         auto file_direction = (index & 4) ? 1 : -1;
         auto rank_direction = (index & 2) ? 1 : -1;
-        auto file_step =( index & 1) ? 2 : 1;
+        auto file_step = (index & 1) ? 2 : 1;
         auto rank_step = 3 - file_step;
         return {file_step*file_direction, rank_step*rank_direction};
     }

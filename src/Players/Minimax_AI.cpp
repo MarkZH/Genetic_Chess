@@ -340,7 +340,7 @@ void Minimax_AI::calibrate_thinking_speed() const
     choose_move(board, clock);
 }
 
-double Minimax_AI::evaluate(const Board & board, const Game_Result& move_result, Color perspective, size_t depth) const
+double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Color perspective, size_t depth) const
 {
     if(move_result.game_has_ended())
     {
