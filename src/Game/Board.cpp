@@ -527,43 +527,24 @@ void Board::update_board(const Move& move)
 
 //! Creates a Move instance given a text string representation.
 //
-//! \param move A string using coordinate notation ("a2b3") or PGN ("Bb3").
+//! \param move A string using coordinate notation ("a2b3") or PGN ("Bb3"). Note: If PGN is used and
+//!        a bishop is to be moved, then the piece symbol 'B' must be capitalized to avoid ambiguity
+//!        with pawn captures. For example, Bxc5 and bxc5.
 //! \returns A Move instance corresponding to the input string.
 //! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
 const Move& Board::create_move(const std::string& move) const
 {
-    static const std::string pieces = "RNBQK";
+    static const std::string promotion_pieces = "RNBQK";
+    static const std::string lowercase_promotion_pieces = String::lowercase(promotion_pieces);
+    static const std::string pieces = "P" + promotion_pieces;
     static const std::string valid_files = "abcdefgh";
-    static const std::string valid_rows = "12345678";
-    static const std::string castling = "O";
-    static const std::string valid_characters = pieces + valid_files + valid_rows + castling;
+    static const std::string valid_rows  = "12345678";
+    static const std::string castling = "Oo";
+    static const std::string valid_characters = lowercase_promotion_pieces + pieces + valid_files + valid_rows + castling;
 
     std::string validated;
-    char promoted_piece = 0;
-    if(String::contains(move, '='))
-    {
-        for(size_t i = move.find('=') + 1; i < move.size(); ++i)
-        {
-            if(String::contains(pieces, move[i]) && move[i] != 'K')
-            {
-                promoted_piece = move[i];
-                break;
-            }
-        }
-    }
-
-    for(char c : move)
-    {
-        if(c == '=')
-        {
-            break;
-        }
-
-        if(String::contains(valid_characters, c))
-        {
-            validated.push_back(c);
-        }
-    }
+    std::copy_if(move.begin(), move.end(), std::back_inserter(validated),
+                 [](auto c) { return String::contains(valid_characters, c); });
 
     if(validated.size() < 2)
     {
@@ -571,66 +552,83 @@ const Move& Board::create_move(const std::string& move) const
     }
 
     // Castling
-    if(validated == "OO")
+    if(String::lowercase(validated) == "oo")
     {
         return create_move({'e', whose_turn() == WHITE ? 1 : 8},
                            {'g', whose_turn() == WHITE ? 1 : 8});
     }
-    if(validated == "OOO")
+    if(String::lowercase(validated) == "ooo")
     {
         return create_move({'e', whose_turn() == WHITE ? 1 : 8},
                            {'c', whose_turn() == WHITE ? 1 : 8});
     }
 
-    // Normal PGN move
-    std::string piece_symbol = (String::contains(pieces, validated[0]) ? validated.substr(0, 1) : "");
-
-    char starting_file = 0;
-    int  starting_rank = 0;
-
-    if(validated.size() == 5 && ! piece_symbol.empty()) // Bb2c3
+    // Capitalize piece symbol when unambiguous (i.e., not a bishop)
+    if(String::contains(String::lowercase(pieces), validated.front()) && validated.front() != 'b')
     {
-        starting_file = validated[1];
-        starting_rank = validated[2] - '0';
+        validated.front() = std::toupper(validated.front());
     }
-    else if(validated.size() == 4 && ! piece_symbol.empty()) // Raa5 or R5c5
+    
+    // Capitalize promotion piece symbol
+    if(std::isalpha(validated.back()))
     {
-        if(std::isdigit(validated[1]))
+        validated.back() = std::toupper(validated.back());
+    }
+
+    std::string moving_pieces;
+    std::copy_if(validated.begin(), validated.end(), std::back_inserter(moving_pieces), std::isupper);
+    std::string files;
+    std::copy_if(validated.begin(), validated.end(), std::back_inserter(files), std::islower);
+    std::string ranks;
+    std::copy_if(validated.begin(), validated.end(), std::back_inserter(ranks), std::isdigit);
+
+    if(files.empty() || ranks.empty())
+    {
+        throw Illegal_Move("Destination square not specified: " + move);
+    }
+    else if(files.size() > 2 || ranks.size() > 2)
+    {
+        throw Illegal_Move("Invalid move specification: " + move);
+    }
+
+    auto ending_square = Square{files.back(), ranks.back() - '0'};
+
+    char starting_file = files.size() == 2 ? files.front() : '\0';
+    int  starting_rank = ranks.size() > 1 ? ranks.front() - '0' : 0;
+
+    std::string piece_symbol;
+    std::string promoted_piece;
+    if(moving_pieces.size() > 2)
+    {
+        throw Illegal_Move("Too many pieces mentioned: " + move);
+    }
+    else if(moving_pieces.size() == 2)
+    {
+        if(moving_pieces.front() != 'P')
         {
-            starting_rank = validated[1] - '0';
+            throw Illegal_Move("Only pawns can be promoted: " + move);
+        }
+        piece_symbol = moving_pieces.front();
+        if( ! String::contains(promotion_pieces, moving_pieces.back()))
+        {
+            throw Illegal_Move("Cannot promote to pawn: " + move);
+        }
+        promoted_piece = moving_pieces.back();
+    }
+    else if(moving_pieces.size() == 1)
+    {
+        if(String::starts_with(validated, moving_pieces))
+        {
+            piece_symbol = moving_pieces.front();
+        }
+        else if(String::ends_with(validated, moving_pieces))
+        {
+            promoted_piece = moving_pieces.front();
         }
         else
         {
-            starting_file = validated[1];
+            throw Illegal_Move("Invalid piece location: " + move);
         }
-    }
-    else if(validated.size() <= 3 && piece_symbol.empty()) // Pawn move/capture de5 (dxe5)
-    {
-        starting_file = validated.front();
-    }
-    else if(piece_symbol.empty())
-    {
-        // No PGN-style move works, try coordinate move (e.g., e7e8q)
-        if(move.size() < 4 || move.size() > 5)
-        {
-            throw Illegal_Move("Illegal text move (wrong length): " + move);
-        }
-
-        auto start = Square{move[0], move[1] - '0'};
-        auto end   = Square{move[2], move[3] - '0'};
-        if(move.size() == 5)
-        {
-            promoted_piece = std::toupper(move[4]);
-        }
-
-        return create_move(start, end, promoted_piece);
-    }
-
-    // else normal PGN-style piece movement
-    auto ending_square = Square{validated[validated.size() - 2], validated[validated.size() - 1] - '0'};
-    if( ! ending_square.inside_board())
-    {
-        throw Illegal_Move("Illegal text move (out of board): " + move);
     }
 
     char file_search_start = (starting_file == 0 ? 'a' : starting_file);
@@ -670,7 +668,7 @@ const Move& Board::create_move(const std::string& move) const
     {
         return create_move({starting_file, starting_rank},
                            ending_square,
-                           promoted_piece);
+                           promoted_piece.empty() ? '\0' : promoted_piece.front());
     }
 
     throw Illegal_Move("Malformed move: " + move);
