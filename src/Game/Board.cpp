@@ -568,7 +568,7 @@ const Move& Board::create_move(const std::string& move) const
     {
         validated.front() = std::toupper(validated.front());
     }
-    
+
     // Capitalize promotion piece symbol
     if(std::isalpha(validated.back()))
     {
@@ -576,11 +576,14 @@ const Move& Board::create_move(const std::string& move) const
     }
 
     std::string moving_pieces;
-    std::copy_if(validated.begin(), validated.end(), std::back_inserter(moving_pieces), std::isupper);
+    std::copy_if(validated.begin(), validated.end(), std::back_inserter(moving_pieces),
+                 [](auto c) { return std::isupper(c); });
     std::string files;
-    std::copy_if(validated.begin(), validated.end(), std::back_inserter(files), std::islower);
+    std::copy_if(validated.begin(), validated.end(), std::back_inserter(files),
+                 [](auto c) { return std::islower(c); });
     std::string ranks;
-    std::copy_if(validated.begin(), validated.end(), std::back_inserter(ranks), std::isdigit);
+    std::copy_if(validated.begin(), validated.end(), std::back_inserter(ranks),
+                 [](auto c) { return std::isdigit(c); });
 
     if(files.empty() || ranks.empty())
     {
