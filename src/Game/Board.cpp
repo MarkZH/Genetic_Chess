@@ -427,24 +427,11 @@ std::string Board::fen_status() const
 const Move& Board::create_move(Square start, Square end, char promote) const
 {
     std::vector<const Move*> move_list;
-    for(const auto& move : legal_moves())
-    {
-        if(move->start() == start &&
-           move->end() == end)
-        {
-            if(promote)
-            {
-                if(move->promotion_piece_symbol() == std::toupper(promote))
-                {
-                    return *move;
-                }
-            }
-            else
-            {
-                move_list.push_back(move);
-            }
-        }
-    }
+    std::copy_if(legal_moves().begin(), legal_moves().end(), std::back_inserter(move_list),
+                 [start, end](auto move)
+                 {
+                     return move->start() == start && move->end() == end;
+                 });
 
     if(move_list.empty())
     {
@@ -461,7 +448,20 @@ const Move& Board::create_move(Square start, Square end, char promote) const
     }
     else
     {
-        throw Promotion_Piece_Needed();
+        auto result = std::find_if(move_list.begin(), move_list.end(),
+                                   [promote](auto move)
+                                   {
+                                       return move->promotion_piece_symbol() == std::toupper(promote);
+                                   });
+
+        if(result == move_list.end())
+        {
+            throw Promotion_Piece_Needed();
+        }
+        else
+        {
+            return **result; // one star to dereference the iterator, one to dereference the pointer
+        }
     }
 }
 
