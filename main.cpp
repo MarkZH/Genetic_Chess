@@ -738,5 +738,6 @@ namespace
                              return ! std::isdigit(move_record.front());
                          });
         }
+        std::cout << std::endl;
     }
 }
