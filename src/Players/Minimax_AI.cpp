@@ -450,6 +450,11 @@ std::string Minimax_AI::commentary_for_next_move(const Board& board) const
     return result;
 }
 
+//! Recalculate values that will last the lifetime of the instance.
+//
+//! In this case, the values are an initial estimate of the speed of
+//! searching the game tree and the value of a centipawn for reporting
+//! scores of board positions.
 void Minimax_AI::recalibrate_self() const
 {
     calibrate_thinking_speed();
