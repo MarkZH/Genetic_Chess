@@ -78,3 +78,4 @@ Makefile
 *.idx
 *.ilg
 *.ind
+doc/doxygen/
