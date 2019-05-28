@@ -11,6 +11,7 @@
 #include <cmath>
 #include <atomic>
 #include <functional>
+using namespace std::placeholders; // for _1, _2, etc. in std::bind()
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -1440,7 +1441,6 @@ bool Board::enough_material_to_checkmate(Color color) const
             return piece_is_right_color(piece) && piece.type() == BISHOP && square.color() == color_sought;
         };
 
-    using namespace std::placeholders; // for _1 in std::bind()
     auto squares = Square::all_squares();
     auto bishops_on_white = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, WHITE, _1));
     auto bishops_on_black = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, BLACK, _1));
