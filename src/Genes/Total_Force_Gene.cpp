@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <numeric>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
@@ -20,18 +21,19 @@ Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_sou
 
 double Total_Force_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    double score = 0.0;
-
-    for(auto square : Square::all_squares())
-    {
-        auto piece = board.piece_on_square(square);
-        if(piece && piece.color() == perspective)
-        {
-            score += piece_strength_source->piece_value(piece);
-        }
-    }
-
-    return score/piece_strength_source->normalizer();
+    return std::accumulate(Square::all_squares().begin(), Square::all_squares().end(), 0.0,
+                           [this, &board, perspective](auto sum, auto square)
+                           {
+                               auto piece = board.piece_on_square(square);
+                               if(piece && piece.color() == perspective)
+                               {
+                                   return sum + piece_strength_source->piece_value(piece);
+                               }
+                               else
+                               {
+                                   return sum;
+                               }
+                           })/piece_strength_source->normalizer();
 }
 
 std::unique_ptr<Gene> Total_Force_Gene::duplicate() const
