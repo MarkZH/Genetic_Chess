@@ -54,6 +54,7 @@ namespace
 
     void print()
     {
+        std::cerr << std::endl;
     }
 
     template<typename Argument_Type>
@@ -872,7 +873,7 @@ namespace
         if( ! expected_result)
         {
             all_tests_passed = false;
-            std::cerr << fail_message << std::endl << std::endl;
+            std::cerr << fail_message << std::endl;
         }
 
         return expected_result;
@@ -997,7 +998,7 @@ namespace
                 assert(moves.front() == "true" || moves.front() == "false");
                 auto expected_result = (moves.front() == "true");
                 test_result(test_passed, board.enough_material_to_checkmate() == expected_result,
-                            std::string("This board does") + (expected_result ? "" : "not") + " have enough material to checkmate.");
+                            std::string("This board does") + (expected_result ? "" : " not") + " have enough material to checkmate.");
             }
             else if(test_type == "king in check")
             {
@@ -1017,7 +1018,7 @@ namespace
                 test_result(test_passed, false, "Bad test: " + test_type);
             }
 
-            test_result(all_tests_passed, test_passed, line + " -- FAILED");
+            test_result(all_tests_passed, test_passed, line + " -- FAILED\n");
         }
 
         return all_tests_passed;
