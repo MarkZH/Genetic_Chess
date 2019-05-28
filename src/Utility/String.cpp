@@ -139,14 +139,15 @@ std::string String::format_integer(int n, const std::string& separator)
     else
     {
         auto s = std::to_string(n);
-        auto index = s.size() % 3;
-        index = (index == 0 ? 3 : index);
+        auto group_size = 3;
+        auto index = s.size() % group_size;
+        index = (index == 0 ? group_size : index);
         auto result = s.substr(0, index);
 
-        for( ; index < s.size(); index += 3)
+        for( ; index < s.size(); index += group_size)
         {
             result += separator;
-            result += s.substr(index, 3);
+            result += s.substr(index, group_size);
         }
 
         return result;
