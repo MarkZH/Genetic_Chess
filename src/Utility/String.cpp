@@ -74,22 +74,15 @@ std::string String::trim_outer_whitespace(const std::string& s)
 
 std::string String::remove_extra_whitespace(const std::string& s)
 {
+    std::string s2 = trim_outer_whitespace(s);
+    std::replace_if(s2.begin(), s2.end(), [](auto c) { return String::contains(whitespace, c); }, ' ');
     std::string result;
+    std::copy_if(s2.begin(), s2.end(), std::back_inserter(result),
+                 [&result](auto c)
+                 {
+                     return  c != ' ' || result.back() != ' ';
 
-    for(auto c : trim_outer_whitespace(s))
-    {
-        if(contains(whitespace, c))
-        {
-            if(result.back() != ' ')
-            {
-                result.push_back(' ');
-            }
-        }
-        else
-        {
-            result.push_back(c);
-        }
-    }
+                 });
 
     return result;
 }
