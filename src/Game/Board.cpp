@@ -10,6 +10,7 @@
 #include <bitset>
 #include <cmath>
 #include <atomic>
+#include <functional>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -1420,62 +1421,40 @@ void Board::recreate_move_caches()
 //!          If the method returns false when called with NONE, this will usually lead to a drawn game.
 bool Board::enough_material_to_checkmate(Color color) const
 {
-    bool knight_found = false;
-    Color bishop_square_color_found = NONE;
+    auto piece_is_right_color = [color](auto piece) { return piece && (color == NONE || piece.color() == color); };
 
-    for(auto square : Square::all_squares())
+    if(std::any_of(board.begin(), board.end(),
+                   [piece_is_right_color](auto piece)
+                   {
+                       return piece_is_right_color(piece) &&
+                              (piece.type() == QUEEN || piece.type() == ROOK || piece.type() == PAWN);
+                   }))
     {
-        auto piece = piece_on_square(square);
-        if( ! piece)
-        {
-            continue;
-        }
-
-        if(color != NONE && piece.color() != color)
-        {
-            continue;
-        }
-
-        auto type = piece.type();
-        if(type == KING)
-        {
-            continue;
-        }
-
-        if(type == QUEEN || type == ROOK || type == PAWN)
-        {
-            return true; // checkmate possible with just queen or rook; pawn can promote
-        }
-
-        // Newly found piece is either a bishop or knight
-        if(knight_found)
-        {
-            return true; // checkmate with a knight and any non-king piece on either side is possible
-        }
-
-        if(type == KNIGHT)
-        {
-            if(bishop_square_color_found != NONE)
-            {
-                return true;
-            }
-            knight_found = true;
-        }
-        else // BISHOP
-        {
-            auto bishop_square_color = square.color();
-            if(bishop_square_color_found == NONE)
-            {
-                bishop_square_color_found = bishop_square_color;
-            }
-            else if(bishop_square_color != bishop_square_color_found)
-            {
-                return true; // checkmate with opposite colored bishops possible
-            }
-        }
+        return true;
     }
 
-    return false;
+    auto bishop_on_square_color =
+        [this, piece_is_right_color](Color color_sought, Square square) -> bool
+        {
+            auto piece = piece_on_square(square);
+            return piece_is_right_color(piece) && piece.type() == BISHOP && square.color() == color_sought;
+        };
+
+    using namespace std::placeholders; // for _1 in std::bind()
+    auto squares = Square::all_squares();
+    auto bishops_on_white = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, WHITE, _1));
+    auto bishops_on_black = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, BLACK, _1));
+    if(bishops_on_white && bishops_on_black)
+    {
+        return true;
+    }
+
+    auto knight_count = std::count_if(board.begin(), board.end(),
+                                      [this, piece_is_right_color](auto piece)
+                                      {
+                                          return piece_is_right_color(piece) && piece.type() == KNIGHT;
+                                      });
+    return knight_count > 1 || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
 //! Get last move for dispaly in text-based UIs.
