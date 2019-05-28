@@ -546,6 +546,11 @@ bool run_tests()
         test_function(tests_passed, "Format integer", test.second, String::format_integer, test.first, ",");
     }
 
+    // String to size_t number conversion
+    function_should_not_throw(tests_passed, "Non-throwing string to size_t", String::string_to_size_t, "123");
+    function_should_not_throw(tests_passed, "Non-throwing string to size_t with whitespace", String::string_to_size_t, " 456  ");
+    function_should_throw(tests_passed, "Throwing string to size_t", String::string_to_size_t, "78x9");
+
 
     // Log-Norm distribution check
     const double mean_moves = 26.0;

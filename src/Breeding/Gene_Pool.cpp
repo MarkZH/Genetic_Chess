@@ -565,13 +565,7 @@ namespace
                 try
                 {
                     auto parse = String::split(line, ":", 2);
-                    auto pool_number_string = parse.at(1);
-                    size_t conversion_character_count;
-                    auto pool_number = std::stoul(pool_number_string, &conversion_character_count);
-                    if( ! String::trim_outer_whitespace(pool_number_string.substr(conversion_character_count)).empty())
-                    {
-                        throw std::exception(); // The pool number string has more characters beyond the gene pool number.
-                    }
+                    auto pool_number = String::string_to_size_t(parse.at(1));
                     still_alive[pool_number] = parse.at(2);
                     pool_line_numbers[pool_number] = line_number;
                     pool_lines[pool_number] = line;

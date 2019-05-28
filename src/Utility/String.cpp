@@ -155,13 +155,23 @@ std::string String::format_integer(int n, const std::string& separator)
 
 size_t String::string_to_size_t(const std::string& s)
 {
+    size_t characters_used;
+
+    auto result =
     #ifdef __linux__
-    return std::stoul(s);
+        std::stoul(s, &characters_used);
     #elif defined(_WIN64)
-    return std::stoull(s);
+        std::stoull(s, &characters_used);
     #else
-    return std::stoi(s);
+        std::stoi(s, &characters_used);
     #endif
+
+    if( ! String::trim_outer_whitespace(s.substr(characters_used)).empty())
+    {
+        throw std::invalid_argument("Non-numeric characters in string: " + s);
+    }
+
+    return result;
 }
 
 std::string String::date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
