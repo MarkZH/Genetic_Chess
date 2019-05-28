@@ -47,6 +47,10 @@ Configuration_File::Configuration_File(const std::string& file_name)
         {
             throw std::runtime_error("Configuration parameter cannot be empty.\n" + line);
         }
+        if(parameters.count(parameter) > 0)
+        {
+            throw std::runtime_error("Configuration parameter used more than once: " + parameter);
+        }
         parameters[parameter] = value;
         used[parameter] = false;
     }
