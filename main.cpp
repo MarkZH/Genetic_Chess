@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
                     }
                     else
                     {
-                        throw std::invalid_argument("Invalid or incomplete option: " + opt);
+                        throw std::invalid_argument("Invalid or incomplete game option: " + opt);
                     }
 
                     if(latest)
