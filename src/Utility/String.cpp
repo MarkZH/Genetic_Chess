@@ -121,7 +121,14 @@ std::string String::strip_block_comment(const std::string& str, const std::strin
 
     auto first_part = str.substr(0, start_comment_index);
     auto last_part = str.substr(end_comment_index + end.size());
-    return strip_block_comment(trim_outer_whitespace(first_part) + " " + trim_outer_whitespace(last_part), start, end);
+    try
+    {
+        return strip_block_comment(trim_outer_whitespace(first_part) + " " + trim_outer_whitespace(last_part), start, end);
+    }
+    catch(const std::invalid_argument& e)
+    {
+        throw std::invalid_argument(e.what() + std::string("\nOriginal line: ") + str);
+    }
 }
 
 std::string String::lowercase(std::string s)
