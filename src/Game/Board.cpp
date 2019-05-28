@@ -38,10 +38,9 @@ namespace
         std::array<std::array<uint64_t, 13>, 64> hash_cache;
         for(auto& square_indexed_row : hash_cache)
         {
-            std::transform(square_indexed_row.begin(),
-                           square_indexed_row.end(),
-                           square_indexed_row.begin(),
-                           [](auto) { return Random::random_unsigned_int64(); });
+            std::generate(square_indexed_row.begin(),
+                          square_indexed_row.end(),
+                          Random::random_unsigned_int64);
         }
         return hash_cache;
     }();
@@ -51,10 +50,9 @@ namespace
     {
         // One entry for each file
         std::array<uint64_t, 8> en_passant_hash_cache;
-        std::transform(en_passant_hash_cache.begin(),
-                       en_passant_hash_cache.end(),
-                       en_passant_hash_cache.begin(),
-                       [](auto) { return Random::random_unsigned_int64(); });
+        std::generate(en_passant_hash_cache.begin(),
+                      en_passant_hash_cache.end(),
+                      Random::random_unsigned_int64);
         return en_passant_hash_cache;
     }();
 
@@ -63,10 +61,9 @@ namespace
     {
         // One entry for each rook
         std::array<uint64_t, 4> castling_hash_cache;
-        std::transform(castling_hash_cache.begin(),
-                       castling_hash_cache.end(),
-                       castling_hash_cache.begin(),
-                       [](auto) { return Random::random_unsigned_int64(); });
+        std::generate(castling_hash_cache.begin(),
+                      castling_hash_cache.end(),
+                      Random::random_unsigned_int64);
         return castling_hash_cache;
     }();
 
