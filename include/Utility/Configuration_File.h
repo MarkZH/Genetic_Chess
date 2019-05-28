@@ -14,8 +14,8 @@ class Configuration_File
         double as_number(const std::string& parameter) const;
         bool as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const;
 
-        // Returns true if there are any unused parameters
-        bool print_unused_parameters() const;
+        bool any_unused_parameters() const;
+        void print_unused_parameters() const;
 
     private:
         std::map<std::string, std::string> parameters;

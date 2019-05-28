@@ -6,6 +6,8 @@
 #include <map>
 #include <vector>
 #include <stdexcept>
+#include <algorithm>
+#include <iterator>
 
 #include "Utility/String.h"
 
@@ -121,24 +123,20 @@ std::string Configuration_File::standardize_text(const std::string& input)
     return String::lowercase(String::remove_extra_whitespace(input));
 }
 
-//! If any values in a configuration file are not used, print them to stdout.
-//
-//! \returns Whether or not there were any unused parameters in the configuration file.
-bool Configuration_File::print_unused_parameters() const
+//! Print the unused parameters in the configuration file to stdout.
+void Configuration_File::print_unused_parameters() const
 {
-    auto header_printed = false;
     for(const auto& param_value : parameters)
     {
         if( ! used[param_value.first])
         {
-            if( ! header_printed)
-            {
-                std::cout << "\nUnused configuration parameters:\n";
-                header_printed = true;
-            }
             std::cout << param_value.first << " --> " << param_value.second << std::endl;
         }
     }
+}
 
-    return header_printed;
+//! Check if any parameters in the configuration file were unused.
+bool Configuration_File::any_unused_parameters() const
+{
+    return std::any_of(used.begin(), used.end(), [](const auto& key_value) { return ! key_value.second; });
 }

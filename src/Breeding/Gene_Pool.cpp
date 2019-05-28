@@ -83,8 +83,10 @@ void gene_pool(const std::string& config_file)
     const bool oscillating_time = config.as_boolean("oscillating time", "yes", "no");
     double game_time = minimum_game_time;
 
-    if(config.print_unused_parameters())
+    if(config.any_unused_parameters())
     {
+        std::cout << "There were unused parameters in the file: " << config_file << std::endl;
+        config.print_unused_parameters();
         std::cout << "\nPress enter to continue or " << stop_key << " to quit ..." << std::endl;
         std::cin.get();
     }
