@@ -392,9 +392,15 @@ All_Squares_Iterator& All_Squares_Iterator::operator++()
 }
 
 //! Iterators are equal when they refer to the same Square.
+bool All_Squares_Iterator::operator==(const All_Squares_Iterator& other) const
+{
+    return current_square == other.current_square;
+}
+
+//! Iterators are unequal when they refer to different Squares.
 bool All_Squares_Iterator::operator!=(const All_Squares_Iterator& other) const
 {
-    return current_square != other.current_square;
+    return ! (*this == other);
 }
 
 //! Get the Square referred to by the iterator.

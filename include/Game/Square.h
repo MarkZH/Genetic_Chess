@@ -85,8 +85,15 @@ bool same_direction(const Square_Difference& move_1, const Square_Difference& mo
 class All_Squares_Iterator
 {
     public:
+        using iterator_category = std::input_iterator_tag;
+        using value_type = Square;
+        using difference_type = int;
+        using pointer = Square*;
+        using reference = Square&;
+
         All_Squares_Iterator(Square start);
         All_Squares_Iterator& operator++();
+        bool operator==(const All_Squares_Iterator& other) const;
         bool operator!=(const All_Squares_Iterator& other) const;
         Square operator*() const;
 
