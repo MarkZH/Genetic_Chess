@@ -392,7 +392,7 @@ std::string Board::fen_status() const
         {
             for(char rook_file : {'h', 'a'})
             {
-                if( ! piece_has_moved({rook_file, base_rank})) // have rooks moved
+                if( ! piece_has_moved({rook_file, base_rank})) // has rook moved?
                 {
                     char mark = (rook_file == 'h' ? 'K' : 'Q');
                     if(base_rank == 8)
