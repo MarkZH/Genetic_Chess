@@ -139,11 +139,12 @@ Genome& Genome::operator=(Genome other)
 //! \param B The second parent.
 Genome::Genome(const Genome& A, const Genome& B)
 {
-    for(size_t i = 0; i < A.genome.size(); ++i)
-    {
-        auto& donor = (Random::coin_flip() ? A : B);
-        genome.emplace_back(donor.genome[i]->duplicate());
-    }
+    std::transform(A.genome.begin(), A.genome.end(), B.genome.begin(),
+                   std::back_inserter(genome),
+                   [](const auto& gene_a, const auto& gene_b)
+                   {
+                       return (Random::coin_flip() ? gene_a : gene_b)->duplicate();
+                   });
 
     reset_piece_strength_gene();
 }
