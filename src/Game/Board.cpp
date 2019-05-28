@@ -1432,7 +1432,7 @@ bool Board::enough_material_to_checkmate(Color color) const
     }
 
     auto bishop_on_square_color =
-        [this, piece_is_right_color](Color color_sought, Square square) -> bool
+        [this, piece_is_right_color](Color color_sought, Square square)
         {
             auto piece = piece_on_square(square);
             return piece_is_right_color(piece) && piece.type() == BISHOP && square.color() == color_sought;
