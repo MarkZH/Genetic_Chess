@@ -3,6 +3,7 @@
 
 #include <random>
 #include <algorithm>
+#include <cassert>
 
 //! A collection of functions for dealing with randomness.
 namespace Random
@@ -27,13 +28,14 @@ namespace Random
     //! \param min The minimum number to return.
     //! \param max The maximum number to return.
     //! \returns A random number in the range [min, max].
-    int random_integer(int min, int max);
-
-    //! Random unsigned integer with inclusive range from a uniform distribution.
-    //
-    //! \param max The maximum number to return.
-    //! \returns A random number in the range [0, max].
-    size_t random_index(size_t max);
+    template<typename Integer>
+    Integer random_integer(Integer min, Integer max)
+    {
+        thread_local static std::mt19937_64 generator(std::random_device{}());
+        using uid = std::uniform_int_distribution<Integer>;
+        thread_local static auto dist = uid{};
+        return dist(generator, typename uid::param_type{min, max});
+    }
 
     //! Random 64-bit unsigned integer.
     //
@@ -67,7 +69,18 @@ namespace Random
     template<typename Container>
     typename Container::const_reference random_element(const Container& container)
     {
-        return container.at(random_index(container.size() - 1));
+        assert( ! container.empty());
+        return container.at(random_integer(size_t{0}, container.size() - 1));
+    }
+
+    //! Select random element from random-access container.
+    //
+    //! \param container A collection of items that allows for access by an index.
+    template<typename Container>
+    typename Container::reference random_element(Container& container)
+    {
+        assert( ! container.empty());
+        return container[random_integer(size_t{0}, container.size() - 1)];
     }
 }
 

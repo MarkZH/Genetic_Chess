@@ -352,7 +352,7 @@ bool run_tests()
     for(int i = 0; i < 10; ++i)
     {
         test_pool.emplace_back(100); // Add AI with 100 mutations
-        test_pool.back().set_origin_pool(Random::random_index(9));
+        test_pool.back().set_origin_pool(Random::random_integer(0, 9));
     }
     for(auto& ai : test_pool)
     {
