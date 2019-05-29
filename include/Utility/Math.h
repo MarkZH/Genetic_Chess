@@ -26,20 +26,6 @@ namespace Math
     //! See https://en.wikipedia.org/wiki/Log-normal_distribution for more information.
     double average_moves_left(double mean_moves, double width, size_t moves_so_far);
 
-    //! Clamps a number to a given range.
-    //
-    //! \param n The input number for the range check.
-    //! \param low The lower bound of the range.
-    //! \param high The upper bound of the range.
-    //! \returns The number n if it lies between the bounds (inclusive), otherwise it returns
-    //!          the nearest bound (upper or lower).
-    template<typename Number>
-    Number clamp(Number n, Number low, Number high)
-    {
-        assert(low <= high);
-        return std::min(std::max(n, low), high);
-    }
-
     //! Returns the sign of the number.
     //
     //! \param x The input nuber.

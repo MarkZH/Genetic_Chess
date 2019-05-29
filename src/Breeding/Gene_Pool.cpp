@@ -212,7 +212,7 @@ void gene_pool(const std::string& config_file)
         if( ! time_line.empty())
         {
             game_time = std::stod(String::split(time_line, "\"").at(1));
-            game_time = Math::clamp(game_time, minimum_game_time, maximum_game_time);
+            game_time = std::clamp(game_time, minimum_game_time, maximum_game_time);
         }
 
         double previous_game_time = game_time;
@@ -226,7 +226,7 @@ void gene_pool(const std::string& config_file)
             game_time_increment = -std::abs(game_time_increment);
         }
 
-        game_time = Math::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
+        game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
 
         std::cout << "Done." << std::endl;
     }
@@ -424,7 +424,7 @@ void gene_pool(const std::string& config_file)
                 game_time_increment = 0;
             }
         }
-        game_time = Math::clamp(game_time, minimum_game_time, maximum_game_time);
+        game_time = std::clamp(game_time, minimum_game_time, maximum_game_time);
 
         game_count[pool_index] += results.size();
 
