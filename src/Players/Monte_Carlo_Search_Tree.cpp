@@ -126,7 +126,6 @@ std::pair<const Move*, double> Monte_Carlo_Search_Tree::best_result() const
 size_t Monte_Carlo_Search_Tree::index_of(const Move* move) const
 {
     auto iter = std::find(moves.begin(), moves.end(), move);
-    assert(iter != moves.end());
     return size_t(std::distance(moves.begin(), iter));
 }
 
