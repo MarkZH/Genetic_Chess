@@ -1724,7 +1724,7 @@ Board Board::without_random_pawn() const
     auto result = *this;
     while(true)
     {
-        auto square = Square(Random::random_integer('a', 'h'), Random::random_integer(1, 8));
+        auto square = Square('a' + Random::random_integer(0, 7), Random::random_integer(1, 8));
         auto piece = result.piece_on_square(square);
         if(piece && piece.type() == PAWN)
         {
