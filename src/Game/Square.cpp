@@ -32,7 +32,7 @@ All_Squares_Iterator All_Squares::begin() const
 //! Return an invalid Square to end iteration
 All_Squares_Iterator All_Squares::end() const
 {
-    return {{}};
+    return All_Squares_Iterator({});
 }
 
 const Square::square_index_t Square::invalid_index = 64;

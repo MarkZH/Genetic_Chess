@@ -91,7 +91,7 @@ class All_Squares_Iterator
         using pointer = Square*;
         using reference = Square&;
 
-        All_Squares_Iterator(Square start);
+        explicit All_Squares_Iterator(Square start);
         All_Squares_Iterator& operator++();
         bool operator==(const All_Squares_Iterator& other) const;
         bool operator!=(const All_Squares_Iterator& other) const;
