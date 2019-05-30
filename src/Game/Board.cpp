@@ -1040,13 +1040,11 @@ bool Board::king_is_in_check_after_move(const Move& move) const
 
     if(king_is_in_check())
     {
-        // King is under check from multiple pieces but not moving
         if(king_multiply_checked())
         {
-            return true; // moving a piece can only block one checking piece
+            return true;
         }
 
-        // Checking piece is captured by non-pinned piece
         if( ! checking_square.is_set())
         {
             const auto& checks = checking_moves();
@@ -1075,7 +1073,6 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             }
         }
 
-        // En passant capture of checking pawn
         if(move.is_en_passant())
         {
             auto pawn_square = Square{move.end().file(), move.start().rank()};
@@ -1088,18 +1085,11 @@ bool Board::king_is_in_check_after_move(const Move& move) const
 
     if(piece_is_pinned(move.start()))
     {
-        const auto& king_square = find_king(whose_turn());
-
-        auto pin_direction = king_square - move.start();
-
-        // If move direction and pin direction are not parallel, the piece will move
-        // out of pin and expose the king to check.
-        return ! moves_are_parallel(move.movement(), pin_direction);
+        return ! moves_are_parallel(move.movement(), find_king(whose_turn()) - move.start());
     }
 
     if(move.is_en_passant())
     {
-        // Check if king is on same row as both pawns and there is an opposing rook or queen on row
         const auto& king_square = find_king(whose_turn());
         if(king_square.rank() != move.start().rank())
         {
