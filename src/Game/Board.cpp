@@ -1634,8 +1634,8 @@ bool Board::all_empty_between(Square start, Square end) const
 //! \param square The queried square.
 //! \returns Whether there is an opposing piece (of color opposite(Board::whose_turn()))
 //!          that would pin a piece occupying the queried square to its king. For example,
-//!          if it is White's turn, is there a Black piece that would pin a (possibly non-existant)
-//!          white piece to the white king.
+//!          if it is white's turn, is there is a black piece that would pin a (possibly non-
+//!          existant) white piece on the given square to the white king?
 bool Board::piece_is_pinned(Square square) const
 {
     auto index = square.index();
