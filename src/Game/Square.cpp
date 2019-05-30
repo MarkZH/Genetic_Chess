@@ -366,13 +366,13 @@ Squares_in_a_Line::Squares_in_a_Line(Square origin, const Square_Difference& squ
 }
 
 //! Start the Square-line collection.
-Square_Line_Iterator Squares_in_a_Line::begin()
+Square_Line_Iterator Squares_in_a_Line::begin() const
 {
     return Square_Line_Iterator(border1 + step, step);
 }
 
 //! End the Square-line collection.
-Square_Line_Iterator Squares_in_a_Line::end()
+Square_Line_Iterator Squares_in_a_Line::end() const
 {
     return {border2, step};
 }

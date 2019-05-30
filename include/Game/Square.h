@@ -138,8 +138,8 @@ class Squares_in_a_Line
     public:
         Squares_in_a_Line(Square first_border, Square second_border);
         Squares_in_a_Line(Square origin, const Square_Difference& step);
-        Square_Line_Iterator begin();
-        Square_Line_Iterator end();
+        Square_Line_Iterator begin() const;
+        Square_Line_Iterator end() const;
 
     private:
         Square border1;
