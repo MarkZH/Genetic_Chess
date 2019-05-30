@@ -1087,34 +1087,18 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             return false;
         }
 
-        auto step = (move.start() - king_square).step();
-        auto attacking_file = move.start().file();
-        auto attacked_file = move.end().file();
-        auto passed_pawns = 0;
-        for(auto square : Square::square_line_from(king_square, step))
-        {
-            if(square.file() == attacked_file || square.file() == attacking_file)
-            {
-                ++passed_pawns;
-                continue;
-            }
+        auto squares = Square::square_line_from(king_square, (move.start() - king_square).step());
+        auto revealed_attacker = std::find_if(squares.begin(), squares.end(),
+                                              [this](auto square)
+                                              {
+                                                  auto piece = piece_on_square(square);
+                                                  return piece && piece.color() == opposite(whose_turn()) &&
+                                                      (piece.type() == QUEEN || piece.type() == ROOK);
+                                              });
 
-            auto piece = piece_on_square(square);
-            if(piece)
-            {
-                if(passed_pawns < 2)
-                {
-                    return false;
-                }
-
-                if(piece.color() == whose_turn())
-                {
-                    return false;
-                }
-
-                return piece.type() == ROOK || piece.type() == QUEEN;
-            }
-        }
+        return revealed_attacker != squares.end() &&
+               in_line_in_order(king_square, move.start(), *revealed_attacker) &&
+               std::count_if(squares.begin(), revealed_attacker, [this](auto square) { return piece_on_square(square); }) == 2;
     }
 
     return false;
