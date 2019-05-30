@@ -1066,8 +1066,8 @@ bool Board::king_is_in_check_after_move(const Move& move) const
 
         if(move.is_en_passant())
         {
-            auto pawn_square = Square{move.end().file(), move.start().rank()};
-            return checking_square != pawn_square || piece_is_pinned(move.start());
+            auto captured_pawn_square = Square{move.end().file(), move.start().rank()};
+            return checking_square != captured_pawn_square || piece_is_pinned(move.start());
         }
 
         // Nothing is done about the check
