@@ -305,6 +305,16 @@ bool same_direction(const Square_Difference& move_1, const Square_Difference& mo
            move_1.file_change*move_2.file_change + move_1.rank_change*move_2.rank_change > 0; // dot product
 }
 
+//! Returns whether the three squares form a line in the order given.
+//
+//! \param a A square that should be to one side.
+//! \param b Another square that should lie between the other two.
+//! \param c A final square that should be on the opposite side of b to a.
+bool in_line_in_order(Square a, Square b, Square c)
+{
+    return same_direction(a - b, b - c);
+}
+
 //! Construct the collection of in-line Squares.
 //
 //! \param start The start of the line of squares (not included in the collection).

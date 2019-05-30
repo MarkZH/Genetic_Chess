@@ -1059,18 +1059,9 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             checking_square = *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
         }
 
-        if(checking_square == move.end())
+        if(checking_square == move.end() || in_line_in_order(checking_square, move.end(), find_king(whose_turn())))
         {
             return piece_is_pinned(move.start());
-        }
-
-        // Non-pinned piece moves to block check
-        if( ! piece_on_square(move.end()))
-        {
-            if(piece_is_pinned(move.end()))
-            {
-                return piece_is_pinned(move.start());
-            }
         }
 
         if(move.is_en_passant())

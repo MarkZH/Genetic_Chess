@@ -80,6 +80,7 @@ Square_Difference operator-(Square a, Square b);
 bool straight_line_move(Square start, Square rank);
 bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2);
 bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2);
+bool in_line_in_order(Square a, Square b, Square c);
 
 //! The iterator created by the All_Squares container that dereferences to a Square.
 class All_Squares_Iterator

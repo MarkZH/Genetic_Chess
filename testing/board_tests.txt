@@ -34,6 +34,10 @@ last move illegal | 2k5/P7/K7/8/8/8/8/8 w - - 0 1 | a8=Q Kb8
 pinned piece      | k1KRr3/8/8/8/8/8/8/8 w - - 0 1 | d8 true
 pinned piece      | k1KRRr2/8/8/8/8/8/8/8 w - - 0 1 | d8 false
 last move illegal | K7/8/8/8/kpP4R/8/8/8 b - c3 0 1 | b4c3
+all moves legal   | K7/8/8/8/kpP3BR/8/8/8 b - c3 0 1 | b4c3
+last move illegal | K7/8/8/8/kpP3QR/8/8/8 b - c3 0 1 | b4c3
+all moves legal   | K7/8/8/8/kpP5/8/8/8 b - c3 0 1 | b4c3
+last move illegal | k7/1b6/8/8/8/7r/1Q5b/7K w - - 0 1 | Qh2
 
 # Moves from perft boards
 all moves legal   | start | c3 a6 Qa4
