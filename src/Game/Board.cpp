@@ -1356,42 +1356,42 @@ Square Board::find_king(Color color) const
 
 void Board::recreate_move_caches()
 {
-    legal_moves_cache.clear();
+    auto is_legal = [this](auto& blocked_move, auto move)
+                    {
+                        if(blocked_move && same_direction(move->movement(), blocked_move->movement()))
+                        {
+                            return false;
+                        }
 
+                        // If there is a piece on the ending square, farther moves are not possible.
+                        // The check for a promotion piece is needed since the set of pawn promotions
+                        // results in moves with identical beginning and ending squares, which would
+                        // result in the first pawn-promotion-by-capture blocking all the others.
+                        if(piece_on_square(move->end()) && ! move->promotion_piece_symbol())
+                        {
+                            blocked_move = move;
+                        }
+                        else
+                        {
+                            blocked_move = nullptr;
+                        }
+
+                        return move->is_legal(*this);
+                    };
+
+    legal_moves_cache.clear();
     for(auto square : Square::all_squares())
     {
         auto piece = piece_on_square(square);
         if(piece && piece.color() == whose_turn())
         {
-            // Invalid direction
             const Move* blocked_move = nullptr;
-
-            for(const auto move : piece.move_list(square))
-            {
-                auto blocked = blocked_move && same_direction(move->movement(), blocked_move->movement());
-
-                if( ! blocked)
-                {
-                    blocked_move = nullptr;
-                    if(move->is_legal(*this))
-                    {
-                        legal_moves_cache.push_back(move);
-                    }
-
-                    // If there is a piece on the ending square, farther moves are not possible.
-                    // The check for a promotion piece is needed since the set of pawn promotions
-                    // results in moves with identical beginning and ending squares, which would
-                    // result in the first pawn-promotion-by-capture blocking all the others.
-                    if(piece_on_square(move->end()) && ! move->promotion_piece_symbol())
-                    {
-                        blocked_move = move;
-                    }
-                }
-            }
+            const auto& moves = piece.move_list(square);
+            std::copy_if(moves.begin(), moves.end(), std::back_inserter(legal_moves_cache),
+                         std::bind(is_legal, std::ref(blocked_move), _1));
         }
     }
 
-    // Make sure board hash is correct for valid repeat counts
     if(std::none_of(legal_moves_cache.begin(),
                     legal_moves_cache.end(),
                     [](auto move) { return move->is_en_passant(); }))
