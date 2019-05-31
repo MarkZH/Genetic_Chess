@@ -4,6 +4,8 @@
 #include <limits>
 #include <iostream>
 #include <iterator>
+#include <thread>
+#include <functional>
 
 #include "Players/Random_AI.h"
 #include "Game/Board.h"
@@ -12,6 +14,11 @@
 #include "Moves/Move.h"
 
 #include "Utility/Math.h"
+
+Monte_Carlo_AI::~Monte_Carlo_AI()
+{
+    stop_pondering();
+}
 
 //! Builds up a sample of the game tree with random complete games to estimate the best move.
 //
@@ -23,15 +30,20 @@
 //! \param clock The game clock.
 const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) const
 {
-    // Prune game tree according to opponent's last move
-    auto first_prune_index = board.game_record().size() - 2;
-    if(first_prune_index >= board.game_record().size())
+    return pick_move(board, clock, false);
+}
+
+const Move& Monte_Carlo_AI::pick_move(const Board& board, const Clock& clock, bool pondering) const
+{
+    if( ! pondering)
     {
-        first_prune_index = 0;
+        stop_pondering();
     }
-    for(auto i = first_prune_index; i < board.game_record().size(); ++i)
+
+    // Prune game tree according to opponent's last move
+    if( ! board.game_record().empty())
     {
-        search_tree.reroot(board.game_record().at(i));
+        search_tree.reroot(board.game_record().back());
     }
 
     auto moves_left_in_game = size_t(Math::average_moves_left(50, 0.5, board.game_record().size()/2));
@@ -146,4 +158,25 @@ void Monte_Carlo_AI::print_cecp_thinking(double time_so_far,
         << "\t"
         << move->game_record_item(board) // best move so far
         << std::endl;
+}
+
+void Monte_Carlo_AI::ponder(const Board& board, const Clock& clock) const
+{
+    if( ! board.game_record().empty())
+    {
+        search_tree.reroot(board.game_record().back());
+    }
+
+    ponder_board = board;
+    ponder_thread = std::thread(std::bind(&Monte_Carlo_AI::pick_move, this, ponder_board, clock, true));
+}
+
+void Monte_Carlo_AI::stop_pondering() const
+{
+    if(ponder_thread.joinable())
+    {
+        ponder_board.pick_move_now();
+        ponder_thread.join();
+        ponder_board.choose_move_at_leisure();
+    }
 }

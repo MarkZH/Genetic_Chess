@@ -2,12 +2,13 @@
 #define MONTE_CARLO_AI_H
 
 #include <string>
+#include <thread>
 
 #include "Random_AI.h"
 
 #include "Monte_Carlo_Search_Tree.h"
+#include "Game/Board.h"
 
-class Board;
 class Clock;
 class Move;
 
@@ -20,12 +21,20 @@ class Move;
 class Monte_Carlo_AI : public Random_AI
 {
     public:
+        ~Monte_Carlo_AI();
+
         const Move& choose_move(const Board& board, const Clock& clock) const override;
+        void ponder(const Board& board, const Clock& clock) const override;
+
         std::string name() const override;
 
     private:
         mutable Monte_Carlo_Search_Tree search_tree;
+        mutable Board ponder_board;
+        mutable std::thread ponder_thread;
 
+        const Move& pick_move(const Board& board, const Clock& clock, bool pondering) const;
+        void stop_pondering() const;
         void print_cecp_thinking(double time_so_far,
                                  double search_time,
                                  double result,
