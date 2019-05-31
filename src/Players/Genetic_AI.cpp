@@ -274,12 +274,24 @@ void Genetic_AI::read_ancestry(std::istream& is)
             continue;
         }
 
-        if(line != "Name: Ancestry")
+        if(String::starts_with(line, "Name"))
         {
-            throw Genetic_AI_Creation_Error("Missing ancestry data " + id_string);
+            auto data = String::split(line, ":", 1);
+            auto header = String::trim_outer_whitespace(data.front());
+            if(data.size() != 2 || header != "Name")
+            {
+                throw Genetic_AI_Creation_Error("Bad section header (" + id_string + "): " + line);
+            }
+            auto section = String::remove_extra_whitespace(data.back());
+            if(section == "Ancestry")
+            {
+                break;
+            }
+            else
+            {
+                throw Genetic_AI_Creation_Error("Missing ancestry data " + id_string);
+            }
         }
-
-        break;
     }
 
     while(std::getline(is, line))
