@@ -24,7 +24,6 @@ Genetic_AI::Genetic_AI(int mutation_count) :
     id_number(next_id++)
 {
     mutate(mutation_count);
-    recalibrate_self();
 }
 
 //! Create a new Genetic_AI via sexual reproduction.
