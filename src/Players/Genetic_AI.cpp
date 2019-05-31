@@ -284,10 +284,14 @@ void Genetic_AI::read_ancestry(std::istream& is)
 
     while(std::getline(is, line))
     {
+        if(String::trim_outer_whitespace(line).empty())
+        {
+            break;
+        }
         line = String::strip_comments(line, "#");
         if(line.empty())
         {
-            break;
+            continue;
         }
 
         auto pool_fraction = String::split(line, ":");
