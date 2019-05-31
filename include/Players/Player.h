@@ -36,8 +36,6 @@ class Player
         //!          or the name of a human player.
         virtual std::string name() const = 0;
 
-        virtual std::string author() const;
-
         virtual void process_game_ending(const Game_Result& ending, const Board& board) const;
         virtual std::string commentary_for_next_move(const Board& board) const;
 

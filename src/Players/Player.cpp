@@ -19,14 +19,6 @@ void Player::ponder(const Board&, const Clock&, bool) const
 {
 }
 
-//! Report the creator of the chess engine.
-//
-//! \returns The programmer who wrote the chess engine.
-std::string Player::author() const
-{
-    return {};
-}
-
 //! Provide commentary for the move to come given a past state of the game.
 //
 //! \param board The board position prior to the move the player should comment on.

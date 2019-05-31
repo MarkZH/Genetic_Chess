@@ -27,7 +27,6 @@ class Genetic_AI : public Minimax_AI
         void mutate(int mutation_count = 1);
 
         std::string name() const override;
-        std::string author() const override;
 
         void print(const std::string& file_name = "") const;
         void print(std::ostream& file) const;
