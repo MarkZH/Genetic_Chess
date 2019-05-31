@@ -117,7 +117,7 @@ void Gene::read_from(std::istream& is)
         }
         catch(const std::out_of_range&)
         {
-            throw_on_invalid_line(line, "Unrecognized parameter.");
+            throw_on_invalid_line(line, "Unrecognized parameter name.");
         }
         catch(const std::invalid_argument&)
         {
