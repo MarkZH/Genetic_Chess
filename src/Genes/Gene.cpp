@@ -78,6 +78,12 @@ size_t Gene::mutatable_components() const
 void Gene::read_from(std::istream& is)
 {
     auto properties = list_properties();
+    std::map<std::string, bool> property_found;
+    std::for_each(properties.begin(), properties.end(),
+                  [&property_found](const auto& key_value)
+                  {
+                      return property_found[key_value.first] = false;
+                  });
 
     std::string line;
     while(std::getline(is, line))
@@ -114,6 +120,7 @@ void Gene::read_from(std::istream& is)
         try
         {
             properties.at(property_name) = std::stod(property_data);
+            property_found.at(property_name) = true;
         }
         catch(const std::out_of_range&)
         {
@@ -125,22 +132,17 @@ void Gene::read_from(std::istream& is)
         }
     }
 
-    try
+    auto missing_data = std::accumulate(property_found.begin(), property_found.end(), std::string{},
+                        [](const auto& so_far, const auto& name_found)
+                        {
+                            return so_far + ( ! name_found.second ? "\n" + name_found.first : "");
+                        });
+    if( ! missing_data.empty())
     {
-        load_properties(properties);
+        throw Genetic_AI_Creation_Error("Missing gene data for " + name() + ":" + missing_data);
     }
-    catch(const std::out_of_range& err)
-    {
-        auto parameters = std::accumulate(properties.begin(),
-                                          properties.end(),
-                                          std::string{},
-                                          [](const auto& so_far, const auto& next)
-                                          {
-                                              return so_far + next.first + "\n";
-                                          });
 
-        throw Genetic_AI_Creation_Error("Bad parameter input for " + name() + "\n" + parameters + "\n" + err.what());
-    }
+    load_properties(properties);
 }
 
 //! Read gene data from a text file.
