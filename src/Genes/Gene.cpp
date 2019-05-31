@@ -82,10 +82,14 @@ void Gene::read_from(std::istream& is)
     std::string line;
     while(std::getline(is, line))
     {
+        if(String::trim_outer_whitespace(line).empty())
+        {
+            break;
+        }
         line = String::strip_comments(line, "#");
         if(line.empty())
         {
-            break;
+            continue;
         }
 
         auto split_line = String::split(line, ":");
