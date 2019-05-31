@@ -6,7 +6,7 @@
 #include "Utility/String.h"
 
 //! The default Game_Result indicates that the game has not ended.
-Game_Result::Game_Result() : victor(NONE), cause()
+Game_Result::Game_Result() : victor(NONE), cause(), game_ended(false)
 {
 }
 
@@ -15,16 +15,18 @@ Game_Result::Game_Result() : victor(NONE), cause()
 //! \param winner The color of the player that has won, or NONE if a draw.
 //! \param reason Explanation of why the game ended.
 Game_Result::Game_Result(Color winner,
-                         const std::string& reason) :
+                         const std::string& reason,
+                         bool game_ended_normally) :
                              victor(winner),
-                             cause(reason)
+                             cause(reason),
+                             game_ended(game_ended_normally)
 {
 }
 
 //! Indicate whether the game ended with the last action.
 bool Game_Result::game_has_ended() const
 {
-    return ! cause.empty();
+    return game_ended;
 }
 
 //! Returns the resultant winner (or NONE, if a draw) as a result of the last action.

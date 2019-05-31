@@ -57,7 +57,7 @@ Game_Result play_game(Board board,
     }
     catch(const std::exception& other_error)
     {
-        result = {NONE, other_error.what()};
+        result = {NONE, other_error.what(), false};
         error = other_error;
     }
 

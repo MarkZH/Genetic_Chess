@@ -10,7 +10,7 @@ class Game_Result
 {
     public:
         Game_Result();
-        Game_Result(Color winner, const std::string& reason);
+        Game_Result(Color winner, const std::string& reason, bool game_ended_normally);
 
         bool game_has_ended() const;
         Color winner() const;
@@ -21,6 +21,7 @@ class Game_Result
     private:
         Color victor;
         std::string cause;
+        bool game_ended;
 };
 
 #endif // GAME_RESULT_H

@@ -480,11 +480,11 @@ Game_Result Board::submit_move(const Move& move)
         if(king_is_in_check())
         {
             auto winner = opposite(whose_turn());
-            return Game_Result(winner, color_text(winner) + " mates");
+            return Game_Result(winner, color_text(winner) + " mates", true);
         }
         else
         {
-            return Game_Result(NONE, "Stalemate");
+            return Game_Result(NONE, "Stalemate", true);
         }
     }
 
@@ -493,19 +493,19 @@ Game_Result Board::submit_move(const Move& move)
     // repeat_count tracker.
     if(moves_since_pawn_or_capture() == 0 && ! enough_material_to_checkmate())
     {
-        return Game_Result(NONE, "Insufficient material");
+        return Game_Result(NONE, "Insufficient material", true);
     }
 
     if(current_board_position_repeat_count() >= 3)
     {
-        return Game_Result(NONE, "Threefold repetition");
+        return Game_Result(NONE, "Threefold repetition", true);
     }
 
     // "Move" means both players move, so the fifty-move rule is
     // triggered after 100 player moves
     if(moves_since_pawn_or_capture() >= 100)
     {
-        return Game_Result(NONE, "50-move limit");
+        return Game_Result(NONE, "50-move limit", true);
     }
 
     return {};
@@ -1163,18 +1163,27 @@ void Board::print_game_record(const Player* white,
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
 
+    print_game_header_line(out_stream, "Event", "?");
+    print_game_header_line(out_stream, "Site", "?");
     print_game_header_line(out_stream, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
-    print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
+    print_game_header_line(out_stream, "Round", game_number++);
 
-    for(auto player : {white, black})
+    for(auto player_color : {WHITE, BLACK})
     {
+        const auto& player = player_color == WHITE ? white : black;
         if(player && ! player->name().empty())
         {
-            print_game_header_line(out_stream, player == white ? "White" : "Black", player->name());
+            print_game_header_line(out_stream, color_text(player_color), player->name());
+        }
+        else
+        {
+            print_game_header_line(out_stream, color_text(player_color), "?");
         }
     }
 
-    print_game_header_line(out_stream, "Round", game_number++);
+    print_game_header_line(out_stream, "Result", result.game_ending_annotation().empty() ? "*" : result.game_ending_annotation());
+
+    print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
     if(game_clock.initial_time() > 0)
     {
@@ -1193,10 +1202,6 @@ void Board::print_game_record(const Player* white,
         print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(BLACK));
     }
 
-    if( ! result.game_ending_annotation().empty())
-    {
-        print_game_header_line(out_stream, "Result", result.game_ending_annotation());
-    }
 
     if( ! result.ending_reason().empty() && ! String::contains(result.ending_reason(), "mates"))
     {

@@ -51,7 +51,7 @@ Game_Result Clock::punch()
     if(local_clock_stoppage && timers[whose_turn] < 0s)
     {
         stop();
-        return Game_Result(opposite(whose_turn), "Time Forfeiture");
+        return Game_Result(opposite(whose_turn), "Time Forfeiture", true);
     }
 
     if(use_reset && (++moves_to_reset_clocks[whose_turn] == move_count_reset))
