@@ -80,12 +80,10 @@ std::atomic_bool Board::move_immediately = false;
 //!        then the FEN string for the start of a standard chess game is given.
 //! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
 Board::Board(const std::string& fen) :
-    board{},
     repeat_count_insertion_point{0},
     unmoved_positions{},
     starting_fen(String::remove_extra_whitespace(fen)),
     pin_result{false},
-    checking_square{},
     potential_attacks{},
     castling_index{{size_t(-1), size_t(-1)}},
     attack_counts{}
