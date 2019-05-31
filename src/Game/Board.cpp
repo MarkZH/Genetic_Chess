@@ -84,8 +84,7 @@ Board::Board(const std::string& fen) :
     repeat_count_insertion_point{0},
     unmoved_positions{},
     starting_fen(String::remove_extra_whitespace(fen)),
-    pinned_squares{},
-    square_searched_for_pin{},
+    pin_result{false},
     checking_square{},
     potential_attacks{},
     castling_index{{size_t(-1), size_t(-1)}},
@@ -1297,7 +1296,7 @@ void Board::clear_en_passant_target()
 
 void Board::clear_pinned_squares()
 {
-    square_searched_for_pin.fill(false);
+    square_checked_for_pin = Square{};
 }
 
 void Board::clear_checking_square()
@@ -1608,17 +1607,14 @@ bool Board::all_empty_between(Square start, Square end) const
 //!          existant) white piece on the given square to the white king?
 bool Board::piece_is_pinned(Square square) const
 {
-    auto index = square.index();
-    if(square_searched_for_pin[index])
+    if(square_checked_for_pin == square)
     {
-        return pinned_squares[index];
+        return pin_result;
     }
 
-    square_searched_for_pin[index] = true;
-    auto& pin_result = pinned_squares[index];
+    square_checked_for_pin = square;
 
     const auto& king_square = find_king(whose_turn());
-
     if(king_square == square)
     {
         return pin_result = false; // king is never pinned
