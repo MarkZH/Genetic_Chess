@@ -372,7 +372,11 @@ bool run_tests()
         remove(rewrite_file_name);
     }
 
-    function_should_not_throw(tests_passed, "Genetic_AI ctor", [=](){ Genetic_AI{"genetic_ai_example.txt"};});
+    auto file_name = "genetic_ai_example.txt";
+    std::string line;
+    std::getline(std::ifstream(file_name), line);
+    auto id = std::stoi(String::split(line).at(1));
+    function_should_not_throw(tests_passed, "Genetic_AI ctor", [=]() { Genetic_AI{file_name, id}; });
 
 
     // Test individual board-scoring genes

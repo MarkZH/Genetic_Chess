@@ -45,34 +45,6 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
     recalibrate_self();
 }
 
-//! Create a Genetic_AI from information in a text file.
-//
-//! \param file_name The name of the text file.
-//! \throws Genetic_AI_Creation_Error if the file cannot be opened or if there is an error during reading.
-Genetic_AI::Genetic_AI(const std::string& file_name)
-{
-    std::ifstream ifs(file_name);
-    if( ! ifs)
-    {
-        throw Genetic_AI_Creation_Error("Could not read: " + file_name);
-    }
-
-    read_from(ifs);
-
-    recalibrate_self();
-}
-
-//! Create a Genetic_AI from information in an input stream (std::ifstream, std::cin, etc.).
-//
-//! \param is Input stream.
-//! \throws Genetic_AI_Creation_Error If there is an error during reading.
-Genetic_AI::Genetic_AI(std::istream& is)
-{
-    read_from(is);
-
-    recalibrate_self();
-}
-
 //! Create a Genetic_AI from a text file by searching for a specfic ID.
 //
 //! \param file_name The name of the file with the Genetic_AI data.
