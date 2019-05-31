@@ -70,18 +70,12 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
         auto param_value = String::split(line, ":", 1);
         if(param_value.size() != 2 || String::trim_outer_whitespace(param_value[0]) != "ID")
         {
-            throw Genetic_AI_Creation_Error("Bad ID line: " + line);
+            continue;
         }
 
         if(id_in == std::stoi(param_value[1]))
         {
-            read_ancestry(ifs);
-            genome.read_from(ifs);
-
-            recalibrate_self();
-
-            next_id = std::max(next_id, id_number + 1);
-
+            read_data(ifs);
             return;
         }
     }
@@ -89,42 +83,19 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
     throw Genetic_AI_Creation_Error("Could not locate ID " + std::to_string(id_in) + " inside file " + file_name);
 }
 
-void Genetic_AI::read_from(std::istream& is)
+void Genetic_AI::read_data(std::istream& is)
 {
-    std::string line;
-    while(std::getline(is, line))
+    try
     {
-        line = String::strip_comments(line, "#");
-        if(line.empty())
-        {
-            continue;
-        }
-
-        if(String::starts_with(line, "ID"))
-        {
-            auto param_value = String::split(line, ":", 1);
-            if(param_value.size() != 2 || String::trim_outer_whitespace(param_value[0]) != "ID")
-            {
-                throw Genetic_AI_Creation_Error("Bad ID line: " + line);
-            }
-            id_number = std::stoi(param_value[1]);
-            break;
-        }
-        else
-        {
-            throw Genetic_AI_Creation_Error("Invalid Genetic_AI line: " + line);
-        }
+        read_ancestry(is);
+        genome.read_from(is);
+        recalibrate_self();
+        next_id = std::max(next_id, id() + 1);
     }
-
-    if( ! is)
+    catch(const Genetic_AI_Creation_Error& e)
     {
-        throw Genetic_AI_Creation_Error("Incomplete Genetic_AI spec in file for ID " + std::to_string(id_number));
+        throw Genetic_AI_Creation_Error("Error in creating Genetic AI #" + std::to_string(id()) + "\n" + e.what());
     }
-
-    read_ancestry(is);
-    genome.read_from(is);
-
-    next_id = std::max(next_id, id_number + 1);
 }
 
 double Genetic_AI::internal_evaluate(const Board& board, Color perspective, size_t depth) const

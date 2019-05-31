@@ -46,7 +46,7 @@ class Genetic_AI : public Minimax_AI
         int id_number;
         std::map<size_t, double> ancestry; // record mix of parents' original gene pool ancestry
 
-        void read_from(std::istream& is);
+        void read_data(std::istream& is);
         void read_ancestry(std::istream& is);
 
         double internal_evaluate(const Board& board,
