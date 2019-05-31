@@ -67,7 +67,6 @@ const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) c
         }
         catch(const Illegal_Move& e)
         {
-            log("ERROR: Illegal move: " + std::string(e.what()));
             send_command("Illegal move (" + std::string(e.what()) + ") " + received_move_text);
         }
     }
