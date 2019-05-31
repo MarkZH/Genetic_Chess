@@ -27,7 +27,8 @@ class Player
         //
         //! \param board The board to ponder on (just after this player's last move).
         //! \param clock The game clock for guessing how much time the opponent will use.
-        virtual void ponder(const Board& board, const Clock& clock) const;
+        //! \param thinking_allowed Allow thinking about the next move during opponent's move.
+        virtual void ponder(const Board& board, const Clock& clock, bool thinking_allowed) const;
 
         //! The name of the player.
         //
@@ -42,6 +43,7 @@ class Player
 
         virtual void initial_board_setup(Board& board) const;
         virtual bool stop_for_local_clock() const;
+        virtual bool off_time_thinking_allowed() const;
 
         //! Decides whether the record of a game should be printed to stdout if no file name is provided.
         //

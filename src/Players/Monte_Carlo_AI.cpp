@@ -43,7 +43,22 @@ const Move& Monte_Carlo_AI::pick_move(const Board& board, const Clock& clock, bo
     // Prune game tree according to opponent's last move
     if( ! board.game_record().empty())
     {
-        search_tree.reroot(board.game_record().back());
+        if(pondered || pondering)
+        {
+            search_tree.reroot(board.game_record().back());
+        }
+        else
+        {
+            auto start_index = board.game_record().size() - 2;
+            if(start_index > board.game_record().size())
+            {
+                start_index = 0;
+            }
+            for(auto i = start_index; i < board.game_record().size(); ++i)
+            {
+                search_tree.reroot(board.game_record()[i]);
+            }
+        }
     }
 
     auto moves_left_in_game = size_t(Math::average_moves_left(50, 0.5, board.game_record().size()/2));
@@ -160,15 +175,14 @@ void Monte_Carlo_AI::print_cecp_thinking(double time_so_far,
         << std::endl;
 }
 
-void Monte_Carlo_AI::ponder(const Board& board, const Clock& clock) const
+void Monte_Carlo_AI::ponder(const Board& board, const Clock& clock, bool thinking_allowed) const
 {
-    if( ! board.game_record().empty())
+    pondered = thinking_allowed;
+    if(thinking_allowed)
     {
-        search_tree.reroot(board.game_record().back());
+        ponder_board = board;
+        ponder_thread = std::thread(std::bind(&Monte_Carlo_AI::pick_move, this, ponder_board, clock, true));
     }
-
-    ponder_board = board;
-    ponder_thread = std::thread(std::bind(&Monte_Carlo_AI::pick_move, this, ponder_board, clock, true));
 }
 
 void Monte_Carlo_AI::stop_pondering() const

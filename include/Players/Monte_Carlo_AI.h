@@ -24,7 +24,7 @@ class Monte_Carlo_AI : public Random_AI
         ~Monte_Carlo_AI();
 
         const Move& choose_move(const Board& board, const Clock& clock) const override;
-        void ponder(const Board& board, const Clock& clock) const override;
+        void ponder(const Board& board, const Clock& clock, bool thinking_allowed) const override;
 
         std::string name() const override;
 
@@ -32,6 +32,7 @@ class Monte_Carlo_AI : public Random_AI
         mutable Monte_Carlo_Search_Tree search_tree;
         mutable Board ponder_board;
         mutable std::thread ponder_thread;
+        mutable bool pondered = false;
 
         const Move& pick_move(const Board& board, const Clock& clock, bool pondering) const;
         void stop_pondering() const;

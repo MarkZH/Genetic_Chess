@@ -39,7 +39,7 @@ Game_Result play_game(Board board,
             auto& player  = board.whose_turn() == WHITE ? white : black;
             auto& thinker = board.whose_turn() == WHITE ? black : white;
 
-            thinker.ponder(board, game_clock);
+            thinker.ponder(board, game_clock, white.off_time_thinking_allowed() && black.off_time_thinking_allowed());
             const auto& move_chosen = player.choose_move(board, game_clock);
 
             result = game_clock.punch();

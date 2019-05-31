@@ -131,7 +131,7 @@ std::string CECP_Mediator::receive_move(const Clock& clock) const
     }
 }
 
-void CECP_Mediator::ponder(const Board& board, const Clock& clock) const
+void CECP_Mediator::ponder(const Board& board, const Clock& clock, bool) const
 {
     last_ponder_command = std::async(std::launch::async, &CECP_Mediator::ponder_method, this, board, clock);
 }
@@ -238,6 +238,16 @@ std::string CECP_Mediator::receive_cecp_command(bool while_pondering) const
             command[1] = 'o'; // change "ping" to "pong"
             send_command(command);
         }
+        else if(command == "easy")
+        {
+            log("Turning off pondering");
+            thinking_on_opponent_time = false;
+        }
+        else if(command == "hard")
+        {
+            log("Turning on pondering");
+            thinking_on_opponent_time = true;
+        }
         else
         {
             return command;
@@ -248,6 +258,11 @@ std::string CECP_Mediator::receive_cecp_command(bool while_pondering) const
 void CECP_Mediator::initial_board_setup(Board& board) const
 {
     board.set_thinking_mode(thinking_mode);
+}
+
+bool CECP_Mediator::off_time_thinking_allowed() const
+{
+    return thinking_on_opponent_time;
 }
 
 void CECP_Mediator::wait_for_quit() const
