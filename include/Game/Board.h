@@ -103,8 +103,6 @@ class Board
         std::string starting_fen;
         static const std::string standard_starting_fen;
         std::array<Square, 2> king_location;
-        mutable Square square_checked_for_pin;
-        mutable bool pin_result;
         mutable Square checking_square;
         size_t move_count_start_offset;
 
@@ -146,7 +144,6 @@ class Board
         bool no_legal_moves() const;
         void make_en_passant_targetable(Square square);
         void clear_en_passant_target();
-        void clear_pinned_squares();
         void clear_checking_square();
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(Piece piece, Square square);

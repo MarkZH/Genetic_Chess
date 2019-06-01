@@ -83,7 +83,6 @@ Board::Board(const std::string& fen) :
     repeat_count_insertion_point{0},
     unmoved_positions{},
     starting_fen(String::remove_extra_whitespace(fen)),
-    pin_result{false},
     potential_attacks{},
     castling_index{{size_t(-1), size_t(-1)}},
     attack_counts{}
@@ -686,7 +685,6 @@ void Board::move_piece(const Move& move)
     place_piece(moving_piece, move.end());
 
     clear_en_passant_target();
-    clear_pinned_squares();
     clear_checking_square();
 }
 
@@ -1292,11 +1290,6 @@ void Board::clear_en_passant_target()
     make_en_passant_targetable({});
 }
 
-void Board::clear_pinned_squares()
-{
-    square_checked_for_pin = Square{};
-}
-
 void Board::clear_checking_square()
 {
     checking_square = Square{};
@@ -1605,22 +1598,15 @@ bool Board::all_empty_between(Square start, Square end) const
 //!          existant) white piece on the given square to the white king?
 bool Board::piece_is_pinned(Square square) const
 {
-    if(square_checked_for_pin == square)
-    {
-        return pin_result;
-    }
-
-    square_checked_for_pin = square;
-
     const auto& king_square = find_king(whose_turn());
     if(king_square == square)
     {
-        return pin_result = false; // king is never pinned
+        return false; // king is never pinned
     }
 
     if( ! straight_line_move(square, king_square))
     {
-        return pin_result = false;
+        return false;
     }
 
     auto diff = king_square - square;
@@ -1630,12 +1616,12 @@ bool Board::piece_is_pinned(Square square) const
         // the queried square in the same direction towards the friendly king. This next check
         // is to make sure the attacking piece is not a limited range piece--i.e., a pawn or king.
         auto attacker = piece_on_square(square - diff.step());
-        return pin_result = ( ! attacker || (attacker.type() != PAWN && attacker.type() != KING)) &&
-                            all_empty_between(king_square, square);
+        return ( ! attacker || (attacker.type() != PAWN && attacker.type() != KING)) &&
+               all_empty_between(king_square, square);
     }
     else
     {
-        return pin_result = false;
+        return false;
     }
 }
 
