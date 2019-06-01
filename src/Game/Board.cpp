@@ -1030,7 +1030,7 @@ bool Board::blocked_attack(Square square, Color attacking_color) const
 //! \returns Whether the move under consideration will leave the friendly king in check.
 bool Board::king_is_in_check_after_move(const Move& move) const
 {
-    if(piece_on_square(move.start()).type() == KING)
+    if(move.start() == find_king(whose_turn()))
     {
         return ! safe_for_king(move.end(), whose_turn());
     }
