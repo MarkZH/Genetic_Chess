@@ -22,6 +22,11 @@ Game_Result play_game(Board board,
                       bool pondering_allowed,
                       const std::string& pgn_file_name)
 {
+    if(board.whose_turn() != game_clock.running_for())
+    {
+        throw std::invalid_argument("Board and Clock disagree on whose turn it is.");
+    }
+
     game_clock.start();
 
     Game_Result result;
