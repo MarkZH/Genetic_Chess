@@ -122,17 +122,13 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
                 send_command("Illegal move (" + std::string(e.what()) + ") " + move);
             }
         }
-        else if(String::starts_with(command, "time "))
+        else if(String::starts_with(command, "time ") || String::starts_with(command, "otim "))
         {
             auto time = std::stod(String::split(command, " ")[1])/100; // time specified in centiseconds
-            clock.set_time(opposite(board.whose_turn()), time); // opposite since the outside player is still to move
-            log("setting " + color_text(opposite(board.whose_turn())) + "'s time to " + std::to_string(time) + " seconds.");
-        }
-        else if(String::starts_with(command, "otim "))
-        {
-            auto time = std::stod(String::split(command, " ")[1])/100; // time specified in centiseconds
-            clock.set_time(board.whose_turn(), time); // board is still waiting for opponent move
-            log("setting " + color_text(board.whose_turn()) + "'s time to " + std::to_string(time) + " seconds.");
+            auto ai_color = wait_for_usermove ? opposite(board.whose_turn()) : board.whose_turn();
+            auto clock_color = String::starts_with(command, "time ") ? ai_color : opposite(ai_color);
+            clock.set_time(clock_color, time);
+            log("setting " + color_text(clock_color) + "'s time to " + std::to_string(time) + " seconds.");
         }
     }
 }
