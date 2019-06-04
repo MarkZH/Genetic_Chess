@@ -64,15 +64,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             ignore_next_move = false;
             wait_for_usermove = true;
             board.choose_move_at_leisure();
-            log("starting clock");
-            clock.start();
-            if(board.whose_turn() != clock.running_for())
-            {
-                log("punching clock to match board");
-                clock.punch();
-                log("Clock running for" + color_text(clock.running_for()));
-            }
-            log("returning from setup_turn()");
+            log("CECP::setup_turn() exit");
             return;
         }
         else if (String::starts_with(command, "setboard "))
@@ -84,14 +76,6 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             auto fen = String::split(command, " ", 1).back();
             log("Rearranging board to: " + fen);
             board = Board(fen);
-            if(board.whose_turn() != clock.running_for())
-            {
-                log("punching clock to match board");
-                clock.punch();
-                log("stopping clock, will be restarted at 'go' command");
-                clock.stop();
-                log("clock running for " + color_text(clock.running_for()));
-            }
         }
         else if(String::starts_with(command, "usermove "))
         {
@@ -108,13 +92,8 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
                 log("reporting last move to local AI and accepting its move");
                 ignore_next_move = false;
                 wait_for_usermove = true;
-                if( ! clock.is_running())
-                {
-                    clock.start();
-                }
-                clock.punch();
                 board.choose_move_at_leisure();
-                log("returning from setup_turn()");
+                log("CECP::setup_turn() exit");
                 return;
             }
             catch(const Illegal_Move& e)
@@ -140,7 +119,7 @@ void CECP_Mediator::listen(Board& board, Clock& clock)
     log("CECP_Mediator::listen() exits");
 }
 
-void CECP_Mediator::handle_move(Board& board, Clock& clock, const Move& move)
+void CECP_Mediator::handle_move(Board& board, const Move& move)
 {
     log("CECP_Mediator::handle_move()");
     if(ignore_next_move)
@@ -151,7 +130,6 @@ void CECP_Mediator::handle_move(Board& board, Clock& clock, const Move& move)
     else
     {
         send_command("move " + move.coordinate_move());
-        clock.punch();
         auto result = board.submit_move(move);
         if(result.game_has_ended())
         {

@@ -24,7 +24,7 @@ class CECP_Mediator : public Outside_Communicator
 
         void setup_turn(Board& board, Clock& clock) override;
         void listen(Board& board, Clock& clock) override;
-        void handle_move(Board& board, Clock& clock, const Move& move) override;
+        void handle_move(Board& board, const Move& move) override;
         bool pondering_allowed() const override;
 
     private:

@@ -17,7 +17,7 @@ class Outside_Communicator
 
         virtual void setup_turn(Board& board, Clock& clock) = 0;
         virtual void listen(Board& board, Clock& clock) = 0;
-        virtual void handle_move(Board& board, Clock& clock, const Move& move) = 0;
+        virtual void handle_move(Board& board, const Move& move) = 0;
         virtual bool pondering_allowed() const= 0;
 
         static void log(const std::string& data);
