@@ -204,7 +204,7 @@ bool run_tests()
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto square = Square{file, rank};
-            test_result(tests_passed, square.color() == current_color, "Wrong color for square " + square.color());
+            test_result(tests_passed, square.color() == current_color, "Wrong color for square " + square.string());
             current_color = opposite(current_color);
         }
     }
