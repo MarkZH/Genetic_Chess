@@ -49,6 +49,8 @@ The \code{.sln} and \code{.vcxproj} files are project files for Visual Studio. T
 \section{Running}\label{running}
 \begin{description}
 	\item[\code{genetic\_chess -test}] Run tests of the program for chess rule conformance and for Genetic AIs working properly.
+	\item[\code{genetic\_chess -perft}:] Test game logic and speed by counting legal moves from a list of board positions.
+	\item[\code{genetic\_chess -speed}:] Measure the speed of various components of the chess engine.
 	\item[\code{genetic\_chess -genepool [file name]}]
 This will start up a gene pool with Genetic\_AIs playing against each other---mating, killing, mutating, all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
 
@@ -63,6 +65,15 @@ This will start up a gene pool with Genetic\_AIs playing against each other---ma
 		\item[\code{-random}:] an AI player that chooses a random legal move at each turn.
 		\item[\code{-turing}:] a chess engine implemented according to the design by Alan Turing~\cite{turing-chess}.
 		\item[\code{-montecarlo}:] a chess AI that picks a move based on the results of randomly played complete games, i.e., the pure version of Monte Carlo tree search~\cite{monte-carlo}. A warning: this AI can be very memory intensive depending upon the computer's speed and the time controls of the game. On my computer, 5/40 time control results in almost 900~MB of memory usage per player.
+	\end{description}
+	
+	Other game options:
+	\begin{description}
+		\item[\code{-time}:] The starting about of time on the game clocks.
+		\item[\code{-repeat\_moves}:] The number of moves a player must make before the clocks are reset to their starting time.
+		\item[\code{-increment}:] The amount of time to add to the clocks after every move.
+		\item[\code{-pondering}:] Allow chess engines/AIs to think while it is not their turn to move.
+		\item[\code{-board <FEN>}] A description of a board setup in \href{https://en.wikipedia.org/wiki/Forsyth\%E2\%80\%93Edwards_Notation}{Forsyth-Edwards Notation} on which to start the game.
 	\end{description}
 \end{description}
 Genetic Chess can communicate with GUI chess programs through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol}, including xboard, PyChess, Cute Chess, and others. When using Genetic Chess this way, only specify the arguments for a single player (\code{-genetic} or \code{-random}). The program will then wait for communication from the GUI\@.

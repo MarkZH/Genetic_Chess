@@ -62,8 +62,6 @@ class Board
                                const Game_Result& result,
                                const Clock& game_clock) const;
 
-        std::string last_move_coordinates() const;
-
         Piece piece_on_square(Square square) const;
 
         const std::vector<const Move*>& legal_moves() const;

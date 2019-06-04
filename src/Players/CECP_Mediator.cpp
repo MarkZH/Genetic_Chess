@@ -2,12 +2,15 @@
 
 #include <string>
 #include <future>
+#include <algorithm>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 
-class Move;
+#include "Moves/Move.h"
+
+#include "Players/Player.h"
 
 #include "Exceptions/Illegal_Move.h"
 #include "Exceptions/Game_Ended.h"
@@ -17,10 +20,10 @@ class Move;
 //! Set up the connection to the outside interface and send configuration data.
 //
 //! \param local_player The player on the machine. The name of the player gets sent to the interface.
-CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THINKING)
+CECP_Mediator::CECP_Mediator(const Player& local_player)
 {
     std::string expected = "protover 2";
-    if(receive_cecp_command(false) == expected)
+    if(receive_command() == expected)
     {
         log("as expected, setting options");
         send_command("feature "
@@ -31,6 +34,7 @@ CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THIN
                      "myname=\"" + local_player.name() + "\" "
                      "name=1 "
                      "ping=1 "
+                     "setboard=1 "
                      "done=1");
     }
     else
@@ -40,142 +44,180 @@ CECP_Mediator::CECP_Mediator(const Player& local_player) : thinking_mode(NO_THIN
     }
 }
 
-//! Send the last move the local player made to the interface and wait for the outside player's move.
-//
-//! \param board The last move on this board is sent to the interface.
-//! \param clock The game clock is also adjusted to better match the interface's clock.
-//! \throws Game_Ended If the interface sends the "quit" command.
-const Move& CECP_Mediator::choose_move(const Board& board, const Clock& clock) const
+void CECP_Mediator::setup_turn(Board& board, Clock& clock)
 {
+    log("CECP_Mediator::setup_turn()");
+
     while(true)
     {
-        try
+        auto command = receive_cecp_command(board, clock, false);
+        if(command == "go")
         {
-            if(first_move.empty())
+            if(wait_for_usermove)
             {
-                send_command("move " + board.last_move_coordinates());
-                received_move_text = receive_move(clock);
-            }
-            else
-            {
-                received_move_text = first_move;
-                first_move.clear();
+                log("Ignoring 'go' command, waiting for usermove");
+                continue;
             }
 
-            board.set_thinking_mode(thinking_mode);
-            return board.create_move(received_move_text);
+            indent = board.whose_turn() == WHITE ? "\t\t" : "\t\t\t";
+            log("telling local AI to move at leisure and accepting move");
+            ignore_next_move = false;
+            wait_for_usermove = true;
+            board.choose_move_at_leisure();
+            log("starting clock");
+            clock.start();
+            if(board.whose_turn() != clock.running_for())
+            {
+                log("punching clock to match board");
+                clock.punch();
+                log("Clock running for" + color_text(clock.running_for()));
+            }
+            log("returning from setup_turn()");
+            return;
         }
-        catch(const Illegal_Move& e)
+        else if (String::starts_with(command, "setboard "))
         {
-            send_command("Illegal move (" + std::string(e.what()) + ") " + received_move_text);
+            disable_thinking_output = true;
+            log("Disabling thinking output");
+            board.set_thinking_mode(NO_THINKING);
+            wait_for_usermove = false;
+            auto fen = String::split(command, " ", 1).back();
+            log("Rearranging board to: " + fen);
+            board = Board(fen);
+            if(board.whose_turn() != clock.running_for())
+            {
+                log("punching clock to match board");
+                clock.punch();
+                log("stopping clock, will be restarted at 'go' command");
+                clock.stop();
+                log("clock running for " + color_text(clock.running_for()));
+            }
+        }
+        else if(String::starts_with(command, "usermove "))
+        {
+            auto move = String::split(command).back();
+            try
+            {
+                log("Applying move: " + move);
+                auto result = board.submit_move(board.create_move(move));
+                indent = board.whose_turn() == WHITE ? "\t\t" : "\t\t\t";
+                if(result.game_has_ended())
+                {
+                    report_end_of_game(result);
+                }
+                log("reporting last move to local AI and accepting its move");
+                ignore_next_move = false;
+                wait_for_usermove = true;
+                if( ! clock.is_running())
+                {
+                    clock.start();
+                }
+                clock.punch();
+                board.choose_move_at_leisure();
+                log("returning from setup_turn()");
+                return;
+            }
+            catch(const Illegal_Move& e)
+            {
+                send_command("Illegal move (" + std::string(e.what()) + ") " + move);
+            }
+        }
+        else if(String::starts_with(command, "time "))
+        {
+            auto time = std::stod(String::split(command, " ")[1])/100; // time specified in centiseconds
+            clock.set_time(opposite(board.whose_turn()), time); // opposite since the outside player is still to move
+            log("setting " + color_text(opposite(board.whose_turn())) + "'s time to " + std::to_string(time) + " seconds.");
+        }
+        else if(String::starts_with(command, "otim "))
+        {
+            auto time = std::stod(String::split(command, " ")[1])/100; // time specified in centiseconds
+            clock.set_time(board.whose_turn(), time); // board is still waiting for opponent move
+            log("setting " + color_text(board.whose_turn()) + "'s time to " + std::to_string(time) + " seconds.");
         }
     }
 }
 
-Color CECP_Mediator::ai_color() const
+void CECP_Mediator::listen(Board& board, Clock& clock)
 {
-    while(true)
-    {
-        auto cmd = receive_cecp_command(false);
-        if(cmd == "white" || cmd == "go")
-        {
-            indent = "\t\t";
-            return WHITE;
-        }
-        else if(String::starts_with(cmd, "usermove"))
-        {
-            first_move = String::split(cmd, " ")[1];
-            indent = "\t\t\t";
-            return BLACK;
-        }
-    }
+    log("CECP_Mediator::listen()");
+    last_listening_command = std::async(std::launch::async, &CECP_Mediator::listener, this, std::ref(board), std::ref(clock));
+    log("CECP_Mediator::listen() exits");
 }
 
-std::string CECP_Mediator::receive_move(const Clock& clock) const
+void CECP_Mediator::handle_move(Board& board, Clock& clock, const Move& move)
 {
-    while(true)
+    log("CECP_Mediator::handle_move()");
+    if(ignore_next_move)
     {
-        auto move = receive_cecp_command(false);
-        if(String::starts_with(move, "usermove"))
-        {
-            auto data = String::split(move, " ")[1];
-            log("got move " + move);
-            return data;
-        }
-        else if(String::starts_with(move, "result"))
-        {
-            log("got result " + move);
-            auto winner = NONE;
-            if(String::contains(move, "1-0"))
-            {
-                winner = WHITE;
-            }
-            else if(String::contains(move, "0-1"))
-            {
-                winner = BLACK;
-            }
-            auto data = String::split(String::split(move, "{", 1)[1], "}", 1)[0];
-            throw Game_Ended(winner, data);
-        }
-        else if(String::starts_with(move, "time"))
-        {
-            // Waiting for non-local move, so the non-local clock is running
-            // for the local AI. The local clock has not been punched yet, so
-            // it is still running for the non-local player. Therefore, the
-            // "opponent time" ("otim") refers to the local AI's clock.
-            auto player = opposite(clock.running_for());
-            auto time = std::stod(String::split(move, " ")[1])/100; // time specified in centiseconds
-            clock.set_time(player, time);
-            log("setting " + color_text(player) + "'s time to " + std::to_string(time) + " seconds.");
-        }
-    }
-}
-
-void CECP_Mediator::ponder(const Board& board, const Clock& clock, bool) const
-{
-    last_ponder_command = std::async(std::launch::async, &CECP_Mediator::ponder_method, this, board, clock);
-}
-
-//! Reports the name of the outside opponent.
-//
-//! \returns The opponent's name or "CECP Interface Player" if unknown.
-std::string CECP_Mediator::name() const
-{
-    if(received_name.empty())
-    {
-        return "CECP Interface Player";
+        log("Ignoring move: " + move.coordinate_move());
+        ignore_next_move = false;
     }
     else
     {
-        return received_name;
+        send_command("move " + move.coordinate_move());
+        clock.punch();
+        auto result = board.submit_move(move);
+        if(result.game_has_ended())
+        {
+            report_end_of_game(result);
+        }
     }
+    log("CECP_Mediator::handle_move() exits");
 }
 
-void CECP_Mediator::process_game_ending(const Game_Result& ending, const Board& board) const
+bool CECP_Mediator::pondering_allowed() const
 {
-    if(board.last_move_coordinates() != received_move_text)
-    {
-        send_command("move " + board.last_move_coordinates());
-    }
-
-    send_command(ending.game_ending_annotation() + " {" + ending.ending_reason() + "}");
-
-    wait_for_quit();
+    return thinking_on_opponent_time;
 }
 
-void CECP_Mediator::receive_clock_specs()
+std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool while_listening)
 {
+    log("CECP_Mediator::receive_cecp_command()");
     while(true)
     {
-        auto response = receive_cecp_command(false);
-        if(String::starts_with(response, "level"))
+        std::string command;
+        if(while_listening)
         {
-            log("got time specs: " + response);
-            auto split = String::split(response);
+            command = receive_command();
+        }
+        else
+        {
+            command = last_listening_command.valid() ? last_listening_command.get() : receive_command();
+        }
+
+        if(String::starts_with(command, "ping "))
+        {
+            command[1] = 'o'; // change "ping" to "pong"
+            send_command(command);
+        }
+        else if(String::starts_with(command, "result "))
+        {
+            log("got result " + command);
+            auto winner = NONE;
+            if(String::contains(command, "1-0"))
+            {
+                winner = WHITE;
+            }
+            else if(String::contains(command, "0-1"))
+            {
+                winner = BLACK;
+            }
+            auto data = String::split(String::split(command, "{", 1)[1], "}", 1)[0];
+            report_end_of_game(Game_Result(winner, data, false));
+        }
+        else if(command == "force")
+        {
+            log("Forcing local AI to pick move and ignoring it");
+            board.pick_move_now();
+            ignore_next_move = true;
+        }
+        else if(String::starts_with(command, "level "))
+        {
+            log("got time specs: " + command);
+            auto split = String::split(command);
 
             log("moves to reset clock = " + split[1]);
-            set_reset_moves(String::string_to_size_t(split[1]));
-
+            auto reset_moves = String::string_to_size_t(split[1]);
             auto time_split = String::split(split[2], ":");
             auto game_time = 0;
             if(time_split.size() == 1)
@@ -188,55 +230,38 @@ void CECP_Mediator::receive_clock_specs()
                 log("game time = " + time_split[0] + " minutes and " + time_split[1] + " seconds");
                 game_time = 60*std::stoi(time_split[0]) + std::stoi(time_split[1]);
             }
-            set_game_time(game_time);
 
             log("increment = " + split[3]);
-            set_increment(std::stod(split[3]));
-            break;
+            auto increment = std::stod(split[3]);
+            clock = Clock(game_time, reset_moves, increment, WHITE, false);
         }
-        else if(String::starts_with(response, "st"))
+        else if(String::starts_with(command, "st "))
         {
-            log("got time specs: " + response);
-            auto split = String::split(response);
+            log("got time specs: " + command);
+            auto split = String::split(command);
             auto time_per_move = std::stoi(split[1]);
-            set_reset_moves(1);
-            set_increment(0);
-            set_game_time(time_per_move);
-            break;
-        }
-    }
-
-    log("done with time specs");
-}
-
-std::string CECP_Mediator::receive_cecp_command(bool while_pondering) const
-{
-    auto last_command = ( ! while_pondering && last_ponder_command.valid()) ? last_ponder_command.get() : std::string{};
-
-    while(true)
-    {
-        auto command = last_command.empty() ? receive_command() : last_command;
-        last_command.clear();
-
-        if(String::starts_with(command, "name"))
-        {
-            received_name = String::split(command, " ", 1)[1];
-            log("got name " + received_name);
+            auto reset_moves = 1;
+            auto increment = 0;
+            auto game_time = time_per_move;
+            clock = Clock(game_time, reset_moves, increment, WHITE, false);
         }
         else if(command == "post")
         {
-            thinking_mode = CECP;
-            log("turning on thinking output for CECP");
+            if(disable_thinking_output)
+            {
+                board.set_thinking_mode(NO_THINKING);
+                log("Disabling thinking output for CECP");
+            }
+            else
+            {
+                board.set_thinking_mode(CECP);
+                log("turning on thinking output for CECP");
+            }
         }
         else if(command == "nopost")
         {
-            thinking_mode = NO_THINKING;
+            board.set_thinking_mode(NO_THINKING);
             log("turning off thinking output for CECP");
-        }
-        else if(String::starts_with(command, "ping"))
-        {
-            command[1] = 'o'; // change "ping" to "pong"
-            send_command(command);
         }
         else if(command == "easy")
         {
@@ -248,61 +273,42 @@ std::string CECP_Mediator::receive_cecp_command(bool while_pondering) const
             log("Turning on pondering");
             thinking_on_opponent_time = true;
         }
+        else if(command == "new")
+        {
+            log("Setting board to standard start position and resetting clock");
+            board = Board{};
+            clock = Clock(clock.initial_time(), clock.moves_to_reset(), clock.increment(), WHITE, false);
+        }
         else
         {
+            log("CECP_Mediator::receive_cecp_command() exits");
             return command;
         }
     }
 }
 
-void CECP_Mediator::initial_board_setup(Board& board) const
+std::string CECP_Mediator::listener(Board& board, Clock& clock)
 {
-    board.set_thinking_mode(thinking_mode);
-}
-
-bool CECP_Mediator::off_time_thinking_allowed() const
-{
-    return thinking_on_opponent_time;
-}
-
-void CECP_Mediator::wait_for_quit() const
-{
-    try
-    {
-        while(true)
-        {
-            receive_cecp_command(false);
-        }
-    }
-    catch(const std::runtime_error&)
-    {
-    }
-}
-
-std::string CECP_Mediator::ponder_method(const Board& board, const Clock&) const
-{
+    log("CECP_Mediator::listener()");
     while(true)
     {
-        auto command = receive_cecp_command(true);
-        if(command == "post")
+        auto command = receive_cecp_command(board, clock, true);
+        if(command == "?")
         {
-            log("turning on thinking output for CECP");
-            board.set_thinking_mode(CECP);
-        }
-        else if(command == "nopost")
-        {
-            log("turning off thinking output for CECP");
-            board.set_thinking_mode(NO_THINKING);
-        }
-        else if(command == "?")
-        {
-            log("Forcing move choice");
+            log("Forcing local AI to pick move and accepting it");
             board.pick_move_now();
+            ignore_next_move = false;
         }
         else
         {
-            log("Ending Pondering");
+            log("CECP_Mediator::listener() returns with: " + command);
             return command;
         }
     }
+}
+
+void CECP_Mediator::report_end_of_game(const Game_Result& result) const
+{
+    send_command(result.game_ending_annotation() + " {" + result.ending_reason() + "}");
+    throw Game_Ended(result.winner(), result.ending_reason());
 }

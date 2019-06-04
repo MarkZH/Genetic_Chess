@@ -269,7 +269,7 @@
     <ClCompile Include="src\Players\Minimax_AI.cpp" />
     <ClCompile Include="src\Players\Monte_Carlo_AI.cpp" />
     <ClCompile Include="src\Players\Monte_Carlo_Search_Tree.cpp" />
-    <ClCompile Include="src\players\Outside_Player.cpp" />
+    <ClCompile Include="src\players\Outside_Communicator.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
     <ClCompile Include="src\players\Random_AI.cpp" />
     <ClCompile Include="src\Testing.cpp" />
@@ -328,7 +328,7 @@
     <ClInclude Include="include\Players\Minimax_AI.h" />
     <ClInclude Include="include\Players\Monte_Carlo_AI.h" />
     <ClInclude Include="include\Players\Monte_Carlo_Search_Tree.h" />
-    <ClInclude Include="include\players\Outside_Player.h" />
+    <ClInclude Include="include\players\Outside_Communicator.h" />
     <ClInclude Include="include\players\Player.h" />
     <ClInclude Include="include\players\Random_AI.h" />
     <ClInclude Include="include\players\Thinking.h" />

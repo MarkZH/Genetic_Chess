@@ -5,6 +5,7 @@
 #include <stdexcept>
 
 #include "Players/Player.h"
+#include "Players/Outside_Communicator.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Color.h"
@@ -15,18 +16,12 @@
 
 // Play single game, return color of winner
 Game_Result play_game(Board board,
+                      Clock game_clock,
                       const Player& white,
                       const Player& black,
-                      double time_in_seconds,
-                      size_t moves_to_reset,
-                      double increment_seconds,
+                      bool pondering_allowed,
                       const std::string& pgn_file_name)
 {
-    white.initial_board_setup(board);
-    black.initial_board_setup(board);
-
-    auto stop_for_clock = white.stop_for_local_clock() && black.stop_for_local_clock();
-    Clock game_clock(time_in_seconds, moves_to_reset, increment_seconds, board.whose_turn(), stop_for_clock);
     game_clock.start();
 
     Game_Result result;
@@ -39,7 +34,7 @@ Game_Result play_game(Board board,
             auto& player  = board.whose_turn() == WHITE ? white : black;
             auto& thinker = board.whose_turn() == WHITE ? black : white;
 
-            thinker.ponder(board, game_clock, white.off_time_thinking_allowed() && black.off_time_thinking_allowed());
+            thinker.ponder(board, game_clock, pondering_allowed);
             const auto& move_chosen = player.choose_move(board, game_clock);
 
             result = game_clock.punch();
@@ -47,8 +42,6 @@ Game_Result play_game(Board board,
             {
                 result = board.submit_move(move_chosen);
             }
-
-            board.choose_move_at_leisure();
         }
     }
     catch(const Game_Ended& termination)
@@ -61,18 +54,11 @@ Game_Result play_game(Board board,
         error = other_error;
     }
 
-    // for Outside_Players communicating with xboard and the like
-    white.process_game_ending(result, board);
-    black.process_game_ending(result, board);
-
-    if( ! pgn_file_name.empty() || (white.print_game_to_stdout() && black.print_game_to_stdout()))
-    {
-        board.print_game_record(&white,
-                                &black,
-                                pgn_file_name,
-                                result,
-                                game_clock);
-    }
+    board.print_game_record(&white,
+                            &black,
+                            pgn_file_name,
+                            result,
+                            game_clock);
 
     if(error)
     {
@@ -81,5 +67,22 @@ Game_Result play_game(Board board,
     else
     {
         return result;
+    }
+}
+
+void play_game_with_outsider(const Player& player)
+{
+    auto outsider = connect_to_outside(player);
+
+    Board board;
+    Clock clock;
+
+    while(true)
+    {
+        outsider->setup_turn(board, clock);
+        outsider->listen(board, clock);
+        const auto& chosen_move = player.choose_move(board, clock);
+        outsider->handle_move(board, clock, chosen_move);
+        player.ponder(board, clock, outsider->pondering_allowed());
     }
 }

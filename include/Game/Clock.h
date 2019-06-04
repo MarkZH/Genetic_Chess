@@ -28,6 +28,7 @@ class Clock
         size_t moves_to_reset(Color color) const;
         Color running_for() const;
         double running_time_left() const;
+        bool is_running() const;
 
         std::chrono::system_clock::time_point game_start_date_and_time() const;
         double initial_time() const;
@@ -37,8 +38,7 @@ class Clock
     private:
         using fractional_seconds = std::chrono::duration<double>;
 
-        // timers are mutable so they can be adjusted by external interfaces (xboard, UCI, etc.)
-        mutable std::array<fractional_seconds, 2> timers;
+        std::array<fractional_seconds, 2> timers;
         std::array<size_t, 2> moves_to_reset_clocks;
 
         fractional_seconds initial_start_time;
@@ -52,12 +52,11 @@ class Clock
         bool local_clock_stoppage;
         std::chrono::system_clock::time_point game_start_date_time;
 
-        // mutable for external adjustment
-        mutable std::chrono::steady_clock::time_point time_previous_punch;
+        std::chrono::steady_clock::time_point time_previous_punch;
 
         // When playing with outside interfaces, use the external clock
         friend class CECP_Mediator;
-        void set_time(Color player, double new_time_seconds) const;
+        void set_time(Color player, double new_time_seconds);
 };
 
 #endif // Clock_H

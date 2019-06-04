@@ -5,6 +5,7 @@
 
 class Player;
 class Board;
+class Clock;
 class Game_Result;
 
 //! \file
@@ -22,11 +23,15 @@ class Game_Result;
 //! \param board The previously set up board on which the game will be played.
 //! \returns The result of the game.
 Game_Result play_game(Board board,
+                      Clock game_clock,
                       const Player& white,
                       const Player& black,
-                      double time_in_seconds,
-                      size_t moves_to_reset_clock,
-                      double increment_seconds,
+                      bool pondering_allowed,
                       const std::string& pgn_file_name);
+
+//! Play a game with an outside GUI interface.
+//
+//! \param local_player A chess engine chosen at the command line.
+void play_game_with_outsider(const Player& local_player);
 
 #endif // GAME_H

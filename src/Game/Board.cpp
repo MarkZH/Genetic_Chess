@@ -529,6 +529,23 @@ void Board::update_board(const Move& move)
 //! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
 const Move& Board::create_move(const std::string& move) const
 {
+    if(String::contains(move, "/"))
+    {
+        // Move is specified via the FEN of the resulting board state (lichess.org quirk)
+        const auto next_board = Board(move);
+        for(auto legal_move : legal_moves())
+        {
+            auto test_board = *this;
+            test_board.submit_move(*legal_move);
+            if(test_board.fen_status() == next_board.fen_status())
+            {
+                return *legal_move;
+            }
+        }
+
+        throw Illegal_Move("No legal move from \"" + fen_status() + "\" to \"" + next_board.fen_status() + "\"");
+    }
+
     static const std::string promotion_pieces = "RNBQK";
     static const std::string lowercase_promotion_pieces = String::lowercase(promotion_pieces);
     static const std::string pieces = "P" + promotion_pieces;
@@ -1240,17 +1257,6 @@ void Board::print_game_record(const Player* white,
         temp.submit_move(*next_move);
     }
     out_stream << "\n\n\n";
-}
-
-//! Prints the last move of the game in coordinate notation.
-//
-//! Used to communicate with external chess programs. This is an altnative to
-//! Board::last_move_record() that doesn't need to replay the game to create
-//! the PGN notation move.
-//! \returns Coordinate-style move string ("e2e4").
-std::string Board::last_move_coordinates() const
-{
-    return game_record_listing.back()->coordinate_move();
 }
 
 void Board::switch_turn()

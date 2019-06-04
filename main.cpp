@@ -6,6 +6,7 @@
 
 #include "Game/Game.h"
 #include "Game/Board.h"
+#include "Game/Clock.h"
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
 
@@ -13,12 +14,12 @@
 #include "Players/Human_Player.h"
 #include "Players/Random_AI.h"
 #include "Players/Monte_Carlo_AI.h"
-#include "Players/Outside_Player.h"
 #include "Players/Alan_Turing_AI.h"
 
 #include "Breeding/Gene_Pool.h"
 
 #include "Exceptions/Illegal_Move.h"
+#include "Exceptions/Game_Ended.h"
 
 #include "Utility/String.h"
 #include "Testing.h"
@@ -155,6 +156,7 @@ int main(int argc, char *argv[])
                 size_t moves_per_reset = 0;
                 double increment_time = 0;
                 Board board;
+                bool pondering_allowed = false;
                 std::string game_file_name;
 
                 for(int i = 1; i < argc; ++i)
@@ -239,6 +241,10 @@ int main(int argc, char *argv[])
                     {
                         game_file_name = argv[++i];
                     }
+                    else if(opt == "-pondering")
+                    {
+                        pondering_allowed = true;
+                    }
                     else
                     {
                         throw std::invalid_argument("Invalid or incomplete game option: " + opt);
@@ -263,22 +269,23 @@ int main(int argc, char *argv[])
 
                 if( ! black)
                 {
-                    auto outside = connect_to_outside(*white);
-                    game_time = outside->game_time();
-                    moves_per_reset = outside->reset_moves();
-                    increment_time = outside->increment();
-                    if(outside->ai_color() == WHITE)
+                    try
                     {
-                        black = std::move(outside);
+                        play_game_with_outsider(*white);
                     }
-                    else
+                    catch(const Game_Ended&)
                     {
-                        black = std::move(white);
-                        white = std::move(outside);
+                        // Outside_Communicator received "quit" command
                     }
                 }
-
-                play_game(board, *white, *black, game_time, moves_per_reset, increment_time, game_file_name);
+                else
+                {
+                    play_game(board,
+                              Clock(game_time, moves_per_reset, increment_time, board.whose_turn(), true),
+                              *white, *black,
+                              pondering_allowed,
+                              game_file_name);
+                }
             }
         }
         else
@@ -338,6 +345,8 @@ namespace
                 << "\t\tSpecify seconds to add to time after each move.\n\n"
                 << "\t-board [FEN string]\n"
                 << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
+                << "\t-pondering\n"
+                << "\t\tAllow AI players to think ahead when it is not their turn.\n\n"
                 << "\t-game_file [file name]\n"
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n";
     }
@@ -446,11 +455,10 @@ namespace
                     if(std::tolower(response) == 'y')
                     {
                         play_game(board,
+                                  {},
                                   Human_Player(),
                                   Human_Player(),
-                                  0,
-                                  0,
-                                  0,
+                                  false,
                                   file_name + "_continued.pgn");
                         break;
                     }

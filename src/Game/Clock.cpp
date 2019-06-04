@@ -130,9 +130,10 @@ Color Clock::running_for() const
 //
 //! \param player Indicates which clock to adjust.
 //! \param new_time_seconds The new amount of time left on that clock.
-//! This method is used by the Players derived from Outside_Player to adjust
+//!
+//! This method is used by the Players derived from Outside_Communicator to adjust
 //! the clock according to instructions from chess GUIs using the CECP protocol.
-void Clock::set_time(Color player, double new_time_seconds) const
+void Clock::set_time(Color player, double new_time_seconds)
 {
     timers[player] = fractional_seconds(new_time_seconds);
     time_previous_punch = std::chrono::steady_clock::now();
@@ -142,6 +143,12 @@ void Clock::set_time(Color player, double new_time_seconds) const
 double Clock::running_time_left() const
 {
     return time_left(running_for());
+}
+
+//! Are clocks currently running?
+bool Clock::is_running() const
+{
+    return clocks_running;
 }
 
 //! Returns the date and time when start() was called.

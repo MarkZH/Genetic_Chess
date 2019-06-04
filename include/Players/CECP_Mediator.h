@@ -1,7 +1,7 @@
 #ifndef CECP_MEDIATOR_H
 #define CECP_MEDIATOR_H
 
-#include "Outside_Player.h"
+#include "Outside_Communicator.h"
 #include "Game/Color.h"
 #include "Thinking.h"
 
@@ -9,41 +9,34 @@
 #include <future>
 
 class Board;
-class Game_Result;
 class Clock;
+class Move;
+class Player;
+class Game_Result;
 
 //! A class to assist in interfacing with a CECP-based external program.
 //
 //! Chess Engine Communication Protocol (CECP): https://www.gnu.org/software/xboard/engine-intf.html
-class CECP_Mediator : public Outside_Player
+class CECP_Mediator : public Outside_Communicator
 {
     public:
         explicit CECP_Mediator(const Player& local_player);
 
-        const Move& choose_move(const Board& b, const Clock& clock) const override;
-        std::string receive_move(const Clock& clock) const override;
-        void ponder(const Board& board, const Clock& clock, bool thinking_allowed) const override;
-
-        Color ai_color() const override;
-        void process_game_ending(const Game_Result& ending, const Board& board) const override;
-
-        std::string name() const override;
-
-        void initial_board_setup(Board& board) const override;
-        bool off_time_thinking_allowed() const override;
+        void setup_turn(Board& board, Clock& clock) override;
+        void listen(Board& board, Clock& clock) override;
+        void handle_move(Board& board, Clock& clock, const Move& move) override;
+        bool pondering_allowed() const override;
 
     private:
-        mutable std::string first_move;
-        mutable std::string received_name;
-        mutable Thinking_Output_Type thinking_mode;
-        mutable bool thinking_on_opponent_time;
-        mutable std::string received_move_text;
-        mutable std::future<std::string> last_ponder_command;
+        bool ignore_next_move = false;
+        std::future<std::string> last_listening_command;
+        bool disable_thinking_output = false;
+        bool thinking_on_opponent_time = false;
+        bool wait_for_usermove = false;
 
-        void receive_clock_specs() override;
-        std::string receive_cecp_command(bool while_pondering) const;
-        void wait_for_quit() const;
-        std::string ponder_method(const Board& board, const Clock& clock) const;
+        std::string receive_cecp_command(Board& board, Clock& clock, bool while_listening);
+        std::string listener(Board& board, Clock& clock);
+        void report_end_of_game(const Game_Result& result) const;
 };
 
 #endif // CECP_MEDIATOR_H

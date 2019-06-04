@@ -22,6 +22,7 @@ using namespace std::chrono_literals;
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
 #include "Game/Board.h"
+#include "Game/Clock.h"
 #include "Game/Game_Result.h"
 
 #include "Utility/String.h"
@@ -284,7 +285,7 @@ void gene_pool(const std::string& config_file)
             auto& white = pool[index];
             auto& black = pool[index + 1];
             results.emplace_back(std::async(std::launch::async,
-                                            play_game, Board{}, white, black, game_time, 0, 0, game_record_file));
+                                            play_game, Board{}, Clock(game_time, 0, 0), white, black, false, game_record_file));
         }
 
         // Get results as they come in
