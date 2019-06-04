@@ -1413,7 +1413,7 @@ bool Board::enough_material_to_checkmate(Color color) const
     }
 
     auto knight_count = std::count_if(board.begin(), board.end(),
-                                      [this, piece_is_right_color](auto piece)
+                                      [piece_is_right_color](auto piece)
                                       {
                                           return piece_is_right_color(piece) && piece.type() == KNIGHT;
                                       });
