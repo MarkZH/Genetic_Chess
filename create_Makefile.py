@@ -103,6 +103,7 @@ linker_options = dict()
 system = sys.argv[1]
 base_options = [
         "-std=c++17",
+        "-lstdc++fs",
         "-fno-rtti",
         "-Wshadow",
         "-Wcast-align",
@@ -131,6 +132,7 @@ elif system == 'clang':
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     options_list['debug'].extend(["-Og"] + linker_options['debug'])
     base_options.extend([
+            "-Wno-unused-command-line-argument",
             "-Wnon-virtual-dtor",
             "-Wredundant-decls",
             "-Wmissing-declarations",

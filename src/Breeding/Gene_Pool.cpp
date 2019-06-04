@@ -14,6 +14,7 @@
 using namespace std::chrono_literals;
 #include <array>
 #include <cstdio>
+#include <filesystem>
 
 #ifndef _WIN32
 #include <mutex>
@@ -405,12 +406,9 @@ void gene_pool(const std::string& config_file)
                                                  best_compare), best_compare);
         }
         auto best_file_name = genome_file_name + "_best_genome.txt";
-        if(remove(best_file_name.c_str()) != 0)
-        {
-            auto error_intro = "\n### Could not delete best genome file (" + best_file_name + ")";
-            perror(error_intro.c_str());
-        }
-        best_ai.print(best_file_name);
+        auto temp_best_file_name = best_file_name + "-" + std::to_string(Random::random_unsigned_int64()) + ".txt";
+        best_ai.print(temp_best_file_name);
+        std::filesystem::rename(temp_best_file_name, best_file_name);
 
         // Update game time
         game_time += game_time_increment;
