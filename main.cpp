@@ -267,6 +267,11 @@ int main(int argc, char *argv[])
                     }
                 }
 
+                if( ! white)
+                {
+                    throw std::invalid_argument("At least one player must be specified.");
+                }
+
                 if( ! black)
                 {
                     try
