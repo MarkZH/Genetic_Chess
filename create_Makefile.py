@@ -144,10 +144,11 @@ for target in final_targets:
     operations[f'before_{target}'].append(f'mkdir -p {bin_dest[target]}')
     operations[f'before_{target}'].append(f'mkdir -p $(LINK_DIR_{target.upper()})')
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
-        dirpath = dirpath[len(os.getcwd()) + 1 :]
+        dirpath = os.path.relpath(dirpath)
+        if dirpath == '.': dirpath = ''
         for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp')]:
-            ext_length = len(source_file.split('.')[-1])
-            obj_file = os.path.join(obj_dest[target], source_file[:-ext_length] + "o")
+            without_extension = '.'.join(source_file.split('.')[:-1])
+            obj_file = os.path.join(obj_dest[target], f"{without_extension}.o")
             depends[obj_file] = [source_file]
             operations[obj_file] = [f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
             obj_dest_dir = os.path.dirname(obj_file)
