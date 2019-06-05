@@ -24,7 +24,6 @@ CECP_Mediator::CECP_Mediator(const Player& local_player)
     std::string expected = "protover 2";
     if(receive_command() == expected)
     {
-        log("as expected, setting options");
         send_command("feature "
                      "usermove=1 "
                      "sigint=0 "
@@ -45,8 +44,6 @@ CECP_Mediator::CECP_Mediator(const Player& local_player)
 
 void CECP_Mediator::setup_turn(Board& board, Clock& clock)
 {
-    log("CECP_Mediator::setup_turn()");
-
     while(true)
     {
         auto command = receive_cecp_command(board, clock, false);
@@ -63,7 +60,6 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             ignore_next_move = false;
             wait_for_usermove = true;
             board.choose_move_at_leisure();
-            log("CECP::setup_turn() exit");
             return;
         }
         else if (String::starts_with(command, "setboard "))
@@ -92,7 +88,6 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
                 ignore_next_move = false;
                 wait_for_usermove = true;
                 board.choose_move_at_leisure();
-                log("CECP::setup_turn() exit");
                 return;
             }
             catch(const Illegal_Move& e)
@@ -113,14 +108,11 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
 
 void CECP_Mediator::listen(Board& board, Clock& clock)
 {
-    log("CECP_Mediator::listen()");
     last_listening_command = std::async(std::launch::async, &CECP_Mediator::listener, this, std::ref(board), std::ref(clock));
-    log("CECP_Mediator::listen() exits");
 }
 
 void CECP_Mediator::handle_move(Board& board, const Move& move)
 {
-    log("CECP_Mediator::handle_move()");
     if(ignore_next_move)
     {
         log("Ignoring move: " + move.coordinate_move());
@@ -135,7 +127,6 @@ void CECP_Mediator::handle_move(Board& board, const Move& move)
             report_end_of_game(result);
         }
     }
-    log("CECP_Mediator::handle_move() exits");
 }
 
 bool CECP_Mediator::pondering_allowed() const
@@ -145,7 +136,6 @@ bool CECP_Mediator::pondering_allowed() const
 
 std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool while_listening)
 {
-    log("CECP_Mediator::receive_cecp_command()");
     while(true)
     {
         std::string command;
@@ -254,7 +244,6 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         }
         else
         {
-            log("CECP_Mediator::receive_cecp_command() exits");
             return command;
         }
     }
@@ -262,7 +251,6 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
 
 std::string CECP_Mediator::listener(Board& board, Clock& clock)
 {
-    log("CECP_Mediator::listener()");
     while(true)
     {
         auto command = receive_cecp_command(board, clock, true);
@@ -274,7 +262,6 @@ std::string CECP_Mediator::listener(Board& board, Clock& clock)
         }
         else
         {
-            log("CECP_Mediator::listener() returns with: " + command);
             return command;
         }
     }
