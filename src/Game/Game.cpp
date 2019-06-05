@@ -1,7 +1,6 @@
 #include "Game/Game.h"
 
 #include <string>
-#include <optional>
 #include <stdexcept>
 
 #include "Players/Player.h"
@@ -11,8 +10,6 @@
 #include "Game/Color.h"
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
-
-#include "Exceptions/Game_Ended.h"
 
 // Play single game, return color of winner
 Game_Result play_game(Board board,
@@ -27,13 +24,11 @@ Game_Result play_game(Board board,
         throw std::invalid_argument("Board and Clock disagree on whose turn it is.");
     }
 
-    game_clock.start();
-
-    Game_Result result;
-    std::optional<std::exception> error;
-
     try
     {
+        game_clock.start();
+        Game_Result result;
+
         while( ! result.game_has_ended())
         {
             auto& player  = board.whose_turn() == WHITE ? white : black;
@@ -48,30 +43,23 @@ Game_Result play_game(Board board,
                 result = board.submit_move(move_chosen);
             }
         }
-    }
-    catch(const Game_Ended& termination)
-    {
-        result = termination.result();
-    }
-    catch(const std::exception& other_error)
-    {
-        result = {NONE, other_error.what(), false};
-        error = other_error;
-    }
 
-    board.print_game_record(&white,
-                            &black,
-                            pgn_file_name,
-                            result,
-                            game_clock);
-
-    if(error)
-    {
-        throw error.value();
-    }
-    else
-    {
+        board.print_game_record(&white,
+                                &black,
+                                pgn_file_name,
+                                result,
+                                game_clock);
         return result;
+
+    }
+    catch(const std::exception& game_error)
+    {
+        board.print_game_record(&white,
+                                &black,
+                                pgn_file_name,
+                                {NONE, game_error.what(), false},
+                                game_clock);
+        throw;
     }
 }
 

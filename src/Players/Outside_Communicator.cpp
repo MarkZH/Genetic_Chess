@@ -63,7 +63,7 @@ std::string Outside_Communicator::receive_command()
 
     if(result == "quit")
     {
-        throw Game_Ended(NONE, "Told to quit");
+        throw Game_Ended();
     }
 
     return result;

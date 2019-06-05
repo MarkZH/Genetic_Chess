@@ -284,5 +284,5 @@ std::string CECP_Mediator::listener(Board& board, Clock& clock)
 void CECP_Mediator::report_end_of_game(const Game_Result& result) const
 {
     send_command(result.game_ending_annotation() + " {" + result.ending_reason() + "}");
-    throw Game_Ended(result.winner(), result.ending_reason());
+    throw Game_Ended();
 }
