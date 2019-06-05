@@ -8,11 +8,9 @@
 #include <memory>
 #include <map>
 
-
 #include "Game/Color.h"
 #include "Game/Piece.h"
 
-class Piece;
 class Board;
 
 //! Provides a database of the value of different piece types to be referenced by other Genes.

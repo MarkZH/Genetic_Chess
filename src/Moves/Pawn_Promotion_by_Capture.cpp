@@ -1,5 +1,6 @@
 #include "Moves/Pawn_Promotion_by_Capture.h"
 
+#include <string>
 #include <stdexcept>
 
 #include "Game/Piece.h"

@@ -2,9 +2,7 @@
 #define MATH_H
 
 #include <limits>
-#include <algorithm>
-#include <cassert>
-#include <string>
+#include <cstddef>
 
 //! Provides a collection of useful math functions.
 namespace Math

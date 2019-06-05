@@ -28,11 +28,9 @@ using namespace std::chrono_literals;
 
 #include "Utility/String.h"
 #include "Utility/Configuration_File.h"
-#include "Utility/Math.h"
 #include "Utility/Random.h"
 
 #include "Exceptions/Bad_Still_Alive_Line.h"
-#include "Exceptions/Genetic_AI_Creation_Error.h"
 
 namespace
 {

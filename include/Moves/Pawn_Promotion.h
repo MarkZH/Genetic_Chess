@@ -7,7 +7,6 @@
 
 #include "Game/Piece.h"
 #include "Game/Color.h"
-#include "Game/Piece.h"
 
 class Board;
 

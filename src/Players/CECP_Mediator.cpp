@@ -2,7 +2,6 @@
 
 #include <string>
 #include <future>
-#include <algorithm>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"

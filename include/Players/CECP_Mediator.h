@@ -2,8 +2,6 @@
 #define CECP_MEDIATOR_H
 
 #include "Outside_Communicator.h"
-#include "Game/Color.h"
-#include "Thinking.h"
 
 #include <string>
 #include <future>

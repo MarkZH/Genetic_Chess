@@ -3,6 +3,8 @@
 
 #include "Player.h"
 
+#include <string>
+
 class Move;
 class Board;
 class Clock;

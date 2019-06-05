@@ -4,6 +4,8 @@
 #include <string>
 #include <array>
 
+#include "Genes/Gene.h"
+
 #include "Game/Board.h"
 #include "Game/Piece.h"
 #include "Game/Color.h"

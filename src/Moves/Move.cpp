@@ -3,6 +3,7 @@
 #include <cassert>
 #include <cmath>
 #include <cctype>
+#include <string>
 #include <stdexcept>
 
 #include "Game/Board.h"

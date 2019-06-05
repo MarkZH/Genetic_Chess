@@ -1,6 +1,7 @@
 #include "Genes/Checkmate_Material_Gene.h"
 
 #include <memory>
+#include <string>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"

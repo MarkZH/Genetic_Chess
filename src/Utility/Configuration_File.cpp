@@ -7,7 +7,6 @@
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
-#include <iterator>
 
 #include "Utility/String.h"
 

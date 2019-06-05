@@ -1,9 +1,10 @@
 #include "Moves/Castle.h"
 
+#include <string>
+
 #include "Moves/Move.h"
 #include "Moves/Direction.h"
 #include "Game/Board.h"
-#include "Game/Piece.h"
 
 //! Construct a castling move in a certain direction.
 //

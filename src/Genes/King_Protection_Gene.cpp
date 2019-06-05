@@ -6,6 +6,7 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
+#include "Game/Square.h"
 
 double King_Protection_Gene::score_board(const Board& board, Color perspective, size_t) const
 {

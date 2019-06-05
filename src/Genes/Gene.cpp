@@ -3,17 +3,19 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+#include <utility>
 #include <map>
 #include <fstream>
 #include <numeric>
 
-#include "Game/Board.h"
 #include "Game/Color.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
 
 #include "Exceptions/Genetic_AI_Creation_Error.h"
+
+class Board;
 
 //! Instantiate the basic parts of the abstract class Gene.
 //
@@ -79,11 +81,11 @@ void Gene::read_from(std::istream& is)
 {
     auto properties = list_properties();
     std::map<std::string, bool> property_found;
-    std::for_each(properties.begin(), properties.end(),
-                  [&property_found](const auto& key_value)
-                  {
-                      return property_found[key_value.first] = false;
-                  });
+    std::transform(properties.begin(), properties.end(), std::inserter(property_found, property_found.begin()),
+                   [](const auto& key_value)
+                   {
+                       return std::make_pair(key_value.first, false);
+                   });
 
     std::string line;
     while(std::getline(is, line))

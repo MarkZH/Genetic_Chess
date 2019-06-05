@@ -3,7 +3,6 @@
 
 #include <chrono>
 #include <string>
-#include <fstream>
 
 //! A tool for timing the execution time of user-chosen sections of code.
 //

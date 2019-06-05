@@ -7,10 +7,11 @@
 
 #include "Genes/Gene.h"
 #include "Game/Piece.h"
-#include "Game/Board.h"
 #include "Game/Color.h"
 
 #include "Utility/Random.h"
+
+class Board;
 
 //! Initialize the Piece values to zero.
 Piece_Strength_Gene::Piece_Strength_Gene() : piece_strength{}

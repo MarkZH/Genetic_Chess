@@ -8,7 +8,6 @@
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Square.h"
-#include "Moves/Move.h"
 #include "Game/Color.h"
 
 #include "Utility/Random.h"

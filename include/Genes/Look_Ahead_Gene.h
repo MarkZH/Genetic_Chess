@@ -11,7 +11,6 @@
 #include "Game/Color.h"
 
 class Board;
-class Move;
 class Clock;
 
 //! This gene controls all aspects of time control.

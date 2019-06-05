@@ -2,12 +2,10 @@
 
 #include <string>
 #include <vector>
-#include <stdexcept>
 #include <iostream>
 #include <algorithm>
 #include <numeric>
 
-#include "Game/Board.h"
 #include "Game/Color.h"
 
 #include "Utility/Random.h"
@@ -32,6 +30,8 @@
 #include "Genes/Null_Gene.h"
 
 #include "Exceptions/Genetic_AI_Creation_Error.h"
+
+class Board;
 
 size_t Genome::piece_strength_gene_index = size_t(-1);
 size_t Genome::look_ahead_gene_index = size_t(-1);

@@ -6,8 +6,8 @@
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
-#include "Genes/Gene.h"
 #include "Game/Color.h"
+#include "Genes/Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 
 //! The Total_Force_Gene constructor requires a Piece_Strength_Gene to reference in score_board().

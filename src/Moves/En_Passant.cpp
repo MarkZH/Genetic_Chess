@@ -1,5 +1,7 @@
 #include "Moves/En_Passant.h"
 
+#include <string>
+
 #include "Moves/Direction.h"
 #include "Moves/Pawn_Capture.h"
 #include "Game/Board.h"

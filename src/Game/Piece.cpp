@@ -9,7 +9,6 @@
 
 #include "Game/Square.h"
 #include "Game/Color.h"
-#include "Game/Square.h"
 
 #include "Moves/Move.h"
 #include "Moves/Direction.h"

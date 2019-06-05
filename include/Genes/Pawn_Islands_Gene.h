@@ -1,10 +1,10 @@
 #ifndef PAWN_ISLANDS_GENE_H
 #define PAWN_ISLANDS_GENE_H
 
+#include "Gene.h"
+
 #include <memory>
 #include <string>
-
-#include "Genes/Gene.h"
 
 #include "Game/Color.h"
 
