@@ -53,11 +53,7 @@ std::string Outside_Communicator::receive_command()
     std::string result;
     std::getline(std::cin, result);
     log("RECEIVING: " + result);
-    if(String::remove_extra_whitespace(result).empty())
-    {
-        log("Got empty input from GUI. Shutting down.");
-        result = "quit";
-    }
+    result = String::remove_extra_whitespace(result);
 
     if(result == "quit")
     {
