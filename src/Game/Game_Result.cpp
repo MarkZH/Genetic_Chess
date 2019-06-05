@@ -14,6 +14,9 @@ Game_Result::Game_Result() : victor(NONE), cause(), game_ended(false)
 //
 //! \param winner The color of the player that has won, or NONE if a draw.
 //! \param reason Explanation of why the game ended.
+//! \param game_ended_normally Whether the game ended according to chess rules or the clock.
+//!        A value of false indicates the game ended for some abnormal reason, usually an
+//!        exception being thrown during the game.
 Game_Result::Game_Result(Color winner,
                          const std::string& reason,
                          bool game_ended_normally) :

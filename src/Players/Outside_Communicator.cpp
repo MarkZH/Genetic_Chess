@@ -35,7 +35,6 @@ std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player)
     }
 }
 
-//! Initialize a generic outside interface.
 Outside_Communicator::Outside_Communicator()
 {
 }

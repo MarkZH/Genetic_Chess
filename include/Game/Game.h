@@ -12,15 +12,13 @@ class Game_Result;
 
 //! Play a game with a new board in the default starting state.
 //
+//! \param board The Board on which the game will be played.
+//! \param game_clock The clock used for time control.
 //! \param white The player with the white pieces.
 //! \param black The player with the black pieces.
-//! \param time_in_seconds The initial time in seconds on the game clocks.
-//! \param moves_to_reset_clock The number of moves to play before the the initial
-//!        time is added to the clock.
-//! \param increment_seconds The amount of time in seconds to add to the clock after each move.
+//! \param pondering_allowed Whether AIs are allowed to think during an opponent's move.
 //! \param pgn_file_name The name of the file where the game record will be written. If empty,
 //!        the game will be written to stdout.
-//! \param board The previously set up board on which the game will be played.
 //! \returns The result of the game.
 Game_Result play_game(Board board,
                       Clock game_clock,
