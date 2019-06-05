@@ -132,12 +132,12 @@ elif system == 'clang':
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     options_list['debug'].extend(["-Og"] + linker_options['debug'])
     base_options.extend([
-            "-Wno-unused-command-line-argument",
-            "-Wnon-virtual-dtor",
-            "-Wredundant-decls",
-            "-Wmissing-declarations",
-            "-Wmissing-include-dirs",
-            "-Wswitch"])
+        "-Wno-unused-command-line-argument",
+        "-Wnon-virtual-dtor",
+        "-Wredundant-decls",
+        "-Wmissing-declarations",
+        "-Wmissing-include-dirs",
+        "-Wswitch"])
 
 obj_dir_written = []
 for target in final_targets:
