@@ -44,7 +44,7 @@ class Outside_Communicator
         static std::string indent;
 
         //! Constructor is protected so that it is only called by connect_to_outside().
-        Outside_Communicator();
+        Outside_Communicator() = default;
 
         static void send_command(const std::string& cmd);
         static std::string receive_command();
