@@ -24,14 +24,14 @@ class Clock
         void start();
 
         double time_left(Color color) const;
-        size_t moves_to_reset(Color color) const;
+        size_t moves_until_reset(Color color) const;
         Color running_for() const;
         double running_time_left() const;
         bool is_running() const;
 
         std::chrono::system_clock::time_point game_start_date_and_time() const;
         double initial_time() const;
-        size_t moves_to_reset() const;
+        size_t moves_per_time_period() const;
         double increment() const;
 
     private:

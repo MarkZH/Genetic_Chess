@@ -61,7 +61,7 @@ const Move& Monte_Carlo_AI::pick_move(const Board& board, const Clock& clock, bo
     }
 
     auto moves_left_in_game = size_t(Math::average_moves_left(50, 0.5, board.game_record().size()/2));
-    auto moves_to_reset = clock.moves_to_reset(clock.running_for());
+    auto moves_to_reset = clock.moves_until_reset(clock.running_for());
     auto moves_left = std::min(moves_left_in_game, moves_to_reset);
     auto time_to_examine = clock.running_time_left()/moves_left;
 

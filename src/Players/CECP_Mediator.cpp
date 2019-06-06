@@ -240,7 +240,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         {
             log("Setting board to standard start position and resetting clock");
             board = Board{};
-            clock = Clock(clock.initial_time(), clock.moves_to_reset(), clock.increment(), WHITE, false);
+            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(), WHITE, false);
         }
         else
         {

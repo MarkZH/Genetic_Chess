@@ -1200,9 +1200,9 @@ void Board::print_game_record(const Player* white,
     if(game_clock.initial_time() > 0)
     {
         std::ostringstream time_control_spec;
-        if(game_clock.moves_to_reset() > 0)
+        if(game_clock.moves_per_time_period() > 0)
         {
-            time_control_spec << game_clock.moves_to_reset() << '/';
+            time_control_spec << game_clock.moves_per_time_period() << '/';
         }
         time_control_spec << game_clock.initial_time();
         if(game_clock.increment() > 0)

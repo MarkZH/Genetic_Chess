@@ -108,7 +108,7 @@ double Clock::time_left(Color color) const
 //! The number of moves left before the clocks reset to the initial time.
 //
 //! \param color The color of the player being queried.
-size_t Clock::moves_to_reset(Color color) const
+size_t Clock::moves_until_reset(Color color) const
 {
     if(use_reset)
     {
@@ -158,7 +158,7 @@ std::chrono::system_clock::time_point Clock::game_start_date_and_time() const
 }
 
 //! How many moves must be played before the clocks are reset to their initial times.
-size_t Clock::moves_to_reset() const
+size_t Clock::moves_per_time_period() const
 {
     return move_count_reset;
 }
