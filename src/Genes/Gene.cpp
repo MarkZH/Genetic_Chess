@@ -7,6 +7,7 @@
 #include <map>
 #include <fstream>
 #include <numeric>
+#include <iterator>
 
 #include "Game/Color.h"
 
