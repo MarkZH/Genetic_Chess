@@ -1205,9 +1205,9 @@ void Board::print_game_record(const Player* white,
             time_control_spec << game_clock.moves_per_time_period() << '/';
         }
         time_control_spec << game_clock.initial_time();
-        if(game_clock.increment() > 0)
+        if(game_clock.increment(WHITE) > 0)
         {
-            time_control_spec << '+' << game_clock.increment();
+            time_control_spec << '+' << game_clock.increment(WHITE);
         }
         print_game_header_line(out_stream, "TimeControl", time_control_spec.str());
         print_game_header_line(out_stream, "TimeLeftWhite", game_clock.time_left(WHITE));
@@ -1438,7 +1438,7 @@ std::string Board::last_move_record() const
 
 //! Set the format an engine should output while picking a move.
 //
-//! \param mode Which chess engine protocol is being used: CECP or NO_THINKING.
+//! \param mode Which chess engine protocol is being used: CECP, UCI, or NO_THINKING.
 void Board::set_thinking_mode(Thinking_Output_Type mode)
 {
     thinking_indicator = mode;
@@ -1446,7 +1446,7 @@ void Board::set_thinking_mode(Thinking_Output_Type mode)
 
 //! Find out what kind of format an engine should output while picking a move.
 //
-//! \returns Format of thinking output: CECP or NO_THINKING.
+//! \returns Format of thinking output: CECP, UCI, or NO_THINKING.
 Thinking_Output_Type Board::thinking_mode()
 {
     return thinking_indicator;

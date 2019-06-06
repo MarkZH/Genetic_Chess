@@ -94,3 +94,8 @@ std::string Human_Player::name() const
 {
     return player_name;
 }
+
+std::string Human_Player::author() const
+{
+    return "Mark Harrison";
+}

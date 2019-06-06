@@ -17,6 +17,7 @@ class Human_Player : public Player
 
         const Move& choose_move(const Board& b, const Clock& clock) const override;
         std::string name() const override;
+        std::string author() const override;
 
     private:
         std::string player_name;

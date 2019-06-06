@@ -15,6 +15,7 @@ class Random_AI : public Player
     public:
         const Move& choose_move(const Board& board, const Clock& clock) const override;
         std::string name() const override;
+        std::string author() const override;
 
     protected:
         const Move* choose_random_move(const Board& board) const;

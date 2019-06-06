@@ -91,6 +91,14 @@ std::string Alan_Turing_AI::name() const
     return "Turochamp";
 }
 
+//! Credit to Turing and Champerowne.
+//
+//! \returns "Alan Turing and David Champernowne"
+std::string Alan_Turing_AI::author() const
+{
+    return "Alan Turing and David Champernowne";
+}
+
 std::vector<const Move*> Alan_Turing_AI::considerable_moves(const Board& board) const
 {
     std::vector<const Move*> result;

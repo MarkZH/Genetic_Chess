@@ -34,6 +34,7 @@ class Player
         //! \returns The name of the individual player. This may have specific details like ID numbers
         //!          or the name of a human player.
         virtual std::string name() const = 0;
+        virtual std::string author() const = 0;
 
         //! Provide commentary for the move to come given a past state of the game.
         //

@@ -28,6 +28,7 @@ class Alan_Turing_AI : public Player
         const Move& choose_move(const Board& board, const Clock& clock) const override;
 
         std::string name() const override;
+        std::string author() const override;
 
     private:
         std::vector<const Move*> considerable_moves(const Board& board) const;

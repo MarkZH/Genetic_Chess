@@ -170,7 +170,6 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         }
         else if(command == "force")
         {
-            log("Forcing local AI to pick move and ignoring it");
             board.pick_move_now();
             ignore_next_move = true;
         }
@@ -240,7 +239,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         {
             log("Setting board to standard start position and resetting clock");
             board = Board{};
-            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(), WHITE, false);
+            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), WHITE, false);
         }
         else
         {

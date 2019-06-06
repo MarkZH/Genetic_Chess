@@ -272,6 +272,7 @@
     <ClCompile Include="src\players\Outside_Communicator.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
     <ClCompile Include="src\players\Random_AI.cpp" />
+    <ClCompile Include="src\Players\UCI_Mediator.cpp" />
     <ClCompile Include="src\Testing.cpp" />
     <ClCompile Include="src\Utility\Configuration_File.cpp" />
     <ClCompile Include="src\Utility\Math.cpp" />
@@ -332,6 +333,7 @@
     <ClInclude Include="include\players\Player.h" />
     <ClInclude Include="include\players\Random_AI.h" />
     <ClInclude Include="include\players\Thinking.h" />
+    <ClInclude Include="include\Players\UCI_Mediator.h" />
     <ClInclude Include="include\Testing.h" />
     <ClInclude Include="include\Utility\Configuration_File.h" />
     <ClInclude Include="include\Utility\Math.h" />

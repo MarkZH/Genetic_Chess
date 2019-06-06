@@ -24,12 +24,11 @@ Clock::Clock(double duration_seconds,
              bool clock_stops_game) :
     timers({fractional_seconds(duration_seconds), fractional_seconds(duration_seconds)}),
     moves_to_reset_clocks({0, 0}),
-    initial_start_time(duration_seconds),
-    increment_time(increment_seconds),
+    initial_start_time(Clock::fractional_seconds(duration_seconds)),
+    increment_time({Clock::fractional_seconds(increment_seconds), Clock::fractional_seconds(increment_seconds)}),
     move_count_reset(moves_to_reset),
     whose_turn(starting_turn),
     use_clock(duration_seconds > 0),
-    use_reset(moves_to_reset > 0),
     clocks_running(false),
     local_clock_stoppage(clock_stops_game)
 {
@@ -54,7 +53,7 @@ Game_Result Clock::punch()
         return Game_Result(opposite(whose_turn), "Time Forfeiture", true);
     }
 
-    if(use_reset && (++moves_to_reset_clocks[whose_turn] == move_count_reset))
+    if(++moves_to_reset_clocks[whose_turn] == move_count_reset)
     {
         timers[whose_turn] += initial_start_time;
         moves_to_reset_clocks[whose_turn] = 0;
@@ -62,7 +61,7 @@ Game_Result Clock::punch()
 
     whose_turn = opposite(whose_turn);
     time_previous_punch = time_this_punch;
-    timers[whose_turn] += increment_time;
+    timers[whose_turn] += increment_time[whose_turn];
 
     return {};
 }
@@ -83,6 +82,11 @@ void Clock::start()
     time_previous_punch = std::chrono::steady_clock::now();
     game_start_date_time = std::chrono::system_clock::now();
     clocks_running = true;
+}
+
+void Clock::do_not_stop_game()
+{
+    local_clock_stoppage = false;
 }
 
 //! Returns the amount of time left for the given player.
@@ -110,7 +114,7 @@ double Clock::time_left(Color color) const
 //! \param color The color of the player being queried.
 size_t Clock::moves_until_reset(Color color) const
 {
-    if(use_reset)
+    if(move_count_reset > 0)
     {
         return move_count_reset - moves_to_reset_clocks[color];
     }
@@ -137,6 +141,19 @@ void Clock::set_time(Color player, double new_time_seconds)
 {
     timers[player] = fractional_seconds(new_time_seconds);
     time_previous_punch = std::chrono::steady_clock::now();
+    use_clock = true;
+}
+
+void Clock::set_increment(Color player, double new_increment_time_seconds)
+{
+    increment_time[player] = fractional_seconds(new_increment_time_seconds);
+    use_clock = true;
+}
+
+void Clock::set_next_time_reset(size_t moves_to_reset)
+{
+    move_count_reset = moves_to_reset_clocks[running_for()] + moves_to_reset;
+    use_clock = true;
 }
 
 //! The amount of time left on the clock that is currently running.
@@ -170,7 +187,7 @@ double Clock::initial_time() const
 }
 
 //! How much time is added to a player's clock after every move.
-double Clock::increment() const
+double Clock::increment(Color color) const
 {
-    return increment_time.count();
+    return increment_time[color].count();
 }

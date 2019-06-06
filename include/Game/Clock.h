@@ -8,6 +8,7 @@
 
 class Game_Result;
 class CECP_Mediator;
+class UCI_Mediator;
 
 //! This class represents the dual-clock game timers used in tournament chess.
 class Clock
@@ -22,6 +23,7 @@ class Clock
         Game_Result punch();
         void stop();
         void start();
+        void do_not_stop_game();
 
         double time_left(Color color) const;
         size_t moves_until_reset(Color color) const;
@@ -31,8 +33,8 @@ class Clock
 
         std::chrono::system_clock::time_point game_start_date_and_time() const;
         double initial_time() const;
+        double increment(Color color) const;
         size_t moves_per_time_period() const;
-        double increment() const;
 
     private:
         using fractional_seconds = std::chrono::duration<double>;
@@ -41,12 +43,11 @@ class Clock
         std::array<size_t, 2> moves_to_reset_clocks;
 
         fractional_seconds initial_start_time;
-        fractional_seconds increment_time;
+        std::array<fractional_seconds, 2> increment_time;
         size_t move_count_reset;
 
         Color whose_turn;
         bool use_clock;
-        bool use_reset;
         bool clocks_running;
         bool local_clock_stoppage;
 
@@ -54,7 +55,11 @@ class Clock
         std::chrono::steady_clock::time_point time_previous_punch;
 
         friend class CECP_Mediator;
+        friend class UCI_Mediator;
+
         void set_time(Color player, double new_time_seconds);
+        void set_increment(Color player, double new_increment_time_seconds);
+        void set_next_time_reset(size_t moves_to_reset);
 };
 
 #endif // Clock_H

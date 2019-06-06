@@ -98,6 +98,10 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     {
         output_thinking_cecp(result, clock, board.whose_turn());
     }
+    else if(board.thinking_mode() == UCI)
+    {
+        output_thinking_uci(result, clock, board.whose_turn());
+    }
 
     commentary.push_back(result);
 
@@ -242,10 +246,18 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
-                else if(board.thinking_mode() == CECP && time_since_last_output(clock) > 0.1)
+                else if(time_since_last_output(clock) > 1.0)
                 {
-                    output_thinking_cecp(alpha, clock,
-                                         depth % 2 == 1 ? perspective : opposite(perspective));
+                    if(board.thinking_mode() == CECP)
+                    {
+                        output_thinking_cecp(alpha, clock,
+                                             depth % 2 == 1 ? perspective : opposite(perspective));
+                    }
+                    else if(board.thinking_mode() == UCI)
+                    {
+                        output_thinking_uci(alpha, clock,
+                                            depth % 2 == 1 ? perspective : opposite(perspective));
+                    }
                     time_at_last_output = clock.running_time_left();
                 }
             }
@@ -305,6 +317,36 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         std::cout << move->coordinate_move() << ' ';
     }
 
+    std::cout << std::endl;
+}
+
+void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const Clock& clock, Color perspective) const
+{
+    auto time_so_far = clock_start_time - clock.running_time_left();
+    std::cout << "info"
+              << " depth " << thought.depth()
+              << " time " << int(time_so_far*1000)
+              << " nodes " << nodes_searched
+              << " nps " << int(nodes_searched/time_so_far)
+              << " pv ";
+    for(const auto& move : thought.variation)
+    {
+        std::cout << move->coordinate_move() << " ";
+    }
+    std::cout << "score ";
+    if(thought.is_winning_for(perspective))
+    {
+        std::cout << "mate " << thought.depth()/2; // moves, not plies
+    }
+    else if(thought.is_losing_for(perspective))
+    {
+        std::cout << "mate -" << thought.depth()/2; // moves, not plies
+    }
+    else
+    {
+        std::cout << "cp " << int(thought.corrected_score(perspective)/centipawn_value());
+    }
+    std::cout << " currmove " << thought.variation.front()->coordinate_move();
     std::cout << std::endl;
 }
 

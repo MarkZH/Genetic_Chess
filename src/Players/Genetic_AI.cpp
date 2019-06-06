@@ -168,6 +168,14 @@ std::string Genetic_AI::name() const
     return "Genetic AI " + std::to_string(id());
 }
 
+//! Reports the author of this chess engine.
+//
+//! \returns "Mark Harrison"
+std::string Genetic_AI::author() const
+{
+    return "Mark Harrison";
+}
+
 //! Reports the ID number of the Genetic_AI.
 //
 //! \returns The ID number.

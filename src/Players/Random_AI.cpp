@@ -30,3 +30,8 @@ std::string Random_AI::name() const
 {
     return "Random AI";
 }
+
+std::string Random_AI::author() const
+{
+    return "Mark Harrison";
+}

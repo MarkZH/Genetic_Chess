@@ -76,6 +76,10 @@ class Minimax_AI : public Player
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                   const Clock& clock,
                                   Color perspective) const;
+        void output_thinking_uci(const Game_Tree_Node_Result& thought,
+                                 const Clock& clock,
+                                 Color perspective) const;
+
         double time_since_last_output(const Clock& clock) const;
 
         mutable double value_of_centipawn;
