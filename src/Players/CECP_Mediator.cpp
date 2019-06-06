@@ -69,8 +69,17 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             board.set_thinking_mode(NO_THINKING);
             wait_for_usermove = false;
             auto fen = String::split(command, " ", 1).back();
-            log("Rearranging board to: " + fen);
-            board = Board(fen);
+
+            try
+            {
+                board.submit_move(board.create_move(fen));
+                log("Derived move: " + board.game_record().back()->coordinate_move());
+            }
+            catch(const Illegal_Move&)
+            {
+                log("Rearranging board to: " + fen);
+                board = Board(fen);
+            }
         }
         else if(String::starts_with(command, "usermove "))
         {

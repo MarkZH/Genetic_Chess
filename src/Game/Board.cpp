@@ -532,18 +532,18 @@ const Move& Board::create_move(const std::string& move) const
     if(String::contains(move, "/"))
     {
         // Move is specified via the FEN of the resulting board state (lichess.org quirk)
-        const auto next_board = Board(move);
+        const auto& new_fen = move; // rename
         for(auto legal_move : legal_moves())
         {
             auto test_board = *this;
             test_board.submit_move(*legal_move);
-            if(test_board.fen_status() == next_board.fen_status())
+            if(test_board.fen_status() == new_fen)
             {
                 return *legal_move;
             }
         }
 
-        throw Illegal_Move("No legal move from \"" + fen_status() + "\" to \"" + next_board.fen_status() + "\"");
+        throw Illegal_Move("No legal move from \"" + fen_status() + "\" to \"" + new_fen + "\"");
     }
 
     static const std::string promotion_pieces = "RNBQK";
