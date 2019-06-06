@@ -13,16 +13,15 @@ class CECP_Mediator;
 class Clock
 {
     public:
-        // Game clock settings: total time, moves to reset clock, time increment per move
         Clock(double duration_seconds = 0.0,
               size_t moves_to_reset = 0,
               double increment_seconds = 0.0,
               Color starting_turn = WHITE,
               bool clock_stops_game = true);
 
-        Game_Result punch(); // start/stop both clocks
-        void stop(); // stop both clocks
-        void start(); // resume after stop()
+        Game_Result punch();
+        void stop();
+        void start();
 
         double time_left(Color color) const;
         size_t moves_to_reset(Color color) const;
@@ -50,11 +49,10 @@ class Clock
         bool use_reset;
         bool clocks_running;
         bool local_clock_stoppage;
-        std::chrono::system_clock::time_point game_start_date_time;
 
+        std::chrono::system_clock::time_point game_start_date_time;
         std::chrono::steady_clock::time_point time_previous_punch;
 
-        // When playing with outside interfaces, use the external clock
         friend class CECP_Mediator;
         void set_time(Color player, double new_time_seconds);
 };
