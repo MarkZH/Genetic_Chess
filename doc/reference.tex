@@ -82,7 +82,7 @@ Other game options that can be added:
 	\item[\code{-pondering}:] Allow chess engines/AIs to think while it is not their turn to move.
 	\item[\code{-board <FEN>}] A description of a board setup in \href{https://en.wikipedia.org/wiki/Forsyth\%E2\%80\%93Edwards_Notation}{Forsyth-Edwards Notation} on which to start the game.
 \end{description}
-Genetic Chess can communicate with GUI chess programs through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol}, including xboard, PyChess, Cute Chess, and others. When using Genetic Chess this way, only specify the arguments for a single player (\code{-genetic} or \code{-random}). The program will then wait for communication from the GUI\@.
+Genetic Chess can communicate with GUI chess programs (xboard, PyChess, Cute Chess, and \href{https://lichess.org}{lichess.org} among others) through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol (CECP)} or the \href{http://wbec-ridderkerk.nl/html/UCIProtocol.html}{Universal Chess Interface (UCI)}. When using Genetic Chess this way, only specify the arguments for a single player. The program will then wait for communication from the GUI through stdin.
 
 
 \section{Non-Evolutionary Aspects}
