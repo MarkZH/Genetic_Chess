@@ -535,17 +535,21 @@ const Move& Board::create_move(const std::string& move) const
     {
         // Move is specified via the FEN of the resulting board state (lichess.org quirk)
         const auto& new_fen = move; // rename
-        for(auto legal_move : legal_moves())
+        auto move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
+                                      [this, new_fen](auto legal_move)
+                                      {
+                                          auto test_board = *this;
+                                          test_board.submit_move(*legal_move);
+                                          return test_board.fen_status() == new_fen;
+                                      });
+        if(move_iter == legal_moves().end())
         {
-            auto test_board = *this;
-            test_board.submit_move(*legal_move);
-            if(test_board.fen_status() == new_fen)
-            {
-                return *legal_move;
-            }
+            throw Illegal_Move("No legal move from \"" + fen_status() + "\" to \"" + new_fen + "\"");
         }
-
-        throw Illegal_Move("No legal move from \"" + fen_status() + "\" to \"" + new_fen + "\"");
+        else
+        {
+            return **move_iter; // one star to dereference the iterator, one to dereference the pointer
+        }
     }
 
     static const std::string promotion_pieces = "RNBQK";
