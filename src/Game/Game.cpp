@@ -57,8 +57,9 @@ Game_Result play_game(Board board,
         board.print_game_record(&white,
                                 &black,
                                 pgn_file_name,
-                                {NONE, game_error.what(), false},
-                                game_clock);
+                                {},
+                                game_clock,
+                                game_error.what());
         throw;
     }
 }

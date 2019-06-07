@@ -60,7 +60,8 @@ class Board
                                const Player* black,
                                const std::string& file_name,
                                const Game_Result& result,
-                               const Clock& game_clock) const;
+                               const Clock& game_clock,
+                               const std::string& unusual_ending_reason = "") const;
 
         Piece piece_on_square(Square square) const;
 

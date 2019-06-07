@@ -34,7 +34,8 @@ class CECP_Mediator : public Outside_Communicator
 
         std::string receive_cecp_command(Board& board, Clock& clock, bool while_listening);
         std::string listener(Board& board, Clock& clock);
-        void report_end_of_game(const Game_Result& result) const;
+        void report_end_of_game(const std::string& result, const std::string& reason) const;
+        void report_end_of_game(const Game_Result& ending) const;
 };
 
 #endif // CECP_MEDIATOR_H

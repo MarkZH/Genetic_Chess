@@ -6,7 +6,9 @@
 #include "Utility/String.h"
 
 //! The default Game_Result indicates that the game has not ended.
-Game_Result::Game_Result() : victor(NONE), cause(), game_ended(false)
+Game_Result::Game_Result() :
+    victor(NONE),
+    cause(ONGOING)
 {
 }
 
@@ -14,22 +16,16 @@ Game_Result::Game_Result() : victor(NONE), cause(), game_ended(false)
 //
 //! \param winner The color of the player that has won, or NONE if a draw.
 //! \param reason Explanation of why the game ended.
-//! \param game_ended_normally Whether the game ended according to chess rules or the clock.
-//!        A value of false indicates the game ended for some abnormal reason, usually an
-//!        exception being thrown during the game.
-Game_Result::Game_Result(Color winner,
-                         const std::string& reason,
-                         bool game_ended_normally) :
-                             victor(winner),
-                             cause(reason),
-                             game_ended(game_ended_normally)
+Game_Result::Game_Result(Color winner, Game_Result_Type reason) :
+    victor(winner),
+    cause(reason)
 {
 }
 
 //! Indicate whether the game ended with the last action.
 bool Game_Result::game_has_ended() const
 {
-    return game_ended;
+    return cause != ONGOING;
 }
 
 //! Returns the resultant winner (or NONE, if a draw) as a result of the last action.
@@ -41,7 +37,23 @@ Color Game_Result::winner() const
 //! Returns the reason for the game ending.
 std::string Game_Result::ending_reason() const
 {
-    return cause;
+    switch(cause)
+    {
+        case CHECKMATE:
+            return color_text(winner()) + " mates";
+        case STALEMATE:
+            return "Stalemate";
+        case FIFTY_MOVE:
+            return "50-move limit";
+        case THREEFOLD_REPETITION:
+            return "Threefold repetition";
+        case INSUFFICIENT_MATERIAL:
+            return "Insufficient material";
+        case TIME_FORFEIT:
+            return "Time forfeiture";
+        default:
+            return {};
+    }
 }
 
 //! Returns the part of the PGN move annotation that goes after the # (checkmate) or + (check).
@@ -64,7 +76,7 @@ std::string Game_Result::game_record_annotation() const
     if(game_has_ended())
     {
         std::string prefix = " ";
-        if(String::ends_with(cause, "mates"))
+        if(cause == CHECKMATE)
         {
             prefix =  "#" + prefix;
         }

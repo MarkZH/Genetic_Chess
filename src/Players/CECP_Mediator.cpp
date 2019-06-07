@@ -164,18 +164,9 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         }
         else if(String::starts_with(command, "result "))
         {
-            log("got result " + command);
-            auto winner = NONE;
-            if(String::contains(command, "1-0"))
-            {
-                winner = WHITE;
-            }
-            else if(String::contains(command, "0-1"))
-            {
-                winner = BLACK;
-            }
-            auto data = String::split(String::split(command, "{", 1)[1], "}", 1)[0];
-            report_end_of_game(Game_Result(winner, data, false));
+            auto result = String::split(command).at(1);
+            auto reason = String::split(String::split(command, "{", 1)[1], "}", 1)[0];
+            report_end_of_game(result, reason);
         }
         else if(command == "force")
         {
@@ -275,8 +266,13 @@ std::string CECP_Mediator::listener(Board& board, Clock& clock)
     }
 }
 
+void CECP_Mediator::report_end_of_game(const std::string& result, const std::string& reason) const
+{
+    send_command(result + " {" + reason + "}");
+    throw Game_Ended();
+}
+
 void CECP_Mediator::report_end_of_game(const Game_Result& result) const
 {
-    send_command(result.game_ending_annotation() + " {" + result.ending_reason() + "}");
-    throw Game_Ended();
+    report_end_of_game(result.game_ending_annotation(), result.ending_reason());
 }

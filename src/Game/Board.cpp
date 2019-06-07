@@ -476,11 +476,11 @@ Game_Result Board::submit_move(const Move& move)
         if(king_is_in_check())
         {
             auto winner = opposite(whose_turn());
-            return Game_Result(winner, color_text(winner) + " mates", true);
+            return Game_Result(winner, CHECKMATE);
         }
         else
         {
-            return Game_Result(NONE, "Stalemate", true);
+            return Game_Result(NONE, STALEMATE);
         }
     }
 
@@ -489,19 +489,19 @@ Game_Result Board::submit_move(const Move& move)
     // repeat_count tracker.
     if(moves_since_pawn_or_capture() == 0 && ! enough_material_to_checkmate())
     {
-        return Game_Result(NONE, "Insufficient material", true);
+        return Game_Result(NONE, INSUFFICIENT_MATERIAL);
     }
 
     if(current_board_position_repeat_count() >= 3)
     {
-        return Game_Result(NONE, "Threefold repetition", true);
+        return Game_Result(NONE, THREEFOLD_REPETITION);
     }
 
     // "Move" means both players move, so the fifty-move rule is
     // triggered after 100 player moves
     if(moves_since_pawn_or_capture() >= 100)
     {
-        return Game_Result(NONE, "50-move limit", true);
+        return Game_Result(NONE, FIFTY_MOVE);
     }
 
     return {};
@@ -1146,7 +1146,8 @@ void Board::print_game_record(const Player* white,
                               const Player* black,
                               const std::string& file_name,
                               const Game_Result& result,
-                              const Clock& game_clock) const
+                              const Clock& game_clock,
+                              const std::string& unusual_ending_reason) const
 {
     static std::mutex write_lock;
     auto write_lock_guard = std::lock_guard(write_lock);
@@ -1193,7 +1194,7 @@ void Board::print_game_record(const Player* white,
         }
     }
 
-    print_game_header_line(out_stream, "Result", result.game_ending_annotation().empty() ? "*" : result.game_ending_annotation());
+    print_game_header_line(out_stream, "Result", result.game_has_ended() ? result.game_ending_annotation() : "*");
 
     print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
@@ -1215,7 +1216,11 @@ void Board::print_game_record(const Player* white,
     }
 
 
-    if( ! result.ending_reason().empty() && ! String::contains(result.ending_reason(), "mates"))
+    if( ! unusual_ending_reason.empty())
+    {
+        print_game_header_line(out_stream, "Termination", result.ending_reason());
+    }
+    else if( ! result.ending_reason().empty() && ! String::contains(result.ending_reason(), "mates"))
     {
         print_game_header_line(out_stream, "Termination", result.ending_reason());
     }
