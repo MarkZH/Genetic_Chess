@@ -522,9 +522,11 @@ void Board::update_board(const Move& move)
 
 //! Creates a Move instance given a text string representation.
 //
-//! \param move A string using coordinate notation ("a2b3") or PGN ("Bb3"). Note: If PGN is used and
+//! \param move A string using coordinate notation ("a2b3"), PGN ("Bb3"), or FEN. Note: If PGN is used and
 //!        a bishop is to be moved, then the piece symbol 'B' must be capitalized to avoid ambiguity
-//!        with pawn captures. For example, Bxc5 and bxc5.
+//!        with pawn captures. For example, Bxc5 and bxc5. If the string is an FEN string corrsponding
+//!        to the position after the move, the method will search for a legal move that brings the board
+//!        into a state that matches the FEN.
 //! \returns A Move instance corresponding to the input string.
 //! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
 const Move& Board::create_move(const std::string& move) const
