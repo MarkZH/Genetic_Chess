@@ -35,7 +35,7 @@ class Outside_Communicator
         virtual void handle_move(Board& board, const Move& move) = 0;
 
         //! Returns whether the GUI is allowing thinking during the other player's move.
-        virtual bool pondering_allowed() const= 0;
+        virtual bool pondering_allowed() const = 0;
 
         static void log(const std::string& data);
 

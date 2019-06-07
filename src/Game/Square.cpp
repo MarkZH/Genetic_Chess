@@ -319,7 +319,7 @@ bool in_line_in_order(Square a, Square b, Square c)
 //
 //! \param start The start of the line of squares (not included in the collection).
 //! \param square_step The direction of the line extending away from start.
-Square_Line_Iterator::Square_Line_Iterator(Square start, const Square_Difference & square_step) :
+Square_Line_Iterator::Square_Line_Iterator(Square start, const Square_Difference& square_step) :
     current_square(start),
     step(square_step)
 {
