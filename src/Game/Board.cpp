@@ -1349,6 +1349,7 @@ void Board::recreate_move_caches()
                         return move->is_legal(*this);
                     };
 
+    last_pin_check_square = Square{};
     legal_moves_cache.clear();
     for(auto square : Square::all_squares())
     {
@@ -1608,15 +1609,21 @@ bool Board::all_empty_between(Square start, Square end) const
 //!          existant) white piece on the given square to the white king?
 bool Board::piece_is_pinned(Square square) const
 {
+    if(square == last_pin_check_square)
+    {
+        return last_pin_result;
+    }
+    last_pin_check_square = square;
+
     const auto& king_square = find_king(whose_turn());
     if(king_square == square)
     {
-        return false; // king is never pinned
+        return last_pin_result = false; // king is never pinned
     }
 
     if( ! straight_line_move(square, king_square))
     {
-        return false;
+        return last_pin_result = false;
     }
 
     auto diff = king_square - square;
@@ -1626,12 +1633,12 @@ bool Board::piece_is_pinned(Square square) const
         // the queried square in the same direction towards the friendly king. This next check
         // is to make sure the attacking piece is not a limited range piece--i.e., a pawn or king.
         auto attacker = piece_on_square(square - diff.step());
-        return ( ! attacker || (attacker.type() != PAWN && attacker.type() != KING)) &&
-               all_empty_between(king_square, square);
+        return last_pin_result = ( ! attacker || (attacker.type() != PAWN && attacker.type() != KING)) &&
+                                 all_empty_between(king_square, square);
     }
     else
     {
-        return false;
+        return last_pin_result = false;
     }
 }
 

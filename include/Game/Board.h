@@ -103,6 +103,8 @@ class Board
         static const std::string standard_starting_fen;
         std::array<Square, 2> king_location;
         mutable Square checking_square;
+        mutable Square last_pin_check_square;
+        mutable bool last_pin_result;
         size_t move_count_start_offset;
 
         // Stores the moves that attack a square. The innermost array
