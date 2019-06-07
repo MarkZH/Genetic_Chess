@@ -2,7 +2,10 @@
 
 #include <string>
 #include <stdexcept>
+
+#ifndef _WIN32
 #include <csignal>
+#endif // _WIN32
 
 #include "Players/Player.h"
 #include "Players/Outside_Communicator.h"
@@ -67,7 +70,9 @@ Game_Result play_game(Board board,
 
 void play_game_with_outsider(const Player& player)
 {
+    #ifndef _WIN32
     signal(SIGTSTP, SIG_IGN);
+    #endif // _WIN32    
 
     auto outsider = connect_to_outside(player);
 
