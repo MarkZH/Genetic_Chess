@@ -2,6 +2,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <csignal>
 
 #include "Players/Player.h"
 #include "Players/Outside_Communicator.h"
@@ -66,6 +67,8 @@ Game_Result play_game(Board board,
 
 void play_game_with_outsider(const Player& player)
 {
+    signal(SIGTSTP, SIG_IGN);
+
     auto outsider = connect_to_outside(player);
 
     Board board;
