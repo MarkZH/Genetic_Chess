@@ -1215,7 +1215,6 @@ void Board::print_game_record(const Player* white,
         print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(BLACK));
     }
 
-
     if( ! unusual_ending_reason.empty())
     {
         print_game_header_line(out_stream, "Termination", result.ending_reason());
