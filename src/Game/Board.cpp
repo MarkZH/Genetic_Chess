@@ -1252,6 +1252,10 @@ void Board::print_game_record(const Player* white,
 
         auto next_move = game_record_listing.at(i);
         out_stream << " " << next_move->game_record_item(temp);
+        if(i + 1 == game_record_listing.size() && ! result.game_has_ended())
+        {
+            out_stream << "*";
+        }
 
         auto current_player = (temp.whose_turn() == WHITE ? white : black);
         if(current_player)
