@@ -8,7 +8,7 @@ void Player::ponder(const Board&, const Clock&, bool) const
 {
 }
 
-std::string Player::commentary_for_next_move(const Board&) const
+std::string Player::commentary_for_next_move(const Board&, size_t) const
 {
     return {};
 }

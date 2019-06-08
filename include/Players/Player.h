@@ -40,7 +40,7 @@ class Player
         //
         //! \param board The board position prior to the move the player should comment on.
         //! \returns A text string commenting on the move that will follow the input position.
-        virtual std::string commentary_for_next_move(const Board& board) const;
+        virtual std::string commentary_for_next_move(const Board& board, size_t move_number) const;
 };
 
 #endif // PLAYER_H

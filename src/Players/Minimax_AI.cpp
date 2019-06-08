@@ -452,24 +452,25 @@ void Minimax_AI::calculate_centipawn_value() const
 //! Prints the expected future variation and score for the chosen move.
 //
 //! \param board The state of the game just prior to the move being commented on.
-std::string Minimax_AI::commentary_for_next_move(const Board& board) const
+std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move_number) const
 {
+    auto comment_index = board.game_record().size()/2;
     std::string result;
-    auto move_number = board.game_record().size()/2;
-    if(move_number < commentary.size() && ! commentary.at(move_number).variation.empty())
+    if(comment_index < commentary.size() && ! commentary.at(comment_index).variation.empty())
     {
-        auto temp_board = board;
+        result += "(";
+        const auto& comment = commentary.at(comment_index);
         Game_Result move_result;
-        const auto& comment = commentary.at(move_number);
+        auto temp_board = board;
+        result += (temp_board.whose_turn() == BLACK ? std::to_string(move_number) + ". ... " : std::string{});
         for(auto move : comment.variation)
         {
-            result += move->game_record_item(temp_board) + " ";
+            result += (temp_board.whose_turn() == WHITE ? std::to_string(move_number) + ". " : std::string{}) + move->game_record_item(temp_board) + " ";
             move_result = temp_board.submit_move(*move);
-        }
-
-        if(comment.variation.size() < 2)
-        {
-            result.clear();
+            if(temp_board.whose_turn() == WHITE)
+            {
+                ++move_number;
+            }
         }
 
         if( ! move_result.game_has_ended())
@@ -481,11 +482,29 @@ std::string Minimax_AI::commentary_for_next_move(const Board& board) const
                 // Truncate to two decimal places
                 score = score.substr(0, decimal_point_index + 3);
             }
-            result += score;
+
+            result += "{" + score + "}";
         }
         else
         {
-            result = String::trim_outer_whitespace(result);
+            if(comment.variation.size() > 1)
+            {
+                // Trim off result annotation ("1-0", "0-1", or "1/2-1/2") by finding a hyphen and cutting
+                // off everything after the previous space.
+                result = result.substr(0, result.find_last_of('-'));
+                result = result.substr(0, result.find_last_of(' '));
+            }
+            else
+            {
+                // No need for commentary on the last move of the game since the result
+                // is obvious.
+                result.clear();
+            }
+        }
+
+        if(String::starts_with(result, "("))
+        {
+            result += ")";
         }
     }
 

@@ -22,7 +22,7 @@ class Minimax_AI : public Player
     public:
         Minimax_AI();
         const Move& choose_move(const Board& board, const Clock& clock) const override;
-        std::string commentary_for_next_move(const Board& board) const override;
+        std::string commentary_for_next_move(const Board& board, size_t move_number) const override;
 
     protected:
         void recalibrate_self() const;

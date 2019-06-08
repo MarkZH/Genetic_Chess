@@ -1241,10 +1241,10 @@ void Board::print_game_record(const Player* white,
 
     for(size_t i = 0; i < game_record_listing.size(); ++i)
     {
+        auto step = move_count_start_offset + (i + starting_turn_offset)/2;
         if(temp.whose_turn() == WHITE || i == 0)
         {
-            auto step = (i + starting_turn_offset)/2;
-            out_stream << '\n' << move_count_start_offset + step << ".";
+            out_stream << '\n' <<  + step << ".";
             if(i == 0 && temp.whose_turn() == BLACK)
             {
                 out_stream << " ...";
@@ -1257,10 +1257,10 @@ void Board::print_game_record(const Player* white,
         auto current_player = (temp.whose_turn() == WHITE ? white : black);
         if(current_player)
         {
-            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(temp));
+            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(temp, step));
             if( ! commentary.empty())
             {
-                out_stream << " { " << commentary << " }";
+                out_stream << " " << commentary;
             }
         }
 
