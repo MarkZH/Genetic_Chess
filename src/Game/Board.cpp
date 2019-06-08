@@ -475,8 +475,7 @@ Game_Result Board::submit_move(const Move& move)
     {
         if(king_is_in_check())
         {
-            auto winner = opposite(whose_turn());
-            return Game_Result(winner, CHECKMATE);
+            return Game_Result(opposite(whose_turn()), CHECKMATE);
         }
         else
         {
