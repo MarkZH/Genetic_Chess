@@ -83,6 +83,7 @@ void play_game_with_outsider(const Player& player)
     {
         outsider->setup_turn(board, clock);
         outsider->listen(board, clock);
+
         if( ! clock.is_running())
         {
             clock.start();
@@ -91,8 +92,10 @@ void play_game_with_outsider(const Player& player)
         {
             clock.punch();
         }
+
         const auto& chosen_move = player.choose_move(board, clock);
         clock.punch();
+
         outsider->handle_move(board, chosen_move);
         player.ponder(board, clock, outsider->pondering_allowed());
     }
