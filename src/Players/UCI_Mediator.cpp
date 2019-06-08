@@ -111,6 +111,11 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
                     log("Next time control in " + std::to_string(moves_to_reset));
                     clock.set_next_time_reset(moves_to_reset);
                 }
+                else if(option == "movetime")
+                {
+                    clock.set_time(board.whose_turn(), new_time);
+                    clock.set_next_time_reset(1);
+                }
                 else
                 {
                     log("Ignoring go command: " + option);
