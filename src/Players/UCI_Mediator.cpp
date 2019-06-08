@@ -147,7 +147,7 @@ bool UCI_Mediator::pondering_allowed() const
 
 std::string UCI_Mediator::listener(Board& board, Clock& clock)
 {
-        return receive_uci_command(board, clock, true);
+    return receive_uci_command(board, clock, true);
 }
 
 std::string UCI_Mediator::receive_uci_command(Board& board, Clock& clock, bool while_listening)
