@@ -40,7 +40,8 @@ y_fit = A*(1/2).^(x_fit);
 plot(x_fit, y_fit, 'LineWidth', 3, 'DisplayName', 'Null hypothesis');
 
 fit_text = {'y = A(1/2)^{x}',
-            ['A = ' num2str(A) ' = # games = # offspring']};
+            ['A = ' num2str(A) ' = # games = # offspring'],
+            'Error bars show \pm{}2 standard deviations'};
 xl = xlim;
 yl = ylim;
 fit_box = text(0.6*xl(2), 0.4*yl(2), fit_text);
