@@ -30,8 +30,6 @@ Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, char file_start, int r
 
 //! This move must capture.
 //
-//! The only time a pawn is allowed to change files is while capturing.
-//! This method implements that rule.
 //! \param board The board state just before this move is to be made.
 bool Pawn_Capture::move_specific_legal(const Board& board) const
 {
