@@ -419,6 +419,7 @@ namespace
         while( ! result.game_has_ended() && std::getline(ifs, line))
         {
             line = String::strip_block_comment(line, "{", "}");
+            line = String::strip_block_comment(line, "(", ")");
             line = String::strip_comments(line, ";");
             if(line.empty())
             {
@@ -496,6 +497,7 @@ namespace
         {
             ++line_number;
             line = String::strip_block_comment(line, "{", "}");
+            line = String::strip_block_comment(line, "(", ")");
             line = String::strip_comments(line, ";");
             line = String::remove_extra_whitespace(line);
             if(line.empty())
@@ -717,6 +719,7 @@ namespace
         {
             line = String::strip_block_comment(line, "[", "]");
             line = String::strip_block_comment(line, "{", "}");
+            line = String::strip_block_comment(line, "(", ")");
             line = String::strip_comments(line, ";");
 
             // Blank lines only occur between games
