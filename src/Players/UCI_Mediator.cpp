@@ -74,6 +74,8 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
                 indent = "\t\t\t";
             }
 
+            clock = Clock(0, 0, 0, board.whose_turn(),false);
+
             auto go_parse = String::split(command);
             for(size_t i = 1; i < go_parse.size(); ++i)
             {
@@ -113,8 +115,8 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
                 }
                 else if(option == "movetime")
                 {
-                    clock.set_time(board.whose_turn(), new_time);
-                    clock.set_next_time_reset(1);
+                    log("Setting clock to " + std::to_string(new_time) + " seconds per move");
+                    clock = Clock(new_time, 1, 0.0, board.whose_turn(), false);
                 }
                 else
                 {
