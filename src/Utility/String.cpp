@@ -104,12 +104,12 @@ std::string String::strip_block_comment(const std::string& str, const std::strin
 
     if(start_comment_index == std::string::npos || end_comment_index == std::string::npos)
     {
-        throw std::invalid_argument("\"" + str + "\" is missing a comment delimiter: " + std::string{start} + std::string{end});
+        throw std::invalid_argument("\"" + str + "\" is missing a comment delimiter: " + start + end);
     }
 
     if(start_comment_index >= end_comment_index)
     {
-        throw std::invalid_argument("\"" + str + "\" contains bad comment delimiters: " + std::string{start} + std::string{end});
+        throw std::invalid_argument("\"" + str + "\" contains bad comment delimiters: " + start + end);
     }
 
     auto first_part = str.substr(0, start_comment_index);
