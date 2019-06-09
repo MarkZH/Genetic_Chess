@@ -57,6 +57,12 @@ std::string Outside_Communicator::receive_command()
     log("RECEIVING: " + result);
     result = String::remove_extra_whitespace(result);
 
+    if(result.empty())
+    {
+        log("Error in communication. Got empty message from GUI.");
+        throw Game_Ended();
+    }
+
     if(result == "quit")
     {
         throw Game_Ended();
