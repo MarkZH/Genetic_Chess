@@ -32,5 +32,4 @@ bool En_Passant::move_specific_legal(const Board& board) const
 void En_Passant::side_effects(Board& board) const
 {
     board.remove_piece({end().file(), start().rank()});
-    Pawn_Capture::side_effects(board);
 }

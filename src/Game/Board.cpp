@@ -703,6 +703,10 @@ void Board::move_piece(const Move& move)
     }
 
     auto moving_piece = piece_on_square(move.start());
+    if(moving_piece.type() == PAWN)
+    {
+        clear_repeat_count();
+    }
     remove_piece(move.start());
     place_piece(moving_piece, move.end());
 

@@ -17,12 +17,11 @@ Pawn_Promotion::Pawn_Promotion(Piece_Type promotion_piece, Color color, char fil
 {
 }
 
-//! In addition to normal pawn move side effects, the pawn gets replaced by another piece.
+//! Replace the pawn with the promoted piece.
 //
 //! \param board The board on which the move is being made.
 void Pawn_Promotion::side_effects(Board& board) const
 {
-    Pawn_Move::side_effects(board);
     board.place_piece(promote_to, end());
 }
 

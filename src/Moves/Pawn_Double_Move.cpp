@@ -23,5 +23,4 @@ Pawn_Double_Move::Pawn_Double_Move(Color color, char file_start) :
 void Pawn_Double_Move::side_effects(Board& board) const
 {
     board.make_en_passant_targetable(start() + Square_Difference{0, rank_change()/2});
-    Pawn_Move::side_effects(board);
 }

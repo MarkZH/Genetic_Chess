@@ -19,14 +19,6 @@ Pawn_Move::Pawn_Move(Color color_in, char file_start, int rank_start) :
     able_to_capture = false;
 }
 
-//! The side effect of all pawn moves is to reset the 50-move draw counter.
-//
-//! \param board The board on which the pawn move was made.
-void Pawn_Move::side_effects(Board& board) const
-{
-    board.clear_repeat_count();
-}
-
 std::string Pawn_Move::game_record_move_item(const Board&) const
 {
     return end().string();
