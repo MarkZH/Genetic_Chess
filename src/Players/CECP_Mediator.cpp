@@ -33,6 +33,7 @@ CECP_Mediator::CECP_Mediator(const Player& local_player)
                      "name=1 "
                      "ping=1 "
                      "setboard=1 "
+                     "colors=0 "
                      "done=1");
     }
     else
