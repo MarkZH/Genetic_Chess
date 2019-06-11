@@ -41,13 +41,16 @@ class Outside_Communicator
 
     protected:
         //! If two copies of genetic_chess are running, their logs can be indented differently to distinguish them.
-        static std::string indent;
+        static void set_indent_level(unsigned int n);
 
         //! Constructor is protected so that it is only called by connect_to_outside().
         Outside_Communicator() = default;
 
         static void send_command(const std::string& cmd);
         static std::string receive_command();
+
+    private:
+        static std::string indent;
 
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
 };

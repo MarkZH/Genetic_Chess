@@ -84,6 +84,11 @@ void Outside_Communicator::log(const std::string& data)
         << std::endl;
 }
 
+void Outside_Communicator::set_indent_level(unsigned int n)
+{
+    indent = std::string(n, '\t');
+}
+
 //! Output the given string to the outside interface.
 //
 //! The outgoing string is also logged to a local file.

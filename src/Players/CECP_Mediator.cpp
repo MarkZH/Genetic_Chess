@@ -56,7 +56,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
                 continue;
             }
 
-            indent = board.whose_turn() == WHITE ? "\t\t" : "\t\t\t";
+            set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
             log("telling local AI to move at leisure and accepting move");
             ignore_next_move = false;
             wait_for_usermove = true;
@@ -89,7 +89,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             {
                 log("Applying move: " + move);
                 auto result = board.submit_move(board.create_move(move));
-                indent = board.whose_turn() == WHITE ? "\t\t" : "\t\t\t";
+                set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
                 if(result.game_has_ended())
                 {
                     report_end_of_game(result);

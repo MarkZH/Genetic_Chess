@@ -65,14 +65,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
         }
         else if(String::starts_with(command, "go"))
         {
-            if(board.whose_turn() == WHITE)
-            {
-                indent = "\t\t";
-            }
-            else
-            {
-                indent = "\t\t\t";
-            }
+            set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
 
             clock = Clock(0, 0, 0, board.whose_turn(),false);
 
