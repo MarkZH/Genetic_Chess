@@ -860,7 +860,7 @@ void print_randomness_sample()
     std::cout << std::setw(int_width) << "+/-1000"
               << std::setw(real_width) << "[0,2]"
               << std::setw(norm_width) << "width = 3"
-              << std::setw(uint_width) << "[0," + std::to_string(std::numeric_limits<uint64_t>::max()) << "]\n";
+              << std::setw(uint_width) << "[0," + std::to_string(std::numeric_limits<uint64_t>::max()) + "]" << "\n";
     for(int i = 0; i < 10; ++i)
     {
         std::cout << std::setw(int_width) << Random::random_integer(-1000, 1000)
