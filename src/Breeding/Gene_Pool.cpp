@@ -405,7 +405,7 @@ void gene_pool(const std::string& config_file)
                                                  best_compare), best_compare);
         }
         auto best_file_name = genome_file_name + "_best_genome.txt";
-        auto temp_best_file_name = best_file_name + "-" + std::to_string(Random::random_unsigned_int64()) + ".txt";
+        auto temp_best_file_name = best_file_name + ".tmp";
         best_ai.print(temp_best_file_name);
         std::filesystem::rename(temp_best_file_name, best_file_name);
 
