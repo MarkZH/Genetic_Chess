@@ -66,6 +66,7 @@ void gene_pool(const std::string& config_file)
     const auto gene_pool_population = size_t(config.as_number("gene pool population"));
     const auto gene_pool_count = size_t(config.as_number("gene pool count"));
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
+    const auto sexual_reproduction = config.as_boolean("reproduction type", "sexual", "cloning");
     const auto genome_file_name = config.as_text("gene pool file");
 
     const int scramble_mutations = 100; // initial number of mutations when creating a new Genetic AI
@@ -300,10 +301,10 @@ void gene_pool(const std::string& config_file)
             auto winner = result.winner();
             std::cout << color_text(winner) << " (" << result.ending_reason() << ")";
 
+            const auto& winning_player = (winner == WHITE ? white : black);
             if(winner != NONE)
             {
                 color_wins[winner][pool_index]++;
-                auto& winning_player = (winner == WHITE ? white : black);
                 wins[winning_player]++;
                 games_since_last_win[winning_player] = 0;
                 consecutive_wins[winning_player]++;
@@ -328,7 +329,7 @@ void gene_pool(const std::string& config_file)
                 std::cout << " --> " << (winner == WHITE ? black : white).id() << " dies";
             }
 
-            auto offspring = Genetic_AI(white, black);
+            auto offspring = sexual_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);
             offspring.mutate();
             original_pool[offspring] = pool_index;
 
