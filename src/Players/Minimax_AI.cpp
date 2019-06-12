@@ -116,7 +116,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
     if(nodes_evaluated > 0)
     {
-        evaluation_speed = nodes_evaluated / total_evaluation_time;
+        evaluation_speed = nodes_evaluated/total_evaluation_time;
     }
 
     return *result.variation.front();
@@ -197,7 +197,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
 
         double time_left = time_to_examine - (time_start - clock.running_time_left());
-        double time_allotted_for_this_move = (time_left / moves_left)*speculation_time_factor(next_board);
+        double time_allotted_for_this_move = (time_left/moves_left)*speculation_time_factor(next_board);
         time_allotted_for_this_move = std::min(time_allotted_for_this_move, clock.running_time_left());
 
         bool recurse;
@@ -215,7 +215,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            auto minimum_time_to_recurse = next_board.legal_moves().size() / evaluation_speed;
+            auto minimum_time_to_recurse = next_board.legal_moves().size()/evaluation_speed;
             recurse = (time_allotted_for_this_move > minimum_time_to_recurse);
         }
 
@@ -285,7 +285,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                       const Clock& clock,
                                       Color perspective) const
 {
-    auto score = thought.corrected_score(perspective) / centipawn_value();
+    auto score = thought.corrected_score(perspective)/centipawn_value();
 
     // Indicate "mate in N moves" where N == thought.depth
     if(thought.is_winning_for(perspective))
@@ -302,13 +302,13 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         << " "
         << int(score) // score in what should be centipawns
         << " "
-        << int(time_so_far * 100) // search time in centiseconds
+        << int(time_so_far*100) // search time in centiseconds
         << " "
         << nodes_searched
         << " "
         << maximum_depth
         << " "
-        << int(nodes_searched / time_so_far)
+        << int(nodes_searched/time_so_far)
         << '\t';
 
     // Principal variation

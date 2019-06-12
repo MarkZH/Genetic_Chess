@@ -95,7 +95,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
         }
 
         auto distance_to_king = king_distances[square.index()][opponent_king_index];
-        score += square_score * scalar_cache[distance_to_king];
+        score += square_score*scalar_cache[distance_to_king];
     }
 
     return score;
