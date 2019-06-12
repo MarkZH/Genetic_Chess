@@ -34,11 +34,15 @@ class Player
         //! \returns The name of the individual player. This may have specific details like ID numbers
         //!          or the name of a human player.
         virtual std::string name() const = 0;
+
+        //! Returns the name of the author of the chess engine.
         virtual std::string author() const = 0;
 
         //! Provide commentary for the move to come given a past state of the game.
         //
         //! \param board The board position prior to the move the player should comment on.
+        //! \param move_number The numeric label of the move (often 1 for the first move of the white and black player).
+        //!        This is also used when the game record begins in the middle of a game.
         //! \returns A text string commenting on the move that will follow the input position.
         virtual std::string commentary_for_next_move(const Board& board, size_t move_number) const;
 };
