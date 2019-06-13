@@ -2,7 +2,6 @@
 #define GAME_TREE_NODE_RESULT_H
 
 #include <vector>
-#include <string>
 #include <utility>
 
 #include "Game/Color.h"
