@@ -10,7 +10,6 @@
 #include "Moves/Move.h"
 
 #include "Utility/String.h"
-#include "Utility/Math.h"
 #include "Utility/Random.h"
 
 Minimax_AI::Minimax_AI()
@@ -77,12 +76,12 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     auto time_to_use = time_to_examine(board, clock);
 
     // alpha = highest score found that opponent will allow
-    Game_Tree_Node_Result alpha_start = {Math::lose_score,
+    Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
                                          board.whose_turn(),
                                          {}};
 
     // beta = score that will cause opponent to choose a different prior move
-    Game_Tree_Node_Result beta_start = {Math::win_score,
+    Game_Tree_Node_Result beta_start = {Game_Tree_Node_Result::win_score,
                                         board.whose_turn(),
                                         {}};
 
@@ -164,7 +163,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     const auto perspective = board.whose_turn();
     auto moves_left = all_legal_moves.size();
 
-    Game_Tree_Node_Result best_result = {Math::lose_score,
+    Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
                                          perspective,
                                          {all_legal_moves.front()}};
 
@@ -392,11 +391,11 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
         }
         else if(move_result.winner() == perspective) // checkmate win
         {
-            return Math::win_score;
+            return Game_Tree_Node_Result::win_score;
         }
         else // checkmate loss
         {
-            return Math::lose_score;
+            return Game_Tree_Node_Result::lose_score;
         }
     }
 

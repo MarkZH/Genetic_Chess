@@ -616,21 +616,21 @@ bool run_tests()
     test_result(tests_passed, r2.value(WHITE) < r1.value(WHITE), "1. Error in comparing Game Tree Node Results.");
     test_result(tests_passed, r1.value(BLACK) < r2.value(BLACK), "2. Error in comparing Game Tree Node Results.");
 
-    Game_Tree_Node_Result alpha_start = {Math::lose_score,
+    Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
                                          WHITE,
                                          {}};
 
-    Game_Tree_Node_Result beta_start = {Math::win_score,
+    Game_Tree_Node_Result beta_start = {Game_Tree_Node_Result::win_score,
                                         WHITE,
                                         {}};
     test_result(tests_passed, alpha_start.value(WHITE) < beta_start.value(WHITE), "3. Error in comparing Game Tree Node Results.");
     test_result(tests_passed, alpha_start.value(BLACK) > beta_start.value(BLACK), "4. Error in comparing Game Tree Node Results.");
 
-    Game_Tree_Node_Result white_win4 = {Math::win_score,
+    Game_Tree_Node_Result white_win4 = {Game_Tree_Node_Result::win_score,
                                         WHITE,
                                         {nullptr, nullptr, nullptr,
                                          nullptr, nullptr}};
-    Game_Tree_Node_Result white_win6 = {Math::win_score,
+    Game_Tree_Node_Result white_win6 = {Game_Tree_Node_Result::win_score,
                                         WHITE,
                                         {nullptr, nullptr, nullptr,
                                          nullptr, nullptr, nullptr,
@@ -638,7 +638,7 @@ bool run_tests()
     test_result(tests_passed, white_win6.value(WHITE) < white_win4.value(WHITE), "Later win preferred over earlier win.");
     test_result(tests_passed, white_win4.value(BLACK) < white_win6.value(BLACK), "Earlier loss preferred over later win.");
 
-    Game_Tree_Node_Result black_loss6 = {Math::lose_score,
+    Game_Tree_Node_Result black_loss6 = {Game_Tree_Node_Result::lose_score,
                                          BLACK,
                                          {nullptr, nullptr, nullptr,
                                           nullptr, nullptr, nullptr,

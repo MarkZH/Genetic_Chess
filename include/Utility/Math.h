@@ -1,17 +1,9 @@
 #ifndef MATH_H
 #define MATH_H
 
-#include <limits>
-#include <cstddef>
-
 //! Provides a collection of useful math functions.
 namespace Math
 {
-    //! The score assigned to a checkmate board position for the winning Minimax_AI.
-    const auto win_score = std::numeric_limits<double>::infinity();
-    //! The score assigned to a checkmate board position for the losing Minimax_AI.
-    const auto lose_score = -win_score;
-
     //! Computes an estimate of the number of moves left in a game assuming a log-normal distribution.
     //
     //! \param mean_moves The average number of moves in a game. More specifically, exp(u) where

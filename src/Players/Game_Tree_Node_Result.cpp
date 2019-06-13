@@ -2,9 +2,13 @@
 
 #include <cmath>
 #include <utility>
+#include <limits>
 
 #include "Game/Color.h"
 #include "Utility/Math.h"
+
+const double Game_Tree_Node_Result::win_score = std::numeric_limits<double>::infinity();
+const double Game_Tree_Node_Result::lose_score = -win_score;
 
 //! Gives the score of the board position from the indicated side.
 //

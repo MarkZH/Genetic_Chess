@@ -23,6 +23,11 @@ struct Game_Tree_Node_Result
     //! The sequence of moves that lead to the board position being scored.
     std::vector<const Move*> variation;
 
+    //! The score assigned to a checkmate board position for the winning Minimax_AI.
+    static const double win_score;
+    //! The score assigned to a checkmate board position for the losing Minimax_AI.
+    static const double lose_score;
+
     double corrected_score(Color query) const;
     size_t depth() const;
     bool is_winning_for(Color query) const;
