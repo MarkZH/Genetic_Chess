@@ -20,7 +20,6 @@ class Game_Result;
 class Minimax_AI : public Player
 {
     public:
-        Minimax_AI();
         //! Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
         //
         //! The depth of the search is determined by how much time is available.

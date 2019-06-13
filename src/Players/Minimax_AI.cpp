@@ -12,10 +12,6 @@
 #include "Utility/String.h"
 #include "Utility/Random.h"
 
-Minimax_AI::Minimax_AI()
-{
-}
-
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const
 {
     // Erase data from previous board when starting new game
