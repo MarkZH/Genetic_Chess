@@ -63,9 +63,9 @@ void King_Confinement_Gene::gene_specific_mutation()
 
 double King_Confinement_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    std::array<Square, 64> square_queue{}; // list of indices to check
-    size_t queue_insertion_point = 0; // where to insert the index of the next square to check
-    std::array<bool, 64> in_queue{}; // track which indices have or will have been checked
+    std::array<Square, 64> square_queue{};
+    size_t queue_insertion_point = 0;
+    std::array<bool, 64> in_queue{};
 
     const auto& king_square = board.find_king(perspective);
 

@@ -15,7 +15,6 @@
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
 
-// Play single game, return color of winner
 Game_Result play_game(Board board,
                       Clock game_clock,
                       const Player& white,
