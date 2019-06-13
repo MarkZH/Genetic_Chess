@@ -1,6 +1,8 @@
 #ifndef MATH_H
 #define MATH_H
 
+#include <cstddef>
+
 //! Provides a collection of useful math functions.
 namespace Math
 {
