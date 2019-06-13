@@ -4,10 +4,11 @@
 
 #include "Moves/Move.h"
 #include "Game/Board.h"
+#include "Game/Square.h"
 
-Pawn_Move::Pawn_Move(Color color_in, char file_start, int rank_start) :
-    Move({file_start, rank_start},
-         {file_start, rank_start + (color_in == WHITE ? 1 : -1)})
+Pawn_Move::Pawn_Move(Color color_in, Square start_in) :
+    Move(start_in,
+         {start_in.file(), start_in.rank() + (color_in == WHITE ? 1 : -1)})
 {
     able_to_capture = false;
 }

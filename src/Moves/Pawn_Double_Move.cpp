@@ -2,9 +2,10 @@
 
 #include "Moves/Pawn_Move.h"
 #include "Game/Board.h"
+#include "Game/Square.h"
 
 Pawn_Double_Move::Pawn_Double_Move(Color color, char file_start) :
-    Pawn_Move(color, file_start, color == WHITE ? 2 : 7)
+    Pawn_Move(color, Square{file_start, color == WHITE ? 2 : 7})
 {
     adjust_end_rank(color == WHITE ? 1 : -1);
     if( ! end().inside_board())

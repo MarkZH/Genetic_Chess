@@ -7,7 +7,7 @@
 #include "Game/Board.h"
 
 En_Passant::En_Passant(Color color, Direction dir, char file_start) :
-    Pawn_Capture(color, dir, file_start, color == WHITE ? 5 : 4)
+    Pawn_Capture(color, dir, Square{file_start, color == WHITE ? 5 : 4})
 {
     is_en_passant_move = true;
 }

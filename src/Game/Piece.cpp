@@ -170,7 +170,7 @@ namespace
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
             {
-                add_legal_move<Pawn_Move>(out, color, PAWN, color, file, rank);
+                add_legal_move<Pawn_Move>(out, color, PAWN, color, Square{file, rank});
             }
         }
 
@@ -189,7 +189,7 @@ namespace
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
                 {
-                    add_legal_move<Pawn_Capture>(out, color, PAWN, color, dir, file, rank);
+                    add_legal_move<Pawn_Capture>(out, color, PAWN, color, dir, Square{file, rank});
                 }
             }
 
