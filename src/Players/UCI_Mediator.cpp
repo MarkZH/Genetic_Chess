@@ -13,9 +13,6 @@
 
 #include "Utility/String.h"
 
-//! Setup a connection to the outside world with a UCI interface.
-//
-//! \param player The chess player on the local machine whose name and author get sent to the GUI.
 UCI_Mediator::UCI_Mediator(const Player& player)
 {
     send_command("id name " + player.name());

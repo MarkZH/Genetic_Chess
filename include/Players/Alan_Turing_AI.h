@@ -25,9 +25,19 @@ class Game_Result;
 class Alan_Turing_AI : public Player
 {
     public:
+        //! Turing's algorithm is a depth-3 minimax algorithm with an complex evalutation function.
+        //
+        //! The evaluation function is especially complex given that it had to be run on pencil and paper.
         const Move& choose_move(const Board& board, const Clock& clock) const override;
 
+        //! This program was named Turochamp after its creators: Turing and David Champernowne.
+        //
+        //! \returns "Turochamp"
         std::string name() const override;
+        
+        //! Credit to Turing and Champerowne.
+        //
+        //! \returns "Alan Turing and David Champernowne"
         std::string author() const override;
 
     private:

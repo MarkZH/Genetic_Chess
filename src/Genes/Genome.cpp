@@ -37,7 +37,6 @@ size_t Genome::piece_strength_gene_index = size_t(-1);
 size_t Genome::look_ahead_gene_index = size_t(-1);
 size_t Genome::mutation_rate_gene_index = size_t(-1);
 
-//! Create a genome with default-constructed (neutral behavior) Genes.
 Genome::Genome()
 {
     // Regulator genes
@@ -98,9 +97,6 @@ Genome::Genome()
     genome.emplace_back(std::make_unique<Null_Gene>());
 }
 
-//! Clone a genome
-//
-//! \param other The originating genome.
 Genome::Genome(const Genome& other)
 {
     std::transform(other.genome.begin(), other.genome.end(),
@@ -121,9 +117,6 @@ void Genome::reset_piece_strength_gene()
     }
 }
 
-//! Inject another genome's data into this one (i.e., assignment operator)
-//
-//! \param other The originating genome.
 Genome& Genome::operator=(Genome other)
 {
     std::swap(genome, other.genome);
@@ -132,11 +125,6 @@ Genome& Genome::operator=(Genome other)
     return *this;
 }
 
-//! Create a new genome from two existing genomes via sexual reproduction
-//
-//! Create each Gene by copying from either parent with a 50-50 probability.
-//! \param A The first parent.
-//! \param B The second parent.
 Genome::Genome(const Genome& A, const Genome& B)
 {
     std::transform(A.genome.begin(), A.genome.end(), B.genome.begin(),
@@ -149,9 +137,6 @@ Genome::Genome(const Genome& A, const Genome& B)
     reset_piece_strength_gene();
 }
 
-//! Read genome data from an input stream (std::ifstream, std::cin, etc.).
-//
-//! \param is The input stream.
 void Genome::read_from(std::istream& is)
 {
     std::string line;
@@ -211,23 +196,11 @@ double Genome::score_board(const Board& board, Color perspective, size_t depth) 
                            });
 }
 
-//! Evaluate a board position and return a numerical value.
-//
-//! The higher the value, the greater the probability that the board position
-//! will lead to victory for the player doing the scoring.
-//
-//! \param board The board position to be evaluated.
-//! \param perspective The player for whom a higher score means a greater chance of victory.
-//! \param depth How man moves in the future the current board state is compared to the
-//!        original board that represents the current state of the game.
 double Genome::evaluate(const Board& board, Color perspective, size_t depth) const
 {
     return score_board(board, perspective, depth) - score_board(board, opposite(perspective), depth);
 }
 
-//! Apply a random set of mutations to the entire genome.
-//
-//! The severity of the mutation is controlled by the Mutation_Rate_Gene.
 void Genome::mutate()
 {
     // Create copies of genes based on the number of internal components
@@ -247,9 +220,6 @@ void Genome::mutate()
     }
 }
 
-//! Print the genome data to the output stream (std::ofstream, std::cout, etc.).
-//
-//! \param os The output stream.
 void Genome::print(std::ostream& os) const
 {
     for(const auto& gene : genome)
@@ -258,32 +228,16 @@ void Genome::print(std::ostream& os) const
     };
 }
 
-//! Determine how much time should be used to choose a move, that is, for the entire search.
-//
-//! \param board The current board position.
-//! \param clock The game clock.
 double Genome::time_to_examine(const Board& board, const Clock& clock) const
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
 }
 
-//! Returns a factor that is multiplied by the time allocated to examine a branch of the game tree.
-//
-//! With alpha-beta pruning, the search for the best move often cuts off before the entire branch
-//! of the game tree is explored, using less time than expected. The value returned by this function
-//! is multiplied by the time allocated for a branch to make sure the time allocated is actually used,
-//! allowing deeper searches of the game tree. More or less time may be allocated based on the
-//! board position being examined.
-//! \param board The board position being examined.
-//! \returns The multiplicative factor.
 double Genome::speculation_time_factor(const Board& board) const
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor(board);
 }
 
-//! Consults the Mutation_Rate_Gene to determine how many point mutations to apply to the genome.
-//
-//! \returns A number of mutations to apply.
 double Genome::components_to_mutate() const
 {
     return static_cast<const Mutation_Rate_Gene*>(genome[mutation_rate_gene_index].get())->mutation_count();

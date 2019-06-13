@@ -17,6 +17,9 @@ class Mutation_Rate_Gene : public Gene
 
         std::string name() const override;
 
+        //! Controls how many changes a call to Genome::mutate() makes to the Gene collections.
+        //
+        //! \returns An integer number that determines the number of point mutations the Genome::mutate() makes.
         int mutation_count() const;
 
         void gene_specific_mutation() override;

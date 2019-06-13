@@ -21,11 +21,23 @@ class Move;
 class Monte_Carlo_AI : public Random_AI
 {
     public:
+        //! Make sure the pondering thread is stopped.
         ~Monte_Carlo_AI();
 
+        //! Builds up a sample of the game tree with random complete games to estimate the best move.
+        //
+        //! As the AI plays more random complete games, it fills out the game tree. After some
+        //! amount of time (estimated to give equal time to every move in the game) it picks the
+        //! move that most often leads to victory. During the next move, the branches of the
+        //! game tree not taken are cutoff to keep memory use under control.
+        //! \param board The current state of the game board.
+        //! \param clock The game clock.
         const Move& choose_move(const Board& board, const Clock& clock) const override;
         void ponder(const Board& board, const Clock& clock, bool thinking_allowed) const override;
 
+        //! The name is the same as the algorithm.
+        //
+        //! \returns "Monte Carlo AI"
         std::string name() const override;
 
     private:

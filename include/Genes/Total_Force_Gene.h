@@ -17,6 +17,9 @@ class Piece_Strength_Gene;
 class Total_Force_Gene : public Gene
 {
     public:
+        //! The Total_Force_Gene constructor requires a Piece_Strength_Gene to reference in score_board().
+        //
+        //! \param piece_strength_source_in The source of piece values to weight the importance of various pieces.
         explicit Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source);
 
         std::unique_ptr<Gene> duplicate() const override;

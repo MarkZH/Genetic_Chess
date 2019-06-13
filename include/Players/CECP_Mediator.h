@@ -18,6 +18,9 @@ class Game_Result;
 class CECP_Mediator : public Outside_Communicator
 {
     public:
+        //! Set up the connection to the outside interface and send configuration data.
+        //
+        //! \param local_player The player on the machine. The name of the player gets sent to the interface.
         explicit CECP_Mediator(const Player& local_player);
 
         void setup_turn(Board& board, Clock& clock) override;

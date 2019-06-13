@@ -10,9 +10,6 @@
 
 double King_Protection_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    // Count the number of empty squares from which a piece could attack the king. This
-    // is a measure of the exposure of the king
-
     const auto& king_square = board.find_king(perspective);
 
     auto square_count = 0;

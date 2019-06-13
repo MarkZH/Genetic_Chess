@@ -3,7 +3,6 @@
 #include <cmath>
 #include <cstddef>
 
-// Mean moves left in game given that a number of moves have been made already.
 double Math::average_moves_left(double mean_moves, double width, size_t moves_so_far)
 {
     // Assumes the number of moves in a game has a log-normal distribution.

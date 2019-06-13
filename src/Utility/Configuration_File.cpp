@@ -10,15 +10,6 @@
 
 #include "Utility/String.h"
 
-//! Read in a text file and organize the configuration data.
-//
-//! \param file_name The name of the text file to be read.
-//!
-//! The file is read line-by-line and expects all configuration data in
-//! the form \<paramter\> = \<value\>. Paramters are case-insensitive, as
-//! are values except for file names.
-//!
-//! Comments can be added to the file by prepending them with '#'.
 Configuration_File::Configuration_File(const std::string& file_name)
 {
     std::ifstream ifs(file_name);
@@ -55,11 +46,6 @@ Configuration_File::Configuration_File(const std::string& file_name)
     }
 }
 
-//! Return string data as found in the file.
-//
-//! \param parameter The configuration parameter sought.
-//! \returns The string data with leading and trailing whitespace removed.
-//! \throws std::runtime_error If the named parameter was not found in the file.
 std::string Configuration_File::as_text(const std::string& parameter) const
 {
     try
@@ -77,12 +63,6 @@ std::string Configuration_File::as_text(const std::string& parameter) const
     }
 }
 
-//! Return numerical data from the configuration file.
-//
-//! \param parameter The configuration parameter sought.
-//! \returns The data in the file converted to a floating point (double) number.
-//! \throws std::runtime_error If the named parameter was not found in the file or
-//!         if the data could not be converted to a numerical value.
 double Configuration_File::as_number(const std::string& parameter) const
 {
     try
@@ -95,14 +75,6 @@ double Configuration_File::as_number(const std::string& parameter) const
     }
 }
 
-//! Return true/false data from the configuration file.
-//
-//! \param parameter The configuration parameter sought.
-//! \param affirmative The case-insensitive value corresponding to true.
-//! \param negative The case-insensitive value corresponding to false.
-//! \returns True if the data matches affirmative, false if it matches negative.
-//! \throws std::runtime_error If the named parameter was not found in the file or
-//!         if the data does not match affirmative or negative.
 bool Configuration_File::as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const
 {
     auto response = standardize_text(as_text(parameter));
@@ -126,7 +98,6 @@ std::string Configuration_File::standardize_text(const std::string& input)
     return String::lowercase(String::remove_extra_whitespace(input));
 }
 
-//! Print the unused parameters in the configuration file to stdout.
 void Configuration_File::print_unused_parameters() const
 {
     for(const auto& param_value : parameters)
@@ -138,7 +109,6 @@ void Configuration_File::print_unused_parameters() const
     }
 }
 
-//! Check if any parameters in the configuration file were unused.
 bool Configuration_File::any_unused_parameters() const
 {
     return std::any_of(used.begin(), used.end(), [](const auto& key_value) { return ! key_value.second; });

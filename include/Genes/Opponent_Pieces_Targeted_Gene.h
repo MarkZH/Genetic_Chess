@@ -17,6 +17,9 @@ class Board;
 class Opponent_Pieces_Targeted_Gene : public Gene
 {
     public:
+        //! The Opponent_Pieces_Targeted_Gene constructor requires a Piece_Strength_Gene to reference in score_board().
+        //
+        //! \param piece_strength_gene The source of piece values to weight the importance of various pieces.
         explicit Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene);
 
         std::unique_ptr<Gene> duplicate() const override;

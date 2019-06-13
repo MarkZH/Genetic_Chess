@@ -11,6 +11,9 @@
 class Board;
 
 //! Scores the board based on how many lines of attack to king there are.
+//
+//! Counts the number of empty squares from which a piece could attack the king. This
+//! is a measure of the exposure of the king
 class King_Protection_Gene : public Gene
 {
     public:

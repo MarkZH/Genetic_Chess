@@ -37,6 +37,9 @@ class Outside_Communicator
         //! Returns whether the GUI is allowing thinking during the other player's move.
         virtual bool pondering_allowed() const = 0;
 
+        //! Log data to a local text file.
+        //
+        //! \param data A text string to write.
         static void log(const std::string& data);
 
     protected:
@@ -46,7 +49,16 @@ class Outside_Communicator
         //! Constructor is protected so that it is only called by connect_to_outside().
         Outside_Communicator() = default;
 
+        //! Output the given string to the outside interface.
+        //
+        //! The outgoing string is also logged to a local file.
+        //! \param cmd The string to send to the outside interface.
         static void send_command(const std::string& cmd);
+        
+        //! Wait for a command from the outside interface and pass it on to derived class instances.
+        //
+        //! \returns The command from the outside interface if not "quit".
+        //! \throws Game_Ended If the command "quit" is received, the game will end and the program will exit.
         static std::string receive_command();
 
     private:
@@ -55,6 +67,14 @@ class Outside_Communicator
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
 };
 
+//! Initialize communication with an outside program.
+//
+//! The function returns an appropriate derived class based on the
+//! communiation protocol by the other program. CECP is the only
+//! protocol implemented so far. UCI may be implemented in the future.
+//! \param player The local player so that its information may be sent
+//!        to the outside interface.
+//! \returns An appropriate derived class instance with the proper protocol.
 std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
 
 #endif // OUTSIDE_PLAYER_H

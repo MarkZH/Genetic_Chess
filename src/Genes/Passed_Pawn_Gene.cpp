@@ -12,8 +12,6 @@
 
 double Passed_Pawn_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    // Counts the number of passed pawns. A passed pawn is one with
-    // no opposing pawns on the same or adjacent files ahead of it.
     double score = 0.0;
     auto own_pawn = Piece{perspective, PAWN};
     auto other_pawn = Piece{opposite(perspective), PAWN};

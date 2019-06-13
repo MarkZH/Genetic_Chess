@@ -63,11 +63,6 @@ void King_Confinement_Gene::gene_specific_mutation()
 
 double King_Confinement_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    // A flood-fill-like algorithm to count the squares that are reachable by the
-    // king from its current positions with unlimited consecutive moves. The
-    // boundaries of this area area squares attacked by the other color or occupied
-    // by pieces of the same color.
-
     std::array<Square, 64> square_queue{}; // list of indices to check
     size_t queue_insertion_point = 0; // where to insert the index of the next square to check
     std::array<bool, 64> in_queue{}; // track which indices have or will have been checked

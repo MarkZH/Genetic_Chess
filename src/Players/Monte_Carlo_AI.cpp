@@ -19,14 +19,6 @@ Monte_Carlo_AI::~Monte_Carlo_AI()
     stop_pondering();
 }
 
-//! Builds up a sample of the game tree with random complete games to estimate the best move.
-//
-//! As the AI plays more random complete games, it fills out the game tree. After some
-//! amount of time (estimated to give equal time to every move in the game) it picks the
-//! move that most often leads to victory. During the next move, the branches of the
-//! game tree not taken are cutoff to keep memory use under control.
-//! \param board The current state of the game board.
-//! \param clock The game clock.
 const Move& Monte_Carlo_AI::choose_move(const Board& board, const Clock& clock) const
 {
     return pick_move(board, clock, false);
@@ -142,9 +134,6 @@ const Move& Monte_Carlo_AI::pick_move(const Board& board, const Clock& clock, bo
     return *best_result.first;
 }
 
-//! The name is the same as the algorithm.
-//
-//! \returns "Monte Carlo AI"
 std::string Monte_Carlo_AI::name() const
 {
     return "Monte Carlo AI";

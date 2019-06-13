@@ -17,13 +17,22 @@ class Board;
 class Piece_Strength_Gene : public Gene
 {
     public:
+        //! Initialize the Piece values to zero.
         Piece_Strength_Gene();
 
         std::unique_ptr<Gene> duplicate() const override;
 
         std::string name() const override;
 
+        //! This method is queried by other Genes to determine the value of various Pieces.
+        //
+        //! \param piece A pointer to a Piece. A nullptr represents no piece (as from an empty square).
+        //! \returns A numerical value of the Piece.
         double piece_value(Piece piece) const;
+        
+        //! Returns the total value of the pieces on the board at the start of a standard game.
+        //
+        //! \returns A value used by other Genes to normalize their scores.
         double normalizer() const;
 
     protected:
