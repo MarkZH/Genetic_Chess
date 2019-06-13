@@ -5,9 +5,7 @@
 #include "Game/Color.h"
 #include "Utility/String.h"
 
-Game_Result::Game_Result() :
-    victor(NONE),
-    cause(ONGOING)
+Game_Result::Game_Result() : Game_Result(NONE, ONGOING)
 {
 }
 
