@@ -20,11 +20,27 @@ class Game_Result;
 class Minimax_AI : public Player
 {
     public:
-        Minimax_AI();
+        //! Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
+        //
+        //! The depth of the search is determined by how much time is available.
+        //! At first, equal time is allocated to each legal move for examination. Time
+        //! is overcommitted with the expectation that not all of the time will be used
+        //! due to search cutoffs due to alpha-beta pruning.
+        //! \param board The current state of the game.
+        //! \param clock The game clock telling how much time is left in the game.
         const Move& choose_move(const Board& board, const Clock& clock) const override;
+
+        //! Prints the expected future variation and score for the chosen move.
+        //
+        //! \param board The state of the game just prior to the move being commented on.
         std::string commentary_for_next_move(const Board& board, size_t move_number) const override;
 
     protected:
+        //! Recalculate values that will last the lifetime of the instance.
+        //
+        //! In this case, the values are an initial estimate of the speed of
+        //! searching the game tree and the value of a centipawn for reporting
+        //! scores of board positions.
         void recalibrate_self() const;
 
     private:
@@ -84,7 +100,18 @@ class Minimax_AI : public Player
 
         mutable double value_of_centipawn;
 
+        //! Approximate the value of 0.01 pawns for reporting scores.
+        //
+        //! \returns A numerical value to normalize the scores returned by board evaluations
+        //!          so that the loss of a random pawn changes the score by about 1.0.
         void calculate_centipawn_value() const;
+
+        //! Initial measurement of evaluation speed of the engine.
+        //
+        //! The method Minimax_AI::choose_move() keeps track of the time it takes
+        //! and the number of positions it evaluates. But, it needs an accurate
+        //! starting value for the first move search. So, this practice move will
+        //! update the evaluation speed to a more reasonable starting value.
         void calibrate_thinking_speed() const;
 };
 

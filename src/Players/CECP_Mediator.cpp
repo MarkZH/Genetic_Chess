@@ -16,9 +16,6 @@
 
 #include "Utility/String.h"
 
-//! Set up the connection to the outside interface and send configuration data.
-//
-//! \param local_player The player on the machine. The name of the player gets sent to the interface.
 CECP_Mediator::CECP_Mediator(const Player& local_player)
 {
     std::string expected = "protover 2";

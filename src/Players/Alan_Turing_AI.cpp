@@ -15,9 +15,6 @@
 
 #include "Moves/Move.h"
 
-//! Turing's algorithm is a depth-3 minimax algorithm with an complex evalutation function.
-//
-//! The evaluation function is especially complex given that it had to be run on pencil and paper.
 const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
 {
     // Every possible first move is considerable
@@ -83,17 +80,11 @@ const Move& Alan_Turing_AI::choose_move(const Board& board, const Clock&) const
     return *best_first_move;
 }
 
-//! This program was named Turochamp after its creators: Turing and David Champernowne.
-//
-//! \returns "Turochamp"
 std::string Alan_Turing_AI::name() const
 {
     return "Turochamp";
 }
 
-//! Credit to Turing and Champerowne.
-//
-//! \returns "Alan Turing and David Champernowne"
 std::string Alan_Turing_AI::author() const
 {
     return "Alan Turing and David Champernowne";

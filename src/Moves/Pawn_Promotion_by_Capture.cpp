@@ -9,12 +9,6 @@
 #include "Moves/Pawn_Promotion.h"
 #include "Moves/Direction.h"
 
-//! Create a pawn capture that also promotes.
-//
-//! \param promotion A type of piece the pawn will be promoted to.
-//! \param color The color of the moving pawn.
-//! \param dir The direction of the capture.
-//! \param file_start The horizontal direction of the capture.
 Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
                                                      Color color,
                                                      Direction dir,
@@ -30,19 +24,11 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
     able_to_capture = true;
 }
 
-//! This move must capture.
-//
-//! \param board The board state just before the move.
-//! \returns Whether there is an opposing piece to capture.
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const
 {
     return board.piece_on_square(end()); // must capture
 }
 
-//! Combine pawn capture note with a promotion note.
-//
-//! \param board The board state just before the move.
-//! \returns A textual record of a capture and a promotion.
 std::string Pawn_Promotion_by_Capture::game_record_move_item(const Board& board) const
 {
     return start().file() + std::string("x") + Pawn_Promotion::game_record_move_item(board);

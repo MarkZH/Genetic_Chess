@@ -3,20 +3,20 @@
 #include <cmath>
 #include <cstddef>
 
-// Mean moves left in game given that a number of moves have been made already.
 double Math::average_moves_left(double mean_moves, double width, size_t moves_so_far)
 {
     // Assumes the number of moves in a game has a log-normal distribution.
     //
-    // A = Sum(x = moves_so_far + 1 to infinity) P(x)*x = average number of moves
-    //                                                    given game has already progressed
-    //                                                    moves_so_far
+    // A = Sum(x = moves_so_far + 1 to infinity) P(x)*x = average number of total moves
+    //                                                    given that the game has already
+    //                                                    progressed a number of moves equal
+    //                                                    to moves_so_far
     //
     // B = Sum(x = moves_so_far + 1 to infinity) P(x) = renormalization of P(x) for a
     //                                                  truncated range
     //
     // The calculations below for A and B use integrals on continuous functions as a
-    // faster approximation.
+    // faster approximation of the sums above.
 
     auto M = std::log(mean_moves);
     auto S = width;

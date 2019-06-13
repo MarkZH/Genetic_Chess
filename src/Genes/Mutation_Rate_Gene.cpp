@@ -20,9 +20,6 @@ std::string Mutation_Rate_Gene::name() const
     return "Mutation Rate Gene";
 }
 
-//! Controls how many changes a call to Genome::mutate() makes to the Gene collections.
-//
-//! \returns An integer number that determines the number of point mutations the Genome::mutate() makes.
 int Mutation_Rate_Gene::mutation_count() const
 {
     // THe larger the fractional component of the mutated_components_per_mutation,

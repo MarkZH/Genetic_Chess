@@ -10,7 +10,7 @@ class Game_Result;
 
 //! \file
 
-//! Play a game with a new board in the default starting state.
+//! Play a game with two local players.
 //
 //! \param board The Board on which the game will be played.
 //! \param game_clock The clock used for time control.

@@ -13,10 +13,25 @@ class Clock;
 class Human_Player : public Player
 {
     public:
+        //! The Human_Player constructor asks for the human's name.
+        //
+        //! The name is optional and can be left blank.
         Human_Player();
 
+        //! The interface for the human player is a text console.
+        //
+        //! The player can type moves in PGN or coordinate notation.
+        //! The text-based UI includes the time left. The player can enter a blank or illegal move
+        //! to update the time. If an illegal or invalid move is entered, the user is asked again
+        //! to type a move.
+        //! \param board The current state of the game.
+        //! \param clock The amount of time left in the game.
         const Move& choose_move(const Board& b, const Clock& clock) const override;
+
+        //! \returns The player's name, if entered.
         std::string name() const override;
+
+        //! \returns The author of this interface.
         std::string author() const override;
 
     private:

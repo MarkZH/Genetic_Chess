@@ -7,6 +7,7 @@
 class Game_Ended : public std::runtime_error
 {
     public:
+        //! Create a game-ending exception to throw.
         Game_Ended();
 };
 

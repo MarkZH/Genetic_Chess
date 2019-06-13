@@ -15,6 +15,7 @@ class Board;
 class Castling_Possible_Gene : public Gene
 {
     public:
+        //! Creates a gene with no inherent preference for castling in either direction.
         Castling_Possible_Gene();
 
         std::string name() const override;

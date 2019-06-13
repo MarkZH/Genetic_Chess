@@ -170,7 +170,7 @@ namespace
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
             {
-                add_legal_move<Pawn_Move>(out, color, PAWN, color, file, rank);
+                add_legal_move<Pawn_Move>(out, color, PAWN, color, Square{file, rank});
             }
         }
 
@@ -189,7 +189,7 @@ namespace
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
                 {
-                    add_legal_move<Pawn_Capture>(out, color, PAWN, color, dir, file, rank);
+                    add_legal_move<Pawn_Capture>(out, color, PAWN, color, dir, Square{file, rank});
                 }
             }
 
@@ -354,15 +354,10 @@ namespace
 
 const Piece::piece_code_t Piece::invalid_code = Piece{BLACK, KING}.index() + 1;
 
-//! Create an invalid piece that can represent an unoccupied space on a Board.
 Piece::Piece() : piece_code(invalid_code)
 {
 }
 
-//! Create a piece.
-//
-//! \param color The color of the piece.
-//! \param type The type of piece.
 Piece::Piece(Color color, Piece_Type type) :
     piece_code((type << 1) | color)
 {
@@ -377,16 +372,6 @@ Piece::Piece(Color color, Piece_Type type) :
     assert(color < 2 && type < 6);
 }
 
-//! Return a row of the ASCII art representation of the piece.
-//
-//! \param row Which row of the square to return, with 0 being the top.
-//!        If the height is above or below the piece's picture, then an
-//!        empty string is returned.
-//! \param square_height The height of the square in characters.
-//! \returns One row of text that forms a picture of the piece.
-//! \throws Debug assert fail if the square height is smaller than the piece height.
-//!
-//! Piece design by VK (?) and taken from http://ascii.co.uk/art/chess.
 std::string Piece::ascii_art(size_t row, size_t square_height) const
 {
     assert(*this);
@@ -406,27 +391,18 @@ std::string Piece::ascii_art(size_t row, size_t square_height) const
     }
 }
 
-//! The color of the piece.
-//
-//! \returns The Color of the player that controls the piece.
 Color Piece::color() const
 {
     assert(*this);
     return static_cast<Color>(piece_code & 1);
 }
 
-//! Get the PGN symbol for the piece.
-//
-//! \returns The symbol for the moving piece when writing a game record. A pawn is represented by an empty string.
 std::string Piece::pgn_symbol() const
 {
     assert(*this);
     return type() == PAWN ? std::string{} : std::string(1, std::toupper(fen_symbol()));
 }
 
-// Get the piece symbol when writing an FEN string.
-
-//! \returns A single character symbol for the piece. Uppercase is white, lowercase is black.
 char Piece::fen_symbol() const
 {
     assert(*this);
@@ -435,10 +411,6 @@ char Piece::fen_symbol() const
     return (color() == WHITE ? symbol : std::tolower(symbol));
 }
 
-//! Check that a piece is allowed to make a certain move.
-//
-//! \param move A pointer to a prospective move.
-//! \returns Whether or not the piece is allowed to move in the manner described by the parameter.
 bool Piece::can_move(const Move* move) const
 {
     assert(*this);
@@ -446,61 +418,39 @@ bool Piece::can_move(const Move* move) const
     return std::find(moves.begin(), moves.end(), move) != moves.end();
 }
 
-//! Get all possibly legal moves of a piece starting from a given square.
-//
-//! \param square The square where the moves start.
-//! \returns A list of legal moves starting from that square.
 const std::vector<const Move*>& Piece::move_list(Square square) const
 {
     assert(*this);
     return legal_moves[color()][type()][square.index()];
 }
 
-//! Get the type of the piece.
-//
-//! \returns The kind of piece, i.e., PAWN, ROOK, etc.
 Piece_Type Piece::type() const
 {
     assert(*this);
     return static_cast<Piece_Type>(piece_code >> 1);
 }
 
-//! Returns true if the piece is valid. An invalid piece represents an empty square on a Board.
 Piece::operator bool() const
 {
     return piece_code != invalid_code;
 }
 
-//! Returns an unsigned integer useful for indexing arrays.
 Piece::piece_code_t Piece::index() const
 {
     return piece_code;
 }
 
-//! Gives a list of moves that are allowed to capture other pieces.
-//
-//! \param square The square where the attacking moves start.
 const std::vector<const Move*>& Piece::attacking_moves(Square square) const
 {
     assert(*this);
     return attack_moves[color()][type()][square.index()];
 }
 
-//! Check two pieces for equality
-//
-//! \param a A piece.
-//! \param b Another piece.
-//! \returns Whether the two pieces are the same type and color
 bool operator==(Piece a, Piece b)
 {
     return a.index() == b.index();
 }
 
-//! Check two pieces for inequality
-//
-//! \param a A piece.
-//! \param b Another piece.
-//! \returns Whether the two pieces have different types or colors.
 bool operator!=(Piece a, Piece b)
 {
     return !(a == b);

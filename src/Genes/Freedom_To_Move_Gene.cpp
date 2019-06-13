@@ -44,9 +44,6 @@ size_t Freedom_To_Move_Gene::attack_count_scan(const Board& board, Color perspec
     return count;
 }
 
-//! Returns whether Board::attack_count() returns the same answer as the
-//! former method used by the Freedom_To_Move_Gene that involved scanning
-//! the Board square-by-square.
 bool Freedom_To_Move_Gene::verify(const Board& board) const
 {
     return board.attack_count(WHITE) == attack_count_scan(board, WHITE) &&
