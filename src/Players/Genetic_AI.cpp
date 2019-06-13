@@ -17,8 +17,7 @@ class Clock;
 int Genetic_AI::next_id = 0;
 size_t Genetic_AI::max_origin_pool_id = 0;
 
-Genetic_AI::Genetic_AI(int mutation_count) :
-    id_number(next_id++)
+Genetic_AI::Genetic_AI(int mutation_count) : id_number(next_id++)
 {
     mutate(mutation_count);
 }
