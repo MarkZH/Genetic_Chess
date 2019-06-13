@@ -45,5 +45,5 @@ bool Game_Tree_Node_Result::is_winning_for(Color query) const
 
 bool Game_Tree_Node_Result::is_losing_for(Color query) const
 {
-    return std::isinf(score) && ((score < 0) == (query == perspective));
+    return is_winning_for(opposite(query));
 }
