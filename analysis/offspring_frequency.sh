@@ -4,6 +4,12 @@
 # played by an AI equals the number of its offspring.
 
 input_file="$1"
+if [[ "$2" == "cloning" ]]
+then
+    adj=1
+else
+    adj=0
+fi
 output_file="${input_file}_offspring_counts.txt"
 grep "\[White \|\[Black " "$input_file" |  # Find players
     cut -d\" -f2 |         # Cut out name of player
@@ -12,6 +18,7 @@ grep "\[White \|\[Black " "$input_file" |  # Find players
     uniq -c |              # count appearances of ID (equals number of children)
     sed "s/^ *//" |        # Delete leading whitespace
     cut -d" " -f1 |        # Get list of number of children by each AI
+    awk '{print $1-'"$adj}" | # Subtract 1 if gene pool was cloning
     sort -n |              # Sort that list to
     uniq -c |              # count number of time an AI has sired N children
     column -t -o\; -O2,1 -N"Frequency,Child count" > "$output_file"

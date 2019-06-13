@@ -34,17 +34,22 @@ low_err(frequency - low_err <= 0) = 0;
 errorbar(child_count, frequency, low_err, high_err, '.');
 
 A = sum(child_count.*frequency)/2;
-x_fit = linspace(1, max(child_count), 1000);
+x_fit = linspace(min(child_count), max(child_count), 1000);
+A_text='';
+if min(x_fit) == 0
+    A_text = '1/2 ';
+end
 y_fit = A*(1/2).^(x_fit);
 
 plot(x_fit, y_fit, 'LineWidth', 3, 'DisplayName', 'Null hypothesis');
 
 fit_text = {'y = A(1/2)^{x}',
-            ['A = ' num2str(A) ' = # games = # offspring'],
+            ['A = ' num2str(A) ' = ' A_text ' # games = ' A_text ' # offspring'],
             'Error bars show \pm{}2 standard deviations'};
 xl = xlim;
+xlim([0 xl(2)]);
 yl = ylim;
-fit_box = text(0.6*xl(2), 0.4*yl(2), fit_text);
+fit_box = text(0.5*xl(2), 0.4*yl(2), fit_text);
 
 leg = legend('show');
 xlabel(data.colheaders(1));
