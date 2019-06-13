@@ -20,7 +20,7 @@ struct Square_Difference
 
     //! Reverse the direction of a square offset.
     Square_Difference operator-() const;
-    
+
     //! Returns a single-step version of the offset--i.e., (-3, 3) --> (-1, 1)
     //
     //! Note: Only valid for straight (rook- or bishop-type) moves
@@ -44,7 +44,7 @@ class Square
     public:
         //! The default constructor creates an invalid square location.
         Square();
-        
+
         //! This constructor creates a user-defined square.
         //
         //! \param file The file (column) of the square (a-h).
@@ -58,7 +58,7 @@ class Square
         //
         //! \returns The letter label of the square file.
         char file() const;
-        
+
         //! The rank of the square.
         //
         //! \returns The numerical label of the rank.
@@ -68,10 +68,10 @@ class Square
         //
         //! \returns An unsigned integer index.
         square_index_t index() const;
-        
+
         //! String representation of square.
         std::string string() const;
-        
+
         //! Returns the color of the square.
         //
         //! This function is useful for Board::enough_material_to_checkmate() since one
@@ -86,7 +86,7 @@ class Square
         //! \returns A reference to the now-modified square. This may create a square that is off
         //!          the board ("h8" + (1,1), for example).
         Square& operator+=(const Square_Difference& diff);
-        
+
         //! Apply an offset to a square in the opposite direction.
         //
         //! \param diff A pair of integers representing the change in file and rank
@@ -111,19 +111,19 @@ class Square
         //! \param rank Square rank to check (1 <= file <= 8)
         //! \returns Whether the rank meets the condition according to the parameter specification above.
         static bool inside_board(char file, int  rank);
-        
+
         //! Check if the square is a valid Board position.
         //
         //! \returns Whether the square is on the Board ("i10" returns false).
         bool inside_board() const;
-        
+
         //! Check whether a square has been set with a valid coordinate.
         //
         //! This is a synonym for Square::inside_board().
         bool is_set() const;
 
         // Iterating methods
-        
+
         //! Returns a pseudo-container than can iterator over all square on a Board.
         //
         //! The primary use of this method is to replace
@@ -143,7 +143,7 @@ class Square
         //!
         //! Use when the order of Square iteration doesn't matter.
         static All_Squares all_squares();
-        
+
         //! Create a container of Squares between--but not including--two squares.
         //
         //! \param a A square that borders the collection but is not included.
@@ -153,7 +153,7 @@ class Square
         //! This structure only works if the Squares in the arguments are along a common
         //! row, column, or diagonal.
         static Squares_in_a_Line squares_between(Square a, Square b);
-        
+
         //! Create a container of Squares along a line specified by a Square and a direction.
         //
         //! \param origin A square that starts a line of Squares but is not included in the collection.
@@ -244,16 +244,16 @@ class All_Squares_Iterator
         //
         //! \param start The square the iterator will refer to.
         explicit All_Squares_Iterator(Square start);
-        
+
         //! Go to the next Square along the line.
         All_Squares_Iterator& operator++();
-        
+
         //! Iterators are equal when they refer to the same Square.
         bool operator==(const All_Squares_Iterator& other) const;
-        
+
         //! Iterators are unequal when they refer to different Squares.
         bool operator!=(const All_Squares_Iterator& other) const;
-        
+
         //! Get the Square referred to by the iterator.
         Square operator*() const;
 
@@ -269,7 +269,7 @@ struct All_Squares
 {
     //! Return the first square iterator when iterating all squares.
     All_Squares_Iterator begin() const;
-    
+
     //! Return the end iterator for all squares.
     All_Squares_Iterator end() const;
 };
@@ -289,16 +289,16 @@ class Square_Line_Iterator
         //! \param start The start of the line of squares (not included in the collection).
         //! \param square_step The direction of the line extending away from start.
         Square_Line_Iterator(Square start, const Square_Difference& square_step);
-        
+
         //! Advance the iterator to the next Square in the line.
         Square_Line_Iterator& operator++();
-        
+
         //! Iterators are equal if they refer to the same square.
         bool operator==(const Square_Line_Iterator& other) const;
-        
+
         //! Iterators are different if they refer to different squares.
         bool operator!=(const Square_Line_Iterator& other) const;
-        
+
         //! Get the Square referred to by the iterator.
         Square operator*() const;
 
@@ -318,7 +318,7 @@ class Squares_in_a_Line
         //
         //! The parameter Squares must be along a common row, column, or diagonal.
         Squares_in_a_Line(Square first_border, Square second_border);
-        
+
         //! Create a collections of Squares along a line starting at--but not including--a Square.
         //
         //! \param origin The start of the line of Squares.
@@ -328,7 +328,7 @@ class Squares_in_a_Line
 
         //! Start the Square-line collection.
         Square_Line_Iterator begin() const;
-        
+
         //! End the Square-line collection.
         Square_Line_Iterator end() const;
 

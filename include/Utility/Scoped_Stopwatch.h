@@ -28,25 +28,25 @@ class Scoped_Stopwatch
         //! The timing result will be written to a file named "timing-N.txt",
         //! where N is a random number from 0 to 2^64 - 1.
         explicit Scoped_Stopwatch(const std::string& name);
-        
+
         Scoped_Stopwatch(const Scoped_Stopwatch& other) = delete;
         Scoped_Stopwatch& operator=(const Scoped_Stopwatch& other) = delete;
-        
+
         //! If the method stop() has not been called already, the destructor stops the stopwatch and records the time to a file.
         ~Scoped_Stopwatch();
 
         //! Manually stop the timer and record the result to a file.
         void stop();
-        
+
         //! Add on to the name provided in the constructor.
         //
         //! This can be useful for code with branches to label which
         //! branch a given execution took.
         void add_info(const std::string& info);
-        
+
         //! Prevent the stopwatch from recording a run.
         void reject(); // do not record time
-        
+
         //! Find out how much time as elapsed since the stopwatch started.
         //
         //! \returns Time in seconds.

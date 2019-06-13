@@ -54,7 +54,7 @@ class Outside_Communicator
         //! The outgoing string is also logged to a local file.
         //! \param cmd The string to send to the outside interface.
         static void send_command(const std::string& cmd);
-        
+
         //! Wait for a command from the outside interface and pass it on to derived class instances.
         //
         //! \returns The command from the outside interface if not "quit".

@@ -31,7 +31,7 @@ class Castle : public Move
         //! \param board The board on which castling is being considered.
         //! \returns Whether the current board position allows for castling.
         void side_effects(Board& board) const override;
-        
+
         //! Moves the rook to its final square.
         //
         //! This overloaded method also records when the castling move was made.

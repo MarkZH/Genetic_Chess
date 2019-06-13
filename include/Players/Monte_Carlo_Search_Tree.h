@@ -35,7 +35,7 @@ class Monte_Carlo_Search_Tree
         void add_search(Move_Iterator begin,
                         Move_Iterator end,
                         int score);
-        
+
         //! Cut off branches representing moves not taken.
         //
         //! In order to save on memory, the branches of the game tree that were
@@ -43,7 +43,7 @@ class Monte_Carlo_Search_Tree
         //! around 1/20th the original size.
         //! \param move The last move made in the current game.
         void reroot(const Move* move);
-        
+
         //! Find the most probable winning move in the branches
         //
         //! \returns A pair consisting of the most probable winning move (defined as
@@ -55,7 +55,7 @@ class Monte_Carlo_Search_Tree
         //! The idea is that the more often random games lead to winning outcomes when they pass
         //! through a node, the more likely that node represents a good move.
         std::pair<const Move*, double> best_result() const;
-        
+
         //! Calculate the current value of a move.
         //
         //! \param move The move being queried.
@@ -69,7 +69,7 @@ class Monte_Carlo_Search_Tree
         //! \returns A branch of the game tree that corresponds to the queried move.
         //!          Returns nullptr if no such branch exists.
         const Monte_Carlo_Search_Tree* subtree(const Move* move) const;
-        
+
         //! Pick the next move to explore while searching the game tree.
         //
         //! \param board The current state of the board being searched.

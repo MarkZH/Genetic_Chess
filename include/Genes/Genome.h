@@ -17,19 +17,19 @@ class Genome
     public:
         //! Create a genome with default-constructed (neutral behavior) Genes.
         Genome();
-        
+
         //! Clone a genome
         //
         //! \param other The originating genome.
         Genome(const Genome& other);
-        
+
         //! Create a new genome from two existing genomes via sexual reproduction
         //
         //! Create each Gene by copying from either parent with a 50-50 probability.
         //! \param A The first parent.
         //! \param B The second parent.
         Genome(const Genome& B, const Genome& A);
-        
+
         //! Inject another genome's data into this one (i.e., assignment operator)
         //
         //! \param other The originating genome.
@@ -50,7 +50,7 @@ class Genome
         //! \param depth How man moves in the future the current board state is compared to the
         //!        original board that represents the current state of the game.
         double evaluate(const Board& board, Color perspective, size_t depth) const;
-        
+
         //! Apply a random set of mutations to the entire genome.
         //
         //! The severity of the mutation is controlled by the Mutation_Rate_Gene.
@@ -61,7 +61,7 @@ class Genome
         //! \param board The current board position.
         //! \param clock The game clock.
         double time_to_examine(const Board& board, const Clock& clock) const; // how much time to use for this move
-        
+
         //! Returns a factor that is multiplied by the time allocated to examine a branch of the game tree.
         //
         //! With alpha-beta pruning, the search for the best move often cuts off before the entire branch
@@ -88,7 +88,7 @@ class Genome
 
         double score_board(const Board& board, Color perspective, size_t depth) const;
         void reset_piece_strength_gene();
-        
+
         //! Consults the Mutation_Rate_Gene to determine how many point mutations to apply to the genome.
         //
         //! \returns A number of mutations to apply.

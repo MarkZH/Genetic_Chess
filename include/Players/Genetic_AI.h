@@ -30,7 +30,7 @@ class Genetic_AI : public Minimax_AI
         //! \param id_in The ID to search for.
         //! \throws Genetic_AI_Creation_Error If there is an error during reading.
         Genetic_AI(const std::string& file_name, int id);
-        
+
         //! Create a new Genetic_AI via sexual reproduction.
         //
         //! The offspring is formed by randomly taking genes from each parent.
@@ -48,7 +48,7 @@ class Genetic_AI : public Minimax_AI
         //
         //! \returns "Genetic AI" plus the ID.
         std::string name() const override;
-        
+
         //! Reports the author of this chess engine.
         //
         //! \returns "Mark Harrison"
@@ -59,7 +59,7 @@ class Genetic_AI : public Minimax_AI
         //! The printed information includes the ID number, ancestry information, and genetic data.
         //! \param file_name The name of the text file to print to. If empty, print to stdout.
         void print(const std::string& file_name = "") const;
-        
+
         //! Print AI information to the given std::ostream.
         //
         //! \param os The stream to be written to.

@@ -34,7 +34,7 @@ struct Game_Tree_Node_Result
     //! have opposite sign.
     //! \param query The color of the player for whom the value of the board is sought.
     double corrected_score(Color query) const;
-    
+
     //! The depth in the game tree where this result was calculated.
     //
     //! \returns The number of moves from the original board needed to reach
@@ -45,12 +45,12 @@ struct Game_Tree_Node_Result
     //
     //! \param query The player for whom the result may be a win.
     bool is_winning_for(Color query) const;
-    
+
     //! Determine whether the result represents a losing endgame for a player.
     //
     //! \param query The player for whom the result may be a loss.
     bool is_losing_for(Color query) const;
-    
+
     //! Creates a quantity that can be compared with other Game_Tree_Node_Results
     //
     //! The quanity considers both the score and the depth in the following steps:

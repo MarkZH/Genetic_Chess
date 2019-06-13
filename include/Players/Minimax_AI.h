@@ -29,7 +29,7 @@ class Minimax_AI : public Player
         //! \param board The current state of the game.
         //! \param clock The game clock telling how much time is left in the game.
         const Move& choose_move(const Board& board, const Clock& clock) const override;
-        
+
         //! Prints the expected future variation and score for the chosen move.
         //
         //! \param board The state of the game just prior to the move being commented on.
@@ -105,7 +105,7 @@ class Minimax_AI : public Player
         //! \returns A numerical value to normalize the scores returned by board evaluations
         //!          so that the loss of a random pawn changes the score by about 1.0.
         void calculate_centipawn_value() const;
-        
+
         //! Initial measurement of evaluation speed of the engine.
         //
         //! The method Minimax_AI::choose_move() keeps track of the time it takes

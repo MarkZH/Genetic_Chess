@@ -27,10 +27,10 @@ class Human_Player : public Player
         //! \param board The current state of the game.
         //! \param clock The amount of time left in the game.
         const Move& choose_move(const Board& b, const Clock& clock) const override;
-        
+
         //! \returns The player's name, if entered.
         std::string name() const override;
-        
+
         //! \returns The author of this interface.
         std::string author() const override;
 

@@ -34,7 +34,7 @@ class Alan_Turing_AI : public Player
         //
         //! \returns "Turochamp"
         std::string name() const override;
-        
+
         //! Credit to Turing and Champerowne.
         //
         //! \returns "Alan Turing and David Champernowne"

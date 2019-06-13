@@ -25,7 +25,7 @@ class Pawn_Promotion : public Pawn_Move
         //
         //! \param board The board on which the move is being made.
         void side_effects(Board& board) const override;
-        
+
         //! The symbol of the piece the pawn is promoted to.
         //
         //! \returns PGN symbol of the new piece.

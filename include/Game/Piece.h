@@ -31,7 +31,7 @@ class Piece
     public:
         //! Create an invalid piece that can represent an unoccupied space on a Board.
         Piece();
-        
+
         //! Create a piece.
         //
         //! \param color The color of the piece.
@@ -42,12 +42,12 @@ class Piece
         //
         //! \returns The symbol for the moving piece when writing a game record. A pawn is represented by an empty string.
         std::string pgn_symbol() const;
-        
+
         // Get the piece symbol when writing an FEN string.
         //
         //! \returns A single character symbol for the piece. Uppercase is white, lowercase is black.
         char fen_symbol() const;
-        
+
         //! Return a row of the ASCII art representation of the piece.
         //
         //! \param row Which row of the square to return, with 0 being the top.
@@ -64,15 +64,15 @@ class Piece
         //
         //! \returns The Color of the player that controls the piece.
         Color color() const;
-        
+
         //! Get the type of the piece.
         //
         //! \returns The kind of piece, i.e., PAWN, ROOK, etc.
         Piece_Type type() const;
-        
+
         //! Returns true if the piece is valid. An invalid piece represents an empty square on a Board.
         operator bool() const;
-        
+
         //! Returns an unsigned integer useful for indexing arrays.
         piece_code_t index() const;
 
@@ -87,7 +87,7 @@ class Piece
         //! \param square The square where the moves start.
         //! \returns A list of legal moves starting from that square.
         const std::vector<const Move*>& move_list(Square square) const;
-        
+
         //! Gives a list of moves that are allowed to capture other pieces.
         //
         //! \param square The square where the attacking moves start.

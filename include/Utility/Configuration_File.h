@@ -25,7 +25,7 @@ class Configuration_File
         //! \returns The string data with leading and trailing whitespace removed.
         //! \throws std::runtime_error If the named parameter was not found in the file.
         std::string as_text(const std::string& parameter) const;
-        
+
         //! Return numerical data from the configuration file.
         //
         //! \param parameter The configuration parameter sought.
@@ -33,7 +33,7 @@ class Configuration_File
         //! \throws std::runtime_error If the named parameter was not found in the file or
         //!         if the data could not be converted to a numerical value.
         double as_number(const std::string& parameter) const;
-        
+
         //! Return true/false data from the configuration file.
         //
         //! \param parameter The configuration parameter sought.
@@ -46,7 +46,7 @@ class Configuration_File
 
         //! Check if any parameters in the configuration file were unused.
         bool any_unused_parameters() const;
-        
+
         //! Print the unused parameters in the configuration file to stdout.
         void print_unused_parameters() const;
 

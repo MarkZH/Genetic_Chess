@@ -78,7 +78,7 @@ class Board
         //! This is useful for Human_Player on the terminal and debugging.
         //! \param perspective Specifies which side of the board is at the bottom of the screen.
         void ascii_draw(Color perspective) const;
-        
+
         //! Returns the status of the game in FEN.
         //
         //! \returns A textual representation of the game state.
@@ -92,7 +92,7 @@ class Board
         //
         //! \returns The list of moves made on this board.
         const std::vector<const Move*>& game_record() const;
-        
+
         //! Get last move for dispaly in text-based UIs.
         //
         //! \returns Last move on this board in PGN notation
@@ -102,18 +102,18 @@ class Board
         //
         //! \param mode Which chess engine protocol is being used: CECP, UCI, or NO_THINKING.
         static void set_thinking_mode(Thinking_Output_Type);
-        
+
         //! Find out what kind of format an engine should output while picking a move.
         //
         //! \returns Format of thinking output: CECP, UCI, or NO_THINKING.
         static Thinking_Output_Type thinking_mode();
-        
+
         //! Force the Player that is currently choosing a move to stop thinking and immediately make a move.
         static void pick_move_now();
-        
+
         //! Check whether a Player should stop thinking and immediately move.
         static bool must_pick_move_now();
-        
+
         //! Allow the Player to take any amount of time to choose a move.
         static void choose_move_at_leisure();
 
@@ -150,44 +150,44 @@ class Board
         //! \param king_color The color of the king piece that is under potential attack.
         //! \returns Whether the king would be in check if it was placed on the square in question.
         bool safe_for_king(Square square, Color king_color) const;
-                
+
         //! Determine if there are any attacks on a square that are blocked by other pieces.
         //
         //! \param square The queried square.
         //! \param attacking_color The color of the attacking pieces.
         //! \returns Whether there is an attack on the square that is blocked by another piece.
         bool blocked_attack(Square square, Color attacking_color) const;
-        
+
         //! Determine whether the indicated square can be a target of an en passant move.
         //
         //! The is called by En_Passant::move_specific_legal().
         //! \param square The queried square.
         //! \returns Whether the square was passed by a pawn double move.
         bool is_en_passant_targetable(Square square) const;
-        
+
         //! Indicates whether the queried square has a piece on it that never moved.
         //
         //! \param square The queried squaer.
         //! \returns If the piece on the square has never moved during the game.
         bool piece_has_moved(Square square) const;
-        
+
         //! Finds the square on which a king resides.
         //
         //! \param color Which king to find.
         //! \returns Square which contains the sought after king.
         Square find_king(Color color) const;
-        
+
         //! Find out if the king of the player to move is currently in check.
         //
         //! \returns If the current player is in check.
         bool king_is_in_check() const;
-        
+
         //! Check if a move will leave the player making the move in check.
         //
         //! \param move A possibly legal move to check.
         //! \returns Whether the move under consideration will leave the friendly king in check.
         bool king_is_in_check_after_move(const Move& move) const;
-        
+
         //! Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.
         //
         //! \param square The queried square.
@@ -196,7 +196,7 @@ class Board
         //!          if it is white's turn, is there is a black piece that would pin a (possibly non-
         //!          existant) white piece on the given square to the white king?
         bool piece_is_pinned(Square square) const;
-        
+
         //! Check whether all of the squares between two squares are empty.
         //
         //! This method assumes the squares are along the same rank, file, or diagonal.
@@ -206,7 +206,7 @@ class Board
         //! \throws assertion_failure In DEBUG builds, squares not along the same rank, file, or diagonal
         //!         will trigger an assertion failure. In RELEASE builds, the result is undefined.
         bool all_empty_between(Square start, Square end) const;
-        
+
         //! Checks whether there are enough pieces on the board for any possible checkmate.
         //
         //! The following piece sets on the board make checkmate possible:
@@ -218,25 +218,25 @@ class Board
         //! \returns If there are enough pieces on the board to make a checkmate arrangement.
         //!          If the method returns false when called with NONE, this will usually lead to a drawn game.
         bool enough_material_to_checkmate(Color color = NONE) const;
-        
+
         //! Determines whether a move captures on the current board.
         //
         //! \param move Move to check.
         //! \returns If the move captures an opponent's piece.
         //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
         bool move_captures(const Move& move) const;
-        
+
         //! The number of moves since the last capture or pawn move.
         //
         //! \returns How many moves have been made since the last capturing or pawn move.
         size_t moves_since_pawn_or_capture() const;
-        
+
         //! Get a list of all moves that attack a given square.
         //
         //! \param square The square being attacked.
         //! \param attacking_color The color of pieces doing the attacking.
         const std::bitset<16>& moves_attacking_square(Square square, Color attacking_color) const;
-        
+
         //! Returns the Zobrist hash of the current state of the board.
         //
         //! See https://en.wikipedia.org/wiki/Zobrist_hashing for details.
@@ -251,27 +251,27 @@ class Board
         //! and how much time to devote to future moves.
         //! \returns Whether the last move captured an opponent's piece.
         bool last_move_captured() const;
-        
+
         //! Report if the last move changed the presence of pieces on the board.
         //
         //! This is more general than Board::last_move_captured() since it also checks
         //! for pawn promotions.
         //! \returns Whether the last move captured or resulted in a promoted pawn.
         bool last_move_changed_material() const;
-        
+
         //! Check if any currently legal move changes material by capturing or promoting a pawn.
         //
         //! This method is used by chess engines to determine how interesting a board position
         //! is and thus how much time to devote to studying future moves.
         //! \returns If any legal move captures or promotes a pawn.
         bool material_change_possible() const;
-        
+
         //! Gets the ply move during which a player castled.
         //
         //! \param player The color of the player being queried.
         //! \returns The ply count when the player castled, or MAX(size_t) if the player has not castled.
         size_t castling_move_index(Color player) const;
-        
+
         //! Returns the number of attacking moves available.
         //
         //! The method is used in the Freedom_To_Move_Gene::score_board() method.

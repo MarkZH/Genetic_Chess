@@ -38,7 +38,7 @@ class Gene
         //! \param is An input stream (std::ifstream, std::iostream, or similar).
         //! \throws Genetic_AI_Creation_Error If there is an invalid line or an unexpected property
         void read_from(std::istream& is);
-        
+
         //! Read gene data from a text file.
         //
         //! The method creates an input stream from the text file and passes it to the
@@ -47,7 +47,7 @@ class Gene
 
         //! Applies a random mutation to the priority or other aspect of a gene.
         void mutate();
-        
+
         //! Gives a numerical score to the board in the arguments.
         //
         //! \param board The state of the board to be evaluated--found at the leaves of the game search tree.
@@ -104,7 +104,7 @@ class Gene
         //! or replace this data with more specialized properties.
         //! \returns A collection of gene properties with their numerical values.
         virtual std::map<std::string, double> list_properties() const;
-        
+
         //! Reads a properties data structure and loads the data into itself.
         //
         //! This method is the counterpart to Gene::list_properties() in that it
@@ -121,7 +121,7 @@ class Gene
 
         virtual double score_board(const Board& board, Color perspective, size_t depth) const = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
-        
+
         //! A method overridden by derived genes to mutate more specific gene components.
         //
         //! By default, this method does nothing.

@@ -51,7 +51,7 @@ class Move
 
         //! The Square the Move originates from.
         Square start() const;
-        
+
         //! The Square the Move ends on.
         Square end() const;
 
@@ -60,12 +60,12 @@ class Move
         //! \returns A value indicating the two-dimensional movement.
         //!          Equivalent to Square_Difference(file_change(), rank_change()).
         Square_Difference movement() const;
-        
+
         //! How far move travels horizontally.
         //
         //! \returns The distance in squares between the start and end files.
         int file_change() const;
-        
+
         //! How far move travels vertically.
         //
         //! \returns The distance in squares between the start and end ranks.
@@ -76,7 +76,7 @@ class Move
         //! \param board A Board instance just prior to the move being made.
         //! \returns The full PGN record of a move.
         std::string game_record_item(const Board& board) const;
-        
+
         //! Returns a textual representation of a move in coordinate notation.
         //
         //! The first two characters indicate the starting square, the next two
@@ -88,12 +88,12 @@ class Move
         //
         //! \returns Whether this is an instance of the En_Passant class.
         bool is_en_passant() const;
-        
+
         //! Indicates whether this move is a castling move, a fact which needs special handling elsewhere.
         //
         //! \returns Whether this is an instance of the Castle class.
         bool is_castling() const;
-        
+
         //! Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.
         //
         //! \returns the PGN symbol of the promotion piece, if any.
@@ -105,13 +105,13 @@ class Move
         //!          2 horizontal moves, 2 vertical moves, 4 diagonal moves, and
         //!          8 knight moves.
         size_t attack_index() const;
-        
+
         //! Returns a unique move direction index for a manually specified move. See Move::attack_index().
         //
         //! \param move The difference between two Squares.
         //! \returns The same result as a call to Move::attack_index() with the same file_change() and rank_change().
         static size_t attack_index(const Square_Difference& move);
-        
+
         //! Returns the movement corresponding to an index given by Move::attack_index().
         //
         //! \returns A pair of integers giving the direction of an attacking move.

@@ -31,10 +31,10 @@ class Clock
 
         //! Stop the current player's clock and restart the opponent's clock.
         Game_Result punch();
-        
+
         //! Stop both clocks.
         void stop();
-        
+
         //! Start the moving player's clock at the start of a game.
         //
         //! This method also records the start time of the game for use in Board::print_game_record().
@@ -45,30 +45,30 @@ class Clock
         //
         //! \param color The color of the player whose time is being queried.
         double time_left(Color color) const;
-        
+
         //! The number of moves left before the clocks reset to the initial time.
         //
         //! \param color The color of the player being queried.
         size_t moves_until_reset(Color color) const;
-        
+
         //! The player for whom the clock is running.
         Color running_for() const;
-        
+
         //! The amount of time left on the clock that is currently running.
         double running_time_left() const;
-        
+
         //! Are clocks currently running?
         bool is_running() const;
 
         //! Returns the date and time when start() was called.
         std::chrono::system_clock::time_point game_start_date_and_time() const;
-        
+
         //! The intitial time on the clocks at the start of the game (and after moves_to_reset()).
         double initial_time() const;
-        
+
         //! How much time is added to a player's clock after every move.
         double increment(Color color) const;
-        
+
         //! How many moves must be played before the clocks are reset to their initial times.
         size_t moves_per_time_period() const;
 
