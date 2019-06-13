@@ -21,6 +21,12 @@ class Castle : public Move
         //! \param direction The direction of the king's move: LEFT for queenside, RIGHT for king side.
         Castle(int base_rank, Direction direction);
 
+        //! Moves the rook to its final square.
+        //
+        //! This overloaded method also records when the castling move was made.
+        //! \param board The board on which the move is being made.
+        void side_effects(Board& board) const override;
+
         //! Implements the rules for castling.
         //
         //! Namely:
@@ -30,12 +36,6 @@ class Castle : public Move
         //! - The king does not cross a square that is attacked by an opponent's piece.
         //! \param board The board on which castling is being considered.
         //! \returns Whether the current board position allows for castling.
-        void side_effects(Board& board) const override;
-
-        //! Moves the rook to its final square.
-        //
-        //! This overloaded method also records when the castling move was made.
-        //! \param board The board on which the move is being made.
         bool move_specific_legal(const Board& board) const override;
 
     protected:
