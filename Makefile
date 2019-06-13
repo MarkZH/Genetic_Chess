@@ -130,7 +130,7 @@ $(DEBUG_OBJ_DIR)/src/Genes/Genome.o : src/Genes/Genome.cpp include/Exceptions/Ge
 $(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Confinement_Gene.h include/Players/Thinking.h include/Utility/Random.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Genes/King_Confinement_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/King_Confinement_Gene.o
 
-$(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o : src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Protection_Gene.h include/Players/Thinking.h
+$(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o : src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Protection_Gene.h include/Moves/Move.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Genes/King_Protection_Gene.cpp -o $(DEBUG_OBJ_DIR)/src/Genes/King_Protection_Gene.o
 
 $(DEBUG_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : src/Genes/Look_Ahead_Gene.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Piece.h include/Game/Square.h include/Genes/Gene.h include/Genes/Look_Ahead_Gene.h include/Players/Thinking.h include/Utility/Math.h include/Utility/Random.h
@@ -310,7 +310,7 @@ $(RELEASE_OBJ_DIR)/src/Genes/Genome.o : src/Genes/Genome.cpp include/Exceptions/
 $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o : src/Genes/King_Confinement_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Confinement_Gene.h include/Players/Thinking.h include/Utility/Random.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Genes/King_Confinement_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/King_Confinement_Gene.o
 
-$(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o : src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Protection_Gene.h include/Players/Thinking.h
+$(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o : src/Genes/King_Protection_Gene.cpp include/Game/Board.h include/Game/Color.h include/Game/Piece.h include/Game/Square.h include/Genes/Gene.h include/Genes/King_Protection_Gene.h include/Moves/Move.h include/Players/Thinking.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Genes/King_Protection_Gene.cpp -o $(RELEASE_OBJ_DIR)/src/Genes/King_Protection_Gene.o
 
 $(RELEASE_OBJ_DIR)/src/Genes/Look_Ahead_Gene.o : src/Genes/Look_Ahead_Gene.cpp include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Piece.h include/Game/Square.h include/Genes/Gene.h include/Genes/Look_Ahead_Gene.h include/Players/Thinking.h include/Utility/Math.h include/Utility/Random.h
