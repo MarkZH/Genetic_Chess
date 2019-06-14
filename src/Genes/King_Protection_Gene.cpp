@@ -18,7 +18,7 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective, 
         auto step = Move::attack_direction_from_index(attack_index);
         for (auto square : Square::square_line_from(board.find_king(perspective), step))
         {
-            if (board.piece_on_square(square))
+            if(board.piece_on_square(square))
             {
                 break;
             }
