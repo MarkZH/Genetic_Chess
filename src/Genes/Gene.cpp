@@ -29,9 +29,9 @@ std::map<std::string, double> Gene::list_properties() const
     return {{"Priority", scoring_priority}};
 }
 
-void Gene::load_properties(const std::map<std::string, double>& property_list)
+void Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    scoring_priority = property_list.at("Priority");
+    scoring_priority = properties.at("Priority");
 }
 
 size_t Gene::mutatable_components() const

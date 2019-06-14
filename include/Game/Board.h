@@ -124,6 +124,8 @@ class Board
         //! \param file_name Name of the text file where the game will be printed. If empty, print to stdout.
         //! \param result The result of the last action (move, clock punch, or outside intervention) in the game.
         //! \param game_clock The game clock used during the game.
+        //! \param unusual_ending_reason A reason for the game ending not covered by a chess rule or the game clock.
+        //!        Usually comes from an exception what() message.
         void print_game_record(const Player* white,
                                const Player* black,
                                const std::string& file_name,
@@ -278,7 +280,7 @@ class Board
         //! \param attacking_color The color of pieces doing the attacking.
         //! \returns The number of attacking moves excepting those that attack pieces
         //!          of the same color.
-        size_t attack_count(Color attacker) const;
+        size_t attack_count(Color attacking_color) const;
 
         //! Create a copy of the board with a random pawn removed.
         //

@@ -188,14 +188,14 @@ bool operator!=(Square a, Square b);
 //! Add an offset to a square, returning a new Square.
 //
 //! \param square The original square.
-//! \param diff A pair of integers representing the change in file and rank.
-Square operator+(Square s, const Square_Difference& diff);
+//! \param diff An offset between two squares.
+Square operator+(Square square, const Square_Difference& diff);
 
 //! Add an offset to a square in the opposite direction, returning a new Square.
 //
 //! \param square The original square.
-//! \param diff A pair of integers representing the change in file and rank.
-Square operator-(Square s, const Square_Difference& diff);
+//! \param diff An offset between two squares.
+Square operator-(Square square, const Square_Difference& diff);
 
 //! Find the 2-dimensional distance offset between two squares.
 //
@@ -208,13 +208,19 @@ Square_Difference operator-(Square a, Square b);
 
 
 //! Returns whether a rook or bishop could move from one square to another in one move.
-bool straight_line_move(Square start, Square rank);
+//
+//! \param a A square on the board.
+//! \param b Another square on the board.
+bool straight_line_move(Square a, Square b);
 
 //! Returns whether two Square_Differences are in the exact same or exact opposite directions.
 //
 //! For example, (2, 2) is parallel to (3, 3) and (-1, -1)
 //!
 //! Note: A difference of (0, 0) is parallel with every possible other difference.
+//!
+//! \param move_1 A movement direction (length of the move does not matter).
+//! \param move_2 A movement direction (length of the move does not matter).
 bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2);
 
 //! Returns whether two Square_Differences are parallel in the same direction.
@@ -322,7 +328,7 @@ class Squares_in_a_Line
         //! Create a collections of Squares along a line starting at--but not including--a Square.
         //
         //! \param origin The start of the line of Squares.
-        //! \param square_step The direction the line proceeds. There are no restrictions on the
+        //! \param step The direction the line proceeds. There are no restrictions on the
         //!        direction or step size.
         Squares_in_a_Line(Square origin, const Square_Difference& step);
 

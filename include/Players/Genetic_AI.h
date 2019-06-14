@@ -27,7 +27,7 @@ class Genetic_AI : public Minimax_AI
         //! Create a Genetic_AI from a text file by searching for a specfic ID.
         //
         //! \param file_name The name of the file with the Genetic_AI data.
-        //! \param id_in The ID to search for.
+        //! \param id The ID to search for.
         //! \throws Genetic_AI_Creation_Error If there is an error during reading.
         Genetic_AI(const std::string& file_name, int id);
 
@@ -36,8 +36,7 @@ class Genetic_AI : public Minimax_AI
         //! The offspring is formed by randomly taking genes from each parent.
         //! \param A The first parent.
         //! \param B The second parent.
-        Genetic_AI(const Genetic_AI& gai_mother,
-                   const Genetic_AI& gai_father);
+        Genetic_AI(const Genetic_AI& A, const Genetic_AI& B);
 
         //! Apply random mutations to the Genome of the Genetic_AI
         //
@@ -62,8 +61,8 @@ class Genetic_AI : public Minimax_AI
 
         //! Print AI information to the given std::ostream.
         //
-        //! \param os The stream to be written to.
-        void print(std::ostream& file) const;
+        //! \param output The stream to be written to.
+        void print(std::ostream& output) const;
 
         //! Reports the ID number of the Genetic_AI.
         //
