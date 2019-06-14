@@ -11,6 +11,7 @@ class Board;
 class Clock;
 class Move;
 
+//! A class that mediates communication with a GUI via the UCI protocol.
 class UCI_Mediator : public Outside_Communicator
 {
     public:

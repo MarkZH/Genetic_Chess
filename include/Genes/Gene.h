@@ -27,6 +27,7 @@ class Gene
         //! the sign of both leads to the same behavior, making the priority non-negative cuts
         //! off the redundant half of the search space.
         Gene(bool non_negative_priority = false);
+
         virtual ~Gene() = default;
 
         //! Reads an input stream for gene data.
@@ -111,7 +112,7 @@ class Gene
         //! reads the same data structure as the one produced by Gene::list_properties().
         //! This means that this method is also overridden by derived Genes that have
         //! different properties.
-        //! \param property_list A data structure with all the data needed for this gene.
+        //! \param properties A data structure with all the data needed for this gene.
         //! \throws std::out_of_range When an expected property is not present in the input.
         virtual void load_properties(const std::map<std::string, double>& properties);
 

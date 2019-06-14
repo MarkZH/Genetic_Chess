@@ -33,6 +33,8 @@ class Minimax_AI : public Player
         //! Prints the expected future variation and score for the chosen move.
         //
         //! \param board The state of the game just prior to the move being commented on.
+        //! \param move_number The numeric label to use for the move (in case the current
+        //!        game did not start with move 1.
         std::string commentary_for_next_move(const Board& board, size_t move_number) const override;
 
     protected:
