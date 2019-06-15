@@ -1139,7 +1139,7 @@ void Board::print_game_record(const Player* white,
 
     if( ! unusual_ending_reason.empty())
     {
-        print_game_header_line(out_stream, "Termination", result.ending_reason());
+        print_game_header_line(out_stream, "Termination", unusual_ending_reason);
     }
     else if( ! result.ending_reason().empty() && ! String::contains(result.ending_reason(), "mates"))
     {
