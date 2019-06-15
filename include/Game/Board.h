@@ -346,7 +346,6 @@ class Board
         void clear_en_passant_target();
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(Piece piece, Square square);
-        void switch_turn();
         void set_unmoved(Square square);
         void update_board(const Move& move);
 

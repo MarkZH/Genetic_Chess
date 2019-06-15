@@ -491,7 +491,11 @@ void Board::update_board(const Move& move)
     move_piece(move);
     move.side_effects(*this);
 
-    switch_turn();
+    turn_color = opposite(turn_color);
+    update_whose_turn_hash();
+
+    checking_square = king_is_in_check() ? find_checking_square() : Square{};
+    recreate_move_caches();
 
     add_board_position_to_repeat_record();
 }
@@ -1180,14 +1184,6 @@ void Board::print_game_record(const Player* white,
         temp.submit_move(*next_move);
     }
     out_stream << "\n\n\n";
-}
-
-void Board::switch_turn()
-{
-    turn_color = opposite(turn_color);
-    update_whose_turn_hash();
-    checking_square = king_is_in_check() ? find_checking_square() : Square{};
-    recreate_move_caches();
 }
 
 void Board::make_en_passant_targetable(Square square)
