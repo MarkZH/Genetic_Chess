@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <cmath>
+#include <stdexcept>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -49,7 +50,12 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
         std::cout << "Time: " << clock.time_left(board.whose_turn()) << std::endl;
 
         std::cout << "Enter move: ";
-        std::getline(std::cin, move);
+
+        if( ! std::getline(std::cin, move))
+        {
+            std::cout << "\n\n";
+            throw std::runtime_error(String::trim_outer_whitespace(name() + " disconnected"));
+        }
 
         try
         {
