@@ -299,7 +299,7 @@ class Board
         std::string starting_fen;
         static const std::string standard_starting_fen;
         std::array<Square, 2> king_location;
-        mutable Square checking_square;
+        Square checking_square;
         mutable Square last_pin_check_square;
         mutable bool last_pin_result;
         size_t move_count_start_offset;
@@ -320,6 +320,8 @@ class Board
         void adjust_attack_counts(Piece piece1, Piece piece2, Square square);
         void adjust_attack_counts_common(Piece piece1, Piece piece2, Square square, int adding_or_subtracting);
         const std::bitset<16>& checking_moves() const;
+        Square find_initial_checking_square() const;
+        Square find_checking_square() const;
 
         // Information cache for gene reference
         bool material_change_move_available;
@@ -342,7 +344,6 @@ class Board
         bool no_legal_moves() const;
         void make_en_passant_targetable(Square square);
         void clear_en_passant_target();
-        void clear_checking_square();
         bool is_in_legal_moves_list(const Move& move) const;
         void place_piece(Piece piece, Square square);
         void switch_turn();

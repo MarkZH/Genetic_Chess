@@ -280,6 +280,7 @@ Board::Board(const std::string& fen) :
         fen_error("It is impossible for more than one knight to check king.");
     }
 
+    checking_square = king_is_in_check() ? find_initial_checking_square() : Square{};
     recreate_move_caches();
 
     // In case a listed en passant target is not actually a legal move.
@@ -678,7 +679,6 @@ void Board::move_piece(const Move& move)
     place_piece(moving_piece, move.end());
 
     clear_en_passant_target();
-    clear_checking_square();
 }
 
 Color Board::whose_turn() const
@@ -994,19 +994,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             return true;
         }
 
-        if( ! checking_square.is_set())
-        {
-            const auto& checks = checking_moves();
-            size_t checking_index = 0;
-            while( ! checks[checking_index])
-            {
-                ++checking_index;
-            }
-            auto step = Move::attack_direction_from_index(checking_index);
-            const auto& king_square = find_king(whose_turn());
-            auto squares = Square::square_line_from(king_square, -step);
-            checking_square = *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
-        }
+        assert(checking_square.is_set());
 
         if(in_line_in_order(checking_square, move.end(), find_king(whose_turn())))
         {
@@ -1198,6 +1186,7 @@ void Board::switch_turn()
 {
     turn_color = opposite(turn_color);
     update_whose_turn_hash();
+    checking_square = king_is_in_check() ? find_checking_square() : Square{};
     recreate_move_caches();
 }
 
@@ -1224,11 +1213,6 @@ bool Board::is_en_passant_targetable(Square square) const
 void Board::clear_en_passant_target()
 {
     make_en_passant_targetable({});
-}
-
-void Board::clear_checking_square()
-{
-    checking_square = Square{};
 }
 
 bool Board::piece_has_moved(Square square) const
@@ -1294,6 +1278,49 @@ void Board::recreate_move_caches()
                                                  {
                                                      return move_captures(*move) || move->promotion_piece_symbol();
                                                  });
+}
+
+Square Board::find_initial_checking_square() const
+{
+    const auto& checks = checking_moves();
+    size_t checking_index = 0;
+    while( ! checks[checking_index])
+    {
+        ++checking_index;
+    }
+    auto step = Move::attack_direction_from_index(checking_index);
+    const auto& king_square = find_king(whose_turn());
+    auto squares = Square::square_line_from(king_square, -step);
+    return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
+}
+
+Square Board::find_checking_square() const
+{
+    auto last_move = game_record().back();
+    if(last_move->is_castling())
+    {
+        // Checking piece must be rook
+        return last_move->end() - Square_Difference{last_move->file_change()/2, 0};
+    }
+
+    auto king_square = find_king(whose_turn());
+    auto attack_direction = king_square - last_move->end();
+    auto last_move_index = Move::attack_index(attack_direction);
+    auto direction_from_index = Move::attack_direction_from_index(last_move_index);
+
+    if(checking_moves().test(last_move_index) &&
+       moves_are_parallel(attack_direction, direction_from_index))
+    {
+        // Last move piece put king in check
+        return last_move->end();
+    }
+    else
+    {
+        // Last move revealed check
+        auto step = (last_move->start() - king_square).step();
+        auto squares = Square::square_line_from(last_move->start(), step);
+        return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
+    }
 }
 
 bool Board::enough_material_to_checkmate(Color color) const
