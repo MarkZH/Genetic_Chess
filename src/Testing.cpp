@@ -904,7 +904,19 @@ namespace
             }
         }
 
-        return ! file1 && ! file2; // both reached end-of-file
+        if(file1)
+        {
+            std::cerr << file_name1 << " is longer than " << file_name2 << std::endl;
+            return false;
+        }
+
+        if(file2)
+        {
+            std::cerr << file_name2 << " is longer than " << file_name1 << std::endl;
+            return false;
+        }
+
+        return true;
     }
 
     unsigned long long move_count(const Board& board, unsigned long long maximum_depth)
