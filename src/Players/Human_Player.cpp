@@ -18,7 +18,10 @@ class Move;
 Human_Player::Human_Player()
 {
     std::cout << "Enter name: ";
-    std::getline(std::cin, player_name);
+    if( ! std::getline(std::cin, player_name))
+    {
+        throw std::runtime_error("stdin disconnected");
+    }
 }
 
 const Move& Human_Player::choose_move(const Board& board, const Clock& clock) const
@@ -28,6 +31,7 @@ const Move& Human_Player::choose_move(const Board& board, const Clock& clock) co
 
     while(true)
     {
+        std::cout << "\n\n";
         board.ascii_draw(board.whose_turn());
         if( ! why_illegal.empty())
         {
