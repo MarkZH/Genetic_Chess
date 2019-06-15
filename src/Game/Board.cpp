@@ -611,7 +611,10 @@ const Move& Board::create_move(const std::string& move) const
     {
         if(String::starts_with(validated, moving_pieces))
         {
-            piece_symbol = moving_pieces.front();
+            if(validated.front() != 'P') // leave blank if pawn is moving
+            {
+                piece_symbol = moving_pieces.front();
+            }
         }
         else if(String::ends_with(validated, moving_pieces))
         {
