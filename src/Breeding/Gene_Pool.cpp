@@ -45,16 +45,16 @@ namespace
     std::mutex pause_mutex;
     #endif
 
-    using Gene_Pool = std::vector<Genetic_AI>;
+    using Gene_Pool_Set = std::vector<std::vector<Genetic_AI>>;
 
-    std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file);
+    Gene_Pool_Set load_gene_pool_file(const std::string& load_file);
 
     void pause_gene_pool(int);
 
-    void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name);
+    void write_generation(const Gene_Pool_Set& pools, size_t pool_index, const std::string& genome_file_name);
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats);
+    void purge_dead_from_map(const Gene_Pool_Set& pools, Stat_Map& stats);
 }
 
 void gene_pool(const std::string& config_file)
@@ -504,7 +504,7 @@ namespace
         #endif // _WIN32
     }
 
-    void write_generation(const std::vector<Gene_Pool>& pools, size_t pool_index, const std::string& genome_file_name)
+    void write_generation(const Gene_Pool_Set& pools, size_t pool_index, const std::string& genome_file_name)
     {
         static std::map<Genetic_AI, bool> written_before;
         static std::string last_file_name;
@@ -541,7 +541,7 @@ namespace
         purge_dead_from_map(pools, written_before);
     }
 
-    std::vector<Gene_Pool> load_gene_pool_file(const std::string& load_file)
+    Gene_Pool_Set load_gene_pool_file(const std::string& load_file)
     {
         std::string line;
         size_t line_number = 0;
@@ -551,7 +551,7 @@ namespace
         {
             std::cout << "Could not open file: " << load_file << std::endl;
             std::cout << "Starting with empty gene pool." << std::endl;
-            return std::vector<Gene_Pool>();
+            return {};
         }
 
         std::map<size_t, std::string> still_alive;
@@ -578,7 +578,7 @@ namespace
         }
 
         auto largest_pool_number = still_alive.rbegin()->first;
-        std::vector<Gene_Pool> result(largest_pool_number + 1);
+        Gene_Pool_Set result(largest_pool_number + 1);
         for(const auto& index_list : still_alive)
         {
             line = pool_lines[index_list.first];
@@ -602,7 +602,7 @@ namespace
     }
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const std::vector<Gene_Pool>& pools, Stat_Map& stats)
+    void purge_dead_from_map(const Gene_Pool_Set& pools, Stat_Map& stats)
     {
         Stat_Map new_stats;
         for(const auto& pool : pools)
