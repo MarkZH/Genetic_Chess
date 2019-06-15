@@ -281,6 +281,10 @@ Board::Board(const std::string& fen) :
     }
 
     recreate_move_caches();
+
+    // In case a listed en passant target is not actually a legal move.
+    --repeat_count_insertion_point;
+    add_board_position_to_repeat_record();
 }
 
 void Board::fen_error(const std::string& reason) const
