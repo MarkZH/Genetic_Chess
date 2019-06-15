@@ -179,7 +179,7 @@ bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference
 bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2)
 {
     return moves_are_parallel(move_1, move_2) &&
-           move_1.file_change*move_2.file_change + move_1.rank_change*move_2.rank_change > 0; // dot product
+           move_1.file_change*move_2.file_change + move_1.rank_change*move_2.rank_change >= 0; // dot product
 }
 
 bool in_line_in_order(Square a, Square b, Square c)

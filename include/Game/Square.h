@@ -217,7 +217,7 @@ bool straight_line_move(Square a, Square b);
 //
 //! For example, (2, 2) is parallel to (3, 3) and (-1, -1)
 //!
-//! Note: A difference of (0, 0) is parallel with every possible other difference.
+//! Note: A difference of (0, 0) is parallel with every other difference.
 //!
 //! \param move_1 A movement direction (length of the move does not matter).
 //! \param move_2 A movement direction (length of the move does not matter).
@@ -227,10 +227,17 @@ bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference
 //
 //! For example, (2, 2) and (-1, -1) are parallel but not in the same direction,
 //! whereas (2, 2) and (1, 1) are parallel and in the same direction.
+//!
+//! Note: A difference of (0, 0) is in the same direction as every other difference.
+//!
+//! \param move_1 A movement direction (length of the move does not matter).
+//! \param move_2 A movement direction (length of the move does not matter).
 bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2);
 
 //! Returns whether the three squares form a line in the order given.
 //
+//! Note: Trivially true if a == b or b == c.
+//!
 //! \param a A square that should be to one side.
 //! \param b Another square that should lie between the other two.
 //! \param c A final square that should be on the opposite side of b to a.
