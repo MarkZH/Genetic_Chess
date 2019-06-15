@@ -59,6 +59,9 @@ namespace
 
 void gene_pool(const std::string& config_file)
 {
+    // Signal to pause gene pool
+    signal(PAUSE_SIGNAL, pause_gene_pool);
+
     auto config = Configuration_File(config_file);
 
     // Environment variables
@@ -231,9 +234,6 @@ void gene_pool(const std::string& config_file)
 
         std::cout << "Done." << std::endl;
     }
-
-    // Signal to pause gene pool
-    signal(PAUSE_SIGNAL, pause_gene_pool);
 
     for(size_t pool_index = starting_pool; true; pool_index = (pool_index + 1) % pools.size()) // run forever
     {
