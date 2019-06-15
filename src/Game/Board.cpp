@@ -600,7 +600,7 @@ const Move& Board::create_move(const std::string& move) const
         {
             throw Illegal_Move("Only pawns can be promoted: " + move);
         }
-        piece_symbol = moving_pieces.front();
+
         if( ! String::contains(promotion_pieces, moving_pieces.back()))
         {
             throw Illegal_Move("Cannot promote to pawn: " + move);
