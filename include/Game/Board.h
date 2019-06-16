@@ -348,6 +348,7 @@ class Board
         void place_piece(Piece piece, Square square);
         void set_unmoved(Square square);
         void update_board(const Move& move);
+        Game_Result move_result() const;
 
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record();

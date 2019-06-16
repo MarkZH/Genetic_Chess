@@ -447,7 +447,11 @@ const Move& Board::create_move(Square start, Square end, char promote) const
 Game_Result Board::submit_move(const Move& move)
 {
     update_board(move);
+    return move_result();
+}
 
+Game_Result Board::move_result() const
+{
     if(no_legal_moves())
     {
         if(king_is_in_check())
@@ -1117,13 +1121,8 @@ void Board::print_game_record(const Player* white,
     }
 
     // Get actual result
-    auto result_board = Board(starting_fen);
-    auto move_result = Game_Result{};
-    for(auto move : game_record())
-    {
-        move_result = result_board.submit_move(*move);
-    }
-    auto actual_result = move_result.game_has_ended() ? move_result : result;
+    auto last_move_result = move_result();
+    auto actual_result = last_move_result.game_has_ended() ? last_move_result : result;
 
     print_game_header_line(out_stream, "Result", actual_result.game_has_ended() ? actual_result.game_ending_annotation() : "*");
 
