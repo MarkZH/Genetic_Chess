@@ -240,7 +240,8 @@ void gene_pool(const std::string& config_file)
         auto& pool = pools[pool_index];
 
         // Write overall stats
-        std::cout << "\nGene pool ID: " << pool_index
+        std::cout << "\n=======================\n\n"
+                  << "Gene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
                   << "\nGames: " << game_count[pool_index]
                   << "  White wins: " << color_wins[WHITE][pool_index]
