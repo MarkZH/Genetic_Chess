@@ -392,17 +392,11 @@ void gene_pool(const std::string& config_file)
         }
 
         // Record best AI from all pools.
-        auto best_ai = pool.front();
-        auto best_compare = [&wins, &draws](const auto& x, const auto& y)
-                            {
-                                return wins[x] - draws[x] < wins[y] - draws[y];
-                            };
+        auto best_ai = pools.front().front();
         for(const auto& search_pool : pools)
         {
-            best_ai = std::max(best_ai,
-                               *std::max_element(search_pool.begin(),
-                                                 search_pool.end(),
-                                                 best_compare), best_compare);
+            // Taking the oldest AI (smallest ID) as the best
+            best_ai = std::min(best_ai, *std::min_element(search_pool.begin(), search_pool.end()));
         }
         auto best_file_name = genome_file_name + "_best_genome.txt";
         auto temp_best_file_name = best_file_name + ".tmp";
@@ -438,16 +432,17 @@ void gene_pool(const std::string& config_file)
                 std::cout << std::endl;
                 std::vector<Genetic_AI> winners;
                 std::transform(pools.begin(), pools.end(), std::back_inserter(winners),
-                               [best_compare](const auto& source_pool)
+                               [](const auto& source_pool)
                                {
-                                   return *std::max_element(source_pool.begin(), source_pool.end(), best_compare);
+                                   // Taking the oldest AI (smallest ID) as the best
+                                   return *std::min_element(source_pool.begin(), source_pool.end());
                                });
 
                 for(size_t source_pool_index = 0; source_pool_index < pools.size(); ++source_pool_index)
                 {
                     auto dest_pool_index = (source_pool_index + 1) % pools.size();
                     auto& dest_pool = pools[dest_pool_index];
-                    auto& loser = *std::min_element(dest_pool.begin(), dest_pool.end(), best_compare);
+                    auto& loser = *std::max_element(dest_pool.begin(), dest_pool.end());
                     std::cout << "Sending ID "
                               << winners[source_pool_index].id()
                               << " to pool "
