@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
                 {
                     try
                     {
-                        play_game_with_outsider(*white);
+                        play_game_with_outsider(*white, game_file_name);
                     }
                     catch(const Game_Ended&)
                     {

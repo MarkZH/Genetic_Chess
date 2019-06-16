@@ -1116,7 +1116,16 @@ void Board::print_game_record(const Player* white,
         }
     }
 
-    print_game_header_line(out_stream, "Result", result.game_has_ended() ? result.game_ending_annotation() : "*");
+    // Get actual result
+    auto result_board = Board(starting_fen);
+    auto move_result = Game_Result{};
+    for(auto move : game_record())
+    {
+        move_result = result_board.submit_move(*move);
+    }
+    auto actual_result = move_result.game_has_ended() ? move_result : result;
+
+    print_game_header_line(out_stream, "Result", actual_result.game_has_ended() ? actual_result.game_ending_annotation() : "*");
 
     print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
@@ -1141,50 +1150,50 @@ void Board::print_game_record(const Player* white,
     {
         print_game_header_line(out_stream, "Termination", unusual_ending_reason);
     }
-    else if( ! result.ending_reason().empty() && ! String::contains(result.ending_reason(), "mates"))
+    else if( ! actual_result.ending_reason().empty() && ! String::contains(actual_result.ending_reason(), "mates"))
     {
-        print_game_header_line(out_stream, "Termination", result.ending_reason());
+        print_game_header_line(out_stream, "Termination", actual_result.ending_reason());
     }
 
-    auto temp = Board(starting_fen);
+    auto commentary_board = Board(starting_fen);
     if(starting_fen != standard_starting_fen)
     {
         print_game_header_line(out_stream, "SetUp", 1);
         print_game_header_line(out_stream, "FEN", starting_fen);
     }
 
-    auto starting_turn_offset = size_t(temp.whose_turn() == WHITE ? 0 : 1);
+    auto starting_turn_offset = size_t(commentary_board.whose_turn() == WHITE ? 0 : 1);
 
     for(size_t i = 0; i < game_record_listing.size(); ++i)
     {
         auto step = move_count_start_offset + (i + starting_turn_offset)/2;
-        if(temp.whose_turn() == WHITE || i == 0)
+        if(commentary_board.whose_turn() == WHITE || i == 0)
         {
             out_stream << '\n' <<  + step << ".";
-            if(i == 0 && temp.whose_turn() == BLACK)
+            if(i == 0 && commentary_board.whose_turn() == BLACK)
             {
                 out_stream << " ...";
             }
         }
 
         auto next_move = game_record_listing.at(i);
-        out_stream << " " << next_move->game_record_item(temp);
-        if(i + 1 == game_record_listing.size() && ! result.game_has_ended())
+        out_stream << " " << next_move->game_record_item(commentary_board);
+        if(i + 1 == game_record_listing.size() && ! actual_result.game_has_ended())
         {
             out_stream << "*";
         }
 
-        auto current_player = (temp.whose_turn() == WHITE ? white : black);
+        auto current_player = (commentary_board.whose_turn() == WHITE ? white : black);
         if(current_player)
         {
-            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(temp, step));
+            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(commentary_board, step));
             if( ! commentary.empty())
             {
                 out_stream << " " << commentary;
             }
         }
 
-        temp.submit_move(*next_move);
+        commentary_board.submit_move(*next_move);
     }
     out_stream << "\n\n\n";
 }

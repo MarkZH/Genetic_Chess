@@ -30,6 +30,7 @@ Game_Result play_game(Board board,
 //! Play a game with an outside GUI interface.
 //
 //! \param local_player A chess engine chosen at the command line.
-void play_game_with_outsider(const Player& local_player);
+void play_game_with_outsider(const Player& local_player,
+                             const std::string& game_file_name);
 
 #endif // GAME_H

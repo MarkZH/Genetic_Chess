@@ -15,6 +15,8 @@
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
 
+#include "Exceptions/Game_Ended.h"
+
 Game_Result play_game(Board board,
                       Clock game_clock,
                       const Player& white,
@@ -67,35 +69,51 @@ Game_Result play_game(Board board,
     }
 }
 
-void play_game_with_outsider(const Player& player)
+void play_game_with_outsider(const Player& player, const std::string& game_file_name)
 {
     #ifndef _WIN32
     signal(SIGTSTP, SIG_IGN);
     #endif // _WIN32
 
     auto outsider = connect_to_outside(player);
+    const Player* white = nullptr;
+    const Player* black = nullptr;
 
     Board board;
     Clock clock;
 
-    while(true)
+    try
     {
-        outsider->setup_turn(board, clock);
-        outsider->listen(board, clock);
+        while(true)
+        {
+            outsider->setup_turn(board, clock);
+            outsider->listen(board, clock);
 
-        if( ! clock.is_running())
-        {
-            clock.start();
-        }
-        if(clock.running_for() != board.whose_turn())
-        {
+            if( ! clock.is_running())
+            {
+                clock.start();
+            }
+            if(clock.running_for() != board.whose_turn())
+            {
+                clock.punch();
+            }
+
+            white = nullptr;
+            black = nullptr;
+            (board.whose_turn() == WHITE ? white : black) = &player;
+
+            const auto& chosen_move = player.choose_move(board, clock);
             clock.punch();
+
+            outsider->handle_move(board, chosen_move);
+            player.ponder(board, clock, outsider->pondering_allowed());
         }
-
-        const auto& chosen_move = player.choose_move(board, clock);
-        clock.punch();
-
-        outsider->handle_move(board, chosen_move);
-        player.ponder(board, clock, outsider->pondering_allowed());
+    }
+    catch(const Game_Ended&)
+    {
+        if( ! game_file_name.empty())
+        {
+            board.print_game_record(white, black, game_file_name, {}, {}, "End of online game");
+        }
     }
 }
