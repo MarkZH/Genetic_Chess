@@ -192,13 +192,13 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             recurse = false;
         }
-        else if(still_on_principal_variation)
-        {
-            recurse = true;
-        }
         else if(depth > 100)
         {
             recurse = false; // prevent stack overflow
+        }
+        else if(still_on_principal_variation)
+        {
+            recurse = true;
         }
         else
         {
