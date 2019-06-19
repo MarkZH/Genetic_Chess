@@ -8,6 +8,7 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
+#include <cmath>
 
 namespace String
 {
@@ -151,6 +152,37 @@ std::string String::format_integer(int n, const std::string& separator)
         }
 
         return result;
+    }
+}
+
+std::string String::round_to_precision(double x, double precision)
+{
+    auto result = std::to_string(std::round(x/precision)*precision);
+    auto last_significant_index = result.find_last_not_of('0');
+    if(last_significant_index == std::string::npos)
+    {
+        return result;
+    }
+    else
+    {
+        if(result[last_significant_index] == '.')
+        {
+            if(precision < 1.0)
+            {
+                // Include ".0"
+                return result.substr(0, last_significant_index + 2);
+            }
+            else
+            {
+                // Precision is greater than one, so delete fractional part
+                return result.substr(0, last_significant_index);
+            }
+        }
+        else
+        {
+            // Include first non-significant digit
+            return result.substr(0, last_significant_index + 1);
+        }
     }
 }
 

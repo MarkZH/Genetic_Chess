@@ -86,6 +86,13 @@ namespace String
     //! \returns A text string with thousands separators.
     std::string format_integer(int n, const std::string& separator);
 
+    //! Round a number to the specified precision
+    //
+    //! \param x The number to be rounded.
+    //! \param precision The precision of the rounding (0.01 for 2 decimal places of precision).
+    //! \returns A string representation of the rounded number.
+    std::string round_to_precision(double x, double precision);
+
     //! Convert a std::string to a size_t for multiple platforms.
     //
     //! \param s The input string containing a number.
