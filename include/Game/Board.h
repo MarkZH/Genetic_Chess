@@ -221,12 +221,19 @@ class Board
         //!          If the method returns false when called with NONE, this will usually lead to a drawn game.
         bool enough_material_to_checkmate(Color color = NONE) const;
 
-        //! Determines whether a move captures on the current board.
+        //! Determines whether a move will capture on the current board.
         //
         //! \param move Move to check.
         //! \returns If the move captures an opponent's piece.
         //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
         bool move_captures(const Move& move) const;
+
+        //! Determines whether a move will change the material on the current board.
+        //
+        //! \param move Move to check.
+        //! \returns If the move captures an opponent's piece or promotes a pawn.
+        //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
+        bool move_changes_material(const Move& move) const;
 
         //! The number of moves since the last capture or pawn move.
         //

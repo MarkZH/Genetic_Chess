@@ -1487,6 +1487,11 @@ bool Board::move_captures(const Move& move) const
     return attacked_piece || move.is_en_passant();
 }
 
+bool Board::move_changes_material(const Move& move) const
+{
+    return move_captures(move) || move.promotion_piece_symbol();
+}
+
 bool Board::king_multiply_checked() const
 {
     return checking_moves().count() > 1;
