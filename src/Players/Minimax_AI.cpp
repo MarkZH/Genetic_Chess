@@ -90,6 +90,9 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         output_thinking_uci(result, clock, board.whose_turn());
     }
 
+    result.time_allotted = time_to_use;
+    result.time_used = clock_start_time - clock.running_time_left();
+
     commentary.push_back(result);
 
     if(result.depth() > 2)
@@ -449,15 +452,9 @@ std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move
 
         if( ! move_result.game_has_ended())
         {
-            auto score = std::to_string(int(comment.corrected_score(board.whose_turn())/centipawn_value())/100.0);
-            auto decimal_point_index = score.find('.');
-            if(decimal_point_index != std::string::npos)
-            {
-                // Truncate to two decimal places
-                score = score.substr(0, decimal_point_index + 3);
-            }
-
-            result += "{" + score + "}";
+            auto round = [](double x) { return String::round_to_precision(x, 0.01); };
+            auto score = round(comment.corrected_score(board.whose_turn())/centipawn_value()/100.0);
+            result += "{" + score + "; " + round(comment.time_used) + "/" + round(comment.time_allotted) + "}";
         }
         else
         {
