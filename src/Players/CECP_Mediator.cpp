@@ -118,12 +118,13 @@ void CECP_Mediator::listen(Board& board, Clock& clock)
     last_listening_command = std::async(std::launch::async, &CECP_Mediator::listener, this, std::ref(board), std::ref(clock));
 }
 
-void CECP_Mediator::handle_move(Board& board, const Move& move)
+Game_Result CECP_Mediator::handle_move(Board& board, const Move& move)
 {
     if(ignore_next_move)
     {
         log("Ignoring move: " + move.coordinate_move());
         ignore_next_move = false;
+        return {};
     }
     else
     {
@@ -133,6 +134,7 @@ void CECP_Mediator::handle_move(Board& board, const Move& move)
         {
             report_end_of_game(result);
         }
+        return result;
     }
 }
 

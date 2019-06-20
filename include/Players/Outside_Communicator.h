@@ -8,6 +8,7 @@ class Clock;
 class Board;
 class Move;
 class Player;
+class Game_Result;
 
 //! A class to facilitate interfacing with outside programs.
 class Outside_Communicator
@@ -32,7 +33,7 @@ class Outside_Communicator
         //
         //! \param board The Board used for the game.
         //! \param move The move picked by the local AI.
-        virtual void handle_move(Board& board, const Move& move) = 0;
+        virtual Game_Result handle_move(Board& board, const Move& move) = 0;
 
         //! Returns whether the GUI is allowing thinking during the other player's move.
         virtual bool pondering_allowed() const = 0;

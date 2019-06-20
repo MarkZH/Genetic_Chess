@@ -81,6 +81,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
 
     Board board;
     Clock clock;
+    Game_Result game_result;
 
     try
     {
@@ -105,7 +106,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
             const auto& chosen_move = player.choose_move(board, clock);
             clock.punch();
 
-            outsider->handle_move(board, chosen_move);
+            game_result = outsider->handle_move(board, chosen_move);
             player.ponder(board, clock, outsider->pondering_allowed());
         }
     }
@@ -113,7 +114,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
     {
         if( ! game_file_name.empty())
         {
-            board.print_game_record(white, black, game_file_name, {}, {}, "End of online game");
+            board.print_game_record(white, black, game_file_name, game_result, clock, "End of online game");
         }
     }
 }

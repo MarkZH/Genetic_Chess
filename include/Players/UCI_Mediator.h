@@ -10,6 +10,7 @@ class Player;
 class Board;
 class Clock;
 class Move;
+class Game_Result;
 
 //! A class that mediates communication with a GUI via the UCI protocol.
 class UCI_Mediator : public Outside_Communicator
@@ -22,7 +23,7 @@ class UCI_Mediator : public Outside_Communicator
 
         void setup_turn(Board& board, Clock& clock) override;
         void listen(Board& board, Clock& clock) override;
-        void handle_move(Board& board, const Move& move) override;
+        Game_Result handle_move(Board& board, const Move& move) override;
         bool pondering_allowed() const override;
 
     private:
