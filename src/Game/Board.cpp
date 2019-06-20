@@ -1145,13 +1145,13 @@ void Board::print_game_record(const Player* white,
         print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(BLACK));
     }
 
-    if( ! unusual_ending_reason.empty())
-    {
-        print_game_header_line(out_stream, "Termination", unusual_ending_reason);
-    }
-    else if( ! actual_result.ending_reason().empty() && ! String::contains(actual_result.ending_reason(), "mates"))
+    if( ! actual_result.ending_reason().empty() && ! String::contains(actual_result.ending_reason(), "mates"))
     {
         print_game_header_line(out_stream, "Termination", actual_result.ending_reason());
+    }
+    else if( ! actual_result.game_has_ended() && ! unusual_ending_reason.empty())
+    {
+        print_game_header_line(out_stream, "Termination", unusual_ending_reason);
     }
 
     auto commentary_board = Board(starting_fen);
