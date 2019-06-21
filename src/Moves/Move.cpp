@@ -161,14 +161,7 @@ std::string Move::game_record_move_item(const Board& board) const
 std::string Move::game_record_ending_item(Board board) const
 {
     auto result = board.submit_move(*this);
-    std::string appendage;
-
-    if(board.king_is_in_check() && result.winner() == NONE)
-    {
-        appendage.push_back('+');
-    }
-
-    return appendage + result.game_record_annotation();
+    return ((board.king_is_in_check() && ! result.game_has_ended()) ? "+" : "") + result.game_record_annotation();
 }
 
 std::string Move::coordinate_move() const

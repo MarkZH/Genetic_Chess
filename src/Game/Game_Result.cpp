@@ -63,12 +63,7 @@ std::string Game_Result::game_record_annotation() const
 {
     if(game_has_ended())
     {
-        std::string prefix = " ";
-        if(cause == CHECKMATE)
-        {
-            prefix =  "#" + prefix;
-        }
-        return prefix + game_ending_annotation();
+        return (cause == CHECKMATE ? "# " : " ") + game_ending_annotation();
     }
     else
     {
