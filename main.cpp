@@ -432,6 +432,7 @@ namespace
                     continue;
                 }
             }
+
             if(line[0] == '[') // header lines
             {
                 std::cout << line << std::endl;
@@ -513,6 +514,7 @@ namespace
                     std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
                     return false;
                 }
+
                 if(expect_threefold_draw != String::contains(result.ending_reason(), "fold"))
                 {
                     std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;

@@ -81,6 +81,7 @@ double Clock::time_left(Color color) const
     {
         return 0.0;
     }
+
     if(whose_turn != color || ! clocks_running)
     {
         return timers[color].count();

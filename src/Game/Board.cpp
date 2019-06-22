@@ -160,6 +160,7 @@ Board::Board(const std::string& fen) :
     {
         fen_error("White king not in FEN string");
     }
+
     if( ! find_king(BLACK).is_set())
     {
         fen_error("Black king not in FEN string");
@@ -383,6 +384,7 @@ std::string Board::fen_status() const
             }
         }
     }
+
     if(s.back() == ' ')
     {
         s.push_back('-');
@@ -550,6 +552,7 @@ const Move& Board::create_move(const std::string& move) const
         return create_move({'e', whose_turn() == WHITE ? 1 : 8},
                            {'g', whose_turn() == WHITE ? 1 : 8});
     }
+
     if(String::lowercase(validated) == "ooo")
     {
         return create_move({'e', whose_turn() == WHITE ? 1 : 8},

@@ -94,6 +94,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
             {
                 clock.start();
             }
+
             if(clock.running_for() != board.whose_turn())
             {
                 clock.punch();

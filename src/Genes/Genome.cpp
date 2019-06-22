@@ -159,6 +159,7 @@ void Genome::read_from(std::istream& is)
         {
             throw Genetic_AI_Creation_Error("No colon in parameter line: " + line);
         }
+
         if(String::trim_outer_whitespace(line_split[0]) == "Name")
         {
             auto gene_name = String::trim_outer_whitespace(line_split[1]);

@@ -114,6 +114,7 @@ std::string Move::game_record_move_item(const Board& board) const
         {
             continue;
         }
+
         if(other_square == start() || other_square == end())
         {
             continue;
@@ -132,6 +133,7 @@ std::string Move::game_record_move_item(const Board& board) const
                 record_file = true;
                 continue;
             }
+
             if(other_square.rank() != start().rank())
             {
                 record_rank = true;
@@ -143,6 +145,7 @@ std::string Move::game_record_move_item(const Board& board) const
     {
         move_record += start().file();
     }
+
     if(record_rank)
     {
         move_record += std::to_string(start().rank());
