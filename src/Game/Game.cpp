@@ -49,6 +49,8 @@ Game_Result play_game(Board board,
             }
         }
 
+        game_clock.stop();
+
         board.print_game_record(&white,
                                 &black,
                                 pgn_file_name,
