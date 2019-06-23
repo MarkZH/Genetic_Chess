@@ -89,7 +89,7 @@ for yi = 2 : length(data.colheaders) - 2
     xlabel(xaxis);
     title(name);
 
-    plot(xlim, [0 0], 'k'); % X-axis
+    add_x_axis = true;
 
     for index = 1:length(id_marks)
         plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
@@ -105,7 +105,6 @@ for yi = 2 : length(data.colheaders) - 2
     conv_margin = floor(conv_window/2);
     x_axis = id_list(conv_margin : end - conv_margin);
     plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
-    print([gene_pool_filename ' gene ' name '.png']);
 
     special_plot_index = 0;
     if ~isempty(strfind(name, piece_strength_prefix))
@@ -117,7 +116,14 @@ for yi = 2 : length(data.colheaders) - 2
     elseif ~isempty(strfind(name, speculation_keyword))
         plot_figure = speculation_figure;
         special_plot_index = 3;
+        add_x_axis = false;
     end
+
+    if add_x_axis
+        plot(xlim, [0 0], 'k'); % X-axis
+    end
+
+    print([gene_pool_filename ' gene ' name '.png']);
 
     if special_plot_index > 0 && length(this_data) > conv_window;
         figure(plot_figure);
@@ -187,11 +193,11 @@ for index = 1 : length(special_plots)
 
     figure(special_plots(index));
 
-    plot(xlim, [0 0], 'k'); % X-axis
+    if special_plots(index) != speculation_figure
+        plot(xlim, [0 0], 'k'); % X-axis
+    end
 
-    if special_plots(index) == speculation_figure
-        plot(xlim, [1 1], 'k'); % default speculation constant
-    elseif special_plots(index) == piece_strength_figure
+    if special_plots(index) == piece_strength_figure
         yl = ylim;
         xl = xlim;
         for level = -10:10

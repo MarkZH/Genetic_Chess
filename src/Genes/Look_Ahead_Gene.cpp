@@ -17,6 +17,7 @@ Look_Ahead_Gene::Look_Ahead_Gene() :
     mean_game_length(50),
     game_length_uncertainty(0.5)
 {
+    speculation_constants.fill(1.0);
 }
 
 std::map<std::string, double> Look_Ahead_Gene::list_properties() const
@@ -58,18 +59,18 @@ void Look_Ahead_Gene::gene_specific_mutation()
     switch(choice)
     {
         case 1:
-            mean_game_length += Random::random_laplace(1.0);
+            mean_game_length += Random::random_laplace(0.1);
             mean_game_length = std::abs(mean_game_length);
             break;
         case 2:
-            game_length_uncertainty += Random::random_laplace(0.05);
+            game_length_uncertainty += Random::random_laplace(0.01);
             game_length_uncertainty = std::abs(game_length_uncertainty);
             break;
         default:
             assert(choice >= 3 && choice - 3 < speculation_constants.size());
             auto& spec = speculation_constants[choice - 3];
-            spec += Random::random_laplace(0.1);
-            spec = std::abs(spec);
+            spec += Random::random_laplace(0.01);
+            spec = std::max(spec, 1.0);
             break;
     }
 }
