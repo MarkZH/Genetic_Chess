@@ -530,12 +530,12 @@ const Move& Board::create_move(const std::string& move) const
     }
 
     static const std::string promotion_pieces = "RNBQK";
-    static const std::string lowercase_promotion_pieces = String::lowercase(promotion_pieces);
     static const std::string pieces = "P" + promotion_pieces;
+    static const std::string lowercase_pieces = String::lowercase(pieces);
     static const std::string valid_files = "abcdefgh";
     static const std::string valid_rows  = "12345678";
     static const std::string castling = "Oo";
-    static const std::string valid_characters = lowercase_promotion_pieces + pieces + valid_files + valid_rows + castling;
+    static const std::string valid_characters = lowercase_pieces + pieces + valid_files + valid_rows + castling;
 
     std::string validated;
     std::copy_if(move.begin(), move.end(), std::back_inserter(validated),
@@ -559,10 +559,13 @@ const Move& Board::create_move(const std::string& move) const
                            {'c', whose_turn() == WHITE ? 1 : 8});
     }
 
-    // Capitalize piece symbol when unambiguous (i.e., not a bishop)
-    if(String::contains(String::lowercase(pieces), validated.front()) && validated.front() != 'b')
+    // Capitalize piece symbols when unambiguous (i.e., not a bishop)
+    for(auto& c : validated)
     {
-        validated.front() = std::toupper(validated.front());
+        if(String::contains(lowercase_pieces, c) && c != 'b')
+        {
+            c = std::toupper(c);
+        }
     }
 
     // Capitalize promotion piece symbol
