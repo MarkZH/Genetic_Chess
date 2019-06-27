@@ -115,6 +115,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
     }
     catch(const Game_Ended&)
     {
+        player.set_opponent_name(outsider->other_player_name());
         if( ! game_file_name.empty())
         {
             board.print_game_record(white, black, game_file_name, game_result, clock, "End of online game");

@@ -45,6 +45,20 @@ class Player
         //!        This is also used when the game record begins in the middle of a game.
         //! \returns A text string commenting on the move that will follow the input position.
         virtual std::string commentary_for_next_move(const Board& board, size_t move_number) const;
+
+        //! Get the name of this player's opponent when playing through a GUI.
+        //
+        //! \param name The GUI-provided name of the opponent.
+        void set_opponent_name(const std::string& name) const;
+
+        //! Provide the name of the opponent if the opponent cannot do so itself.
+        //
+        //! If playing through a GUI, the opponent will not be a part of the same process
+        //! as this player.
+        std::string opponent_name() const;
+
+    private:
+        mutable std::string opposing_player_name;
 };
 
 #endif // PLAYER_H

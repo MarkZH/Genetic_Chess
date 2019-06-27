@@ -17,6 +17,7 @@ UCI_Mediator::UCI_Mediator(const Player& player)
 {
     send_command("id name " + player.name());
     send_command("id author " + player.author());
+    send_command("option name UCI_Opponent type string default <empty>");
     send_command("uciok");
 }
 
@@ -169,6 +170,11 @@ std::string UCI_Mediator::receive_uci_command(Board& board, Clock& clock, bool w
         {
             log("Stopping local AI thinking");
             board.pick_move_now();
+        }
+        else if(String::starts_with(command, "setoption name UCI_Opponent value "))
+        {
+            // command has 8 fields requiring 7 cuts to get name
+            set_other_player_name(String::split(command, " ", 7).back());
         }
         else
         {

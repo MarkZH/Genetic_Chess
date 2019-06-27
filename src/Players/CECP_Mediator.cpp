@@ -241,6 +241,10 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
             board = Board{};
             clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), WHITE, false);
         }
+        else if(String::starts_with(command, "name "))
+        {
+            set_other_player_name(String::split(command, " ", 1).back());
+        }
         else
         {
             return command;

@@ -1115,10 +1115,15 @@ void Board::print_game_record(const Player* white,
 
     for(auto player_color : {WHITE, BLACK})
     {
-        const auto& player = player_color == WHITE ? white : black;
+        auto player = player_color == WHITE ? white : black;
+        auto other_player = player_color == WHITE ? black : white;
         if(player && ! player->name().empty())
         {
             print_game_header_line(out_stream, color_text(player_color), player->name());
+        }
+        else if(other_player && ! other_player->opponent_name().empty())
+        {
+            print_game_header_line(out_stream, color_text(player_color), other_player->opponent_name());
         }
         else
         {

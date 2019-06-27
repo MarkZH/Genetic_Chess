@@ -43,9 +43,17 @@ class Outside_Communicator
         //! \param data A text string to write.
         static void log(const std::string& data);
 
+        //! Get the name of the player on the other side of the GUI.
+        std::string other_player_name() const;
+
     protected:
         //! If two copies of genetic_chess are running, their logs can be indented differently to distinguish them.
         static void set_indent_level(unsigned int n);
+
+        //! Store the opponent's name when received from the GUI.
+        //
+        //! \param name The received name.
+        void set_other_player_name(const std::string& name);
 
         //! Constructor is protected so that it is only called by connect_to_outside().
         Outside_Communicator() = default;
@@ -64,6 +72,7 @@ class Outside_Communicator
 
     private:
         static std::string indent;
+        std::string outside_player_name;
 
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
 };
