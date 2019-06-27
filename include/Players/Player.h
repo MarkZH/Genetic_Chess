@@ -11,7 +11,6 @@ class Move;
 class Player
 {
     public:
-        //! A defaulted destructor.
         virtual ~Player() = default;
 
         //! The player chooses the next move in the game.
