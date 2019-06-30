@@ -67,8 +67,12 @@ void Clock::stop()
 
 void Clock::start()
 {
+    static const auto default_game_start_date_time = std::chrono::system_clock::time_point{};
     time_previous_punch = std::chrono::steady_clock::now();
-    game_start_date_time = std::chrono::system_clock::now();
+    if(game_start_date_time == default_game_start_date_time)
+    {
+        game_start_date_time = std::chrono::system_clock::now();
+    }
     clocks_running = true;
 }
 
