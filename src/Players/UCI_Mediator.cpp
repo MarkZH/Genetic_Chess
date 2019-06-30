@@ -64,7 +64,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
             log("Board ready for play");
             board.set_thinking_mode(UCI);
         }
-        else if(String::starts_with(command, "go"))
+        else if(String::starts_with(command, "go "))
         {
             set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
 
