@@ -70,11 +70,6 @@ void Clock::start()
     clocks_running = true;
 }
 
-void Clock::do_not_stop_game()
-{
-    local_clock_stoppage = false;
-}
-
 double Clock::time_left(Color color) const
 {
     if( ! use_clock)

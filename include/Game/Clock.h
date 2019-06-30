@@ -40,9 +40,6 @@ class Clock
         //! This method also records the start time of the game for use in Board::print_game_record().
         void start();
 
-        //! This method disables the return of a game-ending result from Clock::punch().
-        void do_not_stop_game();
-
         //! Returns the amount of time left for the given player.
         //
         //! \param color The color of the player whose time is being queried.

@@ -29,8 +29,8 @@ class UCI_Mediator : public Outside_Communicator
     private:
         std::future<std::string> last_listening_result;
 
-        std::string listener(Board& board, Clock& clock);
-        std::string receive_uci_command(Board& board, Clock& clock, bool while_listening);
+        std::string listener(Board& board);
+        std::string receive_uci_command(Board& board, bool while_listening);
 };
 
 #endif // UCI_MEDIATOR_H

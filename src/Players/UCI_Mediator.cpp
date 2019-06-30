@@ -25,7 +25,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
 {
     while(true)
     {
-        auto command = receive_uci_command(board, clock, false);
+        auto command = receive_uci_command(board, false);
         if(command == "ucinewgame")
         {
             log("stopping thinking and clocks");
@@ -125,9 +125,9 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
     }
 }
 
-void UCI_Mediator::listen(Board& board, Clock& clock)
+void UCI_Mediator::listen(Board& board, Clock&)
 {
-    last_listening_result = std::async(std::launch::async, &UCI_Mediator::listener, this, std::ref(board), std::ref(clock));
+    last_listening_result = std::async(std::launch::async, &UCI_Mediator::listener, this, std::ref(board));
 }
 
 Game_Result UCI_Mediator::handle_move(Board& board, const Move& move)
@@ -141,15 +141,13 @@ bool UCI_Mediator::pondering_allowed() const
     return true;
 }
 
-std::string UCI_Mediator::listener(Board& board, Clock& clock)
+std::string UCI_Mediator::listener(Board& board)
 {
-    return receive_uci_command(board, clock, true);
+    return receive_uci_command(board, true);
 }
 
-std::string UCI_Mediator::receive_uci_command(Board& board, Clock& clock, bool while_listening)
+std::string UCI_Mediator::receive_uci_command(Board& board, bool while_listening)
 {
-    clock.do_not_stop_game();
-
     while(true)
     {
         std::string command;
