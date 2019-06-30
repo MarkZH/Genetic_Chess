@@ -27,7 +27,8 @@ class Clock
               size_t moves_to_reset = 0,
               double increment_seconds = 0.0,
               Color starting_turn = WHITE,
-              bool clock_stops_game = true);
+              bool clock_stops_game = true,
+              std::chrono::system_clock::time_point previous_start_time = {});
 
         //! Stop the current player's clock and restart the opponent's clock.
         Game_Result punch();

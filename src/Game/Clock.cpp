@@ -12,7 +12,8 @@ Clock::Clock(double duration_seconds,
              size_t moves_to_reset,
              double increment_seconds,
              Color starting_turn,
-             bool clock_stops_game) :
+             bool clock_stops_game,
+             std::chrono::system_clock::time_point previous_start_time) :
     timers({fractional_seconds(duration_seconds), fractional_seconds(duration_seconds)}),
     moves_to_reset_clocks({0, 0}),
     initial_start_time(Clock::fractional_seconds(duration_seconds)),
@@ -21,7 +22,8 @@ Clock::Clock(double duration_seconds,
     whose_turn(starting_turn),
     use_clock(duration_seconds > 0),
     clocks_running(false),
-    local_clock_stoppage(clock_stops_game)
+    local_clock_stoppage(clock_stops_game),
+    game_start_date_time(previous_start_time)
 {
 }
 

@@ -30,7 +30,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
         {
             log("stopping thinking and clocks");
             board.pick_move_now();
-            clock.stop();
+            clock = {};
         }
         else if(String::starts_with(command, "position "))
         {
@@ -68,7 +68,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
         {
             set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
 
-            clock = Clock(0, 0, 0, board.whose_turn(),false);
+            clock = Clock(0, 0, 0, board.whose_turn(), false, clock.game_start_date_and_time());
 
             auto go_parse = String::split(command);
             for(size_t i = 1; i < go_parse.size(); ++i)
@@ -110,7 +110,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
                 else if(option == "movetime")
                 {
                     log("Setting clock to " + std::to_string(new_time) + " seconds per move");
-                    clock = Clock(new_time, 1, 0.0, board.whose_turn(), false);
+                    clock = Clock(new_time, 1, 0.0, board.whose_turn(), false, clock.game_start_date_and_time());
                 }
                 else
                 {
