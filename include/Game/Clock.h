@@ -23,6 +23,9 @@ class Clock
         //! \param starting_turn Which player's clock to start upon calling start().
         //! \param clock_stops_game Whether this clock should return a Game_Result that stops a game upon time expiring.
         //!        This parameter should be false if an external clock (e.g., from XBoard via CECP) will stop the game.
+        //! \param previous_start_time If the clock for a game is being replaced by another clock (for example, a GUI
+        //!        changes time control midgame), then this parameter can be used to preserve the actual start of the
+        //!        current game.
         Clock(double duration_seconds = 0.0,
               size_t moves_to_reset = 0,
               double increment_seconds = 0.0,
