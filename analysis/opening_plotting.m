@@ -58,29 +58,3 @@ set(leg, 'location', 'southoutside');
 set(leg, 'orientation', 'horizontal');
 title('Count of opening moves');
 print([raw_data '_opening_moves_plot_lin.png']);
-
-
-
-top_rate_data = importdata([raw_data, '_top_opening_rate_data.txt'], ',');
-
-figure;
-hold all;
-window = min(1000, floor(0.1*size(top_rate_data.data, 1)));
-
-for col = 1 : size(top_rate_data.data, 2)
-    plot(movsum(top_rate_data.data(:, col), window, 'EndPoints', 'discard'), ...
-         'LineWidth', 3, ...
-         'displayname', top_rate_data.colheaders{col});
-end
-
-for index = 1:length(game_marks)
-    plot(game_marks(index)*[1 1], ylim, 'displayname', game_notes{index});
-end
-
-xlabel('Games played');
-ylabel(['Rate of opening usage (count/' num2str(window) ' games)']);
-leg = legend('show');
-set(leg, 'location', 'southoutside');
-set(leg, 'orientation', 'horizontal');
-title('Rate of opening usage');
-print([raw_data '_opening_moves_rate_plot_lin.png']);
