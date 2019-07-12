@@ -20,6 +20,7 @@ using namespace std::placeholders; // for _1, _2, etc. in std::bind()
 #include "Game/Piece.h"
 
 #include "Moves/Move.h"
+#include "Moves/Castle.h"
 
 #include "Players/Player.h"
 
@@ -1318,7 +1319,7 @@ Square Board::find_checking_square() const
     if(last_move->is_castling())
     {
         // Checking piece must be rook
-        return last_move->end() - Square_Difference{last_move->file_change()/2, 0};
+        return static_cast<const Castle*>(last_move)->rook_end_square();
     }
 
     auto king_square = find_king(whose_turn());
