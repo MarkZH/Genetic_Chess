@@ -172,6 +172,10 @@ for pool_id = 0 : max(pool_ids)
              'displayname', ['Pool ' name(end)]);
     end
 
+    for index = 1:length(id_marks)
+        plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
+    end
+
     xlabel('ID');
     ylabel('Fraction of ancestry');
     title(['Ancestry of Pool ' num2str(pool_id)]);
