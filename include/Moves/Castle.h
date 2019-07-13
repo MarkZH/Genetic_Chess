@@ -38,6 +38,9 @@ class Castle : public Move
         //! \returns Whether the current board position allows for castling.
         bool move_specific_legal(const Board& board) const override;
 
+        //! Returns the square on which the corresponding rook lands.
+        Square rook_end_square() const;
+
     protected:
         //! Castling moves have a special notation in PGN.
         //
