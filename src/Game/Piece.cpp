@@ -406,7 +406,7 @@ std::string Piece::pgn_symbol() const
 char Piece::fen_symbol() const
 {
     assert(*this);
-    static auto symbols = "PRNBQK";
+    static const auto symbols = "PRNBQK";
     auto symbol = symbols[type()];
     return (color() == WHITE ? symbol : std::tolower(symbol));
 }
