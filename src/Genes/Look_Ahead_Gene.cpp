@@ -59,7 +59,7 @@ void Look_Ahead_Gene::gene_specific_mutation()
     switch(choice)
     {
         case 1:
-            mean_game_length += Random::random_laplace(0.1);
+            mean_game_length += Random::random_laplace(0.3);
             mean_game_length = std::abs(mean_game_length);
             break;
         case 2:
