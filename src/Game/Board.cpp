@@ -1012,7 +1012,12 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             return true;
         }
 
-        assert(checking_square.is_set());
+        #ifndef NDEBUG
+        if( ! checking_square.is_set())
+        {
+            throw std::runtime_error("Could not find checking square.");
+        }
+        #endif // NDEBUG
 
         if(in_line_in_order(checking_square, move.end(), find_king(whose_turn())))
         {
@@ -1336,8 +1341,16 @@ Square Board::find_checking_square() const
     else
     {
         // Last move revealed check
-        auto step = (last_move->start() - king_square).step();
-        auto squares = Square::square_line_from(last_move->start(), step);
+        auto reveal_square = last_move->start();
+        if( ! straight_line_move(king_square, reveal_square) || ! checking_moves().test(Move::attack_index(king_square - reveal_square)))
+        {
+            // Pawn captured en passant reveals check
+            assert(last_move->is_en_passant());
+            reveal_square = Square{last_move->end().file(), last_move->start().rank()};
+        }
+
+        auto step = (reveal_square - king_square).step();
+        auto squares = Square::square_line_from(reveal_square, step);
         return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
     }
 }
