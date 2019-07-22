@@ -417,11 +417,7 @@ const Move& Board::create_move(Square start, Square end, char promote) const
 
     if(move_list.empty())
     {
-        throw Illegal_Move("No legal move found for " +
-                           start.string() +
-                           "-" +
-                           end.string() +
-                           " (" + std::string(1, promote ? promote : ' ') + ")");
+        throw Illegal_Move("No legal move found for " + start.string() + end.string() + promote);
     }
 
     if(move_list.size() == 1)
