@@ -16,7 +16,6 @@
 #include "Breeding/Gene_Pool.h"
 
 #include "Exceptions/Illegal_Move.h"
-#include "Exceptions/Game_Ended.h"
 
 #include "Utility/String.h"
 #include "Testing.h"
@@ -259,14 +258,7 @@ int main(int argc, char *argv[])
 
                 if( ! black)
                 {
-                    try
-                    {
-                        play_game_with_outsider(*white, game_file_name);
-                    }
-                    catch(const Game_Ended&)
-                    {
-                        // Outside_Communicator received "quit" command
-                    }
+                    play_game_with_outsider(*white, game_file_name);
                 }
                 else
                 {
