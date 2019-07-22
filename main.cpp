@@ -11,7 +11,6 @@
 #include "Moves/Move.h"
 
 #include "Players/Genetic_AI.h"
-#include "Players/Human_Player.h"
 #include "Players/Random_AI.h"
 
 #include "Breeding/Gene_Pool.h"
@@ -160,11 +159,7 @@ int main(int argc, char *argv[])
                 for(int i = 1; i < argc; ++i)
                 {
                     std::string opt = argv[i];
-                    if(opt == "-human")
-                    {
-                        latest = std::make_unique<Human_Player>();
-                    }
-                    else if(opt == "-random")
+                    if(opt == "-random")
                     {
                         latest = std::make_unique<Random_AI>();
                     }
@@ -447,18 +442,8 @@ namespace
                         break;
                     }
 
-                    std::cout << "Enter \"y\" to play game from here: " << std::endl;
-                    auto response = std::cin.get();
-                    if(std::tolower(response) == 'y')
-                    {
-                        play_game(board,
-                                  {},
-                                  Human_Player(),
-                                  Human_Player(),
-                                  false,
-                                  file_name + "_continued.pgn");
-                        break;
-                    }
+                    std::cout << "Press enter to continue or ctrl-c to quit ..." << std::endl;
+                    std::cin.get();
                 }
                 catch(const Illegal_Move&)
                 {

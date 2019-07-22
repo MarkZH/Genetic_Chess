@@ -63,7 +63,6 @@ The following options can be used together to play a game from the console.
 \begin{description}
 	\item[\code{genetic\_chess <player> [<player>]}] Starts a local game played in the terminal with an ASCII art board. The first parameter is the white player, the second is black. The \code{<player>} argument is replaced with one of the following:
 	\begin{description}
-		\item[\code{-human}:] a human player entering moves on the command line and seeing the results on a text-based drawing of the board. Moves are specified in standard algebraic notation (SAN) or in coordinates that indicate the starting and ending square.
 		\item[\code{-genetic [<file name> [<number>]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID\@. If no number is specified, then there are two possibilities:
 		\begin{itemize}
 			\item If the genome file is the output of a gene pool run, then the AI with the smallest ID that was still alive is chosen. As the oldest surviving AI, it is the nearly the most evolved while still having been tested.
