@@ -13,7 +13,6 @@
 #include "Players/Genetic_AI.h"
 #include "Players/Human_Player.h"
 #include "Players/Random_AI.h"
-#include "Players/Monte_Carlo_AI.h"
 #include "Players/Alan_Turing_AI.h"
 
 #include "Breeding/Gene_Pool.h"
@@ -169,10 +168,6 @@ int main(int argc, char *argv[])
                     else if(opt == "-random")
                     {
                         latest = std::make_unique<Random_AI>();
-                    }
-                    else if(opt == "-montecarlo")
-                    {
-                        latest = std::make_unique<Monte_Carlo_AI>();
                     }
                     else if(opt == "-genetic")
                     {
