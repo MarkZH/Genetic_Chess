@@ -25,7 +25,6 @@ using namespace std::placeholders; // for _1, _2, etc. in std::bind()
 #include "Players/Player.h"
 
 #include "Exceptions/Illegal_Move.h"
-#include "Exceptions/Promotion_Piece_Needed.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
@@ -434,7 +433,7 @@ const Move& Board::create_move(Square start, Square end, char promote) const
 
         if(result == move_list.end())
         {
-            throw Promotion_Piece_Needed();
+            throw Illegal_Move("Invalid choice for pawn promotion (" + start.string() + end.string() + ")");
         }
         else
         {
