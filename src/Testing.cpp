@@ -110,23 +110,40 @@ namespace
         }
     }
 
+    template<typename ...Argument_Types, typename Function>
+    void function_throw_check(bool& tests_passed, bool should_throw, const std::string& test_name, Function f, const Argument_Types& ... arguments)
+    {
+        auto function_threw_exception = false;
+        std::string error_message;
+        try
+        {
+            f(arguments...);
+        }
+        catch(const std::exception& e)
+        {
+            function_threw_exception = true;
+            error_message = e.what();
+        }
+
+        if(function_threw_exception != should_throw)
+        {
+            std::cerr << test_name << " failed. Function should" << (should_throw ? " " : " not ") << "have thrown." << std::endl;
+            std::cerr << "Arguments: ";
+            print(arguments...);
+            if( ! error_message.empty())
+            {
+                std::cerr << error_message << std::endl;
+            }
+            tests_passed = false;
+        }
+    }
+
     // Equivalent to test_function(), but checks that the callable f does not throw
     // with arguments.
     template<typename ...Argument_Types, typename Function>
     void function_should_not_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments)
     {
-        try
-        {
-            f(arguments...);
-        }
-        catch(const std::exception& error)
-        {
-            std::cerr << test_name << " failed. Function should not have thrown." << std::endl;
-            std::cerr << "Arguments: ";
-            print(arguments...);
-            std:: cerr << error.what() << std::endl;
-            tests_passed = false;
-        }
+        function_throw_check(tests_passed, false, test_name, f, arguments...);
     }
 
     // Equivalent to test_function(), but checks that the callable f does throw
@@ -134,17 +151,7 @@ namespace
     template<typename ...Argument_Types, typename Function>
     void function_should_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments)
     {
-        try
-        {
-            f(arguments...);
-            std::cerr << test_name << " failed. Function should have thrown." << std::endl;
-            std::cerr << "Arguments: ";
-            print(arguments...);
-            tests_passed = false;
-        }
-        catch(const std::exception&)
-        {
-        }
+        function_throw_check(tests_passed, true, test_name, f, arguments...);
     }
 
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
