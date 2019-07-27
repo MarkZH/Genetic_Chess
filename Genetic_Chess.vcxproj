@@ -227,7 +227,6 @@
     <ClCompile Include="src\Breeding\Gene_Pool.cpp" />
     <ClCompile Include="src\Exceptions\Bad_Still_Alive_Line.cpp" />
     <ClCompile Include="src\Exceptions\Game_Ended.cpp" />
-    <ClCompile Include="src\Exceptions\Promotion_Piece_Needed.cpp" />
     <ClCompile Include="src\game\Board.cpp" />
     <ClCompile Include="src\game\Clock.cpp" />
     <ClCompile Include="src\game\Color.cpp" />
@@ -261,14 +260,10 @@
     <ClCompile Include="src\moves\Pawn_Move.cpp" />
     <ClCompile Include="src\moves\Pawn_Promotion.cpp" />
     <ClCompile Include="src\moves\Pawn_Promotion_by_Capture.cpp" />
-    <ClCompile Include="src\players\Alan_Turing_AI.cpp" />
     <ClCompile Include="src\players\CECP_Mediator.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
     <ClCompile Include="src\players\Genetic_AI.cpp" />
-    <ClCompile Include="src\players\Human_Player.cpp" />
     <ClCompile Include="src\Players\Minimax_AI.cpp" />
-    <ClCompile Include="src\Players\Monte_Carlo_AI.cpp" />
-    <ClCompile Include="src\Players\Monte_Carlo_Search_Tree.cpp" />
     <ClCompile Include="src\players\Outside_Communicator.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
     <ClCompile Include="src\players\Random_AI.cpp" />
@@ -286,7 +281,6 @@
     <ClInclude Include="include\Exceptions\Game_Ended.h" />
     <ClInclude Include="include\Exceptions\Genetic_AI_Creation_Error.h" />
     <ClInclude Include="include\Exceptions\Illegal_Move.h" />
-    <ClInclude Include="include\Exceptions\Promotion_Piece_Needed.h" />
     <ClInclude Include="include\game\Board.h" />
     <ClInclude Include="include\game\Clock.h" />
     <ClInclude Include="include\game\Color.h" />
@@ -321,14 +315,10 @@
     <ClInclude Include="include\moves\Pawn_Move.h" />
     <ClInclude Include="include\moves\Pawn_Promotion.h" />
     <ClInclude Include="include\moves\Pawn_Promotion_by_Capture.h" />
-    <ClInclude Include="include\players\Alan_Turing_AI.h" />
     <ClInclude Include="include\players\CECP_Mediator.h" />
     <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
     <ClInclude Include="include\players\Genetic_AI.h" />
-    <ClInclude Include="include\players\Human_Player.h" />
     <ClInclude Include="include\Players\Minimax_AI.h" />
-    <ClInclude Include="include\Players\Monte_Carlo_AI.h" />
-    <ClInclude Include="include\Players\Monte_Carlo_Search_Tree.h" />
     <ClInclude Include="include\players\Outside_Communicator.h" />
     <ClInclude Include="include\players\Player.h" />
     <ClInclude Include="include\players\Random_AI.h" />
