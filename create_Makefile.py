@@ -136,6 +136,7 @@ elif system == 'clang':
         "-Wredundant-decls",
         "-Wmissing-declarations",
         "-Wmissing-include-dirs",
+        "-Wunused-exception-parameter",
         "-Wswitch"])
 
 obj_dir_written = []
