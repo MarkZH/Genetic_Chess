@@ -415,7 +415,7 @@ bool run_tests()
     auto test_move_count = 1'000; // Debug build is approximately 1,000x slower.
     #endif // NDEBUG
     Board freedom_to_move_punishment_board;
-    for(auto move_count = 0; move_count < test_move_count; ++move_count)
+    for(auto move_count = 0; move_count < test_move_count && tests_passed; ++move_count)
     {
         test_result(tests_passed, freedom_to_move_gene.verify(freedom_to_move_punishment_board), "Attack count discrepancy.");
 
