@@ -85,13 +85,15 @@ class Piece
         //! Get all possibly legal moves of a piece starting from a given square.
         //
         //! \param square The square where the moves start.
-        //! \returns A list of legal moves starting from that square.
-        const std::vector<const Move*>& move_list(Square square) const;
+        //! \returns A list of lists of legal moves starting from that square. The moves are grouped into
+        //!          lists by direction and ordered by distance from the starting square.
+        const std::vector<std::vector<const Move*>>& move_lists(Square square) const;
 
-        //! Gives a list of moves that are allowed to capture other pieces.
+        //! Gives all moves that are allowed to capture other pieces.
         //
         //! \param square The square where the attacking moves start.
-        const std::vector<const Move*>& attacking_moves(Square square) const;
+        //! \returns A list of lists of moves grouped and ordered as in Piece::move_lists().
+        const std::vector<std::vector<const Move*>>& attacking_move_lists(Square square) const;
 
     private:
         piece_code_t piece_code;

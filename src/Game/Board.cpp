@@ -872,31 +872,33 @@ void Board::modify_attacks(Square square, Piece piece, bool adding_attacks)
 
     auto attacking_color = piece.color();
     auto vulnerable_king = Piece{opposite(attacking_color), KING};
-    const Move* blocked_move = nullptr;
     auto attack_count_diff = adding_attacks ? 1 : -1;
-    for(auto attack : piece.attacking_moves(square))
+    for(const auto& attack_move_list : piece.attacking_move_lists(square))
     {
-        auto attacked_square = attack->end();
-        auto attacked_index = attacked_square.index();
-
-        if(blocked_move && same_direction(blocked_move->movement(), attack->movement()))
+        bool move_blocked = false;
+        for(auto attack : attack_move_list)
         {
-            blocked_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
-        }
-        else
-        {
-            blocked_move = nullptr;
-            auto blocking_piece = piece_on_square(attacked_square);
+            auto attacked_square = attack->end();
+            auto attacked_index = attacked_square.index();
 
-            potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
-            if( ! blocking_piece || blocking_piece.color() != attacking_color)
+            if(move_blocked)
             {
-                attack_counts[attacking_color] += attack_count_diff;
+                blocked_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
             }
-
-            if(blocking_piece && blocking_piece != vulnerable_king)
+            else
             {
-                blocked_move = attack;
+                auto blocking_piece = piece_on_square(attacked_square);
+
+                potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
+                if( ! blocking_piece || blocking_piece.color() != attacking_color)
+                {
+                    attack_counts[attacking_color] += attack_count_diff;
+                }
+
+                if(blocking_piece && blocking_piece != vulnerable_king)
+                {
+                    move_blocked = true;
+                }
             }
         }
     }
@@ -1247,29 +1249,6 @@ Square Board::find_king(Color color) const
 
 void Board::recreate_move_caches()
 {
-    auto is_legal = [this](auto& blocked_move, auto move)
-                    {
-                        if(blocked_move && same_direction(move->movement(), blocked_move->movement()))
-                        {
-                            return false;
-                        }
-
-                        // If there is a piece on the ending square, farther moves are not possible.
-                        // The check for a promotion piece is needed since the set of pawn promotions
-                        // results in moves with identical beginning and ending squares, which would
-                        // result in the first pawn-promotion-by-capture blocking all the others.
-                        if(piece_on_square(move->end()) && ! move->promotion_piece_symbol())
-                        {
-                            blocked_move = move;
-                        }
-                        else
-                        {
-                            blocked_move = nullptr;
-                        }
-
-                        return move->is_legal(*this);
-                    };
-
     last_pin_check_square = Square{};
     legal_moves_cache.clear();
     for(auto square : Square::all_squares())
@@ -1277,10 +1256,21 @@ void Board::recreate_move_caches()
         auto piece = piece_on_square(square);
         if(piece && piece.color() == whose_turn())
         {
-            const Move* blocked_move = nullptr;
-            const auto& moves = piece.move_list(square);
-            std::copy_if(moves.begin(), moves.end(), std::back_inserter(legal_moves_cache),
-                         std::bind(is_legal, std::ref(blocked_move), _1));
+            for(const auto& move_list : piece.move_lists(square))
+            {
+                for(auto move : move_list)
+                {
+                    if(move->is_legal(*this))
+                    {
+                        legal_moves_cache.push_back(move);
+                    }
+
+                    if(piece_on_square(move->end()))
+                    {
+                        break;
+                    }
+                }
+            }
         }
     }
 
