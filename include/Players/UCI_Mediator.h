@@ -19,7 +19,7 @@ class UCI_Mediator : public Outside_Communicator
         //! Setup a connection to the outside world with a UCI interface.
         //
         //! \param player The chess player on the local machine whose name and author get sent to the GUI.
-        UCI_Mediator(const Player& player);
+        explicit UCI_Mediator(const Player& player);
 
         void setup_turn(Board& board, Clock& clock) override;
         void listen(Board& board, Clock& clock) override;

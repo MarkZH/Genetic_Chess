@@ -26,7 +26,7 @@ class Gene
         //! is effectively multliplied by the scores from the Piece_Strength_Gene. Since switching
         //! the sign of both leads to the same behavior, making the priority non-negative cuts
         //! off the redundant half of the search space.
-        Gene(bool non_negative_priority = false);
+        explicit Gene(bool non_negative_priority = false);
 
         virtual ~Gene() = default;
 
