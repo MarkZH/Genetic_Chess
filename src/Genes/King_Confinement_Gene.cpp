@@ -48,16 +48,13 @@ std::map<std::string, double> King_Confinement_Gene::list_properties() const
 void King_Confinement_Gene::gene_specific_mutation()
 {
     auto mutation_size = Random::random_laplace(2.0);
-    switch(Random::random_integer(1, 2))
+    if(Random::coin_flip())
     {
-        case 1:
-            friendly_block_score += mutation_size;
-            break;
-        case 2:
-            opponent_block_score += mutation_size;
-            break;
-        default:
-            throw std::logic_error("Bad random value in King Confinement Gene");
+        friendly_block_score += mutation_size;
+    }
+    else
+    {
+        opponent_block_score += mutation_size;
     }
 }
 
