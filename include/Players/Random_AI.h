@@ -20,12 +20,6 @@ class Random_AI : public Player
         const Move& choose_move(const Board& board, const Clock& clock) const override;
         std::string name() const override;
         std::string author() const override;
-
-    protected:
-        //! Implements the random move choice.
-        //
-        //! \param board The current board. The move is a random entry from board.legal_moves().
-        const Move* choose_random_move(const Board& board) const;
 };
 
 #endif // RANDOM_AI_H

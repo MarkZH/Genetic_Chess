@@ -11,12 +11,7 @@ class Clock;
 
 const Move& Random_AI::choose_move(const Board& board, const Clock&) const
 {
-    return *choose_random_move(board);
-}
-
-const Move* Random_AI::choose_random_move(const Board& board) const
-{
-    return Random::random_element(board.legal_moves());
+    return *Random::random_element(board.legal_moves());
 }
 
 std::string Random_AI::name() const
