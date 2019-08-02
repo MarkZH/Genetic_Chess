@@ -62,6 +62,8 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
 
             try
             {
+                // Handle stateless GUIs that send the next board position
+                // instead of a move.
                 board.submit_move(board.create_move(fen));
                 log("Derived move: " + board.game_record().back()->coordinate_move());
             }
