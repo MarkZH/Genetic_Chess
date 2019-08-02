@@ -55,9 +55,6 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
         }
         else if (String::starts_with(command, "setboard "))
         {
-            disable_thinking_output = true;
-            log("Disabling thinking output");
-            board.set_thinking_mode(NO_THINKING);
             auto fen = String::split(command, " ", 1).back();
 
             try
@@ -204,7 +201,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         }
         else if(command == "post")
         {
-            if(disable_thinking_output)
+            if(board.thinking_mode() == CECP)
             {
                 board.set_thinking_mode(NO_THINKING);
                 log("Disabling thinking output for CECP");

@@ -30,7 +30,6 @@ class CECP_Mediator : public Outside_Communicator
 
     private:
         std::future<std::string> last_listening_command;
-        bool disable_thinking_output = false;
         bool thinking_on_opponent_time = false;
         bool in_force_mode = true;
 
