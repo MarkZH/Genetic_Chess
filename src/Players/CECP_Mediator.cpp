@@ -162,6 +162,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         }
         else if(command == "force")
         {
+            log("Entering force mode");
             board.pick_move_now();
             in_force_mode = true;
         }
@@ -235,6 +236,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         }
         else if(String::starts_with(command, "name "))
         {
+            log("Getting other player's name");
             set_other_player_name(String::split(command, " ", 1).back());
         }
         else
