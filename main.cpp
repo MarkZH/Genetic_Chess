@@ -229,6 +229,10 @@ int main(int argc, char *argv[])
                     {
                         pondering_allowed = true;
                     }
+                    else if(opt == "-short_post")
+                    {
+                        Player::set_short_post();
+                    }
                     else
                     {
                         throw std::invalid_argument("Invalid or incomplete game option: " + opt);

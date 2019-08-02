@@ -56,8 +56,17 @@ class Player
         //! as this player.
         std::string opponent_name() const;
 
+        //! Use the short version of CECP thinking output.
+        //
+        //! Some GUIs cannot handle the optional data.
+        static void set_short_post();
+
+        //! Check whether to use the short version of CECP thinking output.
+        static bool use_short_post();
+
     private:
         mutable std::string opposing_player_name;
+        static bool use_short_cecp_post;
 };
 
 #endif // PLAYER_H
