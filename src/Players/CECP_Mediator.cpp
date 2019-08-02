@@ -47,16 +47,9 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
         auto command = receive_cecp_command(board, clock, false);
         if(command == "go")
         {
-            if(wait_for_usermove)
-            {
-                log("Ignoring 'go' command, waiting for usermove");
-                continue;
-            }
-
             set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
             log("telling local AI to move at leisure and accepting move");
-            ignore_next_move = false;
-            wait_for_usermove = true;
+            in_force_mode = false;
             board.choose_move_at_leisure();
             return;
         }
@@ -65,7 +58,6 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             disable_thinking_output = true;
             log("Disabling thinking output");
             board.set_thinking_mode(NO_THINKING);
-            wait_for_usermove = false;
             auto fen = String::split(command, " ", 1).back();
 
             try
@@ -86,16 +78,18 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             {
                 log("Applying move: " + move);
                 auto result = board.submit_move(board.create_move(move));
-                set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
                 if(result.game_has_ended())
                 {
                     report_end_of_game(result);
                 }
-                log("reporting last move to local AI and accepting its move");
-                ignore_next_move = false;
-                wait_for_usermove = true;
-                board.choose_move_at_leisure();
-                return;
+
+                if( ! in_force_mode)
+                {
+                    set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
+                    log("Local AI now chooses a move");
+                    board.choose_move_at_leisure();
+                    return;
+                }
             }
             catch(const Illegal_Move& e)
             {
@@ -105,7 +99,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
         else if(String::starts_with(command, "time ") || String::starts_with(command, "otim "))
         {
             auto time = std::stod(String::split(command, " ")[1])/100; // time specified in centiseconds
-            auto ai_color = wait_for_usermove ? opposite(board.whose_turn()) : board.whose_turn();
+            auto ai_color = board.whose_turn();
             auto clock_color = String::starts_with(command, "time ") ? ai_color : opposite(ai_color);
             clock.set_time(clock_color, time);
             log("setting " + color_text(clock_color) + "'s time to " + std::to_string(time) + " seconds.");
@@ -120,10 +114,9 @@ void CECP_Mediator::listen(Board& board, Clock& clock)
 
 Game_Result CECP_Mediator::handle_move(Board& board, const Move& move)
 {
-    if(ignore_next_move)
+    if(in_force_mode)
     {
         log("Ignoring move: " + move.coordinate_move());
-        ignore_next_move = false;
         return {};
     }
     else
@@ -171,7 +164,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         else if(command == "force")
         {
             board.pick_move_now();
-            ignore_next_move = true;
+            in_force_mode = true;
         }
         else if(String::starts_with(command, "level "))
         {
@@ -261,7 +254,6 @@ std::string CECP_Mediator::listener(Board& board, Clock& clock)
         {
             log("Forcing local AI to pick move and accepting it");
             board.pick_move_now();
-            ignore_next_move = false;
         }
         else
         {

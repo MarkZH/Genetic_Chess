@@ -29,11 +29,10 @@ class CECP_Mediator : public Outside_Communicator
         bool pondering_allowed() const override;
 
     private:
-        bool ignore_next_move = false;
         std::future<std::string> last_listening_command;
         bool disable_thinking_output = false;
         bool thinking_on_opponent_time = false;
-        bool wait_for_usermove = false;
+        bool in_force_mode = true;
 
         std::string receive_cecp_command(Board& board, Clock& clock, bool while_listening);
         std::string listener(Board& board, Clock& clock);
