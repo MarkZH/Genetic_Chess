@@ -151,41 +151,43 @@ for yi = 2 : length(data.colheaders) - 2
 end
 
 % Plot ancestry data
-for pool_id = 0 : max(pool_ids)
-    selection = (pool_ids == pool_id);
-    figure;
-    hold all;
+if max(pool_ids) > 0
+    for pool_id = 0 : max(pool_ids)
+        selection = (pool_ids == pool_id);
+        figure;
+        hold all;
 
-    for yi = 2 : length(data.colheaders) - 2
-        name_list = data.colheaders(yi);
-        name = name_list{1};
+        for yi = 2 : length(data.colheaders) - 2
+            name_list = data.colheaders(yi);
+            name = name_list{1};
 
-        if isempty(strfind(name, 'Ancestry'))
-            continue;
+            if isempty(strfind(name, 'Ancestry'))
+                continue;
+            end
+
+            ids = id_list(selection);
+            ancestry = data.data(selection, yi);
+            plot(ids, ancestry, ...
+                 '.', ...
+                 'markersize', 10, ...
+                 'displayname', ['Pool ' name(end)]);
         end
 
-        ids = id_list(selection);
-        ancestry = data.data(selection, yi);
-        plot(ids, ancestry, ...
-             '.', ...
-             'markersize', 10, ...
-             'displayname', ['Pool ' name(end)]);
+        for index = 1:length(id_marks)
+            plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
+        end
+
+        xlabel('ID');
+        ylabel('Fraction of ancestry');
+        title(['Ancestry of Pool ' num2str(pool_id)]);
+
+        leg = legend('show');
+        set(leg, 'location', 'southoutside');
+        set(leg, 'orientation', 'horizontal');
+        legend left;
+
+        print([gene_pool_filename ' ancestry of pool ' num2str(pool_id) '.png']);
     end
-
-    for index = 1:length(id_marks)
-        plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
-    end
-
-    xlabel('ID');
-    ylabel('Fraction of ancestry');
-    title(['Ancestry of Pool ' num2str(pool_id)]);
-
-    leg = legend('show');
-    set(leg, 'location', 'southoutside');
-    set(leg, 'orientation', 'horizontal');
-    legend left;
-
-    print([gene_pool_filename ' ancestry of pool ' num2str(pool_id) '.png']);
 end
 
 % Create special summary plots
