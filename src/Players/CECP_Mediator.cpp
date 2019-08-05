@@ -164,6 +164,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         {
             log("Entering force mode");
             board.pick_move_now();
+            clock.stop();
             in_force_mode = true;
         }
         else if(String::starts_with(command, "level "))
@@ -233,6 +234,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
             log("Setting board to standard start position and resetting clock");
             board = Board{};
             clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), WHITE, false);
+            in_force_mode = false;
         }
         else if(String::starts_with(command, "name "))
         {
