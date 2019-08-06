@@ -76,6 +76,16 @@ debug : before_debug $(OUT_DEBUG) after_debug
 release : before_release $(OUT_RELEASE) after_release
 
 
+test_debug : debug
+	$(DEBUG_BIN_DIR)/$(BIN) -test
+	$(DEBUG_BIN_DIR)/$(BIN) -perft
+	$(DEBUG_BIN_DIR)/$(BIN) -speed
+
+test_release : release
+	$(RELEASE_BIN_DIR)/$(BIN) -test
+	$(RELEASE_BIN_DIR)/$(BIN) -perft
+	$(RELEASE_BIN_DIR)/$(BIN) -speed
+
 $(DEBUG_OBJ_DIR)/main.o : main.cpp include/Breeding/Gene_Pool.h include/Exceptions/Illegal_Move.h include/Game/Board.h include/Game/Clock.h include/Game/Color.h include/Game/Game.h include/Game/Game_Result.h include/Game/Piece.h include/Game/Square.h include/Genes/Gene.h include/Genes/Genome.h include/Moves/Move.h include/Players/Game_Tree_Node_Result.h include/Players/Genetic_AI.h include/Players/Minimax_AI.h include/Players/Player.h include/Players/Random_AI.h include/Players/Thinking.h include/Testing.h include/Utility/String.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c main.cpp -o $(DEBUG_OBJ_DIR)/main.o
 
@@ -394,6 +404,6 @@ $(RELEASE_OBJ_DIR)/src/Utility/Scoped_Stopwatch.o : src/Utility/Scoped_Stopwatch
 $(RELEASE_OBJ_DIR)/src/Utility/String.o : src/Utility/String.cpp include/Utility/String.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Utility/String.cpp -o $(RELEASE_OBJ_DIR)/src/Utility/String.o
 
-.PHONY : all LINK after_debug after_release before_debug before_release clean clean_debug clean_release debug release
+.PHONY : all LINK after_debug after_release before_debug before_release clean clean_debug clean_release debug release test_debug test_release
 
 

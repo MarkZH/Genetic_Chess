@@ -92,6 +92,9 @@ for target in final_targets:
     depends[f'clean_{target}'] = []
     operations[f'clean_{target}'] = [f"rm -rf {obj_dest[target]} {bin_dest[target]}"]
 
+    depends[f'test_{target}'] = [target]
+    operations[f'test_{target}'] = [f'{bins[target]} -' + opt for opt in ['test', 'perft', 'speed']]
+
 depends['LINK'] = []
 depends['.PHONY'] = []
 for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
