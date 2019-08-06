@@ -82,10 +82,12 @@ for target in final_targets:
     operations[os.path.join(link_dir_variable, '$(BIN)')] = [f'ln -sf -t {link_dir_variable} `realpath {out_variable}`']
     depends[os.path.join(link_dir_variable, '$(BIN)')] = [out_variable, 'LINK']
     bins[target] = os.path.join(bin_dest[target], '$(BIN)')
+
     depends[target] = [f'before_{target}', out_variable, f'after_{target}']
     depends[f'before_{target}'] = []
     depends[out_variable] = [all_objects]
     depends[f'after_{target}'] = [os.path.join(link_dir_variable, '$(BIN)')]
+
     depends['clean'].append(f'clean_{target}')
     depends[f'clean_{target}'] = []
     operations[f'clean_{target}'] = [f"rm -rf {obj_dest[target]} {bin_dest[target]}"]
