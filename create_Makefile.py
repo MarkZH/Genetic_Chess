@@ -84,8 +84,12 @@ for target in final_targets:
     bins[target] = os.path.join(bin_dest[target], '$(BIN)')
 
     depends[target] = [f'before_{target}', out_variable, f'after_{target}']
+
     depends[f'before_{target}'] = []
+    operations[f'before_{target}'] = [f'mkdir -p {bin_dest[target]}', f'mkdir -p $(LINK_DIR_{target.upper()})']
+
     depends[out_variable] = [all_objects]
+
     depends[f'after_{target}'] = [os.path.join(link_dir_variable, '$(BIN)')]
 
     depends['clean'].append(f'clean_{target}')
@@ -96,12 +100,8 @@ for target in final_targets:
     operations[f'test_{target}'] = [f'{bins[target]} -' + opt for opt in ['test', 'perft', 'speed']]
 
 depends['LINK'] = []
-depends['.PHONY'] = []
-for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
-    if target not in operations:
-        operations[target] = []
-    if target != '.PHONY' and not target.startswith('$'):
-        depends['.PHONY'].append(target)
+sort_key = functools.cmp_to_key(make_sort)
+depends['.PHONY'] = [t for t in sorted(depends.keys(), key=sort_key) if not t.startswith('$')]
 
 options_list = dict()
 linker_options = dict()
@@ -146,14 +146,11 @@ elif system == 'clang':
 
 obj_dir_written = []
 for target in final_targets:
-    operations[f'before_{target}'].append(f'mkdir -p {bin_dest[target]}')
-    operations[f'before_{target}'].append(f'mkdir -p $(LINK_DIR_{target.upper()})')
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
         dirpath = os.path.relpath(dirpath)
         if dirpath == '.': dirpath = ''
         for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp')]:
-            without_extension = '.'.join(source_file.split('.')[:-1])
-            obj_file = os.path.join(obj_dest[target], f"{without_extension}.o")
+            obj_file = os.path.join(obj_dest[target], f"{os.path.splitext(source_file)[0]}.o")
             depends[obj_file] = [source_file]
             operations[obj_file] = [f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
             obj_dest_dir = os.path.dirname(obj_file)
@@ -177,12 +174,12 @@ with open("Makefile", 'w') as make_file:
         make_file.write(f"LINK_DIR_{target.upper()} = {link_dirs[target]}\n")
         make_file.write(f"{target.upper()}_OBJ_DIR = obj/{system}/{target}\n")
         make_file.write(f"OBJ_{target.upper()} = ")
-        make_file.write(' '.join([x for x in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)) if x.endswith('.o') and x.startswith(f"$({target.upper()}")]))
+        make_file.write(' '.join([x for x in sorted(depends.keys(), key=sort_key) if x.endswith('.o') and x.startswith(f"$({target.upper()}")]))
         make_file.write('\n')
         make_file.write(f"CFLAGS_{target.upper()} = {' '.join(options_list[target])}\n")
         make_file.write(f"LDFLAGS_{target.upper()} = {' '.join(linker_options[target])}\n\n\n")
 
-    for target in sorted(depends.keys(), key=functools.cmp_to_key(make_sort)):
+    for target in sorted(depends.keys(), key=sort_key):
         make_file.write(f"{target} : {' '.join(depends[target])}\n")
-        make_file.write("\n".join([f"\t{x}" for x in operations[target]]))
+        make_file.write("\n".join([f"\t{x}" for x in operations.setdefault(target, [])]))
         make_file.write('\n\n')
