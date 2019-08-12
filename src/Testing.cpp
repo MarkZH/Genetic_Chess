@@ -859,7 +859,6 @@ void print_randomness_sample()
     int real_width = 15;
     int norm_width = 15;
     int uint_width = 30;
-    std::cout << std::endl;
     std::cout << std::setw(int_width) << "Integers"
               << std::setw(real_width) << "Reals"
               << std::setw(norm_width) << "Laplace"
