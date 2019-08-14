@@ -15,7 +15,8 @@ reproduction type = sexual
 # How many gene pools
 gene pool count = 3
 
-# Games in between swapping players between pools
+# Complete rounds (in which all pools play a set of games) in between
+# swapping players between pools
 pool swap interval = 1000
 
 # Oscillating game time

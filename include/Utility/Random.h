@@ -63,6 +63,23 @@ namespace Random
         std::shuffle(list.begin(), list.end(), generator);
     }
 
+    //! Shuffles a list so that no element remains unmoved.
+    //
+    //! \param[out] list A indexable, sequential container.
+    //!
+    //! Technical note: this function does not produce all derangements, but chooses
+    //! from a subset of derangements with one cycle.
+    //! - https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#Sattolo's_algorithm
+    //! - https://en.wikipedia.org/wiki/Cyclic_permutation
+    template<class List>
+    void one_cycle_derange(List& list)
+    {
+        for(size_t index = 0; index + 1 < list.size(); ++index)
+        {
+            std::swap(list[index], list[random_integer(index + 1, list.size() - 1)]);
+        }
+    }
+
     //! Select random element from random-access container.
     //
     //! \param container A collection of items that allows for access by an index.

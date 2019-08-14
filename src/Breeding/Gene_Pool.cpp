@@ -72,7 +72,7 @@ void gene_pool(const std::string& config_file)
     const auto sexual_reproduction = config.as_boolean("reproduction type", "sexual", "cloning");
     const auto genome_file_name = config.as_text("gene pool file");
 
-    const int scramble_mutations = 100; // initial number of mutations when creating a new Genetic AI
+    size_t rounds_since_last_swap = 0; // Count of complete gene pool rounds where all pools have played a set of games
 
     // Oscillating game time
     const double minimum_game_time = config.as_number("minimum game time"); // seconds
@@ -178,6 +178,10 @@ void gene_pool(const std::string& config_file)
                     auto pool_number = String::string_to_size_t(alive_split.at(1));
                     game_count.at(pool_number) += String::split(alive_split.at(2)).size()/2;
                     starting_pool = (pool_number + 1) % gene_pool_count;
+                    if(starting_pool == 0)
+                    {
+                        ++rounds_since_last_swap;
+                    }
                 }
                 catch(const std::exception&)
                 {
@@ -424,12 +428,12 @@ void gene_pool(const std::string& config_file)
         // from stagnating or amplifying pathological behavior
         if(pools.size() > 1 && pool_index == pools.size() - 1) // all pools have equal number of games
         {
-            static size_t previous_mod = (game_count[pool_index] - results.size()) % pool_swap_interval;
-            auto this_mod = game_count[pool_index] % pool_swap_interval;
-            if(this_mod < previous_mod)
+            if(++rounds_since_last_swap >= pool_swap_interval)
             {
+                rounds_since_last_swap = 0;
+
                 // Replace player with least wins in each pool with clone of winner from pool to left
-                std::cout << std::endl;
+                std::cout << "\n=======================\n\n";
                 std::vector<Genetic_AI> winners;
                 std::transform(pools.begin(), pools.end(), std::back_inserter(winners),
                                [](const auto& source_pool)
@@ -438,20 +442,23 @@ void gene_pool(const std::string& config_file)
                                    return *std::min_element(source_pool.begin(), source_pool.end());
                                });
 
+                auto destination_pool_indices = std::vector<size_t>(pools.size());
+                std::iota(destination_pool_indices.begin(), destination_pool_indices.end(), 0);
+                Random::one_cycle_derange(destination_pool_indices);
                 for(size_t source_pool_index = 0; source_pool_index < pools.size(); ++source_pool_index)
                 {
-                    auto dest_pool_index = (source_pool_index + 1) % pools.size();
+                    auto dest_pool_index = destination_pool_indices[source_pool_index];
                     auto& dest_pool = pools[dest_pool_index];
                     auto& loser = *std::max_element(dest_pool.begin(), dest_pool.end());
                     std::cout << "Sending ID "
                               << winners[source_pool_index].id()
+                              << " from pool "
+                              << source_pool_index
                               << " to pool "
                               << dest_pool_index << std::endl;
                     loser = winners[source_pool_index]; // winner replaces loser in destination pool
                 }
             }
-
-            previous_mod = this_mod;
         }
 
         std::sort(pool.begin(), pool.end());
