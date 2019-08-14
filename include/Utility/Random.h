@@ -47,8 +47,8 @@ namespace Random
     //! \returns true with probability 50%
     bool coin_flip();
 
-    // Simulate a fair trial.
-
+    //! Simulate a fair trial.
+    //
     //! \param probability The probability of success.
     //! \returns true with given probability
     bool success_probability(double probability);
