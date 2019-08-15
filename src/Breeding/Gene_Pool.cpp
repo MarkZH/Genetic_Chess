@@ -181,7 +181,7 @@ void gene_pool(const std::string& config_file)
                     starting_pool = (pool_number + 1) % gene_pool_count;
                     if(starting_pool == 0)
                     {
-                        ++rounds_since_last_swap;
+                        rounds_since_last_swap = (rounds_since_last_swap + 1)%pool_swap_interval;
                     }
                 }
                 catch(const std::exception&)
