@@ -266,8 +266,9 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
+                    auto clock = Clock(game_time, moves_per_reset, increment_time, board.whose_turn(), true);
                     play_game(board,
-                              Clock(game_time, moves_per_reset, increment_time, board.whose_turn(), true),
+                              clock,
                               *white, *black,
                               pondering_allowed,
                               game_file_name);

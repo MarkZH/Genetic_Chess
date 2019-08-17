@@ -266,6 +266,7 @@ void gene_pool(const std::string& config_file)
         Random::shuffle(pool);
 
         std::vector<std::future<Game_Result>> results; // map from matchups to winners (half the size of pool)
+        auto clocks = std::vector<Clock>(gene_pool_population/2, Clock(game_time, 0, 0));
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
             // Limit the number of simultaneous games by waiting for earlier games to finish
@@ -291,7 +292,7 @@ void gene_pool(const std::string& config_file)
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
             results.emplace_back(std::async(std::launch::async,
-                                            play_game, Board{}, Clock(game_time, 0, 0), white, black, false, game_record_file));
+                                            play_game, Board{}, std::ref(clocks[index/2]), white, black, false, game_record_file));
         }
 
         // Get results as they come in
@@ -331,8 +332,9 @@ void gene_pool(const std::string& config_file)
                 ++draw_count[pool_index];
 
                 // Draw results in random player being replaced
-                winner = (Random::coin_flip() ? WHITE : BLACK);
-                std::cout << " --> " << (winner == WHITE ? black : white).id() << " dies";
+                const auto& clock = clocks[index/2];
+                winner = (clock.time_left(WHITE) < clock.time_left(BLACK) ? WHITE : BLACK);
+                std::cout << " --> " << (winner == WHITE ? white : black).id() << " lives";
             }
 
             auto offspring = sexual_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);

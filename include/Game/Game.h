@@ -21,7 +21,7 @@ class Game_Result;
 //!        the game will be written to stdout.
 //! \returns The result of the game.
 Game_Result play_game(Board board,
-                      Clock game_clock,
+                      Clock& game_clock,
                       const Player& white,
                       const Player& black,
                       bool pondering_allowed,
