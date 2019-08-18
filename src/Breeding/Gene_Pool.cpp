@@ -248,6 +248,7 @@ void gene_pool(const std::string& config_file)
         std::cout << "\n=======================\n\n"
                   << "Gene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
+                  << "  Rounds since pool swaps: " << rounds_since_last_swap << "/" << pool_swap_interval
                   << "\nGames: " << game_count[pool_index]
                   << "  White wins: " << color_wins[WHITE][pool_index]
                   << "  Black wins: " << color_wins[BLACK][pool_index]
