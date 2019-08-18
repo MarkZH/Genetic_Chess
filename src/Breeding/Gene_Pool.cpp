@@ -96,11 +96,8 @@ void gene_pool(const std::string& config_file)
         std::cin.get();
     }
 
-    // Stats (Pool ID --> counts)
-    std::vector<size_t> game_count(gene_pool_count);
-    std::array<std::vector<int>, 2> color_wins; // indexed with [Color][pool_index]
-    color_wins.fill(std::vector<int>(gene_pool_population, 0));
-    std::vector<int> draw_count(gene_pool_count);
+    std::array<int, 2> color_wins{}; // indexed with [Color]
+    size_t draw_count = 0;
 
     std::map<size_t, int> most_wins;
     std::map<size_t, Genetic_AI> most_wins_player;
@@ -177,7 +174,6 @@ void gene_pool(const std::string& config_file)
                 {
                     auto alive_split = String::split(line, ":");
                     auto pool_number = String::string_to_size_t(alive_split.at(1));
-                    game_count.at(pool_number) += String::split(alive_split.at(2)).size()/2;
                     starting_pool = (pool_number + 1) % gene_pool_count;
                     if(starting_pool == 0)
                     {
@@ -202,18 +198,38 @@ void gene_pool(const std::string& config_file)
     if(auto ifs = std::ifstream(game_record_file))
     {
         // Use game time from last run of this gene pool
-        std::cout << "Searching " << game_record_file << " for last game time ..." << std::endl;
+        std::cout << "Searching " << game_record_file << " for last game time and stats ..." << std::endl;
         std::string line;
         std::string time_line;
         std::string previous_time_line;
         while(std::getline(ifs, line))
         {
-            if(String::contains(line, "TimeControl"))
+            if(String::starts_with(line, "[TimeControl"))
             {
                 if(line != time_line)
                 {
                     previous_time_line = time_line;
                     time_line = line;
+                }
+            }
+            else if(String::starts_with(line, "[Result"))
+            {
+                auto result = String::split(line, "\"").at(1);
+                if(result == "1-0")
+                {
+                    color_wins[WHITE]++;
+                }
+                else if(result == "0-1")
+                {
+                    color_wins[BLACK]++;
+                }
+                else if(result == "1/2-1/2")
+                {
+                    draw_count++;
+                }
+                else
+                {
+                    throw std::invalid_argument("Bad PGN Result line: " + line);
                 }
             }
         }
@@ -249,10 +265,10 @@ void gene_pool(const std::string& config_file)
                   << "Gene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
                   << "  Rounds since pool swaps: " << rounds_since_last_swap << "/" << pool_swap_interval
-                  << "\nGames: " << game_count[pool_index]
-                  << "  White wins: " << color_wins[WHITE][pool_index]
-                  << "  Black wins: " << color_wins[BLACK][pool_index]
-                  << "  Draws: " << draw_count[pool_index]
+                  << "\nGames: " << color_wins[WHITE] + color_wins[BLACK] + draw_count
+                  << "  White wins: " << color_wins[WHITE]
+                  << "  Black wins: " << color_wins[BLACK]
+                  << "  Draws: " << draw_count
                   << "\nTime: " << game_time << " sec"
                   << "   Gene pool file name: " << genome_file_name << "\n\n";
 
@@ -312,7 +328,7 @@ void gene_pool(const std::string& config_file)
             const auto& winning_player = (winner == WHITE ? white : black);
             if(winner != NONE)
             {
-                color_wins[winner][pool_index]++;
+                color_wins[winner]++;
                 wins[winning_player]++;
                 games_since_last_win[winning_player] = 0;
                 consecutive_wins[winning_player]++;
@@ -330,7 +346,7 @@ void gene_pool(const std::string& config_file)
                 games_since_last_win[black]++;
                 consecutive_wins[white] = 0;
                 consecutive_wins[black] = 0;
-                ++draw_count[pool_index];
+                ++draw_count;
 
                 // Draw results in random player being replaced
                 const auto& clock = clocks[index/2];
@@ -425,8 +441,6 @@ void gene_pool(const std::string& config_file)
             }
         }
         game_time = std::clamp(game_time, minimum_game_time, maximum_game_time);
-
-        game_count[pool_index] += results.size();
 
         // Mix up the populations of all the gene pools
         if(pools.size() > 1 && pool_index == pools.size() - 1 && ++rounds_since_last_swap >= pool_swap_interval)
