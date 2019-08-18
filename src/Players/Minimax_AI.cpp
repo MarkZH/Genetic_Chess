@@ -416,14 +416,13 @@ void Minimax_AI::calculate_centipawn_value() const
 
         if(board_is_good)
         {
-            ++count;
             auto board_without_pawn = board.without_random_pawn();
             auto original_board_result = evaluate(board, {}, WHITE, 0);
             auto minus_pawn_result = evaluate(board_without_pawn, {}, WHITE, 0);
             auto diff = std::abs(original_board_result - minus_pawn_result);
             sum_of_diffs += diff;
 
-            if(count > 100 && diff < 0.01*sum_of_diffs)
+            if((++count > 100 && diff < 0.01*sum_of_diffs) || count > 1000)
             {
                 break;
             }
