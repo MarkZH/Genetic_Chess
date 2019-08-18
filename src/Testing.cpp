@@ -874,15 +874,6 @@ void print_randomness_sample()
                   << std::setw(norm_width) << Random::random_laplace(3)
                   << std::setw(uint_width) << Random::random_unsigned_int64() << '\n';
     }
-
-    std::cout << "\nDerangement Test:\n";
-    auto numbers = std::vector<int>(10);
-    std::iota(numbers.begin(), numbers.end(), 0);
-    std::for_each(numbers.begin(), numbers.end(), [](auto x) { std::cout << x << " "; });
-    std::cout << std::endl;
-    Random::one_cycle_derange(numbers);
-    std::for_each(numbers.begin(), numbers.end(), [](auto x) { std::cout << x << " "; });
-    std::cout << std::endl;
 }
 
 namespace

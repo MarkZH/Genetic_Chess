@@ -428,40 +428,27 @@ void gene_pool(const std::string& config_file)
 
         game_count[pool_index] += results.size();
 
-        // Transfer best players between gene pools to keep pools
-        // from stagnating or amplifying pathological behavior
-        if(pools.size() > 1 && pool_index == pools.size() - 1) // all pools have equal number of games
+        // Mix up the populations of all the gene pools
+        if(pools.size() > 1 && pool_index == pools.size() - 1 && ++rounds_since_last_swap >= pool_swap_interval)
         {
-            if(++rounds_since_last_swap >= pool_swap_interval)
+            rounds_since_last_swap = 0;
+
+            std::cout << "\n=======================\n\n";
+            std::cout << "Shuffling pools ..." << std::endl;
+            std::vector<Genetic_AI> all_players;
+            for(const auto& gene_pool : pools)
             {
-                rounds_since_last_swap = 0;
+                all_players.insert(all_players.end(), gene_pool.begin(), gene_pool.end());
+            }
 
-                // Replace player with least wins in each pool with clone of winner from pool to left
-                std::cout << "\n=======================\n\n";
-                std::vector<Genetic_AI> winners;
-                std::transform(pools.begin(), pools.end(), std::back_inserter(winners),
-                               [](const auto& source_pool)
-                               {
-                                   // Taking the oldest AI (smallest ID) as the best
-                                   return *std::min_element(source_pool.begin(), source_pool.end());
-                               });
-
-                auto destination_pool_indices = std::vector<size_t>(pools.size());
-                std::iota(destination_pool_indices.begin(), destination_pool_indices.end(), 0);
-                Random::one_cycle_derange(destination_pool_indices);
-                for(size_t source_pool_index = 0; source_pool_index < pools.size(); ++source_pool_index)
-                {
-                    auto dest_pool_index = destination_pool_indices[source_pool_index];
-                    auto& dest_pool = pools[dest_pool_index];
-                    auto& loser = *std::max_element(dest_pool.begin(), dest_pool.end());
-                    std::cout << "Sending ID "
-                              << winners[source_pool_index].id()
-                              << " from pool "
-                              << source_pool_index
-                              << " to pool "
-                              << dest_pool_index << std::endl;
-                    loser = winners[source_pool_index]; // winner replaces loser in destination pool
-                }
+            Random::shuffle(all_players);
+            pools.clear();
+            auto begin_iter = all_players.begin();
+            while(begin_iter != all_players.end())
+            {
+                auto end_iter = std::next(begin_iter, gene_pool_population);
+                pools.emplace_back(begin_iter, end_iter);
+                begin_iter = end_iter;
             }
         }
 
