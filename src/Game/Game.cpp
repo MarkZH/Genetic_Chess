@@ -2,6 +2,9 @@
 
 #include <string>
 #include <stdexcept>
+#include <thread>
+#include <chrono>
+using namespace std::chrono_literals;
 
 #ifndef _WIN32
 #include <csignal>
@@ -117,6 +120,10 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
     {
         if( ! game_file_name.empty())
         {
+            if(&player == black)
+            {
+                std::this_thread::sleep_for(1s);
+            }
             player.set_opponent_name(outsider->other_player_name());
             board.print_game_record(white, black, game_file_name, game_result, clock, "End of online game");
         }
