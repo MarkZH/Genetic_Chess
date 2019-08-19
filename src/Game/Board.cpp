@@ -1191,11 +1191,6 @@ void Board::print_game_record(const Player* white,
 
         auto next_move = game_record_listing.at(i);
         out_stream << " " << next_move->game_record_item(commentary_board);
-        if(i + 1 == game_record_listing.size() && ! actual_result.game_has_ended())
-        {
-            out_stream << "*";
-        }
-
         auto current_player = (commentary_board.whose_turn() == WHITE ? white : black);
         if(current_player)
         {
@@ -1204,6 +1199,11 @@ void Board::print_game_record(const Player* white,
             {
                 out_stream << " " << commentary;
             }
+        }
+
+        if(i + 1 == game_record_listing.size() && ! actual_result.game_has_ended())
+        {
+            out_stream << " *";
         }
 
         commentary_board.submit_move(*next_move);
