@@ -24,7 +24,7 @@ CECP_Mediator::CECP_Mediator(const Player& local_player)
         send_command("feature "
                      "usermove=1 "
                      "sigint=0 "
-                     "reuse=1 "
+                     "reuse=0 "
                      "myname=\"" + local_player.name() + "\" "
                      "name=1 "
                      "ping=1 "
