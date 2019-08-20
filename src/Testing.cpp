@@ -359,11 +359,7 @@ bool run_tests()
     for(int i = 0; i < 10; ++i)
     {
         test_pool.emplace_back(100); // Add AI with 100 mutations
-    }
-    for(auto& ai : test_pool)
-    {
-        ai = Genetic_AI(ai, Random::random_element(test_pool)); // test ancestry writing/parsing
-        ai.print(pool_file_name);
+        test_pool.back().print(pool_file_name);
     }
 
     const auto& test_ai = Random::random_element(test_pool);
