@@ -3,7 +3,6 @@
 
 #include <iosfwd>
 #include <string>
-#include <map>
 
 #include "Minimax_AI.h"
 
@@ -69,11 +68,6 @@ class Genetic_AI : public Minimax_AI
         //! \returns The ID number.
         int id() const;
 
-        //! This function identifies the first gene pool into which a newly created Genetic_AI is placed.
-        //
-        //! \param pool_id The ID number of the gene pool.
-        void set_origin_pool(size_t pool_id);
-
         //! A comparison function to sort Genetic_AI collections.
         //
         //! \param other Another Genetic_AI.
@@ -84,13 +78,10 @@ class Genetic_AI : public Minimax_AI
         Genome genome;
 
         static int next_id;
-        static size_t max_origin_pool_id;
 
         int id_number;
-        std::map<size_t, double> ancestry; // record mix of parents' original gene pool ancestry
 
         void read_data(std::istream& is);
-        void read_ancestry(std::istream& is);
 
         double internal_evaluate(const Board& board,
                                  Color perspective,

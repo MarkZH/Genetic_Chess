@@ -129,7 +129,6 @@ void gene_pool(const std::string& config_file)
         while(pools[i].size() < gene_pool_population)
         {
             pools[i].push_back(Genetic_AI(scramble_mutations));
-            pools[i].back().set_origin_pool(i);
         }
 
         while(pools[i].size() > gene_pool_population)

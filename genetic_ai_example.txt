@@ -1,9 +1,4 @@
 ID: 141490
-Name: Ancestry
-0: 0.380553
-1: 0.0356146
-2: 0.583832
-
 Name: Piece Strength Gene
 B: 17.6124
 K: -20.8854
