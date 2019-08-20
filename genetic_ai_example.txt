@@ -12,9 +12,9 @@ P: 4.20563
 Q: 49.0129
 R: 27.6978
 
-Name: Look Ahead Gene
+Name: Look  Ahead Gene
 Game Length Uncertainty: 0.47594
-Mean Game Length: 24.1568
+Mean Game    Length: 24.1568
 Speculation-Can Change Material: 1.54612
 Speculation-Default: 1.8168
 Speculation-Just Changed Material: 1.59222

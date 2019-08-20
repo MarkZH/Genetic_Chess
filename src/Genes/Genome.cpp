@@ -162,7 +162,7 @@ void Genome::read_from(std::istream& is)
 
         if(String::trim_outer_whitespace(line_split[0]) == "Name")
         {
-            auto gene_name = String::trim_outer_whitespace(line_split[1]);
+            auto gene_name = String::remove_extra_whitespace(line_split[1]);
             bool gene_found = false;
             for(auto& gene : genome)
             {
