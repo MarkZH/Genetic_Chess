@@ -11,7 +11,7 @@ else
     adj=0
 fi
 output_file="${input_file}_offspring_counts.txt"
-grep "\[White \|\[Black " "$input_file" |  # Find players
+grep "Genetic" "$input_file" |  # Find players
     cut -d\" -f2 |            # Cut out name of player
     cut -d' ' -f3 |           # Cut out ID number
     sort -n |                 # Sort by number
