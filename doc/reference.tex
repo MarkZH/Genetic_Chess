@@ -307,7 +307,7 @@ In each generation, the players in a gene pool are randomly matched up with each
 
 In this procedure, some the genes of losing players are passed on and are only slowly weeded out since a single game does not actually provide much information about the fitness of any gene with respect to game play. The removal of individuals destroys genetic information. By ``information,'' I mean filtered genomes. If a gene (including small variations, given the continuous nature of these genotypes) is present is a large percentage of the species, then that gene must have been present in a great number of AIs that were victorious in their games through many generations and many different opponents. Genes found in losing organisms slowly fade away as their host organisms fail to survive long enough reproduce multiple times. On average, a gene from a losing AI will be present in 0.5~AIs (50\% chance of being passed on) in the next generation; a gene from a winning AI will be present in 1.5~AIs (1.0 from the parent and another 0.5 from the 50\% chance of being passed on) in the next generation.
 
-One final means of preventing gene pool stagnation and preserving genetic diversity is the use of multiple gene pools. Each gene pool evolves separately for a long time, allowing each to genetically diverge. Then, every once in a long while (the time being user-specified), the best player from each pool is transferred to the next pool over. Thus, the best genes are further spread afield so that they can be tested against a wide range of opponents. A useful measure of a pool's relative strength is how long its best player survives when it enters a new pool.
+One final means of preventing gene pool stagnation and preserving genetic diversity is the use of multiple gene pools. Each gene pool evolves separately for a long time, allowing each to genetically diverge. Then, every once in a long while (the time being user-specified), all of the AIs are shuffled between all of the gene pools. Thus, the best genes are further spread afield so that they can be tested against a wide range of opponents and combined with the best genes from other pools to create stronger offspring.
 
 On Linux, the gene pool can be paused by pressing Ctrl-z. After the key press, the currently running games will finish and the results recorded before pausing. Pressing Ctrl-c exits the program immediately without waiting for current games to finish. To exit the program after the current round of games finish, pause first with Ctrl-z, then exit with Ctrl-c.
 
@@ -320,7 +320,7 @@ A gene pool is configured with a text file that is reference in the program star
 \subsection{Gene Pool Terminal Output}
 An example of typical output during a gene pool run is shown below. First, some general information about the pool is shown, then the results of the random matchups, thirdly the new makeup of this gene pool in the aftermath of the games, and finally the IDs of the AIs with the most ever wins and the most number of games survived.
 \begin{verbatim}
-Gene pool ID: 0  Gene pool size: 16
+Gene pool ID: 0  Gene pool size: 16  Rounds since pool swaps: 2/1000
 Games: 6000  White wins: 3402  Black wins: 2511  Draws: 87
 Time: 16.65 sec   Gene pool file name: pool.txt
 
