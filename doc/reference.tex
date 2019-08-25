@@ -398,19 +398,6 @@ That the Total Force Gene dominates is fairly predictable. Highly skilled human 
 
 The Pawn Advancement Gene usually gains higher priority first, probably because it is the simplest gene that makes an immediate difference in the game. Push the pawns forward both threatens the opponent's pieces with low-risk attacks and increases the chances of promotion.
 
-\subsubsection{The Pawn Advancement Gene is a temporary substitute for a valid value of the pawn in the Piece Strength Gene.}\label{pawn-result}
-
-Near the birth of the Genetic AI with ID~\#120,000, the Pawn Advancement Gene suddenly died off, with nearly all AIs in the gene pool deactivating the gene simultaneously (see Figure~\ref{pawn-crash}).
-\begin{figure}[htb]
-	\centering
-	\includegraphics[width=0.7\textwidth]{pawn-advancement-crash}
-	\caption{The sudden crash of the Pawn Advancement Gene}\label{pawn-crash}
-\end{figure}
-
-The only correlation with another gene near that time is in the Piece Strength Gene (see Figure~\ref{piece-value-plot}). The change is small, but in the comparison plot shown in Figure~\ref{pawn-crash}, one can see that the pawn strength has a small jump in value near ID~\#120,000. This is the first time that all of the AIs in the gene pools have strictly positive values for the pawn. Prior to this, the value of a pawn was zero on average. When mutations would push the pawn value higher, it would be weighted too much compared to other pieces, leading to losses and a lower value for the remaining population. It was only when the other pieces reached a large enough value that the pawn value could be properly weighted and sustained. Until this happened, the Pawn Advancement Gene evolved a large value in step with the Total Force Gene since pawns are not actually valueless in real games. Until the Piece Strength Gene transition occurred, the Pawn Advancement Gene served as a proxy for the value of a pawn that was more easily tuned in comparison with the Total Force Gene and Piece Strength Gene.
-
-This pattern, in which a gene with a lower proper value or priority needs to wait for properly higher-priority genes to evolve high enough priorities before tuning their own priorities, is common and is discussed more the Section~\ref{lower-priority-waits}.
-
 \subsection{The Queen is the most popular piece for promotion.}
 
 Even when the Piece Strength Gene has not been tuned at all, the queen is the overwhelming favorite, followed by the rook, then bishop, and finally the knight. In human games, only the queen and knight are chosen since they have different move patterns. If you need at least a rook or bishop, you might as well take a queen since that piece provides both. Only the knight provides a viable alternative (usually to avoid a stalemate if the queen was chosen).
