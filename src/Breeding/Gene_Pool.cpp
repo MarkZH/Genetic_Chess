@@ -449,13 +449,48 @@ void gene_pool(const std::string& config_file)
             rounds_since_last_swap = 0;
 
             std::cout << "\n=======================\n\n";
-            std::cout << "Shuffling pools ..." << std::endl;
             std::vector<Genetic_AI> all_players;
             for(const auto& gene_pool : pools)
             {
                 all_players.insert(all_players.end(), gene_pool.begin(), gene_pool.end());
             }
+            auto max_id = std::max_element(all_players.begin(), all_players.end())->id();
 
+            // Make sure quality has not dropped
+
+            // Pick a random AI from the past (probability proportional to ID)
+            auto id_sum = (max_id*(max_id + 1))/2;
+            auto random_sum = Random::random_integer(0, id_sum);
+            auto sum = 0;
+            auto threshhold_id = 0;
+            while(sum < random_sum)
+            {
+                sum += (++threshhold_id);
+            }
+            auto threshold_ai = Genetic_AI(genome_file_name, threshhold_id);
+            std::cout << "Threshold AI ID = " << threshhold_id << std::endl;
+
+            // Replace AIs that lose to the threshold AI with new offsrping
+            // until all AIs beat the threshold.
+            for(auto& ai : all_players)
+            {
+                std::cout << "Threshold game: " << threshold_ai.id() << " vs " << ai.id() << " ... " << std::flush;
+                auto clock = Clock(game_time);
+                auto result = play_game(Board{}, clock, threshold_ai, ai, false, game_record_file);
+                if(result.winner() == WHITE)
+                {
+                    ai = Genetic_AI(threshold_ai, ai);
+                    original_pool[ai] = gene_pool_count; // from nowhere
+                    std::cout << "Replaced" << std::endl;
+                }
+                else
+                {
+                    std::cout << "Passed" << std::endl;
+                }
+            }
+
+            // Distribute players randomly among pools
+            std::cout << "Shuffling pools ... ";
             Random::shuffle(all_players);
             pools.clear();
             auto begin_iter = all_players.begin();
@@ -465,8 +500,15 @@ void gene_pool(const std::string& config_file)
                 pools.emplace_back(begin_iter, end_iter);
                 begin_iter = end_iter;
             }
-        }
 
+            for(auto new_pool_index = 0; new_pool_index < pools.size(); ++new_pool_index)
+            {
+                std::sort(pools[new_pool_index].begin(), pools[new_pool_index].end());
+                write_generation(pools, new_pool_index, genome_file_name);
+            }
+
+            std::cout << "Done." << std::endl;
+        }
 
         // Pause gene pool
         #ifdef _WIN32
