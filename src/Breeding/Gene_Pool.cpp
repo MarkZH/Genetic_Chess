@@ -382,8 +382,7 @@ void gene_pool(const std::string& config_file)
         }
 
         // widths of columns for stats printout
-        auto max_id = pool.back().id();
-        auto id_digits = int(std::floor(std::log10(max_id) + 1));
+        auto id_digits = int(std::floor(std::log10(pool.back().id()) + 1));
 
         // Write stat headers
         std::cout << '\n' << std::setw(id_digits + 1)  << "ID"
