@@ -362,6 +362,9 @@ void gene_pool(const std::string& config_file)
             std::cout << std::endl;
         }
 
+        std::sort(pool.begin(), pool.end());
+        write_generation(pools, pool_index, genome_file_name);
+
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
         purge_dead_from_map(pools, games_since_last_win);
@@ -390,7 +393,6 @@ void gene_pool(const std::string& config_file)
                   << std::setw(9)  << "Streak\n";
 
         // Write stats for each specimen
-        std::sort(pool.begin(), pool.end());
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_digits + 1) << ai.id();
@@ -465,8 +467,6 @@ void gene_pool(const std::string& config_file)
             }
         }
 
-        std::sort(pool.begin(), pool.end());
-        write_generation(pools, pool_index, genome_file_name);
 
         // Pause gene pool
         #ifdef _WIN32
