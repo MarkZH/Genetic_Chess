@@ -475,7 +475,7 @@ void gene_pool(const std::string& config_file)
             {
                 std::cout << "Threshold game: " << threshold_ai.id() << " vs " << ai.id() << " ... " << std::flush;
                 auto clock = Clock(game_time);
-                auto result = play_game(Board{}, clock, threshold_ai, ai, false, game_record_file);
+                auto result = play_game(Board{}, clock, threshold_ai, ai, false, game_record_file + "_threshold.pgn");
                 if(result.winner() == WHITE)
                 {
                     ai = Genetic_AI(threshold_ai, ai);
