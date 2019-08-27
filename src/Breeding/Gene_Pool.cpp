@@ -500,7 +500,7 @@ void gene_pool(const std::string& config_file)
                 begin_iter = end_iter;
             }
 
-            for(auto new_pool_index = 0; new_pool_index < pools.size(); ++new_pool_index)
+            for(size_t new_pool_index = 0; new_pool_index < pools.size(); ++new_pool_index)
             {
                 std::sort(pools[new_pool_index].begin(), pools[new_pool_index].end());
                 write_generation(pools, new_pool_index, genome_file_name);
