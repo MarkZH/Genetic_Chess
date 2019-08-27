@@ -96,7 +96,7 @@ void gene_pool(const std::string& config_file)
         std::cin.get();
     }
 
-    std::array<int, 2> color_wins{}; // indexed with [Color]
+    std::array<size_t, 2> color_wins{}; // indexed with [Color]
     size_t draw_count = 0;
 
     std::map<size_t, int> most_wins;
