@@ -55,18 +55,11 @@ std::string Game_Result::game_ending_annotation() const
         case BLACK:
             return "0-1";
         default:
-            return game_has_ended() ? "1/2-1/2" : "";
+            return game_has_ended() ? "1/2-1/2" : "*";
     }
 }
 
 std::string Game_Result::game_record_annotation() const
 {
-    if(game_has_ended())
-    {
-        return (cause == CHECKMATE ? "# " : " ") + game_ending_annotation();
-    }
-    else
-    {
-        return {};
-    }
+    return cause == CHECKMATE ? "#" : "";
 }

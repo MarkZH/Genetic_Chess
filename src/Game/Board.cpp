@@ -1138,7 +1138,7 @@ void Board::print_game_record(const Player* white,
     auto last_move_result = move_result();
     auto actual_result = last_move_result.game_has_ended() ? last_move_result : result;
 
-    print_game_header_line(out_stream, "Result", actual_result.game_has_ended() ? actual_result.game_ending_annotation() : "*");
+    print_game_header_line(out_stream, "Result", actual_result.game_ending_annotation());
 
     print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
@@ -1200,15 +1200,9 @@ void Board::print_game_record(const Player* white,
                 out_stream << " " << commentary;
             }
         }
-
-        if(i + 1 == game_record_listing.size() && ! actual_result.game_has_ended())
-        {
-            out_stream << " *";
-        }
-
         commentary_board.submit_move(*next_move);
     }
-    out_stream << "\n\n\n";
+    out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
 }
 
 void Board::make_en_passant_targetable(Square square)
