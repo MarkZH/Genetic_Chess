@@ -69,8 +69,8 @@ void Look_Ahead_Gene::gene_specific_mutation()
         default:
             assert(choice >= 3 && choice - 3 < speculation_constants.size());
             auto& spec = speculation_constants[choice - 3];
-            spec += Random::random_laplace(0.01);
-            spec = std::max(spec, 1.0);
+            spec += Random::random_laplace(0.03);
+            spec = std::max(spec, 0.0);
             break;
     }
 }
