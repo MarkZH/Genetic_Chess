@@ -30,9 +30,17 @@ fi
 
 pool_file="$(get_config_value "$config_file" file)"
 game_file="${pool_file}_games.pgn"
+threshold_game_file="${game_file}_threshold.pgn"
 opening_file="${game_file}_opening_list.txt"
 octave analysis/gene_plots.m "$pool_file" "$notes_file" &
 octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
+
+if [[ -f "$threshold_game_file" ]]
+then
+    octave analysis/win_lose_draw_plotting.m "$threshold_game_file" &
+    echo "Theshold game opponents:"
+    grep '^\[White ' "$threshold_game_file" | cut -d\" -f 2 | uniq -c
+fi
 
 # Second term here checks if argument is a number
 if [[ -n "$opening_moves" ]] && [ "$opening_moves" -eq "$opening_moves" ]
