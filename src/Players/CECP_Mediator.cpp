@@ -41,6 +41,9 @@ CECP_Mediator::CECP_Mediator(const Player& local_player)
 
 void CECP_Mediator::setup_turn(Board& board, Clock& clock)
 {
+    auto own_time_left = clock.time_left(opposite(board.whose_turn()));
+    auto opponent_time_left = clock.time_left(board.whose_turn());
+
     while(true)
     {
         auto command = receive_cecp_command(board, clock, false);
@@ -50,7 +53,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             log("telling local AI to move at leisure and accepting move");
             in_force_mode = false;
             board.choose_move_at_leisure();
-            return;
+            break;
         }
         else if (String::starts_with(command, "setboard "))
         {
@@ -86,7 +89,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
                     set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
                     log("Local AI now chooses a move");
                     board.choose_move_at_leisure();
-                    return;
+                    break;
                 }
             }
             catch(const Illegal_Move& e)
@@ -94,15 +97,24 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
                 send_command("Illegal move (" + std::string(e.what()) + ") " + move);
             }
         }
-        else if(String::starts_with(command, "time ") || String::starts_with(command, "otim "))
+        else if(String::starts_with(command, "time "))
         {
-            auto time = std::stod(String::split(command, " ")[1])/100; // time specified in centiseconds
-            auto ai_color = board.whose_turn();
-            auto clock_color = String::starts_with(command, "time ") ? ai_color : opposite(ai_color);
-            clock.set_time(clock_color, time);
-            log("setting " + color_text(clock_color) + "'s time to " + std::to_string(time) + " seconds.");
+            // time specified in centiseconds
+            own_time_left = std::stod(String::split(command, " ")[1])/100;
+            log("Will set own time to " + std::to_string(own_time_left));
+        }
+        else if(String::starts_with(command, "otim "))
+        {
+            // time specified in centiseconds
+            opponent_time_left = std::stod(String::split(command, " ")[1])/100;
+            log("Will set opponent's time to " + std::to_string(opponent_time_left));
         }
     }
+
+    log("Setting own time (" + color_text(board.whose_turn()) + ") to " + std::to_string(own_time_left));
+    clock.set_time(board.whose_turn(), own_time_left);
+    log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time_left));
+    clock.set_time(opposite(board.whose_turn()), opponent_time_left);
 }
 
 void CECP_Mediator::listen(Board& board, Clock& clock)
