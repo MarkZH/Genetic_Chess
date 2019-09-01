@@ -435,54 +435,42 @@ void Minimax_AI::calculate_centipawn_value() const
 std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move_number) const
 {
     auto comment_index = board.game_record().size()/2;
-    std::string result;
-    if(comment_index < commentary.size() && ! commentary.at(comment_index).variation.empty())
+    if(comment_index >= commentary.size() || commentary.at(comment_index).variation.empty())
     {
-        result += "(";
-        const auto& comment = commentary.at(comment_index);
-        Game_Result move_result;
-        auto temp_board = board;
-        result += (temp_board.whose_turn() == BLACK ? std::to_string(move_number) + ". ... " : std::string{});
-        for(auto move : comment.variation)
-        {
-            result += (temp_board.whose_turn() == WHITE ? std::to_string(move_number) + ". " : std::string{}) + move->game_record_item(temp_board) + " ";
-            move_result = temp_board.submit_move(*move);
-            if(temp_board.whose_turn() == WHITE)
-            {
-                ++move_number;
-            }
-        }
-
-        if( ! move_result.game_has_ended())
-        {
-            auto round = [](double x) { return String::round_to_precision(x, 0.01); };
-            auto score = round(comment.corrected_score(board.whose_turn())/centipawn_value()/100.0);
-            result += "{" + score + "; " + round(comment.time_used) + "/" + round(comment.time_allotted) + "}";
-        }
-        else
-        {
-            if(comment.variation.size() > 1)
-            {
-                // Trim off result annotation ("1-0", "0-1", or "1/2-1/2") by finding a hyphen and cutting
-                // off everything after the previous space.
-                result = result.substr(0, result.find_last_of('-'));
-                result = result.substr(0, result.find_last_of(' '));
-            }
-            else
-            {
-                // No need for commentary on the last move of the game since the result
-                // is obvious.
-                result.clear();
-            }
-        }
-
-        if(String::starts_with(result, "("))
-        {
-            result += ")";
-        }
+        return {};
     }
 
-    return result;
+    const auto& comment = commentary.at(comment_index);
+    Game_Result move_result;
+    auto temp_board = board;
+    std::string result = "(" + (temp_board.whose_turn() == BLACK ? std::to_string(move_number) + ". ... " : std::string{});
+    for(auto move : comment.variation)
+    {
+        result += (temp_board.whose_turn() == WHITE ? std::to_string(move_number++) + ". " : std::string{}) + move->game_record_item(temp_board) + " ";
+        move_result = temp_board.submit_move(*move);
+    }
+
+    auto round = [](double x) { return String::round_to_precision(x, 0.01); };
+    auto score = round(comment.corrected_score(board.whose_turn()) / centipawn_value() / 100.0);
+    auto score_text = "{" + score + ";" + round(comment.time_used) + "/" + round(comment.time_allotted) + "})";
+
+    if( ! move_result.game_has_ended())
+    {
+        return result + score_text;
+    }
+    else if(comment.variation.size() == 1)
+    {
+        // No need for commentary on the last move of the game since the result is obvious.
+        return {};
+    }
+    else if(move_result.winner() == NONE)
+    {
+        return result + score_text;
+    }
+    else
+    {
+        return result + "{" + score_text.substr(score_text.find(';') + 1);
+    }
 }
 
 void Minimax_AI::recalibrate_self() const
