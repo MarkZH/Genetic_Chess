@@ -9,14 +9,13 @@
 #include <numeric>
 #include <iterator>
 
+#include "Game/Board.h"
 #include "Game/Color.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
 
 #include "Exceptions/Genetic_AI_Creation_Error.h"
-
-class Board;
 
 Gene::Gene(bool non_negative_priority) :
     scoring_priority(0.0),
@@ -158,9 +157,9 @@ void Gene::gene_specific_mutation()
 {
 }
 
-double Gene::evaluate(const Board& board, Color perspective, size_t depth) const
+double Gene::evaluate(const Board& board, Color perspective, size_t prior_real_moves) const
 {
-    return scoring_priority*score_board(board, perspective, depth);
+    return scoring_priority*score_board(board, perspective, prior_real_moves);
 }
 
 void Gene::print(std::ostream& os) const
@@ -180,7 +179,7 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
 
 void Gene::test(bool& test_variable, const Board& board, Color perspective, double expected_score) const
 {
-    auto result = score_board(board, perspective, 1);
+    auto result = score_board(board, perspective, board.game_record().empty() ? 0 : board.game_record().size() - 1);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';

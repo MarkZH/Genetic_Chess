@@ -30,7 +30,7 @@ class Opponent_Pieces_Targeted_Gene : public Gene
     private:
         const Piece_Strength_Gene* piece_strength_source;
 
-        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
 };
 
 #endif // OPPONENT_PIECES_TARGETED_GENE_H

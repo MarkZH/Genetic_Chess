@@ -759,6 +759,20 @@ void run_speed_tests()
     }
     timing_results.emplace_back(copy_game_watch.time_so_far(), "Board::submit_move() with copy");
 
+    auto quiescent_watch = Scoped_Stopwatch("");
+    Board quiescent_board;
+    for(auto i = 0; i < number_of_tests; ++i)
+    {
+        auto move = Random::random_element(speed_board.legal_moves());
+        auto move_result = speed_board.submit_move(*move);
+        if(move_result.game_has_ended())
+        {
+            speed_board = Board{};
+        }
+        auto quiescent_result_board = quiescent_board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0});
+    }
+    timing_results.emplace_back(quiescent_watch.time_so_far(), "Board::quiescent()");
+
     std::sort(timing_results.begin(), timing_results.end());
     const auto name_width = std::max_element(timing_results.begin(), timing_results.end(),
                                              [](const auto& x, const auto& y){ return x.second.size() < y.second.size(); })->second.size();
@@ -1029,6 +1043,22 @@ namespace
                                 "in check when it should " +
                                 (expected_result ? "" : "not ") +
                                 "be in check.");
+            }
+            else if(test_type == "quiescent")
+            {
+                assert(specification.size() == 4);
+                test_result(test_passed, all_moves_legal(board, moves), "Bad test: Illegal moves");
+                auto actual_result_board = board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0});
+                for(auto quiescent_move : String::split(specification.at(3)))
+                {
+                    board.submit_move(board.create_move(quiescent_move));
+                }
+                auto gr1 = board.game_record();
+                auto gr2 = actual_result_board.game_record();
+                test_result(test_passed,
+                            gr1.size() == gr2.size() &&
+                            std::mismatch(gr1.begin(), gr1.end(), gr2.begin()) == std::make_pair(gr1.end(), gr2.end()),
+                            "Expected: " + board.fen_status() + "\nGot:      " + actual_result_board.fen_status());
             }
             else
             {

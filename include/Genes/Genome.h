@@ -47,9 +47,9 @@ class Genome
         //
         //! \param board The board position to be evaluated.
         //! \param perspective The player for whom a higher score means a greater chance of victory.
-        //! \param depth How man moves in the future the current board state is compared to the
-        //!        original board that represents the current state of the game.
-        double evaluate(const Board& board, Color perspective, size_t depth) const;
+        //! \param prior_real_moves How many moves have already been made on the original board
+        //!        (i.e., at the root of the game tree).
+        double evaluate(const Board& board, Color perspective, size_t prior_real_moves) const;
 
         //! Apply a random set of mutations to the entire genome.
         //
@@ -73,6 +73,9 @@ class Genome
         //! \returns The multiplicative factor.
         double speculation_time_factor(const Board& board) const;
 
+        //! The value of pieces as determined by the Piece_Strength_Gene
+        const std::array<double, 6>& piece_values() const;
+
         //! Print the genome data to the output stream (std::ofstream, std::cout, etc.).
         //
         //! \param os The output stream.
@@ -86,7 +89,7 @@ class Genome
         static size_t look_ahead_gene_index;
         static size_t mutation_rate_gene_index;
 
-        double score_board(const Board& board, Color perspective, size_t depth) const;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const;
         void reset_piece_strength_gene();
 
         //! Consults the Mutation_Rate_Gene to determine how many point mutations to apply to the genome.

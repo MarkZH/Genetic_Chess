@@ -48,7 +48,7 @@ class Look_Ahead_Gene : public Gene
         double mean_game_length; // in moves by one player
         double game_length_uncertainty; // approximately as a fraction of the mean
 
-        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
         void gene_specific_mutation() override;
 };
 

@@ -4,6 +4,7 @@
 #include "Player.h"
 
 #include <vector>
+#include <array>
 
 #include "Game/Color.h"
 #include "Players/Game_Tree_Node_Result.h"
@@ -64,10 +65,12 @@ class Minimax_AI : public Player
         double evaluate(const Board& board,
                         const Game_Result& move_result,
                         Color perspective,
-                        size_t depth) const;
+                        size_t prior_real_moves) const;
         virtual double internal_evaluate(const Board& board,
                                          Color perspective,
-                                         size_t depth) const = 0;
+                                         size_t prior_real_moves) const = 0;
+
+        virtual const std::array<double, 6>& piece_values() const = 0;
 
         // Time management
         virtual double time_to_examine(const Board& board, const Clock& clock) const = 0;
@@ -80,7 +83,7 @@ class Minimax_AI : public Player
         Game_Tree_Node_Result search_game_tree(const Board& board,
                                                double time_to_examine,
                                                const Clock& clock,
-                                               size_t depth,
+                                               size_t prior_real_moves,
                                                Game_Tree_Node_Result alpha,
                                                const Game_Tree_Node_Result& beta,
                                                bool still_on_principal_variation) const;
@@ -88,7 +91,7 @@ class Minimax_AI : public Player
         Game_Tree_Node_Result create_result(const Board& board,
                                             Color perspective,
                                             const Game_Result& move_result,
-                                            size_t depth) const;
+                                            size_t prior_real_moves) const;
 
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,

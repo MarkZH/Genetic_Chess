@@ -44,7 +44,7 @@ std::string Castling_Possible_Gene::name() const
     return "Castling Possible Gene";
 }
 
-double Castling_Possible_Gene::score_board(const Board& board, Color perspective, size_t depth) const
+double Castling_Possible_Gene::score_board(const Board& board, Color perspective, size_t prior_real_moves) const
 {
     // check if a castling move lies between here and the actual state of the board
     if( ! board.game_record().empty())
@@ -54,7 +54,7 @@ double Castling_Possible_Gene::score_board(const Board& board, Color perspective
 
         if(castling_index <= last_move_index) // castling has occurred in the past of this board
         {
-            if(castling_index + depth > last_move_index) // castling has not occurred on the actual board
+            if(castling_index >= prior_real_moves) // castling has not occurred on the actual board
             {
                 return Math::sign(board.game_record()[castling_index]->file_change() > 0 ?
                                   kingside_preference : queenside_preference);

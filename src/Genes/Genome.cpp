@@ -188,18 +188,18 @@ void Genome::read_from(std::istream& is)
     throw Genetic_AI_Creation_Error("Reached end of file before END of genome.");
 }
 
-double Genome::score_board(const Board& board, Color perspective, size_t depth) const
+double Genome::score_board(const Board& board, Color perspective, size_t prior_real_moves) const
 {
     return std::accumulate(genome.begin(), genome.end(), 0.0,
                            [&](auto sum, const auto& gene)
                            {
-                               return sum + gene->evaluate(board, perspective, depth);
+                               return sum + gene->evaluate(board, perspective, prior_real_moves);
                            });
 }
 
-double Genome::evaluate(const Board& board, Color perspective, size_t depth) const
+double Genome::evaluate(const Board& board, Color perspective, size_t prior_real_moves) const
 {
-    return score_board(board, perspective, depth) - score_board(board, opposite(perspective), depth);
+    return score_board(board, perspective, prior_real_moves) - score_board(board, opposite(perspective), prior_real_moves);
 }
 
 void Genome::mutate()
@@ -237,6 +237,11 @@ double Genome::time_to_examine(const Board& board, const Clock& clock) const
 double Genome::speculation_time_factor(const Board& board) const
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor(board);
+}
+
+const std::array<double, 6>& Genome::piece_values() const
+{
+    return static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())->piece_values();
 }
 
 double Genome::components_to_mutate() const

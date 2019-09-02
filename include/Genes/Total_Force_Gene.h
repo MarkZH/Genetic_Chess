@@ -30,7 +30,7 @@ class Total_Force_Gene : public Gene
     private:
         const Piece_Strength_Gene* piece_strength_source;
 
-        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
 };
 
 #endif // TOTAL_FORCE_GENE_H

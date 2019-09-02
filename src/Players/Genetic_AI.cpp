@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 #include <map>
-#include <algorithm>
+#include <array>
 
 class Board;
 class Clock;
@@ -75,9 +75,14 @@ void Genetic_AI::read_data(std::istream& is)
     }
 }
 
-double Genetic_AI::internal_evaluate(const Board& board, Color perspective, size_t depth) const
+double Genetic_AI::internal_evaluate(const Board& board, Color perspective, size_t prior_real_moves) const
 {
-    return genome.evaluate(board, perspective, depth);
+    return genome.evaluate(board, perspective, prior_real_moves);
+}
+
+const std::array<double, 6>& Genetic_AI::piece_values() const
+{
+    return genome.piece_values();
 }
 
 double Genetic_AI::time_to_examine(const Board& board, const Clock& clock) const

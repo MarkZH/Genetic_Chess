@@ -29,7 +29,7 @@ class Castling_Possible_Gene : public Gene
         double kingside_preference;
         double queenside_preference;
 
-        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
         void gene_specific_mutation() override;
 };
 

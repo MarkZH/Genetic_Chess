@@ -79,6 +79,11 @@ double Piece_Strength_Gene::piece_value(Piece piece) const
     }
 }
 
+const std::array<double, 6>& Piece_Strength_Gene::piece_values() const
+{
+    return piece_strength;
+}
+
 double Piece_Strength_Gene::normalizer() const
 {
     return normalizing_value;

@@ -85,7 +85,9 @@ class Genetic_AI : public Minimax_AI
 
         double internal_evaluate(const Board& board,
                                  Color perspective,
-                                 size_t depth) const override;
+                                 size_t prior_real_moves) const override;
+
+        virtual const std::array<double, 6>& piece_values() const override;
 
         // Time management
         double time_to_examine(const Board& board, const Clock& clock) const override;

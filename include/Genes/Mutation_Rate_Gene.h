@@ -32,7 +32,7 @@ class Mutation_Rate_Gene : public Gene
     private:
         double mutated_components_per_mutation;
 
-        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
 };
 
 #endif // MUTATION_RATE_GENE_H

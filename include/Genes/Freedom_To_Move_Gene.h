@@ -27,7 +27,7 @@ class Freedom_To_Move_Gene : public Gene
         bool verify(const Board& board) const;
 
     private:
-        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
 
         size_t attack_count_scan(const Board& board, Color perspective) const;
 };

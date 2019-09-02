@@ -1591,3 +1591,81 @@ Board Board::without_random_pawn() const
         }
     }
 }
+
+Board Board::quiescent(const std::array<double, 6>& piece_values) const
+{
+    if(game_record().empty())
+    {
+        return *this;
+    }
+
+    std::vector<Board> capture_states = {*this};
+    std::vector<double> state_values = {0.0};
+    const auto player_color = whose_turn();
+    auto current_board = *this;
+    const auto square = game_record().back()->end();
+    while( ! current_board.safe_for_king(square, opposite(current_board.whose_turn())))
+    {
+        std::vector<const Move*> capturing_moves;
+        std::copy_if(current_board.legal_moves().begin(), current_board.legal_moves().end(), std::back_inserter(capturing_moves),
+                        [square](auto move) { return move->end() == square; });
+
+        if(capturing_moves.empty())
+        {
+            // This can happen when the only attacking piece is a king
+            // and the attacked piece is guarded.
+            break;
+        }
+
+        // Attack with the weakest piece first
+        auto move = *std::min_element(capturing_moves.begin(), capturing_moves.end(),
+                                      [&piece_values, &current_board](auto move1, auto move2)
+                                      {
+                                          return piece_values[current_board.piece_on_square(move1->start()).type()] <
+                                                 piece_values[current_board.piece_on_square(move2->start()).type()];
+                                      });
+
+        // Make sure that an exchange does not lose material
+        auto moving_piece = current_board.piece_on_square(move->start());
+        auto attacked_piece = current_board.piece_on_square(move->end());
+        current_board.submit_move(*move);
+        capture_states.push_back(current_board);
+        state_values.push_back(state_values.back() + (moving_piece.color() == player_color ? +1 : -1)*piece_values[attacked_piece.type()]);
+    }
+
+
+    if(capture_states.size() == 1)
+    {
+        return capture_states.front();
+    }
+
+    // Make sure to stop before either player ends up in an
+    // avoidable loss of material.
+    auto minimax_index = state_values.size() - 1;
+    auto minimax_value = state_values[minimax_index];
+    for(auto index = state_values.size() - 2; index < state_values.size(); --index)
+    {
+        auto value = state_values[index];
+
+        // Even indices indicate a player's choice (maximize score).
+        // Odd indices indicate an opponent's choice (minimize score).
+        if(index % 2 == 0)
+        {
+            if(value > minimax_value)
+            {
+                minimax_value = value;
+                minimax_index = index;
+            }
+        }
+        else
+        {
+            if(value < minimax_value)
+            {
+                minimax_value = value;
+                minimax_index = index;
+            }
+        }
+    }
+
+    return capture_states[minimax_index];
+}

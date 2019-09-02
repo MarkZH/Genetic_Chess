@@ -31,7 +31,7 @@ class Sphere_of_Influence_Gene : public Gene
         double illegal_square_score;
         double king_target_factor;
 
-        double score_board(const Board& board, Color perspective, const size_t depth) const override;
+        double score_board(const Board& board, Color perspective, const size_t prior_real_moves) const override;
         void gene_specific_mutation() override;
 
         std::array<double, 8> scalar_cache;

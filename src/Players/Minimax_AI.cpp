@@ -76,7 +76,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     auto result = search_game_tree(board,
                                    time_to_use,
                                    clock,
-                                   1,
+                                   board.game_record().size(),
                                    alpha_start,
                                    beta_start,
                                    ! principal_variation.empty());
@@ -115,12 +115,13 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const double time_to_examine,
                                                    const Clock& clock,
-                                                   const size_t depth,
+                                                   const size_t prior_real_moves,
                                                    Game_Tree_Node_Result alpha,
                                                    const Game_Tree_Node_Result& beta,
                                                    bool still_on_principal_variation) const
 {
     const auto time_start = clock.running_time_left();
+    const auto depth = board.game_record().size() - prior_real_moves + 1;
     maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
 
@@ -172,7 +173,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if(move_result.winner() != NONE)
         {
             // This move results in checkmate, no other move can be better.
-            return create_result(next_board, perspective, move_result, depth);
+            return create_result(next_board, perspective, move_result, prior_real_moves);
         }
 
         if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
@@ -215,14 +216,14 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             result = search_game_tree(next_board,
                                       time_allotted_for_this_move,
                                       clock,
-                                      depth + 1,
+                                      prior_real_moves,
                                       beta,
                                       alpha,
                                       still_on_principal_variation);
         }
         else
         {
-            result = create_result(next_board, perspective, move_result, depth);
+            result = create_result(next_board.quiescent(piece_values()), perspective, move_result, prior_real_moves);
         }
 
         if(result.value(perspective) > best_result.value(perspective))
@@ -352,11 +353,11 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
                                                 Color perspective,
                                                 const Game_Result& move_result,
-                                                size_t depth) const
+                                                size_t prior_real_moves) const
 {
-    return {evaluate(board, move_result, perspective, depth),
+    return {evaluate(board, move_result, perspective, prior_real_moves),
             perspective,
-            {board.game_record().end() - int(depth),
+            {board.game_record().begin() + int(prior_real_moves),
             board.game_record().end()}};
 }
 
@@ -370,7 +371,7 @@ void Minimax_AI::calibrate_thinking_speed() const
     choose_move(board, clock);
 }
 
-double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Color perspective, size_t depth) const
+double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Color perspective, size_t prior_real_moves) const
 {
     if(move_result.game_has_ended())
     {
@@ -388,7 +389,7 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
         }
     }
 
-    return internal_evaluate(board, perspective, depth);
+    return internal_evaluate(board, perspective, prior_real_moves);
 }
 
 double Minimax_AI::centipawn_value() const

@@ -30,6 +30,9 @@ class Piece_Strength_Gene : public Gene
         //! \returns A numerical value of the Piece.
         double piece_value(Piece piece) const;
 
+        //! Returns the value of all pieces.
+        const std::array<double, 6>& piece_values() const;
+
         //! Returns the total value of the pieces on the board at the start of a standard game.
         //
         //! \returns A value used by other Genes to normalize their scores.
@@ -43,7 +46,7 @@ class Piece_Strength_Gene : public Gene
         std::array<double, 6> piece_strength;
         double normalizing_value;
 
-        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
         double piece_value(Piece_Type type) const;
         double& piece_value(Piece_Type type);
         void gene_specific_mutation() override;

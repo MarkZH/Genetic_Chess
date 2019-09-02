@@ -33,7 +33,7 @@ class Pawn_Advancement_Gene : public Gene
         double non_linearity;
         std::array<double, 6> score_cache; // precompute scores
 
-        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
         void gene_specific_mutation() override;
         void recompute_scores_cache();
 };

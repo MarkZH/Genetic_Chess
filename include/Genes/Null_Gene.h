@@ -19,7 +19,7 @@ class Null_Gene : public Gene
         std::string name() const override;
 
     private:
-        double score_board(const Board& board, Color perspective, size_t depth) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
 };
 
 #endif // NULL_GENE_H
