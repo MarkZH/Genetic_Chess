@@ -224,6 +224,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         else
         {
             result = create_result(next_board.quiescent(piece_values()), perspective, move_result, prior_real_moves);
+            nodes_searched += result.depth() - 1;
         }
 
         if(result.value(perspective) > best_result.value(perspective))
