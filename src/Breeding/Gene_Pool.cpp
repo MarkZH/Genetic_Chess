@@ -642,7 +642,11 @@ namespace
                     throw Bad_Still_Alive_Line(line_number, line);
                 }
             }
-            write_generation(result, index_list.first, ""); // mark AIs from file as already written
+        }
+
+        for(size_t index = 0; index < result.size(); ++index)
+        {
+            write_generation(result, index, ""); // mark AIs from file as already written
         }
 
         return result;
