@@ -453,21 +453,16 @@ void gene_pool(const std::string& config_file)
             {
                 all_players.insert(all_players.end(), gene_pool.begin(), gene_pool.end());
             }
-            auto max_id = std::max_element(all_players.begin(), all_players.end())->id();
+            size_t max_id = std::max_element(all_players.begin(), all_players.end())->id();
 
             // Make sure quality has not dropped
 
             // Pick a random AI from the past (probability proportional to ID)
             auto id_sum = (max_id*(max_id + 1))/2;
-            auto random_sum = Random::random_integer(0, id_sum);
-            auto sum = 0;
-            auto threshhold_id = 0;
-            while(sum < random_sum)
-            {
-                sum += (++threshhold_id);
-            }
-            auto threshold_ai = Genetic_AI(genome_file_name, threshhold_id);
+            auto random_sum = Random::random_integer(size_t{0}, id_sum);
+            auto threshhold_id = size_t(std::ceil((std::sqrt(0.25 + 2.0*random_sum) - 0.5)));
             std::cout << "Threshold AI ID = " << threshhold_id << std::endl;
+            auto threshold_ai = Genetic_AI(genome_file_name, threshhold_id);
 
             // Replace AIs that lose to the threshold AI with new offsrping
             // until all AIs beat the threshold.
