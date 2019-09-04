@@ -37,9 +37,8 @@ octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
 
 if [[ -f "$threshold_game_file" ]]
 then
-    octave analysis/win_lose_draw_plotting.m "$threshold_game_file" &
     echo "# Theshold game opponents:"
-    grep '^\[White ' "$threshold_game_file" | cut -d\" -f 2 | uniq -c
+    grep '^\[White ' "$threshold_game_file" | cut -d\" -f2 | uniq -c
 fi
 
 # Second term here checks if argument is a number
