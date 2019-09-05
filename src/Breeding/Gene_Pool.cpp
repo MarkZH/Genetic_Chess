@@ -460,7 +460,7 @@ void gene_pool(const std::string& config_file)
             // Pick a random AI from the past (probability proportional to ID)
             auto id_sum = (max_id*(max_id + 1))/2;
             auto random_sum = Random::random_integer(size_t{0}, id_sum);
-            auto threshhold_id = size_t(std::ceil((std::sqrt(0.25 + 2.0*random_sum) - 0.5)));
+            auto threshhold_id = int(std::ceil((std::sqrt(0.25 + 2.0*random_sum) - 0.5)));
             std::cout << "Threshold AI ID = " << threshhold_id << std::endl;
             auto threshold_ai = Genetic_AI(genome_file_name, threshhold_id);
 

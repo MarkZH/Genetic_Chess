@@ -51,7 +51,7 @@ class Minimax_AI : public Player
         mutable std::vector<Game_Tree_Node_Result> commentary;
 
         // Monitor search speed to adapt to different computers/competing workloads
-        mutable int nodes_searched;
+        mutable size_t nodes_searched;
         mutable double clock_start_time;
         mutable size_t maximum_depth;
 
