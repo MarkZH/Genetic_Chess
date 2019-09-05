@@ -45,6 +45,8 @@ fi
 if [[ -n "$opening_moves" ]] && [ "$opening_moves" -eq "$opening_moves" ]
 then
     ./analysis/openings.sh "$game_file" "$opening_moves" && octave analysis/opening_plotting.m "$opening_file" "$notes_file" &
+else
+    echo "Invalid argument for openings analysis: $opening_moves"
 fi
 
 wait # for opening_plotting.m to finish outputing to command line
