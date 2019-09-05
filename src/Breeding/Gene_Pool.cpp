@@ -465,7 +465,7 @@ void gene_pool(const std::string& config_file)
             auto threshold_ai = Genetic_AI(genome_file_name, threshhold_id);
 
             // Replace AIs that lose to the threshold AI with new offsrping
-            // until all AIs beat the threshold.
+            // with the threshold AI as a parent.
             for(auto& ai : all_players)
             {
                 std::cout << "Threshold game: " << threshold_ai.id() << " vs " << ai.id() << " ... " << std::flush;
