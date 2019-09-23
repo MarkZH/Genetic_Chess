@@ -68,11 +68,15 @@ namespace
     }();
 
     const uint64_t switch_turn_board_hash = Random::random_unsigned_int64();
+
+    const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    std::atomic<Thinking_Output_Type> thinking_indicator = NO_THINKING;
+    std::atomic_bool move_immediately = false;
 }
 
-const std::string Board::standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-std::atomic<Thinking_Output_Type> Board::thinking_indicator = NO_THINKING;
-std::atomic_bool Board::move_immediately = false;
+Board::Board() : Board(standard_starting_fen)
+{
+}
 
 Board::Board(const std::string& fen) :
     repeat_count_insertion_point{0},

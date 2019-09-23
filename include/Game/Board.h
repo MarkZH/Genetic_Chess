@@ -5,7 +5,6 @@
 #include <string>
 #include <array>
 #include <bitset>
-#include <atomic>
 
 #include "Game/Color.h"
 #include "Game/Square.h"
@@ -34,12 +33,14 @@ class Pawn_Move;
 class Board
 {
     public:
+        //! Constructs a board in the standard starting position.
+        Board();
+
         //! Constructs a board according to an FEN string.
         //
-        //! \param fen An optional text string given in FEN. If no argument is given,
-        //!        then the FEN string for the start of a standard chess game is given.
+        //! \param fen An text string given in FEN.
         //! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
-        explicit Board(const std::string& fen = standard_starting_fen); // reproduce board from Forsythe-Edwards Notation string
+        explicit Board(const std::string& fen); // reproduce board from Forsythe-Edwards Notation string
 
         //! Updates the state of the board according to a Player-selected Move.
         //
@@ -314,7 +315,6 @@ class Board
         std::array<bool, 64> unmoved_positions;
         Square en_passant_target;
         std::string starting_fen;
-        static const std::string standard_starting_fen;
         std::array<Square, 2> king_location;
         Square checking_square;
         mutable Square last_pin_check_square;
@@ -349,10 +349,6 @@ class Board
         std::vector<const Move*> legal_moves_cache;
 
         void recreate_move_caches();
-
-        // Communication channels
-        static std::atomic<Thinking_Output_Type> thinking_indicator;
-        static std::atomic_bool move_immediately;
 
         Piece& piece_on_square(Square square);
         void remove_piece(Square square);
