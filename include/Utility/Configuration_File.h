@@ -13,8 +13,7 @@ class Configuration_File
         //! \param file_name The name of the text file to be read.
         //!
         //! The file is read line-by-line and expects all configuration data in
-        //! the form \<paramter\> = \<value\>. Paramters are case-insensitive, as
-        //! are values except for file names.
+        //! the form \<paramter\> = \<value\>. Paramter names are case-insensitive.
         //!
         //! Comments can be added to the file by prepending them with '#'.
         explicit Configuration_File(const std::string& file_name);
