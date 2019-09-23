@@ -16,6 +16,7 @@ class Move
         //! \param start The Square where move starts.
         //! \param end   The Square where move ends.
         Move(Square start, Square end);
+
         virtual ~Move() = default;
 
         //! This saves work by preventing all unnecessary copying (which is all copying).
