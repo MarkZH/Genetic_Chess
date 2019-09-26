@@ -1186,7 +1186,7 @@ void Board::print_game_record(const Player* white,
         auto step = move_count_start_offset + (i + starting_turn_offset)/2;
         if(commentary_board.whose_turn() == WHITE || i == 0)
         {
-            out_stream << '\n' <<  + step << ".";
+            out_stream << '\n' << step << ".";
             if(i == 0 && commentary_board.whose_turn() == BLACK)
             {
                 out_stream << " ...";
