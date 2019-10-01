@@ -82,6 +82,7 @@ Board::Board(const std::string& fen) :
     unmoved_positions{},
     starting_fen(String::remove_extra_whitespace(fen)),
     potential_attacks{},
+    blocked_attacks{},
     castling_index{{size_t(-1), size_t(-1)}},
     attack_counts{}
 {
