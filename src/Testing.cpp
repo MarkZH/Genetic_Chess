@@ -250,7 +250,7 @@ bool run_tests()
         for(const auto& move : {"Nc3", "Nc6", "Nb1", "Nb8"})
         {
             ++repeat_move_count;
-            repeat_result = repeat_board.submit_move(repeat_board.create_move(move));
+            repeat_result = repeat_board.submit_move(move);
             if(repeat_result.game_has_ended())
             {
                 test_result(tests_passed, repeat_move_count == 8, "Threefold repetition triggered early.");
@@ -312,15 +312,15 @@ bool run_tests()
 
     // Last move captured/changed material tests
     Board capture_board;
-    capture_board.submit_move(capture_board.create_move("b4"));
-    capture_board.submit_move(capture_board.create_move("c5"));
+    capture_board.submit_move("b4");
+    capture_board.submit_move("c5");
     test_function(tests_passed, "Material change possible", true, [&capture_board](){ return capture_board.material_change_possible(); });
 
-    capture_board.submit_move(capture_board.create_move("bxc5"));
+    capture_board.submit_move("bxc5");
     test_function(tests_passed, "Last move captured", true, [&capture_board](){ return capture_board.last_move_captured(); });
     test_function(tests_passed, "Material change not possible", false, [&capture_board](){ return capture_board.material_change_possible(); });
 
-    capture_board.submit_move(capture_board.create_move("h5"));
+    capture_board.submit_move("h5");
     test_function(tests_passed, "Last move did not capture", false, [&capture_board](){ return capture_board.last_move_captured(); });
 
 
@@ -331,14 +331,14 @@ bool run_tests()
     auto just_kings_move_board = castling_hash_board;
     for(auto move : {"Ke2", "Ke7", "Ke1", "Ke8"})
     {
-        just_kings_move_board.submit_move(just_kings_move_board.create_move(move));
+        just_kings_move_board.submit_move(move);
     }
 
     // Lose all castling rights due to rooks moving
     auto just_rooks_move_board = castling_hash_board;
     for(auto move : {"Ra2", "Ra7", "Ra1", "Ra8", "Rh2", "Rh7", "Rh1", "Rh8"})
     {
-        just_rooks_move_board.submit_move(just_rooks_move_board.create_move(move));
+        just_rooks_move_board.submit_move(move);
     }
 
     test_function(tests_passed, "Board hash after no-castle", true,
@@ -390,13 +390,13 @@ bool run_tests()
     auto white_castling_score = 0.8*(5.0/6.0) + 0.2*(6.0/7.0); // maximum score with and without actually castling
     castling_possible_gene.test(tests_passed, castling_board, WHITE, white_castling_score);
 
-    castling_board.submit_move(castling_board.create_move("O-O"));
+    castling_board.submit_move("O-O");
     castling_possible_gene.test(tests_passed, castling_board, WHITE, 1.0); // full score for kingside castling
 
     auto black_castling_score = 0.2*(5.0/7.0); // castling possible
     castling_possible_gene.test(tests_passed, castling_board, BLACK, black_castling_score);
 
-    castling_board.submit_move(castling_board.create_move("Nc6"));
+    castling_board.submit_move("Nc6");
     castling_possible_gene.test(tests_passed, castling_board, WHITE, 0.0); // castling no longer relevant
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
@@ -465,7 +465,7 @@ bool run_tests()
     auto passed_pawn_score = (1.0 + 2.0/3.0)/8;
     passed_pawn_gene.test(tests_passed, passed_pawn_board, WHITE, passed_pawn_score);
 
-    passed_pawn_board.submit_move(passed_pawn_board.create_move("Kd8"));
+    passed_pawn_board.submit_move("Kd8");
     passed_pawn_score = (2.0/3.0)/8;
     passed_pawn_gene.test(tests_passed, passed_pawn_board, BLACK, passed_pawn_score);
 
@@ -1051,7 +1051,7 @@ namespace
                 auto actual_result_board = board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0});
                 for(auto quiescent_move : String::split(specification.at(3)))
                 {
-                    board.submit_move(board.create_move(quiescent_move));
+                    board.submit_move(quiescent_move);
                 }
                 auto gr1 = board.game_record();
                 auto gr2 = actual_result_board.game_record();
@@ -1085,7 +1085,7 @@ namespace
                         throw Illegal_Move("");
                     }
 
-                    game_has_ended = board.submit_move(board.create_move(move)).game_has_ended();
+                    game_has_ended = board.submit_move(move).game_has_ended();
                 });
         }
 

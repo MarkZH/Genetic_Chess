@@ -452,6 +452,11 @@ Game_Result Board::submit_move(const Move& move)
     return move_result();
 }
 
+Game_Result Board::submit_move(const std::string& move)
+{
+    return submit_move(create_move(move));
+}
+
 Game_Result Board::move_result() const
 {
     if(no_legal_moves())

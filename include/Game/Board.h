@@ -51,6 +51,15 @@ class Board
         //! \returns Returns a Game_Result indicating the result of the move and whether the game has ended.
         Game_Result submit_move(const Move& move);
 
+        //! Updates the state of the board according to the text-based move.
+        //
+        //! This is equivalent to calling board.submit_move(board.create_move(move)).
+        //! \param move A text string specifying a move in any notation that uniquely identifies a
+        //!        legal move (PGN, coordinate, etc.).
+        //! \returns A Game_Result indicating the result of the move and whether the game has ended.
+        //! \throws Illegal_Move if the text represents an illegal or ambiguous move.
+        Game_Result submit_move(const std::string& move);
+
         //! Creates a Move instance given a text string representation.
         //
         //! \param move A string using coordinate notation ("a2b3"), PGN ("Bb3"), or FEN. Note: If PGN is used and

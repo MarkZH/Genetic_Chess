@@ -419,7 +419,7 @@ namespace
             {
                 try
                 {
-                    result = board.submit_move(board.create_move(s));
+                    result = board.submit_move(s);
 
                     board.ascii_draw(WHITE);
                     game_started = true;
@@ -705,7 +705,7 @@ namespace
                 auto move_index = 0;
                 for(const auto& move_record : game_moves)
                 {
-                    board.submit_move(board.create_move(move_record));
+                    board.submit_move(move_record);
                     output << ++move_index << '\t'
                            << game_moves.size() << '\t'
                            << board.legal_moves().size() << '\n';
