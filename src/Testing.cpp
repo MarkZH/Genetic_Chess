@@ -158,7 +158,7 @@ namespace
     unsigned long long move_count(const Board& board, unsigned long long maximum_depth);
     bool run_board_tests(const std::string& file_name);
     bool all_moves_legal(Board& board, const std::vector<std::string>& moves);
-    bool move_is_illegal(Board& board, const std::string& moves);
+    bool move_is_illegal(const Board& board, const std::string& move);
 }
 
 bool run_tests()
@@ -1092,7 +1092,7 @@ namespace
         return result;
     }
 
-    bool move_is_illegal(Board& board, const std::string& move)
+    bool move_is_illegal(const Board& board, const std::string& move)
     {
         bool result = true;
         function_should_throw(result, move + " should be illegal", [&](){ board.create_move(move); });
