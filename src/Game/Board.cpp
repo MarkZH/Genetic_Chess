@@ -79,7 +79,6 @@ Board::Board() : Board(standard_starting_fen)
 }
 
 Board::Board(const std::string& fen) :
-    repeat_count_insertion_point{0},
     unmoved_positions{},
     starting_fen(String::remove_extra_whitespace(fen)),
     potential_attacks{},

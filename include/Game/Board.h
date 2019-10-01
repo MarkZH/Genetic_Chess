@@ -309,7 +309,7 @@ class Board
     private:
         std::array<Piece, 64> board;
         std::array<uint64_t, 101> repeat_count;
-        size_t repeat_count_insertion_point;
+        size_t repeat_count_insertion_point = 0;
         Color turn_color;
         std::vector<const Move*> game_record_listing;
         std::array<bool, 64> unmoved_positions;
