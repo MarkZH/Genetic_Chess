@@ -99,6 +99,7 @@ for target in final_targets:
     depends[f'test_{target}'] = [target]
     operations[f'test_{target}'] = [f'{bins[target]} -' + opt for opt in ['test', 'perft', 'speed']]
 
+depends['test_all'] = [f'test_{x}' for x in final_targets]
 depends['LINK'] = []
 sort_key = functools.cmp_to_key(make_sort)
 depends['.PHONY'] = [t for t in sorted(depends.keys(), key=sort_key) if not t.startswith('$')]
