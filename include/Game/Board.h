@@ -291,14 +291,6 @@ class Board
         //! \returns The ply count when the player castled, or MAX(size_t) if the player has not castled.
         size_t castling_move_index(Color player) const;
 
-        //! Returns the number of attacking moves available.
-        //
-        //! The method is used in the Freedom_To_Move_Gene::score_board() method.
-        //! \param attacking_color The color of pieces doing the attacking.
-        //! \returns The number of attacking moves excepting those that attack pieces
-        //!          of the same color.
-        size_t attack_count(Color attacking_color) const;
-
         //! Create a copy of the board with a random pawn removed.
         //
         //! This can be used by a Player to calibrate the value of a centipawn.
@@ -314,6 +306,11 @@ class Board
         //! \param piece_values An array indexed by Piece::type() that gives
         //!        the value of the piece.
         Board quiescent(const std::array<double, 6>& piece_values) const;
+
+        //! Returns the number of moves available to the opponent prior to the opponent's last move.
+        //
+        //! Returns 0 if no moves have been made on the board.
+        size_t previous_moves_count() const;
 
     private:
         std::array<Piece, 64> board;
@@ -343,8 +340,6 @@ class Board
         void remove_attacks_from(Square square, Piece old_piece);
         void modify_attacks(Square square, Piece piece, bool adding_attacks);
         void update_blocks(Square square, Piece old_piece, Piece new_piece);
-        void adjust_attack_counts(Piece piece1, Piece piece2, Square square);
-        void adjust_attack_counts_common(Piece piece1, Piece piece2, Square square, int adding_or_subtracting);
         const std::bitset<16>& checking_moves() const;
         Square find_initial_checking_square() const;
         Square find_checking_square() const;
@@ -352,10 +347,10 @@ class Board
         // Information cache for gene reference
         bool material_change_move_available;
         std::array<size_t, 2> castling_index;
-        std::array<size_t, 2> attack_counts;
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
+        size_t prior_moves_count = 0;
 
         void recreate_move_caches();
 

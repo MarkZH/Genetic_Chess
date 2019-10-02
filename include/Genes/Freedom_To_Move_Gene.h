@@ -21,15 +21,8 @@ class Freedom_To_Move_Gene : public Gene
 
         std::string name() const override;
 
-        //! Returns whether Board::attack_count() returns the same answer as the
-        //! former method used by the Freedom_To_Move_Gene that involved scanning
-        //! the Board square-by-square.
-        bool verify(const Board& board) const;
-
     private:
         double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
-
-        size_t attack_count_scan(const Board& board, Color perspective) const;
 };
 
 #endif // FREEDOM_TO_MOVE_GENE_H

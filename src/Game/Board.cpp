@@ -83,8 +83,7 @@ Board::Board(const std::string& fen) :
     starting_fen(String::remove_extra_whitespace(fen)),
     potential_attacks{},
     blocked_attacks{},
-    castling_index{{size_t(-1), size_t(-1)}},
-    attack_counts{}
+    castling_index{{size_t(-1), size_t(-1)}}
 {
     auto fen_parse = String::split(fen);
     if(fen_parse.size() != 6)
@@ -796,28 +795,6 @@ void Board::remove_piece(Square square)
     place_piece({}, square);
 }
 
-void Board::adjust_attack_counts_common(Piece piece1, Piece piece2, Square square, int adding_or_substracting)
-{
-    assert(std::abs(adding_or_substracting) == 1);
-
-    // piece1 is the piece for which the attacks are being adjusted based
-    // upon the precense of piece2. The Freedom To Move Gene does not count
-    // attacks on a piece of the same color as an attack. So, if a piece of
-    // the same color is removed, the attacked square is added to the count.
-    // If a piece is placed on a square that is attacked by the same color,
-    // then the attack count for that color is decrimented.
-    if(piece1 && ( ! piece2 || piece2.color() != piece1.color()))
-    {
-        attack_counts[piece1.color()] += adding_or_substracting*moves_attacking_square(square, piece1.color()).count();
-    }
-}
-
-void Board::adjust_attack_counts(Piece removed_piece, Piece moved_piece, Square square)
-{
-    adjust_attack_counts_common(removed_piece, moved_piece, square,  1);
-    adjust_attack_counts_common(moved_piece, removed_piece, square, -1);
-}
-
 void Board::place_piece(Piece piece, Square square)
 {
     update_board_hash(square); // XOR out piece on square
@@ -828,7 +805,6 @@ void Board::place_piece(Piece piece, Square square)
     remove_attacks_from(square, old_piece);
     update_blocks(square, old_piece, piece);
     add_attacks_from(square, piece);
-    adjust_attack_counts(old_piece, piece, square);
 
     auto update_rook_hashes = old_piece && old_piece.type() == KING && unmoved_positions[square.index()];
     if(update_rook_hashes)
@@ -853,18 +829,6 @@ void Board::place_piece(Piece piece, Square square)
     {
         king_location[piece.color()] = square;
     }
-
-    // Make sure the attack count did not drop below zero.
-    // Unsigned wraparound would result in an absurdly large
-    // number, so check against an impossible number of attacks.
-    // Namely, the sum of all squares being attacked from every
-    // possible direction.
-    assert(std::all_of(attack_counts.begin(), attack_counts.end(), [](auto n) { return n <= 16*64; }));
-}
-
-size_t Board::attack_count(Color attacking_color) const
-{
-    return attack_counts[attacking_color];
 }
 
 void Board::add_attacks_from(Square square, Piece piece)
@@ -881,7 +845,6 @@ void Board::modify_attacks(Square square, Piece piece, bool adding_attacks)
 
     auto attacking_color = piece.color();
     auto vulnerable_king = Piece{opposite(attacking_color), KING};
-    auto attack_count_diff = adding_attacks ? 1 : -1;
     for(const auto& attack_move_list : piece.attacking_move_lists(square))
     {
         bool move_blocked = false;
@@ -899,10 +862,6 @@ void Board::modify_attacks(Square square, Piece piece, bool adding_attacks)
                 auto blocking_piece = piece_on_square(attacked_square);
 
                 potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
-                if( ! blocking_piece || blocking_piece.color() != attacking_color)
-                {
-                    attack_counts[attacking_color] += attack_count_diff;
-                }
 
                 if(blocking_piece && blocking_piece != vulnerable_king)
                 {
@@ -929,7 +888,6 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece)
     }
 
     auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
-    auto attack_count_diff = add_new_attacks ? 1 : -1;
     auto origin_square_index = square.index();
 
     for(auto attacking_color : {WHITE, BLACK})
@@ -956,10 +914,6 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece)
                 {
                     auto target_index = target_square.index();
                     auto piece = piece_on_square(target_square);
-                    if(( ! piece || piece.color() != attacking_color) && (potential_attacks[attacking_color][target_index][index] != add_new_attacks))
-                    {
-                        attack_counts[attacking_color] += attack_count_diff;
-                    }
 
                     potential_attacks[attacking_color][target_index][index] = add_new_attacks;
                     blocked_attacks[attacking_color][target_index][index] = ! add_new_attacks;
@@ -1248,6 +1202,7 @@ Square Board::find_king(Color color) const
 void Board::recreate_move_caches()
 {
     last_pin_check_square = Square{};
+    prior_moves_count = legal_moves_cache.size();
     legal_moves_cache.clear();
     for(auto square : Square::all_squares())
     {
@@ -1672,4 +1627,9 @@ Board Board::quiescent(const std::array<double, 6>& piece_values) const
     }
 
     return capture_states[minimax_index];
+}
+
+size_t Board::previous_moves_count() const
+{
+    return prior_moves_count;
 }

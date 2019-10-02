@@ -2,18 +2,22 @@
 
 #include <memory>
 #include <string>
-#include <array>
-#include <bitset>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
-#include "Game/Piece.h"
 
 double Freedom_To_Move_Gene::score_board(const Board& board, Color perspective, size_t) const
 {
-    static auto initial_score = double(Board().attack_count(WHITE));
-    return board.attack_count(perspective)/initial_score;
+    static auto initial_score = double(Board().legal_moves().size());
+    if(perspective == board.whose_turn())
+    {
+        return board.legal_moves().size()/initial_score;
+    }
+    else
+    {
+        return board.previous_moves_count()/initial_score;
+    }
 }
 
 std::unique_ptr<Gene> Freedom_To_Move_Gene::duplicate() const
@@ -24,28 +28,4 @@ std::unique_ptr<Gene> Freedom_To_Move_Gene::duplicate() const
 std::string Freedom_To_Move_Gene::name() const
 {
     return "Freedom to Move Gene";
-}
-
-size_t Freedom_To_Move_Gene::attack_count_scan(const Board& board, Color perspective) const
-{
-    size_t count = 0;
-    for(auto square : Square::all_squares())
-    {
-        if(board.moves_attacking_square(square, perspective).any())
-        {
-            auto piece = board.piece_on_square(square);
-            if( ! piece || piece.color() != perspective)
-            {
-                count += board.moves_attacking_square(square, perspective).count();
-            }
-        }
-    }
-
-    return count;
-}
-
-bool Freedom_To_Move_Gene::verify(const Board& board) const
-{
-    return board.attack_count(WHITE) == attack_count_scan(board, WHITE) &&
-           board.attack_count(BLACK) == attack_count_scan(board, BLACK);
 }

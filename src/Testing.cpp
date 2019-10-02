@@ -401,26 +401,12 @@ bool run_tests()
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
-    auto freedom_to_move_score = 32.0/18.0;
-    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, WHITE, freedom_to_move_score);
-
-    #ifdef NDEBUG
-    auto test_move_count = 1'000'000;
-    #else
-    auto test_move_count = 1'000; // Debug build is approximately 1,000x slower.
-    #endif // NDEBUG
-    Board freedom_to_move_punishment_board;
-    for(auto move_count = 0; move_count < test_move_count && tests_passed; ++move_count)
-    {
-        test_result(tests_passed, freedom_to_move_gene.verify(freedom_to_move_punishment_board), "Attack count discrepancy.");
-
-        const auto& moves = freedom_to_move_punishment_board.legal_moves();
-        auto move = Random::random_element(moves);
-        if(freedom_to_move_punishment_board.submit_move(*move).game_has_ended())
-        {
-            freedom_to_move_punishment_board = Board();
-        }
-    }
+    auto freedom_to_move_white_score = 32.0/20.0;
+    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, WHITE, freedom_to_move_white_score);
+    freedom_to_move_board.submit_move("Qd5");
+    auto freedom_to_move_black_score = 3.0/20.0;
+    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, BLACK, freedom_to_move_black_score);
+    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, WHITE, freedom_to_move_white_score);
 
     auto king_confinement_gene = King_Confinement_Gene();
     king_confinement_gene.read_from(test_genes_file_name);
