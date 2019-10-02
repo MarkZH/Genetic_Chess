@@ -553,14 +553,16 @@ const Move& Board::create_move(const std::string& move) const
     // Castling
     if(String::lowercase(validated) == "oo")
     {
-        return create_move({'e', whose_turn() == WHITE ? 1 : 8},
-                           {'g', whose_turn() == WHITE ? 1 : 8});
+        auto king_square = find_king(whose_turn());
+        return create_move(king_square,
+                           king_square + Square_Difference{2, 0});
     }
 
     if(String::lowercase(validated) == "ooo")
     {
-        return create_move({'e', whose_turn() == WHITE ? 1 : 8},
-                           {'c', whose_turn() == WHITE ? 1 : 8});
+        auto king_square = find_king(whose_turn());
+        return create_move(king_square,
+                           king_square + Square_Difference{-2, 0});
     }
 
     // Capitalize piece symbols when unambiguous (i.e., not a bishop)
