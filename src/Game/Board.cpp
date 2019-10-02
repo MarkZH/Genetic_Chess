@@ -920,15 +920,10 @@ void Board::remove_attacks_from(Square square, Piece old_piece)
 
 void Board::update_blocks(Square square, Piece old_piece, Piece new_piece)
 {
-    // Replacing nothing with nothing changes nothing
-    if( ! old_piece && ! new_piece)
-    {
-        return;
-    }
-
+    // Replacing nothing with nothing changes nothing.
     // Replacing one piece with another does not change which
     // moves are blocked. Only happens during pawn promotions.
-    if(old_piece && new_piece)
+    if(bool(old_piece) == bool(new_piece))
     {
         return;
     }
