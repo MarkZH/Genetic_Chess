@@ -374,7 +374,7 @@ class Board
         void clear_repeat_count();
 
         // Zobrist hashing (implementation of threefold/fifty-move tracking)
-        uint64_t current_board_hash;
+        uint64_t current_board_hash = 0;
 
         void update_board_hash(Square square);
         uint64_t square_hash(Square square) const;
