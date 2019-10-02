@@ -56,7 +56,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
                 std::for_each(std::next(moves_iter), parse.end(),
                               [&board](const auto& move)
                               {
-                                  board.submit_move(board.create_move(move));
+                                  board.submit_move(move);
                               });
                 log("All moves applied");
             }
