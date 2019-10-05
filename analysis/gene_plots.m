@@ -194,6 +194,7 @@ for index = 1 : length(special_plots)
 
     if special_plots(index) == priority_figure
         ylim(1.25*[min(0, min_priority_value) second_max_priority_value]);
+        title(['Lower ' get(get(gca, 'title'), 'string')]);
         print([gene_pool_filename ' special ' file_name_suffixes{index} ' low.png']);
     end
 end
