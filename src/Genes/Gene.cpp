@@ -140,7 +140,7 @@ void Gene::mutate()
     auto priority_probability = list_properties().count("Priority")/double(list_properties().size());
     if(Random::success_probability(priority_probability))
     {
-        auto mutation_size = std::max(10.0, std::sqrt(std::abs(scoring_priority)));
+        auto mutation_size = 10.0 + std::sqrt(std::abs(scoring_priority));
         scoring_priority += Random::random_laplace(mutation_size);
         if(priority_is_non_negative)
         {
