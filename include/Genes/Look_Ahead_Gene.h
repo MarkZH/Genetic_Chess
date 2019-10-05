@@ -5,7 +5,6 @@
 
 #include <string>
 #include <memory>
-#include <array>
 #include <map>
 
 #include "Game/Color.h"
@@ -37,14 +36,14 @@ class Look_Ahead_Gene : public Gene
         //! how much extra time to allocate knowing that not all of it will be used.
         //! \param board The current board position.
         //! \returns A factor that gets multiplied by the allocated time to overallocate.
-        double speculation_time_factor(const Board& board) const;
+        double speculation_time_factor() const;
 
     protected:
         std::map<std::string, double> list_properties() const override;
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
-        std::array<double, 4> speculation_constants; // controls over/under-allocation of time
+        double speculation_constant = 1.0; // controls over/under-allocation of time
         double mean_game_length; // in moves by one player
         double game_length_uncertainty; // approximately as a fraction of the mean
 

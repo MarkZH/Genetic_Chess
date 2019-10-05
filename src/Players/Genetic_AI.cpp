@@ -90,9 +90,9 @@ double Genetic_AI::time_to_examine(const Board& board, const Clock& clock) const
     return genome.time_to_examine(board, clock);
 }
 
-double Genetic_AI::speculation_time_factor(const Board& board) const
+double Genetic_AI::speculation_time_factor() const
 {
-    return genome.speculation_time_factor(board);
+    return genome.speculation_time_factor();
 }
 
 void Genetic_AI::mutate(int mutation_count)

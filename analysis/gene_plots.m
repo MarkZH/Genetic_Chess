@@ -57,7 +57,7 @@ speculation_keyword = 'Speculation';
 speculation_figure = figure;
 title('Speculation Constants');
 
-special_plots = [0, 0, 0];
+special_plots = [0, 0];
 
 max_priority_value = -inf;
 second_max_priority_value = -inf;
@@ -89,8 +89,6 @@ for yi = 2 : length(data.colheaders) - 2
     xlabel(xaxis);
     title(name);
 
-    add_x_axis = true;
-
     for index = 1:length(id_marks)
         plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
     end
@@ -113,15 +111,9 @@ for yi = 2 : length(data.colheaders) - 2
     elseif ~isempty(strfind(name, priority_suffix))
         plot_figure = priority_figure;
         special_plot_index = 2;
-    elseif ~isempty(strfind(name, speculation_keyword))
-        plot_figure = speculation_figure;
-        special_plot_index = 3;
-        add_x_axis = false;
     end
 
-    if add_x_axis
-        plot(xlim, [0 0], 'k'); % X-axis
-    end
+    plot(xlim, [0 0], 'k'); % X-axis
 
     print([gene_pool_filename ' gene ' name '.png']);
 
@@ -159,7 +151,7 @@ for yi = 2 : length(data.colheaders) - 2
 end
 
 % Create special summary plots
-file_name_suffixes = {'piece strength', 'gene priorities', 'speculation'};
+file_name_suffixes = {'piece strength', 'gene priorities'};
 for index = 1 : length(special_plots)
     if ~special_plots(index)
         continue;
@@ -167,9 +159,7 @@ for index = 1 : length(special_plots)
 
     figure(special_plots(index));
 
-    if special_plots(index) != speculation_figure
-        plot(xlim, [0 0], 'k'); % X-axis
-    end
+    plot(xlim, [0 0], 'k'); % X-axis
 
     if special_plots(index) == piece_strength_figure
         yl = ylim;

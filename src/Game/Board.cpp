@@ -1235,13 +1235,6 @@ void Board::recreate_move_caches()
     {
         clear_en_passant_target();
     }
-
-    material_change_move_available = std::any_of(legal_moves_cache.begin(),
-                                                 legal_moves_cache.end(),
-                                                 [this](auto move)
-                                                 {
-                                                     return move_captures(*move) || move->promotion_piece_symbol();
-                                                 });
 }
 
 Square Board::find_initial_checking_square() const
@@ -1409,36 +1402,6 @@ uint64_t Board::square_hash(Square square) const
 uint64_t Board::board_hash() const
 {
     return current_board_hash;
-}
-
-bool Board::last_move_changed_material() const
-{
-    return last_move_captured() ||
-           ( ! game_record_listing.empty() && game_record_listing.back()->promotion_piece_symbol());
-}
-
-bool Board::last_move_captured() const
-{
-    if(game_record_listing.empty() || moves_since_pawn_or_capture() > 0)
-    {
-        return false;
-    }
-
-    auto last_move = game_record_listing.back();
-    if(piece_on_square(last_move->end()).type() == PAWN ||
-       last_move->promotion_piece_symbol())
-    {
-        // Check if move was pawn capture
-        return last_move->file_change() != 0;
-    }
-
-    // Not a pawn move and moves_since_pawn_or_capture() == 0 ==> capturing move
-    return true;
-}
-
-bool Board::material_change_possible() const
-{
-    return material_change_move_available;
 }
 
 bool Board::move_captures(const Move& move) const

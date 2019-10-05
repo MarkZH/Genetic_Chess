@@ -10,10 +10,7 @@ R: 27.6978
 Name: Look  Ahead Gene
 Game Length Uncertainty: 0.47594
 Mean Game    Length: 24.1568
-Speculation-Can Change Material: 1.54612
-Speculation-Default: 1.8168
-Speculation-Just Changed Material: 1.59222
-Speculation-Material Exchange: 4.27498
+Speculation: 1.8168
 
 Name: Mutation Rate Gene
 Mutation Rate: 2.35148

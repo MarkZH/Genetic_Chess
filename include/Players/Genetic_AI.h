@@ -91,7 +91,7 @@ class Genetic_AI : public Minimax_AI
 
         // Time management
         double time_to_examine(const Board& board, const Clock& clock) const override;
-        double speculation_time_factor(const Board& board) const override;
+        double speculation_time_factor() const override;
 };
 
 #endif // GENETIC_AI_H

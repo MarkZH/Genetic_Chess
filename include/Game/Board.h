@@ -264,27 +264,6 @@ class Board
 
         // Methods for gene reference
 
-        //! Report if the most recent move in the game captured a piece.
-        //
-        //! This method is used by chess engines to decide how interesting a board position is
-        //! and how much time to devote to future moves.
-        //! \returns Whether the last move captured an opponent's piece.
-        bool last_move_captured() const;
-
-        //! Report if the last move changed the presence of pieces on the board.
-        //
-        //! This is more general than Board::last_move_captured() since it also checks
-        //! for pawn promotions.
-        //! \returns Whether the last move captured or resulted in a promoted pawn.
-        bool last_move_changed_material() const;
-
-        //! Check if any currently legal move changes material by capturing or promoting a pawn.
-        //
-        //! This method is used by chess engines to determine how interesting a board position
-        //! is and thus how much time to devote to studying future moves.
-        //! \returns If any legal move captures or promotes a pawn.
-        bool material_change_possible() const;
-
         //! Gets the ply move during which a player castled.
         //
         //! \param player The color of the player being queried.
@@ -345,7 +324,6 @@ class Board
         Square find_checking_square() const;
 
         // Information cache for gene reference
-        bool material_change_move_available;
         std::array<size_t, 2> castling_index;
 
         // Caches

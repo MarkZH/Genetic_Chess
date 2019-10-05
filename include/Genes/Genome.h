@@ -71,7 +71,7 @@ class Genome
         //! board position being examined.
         //! \param board The board position being examined.
         //! \returns The multiplicative factor.
-        double speculation_time_factor(const Board& board) const;
+        double speculation_time_factor() const;
 
         //! The value of pieces as determined by the Piece_Strength_Gene
         const std::array<double, 6>& piece_values() const;

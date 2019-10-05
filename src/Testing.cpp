@@ -310,20 +310,6 @@ bool run_tests()
     test_result(tests_passed, run_board_tests("testing/board_tests.txt"), "");
 
 
-    // Last move captured/changed material tests
-    Board capture_board;
-    capture_board.submit_move("b4");
-    capture_board.submit_move("c5");
-    test_function(tests_passed, "Material change possible", true, [&capture_board](){ return capture_board.material_change_possible(); });
-
-    capture_board.submit_move("bxc5");
-    test_function(tests_passed, "Last move captured", true, [&capture_board](){ return capture_board.last_move_captured(); });
-    test_function(tests_passed, "Material change not possible", false, [&capture_board](){ return capture_board.material_change_possible(); });
-
-    capture_board.submit_move("h5");
-    test_function(tests_passed, "Last move did not capture", false, [&capture_board](){ return capture_board.last_move_captured(); });
-
-
     // Board hash with castling tests
     auto castling_hash_board = Board("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
 
