@@ -31,12 +31,11 @@ std::map<std::string, double> Piece_Strength_Gene::list_properties() const
 
 void Piece_Strength_Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    piece_value(PAWN)   = properties.at("P");
-    piece_value(ROOK)   = properties.at("R");
-    piece_value(KNIGHT) = properties.at("N");
-    piece_value(BISHOP) = properties.at("B");
-    piece_value(QUEEN)  = properties.at("Q");
-    piece_value(KING)   = properties.at("K");
+    for(auto piece_type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
+    {
+        auto piece = Piece{WHITE, piece_type};
+        piece_value(piece_type) = properties.at(std::string(1, piece.fen_symbol()));
+    }
 
     recalculate_normalizing_value();
 }
