@@ -358,7 +358,7 @@ In descending order of valuation by a Genetic\_AI\@: Queen, Rook, Bishop and Kni
 \begin{figure}[htb]
 	\centering
 	\includegraphics[width=\textwidth]{pawn-crash-strength-plot}
-	\caption{The evolution of the value of pieces to the AIs. The small bump near ID~\#120,000 in the strength of a pawn that caused the Pawn Advancement Gene crash seen in Figure~\ref{pawn-crash}}\label{piece-value-plot}
+	\caption{The evolution of the value of pieces to the AIs.}\label{piece-value-plot}
 \end{figure}
 
 \subsubsection{Piece Strengths with the king}\label{piece-strength-with-king}
@@ -422,7 +422,7 @@ It seems that the Look Ahead Gene does not experience significant evolutionary p
 
 \subsection{The Sphere of Influence Gene typically counts legal moves as having lower value than other moves.}
 
-This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game. Or, the Opponent Pieces Targeted Gene relieves this gene of having to consider legal moves (much the same as how the Pawn value in the Piece Strength Gene and the priority of the Pawn Advancement Gene interact (Section~\ref{pawn-result})).
+This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game. Or, the Opponent Pieces Targeted Gene relieves this gene of having to consider legal moves.
 
 \subsection{Genes with properly lower priorities have to wait for higher priority genes to evolve their higher priority before evolving themselves.}\label{lower-priority-waits}
 
