@@ -332,11 +332,11 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const
     std::cout << "score ";
     if(thought.is_winning_for(perspective))
     {
-        std::cout << "mate " << thought.depth()/2; // moves, not plies
+        std::cout << "mate " << (1 + thought.depth())/2; // moves, not plies
     }
     else if(thought.is_losing_for(perspective))
     {
-        std::cout << "mate -" << thought.depth()/2; // moves, not plies
+        std::cout << "mate -" << (1 + thought.depth())/2; // moves, not plies
     }
     else
     {
