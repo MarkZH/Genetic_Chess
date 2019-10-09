@@ -721,6 +721,7 @@ void run_speed_tests()
         }
     }
     timing_results.emplace_back(game_watch.time_so_far(), "Board::submit_move()");
+    auto board_submit_time = timing_results.back().first;
 
     std::cout << "Board::submit_move() with copy speed ..." << std::endl;
     auto copy_game_watch = Scoped_Stopwatch("");
@@ -741,19 +742,31 @@ void run_speed_tests()
     }
     timing_results.emplace_back(copy_game_watch.time_so_far(), "Board::submit_move() with copy");
 
+    std::cout << "Board::quiescent() speed ... " << std::flush;
     auto quiescent_watch = Scoped_Stopwatch("");
     Board quiescent_board;
+    size_t move_count = 0;
     for(auto i = 0; i < number_of_tests; ++i)
     {
-        auto move = Random::random_element(speed_board.legal_moves());
-        auto move_result = speed_board.submit_move(*move);
-        if(move_result.game_has_ended())
+        while(true)
         {
-            speed_board = Board{};
+            auto move = Random::random_element(quiescent_board.legal_moves());
+            auto move_result = quiescent_board.submit_move(*move);
+            ++move_count;
+            if(move_result.game_has_ended())
+            {
+                quiescent_board = Board{};
+            }
+            else if( ! quiescent_board.safe_for_king(move->end(), opposite(quiescent_board.whose_turn())))
+            {
+                break;
+            }
         }
+
         auto quiescent_result_board = quiescent_board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0});
     }
-    timing_results.emplace_back(quiescent_watch.time_so_far(), "Board::quiescent()");
+    timing_results.emplace_back(quiescent_watch.time_so_far() - (board_submit_time*move_count)/number_of_tests, "Board::quiescent()");
+    std::cout << "(non-quiescent moves = " << String::format_integer(move_count, ",") << ")" << std::endl;
 
     std::sort(timing_results.begin(), timing_results.end());
     const auto name_width = std::max_element(timing_results.begin(), timing_results.end(),
