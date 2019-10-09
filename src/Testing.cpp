@@ -661,7 +661,17 @@ void run_speed_tests()
     auto checkmate_material_gene = Checkmate_Material_Gene();
     auto null_gene = Null_Gene();
 
-    auto performance_board = Board("r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 0 1");
+    auto performance_board = Board();
+    for(const auto& move : String::split("e4 e6 d4 h5 d5 b5 Qf3 g6 Be2 Bg7 Bd2 h4 Nh3 Na6 Nc3 b4 Nf4 Nc5 Nd3 Na4 Ne5 Nb6 Qd3 Qe7 Qe3 Ba6 Qf3 Nf6 Qe3 h3 Qf4 Qc5 Qf3 Qe7"))
+    {
+        performance_board.submit_move(move);
+    }
+
+    if(performance_board.fen_status() != "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 4 18")
+    {
+        throw std::logic_error("Different FEN from previous tests.");
+    }
+
     std::vector<const Gene*> performance_genome = {&castling_possible_gene,
                                                    &checkmate_material_gene,
                                                    &freedom_to_move_gene,
@@ -692,7 +702,7 @@ void run_speed_tests()
         for(int i = 1; i <= number_of_tests; ++i)
         {
             auto side = performance_board.whose_turn();
-            score += gene->evaluate(performance_board, opposite(side), 0);
+            score += gene->evaluate(performance_board, opposite(side), performance_board.game_record().size());
         }
         timing_results.emplace_back(watch.time_so_far(), gene->name());
     }
