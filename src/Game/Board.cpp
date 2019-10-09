@@ -279,7 +279,7 @@ Board::Board(const std::string& fen) : starting_fen(String::remove_extra_whitesp
         fen_error("It is impossible for more than one knight to check king.");
     }
 
-    checking_square = king_is_in_check() ? find_initial_checking_square() : Square{};
+    checking_square = king_is_in_check() ? find_checking_square() : Square{};
     recreate_move_caches();
 
     // In case a listed en passant target is not actually a legal move.
@@ -1232,7 +1232,7 @@ void Board::recreate_move_caches()
     }
 }
 
-Square Board::find_initial_checking_square() const
+Square Board::find_checking_square() const
 {
     const auto& checks = checking_moves();
     size_t checking_index = 0;
@@ -1244,43 +1244,6 @@ Square Board::find_initial_checking_square() const
     const auto& king_square = find_king(whose_turn());
     auto squares = Square::square_line_from(king_square, -step);
     return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
-}
-
-Square Board::find_checking_square() const
-{
-    auto last_move = game_record().back();
-    if(last_move->is_castling())
-    {
-        // Checking piece must be rook
-        return static_cast<const Castle*>(last_move)->rook_end_square();
-    }
-
-    auto king_square = find_king(whose_turn());
-    auto attack_direction = king_square - last_move->end();
-    auto last_move_index = Move::attack_index(attack_direction);
-    auto direction_from_index = Move::attack_direction_from_index(last_move_index);
-
-    if(checking_moves().test(last_move_index) &&
-       moves_are_parallel(attack_direction, direction_from_index))
-    {
-        // Last move piece put king in check
-        return last_move->end();
-    }
-    else
-    {
-        // Last move revealed check
-        auto reveal_square = last_move->start();
-        if( ! straight_line_move(king_square, reveal_square) || ! checking_moves().test(Move::attack_index(king_square - reveal_square)))
-        {
-            // Pawn captured en passant reveals check
-            assert(last_move->is_en_passant());
-            reveal_square = Square{last_move->end().file(), last_move->start().rank()};
-        }
-
-        auto step = (reveal_square - king_square).step();
-        auto squares = Square::square_line_from(reveal_square, step);
-        return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
-    }
 }
 
 bool Board::enough_material_to_checkmate(Color color) const

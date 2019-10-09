@@ -320,7 +320,6 @@ class Board
         void modify_attacks(Square square, Piece piece, bool adding_attacks);
         void update_blocks(Square square, Piece old_piece, Piece new_piece);
         const std::bitset<16>& checking_moves() const;
-        Square find_initial_checking_square() const;
         Square find_checking_square() const;
 
         // Information cache for gene reference
