@@ -952,7 +952,8 @@ bool Board::blocked_attack(Square square, Color attacking_color) const
 
 bool Board::king_is_in_check_after_move(const Move& move) const
 {
-    if(move.start() == find_king(whose_turn()))
+    auto king_square = find_king(whose_turn());
+    if(move.start() == king_square)
     {
         return ! safe_for_king(move.end(), whose_turn());
     }
@@ -971,7 +972,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
         }
         #endif // NDEBUG
 
-        if(in_line_in_order(checking_square, move.end(), find_king(whose_turn())))
+        if(in_line_in_order(checking_square, move.end(), king_square))
         {
             return piece_is_pinned(move.start());
         }
@@ -988,12 +989,11 @@ bool Board::king_is_in_check_after_move(const Move& move) const
 
     if(piece_is_pinned(move.start()))
     {
-        return ! moves_are_parallel(move.movement(), find_king(whose_turn()) - move.start());
+        return ! moves_are_parallel(move.movement(), king_square - move.start());
     }
 
     if(move.is_en_passant())
     {
-        const auto& king_square = find_king(whose_turn());
         if(king_square.rank() != move.start().rank())
         {
             return false;
