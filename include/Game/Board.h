@@ -297,7 +297,7 @@ class Board
         size_t repeat_count_insertion_point = 0;
         Color turn_color;
         std::vector<const Move*> game_record_listing;
-        std::array<bool, 64> unmoved_positions;
+        std::array<bool, 64> unmoved_positions{};
         Square en_passant_target;
         std::string starting_fen;
         std::array<Square, 2> king_location;
@@ -312,8 +312,8 @@ class Board
         // up, down, left, right, up-left, up-right, down-left, down-right,
         // 2x1 up-left, 1x2 up-left, 2x1 up-right, 1x2 up-right,
         // 2x1 down-left, 1x2 down-left, 2x1 down-right, 1x2 down-right
-        std::array<std::array<std::bitset<16>, 64>, 2> potential_attacks; // indexed by [attacker color][square index];
-        std::array<std::array<std::bitset<16>, 64>, 2> blocked_attacks;
+        std::array<std::array<std::bitset<16>, 64>, 2> potential_attacks{}; // indexed by [attacker color][square index];
+        std::array<std::array<std::bitset<16>, 64>, 2> blocked_attacks{};
 
         void add_attacks_from(Square square, Piece piece);
         void remove_attacks_from(Square square, Piece old_piece);
@@ -324,7 +324,7 @@ class Board
         Square find_checking_square() const;
 
         // Information cache for gene reference
-        std::array<size_t, 2> castling_index;
+        std::array<size_t, 2> castling_index{size_t(-1), size_t(-1)};
 
         // Caches
         std::vector<const Move*> legal_moves_cache;

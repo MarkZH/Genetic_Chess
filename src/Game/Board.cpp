@@ -78,12 +78,7 @@ Board::Board() : Board(standard_starting_fen)
 {
 }
 
-Board::Board(const std::string& fen) :
-    unmoved_positions{},
-    starting_fen(String::remove_extra_whitespace(fen)),
-    potential_attacks{},
-    blocked_attacks{},
-    castling_index{{size_t(-1), size_t(-1)}}
+Board::Board(const std::string& fen) : starting_fen(String::remove_extra_whitespace(fen))
 {
     auto fen_parse = String::split(fen);
     if(fen_parse.size() != 6)
