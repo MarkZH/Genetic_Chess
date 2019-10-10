@@ -416,14 +416,6 @@ The plot in Figure~\ref{game-ending-plot} shows the counts of how games end.
 \end{figure}
 It seems that the Look Ahead Gene does not experience significant evolutionary pressure until the board-scoring genes have been tuned to a semi-decent state. My hypothesis is that if the board-scoring function is not able to tell a good position from bad, then looking ahead only increases the risk of losing by time forfeiture with no benefit. However, when the board-scoring genes are in a decent state, the increase in look ahead is very quick. This leads to a rapid increase in the rate of deaths by running out of time, but apparently this is worth the risk as those who are more conservative with their time lose to those who see farther ahead.
 
-\subsection{Genes with properly lower priorities have to wait for higher priority genes to evolve their higher priority before evolving themselves.}\label{lower-priority-waits}
-
-Some genes are more important than others. The Total Force Gene dominates because it is nearly always more difficult to win when behind in pieces. So, if another gene evolves too high a priority, it hinders game play and will soon be killed off. This means that, because the rate of evolution is the same for all gene priorities, that genes with a lower proper priority\footnote{By proper priority, I mean the as yet unknown relative priority compared with other genes that leads to winning game play. The proper priorities are what this program should be evolving towards.} need to wait for those genes with higher proper priority to evolve a large enough value. Before then, it is too likely for a random mutation to push a lower priority too high and get a gene killed off.
-
-To speed up evolution, the size of a gene's priority mutation is now proportional to the square root of the current value of the priority (with a minimum mutation size of 10). This allows for more rapid adjustment of values that are deemed important early on. This is a compromise between a constant mutation rate (which leads to a maximum linear growth) and a linearly proportional mutation rate (which leads to overly fast exponential growth).
-
-The same goes for the Piece Strength Gene with respect to the value of each type of piece. Note in Figure~\ref{piece-value-plot} that the values rise and fall with each other.
-
 \section{Programming Quirks}
 
 Since this software is still in heavy development, the following sections are likely to change. As such, here is a summary of aspects of the code that might seem weird upon first---and possibly every other---reading. Specifically, if this is modern \cpp{}, why are there pointers everywhere?
