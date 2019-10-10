@@ -103,11 +103,6 @@ class Board
         //! \returns The list of moves made on this board.
         const std::vector<const Move*>& game_record() const;
 
-        //! Get last move for dispaly in text-based UIs.
-        //
-        //! \returns Last move on this board in PGN notation
-        std::string last_move_record() const;
-
         //! Set the format an engine should output while picking a move.
         //
         //! \param mode Which chess engine protocol is being used: CECP, UCI, or NO_THINKING.

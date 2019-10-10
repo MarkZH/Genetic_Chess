@@ -1264,19 +1264,6 @@ bool Board::enough_material_to_checkmate() const
     return knight_count > 1 || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
-std::string Board::last_move_record() const
-{
-    Board b(starting_fen);
-    std::string result;
-    for(const auto& move : game_record())
-    {
-        result = move->game_record_item(b);
-        b.submit_move(*move);
-    }
-
-    return result;
-}
-
 void Board::set_thinking_mode(Thinking_Output_Type mode)
 {
     thinking_indicator = mode;
