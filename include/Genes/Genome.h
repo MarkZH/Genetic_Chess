@@ -69,7 +69,6 @@ class Genome
         //! is multiplied by the time allocated for a branch to make sure the time allocated is actually used,
         //! allowing deeper searches of the game tree. More or less time may be allocated based on the
         //! board position being examined.
-        //! \param board The board position being examined.
         //! \returns The multiplicative factor.
         double speculation_time_factor() const;
 

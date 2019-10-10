@@ -32,7 +32,6 @@ class Look_Ahead_Gene : public Gene
         //! With alpha-beta pruning, only a portion of a branch will be searched, so time
         //! will be saved that can be spent on other branches. So, this factor controls
         //! how much extra time to allocate knowing that not all of it will be used.
-        //! \param board The current board position.
         //! \returns A factor that gets multiplied by the allocated time to overallocate.
         double speculation_time_factor() const;
 
