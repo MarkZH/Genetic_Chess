@@ -253,9 +253,6 @@ class Board
         //! See https://en.wikipedia.org/wiki/Zobrist_hashing for details.
         uint64_t board_hash() const;
 
-
-        // Methods for gene reference
-
         //! Gets the ply move during which a player castled.
         //
         //! \param player The color of the player being queried.
