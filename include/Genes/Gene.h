@@ -117,8 +117,8 @@ class Gene
         virtual void load_properties(const std::map<std::string, double>& properties);
 
     private:
-        double scoring_priority;
-        bool priority_is_non_negative;
+        double scoring_priority = 0.0;
+        bool priority_is_non_negative = false;
 
         virtual double score_board(const Board& board, Color perspective, size_t prior_real_moves) const = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;

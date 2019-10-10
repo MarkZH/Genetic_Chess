@@ -79,7 +79,7 @@ class Clock
         using fractional_seconds = std::chrono::duration<double>;
 
         std::array<fractional_seconds, 2> timers;
-        std::array<size_t, 2> moves_to_reset_clocks;
+        std::array<size_t, 2> moves_to_reset_clocks{0, 0};
 
         fractional_seconds initial_start_time;
         std::array<fractional_seconds, 2> increment_time;
@@ -87,7 +87,7 @@ class Clock
 
         Color whose_turn;
         bool use_clock;
-        bool clocks_running;
+        bool clocks_running = false;
         bool local_clock_stoppage;
 
         std::chrono::system_clock::time_point game_start_date_time;

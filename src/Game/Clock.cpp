@@ -15,13 +15,11 @@ Clock::Clock(double duration_seconds,
              bool clock_stops_game,
              std::chrono::system_clock::time_point previous_start_time) :
     timers({fractional_seconds(duration_seconds), fractional_seconds(duration_seconds)}),
-    moves_to_reset_clocks({0, 0}),
     initial_start_time(Clock::fractional_seconds(duration_seconds)),
     increment_time({Clock::fractional_seconds(increment_seconds), Clock::fractional_seconds(increment_seconds)}),
     move_count_reset(moves_to_reset),
     whose_turn(starting_turn),
     use_clock(duration_seconds > 0),
-    clocks_running(false),
     local_clock_stoppage(clock_stops_game),
     game_start_date_time(previous_start_time)
 {

@@ -30,7 +30,7 @@ class Pawn_Advancement_Gene : public Gene
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
-        double non_linearity;
+        double non_linearity = 0.0;
         std::array<double, 6> score_cache; // precompute scores
 
         double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;

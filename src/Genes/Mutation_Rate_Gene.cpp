@@ -11,10 +11,6 @@
 
 class Board;
 
-Mutation_Rate_Gene::Mutation_Rate_Gene() : mutated_components_per_mutation(10)
-{
-}
-
 std::string Mutation_Rate_Gene::name() const
 {
     return "Mutation Rate Gene";

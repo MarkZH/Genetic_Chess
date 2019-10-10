@@ -13,7 +13,7 @@
 
 class Board;
 
-Piece_Strength_Gene::Piece_Strength_Gene() : piece_strength{}
+Piece_Strength_Gene::Piece_Strength_Gene()
 {
     recalculate_normalizing_value();
 }

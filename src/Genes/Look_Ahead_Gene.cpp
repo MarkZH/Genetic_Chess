@@ -12,12 +12,6 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
-Look_Ahead_Gene::Look_Ahead_Gene() :
-    mean_game_length(50),
-    game_length_uncertainty(0.5)
-{
-}
-
 std::map<std::string, double> Look_Ahead_Gene::list_properties() const
 {
     std::map<std::string, double> properties;

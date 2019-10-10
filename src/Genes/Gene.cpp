@@ -17,9 +17,7 @@
 
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
-Gene::Gene(bool non_negative_priority) :
-    scoring_priority(0.0),
-    priority_is_non_negative(non_negative_priority)
+Gene::Gene(bool non_negative_priority) : priority_is_non_negative(non_negative_priority)
 {
 }
 

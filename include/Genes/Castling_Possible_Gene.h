@@ -26,8 +26,8 @@ class Castling_Possible_Gene : public Gene
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
-        double kingside_preference;
-        double queenside_preference;
+        double kingside_preference = 0.0;
+        double queenside_preference = 0.0;
 
         double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
         void gene_specific_mutation() override;

@@ -12,10 +12,7 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
-Castling_Possible_Gene::Castling_Possible_Gene() :
-    Gene(true),
-    kingside_preference(0.0),
-    queenside_preference(0.0)
+Castling_Possible_Gene::Castling_Possible_Gene() : Gene(true)
 {
 }
 

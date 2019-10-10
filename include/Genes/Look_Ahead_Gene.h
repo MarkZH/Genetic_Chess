@@ -16,8 +16,6 @@ class Clock;
 class Look_Ahead_Gene : public Gene
 {
     public:
-        Look_Ahead_Gene();
-
         std::unique_ptr<Gene> duplicate() const override;
 
         std::string name() const override;
@@ -44,8 +42,8 @@ class Look_Ahead_Gene : public Gene
 
     private:
         double speculation_constant = 1.0; // controls over/under-allocation of time
-        double mean_game_length; // in moves by one player
-        double game_length_uncertainty; // approximately as a fraction of the mean
+        double mean_game_length = 50.0; // in moves by one player
+        double game_length_uncertainty = 0.5; // approximately as a fraction of the mean
 
         double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
         void gene_specific_mutation() override;

@@ -13,8 +13,6 @@
 class Mutation_Rate_Gene : public Gene
 {
     public:
-        Mutation_Rate_Gene();
-
         std::string name() const override;
 
         //! Controls how many changes a call to Genome::mutate() makes to the Gene collections.
@@ -30,7 +28,7 @@ class Mutation_Rate_Gene : public Gene
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
-        double mutated_components_per_mutation;
+        double mutated_components_per_mutation = 10;
 
         double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
 };

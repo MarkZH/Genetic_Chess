@@ -13,7 +13,7 @@
 
 #include "Utility/Random.h"
 
-Pawn_Advancement_Gene::Pawn_Advancement_Gene() : non_linearity(0.0)
+Pawn_Advancement_Gene::Pawn_Advancement_Gene()
 {
     recompute_scores_cache();
 }
