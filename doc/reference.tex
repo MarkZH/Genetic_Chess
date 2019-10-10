@@ -242,11 +242,7 @@ This gene sums the total strength (as determined by the Piece Strength Gene) of 
 Interestingly, since both kings are always on the board, they always cancel each others effect in the Total Force Gene, leaving this gene alone to drive their strength value. The result of this is discussed in the results section (Section~\ref{piece-strength-with-king}).
 
 \subsubsection{Sphere of Influence Gene}
-This gene counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move. That is, if a piece cannot reach a square in one move (perhaps because such a move is blocked by another piece), then that square is still counted as falling under the influence of the side owning that piece. Further bonus points are awarded based on how close the attacked square is to the king. Because of its subcomponents, this gene's priority is restricted to non-negative values.
-
-The effective formula for the score of this gene can be expressed as
-\[score = \sum_s legal(s)\left(1+\frac{KTF}{1+distance(s,king)}\right)\]
-where the sum is over all squares \(s\) on the board. The function \(legal(s)\) returns~0 if \(s\) is not attacked at all, or one of two genetically determined factors depending on if the the attack is legal (ignoring checks or pins) or not. An illegal move is one that is blocked by another piece. The term \(KTF\) is the king target factor and is a genetically determined weight that adjusts the importance of attacking squares close to the opposing king. The function \(distance(s_1, s_2)\) gives the distance between two squares in king moves and is equal to the maximum of the difference in file or rank between the squares. In the formula above, \(king\) represents the square the opposing king occupies.
+This gene counts the number of squares attacked by all pieces.
 
 \subsubsection{King Confinement Gene}
 This gene tracks the manner in which the king is prevented from moving. In general, a king is safe if it is surrounded by friendly pieces or, failing that, it is free to move around the board when there are opposing pieces near. In scoring a board, this gene tracks the squares the king can reach given unlimited consecutive legal moves up to a genetically determined maximum distance.
@@ -419,10 +415,6 @@ The plot in Figure~\ref{game-ending-plot} shows the counts of how games end.
 	\caption{A log-log scale of the percentage of games with various endings. Note that the time forfeits don't get going until about 30,000 games in.}\label{game-ending-plot}
 \end{figure}
 It seems that the Look Ahead Gene does not experience significant evolutionary pressure until the board-scoring genes have been tuned to a semi-decent state. My hypothesis is that if the board-scoring function is not able to tell a good position from bad, then looking ahead only increases the risk of losing by time forfeiture with no benefit. However, when the board-scoring genes are in a decent state, the increase in look ahead is very quick. This leads to a rapid increase in the rate of deaths by running out of time, but apparently this is worth the risk as those who are more conservative with their time lose to those who see farther ahead.
-
-\subsection{The Sphere of Influence Gene typically counts legal moves as having lower value than other moves.}
-
-This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game. Or, the Opponent Pieces Targeted Gene relieves this gene of having to consider legal moves.
 
 \subsection{Genes with properly lower priorities have to wait for higher priority genes to evolve their higher priority before evolving themselves.}\label{lower-priority-waits}
 

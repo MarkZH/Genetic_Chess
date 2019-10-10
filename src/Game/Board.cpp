@@ -844,26 +844,16 @@ void Board::modify_attacks(Square square, Piece piece, bool adding_attacks)
     auto vulnerable_king = Piece{opposite(attacking_color), KING};
     for(const auto& attack_move_list : piece.attacking_move_lists(square))
     {
-        bool move_blocked = false;
         for(auto attack : attack_move_list)
         {
             auto attacked_square = attack->end();
             auto attacked_index = attacked_square.index();
+            potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
 
-            if(move_blocked)
+            auto blocking_piece = piece_on_square(attacked_square);
+            if(blocking_piece && blocking_piece != vulnerable_king)
             {
-                blocked_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
-            }
-            else
-            {
-                auto blocking_piece = piece_on_square(attacked_square);
-
-                potential_attacks[attacking_color][attacked_index][attack->attack_index()] = adding_attacks;
-
-                if(blocking_piece && blocking_piece != vulnerable_king)
-                {
-                    move_blocked = true;
-                }
+                break;
             }
         }
     }
@@ -913,7 +903,6 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece)
                     auto piece = piece_on_square(target_square);
 
                     potential_attacks[attacking_color][target_index][index] = add_new_attacks;
-                    blocked_attacks[attacking_color][target_index][index] = ! add_new_attacks;
 
                     if(piece && piece != vulnerable_king)
                     {
@@ -943,11 +932,6 @@ bool Board::king_is_in_check() const
 bool Board::safe_for_king(Square square, Color king_color) const
 {
     return moves_attacking_square(square, opposite(king_color)).none();
-}
-
-bool Board::blocked_attack(Square square, Color attacking_color) const
-{
-    return blocked_attacks[attacking_color][square.index()].any();
 }
 
 bool Board::king_is_in_check_after_move(const Move& move) const

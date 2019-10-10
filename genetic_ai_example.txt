@@ -32,9 +32,6 @@ Name: Opponent Pieces Targeted Gene
 Priority: 132.21
 
 Name: Sphere of Influence Gene
-Illegal Square Score: 4.36788
-King Target Factor: -3.4612
-Legal Square Score: 14.6899
 Priority: 405.079
 
 Name: King Confinement Gene
