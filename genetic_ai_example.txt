@@ -53,9 +53,6 @@ Priority: -224.26
 Name: Pawn Islands Gene
 Priority: -25.7995
 
-Name: Checkmate Material Gene
-Priority: 72.0995
-
 Name: Null Gene
 Priority: -403.524
 

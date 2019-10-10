@@ -217,12 +217,11 @@ class Board
         //! The following piece sets on the board make checkmate possible:
         //! - Any single pawn, rook, or queen,
         //! - At least two bishops (of any color) on oppositely colored squares,
-        //! - A bishop and knight (of an piece color or square color combination),
+        //! - A bishop and knight (of any piece color or square color combination),
         //! - Two knights (of any piece color or square color combination).
-        //! \param color If NONE, check both sides for enough material. Otherwise, only check the pieces of one side.
         //! \returns If there are enough pieces on the board to make a checkmate arrangement.
-        //!          If the method returns false when called with NONE, this will usually lead to a drawn game.
-        bool enough_material_to_checkmate(Color color = NONE) const;
+        //!          If the method returns false, this will usually lead to a drawn game.
+        bool enough_material_to_checkmate() const;
 
         //! Determines whether a move will capture on the current board.
         //

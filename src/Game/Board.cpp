@@ -1230,25 +1230,22 @@ Square Board::find_checking_square() const
     return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
 }
 
-bool Board::enough_material_to_checkmate(Color color) const
+bool Board::enough_material_to_checkmate() const
 {
-    auto piece_is_right_color = [color](auto piece) { return piece && (color == NONE || piece.color() == color); };
-
     if(std::any_of(board.begin(), board.end(),
-                   [piece_is_right_color](auto piece)
+                   [](auto piece)
                    {
-                       return piece_is_right_color(piece) &&
-                              (piece.type() == QUEEN || piece.type() == ROOK || piece.type() == PAWN);
+                       return piece && (piece.type() == QUEEN || piece.type() == ROOK || piece.type() == PAWN);
                    }))
     {
         return true;
     }
 
     auto bishop_on_square_color =
-        [this, piece_is_right_color](Color color_sought, Square square)
+        [this](Color color_sought, Square square)
         {
             auto piece = piece_on_square(square);
-            return piece_is_right_color(piece) && piece.type() == BISHOP && square.color() == color_sought;
+            return piece && piece.type() == BISHOP && square.color() == color_sought;
         };
 
     auto squares = Square::all_squares();
@@ -1260,9 +1257,9 @@ bool Board::enough_material_to_checkmate(Color color) const
     }
 
     auto knight_count = std::count_if(board.begin(), board.end(),
-                                      [piece_is_right_color](auto piece)
+                                      [](auto piece)
                                       {
-                                          return piece_is_right_color(piece) && piece.type() == KNIGHT;
+                                          return piece && piece.type() == KNIGHT;
                                       });
     return knight_count > 1 || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
