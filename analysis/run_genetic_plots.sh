@@ -39,6 +39,10 @@ if [[ -f "$threshold_game_file" ]]
 then
     echo "# Theshold game opponents:"
     grep '^\[White ' "$threshold_game_file" | cut -d\" -f2 | uniq -c
+    echo -n "Passes: "
+    grep Result "$threshold_game_file" | grep -c '0-1'
+    echo -n "Replacements: "
+    grep Result "$threshold_game_file" | grep -c -v '0-1'
 fi
 
 # Second term here checks if argument is a number
