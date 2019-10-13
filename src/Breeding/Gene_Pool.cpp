@@ -471,10 +471,11 @@ void gene_pool(const std::string& config_file)
                 std::cout << "Threshold game: " << threshold_ai.id() << " vs " << ai.id() << " ... " << std::flush;
                 auto clock = Clock(game_time);
                 auto result = play_game(Board{}, clock, threshold_ai, ai, false, game_record_file + "_threshold.pgn");
-                if(result.winner() == WHITE)
+                if(result.winner() != BLACK)
                 {
+                    auto ancestor_original_pool = original_pool[ai];
                     ai = Genetic_AI(threshold_ai, ai);
-                    original_pool[ai] = gene_pool_count; // from nowhere
+                    original_pool[ai] = ancestor_original_pool;
                     std::cout << "Replaced" << std::endl;
                 }
                 else
