@@ -32,18 +32,16 @@ class Gene
 
         //! Reads an input stream for gene data.
         //
-        //! Every line should be one of the following:
-        //! - \<property\> = \<value\> with optional comments at the end preceded by '#'.
-        //! - blank
-        //! - A commented line starting with a '#'.
+        //! Every line should be of the form: \<property\> = \<value\> with optional comments at the end preceded by '#'.
+        //! A blank line marks the end of the gene data.
         //! \param is An input stream (std::ifstream, std::iostream, or similar).
         //! \throws Genetic_AI_Creation_Error If there is an invalid line or an unexpected property
         void read_from(std::istream& is);
 
         //! Read gene data from a text file.
         //
-        //! The method creates an input stream from the text file and passes it to the
-        //! other Gene::read_from().
+        //! The method creates an input stream from the text file, finds the first line with
+        //! the correct Name: line, and passes it to the other Gene::read_from().
         void read_from(const std::string& file_name);
 
         //! Applies a random mutation to the priority or other aspect of a gene.
