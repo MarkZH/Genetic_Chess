@@ -247,10 +247,15 @@ bool in_line_in_order(Square a, Square b, Square c);
 class All_Squares_Iterator
 {
     public:
+        //! This iterator is meant to be traversed once.
         using iterator_category = std::input_iterator_tag;
+        //! The iterator dereferences to a Square.
         using value_type = Square;
+        //! The distance between iterators is an int.
         using difference_type = int;
+        //! The pointer to the data is a pointer to a Square.
         using pointer = Square*;
+        //! The reference to the data is reference to a Square.
         using reference = Square&;
 
         //! Create an iterator referring to a square.
@@ -291,10 +296,15 @@ struct All_Squares
 class Square_Line_Iterator
 {
     public:
+        //! This iterator is meant to be traversed once.
         using iterator_category = std::input_iterator_tag;
+        //! The iterator dereferences to a Square.
         using value_type = Square;
+        //! The distance between iterators is an int.
         using difference_type = int;
+        //! The pointer to the data is a pointer to a Square.
         using pointer = Square*;
+        //! The reference to the data is reference to a Square.
         using reference = Square&;
 
         //! Construct the collection of in-line Squares.
