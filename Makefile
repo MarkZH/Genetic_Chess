@@ -30,10 +30,10 @@ LINK :
 
 
 after_debug : $(LINK_DIR_DEBUG)/$(BIN)
-
+	doxygen
 
 after_release : $(LINK_DIR_RELEASE)/$(BIN)
-
+	doxygen
 
 before_debug : 
 	mkdir -p $(DEBUG_BIN_DIR)

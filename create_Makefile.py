@@ -91,6 +91,7 @@ for target in final_targets:
     depends[out_variable] = [all_objects]
 
     depends[f'after_{target}'] = [os.path.join(link_dir_variable, '$(BIN)')]
+    operations[f'after_{target}'] = ['doxygen']
 
     depends['clean'].append(f'clean_{target}')
     depends[f'clean_{target}'] = []
