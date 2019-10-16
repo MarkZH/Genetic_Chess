@@ -264,9 +264,6 @@ Usually, the weight \(W_{friend}\) will be positive and \(W_{opponent}\) will be
 
 The priority of this gene is non-negative so as to hasten the evolution of the friend/opponent weights to their proper signs.
 
-\subsubsection{King Protection Gene}
-This gene counts the squares that have access to the king by any valid piece movement and are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a less exposed king.
-
 \subsubsection{Castling Possible Gene}
 This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away, the king and rook remaining unmoved, and opposing pieces not attacking. The score can vary based on a genetically determined preference for kingside or queenside castling. Because of these preference values, the priority is non-negative.
 

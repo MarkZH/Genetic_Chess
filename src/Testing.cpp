@@ -27,7 +27,6 @@ using namespace std::chrono_literals;
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Freedom_To_Move_Gene.h"
 #include "Genes/King_Confinement_Gene.h"
-#include "Genes/King_Protection_Gene.h"
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 #include "Genes/Pawn_Advancement_Gene.h"
 #include "Genes/Passed_Pawn_Gene.h"
@@ -409,13 +408,6 @@ bool run_tests()
                                          (1 + 8); // free squares (a1-h1)
     king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, WHITE, king_confined_by_pawns_score);
 
-    auto king_protection_gene = King_Protection_Gene();
-    auto king_protection_board = king_confinement_board;
-    auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
-    auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
-    auto king_protection_score = double(max_square_count - square_count)/max_square_count;
-    king_protection_gene.test(tests_passed, king_protection_board, WHITE, king_protection_score);
-
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
     auto piece_strength_normalizer = double(32 + 16 + 2*8 + 2*4 + 2*2 + 8*1);
@@ -624,7 +616,6 @@ void run_speed_tests()
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto king_confinement_gene = King_Confinement_Gene();
     king_confinement_gene.read_from(test_genes_file_name);
-    auto king_protection_gene = King_Protection_Gene();
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
     auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
@@ -652,7 +643,6 @@ void run_speed_tests()
     std::vector<const Gene*> performance_genome = {&castling_possible_gene,
                                                    &freedom_to_move_gene,
                                                    &king_confinement_gene,
-                                                   &king_protection_gene,
                                                    &opponent_pieces_targeted_gene,
                                                    &passed_pawn_gene,
                                                    &pawn_advancement_gene,
