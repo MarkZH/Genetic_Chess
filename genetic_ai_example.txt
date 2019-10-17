@@ -39,6 +39,9 @@ Friendly Block Score: 17.1207
 Opponent Block Score: -3.78252
 Priority: 63.1721
 
+Name: King Protection Gene
+Priority: -9.15147
+
 Name: Castling Possible Gene
 Kingside Preference: 0.185913
 Priority: 109.817
