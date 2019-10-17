@@ -12,10 +12,6 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
-Castling_Possible_Gene::Castling_Possible_Gene() : Gene(true)
-{
-}
-
 std::map<std::string, double> Castling_Possible_Gene::list_properties() const
 {
     auto properties = Gene::list_properties();

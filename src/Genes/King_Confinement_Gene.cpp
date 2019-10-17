@@ -13,10 +13,6 @@
 
 #include "Utility/Random.h"
 
-King_Confinement_Gene::King_Confinement_Gene() : Gene(true)
-{
-}
-
 std::unique_ptr<Gene> King_Confinement_Gene::duplicate() const
 {
     return std::make_unique<King_Confinement_Gene>(*this);

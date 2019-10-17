@@ -43,7 +43,7 @@ class Piece_Strength_Gene : public Gene
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
-        std::array<double, 6> piece_strength{};
+        std::array<double, 6> piece_strength;
         double normalizing_value;
 
         double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;

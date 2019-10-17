@@ -15,19 +15,6 @@ class Piece_Strength_Gene;
 class Gene
 {
     public:
-        //! Instantiate the basic parts of the abstract class Gene.
-        //
-        //! \param non_negative_priority Specifies whether the scoring priority should be restricted
-        //!        to values greater than or equal to zero.
-        //!
-        //! For some genes, having the priority vary across positive and negative numbers
-        //! slows down evolution because it has some other multiplicative factor that can
-        //! also take on negative or positive values. For example, the Total_Force_Gene priority
-        //! is effectively multliplied by the scores from the Piece_Strength_Gene. Since switching
-        //! the sign of both leads to the same behavior, making the priority non-negative cuts
-        //! off the redundant half of the search space.
-        explicit Gene(bool non_negative_priority = false);
-
         virtual ~Gene() = default;
 
         //! Reads an input stream for gene data.
@@ -115,8 +102,7 @@ class Gene
         virtual void load_properties(const std::map<std::string, double>& properties);
 
     private:
-        double scoring_priority = 0.0;
-        bool priority_is_non_negative = false;
+        double scoring_priority = 1000.0;
 
         virtual double score_board(const Board& board, Color perspective, size_t prior_real_moves) const = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;

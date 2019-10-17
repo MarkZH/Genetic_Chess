@@ -55,10 +55,6 @@ title('Gene Priority Evolution');
 
 special_plots = [0, 0];
 
-max_priority_value = -inf;
-second_max_priority_value = -inf;
-min_priority_value = inf;
-
 % Plot evolution of individual genes
 for yi = 2 : length(data.colheaders) - 2
     this_data = data.data(:, yi);
@@ -123,14 +119,6 @@ for yi = 2 : length(data.colheaders) - 2
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
             make_dashed = (priority_count > 7);
-            smooth_max = max(smooth_data);
-            if smooth_max > max_priority_value
-                second_max_priority_value = max_priority_value;
-                max_priority_value = smooth_max;
-            elseif smooth_max > second_max_priority_value
-                second_max_priority_value = smooth_max;
-            end
-            min_priority_value = min(min(smooth_data), min_priority_value);
         elseif special_plot_index == 3
             cutoff = strfind(name, '-');
             name = name(cutoff + 2 : end);
@@ -185,10 +173,4 @@ for index = 1 : length(special_plots)
     xlabel('ID');
 
     print([gene_pool_filename ' special ' file_name_suffixes{index} '.png']);
-
-    if special_plots(index) == priority_figure
-        ylim(1.25*[min(0, min_priority_value) second_max_priority_value]);
-        title(['Lower ' get(get(gca, 'title'), 'string')]);
-        print([gene_pool_filename ' special ' file_name_suffixes{index} ' low.png']);
-    end
 end

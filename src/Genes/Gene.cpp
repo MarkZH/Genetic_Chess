@@ -17,10 +17,6 @@
 
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
-Gene::Gene(bool non_negative_priority) : priority_is_non_negative(non_negative_priority)
-{
-}
-
 std::map<std::string, double> Gene::list_properties() const
 {
     return {{"Priority", scoring_priority}};
@@ -138,12 +134,7 @@ void Gene::mutate()
     auto priority_probability = list_properties().count("Priority")/double(list_properties().size());
     if(Random::success_probability(priority_probability))
     {
-        auto mutation_size = 10.0 + std::sqrt(std::abs(scoring_priority));
-        scoring_priority += Random::random_laplace(mutation_size);
-        if(priority_is_non_negative)
-        {
-            scoring_priority = std::abs(scoring_priority);
-        }
+        scoring_priority += Random::random_laplace(10.0);
     }
     else
     {

@@ -15,6 +15,7 @@ class Board;
 
 Piece_Strength_Gene::Piece_Strength_Gene()
 {
+    piece_strength.fill(100.0);
     recalculate_normalizing_value();
 }
 
