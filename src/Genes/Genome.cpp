@@ -25,6 +25,7 @@
 #include "Genes/Piece_Strength_Gene.h"
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
+#include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Mutation_Rate_Gene.h"
 #include "Genes/Null_Gene.h"
 
@@ -92,6 +93,7 @@ Genome::Genome()
     genome.emplace_back(std::make_unique<Castling_Possible_Gene>());
     genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
     genome.emplace_back(std::make_unique<Pawn_Islands_Gene>());
+    genome.emplace_back(std::make_unique<Checkmate_Material_Gene>());
     genome.emplace_back(std::make_unique<Null_Gene>());
 }
 

@@ -36,6 +36,7 @@ using namespace std::chrono_literals;
 #include "Genes/Total_Force_Gene.h"
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
+#include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Null_Gene.h"
 
 #include "Utility/String.h"
@@ -466,6 +467,11 @@ bool run_tests()
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
     pawn_islands_gene.test(tests_passed, pawn_islands_board, WHITE, (6.0/3)/8);
 
+    auto checkmate_material_gene = Checkmate_Material_Gene();
+    auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
+    checkmate_material_gene.test(tests_passed, checkmate_material_board, WHITE, 1.0); // white can checkmate
+    checkmate_material_gene.test(tests_passed, checkmate_material_board, BLACK, 0.0); // black cannot
+
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
     test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");
 
@@ -636,6 +642,7 @@ void run_speed_tests()
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto pawn_islands_gene = Pawn_Islands_Gene();
+    auto checkmate_material_gene = Checkmate_Material_Gene();
     auto null_gene = Null_Gene();
 
     auto performance_board = Board();
@@ -650,6 +657,7 @@ void run_speed_tests()
     }
 
     std::vector<const Gene*> performance_genome = {&castling_possible_gene,
+                                                   &checkmate_material_gene,
                                                    &freedom_to_move_gene,
                                                    &king_confinement_gene,
                                                    &king_protection_gene,
