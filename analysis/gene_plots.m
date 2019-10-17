@@ -53,10 +53,6 @@ priority_suffix = ' Gene - Priority';
 priority_count = 0;
 title('Gene Priority Evolution');
 
-speculation_keyword = 'Speculation';
-speculation_figure = figure;
-title('Speculation Constants');
-
 special_plots = [0, 0];
 
 max_priority_value = -inf;
@@ -103,6 +99,8 @@ for yi = 2 : length(data.colheaders) - 2
     conv_margin = floor(conv_window/2);
     x_axis = id_list(conv_margin : end - conv_margin);
     plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
+    plot(xlim, [0 0], 'k'); % X-axis
+    print([gene_pool_filename ' gene ' name '.png']);
 
     special_plot_index = 0;
     if ~isempty(strfind(name, piece_strength_prefix))
@@ -113,11 +111,7 @@ for yi = 2 : length(data.colheaders) - 2
         special_plot_index = 2;
     end
 
-    plot(xlim, [0 0], 'k'); % X-axis
-
-    print([gene_pool_filename ' gene ' name '.png']);
-
-    if special_plot_index > 0 && length(this_data) > conv_window;
+    if special_plot_index > 0 && length(this_data) > conv_window
         figure(plot_figure);
         hold all;
 
