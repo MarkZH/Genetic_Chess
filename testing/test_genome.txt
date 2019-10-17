@@ -9,6 +9,9 @@ Q: 16
 K: 32
 
 Name: Sphere of Influence Gene
+King Target Factor: 2
+Legal Square Score: 4
+Illegal Square Score: 1
 Priority: 1
 
 Name: King Confinement Gene
