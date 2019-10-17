@@ -20,7 +20,7 @@ namespace String
                                    std::string delim = "",
                                    size_t count = std::string::npos);
 
-    //! Determine whether a strings exists inside another string.
+    //! Determine whether a string exists inside another string.
     //
     //! \param container The string to search.
     //! \param target The character or string to search for.
