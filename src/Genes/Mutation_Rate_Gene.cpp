@@ -26,12 +26,7 @@ int Mutation_Rate_Gene::mutation_count() const
 void Mutation_Rate_Gene::gene_specific_mutation()
 {
     mutated_components_per_mutation += Random::random_laplace(1.0);
-
-    if(mutated_components_per_mutation < 1.0)
-    {
-        // Reflect about line y = 1.
-        mutated_components_per_mutation += 2*(1.0 - mutated_components_per_mutation);
-    }
+    mutated_components_per_mutation = std::max(1.0, mutated_components_per_mutation);
 }
 
 std::unique_ptr<Gene> Mutation_Rate_Gene::duplicate() const
