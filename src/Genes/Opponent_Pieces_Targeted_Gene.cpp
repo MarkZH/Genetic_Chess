@@ -1,12 +1,10 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 
-#include <array>
 #include <memory>
 #include <string>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
-#include "Genes/Gene.h"
 #include "Game/Color.h"
 
 #include "Genes/Gene.h"
