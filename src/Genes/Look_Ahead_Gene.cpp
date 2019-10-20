@@ -43,15 +43,12 @@ void Look_Ahead_Gene::gene_specific_mutation()
     {
         case 1:
             mean_game_length += Random::random_laplace(0.3);
-            mean_game_length = std::abs(mean_game_length);
             break;
         case 2:
-            game_length_uncertainty += Random::random_laplace(0.01);
-            game_length_uncertainty = std::abs(game_length_uncertainty);
+            game_length_uncertainty += Random::random_laplace(0.005);
             break;
         case 3:
             speculation_constant += Random::random_laplace(0.03);
-            speculation_constant = std::max(speculation_constant, 0.0);
             break;
         default:
             throw std::logic_error("Bad random value in mutation of " + name());
