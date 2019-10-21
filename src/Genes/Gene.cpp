@@ -131,7 +131,8 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 
 void Gene::mutate()
 {
-    auto priority_probability = list_properties().count("Priority")/double(list_properties().size());
+    auto properties = list_properties();
+    auto priority_probability = properties.count("Priority")/double(properties.size());
     if(Random::success_probability(priority_probability))
     {
         scoring_priority += Random::random_laplace(10.0);
