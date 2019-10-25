@@ -64,7 +64,7 @@ void Gene::read_from(std::istream& is)
         auto property_data = String::remove_extra_whitespace(split_line[1]);
         if(property_name == "Name")
         {
-            if(property_data == name())
+            if(String::remove_extra_whitespace(property_data) == name())
             {
                 continue;
             }
@@ -111,7 +111,7 @@ void Gene::read_from(const std::string& file_name)
     {
         if(String::starts_with(line, "Name: "))
         {
-            auto gene_name = String::trim_outer_whitespace(String::split(line, ":", 1)[1]);
+            auto gene_name = String::remove_extra_whitespace(String::split(line, ":", 1)[1]);
             if(gene_name == name())
             {
                 read_from(ifs);

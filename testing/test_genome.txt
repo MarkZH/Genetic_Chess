@@ -14,8 +14,8 @@ Legal Square Score: 4
 Illegal Square Score: 1
 Priority: 1
 
-Name: King Confinement Gene
-Friendly Block Score: 4
+Name: King   Confinement Gene
+Friendly Block Score : 4
 Opponent Block Score: -1
 Priority: 1
 
