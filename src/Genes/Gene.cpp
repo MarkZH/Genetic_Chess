@@ -135,7 +135,7 @@ void Gene::mutate()
     auto priority_probability = properties.count("Priority")/double(properties.size());
     if(Random::success_probability(priority_probability))
     {
-        scoring_priority += Random::random_laplace(10.0);
+        scoring_priority += Random::random_laplace(10.0 + std::sqrt(std::abs(scoring_priority)));
     }
     else
     {
