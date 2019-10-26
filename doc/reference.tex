@@ -218,8 +218,6 @@ Since it is not only important to find position that are advantageous to the pla
 
 In general, the scoring function outputs of each gene are scaled so that a typical board state gets a score near one. For example, the Freedom to Move Gene divides the number of legal moves by the number of legal moves at the start of the game (20 for standard chess). This way, the priorities of genes can be easily compared as evolution progresses.
 
-Some of the board-scoring genes are forced to have non-negative priorities as a way of speeding up the optimization. As an example, the Total Force Gene (Section~\ref{total-force}) has a non-negative priority because its scoring method relies on values from the Piece Strength Gene (Section~\ref{piece-strength}). The score returned is basically the product of the priority of the Total Force Gene and the values of the piece strengths. When both of these are allowed to mutate to both positive and negative values, they often get stuck near zero. When one changes sign, the other is driven towards changing sign as well to get back to better evaluation results. Forcing the priority to be positive puts a consistent pressure on the piece strengths to get to their proper values (whether positive or negative). This does not limit the behavior of the Genetic AIs since the piece strengths could evolve to negative strengths if the AI wants to lose its pieces.
-
 \subsubsection{Total Force Gene}\label{total-force}
 This gene sums the strength--according to the Piece Strength Gene (see Section~\ref{piece-strength})--of all the player's pieces on the board. The score returned is divided by the total value of the starting set of pieces (8~pawns, 2~rooks, 2~knights, 2~bishops, and 1~queen) so that the result is between~0 and~1.
 
