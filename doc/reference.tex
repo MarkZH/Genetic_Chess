@@ -144,6 +144,8 @@ This gene specifies the importance or strength of each different type of chess p
 
 Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and~\ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
 
+The values of the piece strengths are modified in a similar fashion and for similar reasons to the board-scoring gene priorities as described in the summary section of Section~\ref{board-score-section}.
+
 \subsubsection{Look Ahead Gene}
 This gene determines all aspects of the Genetic AIs time management through a set of genetically determined components to this gene that determine how the AI spends its time:
 \begin{enumerate}
@@ -211,7 +213,13 @@ This gene controls how many randomly chosen genes get mutated every time there's
 
 These genes are used to give a score to a board state. The higher the score, the more desirable the moves that lead to this board. The score is calculated by
 \[Score = \sum_g Priority(g) \times Score(g,B)\]
-where \(g\) represents each gene, \(Priority(g)\) is a genetically determined scalar multiplicative factor that determines how much the gene's score of the board influences the final score, and \(Score(g,B)\) is the result of the scoring procedure of that gene on a given board \(B\).
+where \(g\) represents each gene, \(Priority(g)\) is a genetically determined scalar multiplicative factor that determines how much the gene's score of the board influences the final score, and \(Score(g,B)\) is the result of the scoring procedure of that gene on a given board \(B\). During mutation, the size of the priority modification is equal to the square root of the current priority. This is done for these reasons:
+\begin{itemize}
+	\item Mutations to high priority genes can still have an effect on gameplay,
+	\item Gene priorities that have a large proper value (namely, the Total Force Gene (see Sec.~\ref{total-force-and-pawn-result}) can achieve that value quickly,
+	\item If a gene has a proper value closer to zero, then it can settle on a proper value with respect to other low-priority genes using smaller mutations.
+\end{itemize}
+The square root of the current priority value was chosen as a compromise between a constant mutation size (which would lead to linear growth at best) and a mutation size proportional to the priority value (which would lead to exponential grown and probably wild swings during mutation at all priority values). A minimum priority mutations size of 10.0 is set so that the priority does not get trapped near zero.
 
 Since it is not only important to find position that are advantageous to the player, but also disadvantageous to the opponent, the final heuristic score for a board position is given by
 \[Heuristic\ Score = Score(Player) - Score(Opponent).\]
