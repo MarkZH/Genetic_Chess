@@ -26,18 +26,18 @@ namespace
     using indexed_art_array = std::array<std::array<std::vector<std::string>, 6>, 2>;
 
 
-    void add_pawn_moves(indexed_move_array& out, Color color);
-    void add_rook_moves(indexed_move_array& out, Color color, Piece_Type type = ROOK);
-    void add_knight_moves(indexed_move_array& out, Color color);
-    void add_bishop_moves(indexed_move_array& out, Color color, Piece_Type type = BISHOP);
-    void add_king_moves(indexed_move_array& out, Color color);
+    void add_pawn_moves(indexed_move_array& out, Color color) noexcept;
+    void add_rook_moves(indexed_move_array& out, Color color, Piece_Type type = ROOK) noexcept;
+    void add_knight_moves(indexed_move_array& out, Color color) noexcept;
+    void add_bishop_moves(indexed_move_array& out, Color color, Piece_Type type = BISHOP) noexcept;
+    void add_king_moves(indexed_move_array& out, Color color) noexcept;
 
-    void add_pawn_art(indexed_art_array& out, Color color);
-    void add_rook_art(indexed_art_array& out, Color color);
-    void add_knight_art(indexed_art_array& out, Color color);
-    void add_bishop_art(indexed_art_array& out, Color color);
-    void add_queen_art(indexed_art_array& out, Color color);
-    void add_king_art(indexed_art_array& out, Color color);
+    void add_pawn_art(indexed_art_array& out, Color color) noexcept;
+    void add_rook_art(indexed_art_array& out, Color color) noexcept;
+    void add_knight_art(indexed_art_array& out, Color color) noexcept;
+    void add_bishop_art(indexed_art_array& out, Color color) noexcept;
+    void add_queen_art(indexed_art_array& out, Color color) noexcept;
+    void add_king_art(indexed_art_array& out, Color color) noexcept;
 
     const auto ascii_art_lines =
         []()
@@ -147,7 +147,7 @@ namespace
     // Add a move to the list that is only legal when starting from a certain square
     // (e.g., castling, pawn double move, promotion, etc.)
     template<typename Move_Type, typename ...Parameters>
-    void add_legal_move(indexed_move_array& out, Color color, Piece_Type type, bool add_new_list, Parameters ... parameters)
+    void add_legal_move(indexed_move_array& out, Color color, Piece_Type type, bool add_new_list, Parameters ... parameters) noexcept
     {
         auto move = std::make_unique<Move_Type>(parameters...);
         auto index = move->start().index();
@@ -165,7 +165,7 @@ namespace
         lists.back().push_back(move.release());
     }
 
-    void add_standard_legal_move(indexed_move_array& out, Color color, Piece_Type type, int file_step, int rank_step)
+    void add_standard_legal_move(indexed_move_array& out, Color color, Piece_Type type, int file_step, int rank_step) noexcept
     {
         for(auto start : Square::all_squares())
         {
@@ -177,7 +177,7 @@ namespace
         }
     }
 
-    void add_pawn_moves(indexed_move_array& out, Color color)
+    void add_pawn_moves(indexed_move_array& out, Color color) noexcept
     {
         auto base_rank = (color == WHITE ? 2 : 7);
         auto no_normal_move_rank = (color == WHITE ? 7 : 2);
@@ -232,7 +232,7 @@ namespace
         }
     }
 
-    void add_rook_moves(indexed_move_array& out, Color color, Piece_Type type)
+    void add_rook_moves(indexed_move_array& out, Color color, Piece_Type type) noexcept
     {
         for(int d_file = -1; d_file <= 1; ++d_file)
         {
@@ -249,7 +249,7 @@ namespace
         }
     }
 
-    void add_knight_moves(indexed_move_array& out, Color color)
+    void add_knight_moves(indexed_move_array& out, Color color) noexcept
     {
         for(auto d_file : {1, 2})
         {
@@ -264,7 +264,7 @@ namespace
         }
     }
 
-    void add_bishop_moves(indexed_move_array& out, Color color, Piece_Type type)
+    void add_bishop_moves(indexed_move_array& out, Color color, Piece_Type type) noexcept
     {
         for(int d_rank : {-1, 1})
         {
@@ -278,7 +278,7 @@ namespace
         }
     }
 
-    void add_king_moves(indexed_move_array& out, Color color)
+    void add_king_moves(indexed_move_array& out, Color color) noexcept
     {
         for(int d_rank = -1; d_rank <= 1; ++d_rank)
         {
@@ -295,7 +295,7 @@ namespace
         add_legal_move<Castle>(out, color, KING, true, base_rank, RIGHT);
     }
 
-    void add_color(indexed_art_array& out, Color color, Piece_Type type)
+    void add_color(indexed_art_array& out, Color color, Piece_Type type) noexcept
     {
         if(color == WHITE)
         {
@@ -308,7 +308,7 @@ namespace
         }
     }
 
-    void add_pawn_art(indexed_art_array& out, Color color)
+    void add_pawn_art(indexed_art_array& out, Color color) noexcept
     {
         // ASCII Art http://ascii.co.uk/art/chess (VK)
         auto& store = out[color][PAWN];
@@ -317,7 +317,7 @@ namespace
         add_color(out, color, PAWN);
     }
 
-    void add_rook_art(indexed_art_array& out, Color color)
+    void add_rook_art(indexed_art_array& out, Color color) noexcept
     {
         // ASCII Art http://ascii.co.uk/art/chess (VK)
         auto& store = out[color][ROOK];
@@ -327,7 +327,7 @@ namespace
         add_color(out, color, ROOK);
     }
 
-    void add_knight_art(indexed_art_array& out, Color color)
+    void add_knight_art(indexed_art_array& out, Color color) noexcept
     {
         // ASCII Art http://ascii.co.uk/art/chess (VK)
         auto& store = out[color][KNIGHT];
@@ -337,7 +337,7 @@ namespace
         add_color(out, color, KNIGHT);
     }
 
-    void add_bishop_art(indexed_art_array& out, Color color)
+    void add_bishop_art(indexed_art_array& out, Color color) noexcept
     {
         // ASCII art http://ascii.co.uk/art/chess (VK)
         auto& store = out[color][BISHOP];
@@ -347,7 +347,7 @@ namespace
         add_color(out, color, BISHOP);
     }
 
-    void add_queen_art(indexed_art_array& out, Color color)
+    void add_queen_art(indexed_art_array& out, Color color) noexcept
     {
         // ASCII Art http://ascii.co.uk/art/chess (VK)
         auto& store = out[color][QUEEN];
@@ -357,7 +357,7 @@ namespace
         add_color(out, color, QUEEN);
     }
 
-    void add_king_art(indexed_art_array& out, Color color)
+    void add_king_art(indexed_art_array& out, Color color) noexcept
     {
         // ASCII Art http://ascii.co.uk/art/chess (VK)
         auto& store = out[color][KING];
