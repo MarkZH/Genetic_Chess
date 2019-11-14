@@ -6,7 +6,7 @@
 //! \file
 
 //! Used for identifying the color of a piece, player, square, or game winner.
-enum  Color : unsigned
+enum Color : unsigned
 {
     WHITE,
     BLACK,
