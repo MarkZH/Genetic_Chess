@@ -25,11 +25,6 @@ bool Castle::move_specific_legal(const Board& board) const
             && board.all_empty_between(start(), rook_move.start());
 }
 
-Square Castle::rook_end_square() const
-{
-    return rook_move.end();
-}
-
 void Castle::side_effects(Board& board) const
 {
     board.move_piece(rook_move);
