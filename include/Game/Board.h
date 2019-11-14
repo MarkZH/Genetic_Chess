@@ -141,7 +141,7 @@ class Board
         //! Get the piece on the square indicated by coordinates.
         //
         //! \param square The queried square.
-        //! \returns Pointer to piece on square. May be nullptr if square is emtpy.
+        //! \returns Piece instance on square. May be an invalid Piece if square is emtpy.
         Piece piece_on_square(Square square) const noexcept;
 
         //! Get a list of all legal moves for the current player.
