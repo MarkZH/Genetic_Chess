@@ -18,7 +18,7 @@ namespace String
     //! \returns A list of strings that were separated by the delimiter.
     std::vector<std::string> split(std::string s,
                                    std::string delim = "",
-                                   size_t count = std::string::npos);
+                                   size_t count = std::string::npos) noexcept;
 
     //! Determine whether a string exists inside another string.
     //
@@ -26,7 +26,7 @@ namespace String
     //! \param target The character or string to search for.
     //! \returns True if the target is inside the container.
     template<class T>
-    bool contains(const std::string& container, const T& target)
+    bool contains(const std::string& container, const T& target) noexcept
     {
         return container.find(target) != std::string::npos;
     }
@@ -36,34 +36,34 @@ namespace String
     //! \param s The string to check.
     //! \param beginning The prefix to find.
     //! \returns True if the string starts with the beginning string.
-    bool starts_with(const std::string& s, const std::string& beginning);
+    bool starts_with(const std::string& s, const std::string& beginning) noexcept;
 
     //! Determine whether a strings has another string as a suffix.
     //
     //! \param s The string to check.
     //! \param ending The suffix to find.
     //! \returns True if the string ends with the ending string.
-    bool ends_with(const std::string& s, const std::string& ending);
+    bool ends_with(const std::string& s, const std::string& ending) noexcept;
 
     //! Remove leading and trailing whitespace from a string.
     //
     //! \param s The input string.
     //! \returns The same string with no leading or trailing whitespace.
-    std::string trim_outer_whitespace(const std::string& s);
+    std::string trim_outer_whitespace(const std::string& s) noexcept;
 
     //! Remove leading, trailing, and multiple whitespaces from a string.
     //
     //! \param s The input string.
     //! \returns The same string with no leading or trailing whitespace, and with all
     //!          runs of internal whitespace replaced with a single space.
-    std::string remove_extra_whitespace(const std::string& s);
+    std::string remove_extra_whitespace(const std::string& s) noexcept;
 
     //! Remove all text after a comment indicator.
     //
     //! \param str The input string.
     //! \param comment The marker indicating the start of a comment to be removed.
     //! \returns The same string with everything after the comment marker removed.
-    std::string strip_comments(const std::string& str, const std::string& comment);
+    std::string strip_comments(const std::string& str, const std::string& comment) noexcept;
 
     //! Remove all text between comment indicators.
     //
@@ -77,7 +77,7 @@ namespace String
     //
     //! \param s The input string.
     //! \returns The same string with all letters replaced by their lowercase versions.
-    std::string lowercase(std::string s);
+    std::string lowercase(std::string s) noexcept;
 
     //! Returns a text version of an integer with thousands separators
     //
@@ -85,7 +85,7 @@ namespace String
     //! \param separator The separator between groups of thousands.
     //! \returns A text string with thousands separators.
     template<typename Integer>
-    constexpr std::enable_if_t<std::is_integral_v<Integer>, std::string> format_integer(Integer n, const std::string& separator)
+    constexpr std::enable_if_t<std::is_integral_v<Integer>, std::string> format_integer(Integer n, const std::string& separator) noexcept
     {
         if constexpr (std::is_signed_v<Integer>)
         {
@@ -115,7 +115,7 @@ namespace String
     //! \param x The number to be rounded.
     //! \param precision The precision of the rounding (0.01 for 2 decimal places of precision).
     //! \returns A string representation of the rounded number.
-    std::string round_to_precision(double x, double precision);
+    std::string round_to_precision(double x, double precision) noexcept;
 
     //! Convert a std::string to a size_t for multiple platforms.
     //
@@ -131,7 +131,7 @@ namespace String
     //! \param format The format of the date/time data (see docs for std::put_time).
     //! \returns A formatted text string of the date and/or time.
     std::string date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
-                                     const std::string& format);
+                                     const std::string& format) noexcept;
 }
 
 #endif // STRING_H

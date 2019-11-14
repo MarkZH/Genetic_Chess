@@ -3,7 +3,7 @@
 #include <cmath>
 #include <cstddef>
 
-double Math::average_moves_left(double mean_moves, double width, size_t moves_so_far)
+double Math::average_moves_left(double mean_moves, double width, size_t moves_so_far) noexcept
 {
     // Assumes the number of moves in a game has a log-normal distribution.
     //
