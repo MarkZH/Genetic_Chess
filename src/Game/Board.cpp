@@ -965,13 +965,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
             return true;
         }
 
-        #ifndef NDEBUG
-        if( ! checking_square.is_set())
-        {
-            throw std::runtime_error("Could not find checking square.");
-        }
-        #endif // NDEBUG
-
+        assert(checking_square.is_set());
         if(in_line_in_order(checking_square, move.end(), king_square))
         {
             return piece_is_pinned(move.start());
