@@ -20,17 +20,17 @@ class Total_Force_Gene : public Gene
         //! The Total_Force_Gene constructor requires a Piece_Strength_Gene to reference in score_board().
         //
         //! \param piece_strength_source The source of piece values to weight the importance of various pieces.
-        explicit Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source);
+        explicit Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source) noexcept;
 
-        std::unique_ptr<Gene> duplicate() const override;
-        void reset_piece_strength_gene(const Piece_Strength_Gene* psg) override;
+        std::unique_ptr<Gene> duplicate() const noexcept override;
+        void reset_piece_strength_gene(const Piece_Strength_Gene* psg) noexcept override;
 
-        std::string name() const override;
+        std::string name() const noexcept override;
 
     private:
         const Piece_Strength_Gene* piece_strength_source;
 
-        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept override;
 };
 
 #endif // TOTAL_FORCE_GENE_H

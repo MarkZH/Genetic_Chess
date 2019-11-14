@@ -11,35 +11,35 @@
 
 class Board;
 
-std::string Mutation_Rate_Gene::name() const
+std::string Mutation_Rate_Gene::name() const noexcept
 {
     return "Mutation Rate Gene";
 }
 
-int Mutation_Rate_Gene::mutation_count() const
+int Mutation_Rate_Gene::mutation_count() const noexcept
 {
     // THe larger the fractional component of the mutated_components_per_mutation,
     // the greater the probability of return an extra mutation count.
     return int(mutated_components_per_mutation + Random::random_real(0.0, 1.0));
 }
 
-void Mutation_Rate_Gene::gene_specific_mutation()
+void Mutation_Rate_Gene::gene_specific_mutation() noexcept
 {
     mutated_components_per_mutation += Random::random_laplace(1.0);
     mutated_components_per_mutation = std::max(1.0, mutated_components_per_mutation);
 }
 
-std::unique_ptr<Gene> Mutation_Rate_Gene::duplicate() const
+std::unique_ptr<Gene> Mutation_Rate_Gene::duplicate() const noexcept
 {
     return std::make_unique<Mutation_Rate_Gene>(*this);
 }
 
-double Mutation_Rate_Gene::score_board(const Board&, Color, size_t) const
+double Mutation_Rate_Gene::score_board(const Board&, Color, size_t) const noexcept
 {
     return 0.0;
 }
 
-std::map<std::string, double> Mutation_Rate_Gene::list_properties() const
+std::map<std::string, double> Mutation_Rate_Gene::list_properties() const noexcept
 {
     return {{"Mutation Rate", mutated_components_per_mutation}};
 }

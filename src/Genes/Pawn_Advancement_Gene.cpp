@@ -13,12 +13,12 @@
 
 #include "Utility/Random.h"
 
-Pawn_Advancement_Gene::Pawn_Advancement_Gene()
+Pawn_Advancement_Gene::Pawn_Advancement_Gene() noexcept
 {
     recompute_scores_cache();
 }
 
-double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective, size_t) const
+double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
 {
     auto own_pawn = Piece{perspective, PAWN};
 
@@ -44,17 +44,17 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective,
     return score;
 }
 
-std::unique_ptr<Gene> Pawn_Advancement_Gene::duplicate() const
+std::unique_ptr<Gene> Pawn_Advancement_Gene::duplicate() const noexcept
 {
     return std::make_unique<Pawn_Advancement_Gene>(*this);
 }
 
-std::string Pawn_Advancement_Gene::name() const
+std::string Pawn_Advancement_Gene::name() const noexcept
 {
     return "Pawn Advancement Gene";
 }
 
-std::map<std::string, double> Pawn_Advancement_Gene::list_properties() const
+std::map<std::string, double> Pawn_Advancement_Gene::list_properties() const noexcept
 {
     auto properties = Gene::list_properties();
     properties["Non-linearity"] = non_linearity;
@@ -68,13 +68,13 @@ void Pawn_Advancement_Gene::load_properties(const std::map<std::string, double>&
     recompute_scores_cache();
 }
 
-void Pawn_Advancement_Gene::gene_specific_mutation()
+void Pawn_Advancement_Gene::gene_specific_mutation() noexcept
 {
     non_linearity += Random::random_laplace(0.01);
     recompute_scores_cache();
 }
 
-void Pawn_Advancement_Gene::recompute_scores_cache()
+void Pawn_Advancement_Gene::recompute_scores_cache() noexcept
 {
     for(size_t i = 0; i < score_cache.size(); ++i)
     {

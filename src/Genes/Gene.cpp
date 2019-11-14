@@ -17,7 +17,7 @@
 
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
-std::map<std::string, double> Gene::list_properties() const
+std::map<std::string, double> Gene::list_properties() const noexcept
 {
     return {{"Priority", scoring_priority}};
 }
@@ -27,7 +27,7 @@ void Gene::load_properties(const std::map<std::string, double>& properties)
     scoring_priority = properties.at("Priority");
 }
 
-size_t Gene::mutatable_components() const
+size_t Gene::mutatable_components() const noexcept
 {
     return list_properties().size();
 }
@@ -129,7 +129,7 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
     throw Genetic_AI_Creation_Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
 }
 
-void Gene::mutate()
+void Gene::mutate() noexcept
 {
     auto properties = list_properties();
     auto priority_probability = properties.count("Priority")/double(properties.size());
@@ -143,16 +143,16 @@ void Gene::mutate()
     }
 }
 
-void Gene::gene_specific_mutation()
+void Gene::gene_specific_mutation() noexcept
 {
 }
 
-double Gene::evaluate(const Board& board, Color perspective, size_t prior_real_moves) const
+double Gene::evaluate(const Board& board, Color perspective, size_t prior_real_moves) const noexcept
 {
     return scoring_priority*score_board(board, perspective, prior_real_moves);
 }
 
-void Gene::print(std::ostream& os) const
+void Gene::print(std::ostream& os) const noexcept
 {
     auto properties = list_properties();
     os << "Name: " << name() << "\n";
@@ -163,11 +163,11 @@ void Gene::print(std::ostream& os) const
     os << "\n";
 }
 
-void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*)
+void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
 {
 }
 
-void Gene::test(bool& test_variable, const Board& board, Color perspective, double expected_score) const
+void Gene::test(bool& test_variable, const Board& board, Color perspective, double expected_score) const noexcept
 {
     auto result = score_board(board, perspective, board.game_record().empty() ? 0 : board.game_record().size() - 1);
     if(std::abs(result - expected_score) > 1e-6)

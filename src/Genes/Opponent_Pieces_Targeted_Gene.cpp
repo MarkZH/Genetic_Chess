@@ -10,12 +10,12 @@
 #include "Genes/Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 
-Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene) :
+Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene) noexcept :
     piece_strength_source(piece_strength_gene)
 {
 }
 
-double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective, size_t) const
+double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
 {
     double score = 0.0;
 
@@ -34,17 +34,17 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
     return score/piece_strength_source->normalizer();
 }
 
-std::unique_ptr<Gene> Opponent_Pieces_Targeted_Gene::duplicate() const
+std::unique_ptr<Gene> Opponent_Pieces_Targeted_Gene::duplicate() const noexcept
 {
     return std::make_unique<Opponent_Pieces_Targeted_Gene>(*this);
 }
 
-std::string Opponent_Pieces_Targeted_Gene::name() const
+std::string Opponent_Pieces_Targeted_Gene::name() const noexcept
 {
     return "Opponent Pieces Targeted Gene";
 }
 
-void Opponent_Pieces_Targeted_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* psg)
+void Opponent_Pieces_Targeted_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* psg) noexcept
 {
     piece_strength_source = psg;
 }

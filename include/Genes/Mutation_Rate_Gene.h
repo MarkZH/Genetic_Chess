@@ -13,24 +13,24 @@
 class Mutation_Rate_Gene : public Gene
 {
     public:
-        std::string name() const override;
+        std::string name() const noexcept override;
 
         //! Controls how many changes a call to Genome::mutate() makes to the Gene collections.
         //
         //! \returns An integer number that determines the number of point mutations the Genome::mutate() makes.
-        int mutation_count() const;
+        int mutation_count() const noexcept;
 
-        void gene_specific_mutation() override;
-        std::unique_ptr<Gene> duplicate() const override;
+        void gene_specific_mutation() noexcept override;
+        std::unique_ptr<Gene> duplicate() const noexcept override;
 
     protected:
-        std::map<std::string, double> list_properties() const override;
+        std::map<std::string, double> list_properties() const noexcept override;
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
         double mutated_components_per_mutation = 10;
 
-        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept override;
 };
 
 #endif // MUTATION_RATE_GENE_H

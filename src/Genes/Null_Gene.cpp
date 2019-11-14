@@ -8,17 +8,17 @@
 
 class Board;
 
-double Null_Gene::score_board(const Board&, Color, size_t) const
+double Null_Gene::score_board(const Board&, Color, size_t) const noexcept
 {
     return 0.0;
 }
 
-std::unique_ptr<Gene> Null_Gene::duplicate() const
+std::unique_ptr<Gene> Null_Gene::duplicate() const noexcept
 {
     return std::make_unique<Null_Gene>(*this);
 }
 
-std::string Null_Gene::name() const
+std::string Null_Gene::name() const noexcept
 {
     return "Null Gene";
 }

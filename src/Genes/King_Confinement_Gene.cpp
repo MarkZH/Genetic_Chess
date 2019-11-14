@@ -13,12 +13,12 @@
 
 #include "Utility/Random.h"
 
-std::unique_ptr<Gene> King_Confinement_Gene::duplicate() const
+std::unique_ptr<Gene> King_Confinement_Gene::duplicate() const noexcept
 {
     return std::make_unique<King_Confinement_Gene>(*this);
 }
 
-std::string King_Confinement_Gene::name() const
+std::string King_Confinement_Gene::name() const noexcept
 {
     return "King Confinement Gene";
 }
@@ -30,7 +30,7 @@ void King_Confinement_Gene::load_properties(const std::map<std::string, double>&
     opponent_block_score = properties.at("Opponent Block Score");
 }
 
-std::map<std::string, double> King_Confinement_Gene::list_properties() const
+std::map<std::string, double> King_Confinement_Gene::list_properties() const noexcept
 {
     auto properties = Gene::list_properties();
     properties["Friendly Block Score"] = friendly_block_score;
@@ -38,7 +38,7 @@ std::map<std::string, double> King_Confinement_Gene::list_properties() const
     return properties;
 }
 
-void King_Confinement_Gene::gene_specific_mutation()
+void King_Confinement_Gene::gene_specific_mutation() noexcept
 {
     auto mutation_size = Random::random_laplace(2.0);
     if(Random::coin_flip())
@@ -51,7 +51,7 @@ void King_Confinement_Gene::gene_specific_mutation()
     }
 }
 
-double King_Confinement_Gene::score_board(const Board& board, Color perspective, size_t) const
+double King_Confinement_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
 {
     std::array<Square, 64> square_queue{};
     size_t queue_insertion_point = 0;
