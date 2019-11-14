@@ -370,11 +370,11 @@ namespace
 
 const Piece::piece_code_t Piece::invalid_code = Piece{BLACK, KING}.index() + 1;
 
-Piece::Piece() : piece_code(invalid_code)
+Piece::Piece() noexcept : piece_code(invalid_code)
 {
 }
 
-Piece::Piece(Color color, Piece_Type type) :
+Piece::Piece(Color color, Piece_Type type) noexcept :
     piece_code((type << 1) | color)
 {
     // piece_code layout: 4 bits
@@ -388,7 +388,7 @@ Piece::Piece(Color color, Piece_Type type) :
     assert(color < 2 && type < 6);
 }
 
-std::string Piece::ascii_art(size_t row, size_t square_height) const
+std::string Piece::ascii_art(size_t row, size_t square_height) const noexcept
 {
     assert(*this);
     assert(square_height >= maximum_piece_height);
@@ -407,19 +407,19 @@ std::string Piece::ascii_art(size_t row, size_t square_height) const
     }
 }
 
-Color Piece::color() const
+Color Piece::color() const noexcept
 {
     assert(*this);
     return static_cast<Color>(piece_code & 1);
 }
 
-std::string Piece::pgn_symbol() const
+std::string Piece::pgn_symbol() const noexcept
 {
     assert(*this);
     return type() == PAWN ? std::string{} : std::string(1, std::toupper(fen_symbol()));
 }
 
-char Piece::fen_symbol() const
+char Piece::fen_symbol() const noexcept
 {
     assert(*this);
     static const auto symbols = "PRNBQK";
@@ -427,7 +427,7 @@ char Piece::fen_symbol() const
     return (color() == WHITE ? symbol : std::tolower(symbol));
 }
 
-bool Piece::can_move(const Move* move) const
+bool Piece::can_move(const Move* move) const noexcept
 {
     assert(*this);
     for(const auto& moves : move_lists(move->start()))
@@ -441,40 +441,40 @@ bool Piece::can_move(const Move* move) const
     return false;
 }
 
-const std::vector<std::vector<const Move*>>& Piece::move_lists(Square square) const
+const std::vector<std::vector<const Move*>>& Piece::move_lists(Square square) const noexcept
 {
     assert(*this);
     return legal_moves[color()][type()][square.index()];
 }
 
-Piece_Type Piece::type() const
+Piece_Type Piece::type() const noexcept
 {
     assert(*this);
     return static_cast<Piece_Type>(piece_code >> 1);
 }
 
-Piece::operator bool() const
+Piece::operator bool() const noexcept
 {
     return piece_code != invalid_code;
 }
 
-Piece::piece_code_t Piece::index() const
+Piece::piece_code_t Piece::index() const noexcept
 {
     return piece_code;
 }
 
-const std::vector<std::vector<const Move*>>& Piece::attacking_move_lists(Square square) const
+const std::vector<std::vector<const Move*>>& Piece::attacking_move_lists(Square square) const noexcept
 {
     assert(*this);
     return attack_moves[color()][type()][square.index()];
 }
 
-bool operator==(Piece a, Piece b)
+bool operator==(Piece a, Piece b) noexcept
 {
     return a.index() == b.index();
 }
 
-bool operator!=(Piece a, Piece b)
+bool operator!=(Piece a, Piece b) noexcept
 {
     return !(a == b);
 }

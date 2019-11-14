@@ -17,13 +17,13 @@ enum Color : unsigned
 //
 //! \param color The color to reverse. If called with NONE, it will trip a DEBUG assert or return WHITE in RELEASE builds.
 //! \returns Opposite color.
-Color opposite(Color color);
+Color opposite(Color color) noexcept;
 
 //! Returns a text (std::string) version of a color.
 //
 //! \param color The color to convert to text.
 //! \returns A textual representation of the color.
 //! \throws std::runtime_error if an invalid Color value is passed in.
-std::string color_text(Color color);
+std::string color_text(Color color) noexcept;
 
 #endif // COLOR_H

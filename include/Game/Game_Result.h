@@ -21,28 +21,28 @@ class Game_Result
 {
     public:
         //! The default Game_Result indicates that the game has not ended.
-        Game_Result();
+        Game_Result() noexcept;
 
         //! This constructor creates a Game_Result indicating that the game has ended.
         //
         //! \param winner The color of the player that has won, or NONE if a draw.
         //! \param reason Explanation of why the game ended.
-        Game_Result(Color winner, Game_Result_Type reason);
+        Game_Result(Color winner, Game_Result_Type reason) noexcept;
 
         //! Indicate whether the game ended with the last action.
-        bool game_has_ended() const;
+        bool game_has_ended() const noexcept;
 
         //! Returns the resultant winner (or NONE, if a draw) as a result of the last action.
-        Color winner() const;
+        Color winner() const noexcept;
 
         //! Returns the reason for the game ending.
-        std::string ending_reason() const;
+        std::string ending_reason() const noexcept;
 
         //! Returns the part of the PGN move annotation that goes after the # (checkmate) or + (check).
-        std::string game_ending_annotation() const;
+        std::string game_ending_annotation() const noexcept;
 
         //! Returns the winner annotation to be appended to the last move of a PGN-style game record.
-        std::string game_record_annotation() const;
+        std::string game_record_annotation() const noexcept;
 
     private:
         Color victor;
