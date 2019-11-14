@@ -164,22 +164,13 @@ std::string String::round_to_precision(double x, double precision)
 
 size_t String::string_to_size_t(const std::string& s)
 {
-    size_t characters_used;
-
-    auto result =
-    #ifdef __linux__
-        std::stoul(s, &characters_used);
-    #elif defined(_WIN64)
-        std::stoull(s, &characters_used);
-    #else
-        std::stoi(s, &characters_used);
-    #endif
-
-    if( ! String::trim_outer_whitespace(s.substr(characters_used)).empty())
+    size_t result;
+    std::string remainder;
+    std::istringstream(s) >> result >> remainder;
+    if( ! String::trim_outer_whitespace(remainder).empty())
     {
         throw std::invalid_argument("Non-numeric characters in string: " + s);
     }
-
     return result;
 }
 
