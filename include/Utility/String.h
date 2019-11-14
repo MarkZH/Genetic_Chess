@@ -84,7 +84,31 @@ namespace String
     //! \param n The integer.
     //! \param separator The separator between groups of thousands.
     //! \returns A text string with thousands separators.
-    std::string format_integer(int n, const std::string& separator);
+    template<typename Integer>
+    constexpr std::enable_if_t<std::is_integral_v<Integer>, std::string> format_integer(Integer n, const std::string& separator)
+    {
+        if constexpr (std::is_signed_v<Integer>)
+        {
+            if(n < 0)
+            {
+                return '-' + format_integer(-n, separator);
+            }
+        }
+        
+        auto s = std::to_string(n);
+        auto group_size = 3;
+        auto index = s.size() % group_size;
+        index = (index == 0 ? group_size : index);
+        auto result = s.substr(0, index);
+
+        for(; index < s.size(); index += group_size)
+        {
+            result += separator;
+            result += s.substr(index, group_size);
+        }
+
+        return result;
+    }
 
     //! Round a number to the specified precision
     //

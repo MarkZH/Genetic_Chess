@@ -131,30 +131,6 @@ std::string String::lowercase(std::string s)
     return s;
 }
 
-std::string String::format_integer(int n, const std::string& separator)
-{
-    if(n < 0)
-    {
-        return '-' + format_integer(-n, separator);
-    }
-    else
-    {
-        auto s = std::to_string(n);
-        auto group_size = 3;
-        auto index = s.size() % group_size;
-        index = (index == 0 ? group_size : index);
-        auto result = s.substr(0, index);
-
-        for( ; index < s.size(); index += group_size)
-        {
-            result += separator;
-            result += s.substr(index, group_size);
-        }
-
-        return result;
-    }
-}
-
 std::string String::round_to_precision(double x, double precision)
 {
     auto result = std::to_string(std::round(x/precision)*precision);

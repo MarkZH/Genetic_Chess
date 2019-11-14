@@ -522,7 +522,15 @@ bool run_tests()
          {1000000000, "1,000,000,000"}};
     for(const auto& test : tests)
     {
-        test_function(tests_passed, "Format integer", test.second, String::format_integer, test.first, ",");
+        test_function(tests_passed, "Format integer (size_t)", test.second, String::format_integer<size_t>, test.first, ",");
+    }
+    for(const auto& test : tests)
+    {
+        test_function(tests_passed, "Format integer (int)", test.second, String::format_integer<int>, test.first, ",");
+    }
+    for(const auto& test : tests)
+    {
+        test_function(tests_passed, "Format integer (negative int)", "-" + test.second, String::format_integer<int>, -test.first, ",");
     }
 
     // String to size_t number conversion
