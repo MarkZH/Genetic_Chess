@@ -21,7 +21,7 @@ class Genetic_AI : public Minimax_AI
         //! Generate a randomly mutated Genetic_AI
         //
         //! \param mutation_count The number of genome mutations to apply to the AI after construction.
-        explicit Genetic_AI(int mutation_count);
+        explicit Genetic_AI(int mutation_count) noexcept;
 
         //! Create a Genetic_AI from a text file by searching for a specfic ID.
         //
@@ -35,44 +35,44 @@ class Genetic_AI : public Minimax_AI
         //! The offspring is formed by randomly taking genes from each parent.
         //! \param A The first parent.
         //! \param B The second parent.
-        Genetic_AI(const Genetic_AI& A, const Genetic_AI& B);
+        Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) noexcept;
 
         //! Apply random mutations to the Genome of the Genetic_AI
         //
         //! \param mutation_count The number of mutation actions to apply to the genome. Defaults to 1 if unspecified.
-        void mutate(int mutation_count = 1);
+        void mutate(int mutation_count = 1) noexcept;
 
         //! Reports the name of the AI and ID number.
         //
         //! \returns "Genetic AI" plus the ID.
-        std::string name() const override;
+        std::string name() const noexcept override;
 
         //! Reports the author of this chess engine.
         //
         //! \returns "Mark Harrison"
-        std::string author() const override;
+        std::string author() const noexcept override;
 
         //! Prints the information defining this AI.
         //
         //! The printed information includes the ID number and genetic data.
         //! \param file_name The name of the text file to print to. If empty, print to stdout.
-        void print(const std::string& file_name = "") const;
+        void print(const std::string& file_name = "") const noexcept;
 
         //! Print AI information to the given std::ostream.
         //
         //! \param output The stream to be written to.
-        void print(std::ostream& output) const;
+        void print(std::ostream& output) const noexcept;
 
         //! Reports the ID number of the Genetic_AI.
         //
         //! \returns The ID number.
-        int id() const;
+        int id() const noexcept;
 
         //! A comparison function to sort Genetic_AI collections.
         //
         //! \param other Another Genetic_AI.
         //! \returns If the other AI should go after this AI.
-        bool operator<(const Genetic_AI& other) const;
+        bool operator<(const Genetic_AI& other) const noexcept;
 
     private:
         Genome genome;
@@ -85,13 +85,13 @@ class Genetic_AI : public Minimax_AI
 
         double internal_evaluate(const Board& board,
                                  Color perspective,
-                                 size_t prior_real_moves) const override;
+                                 size_t prior_real_moves) const noexcept override;
 
-        virtual const std::array<double, 6>& piece_values() const override;
+        virtual const std::array<double, 6>& piece_values() const noexcept override;
 
         // Time management
-        double time_to_examine(const Board& board, const Clock& clock) const override;
-        double speculation_time_factor() const override;
+        double time_to_examine(const Board& board, const Clock& clock) const noexcept override;
+        double speculation_time_factor() const noexcept override;
 };
 
 #endif // GENETIC_AI_H

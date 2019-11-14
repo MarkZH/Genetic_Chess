@@ -16,12 +16,12 @@ class Clock;
 
 int Genetic_AI::next_id = 0;
 
-Genetic_AI::Genetic_AI(int mutation_count) : id_number(next_id++)
+Genetic_AI::Genetic_AI(int mutation_count) noexcept : id_number(next_id++)
 {
     mutate(mutation_count);
 }
 
-Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) :
+Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) noexcept :
     genome(A.genome, B.genome),
     id_number(next_id++)
 {
@@ -75,27 +75,27 @@ void Genetic_AI::read_data(std::istream& is)
     }
 }
 
-double Genetic_AI::internal_evaluate(const Board& board, Color perspective, size_t prior_real_moves) const
+double Genetic_AI::internal_evaluate(const Board& board, Color perspective, size_t prior_real_moves) const noexcept
 {
     return genome.evaluate(board, perspective, prior_real_moves);
 }
 
-const std::array<double, 6>& Genetic_AI::piece_values() const
+const std::array<double, 6>& Genetic_AI::piece_values() const noexcept
 {
     return genome.piece_values();
 }
 
-double Genetic_AI::time_to_examine(const Board& board, const Clock& clock) const
+double Genetic_AI::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
     return genome.time_to_examine(board, clock);
 }
 
-double Genetic_AI::speculation_time_factor() const
+double Genetic_AI::speculation_time_factor() const noexcept
 {
     return genome.speculation_time_factor();
 }
 
-void Genetic_AI::mutate(int mutation_count)
+void Genetic_AI::mutate(int mutation_count) noexcept
 {
     for(int i = 0; i < mutation_count; ++i)
     {
@@ -105,7 +105,7 @@ void Genetic_AI::mutate(int mutation_count)
     recalibrate_self();
 }
 
-void Genetic_AI::print(const std::string& file_name) const
+void Genetic_AI::print(const std::string& file_name) const noexcept
 {
     if(file_name.empty())
     {
@@ -118,29 +118,29 @@ void Genetic_AI::print(const std::string& file_name) const
     }
 }
 
-void Genetic_AI::print(std::ostream& os) const
+void Genetic_AI::print(std::ostream& os) const noexcept
 {
     os << "ID: " << id() << '\n';
     genome.print(os);
     os << "END" << "\n" << std::endl;
 }
 
-std::string Genetic_AI::name() const
+std::string Genetic_AI::name() const noexcept
 {
     return "Genetic AI " + std::to_string(id());
 }
 
-std::string Genetic_AI::author() const
+std::string Genetic_AI::author() const noexcept
 {
     return "Mark Harrison";
 }
 
-int Genetic_AI::id() const
+int Genetic_AI::id() const noexcept
 {
     return id_number;
 }
 
-bool Genetic_AI::operator<(const Genetic_AI& other) const
+bool Genetic_AI::operator<(const Genetic_AI& other) const noexcept
 {
     return id() < other.id();
 }

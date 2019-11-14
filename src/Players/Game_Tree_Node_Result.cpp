@@ -10,12 +10,12 @@
 const double Game_Tree_Node_Result::win_score = std::numeric_limits<double>::infinity();
 const double Game_Tree_Node_Result::lose_score = -win_score;
 
-double Game_Tree_Node_Result::corrected_score(Color query) const
+double Game_Tree_Node_Result::corrected_score(Color query) const noexcept
 {
     return query == perspective ? score : -score;
 }
 
-std::pair<double, int> Game_Tree_Node_Result::value(Color query) const
+std::pair<double, int> Game_Tree_Node_Result::value(Color query) const noexcept
 {
     auto standardized_score = corrected_score(query);
     if(std::isinf(standardized_score))
@@ -33,17 +33,17 @@ std::pair<double, int> Game_Tree_Node_Result::value(Color query) const
     }
 }
 
-size_t Game_Tree_Node_Result::depth() const
+size_t Game_Tree_Node_Result::depth() const noexcept
 {
     return variation.size();
 }
 
-bool Game_Tree_Node_Result::is_winning_for(Color query) const
+bool Game_Tree_Node_Result::is_winning_for(Color query) const noexcept
 {
     return std::isinf(score) && ((score > 0) == (query == perspective));
 }
 
-bool Game_Tree_Node_Result::is_losing_for(Color query) const
+bool Game_Tree_Node_Result::is_losing_for(Color query) const noexcept
 {
     return is_winning_for(opposite(query));
 }
