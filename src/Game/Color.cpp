@@ -1,22 +1,21 @@
 #include "Game/Color.h"
 
 #include <cassert>
-#include <stdexcept>
 #include <string>
 
-Color opposite(Color color)
+Color opposite(Color color) noexcept
 {
     assert(color != NONE);
     return (color == WHITE ? BLACK : WHITE);
 }
 
-std::string color_text(Color color)
+std::string color_text(Color color) noexcept
 {
     switch(color)
     {
         case WHITE: return "White";
         case BLACK: return "Black";
         case NONE:  return "None";
-        default: throw std::invalid_argument("Invalid color in argument of color_text().");
+        default:    return {};
     }
 }

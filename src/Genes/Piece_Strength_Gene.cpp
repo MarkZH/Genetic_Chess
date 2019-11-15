@@ -13,13 +13,13 @@
 
 class Board;
 
-Piece_Strength_Gene::Piece_Strength_Gene()
+Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 {
     piece_strength.fill(100.0);
     recalculate_normalizing_value();
 }
 
-std::map<std::string, double> Piece_Strength_Gene::list_properties() const
+std::map<std::string, double> Piece_Strength_Gene::list_properties() const noexcept
 {
     std::map<std::string, double> properties;
     for(auto piece_type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
@@ -41,14 +41,14 @@ void Piece_Strength_Gene::load_properties(const std::map<std::string, double>& p
     recalculate_normalizing_value();
 }
 
-void Piece_Strength_Gene::gene_specific_mutation()
+void Piece_Strength_Gene::gene_specific_mutation() noexcept
 {
     auto& value = Random::random_element(piece_strength);
     value += Random::random_laplace(1.0 + std::sqrt(std::abs(value)));
     recalculate_normalizing_value();
 }
 
-void Piece_Strength_Gene::recalculate_normalizing_value()
+void Piece_Strength_Gene::recalculate_normalizing_value() noexcept
 {
     normalizing_value = 8*std::abs(piece_value(PAWN)) +
                         2*std::abs(piece_value(ROOK)) +
@@ -58,17 +58,17 @@ void Piece_Strength_Gene::recalculate_normalizing_value()
                         1*std::abs(piece_value(KING));
 }
 
-double Piece_Strength_Gene::piece_value(Piece_Type type) const
+double Piece_Strength_Gene::piece_value(Piece_Type type) const noexcept
 {
     return piece_strength[type];
 }
 
-double& Piece_Strength_Gene::piece_value(Piece_Type type)
+double& Piece_Strength_Gene::piece_value(Piece_Type type) noexcept
 {
     return piece_strength[type];
 }
 
-double Piece_Strength_Gene::piece_value(Piece piece) const
+double Piece_Strength_Gene::piece_value(Piece piece) const noexcept
 {
     if( ! piece)
     {
@@ -80,27 +80,27 @@ double Piece_Strength_Gene::piece_value(Piece piece) const
     }
 }
 
-const std::array<double, 6>& Piece_Strength_Gene::piece_values() const
+const std::array<double, 6>& Piece_Strength_Gene::piece_values() const noexcept
 {
     return piece_strength;
 }
 
-double Piece_Strength_Gene::normalizer() const
+double Piece_Strength_Gene::normalizer() const noexcept
 {
     return normalizing_value;
 }
 
-std::unique_ptr<Gene> Piece_Strength_Gene::duplicate() const
+std::unique_ptr<Gene> Piece_Strength_Gene::duplicate() const noexcept
 {
     return std::make_unique<Piece_Strength_Gene>(*this);
 }
 
-std::string Piece_Strength_Gene::name() const
+std::string Piece_Strength_Gene::name() const noexcept
 {
     return "Piece Strength Gene";
 }
 
-double Piece_Strength_Gene::score_board(const Board&, Color, size_t) const
+double Piece_Strength_Gene::score_board(const Board&, Color, size_t) const noexcept
 {
     return 0.0;
 }

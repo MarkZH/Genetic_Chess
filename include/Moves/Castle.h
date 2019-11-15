@@ -19,13 +19,13 @@ class Castle : public Move
         //
         //! \param base_rank The back rank of the player: 1 for white, 8 for black.
         //! \param direction The direction of the king's move: LEFT for queenside, RIGHT for king side.
-        Castle(int base_rank, Direction direction);
+        Castle(int base_rank, Direction direction) noexcept;
 
         //! Moves the rook to its final square.
         //
         //! This overloaded method also records when the castling move was made.
         //! \param board The board on which the move is being made.
-        void side_effects(Board& board) const override;
+        void side_effects(Board& board) const noexcept override;
 
         //! Implements the rules for castling.
         //
@@ -36,16 +36,13 @@ class Castle : public Move
         //! - The king does not cross a square that is attacked by an opponent's piece.
         //! \param board The board on which castling is being considered.
         //! \returns Whether the current board position allows for castling.
-        bool move_specific_legal(const Board& board) const override;
-
-        //! Returns the square on which the corresponding rook lands.
-        Square rook_end_square() const;
+        bool move_specific_legal(const Board& board) const noexcept override;
 
     protected:
         //! Castling moves have a special notation in PGN.
         //
         //! \returns "O-O" for kingside castling or "O-O-O" for queenside castling.
-        std::string game_record_move_item(const Board&) const override;
+        std::string game_record_move_item(const Board&) const noexcept override;
 
     private:
         Move rook_move;

@@ -5,27 +5,27 @@
 #include "Game/Color.h"
 #include "Utility/String.h"
 
-Game_Result::Game_Result() : Game_Result(NONE, ONGOING)
+Game_Result::Game_Result() noexcept : Game_Result(NONE, ONGOING)
 {
 }
 
-Game_Result::Game_Result(Color winner, Game_Result_Type reason) :
+Game_Result::Game_Result(Color winner, Game_Result_Type reason) noexcept :
     victor(winner),
     cause(reason)
 {
 }
 
-bool Game_Result::game_has_ended() const
+bool Game_Result::game_has_ended() const noexcept
 {
     return cause != ONGOING;
 }
 
-Color Game_Result::winner() const
+Color Game_Result::winner() const noexcept
 {
     return victor;
 }
 
-std::string Game_Result::ending_reason() const
+std::string Game_Result::ending_reason() const noexcept
 {
     switch(cause)
     {
@@ -46,7 +46,7 @@ std::string Game_Result::ending_reason() const
     }
 }
 
-std::string Game_Result::game_ending_annotation() const
+std::string Game_Result::game_ending_annotation() const noexcept
 {
     switch(winner())
     {
@@ -59,7 +59,7 @@ std::string Game_Result::game_ending_annotation() const
     }
 }
 
-std::string Game_Result::game_record_annotation() const
+std::string Game_Result::game_record_annotation() const noexcept
 {
     return cause == CHECKMATE ? "#" : "";
 }

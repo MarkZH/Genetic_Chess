@@ -74,7 +74,7 @@ namespace
     std::atomic_bool move_immediately = false;
 }
 
-Board::Board() : Board(standard_starting_fen)
+Board::Board() noexcept : Board(standard_starting_fen)
 {
 }
 
@@ -292,24 +292,24 @@ void Board::fen_error(const std::string& reason) const
     throw std::invalid_argument("Bad FEN input: " + starting_fen + "\n" + reason);
 }
 
-Piece& Board::piece_on_square(Square square)
+Piece& Board::piece_on_square(Square square) noexcept
 {
     return board[square.index()];
 }
 
-Piece Board::piece_on_square(Square square) const
+Piece Board::piece_on_square(Square square) const noexcept
 {
     return board[square.index()];
 }
 
-void Board::set_unmoved(Square square)
+void Board::set_unmoved(Square square) noexcept
 {
     update_board_hash(square); // remove reference to moved piece
     unmoved_positions[square.index()] = true;
     update_board_hash(square);
 }
 
-bool Board::is_legal(Square start, Square end) const
+bool Board::is_legal(Square start, Square end) const noexcept
 {
     return std::any_of(legal_moves().begin(), legal_moves().end(),
                        [&](auto move)
@@ -319,12 +319,12 @@ bool Board::is_legal(Square start, Square end) const
                        });
 }
 
-bool Board::is_in_legal_moves_list(const Move& move) const
+bool Board::is_in_legal_moves_list(const Move& move) const noexcept
 {
     return std::find(legal_moves().begin(), legal_moves().end(), &move) != legal_moves().end();
 }
 
-std::string Board::fen_status() const
+std::string Board::fen_status() const noexcept
 {
     std::string s;
 
@@ -440,7 +440,7 @@ const Move& Board::create_move(Square start, Square end, char promote) const
     }
 }
 
-Game_Result Board::submit_move(const Move& move)
+Game_Result Board::submit_move(const Move& move) noexcept
 {
     update_board(move);
     return move_result();
@@ -451,7 +451,7 @@ Game_Result Board::submit_move(const std::string& move)
     return submit_move(create_move(move));
 }
 
-Game_Result Board::move_result() const
+Game_Result Board::move_result() const noexcept
 {
     if(no_legal_moves())
     {
@@ -488,7 +488,7 @@ Game_Result Board::move_result() const
     return {};
 }
 
-void Board::update_board(const Move& move)
+void Board::update_board(const Move& move) noexcept
 {
     assert(is_in_legal_moves_list(move));
 
@@ -680,7 +680,7 @@ const Move& Board::create_move(const std::string& move) const
     throw Illegal_Move("Malformed move: " + move);
 }
 
-void Board::move_piece(const Move& move)
+void Board::move_piece(const Move& move) noexcept
 {
     if(piece_on_square(move.end()))
     {
@@ -699,17 +699,17 @@ void Board::move_piece(const Move& move)
     clear_en_passant_target();
 }
 
-Color Board::whose_turn() const
+Color Board::whose_turn() const noexcept
 {
     return turn_color;
 }
 
-const std::vector<const Move*>& Board::legal_moves() const
+const std::vector<const Move*>& Board::legal_moves() const noexcept
 {
     return legal_moves_cache;
 }
 
-void Board::ascii_draw(Color perspective) const
+void Board::ascii_draw(Color perspective) const noexcept
 {
     const size_t square_width = 7;
     const size_t square_height = 3;
@@ -787,12 +787,12 @@ void Board::ascii_draw(Color perspective) const
     std::cout << std::endl << std::endl;
 }
 
-void Board::remove_piece(Square square)
+void Board::remove_piece(Square square) noexcept
 {
     place_piece({}, square);
 }
 
-void Board::place_piece(Piece piece, Square square)
+void Board::place_piece(Piece piece, Square square) noexcept
 {
     update_board_hash(square); // XOR out piece on square
 
@@ -828,12 +828,12 @@ void Board::place_piece(Piece piece, Square square)
     }
 }
 
-void Board::add_attacks_from(Square square, Piece piece)
+void Board::add_attacks_from(Square square, Piece piece) noexcept
 {
     modify_attacks(square, piece, true);
 }
 
-void Board::modify_attacks(Square square, Piece piece, bool adding_attacks)
+void Board::modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept
 {
     if( ! piece)
     {
@@ -869,12 +869,12 @@ void Board::modify_attacks(Square square, Piece piece, bool adding_attacks)
     }
 }
 
-void Board::remove_attacks_from(Square square, Piece old_piece)
+void Board::remove_attacks_from(Square square, Piece old_piece) noexcept
 {
     modify_attacks(square, old_piece, false);
 }
 
-void Board::update_blocks(Square square, Piece old_piece, Piece new_piece)
+void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept
 {
     // Replacing nothing with nothing changes nothing.
     // Replacing one piece with another does not change which
@@ -925,32 +925,32 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece)
     }
 }
 
-const std::bitset<16>& Board::moves_attacking_square(Square square, Color attacking_color) const
+const std::bitset<16>& Board::moves_attacking_square(Square square, Color attacking_color) const noexcept
 {
     return potential_attacks[attacking_color][square.index()];
 }
 
-const std::bitset<16>& Board::checking_moves() const
+const std::bitset<16>& Board::checking_moves() const noexcept
 {
     return moves_attacking_square(find_king(whose_turn()), opposite(whose_turn()));
 }
 
-bool Board::king_is_in_check() const
+bool Board::king_is_in_check() const noexcept
 {
     return checking_moves().any();
 }
 
-bool Board::safe_for_king(Square square, Color king_color) const
+bool Board::safe_for_king(Square square, Color king_color) const noexcept
 {
     return moves_attacking_square(square, opposite(king_color)).none();
 }
 
-bool Board::blocked_attack(Square square, Color attacking_color) const
+bool Board::blocked_attack(Square square, Color attacking_color) const noexcept
 {
     return blocked_attacks[attacking_color][square.index()].any();
 }
 
-bool Board::king_is_in_check_after_move(const Move& move) const
+bool Board::king_is_in_check_after_move(const Move& move) const noexcept
 {
     auto king_square = find_king(whose_turn());
     if(move.start() == king_square)
@@ -965,13 +965,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const
             return true;
         }
 
-        #ifndef NDEBUG
-        if( ! checking_square.is_set())
-        {
-            throw std::runtime_error("Could not find checking square.");
-        }
-        #endif // NDEBUG
-
+        assert(checking_square.is_set());
         if(in_line_in_order(checking_square, move.end(), king_square))
         {
             return piece_is_pinned(move.start());
@@ -1016,12 +1010,12 @@ bool Board::king_is_in_check_after_move(const Move& move) const
     return false;
 }
 
-bool Board::no_legal_moves() const
+bool Board::no_legal_moves() const noexcept
 {
     return legal_moves().empty();
 }
 
-const std::vector<const Move*>& Board::game_record() const
+const std::vector<const Move*>& Board::game_record() const noexcept
 {
     return game_record_listing;
 }
@@ -1037,7 +1031,7 @@ void Board::print_game_record(const Player* white,
                               const std::string& file_name,
                               const Game_Result& result,
                               const Clock& game_clock,
-                              const std::string& unusual_ending_reason) const
+                              const std::string& unusual_ending_reason) const noexcept
 {
     static std::mutex write_lock;
     auto write_lock_guard = std::lock_guard(write_lock);
@@ -1160,7 +1154,7 @@ void Board::print_game_record(const Player* white,
     out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
 }
 
-void Board::make_en_passant_targetable(Square square)
+void Board::make_en_passant_targetable(Square square) noexcept
 {
     if(en_passant_target.is_set())
     {
@@ -1175,28 +1169,28 @@ void Board::make_en_passant_targetable(Square square)
     }
 }
 
-bool Board::is_en_passant_targetable(Square square) const
+bool Board::is_en_passant_targetable(Square square) const noexcept
 {
     return en_passant_target == square;
 }
 
-void Board::clear_en_passant_target()
+void Board::clear_en_passant_target() noexcept
 {
     make_en_passant_targetable({});
 }
 
-bool Board::piece_has_moved(Square square) const
+bool Board::piece_has_moved(Square square) const noexcept
 {
     return ! unmoved_positions[square.index()];
 }
 
-Square Board::find_king(Color color) const
+Square Board::find_king(Color color) const noexcept
 {
     assert(piece_on_square(king_location[color]) == Piece(color, KING));
     return king_location[color];
 }
 
-void Board::recreate_move_caches()
+void Board::recreate_move_caches() noexcept
 {
     last_pin_check_square = Square{};
     prior_moves_count = legal_moves_cache.size();
@@ -1232,7 +1226,7 @@ void Board::recreate_move_caches()
     }
 }
 
-Square Board::find_checking_square() const
+Square Board::find_checking_square() const noexcept
 {
     const auto& checks = checking_moves();
     size_t checking_index = 0;
@@ -1246,7 +1240,7 @@ Square Board::find_checking_square() const
     return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
 }
 
-bool Board::enough_material_to_checkmate(Color color) const
+bool Board::enough_material_to_checkmate(Color color) const noexcept
 {
     auto piece_is_right_color = [color](auto piece) { return piece && (color == NONE || piece.color() == color); };
 
@@ -1283,42 +1277,42 @@ bool Board::enough_material_to_checkmate(Color color) const
     return knight_count > 1 || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
-void Board::set_thinking_mode(Thinking_Output_Type mode)
+void Board::set_thinking_mode(Thinking_Output_Type mode) noexcept
 {
     thinking_indicator = mode;
 }
 
-Thinking_Output_Type Board::thinking_mode()
+Thinking_Output_Type Board::thinking_mode() noexcept
 {
     return thinking_indicator;
 }
 
-void Board::pick_move_now()
+void Board::pick_move_now() noexcept
 {
     move_immediately = true;
 }
 
-void Board::choose_move_at_leisure()
+void Board::choose_move_at_leisure() noexcept
 {
     move_immediately = false;
 }
 
-bool Board::must_pick_move_now()
+bool Board::must_pick_move_now() noexcept
 {
     return move_immediately;
 }
 
-void Board::update_board_hash(Square square)
+void Board::update_board_hash(Square square) noexcept
 {
     current_board_hash ^= square_hash(square);
 }
 
-void Board::update_whose_turn_hash()
+void Board::update_whose_turn_hash() noexcept
 {
     current_board_hash ^= switch_turn_board_hash;
 }
 
-uint64_t Board::square_hash(Square square) const
+uint64_t Board::square_hash(Square square) const noexcept
 {
     assert(square.inside_board());
 
@@ -1344,12 +1338,12 @@ uint64_t Board::square_hash(Square square) const
     return result;
 }
 
-uint64_t Board::board_hash() const
+uint64_t Board::board_hash() const noexcept
 {
     return current_board_hash;
 }
 
-bool Board::move_captures(const Move& move) const
+bool Board::move_captures(const Move& move) const noexcept
 {
     auto attacked_piece = piece_on_square(move.end());
 
@@ -1360,24 +1354,24 @@ bool Board::move_captures(const Move& move) const
     return attacked_piece || move.is_en_passant();
 }
 
-bool Board::move_changes_material(const Move& move) const
+bool Board::move_changes_material(const Move& move) const noexcept
 {
     return move_captures(move) || move.promotion_piece_symbol();
 }
 
-bool Board::king_multiply_checked() const
+bool Board::king_multiply_checked() const noexcept
 {
     return checking_moves().count() > 1;
 }
 
-bool Board::all_empty_between(Square start, Square end) const
+bool Board::all_empty_between(Square start, Square end) const noexcept
 {
     assert(straight_line_move(start, end));
     auto squares = Square::squares_between(start, end);
     return std::all_of(squares.begin(), squares.end(), [this](auto square) { return ! piece_on_square(square); });
 }
 
-bool Board::piece_is_pinned(Square square) const
+bool Board::piece_is_pinned(Square square) const noexcept
 {
     if(square == last_pin_check_square)
     {
@@ -1412,39 +1406,39 @@ bool Board::piece_is_pinned(Square square) const
     }
 }
 
-void Board::add_board_position_to_repeat_record()
+void Board::add_board_position_to_repeat_record() noexcept
 {
     add_to_repeat_count(board_hash());
 }
 
-void Board::add_to_repeat_count(uint64_t new_hash)
+void Board::add_to_repeat_count(uint64_t new_hash) noexcept
 {
     repeat_count[repeat_count_insertion_point++] = new_hash;
 }
 
-ptrdiff_t Board::current_board_position_repeat_count() const
+ptrdiff_t Board::current_board_position_repeat_count() const noexcept
 {
     return std::count(repeat_count.begin(),
                       repeat_count.begin() + repeat_count_insertion_point,
                       board_hash());
 }
 
-size_t Board::moves_since_pawn_or_capture() const
+size_t Board::moves_since_pawn_or_capture() const noexcept
 {
     return repeat_count_insertion_point - 1;
 }
 
-void Board::clear_repeat_count()
+void Board::clear_repeat_count() noexcept
 {
     repeat_count_insertion_point = 0;
 }
 
-size_t Board::castling_move_index(Color player) const
+size_t Board::castling_move_index(Color player) const noexcept
 {
     return castling_index[player];
 }
 
-Board Board::without_random_pawn() const
+Board Board::without_random_pawn() const noexcept
 {
     assert(std::any_of(board.begin(), board.end(), [](auto p) { return p && p.type() == PAWN; }));
 
@@ -1461,7 +1455,7 @@ Board Board::without_random_pawn() const
     }
 }
 
-Board Board::quiescent(const std::array<double, 6>& piece_values) const
+Board Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
 {
     if(game_record().empty())
     {
@@ -1539,7 +1533,7 @@ Board Board::quiescent(const std::array<double, 6>& piece_values) const
     return capture_states[minimax_index];
 }
 
-size_t Board::previous_moves_count() const
+size_t Board::previous_moves_count() const noexcept
 {
     return prior_moves_count;
 }

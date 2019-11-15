@@ -18,7 +18,7 @@ namespace String
     }
 }
 
-std::vector<std::string> String::split(std::string s, std::string delim, size_t count)
+std::vector<std::string> String::split(std::string s, std::string delim, size_t count) noexcept
 {
     if(delim.empty())
     {
@@ -51,17 +51,17 @@ std::vector<std::string> String::split(std::string s, std::string delim, size_t 
     return result;
 }
 
-bool String::starts_with(const std::string& s, const std::string& beginning)
+bool String::starts_with(const std::string& s, const std::string& beginning) noexcept
 {
     return (beginning.size() <= s.size()) && std::equal(beginning.begin(), beginning.end(), s.begin());
 }
 
-bool String::ends_with(const std::string& s, const std::string& ending)
+bool String::ends_with(const std::string& s, const std::string& ending) noexcept
 {
     return (ending.size() <= s.size()) && std::equal(ending.rbegin(), ending.rend(), s.rbegin());
 }
 
-std::string String::trim_outer_whitespace(const std::string& s)
+std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
     auto text_start = s.find_first_not_of(whitespace);
     if(text_start == std::string::npos)
@@ -73,7 +73,7 @@ std::string String::trim_outer_whitespace(const std::string& s)
     return s.substr(text_start, text_end - text_start + 1);
 }
 
-std::string String::remove_extra_whitespace(const std::string& s)
+std::string String::remove_extra_whitespace(const std::string& s) noexcept
 {
     std::string s2 = trim_outer_whitespace(s);
     std::replace_if(s2.begin(), s2.end(), [](auto c) { return String::contains(whitespace, c); }, ' ');
@@ -88,7 +88,7 @@ std::string String::remove_extra_whitespace(const std::string& s)
     return result;
 }
 
-std::string String::strip_comments(const std::string& str, const std::string& comment)
+std::string String::strip_comments(const std::string& str, const std::string& comment) noexcept
 {
     return trim_outer_whitespace(str.substr(0, str.find(comment)));
 }
@@ -125,37 +125,13 @@ std::string String::strip_block_comment(const std::string& str, const std::strin
     }
 }
 
-std::string String::lowercase(std::string s)
+std::string String::lowercase(std::string s) noexcept
 {
     for(auto& c : s){ c = std::tolower(c); }
     return s;
 }
 
-std::string String::format_integer(int n, const std::string& separator)
-{
-    if(n < 0)
-    {
-        return '-' + format_integer(-n, separator);
-    }
-    else
-    {
-        auto s = std::to_string(n);
-        auto group_size = 3;
-        auto index = s.size() % group_size;
-        index = (index == 0 ? group_size : index);
-        auto result = s.substr(0, index);
-
-        for( ; index < s.size(); index += group_size)
-        {
-            result += separator;
-            result += s.substr(index, group_size);
-        }
-
-        return result;
-    }
-}
-
-std::string String::round_to_precision(double x, double precision)
+std::string String::round_to_precision(double x, double precision) noexcept
 {
     auto result = std::to_string(std::round(x/precision)*precision);
     auto last_significant_index = result.find_last_not_of('0');
@@ -188,27 +164,18 @@ std::string String::round_to_precision(double x, double precision)
 
 size_t String::string_to_size_t(const std::string& s)
 {
-    size_t characters_used;
-
-    auto result =
-    #ifdef __linux__
-        std::stoul(s, &characters_used);
-    #elif defined(_WIN64)
-        std::stoull(s, &characters_used);
-    #else
-        std::stoi(s, &characters_used);
-    #endif
-
-    if( ! String::trim_outer_whitespace(s.substr(characters_used)).empty())
+    size_t result;
+    std::string remainder;
+    std::istringstream(s) >> result >> remainder;
+    if( ! String::trim_outer_whitespace(remainder).empty())
     {
         throw std::invalid_argument("Non-numeric characters in string: " + s);
     }
-
     return result;
 }
 
 std::string String::date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
-                                         const std::string& format)
+                                         const std::string& format) noexcept
 {
     auto time_c = std::chrono::system_clock::to_time_t(point_in_time);
     std::tm time_out;

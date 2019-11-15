@@ -15,19 +15,19 @@ class Board;
 class Castling_Possible_Gene : public Gene
 {
     public:
-        std::string name() const override;
-        std::unique_ptr<Gene> duplicate() const override;
+        std::string name() const noexcept override;
+        std::unique_ptr<Gene> duplicate() const noexcept override;
 
     protected:
-        std::map<std::string, double> list_properties() const override;
+        std::map<std::string, double> list_properties() const noexcept override;
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
         double kingside_preference = 0.0;
         double queenside_preference = 0.0;
 
-        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
-        void gene_specific_mutation() override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept override;
+        void gene_specific_mutation() noexcept override;
 };
 
 #endif // CASTLING_POSSIBLE_GENE_H

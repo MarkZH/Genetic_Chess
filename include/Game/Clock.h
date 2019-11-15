@@ -31,49 +31,49 @@ class Clock
               double increment_seconds = 0.0,
               Color starting_turn = WHITE,
               bool clock_stops_game = true,
-              std::chrono::system_clock::time_point previous_start_time = {});
+              std::chrono::system_clock::time_point previous_start_time = {}) noexcept;
 
         //! Stop the current player's clock and restart the opponent's clock.
-        Game_Result punch();
+        Game_Result punch() noexcept;
 
         //! Stop both clocks.
-        void stop();
+        void stop() noexcept;
 
         //! Start the moving player's clock at the start of a game.
         //
         //! This method also records the start time of the game for use in Board::print_game_record().
-        void start();
+        void start() noexcept;
 
         //! Returns the amount of time left for the given player.
         //
         //! \param color The color of the player whose time is being queried.
-        double time_left(Color color) const;
+        double time_left(Color color) const noexcept;
 
         //! The number of moves left before the clocks reset to the initial time.
         //
         //! \param color The color of the player being queried.
-        size_t moves_until_reset(Color color) const;
+        size_t moves_until_reset(Color color) const noexcept;
 
         //! The player for whom the clock is running.
-        Color running_for() const;
+        Color running_for() const noexcept;
 
         //! The amount of time left on the clock that is currently running.
-        double running_time_left() const;
+        double running_time_left() const noexcept;
 
         //! Are clocks currently running?
-        bool is_running() const;
+        bool is_running() const noexcept;
 
         //! Returns the date and time when start() was called.
-        std::chrono::system_clock::time_point game_start_date_and_time() const;
+        std::chrono::system_clock::time_point game_start_date_and_time() const noexcept;
 
         //! The intitial time on the clocks at the start of the game (and after moves_to_reset()).
-        double initial_time() const;
+        double initial_time() const noexcept;
 
         //! How much time is added to a player's clock after every move.
-        double increment(Color color) const;
+        double increment(Color color) const noexcept;
 
         //! How many moves must be played before the clocks are reset to their initial times.
-        size_t moves_per_time_period() const;
+        size_t moves_per_time_period() const noexcept;
 
     private:
         using fractional_seconds = std::chrono::duration<double>;
@@ -103,9 +103,9 @@ class Clock
         //!
         //! This method is used by the Players derived from Outside_Communicator to adjust
         //! the clock according to instructions from chess GUIs using the CECP protocol.
-        void set_time(Color player, double new_time_seconds);
-        void set_increment(Color player, double new_increment_time_seconds);
-        void set_next_time_reset(size_t moves_to_reset);
+        void set_time(Color player, double new_time_seconds) noexcept;
+        void set_increment(Color player, double new_increment_time_seconds) noexcept;
+        void set_next_time_reset(size_t moves_to_reset) noexcept;
 };
 
 #endif // Clock_H

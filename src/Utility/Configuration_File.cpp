@@ -95,12 +95,12 @@ bool Configuration_File::as_boolean(const std::string& parameter, const std::str
     }
 }
 
-std::string Configuration_File::standardize_text(const std::string& input)
+std::string Configuration_File::standardize_text(const std::string& input) noexcept
 {
     return String::lowercase(String::remove_extra_whitespace(input));
 }
 
-void Configuration_File::print_unused_parameters() const
+void Configuration_File::print_unused_parameters() const noexcept
 {
     for(const auto& param_value : parameters)
     {
@@ -111,7 +111,7 @@ void Configuration_File::print_unused_parameters() const
     }
 }
 
-bool Configuration_File::any_unused_parameters() const
+bool Configuration_File::any_unused_parameters() const noexcept
 {
     return std::any_of(used.begin(), used.end(), [](const auto& key_value) { return ! key_value.second; });
 }

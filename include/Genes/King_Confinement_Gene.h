@@ -19,20 +19,20 @@ class Board;
 class King_Confinement_Gene : public Gene
 {
     public:
-        std::unique_ptr<Gene> duplicate() const override;
-        void gene_specific_mutation() override;
+        std::unique_ptr<Gene> duplicate() const noexcept override;
+        void gene_specific_mutation() noexcept override;
 
-        std::string name() const override;
+        std::string name() const noexcept override;
 
     protected:
         void load_properties(const std::map<std::string, double>& properties) override;
-        std::map<std::string, double> list_properties() const override;
+        std::map<std::string, double> list_properties() const noexcept override;
 
     private:
         double friendly_block_score = 0.0;
         double opponent_block_score = 0.0;
 
-        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept override;
 };
 
 #endif // KING_CONFINEMENT_GENE_H

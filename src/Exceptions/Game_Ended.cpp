@@ -2,6 +2,6 @@
 
 #include <stdexcept>
 
-Game_Ended::Game_Ended() : std::runtime_error("Uncaught Game_Ended exception.")
+Game_Ended::Game_Ended() noexcept : std::runtime_error("Uncaught Game_Ended exception.")
 {
 }

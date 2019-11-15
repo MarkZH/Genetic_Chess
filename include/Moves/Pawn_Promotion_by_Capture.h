@@ -22,21 +22,21 @@ class Pawn_Promotion_by_Capture : public Pawn_Promotion
         Pawn_Promotion_by_Capture(Piece_Type promotion,
                                   Color color,
                                   Direction dir,
-                                  char file_start);
+                                  char file_start) noexcept;
 
     protected:
         //! Combine pawn capture note with a promotion note.
         //
         //! \param board The board state just before the move.
         //! \returns A textual record of a capture and a promotion.
-        std::string game_record_move_item(const Board& board) const override;
+        std::string game_record_move_item(const Board& board) const noexcept override;
 
     private:
         //! This move must capture.
         //
         //! \param board The board state just before the move.
         //! \returns Whether there is an opposing piece to capture.
-        bool move_specific_legal(const Board& board) const override;
+        bool move_specific_legal(const Board& board) const noexcept override;
 };
 
 #endif // PAWN_PROMOTION_BY_CAPTURE_H

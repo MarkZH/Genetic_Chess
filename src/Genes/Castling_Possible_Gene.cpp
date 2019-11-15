@@ -12,7 +12,7 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
-std::map<std::string, double> Castling_Possible_Gene::list_properties() const
+std::map<std::string, double> Castling_Possible_Gene::list_properties() const noexcept
 {
     auto properties = Gene::list_properties();
     properties["Kingside Preference"] = kingside_preference;
@@ -27,17 +27,17 @@ void Castling_Possible_Gene::load_properties(const std::map<std::string, double>
     queenside_preference = properties.at("Queenside Preference");
 }
 
-std::unique_ptr<Gene> Castling_Possible_Gene::duplicate() const
+std::unique_ptr<Gene> Castling_Possible_Gene::duplicate() const noexcept
 {
     return std::make_unique<Castling_Possible_Gene>(*this);
 }
 
-std::string Castling_Possible_Gene::name() const
+std::string Castling_Possible_Gene::name() const noexcept
 {
     return "Castling Possible Gene";
 }
 
-double Castling_Possible_Gene::score_board(const Board& board, Color perspective, size_t prior_real_moves) const
+double Castling_Possible_Gene::score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept
 {
     // check if a castling move lies between here and the actual state of the board
     if( ! board.game_record().empty())
@@ -106,7 +106,7 @@ double Castling_Possible_Gene::score_board(const Board& board, Color perspective
     return score/normalizing_factor;
 }
 
-void Castling_Possible_Gene::gene_specific_mutation()
+void Castling_Possible_Gene::gene_specific_mutation() noexcept
 {
     if(Random::coin_flip())
     {

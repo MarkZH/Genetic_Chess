@@ -15,7 +15,7 @@ class Move
         //
         //! \param start The Square where move starts.
         //! \param end   The Square where move ends.
-        Move(Square start, Square end);
+        Move(Square start, Square end) noexcept;
 
         virtual ~Move() = default;
 
@@ -34,7 +34,7 @@ class Move
         //!
         //! The default move has no side effects.
         //! \param board The board upon which the side effects are applied.
-        virtual void side_effects(Board& board) const;
+        virtual void side_effects(Board& board) const noexcept;
 
         //! Checks if a move is legal on a given Board.
         //
@@ -43,80 +43,80 @@ class Move
         //! and whether the king is in check after the move. It does not
         //! check if there are intervening pieces (see Board::recreate_move_cache()).
         //! \param board The board on which the Move's legality is tested.
-        bool is_legal(const Board& board) const;
+        bool is_legal(const Board& board) const noexcept;
 
         //! Check whether this move can land on an opponent-occupied square.
         //
         //! \returns Whether this move is allowed to capture.
-        bool can_capture() const;
+        bool can_capture() const noexcept;
 
         //! The Square the Move originates from.
-        Square start() const;
+        Square start() const noexcept;
 
         //! The Square the Move ends on.
-        Square end() const;
+        Square end() const noexcept;
 
         //! The total movement of a move.
         //
         //! \returns A value indicating the two-dimensional movement.
         //!          Equivalent to Square_Difference(file_change(), rank_change()).
-        Square_Difference movement() const;
+        Square_Difference movement() const noexcept;
 
         //! How far move travels horizontally.
         //
         //! \returns The distance in squares between the start and end files.
-        int file_change() const;
+        int file_change() const noexcept;
 
         //! How far move travels vertically.
         //
         //! \returns The distance in squares between the start and end ranks.
-        int rank_change() const;
+        int rank_change() const noexcept;
 
         //! Creates a textual representation of a move suitable for a PGN game record.
         //
         //! \param board A Board instance just prior to the move being made.
         //! \returns The full PGN record of a move.
-        std::string game_record_item(const Board& board) const;
+        std::string game_record_item(const Board& board) const noexcept;
 
         //! Returns a textual representation of a move in coordinate notation.
         //
         //! The first two characters indicate the starting square, the next two
         //! indicate the ending square, and a final optional character to indicate
         //! a pawn promtion.
-        std::string coordinate_move() const;
+        std::string coordinate_move() const noexcept;
 
         //! Indicates whether this move is en passant, which needs special handling elsewhere.
         //
         //! \returns Whether this is an instance of the En_Passant class.
-        bool is_en_passant() const;
+        bool is_en_passant() const noexcept;
 
         //! Indicates whether this move is a castling move, a fact which needs special handling elsewhere.
         //
         //! \returns Whether this is an instance of the Castle class.
-        bool is_castling() const;
+        bool is_castling() const noexcept;
 
         //! Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.
         //
         //! \returns the PGN symbol of the promotion piece, if any.
-        virtual char promotion_piece_symbol() const;
+        virtual char promotion_piece_symbol() const noexcept;
 
         //! Assigns a unique index to the direction of movement of a possibly capturing move.
         //
         //! \returns An unsigned integer in the range [0,15] corresponding to one of
         //!          2 horizontal moves, 2 vertical moves, 4 diagonal moves, and
         //!          8 knight moves.
-        size_t attack_index() const;
+        size_t attack_index() const noexcept;
 
         //! Returns a unique move direction index for a manually specified move. See Move::attack_index().
         //
         //! \param move The difference between two Squares.
         //! \returns The same result as a call to Move::attack_index() with the same file_change() and rank_change().
-        static size_t attack_index(const Square_Difference& move);
+        static size_t attack_index(const Square_Difference& move) noexcept;
 
         //! Returns the movement corresponding to an index given by Move::attack_index().
         //
         //! \returns A pair of integers giving the direction of an attacking move.
-        static Square_Difference attack_direction_from_index(size_t index);
+        static Square_Difference attack_direction_from_index(size_t index) noexcept;
 
     protected:
         //! Is the move allowed to capture a piece on the end square?
@@ -132,7 +132,7 @@ class Move
         //! forces single moves.
         //
         //! \param adjust The size of the adjustment.
-        void adjust_end_file(int adjust);
+        void adjust_end_file(int adjust) noexcept;
 
         //! Adjust the rank of the square a move ends on.
         //
@@ -140,13 +140,13 @@ class Move
         //! forces single moves.
         //
         //! \param adjust The size of the adjustment.
-        void adjust_end_rank(int adjust);
+        void adjust_end_rank(int adjust) noexcept;
 
         //! A textual representation of a move in PGN format without consequences ('+' for check, etc.).
         //
         //! \param board The board on which the move is about to be made.
         //! \returns The movement portion of a PGN move entry.
-        virtual std::string game_record_move_item(const Board& board) const;
+        virtual std::string game_record_move_item(const Board& board) const noexcept;
 
     private:
         Square origin;
@@ -157,9 +157,9 @@ class Move
         //! This method is overridden by subclassed moves with
         //! special rules. The standard Move just returns true;
         //! \param board The board on which legality is being checked.
-        virtual bool move_specific_legal(const Board& board) const;
+        virtual bool move_specific_legal(const Board& board) const noexcept;
 
-        std::string game_record_ending_item(Board board) const;
+        std::string game_record_ending_item(Board board) const noexcept;
 };
 
 #endif // MOVE_H

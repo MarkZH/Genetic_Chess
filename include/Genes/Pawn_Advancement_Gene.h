@@ -19,23 +19,23 @@ class Board;
 class Pawn_Advancement_Gene : public Gene
 {
     public:
-        Pawn_Advancement_Gene();
+        Pawn_Advancement_Gene() noexcept;
 
-        std::unique_ptr<Gene> duplicate() const override;
+        std::unique_ptr<Gene> duplicate() const noexcept override;
 
-        std::string name() const override;
+        std::string name() const noexcept override;
 
     protected:
-        std::map<std::string, double> list_properties() const override;
+        std::map<std::string, double> list_properties() const noexcept override;
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
         double non_linearity = 0.0;
         std::array<double, 6> score_cache; // precompute scores
 
-        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const override;
-        void gene_specific_mutation() override;
-        void recompute_scores_cache();
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept override;
+        void gene_specific_mutation() noexcept override;
+        void recompute_scores_cache() noexcept;
 };
 
 #endif // GENES_PAWN_ADVANCEMENT_GENE_H

@@ -50,21 +50,21 @@ namespace
 {
     // If expected_result is false, set all_tests_passed to false and print the
     // fail_message to std::cerr. Otherwise, do nothing.
-    bool test_result(bool& all_tests_passed, bool expected_result, const std::string& fail_message);
+    bool test_result(bool& all_tests_passed, bool expected_result, const std::string& fail_message) noexcept;
 
-    void print()
+    void print() noexcept
     {
         std::cerr << std::endl;
     }
 
     template<typename Argument_Type>
-    void print(const Argument_Type& arg)
+    void print(const Argument_Type& arg) noexcept
     {
         std::cerr << "'" << arg << "'" << std::endl;
     }
 
     template<typename First_Argument_Type, typename ...Rest_Argument_Types>
-    void print(const First_Argument_Type& first, const Rest_Argument_Types& ... rest)
+    void print(const First_Argument_Type& first, const Rest_Argument_Types& ... rest) noexcept
     {
         std::cerr << "'" << first << "', ";
         print(rest...);
@@ -74,7 +74,7 @@ namespace
     // equal to the expecte result, set all_tests_passed to false and print
     // an error message. Otherwise, do nothing.
     template<typename ...Argument_Types, typename Result_Type, typename Function>
-    void test_function(bool& tests_passed, const std::string& test_name, const Result_Type& expected_result, Function f, const Argument_Types& ... arguments)
+    void test_function(bool& tests_passed, const std::string& test_name, const Result_Type& expected_result, Function f, const Argument_Types& ... arguments) noexcept(noexcept(f))
     {
         auto result = f(arguments...);
         if(result != expected_result)
@@ -89,7 +89,7 @@ namespace
     // A specialization of the test_function() template that handles
     // functions that return a std::vector<std::string>.
     template<typename ...Argument_Types, typename Function>
-    void test_function(bool& tests_passed, const std::string& test_name, const std::vector<std::string>& expected_result, Function f, const Argument_Types& ... arguments)
+    void test_function(bool& tests_passed, const std::string& test_name, const std::vector<std::string>& expected_result, Function f, const Argument_Types& ... arguments)  noexcept(noexcept(f))
     {
         auto result = f(arguments...);
         if(result != expected_result)
@@ -111,7 +111,7 @@ namespace
     }
 
     template<typename ...Argument_Types, typename Function>
-    void function_throw_check(bool& tests_passed, bool should_throw, const std::string& test_name, Function f, const Argument_Types& ... arguments)
+    void function_throw_check(bool& tests_passed, bool should_throw, const std::string& test_name, Function f, const Argument_Types& ... arguments) noexcept
     {
         auto function_threw_exception = false;
         std::string error_message;
@@ -141,7 +141,7 @@ namespace
     // Equivalent to test_function(), but checks that the callable f does not throw
     // with arguments.
     template<typename ...Argument_Types, typename Function>
-    void function_should_not_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments)
+    void function_should_not_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments) noexcept
     {
         function_throw_check(tests_passed, false, test_name, f, arguments...);
     }
@@ -149,16 +149,16 @@ namespace
     // Equivalent to test_function(), but checks that the callable f does throw
     // with arguments.
     template<typename ...Argument_Types, typename Function>
-    void function_should_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments)
+    void function_should_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments) noexcept
     {
         function_throw_check(tests_passed, true, test_name, f, arguments...);
     }
 
-    bool files_are_identical(const std::string& file_name1, const std::string& file_name2);
-    unsigned long long move_count(const Board& board, unsigned long long maximum_depth);
+    bool files_are_identical(const std::string& file_name1, const std::string& file_name2) noexcept;
+    constexpr unsigned long long move_count(const Board& board, unsigned long long maximum_depth) noexcept;
     bool run_board_tests(const std::string& file_name);
-    bool all_moves_legal(Board& board, const std::vector<std::string>& moves);
-    bool move_is_illegal(const Board& board, const std::string& move);
+    bool all_moves_legal(Board& board, const std::vector<std::string>& moves) noexcept;
+    bool move_is_illegal(const Board& board, const std::string& move) noexcept;
 }
 
 bool run_tests()
@@ -522,7 +522,15 @@ bool run_tests()
          {1000000000, "1,000,000,000"}};
     for(const auto& test : tests)
     {
-        test_function(tests_passed, "Format integer", test.second, String::format_integer, test.first, ",");
+        test_function(tests_passed, "Format integer (size_t)", test.second, String::format_integer<size_t>, test.first, ",");
+    }
+    for(const auto& test : tests)
+    {
+        test_function(tests_passed, "Format integer (int)", test.second, String::format_integer<int>, test.first, ",");
+    }
+    for(const auto& test : tests)
+    {
+        test_function(tests_passed, "Format integer (negative int)", "-" + test.second, String::format_integer<int>, -test.first, ",");
     }
 
     // String to size_t number conversion
@@ -882,7 +890,7 @@ void print_randomness_sample()
 
 namespace
 {
-    bool test_result(bool& all_tests_passed, bool expected_result, const std::string& fail_message)
+    bool test_result(bool& all_tests_passed, bool expected_result, const std::string& fail_message) noexcept
     {
         if( ! expected_result)
         {
@@ -893,7 +901,7 @@ namespace
         return expected_result;
     }
 
-    bool files_are_identical(const std::string& file_name1, const std::string& file_name2)
+    bool files_are_identical(const std::string& file_name1, const std::string& file_name2) noexcept
     {
         std::ifstream file1(file_name1);
         std::ifstream file2(file_name2);
@@ -929,7 +937,7 @@ namespace
         return true;
     }
 
-    unsigned long long move_count(const Board& board, unsigned long long maximum_depth)
+    constexpr unsigned long long move_count(const Board& board, unsigned long long maximum_depth) noexcept
     {
         if(maximum_depth == 0)
         {
@@ -1066,7 +1074,7 @@ namespace
         return all_tests_passed;
     }
 
-    bool all_moves_legal(Board& board, const std::vector<std::string>& moves)
+    bool all_moves_legal(Board& board, const std::vector<std::string>& moves) noexcept
     {
         bool result = true;
         auto game_has_ended = false;
@@ -1087,7 +1095,7 @@ namespace
         return result;
     }
 
-    bool move_is_illegal(const Board& board, const std::string& move)
+    bool move_is_illegal(const Board& board, const std::string& move) noexcept
     {
         bool result = true;
         function_should_throw(result, move + " should be illegal", [&](){ board.create_move(move); });

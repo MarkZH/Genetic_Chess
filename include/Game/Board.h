@@ -34,7 +34,7 @@ class Board
 {
     public:
         //! Constructs a board in the standard starting position.
-        Board();
+        Board() noexcept;
 
         //! Constructs a board according to an FEN string.
         //
@@ -49,7 +49,7 @@ class Board
         //!        will trip an assert. In RELEASE builds, submitting an illegal move is undefined,
         //!        resulting in anything from an invalid board state to a crash due to segfault.
         //! \returns Returns a Game_Result indicating the result of the move and whether the game has ended.
-        Game_Result submit_move(const Move& move);
+        Game_Result submit_move(const Move& move) noexcept;
 
         //! Updates the state of the board according to the text-based move.
         //
@@ -76,18 +76,18 @@ class Board
         //! \param start The square where the move should start.
         //! \param end   The square where the move should end.
         //! \returns True if there is a legal move between the given squares.
-        bool is_legal(Square start, Square end) const;
+        bool is_legal(Square start, Square end) const noexcept;
 
         //! Tells which player is due to move.
         //
         //! \returns Color of player who is next to move.
-        Color whose_turn() const;
+        Color whose_turn() const noexcept;
 
         //! Prints an ASCII version of the board to a terminal.
         //
         //! This is useful for Human_Player on the terminal and debugging.
         //! \param perspective Specifies which side of the board is at the bottom of the screen.
-        void ascii_draw(Color perspective) const;
+        void ascii_draw(Color perspective) const noexcept;
 
         //! Returns the status of the game in FEN.
         //
@@ -96,31 +96,31 @@ class Board
         //! This may slightly differ from the output of other programs
         //! in that the en passant target is only listed if there is a
         //! legal en passant move to be made.
-        std::string fen_status() const; // current state of board in FEN
+        std::string fen_status() const noexcept; // current state of board in FEN
 
         //! Get the history of moves.
         //
         //! \returns The list of moves made on this board.
-        const std::vector<const Move*>& game_record() const;
+        const std::vector<const Move*>& game_record() const noexcept;
 
         //! Set the format an engine should output while picking a move.
         //
         //! \param mode Which chess engine protocol is being used: CECP, UCI, or NO_THINKING.
-        static void set_thinking_mode(Thinking_Output_Type);
+        static void set_thinking_mode(Thinking_Output_Type) noexcept;
 
         //! Find out what kind of format an engine should output while picking a move.
         //
         //! \returns Format of thinking output: CECP, UCI, or NO_THINKING.
-        static Thinking_Output_Type thinking_mode();
+        static Thinking_Output_Type thinking_mode() noexcept;
 
         //! Force the Player that is currently choosing a move to stop thinking and immediately make a move.
-        static void pick_move_now();
+        static void pick_move_now() noexcept;
 
         //! Check whether a Player should stop thinking and immediately move.
-        static bool must_pick_move_now();
+        static bool must_pick_move_now() noexcept;
 
         //! Allow the Player to take any amount of time to choose a move.
-        static void choose_move_at_leisure();
+        static void choose_move_at_leisure() noexcept;
 
         //! Prints the PGN game record with commentary from Players.
         //
@@ -136,19 +136,19 @@ class Board
                                const std::string& file_name,
                                const Game_Result& result,
                                const Clock& game_clock,
-                               const std::string& unusual_ending_reason = "") const;
+                               const std::string& unusual_ending_reason = "") const noexcept;
 
         //! Get the piece on the square indicated by coordinates.
         //
         //! \param square The queried square.
-        //! \returns Pointer to piece on square. May be nullptr if square is emtpy.
-        Piece piece_on_square(Square square) const;
+        //! \returns Piece instance on square. May be an invalid Piece if square is emtpy.
+        Piece piece_on_square(Square square) const noexcept;
 
         //! Get a list of all legal moves for the current player.
         //
         //! \returns A list of pointers to legal moves. Any call to Board::submit_move() must take
         //!          its argument from this list.
-        const std::vector<const Move*>& legal_moves() const;
+        const std::vector<const Move*>& legal_moves() const noexcept;
 
         //! Find out whether the input square is safe for the given king to occupy.
         //
@@ -156,44 +156,44 @@ class Board
         //! \param square The queried square.
         //! \param king_color The color of the king piece that is under potential attack.
         //! \returns Whether the king would be in check if it was placed on the square in question.
-        bool safe_for_king(Square square, Color king_color) const;
+        bool safe_for_king(Square square, Color king_color) const noexcept;
 
         //! Determine if there are any attacks on a square that are blocked by other pieces.
         //
         //! \param square The queried square.
         //! \param attacking_color The color of the attacking pieces.
         //! \returns Whether there is an attack on the square that is blocked by another piece.
-        bool blocked_attack(Square square, Color attacking_color) const;
+        bool blocked_attack(Square square, Color attacking_color) const noexcept;
 
         //! Determine whether the indicated square can be a target of an en passant move.
         //
         //! The is called by En_Passant::move_specific_legal().
         //! \param square The queried square.
         //! \returns Whether the square was passed by a pawn double move.
-        bool is_en_passant_targetable(Square square) const;
+        bool is_en_passant_targetable(Square square) const noexcept;
 
         //! Indicates whether the queried square has a piece on it that never moved.
         //
         //! \param square The queried squaer.
         //! \returns If the piece on the square has never moved during the game.
-        bool piece_has_moved(Square square) const;
+        bool piece_has_moved(Square square) const noexcept;
 
         //! Finds the square on which a king resides.
         //
         //! \param color Which king to find.
         //! \returns Square which contains the sought after king.
-        Square find_king(Color color) const;
+        Square find_king(Color color) const noexcept;
 
         //! Find out if the king of the player to move is currently in check.
         //
         //! \returns If the current player is in check.
-        bool king_is_in_check() const;
+        bool king_is_in_check() const noexcept;
 
         //! Check if a move will leave the player making the move in check.
         //
         //! \param move A possibly legal move to check.
         //! \returns Whether the move under consideration will leave the friendly king in check.
-        bool king_is_in_check_after_move(const Move& move) const;
+        bool king_is_in_check_after_move(const Move& move) const noexcept;
 
         //! Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.
         //
@@ -202,7 +202,7 @@ class Board
         //!          that would pin a piece occupying the queried square to its king. For example,
         //!          if it is white's turn, is there is a black piece that would pin a (possibly non-
         //!          existant) white piece on the given square to the white king?
-        bool piece_is_pinned(Square square) const;
+        bool piece_is_pinned(Square square) const noexcept;
 
         //! Check whether all of the squares between two squares are empty.
         //
@@ -212,7 +212,7 @@ class Board
         //! \returns Whether all of the intervening squares between the two input squares are unoccupied by pieces.
         //! \throws assertion_failure In DEBUG builds, squares not along the same rank, file, or diagonal
         //!         will trigger an assertion failure. In RELEASE builds, the result is undefined.
-        bool all_empty_between(Square start, Square end) const;
+        bool all_empty_between(Square start, Square end) const noexcept;
 
         //! Checks whether there are enough pieces on the board for any possible checkmate.
         //
@@ -224,49 +224,49 @@ class Board
         //! \param color If NONE, check both sides for enough material. Otherwise, only check the pieces of one side.
         //! \returns If there are enough pieces on the board to make a checkmate arrangement.
         //!          If the method returns false when called with NONE, this will usually lead to a drawn game.
-        bool enough_material_to_checkmate(Color color = NONE) const;
+        bool enough_material_to_checkmate(Color color = NONE) const noexcept;
 
         //! Determines whether a move will capture on the current board.
         //
         //! \param move Move to check.
         //! \returns If the move captures an opponent's piece.
         //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
-        bool move_captures(const Move& move) const;
+        bool move_captures(const Move& move) const noexcept;
 
         //! Determines whether a move will change the material on the current board.
         //
         //! \param move Move to check.
         //! \returns If the move captures an opponent's piece or promotes a pawn.
         //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
-        bool move_changes_material(const Move& move) const;
+        bool move_changes_material(const Move& move) const noexcept;
 
         //! The number of moves since the last capture or pawn move.
         //
         //! \returns How many moves have been made since the last capturing or pawn move.
-        size_t moves_since_pawn_or_capture() const;
+        size_t moves_since_pawn_or_capture() const noexcept;
 
         //! Get a list of all moves that attack a given square.
         //
         //! \param square The square being attacked.
         //! \param attacking_color The color of pieces doing the attacking.
-        const std::bitset<16>& moves_attacking_square(Square square, Color attacking_color) const;
+        const std::bitset<16>& moves_attacking_square(Square square, Color attacking_color) const noexcept;
 
         //! Returns the Zobrist hash of the current state of the board.
         //
         //! See https://en.wikipedia.org/wiki/Zobrist_hashing for details.
-        uint64_t board_hash() const;
+        uint64_t board_hash() const noexcept;
 
         //! Gets the ply move during which a player castled.
         //
         //! \param player The color of the player being queried.
         //! \returns The ply count when the player castled, or MAX(size_t) if the player has not castled.
-        size_t castling_move_index(Color player) const;
+        size_t castling_move_index(Color player) const noexcept;
 
         //! Create a copy of the board with a random pawn removed.
         //
         //! This can be used by a Player to calibrate the value of a centipawn.
         //! \throws Debug assertion failure if there are no pawns on the board.
-        Board without_random_pawn() const;
+        Board without_random_pawn() const noexcept;
 
         //! Returns a quiescent version of the board.
         //
@@ -276,12 +276,12 @@ class Board
         //! values array.
         //! \param piece_values An array indexed by Piece::type() that gives
         //!        the value of the piece.
-        Board quiescent(const std::array<double, 6>& piece_values) const;
+        Board quiescent(const std::array<double, 6>& piece_values) const noexcept;
 
         //! Returns the number of moves available to the opponent prior to the opponent's last move.
         //
         //! Returns 0 if no moves have been made on the board.
-        size_t previous_moves_count() const;
+        size_t previous_moves_count() const noexcept;
 
     private:
         std::array<Piece, 64> board;
@@ -307,12 +307,12 @@ class Board
         std::array<std::array<std::bitset<16>, 64>, 2> potential_attacks{}; // indexed by [attacker color][square index];
         std::array<std::array<std::bitset<16>, 64>, 2> blocked_attacks{};
 
-        void add_attacks_from(Square square, Piece piece);
-        void remove_attacks_from(Square square, Piece old_piece);
-        void modify_attacks(Square square, Piece piece, bool adding_attacks);
-        void update_blocks(Square square, Piece old_piece, Piece new_piece);
-        const std::bitset<16>& checking_moves() const;
-        Square find_checking_square() const;
+        void add_attacks_from(Square square, Piece piece) noexcept;
+        void remove_attacks_from(Square square, Piece old_piece) noexcept;
+        void modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept;
+        void update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept;
+        const std::bitset<16>& checking_moves() const noexcept;
+        Square find_checking_square() const noexcept;
 
         // Information cache for gene reference
         std::array<size_t, 2> castling_index{size_t(-1), size_t(-1)};
@@ -321,35 +321,35 @@ class Board
         std::vector<const Move*> legal_moves_cache;
         size_t prior_moves_count = 0;
 
-        void recreate_move_caches();
+        void recreate_move_caches() noexcept;
 
-        Piece& piece_on_square(Square square);
-        void remove_piece(Square square);
-        void move_piece(const Move& move);
+        Piece& piece_on_square(Square square) noexcept;
+        void remove_piece(Square square) noexcept;
+        void move_piece(const Move& move) noexcept;
         const Move& create_move(Square start, Square rank, char promote = 0) const;
-        bool no_legal_moves() const;
-        void make_en_passant_targetable(Square square);
-        void clear_en_passant_target();
-        bool is_in_legal_moves_list(const Move& move) const;
-        void place_piece(Piece piece, Square square);
-        void set_unmoved(Square square);
-        void update_board(const Move& move);
-        Game_Result move_result() const;
+        bool no_legal_moves() const noexcept;
+        void make_en_passant_targetable(Square square) noexcept;
+        void clear_en_passant_target() noexcept;
+        bool is_in_legal_moves_list(const Move& move) const noexcept;
+        void place_piece(Piece piece, Square square) noexcept;
+        void set_unmoved(Square square) noexcept;
+        void update_board(const Move& move) noexcept;
+        Game_Result move_result() const noexcept;
 
         // Track threefold repetition and fifty-move rule
-        void add_board_position_to_repeat_record();
-        void add_to_repeat_count(uint64_t new_hash);
-        ptrdiff_t current_board_position_repeat_count() const;
-        void clear_repeat_count();
+        void add_board_position_to_repeat_record() noexcept;
+        void add_to_repeat_count(uint64_t new_hash) noexcept;
+        ptrdiff_t current_board_position_repeat_count() const noexcept;
+        void clear_repeat_count() noexcept;
 
         // Zobrist hashing (implementation of threefold/fifty-move tracking)
         uint64_t current_board_hash = 0;
 
-        void update_board_hash(Square square);
-        uint64_t square_hash(Square square) const;
-        void update_whose_turn_hash();
+        void update_board_hash(Square square) noexcept;
+        uint64_t square_hash(Square square) const noexcept;
+        void update_whose_turn_hash() noexcept;
 
-        bool king_multiply_checked() const;
+        bool king_multiply_checked() const noexcept;
 
         [[noreturn]] void fen_error(const std::string& reason) const;
 

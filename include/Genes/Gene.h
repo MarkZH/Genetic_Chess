@@ -32,7 +32,7 @@ class Gene
         void read_from(const std::string& file_name);
 
         //! Applies a random mutation to the priority or other aspect of a gene.
-        void mutate();
+        void mutate() noexcept;
 
         //! Gives a numerical score to the board in the arguments.
         //
@@ -40,29 +40,29 @@ class Gene
         //! \param perspective For which player the board is being scored.
         //! \param prior_real_moves How many of the first moves on the board represent real moves from the current game.
         //! \returns A numerical score indicating the likelihood that the board in the first argument is winning for board.whose_turn().
-        double evaluate(const Board& board, Color perspective, size_t prior_real_moves) const;
+        double evaluate(const Board& board, Color perspective, size_t prior_real_moves) const noexcept;
 
         //! Copies the gene data and returns a pointer to the new data
         //
         //! \returns A unique pointer to the copied data.
-        virtual std::unique_ptr<Gene> duplicate() const = 0;
+        virtual std::unique_ptr<Gene> duplicate() const noexcept = 0;
 
         //! Tells how many mutatable components are present in a gene.
         //
         //! The more components a gene has, the more likely it will be mutated by a call
         //! to Genome::mutate().
         //! \returns How many individually mutatable components exist in a gene.
-        size_t mutatable_components() const;
+        size_t mutatable_components() const noexcept;
 
         //! Returns the name of the gene.
         //
         //! \returns A text string with the name of the gene.
-        virtual std::string name() const = 0;
+        virtual std::string name() const noexcept = 0;
 
         //! Outputs gene data to a std::ostream in text form.
         //
         //! \param os An output stream (std::ofstream, std::cout, etc.)
-        void print(std::ostream& os) const;
+        void print(std::ostream& os) const noexcept;
 
         //! Gives the gene the new location of the Piece Strength Gene.
         //
@@ -70,7 +70,7 @@ class Gene
         //! the Piece_Strength_Gene need to be told the location of the new
         //! copy. For all other genes, this does nothing.
         //! \param psg A pointer to the correct Piece Strength Gene.
-        virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg);
+        virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg) noexcept;
 
         //! Tests the board-scoring method of the Gene.
         //
@@ -79,7 +79,7 @@ class Gene
         //! \param board The board upon which the test takes place.
         //! \param perspective The player for whom the score is being calculated.
         //! \param expected_score The expected score returned by Gene::score_board().
-        void test(bool& test_variable, const Board& board, Color perspective, double expected_score) const;
+        void test(bool& test_variable, const Board& board, Color perspective, double expected_score) const noexcept;
 
     protected:
         //! Returns a structure relating a gene property to a numerical value.
@@ -89,7 +89,7 @@ class Gene
         //! board position. This method is overridden by derived Gene classes to either augment
         //! or replace this data with more specialized properties.
         //! \returns A collection of gene properties with their numerical values.
-        virtual std::map<std::string, double> list_properties() const;
+        virtual std::map<std::string, double> list_properties() const noexcept;
 
         //! Reads a properties data structure and loads the data into itself.
         //
@@ -104,13 +104,13 @@ class Gene
     private:
         double scoring_priority = 1000.0;
 
-        virtual double score_board(const Board& board, Color perspective, size_t prior_real_moves) const = 0;
+        virtual double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
 
         //! A method overridden by derived genes to mutate more specific gene components.
         //
         //! By default, this method does nothing.
-        virtual void gene_specific_mutation();
+        virtual void gene_specific_mutation() noexcept;
 };
 
 #endif // GENE_H

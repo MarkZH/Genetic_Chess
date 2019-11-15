@@ -12,7 +12,7 @@
 #include "Utility/String.h"
 #include "Utility/Random.h"
 
-const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const
+const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
     // Erase data from previous board when starting new game
     if(board.game_record().size() <= 1)
@@ -118,7 +118,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const size_t prior_real_moves,
                                                    Game_Tree_Node_Result alpha,
                                                    const Game_Tree_Node_Result& beta,
-                                                   bool still_on_principal_variation) const
+                                                   bool still_on_principal_variation) const noexcept
 {
     const auto time_start = clock.running_time_left();
     const auto depth = board.game_record().size() - prior_real_moves + 1;
@@ -275,7 +275,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
 void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                       const Clock& clock,
-                                      Color perspective) const
+                                      Color perspective) const noexcept
 {
     auto score = thought.corrected_score(perspective)/centipawn_value();
 
@@ -316,7 +316,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     std::cout << std::endl;
 }
 
-void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const Clock& clock, Color perspective) const
+void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const Clock& clock, Color perspective) const noexcept
 {
     auto time_so_far = clock_start_time - clock.running_time_left();
     std::cout << "info"
@@ -346,7 +346,7 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const
     std::cout << std::endl;
 }
 
-double Minimax_AI::time_since_last_output(const Clock& clock) const
+double Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
 {
     return time_at_last_output - clock.running_time_left();
 }
@@ -354,7 +354,7 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
                                                 Color perspective,
                                                 const Game_Result& move_result,
-                                                size_t prior_real_moves) const
+                                                size_t prior_real_moves) const noexcept
 {
     return {evaluate(board, move_result, perspective, prior_real_moves),
             perspective,
@@ -362,7 +362,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
             board.game_record().end()}};
 }
 
-void Minimax_AI::calibrate_thinking_speed() const
+void Minimax_AI::calibrate_thinking_speed() const noexcept
 {
     evaluation_speed = 100; // very conservative initial guess
     auto calibration_time = 1.0; // seconds
@@ -372,7 +372,7 @@ void Minimax_AI::calibrate_thinking_speed() const
     choose_move(board, clock);
 }
 
-double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Color perspective, size_t prior_real_moves) const
+double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Color perspective, size_t prior_real_moves) const noexcept
 {
     if(move_result.game_has_ended())
     {
@@ -393,12 +393,12 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
     return internal_evaluate(board, perspective, prior_real_moves);
 }
 
-double Minimax_AI::centipawn_value() const
+double Minimax_AI::centipawn_value() const noexcept
 {
     return value_of_centipawn;
 }
 
-void Minimax_AI::calculate_centipawn_value() const
+void Minimax_AI::calculate_centipawn_value() const noexcept
 {
     auto sum_of_diffs = 0.0;
     auto count = 0;
@@ -434,7 +434,7 @@ void Minimax_AI::calculate_centipawn_value() const
     value_of_centipawn = sum_of_diffs/count/100;
 }
 
-std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move_number) const
+std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move_number) const noexcept
 {
     auto comment_index = board.game_record().size()/2;
     if(comment_index >= commentary.size() || commentary.at(comment_index).variation.empty())
@@ -475,7 +475,7 @@ std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move
     }
 }
 
-void Minimax_AI::recalibrate_self() const
+void Minimax_AI::recalibrate_self() const noexcept
 {
     calibrate_thinking_speed();
     calculate_centipawn_value();

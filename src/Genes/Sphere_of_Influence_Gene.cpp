@@ -33,12 +33,12 @@ namespace
         }();
 }
 
-Sphere_of_Influence_Gene::Sphere_of_Influence_Gene()
+Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() noexcept
 {
     recompute_scalar_cache();
 }
 
-std::map<std::string, double> Sphere_of_Influence_Gene::list_properties() const
+std::map<std::string, double> Sphere_of_Influence_Gene::list_properties() const noexcept
 {
     auto properties = Gene::list_properties();
     properties["Legal Square Score"] = legal_square_score;
@@ -56,19 +56,19 @@ void Sphere_of_Influence_Gene::load_properties(const std::map<std::string, doubl
     recompute_scalar_cache();
 }
 
-std::unique_ptr<Gene> Sphere_of_Influence_Gene::duplicate() const
+std::unique_ptr<Gene> Sphere_of_Influence_Gene::duplicate() const noexcept
 {
     return std::make_unique<Sphere_of_Influence_Gene>(*this);
 }
 
-std::string Sphere_of_Influence_Gene::name() const
+std::string Sphere_of_Influence_Gene::name() const noexcept
 {
     return "Sphere of Influence Gene";
 }
 
 // Count all squares potentially attacked by all pieces with bonus points if
 // the attacking move is legal.
-double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspective, size_t) const
+double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
 {
     const auto& opponent_king_square = board.find_king(opposite(perspective));
     auto opponent_king_index = opponent_king_square.index();
@@ -98,7 +98,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspecti
 }
 
 
-void Sphere_of_Influence_Gene::gene_specific_mutation()
+void Sphere_of_Influence_Gene::gene_specific_mutation() noexcept
 {
     switch(Random::random_integer(1, 3))
     {
@@ -112,13 +112,13 @@ void Sphere_of_Influence_Gene::gene_specific_mutation()
             king_target_factor += Random::random_laplace(0.1);
             break;
         default:
-            throw std::logic_error("Bad range in Sphere_of_Influence_Gene::gene_specific_mutation()");
+            assert(false);
     }
 
     recompute_scalar_cache();
 }
 
-void Sphere_of_Influence_Gene::recompute_scalar_cache()
+void Sphere_of_Influence_Gene::recompute_scalar_cache() noexcept
 {
     for(size_t king_distance = 0; king_distance < 8; ++king_distance)
     {

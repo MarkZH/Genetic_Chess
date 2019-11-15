@@ -12,7 +12,7 @@ class Bad_Still_Alive_Line : public std::runtime_error
         //
         //! \param line_number The number of the line in the gene pool file.
         //! \param line The offending line.
-        Bad_Still_Alive_Line(size_t line_number, std::string& line);
+        Bad_Still_Alive_Line(size_t line_number, std::string& line) noexcept;
 };
 
 #endif // BAD_STILL_ALIVE_LINE_H

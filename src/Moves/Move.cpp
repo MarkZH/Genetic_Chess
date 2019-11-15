@@ -4,7 +4,6 @@
 #include <cmath>
 #include <cctype>
 #include <string>
-#include <stdexcept>
 
 #include "Game/Board.h"
 #include "Game/Square.h"
@@ -12,35 +11,23 @@
 #include "Game/Piece.h"
 
 
-Move::Move(Square start, Square end) :
+Move::Move(Square start, Square end) noexcept :
                able_to_capture(true),
                is_en_passant_move(false),
                is_castling_move(false),
                origin(start),
                destination(end)
 {
-    if( ! start.inside_board())
-    {
-        throw std::invalid_argument(std::string("Invalid starting square: ") + start.string());
-    }
-
-    if( ! end.inside_board())
-    {
-        throw std::invalid_argument(std::string("Invalid ending square: ") + end.string());
-    }
-
-    if(file_change() == 0 && rank_change() == 0)
-    {
-        throw std::invalid_argument(std::string("Zero-distance moves are illegal: ")
-                                    + start.string() + " --> " + end.string());
-    }
+    assert(start.inside_board());
+    assert(end.inside_board());
+    assert(file_change() != 0 || rank_change() != 0);
 }
 
-void Move::side_effects(Board&) const
+void Move::side_effects(Board&) const noexcept
 {
 }
 
-bool Move::is_legal(const Board& board) const
+bool Move::is_legal(const Board& board) const noexcept
 {
 #ifndef NDEBUG
     auto moving_piece = board.piece_on_square(start());
@@ -61,47 +48,47 @@ bool Move::is_legal(const Board& board) const
     return move_specific_legal(board) && ! board.king_is_in_check_after_move(*this);
 }
 
-bool Move::move_specific_legal(const Board&) const
+bool Move::move_specific_legal(const Board&) const noexcept
 {
     return true;
 }
 
-bool Move::can_capture() const
+bool Move::can_capture() const noexcept
 {
     return able_to_capture;
 }
 
-Square Move::start() const
+Square Move::start() const noexcept
 {
     return origin;
 }
 
-Square Move::end() const
+Square Move::end() const noexcept
 {
     return destination;
 }
 
-Square_Difference Move::movement() const
+Square_Difference Move::movement() const noexcept
 {
     return end() - start();
 }
 
-int Move::file_change() const
+int Move::file_change() const noexcept
 {
     return end().file() - start().file();
 }
 
-int Move::rank_change() const
+int Move::rank_change() const noexcept
 {
     return end().rank() - start().rank();
 }
 
-std::string Move::game_record_item(const Board& board) const
+std::string Move::game_record_item(const Board& board) const noexcept
 {
     return game_record_move_item(board) + game_record_ending_item(board);
 }
 
-std::string Move::game_record_move_item(const Board& board) const
+std::string Move::game_record_move_item(const Board& board) const noexcept
 {
     auto original_piece = board.piece_on_square(start());
     std::string move_record = original_piece.pgn_symbol();
@@ -161,13 +148,13 @@ std::string Move::game_record_move_item(const Board& board) const
     return move_record;
 }
 
-std::string Move::game_record_ending_item(Board board) const
+std::string Move::game_record_ending_item(Board board) const noexcept
 {
     auto result = board.submit_move(*this);
     return ((board.king_is_in_check() && result.winner() == NONE) ? "+" : "") + result.game_record_annotation();
 }
 
-std::string Move::coordinate_move() const
+std::string Move::coordinate_move() const noexcept
 {
     auto result = start().string() + end().string();
 
@@ -179,37 +166,37 @@ std::string Move::coordinate_move() const
     return result;
 }
 
-bool Move::is_en_passant() const
+bool Move::is_en_passant() const noexcept
 {
     return is_en_passant_move;
 }
 
-bool Move::is_castling() const
+bool Move::is_castling() const noexcept
 {
     return is_castling_move;
 }
 
-char Move::promotion_piece_symbol() const
+char Move::promotion_piece_symbol() const noexcept
 {
     return '\0';
 }
 
-void Move::adjust_end_file(int adjust)
+void Move::adjust_end_file(int adjust) noexcept
 {
     destination += Square_Difference{adjust, 0};
 }
 
-void Move::adjust_end_rank(int adjust)
+void Move::adjust_end_rank(int adjust) noexcept
 {
     destination += Square_Difference{0, adjust};
 }
 
-size_t Move::attack_index() const
+size_t Move::attack_index() const noexcept
 {
     return attack_index(movement());
 }
 
-size_t Move::attack_index(const Square_Difference& move)
+size_t Move::attack_index(const Square_Difference& move) noexcept
 {
     size_t result = 0;
 
@@ -241,7 +228,7 @@ size_t Move::attack_index(const Square_Difference& move)
     return result;
 }
 
-Square_Difference Move::attack_direction_from_index(size_t index)
+Square_Difference Move::attack_direction_from_index(size_t index) noexcept
 {
     if(index & 8)
     {

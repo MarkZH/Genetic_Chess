@@ -7,7 +7,7 @@
 
 #include "Utility/Random.h"
 
-Scoped_Stopwatch::Scoped_Stopwatch(const std::string& name) :
+Scoped_Stopwatch::Scoped_Stopwatch(const std::string& name) noexcept :
     place_name(name),
     start_time(std::chrono::steady_clock::now()),
     stopped(place_name.empty())
@@ -19,7 +19,7 @@ Scoped_Stopwatch::~Scoped_Stopwatch()
     stop();
 }
 
-void Scoped_Stopwatch::stop()
+void Scoped_Stopwatch::stop() noexcept
 {
     auto end_time = std::chrono::steady_clock::now();
 
@@ -41,17 +41,17 @@ void Scoped_Stopwatch::stop()
     stopped = true;
 }
 
-void Scoped_Stopwatch::add_info(const std::string& info)
+void Scoped_Stopwatch::add_info(const std::string& info) noexcept
 {
     place_name += info;
 }
 
-void Scoped_Stopwatch::reject()
+void Scoped_Stopwatch::reject() noexcept
 {
     stopped = true;
 }
 
-double Scoped_Stopwatch::time_so_far() const
+double Scoped_Stopwatch::time_so_far() const noexcept
 {
     auto end_time = std::chrono::steady_clock::now();
     return std::chrono::duration_cast<std::chrono::duration<double>>

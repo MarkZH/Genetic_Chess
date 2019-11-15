@@ -12,7 +12,7 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
-std::map<std::string, double> Look_Ahead_Gene::list_properties() const
+std::map<std::string, double> Look_Ahead_Gene::list_properties() const noexcept
 {
     return {{"Mean Game Length", mean_game_length},
             {"Game Length Uncertainty", game_length_uncertainty},
@@ -26,7 +26,7 @@ void Look_Ahead_Gene::load_properties(const std::map<std::string, double>& prope
     speculation_constant = properties.at("Speculation");
 }
 
-double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const
+double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
     auto time_left = clock.time_left(board.whose_turn());
     auto moves_to_reset = clock.moves_until_reset(board.whose_turn());
@@ -37,7 +37,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
     return time_left/std::min(moves_left, double(moves_to_reset));
 }
 
-void Look_Ahead_Gene::gene_specific_mutation()
+void Look_Ahead_Gene::gene_specific_mutation() noexcept
 {
     switch(Random::random_integer(1, 3))
     {
@@ -51,26 +51,26 @@ void Look_Ahead_Gene::gene_specific_mutation()
             speculation_constant += Random::random_laplace(0.03);
             break;
         default:
-            throw std::logic_error("Bad random value in mutation of " + name());
+            assert(false);
     }
 }
 
-std::unique_ptr<Gene> Look_Ahead_Gene::duplicate() const
+std::unique_ptr<Gene> Look_Ahead_Gene::duplicate() const noexcept
 {
     return std::make_unique<Look_Ahead_Gene>(*this);
 }
 
-std::string Look_Ahead_Gene::name() const
+std::string Look_Ahead_Gene::name() const noexcept
 {
     return "Look Ahead Gene";
 }
 
-double Look_Ahead_Gene::score_board(const Board&, Color, size_t) const
+double Look_Ahead_Gene::score_board(const Board&, Color, size_t) const noexcept
 {
     return 0.0;
 }
 
-double Look_Ahead_Gene::speculation_time_factor() const
+double Look_Ahead_Gene::speculation_time_factor() const noexcept
 {
     return speculation_constant;
 }

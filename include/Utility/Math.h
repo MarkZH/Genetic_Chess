@@ -16,14 +16,14 @@ namespace Math
     //! \returns An estimate of the number of moves left in the game.
     //!
     //! See https://en.wikipedia.org/wiki/Log-normal_distribution for more information.
-    double average_moves_left(double mean_moves, double width, size_t moves_so_far);
+    double average_moves_left(double mean_moves, double width, size_t moves_so_far) noexcept;
 
     //! Returns the sign of the number.
     //
     //! \param x The input nuber.
     //! \returns +1 for positive numbers, -1 for negative, and 0 otherwise.
     template<typename Number>
-    int sign(Number x)
+    constexpr int sign(Number x) noexcept
     {
         if(x > 0)
         {

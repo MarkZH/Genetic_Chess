@@ -44,16 +44,16 @@ class Configuration_File
         bool as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const;
 
         //! Check if any parameters in the configuration file were unused.
-        bool any_unused_parameters() const;
+        bool any_unused_parameters() const noexcept;
 
         //! Print the unused parameters in the configuration file to stdout.
-        void print_unused_parameters() const;
+        void print_unused_parameters() const noexcept;
 
     private:
         std::map<std::string, std::string> parameters;
         mutable std::map<std::string, bool> used;
 
-        static std::string standardize_text(const std::string& input);
+        static std::string standardize_text(const std::string& input) noexcept;
 };
 
 #endif // CONFIGURATION_FILE_H
