@@ -151,7 +151,21 @@ std::string Move::game_record_move_item(const Board& board) const noexcept
 std::string Move::game_record_ending_item(Board board) const noexcept
 {
     auto result = board.submit_move(*this);
-    return ((board.king_is_in_check() && result.winner() == NONE) ? "+" : "") + result.game_record_annotation();
+    if(board.king_is_in_check())
+    {
+        if(result.winner() == NONE)
+        {
+            return "+";
+        }
+        else
+        {
+            return "#";
+        }
+    }
+    else
+    {
+        return {};
+    }
 }
 
 std::string Move::coordinate_move() const noexcept

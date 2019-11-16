@@ -41,9 +41,6 @@ class Game_Result
         //! Returns the part of the PGN move annotation that goes after the # (checkmate) or + (check).
         std::string game_ending_annotation() const noexcept;
 
-        //! Returns the winner annotation to be appended to the last move of a PGN-style game record.
-        std::string game_record_annotation() const noexcept;
-
     private:
         Color victor;
         Game_Result_Type cause;

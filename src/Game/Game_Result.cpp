@@ -58,8 +58,3 @@ std::string Game_Result::game_ending_annotation() const noexcept
             return game_has_ended() ? "1/2-1/2" : "*";
     }
 }
-
-std::string Game_Result::game_record_annotation() const noexcept
-{
-    return cause == CHECKMATE ? "#" : "";
-}
