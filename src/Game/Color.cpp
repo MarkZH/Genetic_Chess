@@ -5,8 +5,8 @@
 
 Color opposite(Color color) noexcept
 {
-    assert(color != NONE);
-    return (color == WHITE ? BLACK : WHITE);
+    assert(color == WHITE || color == BLACK);
+    return static_cast<Color>(1 - color);
 }
 
 std::string color_text(Color color) noexcept
