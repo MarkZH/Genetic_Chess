@@ -8,9 +8,9 @@
 
 Castle::Castle(int base_rank, Direction direction) noexcept :
     Move({'e', base_rank},
-         {(direction == RIGHT ? 'g' : 'c'), base_rank}),
-    rook_move({(direction == RIGHT ? 'h' : 'a'), base_rank},
-              {(direction == RIGHT ? 'f' : 'd'), base_rank})
+         {(direction == Direction::RIGHT ? 'g' : 'c'), base_rank}),
+    rook_move({(direction == Direction::RIGHT ? 'h' : 'a'), base_rank},
+              {(direction == Direction::RIGHT ? 'f' : 'd'), base_rank})
 {
     able_to_capture = false;
     is_castling_move = true;

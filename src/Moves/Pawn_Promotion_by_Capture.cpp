@@ -15,7 +15,7 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
                                                      char file_start) noexcept :
     Pawn_Promotion(promotion, color, file_start)
 {
-    adjust_end_file(dir == RIGHT ? 1 : -1);
+    adjust_end_file(dir == Direction::RIGHT ? 1 : -1);
     assert(end().inside_board());
     able_to_capture = true;
 }

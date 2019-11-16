@@ -4,6 +4,6 @@
 //! \file
 
 //! Indicates a horizontal direction on the chess board.
-enum Direction { LEFT, RIGHT };
+enum class Direction { LEFT, RIGHT };
 
 #endif // DIRECTION_H

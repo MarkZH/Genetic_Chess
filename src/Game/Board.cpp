@@ -70,7 +70,7 @@ namespace
     const uint64_t switch_turn_board_hash = Random::random_unsigned_int64();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    std::atomic<Thinking_Output_Type> thinking_indicator = NO_THINKING;
+    std::atomic<Thinking_Output_Type> thinking_indicator = Thinking_Output_Type::NO_THINKING;
     std::atomic_bool move_immediately = false;
 }
 
@@ -457,11 +457,11 @@ Game_Result Board::move_result() const noexcept
     {
         if(king_is_in_check())
         {
-            return Game_Result(opposite(whose_turn()), CHECKMATE);
+            return Game_Result(opposite(whose_turn()), Game_Result_Type::CHECKMATE);
         }
         else
         {
-            return Game_Result(NONE, STALEMATE);
+            return Game_Result(NONE, Game_Result_Type::STALEMATE);
         }
     }
 
@@ -470,19 +470,19 @@ Game_Result Board::move_result() const noexcept
     // repeat_count tracker.
     if(moves_since_pawn_or_capture() == 0 && ! enough_material_to_checkmate())
     {
-        return Game_Result(NONE, INSUFFICIENT_MATERIAL);
+        return Game_Result(NONE, Game_Result_Type::INSUFFICIENT_MATERIAL);
     }
 
     if(current_board_position_repeat_count() >= 3)
     {
-        return Game_Result(NONE, THREEFOLD_REPETITION);
+        return Game_Result(NONE, Game_Result_Type::THREEFOLD_REPETITION);
     }
 
     // "Move" means both players move, so the fifty-move rule is
     // triggered after 100 player moves
     if(moves_since_pawn_or_capture() >= 100)
     {
-        return Game_Result(NONE, FIFTY_MOVE);
+        return Game_Result(NONE, Game_Result_Type::FIFTY_MOVE);
     }
 
     return {};

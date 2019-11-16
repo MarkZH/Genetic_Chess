@@ -5,7 +5,7 @@
 #include "Game/Color.h"
 #include "Utility/String.h"
 
-Game_Result::Game_Result() noexcept : Game_Result(NONE, ONGOING)
+Game_Result::Game_Result() noexcept : Game_Result(NONE, Game_Result_Type::ONGOING)
 {
 }
 
@@ -17,7 +17,7 @@ Game_Result::Game_Result(Color winner, Game_Result_Type reason) noexcept :
 
 bool Game_Result::game_has_ended() const noexcept
 {
-    return cause != ONGOING;
+    return cause != Game_Result_Type::ONGOING;
 }
 
 Color Game_Result::winner() const noexcept
@@ -29,17 +29,17 @@ std::string Game_Result::ending_reason() const noexcept
 {
     switch(cause)
     {
-        case CHECKMATE:
+        case Game_Result_Type::CHECKMATE:
             return color_text(winner()) + " mates";
-        case STALEMATE:
+        case Game_Result_Type::STALEMATE:
             return "Stalemate";
-        case FIFTY_MOVE:
+        case Game_Result_Type::FIFTY_MOVE:
             return "50-move limit";
-        case THREEFOLD_REPETITION:
+        case Game_Result_Type::THREEFOLD_REPETITION:
             return "Threefold repetition";
-        case INSUFFICIENT_MATERIAL:
+        case Game_Result_Type::INSUFFICIENT_MATERIAL:
             return "Insufficient material";
-        case TIME_FORFEIT:
+        case Game_Result_Type::TIME_FORFEIT:
             return "Time forfeiture";
         default:
             return {};

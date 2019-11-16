@@ -62,7 +62,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock)
             }
 
             log("Board ready for play");
-            board.set_thinking_mode(UCI);
+            board.set_thinking_mode(Thinking_Output_Type::UCI);
         }
         else if(String::starts_with(command, "go "))
         {

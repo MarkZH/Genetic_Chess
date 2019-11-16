@@ -214,20 +214,20 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         }
         else if(command == "post")
         {
-            if(board.thinking_mode() == CECP)
+            if(board.thinking_mode() == Thinking_Output_Type::CECP)
             {
-                board.set_thinking_mode(NO_THINKING);
+                board.set_thinking_mode(Thinking_Output_Type::NO_THINKING);
                 log("Disabling thinking output for CECP");
             }
             else
             {
-                board.set_thinking_mode(CECP);
+                board.set_thinking_mode(Thinking_Output_Type::CECP);
                 log("turning on thinking output for CECP");
             }
         }
         else if(command == "nopost")
         {
-            board.set_thinking_mode(NO_THINKING);
+            board.set_thinking_mode(Thinking_Output_Type::NO_THINKING);
             log("turning off thinking output for CECP");
         }
         else if(command == "easy")

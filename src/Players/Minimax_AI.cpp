@@ -81,11 +81,11 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
                                    beta_start,
                                    ! principal_variation.empty());
 
-    if(board.thinking_mode() == CECP)
+    if(board.thinking_mode() == Thinking_Output_Type::CECP)
     {
         output_thinking_cecp(result, clock, board.whose_turn());
     }
-    else if(board.thinking_mode() == UCI)
+    else if(board.thinking_mode() == Thinking_Output_Type::UCI)
     {
         output_thinking_uci(result, clock, board.whose_turn());
     }
@@ -240,12 +240,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 }
                 else if(time_since_last_output(clock) > 1.0)
                 {
-                    if(board.thinking_mode() == CECP)
+                    if(board.thinking_mode() == Thinking_Output_Type::CECP)
                     {
                         output_thinking_cecp(alpha, clock,
                                              depth % 2 == 1 ? perspective : opposite(perspective));
                     }
-                    else if(board.thinking_mode() == UCI)
+                    else if(board.thinking_mode() == Thinking_Output_Type::UCI)
                     {
                         output_thinking_uci(alpha, clock,
                                             depth % 2 == 1 ? perspective : opposite(perspective));

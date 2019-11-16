@@ -197,10 +197,10 @@ namespace
 
         auto possible_promotions = {QUEEN, KNIGHT, ROOK, BISHOP};
 
-        for(auto dir : {RIGHT, LEFT})
+        for(auto dir : {Direction::RIGHT, Direction::LEFT})
         {
-            auto first_file = (dir == RIGHT ? 'a' : 'b');
-            auto last_file = (dir == RIGHT ? 'g' : 'h');
+            auto first_file = (dir == Direction::RIGHT ? 'a' : 'b');
+            auto last_file = (dir == Direction::RIGHT ? 'g' : 'h');
             for(char file = first_file; file <= last_file; ++file)
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
@@ -291,8 +291,8 @@ namespace
         }
 
         int base_rank = (color == WHITE ? 1 : 8);
-        add_legal_move<Castle>(out, color, KING, true, base_rank, LEFT);
-        add_legal_move<Castle>(out, color, KING, true, base_rank, RIGHT);
+        add_legal_move<Castle>(out, color, KING, true, base_rank, Direction::LEFT);
+        add_legal_move<Castle>(out, color, KING, true, base_rank, Direction::RIGHT);
     }
 
     void add_color(indexed_art_array& out, Color color, Piece_Type type) noexcept

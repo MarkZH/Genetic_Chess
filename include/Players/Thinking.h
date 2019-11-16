@@ -4,6 +4,6 @@
 //! \file
 
 //! Indicates the expected format of thinking output for AIs interfacing with an external GUI.
-enum Thinking_Output_Type { NO_THINKING, CECP, UCI };
+enum class Thinking_Output_Type { NO_THINKING, CECP, UCI };
 
 #endif // THINKING_H

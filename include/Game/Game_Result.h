@@ -5,7 +5,7 @@
 
 #include "Color.h"
 
-enum Game_Result_Type
+enum class Game_Result_Type
 {
     ONGOING,
     CHECKMATE,

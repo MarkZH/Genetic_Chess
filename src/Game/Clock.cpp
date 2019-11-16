@@ -40,7 +40,7 @@ Game_Result Clock::punch() noexcept
     if(local_clock_stoppage && timers[whose_turn] < 0s)
     {
         stop();
-        return Game_Result(opposite(whose_turn), TIME_FORFEIT);
+        return Game_Result(opposite(whose_turn), Game_Result_Type::TIME_FORFEIT);
     }
 
     if(++moves_to_reset_clocks[whose_turn] == move_count_reset)
