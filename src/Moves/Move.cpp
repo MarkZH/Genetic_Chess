@@ -118,10 +118,8 @@ std::string Move::game_record_move_item(const Board& board) const noexcept
             if(other_square.file() != start().file() && ! record_file)
             {
                 record_file = true;
-                continue;
             }
-
-            if(other_square.rank() != start().rank())
+            else if(other_square.rank() != start().rank())
             {
                 record_rank = true;
             }

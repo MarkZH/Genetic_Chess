@@ -160,12 +160,9 @@ Square_Difference operator-(Square a, Square b) noexcept
 bool straight_line_move(Square start, Square end) noexcept
 {
     auto move = end - start;
-    if(move.file_change == 0 || move.rank_change == 0)
-    {
-        return true;
-    }
-
-    return std::abs(move.file_change) == std::abs(move.rank_change);
+    return move.file_change == 0 ||
+           move.rank_change == 0 ||
+           std::abs(move.file_change) == std::abs(move.rank_change);
 }
 
 bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2) noexcept
