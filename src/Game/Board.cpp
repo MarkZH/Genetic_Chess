@@ -279,7 +279,6 @@ Board::Board(const std::string& fen) : starting_fen(String::remove_extra_whitesp
         fen_error("It is impossible for more than one knight to check king.");
     }
 
-    checking_square = king_is_in_check() ? find_checking_square() : Square{};
     recreate_move_caches();
 
     // In case a listed en passant target is not actually a legal move.
@@ -499,7 +498,6 @@ void Board::update_board(const Move& move) noexcept
     turn_color = opposite(turn_color);
     update_whose_turn_hash();
 
-    checking_square = king_is_in_check() ? find_checking_square() : Square{};
     recreate_move_caches();
 
     add_board_position_to_repeat_record();
@@ -1193,6 +1191,7 @@ Square Board::find_king(Color color) const noexcept
 void Board::recreate_move_caches() noexcept
 {
     last_pin_check_square = Square{};
+    checking_square = king_is_in_check() ? find_checking_square() : Square{};
     prior_moves_count = legal_moves_cache.size();
     legal_moves_cache.clear();
     for(auto square : Square::all_squares())
