@@ -18,9 +18,7 @@ std::string Mutation_Rate_Gene::name() const noexcept
 
 int Mutation_Rate_Gene::mutation_count() const noexcept
 {
-    // THe larger the fractional component of the mutated_components_per_mutation,
-    // the greater the probability of return an extra mutation count.
-    return int(mutated_components_per_mutation + Random::random_real(0.0, 1.0));
+    return mutated_components_per_mutation;
 }
 
 void Mutation_Rate_Gene::gene_specific_mutation() noexcept
