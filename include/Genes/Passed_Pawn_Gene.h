@@ -19,7 +19,6 @@ class Passed_Pawn_Gene : public Gene
         std::string name() const noexcept override;
 
     private:
-        //! Counts the number of passed pawns. A passed pawn is one with no opposing pawns on the same or adjacent files ahead of it.
         double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept override;
 };
 
