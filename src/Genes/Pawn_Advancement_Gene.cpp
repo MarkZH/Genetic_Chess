@@ -2,21 +2,11 @@
 
 #include <string>
 #include <memory>
-#include <cmath>
-#include <map>
-#include <array>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Piece.h"
 #include "Game/Color.h"
-
-#include "Utility/Random.h"
-
-Pawn_Advancement_Gene::Pawn_Advancement_Gene() noexcept
-{
-    recompute_scores_cache();
-}
 
 double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
 {
@@ -30,18 +20,17 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective,
     double score = 0.0;
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        size_t steps = 0;
         for(int rank = first_rank; rank <= last_rank; rank += rank_step)
         {
-            ++steps;
             if(board.piece_on_square({file, rank}) == own_pawn)
             {
-                score += score_cache[steps];
+                score += (rank - first_rank + 1)*rank_step;
             }
         }
     }
 
-    return score;
+    constexpr double max_score = 8*5;
+    return score/max_score;
 }
 
 std::unique_ptr<Gene> Pawn_Advancement_Gene::duplicate() const noexcept
@@ -52,32 +41,4 @@ std::unique_ptr<Gene> Pawn_Advancement_Gene::duplicate() const noexcept
 std::string Pawn_Advancement_Gene::name() const noexcept
 {
     return "Pawn Advancement Gene";
-}
-
-std::map<std::string, double> Pawn_Advancement_Gene::list_properties() const noexcept
-{
-    auto properties = Gene::list_properties();
-    properties["Non-linearity"] = non_linearity;
-    return properties;
-}
-
-void Pawn_Advancement_Gene::load_properties(const std::map<std::string, double>& properties)
-{
-    Gene::load_properties(properties);
-    non_linearity = properties.at("Non-linearity");
-    recompute_scores_cache();
-}
-
-void Pawn_Advancement_Gene::gene_specific_mutation() noexcept
-{
-    non_linearity += Random::random_laplace(0.01);
-    recompute_scores_cache();
-}
-
-void Pawn_Advancement_Gene::recompute_scores_cache() noexcept
-{
-    for(size_t i = 0; i < score_cache.size(); ++i)
-    {
-        score_cache[i] = std::pow(i/5.0, 1.0 + non_linearity)/8;
-    }
 }

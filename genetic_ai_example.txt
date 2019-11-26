@@ -22,7 +22,6 @@ Name: Freedom to Move Gene
 Priority: 224.753
 
 Name: Pawn Advancement Gene
-Non-linearity: 0.108994
 Priority: 1133.36
 
 Name: Passed Pawn Gene

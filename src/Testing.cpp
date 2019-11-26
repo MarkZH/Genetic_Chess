@@ -429,7 +429,7 @@ bool run_tests()
     auto pawn_advancement_gene = Pawn_Advancement_Gene();
     pawn_advancement_gene.read_from(test_genes_file_name);
     auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
-    auto pawn_advancement_score = (std::pow(1, 1.2) + std::pow(2, 1.2) + std::pow(3, 1.2) + std::pow(4, 1.2) + std::pow(5, 1.2))/(8*std::pow(5, 1.2));
+    auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*5);
     pawn_advancement_gene.test(tests_passed, pawn_advancement_board, WHITE, pawn_advancement_score);
 
     auto passed_pawn_gene = Passed_Pawn_Gene();
