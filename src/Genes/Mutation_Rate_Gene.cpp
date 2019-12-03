@@ -18,7 +18,7 @@ std::string Mutation_Rate_Gene::name() const noexcept
 
 int Mutation_Rate_Gene::mutation_count() const noexcept
 {
-    return mutated_components_per_mutation;
+    return int(mutated_components_per_mutation);
 }
 
 void Mutation_Rate_Gene::gene_specific_mutation() noexcept
