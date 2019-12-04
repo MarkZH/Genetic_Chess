@@ -12,9 +12,6 @@
 
 
 Move::Move(Square start, Square end) noexcept :
-               able_to_capture(true),
-               is_en_passant_move(false),
-               is_castling_move(false),
                origin(start),
                destination(end)
 {
@@ -273,4 +270,24 @@ Square_Difference Move::attack_direction_from_index(size_t index) noexcept
             return {(index & 2) ? 1 : -1, (index & 1) ? 1 : -1};
         }
     }
+}
+
+void Move::disable_capturing() noexcept
+{
+    able_to_capture = false;
+}
+
+void Move::enable_capturing() noexcept
+{
+    able_to_capture = true;
+}
+
+void Move::mark_as_en_passant() noexcept
+{
+    is_en_passant_move = true;
+}
+
+void Move::mark_as_castling() noexcept
+{
+    is_castling_move = true;
 }

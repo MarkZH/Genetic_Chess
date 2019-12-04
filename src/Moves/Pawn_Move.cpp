@@ -10,7 +10,7 @@ Pawn_Move::Pawn_Move(Color color_in, Square start_in) noexcept :
     Move(start_in,
          {start_in.file(), start_in.rank() + (color_in == WHITE ? 1 : -1)})
 {
-    able_to_capture = false;
+    disable_capturing();
 }
 
 std::string Pawn_Move::game_record_move_item(const Board&) const noexcept

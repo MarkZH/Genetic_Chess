@@ -119,12 +119,17 @@ class Move
         static Square_Difference attack_direction_from_index(size_t index) noexcept;
 
     protected:
-        //! Is the move allowed to capture a piece on the end square?
-        bool able_to_capture;
-        //! Is this move en passant?
-        bool is_en_passant_move;
-        //! Is the move a castling move?
-        bool is_castling_move;
+        //! Remove the ability to capture from the Move.
+        void disable_capturing() noexcept;
+
+        //! Restore the ability to capture to the Move.
+        void enable_capturing() noexcept;
+
+        //! Indicate that the Move being created is an en passant capture.
+        void mark_as_en_passant() noexcept;
+
+        //! Indicate that the Move being created is a castling move.
+        void mark_as_castling() noexcept;
 
         //! Adjust the file of the square a move ends on.
         //
@@ -151,6 +156,10 @@ class Move
     private:
         Square origin;
         Square destination;
+
+        bool able_to_capture = true;
+        bool is_en_passant_move = false;
+        bool is_castling_move = false;
 
         //! Returns whether a move is legal according to rules not covered by Move::is_legal().
         //

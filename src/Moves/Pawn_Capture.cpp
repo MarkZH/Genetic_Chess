@@ -14,7 +14,7 @@ Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, Square start_in) :
 {
     adjust_end_file(dir == Direction::RIGHT ? 1 : -1);
     assert(end().inside_board());
-    able_to_capture = true;
+    enable_capturing();
 }
 
 bool Pawn_Capture::move_specific_legal(const Board& board) const noexcept

@@ -17,7 +17,7 @@ Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
 {
     adjust_end_file(dir == Direction::RIGHT ? 1 : -1);
     assert(end().inside_board());
-    able_to_capture = true;
+    enable_capturing();
 }
 
 bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const noexcept

@@ -9,7 +9,7 @@
 En_Passant::En_Passant(Color color, Direction dir, char file_start) noexcept :
     Pawn_Capture(color, dir, Square{file_start, color == WHITE ? 5 : 4})
 {
-    is_en_passant_move = true;
+    mark_as_en_passant();
 }
 
 bool En_Passant::move_specific_legal(const Board& board) const noexcept
