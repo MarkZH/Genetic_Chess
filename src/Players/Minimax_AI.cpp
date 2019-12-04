@@ -94,15 +94,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     result.time_used = clock_start_time - clock.running_time_left();
 
     commentary.push_back(result);
-
-    if(result.depth() > 2)
-    {
-        principal_variation = result.variation;
-    }
-    else
-    {
-        principal_variation.clear();
-    }
+    principal_variation = result.variation;
 
     if(nodes_evaluated > 0)
     {
