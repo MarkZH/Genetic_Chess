@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <utility>
+#include <limits>
 
 #include "Game/Color.h"
 
@@ -29,9 +30,9 @@ struct Game_Tree_Node_Result
     double time_used = 0.0;
 
     //! The score assigned to a checkmate board position for the winning Minimax_AI.
-    static const double win_score;
+    static constexpr auto win_score = std::numeric_limits<double>::infinity();
     //! The score assigned to a checkmate board position for the losing Minimax_AI.
-    static const double lose_score;
+    static constexpr auto lose_score = -win_score;
 
     //! Gives the score of the board position from the indicated side.
     //

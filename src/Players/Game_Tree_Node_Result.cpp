@@ -2,13 +2,9 @@
 
 #include <cmath>
 #include <utility>
-#include <limits>
 
 #include "Game/Color.h"
 #include "Utility/Math.h"
-
-const double Game_Tree_Node_Result::win_score = std::numeric_limits<double>::infinity();
-const double Game_Tree_Node_Result::lose_score = -win_score;
 
 double Game_Tree_Node_Result::corrected_score(Color query) const noexcept
 {
