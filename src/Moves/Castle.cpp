@@ -13,7 +13,6 @@ Castle::Castle(int base_rank, Direction direction) noexcept :
               {(direction == Direction::RIGHT ? 'f' : 'd'), base_rank})
 {
     disable_capturing();
-    mark_as_castling();
 }
 
 bool Castle::move_specific_legal(const Board& board) const noexcept

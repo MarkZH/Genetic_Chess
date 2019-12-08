@@ -90,11 +90,6 @@ class Move
         //! \returns Whether this is an instance of the En_Passant class.
         bool is_en_passant() const noexcept;
 
-        //! Indicates whether this move is a castling move, a fact which needs special handling elsewhere.
-        //
-        //! \returns Whether this is an instance of the Castle class.
-        bool is_castling() const noexcept;
-
         //! Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.
         //
         //! \returns the PGN symbol of the promotion piece, if any.
@@ -128,9 +123,6 @@ class Move
         //! Indicate that the Move being created is an en passant capture.
         void mark_as_en_passant() noexcept;
 
-        //! Indicate that the Move being created is a castling move.
-        void mark_as_castling() noexcept;
-
         //! Adjust the file of the square a move ends on.
         //
         //! This is used for Pawn_Move derivitives since that constructor
@@ -159,7 +151,6 @@ class Move
 
         bool able_to_capture = true;
         bool is_en_passant_move = false;
-        bool is_castling_move = false;
 
         //! Returns whether a move is legal according to rules not covered by Move::is_legal().
         //
