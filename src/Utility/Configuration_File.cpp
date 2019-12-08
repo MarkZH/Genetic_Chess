@@ -1,4 +1,4 @@
-#include "Utility/Configuration_File.h"
+#include "Utility/Configuration.h"
 
 #include <iostream>
 #include <fstream>

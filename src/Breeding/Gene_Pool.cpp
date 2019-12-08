@@ -27,7 +27,7 @@ using namespace std::chrono_literals;
 #include "Game/Game_Result.h"
 
 #include "Utility/String.h"
-#include "Utility/Configuration_File.h"
+#include "Utility/Configuration.h"
 #include "Utility/Random.h"
 
 #include "Exceptions/Bad_Still_Alive_Line.h"
