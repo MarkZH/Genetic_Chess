@@ -96,7 +96,7 @@ class Board
         //! This may slightly differ from the output of other programs
         //! in that the en passant target is only listed if there is a
         //! legal en passant move to be made.
-        std::string fen_status() const noexcept; // current state of board in FEN
+        std::string fen() const noexcept; // current state of board in FEN
 
         //! Get the history of moves.
         //
