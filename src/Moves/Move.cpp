@@ -33,8 +33,7 @@ bool Move::is_legal(const Board& board) const noexcept
     assert(moving_piece.color() == board.whose_turn());
     assert(moving_piece.can_move(this));
 
-    auto attacked_piece = board.piece_on_square(end());
-    if(attacked_piece)
+    if(auto attacked_piece = board.piece_on_square(end()))
     {
         if( ! can_capture() || board.whose_turn() == attacked_piece.color())
         {
