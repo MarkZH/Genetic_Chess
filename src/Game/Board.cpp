@@ -78,9 +78,9 @@ Board::Board() noexcept : Board(standard_starting_fen)
 {
 }
 
-Board::Board(const std::string& fen) : starting_fen(String::remove_extra_whitespace(fen))
+Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_whitespace(input_fen))
 {
-    auto fen_parse = String::split(fen);
+    auto fen_parse = String::split(input_fen);
     if(fen_parse.size() != 6)
     {
         fen_error("Wrong number of fields (should be 6)");
@@ -261,9 +261,9 @@ Board::Board(const std::string& fen) : starting_fen(String::remove_extra_whitesp
 
     move_count_start_offset = String::string_to_size_t(fen_parse.at(5));
 
-    if(fen_status() != starting_fen)
+    if(fen() != starting_fen)
     {
-        fen_error("Result: " + fen_status());
+        fen_error("Result: " + fen());
     }
 
     const auto& king_square = find_king(whose_turn());
@@ -323,7 +323,7 @@ bool Board::is_in_legal_moves_list(const Move& move) const noexcept
     return std::find(legal_moves().begin(), legal_moves().end(), &move) != legal_moves().end();
 }
 
-std::string Board::fen_status() const noexcept
+std::string Board::fen() const noexcept
 {
     std::string s;
 
@@ -514,11 +514,11 @@ const Move& Board::create_move(const std::string& move) const
                                       {
                                           auto test_board = *this;
                                           test_board.submit_move(*legal_move);
-                                          return test_board.fen_status() == new_fen;
+                                          return test_board.fen() == new_fen;
                                       });
         if(move_iter == legal_moves().end())
         {
-            throw Illegal_Move("No legal move from \"" + fen_status() + "\" to \"" + new_fen + "\"");
+            throw Illegal_Move("No legal move from \"" + fen() + "\" to \"" + new_fen + "\"");
         }
         else
         {

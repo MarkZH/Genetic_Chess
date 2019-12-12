@@ -96,7 +96,7 @@ class Board
         //! This may slightly differ from the output of other programs
         //! in that the en passant target is only listed if there is a
         //! legal en passant move to be made.
-        std::string fen_status() const noexcept; // current state of board in FEN
+        std::string fen() const noexcept; // current state of board in FEN
 
         //! Get the history of moves.
         //
@@ -165,13 +165,6 @@ class Board
         //! \returns Whether there is an attack on the square that is blocked by another piece.
         bool blocked_attack(Square square, Color attacking_color) const noexcept;
 
-        //! Determine whether the indicated square can be a target of an en passant move.
-        //
-        //! The is called by En_Passant::move_specific_legal().
-        //! \param square The queried square.
-        //! \returns Whether the square was passed by a pawn double move.
-        bool is_en_passant_targetable(Square square) const noexcept;
-
         //! Indicates whether the queried square has a piece on it that never moved.
         //
         //! \param square The queried squaer.
@@ -204,16 +197,6 @@ class Board
         //!          existant) white piece on the given square to the white king?
         bool piece_is_pinned(Square square) const noexcept;
 
-        //! Check whether all of the squares between two squares are empty.
-        //
-        //! This method assumes the squares are along the same rank, file, or diagonal.
-        //! \param start The first square.
-        //! \param end   The second square.
-        //! \returns Whether all of the intervening squares between the two input squares are unoccupied by pieces.
-        //! \throws assertion_failure In DEBUG builds, squares not along the same rank, file, or diagonal
-        //!         will trigger an assertion failure. In RELEASE builds, the result is undefined.
-        bool all_empty_between(Square start, Square end) const noexcept;
-
         //! Checks whether there are enough pieces on the board for any possible checkmate.
         //
         //! The following piece sets on the board make checkmate possible:
@@ -239,17 +222,6 @@ class Board
         //! \returns If the move captures an opponent's piece or promotes a pawn.
         //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
         bool move_changes_material(const Move& move) const noexcept;
-
-        //! The number of moves since the last capture or pawn move.
-        //
-        //! \returns How many moves have been made since the last capturing or pawn move.
-        size_t moves_since_pawn_or_capture() const noexcept;
-
-        //! Get a list of all moves that attack a given square.
-        //
-        //! \param square The square being attacked.
-        //! \param attacking_color The color of pieces doing the attacking.
-        const std::bitset<16>& moves_attacking_square(Square square, Color attacking_color) const noexcept;
 
         //! Returns the Zobrist hash of the current state of the board.
         //
@@ -311,6 +283,7 @@ class Board
         void remove_attacks_from(Square square, Piece old_piece) noexcept;
         void modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept;
         void update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept;
+        const std::bitset<16>& moves_attacking_square(Square square, Color attacking_color) const noexcept;
         const std::bitset<16>& checking_moves() const noexcept;
         Square find_checking_square() const noexcept;
 
@@ -330,8 +303,10 @@ class Board
         bool no_legal_moves() const noexcept;
         void make_en_passant_targetable(Square square) noexcept;
         void clear_en_passant_target() noexcept;
+        bool is_en_passant_targetable(Square square) const noexcept;
         bool is_in_legal_moves_list(const Move& move) const noexcept;
         void place_piece(Piece piece, Square square) noexcept;
+        bool all_empty_between(Square start, Square end) const noexcept;
         void set_unmoved(Square square) noexcept;
         void update_board(const Move& move) noexcept;
         Game_Result move_result() const noexcept;
@@ -341,6 +316,7 @@ class Board
         void add_to_repeat_count(uint64_t new_hash) noexcept;
         ptrdiff_t current_board_position_repeat_count() const noexcept;
         void clear_repeat_count() noexcept;
+        size_t moves_since_pawn_or_capture() const noexcept;
 
         // Zobrist hashing (implementation of threefold/fifty-move tracking)
         uint64_t current_board_hash = 0;

@@ -675,7 +675,7 @@ void run_speed_tests()
         performance_board.submit_move(move);
     }
 
-    if(performance_board.fen_status() != "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 4 18")
+    if(performance_board.fen() != "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 4 18")
     {
         throw std::logic_error("Different FEN from previous tests.");
     }
@@ -982,7 +982,7 @@ namespace
             auto board_fen = String::remove_extra_whitespace(specification.at(1));
             if(board_fen == "start")
             {
-                board_fen = Board{}.fen_status();
+                board_fen = Board{}.fen();
             }
 
             if(test_type == "invalid board")
@@ -1061,7 +1061,7 @@ namespace
                 test_result(test_passed,
                             gr1.size() == gr2.size() &&
                             std::mismatch(gr1.begin(), gr1.end(), gr2.begin()) == std::make_pair(gr1.end(), gr2.end()),
-                            "Expected: " + board.fen_status() + "\nGot:      " + actual_result_board.fen_status());
+                            "Expected: " + board.fen() + "\nGot:      " + actual_result_board.fen());
             }
             else
             {

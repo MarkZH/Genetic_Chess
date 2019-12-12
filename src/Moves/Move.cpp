@@ -164,11 +164,6 @@ bool Move::is_en_passant() const noexcept
     return is_en_passant_move;
 }
 
-bool Move::is_castling() const noexcept
-{
-    return is_castling_move;
-}
-
 char Move::promotion_piece_symbol() const noexcept
 {
     return '\0';
@@ -269,9 +264,4 @@ void Move::enable_capturing() noexcept
 void Move::mark_as_en_passant() noexcept
 {
     is_en_passant_move = true;
-}
-
-void Move::mark_as_castling() noexcept
-{
-    is_castling_move = true;
 }

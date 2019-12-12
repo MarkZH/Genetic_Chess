@@ -401,7 +401,7 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
         for(int move = 0; move < 40; ++move)
         {
             auto next_move = Random::random_element(board.legal_moves());
-            if(board.submit_move(*next_move).game_has_ended() || board.fen_status().find_first_of("pP") == std::string::npos)
+            if(board.submit_move(*next_move).game_has_ended() || board.fen().find_first_of("pP") == std::string::npos)
             {
                 board_is_good = false;
                 break;

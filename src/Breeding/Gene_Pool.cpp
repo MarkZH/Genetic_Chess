@@ -27,7 +27,7 @@ using namespace std::chrono_literals;
 #include "Game/Game_Result.h"
 
 #include "Utility/String.h"
-#include "Utility/Configuration_File.h"
+#include "Utility/Configuration.h"
 #include "Utility/Random.h"
 
 #include "Exceptions/Bad_Still_Alive_Line.h"
@@ -62,7 +62,7 @@ void gene_pool(const std::string& config_file)
     // Signal to pause gene pool
     signal(PAUSE_SIGNAL, pause_gene_pool);
 
-    auto config = Configuration_File(config_file);
+    auto config = Configuration(config_file);
 
     // Environment variables
     const auto maximum_simultaneous_games = size_t(config.as_number("maximum simultaneous games"));

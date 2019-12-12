@@ -1,11 +1,11 @@
-#ifndef CONFIGURATION_FILE_H
-#define CONFIGURATION_FILE_H
+#ifndef CONFIGURATION_H
+#define CONFIGURATION_H
 
 #include <string>
 #include <map>
 
 //! A class that reads a text file to allow easy querying of configuration data.
-class Configuration_File
+class Configuration
 {
     public:
         //! Read in a text file and organize the configuration data.
@@ -16,7 +16,7 @@ class Configuration_File
         //! the form \<paramter\> = \<value\>. Paramter names are case-insensitive.
         //!
         //! Comments can be added to the file by prepending them with '#'.
-        explicit Configuration_File(const std::string& file_name);
+        explicit Configuration(const std::string& file_name);
 
         //! Return string data as found in the file.
         //
@@ -56,4 +56,4 @@ class Configuration_File
         static std::string standardize_text(const std::string& input) noexcept;
 };
 
-#endif // CONFIGURATION_FILE_H
+#endif // CONFIGURATION_H

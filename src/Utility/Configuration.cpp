@@ -1,4 +1,4 @@
-#include "Utility/Configuration_File.h"
+#include "Utility/Configuration.h"
 
 #include <iostream>
 #include <fstream>
@@ -10,7 +10,7 @@
 
 #include "Utility/String.h"
 
-Configuration_File::Configuration_File(const std::string& file_name)
+Configuration::Configuration(const std::string& file_name)
 {
     std::ifstream ifs(file_name);
     if( ! ifs)
@@ -48,7 +48,7 @@ Configuration_File::Configuration_File(const std::string& file_name)
     }
 }
 
-std::string Configuration_File::as_text(const std::string& parameter) const
+std::string Configuration::as_text(const std::string& parameter) const
 {
     try
     {
@@ -65,7 +65,7 @@ std::string Configuration_File::as_text(const std::string& parameter) const
     }
 }
 
-double Configuration_File::as_number(const std::string& parameter) const
+double Configuration::as_number(const std::string& parameter) const
 {
     try
     {
@@ -77,7 +77,7 @@ double Configuration_File::as_number(const std::string& parameter) const
     }
 }
 
-bool Configuration_File::as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const
+bool Configuration::as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const
 {
     auto response = standardize_text(as_text(parameter));
     if(response == standardize_text(affirmative))
@@ -95,12 +95,12 @@ bool Configuration_File::as_boolean(const std::string& parameter, const std::str
     }
 }
 
-std::string Configuration_File::standardize_text(const std::string& input) noexcept
+std::string Configuration::standardize_text(const std::string& input) noexcept
 {
     return String::lowercase(String::remove_extra_whitespace(input));
 }
 
-void Configuration_File::print_unused_parameters() const noexcept
+void Configuration::print_unused_parameters() const noexcept
 {
     for(const auto& param_value : parameters)
     {
@@ -111,7 +111,7 @@ void Configuration_File::print_unused_parameters() const noexcept
     }
 }
 
-bool Configuration_File::any_unused_parameters() const noexcept
+bool Configuration::any_unused_parameters() const noexcept
 {
     return std::any_of(used.begin(), used.end(), [](const auto& key_value) { return ! key_value.second; });
 }
