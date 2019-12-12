@@ -269,7 +269,7 @@
     <ClCompile Include="src\players\Random_AI.cpp" />
     <ClCompile Include="src\Players\UCI_Mediator.cpp" />
     <ClCompile Include="src\Testing.cpp" />
-    <ClCompile Include="src\Utility\Configuration_File.cpp" />
+    <ClCompile Include="src\Utility\Configuration.cpp" />
     <ClCompile Include="src\Utility\Math.cpp" />
     <ClCompile Include="src\Utility\Random.cpp" />
     <ClCompile Include="src\Utility\Scoped_Stopwatch.cpp" />
@@ -325,7 +325,7 @@
     <ClInclude Include="include\players\Thinking.h" />
     <ClInclude Include="include\Players\UCI_Mediator.h" />
     <ClInclude Include="include\Testing.h" />
-    <ClInclude Include="include\Utility\Configuration_File.h" />
+    <ClInclude Include="include\Utility\Configuration.h" />
     <ClInclude Include="include\Utility\Math.h" />
     <ClInclude Include="include\Utility\Random.h" />
     <ClInclude Include="include\Utility\Scoped_Stopwatch.h" />
