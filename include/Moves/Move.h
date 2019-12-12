@@ -139,6 +139,12 @@ class Move
         //! \param adjust The size of the adjustment.
         void adjust_end_rank(int adjust) noexcept;
 
+        //! A textual representation of a move in PGN format without consequences ('+' for check, etc.).
+        //
+        //! \param board The board on which the move is about to be made.
+        //! \returns The movement portion of a PGN move entry.
+        virtual std::string game_record_move_item(const Board& board) const noexcept;
+
     private:
         Square origin;
         Square destination;
@@ -146,8 +152,13 @@ class Move
         bool able_to_capture = true;
         bool is_en_passant_move = false;
 
+        //! Returns whether a move is legal according to rules not covered by Move::is_legal().
+        //
+        //! This method is overridden by subclassed moves with
+        //! special rules. The standard Move just returns true;
+        //! \param board The board on which legality is being checked.
         virtual bool move_specific_legal(const Board& board) const noexcept;
-        virtual std::string game_record_move_item(const Board& board) const noexcept;
+
         std::string game_record_ending_item(Board board) const noexcept;
 };
 
