@@ -90,27 +90,12 @@ std::string Move::game_record_move_item(const Board& board) const noexcept
     auto original_piece = board.piece_on_square(start());
     std::string move_record = original_piece.pgn_symbol();
 
-    bool record_file = false;
-    bool record_rank = false;
+    auto record_file = false;
+    auto record_rank = false;
     for(auto other_square : Square::all_squares())
     {
-        if( ! board.piece_on_square(other_square))
-        {
-            continue;
-        }
-
-        if(other_square == start() || other_square == end())
-        {
-            continue;
-        }
-
         auto new_piece = board.piece_on_square(other_square);
-        if(original_piece != new_piece)
-        {
-            continue;
-        }
-
-        if(board.is_legal(other_square, end()))
+        if(original_piece == new_piece && board.is_legal(other_square, end()))
         {
             if(other_square.file() != start().file() && ! record_file)
             {
@@ -139,7 +124,6 @@ std::string Move::game_record_move_item(const Board& board) const noexcept
     }
 
     move_record += end().string();
-
     return move_record;
 }
 
