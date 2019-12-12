@@ -152,13 +152,7 @@ class Move
         bool able_to_capture = true;
         bool is_en_passant_move = false;
 
-        //! Returns whether a move is legal according to rules not covered by Move::is_legal().
-        //
-        //! This method is overridden by subclassed moves with
-        //! special rules. The standard Move just returns true;
-        //! \param board The board on which legality is being checked.
         virtual bool move_specific_legal(const Board& board) const noexcept;
-
         std::string game_record_ending_item(Board board) const noexcept;
 };
 
