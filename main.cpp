@@ -40,12 +40,6 @@ namespace
     //! \param verbose If true, print extra information before and after each move (draw the board state and list legal moves).
     bool confirm_game_record(const std::string& file_name, bool verbose);
 
-    //! An experimental feature that tries to correlate the number of legal moves with progress through the game.
-    //
-    //! \param game_record_file_name A file with a set of PGN game records.
-    //! \param results_file_name Where the results of the correlation will be written.
-    void game_progress_move_count(const std::string& game_record_file_name, const std::string& results_file_name);
-
     //! Find the last ID of a Genetic_AI in a gene pool file.
     //
     //! \param file_name The name of the file with Genetic_AI data.
@@ -131,15 +125,6 @@ int main(int argc, char *argv[])
             else if(option == "-random_test")
             {
                 print_randomness_sample();
-            }
-            else if(option == "-progress")
-            {
-                if(argc < 4)
-                {
-                    throw std::invalid_argument("Specify a file name for input and a file name for output.");
-                }
-
-                game_progress_move_count(argv[2], argv[3]);
             }
             else
             {
@@ -302,8 +287,6 @@ namespace
                 << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time.\n\n"
                 << "\t-confirm [filename]\n"
                 << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates.\n\n"
-                << "\t-progress [input pgn file name] [output file name]\n"
-                << "\t\tParse a file with PGN-style game records and record the number\n\t\tof legal moves as the game progresses.\n\n"
                 << "\t-test\n"
                 << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly.\n\n"
                 << "\t-speed\n"
@@ -673,55 +656,5 @@ namespace
         }
 
         return true;
-    }
-
-    void game_progress_move_count(const std::string& input_file_name, const std::string& output_file_name)
-    {
-        auto input = std::ifstream(input_file_name);
-        auto output = std::ofstream(output_file_name);
-
-        std::string line;
-        std::vector<std::string> game_moves;
-        auto game_count = 0;
-        while(std::getline(input, line) || ! game_moves.empty())
-        {
-            line = String::strip_block_comment(line, "[", "]");
-            line = String::strip_block_comment(line, "{", "}");
-            line = String::strip_block_comment(line, "(", ")");
-            line = String::strip_comments(line, ";");
-
-            // Blank lines only occur between games
-            if(line.empty())
-            {
-                if(game_moves.empty())
-                {
-                    continue;
-                }
-
-                std::cout << "\rGame count: " << ++game_count << std::flush;
-
-                // Output result
-                Board board;
-                auto move_index = 0;
-                for(const auto& move_record : game_moves)
-                {
-                    board.submit_move(move_record);
-                    output << ++move_index << '\t'
-                           << game_moves.size() << '\t'
-                           << board.legal_moves().size() << '\n';
-                }
-
-                game_moves.clear();
-                continue;
-            }
-
-            auto moves = String::split(line);
-            std::copy_if(moves.begin(), moves.end(), std::back_inserter(game_moves),
-                         [](const auto& move_record)
-                         {
-                             return ! std::isdigit(move_record.front());
-                         });
-        }
-        std::cout << std::endl;
     }
 }
