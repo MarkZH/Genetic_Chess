@@ -21,10 +21,10 @@ while True:
     count += 1
     print('Game #' + str(count))
 
+    generator_command = [generator, '-random', '-random', '-game_file', game_file]
     if board:
-        out = subprocess.run([generator, '-random', '-random', '-game_file', game_file, '-board', board])
-    else:
-        out = subprocess.run([generator, '-random', '-random', '-game_file', game_file])
+        generator_command.extend(['-board', board])
+    out = subprocess.run(generator_command)
 
     if not os.path.isfile(game_file):
         print('Game file not produced: ' + game_file)
