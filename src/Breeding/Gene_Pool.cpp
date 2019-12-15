@@ -65,9 +65,9 @@ void gene_pool(const std::string& config_file)
     auto config = Configuration(config_file);
 
     // Environment variables
-    const auto maximum_simultaneous_games = size_t(config.as_number("maximum simultaneous games"));
-    const auto gene_pool_population = size_t(config.as_number("gene pool population"));
-    const auto gene_pool_count = size_t(config.as_number("gene pool count"));
+    const auto maximum_simultaneous_games = size_t(config.as_positive_number("maximum simultaneous games"));
+    const auto gene_pool_population = size_t(config.as_positive_number("gene pool population"));
+    const auto gene_pool_count = size_t(config.as_positive_number("gene pool count"));
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
     const auto sexual_reproduction = config.as_boolean("reproduction type", "sexual", "cloning");
     const auto genome_file_name = config.as_text("gene pool file");

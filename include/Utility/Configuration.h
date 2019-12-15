@@ -33,6 +33,15 @@ class Configuration
         //!         if the data could not be converted to a numerical value.
         double as_number(const std::string& parameter) const;
 
+        //! Return numerical data from the configuration file if it is greater than zero.
+        //
+        //! \param parameter The configuration parameter sought.
+        //! \returns The data in the file converted to a floating point (double) number.
+        //! \throws std::runtime_error If the named parameter was not found in the file or
+        //!         if the data could not be converted to a numerical value or if the
+        //!         numerical value is not greater than zero.
+        double as_positive_number(const std::string& parameter) const;
+
         //! Return true/false data from the configuration file.
         //
         //! \param parameter The configuration parameter sought.
