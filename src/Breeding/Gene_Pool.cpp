@@ -395,10 +395,10 @@ void gene_pool(const std::string& config_file)
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_digits + 1) << ai.id();
-            std::cout << std::setw(7)    << wins[ai]
-                      << std::setw(8)   << consecutive_wins[ai]
-                      << std::setw(7)    << draws[ai]
-                      << std::setw(8)   << games_since_last_win[ai]
+            std::cout << std::setw(7) << wins[ai]
+                      << std::setw(8) << consecutive_wins[ai]
+                      << std::setw(7) << draws[ai]
+                      << std::setw(8) << games_since_last_win[ai]
                       << (original_pool[ai] != pool_index ? " T" : "") << "\n";
         }
         std::cout << std::endl;
