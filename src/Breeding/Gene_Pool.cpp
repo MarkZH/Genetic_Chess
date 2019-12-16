@@ -73,7 +73,7 @@ void gene_pool(const std::string& config_file)
     const auto sexual_reproduction = config.as_boolean("reproduction type", "sexual", "cloning");
     const auto genome_file_name = config.as_text("gene pool file");
 
-    const int scramble_mutations = 10; // initial number of mutations when creating a new Genetic AI
+    const int scramble_mutations = 1; // initial number of mutations when creating a new Genetic AI
     size_t rounds_since_last_swap = 0; // Count of complete gene pool rounds where all pools have played a set of games
 
     // Oscillating game time
