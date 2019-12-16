@@ -15,6 +15,7 @@ using namespace std::chrono_literals;
 #include <array>
 #include <cstdio>
 #include <filesystem>
+#include <utility>
 
 #ifndef _WIN32
 #include <mutex>
@@ -99,11 +100,8 @@ void gene_pool(const std::string& config_file)
     std::array<size_t, 2> color_wins{}; // indexed with [Color]
     size_t draw_count = 0;
 
-    std::map<size_t, int> most_wins;
-    std::map<size_t, Genetic_AI> most_wins_player;
-
-    std::map<size_t, int> most_games_survived;
-    std::map<size_t, Genetic_AI> most_games_survived_player;
+    std::map<size_t, std::pair<Genetic_AI, int>> most_wins;
+    std::map<size_t, std::pair<Genetic_AI, int>> most_games_survived;
 
     // Individual Genetic AI stats
     std::map<Genetic_AI, int> wins;
@@ -127,6 +125,9 @@ void gene_pool(const std::string& config_file)
         {
             pools[i].pop_back();
         }
+
+        most_wins.insert_or_assign(i, std::make_pair(pools[i].front(), 0));
+        most_games_survived.insert_or_assign(i, std::make_pair(pools[i].front(), 0));
 
         for(const auto& ai : pools[i])
         {
@@ -323,10 +324,9 @@ void gene_pool(const std::string& config_file)
                 wins[winning_player]++;
                 games_since_last_win[winning_player] = 0;
                 consecutive_wins[winning_player]++;
-                if(wins[winning_player] >= most_wins[pool_index])
+                if(wins[winning_player] >= most_wins.at(pool_index).second)
                 {
-                    most_wins[pool_index] = wins[winning_player];
-                    most_wins_player.insert_or_assign(pool_index, winning_player);
+                    most_wins.insert_or_assign(pool_index, std::make_pair(winning_player, wins[winning_player]));
                 }
             }
             else
@@ -366,10 +366,9 @@ void gene_pool(const std::string& config_file)
         for(const auto& ai : pool)
         {
             auto games_survived = wins[ai] + draws[ai];
-            if(games_survived >= most_games_survived[pool_index])
+            if(games_survived >= most_games_survived.at(pool_index).second)
             {
-                most_games_survived[pool_index] = games_survived;
-                most_games_survived_player.insert_or_assign(pool_index, ai);
+                most_games_survived.insert_or_assign(pool_index, std::make_pair(ai, games_survived));
             }
         }
 
@@ -397,14 +396,14 @@ void gene_pool(const std::string& config_file)
 
         if(most_wins.count(pool_index) > 0)
         {
-            std::cout << "Most wins:     " << most_wins.at(pool_index)
-                      << " by ID " << most_wins_player.at(pool_index).id() << std::endl;
+            std::cout << "Most wins:     " << most_wins.at(pool_index).second
+                      << " by ID " << most_wins.at(pool_index).first.id() << std::endl;
         }
 
         if(most_games_survived.count(pool_index) > 0)
         {
-            std::cout << "Longest lived: " << most_games_survived.at(pool_index)
-                      << " by ID " << most_games_survived_player.at(pool_index).id() << std::endl;
+            std::cout << "Longest lived: " << most_games_survived.at(pool_index).second
+                      << " by ID " << most_games_survived.at(pool_index).first.id() << std::endl;
         }
 
         // Record best AI from all pools.
