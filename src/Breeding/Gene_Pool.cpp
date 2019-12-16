@@ -114,15 +114,7 @@ void gene_pool(const std::string& config_file)
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
-    while(pools.size() < gene_pool_count)
-    {
-        pools.push_back({});
-    }
-
-    while(pools.size() > gene_pool_count)
-    {
-        pools.pop_back();
-    }
+    pools.resize(gene_pool_count);
 
     for(size_t i = 0; i < pools.size(); ++i)
     {
