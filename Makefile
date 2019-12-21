@@ -5,6 +5,10 @@ LD = g++
 CFLAGS = -fno-rtti -Iinclude -lstdc++fs -pedantic -std=c++17 -Wall -Wcast-align -Werror -Wextra -Wfloat-equal -Wmain -Wshadow -Wundef -Wunreachable-code -Wzero-as-null-pointer-constant
 LDFLAGS = -pthread
 
+DOC_DIR = doc/doxygen/html
+DOC_INDEX = $(DOC_DIR)/index.html
+ALL_SOURCES = main.cpp src/Testing.cpp include/Testing.h src/Players/Game_Tree_Node_Result.cpp include/Players/Game_Tree_Node_Result.h src/Players/UCI_Mediator.cpp include/Players/UCI_Mediator.h src/Players/Outside_Communicator.cpp include/Players/Outside_Communicator.h src/Players/CECP_Mediator.cpp include/Players/CECP_Mediator.h src/Players/Minimax_AI.cpp include/Players/Minimax_AI.h src/Players/Player.cpp include/Players/Player.h src/Players/Random_AI.cpp include/Players/Random_AI.h src/Players/Genetic_AI.cpp include/Players/Genetic_AI.h src/Breeding/Gene_Pool.cpp include/Breeding/Gene_Pool.h src/Exceptions/Game_Ended.cpp include/Exceptions/Game_Ended.h src/Exceptions/Bad_Still_Alive_Line.cpp include/Exceptions/Bad_Still_Alive_Line.h src/Utility/Random.cpp include/Utility/Random.h src/Utility/Scoped_Stopwatch.cpp include/Utility/Scoped_Stopwatch.h src/Utility/Configuration.cpp include/Utility/Configuration.h src/Utility/Math.cpp include/Utility/Math.h src/Utility/String.cpp include/Utility/String.h src/Game/Game.cpp include/Game/Game.h src/Game/Piece.cpp include/Game/Piece.h src/Game/Square.cpp include/Game/Square.h src/Game/Board.cpp include/Game/Board.h src/Game/Game_Result.cpp include/Game/Game_Result.h src/Game/Color.cpp include/Game/Color.h src/Game/Clock.cpp include/Game/Clock.h src/Genes/Pawn_Advancement_Gene.cpp include/Genes/Pawn_Advancement_Gene.h src/Genes/King_Confinement_Gene.cpp include/Genes/King_Confinement_Gene.h src/Genes/Genome.cpp include/Genes/Genome.h src/Genes/Piece_Strength_Gene.cpp include/Genes/Piece_Strength_Gene.h src/Genes/Null_Gene.cpp include/Genes/Null_Gene.h src/Genes/Freedom_To_Move_Gene.cpp include/Genes/Freedom_To_Move_Gene.h src/Genes/Stacked_Pawns_Gene.cpp include/Genes/Stacked_Pawns_Gene.h src/Genes/Sphere_of_Influence_Gene.cpp include/Genes/Sphere_of_Influence_Gene.h src/Genes/Total_Force_Gene.cpp include/Genes/Total_Force_Gene.h src/Genes/Opponent_Pieces_Targeted_Gene.cpp include/Genes/Opponent_Pieces_Targeted_Gene.h src/Genes/King_Protection_Gene.cpp include/Genes/King_Protection_Gene.h src/Genes/Checkmate_Material_Gene.cpp include/Genes/Checkmate_Material_Gene.h src/Genes/Mutation_Rate_Gene.cpp include/Genes/Mutation_Rate_Gene.h src/Genes/Pawn_Islands_Gene.cpp include/Genes/Pawn_Islands_Gene.h src/Genes/Gene.cpp include/Genes/Gene.h src/Genes/Castling_Possible_Gene.cpp include/Genes/Castling_Possible_Gene.h src/Genes/Look_Ahead_Gene.cpp include/Genes/Look_Ahead_Gene.h src/Genes/Passed_Pawn_Gene.cpp include/Genes/Passed_Pawn_Gene.h src/Moves/Pawn_Capture.cpp include/Moves/Pawn_Capture.h src/Moves/Pawn_Promotion_by_Capture.cpp include/Moves/Pawn_Promotion_by_Capture.h src/Moves/Pawn_Promotion.cpp include/Moves/Pawn_Promotion.h src/Moves/Move.cpp include/Moves/Move.h src/Moves/Castle.cpp include/Moves/Castle.h src/Moves/Pawn_Move.cpp include/Moves/Pawn_Move.h src/Moves/En_Passant.cpp include/Moves/En_Passant.h src/Moves/Pawn_Double_Move.cpp include/Moves/Pawn_Double_Move.h main.cpp src/Testing.cpp include/Testing.h src/Players/Game_Tree_Node_Result.cpp include/Players/Game_Tree_Node_Result.h src/Players/UCI_Mediator.cpp include/Players/UCI_Mediator.h src/Players/Outside_Communicator.cpp include/Players/Outside_Communicator.h src/Players/CECP_Mediator.cpp include/Players/CECP_Mediator.h src/Players/Minimax_AI.cpp include/Players/Minimax_AI.h src/Players/Player.cpp include/Players/Player.h src/Players/Random_AI.cpp include/Players/Random_AI.h src/Players/Genetic_AI.cpp include/Players/Genetic_AI.h src/Breeding/Gene_Pool.cpp include/Breeding/Gene_Pool.h src/Exceptions/Game_Ended.cpp include/Exceptions/Game_Ended.h src/Exceptions/Bad_Still_Alive_Line.cpp include/Exceptions/Bad_Still_Alive_Line.h src/Utility/Random.cpp include/Utility/Random.h src/Utility/Scoped_Stopwatch.cpp include/Utility/Scoped_Stopwatch.h src/Utility/Configuration.cpp include/Utility/Configuration.h src/Utility/Math.cpp include/Utility/Math.h src/Utility/String.cpp include/Utility/String.h src/Game/Game.cpp include/Game/Game.h src/Game/Piece.cpp include/Game/Piece.h src/Game/Square.cpp include/Game/Square.h src/Game/Board.cpp include/Game/Board.h src/Game/Game_Result.cpp include/Game/Game_Result.h src/Game/Color.cpp include/Game/Color.h src/Game/Clock.cpp include/Game/Clock.h src/Genes/Pawn_Advancement_Gene.cpp include/Genes/Pawn_Advancement_Gene.h src/Genes/King_Confinement_Gene.cpp include/Genes/King_Confinement_Gene.h src/Genes/Genome.cpp include/Genes/Genome.h src/Genes/Piece_Strength_Gene.cpp include/Genes/Piece_Strength_Gene.h src/Genes/Null_Gene.cpp include/Genes/Null_Gene.h src/Genes/Freedom_To_Move_Gene.cpp include/Genes/Freedom_To_Move_Gene.h src/Genes/Stacked_Pawns_Gene.cpp include/Genes/Stacked_Pawns_Gene.h src/Genes/Sphere_of_Influence_Gene.cpp include/Genes/Sphere_of_Influence_Gene.h src/Genes/Total_Force_Gene.cpp include/Genes/Total_Force_Gene.h src/Genes/Opponent_Pieces_Targeted_Gene.cpp include/Genes/Opponent_Pieces_Targeted_Gene.h src/Genes/King_Protection_Gene.cpp include/Genes/King_Protection_Gene.h src/Genes/Checkmate_Material_Gene.cpp include/Genes/Checkmate_Material_Gene.h src/Genes/Mutation_Rate_Gene.cpp include/Genes/Mutation_Rate_Gene.h src/Genes/Pawn_Islands_Gene.cpp include/Genes/Pawn_Islands_Gene.h src/Genes/Gene.cpp include/Genes/Gene.h src/Genes/Castling_Possible_Gene.cpp include/Genes/Castling_Possible_Gene.h src/Genes/Look_Ahead_Gene.cpp include/Genes/Look_Ahead_Gene.h src/Genes/Passed_Pawn_Gene.cpp include/Genes/Passed_Pawn_Gene.h src/Moves/Pawn_Capture.cpp include/Moves/Pawn_Capture.h src/Moves/Pawn_Promotion_by_Capture.cpp include/Moves/Pawn_Promotion_by_Capture.h src/Moves/Pawn_Promotion.cpp include/Moves/Pawn_Promotion.h src/Moves/Move.cpp include/Moves/Move.h src/Moves/Castle.cpp include/Moves/Castle.h src/Moves/Pawn_Move.cpp include/Moves/Pawn_Move.h src/Moves/En_Passant.cpp include/Moves/En_Passant.h src/Moves/Pawn_Double_Move.cpp include/Moves/Pawn_Double_Move.h
+
 RELEASE_BIN_DIR = bin/gcc/release
 OUT_RELEASE = $(RELEASE_BIN_DIR)/$(BIN)
 LINK_DIR_RELEASE = bin/release
@@ -29,11 +33,11 @@ all : release debug
 LINK : 
 
 
-after_debug : $(LINK_DIR_DEBUG)/$(BIN)
-	doxygen
+after_debug : $(LINK_DIR_DEBUG)/$(BIN) $(DOC_INDEX)
 
-after_release : $(LINK_DIR_RELEASE)/$(BIN)
-	doxygen
+
+after_release : $(LINK_DIR_RELEASE)/$(BIN) $(DOC_INDEX)
+
 
 before_debug : 
 	mkdir -p $(DEBUG_BIN_DIR)
@@ -62,7 +66,7 @@ before_release :
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Moves
 
 clean : clean_release clean_debug
-
+	rm -rf $(DOC_DIR)
 
 clean_debug : 
 	rm -rf $(DEBUG_OBJ_DIR) $(DEBUG_BIN_DIR)
@@ -241,6 +245,9 @@ $(DEBUG_OBJ_DIR)/src/Utility/Scoped_Stopwatch.o : src/Utility/Scoped_Stopwatch.c
 
 $(DEBUG_OBJ_DIR)/src/Utility/String.o : src/Utility/String.cpp include/Utility/String.h
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Utility/String.cpp -o $(DEBUG_OBJ_DIR)/src/Utility/String.o
+
+$(DOC_INDEX) : $(ALL_SOURCES)
+	doxygen
 
 $(LINK_DIR_DEBUG)/$(BIN) : $(OUT_DEBUG) LINK
 	ln -sf -t $(LINK_DIR_DEBUG) `realpath $(OUT_DEBUG)`

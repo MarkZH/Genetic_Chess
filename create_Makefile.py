@@ -61,6 +61,9 @@ operations = dict()
 bins = dict()
 link_dirs = dict()
 
+operations['$(DOC_INDEX)'] = ['doxygen']
+depends['$(DOC_INDEX)'] = ["$(ALL_SOURCES)"]
+
 for target in final_targets:
     options[target] = f"$(CFLAGS_{target.upper()}) $(LDFLAGS_{target.upper()})"
     operations[target] = []
@@ -90,8 +93,7 @@ for target in final_targets:
 
     depends[out_variable] = [all_objects]
 
-    depends[f'after_{target}'] = [os.path.join(link_dir_variable, '$(BIN)')]
-    operations[f'after_{target}'] = ['doxygen']
+    depends[f'after_{target}'] = [os.path.join(link_dir_variable, '$(BIN)'), "$(DOC_INDEX)"]
 
     depends['clean'].append(f'clean_{target}')
     depends[f'clean_{target}'] = []
@@ -100,6 +102,7 @@ for target in final_targets:
     depends[f'test_{target}'] = [target]
     operations[f'test_{target}'] = [f'{bins[target]} -' + opt for opt in ['test', 'perft', 'speed']]
 
+operations['clean'] = ['rm -rf $(DOC_DIR)']
 depends['test_all'] = [f'test_{x}' for x in final_targets]
 depends['LINK'] = []
 sort_key = functools.cmp_to_key(make_sort)
@@ -147,11 +150,15 @@ elif system == 'clang':
         "-Wswitch"])
 
 obj_dir_written = []
+all_sources = []
 for target in final_targets:
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
         dirpath = os.path.relpath(dirpath)
         if dirpath == '.': dirpath = ''
         for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp')]:
+            all_sources.append(source_file)
+            if source_file != 'main.cpp':
+                all_sources.append((os.path.splitext(source_file)[0] + '.h').replace('src', 'include'))
             obj_file = os.path.join(obj_dest[target], f"{os.path.splitext(source_file)[0]}.o")
             depends[obj_file] = [source_file]
             operations[obj_file] = [f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
@@ -170,6 +177,9 @@ with open("Makefile", 'w') as make_file:
     make_file.write(f"LD = {compiler}\n\n")
     make_file.write(f"CFLAGS = {' '.join(sorted(base_options, key=lambda s : s.lower()))}\n")
     make_file.write(f"LDFLAGS = {' '.join(base_linker_options)}\n\n")
+    make_file.write(f"DOC_DIR = {os.path.join('doc', 'doxygen', 'html')}\n")
+    make_file.write(f"DOC_INDEX = {os.path.join('$(DOC_DIR)', 'index.html')}\n")
+    make_file.write(f"ALL_SOURCES = {' '.join(all_sources)}\n\n")
     for target in final_targets:
         make_file.write(f"{target.upper()}_BIN_DIR = bin/{system}/{target}\n")
         make_file.write(f"OUT_{target.upper()} = {bins[target]}\n")
