@@ -28,7 +28,7 @@ class Mutation_Rate_Gene : public Gene
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
-        double mutated_components_per_mutation = 100.0;
+        double mutated_components_per_mutation = 1.0;
 
         double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept override;
 };
