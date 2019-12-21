@@ -866,7 +866,7 @@ bool run_perft_tests()
 
 void print_randomness_sample()
 {
-        // Random number generation sample
+    // Random number generation sample
     int int_width = 10;
     int real_width = 15;
     int norm_width = 15;
