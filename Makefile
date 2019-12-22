@@ -27,16 +27,16 @@ CFLAGS_DEBUG = -g
 LDFLAGS_DEBUG = 
 
 
-all : release debug
+all : release debug $(DOC_INDEX)
 
 
 LINK : 
 
 
-after_debug : $(LINK_DIR_DEBUG)/$(BIN) $(DOC_INDEX)
+after_debug : $(LINK_DIR_DEBUG)/$(BIN)
 
 
-after_release : $(LINK_DIR_RELEASE)/$(BIN) $(DOC_INDEX)
+after_release : $(LINK_DIR_RELEASE)/$(BIN)
 
 
 before_debug : 

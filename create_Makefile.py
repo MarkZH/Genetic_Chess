@@ -51,7 +51,7 @@ if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
 program_name = 'genetic_chess'
 final_targets = ["release", "debug"]
 depends = dict()
-depends['all'] = final_targets
+depends['all'] = final_targets + ["$(DOC_INDEX)"]
 depends['clean'] = []
 
 options = dict()
@@ -93,7 +93,7 @@ for target in final_targets:
 
     depends[out_variable] = [all_objects]
 
-    depends[f'after_{target}'] = [os.path.join(link_dir_variable, '$(BIN)'), "$(DOC_INDEX)"]
+    depends[f'after_{target}'] = [os.path.join(link_dir_variable, '$(BIN)')]
 
     depends['clean'].append(f'clean_{target}')
     depends[f'clean_{target}'] = []
