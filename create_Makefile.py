@@ -74,7 +74,8 @@ for target in final_targets:
     out_variable = f"$(OUT_{target.upper()})"
     link_dir_variable = f"$(LINK_DIR_{target.upper()})"
     all_objects = f"$(OBJ_{target.upper()})"
-    operations[out_variable] = [' '.join(["$(LD)",
+    operations[out_variable] = [f"mkdir -p {bin_dest[target]}",
+                                ' '.join(["$(LD)",
                                           "-o", out_variable,
                                           all_objects,
                                           "$(LDFLAGS)",
@@ -82,18 +83,12 @@ for target in final_targets:
                                           "$(CFLAGS)",
                                           f"$(CFLAGS_{target.upper()})"])]
     link_dirs[target] = os.path.join('bin', target)
-    operations[os.path.join(link_dir_variable, '$(BIN)')] = [f'ln -sf -t {link_dir_variable} `realpath {out_variable}`']
-    depends[os.path.join(link_dir_variable, '$(BIN)')] = [out_variable, 'LINK']
+    operations[os.path.join(link_dir_variable, '$(BIN)')] = [f'mkdir -p {link_dir_variable}', f'ln -sf -t {link_dir_variable} `realpath {out_variable}`']
+    depends[os.path.join(link_dir_variable, '$(BIN)')] = [out_variable, 'Makefile']
     bins[target] = os.path.join(bin_dest[target], '$(BIN)')
 
-    depends[target] = [f'before_{target}', out_variable, f'after_{target}']
-
-    depends[f'before_{target}'] = []
-    operations[f'before_{target}'] = [f'mkdir -p {bin_dest[target]}', f'mkdir -p $(LINK_DIR_{target.upper()})']
-
+    depends[target] = [out_variable, os.path.join(link_dir_variable, '$(BIN)')]
     depends[out_variable] = [all_objects]
-
-    depends[f'after_{target}'] = [os.path.join(link_dir_variable, '$(BIN)')]
 
     depends['clean'].append(f'clean_{target}')
     depends[f'clean_{target}'] = []
@@ -104,7 +99,6 @@ for target in final_targets:
 
 operations['clean'] = ['rm -rf $(DOC_DIR)']
 depends['test_all'] = [f'test_{x}' for x in final_targets]
-depends['LINK'] = []
 sort_key = functools.cmp_to_key(make_sort)
 depends['.PHONY'] = [t for t in sorted(depends.keys(), key=sort_key) if not t.startswith('$')]
 
@@ -149,7 +143,6 @@ elif system == 'clang':
         "-Wunused-exception-parameter",
         "-Wswitch"])
 
-obj_dir_written = []
 all_sources = []
 for target in final_targets:
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
@@ -161,11 +154,7 @@ for target in final_targets:
                 all_sources.append((os.path.splitext(source_file)[0] + '.h').replace('src', 'include'))
             obj_file = os.path.join(obj_dest[target], f"{os.path.splitext(source_file)[0]}.o")
             depends[obj_file] = [source_file]
-            operations[obj_file] = [f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
-            obj_dest_dir = os.path.dirname(obj_file)
-            if obj_dest_dir not in obj_dir_written:
-                operations[f'before_{target}'].append(f'mkdir -p {obj_dest_dir}')
-                obj_dir_written.append(obj_dest_dir)
+            operations[obj_file] = [f"mkdir -p {os.path.dirname(obj_file)}", f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
 
             compile_depends = subprocess.check_output([compiler] + base_options + options_list[target] + ['-MM', source_file]).decode('ascii').split()
             depends[obj_file].extend(sorted(list(set(d for d in compile_depends if d != '\\' and d != source_file and not d.endswith(':')))))
