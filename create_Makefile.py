@@ -83,7 +83,9 @@ for target in final_targets:
                                           "$(CFLAGS)",
                                           f"$(CFLAGS_{target.upper()})"])]
     link_dirs[target] = os.path.join('bin', target)
-    operations[os.path.join(link_dir_variable, '$(BIN)')] = [f'mkdir -p {link_dir_variable}', f'ln -sf -t {link_dir_variable} `realpath {out_variable}`']
+    operations[os.path.join(link_dir_variable, '$(BIN)')] = [f'mkdir -p {link_dir_variable}',
+                                                             f'ln -sf -t {link_dir_variable} `realpath {out_variable}`',
+                                                             f'touch {out_variable}']
     depends[os.path.join(link_dir_variable, '$(BIN)')] = [out_variable, 'Makefile']
     bins[target] = os.path.join(bin_dest[target], '$(BIN)')
 
@@ -160,7 +162,6 @@ for target in final_targets:
             depends[obj_file].extend(sorted(list(set(d for d in compile_depends if d != '\\' and d != source_file and not d.endswith(':')))))
 
 with open("Makefile", 'w') as make_file:
-    # Variables
     make_file.write(f"BIN = {program_name}\n")
     make_file.write(f"CXX = {compiler}\n")
     make_file.write(f"LD = {compiler}\n\n")

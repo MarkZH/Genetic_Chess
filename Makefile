@@ -268,10 +268,12 @@ $(DOC_INDEX) : $(ALL_SOURCES)
 $(LINK_DIR_DEBUG)/$(BIN) : $(OUT_DEBUG) Makefile
 	mkdir -p $(LINK_DIR_DEBUG)
 	ln -sf -t $(LINK_DIR_DEBUG) `realpath $(OUT_DEBUG)`
+	touch $(OUT_DEBUG)
 
 $(LINK_DIR_RELEASE)/$(BIN) : $(OUT_RELEASE) Makefile
 	mkdir -p $(LINK_DIR_RELEASE)
 	ln -sf -t $(LINK_DIR_RELEASE) `realpath $(OUT_RELEASE)`
+	touch $(OUT_RELEASE)
 
 $(OUT_DEBUG) : $(OBJ_DEBUG)
 	mkdir -p $(DEBUG_BIN_DIR)
