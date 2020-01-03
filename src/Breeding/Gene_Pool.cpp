@@ -583,16 +583,16 @@ namespace
 
         auto largest_pool_number = still_alive.rbegin()->first;
         Gene_Pool_Set result(largest_pool_number + 1);
-        for(const auto& index_list : still_alive)
+        for(const auto& [index, list] : still_alive)
         {
-            line = pool_lines[index_list.first];
-            line_number = pool_line_numbers[index_list.first];
-            for(const auto& number_string : String::split(index_list.second))
+            line = pool_lines[index];
+            line_number = pool_line_numbers[index];
+            for(const auto& number_string : String::split(list))
             {
                 try
                 {
                     int index = std::stoi(number_string);
-                    result[index_list.first].emplace_back(load_file, index);
+                    result[index].emplace_back(load_file, index);
                 }
                 catch(const std::invalid_argument&)
                 {

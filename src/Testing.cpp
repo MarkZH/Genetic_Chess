@@ -520,17 +520,11 @@ bool run_tests()
          {88888888, "88,888,888"},
          {999999999, "999,999,999"},
          {1000000000, "1,000,000,000"}};
-    for(const auto& test : tests)
+    for(const auto& [number, text] : tests)
     {
-        test_function(tests_passed, "Format integer (size_t)", test.second, String::format_integer<size_t>, test.first, ",");
-    }
-    for(const auto& test : tests)
-    {
-        test_function(tests_passed, "Format integer (int)", test.second, String::format_integer<int>, test.first, ",");
-    }
-    for(const auto& test : tests)
-    {
-        test_function(tests_passed, "Format integer (negative int)", "-" + test.second, String::format_integer<int>, -test.first, ",");
+        test_function(tests_passed, "Format integer (size_t)", text, String::format_integer<size_t>, number, ",");
+        test_function(tests_passed, "Format integer (int)", text, String::format_integer<int>, number, ",");
+        test_function(tests_passed, "Format integer (negative int)", "-" + text, String::format_integer<int>, -number, ",");
     }
 
     // String to size_t number conversion
@@ -781,9 +775,9 @@ void run_speed_tests()
                                              [](const auto& x, const auto& y){ return x.second.size() < y.second.size(); })->second.size();
     std::cout << "\n" << std::setw(name_width) << "Test Item" << "   " << "Time (" << time_unit << ")";
     std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------" << std::endl;
-    for(const auto& result : timing_results)
+    for(const auto& [time, name] : timing_results)
     {
-        std::cout << std::setw(name_width) << result.second << " = " << result.first << std::endl;
+        std::cout << std::setw(name_width) << name << " = " << time << std::endl;
     }
 }
 

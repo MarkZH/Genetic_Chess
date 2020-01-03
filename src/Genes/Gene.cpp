@@ -156,9 +156,9 @@ void Gene::print(std::ostream& os) const noexcept
 {
     auto properties = list_properties();
     os << "Name: " << name() << "\n";
-    for(const auto& name_value : properties)
+    for(const auto& [name, value] : properties)
     {
-        os << name_value.first << ": " << name_value.second << "\n";
+        os << name << ": " << value << "\n";
     }
     os << "\n";
 }

@@ -57,9 +57,9 @@ std::string Configuration::as_text(const std::string& parameter) const
     }
     catch(const std::out_of_range&)
     {
-        for(const auto& key_value : parameters)
+        for(const auto& [key, value] : parameters)
         {
-            std::cerr << "\"" << key_value.first << "\" --> \"" << key_value.second << "\"" << std::endl;
+            std::cerr << "\"" << key << "\" --> \"" << value << "\"" << std::endl;
         }
         throw std::runtime_error("Configuration parameter not found: " + parameter);
     }
@@ -115,11 +115,11 @@ std::string Configuration::standardize_text(const std::string& input) noexcept
 
 void Configuration::print_unused_parameters() const noexcept
 {
-    for(const auto& param_value : parameters)
+    for(const auto& [param, value] : parameters)
     {
-        if( ! used[param_value.first])
+        if( ! used[param])
         {
-            std::cout << param_value.first << " --> " << param_value.second << std::endl;
+            std::cout << param << " --> " << value << std::endl;
         }
     }
 }
