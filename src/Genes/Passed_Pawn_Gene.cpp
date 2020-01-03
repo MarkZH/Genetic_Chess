@@ -22,7 +22,7 @@ double Passed_Pawn_Gene::score_board(const Board& board, Color perspective, size
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        for(int rank = far_rank ; rank != near_rank; rank -= rank_step)
+        for(int rank = far_rank; rank != near_rank; rank -= rank_step)
         {
             auto piece = board.piece_on_square({file, rank});
             if(piece == own_pawn)
