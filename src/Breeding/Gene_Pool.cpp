@@ -547,9 +547,6 @@ namespace
 
     Gene_Pool_Set load_gene_pool_file(const std::string& load_file)
     {
-        std::string line;
-        size_t line_number = 0;
-
         std::ifstream ifs(load_file);
         if( ! ifs)
         {
@@ -561,6 +558,9 @@ namespace
         std::map<size_t, std::string> still_alive;
         std::map<size_t, size_t> pool_line_numbers;
         std::map<size_t, std::string> pool_lines;
+
+        std::string line;
+        size_t line_number = 0;
         while(std::getline(ifs, line))
         {
             ++line_number;
@@ -585,8 +585,6 @@ namespace
         Gene_Pool_Set result(largest_pool_number + 1);
         for(const auto& [pool_number, list] : still_alive)
         {
-            line = pool_lines[pool_number];
-            line_number = pool_line_numbers[pool_number];
             for(const auto& number_string : String::split(list))
             {
                 try
@@ -596,7 +594,7 @@ namespace
                 }
                 catch(const std::invalid_argument&)
                 {
-                    throw Bad_Still_Alive_Line(line_number, line);
+                    throw Bad_Still_Alive_Line(pool_line_numbers[pool_number], pool_lines[pool_number]);
                 }
             }
         }
