@@ -583,10 +583,10 @@ namespace
 
         auto largest_pool_number = still_alive.rbegin()->first;
         Gene_Pool_Set result(largest_pool_number + 1);
-        for(const auto& [index, list] : still_alive)
+        for(const auto& [pool_number, list] : still_alive)
         {
-            line = pool_lines[index];
-            line_number = pool_line_numbers[index];
+            line = pool_lines[pool_number];
+            line_number = pool_line_numbers[pool_number];
             for(const auto& number_string : String::split(list))
             {
                 try
