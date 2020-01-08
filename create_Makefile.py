@@ -43,6 +43,8 @@ def make_sort(a, b):
     if a > b:
         return 1
 
+def all_targets_so_far(depends, operations):
+    return sorted(list(set(list(depends.keys()) + list(operations.keys()))), key=functools.cmp_to_key(make_sort))
 
 if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
     print('Specify a compiler ("gcc" or "clang")')
@@ -52,7 +54,7 @@ program_name = 'genetic_chess'
 final_targets = ["release", "debug"]
 depends = dict()
 depends['all'] = final_targets + ["$(DOC_INDEX)"]
-depends['clean'] = []
+depends['clean'] = (f"clean_{target}" for target in final_targets)
 
 options = dict()
 obj_dest = dict()
@@ -66,7 +68,6 @@ depends['$(DOC_INDEX)'] = ["$(ALL_SOURCES)"]
 
 for target in final_targets:
     options[target] = f"$(CFLAGS_{target.upper()}) $(LDFLAGS_{target.upper()})"
-    operations[target] = []
 
     obj_dest[target]= f"$({target.upper()}_OBJ_DIR)"
     bin_dest[target]= f"$({target.upper()}_BIN_DIR)"
@@ -92,17 +93,14 @@ for target in final_targets:
     depends[target] = [out_variable, os.path.join(link_dir_variable, '$(BIN)')]
     depends[out_variable] = [all_objects]
 
-    depends['clean'].append(f'clean_{target}')
-    depends[f'clean_{target}'] = []
     operations[f'clean_{target}'] = [f"rm -rf {obj_dest[target]} {bin_dest[target]}"]
 
     depends[f'test_{target}'] = [target]
-    operations[f'test_{target}'] = [f'{bins[target]} -' + opt for opt in ['test', 'perft', 'speed']]
+    operations[f'test_{target}'] = [f'{bins[target]} -{opt}' for opt in ['test', 'perft', 'speed']]
 
 operations['clean'] = ['rm -rf $(DOC_DIR)']
 depends['test_all'] = [f'test_{x}' for x in final_targets]
-sort_key = functools.cmp_to_key(make_sort)
-depends['.PHONY'] = [t for t in sorted(depends.keys(), key=sort_key) if not t.startswith('$')]
+depends['.PHONY'] = [t for t in all_targets_so_far(depends, operations) if not t.startswith('$')]
 
 options_list = dict()
 linker_options = dict()
@@ -155,11 +153,10 @@ for target in final_targets:
             if source_file != 'main.cpp':
                 all_sources.append((os.path.splitext(source_file)[0] + '.h').replace('src', 'include'))
             obj_file = os.path.join(obj_dest[target], f"{os.path.splitext(source_file)[0]}.o")
-            depends[obj_file] = [source_file]
             operations[obj_file] = [f"mkdir -p {os.path.dirname(obj_file)}", f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
 
             compile_depends = subprocess.check_output([compiler] + base_options + options_list[target] + ['-MM', source_file]).decode('ascii').split()
-            depends[obj_file].extend(sorted(list(set(d for d in compile_depends if d != '\\' and d != source_file and not d.endswith(':')))))
+            depends[obj_file] = [source_file] + sorted(list(set(list(d for d in compile_depends if d != '\\')[2:])))
 
 with open("Makefile", 'w') as make_file:
     make_file.write(f"BIN = {program_name}\n")
@@ -176,12 +173,12 @@ with open("Makefile", 'w') as make_file:
         make_file.write(f"LINK_DIR_{target.upper()} = {link_dirs[target]}\n")
         make_file.write(f"{target.upper()}_OBJ_DIR = obj/{system}/{target}\n")
         make_file.write(f"OBJ_{target.upper()} = ")
-        make_file.write(' '.join([x for x in sorted(depends.keys(), key=sort_key) if x.endswith('.o') and x.startswith(f"$({target.upper()}")]))
+        make_file.write(' '.join([x for x in all_targets_so_far(depends, operations) if x.endswith('.o') and x.startswith(f"$({target.upper()}")]))
         make_file.write('\n')
         make_file.write(f"CFLAGS_{target.upper()} = {' '.join(options_list[target])}\n")
         make_file.write(f"LDFLAGS_{target.upper()} = {' '.join(linker_options[target])}\n\n\n")
 
-    for target in sorted(depends.keys(), key=sort_key):
-        make_file.write(f"{target} : {' '.join(depends[target])}\n")
+    for target in all_targets_so_far(depends, operations):
+        make_file.write(f"{target} : {' '.join(depends.setdefault(target, []))}\n")
         make_file.write("\n".join([f"\t{x}" for x in operations.setdefault(target, [])]))
         make_file.write('\n\n')
