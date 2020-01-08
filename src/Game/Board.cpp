@@ -399,7 +399,7 @@ std::string Board::fen() const noexcept
 
     return s + " " +
         std::to_string(moves_since_pawn_or_capture()) + " " +
-        std::to_string(move_count_start_offset + game_record_listing.size()/2);
+        std::to_string(move_count_start_offset + game_length()/2);
 }
 
 const Move& Board::create_move(Square start, Square end, char promote) const
@@ -491,7 +491,8 @@ void Board::update_board(const Move& move) noexcept
 {
     assert(is_in_legal_moves_list(move));
 
-    game_record_listing.push_back(&move);
+    ++game_move_count;
+    previous_move = &move;
     move_piece(move);
     move.side_effects(*this);
 
@@ -501,6 +502,21 @@ void Board::update_board(const Move& move) noexcept
     recreate_move_caches();
 
     add_board_position_to_repeat_record();
+}
+
+size_t Board::game_length() const noexcept
+{
+    return game_move_count;
+}
+
+const Move* Board::last_move() const noexcept
+{
+    return previous_move;
+}
+
+int Board::castling_direction(Color player) const noexcept
+{
+    return castling_movement[player];
 }
 
 const Move& Board::create_move(const std::string& move) const
@@ -1013,18 +1029,14 @@ bool Board::no_legal_moves() const noexcept
     return legal_moves().empty();
 }
 
-const std::vector<const Move*>& Board::game_record() const noexcept
-{
-    return game_record_listing;
-}
-
 template<typename OutputStream, typename DataType>
 void print_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
 {
     output << "[" << heading << " \"" << data << "\"]\n";
 }
 
-void Board::print_game_record(const Player* white,
+void Board::print_game_record(const std::vector<const Move*>& game_record_listing,
+                              const Player* white,
                               const Player* black,
                               const std::string& file_name,
                               const Game_Result& result,
@@ -1150,6 +1162,8 @@ void Board::print_game_record(const Player* white,
         commentary_board.submit_move(*next_move);
     }
     out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
+
+    assert(commentary_board.fen() != fen());
 }
 
 void Board::make_en_passant_targetable(Square square) noexcept
@@ -1456,7 +1470,7 @@ Board Board::without_random_pawn() const noexcept
 
 Board Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
 {
-    if(game_record().empty())
+    if(game_length() == 0)
     {
         return *this;
     }
@@ -1465,7 +1479,7 @@ Board Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
     std::vector<double> state_values = {0.0};
     const auto player_color = whose_turn();
     auto current_board = *this;
-    const auto square = game_record().back()->end();
+    const auto square = previous_move->end();
     while( ! current_board.safe_for_king(square, opposite(current_board.whose_turn())))
     {
         std::vector<const Move*> capturing_moves;

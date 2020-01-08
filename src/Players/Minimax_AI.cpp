@@ -15,7 +15,7 @@
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
     // Erase data from previous board when starting new game
-    if(board.game_record().size() <= 1)
+    if(board.game_length() <= 1)
     {
         principal_variation.clear();
         commentary.clear();
@@ -32,7 +32,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
     {
-        if(principal_variation.size() > 3 && principal_variation[1] == board.game_record().back())
+        if(principal_variation.size() > 3 && principal_variation[1] == board.last_move())
         {
             // search_game_tree() assumes the principal variation starts
             // with the previous move of this player. If a move was forced,
@@ -56,7 +56,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
     // No useful principal variation if it doesn't include the next possible move
     // or if the opponent did not make the predicted next move.
-    if(principal_variation.size() < 2 || principal_variation[1] != board.game_record().back())
+    if(principal_variation.size() < 2 || principal_variation[1] != board.last_move())
     {
         principal_variation.clear();
     }
@@ -73,13 +73,16 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
                                         board.whose_turn(),
                                         {}};
 
+    std::vector<const Move*> current_variation;
+
     auto result = search_game_tree(board,
                                    time_to_use,
                                    clock,
-                                   board.game_record().size(),
+                                   board.game_length(),
                                    alpha_start,
                                    beta_start,
-                                   ! principal_variation.empty());
+                                   ! principal_variation.empty(),
+                                   current_variation);
 
     if(board.thinking_mode() == Thinking_Output_Type::CECP)
     {
@@ -110,10 +113,11 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const size_t prior_real_moves,
                                                    Game_Tree_Node_Result alpha,
                                                    const Game_Tree_Node_Result& beta,
-                                                   bool still_on_principal_variation) const noexcept
+                                                   bool still_on_principal_variation,
+                                                   std::vector<const Move*>& current_variation) const noexcept
 {
     const auto time_start = clock.running_time_left();
-    const auto depth = board.game_record().size() - prior_real_moves + 1;
+    const auto depth = board.game_length() - prior_real_moves + 1;
     maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
 
@@ -159,13 +163,23 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         auto evaluate_start_time = clock.running_time_left();
         ++nodes_searched;
 
+        class push_guard
+        {
+            public:
+                push_guard(std::vector<const Move*>& list, const Move* move) : push_list(list) { push_list.push_back(move); }
+                ~push_guard() { push_list.pop_back(); }
+            private:
+                std::vector<const Move*>& push_list;
+        };
+        auto variation_guard = push_guard(current_variation, move);
+
         auto next_board = board;
 
         auto move_result = next_board.submit_move(*move);
         if(move_result.winner() != NONE)
         {
             // This move results in checkmate, no other move can be better.
-            return create_result(next_board, perspective, move_result, prior_real_moves);
+            return create_result(next_board, perspective, move_result, prior_real_moves, current_variation);
         }
 
         if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
@@ -211,11 +225,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                       prior_real_moves,
                                       beta,
                                       alpha,
-                                      still_on_principal_variation);
+                                      still_on_principal_variation,
+                                      current_variation);
         }
         else
         {
-            result = create_result(next_board.quiescent(piece_values()), perspective, move_result, prior_real_moves);
+            result = create_result(next_board.quiescent(piece_values()), perspective, move_result, prior_real_moves, current_variation);
             nodes_searched += result.depth() - depth;
         }
 
@@ -346,12 +361,12 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
                                                 Color perspective,
                                                 const Game_Result& move_result,
-                                                size_t prior_real_moves) const noexcept
+                                                size_t prior_real_moves,
+                                                const std::vector<const Move*>& move_list) const noexcept
 {
     return {evaluate(board, move_result, perspective, prior_real_moves),
             perspective,
-            {board.game_record().begin() + int(prior_real_moves),
-            board.game_record().end()}};
+            move_list};
 }
 
 void Minimax_AI::calibrate_thinking_speed() const noexcept
@@ -428,7 +443,7 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
 
 std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move_number) const noexcept
 {
-    auto comment_index = board.game_record().size()/2;
+    auto comment_index = board.game_length()/2;
     if(comment_index >= commentary.size() || commentary.at(comment_index).variation.empty())
     {
         return {};

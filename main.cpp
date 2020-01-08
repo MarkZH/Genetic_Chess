@@ -407,9 +407,9 @@ namespace
                     board.ascii_draw(WHITE);
                     game_started = true;
                     std::cout << "Last move: ";
-                    std::cout << (board.game_record().size() + 1)/2 << ". ";
+                    std::cout << (board.game_length() + 1)/2 << ". ";
                     std::cout << (board.whose_turn() == WHITE ? "... " : "");
-                    std::cout << board.game_record().back()->coordinate_move() << std::endl;
+                    std::cout << board.last_move()->coordinate_move() << std::endl;
                     if(result.game_has_ended())
                     {
                         std::cout << result.ending_reason() << std::endl;

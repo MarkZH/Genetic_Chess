@@ -5,6 +5,7 @@
 #include <thread>
 #include <chrono>
 using namespace std::chrono_literals;
+#include <vector>
 
 #ifndef _WIN32
 #include <csignal>
@@ -32,6 +33,8 @@ Game_Result play_game(Board board,
         throw std::invalid_argument("Board and Clock disagree on whose turn it is.");
     }
 
+    std::vector<const Move*> game_record;
+
     try
     {
         game_clock.start();
@@ -50,11 +53,13 @@ Game_Result play_game(Board board,
             {
                 result = board.submit_move(move_chosen);
             }
+            game_record.push_back(&move_chosen);
         }
 
         game_clock.stop();
 
-        board.print_game_record(&white,
+        board.print_game_record(game_record,
+                                &white,
                                 &black,
                                 pgn_file_name,
                                 result,
@@ -64,7 +69,8 @@ Game_Result play_game(Board board,
     }
     catch(const std::exception& game_error)
     {
-        board.print_game_record(&white,
+        board.print_game_record(game_record,
+                                &white,
                                 &black,
                                 pgn_file_name,
                                 {},
@@ -87,6 +93,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
     Board board;
     Clock clock;
     Game_Result game_result;
+    std::vector<const Move*> game_record;
 
     try
     {
@@ -125,7 +132,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
                 std::this_thread::sleep_for(1s);
             }
             player.set_opponent_name(outsider->other_player_name());
-            board.print_game_record(white, black, game_file_name, game_result, clock, "End of online game");
+            board.print_game_record(game_record, white, black, game_file_name, game_result, clock, "End of online game");
         }
     }
 }

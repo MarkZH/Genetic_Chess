@@ -27,7 +27,8 @@ bool Castle::move_specific_legal(const Board& board) const noexcept
 void Castle::side_effects(Board& board) const noexcept
 {
     board.move_piece(rook_move);
-    board.castling_index[board.whose_turn()] = board.game_record().size() - 1;
+    board.castling_index[board.whose_turn()] = board.game_length() - 1;
+    board.castling_movement[board.whose_turn()] = file_change();
 }
 
 std::string Castle::game_record_move_item(const Board&) const noexcept

@@ -86,12 +86,14 @@ class Minimax_AI : public Player
                                                size_t prior_real_moves,
                                                Game_Tree_Node_Result alpha,
                                                const Game_Tree_Node_Result& beta,
-                                               bool still_on_principal_variation) const noexcept;
+                                               bool still_on_principal_variation,
+                                               std::vector<const Move*>& current_variation) const noexcept;
 
         Game_Tree_Node_Result create_result(const Board& board,
                                             Color perspective,
                                             const Game_Result& move_result,
-                                            size_t prior_real_moves) const noexcept;
+                                            size_t prior_real_moves,
+                                            const std::vector<const Move*>& move_list) const noexcept;
 
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,

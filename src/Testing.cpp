@@ -704,7 +704,7 @@ void run_speed_tests()
         for(int i = 1; i <= number_of_tests; ++i)
         {
             auto side = performance_board.whose_turn();
-            score += gene->evaluate(performance_board, opposite(side), performance_board.game_record().size());
+            score += gene->evaluate(performance_board, opposite(side), performance_board.game_length());
         }
         timing_results.emplace_back(watch.time_so_far(), gene->name());
     }
@@ -1050,11 +1050,8 @@ namespace
                 {
                     board.submit_move(quiescent_move);
                 }
-                auto gr1 = board.game_record();
-                auto gr2 = actual_result_board.game_record();
                 test_result(test_passed,
-                            gr1.size() == gr2.size() &&
-                            std::mismatch(gr1.begin(), gr1.end(), gr2.begin()) == std::make_pair(gr1.end(), gr2.end()),
+                            board.fen() == actual_result_board.fen(),
                             "Expected: " + board.fen() + "\nGot:      " + actual_result_board.fen());
             }
             else

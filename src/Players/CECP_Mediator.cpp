@@ -64,7 +64,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
                 // Handle stateless GUIs that send the next board position
                 // instead of a move.
                 board.submit_move(fen);
-                log("Derived move: " + board.game_record().back()->coordinate_move());
+                log("Derived move: " + board.last_move()->coordinate_move());
             }
             catch(const Illegal_Move&)
             {

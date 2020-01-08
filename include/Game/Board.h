@@ -98,10 +98,23 @@ class Board
         //! legal en passant move to be made.
         std::string fen() const noexcept;
 
-        //! Get the history of moves.
+        //! Returns the last move made on this Board
         //
-        //! \returns The list of moves made on this board.
-        const std::vector<const Move*>& game_record() const noexcept;
+        //! \returns A pointer representing the last move made.
+        const Move* last_move() const noexcept;
+
+        //! The length of the game on this Board.
+        //
+        //! \returns The number of moves made on this board since its creation.
+        size_t game_length() const noexcept;
+
+        //! The direction (if any) of the castling move made by a player.
+        //
+        //! \param player The color of the player being queried.
+        //! \returns A number indicating the direction of the castling
+        //!          (positive for kingside, negative for queenside, zero
+        //!          for no castling yet).
+        int castling_direction(Color player) const noexcept;
 
         //! Set the format an engine should output while picking a move.
         //
@@ -124,6 +137,8 @@ class Board
 
         //! Prints the PGN game record with commentary from Players.
         //
+        //! \param game_record_listing A list of Moves. This must be a legal sequence of moves starting from
+        //!        the state of the Board at its creation and resulting in the current state of the Board.
         //! \param white Pointer to Player playing white to provide commentary for moves. Can be nullptr.
         //! \param black Pointer to Player playing black to provide commentary for moves. Can be nullptr.
         //! \param file_name Name of the text file where the game will be printed. If empty, print to stdout.
@@ -131,7 +146,8 @@ class Board
         //! \param game_clock The game clock used during the game.
         //! \param unusual_ending_reason A reason for the game ending not covered by a chess rule or the game clock.
         //!        Usually comes from an exception what() message.
-        void print_game_record(const Player* white,
+        void print_game_record(const std::vector<const Move*>& game_record_listing,
+                               const Player* white,
                                const Player* black,
                                const std::string& file_name,
                                const Game_Result& result,
@@ -260,7 +276,8 @@ class Board
         std::array<uint64_t, 101> repeat_count;
         size_t repeat_count_insertion_point = 0;
         Color turn_color;
-        std::vector<const Move*> game_record_listing;
+        size_t game_move_count = 0;
+        const Move* previous_move = nullptr;
         std::array<bool, 64> unmoved_positions{};
         Square en_passant_target;
         std::string starting_fen;
@@ -289,6 +306,7 @@ class Board
 
         // Information cache for gene reference
         std::array<size_t, 2> castling_index{size_t(-1), size_t(-1)};
+        std::array<int, 2> castling_movement{0, 0};
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
