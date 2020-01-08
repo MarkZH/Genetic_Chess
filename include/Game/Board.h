@@ -40,7 +40,7 @@ class Board
         //
         //! \param fen An text string given in FEN.
         //! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
-        explicit Board(const std::string& fen); // reproduce board from Forsythe-Edwards Notation string
+        explicit Board(const std::string& fen);
 
         //! Updates the state of the board according to a Player-selected Move.
         //
@@ -96,7 +96,7 @@ class Board
         //! This may slightly differ from the output of other programs
         //! in that the en passant target is only listed if there is a
         //! legal en passant move to be made.
-        std::string fen() const noexcept; // current state of board in FEN
+        std::string fen() const noexcept;
 
         //! Get the history of moves.
         //
