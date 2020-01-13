@@ -1454,14 +1454,14 @@ Board Board::without_random_pawn() const noexcept
     }
 }
 
-Board Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
+std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
 {
     if(game_record().empty())
     {
-        return *this;
+        return {};
     }
 
-    std::vector<Board> capture_states = {*this};
+    std::vector<const Move*> capture_moves = {nullptr};
     std::vector<double> state_values = {0.0};
     const auto player_color = whose_turn();
     auto current_board = *this;
@@ -1491,14 +1491,14 @@ Board Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
         auto moving_piece = current_board.piece_on_square(move->start());
         auto attacked_piece = current_board.piece_on_square(move->end());
         current_board.submit_move(*move);
-        capture_states.push_back(current_board);
+        capture_moves.push_back(move);
         state_values.push_back(state_values.back() + (moving_piece.color() == player_color ? +1 : -1)*piece_values[attacked_piece.type()]);
     }
 
 
-    if(capture_states.size() == 1)
+    if(capture_moves.size() == 1)
     {
-        return capture_states.front();
+        return {};
     }
 
     // Make sure to stop before either player ends up in an
@@ -1529,7 +1529,11 @@ Board Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
         }
     }
 
-    return capture_states[minimax_index];
+    decltype(capture_moves) result;
+    std::copy(capture_moves.begin() + 1,
+              capture_moves.begin() + minimax_index + 1,
+              std::back_inserter(result));
+    return result;
 }
 
 size_t Board::previous_moves_count() const noexcept
