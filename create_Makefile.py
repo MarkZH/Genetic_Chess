@@ -194,7 +194,7 @@ with open("Makefile", 'w') as make_file:
         make_file.write(' '.join([x for x in all_targets_so_far(depends, operations) if x.endswith('.o') and x.startswith(f"$({target.upper()}")]))
         make_file.write('\n')
         make_file.write(f"CFLAGS_{target.upper()} = {' '.join(options_list[target])}\n")
-        make_file.write(f"LDFLAGS_{target.upper()} = {' '.join(linker_options[target])}\n\n\n")
+        make_file.write(f"LDFLAGS_{target.upper()} = {' '.join(linker_options[target])}\n\n")
 
     for target in all_targets_so_far(depends, operations):
         make_file.write(f"{target} : {' '.join(depends.setdefault(target, []))}\n")
