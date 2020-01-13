@@ -89,11 +89,22 @@ class Minimax_AI : public Player
                                                bool still_on_principal_variation,
                                                std::vector<const Move*>& current_variation) const noexcept;
 
-        Game_Tree_Node_Result create_result(const Board& board,
+        //! Assign a score to the current board state.
+        //
+        //! \param board The current state of the Board.
+        //! \param extra_moves A list of moves to submit to the Board before scoring.
+        //!        (e.g., moves that result in a quiescent Board).
+        //! \param perspective From whose perspective (Black or White) the board should be scored.
+        //! \param move_result The possibly game-ending result of the move.
+        //! \param prior_real_moves The number of moves performed on the Board before the current
+        //!        game tree search.
+        //! \param move_list The current move list from the game tree search.
+        Game_Tree_Node_Result create_result(Board board,
+                                            const std::vector<const Move*>& extra_moves,
                                             Color perspective,
                                             const Game_Result& move_result,
                                             size_t prior_real_moves,
-                                            const std::vector<const Move*>& move_list) const noexcept;
+                                            std::vector<const Move*> move_list) const noexcept;
 
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,

@@ -1045,7 +1045,11 @@ namespace
             {
                 assert(specification.size() == 4);
                 test_result(test_passed, all_moves_legal(board, moves), "Bad test: Illegal moves");
-                auto actual_result_board = board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0});
+                auto actual_result_board = board;
+                for(auto move : board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0}))
+                {
+                    actual_result_board.submit_move(*move);
+                }
                 for(auto quiescent_move : String::split(specification.at(3)))
                 {
                     board.submit_move(quiescent_move);

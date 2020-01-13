@@ -256,15 +256,15 @@ class Board
         //! \throws Debug assertion failure if there are no pawns on the board.
         Board without_random_pawn() const noexcept;
 
-        //! Returns a quiescent version of the board.
+        //! Returns a list of moves that results in a quiescent version of the board.
         //
-        //! This board is created by performing all possible captures on
+        //! This list is created by performing all possible captures on
         //! the ending square of the last move. If multiple captures are
         //! possible, the weakest pieces goes first according to the piece
         //! values array.
         //! \param piece_values An array indexed by Piece::type() that gives
         //!        the value of the piece.
-        Board quiescent(const std::array<double, 6>& piece_values) const noexcept;
+        std::vector<const Move*> quiescent(const std::array<double, 6>& piece_values) const noexcept;
 
         //! Returns the number of moves available to the opponent prior to the opponent's last move.
         //

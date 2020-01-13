@@ -179,7 +179,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if(move_result.winner() != NONE)
         {
             // This move results in checkmate, no other move can be better.
-            return create_result(next_board, perspective, move_result, prior_real_moves, current_variation);
+            return create_result(next_board, {}, perspective, move_result, prior_real_moves, current_variation);
         }
 
         if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
@@ -230,7 +230,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            result = create_result(next_board.quiescent(piece_values()), perspective, move_result, prior_real_moves, current_variation);
+            result = create_result(next_board, next_board.quiescent(piece_values()), perspective, move_result, prior_real_moves, current_variation);
             nodes_searched += result.depth() - depth;
         }
 
@@ -358,12 +358,14 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
     return time_at_last_output - clock.running_time_left();
 }
 
-Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
+Game_Tree_Node_Result Minimax_AI::create_result(Board board,
+                                                const std::vector<const Move*>& extra_moves,
                                                 Color perspective,
                                                 const Game_Result& move_result,
                                                 size_t prior_real_moves,
-                                                const std::vector<const Move*>& move_list) const noexcept
+                                                std::vector<const Move*> move_list) const noexcept
 {
+    std::copy(extra_moves.begin(), extra_moves.end(), std::back_inserter(move_list));
     return {evaluate(board, move_result, perspective, prior_real_moves),
             perspective,
             move_list};
