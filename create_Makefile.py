@@ -148,10 +148,11 @@ for target in final_targets:
     for (dirpath, dirnames, filenames) in os.walk(os.getcwd()):
         dirpath = os.path.relpath(dirpath)
         if dirpath == '.': dirpath = ''
-        for source_file in [os.path.join(dirpath, fn) for fn in filenames if fn.endswith('.cpp')]:
-            all_sources.append(source_file)
-            if source_file != 'main.cpp':
-                all_sources.append((os.path.splitext(source_file)[0] + '.h').replace('src', 'include'))
+        for source_file in [os.path.join(dirpath, fn) for fn in filenames]:
+            if source_file.endswith('.h') or source_file.endswith('.cpp'):
+                all_sources.append(source_file)
+            if not source_file.endswith('.cpp'):
+                continue
             obj_file = os.path.join(obj_dest[target], f"{os.path.splitext(source_file)[0]}.o")
             operations[obj_file] = [f"mkdir -p {os.path.dirname(obj_file)}", f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
 
