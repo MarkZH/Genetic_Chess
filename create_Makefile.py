@@ -66,6 +66,22 @@ link_dirs = dict()
 operations['$(DOC_INDEX)'] = ['doxygen']
 depends['$(DOC_INDEX)'] = ["$(ALL_SOURCES)"]
 
+user_manual = 'doc/reference.pdf'
+user_manual_tex = f'{os.path.splitext(user_manual)[0]}.tex'
+user_manual_var = '$(USER_MANUAL)'
+depends[user_manual_var] = [
+    user_manual_tex,
+    'gene_pool_config_example.txt',
+    'genetic_ai_example.txt',
+    'doc/game-endings-log-plot.png',
+    'doc/game_length_distribution.png',
+    'doc/game_length_log_norm_distribution.png',
+    'doc/pawn-crash-strength-plot.png',
+    'doc/piece-strength-with-king-plot.png',
+    'doc/win-lose-plot.png']
+operations[user_manual_var] = [f'latexmk -pdf -cd {user_manual_tex}']
+depends['all'].append(user_manual_var)
+
 for target in final_targets:
     options[target] = f"$(CFLAGS_{target.upper()}) $(LDFLAGS_{target.upper()})"
 
@@ -98,7 +114,7 @@ for target in final_targets:
     depends[f'test_{target}'] = [target]
     operations[f'test_{target}'] = [f'{bins[target]} -{opt}' for opt in ['test', 'perft', 'speed']]
 
-operations['clean'] = ['rm -rf $(DOC_DIR)']
+operations['clean'] = ['rm -rf $(DOC_DIR)', f'latexmk -C -cd {user_manual_tex}']
 depends['test_all'] = [f'test_{x}' for x in final_targets]
 depends['.PHONY'] = [t for t in all_targets_so_far(depends, operations) if not t.startswith('$')]
 
@@ -168,6 +184,7 @@ with open("Makefile", 'w') as make_file:
     make_file.write(f"DOC_DIR = {os.path.join('doc', 'doxygen', 'html')}\n")
     make_file.write(f"DOC_INDEX = {os.path.join('$(DOC_DIR)', 'index.html')}\n")
     make_file.write(f"ALL_SOURCES = {' '.join(all_sources)}\n\n")
+    make_file.write(f"USER_MANUAL = {user_manual}\n\n")
     for target in final_targets:
         make_file.write(f"{target.upper()}_BIN_DIR = bin/{system}/{target}\n")
         make_file.write(f"OUT_{target.upper()} = {bins[target]}\n")
