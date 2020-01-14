@@ -100,6 +100,10 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
         while(true)
         {
             outsider->setup_turn(board, clock);
+            if(board.last_move())
+            {
+                game_record.push_back(board.last_move());
+            }
             outsider->listen(board, clock);
 
             if( ! clock.is_running())
@@ -119,8 +123,8 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
             const auto& chosen_move = player.choose_move(board, clock);
             clock.punch();
 
-            game_result = outsider->handle_move(board, chosen_move);
             game_record.push_back(&chosen_move);
+            game_result = outsider->handle_move(board, chosen_move);
             player.ponder(board, clock, outsider->pondering_allowed());
         }
     }
@@ -133,6 +137,10 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
                 std::this_thread::sleep_for(1s);
             }
             player.set_opponent_name(outsider->other_player_name());
+            if(board.last_move() && (game_record.empty() || board.last_move() != game_record.back()))
+            {
+                game_record.push_back(board.last_move());
+            }
             board.print_game_record(game_record, white, black, game_file_name, game_result, clock, "End of online game");
         }
     }
