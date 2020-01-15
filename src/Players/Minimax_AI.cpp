@@ -121,7 +121,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
 
-    // The two items in the principal variation are the last two moves of
+    // The first two items in the principal variation are the last two moves of
     // the non-hypothetical board. So, the first item in the principal variation to
     // consider is at index depth + 1 (since depth starts at 1).
     still_on_principal_variation = (still_on_principal_variation && principal_variation.size() > depth + 1);
