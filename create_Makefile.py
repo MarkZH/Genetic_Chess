@@ -64,7 +64,7 @@ bins = dict()
 link_dirs = dict()
 
 operations['$(DOC_INDEX)'] = ['doxygen']
-depends['$(DOC_INDEX)'] = ["$(ALL_SOURCES)"]
+depends['$(DOC_INDEX)'] = ["Doxyfile", "$(ALL_SOURCES)"]
 
 user_manual = 'doc/reference.pdf'
 user_manual_tex = f'{os.path.splitext(user_manual)[0]}.tex'

@@ -263,7 +263,7 @@ $(DEBUG_OBJ_DIR)/src/Utility/String.o : src/Utility/String.cpp include/Utility/S
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Utility
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Utility/String.cpp -o $(DEBUG_OBJ_DIR)/src/Utility/String.o
 
-$(DOC_INDEX) : $(ALL_SOURCES)
+$(DOC_INDEX) : Doxyfile $(ALL_SOURCES)
 	doxygen
 
 $(LINK_DIR_DEBUG)/$(BIN) : $(OUT_DEBUG) Makefile
