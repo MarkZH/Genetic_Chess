@@ -15,6 +15,10 @@ reproduction type = sexual
 # How many gene pools
 gene pool count = 3
 
+# How many mutations a newly created Genetic AI should undergo
+# at the start of a gene pool run
+initial mutations = 100
+
 # Complete rounds (in which all pools play a set of games) in between
 # swapping players between pools
 pool swap interval = 1000

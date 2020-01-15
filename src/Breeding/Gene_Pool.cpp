@@ -72,9 +72,7 @@ void gene_pool(const std::string& config_file)
     const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
     const auto sexual_reproduction = config.as_boolean("reproduction type", "sexual", "cloning");
     const auto genome_file_name = config.as_text("gene pool file");
-
-    const int scramble_mutations = 1; // initial number of mutations when creating a new Genetic AI
-    size_t rounds_since_last_swap = 0; // Count of complete gene pool rounds where all pools have played a set of games
+    const auto scramble_mutations = int(config.as_number("initial mutations"));
 
     // Oscillating game time
     const double minimum_game_time = config.as_number("minimum game time"); // seconds
@@ -129,6 +127,7 @@ void gene_pool(const std::string& config_file)
     }
 
     size_t starting_pool = 0;
+    size_t rounds_since_last_swap = 0; // Count of complete gene pool rounds where all pools have played a set of games
     if(auto genome_file = std::ifstream(genome_file_name))
     {
         std::string line;
