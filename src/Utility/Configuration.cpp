@@ -52,8 +52,9 @@ std::string Configuration::as_text(const std::string& parameter) const
 {
     try
     {
-        used.at(parameter) = true;
-        return parameters.at(standardize_text(parameter));
+        auto key = standardize_text(parameter);
+        used.at(key) = true;
+        return parameters.at(key);
     }
     catch(const std::out_of_range&)
     {
