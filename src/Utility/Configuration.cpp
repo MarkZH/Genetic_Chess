@@ -66,31 +66,6 @@ std::string Configuration::as_text(const std::string& parameter) const
     }
 }
 
-double Configuration::as_number(const std::string& parameter) const
-{
-    try
-    {
-        return std::stod(as_text(parameter));
-    }
-    catch(const std::invalid_argument&)
-    {
-        throw std::runtime_error("Invalid number for \"" + parameter + "\" : " + as_text(parameter));
-    }
-}
-
-double Configuration::as_positive_number(const std::string& parameter) const
-{
-    auto result = as_number(parameter);
-    if(result > 0)
-    {
-        return result;
-    }
-    else
-    {
-        throw std::runtime_error(parameter + " must be greater than zero (value = " + std::to_string(result) + ")");
-    }
-}
-
 bool Configuration::as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const
 {
     auto response = standardize_text(as_text(parameter));

@@ -66,24 +66,24 @@ void gene_pool(const std::string& config_file)
     auto config = Configuration(config_file);
 
     // Environment variables
-    const auto maximum_simultaneous_games = size_t(config.as_positive_number("maximum simultaneous games"));
-    const auto gene_pool_population = size_t(config.as_positive_number("gene pool population"));
-    const auto gene_pool_count = size_t(config.as_positive_number("gene pool count"));
-    const auto pool_swap_interval = size_t(config.as_number("pool swap interval"));
+    const auto maximum_simultaneous_games = config.as_positive_number<size_t>("maximum simultaneous games");
+    const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
+    const auto gene_pool_count = config.as_positive_number<size_t>("gene pool count");
+    const auto pool_swap_interval = config.as_positive_number<size_t>("pool swap interval");
     const auto sexual_reproduction = config.as_boolean("reproduction type", "sexual", "cloning");
     const auto genome_file_name = config.as_text("gene pool file");
-    const auto scramble_mutations = int(config.as_number("initial mutations"));
+    const auto scramble_mutations = config.as_positive_number<int>("initial mutations");
 
     // Oscillating game time
-    const auto minimum_game_time = config.as_number("minimum game time"); // seconds
-    const auto maximum_game_time = config.as_number("maximum game time"); // seconds
+    const auto minimum_game_time = config.as_positive_number<double>("minimum game time"); // seconds
+    const auto maximum_game_time = config.as_positive_number<double>("maximum game time"); // seconds
     if(maximum_game_time < minimum_game_time)
     {
         std::cerr << "Minimum game time = " << minimum_game_time << "\n";
         std::cerr << "Maximum game time = " << maximum_game_time << "\n";
         throw std::invalid_argument("Maximum game time must be greater than the minimum game time.");
     }
-    auto game_time_increment = config.as_number("game time increment"); // seconds
+    auto game_time_increment = config.as_number<double>("game time increment"); // seconds
     const auto oscillating_time = config.as_boolean("oscillating time", "yes", "no");
 
     if(config.any_unused_parameters())

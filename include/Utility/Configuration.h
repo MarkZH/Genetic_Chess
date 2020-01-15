@@ -3,6 +3,9 @@
 
 #include <string>
 #include <map>
+#include <sstream>
+#include <stdexcept>
+#include <type_traits>
 
 //! A class that reads a text file to allow easy querying of configuration data.
 class Configuration
@@ -31,7 +34,21 @@ class Configuration
         //! \returns The data in the file converted to a floating point (double) number.
         //! \throws std::runtime_error If the named parameter was not found in the file or
         //!         if the data could not be converted to a numerical value.
-        double as_number(const std::string& parameter) const;
+        template<typename Number>
+        std::enable_if_t<std::is_arithmetic_v<Number>, Number> as_number(const std::string& parameter) const
+        {
+            auto iss = std::istringstream(as_text(parameter));
+            Number result;
+            iss >> result;
+            if(iss.fail() || ! iss.eof())
+            {
+                throw std::invalid_argument("Invalid number for \"" + parameter + "\" : " + as_text(parameter));
+            }
+            else
+            {
+                return result;
+            }
+        }
 
         //! Return numerical data from the configuration file if it is greater than zero.
         //
@@ -40,7 +57,19 @@ class Configuration
         //! \throws std::runtime_error If the named parameter was not found in the file or
         //!         if the data could not be converted to a numerical value or if the
         //!         numerical value is not greater than zero.
-        double as_positive_number(const std::string& parameter) const;
+        template<typename Number>
+        Number as_positive_number(const std::string& parameter) const
+        {
+            auto result = as_number<Number>(parameter);
+            if(result > 0)
+            {
+                return result;
+            }
+            else
+            {
+                throw std::runtime_error(parameter + " must be greater than zero (value = " + std::to_string(result) + ")");
+            }
+        }
 
         //! Return true/false data from the configuration file.
         //
