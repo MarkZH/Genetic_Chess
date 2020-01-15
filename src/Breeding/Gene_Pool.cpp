@@ -75,17 +75,16 @@ void gene_pool(const std::string& config_file)
     const auto scramble_mutations = int(config.as_number("initial mutations"));
 
     // Oscillating game time
-    const double minimum_game_time = config.as_number("minimum game time"); // seconds
-    const double maximum_game_time = config.as_number("maximum game time"); // seconds
+    const auto minimum_game_time = config.as_number("minimum game time"); // seconds
+    const auto maximum_game_time = config.as_number("maximum game time"); // seconds
     if(maximum_game_time < minimum_game_time)
     {
         std::cerr << "Minimum game time = " << minimum_game_time << "\n";
         std::cerr << "Maximum game time = " << maximum_game_time << "\n";
         throw std::invalid_argument("Maximum game time must be greater than the minimum game time.");
     }
-    double game_time_increment = config.as_number("game time increment"); // seconds
-    const bool oscillating_time = config.as_boolean("oscillating time", "yes", "no");
-    double game_time = minimum_game_time;
+    auto game_time_increment = config.as_number("game time increment"); // seconds
+    const auto oscillating_time = config.as_boolean("oscillating time", "yes", "no");
 
     if(config.any_unused_parameters())
     {
@@ -173,7 +172,8 @@ void gene_pool(const std::string& config_file)
         }
     }
 
-    std::string game_record_file = genome_file_name +  "_games.pgn";
+    auto game_record_file = genome_file_name +  "_games.pgn";
+    auto game_time = minimum_game_time;
     if(auto ifs = std::ifstream(game_record_file))
     {
         // Use game time from last run of this gene pool
