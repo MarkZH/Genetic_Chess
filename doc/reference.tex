@@ -317,7 +317,7 @@ A gene pool is configured with a text file that is reference in the program star
 \verbatiminput{../gene_pool_config_example.txt}
 
 \subsection{Gene Pool Terminal Output}
-An example of typical output during a gene pool run is shown below. First, some general information about the pool is shown, then the results of the random matchups, thirdly the new makeup of this gene pool in the aftermath of the games, and finally the IDs of the AIs with the most ever wins and the most number of games survived.
+An example of typical output during a gene pool run is shown below. First, some general information about the pool is shown, then the results of the random matchups, and finally the new makeup of this gene pool in the aftermath of the games.
 \begin{verbatim}
 Gene pool ID: 0  Gene pool size: 16  Rounds since pool swaps: 2/1000
 Games: 6000  White wins: 3402  Black wins: 2511  Draws: 87
@@ -332,29 +332,25 @@ Time: 16.65 sec   Gene pool file name: pool.txt
 106529 vs 106433: White (White mates)
 106533 vs 106534: White (White mates)
 
-     ID   Wins  Streak  Draws  Streak
- 106457      2       0      3       2
- 106479      4       4      0       0 T
- 106495      1       1      2       0
- 106497      1       0      2       2
- 106529      1       1      0       0
- 106531      1       1      0       0
- 106532      1       1      0       0
- 106533      1       1      0       0
- 106549      0       0      0       0
- 106550      0       0      0       0
- 106551      0       0      0       0
- 106552      0       0      0       0
- 106553      0       0      0       0
- 106554      0       0      0       0
- 106555      0       0      0       0
- 106556      0       0      0       0
-
-Most wins:     16 by ID 96392
-Longest lived: 27 by ID 96392
-
+     ID   Wins  Draws
+ 106457      2      3
+ 106479      4      0 T
+ 106495      1      2
+ 106497      1      2
+ 106529      1      0
+ 106531      1      0
+ 106532      1      0
+ 106533      1      0
+ 106549      0      0
+ 106550      0      0
+ 106551      0      0
+ 106552      0      0
+ 106553      0      0
+ 106554      0      0
+ 106555      0      0
+ 106556      0      0
 \end{verbatim}
-The \verb|Streak| column indicates the current number of consecutive wins or draws a player has attained in the last few games. In the example above, Player 106479 is on a four-game winning streak since it was born (including victories both in this pool and in pool 2 where it was born). Player 106457 has drawn its last two games after its last win. The (\verb|T|) indicates that the AI is a copy that has been transferred from another pool.
+The (\verb|T|) indicates that the AI is a copy that has been transferred from another pool.
 
 
 \section{Some Consistent Results (in rough order of discovery)}
