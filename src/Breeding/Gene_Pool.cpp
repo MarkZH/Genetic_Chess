@@ -108,17 +108,13 @@ void gene_pool(const std::string& config_file)
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
     pools.resize(gene_pool_count);
-
     for(size_t i = 0; i < pools.size(); ++i)
     {
-        while(pools[i].size() < gene_pool_population)
+        auto new_ai_index = pools[i].size();
+        pools[i].resize(gene_pool_population);
+        for(auto ai_index = new_ai_index; ai_index < pools[i].size(); ++ai_index)
         {
-            pools[i].push_back(Genetic_AI(scramble_mutations));
-        }
-
-        while(pools[i].size() > gene_pool_population)
-        {
-            pools[i].pop_back();
+            pools[i][ai_index].mutate(scramble_mutations);
         }
 
         for(const auto& ai : pools[i])

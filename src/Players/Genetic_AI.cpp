@@ -16,9 +16,8 @@ class Clock;
 
 int Genetic_AI::next_id = 0;
 
-Genetic_AI::Genetic_AI(int mutation_count) noexcept : id_number(next_id++)
+Genetic_AI::Genetic_AI() noexcept : id_number(next_id++)
 {
-    mutate(mutation_count);
 }
 
 Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) noexcept :

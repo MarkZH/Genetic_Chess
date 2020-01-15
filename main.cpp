@@ -173,8 +173,10 @@ int main(int argc, char *argv[])
 
                         if(filename.empty())
                         {
-                            latest = std::make_unique<Genetic_AI>(10000);
-                            static_cast<const Genetic_AI*>(latest.get())->print("single_game_player.txt");
+                            auto genetic_player = std::make_unique<Genetic_AI>();
+                            genetic_player->mutate(10000);
+                            genetic_player->print("single_game_player.txt");
+                            latest = std::move(genetic_player);
                         }
                         else
                         {

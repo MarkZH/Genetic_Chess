@@ -18,10 +18,8 @@ class Clock;
 class Genetic_AI : public Minimax_AI
 {
     public:
-        //! Generate a randomly mutated Genetic_AI
-        //
-        //! \param mutation_count The number of genome mutations to apply to the AI after construction.
-        explicit Genetic_AI(int mutation_count) noexcept;
+        //! Generate a Genetic_AI
+        explicit Genetic_AI() noexcept;
 
         //! Create a Genetic_AI from a text file by searching for a specfic ID.
         //

@@ -341,11 +341,11 @@ bool run_tests()
     remove(write_file_name);
     remove(rewrite_file_name);
 
-    std::vector<Genetic_AI> test_pool;
-    for(int i = 0; i < 10; ++i)
+    std::vector<Genetic_AI> test_pool(10);
+    for(auto& ai : test_pool)
     {
-        test_pool.emplace_back(100); // Add AI with 100 mutations
-        test_pool.back().print(pool_file_name);
+        ai.mutate(100);
+        ai.print(pool_file_name);
     }
 
     const auto& test_ai = Random::random_element(test_pool);
