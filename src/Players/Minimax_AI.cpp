@@ -125,7 +125,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     // the non-hypothetical board. So, the first item in the principal variation to
     // consider is at index depth + 1 (since depth starts at 1).
     still_on_principal_variation = (still_on_principal_variation && principal_variation.size() > depth + 1);
-    auto start_offset = 0;
     if(still_on_principal_variation)
     {
         auto next_principal_variation_move = principal_variation[depth + 1];
@@ -139,12 +138,11 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             // Put principal variation move at start of list to allow
             // the most pruning later.
             std::iter_swap(all_legal_moves.begin(), move_iter);
-            start_offset = 1;
         }
     }
 
     // Consider capturing and promoting moves first after principal variation move
-    auto partition_start = std::next(all_legal_moves.begin(), start_offset);
+    auto partition_start = std::next(all_legal_moves.begin(), still_on_principal_variation ? 1 : 0);
     std::partition(partition_start, all_legal_moves.end(),
                    [&board](auto move){ return board.move_changes_material(*move); });
 
