@@ -153,7 +153,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
     Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
                                          perspective,
-                                         {all_legal_moves.front()}};
+                                         {current_variation.empty() ? all_legal_moves.front() : current_variation.front()}};
 
     // Pre-loop time to assign to each move for more accurate speed calculations
     auto setup_time_per_move = (time_start - clock.running_time_left())/moves_left;
