@@ -166,8 +166,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         class push_guard
         {
             public:
-                push_guard(std::vector<const Move*>& list, const Move* move) : push_list(list) { push_list.push_back(move); }
-                ~push_guard() { push_list.pop_back(); }
+                push_guard(std::vector<const Move*>& list, const Move* move) noexcept : push_list(list) { push_list.push_back(move); }
+                ~push_guard() noexcept { push_list.pop_back(); }
             private:
                 std::vector<const Move*>& push_list;
         };
