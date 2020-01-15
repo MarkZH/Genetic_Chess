@@ -100,14 +100,9 @@ void gene_pool(const std::string& config_file)
     std::array<size_t, 2> color_wins{}; // indexed with [Color]
     size_t draw_count = 0;
 
-    std::map<size_t, std::pair<Genetic_AI, int>> most_wins;
-    std::map<size_t, std::pair<Genetic_AI, int>> most_games_survived;
-
     // Individual Genetic AI stats
     std::map<Genetic_AI, int> wins;
     std::map<Genetic_AI, int> draws;
-    std::map<Genetic_AI, int> games_since_last_win;
-    std::map<Genetic_AI, int> consecutive_wins;
     std::map<Genetic_AI, size_t> original_pool;
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
@@ -125,9 +120,6 @@ void gene_pool(const std::string& config_file)
         {
             pools[i].pop_back();
         }
-
-        most_wins.insert_or_assign(i, std::make_pair(pools[i].front(), 0));
-        most_games_survived.insert_or_assign(i, std::make_pair(pools[i].front(), 0));
 
         for(const auto& ai : pools[i])
         {
@@ -321,21 +313,11 @@ void gene_pool(const std::string& config_file)
             {
                 color_wins[winner]++;
                 wins[winning_player]++;
-                games_since_last_win[winning_player] = 0;
-                consecutive_wins[winning_player]++;
-                if(wins[winning_player] >= most_wins.at(pool_index).second)
-                {
-                    most_wins.insert_or_assign(pool_index, std::make_pair(winning_player, wins[winning_player]));
-                }
             }
             else
             {
                 draws[white]++;
                 draws[black]++;
-                games_since_last_win[white]++;
-                games_since_last_win[black]++;
-                consecutive_wins[white] = 0;
-                consecutive_wins[black] = 0;
                 ++draw_count;
 
                 winner = (Random::coin_flip() ? WHITE : BLACK);
@@ -356,18 +338,7 @@ void gene_pool(const std::string& config_file)
 
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
-        purge_dead_from_map(pools, games_since_last_win);
-        purge_dead_from_map(pools, consecutive_wins);
         purge_dead_from_map(pools, original_pool);
-
-        for(const auto& ai : pool)
-        {
-            auto games_survived = wins[ai] + draws[ai];
-            if(games_survived >= most_games_survived.at(pool_index).second)
-            {
-                most_games_survived.insert_or_assign(pool_index, std::make_pair(ai, games_survived));
-            }
-        }
 
         // widths of columns for stats printout
         auto id_digits = int(std::floor(std::log10(pool.back().id()) + 1));
@@ -375,32 +346,15 @@ void gene_pool(const std::string& config_file)
         // Write stat headers
         std::cout << '\n' << std::setw(id_digits + 1)  << "ID"
                   << std::setw(7) << "Wins"
-                  << std::setw(8) << "Streak"
-                  << std::setw(7) << "Draws"
-                  << std::setw(9) << "Streak\n";
+                  << std::setw(8) << "Draws\n";
 
         // Write stats for each specimen
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_digits + 1) << ai.id();
             std::cout << std::setw(7) << wins[ai]
-                      << std::setw(8) << consecutive_wins[ai]
                       << std::setw(7) << draws[ai]
-                      << std::setw(8) << games_since_last_win[ai]
                       << (original_pool[ai] != pool_index ? " T" : "") << "\n";
-        }
-        std::cout << std::endl;
-
-        if(most_wins.count(pool_index) > 0)
-        {
-            std::cout << "Most wins:     " << most_wins.at(pool_index).second
-                      << " by ID " << most_wins.at(pool_index).first.id() << std::endl;
-        }
-
-        if(most_games_survived.count(pool_index) > 0)
-        {
-            std::cout << "Longest lived: " << most_games_survived.at(pool_index).second
-                      << " by ID " << most_games_survived.at(pool_index).first.id() << std::endl;
         }
 
         // Record best AI from all pools.
