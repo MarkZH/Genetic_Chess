@@ -363,7 +363,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(Board board,
                                                 size_t prior_real_moves,
                                                 std::vector<const Move*> move_list) const noexcept
 {
-    std::copy(extra_moves.begin(), extra_moves.end(), std::back_inserter(move_list));
+    move_list.insert(move_list.end(), extra_moves.begin(), extra_moves.end());
     return {evaluate(board, move_result, perspective, prior_real_moves),
             perspective,
             move_list};
