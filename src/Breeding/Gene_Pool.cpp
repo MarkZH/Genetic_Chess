@@ -336,7 +336,7 @@ void gene_pool(const std::string& config_file)
         purge_dead_from_map(pools, original_pool);
 
         // widths of columns for stats printout
-        auto id_digits = int(std::floor(std::log10(pool.back().id()) + 1));
+        auto id_digits = std::to_string(pool.back().id()).size();
 
         // Write stat headers
         std::cout << '\n' << std::setw(id_digits + 1)  << "ID"
