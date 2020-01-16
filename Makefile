@@ -489,7 +489,7 @@ $(RELEASE_OBJ_DIR)/src/Utility/String.o : src/Utility/String.cpp include/Utility
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Utility/String.cpp -o $(RELEASE_OBJ_DIR)/src/Utility/String.o
 
 $(USER_MANUAL) : doc/reference.tex gene_pool_config_example.txt genetic_ai_example.txt doc/game-endings-log-plot.png doc/game_length_distribution.png doc/game_length_log_norm_distribution.png doc/pawn-crash-strength-plot.png doc/piece-strength-with-king-plot.png doc/win-lose-plot.png
-	latexmk -pdf -cd doc/reference.tex
+	latexmk -synctex=1 -pdf -cd doc/reference.tex
 
 .PHONY : all clean clean_debug clean_release debug release test_all test_debug test_release
 

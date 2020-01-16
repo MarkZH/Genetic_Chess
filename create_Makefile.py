@@ -79,7 +79,7 @@ depends[user_manual_var] = [
     'doc/pawn-crash-strength-plot.png',
     'doc/piece-strength-with-king-plot.png',
     'doc/win-lose-plot.png']
-operations[user_manual_var] = [f'latexmk -pdf -cd {user_manual_tex}']
+operations[user_manual_var] = [f'latexmk -synctex=1 -pdf -cd {user_manual_tex}']
 depends['all'].append(user_manual_var)
 
 for target in final_targets:
