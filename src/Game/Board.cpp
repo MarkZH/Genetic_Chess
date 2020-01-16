@@ -1475,8 +1475,10 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
         return {};
     }
 
-    std::vector<const Move*> capture_moves = {nullptr};
+    // The capture_move at index i results in the state_value at index i + 1
+    std::vector<const Move*> capture_moves;
     std::vector<double> state_values = {0.0};
+
     const auto player_color = whose_turn();
     auto current_board = *this;
     const auto square = previous_move->end();
@@ -1510,9 +1512,9 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
     }
 
 
-    if(capture_moves.size() == 1)
+    if(capture_moves.empty())
     {
-        return {};
+        return capture_moves;
     }
 
     // Make sure to stop before either player ends up in an
@@ -1543,11 +1545,7 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
         }
     }
 
-    decltype(capture_moves) result;
-    std::copy(capture_moves.begin() + 1,
-              capture_moves.begin() + minimax_index + 1,
-              std::back_inserter(result));
-    return result;
+    return {capture_moves.begin(), capture_moves.begin() + minimax_index};
 }
 
 size_t Board::previous_moves_count() const noexcept
