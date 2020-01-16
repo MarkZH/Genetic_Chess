@@ -341,7 +341,7 @@ void gene_pool(const std::string& config_file)
         // Write stat headers
         std::cout << '\n' << std::setw(id_digits + 1)  << "ID"
                   << std::setw(7) << "Wins"
-                  << std::setw(8) << "Draws\n";
+                  << std::setw(7) << "Draws" << "\n";
 
         // Write stats for each specimen
         for(const auto& ai : pool)
