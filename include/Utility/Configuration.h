@@ -61,7 +61,7 @@ class Configuration
         Number as_positive_number(const std::string& parameter) const
         {
             auto result = as_number<Number>(parameter);
-            if(result > 0)
+            if(result > Number{0})
             {
                 return result;
             }
