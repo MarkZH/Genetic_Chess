@@ -100,7 +100,6 @@ void gene_pool(const std::string& config_file)
     // Individual Genetic AI stats
     std::map<Genetic_AI, int> wins;
     std::map<Genetic_AI, int> draws;
-    std::map<Genetic_AI, size_t> original_pool;
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
@@ -112,11 +111,6 @@ void gene_pool(const std::string& config_file)
         for(auto ai_index = new_ai_index; ai_index < pools[i].size(); ++ai_index)
         {
             pools[i][ai_index].mutate(scramble_mutations);
-        }
-
-        for(const auto& ai : pools[i])
-        {
-            original_pool[ai] = i;
         }
     }
 
@@ -321,7 +315,6 @@ void gene_pool(const std::string& config_file)
 
             auto offspring = sexual_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);
             offspring.mutate();
-            original_pool[offspring] = pool_index;
 
             auto& losing_player  = (winner == WHITE ? black : white);
             losing_player = offspring; // offspring replaces loser
@@ -333,7 +326,6 @@ void gene_pool(const std::string& config_file)
 
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
-        purge_dead_from_map(pools, original_pool);
 
         // widths of columns for stats printout
         auto id_digits = std::to_string(pool.back().id()).size();
@@ -348,8 +340,7 @@ void gene_pool(const std::string& config_file)
         {
             std::cout << std::setw(id_digits + 1) << ai.id();
             std::cout << std::setw(7) << wins[ai]
-                      << std::setw(7) << draws[ai]
-                      << (original_pool[ai] != pool_index ? " T" : "") << "\n";
+                      << std::setw(7) << draws[ai] << "\n";
         }
 
         // Record best AI from all pools.
