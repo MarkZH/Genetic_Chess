@@ -82,7 +82,6 @@ std::string String::remove_extra_whitespace(const std::string& s) noexcept
                  [&result](auto c)
                  {
                      return  c != ' ' || result.back() != ' ';
-
                  });
 
     return result;
