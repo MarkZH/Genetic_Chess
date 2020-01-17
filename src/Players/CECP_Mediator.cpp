@@ -122,7 +122,7 @@ void CECP_Mediator::listen(Board& board, Clock& clock)
     last_listening_command = std::async(std::launch::async, &CECP_Mediator::listener, this, std::ref(board), std::ref(clock));
 }
 
-Game_Result CECP_Mediator::handle_move(Board& board, const Move& move)
+Game_Result CECP_Mediator::handle_move(Board& board, const Move& move) const
 {
     if(in_force_mode)
     {
