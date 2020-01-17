@@ -49,7 +49,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
         auto command = receive_cecp_command(board, clock, false);
         if(command == "go")
         {
-            set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
+            set_log_indent(board.whose_turn());
             log("telling local AI to move at leisure and accepting move");
             in_force_mode = false;
             board.choose_move_at_leisure();
@@ -86,7 +86,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
 
                 if( ! in_force_mode)
                 {
-                    set_indent_level(board.whose_turn() == WHITE ? 2 : 3);
+                    set_log_indent(board.whose_turn());
                     log("Local AI now chooses a move");
                     board.choose_move_at_leisure();
                     break;

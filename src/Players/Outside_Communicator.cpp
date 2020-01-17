@@ -6,6 +6,7 @@
 #include <string>
 #include <chrono>
 
+#include "Game/Color.h"
 #include "Players/CECP_Mediator.h"
 #include "Players/UCI_Mediator.h"
 
@@ -13,10 +14,14 @@
 
 #include "Utility/String.h"
 
-std::string Outside_Communicator::indent = "\t";
+namespace
+{
+    std::string indent;
+}
 
 std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player)
 {
+    Outside_Communicator::set_log_indent(NONE);
     Outside_Communicator::log("==================");
     auto protocol_type = Outside_Communicator::receive_command();
     if(protocol_type == "xboard")
@@ -79,9 +84,9 @@ std::string Outside_Communicator::other_player_name() const
     return outside_player_name;
 }
 
-void Outside_Communicator::set_indent_level(unsigned int n)
+void Outside_Communicator::set_log_indent(Color color) noexcept
 {
-    indent = std::string(n, '\t');
+    indent = std::string((static_cast<int>(color) + 1)%3 + 1, '\t');
 }
 
 void Outside_Communicator::set_other_player_name(const std::string& name)

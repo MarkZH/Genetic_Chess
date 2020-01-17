@@ -4,6 +4,8 @@
 #include <string>
 #include <memory>
 
+#include "Game/Color.h"
+
 class Clock;
 class Board;
 class Move;
@@ -48,7 +50,9 @@ class Outside_Communicator
 
     protected:
         //! If two copies of genetic_chess are running, their logs can be indented differently to distinguish them.
-        static void set_indent_level(unsigned int n);
+        //
+        //! \param color The color of the local player.
+        static void set_log_indent(Color color) noexcept;
 
         //! Store the opponent's name when received from the GUI.
         //
@@ -71,7 +75,6 @@ class Outside_Communicator
         static std::string receive_command();
 
     private:
-        static std::string indent;
         std::string outside_player_name;
 
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
