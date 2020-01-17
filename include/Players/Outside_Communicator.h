@@ -43,7 +43,7 @@ class Outside_Communicator
         //! Log data to a local text file.
         //
         //! \param data A text string to write.
-        static void log(const std::string& data);
+        static void log(const std::string& data) noexcept;
 
         //! Get the name of the player on the other side of the GUI.
         std::string other_player_name() const;
@@ -57,7 +57,7 @@ class Outside_Communicator
         //! Store the opponent's name when received from the GUI.
         //
         //! \param name The received name.
-        void set_other_player_name(const std::string& name);
+        void set_other_player_name(const std::string& name) noexcept;
 
         //! Constructor is protected so that it is only called by connect_to_outside().
         Outside_Communicator() = default;
@@ -66,7 +66,7 @@ class Outside_Communicator
         //
         //! The outgoing string is also logged to a local file.
         //! \param cmd The string to send to the outside interface.
-        static void send_command(const std::string& cmd);
+        void send_command(const std::string& cmd) const noexcept;
 
         //! Wait for a command from the outside interface and pass it on to derived class instances.
         //

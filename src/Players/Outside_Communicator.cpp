@@ -69,7 +69,7 @@ std::string Outside_Communicator::receive_command()
     return result;
 }
 
-void Outside_Communicator::log(const std::string& data)
+void Outside_Communicator::log(const std::string& data) noexcept
 {
     static const auto log_file_name = "chess_comm_log.txt";
     std::ofstream(log_file_name, std::ios::app)
@@ -89,12 +89,12 @@ void Outside_Communicator::set_log_indent(Color color) noexcept
     indent = std::string((static_cast<int>(color) + 1)%3 + 1, '\t');
 }
 
-void Outside_Communicator::set_other_player_name(const std::string& name)
+void Outside_Communicator::set_other_player_name(const std::string& name) noexcept
 {
     outside_player_name = name;
 }
 
-void Outside_Communicator::send_command(const std::string& cmd)
+void Outside_Communicator::send_command(const std::string& cmd) const noexcept
 {
     log("SENDING: " + cmd);
     std::cout << cmd << std::endl;
