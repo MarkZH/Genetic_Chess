@@ -23,7 +23,7 @@ class Genome
         //! \param other The originating genome.
         Genome(const Genome& other);
 
-        //! Create a new genome from two existing genomes via sexual reproduction
+        //! Create a new genome from two existing genomes via mating
         //
         //! Create each Gene by copying from either parent with a 50-50 probability.
         //! \param A The first parent.

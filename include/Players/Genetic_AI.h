@@ -28,7 +28,7 @@ class Genetic_AI : public Minimax_AI
         //! \throws Genetic_AI_Creation_Error If there is an error during reading.
         Genetic_AI(const std::string& file_name, int id);
 
-        //! Create a new Genetic_AI via sexual reproduction.
+        //! Create a new Genetic_AI via mating.
         //
         //! The offspring is formed by randomly taking genes from each parent.
         //! \param A The first parent.

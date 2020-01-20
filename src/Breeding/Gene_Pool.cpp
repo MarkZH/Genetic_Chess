@@ -70,7 +70,7 @@ void gene_pool(const std::string& config_file)
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
     const auto gene_pool_count = config.as_positive_number<size_t>("gene pool count");
     const auto pool_swap_interval = config.as_positive_number<size_t>("pool swap interval");
-    const auto sexual_reproduction = config.as_boolean("reproduction type", "sexual", "cloning");
+    const auto mating_reproduction = config.as_boolean("reproduction type", "mating", "cloning");
     const auto genome_file_name = config.as_text("gene pool file");
     const auto scramble_mutations = config.as_positive_number<int>("initial mutations");
 
@@ -303,7 +303,7 @@ void gene_pool(const std::string& config_file)
                 std::cout << " --> " << (winner == WHITE ? white : black).id() << " lives";
             }
 
-            auto offspring = sexual_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);
+            auto offspring = mating_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);
             offspring.mutate();
 
             auto& losing_player  = (winner == WHITE ? black : white);
