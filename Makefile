@@ -223,7 +223,7 @@ $(DEBUG_OBJ_DIR)/src/Players/Minimax_AI.o : src/Players/Minimax_AI.cpp include/G
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Players
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Minimax_AI.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Minimax_AI.o
 
-$(DEBUG_OBJ_DIR)/src/Players/Outside_Communicator.o : src/Players/Outside_Communicator.cpp include/Exceptions/Game_Ended.h include/Players/CECP_Mediator.h include/Players/Outside_Communicator.h include/Players/UCI_Mediator.h include/Utility/String.h
+$(DEBUG_OBJ_DIR)/src/Players/Outside_Communicator.o : src/Players/Outside_Communicator.cpp include/Exceptions/Game_Ended.h include/Game/Color.h include/Players/CECP_Mediator.h include/Players/Outside_Communicator.h include/Players/UCI_Mediator.h include/Utility/String.h
 	mkdir -p $(DEBUG_OBJ_DIR)/src/Players
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_DEBUG) $(LDFLAGS_DEBUG) -c src/Players/Outside_Communicator.cpp -o $(DEBUG_OBJ_DIR)/src/Players/Outside_Communicator.o
 
@@ -448,7 +448,7 @@ $(RELEASE_OBJ_DIR)/src/Players/Minimax_AI.o : src/Players/Minimax_AI.cpp include
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Players
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Minimax_AI.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Minimax_AI.o
 
-$(RELEASE_OBJ_DIR)/src/Players/Outside_Communicator.o : src/Players/Outside_Communicator.cpp include/Exceptions/Game_Ended.h include/Players/CECP_Mediator.h include/Players/Outside_Communicator.h include/Players/UCI_Mediator.h include/Utility/String.h
+$(RELEASE_OBJ_DIR)/src/Players/Outside_Communicator.o : src/Players/Outside_Communicator.cpp include/Exceptions/Game_Ended.h include/Game/Color.h include/Players/CECP_Mediator.h include/Players/Outside_Communicator.h include/Players/UCI_Mediator.h include/Utility/String.h
 	mkdir -p $(RELEASE_OBJ_DIR)/src/Players
 	$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_RELEASE) $(LDFLAGS_RELEASE) -c src/Players/Outside_Communicator.cpp -o $(RELEASE_OBJ_DIR)/src/Players/Outside_Communicator.o
 
