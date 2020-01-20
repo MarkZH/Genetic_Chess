@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <cassert>
 #include <array>
-#include <memory>
 
 #include "Game/Square.h"
 #include "Game/Color.h"
@@ -129,9 +128,8 @@ namespace
     template<typename Move_Type, typename ...Parameters>
     void add_legal_move(indexed_move_array& out, Color color, Piece_Type type, bool add_new_list, Parameters ... parameters) noexcept
     {
-        auto move = std::make_unique<Move_Type>(parameters...);
-        auto index = move->start().index();
-        auto& lists = out[color][type][index];
+        auto move = new Move_Type(parameters...);
+        auto& lists = out[color][type][move->start().index()];
         if(lists.empty() || add_new_list)
         {
             lists.push_back({});
@@ -142,7 +140,7 @@ namespace
             lists.push_back({});
         }
 
-        lists.back().push_back(move.release());
+        lists.back().push_back(move);
     }
 
     void add_standard_legal_move(indexed_move_array& out, Color color, Piece_Type type, int file_step, int rank_step) noexcept
