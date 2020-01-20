@@ -104,19 +104,24 @@ void gene_pool(const std::string& config_file)
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
     pools.resize(gene_pool_count);
+    auto needs_writing = std::vector<bool>(pools.size(), false);
     for(size_t i = 0; i < pools.size(); ++i)
     {
         auto new_ai_index = pools[i].size();
         pools[i].resize(gene_pool_population);
         for(auto ai_index = new_ai_index; ai_index < pools[i].size(); ++ai_index)
         {
+            needs_writing[i] = true;
             pools[i][ai_index].mutate(scramble_mutations);
         }
     }
 
     for(size_t i = 0; i < pools.size(); ++i)
     {
-        write_generation(pools, i, genome_file_name);
+        if(needs_writing[i])
+        {
+            write_generation(pools, i, genome_file_name);
+        }
     }
 
     size_t starting_pool = 0;
@@ -125,28 +130,18 @@ void gene_pool(const std::string& config_file)
     {
         std::string line;
         size_t line_number = 0;
-        auto previous_line_was_still_alive = false;
         while(std::getline(genome_file, line))
         {
             line = String::trim_outer_whitespace(line);
             ++line_number;
-            if(line.empty())
-            {
-                continue;
-            }
 
             if(String::starts_with(line, "Still Alive"))
             {
-                if(previous_line_was_still_alive)
-                {
-                    continue; // Still alive line was written after loading a previous session
-                }
-
                 try
                 {
                     auto alive_split = String::split(line, ":");
                     auto pool_number = String::string_to_size_t(alive_split.at(1));
-                    starting_pool = (pool_number + 1) % gene_pool_count;
+                    starting_pool = std::min(pool_number + 1, gene_pool_count)%gene_pool_count;
                     if(starting_pool == 0)
                     {
                         rounds_since_last_swap = (rounds_since_last_swap + 1)%pool_swap_interval;
@@ -156,12 +151,6 @@ void gene_pool(const std::string& config_file)
                 {
                     throw Bad_Still_Alive_Line(line_number, line);
                 }
-
-                previous_line_was_still_alive = true;
-            }
-            else
-            {
-                previous_line_was_still_alive = false;
             }
         }
     }
@@ -177,6 +166,7 @@ void gene_pool(const std::string& config_file)
         std::string previous_time_line;
         while(std::getline(ifs, line))
         {
+            line = String::trim_outer_whitespace(line);
             if(String::starts_with(line, "[TimeControl"))
             {
                 if(line != time_line)
