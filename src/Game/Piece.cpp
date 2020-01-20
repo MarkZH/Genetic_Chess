@@ -30,6 +30,7 @@ namespace
     void add_rook_moves(indexed_move_array& out, Color color, Piece_Type type = ROOK) noexcept;
     void add_knight_moves(indexed_move_array& out, Color color) noexcept;
     void add_bishop_moves(indexed_move_array& out, Color color, Piece_Type type = BISHOP) noexcept;
+    void add_queen_moves(indexed_move_array& out, Color color) noexcept;
     void add_king_moves(indexed_move_array& out, Color color) noexcept;
 
     void add_pawn_art(indexed_art_array& out, Color color) noexcept;
@@ -78,33 +79,12 @@ namespace
             indexed_move_array result;
             for(auto color : {WHITE, BLACK})
             {
-                for(auto type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
-                {
-                    switch(type)
-                    {
-                        case PAWN:
-                            add_pawn_moves(result, color);
-                            break;
-                        case ROOK:
-                            add_rook_moves(result, color);
-                            break;
-                        case KNIGHT:
-                            add_knight_moves(result, color);
-                            break;
-                        case BISHOP:
-                            add_bishop_moves(result, color, type);
-                            break;
-                        case QUEEN:
-                            add_bishop_moves(result, color, type);
-                            add_rook_moves(result, color, type);
-                            break;
-                        case KING:
-                            add_king_moves(result, color);
-                            break;
-                        default:
-                            throw std::invalid_argument("Program bug: Invalid piece type in Piece(): " + std::to_string(type));
-                    }
-                }
+                add_pawn_moves(result, color);
+                add_rook_moves(result, color);
+                add_knight_moves(result, color);
+                add_bishop_moves(result, color);
+                add_queen_moves(result, color);
+                add_king_moves(result, color);
             }
 
             return result;
@@ -276,6 +256,12 @@ namespace
                 }
             }
         }
+    }
+
+    void add_queen_moves(indexed_move_array& out, Color color) noexcept
+    {
+        add_bishop_moves(out, color, QUEEN);
+        add_rook_moves(out, color, QUEEN);
     }
 
     void add_king_moves(indexed_move_array& out, Color color) noexcept
