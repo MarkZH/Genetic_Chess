@@ -53,8 +53,9 @@ if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
 program_name = 'genetic_chess'
 final_targets = ["release", "debug"]
 depends = dict()
-depends['all'] = final_targets + ["$(DOC_INDEX)"]
+depends['all'] = final_targets + ["docs"]
 depends['clean'] = (f"clean_{target}" for target in final_targets)
+depends["docs"] = ["user_manual", "code_docs"]
 
 options = dict()
 obj_dest = dict()
@@ -63,12 +64,14 @@ operations = dict()
 bins = dict()
 link_dirs = dict()
 
+depends["code_docs"] = ['$(DOC_INDEX)']
 operations['$(DOC_INDEX)'] = ['doxygen']
 depends['$(DOC_INDEX)'] = ["Doxyfile", "$(ALL_SOURCES)"]
 
 user_manual = 'doc/reference.pdf'
 user_manual_tex = f'{os.path.splitext(user_manual)[0]}.tex'
 user_manual_var = '$(USER_MANUAL)'
+depends["user_manual"] = [user_manual_var]
 depends[user_manual_var] = [
     user_manual_tex,
     'gene_pool_config_example.txt',
@@ -80,7 +83,6 @@ depends[user_manual_var] = [
     'doc/piece-strength-with-king-plot.png',
     'doc/win-lose-plot.png']
 operations[user_manual_var] = [f'latexmk -synctex=1 -pdf -cd {user_manual_tex}']
-depends['all'].append(user_manual_var)
 
 for target in final_targets:
     options[target] = f"$(CFLAGS_{target.upper()}) $(LDFLAGS_{target.upper()})"
