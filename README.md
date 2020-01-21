@@ -27,6 +27,10 @@ this project.
 1. Clone this repository to your computer.
 2. Open Genetic_Chess.sln in Visual Studio and compile.
 
+#### More documentation
+- `make user_manual`, or
+- Compile `doc/reference.tex` with TexWriter or similar.
+
 ### Start a game
 Install a chess GUI (e.g., [PyChess](http://www.pychess.org/)): `$cwd/bin/release/genetic_chess -genetic genetic_ai_example.txt`
 
