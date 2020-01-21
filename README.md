@@ -16,32 +16,28 @@ indicate the relative value of each piece type.
 See the `doc/` folder for an in-depth description of the running and working of
 this project.
 
-### Quick start to play a game
-
+### Quick build instructions
+#### Linux
+0. Install `gcc` or `clang`
 1. Clone this repository to your computer.
-2. `make`
-    * If on Windows and Visual Studio is installed, open Genetic_Chess.sln
-      and compile.
-3. `bin/release/genetic_chess -genetic genetic_ai_example.txt -human`
-    * or, if you want to play white: `bin/genetic_chess -human -genetic
-      genetic_ai_example.txt`
-    * If compiling with Visual Studio, look in x86/Release or x64/Release
-      for the compiled program.
-4. Do not expect to be impressed by the quality of play.
+2. `./create_Makefile gcc` (or `clang`)
+3. `make release`
 
-### Quick start to starting a gene pool
-
+#### Windows
 1. Clone this repository to your computer.
-2. `make`
-    * If on Windows and Visual Studio is installed, open Genetic_Chess.sln
-      and compile.
-3. Edit `gene_pool_config_example.txt` to adjust the number of simultaneous
+2. Open Genetic_Chess.sln in Visual Studio and compile.
+
+### Start a game
+Install a chess GUI (e.g., [PyChess](http://www.pychess.org/)): `$cwd/bin/release/genetic_chess -genetic genetic_ai_example.txt`
+
+### Start a gene pool
+1. Edit `gene_pool_config_example.txt` to adjust the number of simultaneous
    games to a number less than or equal to the number of processors on your
    computer.
-4. `bin/release/genetic_chess -genepool gene_pool_config_example.txt`
+2. `<bin location>/genetic_chess -genepool gene_pool_config_example.txt`
     * If compiling with Visual Studio, look in x86/Release or x64/Release
       for the compiled program.
-5. About once a day, pause the gene pool with `Ctrl-Z` (Linux) or `Ctrl-Break`
+3. Every few hours or days, pause the gene pool with `Ctrl-Z` (Linux) or `Ctrl-C`
    (on Windows) and run `analysis/run_all_plots.sh pool.txt 1` to generate
    plots and other data showing the evolution and behavior of the specimens.
    * This script requires the program `octave` to run.

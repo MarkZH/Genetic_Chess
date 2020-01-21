@@ -29,21 +29,25 @@ This work is a program for evolving chess-playing AIs.  By pitting a population 
 
 
 \section{Building}
-There is nothing OS-specific about the \cpp{} code, so the code can be compiled with any \cpp{} compiler via
-\begin{quote}
-	\code{<compiler> -I include -D NDEBUG <all *.cpp files>}
-\end{quote}
-where \code{-I} indicates the option to specify the base directory of the header files and \code{-D NDEBUG} instructs the compiler to skip tests and assertions. For testing and debugging, use
-\begin{quote}
-	\code{<compiler> -I include -D DEBUG <all *.cpp files>}
-\end{quote}
-instead.
 
 \subsection{Linux}
-Run \code{make} to create various executables in a \code{bin/} subfolder that will be created if it does not already exist. If, in the course of working on this project, new files are created or the \code{\#include} files are changed within a file, run \code{python create\_Makefile.py [compiler]} to regenerate the Makefile. The choices for the compiler are \code{gcc} and \code{clang}. These python script assumes all \code{*.cpp} files in the current directory and all subfolders are part of the project and need compiling. Then, run \code{make} to build any of the following: \code{build} for an executable with debugging symbols and no optimization, \code{profile} for an optimized build that generates profiling information while running, and \code{release} for a fully optimized executable.
+Required software: GCC\footnote{\url{https://gcc.gnu.org/}} or clang\footnote{\url{https://clang.llvm.org/}}, latexmk\footnote{\url{https://ctan.org/pkg/latexmk}}, and doxygen\footnote{\label{doxygen-footnote}\url{http://www.doxygen.nl/}} (the last two are for generating the documentation). All of these should be available in your OS's package manager.
+
+\begin{enumerate}
+	\item After cloning the project, run \code{python create\_Makefile.py [compiler]} to regenerate the Makefile. The choices for the compiler are \code{gcc} and \code{clang}.
+	\item Run \code{make}. Optional target arguments include
+		\begin{itemize}
+			\item \code{all}: The default, creates \code{release} and \code{debug} builds as well as the documentation: a PDF user manual and Doxygen code documentation.
+			\item \code{release} The build that is optimized for speed.
+			\item \code{debug} The build that contains symbols for debugging.
+			\item \code{test\_all}, \code{test\_release}, \code{test\_debug}: Runs test suites on the named builds to ensure proper functioning and to measure performance.
+			\item \code{clean\_all}, \code{clean\_release}, \code{clean\_debug}: Deletes build files and (in the case of \code{clean\_all}) generated documentation files.
+		\end{itemize}
+		\item The executable files will be placed in the directory \code{./bin/<compiler>/<build>/\allowbreak{}genetic\_chess}, where \code{<compiler>} is either \code{gcc} or \code{clang} from step 1 and \code{<build>} is either \code{release} or \code{debug}. For convenience, symbolic links to the last made executable file will placed in \code{./bin/<build>/}.
+\end{enumerate}
 
 \subsection{Windows}
-The \code{.sln} and \code{.vcxproj} files are project files for Visual Studio. These will load all source files for one-click compiling.
+Required software: Any \cpp{} development suite. The \code{.sln} and \code{.vcxproj} files are project files for Microsoft Visual Studio\footnote{\url{https://visualstudio.microsoft.com/}}. The user manual can be generated with TexMaker\footnote{\url{https://www.xm1math.net/texmaker/}} or any other \LaTeX{} suite. The code documentation is generated with Doxygen (see footnote \ref{doxygen-footnote}).
 
 
 \section{Running}\label{running}
