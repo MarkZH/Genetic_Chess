@@ -1163,7 +1163,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     }
     out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
 
-    assert(commentary_board.fen() != fen());
+    assert(commentary_board.fen() == fen());
 }
 
 void Board::make_en_passant_targetable(Square square) noexcept
