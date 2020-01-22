@@ -5,6 +5,7 @@
 
 #include <string>
 #include <future>
+#include <vector>
 
 class Player;
 class Board;
@@ -21,7 +22,7 @@ class UCI_Mediator : public Outside_Communicator
         //! \param player The chess player on the local machine whose name and author get sent to the GUI.
         explicit UCI_Mediator(const Player& player);
 
-        void setup_turn(Board& board, Clock& clock) override;
+        void setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list) override;
         void listen(Board& board, Clock& clock) override;
         Game_Result handle_move(Board& board, const Move& move) const override;
         bool pondering_allowed() const override;

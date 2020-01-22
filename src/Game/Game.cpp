@@ -99,7 +99,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
     {
         while(true)
         {
-            outsider->setup_turn(board, clock);
+            outsider->setup_turn(board, clock, game_record);
             if(board.last_move())
             {
                 game_record.push_back(board.last_move());

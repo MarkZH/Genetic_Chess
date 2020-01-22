@@ -98,6 +98,9 @@ class Board
         //! legal en passant move to be made.
         std::string fen() const noexcept;
 
+        //! Returns the FEN string that was used to create the Board.
+        std::string original_fen() const noexcept;
+
         //! Returns the last move made on this Board
         //
         //! \returns A pointer representing the last move made.

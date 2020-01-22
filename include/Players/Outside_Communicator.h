@@ -3,6 +3,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 #include "Game/Color.h"
 
@@ -23,7 +24,7 @@ class Outside_Communicator
         //
         //! \param board The Board used for the game.
         //! \param clock The clock used for the game.
-        virtual void setup_turn(Board& board, Clock& clock) = 0;
+        virtual void setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list) = 0;
 
         //! Start a separate thread to listen for commands while the local AI is thinking.
         //

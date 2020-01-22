@@ -39,7 +39,7 @@ CECP_Mediator::CECP_Mediator(const Player& local_player)
     }
 }
 
-void CECP_Mediator::setup_turn(Board& board, Clock& clock)
+void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list)
 {
     auto own_time_left = clock.time_left(opposite(board.whose_turn()));
     auto opponent_time_left = clock.time_left(board.whose_turn());
@@ -115,6 +115,24 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             // time specified in centiseconds
             opponent_time_left = std::stod(String::split(command, " ")[1])/100;
             log("Will set opponent's time to " + std::to_string(opponent_time_left));
+        }
+        else if(command == "undo")
+        {
+            if(move_list.empty())
+            {
+                send_error(command, "no moves to undo");
+            }
+            else
+            {
+                log("Undoing move: " + move_list.back()->coordinate_move());
+                move_list.pop_back();
+                auto new_board = Board(board.original_fen());
+                for(auto move : move_list)
+                {
+                    new_board.submit_move(*move);
+                }
+                board = new_board;
+            }
         }
     }
 

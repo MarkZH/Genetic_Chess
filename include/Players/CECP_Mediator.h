@@ -5,6 +5,7 @@
 
 #include <string>
 #include <future>
+#include <vector>
 
 class Board;
 class Clock;
@@ -23,7 +24,7 @@ class CECP_Mediator : public Outside_Communicator
         //! \param local_player The player on the machine. The name of the player gets sent to the interface.
         explicit CECP_Mediator(const Player& local_player);
 
-        void setup_turn(Board& board, Clock& clock) override;
+        void setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list) override;
         void listen(Board& board, Clock& clock) override;
         Game_Result handle_move(Board& board, const Move& move) const override;
         bool pondering_allowed() const override;
