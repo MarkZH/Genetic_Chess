@@ -24,6 +24,7 @@ class Outside_Communicator
         //
         //! \param board The Board used for the game.
         //! \param clock The clock used for the game.
+        //! \param move_list The list of moves in the game so far.
         virtual void setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list) = 0;
 
         //! Start a separate thread to listen for commands while the local AI is thinking.
