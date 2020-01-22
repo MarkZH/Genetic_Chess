@@ -402,6 +402,11 @@ std::string Board::fen() const noexcept
         std::to_string(move_count_start_offset + game_length()/2);
 }
 
+std::string Board::original_fen() const noexcept
+{
+    return starting_fen;
+}
+
 const Move& Board::create_move(Square start, Square end, char promote) const
 {
     std::vector<const Move*> move_list;
@@ -1163,7 +1168,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     }
     out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
 
-    assert(commentary_board.fen() != fen());
+    assert(commentary_board.fen() == fen());
 }
 
 void Board::make_en_passant_targetable(Square square) noexcept

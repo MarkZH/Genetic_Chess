@@ -21,7 +21,7 @@ UCI_Mediator::UCI_Mediator(const Player& player)
     send_command("uciok");
 }
 
-void UCI_Mediator::setup_turn(Board& board, Clock& clock)
+void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>&)
 {
     while(true)
     {
