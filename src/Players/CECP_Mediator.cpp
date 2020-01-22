@@ -68,8 +68,15 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock)
             }
             catch(const Illegal_Move&)
             {
-                log("Rearranging board to: " + fen);
-                board = Board(fen);
+                try
+                {
+                    log("Rearranging board to: " + fen);
+                    board = Board(fen);
+                }
+                catch(const std::invalid_argument&)
+                {
+                    send_error(command, "Bad FEN");
+                }
             }
         }
         else if(String::starts_with(command, "usermove "))
@@ -257,6 +264,11 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
             return command;
         }
     }
+}
+
+void CECP_Mediator::send_error(const std::string& command, const std::string& reason) const noexcept
+{
+    send_command("Error (" + reason + "): " + command);
 }
 
 std::string CECP_Mediator::listener(Board& board, Clock& clock)
