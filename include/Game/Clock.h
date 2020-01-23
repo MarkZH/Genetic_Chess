@@ -36,6 +36,9 @@ class Clock
         //! Stop the current player's clock and restart the opponent's clock.
         Game_Result punch() noexcept;
 
+        //! Undo the last clock punch (time is not added).
+        void unpunch() noexcept;
+
         //! Stop both clocks.
         void stop() noexcept;
 

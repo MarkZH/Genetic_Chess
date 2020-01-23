@@ -56,6 +56,13 @@ Game_Result Clock::punch() noexcept
     return {};
 }
 
+void Clock::unpunch() noexcept
+{
+    moves_to_reset_clocks[whose_turn] -= 1;
+    moves_to_reset_clocks[opposite(whose_turn)] -= 1;
+    punch();
+}
+
 void Clock::stop() noexcept
 {
     auto time_stop = std::chrono::steady_clock::now();

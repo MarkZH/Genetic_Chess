@@ -135,6 +135,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
                     new_board.submit_move(*move);
                 }
                 board = new_board;
+                clock.unpunch();
             }
         }
     }
