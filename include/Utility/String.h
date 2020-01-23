@@ -108,7 +108,7 @@ namespace String
                 return '-' + format_integer(-n, separator);
             }
         }
-        
+
         auto s = std::to_string(n);
         auto group_size = 3;
         auto index = s.size() % group_size;
