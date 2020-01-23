@@ -116,9 +116,8 @@ void gene_pool(const std::string& config_file)
     }
     write_generation(pools, genome_file_name, write_new_pools);
 
-
-    size_t starting_pool = 0;
-    size_t rounds_since_last_swap = 0; // Count of complete gene pool rounds where all pools have played a set of games
+    size_t last_pool = gene_pool_count;
+    size_t rounds = 0; // Count of complete gene pool rounds where all pools have played a set of games
     if(auto genome_file = std::ifstream(genome_file_name))
     {
         std::string line;
@@ -133,11 +132,10 @@ void gene_pool(const std::string& config_file)
                 try
                 {
                     auto alive_split = String::split(line, ":");
-                    auto pool_number = String::string_to_size_t(alive_split.at(1));
-                    starting_pool = std::min(pool_number + 1, gene_pool_count)%gene_pool_count;
-                    if(starting_pool == 0)
+                    last_pool = String::string_to_size_t(alive_split.at(1));
+                    if(last_pool == gene_pool_count - 1)
                     {
-                        rounds_since_last_swap = (rounds_since_last_swap + 1)%pool_swap_interval;
+                        ++rounds;
                     }
                 }
                 catch(const std::exception&)
@@ -147,8 +145,10 @@ void gene_pool(const std::string& config_file)
             }
         }
     }
+    auto rounds_since_last_swap = rounds % pool_swap_interval;
+    const auto starting_pool = (last_pool + 1) % gene_pool_count;
 
-    auto game_record_file = genome_file_name +  "_games.pgn";
+    const auto game_record_file = genome_file_name +  "_games.pgn";
     auto game_time = minimum_game_time;
     if(auto ifs = std::ifstream(game_record_file))
     {
