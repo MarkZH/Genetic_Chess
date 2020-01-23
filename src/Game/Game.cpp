@@ -105,8 +105,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
             const auto& chosen_move = player.choose_move(board, clock);
             clock.punch();
 
-            game_record.push_back(&chosen_move);
-            game_result = outsider->handle_move(board, chosen_move);
+            game_result = outsider->handle_move(board, chosen_move, game_record);
             player.ponder(board, clock, outsider->pondering_allowed());
         }
     }

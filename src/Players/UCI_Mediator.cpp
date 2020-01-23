@@ -141,9 +141,10 @@ void UCI_Mediator::listen(Board& board, Clock&)
     last_listening_result = std::async(std::launch::async, &UCI_Mediator::listener, this, std::ref(board));
 }
 
-Game_Result UCI_Mediator::handle_move(Board& board, const Move& move) const
+Game_Result UCI_Mediator::handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const
 {
     send_command("bestmove " + move.coordinate_move());
+    move_list.push_back(&move);
     return board.submit_move(move);
 }
 
