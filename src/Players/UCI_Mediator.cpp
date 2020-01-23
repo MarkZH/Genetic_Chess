@@ -21,7 +21,7 @@ UCI_Mediator::UCI_Mediator(const Player& player)
     send_command("uciok");
 }
 
-void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>&)
+void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list)
 {
     while(true)
     {
@@ -31,6 +31,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
             log("stopping thinking and clocks");
             board.pick_move_now();
             clock = {};
+            move_list.clear();
         }
         else if(String::starts_with(command, "position "))
         {
@@ -50,13 +51,15 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
                 board = Board(fen);
             }
 
+            move_list.clear();
             auto moves_iter = std::find(parse.begin(), parse.end(), "moves");
             if(moves_iter != parse.end())
             {
                 std::for_each(std::next(moves_iter), parse.end(),
-                              [&board](const auto& move)
+                              [&board, &move_list](const auto& move)
                               {
                                   board.submit_move(move);
+                                  move_list.push_back(board.last_move());
                               });
                 log("All moves applied");
             }
