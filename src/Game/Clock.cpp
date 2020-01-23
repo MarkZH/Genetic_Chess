@@ -12,7 +12,6 @@ Clock::Clock(double duration_seconds,
              size_t moves_to_reset,
              double increment_seconds,
              Color starting_turn,
-             bool clock_stops_game,
              std::chrono::system_clock::time_point previous_start_time) noexcept :
     timers({fractional_seconds(duration_seconds), fractional_seconds(duration_seconds)}),
     initial_start_time(Clock::fractional_seconds(duration_seconds)),
@@ -20,7 +19,6 @@ Clock::Clock(double duration_seconds,
     move_count_reset(moves_to_reset),
     whose_turn(starting_turn),
     use_clock(duration_seconds > 0),
-    local_clock_stoppage(clock_stops_game),
     game_start_date_time(previous_start_time)
 {
 }
@@ -38,11 +36,6 @@ Game_Result Clock::punch() noexcept
     }
 
     timers[whose_turn] -= (time_this_punch - time_previous_punch);
-    if(local_clock_stoppage && timers[whose_turn] < 0s)
-    {
-        stop();
-        return Game_Result(opposite(whose_turn), Game_Result_Type::TIME_FORFEIT);
-    }
 
     if(++moves_to_reset_clocks[whose_turn] == move_count_reset)
     {
@@ -53,7 +46,14 @@ Game_Result Clock::punch() noexcept
     time_previous_punch = time_this_punch;
     timers[whose_turn] += increment_time[whose_turn];
 
-    return {};
+    if(timers[whose_turn] < 0s)
+    {
+        return Game_Result(opposite(whose_turn), Game_Result_Type::TIME_FORFEIT);
+    }
+    else
+    {
+        return {};
+    }
 }
 
 void Clock::unpunch() noexcept

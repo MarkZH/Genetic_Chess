@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
                 else
                 {
                     play_game(board,
-                              Clock(game_time, moves_per_reset, increment_time, board.whose_turn(), true),
+                              Clock(game_time, moves_per_reset, increment_time, board.whose_turn()),
                               *white, *black,
                               pondering_allowed,
                               game_file_name);

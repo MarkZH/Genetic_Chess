@@ -114,6 +114,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
     {
         if( ! game_file_name.empty())
         {
+            clock.stop();
             if(player_color == BLACK)
             {
                 std::this_thread::sleep_for(1s);

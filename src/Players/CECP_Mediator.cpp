@@ -239,7 +239,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
 
             log("increment = " + split[3]);
             auto increment = std::stod(split[3]);
-            clock = Clock(game_time, reset_moves, increment, WHITE, false);
+            clock = Clock(game_time, reset_moves, increment, WHITE);
         }
         else if(String::starts_with(command, "st "))
         {
@@ -249,7 +249,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
             auto reset_moves = 1;
             auto increment = 0;
             auto game_time = time_per_move;
-            clock = Clock(game_time, reset_moves, increment, WHITE, false);
+            clock = Clock(game_time, reset_moves, increment, WHITE);
         }
         else if(command == "post")
         {
@@ -283,7 +283,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         {
             log("Setting board to standard start position and resetting clock");
             board = Board{};
-            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), WHITE, false);
+            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), WHITE);
             in_force_mode = false;
         }
         else if(String::starts_with(command, "name "))

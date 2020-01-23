@@ -21,8 +21,6 @@ class Clock
         //! \param moves_to_reset The number of moves before the clocks are reset to the initial time.
         //! \param increment_seconds Amount of time to add to a player's clock after every move.
         //! \param starting_turn Which player's clock to start upon calling start().
-        //! \param clock_stops_game Whether this clock should return a Game_Result that stops a game upon time expiring.
-        //!        This parameter should be false if an external clock (e.g., from XBoard via CECP) will stop the game.
         //! \param previous_start_time If the clock for a game is being replaced by another clock (for example, a GUI
         //!        changes time control midgame), then this parameter can be used to preserve the actual start of the
         //!        current game.
@@ -30,7 +28,6 @@ class Clock
               size_t moves_to_reset = 0,
               double increment_seconds = 0.0,
               Color starting_turn = WHITE,
-              bool clock_stops_game = true,
               std::chrono::system_clock::time_point previous_start_time = {}) noexcept;
 
         //! Stop the current player's clock and restart the opponent's clock.
@@ -91,7 +88,6 @@ class Clock
         Color whose_turn;
         bool use_clock;
         bool clocks_running = false;
-        bool local_clock_stoppage;
 
         std::chrono::system_clock::time_point game_start_date_time;
         std::chrono::steady_clock::time_point time_previous_punch;
