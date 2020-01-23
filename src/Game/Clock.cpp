@@ -30,6 +30,7 @@ Game_Result Clock::punch() noexcept
     assert(clocks_running);
 
     auto time_this_punch = std::chrono::steady_clock::now();
+    whose_turn = opposite(whose_turn);
 
     if( ! use_clock)
     {
@@ -49,7 +50,6 @@ Game_Result Clock::punch() noexcept
         moves_to_reset_clocks[whose_turn] = 0;
     }
 
-    whose_turn = opposite(whose_turn);
     time_previous_punch = time_this_punch;
     timers[whose_turn] += increment_time[whose_turn];
 
@@ -119,6 +119,7 @@ Color Clock::running_for() const noexcept
 void Clock::set_time(Color player, double new_time_seconds) noexcept
 {
     timers[player] = fractional_seconds(new_time_seconds);
+    initial_start_time = fractional_seconds(std::max(new_time_seconds, initial_start_time.count()));
     time_previous_punch = std::chrono::steady_clock::now();
     use_clock = true;
 }

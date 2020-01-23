@@ -70,8 +70,15 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
         else if(String::starts_with(command, "go "))
         {
             set_log_indent(board.whose_turn());
+            if( ! clock.is_running())
+            {
+                clock.start();
+            }
 
-            clock = Clock(0, 0, 0, board.whose_turn(), false, clock.game_start_date_and_time());
+            if(clock.running_for() != board.whose_turn())
+            {
+                clock.punch();
+            }
 
             auto go_parse = String::split(command);
             for(size_t i = 1; i < go_parse.size(); ++i)
@@ -114,6 +121,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
                 {
                     log("Setting clock to " + std::to_string(new_time) + " seconds per move");
                     clock = Clock(new_time, 1, 0.0, board.whose_turn(), false, clock.game_start_date_and_time());
+                    clock.start();
                 }
                 else
                 {

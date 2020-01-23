@@ -101,16 +101,6 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
             outsider->setup_turn(board, clock, game_record);
             outsider->listen(board, clock);
 
-            if( ! clock.is_running())
-            {
-                clock.start();
-            }
-
-            if(clock.running_for() != board.whose_turn())
-            {
-                clock.punch();
-            }
-
             player_color = board.whose_turn();
             const auto& chosen_move = player.choose_move(board, clock);
             clock.punch();

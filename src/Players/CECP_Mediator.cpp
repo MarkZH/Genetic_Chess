@@ -144,6 +144,16 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
     clock.set_time(board.whose_turn(), own_time_left);
     log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time_left));
     clock.set_time(opposite(board.whose_turn()), opponent_time_left);
+
+    if( ! clock.is_running())
+    {
+        clock.start();
+    }
+
+    if(clock.running_for() != board.whose_turn())
+    {
+        clock.punch();
+    }
 }
 
 void CECP_Mediator::listen(Board& board, Clock& clock)
