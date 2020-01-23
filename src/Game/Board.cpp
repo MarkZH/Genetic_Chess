@@ -1106,7 +1106,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
     print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
-    if(game_clock.initial_time() > 0)
+    if(game_clock.is_in_use())
     {
         std::ostringstream time_control_spec;
         if(game_clock.moves_per_time_period() > 0)

@@ -7,8 +7,7 @@
 class Game_Ended : public std::runtime_error
 {
     public:
-        //! Create a game-ending exception to throw.
-        Game_Ended() noexcept;
+        using std::runtime_error::runtime_error;
 };
 
 #endif // GAME_ENDED_H

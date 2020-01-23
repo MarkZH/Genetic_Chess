@@ -83,11 +83,6 @@ class Genome
     private:
         std::vector<std::unique_ptr<Gene>> genome;
 
-        // Regulatory gene locations
-        static size_t piece_strength_gene_index;
-        static size_t look_ahead_gene_index;
-        static size_t mutation_rate_gene_index;
-
         double score_board(const Board& board, Color perspective, size_t prior_real_moves) const;
         void reset_piece_strength_gene();
 

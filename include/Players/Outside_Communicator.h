@@ -24,6 +24,7 @@ class Outside_Communicator
         //
         //! \param board The Board used for the game.
         //! \param clock The clock used for the game.
+        //! \param move_list The list of moves in the game so far.
         virtual void setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list) = 0;
 
         //! Start a separate thread to listen for commands while the local AI is thinking.
@@ -36,7 +37,8 @@ class Outside_Communicator
         //
         //! \param board The Board used for the game.
         //! \param move The move picked by the local AI.
-        virtual Game_Result handle_move(Board& board, const Move& move) const = 0;
+        //! \param move_list The list of moves in the game so far.
+        virtual Game_Result handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const = 0;
 
         //! Returns whether the GUI is allowing thinking during the other player's move.
         virtual bool pondering_allowed() const = 0;
@@ -84,8 +86,7 @@ class Outside_Communicator
 //! Initialize communication with an outside program.
 //
 //! The function returns an appropriate derived class based on the
-//! communiation protocol by the other program. CECP is the only
-//! protocol implemented so far. UCI may be implemented in the future.
+//! communiation protocol by the other program (CECP or UCI).
 //! \param player The local player so that its information may be sent
 //!        to the outside interface.
 //! \returns An appropriate derived class instance with the proper protocol.

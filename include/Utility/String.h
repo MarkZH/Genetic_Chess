@@ -73,6 +73,20 @@ namespace String
     //! \returns The same string with the markers and everything between them removed.
     std::string strip_block_comment(const std::string& str, const std::string& start, const std::string& end);
 
+    //! Extract text between delimiters
+    //
+    //! \param str The input string
+    //! \param start The marker indicating the beginning of the text block.
+    //! \param end The marker indicating the end of the text block.
+    //! Note: The returned text will not include the delimiters. This function does not consider
+    //!       delimiter nesting, meaning it will use the first instance of start and the first
+    //!       instance of end that follows start.
+    //!
+    //! \code{cpp}
+    //! extract_delimited_text("(a(b))", "(", ")") == "a(b"
+    //! \endcode
+    std::string extract_delimited_text(const std::string& str, const std::string& start, const std::string& end);
+
     //! Create a lowercase version of a string.
     //
     //! \param s The input string.
@@ -94,7 +108,7 @@ namespace String
                 return '-' + format_integer(-n, separator);
             }
         }
-        
+
         auto s = std::to_string(n);
         auto group_size = 3;
         auto index = s.size() % group_size;

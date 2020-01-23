@@ -41,6 +41,7 @@ Required software: GCC\footnote{\url{https://gcc.gnu.org/}} or clang\footnote{\u
 			\item \code{release} The build that is optimized for speed.
 			\item \code{debug} The build that contains symbols for debugging.
 			\item \code{test\_all}, \code{test\_release}, \code{test\_debug}: Runs test suites on the named builds to ensure proper functioning and to measure performance.
+			\item \code{docs}, \code{user\_manual}, \code{code\_docs}: Generate documentation. The target \code{docs} implies the other two. The \code{user\_manual} is a PDF document detailing how to run the program; the \code{code\_docs} target is a series of HTML pages detailing the public interfaces of the \cpp{} code.
 			\item \code{clean\_all}, \code{clean\_release}, \code{clean\_debug}: Deletes build files and (in the case of \code{clean\_all}) generated documentation files.
 		\end{itemize}
 		\item The executable files will be placed in the directory \code{./bin/<compiler>/<build>/\allowbreak{}genetic\_chess}, where \code{<compiler>} is either \code{gcc} or \code{clang} from step 1 and \code{<build>} is either \code{release} or \code{debug}. For convenience, symbolic links to the last made executable file will placed in \code{./bin/<build>/}.

@@ -21,8 +21,6 @@ class Clock
         //! \param moves_to_reset The number of moves before the clocks are reset to the initial time.
         //! \param increment_seconds Amount of time to add to a player's clock after every move.
         //! \param starting_turn Which player's clock to start upon calling start().
-        //! \param clock_stops_game Whether this clock should return a Game_Result that stops a game upon time expiring.
-        //!        This parameter should be false if an external clock (e.g., from XBoard via CECP) will stop the game.
         //! \param previous_start_time If the clock for a game is being replaced by another clock (for example, a GUI
         //!        changes time control midgame), then this parameter can be used to preserve the actual start of the
         //!        current game.
@@ -30,11 +28,13 @@ class Clock
               size_t moves_to_reset = 0,
               double increment_seconds = 0.0,
               Color starting_turn = WHITE,
-              bool clock_stops_game = true,
               std::chrono::system_clock::time_point previous_start_time = {}) noexcept;
 
         //! Stop the current player's clock and restart the opponent's clock.
         Game_Result punch() noexcept;
+
+        //! Undo the last clock punch (time is not added).
+        void unpunch() noexcept;
 
         //! Stop both clocks.
         void stop() noexcept;
@@ -66,7 +66,7 @@ class Clock
         //! Returns the date and time when start() was called.
         std::chrono::system_clock::time_point game_start_date_and_time() const noexcept;
 
-        //! The intitial time on the clocks at the start of the game (and after moves_to_reset()).
+        //! The intitial time on the clocks at the start of the game (and added after moves_to_reset()).
         double initial_time() const noexcept;
 
         //! How much time is added to a player's clock after every move.
@@ -74,6 +74,9 @@ class Clock
 
         //! How many moves must be played before the clocks are reset to their initial times.
         size_t moves_per_time_period() const noexcept;
+
+        //! Was the clock used for a game?
+        bool is_in_use() const noexcept;
 
     private:
         using fractional_seconds = std::chrono::duration<double>;
@@ -84,11 +87,10 @@ class Clock
         fractional_seconds initial_start_time;
         std::array<fractional_seconds, 2> increment_time;
         size_t move_count_reset;
+        int initial_time_set_count = 0;
 
         Color whose_turn;
-        bool use_clock;
         bool clocks_running = false;
-        bool local_clock_stoppage;
 
         std::chrono::system_clock::time_point game_start_date_time;
         std::chrono::steady_clock::time_point time_previous_punch;

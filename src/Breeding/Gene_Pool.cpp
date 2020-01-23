@@ -52,7 +52,7 @@ namespace
 
     void pause_gene_pool(int);
 
-    void write_generation(const Gene_Pool_Set& pools, size_t pool_index, const std::string& genome_file_name);
+    void write_generation(const Gene_Pool_Set& pools, const std::string& genome_file_name, bool force_write_still_alive);
 
     template<typename Stat_Map>
     void purge_dead_from_map(const Gene_Pool_Set& pools, Stat_Map& stats);
@@ -103,29 +103,21 @@ void gene_pool(const std::string& config_file)
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
+    auto write_new_pools = pools.empty() || pools.front().size() != gene_pool_population;
     pools.resize(gene_pool_count);
-    auto needs_writing = std::vector<bool>(pools.size(), false);
     for(size_t i = 0; i < pools.size(); ++i)
     {
         auto new_ai_index = pools[i].size();
         pools[i].resize(gene_pool_population);
         for(auto ai_index = new_ai_index; ai_index < pools[i].size(); ++ai_index)
         {
-            needs_writing[i] = true;
             pools[i][ai_index].mutate(scramble_mutations);
         }
     }
+    write_generation(pools, genome_file_name, write_new_pools);
 
-    for(size_t i = 0; i < pools.size(); ++i)
-    {
-        if(needs_writing[i])
-        {
-            write_generation(pools, i, genome_file_name);
-        }
-    }
-
-    size_t starting_pool = 0;
-    size_t rounds_since_last_swap = 0; // Count of complete gene pool rounds where all pools have played a set of games
+    size_t last_pool = gene_pool_count;
+    size_t rounds = 0; // Count of complete gene pool rounds where all pools have played a set of games
     if(auto genome_file = std::ifstream(genome_file_name))
     {
         std::string line;
@@ -140,11 +132,10 @@ void gene_pool(const std::string& config_file)
                 try
                 {
                     auto alive_split = String::split(line, ":");
-                    auto pool_number = String::string_to_size_t(alive_split.at(1));
-                    starting_pool = std::min(pool_number + 1, gene_pool_count)%gene_pool_count;
-                    if(starting_pool == 0)
+                    last_pool = String::string_to_size_t(alive_split.at(1));
+                    if(last_pool == gene_pool_count - 1)
                     {
-                        rounds_since_last_swap = (rounds_since_last_swap + 1)%pool_swap_interval;
+                        ++rounds;
                     }
                 }
                 catch(const std::exception&)
@@ -154,8 +145,10 @@ void gene_pool(const std::string& config_file)
             }
         }
     }
+    auto rounds_since_last_swap = rounds % pool_swap_interval;
+    const auto starting_pool = (last_pool + 1) % gene_pool_count;
 
-    auto game_record_file = genome_file_name +  "_games.pgn";
+    const auto game_record_file = genome_file_name +  "_games.pgn";
     auto game_time = minimum_game_time;
     if(auto ifs = std::ifstream(game_record_file))
     {
@@ -312,7 +305,7 @@ void gene_pool(const std::string& config_file)
         }
 
         std::sort(pool.begin(), pool.end());
-        write_generation(pools, pool_index, genome_file_name);
+        write_generation(pools, genome_file_name, false);
 
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
@@ -384,11 +377,11 @@ void gene_pool(const std::string& config_file)
                 begin_iter = end_iter;
             }
 
-            for(size_t new_pool_index = 0; new_pool_index < pools.size(); ++new_pool_index)
+            for(auto& new_pool : pools)
             {
-                std::sort(pools[new_pool_index].begin(), pools[new_pool_index].end());
-                write_generation(pools, new_pool_index, genome_file_name);
+                std::sort(new_pool.begin(), new_pool.end());
             }
+            write_generation(pools, genome_file_name, true);
 
             std::cout << "\n=======================\n" << std::endl;
         }
@@ -435,7 +428,7 @@ namespace
         #endif // _WIN32
     }
 
-    void write_generation(const Gene_Pool_Set& pools, size_t pool_index, const std::string& genome_file_name)
+    void write_generation(const Gene_Pool_Set& pools, const std::string& genome_file_name, bool force_write_still_alive)
     {
         static std::map<Genetic_AI, bool> written_before;
         static std::string last_file_name;
@@ -452,22 +445,30 @@ namespace
             throw std::runtime_error("Could not write to file:" + genome_file_name);
         }
 
-        const auto& pool = pools.at(pool_index);
-        for(const auto& ai : pool)
+        for(size_t i = 0; i < pools.size(); ++i)
         {
-            if( ! written_before[ai])
+            auto needs_still_alive_line = false;
+            const auto& pool = pools.at(i);
+            for(const auto& ai : pool)
             {
-                ai.print(ofs);
-                written_before[ai] = true;
+                if( ! written_before[ai])
+                {
+                    ai.print(ofs);
+                    written_before[ai] = true;
+                    needs_still_alive_line = true;
+                }
+            }
+
+            if(needs_still_alive_line || force_write_still_alive)
+            {
+                ofs << "\nStill Alive: " << i << " : ";
+                for(const auto& ai : pool)
+                {
+                    ofs << ai.id() << " ";
+                }
+                ofs << "\n\n" << std::flush;
             }
         }
-
-        ofs << "\nStill Alive: " << pool_index << " : ";
-        for(const auto& ai : pool)
-        {
-            ofs << ai.id() << " ";
-        }
-        ofs << "\n\n" << std::flush;
 
         purge_dead_from_map(pools, written_before);
     }
@@ -525,11 +526,7 @@ namespace
             }
         }
 
-        for(size_t index = 0; index < result.size(); ++index)
-        {
-            write_generation(result, index, ""); // mark AIs from file as already written
-        }
-
+        write_generation(result, "", false); // mark AIs from file as already written
         return result;
     }
 
