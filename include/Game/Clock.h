@@ -87,6 +87,7 @@ class Clock
         fractional_seconds initial_start_time;
         std::array<fractional_seconds, 2> increment_time;
         size_t move_count_reset;
+        int initial_time_set_count = 0;
 
         Color whose_turn;
         bool clocks_running = false;

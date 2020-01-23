@@ -115,7 +115,14 @@ Color Clock::running_for() const noexcept
 void Clock::set_time(Color player, double new_time_seconds) noexcept
 {
     timers[player] = fractional_seconds(new_time_seconds);
-    initial_start_time = fractional_seconds(std::max(new_time_seconds, initial_start_time.count()));
+
+    // This function is called by GUI mediators, so the actual
+    // start time will be during one of the first two calls
+    // (first if the local player is white, second if black).
+    if(++initial_time_set_count <= 2)
+    {
+        initial_start_time = fractional_seconds(std::max(new_time_seconds, initial_start_time.count()));
+    }
     time_previous_punch = std::chrono::steady_clock::now();
 }
 
