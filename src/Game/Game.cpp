@@ -87,13 +87,12 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
     #endif // _WIN32
 
     auto outsider = connect_to_outside(player);
-    const Player* white = nullptr;
-    const Player* black = nullptr;
 
     Board board;
     Clock clock;
     Game_Result game_result;
     std::vector<const Move*> game_record;
+    auto player_color = NONE;
 
     try
     {
@@ -116,10 +115,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
                 clock.punch();
             }
 
-            white = nullptr;
-            black = nullptr;
-            (board.whose_turn() == WHITE ? white : black) = &player;
-
+            player_color = board.whose_turn();
             const auto& chosen_move = player.choose_move(board, clock);
             clock.punch();
 
@@ -132,7 +128,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
     {
         if( ! game_file_name.empty())
         {
-            if(&player == black)
+            if(player_color == BLACK)
             {
                 std::this_thread::sleep_for(1s);
             }
@@ -141,6 +137,8 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
             {
                 game_record.push_back(board.last_move());
             }
+            auto white = (player_color == WHITE ? &player : nullptr);
+            auto black = (player_color == BLACK ? &player : nullptr);
             board.print_game_record(game_record, white, black, game_file_name, game_result, clock, "End of online game");
         }
     }
