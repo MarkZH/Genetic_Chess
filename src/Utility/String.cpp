@@ -124,6 +124,22 @@ std::string String::strip_block_comment(const std::string& str, const std::strin
     }
 }
 
+std::string String::extract_delimited_text(const std::string& str, const std::string& start, const std::string& end)
+{
+    auto start_split = split(str, start, 1);
+    if(start_split.size() != 2)
+    {
+        throw std::invalid_argument("Starting delimiter not found in \"" + str + "\": " + start + " " + end);
+    }
+    auto start_of_inside = start_split[1];
+    auto inside_split = split(start_of_inside, end, 1);
+    if(inside_split.size() != 2)
+    {
+        throw std::invalid_argument("Ending delimiter not found in \"" + str + "\": " + start + " " + end);
+    }
+    return inside_split[0];
+}
+
 std::string String::lowercase(std::string s) noexcept
 {
     for(auto& c : s){ c = std::tolower(c); }

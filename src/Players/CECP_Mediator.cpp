@@ -208,7 +208,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         else if(String::starts_with(command, "result "))
         {
             auto result = String::split(command).at(1);
-            auto reason = String::split(String::split(command, "{", 1)[1], "}", 1)[0];
+            auto reason = String::extract_delimited_text(command, "{", "}");
             report_end_of_game(result, reason);
         }
         else if(command == "force")
