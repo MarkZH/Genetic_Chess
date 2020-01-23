@@ -173,6 +173,7 @@ std::string UCI_Mediator::receive_uci_command(Board& board, bool while_listening
         {
             // command has 8 fields requiring 7 cuts to get name
             set_other_player_name(String::split(command, " ", 7).back());
+            log("Opponent's name: " + other_player_name());
         }
         else
         {
