@@ -20,6 +20,7 @@ Clock::Clock(double duration_seconds,
     whose_turn(starting_turn),
     game_start_date_time(previous_start_time)
 {
+    assert(whose_turn != NONE);
 }
 
 Game_Result Clock::punch() noexcept
