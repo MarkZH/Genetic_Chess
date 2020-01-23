@@ -85,8 +85,7 @@ class Outside_Communicator
 //! Initialize communication with an outside program.
 //
 //! The function returns an appropriate derived class based on the
-//! communiation protocol by the other program. CECP is the only
-//! protocol implemented so far. UCI may be implemented in the future.
+//! communiation protocol by the other program (CECP or UCI).
 //! \param player The local player so that its information may be sent
 //!        to the outside interface.
 //! \returns An appropriate derived class instance with the proper protocol.
