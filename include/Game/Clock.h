@@ -66,7 +66,7 @@ class Clock
         //! Returns the date and time when start() was called.
         std::chrono::system_clock::time_point game_start_date_and_time() const noexcept;
 
-        //! The intitial time on the clocks at the start of the game (and after moves_to_reset()).
+        //! The intitial time on the clocks at the start of the game (and added after moves_to_reset()).
         double initial_time() const noexcept;
 
         //! How much time is added to a player's clock after every move.
