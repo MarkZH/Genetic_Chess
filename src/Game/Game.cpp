@@ -99,10 +99,6 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
         while(true)
         {
             outsider->setup_turn(board, clock, game_record);
-            if(board.last_move())
-            {
-                game_record.push_back(board.last_move());
-            }
             outsider->listen(board, clock);
 
             if( ! clock.is_running())
@@ -133,10 +129,6 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
                 std::this_thread::sleep_for(1s);
             }
             player.set_opponent_name(outsider->other_player_name());
-            if(board.last_move() && (game_record.empty() || board.last_move() != game_record.back()))
-            {
-                game_record.push_back(board.last_move());
-            }
             auto white = (player_color == WHITE ? &player : nullptr);
             auto black = (player_color == BLACK ? &player : nullptr);
             board.print_game_record(game_record, white, black, game_file_name, game_result, clock, game_end.what());

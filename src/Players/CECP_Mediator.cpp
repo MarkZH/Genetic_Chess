@@ -65,6 +65,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
                 // instead of a move.
                 board.submit_move(fen);
                 log("Derived move: " + board.last_move()->coordinate_move());
+                move_list.push_back(board.last_move());
             }
             catch(const Illegal_Move&)
             {
@@ -72,6 +73,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
                 {
                     log("Rearranging board to: " + fen);
                     board = Board(fen);
+                    move_list.clear();
                 }
                 catch(const std::invalid_argument&)
                 {
@@ -86,6 +88,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
             {
                 log("Applying move: " + move);
                 auto result = board.submit_move(move);
+                move_list.push_back(board.last_move());
                 if(result.game_has_ended())
                 {
                     report_end_of_game(result);
