@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                // Use pointers since each player could be Human, Genetic, Random, etc.
+                // Use pointers since each player could be Genetic, Random, etc.
                 std::unique_ptr<Player> white;
                 std::unique_ptr<Player> black;
                 std::unique_ptr<Player> latest;
