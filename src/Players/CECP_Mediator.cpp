@@ -309,7 +309,7 @@ std::string CECP_Mediator::listener(Board& board, Clock& clock)
 void CECP_Mediator::report_end_of_game(const std::string& result, const std::string& reason) const
 {
     send_command(result + " {" + reason + "}");
-    throw Game_Ended();
+    throw Game_Ended(reason);
 }
 
 void CECP_Mediator::report_end_of_game(const Game_Result& result) const

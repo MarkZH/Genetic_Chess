@@ -124,7 +124,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
             player.ponder(board, clock, outsider->pondering_allowed());
         }
     }
-    catch(const Game_Ended&)
+    catch(const Game_Ended& game_end)
     {
         if( ! game_file_name.empty())
         {
@@ -139,7 +139,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
             }
             auto white = (player_color == WHITE ? &player : nullptr);
             auto black = (player_color == BLACK ? &player : nullptr);
-            board.print_game_record(game_record, white, black, game_file_name, game_result, clock, "End of online game");
+            board.print_game_record(game_record, white, black, game_file_name, game_result, clock, game_end.what());
         }
     }
 }

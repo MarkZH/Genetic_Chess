@@ -49,7 +49,7 @@ std::string Outside_Communicator::receive_command()
     if( ! std::getline(std::cin, result))
     {
         log("GUI disconnected");
-        throw Game_Ended();
+        throw Game_Ended("GUI disconnected");
     }
 
     log("RECEIVING: " + result);
@@ -58,12 +58,12 @@ std::string Outside_Communicator::receive_command()
     if(result.empty())
     {
         log("Error in communication. Got empty message from GUI.");
-        throw Game_Ended();
+        throw Game_Ended("Communication error");
     }
 
     if(result == "quit")
     {
-        throw Game_Ended();
+        throw Game_Ended("");
     }
 
     return result;
