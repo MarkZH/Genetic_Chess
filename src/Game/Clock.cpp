@@ -18,7 +18,6 @@ Clock::Clock(double duration_seconds,
     increment_time({Clock::fractional_seconds(increment_seconds), Clock::fractional_seconds(increment_seconds)}),
     move_count_reset(moves_to_reset),
     whose_turn(starting_turn),
-    use_clock(duration_seconds > 0),
     game_start_date_time(previous_start_time)
 {
 }
@@ -30,7 +29,7 @@ Game_Result Clock::punch() noexcept
     auto time_this_punch = std::chrono::steady_clock::now();
     whose_turn = opposite(whose_turn);
 
-    if( ! use_clock)
+    if( ! is_in_use())
     {
         return {};
     }
@@ -83,7 +82,7 @@ void Clock::start() noexcept
 
 double Clock::time_left(Color color) const noexcept
 {
-    if( ! use_clock)
+    if( ! is_in_use())
     {
         return 0.0;
     }
@@ -121,19 +120,16 @@ void Clock::set_time(Color player, double new_time_seconds) noexcept
     timers[player] = fractional_seconds(new_time_seconds);
     initial_start_time = fractional_seconds(std::max(new_time_seconds, initial_start_time.count()));
     time_previous_punch = std::chrono::steady_clock::now();
-    use_clock = true;
 }
 
 void Clock::set_increment(Color player, double new_increment_time_seconds) noexcept
 {
     increment_time[player] = fractional_seconds(new_increment_time_seconds);
-    use_clock = true;
 }
 
 void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
 {
     move_count_reset = moves_to_reset_clocks[running_for()] + moves_to_reset;
-    use_clock = true;
 }
 
 double Clock::running_time_left() const noexcept
@@ -164,4 +160,9 @@ double Clock::initial_time() const noexcept
 double Clock::increment(Color color) const noexcept
 {
     return increment_time[color].count();
+}
+
+bool Clock::is_in_use() const noexcept
+{
+    return initial_start_time > 0s;
 }

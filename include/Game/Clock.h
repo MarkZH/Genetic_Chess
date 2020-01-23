@@ -75,6 +75,9 @@ class Clock
         //! How many moves must be played before the clocks are reset to their initial times.
         size_t moves_per_time_period() const noexcept;
 
+        //! Was the clock used for a game?
+        bool is_in_use() const noexcept;
+
     private:
         using fractional_seconds = std::chrono::duration<double>;
 
@@ -86,7 +89,6 @@ class Clock
         size_t move_count_reset;
 
         Color whose_turn;
-        bool use_clock;
         bool clocks_running = false;
 
         std::chrono::system_clock::time_point game_start_date_time;
