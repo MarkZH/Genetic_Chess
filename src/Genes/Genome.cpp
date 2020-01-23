@@ -33,51 +33,22 @@
 
 class Board;
 
-size_t Genome::piece_strength_gene_index = size_t(-1);
-size_t Genome::look_ahead_gene_index = size_t(-1);
-size_t Genome::mutation_rate_gene_index = size_t(-1);
+namespace
+{
+     const auto piece_strength_gene_index = size_t(0);
+     const auto look_ahead_gene_index = size_t(1);
+     const auto mutation_rate_gene_index = size_t(2);
+}
 
 Genome::Genome()
 {
     // Regulator genes
     genome.emplace_back(std::make_unique<Piece_Strength_Gene>());
-    if(piece_strength_gene_index < genome.size())
-    {
-        if(piece_strength_gene_index != genome.size() - 1)
-        {
-            throw Genetic_AI_Creation_Error("Different genomes have different piece strength index values.");
-        }
-    }
-    else
-    {
-        piece_strength_gene_index = genome.size() - 1;
-    }
-
+    assert(genome[piece_strength_gene_index]->name() == "Piece Strength Gene");
     genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
-    if(look_ahead_gene_index < genome.size())
-    {
-        if(look_ahead_gene_index != genome.size() - 1)
-        {
-            throw Genetic_AI_Creation_Error("Different genomes have different look ahead index values.");
-        }
-    }
-    else
-    {
-        look_ahead_gene_index = genome.size() - 1;
-    }
-
+    assert(genome[look_ahead_gene_index]->name() == "Look Ahead Gene");
     genome.emplace_back(std::make_unique<Mutation_Rate_Gene>());
-    if(mutation_rate_gene_index < genome.size())
-    {
-        if(mutation_rate_gene_index != genome.size() - 1)
-        {
-            throw Genetic_AI_Creation_Error("Different genomes have different mutation rate index values.");
-        }
-    }
-    else
-    {
-        mutation_rate_gene_index = genome.size() - 1;
-    }
+    assert(genome[mutation_rate_gene_index]->name() == "Mutation Rate Gene");
 
     // Normal genes
     auto psg = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
