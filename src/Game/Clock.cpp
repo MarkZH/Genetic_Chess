@@ -28,12 +28,6 @@ Game_Result Clock::punch() noexcept
     assert(clocks_running);
 
     auto time_this_punch = std::chrono::steady_clock::now();
-    whose_turn = opposite(whose_turn);
-
-    if( ! is_in_use())
-    {
-        return {};
-    }
 
     timers[whose_turn] -= (time_this_punch - time_previous_punch);
 
@@ -46,9 +40,11 @@ Game_Result Clock::punch() noexcept
     time_previous_punch = time_this_punch;
     timers[whose_turn] += increment_time[whose_turn];
 
-    if(timers[whose_turn] < 0s)
+    whose_turn = opposite(whose_turn);
+
+    if(timers[opposite(whose_turn)] < 0s)
     {
-        return Game_Result(opposite(whose_turn), Game_Result_Type::TIME_FORFEIT);
+        return Game_Result(whose_turn, Game_Result_Type::TIME_FORFEIT);
     }
     else
     {
