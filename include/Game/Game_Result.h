@@ -13,7 +13,8 @@ enum class Game_Result_Type
     FIFTY_MOVE,
     THREEFOLD_REPETITION,
     INSUFFICIENT_MATERIAL,
-    TIME_FORFEIT
+    TIME_FORFEIT,
+    TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL
 };
 
 //! This class represents the result of a game action, primarily whether the game is still ongoing.

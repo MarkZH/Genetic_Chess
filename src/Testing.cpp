@@ -559,13 +559,14 @@ bool run_tests()
     auto time = 30;
     double expected_time_after_reset = 0.0;
     size_t moves_to_reset = 40;
+    Board timing_board;
     auto clock = Clock(time, moves_to_reset);
     clock.start();
     for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
         std::this_thread::sleep_for(5ms);
         expected_time_after_reset = clock.time_left(BLACK) + time;
-        clock.punch();
+        clock.punch(timing_board);
     }
     clock.stop();
     test_result(tests_passed, std::abs(clock.time_left(BLACK) - expected_time_after_reset) < 0.2,
@@ -580,7 +581,7 @@ bool run_tests()
     for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
         std::this_thread::sleep_for(5ms);
-        clock2.punch();
+        clock2.punch(timing_board);
         if(i % 2 == 1) // only on black moves
         {
             expected_time += increment - 0.005;

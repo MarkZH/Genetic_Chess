@@ -48,7 +48,7 @@ Game_Result play_game(Board board,
             thinker.ponder(board, game_clock, pondering_allowed);
             const auto& move_chosen = player.choose_move(board, game_clock);
 
-            result = game_clock.punch();
+            result = game_clock.punch(board);
             if( ! result.game_has_ended())
             {
                 result = board.submit_move(move_chosen);
@@ -103,7 +103,7 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
 
             player_color = board.whose_turn();
             const auto& chosen_move = player.choose_move(board, clock);
-            clock.punch();
+            clock.punch(board);
 
             game_result = outsider->handle_move(board, chosen_move, game_record);
             player.ponder(board, clock, outsider->pondering_allowed());

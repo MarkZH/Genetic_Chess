@@ -41,6 +41,8 @@ std::string Game_Result::ending_reason() const noexcept
             return "Insufficient material";
         case Game_Result_Type::TIME_FORFEIT:
             return "Time forfeiture";
+        case Game_Result_Type::TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL:
+            return "Time expired with insufficient material";
         default:
             return {};
     }

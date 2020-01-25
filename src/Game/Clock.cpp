@@ -6,6 +6,7 @@ using namespace std::chrono_literals;
 #include <cassert>
 #include <limits>
 
+#include "Game/Board.h"
 #include "Game/Game_Result.h"
 
 Clock::Clock(double duration_seconds,
@@ -23,7 +24,7 @@ Clock::Clock(double duration_seconds,
     assert(whose_turn != NONE);
 }
 
-Game_Result Clock::punch() noexcept
+Game_Result Clock::punch(const Board& board) noexcept
 {
     assert(clocks_running);
 
@@ -44,7 +45,14 @@ Game_Result Clock::punch() noexcept
 
     if(timers[opposite(whose_turn)] < 0s)
     {
-        return Game_Result(whose_turn, Game_Result_Type::TIME_FORFEIT);
+        if(board.enough_material_to_checkmate(whose_turn))
+        {
+            return Game_Result(whose_turn, Game_Result_Type::TIME_FORFEIT);
+        }
+        else
+        {
+            return Game_Result(NONE, Game_Result_Type::TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL);
+        }
     }
     else
     {
@@ -56,7 +64,7 @@ void Clock::unpunch() noexcept
 {
     moves_to_reset_clocks[whose_turn] -= 1;
     moves_to_reset_clocks[opposite(whose_turn)] -= 1;
-    punch();
+    punch({});
 }
 
 void Clock::stop() noexcept

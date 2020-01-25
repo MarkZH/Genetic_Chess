@@ -6,6 +6,7 @@
 
 #include "Color.h"
 
+class Board;
 class Game_Result;
 class CECP_Mediator;
 class UCI_Mediator;
@@ -31,7 +32,7 @@ class Clock
               std::chrono::system_clock::time_point previous_start_time = {}) noexcept;
 
         //! Stop the current player's clock and restart the opponent's clock.
-        Game_Result punch() noexcept;
+        Game_Result punch(const Board& board) noexcept;
 
         //! Undo the last clock punch (time is not added).
         void unpunch() noexcept;

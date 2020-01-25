@@ -146,7 +146,7 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
 
     if(clock.running_for() != board.whose_turn())
     {
-        clock.punch();
+        clock.punch(board);
     }
 }
 

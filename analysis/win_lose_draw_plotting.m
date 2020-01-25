@@ -77,6 +77,7 @@ white_time_win = zeros(size(game_number));
 black_time_win = zeros(size(game_number));
 material = zeros(size(game_number));
 no_legal = zeros(size(game_number));
+time_and_material = zeros(size(game_number));
 number_of_games = length(game_number);
 for index = 1 : number_of_games
     if result_type(index) == 0
@@ -95,6 +96,8 @@ for index = 1 : number_of_games
         material(index) = 1;
     elseif result_type(index) == 7
         no_legal(index) = 1;
+    elseif result_type(index) == 8
+        time_and_material(index) = 1;
     else
         disp(['Unknown result type' num2str(result_type(index))]);
     end
@@ -109,12 +112,14 @@ loglog(game_number, 100*cumsum(white_checkmates)./game_number, 'LineWidth', 3, .
        game_number, 100*cumsum(fifty_moves)./game_number, 'LineWidth', 3, ...
        game_number, 100*cumsum(threefold)./game_number, 'LineWidth', 3, ...
        game_number, 100*cumsum(material)./game_number, 'LineWidth', 3, ...
-       game_number, 100*cumsum(no_legal)./game_number, 'LineWidth', 3);
+       game_number, 100*cumsum(no_legal)./game_number, 'LineWidth', 3, ...
+       game_number, 100*cumsum(time_and_material)./game_number, 'LineWidth', 3);
 xlabel('Games played');
 ylabel('Percentage');
 legend('White checkmate', 'Black checkmate', ...
        'White wins on time', 'Black wins on time', ...
        '50-move', '3-fold', 'Insufficient material', 'Stalemate', ...
+       'Time expires with insufficient material', ...
        'location', 'southwest');
 title('Type of Endgame');
 

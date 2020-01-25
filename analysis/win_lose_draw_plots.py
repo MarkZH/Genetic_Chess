@@ -30,6 +30,7 @@ def main(files):
             #   5 = Time forfeit (black win)
             #   6 = Insufficient material
             #   7 = No legal moves
+            #   8 = Time expired with insufficient material
             game_section = False
             for line in f:
                 if line.startswith('[Result'):
@@ -53,8 +54,12 @@ def main(files):
                         result_type += 4
                     elif result_text.lower() == 'insufficient material':
                         result_type = 6
-                    else: # Stalemate
+                    elif result_text.lower() == 'stalemate':
                         result_type = 7
+                    elif result_text.lower() == 'time expired with insufficient material':
+                        result_type = 8
+                    else:
+                        raise Exception('Unrecognized result type: ' + result_text)
                 elif line and line[0] in '123456789':
                     game_section = True
                     number_of_moves = line.split('. ')[0]

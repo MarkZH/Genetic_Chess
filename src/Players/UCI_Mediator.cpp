@@ -76,7 +76,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
 
             if(clock.running_for() != board.whose_turn())
             {
-                clock.punch();
+                clock.punch(board);
             }
 
             auto go_parse = String::split(command);
