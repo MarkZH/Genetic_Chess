@@ -35,6 +35,7 @@ class CECP_Mediator : public Outside_Communicator
         bool in_force_mode = true;
 
         std::string receive_cecp_command(Board& board, Clock& clock, bool while_listening);
+        bool undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock);
         void send_error(const std::string& command, const std::string& reason) const noexcept;
         std::string listener(Board& board, Clock& clock);
         [[ noreturn ]] void report_end_of_game(const std::string& result, const std::string& reason) const;

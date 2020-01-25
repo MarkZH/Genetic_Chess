@@ -121,21 +121,13 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
         }
         else if(command == "undo")
         {
-            if(move_list.empty())
+            undo_move(move_list, command, board, clock);
+        }
+        else if(command == "remove")
+        {
+            if(undo_move(move_list, command, board, clock))
             {
-                send_error(command, "no moves to undo");
-            }
-            else
-            {
-                log("Undoing move: " + move_list.back()->coordinate_move());
-                move_list.pop_back();
-                auto new_board = Board(board.original_fen());
-                for(auto move : move_list)
-                {
-                    new_board.submit_move(*move);
-                }
-                board = new_board;
-                clock.unpunch();
+                undo_move(move_list, command, board, clock);
             }
         }
     }
@@ -153,6 +145,28 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
     if(clock.running_for() != board.whose_turn())
     {
         clock.punch();
+    }
+}
+
+bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock)
+{
+    if(move_list.empty())
+    {
+        send_error(command, "no moves to undo");
+        return false;
+    }
+    else
+    {
+        log("Undoing move: " + move_list.back()->coordinate_move());
+        move_list.pop_back();
+        auto new_board = Board(board.original_fen());
+        for(auto move : move_list)
+        {
+            new_board.submit_move(*move);
+        }
+        board = new_board;
+        clock.unpunch();
+        return true;
     }
 }
 
