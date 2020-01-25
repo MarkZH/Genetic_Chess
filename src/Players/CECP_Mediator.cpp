@@ -57,16 +57,11 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
         else if (String::starts_with(command, "setboard "))
         {
             auto fen = String::split(command, " ", 1).back();
-
-            try
-            {
-                // Handle stateless GUIs that send the next board position
-                // instead of a move.
-                board.submit_move(fen);
-                log("Derived move: " + board.last_move()->coordinate_move());
-                move_list.push_back(board.last_move());
-            }
-            catch(const Illegal_Move&)
+            
+            // Handle GUIs that send the next board position
+            // instead of a move.
+            auto new_move_list = board.derive_moves(fen);
+            if(new_move_list.empty())
             {
                 try
                 {
@@ -77,6 +72,15 @@ void CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Mov
                 catch(const std::invalid_argument&)
                 {
                     send_error(command, "Bad FEN");
+                }                
+            }
+            else
+            {
+                for(auto move : new_move_list)
+                {
+                    log("Derived move: " + move->coordinate_move());
+                    board.submit_move(*move);
+                    move_list.push_back(board.last_move());
                 }
             }
         }

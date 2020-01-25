@@ -455,6 +455,48 @@ Game_Result Board::submit_move(const std::string& move)
     return submit_move(create_move(move));
 }
 
+std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
+{
+    constexpr auto moves_so_far = [](const auto& board)
+                                  {
+                                      return 2*std::stoi(String::split(board.fen()).back()) + (board.whose_turn() == WHITE ? 0 : 1);
+                                  };
+    auto new_board = Board(new_fen);
+    auto goal_fen = new_board.fen();
+    auto moves_to_derive_count = moves_so_far(new_board) - moves_so_far(*this);
+    if(moves_to_derive_count > 2 || moves_to_derive_count < 1)
+    {
+        return {};
+    }
+
+    for(auto first_move : legal_moves())
+    {
+        auto first_move_board = *this;
+        first_move_board.submit_move(*first_move);
+        if(moves_to_derive_count == 1)
+        {
+            if(first_move_board.fen() == goal_fen)
+            {
+                return {first_move};
+            }
+        }
+        else
+        {
+            for(auto second_move : first_move_board.legal_moves())
+            {
+                auto second_move_board = first_move_board;
+                second_move_board.submit_move(*second_move);
+                if(second_move_board.fen() == goal_fen)
+                {
+                    return {first_move, second_move};
+                }
+            }
+        }
+    }
+
+    return {};
+}
+
 Game_Result Board::move_result() const noexcept
 {
     if(no_legal_moves())
@@ -526,27 +568,6 @@ int Board::castling_direction(Color player) const noexcept
 
 const Move& Board::create_move(const std::string& move) const
 {
-    if(String::contains(move, "/"))
-    {
-        // Move is specified via the FEN of the resulting board state (lichess.org quirk)
-        const auto& new_fen = move; // rename
-        auto move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
-                                      [this, new_fen](auto legal_move)
-                                      {
-                                          auto test_board = *this;
-                                          test_board.submit_move(*legal_move);
-                                          return test_board.fen() == new_fen;
-                                      });
-        if(move_iter == legal_moves().end())
-        {
-            throw Illegal_Move("No legal move from \"" + fen() + "\" to \"" + new_fen + "\"");
-        }
-        else
-        {
-            return **move_iter; // one star to dereference the iterator, one to dereference the pointer
-        }
-    }
-
     static const std::string promotion_pieces = "RNBQK";
     static const std::string pieces = "P" + promotion_pieces;
     static const std::string lowercase_pieces = String::lowercase(pieces);

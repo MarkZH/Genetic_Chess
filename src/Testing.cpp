@@ -306,6 +306,15 @@ bool run_tests()
     }
     test_result(tests_passed, fifty_move_result.ending_reason() == "50-move limit", "50-move draw test result: Got: " + fifty_move_result.ending_reason() + " instead.");
 
+    // Move derivation test
+    Board move_derivation_board;
+    auto derived_fen = std::string{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
+    auto derived_moves = move_derivation_board.derive_moves(derived_fen);
+    for(auto move : derived_moves)
+    {
+        move_derivation_board.submit_move(*move);
+    }
+    test_result(tests_passed, move_derivation_board.fen() == derived_fen, "Wrong moves derived.");
 
     test_result(tests_passed, run_board_tests("testing/board_tests.txt"), "");
 
