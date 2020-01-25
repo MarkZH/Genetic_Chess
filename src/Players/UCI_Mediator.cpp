@@ -69,7 +69,6 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
         }
         else if(String::starts_with(command, "go "))
         {
-            set_log_indent(board.whose_turn());
             if( ! clock.is_running())
             {
                 clock.start();

@@ -46,17 +46,12 @@ class Outside_Communicator
         //! Log data to a local text file.
         //
         //! \param data A text string to write.
-        static void log(const std::string& data) noexcept;
+        static void log(const std::string& data);
 
         //! Get the name of the player on the other side of the GUI.
         std::string other_player_name() const;
 
     protected:
-        //! If two copies of genetic_chess are running, their logs can be indented differently to distinguish them.
-        //
-        //! \param color The color of the local player.
-        static void set_log_indent(Color color) noexcept;
-
         //! Store the opponent's name when received from the GUI.
         //
         //! \param name The received name.

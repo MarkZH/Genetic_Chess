@@ -13,15 +13,10 @@
 #include "Exceptions/Game_Ended.h"
 
 #include "Utility/String.h"
-
-namespace
-{
-    std::string indent;
-}
+#include "Utility/Random.h"
 
 std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player)
 {
-    Outside_Communicator::set_log_indent(NONE);
     Outside_Communicator::log("==================");
     auto protocol_type = Outside_Communicator::receive_command();
     if(protocol_type == "xboard")
@@ -69,12 +64,19 @@ std::string Outside_Communicator::receive_command()
     return result;
 }
 
-void Outside_Communicator::log(const std::string& data) noexcept
+void Outside_Communicator::log(const std::string& data)
 {
-    static const auto log_file_name = "chess_comm_log.txt";
-    std::ofstream(log_file_name, std::ios::app)
-        << String::date_and_time_format(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S --")
-        << indent
+    static const auto log_time_stamp = String::date_and_time_format(std::chrono::system_clock::now(), "%Y.%m.%d-%H.%M.%S");
+    static const auto log_file_name = "chess_comm_log " + log_time_stamp + " " + std::to_string(Random::random_unsigned_int64()) + ".txt";
+    static auto ofs = std::ofstream(log_file_name, std::ios::app);
+    if( ! ofs)
+    {
+        throw std::runtime_error("Could not write to file: " + log_file_name);
+    }
+
+    auto item_time_stamp = String::date_and_time_format(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S");
+    ofs << item_time_stamp
+        << " -- "
         << data
         << std::endl;
 }
@@ -82,11 +84,6 @@ void Outside_Communicator::log(const std::string& data) noexcept
 std::string Outside_Communicator::other_player_name() const
 {
     return outside_player_name;
-}
-
-void Outside_Communicator::set_log_indent(Color color) noexcept
-{
-    indent = std::string((static_cast<int>(color) + 1)%3 + 1, '\t');
 }
 
 void Outside_Communicator::set_other_player_name(const std::string& name) noexcept
