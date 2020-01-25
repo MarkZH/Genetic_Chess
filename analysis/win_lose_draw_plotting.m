@@ -4,38 +4,49 @@ warning('off'); % Disable warnings about non-positive data
 isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
 
 filename = 0;
-directory = '';
+marks_file_name = 0;
+file_directory = '';
+marks_directory = '';
 if isOctave
     graphics_toolkit('gnuplot');
     args = argv();
-    if length(args) > 0
-        filename = args{1};
-        game_number_marks = [];
-        if length(args) > 1
-            marks_file_name = args{2};
-            if ~isempty(marks_file_name)
-                data = importdata(marks_file_name, ';', 1);
-                game_number_marks = data.data(:,2)';
-                game_notes = data.textdata(2:end);
-            end
+    for argi = 1 : length(args)
+        if args{argi}(1) == '-'
+            continue;
+        end
+        
+        if filename == 0
+            filename = args{argi}
+        else
+            marks_file_name = args(argi)
+            break;
         end
     end
 end
 
 if filename == 0
-    [filename, directory, ~] = uigetfile();
+    [filename, file_directory, ~] = uigetfile();
+    if filename == 0
+        return
+    end
+    if marks_file_name == 0
+        [marks_file_name, marks_directory, ~] = uigetfile();
+    end
 end
 
-if filename == 0
-    return
-end
-raw_data = fullfile(directory, filename);
-
+raw_data = fullfile(file_directory, filename);
 if isOctave
     python('analysis/win_lose_draw_plots.py', ['"' raw_data '"']);
 end
-
 data = importdata([raw_data, '_plots.txt'], '\t');
+
+game_number_marks = [];
+if marks_file_name != 0
+    marks_file_name = fullfile(marks_directory, marks_file_name);
+    data = importdata(marks_file_name, ';', 1);
+    game_number_marks = data.data(:,2)';
+    game_notes = data.textdata(2:end);
+end
 
 game_number = data.data(:, 1);
 white_wins = data.data(:, 2);
