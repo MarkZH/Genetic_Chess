@@ -21,6 +21,11 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         commentary.clear();
     }
 
+    while(commentary.size() < board.game_length()/2)
+    {
+        commentary.push_back({});
+    }
+
     nodes_searched = 0;
     clock_start_time = clock.running_time_left();
     maximum_depth = 0;
