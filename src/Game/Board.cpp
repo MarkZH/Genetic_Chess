@@ -457,9 +457,10 @@ Game_Result Board::submit_move(const std::string& move)
 
 std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
 {
-    constexpr auto moves_so_far = [](const auto& board)
+    constexpr auto moves_so_far = [](const auto& b)
                                   {
-                                      return 2*std::stoi(String::split(board.fen()).back()) + (board.whose_turn() == WHITE ? 0 : 1);
+                                      return 2*std::stoi(String::split(b.fen()).back()) +
+                                             (b.whose_turn() == WHITE ? 0 : 1);
                                   };
     auto new_board = Board(new_fen);
     auto goal_fen = new_board.fen();
