@@ -94,11 +94,11 @@ number_of_games = length(game_number);
 for index = 1 : number_of_games
     if result_type(index) == 0
         white_checkmates(index) = 1;
-    elseif result_type(index) == 1;
+    elseif result_type(index) == 1
         black_checkmates(index) = 1;
-    elseif result_type(index) == 2;
+    elseif result_type(index) == 2
         fifty_moves(index) = 1;
-    elseif result_type(index) == 3;
+    elseif result_type(index) == 3
         threefold(index) = 1;
     elseif result_type(index) == 4
         white_time_win(index) = 1;
@@ -151,7 +151,7 @@ if max(game_time) > 0
     ylim(max(white_time_left)*[-0.10, 1.05]);
     xlabel('Game number');
     ylabel('Time (sec)');
-    title('Time left on clock at end of game')
+    title('Time left on clock at end of game');
 
     if length(game_number_marks) > 0
         for index = 1:length(game_number_marks)
@@ -182,7 +182,7 @@ hold all;
 scatter(game_number, moves_in_game, 'k');
 xlabel('Game number');
 ylabel('Moves in Game');
-title('Number of moves in game')
+title('Number of moves in game');
 ylim([0, max_game_length_display]);
 
 if length(game_number_marks) > 0
@@ -200,7 +200,7 @@ hold all;
 bar(bins, counts, 'barwidth', 1, 'facecolor', 'y');
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(number_of_games) ')']);
-title('Number of moves in game')
+title('Number of moves in game');
 xlim([0, max_game_length_display]);
 set(gca, 'xtick', 0 : 10 : max_game_length_display);
 mean_moves = mean(moves_in_game);
