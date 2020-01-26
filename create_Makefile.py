@@ -54,8 +54,9 @@ program_name = 'genetic_chess'
 final_targets = ["release", "debug"]
 depends = dict()
 depends['all'] = final_targets + ["docs"]
-depends['clean'] = (f"clean_{target}" for target in final_targets)
+depends['clean'] = (f"clean_{target}" for target in depends['all'])
 depends["docs"] = ["user_manual", "code_docs"]
+depends['clean_docs'] = (f"clean_{target}" for target in depends['docs'])
 
 options = dict()
 obj_dest = dict()
@@ -116,7 +117,8 @@ for target in final_targets:
     depends[f'test_{target}'] = [target]
     operations[f'test_{target}'] = [f'{bins[target]} -{opt}' for opt in ['test', 'perft', 'speed']]
 
-operations['clean'] = ['rm -rf $(DOC_DIR)', f'latexmk -C -cd {user_manual_tex}']
+operations['clean_code_docs'] = ['rm -rf $(DOC_DIR)']
+operations['clean_user_manual'] = [f'latexmk -C -cd {user_manual_tex}']
 depends['test_all'] = [f'test_{x}' for x in final_targets]
 depends['.PHONY'] = [t for t in all_targets_so_far(depends, operations) if not t.startswith('$')]
 
