@@ -11,14 +11,15 @@ if isOctave
     graphics_toolkit('gnuplot');
     args = argv();
     for argi = 1 : length(args)
-        if args{argi}(1) == '-'
+        option = args{argi};
+        if isempty(option) || option(1) == '-'
             continue;
         end
         
         if filename == 0
-            filename = args{argi}
+            filename = option;
         else
-            marks_file_name = args(argi)
+            marks_file_name = option;
             break;
         end
     end
