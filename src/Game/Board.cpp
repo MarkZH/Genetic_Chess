@@ -12,6 +12,7 @@
 #include <atomic>
 #include <functional>
 using namespace std::placeholders; // for _1, _2, etc. in std::bind()
+#include <string>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"

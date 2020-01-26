@@ -3,6 +3,7 @@
 #include <fstream>
 #include <cctype>
 #include <algorithm>
+#include <string>
 
 #include "Game/Game.h"
 #include "Game/Board.h"

@@ -4,6 +4,7 @@
 #include <fstream>
 #include <map>
 #include <array>
+#include <string>
 
 class Board;
 class Clock;

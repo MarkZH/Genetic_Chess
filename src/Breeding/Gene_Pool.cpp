@@ -16,6 +16,7 @@ using namespace std::chrono_literals;
 #include <cstdio>
 #include <filesystem>
 #include <utility>
+#include <string>
 
 #ifndef _WIN32
 #include <mutex>
