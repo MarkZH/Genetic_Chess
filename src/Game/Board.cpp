@@ -642,7 +642,7 @@ const Move& Board::create_move(const std::string& move) const
     int  starting_rank = ranks.size() > 1 ? ranks.front() - '0' : 0;
 
     std::string piece_symbol;
-    std::string promoted_piece;
+    char promoted_piece = '\0';
     if(moving_pieces.size() > 2)
     {
         throw Illegal_Move("Too many pieces mentioned: " + move);
@@ -716,7 +716,7 @@ const Move& Board::create_move(const std::string& move) const
     {
         return create_move({starting_file, starting_rank},
                            ending_square,
-                           promoted_piece.empty() ? '\0' : promoted_piece.front());
+                           promoted_piece);
     }
 
     throw Illegal_Move("Malformed move: " + move);
