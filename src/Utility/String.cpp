@@ -50,12 +50,12 @@ std::vector<std::string> String::split(std::string s, std::string delim, size_t 
 
 bool String::starts_with(const std::string& s, const std::string& beginning) noexcept
 {
-    return (beginning.size() <= s.size()) && std::equal(beginning.begin(), beginning.end(), s.begin());
+    return std::mismatch(beginning.begin(), beginning.end(), s.begin(), s.end()).first == beginning.end();
 }
 
 bool String::ends_with(const std::string& s, const std::string& ending) noexcept
 {
-    return (ending.size() <= s.size()) && std::equal(ending.rbegin(), ending.rend(), s.rbegin());
+    return std::mismatch(ending.rbegin(), ending.rend(), s.rbegin(), s.rend()).first == ending.rend();
 }
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
