@@ -1283,39 +1283,37 @@ Square Board::find_checking_square() const noexcept
 
 bool Board::enough_material_to_checkmate(Color color) const noexcept
 {
-    auto piece_is_right_color = [color](auto piece) { return piece && (color == NONE || piece.color() == color); };
+    auto piece_is_right = [color](auto piece, auto type) { return piece &&
+                                                                  (color == NONE || piece.color() == color) &&
+                                                                  piece.type() == type; };
 
     if(std::any_of(board.begin(), board.end(),
-                   [piece_is_right_color](auto piece)
+                   [piece_is_right](auto piece)
                    {
-                       return piece_is_right_color(piece) &&
-                              (piece.type() == QUEEN || piece.type() == ROOK || piece.type() == PAWN);
+                       return piece_is_right(piece, QUEEN) ||
+                              piece_is_right(piece, ROOK) ||
+                              piece_is_right(piece, PAWN);
                    }))
     {
         return true;
     }
 
+    auto knight_count = std::count_if(board.begin(), board.end(), std::bind(piece_is_right, _1, KNIGHT));
+    if(knight_count > 1)
+    {
+        return true;
+    }
+
     auto bishop_on_square_color =
-        [this, piece_is_right_color](Color color_sought, Square square)
+        [this, piece_is_right](Color color_sought, Square square)
         {
-            auto piece = piece_on_square(square);
-            return piece_is_right_color(piece) && piece.type() == BISHOP && square.color() == color_sought;
+            return piece_is_right(piece_on_square(square), BISHOP) && square.color() == color_sought;
         };
 
     auto squares = Square::all_squares();
     auto bishops_on_white = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, WHITE, _1));
     auto bishops_on_black = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, BLACK, _1));
-    if(bishops_on_white && bishops_on_black)
-    {
-        return true;
-    }
-
-    auto knight_count = std::count_if(board.begin(), board.end(),
-                                      [piece_is_right_color](auto piece)
-                                      {
-                                          return piece_is_right_color(piece) && piece.type() == KNIGHT;
-                                      });
-    return knight_count > 1 || (knight_count > 0 && (bishops_on_white || bishops_on_black));
+    return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
 void Board::set_thinking_mode(Thinking_Output_Type mode) noexcept
