@@ -1281,11 +1281,11 @@ Square Board::find_checking_square() const noexcept
     return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
 }
 
-bool Board::enough_material_to_checkmate(Color color) const noexcept
+bool Board::enough_material_to_checkmate(Color piece_color) const noexcept
 {
-    auto piece_is_right = [color](auto piece, auto type) { return piece &&
-                                                                  (color == NONE || piece.color() == color) &&
-                                                                  piece.type() == type; };
+    auto piece_is_right = [piece_color](auto piece, auto type) { return piece &&
+                                                                        (piece_color == NONE || piece.color() == piece_color) &&
+                                                                        piece.type() == type; };
 
     if(std::any_of(board.begin(), board.end(),
                    [piece_is_right](auto piece)
@@ -1305,9 +1305,9 @@ bool Board::enough_material_to_checkmate(Color color) const noexcept
     }
 
     auto bishop_on_square_color =
-        [this, piece_is_right](Color color_sought, Square square)
+        [this, piece_is_right](Color square_color, Square square)
         {
-            return piece_is_right(piece_on_square(square), BISHOP) && square.color() == color_sought;
+            return piece_is_right(piece_on_square(square), BISHOP) && square.color() == square_color;
         };
 
     auto squares = Square::all_squares();
