@@ -48,18 +48,6 @@ class Piece
         //! \returns A single character symbol for the piece. Uppercase is white, lowercase is black.
         char fen_symbol() const noexcept;
 
-        //! Return a row of the ASCII art representation of the piece.
-        //
-        //! \param row Which row of the square to return, with 0 being the top.
-        //!        If the height is above or below the piece's picture, then an
-        //!        empty string is returned.
-        //! \param square_height The height of the square in characters.
-        //! \returns One row of text that forms a picture of the piece.
-        //! \throws Debug assert fail if the square height is smaller than the piece height.
-        //!
-        //! Piece design by VK (?) and taken from http://ascii.co.uk/art/chess.
-        std::string ascii_art(size_t row, size_t square_height) const noexcept;
-
         //! The color of the piece.
         //
         //! \returns The Color of the player that controls the piece.

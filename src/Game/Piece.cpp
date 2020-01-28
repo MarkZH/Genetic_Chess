@@ -22,8 +22,6 @@
 namespace
 {
     using indexed_move_array = std::array<std::array<std::array<std::vector<std::vector<const Move*>>, 64>, 6>, 2>;
-    using indexed_art_array = std::array<std::array<std::vector<std::string>, 6>, 2>;
-
 
     void add_pawn_moves(indexed_move_array& out, Color color) noexcept;
     void add_rook_moves(indexed_move_array& out, Color color, Piece_Type type = ROOK) noexcept;
@@ -31,46 +29,6 @@ namespace
     void add_bishop_moves(indexed_move_array& out, Color color, Piece_Type type = BISHOP) noexcept;
     void add_queen_moves(indexed_move_array& out, Color color) noexcept;
     void add_king_moves(indexed_move_array& out, Color color) noexcept;
-
-    void add_pawn_art(indexed_art_array& out, Color color) noexcept;
-    void add_rook_art(indexed_art_array& out, Color color) noexcept;
-    void add_knight_art(indexed_art_array& out, Color color) noexcept;
-    void add_bishop_art(indexed_art_array& out, Color color) noexcept;
-    void add_queen_art(indexed_art_array& out, Color color) noexcept;
-    void add_king_art(indexed_art_array& out, Color color) noexcept;
-
-    const auto ascii_art_lines =
-        []()
-        {
-            indexed_art_array result;
-
-            for(auto color : {WHITE, BLACK})
-            {
-                add_pawn_art(result, color);
-                add_rook_art(result, color);
-                add_knight_art(result, color);
-                add_bishop_art(result, color);
-                add_queen_art(result, color);
-                add_king_art(result, color);
-            }
-
-            return result;
-        }();
-
-    const auto maximum_piece_height =
-        []()
-        {
-            size_t max_height = 0;
-            for(auto color : {WHITE, BLACK})
-            {
-                for(auto type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
-                {
-                    max_height = std::max(max_height, ascii_art_lines[color][type].size());
-                }
-            }
-
-            return max_height;
-        }();
 
     const auto legal_moves =
         []()
@@ -278,78 +236,6 @@ namespace
         add_legal_move<Castle>(out, color, KING, true, base_rank, Direction::LEFT);
         add_legal_move<Castle>(out, color, KING, true, base_rank, Direction::RIGHT);
     }
-
-    void add_color(indexed_art_array& out, Color color, Piece_Type type) noexcept
-    {
-        if(color == WHITE)
-        {
-            return;
-        }
-
-        for(auto& line : out[color][type])
-        {
-            std::replace_if(line.begin(), line.end(), [](auto c){ return c == ' ' || c == '_'; }, '#');
-        }
-    }
-
-    void add_pawn_art(indexed_art_array& out, Color color) noexcept
-    {
-        // ASCII Art http://ascii.co.uk/art/chess (VK)
-        auto& store = out[color][PAWN];
-        store.insert(store.end(), {"( )",
-                                  "/___\\"});
-        add_color(out, color, PAWN);
-    }
-
-    void add_rook_art(indexed_art_array& out, Color color) noexcept
-    {
-        // ASCII Art http://ascii.co.uk/art/chess (VK)
-        auto& store = out[color][ROOK];
-        store.insert(store.end(), {"|U|",
-                                   "| |",
-                                  "/___\\"});
-        add_color(out, color, ROOK);
-    }
-
-    void add_knight_art(indexed_art_array& out, Color color) noexcept
-    {
-        // ASCII Art http://ascii.co.uk/art/chess (VK)
-        auto& store = out[color][KNIGHT];
-        store.insert(store.end(), {"/\")",
-                                   "7 (",
-                                  "/___\\"});
-        add_color(out, color, KNIGHT);
-    }
-
-    void add_bishop_art(indexed_art_array& out, Color color) noexcept
-    {
-        // ASCII art http://ascii.co.uk/art/chess (VK)
-        auto& store = out[color][BISHOP];
-        store.insert(store.end(), {"(V)",
-                                   ") (",
-                                  "/___\\"});
-        add_color(out, color, BISHOP);
-    }
-
-    void add_queen_art(indexed_art_array& out, Color color) noexcept
-    {
-        // ASCII Art http://ascii.co.uk/art/chess (VK)
-        auto& store = out[color][QUEEN];
-        store.insert(store.end(), {"\\^/",
-                                    ") (",
-                                   "(___)"});
-        add_color(out, color, QUEEN);
-    }
-
-    void add_king_art(indexed_art_array& out, Color color) noexcept
-    {
-        // ASCII Art http://ascii.co.uk/art/chess (VK)
-        auto& store = out[color][KING];
-        store.insert(store.end(), {"\\+/",
-                                    "| |",
-                                   "/___\\"});
-        add_color(out, color, KING);
-    }
 }
 
 const Piece::piece_code_t Piece::invalid_code = Piece{BLACK, KING}.index() + 1;
@@ -370,25 +256,6 @@ Piece::Piece(Color color, Piece_Type type) noexcept :
     //  +--- KING
 
     assert(color < 2 && type < 6);
-}
-
-std::string Piece::ascii_art(size_t row, size_t square_height) const noexcept
-{
-    assert(*this);
-    assert(square_height >= maximum_piece_height);
-
-    const auto& art = ascii_art_lines[color()][type()];
-    auto empty_bottom_rows = (square_height - maximum_piece_height)/2;
-    auto empty_top_rows = square_height - art.size() - empty_bottom_rows;
-    auto line = row - empty_top_rows;
-    if(line < art.size())
-    {
-        return art[line];
-    }
-    else
-    {
-        return {};
-    }
 }
 
 Color Piece::color() const noexcept

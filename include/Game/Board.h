@@ -88,12 +88,6 @@ class Board
         //! \returns Color of player who is next to move.
         Color whose_turn() const noexcept;
 
-        //! Prints an ASCII version of the board to a terminal.
-        //
-        //! This is useful for Human_Player on the terminal and debugging.
-        //! \param perspective Specifies which side of the board is at the bottom of the screen.
-        void ascii_draw(Color perspective) const noexcept;
-
         //! Returns the status of the game in FEN.
         //
         //! \returns A textual representation of the game state.
