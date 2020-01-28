@@ -111,7 +111,6 @@ depends['.PHONY'] = [t for t in all_targets_so_far(depends, operations) if not t
 
 options_list = dict()
 linker_options = dict()
-system = sys.argv[1]
 base_options = [
         "-std=c++17",
         "-lstdc++fs",
@@ -132,6 +131,7 @@ linker_options['release'] = ['-flto']
 options_list['debug'] = ["-g"]
 options_list['release'] = ["-O3", "-DNDEBUG"]
 
+system = sys.argv[1]
 if system == 'gcc':
     compiler = 'g++'
     base_options.extend([
