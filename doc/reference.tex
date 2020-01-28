@@ -61,6 +61,7 @@ These first options are standalone operations. If multiple options are used, all
 	\item[\code{genetic\_chess -test}] Run tests of the program for chess rule conformance and for Genetic AIs working properly.
 	\item[\code{genetic\_chess -perft}:] Test game logic and speed by counting legal moves from a list of board positions.
 	\item[\code{genetic\_chess -speed}:] Measure the speed of various components of the chess engine.
+	\item[\code{genetic\_chess -confirm <file name>}] Analyze a game recod in Portable Game Notation (PGN) to check that all moves listed are legal and all move are correctly noted with respect to check (+), capture (x), and checkmate (\#).
 	\item[\code{genetic\_chess -genepool <file name>}]
 This will start up a gene pool with Genetic\_AIs playing against each other---mating, killing, mutating, all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
 \end{description}
