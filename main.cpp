@@ -31,8 +31,7 @@ namespace
     //! Confirm that all moves in a PGN game record are legal moves.
     //
     //! \param file_name The name of the file with the PGN game records. All games will be examined.
-    //! \param verbose If true, print extra information before and after each move (draw the board state and list legal moves).
-    bool confirm_game_record(const std::string& file_name, bool verbose);
+    bool confirm_game_record(const std::string& file_name);
 
     //! Find the last ID of a Genetic_AI in a gene pool file.
     //
@@ -73,8 +72,7 @@ int main(int argc, char *argv[])
             {
                 if(argc >= 3)
                 {
-                    auto verbose = (argc >= 4 && std::string(argv[2]) == "-v");
-                    if( ! confirm_game_record(argv[verbose ? 3 : 2], verbose))
+                    if( ! confirm_game_record(argv[2]))
                     {
                         std::cerr << "Game contains illegal or mismarked moves." << std::endl;
                         return 2;
@@ -306,7 +304,7 @@ namespace
         return last_player;
     }
 
-    bool confirm_game_record(const std::string& file_name, bool verbose)
+    bool confirm_game_record(const std::string& file_name)
     {
         auto input = std::ifstream(file_name);
         std::string line;
@@ -444,31 +442,7 @@ namespace
                             }
                         }
 
-                        if(verbose)
-                        {
-                            std::cout << "Before " << move_number << move << "\n";
-                            board.ascii_draw(WHITE);
-                            std::cerr << "Legal moves:\n";
-                            for(auto legal_move : board.legal_moves())
-                            {
-                                std::cerr << legal_move->coordinate_move() << ", ";
-                            }
-                            std::cerr << std::endl << std::endl;
-                        }
-
                         result = board.submit_move(move_to_submit);
-
-                        if(verbose)
-                        {
-                            std::cout << "After " << move_number << move << "\n";
-                            board.ascii_draw(WHITE);
-                            std::cerr << "Legal moves:\n";
-                            for(auto legal_move : board.legal_moves())
-                            {
-                                std::cerr << legal_move->coordinate_move() << ", ";
-                            }
-                            std::cerr << std::endl << std::endl;
-                        }
 
                         if(move_checks)
                         {
@@ -516,17 +490,6 @@ namespace
                         std::cerr << "Move (" << move_number << move << ") is illegal: "
                                 << error.what()
                                 << ". (line: " << line_number << ")" << std::endl;
-
-                        if(verbose)
-                        {
-                            std::cerr << "Legal moves:\n";
-                            for(auto legal_move : board.legal_moves())
-                            {
-                                std::cerr << legal_move->coordinate_move() << ", ";
-                            }
-                            std::cerr << std::endl;
-                        }
-
                         return false;
                     }
                 }
