@@ -161,9 +161,11 @@ for target in final_targets:
             if not source_file.endswith('.cpp'):
                 continue
             obj_file = os.path.join(obj_dest[target], f"{os.path.splitext(source_file)[0]}.o")
-            operations[obj_file] = [f"mkdir -p {os.path.dirname(obj_file)}", f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
+            operations[obj_file] = [f"mkdir -p {os.path.dirname(obj_file)}",
+                                    f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
 
-            compile_depends = subprocess.check_output([compiler] + base_options + options_list[target] + ['-MM', source_file]).decode('ascii').split(':', 1)[1].split()
+            compiler_command = [compiler] + base_options + options_list[target] + ['-MM', source_file]
+            compile_depends = subprocess.check_output(compiler_command).decode('ascii').split(':', 1)[1].split()
             depends[obj_file] = list(set(d for d in compile_depends if d != '\\'))
 
 with open("Makefile", 'w') as make_file:
