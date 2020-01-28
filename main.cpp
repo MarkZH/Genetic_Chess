@@ -486,7 +486,6 @@ namespace
                     }
                     catch(const Illegal_Move& error)
                     {
-                        board.ascii_draw(WHITE);
                         std::cerr << "Move (" << move_number << move << ") is illegal: "
                                 << error.what()
                                 << ". (line: " << line_number << ")" << std::endl;
