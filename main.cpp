@@ -14,7 +14,7 @@
 #include "Players/Genetic_AI.h"
 #include "Players/Random_AI.h"
 
-#include "Breeding/Gene_Pool.h"
+#include "Genes/Gene_Pool.h"
 
 #include "Exceptions/Illegal_Move.h"
 
