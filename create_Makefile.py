@@ -2,7 +2,7 @@
 
 import os, functools, subprocess, sys
 
-def make_sort(a, b):
+def target_sort(a, b):
     if a == b:
         return 0
 
@@ -18,20 +18,7 @@ def make_sort(a, b):
     if b == '.PHONY':
         return -1
 
-    # include files are next to last
-    if a.startswith('include'):
-        if not b.startswith('include'):
-            return 1
-    elif b.startswith('include'):
-        return -1
-
-    # Blank lines go at end
-    if not a:
-        return 1
-    if not b:
-        return -1
-
-   # Sort cpp files before object files
+    # Sort targets creating files after meta-targets
     if a[0] == '$':
         if b[0] != '$':
             return 1
@@ -44,7 +31,7 @@ def make_sort(a, b):
         return 1
 
 def all_targets_so_far(depends, operations):
-    return sorted(list(set(list(depends.keys()) + list(operations.keys()))), key=functools.cmp_to_key(make_sort))
+    return sorted(list(set(list(depends.keys()) + list(operations.keys()))), key=functools.cmp_to_key(target_sort))
 
 if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
     print('Specify a compiler ("gcc" or "clang")')
