@@ -28,13 +28,6 @@ namespace
     //! Print the command-line options for this program.
     void print_help();
 
-    //! Step through a game record, displaying each move as ASCII art on the terminal.
-    //
-    //! \param file_name The name of the file with the PGN game record.
-    //! \param game_number The ID number of the game (as indicated by the Round header) to replay.
-    //!        If game_number is -1, replay the first game in the file.
-    void replay_game(const std::string& file_name, int game_number);
-
     //! Confirm that all moves in a PGN game record are legal moves.
     //
     //! \param file_name The name of the file with the PGN game records. All games will be examined.
@@ -75,24 +68,6 @@ int main(int argc, char *argv[])
                 }
 
                 gene_pool(gene_pool_config_file_name);
-            }
-            else if(option == "-replay")
-            {
-                if(argc > 2)
-                {
-                    std::string file_name = argv[2];
-                    int game_number = -1;
-                    if(argc > 3)
-                    {
-                        game_number = std::stoi(argv[3]);
-                    }
-                    replay_game(file_name, game_number);
-                }
-                else
-                {
-                    std::cout << "Provide a file containing a game to replay." << std::endl;
-                    return 1;
-                }
             }
             else if(option == "-confirm")
             {
@@ -285,8 +260,6 @@ namespace
                 << "Standalone functions (only first is run if multiple are specified):\n\n"
                 << "\t-genepool [file name]\n"
                 << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
-                << "\t-replay [filename] [game number]\n"
-                << "\t\tStep through a game in a PGN game file, drawing the board after\n\t\teach move with an option to begin playing at any time.\n\n"
                 << "\t-confirm [filename]\n"
                 << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates.\n\n"
                 << "\t-test\n"
@@ -331,103 +304,6 @@ namespace
         }
 
         return last_player;
-    }
-
-    void replay_game(const std::string& file_name, int game_number)
-    {
-        std::ifstream ifs(file_name);
-        std::vector<std::string> game_headers;
-        std::string line;
-        if(game_number >= 0)
-        {
-            // fast forward to indicated game
-            while(std::getline(ifs, line))
-            {
-                line = String::trim_outer_whitespace(line);
-                if(String::starts_with(line, "["))
-                {
-                    game_headers.push_back(line);
-                }
-                else
-                {
-                    game_headers.clear();
-                }
-
-                if(String::starts_with(line, "[Round"))
-                {
-                    auto number = std::stoi(String::split(line, "\"")[1]);
-                    if(number == game_number)
-                    {
-                        break;
-                    }
-                }
-            }
-
-            if( ! ifs)
-            {
-                std::cout << "No game with ID number " << game_number << " found." << std::endl;
-            }
-
-            for(const auto& header : game_headers)
-            {
-                std::cout << header << std::endl;
-            }
-        }
-
-        Board board;
-        Game_Result result;
-        bool game_started = false;
-        while( ! result.game_has_ended() && std::getline(ifs, line))
-        {
-            line = String::strip_block_comment(line, "{", "}");
-            line = String::strip_block_comment(line, "(", ")");
-            line = String::strip_comments(line, ";");
-            if(line.empty())
-            {
-                if(game_started)
-                {
-                    break;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-
-            if(line[0] == '[') // header lines
-            {
-                std::cout << line << std::endl;
-                continue;
-            }
-
-            for(const auto& s : String::split(line))
-            {
-                try
-                {
-                    result = board.submit_move(s);
-
-                    board.ascii_draw(WHITE);
-                    game_started = true;
-                    std::cout << "Last move: ";
-                    std::cout << (board.game_length() + 1)/2 << ". ";
-                    std::cout << (board.whose_turn() == WHITE ? "... " : "");
-                    std::cout << board.last_move()->coordinate_move() << std::endl;
-                    if(result.game_has_ended())
-                    {
-                        std::cout << result.ending_reason() << std::endl;
-                        break;
-                    }
-
-                    std::cout << "Press enter to continue or ctrl-c to quit ..." << std::endl;
-                    std::cin.get();
-                }
-                catch(const Illegal_Move&)
-                {
-                    std::cout << "Ignoring: " << s << std::endl;
-                    continue;
-                }
-            }
-        }
     }
 
     bool confirm_game_record(const std::string& file_name, bool verbose)
