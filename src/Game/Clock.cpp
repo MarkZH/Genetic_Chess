@@ -28,6 +28,11 @@ Game_Result Clock::punch(const Board& board) noexcept
 {
     assert(clocks_running);
 
+    if( ! is_in_use())
+    {
+        return {};
+    }
+
     auto time_this_punch = std::chrono::steady_clock::now();
 
     timers[whose_turn] -= (time_this_punch - time_previous_punch);
