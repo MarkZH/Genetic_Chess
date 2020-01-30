@@ -113,6 +113,8 @@ int main(int argc, char *argv[])
                 Board board;
                 bool pondering_allowed = false;
                 std::string game_file_name;
+                std::string event_name;
+                std::string location;
 
                 for(int i = 1; i < argc; ++i)
                 {
@@ -186,6 +188,14 @@ int main(int argc, char *argv[])
                     {
                         game_file_name = argv[++i];
                     }
+                    else if(opt == "-event" && i + 1 < argc)
+                    {
+                        event_name = argv[++i];
+                    }
+                    else if(opt == "-location" && i + 1 < argc)
+                    {
+                        location = argv[++i];
+                    }
                     else if(opt == "-pondering")
                     {
                         pondering_allowed = true;
@@ -223,7 +233,7 @@ int main(int argc, char *argv[])
 
                 if( ! black)
                 {
-                    play_game_with_outsider(*white, game_file_name);
+                    play_game_with_outsider(*white, event_name, location, game_file_name);
                 }
                 else
                 {
@@ -231,6 +241,8 @@ int main(int argc, char *argv[])
                               Clock(game_time, moves_per_reset, increment_time, board.whose_turn()),
                               *white, *black,
                               pondering_allowed,
+                              event_name,
+                              location,
                               game_file_name);
                 }
             }

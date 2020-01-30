@@ -264,8 +264,14 @@ void gene_pool(const std::string& config_file)
 
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
-            results.emplace_back(std::async(std::launch::async,
-                                            play_game, Board{}, Clock(game_time), white, black, false, game_record_file));
+            results.emplace_back(std::async(std::launch::async, play_game,
+                                            Board{},
+                                            Clock(game_time),
+                                            white, black,
+                                            false,
+                                            "Gene pool",
+                                            "Local computer",
+                                            game_record_file));
         }
 
         // Get results as they come in

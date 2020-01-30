@@ -26,6 +26,8 @@ Game_Result play_game(Board board,
                       const Player& white,
                       const Player& black,
                       bool pondering_allowed,
+                      const std::string& event_name,
+                      const std::string& location,
                       const std::string& pgn_file_name)
 {
     if(board.whose_turn() != game_clock.running_for())
@@ -63,7 +65,9 @@ Game_Result play_game(Board board,
                                 &black,
                                 pgn_file_name,
                                 result,
-                                game_clock);
+                                game_clock,
+                                event_name,
+                                location);
         return result;
 
     }
@@ -75,12 +79,17 @@ Game_Result play_game(Board board,
                                 pgn_file_name,
                                 {},
                                 game_clock,
+                                event_name,
+                                location,
                                 game_error.what());
         throw;
     }
 }
 
-void play_game_with_outsider(const Player& player, const std::string& game_file_name)
+void play_game_with_outsider(const Player& player,
+                             const std::string& event_name,
+                             const std::string& location,
+                             const std::string& game_file_name)
 {
     #ifndef _WIN32
     signal(SIGTSTP, SIG_IGN);
@@ -121,7 +130,14 @@ void play_game_with_outsider(const Player& player, const std::string& game_file_
             player.set_opponent_name(outsider->other_player_name());
             auto white = (player_color == WHITE ? &player : nullptr);
             auto black = (player_color == BLACK ? &player : nullptr);
-            board.print_game_record(game_record, white, black, game_file_name, game_result, clock, game_end.what());
+            board.print_game_record(game_record,
+                                    white, black,
+                                    game_file_name,
+                                    game_result,
+                                    clock,
+                                    event_name,
+                                    location,
+                                    game_end.what());
         }
     }
 }

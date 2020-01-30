@@ -1009,6 +1009,8 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
                               const std::string& file_name,
                               const Game_Result& result,
                               const Clock& game_clock,
+                              const std::string& event_name,
+                              const std::string& location,
                               const std::string& unusual_ending_reason) const noexcept
 {
     static std::mutex write_lock;
@@ -1038,8 +1040,8 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
 
-    print_game_header_line(out_stream, "Event", "");
-    print_game_header_line(out_stream, "Site", "");
+    print_game_header_line(out_stream, "Event", event_name);
+    print_game_header_line(out_stream, "Site", location);
     print_game_header_line(out_stream, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
     print_game_header_line(out_stream, "Round", game_number++);
 

@@ -17,6 +17,8 @@ class Game_Result;
 //! \param white The player with the white pieces.
 //! \param black The player with the black pieces.
 //! \param pondering_allowed Whether AIs are allowed to think during an opponent's move.
+//! \param event_name The name of the event where the game will take place. May be empty.
+//! \param location The name of the location of the game. May be empty.
 //! \param pgn_file_name The name of the file where the game record will be written. If empty,
 //!        the game will be written to stdout.
 //! \returns The result of the game.
@@ -25,13 +27,19 @@ Game_Result play_game(Board board,
                       const Player& white,
                       const Player& black,
                       bool pondering_allowed,
+                      const std::string& event_name,
+                      const std::string& location,
                       const std::string& pgn_file_name);
 
 //! Play a game with an outside GUI interface.
 //
 //! \param local_player A chess engine chosen at the command line.
+//! \param event_name The name of the event where the game will take place. May be empty.
+//! \param location The name of the location of the game. May be empty.
 //! \param game_file_name The name of a file for writing the game record.
 void play_game_with_outsider(const Player& local_player,
+                             const std::string& event_name,
+                             const std::string& location,
                              const std::string& game_file_name);
 
 #endif // GAME_H
