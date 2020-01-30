@@ -224,7 +224,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="src\Breeding\Gene_Pool.cpp" />
     <ClCompile Include="src\Exceptions\Bad_Still_Alive_Line.cpp" />
     <ClCompile Include="src\game\Board.cpp" />
     <ClCompile Include="src\game\Clock.cpp" />
@@ -237,6 +236,7 @@
     <ClCompile Include="src\Genes\Checkmate_Material_Gene.cpp" />
     <ClCompile Include="src\genes\Freedom_To_Move_Gene.cpp" />
     <ClCompile Include="src\genes\Gene.cpp" />
+    <ClCompile Include="src\Genes\Gene_Pool.cpp" />
     <ClCompile Include="src\genes\Genome.cpp" />
     <ClCompile Include="src\genes\King_Confinement_Gene.cpp" />
     <ClCompile Include="src\genes\King_Protection_Gene.cpp" />
@@ -275,7 +275,6 @@
     <ClCompile Include="src\Utility\String.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Breeding\Gene_Pool.h" />
     <ClInclude Include="include\Exceptions\Bad_Still_Alive_Line.h" />
     <ClInclude Include="include\Exceptions\Game_Ended.h" />
     <ClInclude Include="include\Exceptions\Genetic_AI_Creation_Error.h" />
@@ -291,6 +290,7 @@
     <ClInclude Include="include\Genes\Checkmate_Material_Gene.h" />
     <ClInclude Include="include\genes\Freedom_To_Move_Gene.h" />
     <ClInclude Include="include\genes\Gene.h" />
+    <ClInclude Include="include\Genes\Gene_Pool.h" />
     <ClInclude Include="include\genes\Genome.h" />
     <ClInclude Include="include\genes\King_Confinement_Gene.h" />
     <ClInclude Include="include\genes\King_Protection_Gene.h" />
