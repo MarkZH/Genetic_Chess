@@ -1046,19 +1046,13 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     for(auto player_color : {WHITE, BLACK})
     {
         auto player = player_color == WHITE ? white : black;
-        auto other_player = player_color == WHITE ? black : white;
-        if(player && ! player->name().empty())
+        auto player_name = player ? player->name() : std::string{};
+        if(player_name.empty())
         {
-            print_game_header_line(out_stream, color_text(player_color), player->name());
+            auto other_player = player_color == WHITE ? black : white;
+            player_name = other_player ? other_player->opponent_name() : std::string{};
         }
-        else if(other_player && ! other_player->opponent_name().empty())
-        {
-            print_game_header_line(out_stream, color_text(player_color), other_player->opponent_name());
-        }
-        else
-        {
-            print_game_header_line(out_stream, color_text(player_color), "?");
-        }
+        print_game_header_line(out_stream, color_text(player_color), player_name);
     }
 
     // Get actual result
