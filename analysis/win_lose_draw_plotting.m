@@ -149,11 +149,16 @@ print([raw_data '_game_result_type_frequencies.png']);
 if max(game_time) > 0
     figure;
     hold all;
-    white_time_left(white_time_left < 0) = -0.05*max(white_time_left);
-    black_time_left(black_time_left < 0) = -0.05*max(white_time_left);
+
+    max_time_left = max(max(white_time_left), max(black_time_left));
+    below_zero = -0.05*max_time_left;
+    below_zero_random = below_zero*(1.5 - rand(size(white_time_left)));
+    white_time_left(white_time_left < 0) = below_zero_random(white_time_left < 0);
+    black_time_left(black_time_left < 0) = below_zero_random(black_time_left < 0);
+
     scatter(game_number, white_time_left, 'k');
     scatter(game_number, black_time_left, 'k');
-    ylim(max(white_time_left)*[-0.10, 1.05]);
+    ylim(max_time_left*[-0.10, 1.05]);
     xlabel('Game number');
     ylabel('Time (sec)');
     title('Time left on clock at end of game');
