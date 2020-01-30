@@ -980,9 +980,27 @@ bool Board::no_legal_moves() const noexcept
 }
 
 template<typename OutputStream, typename DataType>
-void print_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
+void output_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
 {
     output << "[" << heading << " \"" << data << "\"]\n";
+}
+
+template<typename OutputStream, typename DataType>
+void print_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
+{
+    output_game_header_line(output, heading, data);
+}
+
+template<typename OutputStream>
+void print_game_header_line(OutputStream& output, const std::string& heading, const std::string& data)
+{
+    output_game_header_line(output, heading, data.empty() ? "?" : data);
+}
+
+template<typename OutputStream>
+void print_game_header_line(OutputStream& output, const std::string& heading, const char* data)
+{
+    print_game_header_line(output, heading, std::string{data});
 }
 
 void Board::print_game_record(const std::vector<const Move*>& game_record_listing,
@@ -1020,8 +1038,8 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     std::ofstream ofs(file_name, std::ios::app);
     std::ostream& out_stream = (ofs ? ofs : std::cout);
 
-    print_game_header_line(out_stream, "Event", "?");
-    print_game_header_line(out_stream, "Site", "?");
+    print_game_header_line(out_stream, "Event", "");
+    print_game_header_line(out_stream, "Site", "");
     print_game_header_line(out_stream, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
     print_game_header_line(out_stream, "Round", game_number++);
 
