@@ -512,6 +512,8 @@ bool run_tests()
     test_function(tests_passed, "String::ends_with()", true, String::ends_with, "abcdefg", "efg");
     test_function(tests_passed, "String::ends_with()", false, String::ends_with, "abcdefg", "efh");
     test_function(tests_passed, "String::lowercase()", "abc def", String::lowercase, "AbC dEf");
+    test_function(tests_passed, "String::add_to_file_name() with dot", "a-b.c", String::add_to_file_name, "a.c", "-b");
+    test_function(tests_passed, "String::add_to_file_name() with no dot", "a-b", String::add_to_file_name, "a", "-b");
 
     test_function(tests_passed, "String::split()", {"a", "b", "c", "d", "e"}, String::split, "\t a b c d e ", "", -1);
     test_function(tests_passed, "Split on comma", {"", ""}, String::split, ",", ",", 1);

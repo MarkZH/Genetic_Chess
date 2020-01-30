@@ -146,6 +146,14 @@ namespace String
     //! \returns A formatted text string of the date and/or time.
     std::string date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
                                      const std::string& format) noexcept;
+
+    //! Inserts extra text before the file name extension.
+    //
+    //! \param original_file_name The file name to be editted.
+    //! \param addition A string to insert just before the dot before the file name extension.
+    //! \returns (original file name without extention) + (addition) + (extension)
+    std::string add_to_file_name(const std::string& original_file_name,
+                                 const std::string& addition) noexcept;
 }
 
 #endif // STRING_H

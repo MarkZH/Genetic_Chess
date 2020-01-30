@@ -200,3 +200,9 @@ std::string String::date_and_time_format(const std::chrono::system_clock::time_p
     ss << std::put_time(&time_out, format.c_str());
     return ss.str();
 }
+
+std::string String::add_to_file_name(const std::string& original_file_name, const std::string& addition) noexcept
+{
+    auto dot_index = std::min(original_file_name.find_last_of('.'), original_file_name.size());
+    return original_file_name.substr(0, dot_index) + addition + original_file_name.substr(dot_index);
+}

@@ -19,6 +19,8 @@ using namespace std::chrono_literals;
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
 
+#include "Utility/String.h"
+
 #include "Exceptions/Game_Ended.h"
 
 Game_Result play_game(Board board,
@@ -123,16 +125,12 @@ void play_game_with_outsider(const Player& player,
         if( ! game_file_name.empty())
         {
             clock.stop();
-            if(player_color == BLACK)
-            {
-                std::this_thread::sleep_for(1s);
-            }
             player.set_opponent_name(outsider->other_player_name());
             auto white = (player_color == WHITE ? &player : nullptr);
             auto black = (player_color == BLACK ? &player : nullptr);
             board.print_game_record(game_record,
                                     white, black,
-                                    game_file_name,
+                                    String::add_to_file_name(game_file_name, "-" + color_text(player_color)),
                                     game_result,
                                     clock,
                                     event_name,
