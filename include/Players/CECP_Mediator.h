@@ -26,7 +26,10 @@ class CECP_Mediator : public Outside_Communicator
 
         void setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list) override;
         void listen(Board& board, Clock& clock) override;
-        Game_Result handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const override;
+        Game_Result handle_move(Board& board,
+                                const Move& move,
+                                std::vector<const Move*>& move_list,
+                                const Player& player) const override;
         bool pondering_allowed() const override;
 
     private:

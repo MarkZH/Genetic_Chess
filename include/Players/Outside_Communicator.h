@@ -38,7 +38,11 @@ class Outside_Communicator
         //! \param board The Board used for the game.
         //! \param move The move picked by the local AI.
         //! \param move_list The list of moves in the game so far.
-        virtual Game_Result handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const = 0;
+        //! \param player The player making the move.
+        virtual Game_Result handle_move(Board& board,
+                                        const Move& move,
+                                        std::vector<const Move*>& move_list,
+                                        const Player& player) const = 0;
 
         //! Returns whether the GUI is allowing thinking during the other player's move.
         virtual bool pondering_allowed() const = 0;

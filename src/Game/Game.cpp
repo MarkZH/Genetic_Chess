@@ -116,7 +116,7 @@ void play_game_with_outsider(const Player& player,
             const auto& chosen_move = player.choose_move(board, clock);
             clock.punch(board);
 
-            game_result = outsider->handle_move(board, chosen_move, game_record);
+            game_result = outsider->handle_move(board, chosen_move, game_record, player);
             player.ponder(board, clock, outsider->pondering_allowed());
         }
     }

@@ -28,6 +28,11 @@ class Player
         //! \param thinking_allowed Allow thinking about the next move during opponent's move.
         virtual void ponder(const Board& board, const Clock& clock, bool thinking_allowed) const noexcept;
 
+        //! The move that this player expects in response to the chosen move (i.e., the result of Player::choose_move()).
+        //
+        //! \returns A pointer to a move or nullptr if there is no prediction.
+        virtual const Move* expected_response() const noexcept;
+
         //! The name of the player.
         //
         //! \returns The name of the individual player. This may have specific details like ID numbers

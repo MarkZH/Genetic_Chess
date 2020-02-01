@@ -10,6 +10,11 @@ void Player::ponder(const Board&, const Clock&, bool) const noexcept
 {
 }
 
+const Move* Player::expected_response() const noexcept
+{
+    return nullptr;
+}
+
 std::string Player::commentary_for_next_move(const Board&, size_t) const noexcept
 {
     return {};
