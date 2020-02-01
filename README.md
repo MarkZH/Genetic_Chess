@@ -42,6 +42,6 @@ Install a chess GUI (e.g., [PyChess](http://www.pychess.org/)): `$cwd/bin/releas
     * If compiling with Visual Studio, look in x86/Release or x64/Release
       for the compiled program.
 3. Every few hours or days, pause the gene pool with `Ctrl-Z` (Linux) or `Ctrl-C`
-   (on Windows) and run `analysis/run_all_plots.sh pool.txt 1` to generate
-   plots and other data showing the evolution and behavior of the specimens.
+   (on Windows) and run `analysis/run_all_plots.sh gene_pool_config_example.txt 1`
+   to generate plots and other data showing the evolution and behavior of the specimens.
    * This script requires the program `octave` to run.
