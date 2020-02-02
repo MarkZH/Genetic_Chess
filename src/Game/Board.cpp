@@ -410,39 +410,20 @@ std::string Board::original_fen() const noexcept
 
 const Move& Board::create_move(Square start, Square end, char promote) const
 {
-    std::vector<const Move*> move_list;
-    std::copy_if(legal_moves().begin(), legal_moves().end(), std::back_inserter(move_list),
-                 [start, end](auto move)
-                 {
-                     return move->start() == start && move->end() == end;
-                 });
-
-    if(move_list.empty())
+    auto result = std::find_if(legal_moves().begin(), legal_moves().end(),
+                               [start, end, promote](auto move)
+                               {
+                                   return move->start() == start &&
+                                          move->end() == end &&
+                                          move->promotion_piece_symbol() == promote;
+                               });
+    
+    if(result == legal_moves().end())
     {
         throw Illegal_Move("No legal move found for " + start.string() + end.string() + promote);
     }
 
-    if(move_list.size() == 1)
-    {
-        return *move_list.front();
-    }
-    else
-    {
-        auto result = std::find_if(move_list.begin(), move_list.end(),
-                                   [promote](auto move)
-                                   {
-                                       return move->promotion_piece_symbol() == std::toupper(promote);
-                                   });
-
-        if(result == move_list.end())
-        {
-            throw Illegal_Move("Invalid choice for pawn promotion (" + start.string() + end.string() + ")");
-        }
-        else
-        {
-            return **result; // one star to dereference the iterator, one to dereference the pointer
-        }
-    }
+    return **result; // one star to dereference the iterator, one to dereference the pointer
 }
 
 Game_Result Board::submit_move(const Move& move) noexcept
