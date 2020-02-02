@@ -551,13 +551,11 @@ int Board::castling_direction(Color player) const noexcept
 
 const Move& Board::create_move(const std::string& move) const
 {
-    static const std::string promotion_pieces = "RNBQK";
-    static const std::string pieces = "P" + promotion_pieces;
-    static const std::string lowercase_pieces = String::lowercase(pieces);
+    static const std::string pieces = "PRNBQK";
     static const std::string valid_files = "abcdefgh";
     static const std::string valid_rows  = "12345678";
     static const std::string castling = "Oo";
-    static const std::string valid_characters = lowercase_pieces + pieces + valid_files + valid_rows + castling;
+    static const std::string valid_characters = pieces + valid_files + valid_rows + castling;
 
     std::string validated;
     std::copy_if(move.begin(), move.end(), std::back_inserter(validated),
@@ -581,15 +579,6 @@ const Move& Board::create_move(const std::string& move) const
         auto king_square = find_king(whose_turn());
         return create_move(king_square,
                            king_square + Square_Difference{-2, 0});
-    }
-
-    // Capitalize piece symbols when unambiguous (i.e., not a bishop)
-    for(auto& c : validated)
-    {
-        if(String::contains(lowercase_pieces, c) && c != 'b')
-        {
-            c = std::toupper(c);
-        }
     }
 
     // Capitalize promotion piece symbol
@@ -635,7 +624,7 @@ const Move& Board::create_move(const std::string& move) const
             throw Illegal_Move("Only pawns can be promoted: " + move);
         }
 
-        if( ! String::contains(promotion_pieces, moving_pieces.back()))
+        if(moving_pieces.back() == 'P')
         {
             throw Illegal_Move("Cannot promote to pawn: " + move);
         }

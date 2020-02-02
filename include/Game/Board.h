@@ -69,9 +69,8 @@ class Board
 
         //! Creates a Move instance given a text string representation.
         //
-        //! \param move A string using coordinate notation ("a2b3") or PGN ("Bb3"). Note: If PGN is used and
-        //!        a bishop is to be moved, then the piece symbol 'B' must be capitalized to avoid ambiguity
-        //!        with pawn captures. For example, Bxc5 and bxc5.
+        //! \param move A string using coordinate notation ("a2b3")
+        //!        or [algebraic notation](https://en.wikipedia.org/wiki/Algebraic_notation_(chess)) ("Bb3").
         //! \returns A Move instance corresponding to the input string.
         //! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
         const Move& create_move(const std::string& move) const;
