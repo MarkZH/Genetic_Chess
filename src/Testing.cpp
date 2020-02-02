@@ -336,10 +336,8 @@ bool run_tests()
         just_rooks_move_board.submit_move(move);
     }
 
-    test_function(tests_passed, "Board hash after no-castle", true,
-        [&](){ return just_kings_move_board.board_hash() == just_rooks_move_board.board_hash(); });
-    test_function(tests_passed, "Boards with different castling rights", false,
-        [&](){ return just_kings_move_board.board_hash() == castling_hash_board.board_hash(); });
+    test_result(tests_passed, just_kings_move_board.board_hash() == just_rooks_move_board.board_hash(), "Boards should have same hash after castling rights lost");
+    test_result(tests_passed, just_kings_move_board.board_hash() != castling_hash_board.board_hash(), "Boards should have different hashes with different castling rights");
 
 
     // Test Genetic_AI file loading
