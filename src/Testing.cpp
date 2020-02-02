@@ -235,7 +235,7 @@ bool run_tests()
         test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.string() + " already visited.");
         squares_visited[square.index()] = true;
     }
-    test_result(tests_passed, std::all_of(squares_visited.begin(), squares_visited.end(), [](auto tf) {return tf; }), "Square iterator missed some squares.");
+    test_result(tests_passed, std::all_of(squares_visited.begin(), squares_visited.end(), [](auto tf) { return tf; }), "Square iterator missed some squares.");
 
 
     // Threefold repetition rule test
