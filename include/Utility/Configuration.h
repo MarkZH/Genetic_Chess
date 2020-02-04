@@ -6,6 +6,8 @@
 #include <stdexcept>
 #include <type_traits>
 
+#include "Utility/String.h"
+
 //! A class that reads a text file to allow easy querying of configuration data.
 class Configuration
 {

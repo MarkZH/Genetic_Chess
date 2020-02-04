@@ -5,6 +5,7 @@
 #include <vector>
 #include <chrono>
 #include <sstream>
+#include <type_traits>
 
 //! A collection of useful functions for dealing with text strings.
 namespace String
