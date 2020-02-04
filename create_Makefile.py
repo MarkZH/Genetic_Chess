@@ -172,7 +172,7 @@ with open("Makefile", 'w') as make_file:
     make_file.write(f"BIN = {program_name}\n")
     make_file.write(f"CXX = {compiler}\n")
     make_file.write(f"LD = {compiler}\n\n")
-    make_file.write(f"CFLAGS = {' '.join(sorted(base_options, key=lambda s : s.lower()))}\n")
+    make_file.write(f"CFLAGS = {' '.join(base_options)}\n")
     make_file.write(f"LDFLAGS = {' '.join(base_linker_options)}\n\n")
     make_file.write(f"DOC_DIR = {os.path.join('doc', 'doxygen', 'html')}\n")
     make_file.write(f"DOC_INDEX = {os.path.join('$(DOC_DIR)', 'index.html')}\n")
