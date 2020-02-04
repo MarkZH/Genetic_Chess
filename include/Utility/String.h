@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <chrono>
+#include <sstream>
 
 //! A collection of useful functions for dealing with text strings.
 namespace String
@@ -131,13 +132,28 @@ namespace String
     //! \returns A string representation of the rounded number.
     std::string round_to_precision(double x, double precision) noexcept;
 
-    //! Convert a std::string to a size_t for multiple platforms.
+    //! Convert a std::string to a numeric type.
     //
     //! \param s The input string containing a number.
-    //! \returns An unsigned integer of the same type as size_t.
-    //! \throws std::invalid_argument if no conversion could be made.
-    //! \throws std::out_of_range if the number in the string cannot fit in a size_t.
-    size_t string_to_size_t(const std::string& s);
+    //! \tparam Number The numeric type the string should be converted to.
+    //! \returns A number of type Number.
+    //! \throws std::invalid_argument if no conversion could be made or if there are extra characters
+    //!         that cannot be converted to a number.
+    template<typename Number>
+    constexpr std::enable_if_t<std::is_arithmetic_v<Number>, Number> string_to_number(const std::string& s)
+    {
+        auto iss = std::istringstream(trim_outer_whitespace(s));
+        Number result;
+        iss >> result;
+        if(iss.fail() || ! iss.eof())
+        {
+            throw std::invalid_argument("Non-numeric data in argument: " + s);
+        }
+        else
+        {
+            return result;
+        }
+    }
 
     //! Create a text string of the given time point in the given format
     //

@@ -3,7 +3,6 @@
 
 #include <string>
 #include <map>
-#include <sstream>
 #include <stdexcept>
 #include <type_traits>
 
@@ -35,19 +34,9 @@ class Configuration
         //! \throws std::runtime_error If the named parameter was not found in the file or
         //!         if the data could not be converted to a numerical value.
         template<typename Number>
-        std::enable_if_t<std::is_arithmetic_v<Number>, Number> as_number(const std::string& parameter) const
+        Number as_number(const std::string& parameter) const
         {
-            auto iss = std::istringstream(as_text(parameter));
-            Number result;
-            iss >> result;
-            if(iss.fail() || ! iss.eof())
-            {
-                throw std::invalid_argument("Invalid number for \"" + parameter + "\" : " + as_text(parameter));
-            }
-            else
-            {
-                return result;
-            }
+            return String::string_to_number<Number>(as_text(parameter));
         }
 
         //! Return numerical data from the configuration file if it is greater than zero.

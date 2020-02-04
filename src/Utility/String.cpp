@@ -8,7 +8,6 @@
 #include <chrono>
 #include <iomanip>
 #include <sstream>
-#include <cmath>
 
 namespace
 {
@@ -172,18 +171,6 @@ std::string String::round_to_precision(double x, double precision) noexcept
             return result.substr(0, last_significant_index + 1);
         }
     }
-}
-
-size_t String::string_to_size_t(const std::string& s)
-{
-    size_t result;
-    std::string remainder;
-    std::istringstream(s) >> result >> remainder;
-    if( ! String::trim_outer_whitespace(remainder).empty())
-    {
-        throw std::invalid_argument("Non-numeric characters in string: " + s);
-    }
-    return result;
 }
 
 std::string String::date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,

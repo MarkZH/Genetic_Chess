@@ -112,7 +112,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
                 }
                 else if(option == "movestogo")
                 {
-                    auto moves_to_reset = String::string_to_size_t(go_parse.at(++i));
+                    auto moves_to_reset = String::string_to_number<size_t>(go_parse.at(++i));
                     log("Next time control in " + std::to_string(moves_to_reset));
                     clock.set_next_time_reset(moves_to_reset);
                 }

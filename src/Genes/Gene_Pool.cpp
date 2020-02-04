@@ -133,7 +133,7 @@ void gene_pool(const std::string& config_file)
                 try
                 {
                     auto alive_split = String::split(line, ":");
-                    last_pool = String::string_to_size_t(alive_split.at(1));
+                    last_pool = String::string_to_number<size_t>(alive_split.at(1));
                     if(last_pool == gene_pool_count - 1)
                     {
                         ++rounds;
@@ -504,7 +504,7 @@ namespace
                 try
                 {
                     auto parse = String::split(line, ":", 2);
-                    auto pool_number = String::string_to_size_t(parse.at(1));
+                    auto pool_number = String::string_to_number<size_t>(parse.at(1));
                     still_alive[pool_number] = parse.at(2);
                     pool_line_numbers[pool_number] = line_number;
                     pool_lines[pool_number] = line;

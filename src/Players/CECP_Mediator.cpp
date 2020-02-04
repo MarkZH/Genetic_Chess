@@ -240,7 +240,7 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
             auto split = String::split(command);
 
             log("moves to reset clock = " + split[1]);
-            auto reset_moves = String::string_to_size_t(split[1]);
+            auto reset_moves = String::string_to_number<size_t>(split[1]);
             auto time_split = String::split(split[2], ":");
             auto game_time = 0;
             if(time_split.size() == 1)

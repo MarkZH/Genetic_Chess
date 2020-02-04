@@ -249,7 +249,7 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
 
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
-    auto fifty_move_count_input = String::string_to_size_t(fen_parse.at(4));
+    auto fifty_move_count_input = String::string_to_number<size_t>(fen_parse.at(4));
     if(fifty_move_count_input > 100)
     {
         fen_error("Halfmove clock value too large.");
@@ -260,7 +260,7 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
         add_to_repeat_count(Random::random_unsigned_int64());
     }
 
-    move_count_start_offset = String::string_to_size_t(fen_parse.at(5));
+    move_count_start_offset = String::string_to_number<size_t>(fen_parse.at(5));
 
     if(fen() != starting_fen)
     {

@@ -539,9 +539,9 @@ bool run_tests()
     }
 
     // String to size_t number conversion
-    function_should_not_throw(tests_passed, "Non-throwing string to size_t", String::string_to_size_t, "123");
-    function_should_not_throw(tests_passed, "Non-throwing string to size_t with whitespace", String::string_to_size_t, " 456  ");
-    function_should_throw(tests_passed, "Throwing string to size_t", String::string_to_size_t, "78x9");
+    function_should_not_throw(tests_passed, "Non-throwing string to size_t", String::string_to_number<size_t>, "123");
+    function_should_not_throw(tests_passed, "Non-throwing string to size_t with whitespace", String::string_to_number<size_t>, " 456  ");
+    function_should_throw(tests_passed, "Throwing string to size_t", String::string_to_number<size_t>, "78x9");
 
 
     // Log-Norm distribution check
@@ -1029,7 +1029,7 @@ namespace
             else if(test_type == "move count")
             {
                 assert(specification.size() == 4);
-                auto expected_count = String::string_to_size_t(specification.back());
+                auto expected_count = String::string_to_number<size_t>(specification.back());
                 test_result(test_passed, all_moves_legal(board, moves) && board.legal_moves().size() == expected_count,
                             "Legal moves counted: " + std::to_string(board.legal_moves().size()) + "; Expected: " + std::to_string(expected_count));
             }
