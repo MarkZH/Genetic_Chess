@@ -45,9 +45,7 @@ depends['clean'] = (f"clean_{target}" for target in depends['all'])
 depends["docs"] = ["user_manual", "code_docs"]
 depends['clean_docs'] = (f"clean_{target}" for target in depends['docs'])
 
-options = dict()
 obj_dest = dict()
-bin_dest = dict()
 operations = dict()
 bins = dict()
 link_dirs = dict()
@@ -73,15 +71,10 @@ depends[user_manual_var] = [
 operations[user_manual_var] = [f'latexmk -synctex=1 -pdf -cd {user_manual_tex}']
 
 for target in final_targets:
-    options[target] = f"$(CFLAGS_{target.upper()}) $(LDFLAGS_{target.upper()})"
-
-    obj_dest[target]= f"$({target.upper()}_OBJ_DIR)"
-    bin_dest[target]= f"$({target.upper()}_BIN_DIR)"
-
     out_variable = f"$(OUT_{target.upper()})"
-    link_dir_variable = f"$(LINK_DIR_{target.upper()})"
     all_objects = f"$(OBJ_{target.upper()})"
-    operations[out_variable] = [f"mkdir -p {bin_dest[target]}",
+    bin_dest = f"$({target.upper()}_BIN_DIR)"
+    operations[out_variable] = [f"mkdir -p {bin_dest}",
                                 ' '.join(["$(LD)",
                                           "-o", out_variable,
                                           all_objects,
@@ -90,17 +83,19 @@ for target in final_targets:
                                           "$(CFLAGS)",
                                           f"$(CFLAGS_{target.upper()})"])]
     link_dirs[target] = os.path.join('bin', target)
+    link_dir_variable = f"$(LINK_DIR_{target.upper()})"
     operations[os.path.join(link_dir_variable, '$(BIN)')] = [f'mkdir -p {link_dir_variable}',
                                                              f'ln -sf -t {link_dir_variable} `realpath {out_variable}`',
                                                              f'touch {out_variable}']
-    depends[os.path.join(link_dir_variable, '$(BIN)')] = [out_variable, 'Makefile']
-    bins[target] = os.path.join(bin_dest[target], '$(BIN)')
+    depends[os.path.join(link_dir_variable, '$(BIN)')] = [out_variable]
 
     depends[target] = [out_variable, os.path.join(link_dir_variable, '$(BIN)')]
     depends[out_variable] = [all_objects]
 
-    operations[f'clean_{target}'] = [f"rm -rf {obj_dest[target]} {bin_dest[target]}"]
+    obj_dest[target] = f"$({target.upper()}_OBJ_DIR)"
+    operations[f'clean_{target}'] = [f"rm -rf {obj_dest[target]} {bin_dest}"]
 
+    bins[target] = os.path.join(bin_dest, '$(BIN)')
     depends[f'test_{target}'] = [target]
     operations[f'test_{target}'] = [f'{bins[target]} -{opt}' for opt in ['test', 'perft', 'speed']]
 
@@ -162,7 +157,7 @@ for target in final_targets:
                 continue
             obj_file = os.path.join(obj_dest[target], f"{os.path.splitext(source_file)[0]}.o")
             operations[obj_file] = [f"mkdir -p {os.path.dirname(obj_file)}",
-                                    f"$(CXX) $(CFLAGS) $(LDFLAGS) {options[target]} -c {source_file} -o {obj_file}"]
+                                    f"$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_{target.upper()}) $(LDFLAGS_{target.upper()}) -c {source_file} -o {obj_file}"]
 
             compiler_command = [compiler] + base_options + options_list[target] + ['-MM', source_file]
             compile_depends = subprocess.check_output(compiler_command).decode('ascii').split(':', 1)[1].split()
