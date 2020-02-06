@@ -581,10 +581,10 @@ const Move& Board::create_move(const std::string& move) const
                            king_square + Square_Difference{-2, 0});
     }
 
-    // Capitalize promotion piece symbol
-    if(std::isalpha(validated.back()))
+    // Check for and capitalize promotion piece symbol
+    if(std::islower(move.back()))
     {
-        validated.back() = std::toupper(validated.back());
+        validated.push_back(std::toupper(move.back()));
     }
 
     std::string moving_pieces;

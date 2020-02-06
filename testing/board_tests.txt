@@ -29,6 +29,7 @@ all moves legal | k7/8/8/4p3/3P4/8/8/K7 b - - 0 1 | e5d4
 
 # Generating moves with side effects
 last move illegal | 2k5/P7/K7/8/8/8/8/8 w - - 0 1 | a8=Q Kb8
+last move illegal | 2k5/P7/K7/8/8/8/8/8 w - - 0 1 | a7a8q c8b8
 
 # Pinned pieces tests
 pinned piece      | k1KRr3/8/8/8/8/8/8/8 w - - 0 1 | d8 true
