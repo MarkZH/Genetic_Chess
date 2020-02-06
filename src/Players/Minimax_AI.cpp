@@ -245,7 +245,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            result = create_result(next_board, next_board.quiescent(piece_values()), perspective, move_result, prior_real_moves, current_variation);
+            auto quiescent_moves = next_board.quiescent(piece_values());
+            for(auto quiescent_move : quiescent_moves)
+            {
+                next_board.submit_move(*quiescent_move);
+            }
+            result = create_result(next_board, quiescent_moves, perspective, move_result, prior_real_moves, current_variation);
             nodes_searched += result.depth() - depth;
         }
 
