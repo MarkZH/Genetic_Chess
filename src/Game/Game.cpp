@@ -120,8 +120,14 @@ void play_game_with_outsider(const Player& player,
             player.ponder(board, clock, outsider->pondering_allowed());
         }
     }
-    catch(const Game_Ended& game_end)
+    catch(const std::exception& game_end)
     {
+        std::string reason = game_end.what();
+        if( ! reason.empty())
+        {
+            outsider->log(std::string("Game ended with: ") + reason);
+        }
+
         if( ! game_file_name.empty())
         {
             clock.stop();
@@ -135,7 +141,7 @@ void play_game_with_outsider(const Player& player,
                                     clock,
                                     event_name,
                                     location,
-                                    game_end.what());
+                                    reason);
         }
     }
 }
