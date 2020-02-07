@@ -24,11 +24,6 @@ struct Game_Tree_Node_Result
     //! The sequence of moves that lead to the board position being scored.
     std::vector<const Move*> variation;
 
-    //! How much time was allotted for picking this move.
-    double time_allotted = 0.0;
-    //! How much time was actually usd in picking this move.
-    double time_used = 0.0;
-
     //! The score assigned to a checkmate board position for the winning Minimax_AI.
     static constexpr auto win_score = std::numeric_limits<double>::infinity();
     //! The score assigned to a checkmate board position for the losing Minimax_AI.

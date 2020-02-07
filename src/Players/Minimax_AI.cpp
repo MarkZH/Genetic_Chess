@@ -101,9 +101,6 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         output_thinking_uci(result, clock, board.whose_turn());
     }
 
-    result.time_allotted = time_to_use;
-    result.time_used = clock_start_time - clock.running_time_left();
-
     commentary.push_back(result);
     principal_variation = result.variation;
 
@@ -484,26 +481,20 @@ std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move
         move_result = temp_board.submit_move(*move);
     }
 
-    auto round = [](double x) { return String::round_to_precision(x, 0.01); };
-    auto score = round(comment.corrected_score(board.whose_turn()) / centipawn_value() / 100.0);
-    auto score_text = "{" + score + ";" + round(comment.time_used) + "/" + round(comment.time_allotted) + "})";
-
     if( ! move_result.game_has_ended())
     {
-        return result + score_text;
+        auto round = [](double x) { return String::round_to_precision(x, 0.01); };
+        auto score = round(comment.corrected_score(board.whose_turn())/centipawn_value()/100.0);
+        return result + "{" + score + "})";
     }
     else if(comment.variation.size() == 1)
     {
         // No need for commentary on the last move of the game since the result is obvious.
         return {};
     }
-    else if(move_result.winner() == NONE)
-    {
-        return result + score_text;
-    }
     else
     {
-        return result + "{" + score_text.substr(score_text.find(';') + 1);
+        return String::trim_outer_whitespace(result) + ")";
     }
 }
 
