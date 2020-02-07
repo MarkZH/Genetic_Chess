@@ -8,6 +8,7 @@
 
 #include "Game/Color.h"
 #include "Players/Game_Tree_Node_Result.h"
+#include "Utility/Fixed_Capacity_Vector.h"
 
 class Board;
 class Clock;
@@ -82,6 +83,8 @@ class Minimax_AI : public Player
         double centipawn_value() const noexcept;
 
         // Minimax (actually negamax) with alpha-beta pruning
+        const static size_t maximum_search_depth = 100;
+        using current_variation_store = Fixed_Capacity_Vector<const Move*, maximum_search_depth>;
         Game_Tree_Node_Result search_game_tree(const Board& board,
                                                double time_to_examine,
                                                const Clock& clock,
@@ -89,7 +92,7 @@ class Minimax_AI : public Player
                                                Game_Tree_Node_Result alpha,
                                                const Game_Tree_Node_Result& beta,
                                                bool still_on_principal_variation,
-                                               std::vector<const Move*>& current_variation) const noexcept;
+                                               current_variation_store& current_variation) const noexcept;
 
         //! Assign a score to the current board state.
         //
@@ -102,11 +105,10 @@ class Minimax_AI : public Player
         //!        game tree search.
         //! \param move_list The current move list from the game tree search.
         Game_Tree_Node_Result create_result(Board board,
-                                            const std::vector<const Move*>& extra_moves,
                                             Color perspective,
                                             const Game_Result& move_result,
                                             size_t prior_real_moves,
-                                            std::vector<const Move*> move_list) const noexcept;
+                                            const std::vector<const Move*>& move_list) const noexcept;
 
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,

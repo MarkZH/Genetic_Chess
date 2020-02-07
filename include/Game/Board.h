@@ -11,6 +11,8 @@
 #include "Game/Piece.h"
 #include "Players/Thinking.h"
 
+#include "Utility/Fixed_Capacity_Vector.h"
+
 class Clock;
 class Game_Result;
 class Player;
@@ -278,8 +280,7 @@ class Board
 
     private:
         std::array<Piece, 64> board;
-        std::array<uint64_t, 101> repeat_count;
-        size_t repeat_count_insertion_point = 0;
+        Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
         Color turn_color;
         size_t game_move_count = 0;
         const Move* previous_move = nullptr;

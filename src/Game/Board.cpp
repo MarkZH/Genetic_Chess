@@ -29,6 +29,7 @@ using namespace std::placeholders; // for _1, _2, etc. in std::bind()
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
+#include "Utility/Fixed_Capacity_Vector.h"
 
 namespace
 {
@@ -283,7 +284,7 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
     recreate_move_caches();
 
     // In case a listed en passant target is not actually a legal move.
-    --repeat_count_insertion_point;
+    repeat_count.pop_back();
     add_board_position_to_repeat_record();
 }
 
@@ -1358,24 +1359,22 @@ void Board::add_board_position_to_repeat_record() noexcept
 
 void Board::add_to_repeat_count(uint64_t new_hash) noexcept
 {
-    repeat_count[repeat_count_insertion_point++] = new_hash;
+    repeat_count.push_back(new_hash);
 }
 
 ptrdiff_t Board::current_board_position_repeat_count() const noexcept
 {
-    return std::count(repeat_count.begin(),
-                      repeat_count.begin() + repeat_count_insertion_point,
-                      board_hash());
+    return repeat_count.count(board_hash());
 }
 
 size_t Board::moves_since_pawn_or_capture() const noexcept
 {
-    return repeat_count_insertion_point - 1;
+    return repeat_count.size() - 1;
 }
 
 void Board::clear_repeat_count() noexcept
 {
-    repeat_count_insertion_point = 0;
+    repeat_count.clear();
 }
 
 size_t Board::castling_move_index(Color player) const noexcept

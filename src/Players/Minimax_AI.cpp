@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
+#include <array>
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Game/Board.h"
@@ -11,6 +13,7 @@
 
 #include "Utility/String.h"
 #include "Utility/Random.h"
+#include "Utility/Fixed_Capacity_Vector.h"
 
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
@@ -78,7 +81,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
                                         board.whose_turn(),
                                         {}};
 
-    std::vector<const Move*> current_variation;
+    current_variation_store current_variation;
 
     auto result = search_game_tree(board,
                                    time_to_use,
@@ -131,7 +134,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    Game_Tree_Node_Result alpha,
                                                    const Game_Tree_Node_Result& beta,
                                                    bool still_on_principal_variation,
-                                                   std::vector<const Move*>& current_variation) const noexcept
+                                                   current_variation_store& current_variation) const noexcept
 {
     const auto time_start = clock.running_time_left();
     const auto depth = board.game_length() - prior_real_moves + 1;
@@ -181,10 +184,10 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         class push_guard
         {
             public:
-                push_guard(std::vector<const Move*>& list, const Move* move) noexcept : push_list(list) { push_list.push_back(move); }
+                push_guard(current_variation_store& list, const Move* move) noexcept : push_list(list) { push_list.push_back(move); }
                 ~push_guard() noexcept { push_list.pop_back(); }
             private:
-                std::vector<const Move*>& push_list;
+                current_variation_store& push_list;
         };
         auto variation_guard = push_guard(current_variation, move);
 
@@ -194,7 +197,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if(move_result.winner() != NONE)
         {
             // This move results in checkmate, no other move can be better.
-            return create_result(next_board, {}, perspective, move_result, prior_real_moves, current_variation);
+            return create_result(next_board, perspective, move_result, prior_real_moves, current_variation.to_vector());
         }
 
         if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
@@ -217,7 +220,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             recurse = false;
         }
-        else if(depth > 100)
+        else if(current_variation.full())
         {
             recurse = false; // prevent stack overflow
         }
@@ -250,7 +253,9 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             {
                 next_board.submit_move(*quiescent_move);
             }
-            result = create_result(next_board, quiescent_moves, perspective, move_result, prior_real_moves, current_variation);
+            auto variation = current_variation.to_vector();
+            variation.insert(variation.end(), quiescent_moves.begin(), quiescent_moves.end());
+            result = create_result(next_board, perspective, move_result, prior_real_moves, variation);
             nodes_searched += result.depth() - depth;
         }
 
@@ -379,13 +384,11 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
 }
 
 Game_Tree_Node_Result Minimax_AI::create_result(Board board,
-                                                const std::vector<const Move*>& extra_moves,
                                                 Color perspective,
                                                 const Game_Result& move_result,
                                                 size_t prior_real_moves,
-                                                std::vector<const Move*> move_list) const noexcept
+                                                const std::vector<const Move*>& move_list) const noexcept
 {
-    move_list.insert(move_list.end(), extra_moves.begin(), extra_moves.end());
     return {evaluate(board, move_result, perspective, prior_real_moves),
             perspective,
             move_list};

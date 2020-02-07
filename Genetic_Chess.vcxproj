@@ -325,6 +325,7 @@
     <ClInclude Include="include\Players\UCI_Mediator.h" />
     <ClInclude Include="include\Testing.h" />
     <ClInclude Include="include\Utility\Configuration.h" />
+    <ClInclude Include="include\Utility\Fixed_Capacity_Vector.h" />
     <ClInclude Include="include\Utility\Math.h" />
     <ClInclude Include="include\Utility\Random.h" />
     <ClInclude Include="include\Utility\Scoped_Stopwatch.h" />
