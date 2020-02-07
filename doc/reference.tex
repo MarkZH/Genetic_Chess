@@ -131,6 +131,10 @@ If the best move is chosen based upon the probable resulting future board state 
 
 Besides Principal Variation Recall, those moves that capture an opponent's piece are examined before other moves. Capturing moves usually result in the largest changes in position evaluations (see Section~\ref{total-force-and-pawn-result}), so they should quickly establish alpha and beta values that will lead to quick cutoffs.
 
+\subsection{Quiescence Search}
+
+One problem with minimax search is deciding when to stop the search and evaluate the board just reached. There is a danger that stopping prematurely will mistakenly assign a high score to a board that leaves pieces in danger. For example, if a search stops just after a queen captures a bishop, evaluating that board might result in a favorable score. However, if that bishop was guarded by another piece, the capture is actually a bad move since trading a bishop for a queen is a net loss of material. It is better to evaluate boards that are in a quiescent state---that is, one without immediate captures that favor the capturing player~\cite{quiescence-ref}. However, not all capturing moves can be considered since this will lead to running out of time, which was the point of stopping the search in the first place. As a compromise, only moves that land on the same square as the last minimax move will be considered. For example, if mimimax search bottoms out at the move Ne4, then only moves that also land on e4 will be considered during the quiescence search phase. If multiple pieces can move to that square, then the least valuable piece (as determined by the AI) will move first. An abbreviated form of minimax is applied to this series of captures to make sure that neither player makes a move that avoidably loses material.
+
 \section{The Genome}\label{gene-section}
 
 The genome is the repository for genetic information in the Genetic AIs and controls all aspects of game play not mentioned in the previous section. All are subject to mutation, which can change the behavior and influence of a given gene.
