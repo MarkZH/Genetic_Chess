@@ -37,7 +37,7 @@ Required software: GCC\footnote{\url{https://gcc.gnu.org/}} or clang\footnote{\u
 	\item After cloning the project, run \code{python create\_Makefile.py [compiler]} to regenerate the Makefile. The choices for the compiler are \code{gcc} and \code{clang}.
 	\item Run \code{make}. Optional target arguments include
 		\begin{itemize}
-			\item \code{all}: The default, creates \code{release} and \code{debug} builds as well as the documentation: a PDF user manual and Doxygen code documentation.
+			\item \code{all}: The default, creates \code{release} and \code{debug} builds as well as the documentation: a PDF user manual and Doxygen code documentation in HTML.
 			\item \code{release} The build that is optimized for speed.
 			\item \code{debug} The build that contains symbols for debugging.
 			\item \code{test\_all}, \code{test\_release}, \code{test\_debug}: Runs test suites on the named builds to ensure proper functioning and to measure performance.
@@ -116,8 +116,8 @@ The principle behind the minimax algorithm is that the quality of a move is meas
 
 Alpha-beta pruning is based upon keeping a record of two game state evaluations:
 \begin{description}
-	\item[Alpha:] is the highest guaranteed score that the player whose turn it is can reach once the game reaches the current state (i.e., the root of the current game tree) and cannot be avoided by the opponent making different moves later in the game. That is, the player whose turn it is at this point in the game tree can force the game into a state with at least this score.
-	\item[Beta:] is the lowest score to which the opponent can limit the current player by making moves that avoid higher scores. If the current player finds a move with a higher score than Beta, then the opponent would make a different move earlier in the game that makes this game state impossible to reach. This earlier move is called a ``refuting'' move. Once a move is found that is refuted by an earlier opponent move, the examination of that set of moves is abandoned, as the opponent will not allow the game to reach that state.
+	\item[Alpha] is the highest guaranteed score that the player whose turn it is can reach once the game reaches the current state (i.e., the root of the current game tree) and cannot be avoided by the opponent making different moves later in the game. That is, the player whose turn it is at this point in the game tree can force the game into a state with at least this score.
+	\item[Beta] is the lowest score to which the opponent can limit the current player by making moves that avoid higher scores. If the current player finds a move with a higher score than Beta, then the opponent would make a different move earlier in the game that makes this game state impossible to reach. This earlier move is called a ``refuting'' move. Once a move is found that is refuted by an earlier opponent move, the examination of that set of moves is abandoned, as the opponent will not allow the game to reach that state.
 \end{description}
 Each time a move examination reaches a greater depth in the game tree, these values switch roles to represent the view of the board from the opponent's perspective.
 
