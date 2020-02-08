@@ -418,7 +418,7 @@ const Move& Board::create_move(Square start, Square end, char promote) const
                                           move->end() == end &&
                                           move->promotion_piece_symbol() == promote;
                                });
-    
+
     if(result == legal_moves().end())
     {
         throw Illegal_Move("No legal move found for " + start.string() + end.string() + promote);

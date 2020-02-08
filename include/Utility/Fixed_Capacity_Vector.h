@@ -10,10 +10,10 @@
 //
 //! \tparam T The type of data to be stored.
 //! \tparam capacity The maximum size of the container.
-//! 
+//!
 //! Under the hood, the container's data is stored as a fixed-size std::array<T, capacity>
 //! with an index to where the next piece of data should be inserted. As such, the
-//! data type T must have a default constructor. 
+//! data type T must have a default constructor.
 template<typename T, size_t capacity>
 class Fixed_Capacity_Vector
 {
@@ -49,13 +49,13 @@ class Fixed_Capacity_Vector
 
         //! Count the number of copies of a given item the FCV contains.
         //
-        //! \param item The item to count. 
+        //! \param item The item to count.
         constexpr size_t count(const T& item) const noexcept
         {
             return std::count(cbegin(), cend(), item);
         }
 
-        //! Return if FCV is empty. 
+        //! Return if FCV is empty.
         constexpr bool empty() const noexcept
         {
             return size() == 0;
