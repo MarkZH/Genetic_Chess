@@ -223,7 +223,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="src\Exceptions\Bad_Still_Alive_Line.cpp" />
     <ClCompile Include="src\game\Board.cpp" />
     <ClCompile Include="src\game\Clock.cpp" />
@@ -251,6 +250,7 @@
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
     <ClCompile Include="src\Genes\Stacked_Pawns_Gene.cpp" />
     <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
+    <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Moves\Castle.cpp" />
     <ClCompile Include="src\moves\En_Passant.cpp" />
     <ClCompile Include="src\moves\Move.cpp" />
