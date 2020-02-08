@@ -379,7 +379,10 @@ namespace
                 }
                 else if(String::contains(line, "1/2-1/2"))
                 {
-                    expected_winner = NONE;
+                    expect_checkmate = false;
+                }
+                else if(String::contains(line, '*'))
+                {
                     expect_checkmate = false;
                 }
                 else
@@ -426,14 +429,15 @@ namespace
                     }
 
                     if((move == "1/2-1/2" && expected_winner != NONE) ||
-                    (move == "1-0" && expected_winner != WHITE) ||
-                    (move == "0-1" && expected_winner != BLACK))
+                       (move == "1-0" && expected_winner != WHITE) ||
+                       (move == "0-1" && expected_winner != BLACK) ||
+                       (move == "*" && expected_winner != NONE))
                     {
                         std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")" << std::endl;
                         return false;
                     }
 
-                    if(move == "1/2-1/2" || move == "1-0" || move == "0-1")
+                    if(move == "1/2-1/2" || move == "1-0" || move == "0-1" || move == "*")
                     {
                         continue;
                     }
