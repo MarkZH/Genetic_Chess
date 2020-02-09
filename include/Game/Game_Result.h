@@ -29,9 +29,13 @@ class Game_Result
         //
         //! \param winner The color of the player that has won, or NONE if a draw.
         //! \param reason Explanation of why the game ended.
-        //! \param other_reason If the reason parameter is Game_Result_Type::OTHER, then another reason
-        //!        must be supplied.
-        Game_Result(Color winner, Game_Result_Type reason, const std::string& other_reason = {}) noexcept;
+        Game_Result(Color winner, Game_Result_Type reason) noexcept;
+
+        //! Create a Game_Result when the game has ended for an unanticipated reason.
+        //
+        //! \param winner The declared winner of the game.
+        //! \param reason The declared reason for the end of the game.
+        Game_Result(Color winner, const std::string& reason) noexcept;
 
         //! Indicate whether the game ended with the last action.
         bool game_has_ended() const noexcept;

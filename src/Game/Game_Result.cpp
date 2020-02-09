@@ -1,7 +1,6 @@
 #include "Game/Game_Result.h"
 
 #include <string>
-#include <cassert>
 
 #include "Game/Color.h"
 #include "Utility/String.h"
@@ -10,12 +9,18 @@ Game_Result::Game_Result() noexcept : Game_Result(NONE, Game_Result_Type::ONGOIN
 {
 }
 
-Game_Result::Game_Result(Color winner, Game_Result_Type reason, const std::string& other_reason) noexcept :
+Game_Result::Game_Result(Color winner, Game_Result_Type reason) noexcept :
     victor(winner),
     cause(reason),
-    alternate_reason(other_reason)
+    alternate_reason()
 {
-    assert((cause != Game_Result_Type::OTHER) == other_reason.empty());
+}
+
+Game_Result::Game_Result(Color winner, const std::string& reason) noexcept :
+    victor(winner),
+    cause(Game_Result_Type::OTHER),
+    alternate_reason(reason)
+{
 }
 
 bool Game_Result::game_has_ended() const noexcept

@@ -197,7 +197,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                 winner = BLACK;
             }
 
-            return Game_Result(winner, Game_Result_Type::OTHER, reason);
+            return Game_Result(winner, reason);
         }
     }
 
