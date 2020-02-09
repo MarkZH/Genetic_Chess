@@ -21,8 +21,10 @@ UCI_Mediator::UCI_Mediator(const Player& player)
     send_command("uciok");
 }
 
-void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list)
+Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
 {
+    Game_Result setup_result;
+
     while(true)
     {
         auto command = receive_uci_command(board, false);
@@ -32,6 +34,15 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
             board.pick_move_now();
             clock = {};
             move_list.clear();
+            player.reset();
+            setup_result = {};
+        }
+        else if(String::starts_with(command, "setoption name UCI_Opponent value "))
+        {
+            // command has 8 fields requiring 7 cuts to get name
+            auto name = String::split(command, " ", 7).back();
+            player.set_opponent_name(name);
+            log("Opponent's name: " + name);
         }
         else if(String::starts_with(command, "position "))
         {
@@ -56,9 +67,9 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
             if(moves_iter != parse.end())
             {
                 std::for_each(std::next(moves_iter), parse.end(),
-                              [&board, &move_list](const auto& move)
+                              [&board, &move_list, &setup_result](const auto& move)
                               {
-                                  board.submit_move(move);
+                                  setup_result = board.submit_move(move);
                                   move_list.push_back(board.last_move());
                               });
                 log("All moves applied");
@@ -130,7 +141,7 @@ void UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move
 
             log("Telling AI to choose a move at leisure");
             board.choose_move_at_leisure();
-            return;
+            return setup_result;
         }
     }
 }
@@ -188,12 +199,6 @@ std::string UCI_Mediator::receive_uci_command(Board& board, bool while_listening
         {
             log("Stopping local AI thinking");
             board.pick_move_now();
-        }
-        else if(String::starts_with(command, "setoption name UCI_Opponent value "))
-        {
-            // command has 8 fields requiring 7 cuts to get name
-            set_other_player_name(String::split(command, " ", 7).back());
-            log("Opponent's name: " + other_player_name());
         }
         else
         {

@@ -24,7 +24,10 @@ class CECP_Mediator : public Outside_Communicator
         //! \param local_player The player on the machine. The name of the player gets sent to the interface.
         explicit CECP_Mediator(const Player& local_player);
 
-        void setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list) override;
+        Game_Result setup_turn(Board& board,
+                               Clock& clock,
+                               std::vector<const Move*>& move_list,
+                               const Player& player) override;
         void listen(Board& board, Clock& clock) override;
         Game_Result handle_move(Board& board,
                                 const Move& move,
@@ -41,8 +44,7 @@ class CECP_Mediator : public Outside_Communicator
         bool undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock);
         void send_error(const std::string& command, const std::string& reason) const noexcept;
         std::string listener(Board& board, Clock& clock);
-        [[ noreturn ]] void report_end_of_game(const std::string& result, const std::string& reason) const;
-        [[ noreturn ]] void report_end_of_game(const Game_Result& ending) const;
+        void report_end_of_game(const Game_Result& ending) const noexcept;
 };
 
 #endif // CECP_MEDIATOR_H

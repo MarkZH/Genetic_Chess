@@ -33,6 +33,9 @@ class Player
         //! \returns A pointer to a move or nullptr if there is no prediction.
         virtual const Move* expected_response() const noexcept;
 
+        //! Reset player internals (if any) for a new game
+        virtual void reset() const noexcept;
+
         //! The name of the player.
         //
         //! \returns The name of the individual player. This may have specific details like ID numbers

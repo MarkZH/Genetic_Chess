@@ -41,6 +41,8 @@ class Minimax_AI : public Player
         //!        game did not start with move 1.
         std::string commentary_for_next_move(const Board& board, size_t move_number) const noexcept override;
 
+        void reset() const noexcept override;
+
     protected:
         //! Recalculate values that will last the lifetime of the instance.
         //

@@ -81,16 +81,6 @@ void Outside_Communicator::log(const std::string& data)
         << std::endl;
 }
 
-std::string Outside_Communicator::other_player_name() const
-{
-    return outside_player_name;
-}
-
-void Outside_Communicator::set_other_player_name(const std::string& name) noexcept
-{
-    outside_player_name = name;
-}
-
 void Outside_Communicator::send_command(const std::string& cmd) const noexcept
 {
     log("SENDING: " + cmd);

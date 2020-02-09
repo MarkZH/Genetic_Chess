@@ -1,6 +1,7 @@
 #include "Game/Game_Result.h"
 
 #include <string>
+#include <cassert>
 
 #include "Game/Color.h"
 #include "Utility/String.h"
@@ -9,10 +10,12 @@ Game_Result::Game_Result() noexcept : Game_Result(NONE, Game_Result_Type::ONGOIN
 {
 }
 
-Game_Result::Game_Result(Color winner, Game_Result_Type reason) noexcept :
+Game_Result::Game_Result(Color winner, Game_Result_Type reason, const std::string& other_reason) noexcept :
     victor(winner),
-    cause(reason)
+    cause(reason),
+    alternate_reason(other_reason)
 {
+    assert((cause != Game_Result_Type::OTHER) == other_reason.empty());
 }
 
 bool Game_Result::game_has_ended() const noexcept
@@ -43,6 +46,8 @@ std::string Game_Result::ending_reason() const noexcept
             return "Time forfeiture";
         case Game_Result_Type::TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL:
             return "Time expired with insufficient material";
+        case Game_Result_Type::OTHER:
+            return alternate_reason;
         default:
             return {};
     }

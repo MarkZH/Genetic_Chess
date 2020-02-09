@@ -503,3 +503,9 @@ void Minimax_AI::recalibrate_self() const noexcept
     calibrate_thinking_speed();
     calculate_centipawn_value();
 }
+
+void Minimax_AI::reset() const noexcept
+{
+    commentary.clear();
+    principal_variation.clear();
+}

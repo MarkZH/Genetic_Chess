@@ -15,6 +15,10 @@ const Move* Player::expected_response() const noexcept
     return nullptr;
 }
 
+void Player::reset() const noexcept
+{
+}
+
 std::string Player::commentary_for_next_move(const Board&, size_t) const noexcept
 {
     return {};

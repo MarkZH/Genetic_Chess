@@ -14,7 +14,8 @@ enum class Game_Result_Type
     THREEFOLD_REPETITION,
     INSUFFICIENT_MATERIAL,
     TIME_FORFEIT,
-    TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL
+    TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL,
+    OTHER
 };
 
 //! This class represents the result of a game action, primarily whether the game is still ongoing.
@@ -28,7 +29,9 @@ class Game_Result
         //
         //! \param winner The color of the player that has won, or NONE if a draw.
         //! \param reason Explanation of why the game ended.
-        Game_Result(Color winner, Game_Result_Type reason) noexcept;
+        //! \param other_reason If the reason parameter is Game_Result_Type::OTHER, then another reason
+        //!        must be supplied.
+        Game_Result(Color winner, Game_Result_Type reason, const std::string& other_reason = {}) noexcept;
 
         //! Indicate whether the game ended with the last action.
         bool game_has_ended() const noexcept;
@@ -45,6 +48,7 @@ class Game_Result
     private:
         Color victor;
         Game_Result_Type cause;
+        std::string alternate_reason;
 };
 
 #endif // GAME_RESULT_H

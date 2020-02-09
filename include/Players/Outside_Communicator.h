@@ -25,7 +25,11 @@ class Outside_Communicator
         //! \param board The Board used for the game.
         //! \param clock The clock used for the game.
         //! \param move_list The list of moves in the game so far.
-        virtual void setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list) = 0;
+        //! \param player The local AI.
+        virtual Game_Result setup_turn(Board& board,
+                                       Clock& clock,
+                                       std::vector<const Move*>& move_list,
+                                       const Player& player) = 0;
 
         //! Start a separate thread to listen for commands while the local AI is thinking.
         //
@@ -38,7 +42,7 @@ class Outside_Communicator
         //! \param board The Board used for the game.
         //! \param move The move picked by the local AI.
         //! \param move_list The list of moves in the game so far.
-        //! \param player The player making the move.
+        //! \param player The local AI>
         virtual Game_Result handle_move(Board& board,
                                         const Move& move,
                                         std::vector<const Move*>& move_list,
@@ -52,15 +56,7 @@ class Outside_Communicator
         //! \param data A text string to write.
         static void log(const std::string& data);
 
-        //! Get the name of the player on the other side of the GUI.
-        std::string other_player_name() const;
-
     protected:
-        //! Store the opponent's name when received from the GUI.
-        //
-        //! \param name The received name.
-        void set_other_player_name(const std::string& name) noexcept;
-
         //! Constructor is protected so that it is only called by connect_to_outside().
         Outside_Communicator() = default;
 
@@ -75,9 +71,6 @@ class Outside_Communicator
         //! \returns The command from the outside interface if not "quit".
         //! \throws Game_Ended If the command "quit" is received, the game will end and the program will exit.
         static std::string receive_command();
-
-    private:
-        std::string outside_player_name;
 
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
 };
