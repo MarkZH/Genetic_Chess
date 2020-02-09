@@ -67,6 +67,11 @@ std::string Game_Result::game_ending_annotation() const noexcept
         case BLACK:
             return "0-1";
         default:
-            return game_has_ended() ? "1/2-1/2" : "*";
+            return game_has_ended_by_rule() ? "1/2-1/2" : "*";
     }
+}
+
+bool Game_Result::game_has_ended_by_rule() const noexcept
+{
+    return game_has_ended() && cause != Game_Result_Type::OTHER;
 }

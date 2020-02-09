@@ -53,6 +53,8 @@ class Game_Result
         Color victor;
         Game_Result_Type cause;
         std::string alternate_reason;
+
+        bool game_has_ended_by_rule() const noexcept;
 };
 
 #endif // GAME_RESULT_H
