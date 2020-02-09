@@ -93,10 +93,6 @@ void play_game_with_outsider(const Player& player,
                              const std::string& location,
                              const std::string& game_file_name)
 {
-    #ifndef _WIN32
-    signal(SIGTSTP, SIG_IGN);
-    #endif // _WIN32
-
     auto outsider = connect_to_outside(player);
 
     Board board;
