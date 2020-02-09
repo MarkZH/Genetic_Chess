@@ -41,27 +41,27 @@ Outside_Communicator::~Outside_Communicator()
 std::string Outside_Communicator::receive_command()
 {
     std::string result;
-    if( ! std::getline(std::cin, result))
-    {
-        log("GUI disconnected");
-        throw Game_Ended("GUI disconnected");
-    }
 
-    log("RECEIVING: " + result);
-    result = String::remove_extra_whitespace(result);
-
-    if(result.empty())
+    while(result.empty())
     {
-        log("Error in communication. Got empty message from GUI.");
-        throw Game_Ended("Communication error");
+        if( ! std::getline(std::cin, result))
+        {
+            log("GUI disconnected");
+            throw Game_Ended("GUI disconnected");
+        }
+
+        log("RECEIVING: " + result);
+        result = String::remove_extra_whitespace(result);
     }
 
     if(result == "quit")
     {
-        throw Game_Ended("");
+        throw Game_Ended(result);
     }
-
-    return result;
+    else
+    {
+        return result;
+    }
 }
 
 void Outside_Communicator::log(const std::string& data)
