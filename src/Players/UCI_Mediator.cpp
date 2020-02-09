@@ -13,6 +13,8 @@
 
 #include "Utility/String.h"
 
+#include "Exceptions/Game_Ended.h"
+
 UCI_Mediator::UCI_Mediator(const Player& player)
 {
     send_command("id name " + player.name());
@@ -27,7 +29,16 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
 
     while(true)
     {
-        auto command = receive_uci_command(board, false);
+        std::string command;
+        try
+        {
+            command = receive_uci_command(board, false);
+        }
+        catch(const Game_Ended& game_ending_error)
+        {
+            return Game_Result(NONE, game_ending_error.what());
+        }
+
         if(command == "ucinewgame")
         {
             log("stopping thinking and clocks");

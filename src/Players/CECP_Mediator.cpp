@@ -12,6 +12,7 @@
 #include "Players/Player.h"
 
 #include "Exceptions/Illegal_Move.h"
+#include "Exceptions/Game_Ended.h"
 
 #include "Utility/String.h"
 
@@ -46,7 +47,16 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 
     while(true)
     {
-        auto command = receive_cecp_command(board, clock, false);
+        std::string command;
+        try
+        {
+            command = receive_cecp_command(board, clock, false);
+        }
+        catch(const Game_Ended& game_ending_error)
+        {
+            return Game_Result(NONE, game_ending_error.what());
+        }
+
         if(command == "go")
         {
             log("telling local AI to move at leisure and accepting move");

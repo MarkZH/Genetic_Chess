@@ -149,8 +149,6 @@ class Board
         //! \param game_clock The game clock used during the game.
         //! \param event_name The name of the event where the game will take place. May be empty.
         //! \param location The name of the location of the game. May be empty.
-        //! \param unusual_ending_reason A reason for the game ending not covered by a chess rule or the game clock.
-        //!        Usually comes from an exception what() message.
         void print_game_record(const std::vector<const Move*>& game_record_listing,
                                const Player* white,
                                const Player* black,
@@ -158,8 +156,7 @@ class Board
                                const Game_Result& result,
                                const Clock& game_clock,
                                const std::string& event_name,
-                               const std::string& location,
-                               const std::string& unusual_ending_reason = "") const noexcept;
+                               const std::string& location) const noexcept;
 
         //! Get the piece on the square indicated by coordinates.
         //

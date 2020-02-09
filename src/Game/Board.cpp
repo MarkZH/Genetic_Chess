@@ -981,8 +981,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
                               const Game_Result& result,
                               const Clock& game_clock,
                               const std::string& event_name,
-                              const std::string& location,
-                              const std::string& unusual_ending_reason) const noexcept
+                              const std::string& location) const noexcept
 {
     static std::mutex write_lock;
     auto write_lock_guard = std::lock_guard(write_lock);
@@ -1056,10 +1055,6 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     if( ! actual_result.ending_reason().empty() && ! String::contains(actual_result.ending_reason(), "mates"))
     {
         print_game_header_line(out_stream, "Termination", actual_result.ending_reason());
-    }
-    else if( ! actual_result.game_has_ended() && ! unusual_ending_reason.empty())
-    {
-        print_game_header_line(out_stream, "Termination", unusual_ending_reason);
     }
 
     auto commentary_board = Board(starting_fen);

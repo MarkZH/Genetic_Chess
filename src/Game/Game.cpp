@@ -79,11 +79,10 @@ Game_Result play_game(Board board,
                                 &white,
                                 &black,
                                 pgn_file_name,
-                                {},
+                                Game_Result{NONE, game_error.what()},
                                 game_clock,
                                 event_name,
-                                location,
-                                game_error.what());
+                                location);
         throw;
     }
 }
@@ -99,18 +98,20 @@ void play_game_with_outsider(const Player& player,
     Clock clock;
     Game_Result game_result;
     std::vector<const Move*> game_record;
-    auto player_color = NONE;
+    auto player_color = BLACK;
+    auto print_game_record = true;
 
     while(true)
     {
-        try
+        while(true)
         {
             game_result = outsider->setup_turn(board, clock, game_record, player);
             if(game_result.game_has_ended())
             {
-                throw Game_Ended("");
+                break;
             }
             outsider->listen(board, clock);
+            print_game_record = true;
 
             player_color = board.whose_turn();
             const auto& chosen_move = player.choose_move(board, clock);
@@ -119,44 +120,30 @@ void play_game_with_outsider(const Player& player,
             game_result = outsider->handle_move(board, chosen_move, game_record, player);
             if(game_result.game_has_ended())
             {
-                throw Game_Ended("");
+                break;
             }
             player.ponder(board, clock, outsider->pondering_allowed());
         }
-        catch(const Game_Ended& game_end)
+
+        outsider->log("Game ended with: " + game_result.ending_reason());
+        if(print_game_record && ! game_file_name.empty())
         {
-            std::string reason = game_end.what();
-            if( ! reason.empty())
-            {
-                outsider->log("Game ended with: " + reason);
-            }
+            clock.stop();
+            auto white = (player_color == WHITE ? &player : nullptr);
+            auto black = (player_color == BLACK ? &player : nullptr);
+            board.print_game_record(game_record,
+                                    white, black,
+                                    String::add_to_file_name(game_file_name, "-" + color_text(player_color)),
+                                    game_result,
+                                    clock,
+                                    event_name,
+                                    location);
+            print_game_record = false;
+        }
 
-            auto exit = false;
-            if(reason == "quit")
-            {
-                reason.clear();
-                exit = true;
-            }
-
-            if( ! game_file_name.empty())
-            {
-                clock.stop();
-                auto white = (player_color == WHITE ? &player : nullptr);
-                auto black = (player_color == BLACK ? &player : nullptr);
-                board.print_game_record(game_record,
-                                        white, black,
-                                        String::add_to_file_name(game_file_name, "-" + color_text(player_color)),
-                                        game_result,
-                                        clock,
-                                        event_name,
-                                        location,
-                                        reason);
-            }
-
-            if(exit)
-            {
-                return;
-            }
+        if(game_result.ending_reason() == "quit")
+        {
+            return;
         }
     }
 }
