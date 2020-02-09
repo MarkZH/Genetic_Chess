@@ -187,17 +187,18 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         {
             auto result = String::split(command).at(1);
             auto reason = String::extract_delimited_text(command, "{", "}");
-            Color winner = NONE;
             if(result == "1-0")
             {
-                winner = WHITE;
+                return Game_Result(WHITE, reason);
             }
             else if(result == "0-1")
             {
-                winner = BLACK;
+                return Game_Result(BLACK, reason);
             }
-
-            return Game_Result(winner, reason);
+            else
+            {
+                return Game_Result(NONE, reason);
+            }
         }
     }
 
