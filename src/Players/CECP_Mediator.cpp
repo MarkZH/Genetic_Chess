@@ -43,6 +43,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 {
     auto own_time_left = clock.time_left(opposite(board.whose_turn()));
     auto opponent_time_left = clock.time_left(board.whose_turn());
+    auto need_to_set_time = false;
     Game_Result setup_result;
 
     while(true)
@@ -69,6 +70,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             log("Setting board to standard start position and resetting clock");
             board = Board{};
             clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), WHITE);
+            need_to_set_time = false;;
             setup_result = {};
             player.reset();
             in_force_mode = false;
@@ -157,6 +159,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             log("increment = " + split[3]);
             auto increment = std::stod(split[3]);
             clock = Clock(game_time, reset_moves, increment, WHITE);
+            need_to_set_time = false;;
         }
         else if(String::starts_with(command, "st "))
         {
@@ -167,17 +170,20 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             auto increment = 0;
             auto game_time = time_per_move;
             clock = Clock(game_time, reset_moves, increment, WHITE);
+            need_to_set_time = false;
         }
         else if(String::starts_with(command, "time "))
         {
             // time specified in centiseconds
             own_time_left = std::stod(String::split(command, " ")[1])/100;
+            need_to_set_time = true;
             log("Will set own time to " + std::to_string(own_time_left));
         }
         else if(String::starts_with(command, "otim "))
         {
             // time specified in centiseconds
             opponent_time_left = std::stod(String::split(command, " ")[1])/100;
+            need_to_set_time = true;
             log("Will set opponent's time to " + std::to_string(opponent_time_left));
         }
         else if(command == "undo")
@@ -212,10 +218,13 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
     }
 
-    log("Setting own time (" + color_text(board.whose_turn()) + ") to " + std::to_string(own_time_left));
-    clock.set_time(board.whose_turn(), own_time_left);
-    log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time_left));
-    clock.set_time(opposite(board.whose_turn()), opponent_time_left);
+    if(need_to_set_time)
+    {
+        log("Setting own time (" + color_text(board.whose_turn()) + ") to " + std::to_string(own_time_left));
+        clock.set_time(board.whose_turn(), own_time_left);
+        log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time_left));
+        clock.set_time(opposite(board.whose_turn()), opponent_time_left);
+    }
 
     if( ! clock.is_running())
     {
