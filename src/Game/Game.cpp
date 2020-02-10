@@ -36,53 +36,36 @@ Game_Result play_game(Board board,
     }
 
     std::vector<const Move*> game_record;
+    Game_Result result;
 
-    try
+    game_clock.start();
+
+    while( ! result.game_has_ended())
     {
-        game_clock.start();
-        Game_Result result;
+        auto& player  = board.whose_turn() == WHITE ? white : black;
+        auto& thinker = board.whose_turn() == WHITE ? black : white;
 
-        while( ! result.game_has_ended())
+        thinker.ponder(board, game_clock, pondering_allowed);
+        const auto& move_chosen = player.choose_move(board, game_clock);
+
+        result = game_clock.punch(board);
+        if( ! result.game_has_ended())
         {
-            auto& player  = board.whose_turn() == WHITE ? white : black;
-            auto& thinker = board.whose_turn() == WHITE ? black : white;
-
-            thinker.ponder(board, game_clock, pondering_allowed);
-            const auto& move_chosen = player.choose_move(board, game_clock);
-
-            result = game_clock.punch(board);
-            if( ! result.game_has_ended())
-            {
-                result = board.submit_move(move_chosen);
-            }
-            game_record.push_back(&move_chosen);
+            result = board.submit_move(move_chosen);
         }
-
-        game_clock.stop();
-
-        board.print_game_record(game_record,
-                                &white,
-                                &black,
-                                pgn_file_name,
-                                result,
-                                game_clock,
-                                event_name,
-                                location);
-        return result;
-
+        game_record.push_back(&move_chosen);
     }
-    catch(const std::exception& game_error)
-    {
-        board.print_game_record(game_record,
-                                &white,
-                                &black,
-                                pgn_file_name,
-                                Game_Result{NONE, game_error.what(), true},
-                                game_clock,
-                                event_name,
-                                location);
-        throw;
-    }
+
+    game_clock.stop();
+    board.print_game_record(game_record,
+                            &white,
+                            &black,
+                            pgn_file_name,
+                            result,
+                            game_clock,
+                            event_name,
+                            location);
+    return result;
 }
 
 void play_game_with_outsider(const Player& player,
