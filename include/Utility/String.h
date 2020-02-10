@@ -141,7 +141,7 @@ namespace String
     //! \throws std::invalid_argument if no conversion could be made or if there are extra characters
     //!         that cannot be converted to a number.
     template<typename Number>
-    constexpr std::enable_if_t<std::is_arithmetic_v<Number>, Number> string_to_number(const std::string& s)
+    std::enable_if_t<std::is_arithmetic_v<Number>, Number> string_to_number(const std::string& s)
     {
         auto iss = std::istringstream(trim_outer_whitespace(s));
         Number result;
