@@ -68,7 +68,7 @@ void Outside_Communicator::log(const std::string& data)
 {
     static const auto log_time_stamp = String::date_and_time_format(std::chrono::system_clock::now(), "%Y.%m.%d-%H.%M.%S");
     static const auto log_file_name = "chess_comm_log " + log_time_stamp + " " + std::to_string(Random::random_unsigned_int64()) + ".txt";
-    static auto ofs = std::ofstream(log_file_name, std::ios::app);
+    static auto ofs = std::ofstream(log_file_name);
     if( ! ofs)
     {
         throw std::runtime_error("Could not write to file: " + log_file_name);
