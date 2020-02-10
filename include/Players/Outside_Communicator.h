@@ -69,7 +69,8 @@ class Outside_Communicator
         //! Wait for a command from the outside interface and pass it on to derived class instances.
         //
         //! \returns The command from the outside interface if not "quit".
-        //! \throws Game_Ended If the command "quit" is received, the game will end and the program will exit.
+        //! \throws Game_Ended If the command "quit" is received or an error occurs, the game will
+        //!         end and the program will exit.
         static std::string receive_command();
 
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);

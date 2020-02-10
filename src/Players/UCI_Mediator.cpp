@@ -36,7 +36,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
         }
         catch(const Game_Ended& game_ending_error)
         {
-            return Game_Result(NONE, game_ending_error.what());
+            return Game_Result(NONE, game_ending_error.what(), true);
         }
 
         if(command == "ucinewgame")

@@ -21,8 +21,6 @@ using namespace std::chrono_literals;
 
 #include "Utility/String.h"
 
-#include "Exceptions/Game_Ended.h"
-
 Game_Result play_game(Board board,
                       Clock game_clock,
                       const Player& white,
@@ -79,7 +77,7 @@ Game_Result play_game(Board board,
                                 &white,
                                 &black,
                                 pgn_file_name,
-                                Game_Result{NONE, game_error.what()},
+                                Game_Result{NONE, game_error.what(), true},
                                 game_clock,
                                 event_name,
                                 location);
@@ -141,7 +139,7 @@ void play_game_with_outsider(const Player& player,
             print_game_record = false;
         }
 
-        if(game_result.ending_reason() == "quit")
+        if(game_result.exit_program())
         {
             return;
         }

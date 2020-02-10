@@ -11,14 +11,16 @@ Game_Result::Game_Result() noexcept : Game_Result(NONE, Game_Result_Type::ONGOIN
 Game_Result::Game_Result(Color winner, Game_Result_Type reason) noexcept :
     victor(winner),
     cause(reason),
-    alternate_reason()
+    alternate_reason(),
+    shutdown_program(false)
 {
 }
 
-Game_Result::Game_Result(Color winner, const std::string& reason) noexcept :
+Game_Result::Game_Result(Color winner, const std::string& reason, bool shutdown) noexcept :
     victor(winner),
     cause(Game_Result_Type::OTHER),
-    alternate_reason(reason)
+    alternate_reason(reason),
+    shutdown_program(shutdown)
 {
 }
 
@@ -73,4 +75,9 @@ std::string Game_Result::game_ending_annotation() const noexcept
 bool Game_Result::game_has_ended_by_rule() const noexcept
 {
     return game_has_ended() && cause != Game_Result_Type::OTHER;
+}
+
+bool Game_Result::exit_program() const noexcept
+{
+    return shutdown_program;
 }

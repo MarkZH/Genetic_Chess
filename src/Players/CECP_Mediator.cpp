@@ -54,7 +54,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
         catch(const Game_Ended& game_ending_error)
         {
-            return Game_Result(NONE, game_ending_error.what());
+            return Game_Result(NONE, game_ending_error.what(), true);
         }
 
         if(command == "go")
@@ -199,15 +199,15 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             auto reason = String::extract_delimited_text(command, "{", "}");
             if(result == "1-0")
             {
-                return Game_Result(WHITE, reason);
+                return Game_Result(WHITE, reason, false);
             }
             else if(result == "0-1")
             {
-                return Game_Result(BLACK, reason);
+                return Game_Result(BLACK, reason, false);
             }
             else
             {
-                return Game_Result(NONE, reason);
+                return Game_Result(NONE, reason, false);
             }
         }
     }

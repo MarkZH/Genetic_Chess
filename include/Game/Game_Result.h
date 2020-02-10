@@ -35,7 +35,8 @@ class Game_Result
         //
         //! \param winner The declared winner of the game.
         //! \param reason The declared reason for the end of the game.
-        Game_Result(Color winner, const std::string& reason) noexcept;
+        //! \param shutdown Whether this result should shutdown the program.
+        Game_Result(Color winner, const std::string& reason, bool shutdown) noexcept;
 
         //! Indicate whether the game ended with the last action.
         bool game_has_ended() const noexcept;
@@ -49,10 +50,14 @@ class Game_Result
         //! Returns the part of the PGN move annotation that goes after the # (checkmate) or + (check).
         std::string game_ending_annotation() const noexcept;
 
+        //! Returns whether or not the program should shutdown after getting this result.
+        bool exit_program() const noexcept;
+
     private:
         Color victor;
         Game_Result_Type cause;
         std::string alternate_reason;
+        bool shutdown_program;
 
         bool game_has_ended_by_rule() const noexcept;
 };
