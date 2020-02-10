@@ -44,9 +44,9 @@ data = importdata([raw_data, '_plots.txt'], '\t');
 game_number_marks = [];
 if marks_file_name != 0
     marks_file_name = fullfile(marks_directory, marks_file_name);
-    data = importdata(marks_file_name, ';', 1);
-    game_number_marks = data.data(:,2)';
-    game_notes = data.textdata(2:end);
+    marks_data = importdata(marks_file_name, ';', 1);
+    game_number_marks = marks_data.data(:,2)';
+    game_notes = marks_data.textdata(2:end);
 end
 
 game_number = data.data(:, 1);
