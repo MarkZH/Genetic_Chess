@@ -3,7 +3,6 @@
 #include <string>
 
 #include "Game/Color.h"
-#include "Utility/String.h"
 
 Game_Result::Game_Result() noexcept : Game_Result(NONE, Game_Result_Type::ONGOING)
 {
