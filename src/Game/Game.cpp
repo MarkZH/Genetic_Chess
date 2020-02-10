@@ -1,15 +1,7 @@
 #include "Game/Game.h"
 
 #include <string>
-#include <stdexcept>
-#include <thread>
-#include <chrono>
-using namespace std::chrono_literals;
 #include <vector>
-
-#ifndef _WIN32
-#include <csignal>
-#endif // _WIN32
 
 #include "Players/Player.h"
 #include "Players/Outside_Communicator.h"
