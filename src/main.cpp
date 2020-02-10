@@ -503,8 +503,8 @@ namespace
                     catch(const Illegal_Move& error)
                     {
                         std::cerr << "Move (" << move_number << move << ") is illegal: "
-                                << error.what()
-                                << ". (line: " << line_number << ")" << std::endl;
+                                  << error.what()
+                                  << ". (line: " << line_number << ")" << std::endl;
                         return false;
                     }
                 }
