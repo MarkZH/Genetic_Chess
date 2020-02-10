@@ -5,6 +5,7 @@
 #include <memory>
 #include <string>
 #include <chrono>
+#include <stdexcept>
 
 #include "Game/Color.h"
 #include "Players/CECP_Mediator.h"
