@@ -91,16 +91,6 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
         }
         else if(String::starts_with(command, "go "))
         {
-            if( ! clock.is_running())
-            {
-                clock.start();
-            }
-
-            if(clock.running_for() != board.whose_turn())
-            {
-                clock.punch(board);
-            }
-
             auto go_parse = String::split(command);
             for(size_t i = 1; i < go_parse.size(); ++i)
             {
@@ -152,6 +142,16 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 {
                     log("Ignoring go command: " + option);
                 }
+            }
+
+            if( ! clock.is_running())
+            {
+                clock.start();
+            }
+
+            if(clock.running_for() != board.whose_turn())
+            {
+                clock.punch(board);
             }
 
             log("Telling AI to choose a move at leisure");
