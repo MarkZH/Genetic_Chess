@@ -9,6 +9,8 @@
 class Move;
 class Square;
 
+//! \file
+
 //! An enumeration to identify the type of a Piece.
 enum Piece_Type : unsigned
 {
