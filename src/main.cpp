@@ -238,7 +238,7 @@ int main(int argc, char *argv[])
                 else
                 {
                     play_game(board,
-                              Clock(game_time, moves_per_reset, increment_time, board.whose_turn()),
+                              Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board.whose_turn()),
                               *white, *black,
                               pondering_allowed,
                               event_name,

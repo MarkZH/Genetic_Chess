@@ -69,7 +69,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         {
             log("Setting board to standard start position and resetting clock");
             board = Board{};
-            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), WHITE);
+            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), clock.reset_mode(), WHITE);
             need_to_set_time = false;;
             setup_result = {};
             player.reset();
@@ -158,7 +158,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 
             log("increment = " + split[3]);
             auto increment = std::stod(split[3]);
-            clock = Clock(game_time, reset_moves, increment, WHITE);
+            clock = Clock(game_time, reset_moves, increment, Time_Reset_Method::ADDITION, WHITE);
             need_to_set_time = false;;
         }
         else if(String::starts_with(command, "st "))
@@ -166,10 +166,8 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             log("got time specs: " + command);
             auto split = String::split(command);
             auto time_per_move = std::stoi(split[1]);
-            auto reset_moves = 1;
-            auto increment = 0;
-            auto game_time = time_per_move;
-            clock = Clock(game_time, reset_moves, increment, WHITE);
+            log("game time per move = " + std::to_string(time_per_move));
+            clock = Clock(time_per_move, 1, 0, Time_Reset_Method::SET_TO_ORIGINAL, WHITE);
             need_to_set_time = false;
         }
         else if(String::starts_with(command, "time "))

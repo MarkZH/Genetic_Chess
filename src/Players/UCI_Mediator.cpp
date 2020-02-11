@@ -110,6 +110,10 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 {
                     // All times received are in milliseconds
                     new_time = std::stod(go_parse.at(++i))/1000;
+                    if(option != "movetime")
+                    {
+                        clock.set_reset_method(Time_Reset_Method::ADDITION);
+                    }
                 }
 
                 if(option == "wtime")
@@ -141,7 +145,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 else if(option == "movetime")
                 {
                     log("Setting clock to " + std::to_string(new_time) + " seconds per move");
-                    clock = Clock(new_time, 1, 0.0, board.whose_turn(), clock.game_start_date_and_time());
+                    clock = Clock(new_time, 1, 0.0, Time_Reset_Method::SET_TO_ORIGINAL, board.whose_turn(), clock.game_start_date_and_time());
                     clock.start();
                 }
                 else

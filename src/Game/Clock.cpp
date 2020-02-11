@@ -12,12 +12,14 @@ using namespace std::chrono_literals;
 Clock::Clock(double duration_seconds,
              size_t moves_to_reset,
              double increment_seconds,
+             Time_Reset_Method reset_method,
              Color starting_turn,
              std::chrono::system_clock::time_point previous_start_time) noexcept :
     timers({fractional_seconds(duration_seconds), fractional_seconds(duration_seconds)}),
     initial_start_time(Clock::fractional_seconds(duration_seconds)),
     increment_time({Clock::fractional_seconds(increment_seconds), Clock::fractional_seconds(increment_seconds)}),
     move_count_reset(moves_to_reset),
+    method_of_reset(reset_method),
     whose_turn(starting_turn),
     game_start_date_time(previous_start_time)
 {
@@ -39,7 +41,14 @@ Game_Result Clock::punch(const Board& board) noexcept
 
     if(++moves_to_reset_clocks[whose_turn] == move_count_reset)
     {
-        timers[whose_turn] += initial_start_time;
+        if(method_of_reset == Time_Reset_Method::ADDITION)
+        {
+            timers[whose_turn] += initial_start_time;
+        }
+        else
+        {
+            timers[whose_turn] = initial_start_time;
+        }
         moves_to_reset_clocks[whose_turn] = 0;
     }
 
@@ -149,6 +158,11 @@ void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
     move_count_reset = moves_to_reset_clocks[running_for()] + moves_to_reset;
 }
 
+void Clock::set_reset_method(Time_Reset_Method method) noexcept
+{
+    method_of_reset = method;
+}
+
 double Clock::running_time_left() const noexcept
 {
     return time_left(running_for());
@@ -167,6 +181,11 @@ std::chrono::system_clock::time_point Clock::game_start_date_and_time() const no
 size_t Clock::moves_per_time_period() const noexcept
 {
     return move_count_reset;
+}
+
+Time_Reset_Method Clock::reset_mode() const noexcept
+{
+    return method_of_reset;
 }
 
 double Clock::initial_time() const noexcept
