@@ -189,7 +189,15 @@ bool UCI_Mediator::pondering_allowed() const
 
 std::string UCI_Mediator::listener(Board& board)
 {
-    return receive_uci_command(board, true);
+    try
+    {
+        return receive_uci_command(board, true);
+    }
+    catch(const Game_Ended&)
+    {
+        board.pick_move_now();
+        throw;
+    }
 }
 
 std::string UCI_Mediator::receive_uci_command(Board& board, bool while_listening)

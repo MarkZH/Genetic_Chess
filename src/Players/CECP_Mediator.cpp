@@ -351,11 +351,27 @@ std::string CECP_Mediator::listener(Board& board, Clock& clock)
 {
     while(true)
     {
-        auto command = receive_cecp_command(board, clock, true);
+        std::string command;
+        try
+        {
+            command = receive_cecp_command(board, clock, true);
+        }
+        catch(const Game_Ended&)
+        {
+            board.pick_move_now();
+            throw;
+        }
+
         if(command == "?")
         {
             log("Forcing local AI to pick move and accepting it");
             board.pick_move_now();
+        }
+        else if(String::starts_with(command, "result "))
+        {
+            log("Stopped thinking about move by: " + command);
+            board.pick_move_now();
+            return command;
         }
         else
         {
