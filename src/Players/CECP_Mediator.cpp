@@ -317,16 +317,8 @@ std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool
         }
         else if(command == "post")
         {
-            if(board.thinking_mode() == Thinking_Output_Type::CECP)
-            {
-                board.set_thinking_mode(Thinking_Output_Type::NO_THINKING);
-                log("Disabling thinking output for CECP");
-            }
-            else
-            {
-                board.set_thinking_mode(Thinking_Output_Type::CECP);
-                log("turning on thinking output for CECP");
-            }
+            board.set_thinking_mode(Thinking_Output_Type::CECP);
+            log("turning on thinking output for CECP");
         }
         else if(command == "nopost")
         {
