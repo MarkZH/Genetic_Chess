@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <stdexcept>
 
 #include "Players/Player.h"
 #include "Players/Outside_Communicator.h"
