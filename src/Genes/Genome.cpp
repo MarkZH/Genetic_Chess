@@ -79,7 +79,7 @@ Genome::Genome(const Genome& other)
     reset_piece_strength_gene();
 }
 
-void Genome::reset_piece_strength_gene()
+void Genome::reset_piece_strength_gene() noexcept
 {
     auto piece_strength_gene = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
     for(auto& gene : genome)
@@ -159,7 +159,7 @@ void Genome::read_from(std::istream& is)
     throw Genetic_AI_Creation_Error("Reached end of file before END of genome.");
 }
 
-double Genome::score_board(const Board& board, Color perspective, size_t prior_real_moves) const
+double Genome::score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept
 {
     return std::accumulate(genome.begin(), genome.end(), 0.0,
                            [&](auto sum, const auto& gene)
@@ -192,7 +192,7 @@ void Genome::mutate()
     }
 }
 
-void Genome::print(std::ostream& os) const
+void Genome::print(std::ostream& os) const noexcept
 {
     for(const auto& gene : genome)
     {

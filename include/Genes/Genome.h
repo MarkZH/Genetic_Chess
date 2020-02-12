@@ -78,13 +78,13 @@ class Genome
         //! Print the genome data to the output stream (std::ofstream, std::cout, etc.).
         //
         //! \param os The output stream.
-        void print(std::ostream& os) const;
+        void print(std::ostream& os) const noexcept;
 
     private:
         std::vector<std::unique_ptr<Gene>> genome;
 
-        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const;
-        void reset_piece_strength_gene();
+        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept;
+        void reset_piece_strength_gene() noexcept;
 
         //! Consults the Mutation_Rate_Gene to determine how many point mutations to apply to the genome.
         //
