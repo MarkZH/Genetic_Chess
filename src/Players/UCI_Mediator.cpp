@@ -51,9 +51,34 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
         else if(String::starts_with(command, "setoption name UCI_Opponent value "))
         {
             // command has 8 fields requiring 7 cuts to get name
-            auto name = String::split(command, " ", 7).back();
-            player.set_opponent_name(name);
-            log("Opponent's name: " + name);
+            auto opponent_split = String::split(command, " ", 7);
+            if(opponent_split.size() != 8)
+            {
+                log("Malformed UCI_Opponent line: " + command);
+            }
+            else
+            {
+                auto title = opponent_split[4];
+                log("Opponent title: " + title);
+                if(title == "none")
+                {
+                    title.clear();
+                }
+                else
+                {
+                    title = title + " ";
+                }
+
+                auto rating = opponent_split[5];
+                log("Opponent rating: " + rating);
+
+                auto type = opponent_split[6];
+                log("Opponent type: " + type);
+
+                auto name = opponent_split[7];
+                player.set_opponent_name(title + name);
+                log("Opponent's name: " + name);
+            }
         }
         else if(String::starts_with(command, "position "))
         {
