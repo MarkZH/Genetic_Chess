@@ -186,6 +186,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 current_variation_store& push_list;
         };
         auto variation_guard = push_guard(current_variation, move);
+        assert(current_variation.size() == depth);
 
         auto next_board = board;
 
