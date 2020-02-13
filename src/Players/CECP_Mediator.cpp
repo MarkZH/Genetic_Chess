@@ -70,6 +70,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             log("Setting board to standard start position and resetting clock");
             board = Board{};
             clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), clock.reset_mode(), WHITE);
+            move_list.clear();
             need_to_set_time = false;;
             setup_result = {};
             player.reset();
@@ -119,11 +120,12 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             {
                 log("Applying move: " + move);
                 setup_result = board.submit_move(move);
+                move_list.push_back(board.last_move());
                 if(setup_result.game_has_ended())
                 {
                     report_end_of_game(setup_result);
                 }
-                move_list.push_back(board.last_move());
+
                 if( ! in_force_mode)
                 {
                     log("Local AI now chooses a move");

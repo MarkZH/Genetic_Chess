@@ -121,6 +121,54 @@ std::string String::strip_block_comment(const std::string& str, const std::strin
     }
 }
 
+std::string String::strip_nested_block_comments(const std::string& str, const std::string& start, const std::string& end)
+{
+    if(contains(start, end) || contains(end, start))
+    {
+        throw std::invalid_argument("Delimiters cannot share substrings: " + start + "," + end + ".");
+    }
+
+    auto error_message = "Invalid nesting of delimiters " + start + "," + end + ": " + str;
+    std::string result;
+    auto depth = 0;
+    size_t index = 0;
+    while(index < str.size())
+    {
+        auto start_index = str.find(start, index);
+        auto end_index = str.find(end, index);
+        if(start_index < end_index)
+        {
+            if(depth == 0)
+            {
+                result += str.substr(index, start_index - index);
+            }
+            ++depth;
+            index = start_index + start.size();
+        }
+        else if(end_index < start_index)
+        {
+            if(depth == 0)
+            {
+                throw std::invalid_argument(error_message);
+            }
+            --depth;
+            index = end_index + end.size();
+        }
+        else // start_index == end_index == std::string::npos
+        {
+            result += str.substr(index);
+            break;
+        }
+    }
+
+    if(depth != 0)
+    {
+        throw std::invalid_argument(error_message);
+    }
+
+    return result;
+}
+
 std::string String::extract_delimited_text(const std::string& str, const std::string& start, const std::string& end)
 {
     auto start_split = split(str, start, 1);

@@ -335,7 +335,7 @@ namespace
         {
             ++line_number;
             line = String::strip_block_comment(line, "{", "}");
-            line = String::strip_block_comment(line, "(", ")");
+            line = String::strip_nested_block_comments(line, "(", ")");
             line = String::strip_comments(line, ";");
             line = String::remove_extra_whitespace(line);
             if(line.empty())
