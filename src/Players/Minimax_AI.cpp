@@ -20,8 +20,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     // Erase data from previous board when starting new game
     if(board.game_length() <= 1)
     {
-        principal_variation.clear();
-        commentary.clear();
+        reset();
     }
 
     while(commentary.size() < board.game_length()/2)
