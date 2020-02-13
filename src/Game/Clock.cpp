@@ -155,7 +155,14 @@ void Clock::set_increment(Color player, double new_increment_time_seconds) noexc
 
 void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
 {
-    move_count_reset = moves_to_reset_clocks[running_for()] + moves_to_reset;
+    if(moves_to_reset == 0)
+    {
+        move_count_reset = 0;
+    }
+    else
+    {
+        move_count_reset = moves_to_reset_clocks[running_for()] + moves_to_reset;
+    }
 }
 
 void Clock::set_reset_method(Time_Reset_Method method) noexcept

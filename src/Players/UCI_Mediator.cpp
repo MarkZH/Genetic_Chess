@@ -91,6 +91,15 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
         }
         else if(String::starts_with(command, "go "))
         {
+            auto mode = clock.reset_mode();
+            auto wtime = clock.time_left(WHITE);
+            auto btime = clock.time_left(BLACK);
+            auto winc = clock.increment(WHITE);
+            auto binc = clock.increment(BLACK);
+            auto movestogo = 0;
+            auto movetime = clock.initial_time();
+            auto new_mode = mode;
+
             auto go_parse = String::split(command);
             for(size_t i = 1; i < go_parse.size(); ++i)
             {
@@ -100,47 +109,84 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 {
                     // All times received are in milliseconds
                     new_time = std::stod(go_parse.at(++i))/1000;
-                    if(option != "movetime")
-                    {
-                        clock.set_reset_method(Time_Reset_Method::ADDITION);
-                    }
                 }
 
                 if(option == "wtime")
                 {
                     log("Setting White's time to " + std::to_string(new_time));
-                    clock.set_time(WHITE, new_time);
+                    wtime = new_time;
+                    new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(option == "btime")
                 {
                     log("Setting Black's time to " + std::to_string(new_time));
-                    clock.set_time(BLACK, new_time);
+                    btime = new_time;
+                    new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(option == "winc")
                 {
                     log("Setting White's increment time to " + std::to_string(new_time));
-                    clock.set_increment(WHITE, new_time);
+                    winc = new_time;
+                    new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(option == "binc")
                 {
                     log("Setting Black's increment time to " + std::to_string(new_time));
-                    clock.set_increment(BLACK, new_time);
+                    binc = new_time;
+                    new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(option == "movestogo")
                 {
-                    auto moves_to_reset = String::string_to_number<size_t>(go_parse.at(++i));
-                    log("Next time control in " + std::to_string(moves_to_reset));
-                    clock.set_next_time_reset(moves_to_reset);
+                    movestogo = String::string_to_number<size_t>(go_parse.at(++i));
+                    log("Next time control in " + std::to_string(movestogo));
+                    new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(option == "movetime")
                 {
                     log("Setting clock to " + std::to_string(new_time) + " seconds per move");
-                    clock = Clock(new_time, 1, 0.0, Time_Reset_Method::SET_TO_ORIGINAL, board.whose_turn(), clock.game_start_date_and_time());
-                    clock.start();
+                    movetime = new_time;
+                    new_mode = Time_Reset_Method::SET_TO_ORIGINAL;
                 }
                 else
                 {
                     log("Ignoring go command: " + option);
+                }
+            }
+
+            if(new_mode != mode)
+            {
+                if(new_mode == Time_Reset_Method::ADDITION)
+                {
+                    clock = Clock(board.whose_turn() == WHITE ? wtime : btime,
+                                  movestogo,
+                                  board.whose_turn() == WHITE ? winc : binc,
+                                  new_mode,
+                                  board.whose_turn(),
+                                  clock.game_start_date_and_time());
+                }
+                else
+                {
+                    clock = Clock(movetime,
+                                  1,
+                                  0.0,
+                                  new_mode,
+                                  board.whose_turn(),
+                                  clock.game_start_date_and_time());
+                }
+            }
+            else
+            {
+                if(new_mode == Time_Reset_Method::ADDITION)
+                {
+                    clock.set_time(WHITE, wtime);
+                    clock.set_time(BLACK, btime);
+                    clock.set_increment(WHITE, winc);
+                    clock.set_increment(BLACK, binc);
+                    clock.set_next_time_reset(movestogo);
+                }
+                else
+                {
+                    clock.set_time(board.whose_turn(), movetime);
                 }
             }
 
