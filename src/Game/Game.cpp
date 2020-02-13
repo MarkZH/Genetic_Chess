@@ -45,8 +45,8 @@ Game_Result play_game(Board board,
         if( ! result.game_has_ended())
         {
             result = board.submit_move(move_chosen);
+            game_record.push_back(&move_chosen);
         }
-        game_record.push_back(&move_chosen);
     }
 
     game_clock.stop();
