@@ -503,6 +503,9 @@ bool run_tests()
 
     test_function(tests_passed, "Delimited text extraction", "a(b", String::extract_delimited_text, "(a(b))", "(", ")");
 
+    test_function(tests_passed, "Nested block deletion", "ae", String::strip_nested_block_comments, "a(b(c)d)e", "(", ")");
+    function_should_throw(tests_passed, "Invalid nested block delimiters", String::strip_nested_block_comments, "", "??", "???");
+
     test_function(tests_passed, "Strip multicharacter comment", "a", String::strip_comments, "a // b", "//");
     test_function(tests_passed, "Multicharacter block comment", "a c", String::strip_block_comment, "a /* b  */ c", "/*", "*/");
     test_function(tests_passed, "String::starts_with()", true, String::starts_with, "abcdefg", "abc");

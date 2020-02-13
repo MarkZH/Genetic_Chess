@@ -73,7 +73,17 @@ namespace String
     //! \param start The marker indicating the start of a comment to be removed.
     //! \param end The marker indicating the end of a comment to be removed.
     //! \returns The same string with the markers and everything between them removed.
+    //!
+    //! Note: This function does not consider the nesting of delimited blocks of text.
     std::string strip_block_comment(const std::string& str, const std::string& start, const std::string& end);
+
+    //! Remove all text between comment indicators.
+    //
+    //! \param str The input string.
+    //! \param start The marker indicating the start of a comment to be removed.
+    //! \param end The marker indicating the end of a comment to be removed.
+    //! \returns The same string with the markers and everything between them removed.
+    std::string strip_nested_block_comments(const std::string& str, const std::string& start, const std::string& end);
 
     //! Extract text between delimiters
     //
