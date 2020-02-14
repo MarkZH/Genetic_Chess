@@ -57,4 +57,5 @@ leg = legend('show');
 set(leg, 'location', 'southoutside');
 set(leg, 'orientation', 'horizontal');
 title('Count of opening moves');
-print([raw_data '_opening_moves_plot_lin.png']);
+print([raw_data '_opening_moves_plot.png']);
+close;

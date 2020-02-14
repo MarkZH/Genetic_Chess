@@ -78,6 +78,7 @@ for index = 1:length(game_number_marks)
 end
 
 print([raw_data '_game_outcomes.png']);
+close;
 
 
 
@@ -145,6 +146,7 @@ for index = 1:length(game_number_marks)
 end
 
 print([raw_data '_game_result_type_frequencies.png']);
+close;
 
 if max(game_time) > 0
     figure;
@@ -172,6 +174,7 @@ if max(game_time) > 0
     end
 
     print([raw_data '_game_time_left.png']);
+    close;
 end
 
 
@@ -204,6 +207,7 @@ if length(game_number_marks) > 0
 end
 
 print([raw_data '_moves_in_game.png']);
+close;
 
 figure;
 hold all;
@@ -249,3 +253,4 @@ yl = ylim;
 text(0.5*xl(2), 0.5*yl(2), stats);
 
 print([raw_data '_moves_in_game_histogram.png']);
+close;

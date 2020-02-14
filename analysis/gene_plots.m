@@ -97,6 +97,7 @@ for yi = 2 : length(data.colheaders) - 2
     plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
     plot(xlim, [0 0], 'k'); % X-axis
     print([gene_pool_filename ' gene ' name '.png']);
+    close;
 
     special_plot_index = 0;
     if ~isempty(strfind(name, piece_strength_prefix))
@@ -173,4 +174,5 @@ for index = 1 : length(special_plots)
     xlabel('ID');
 
     print([gene_pool_filename ' special ' file_name_suffixes{index} '.png']);
+    close;
 end

@@ -59,7 +59,8 @@ xlabel(data.colheaders(1));
 ylabel(data.colheaders(2));
 title('Offspring Count');
 
-print([raw_data_file_name '_offspring_plot.png']);
+print([raw_data_file_name '_offspring_plot_lin.png']);
 set(gca, 'yscale', 'log');
 set(fit_box, 'position', [0.6*xl(2), 0.01*yl(2)]);
 print([raw_data_file_name '_offspring_plot_log.png']);
+close;
