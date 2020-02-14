@@ -58,8 +58,5 @@ Priority: -41.3929
 Name: Checkmate Material Gene
 Priority: 251.059
 
-Name: Null Gene
-Priority: -143.872
-
 END
 

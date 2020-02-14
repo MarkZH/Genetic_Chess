@@ -303,9 +303,6 @@ This gene counts the pawns that have a pawn of the same color ahead of them in t
 \subsubsection{Checkmate Material Gene}
 This gene returns a score of one if the scoring side has enough pieces to checkmate a lone king. Otherwise, it returns zero. This should help avoid piece trade-offs resulting in one side having a material advantage but unable to checkmate---king and knight vs\@. king and pawn, for example.
 
-\subsubsection{Null Gene}
-This gene does nothing. It has no effect on gameplay. The only purpose of this gene is to have a priority that mutates. In a way, this gene represents the null hypothesis: that evolution does nothing to tune the behavior of a chess-playing program. It will be interesting to see how the plots of this gene compare with others so that there is a contrast between genes with alleged evolutionary pressure and a gene with none.
-
 
 \subsection{Genome File Format}
 An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line. Each component of a gene is a single line and specified by a name followed by a colon and the numerical value. Spacing within the line does not matter.

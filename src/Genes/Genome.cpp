@@ -27,7 +27,6 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Mutation_Rate_Gene.h"
-#include "Genes/Null_Gene.h"
 
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
@@ -65,7 +64,6 @@ Genome::Genome()
     genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
     genome.emplace_back(std::make_unique<Pawn_Islands_Gene>());
     genome.emplace_back(std::make_unique<Checkmate_Material_Gene>());
-    genome.emplace_back(std::make_unique<Null_Gene>());
 }
 
 Genome::Genome(const Genome& other)
