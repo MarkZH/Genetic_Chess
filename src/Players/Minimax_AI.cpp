@@ -36,10 +36,17 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     total_evaluation_time = 0.0;
     time_at_last_output = clock.running_time_left();
 
+    auto real_prior_result = depth_one_results[board.last_move()];
+    auto principal_variation = real_prior_result.variation;
+    if( ! commentary.empty() && commentary.back().first.variation != principal_variation)
+    {
+        commentary.back().second = real_prior_result;
+    }
+
     const auto& legal_moves = board.legal_moves();
     if(legal_moves.size() == 1)
     {
-        if(principal_variation.size() > 3 && principal_variation[1] == board.last_move())
+        if(principal_variation.size() > 3)
         {
             // search_game_tree() assumes the principal variation starts
             // with the previous move of this player. If a move was forced,
@@ -54,18 +61,16 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
             principal_variation.clear();
         }
 
-        commentary.push_back({commentary.empty() ? 0.0 : commentary.back().corrected_score(board.whose_turn()),
-                              board.whose_turn(),
-                              principal_variation});
+        depth_one_results.clear();
+        commentary.push_back({real_prior_result, {}});
+        commentary.back().first.variation = principal_variation;
+
+        if(principal_variation.size() > 2)
+        {
+            depth_one_results[principal_variation[1]].variation = principal_variation;
+        }
 
         return *legal_moves.front(); // If there's only one legal move, take it.
-    }
-
-    // No useful principal variation if it doesn't include the next possible move
-    // or if the opponent did not make the predicted next move.
-    if(principal_variation.size() < 2 || principal_variation[1] != board.last_move())
-    {
-        principal_variation.clear();
     }
 
     auto time_to_use = time_to_examine(board, clock);
@@ -88,7 +93,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
                                    board.game_length(),
                                    alpha_start,
                                    beta_start,
-                                   ! principal_variation.empty(),
+                                   principal_variation,
                                    current_variation);
 
     if(board.thinking_mode() == Thinking_Output_Type::CECP)
@@ -100,8 +105,9 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         output_thinking_uci(result, clock, board.whose_turn());
     }
 
-    commentary.push_back(result);
-    principal_variation = result.variation;
+    commentary.push_back({result, {}});
+    depth_one_results = depth_two_results[result.variation.front()];
+    depth_two_results.clear();
 
     if(nodes_evaluated > 0)
     {
@@ -113,9 +119,9 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
 const Move* Minimax_AI::expected_response() const noexcept
 {
-    if( ! commentary.empty() && commentary.back().variation.size() > 1)
+    if( ! commentary.empty() && commentary.back().first.variation.size() > 1)
     {
-        return commentary.back().variation.at(1);
+        return commentary.back().first.variation.at(1);
     }
     else
     {
@@ -129,7 +135,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const size_t prior_real_moves,
                                                    Game_Tree_Node_Result alpha,
                                                    const Game_Tree_Node_Result& beta,
-                                                   bool still_on_principal_variation,
+                                                   std::vector<const Move*>& principal_variation,
                                                    current_variation_store& current_variation) const noexcept
 {
     const auto time_start = clock.running_time_left();
@@ -140,25 +146,26 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     // The first two items in the principal variation are the last two moves of
     // the non-hypothetical board. So, the first item in the principal variation to
     // consider is at index depth + 1 (since depth starts at 1).
-    still_on_principal_variation = (still_on_principal_variation && principal_variation.size() > depth + 1);
-    if(still_on_principal_variation)
+    if(principal_variation.size() > depth + 1)
     {
         auto next_principal_variation_move = principal_variation[depth + 1];
         auto move_iter = std::find(all_legal_moves.begin(),
                                    all_legal_moves.end(),
                                    next_principal_variation_move);
 
-        still_on_principal_variation = (move_iter != all_legal_moves.end());
-        if(still_on_principal_variation)
-        {
-            // Put principal variation move at start of list to allow
-            // the most pruning later.
-            std::iter_swap(all_legal_moves.begin(), move_iter);
-        }
+        assert(move_iter != all_legal_moves.end());
+
+        // Put principal variation move at start of list to allow
+        // the most pruning later.
+        std::iter_swap(all_legal_moves.begin(), move_iter);
+    }
+    else
+    {
+        principal_variation.clear();
     }
 
     // Consider capturing and promoting moves first after principal variation move
-    auto partition_start = std::next(all_legal_moves.begin(), still_on_principal_variation ? 1 : 0);
+    auto partition_start = std::next(all_legal_moves.begin(), principal_variation.empty() ? 0 : 1);
     std::partition(partition_start, all_legal_moves.end(),
                    [&board](auto move){ return board.move_changes_material(*move); });
 
@@ -221,7 +228,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             recurse = false; // prevent stack overflow
         }
-        else if(still_on_principal_variation)
+        else if( ! principal_variation.empty())
         {
             recurse = true;
         }
@@ -240,7 +247,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                       prior_real_moves,
                                       beta,
                                       alpha,
-                                      still_on_principal_variation,
+                                      principal_variation,
                                       current_variation);
         }
         else
@@ -285,7 +292,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
 
         --moves_left;
-        still_on_principal_variation = false; // only the first move is part of the principal variation
+        principal_variation.clear(); // only the first move is part of the principal variation
 
         if(clock.running_time_left() < 0 || board.must_pick_move_now())
         {
@@ -297,6 +304,11 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             ++nodes_evaluated;
             total_evaluation_time += setup_time_per_move + (evaluate_start_time - clock.running_time_left());
         }
+    }
+
+    if(depth == 3 && best_result.variation.size() > 2)
+    {
+        depth_two_results[best_result.variation[0]][best_result.variation[1]] = best_result;
     }
 
     return best_result;
@@ -466,28 +478,52 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
 std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move_number) const noexcept
 {
     auto comment_index = board.game_length()/2;
-    if(comment_index >= commentary.size() || commentary.at(comment_index).variation.empty())
+    if(comment_index >= commentary.size() || commentary.at(comment_index).first.variation.empty())
     {
         return {};
     }
 
     const auto& comment = commentary.at(comment_index);
+    auto variation = comment.first.variation;
+    auto score = comment.first.corrected_score(board.whose_turn())/centipawn_value()/100.0;
+    auto alternate_variation = comment.second.variation;
+    auto alternate_score = comment.second.corrected_score(board.whose_turn())/centipawn_value()/100.0;
+    return variation_line(board, move_number, variation, score, alternate_variation, alternate_score);
+}
+
+std::string variation_line(Board board,
+                           const size_t move_number,
+                           const std::vector<const Move*>& variation,
+                           const double score,
+                           const std::vector<const Move*>& alternate_variation,
+                           const double alternate_score)
+{
     Game_Result move_result;
-    auto temp_board = board;
-    std::string result = "(" + (temp_board.whose_turn() == BLACK ? std::to_string(move_number) + ". ... " : std::string{});
-    for(auto move : comment.variation)
+    auto write_alternate_variation = ! alternate_variation.empty();
+    const auto move_label_offset = (board.whose_turn() == WHITE ? 0 : 1);
+    std::string result = "(" + (board.whose_turn() == BLACK ? std::to_string(move_number) + ". ... " : std::string{});
+    for(size_t i = 0; i < variation.size(); ++i)
     {
-        result += (temp_board.whose_turn() == WHITE ? std::to_string(move_number++) + ". " : std::string{}) + move->game_record_item(temp_board) + " ";
-        move_result = temp_board.submit_move(*move);
+        const auto move_label = move_number + i/2 + move_label_offset;
+        result += (board.whose_turn() == WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->game_record_item(board) + " ";
+        if(write_alternate_variation && i < alternate_variation.size() && alternate_variation[i] != variation[i])
+        {
+            result += variation_line(board,
+                                     move_label,
+                                     {alternate_variation.begin() + i, alternate_variation.end()},
+                                     alternate_score,
+                                     {},
+                                     {}) + " ";
+            write_alternate_variation = false;
+        }
+        move_result = board.submit_move(*variation[i]);
     }
 
     if( ! move_result.game_has_ended())
     {
-        auto round = [](double x) { return String::round_to_precision(x, 0.01); };
-        auto score = round(comment.corrected_score(board.whose_turn())/centipawn_value()/100.0);
-        return result + "{" + score + "})";
+        return result + "{" + String::round_to_precision(score, 0.01) + "})";
     }
-    else if(comment.variation.size() == 1)
+    else if(variation.size() == 1)
     {
         // No need for commentary on the last move of the game since the result is obvious.
         return {};
@@ -507,5 +543,5 @@ void Minimax_AI::recalibrate_self() const noexcept
 void Minimax_AI::reset() const noexcept
 {
     commentary.clear();
-    principal_variation.clear();
+    depth_one_results.clear();
 }
