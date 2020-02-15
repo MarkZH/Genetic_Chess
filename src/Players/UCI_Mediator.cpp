@@ -121,7 +121,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             auto btime = clock.time_left(BLACK);
             auto winc = clock.increment(WHITE);
             auto binc = clock.increment(BLACK);
-            auto movestogo = 0;
+            auto movestogo = size_t{0};
             auto movetime = clock.initial_time();
             auto new_mode = mode;
 
