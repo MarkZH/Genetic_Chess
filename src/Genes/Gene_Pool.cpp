@@ -46,6 +46,7 @@ namespace
     const std::string pause_key = "Ctrl-z";
     std::mutex pause_mutex;
     #endif
+    bool gene_pool_started = false;
 
     using Gene_Pool_Set = std::vector<std::vector<Genetic_AI>>;
 
@@ -213,8 +214,25 @@ void gene_pool(const std::string& config_file)
         std::cout << "Done." << std::endl;
     }
 
+    gene_pool_started = true;
     for(size_t pool_index = starting_pool; true; pool_index = (pool_index + 1) % pools.size()) // run forever
     {
+        // Pause gene pool
+        #ifdef _WIN32
+        if(quit_gene_pool)
+        {
+            std::cout << "Done." << std::endl;
+            break;
+        }
+        #else
+        if(auto pause_lock = std::unique_lock(pause_mutex, std::try_to_lock); ! pause_lock.owns_lock())
+        {
+            std::cout << "\nGene pool paused. Press " << pause_key << " to continue" << std::endl;
+            std::cout << "or " << stop_key << " to quit." << std::endl;
+            pause_lock.lock();
+        }
+        #endif // _WIN32
+
         auto& pool = pools[pool_index];
 
         // Write overall stats
@@ -392,23 +410,6 @@ void gene_pool(const std::string& config_file)
 
             std::cout << "\n=======================\n" << std::endl;
         }
-
-        // Pause gene pool
-        #ifdef _WIN32
-        if(quit_gene_pool)
-        {
-            std::cout << "Done." << std::endl;
-            break;
-        }
-        #else
-        auto gene_pool_pause_lock = std::unique_lock(pause_mutex, std::try_to_lock);
-        if( ! gene_pool_pause_lock.owns_lock())
-        {
-            std::cout << "\nGene pool paused. Press " << pause_key << " to continue" << std::endl;
-            std::cout << "or " << stop_key << " to quit." << std::endl;
-            gene_pool_pause_lock.lock();
-        }
-        #endif // _WIN32
     }
 }
 
@@ -417,8 +418,15 @@ namespace
     void pause_gene_pool(int)
     {
         #ifdef _WIN32
-        quit_gene_pool = true;
-        std::cout << "\nQuitting program after current games are finished ..." << std::endl;
+        if(gene_pool_started)
+        {
+            quit_gene_pool = true;
+            std::cout << "\nQuitting program after current games are finished ..." << std::endl;
+        }
+        else
+        {
+            exit(1);
+        }
         #else
         static auto pause_lock = std::unique_lock(pause_mutex, std::defer_lock);
 
@@ -430,7 +438,14 @@ namespace
         else
         {
             pause_lock.lock();
-            std::cout << "\nWaiting for games to end and be recorded before pausing ..." << std::endl;
+            if(gene_pool_started)
+            {
+                std::cout << "\nWaiting for games to end and be recorded before pausing ..." << std::endl;
+            }
+            else
+            {
+                std::cout << "\n\nWill pause once the loading of files finishes ..." << std::endl;
+            }
         }
         #endif // _WIN32
     }
