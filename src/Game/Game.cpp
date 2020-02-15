@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <csignal>
 
 #include "Players/Player.h"
 #include "Players/Outside_Communicator.h"
@@ -67,6 +68,9 @@ void play_game_with_outsider(const Player& player,
                              const std::string& game_file_name)
 {
     auto outsider = connect_to_outside(player);
+
+    signal(SIGINT, SIG_IGN);
+    signal(SIGTERM, SIG_IGN);
 
     Board board;
     Clock clock;
