@@ -122,7 +122,7 @@ void Genetic_AI::print(std::ostream& os) const noexcept
 {
     os << "ID: " << id() << '\n';
     genome.print(os);
-    os << "END" << "\n" << std::endl;
+    os << "END\n" << std::endl;
 }
 
 std::string Genetic_AI::name() const noexcept
