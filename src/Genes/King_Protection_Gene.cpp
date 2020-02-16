@@ -40,11 +40,6 @@ double King_Protection_Gene::score_board(const Board& board, Color perspective, 
     return double(max_square_count - square_count)/max_square_count; // return score [0, 1]
 }
 
-std::unique_ptr<Gene> King_Protection_Gene::duplicate() const noexcept
-{
-    return std::make_unique<King_Protection_Gene>(*this);
-}
-
 std::string King_Protection_Gene::name() const noexcept
 {
     return "King Protection Gene";

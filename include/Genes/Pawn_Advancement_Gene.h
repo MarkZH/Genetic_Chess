@@ -14,11 +14,9 @@ class Board;
 //
 //! This score is modulated by an adjustment that favors the pushing
 //! of either advanced pawns or rear pawns.
-class Pawn_Advancement_Gene : public Gene
+class Pawn_Advancement_Gene : public Clonable_Gene<Pawn_Advancement_Gene>
 {
     public:
-        std::unique_ptr<Gene> duplicate() const noexcept override;
-
         std::string name() const noexcept override;
 
     private:

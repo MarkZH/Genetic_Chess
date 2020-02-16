@@ -11,11 +11,9 @@
 class Board;
 
 //! Adds or subtracts points from the score based on if the player has enough pieces to checkmate their opponent.
-class Checkmate_Material_Gene : public Gene
+class Checkmate_Material_Gene : public Clonable_Gene<Checkmate_Material_Gene>
 {
     public:
-        std::unique_ptr<Gene> duplicate() const noexcept override;
-
         std::string name() const noexcept override;
 
     private:

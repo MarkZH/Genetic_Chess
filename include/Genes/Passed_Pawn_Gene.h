@@ -11,11 +11,9 @@
 class Board;
 
 //! Scores a board based on how many passed pawns (pawns with no opponent pawns ahead of them or in adjacent files) a player has.
-class Passed_Pawn_Gene : public Gene
+class Passed_Pawn_Gene : public Clonable_Gene<Passed_Pawn_Gene>
 {
     public:
-        std::unique_ptr<Gene> duplicate() const noexcept override;
-
         std::string name() const noexcept override;
 
     private:

@@ -56,11 +56,6 @@ void Sphere_of_Influence_Gene::load_properties(const std::map<std::string, doubl
     recompute_scalar_cache();
 }
 
-std::unique_ptr<Gene> Sphere_of_Influence_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Sphere_of_Influence_Gene>(*this);
-}
-
 std::string Sphere_of_Influence_Gene::name() const noexcept
 {
     return "Sphere of Influence Gene";

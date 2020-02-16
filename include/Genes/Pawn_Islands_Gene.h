@@ -11,11 +11,9 @@
 class Board;
 
 //! Scores a board based on the number of isolated pawn groups a player has.
-class Pawn_Islands_Gene : public Gene
+class Pawn_Islands_Gene : public Clonable_Gene<Pawn_Islands_Gene>
 {
     public:
-        std::unique_ptr<Gene> duplicate() const noexcept override;
-
         std::string name() const noexcept override;
 
     private:

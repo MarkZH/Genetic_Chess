@@ -12,11 +12,10 @@
 class Board;
 
 //! This gene scores a board based of if castling is possible or has already happened.
-class Castling_Possible_Gene : public Gene
+class Castling_Possible_Gene : public Clonable_Gene<Castling_Possible_Gene>
 {
     public:
         std::string name() const noexcept override;
-        std::unique_ptr<Gene> duplicate() const noexcept override;
 
     protected:
         std::map<std::string, double> list_properties() const noexcept override;

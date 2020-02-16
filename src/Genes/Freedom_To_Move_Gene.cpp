@@ -20,11 +20,6 @@ double Freedom_To_Move_Gene::score_board(const Board& board, Color perspective, 
     }
 }
 
-std::unique_ptr<Gene> Freedom_To_Move_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Freedom_To_Move_Gene>(*this);
-}
-
 std::string Freedom_To_Move_Gene::name() const noexcept
 {
     return "Freedom to Move Gene";

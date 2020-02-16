@@ -33,11 +33,6 @@ double Pawn_Advancement_Gene::score_board(const Board& board, Color perspective,
     return score/max_score;
 }
 
-std::unique_ptr<Gene> Pawn_Advancement_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Pawn_Advancement_Gene>(*this);
-}
-
 std::string Pawn_Advancement_Gene::name() const noexcept
 {
     return "Pawn Advancement Gene";

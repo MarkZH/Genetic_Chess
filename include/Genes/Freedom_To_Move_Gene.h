@@ -14,11 +14,9 @@ class Board;
 //
 //! The scoring of this gene counts empty squares and squares occupied
 //! by opposing pieces. It does not take into account check or pins.
-class Freedom_To_Move_Gene : public Gene
+class Freedom_To_Move_Gene : public Clonable_Gene<Freedom_To_Move_Gene>
 {
     public:
-        std::unique_ptr<Gene> duplicate() const noexcept override;
-
         std::string name() const noexcept override;
 
     private:

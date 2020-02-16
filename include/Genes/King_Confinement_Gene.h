@@ -16,10 +16,9 @@ class Board;
 //! This gene uses a flood-fill-like algorithm to count the squares that are reachable by the
 //! king from its current positions with unlimited consecutive moves. The boundaries of this
 //! area are squares attacked by the other player or occupied by pieces of the same color.
-class King_Confinement_Gene : public Gene
+class King_Confinement_Gene : public Clonable_Gene<King_Confinement_Gene>
 {
     public:
-        std::unique_ptr<Gene> duplicate() const noexcept override;
         void gene_specific_mutation() noexcept override;
 
         std::string name() const noexcept override;

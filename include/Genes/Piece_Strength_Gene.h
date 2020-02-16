@@ -14,13 +14,11 @@
 class Board;
 
 //! Provides a database of the value of different piece types to be referenced by other Genes.
-class Piece_Strength_Gene : public Gene
+class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
 {
     public:
         //! Initialize the Piece values to zero.
         Piece_Strength_Gene() noexcept;
-
-        std::unique_ptr<Gene> duplicate() const noexcept override;
 
         std::string name() const noexcept override;
 

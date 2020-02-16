@@ -38,11 +38,6 @@ double Stacked_Pawns_Gene::score_board(const Board& board, Color perspective, si
                      // that can be blocked by other pawns.
 }
 
-std::unique_ptr<Gene> Stacked_Pawns_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Stacked_Pawns_Gene>(*this);
-}
-
 std::string Stacked_Pawns_Gene::name() const noexcept
 {
     return "Stacked Pawns Gene";

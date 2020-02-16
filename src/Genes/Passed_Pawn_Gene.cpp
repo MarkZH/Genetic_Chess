@@ -51,11 +51,6 @@ double Passed_Pawn_Gene::score_board(const Board& board, Color perspective, size
     return score/8; // maximum score == 1
 }
 
-std::unique_ptr<Gene> Passed_Pawn_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Passed_Pawn_Gene>(*this);
-}
-
 std::string Passed_Pawn_Gene::name() const noexcept
 {
     return "Passed Pawn Gene";

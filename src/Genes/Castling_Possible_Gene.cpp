@@ -27,11 +27,6 @@ void Castling_Possible_Gene::load_properties(const std::map<std::string, double>
     queenside_preference = properties.at("Queenside Preference");
 }
 
-std::unique_ptr<Gene> Castling_Possible_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Castling_Possible_Gene>(*this);
-}
-
 std::string Castling_Possible_Gene::name() const noexcept
 {
     return "Castling Possible Gene";

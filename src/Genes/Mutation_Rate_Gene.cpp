@@ -27,11 +27,6 @@ void Mutation_Rate_Gene::gene_specific_mutation() noexcept
     mutated_components_per_mutation = std::max(1.0, mutated_components_per_mutation);
 }
 
-std::unique_ptr<Gene> Mutation_Rate_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Mutation_Rate_Gene>(*this);
-}
-
 double Mutation_Rate_Gene::score_board(const Board&, Color, size_t) const noexcept
 {
     return 0.0;

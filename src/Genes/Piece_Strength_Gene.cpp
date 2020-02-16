@@ -90,11 +90,6 @@ double Piece_Strength_Gene::normalizer() const noexcept
     return normalizing_value;
 }
 
-std::unique_ptr<Gene> Piece_Strength_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Piece_Strength_Gene>(*this);
-}
-
 std::string Piece_Strength_Gene::name() const noexcept
 {
     return "Piece Strength Gene";

@@ -55,11 +55,6 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
     }
 }
 
-std::unique_ptr<Gene> Look_Ahead_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Look_Ahead_Gene>(*this);
-}
-
 std::string Look_Ahead_Gene::name() const noexcept
 {
     return "Look Ahead Gene";

@@ -34,11 +34,6 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color pers
     return score/piece_strength_source->normalizer();
 }
 
-std::unique_ptr<Gene> Opponent_Pieces_Targeted_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Opponent_Pieces_Targeted_Gene>(*this);
-}
-
 std::string Opponent_Pieces_Targeted_Gene::name() const noexcept
 {
     return "Opponent Pieces Targeted Gene";

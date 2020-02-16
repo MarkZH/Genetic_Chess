@@ -12,11 +12,6 @@ double Checkmate_Material_Gene::score_board(const Board& board, Color perspectiv
     return board.enough_material_to_checkmate(perspective);
 }
 
-std::unique_ptr<Gene> Checkmate_Material_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Checkmate_Material_Gene>(*this);
-}
-
 std::string Checkmate_Material_Gene::name() const noexcept
 {
     return "Checkmate Material Gene";

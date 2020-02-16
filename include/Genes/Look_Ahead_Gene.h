@@ -13,11 +13,9 @@ class Board;
 class Clock;
 
 //! This gene controls all aspects of time control.
-class Look_Ahead_Gene : public Gene
+class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
 {
     public:
-        std::unique_ptr<Gene> duplicate() const noexcept override;
-
         std::string name() const noexcept override;
 
         //! How much time to search for the next move.

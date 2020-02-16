@@ -13,11 +13,6 @@
 
 #include "Utility/Random.h"
 
-std::unique_ptr<Gene> King_Confinement_Gene::duplicate() const noexcept
-{
-    return std::make_unique<King_Confinement_Gene>(*this);
-}
-
 std::string King_Confinement_Gene::name() const noexcept
 {
     return "King Confinement Gene";

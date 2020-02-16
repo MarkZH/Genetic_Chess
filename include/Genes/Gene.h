@@ -113,4 +113,21 @@ class Gene
         virtual void gene_specific_mutation() noexcept;
 };
 
+//! A template class to create the duplicate method for all Gene subtypes.
+//
+//! \tparam Gene_Type The real Gene subclass that implements the Gene.
+//!
+//! Every concrete Gene subclass should be declared as
+//! \code{cpp}class Chess_Gene : public Clonable_Gene<Chess_Gene> { ... }; \endcode
+template<typename Gene_Type>
+class Clonable_Gene : public Gene
+{
+    public:
+        //! The concrete (though templated) implementation of the duplicate() method.
+        std::unique_ptr<Gene> duplicate() const noexcept override
+        {
+            return std::make_unique<Gene_Type>(static_cast<const Gene_Type&>(*this));
+        }
+};
+
 #endif // GENE_H

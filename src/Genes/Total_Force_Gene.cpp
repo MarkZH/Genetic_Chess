@@ -31,11 +31,6 @@ double Total_Force_Gene::score_board(const Board& board, Color perspective, size
                            })/piece_strength_source->normalizer();
 }
 
-std::unique_ptr<Gene> Total_Force_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Total_Force_Gene>(*this);
-}
-
 std::string Total_Force_Gene::name() const noexcept
 {
     return "Total Force Gene";

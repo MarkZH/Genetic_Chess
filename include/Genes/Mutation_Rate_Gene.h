@@ -10,7 +10,7 @@
 #include "Game/Color.h"
 
 //! The gene controls how much of the genome mutates per Genome::mutate() event.
-class Mutation_Rate_Gene : public Gene
+class Mutation_Rate_Gene : public Clonable_Gene<Mutation_Rate_Gene>
 {
     public:
         std::string name() const noexcept override;
@@ -21,7 +21,6 @@ class Mutation_Rate_Gene : public Gene
         int mutation_count() const noexcept;
 
         void gene_specific_mutation() noexcept override;
-        std::unique_ptr<Gene> duplicate() const noexcept override;
 
     protected:
         std::map<std::string, double> list_properties() const noexcept override;

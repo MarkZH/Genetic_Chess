@@ -44,11 +44,6 @@ double Pawn_Islands_Gene::score_board(const Board& board, Color perspective, siz
     return (double(pawn_count)/islands)/8;
 }
 
-std::unique_ptr<Gene> Pawn_Islands_Gene::duplicate() const noexcept
-{
-    return std::make_unique<Pawn_Islands_Gene>(*this);
-}
-
 std::string Pawn_Islands_Gene::name() const noexcept
 {
     return "Pawn Islands Gene";

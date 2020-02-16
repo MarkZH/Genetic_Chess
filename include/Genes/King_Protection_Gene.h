@@ -14,11 +14,9 @@ class Board;
 //
 //! Counts the number of empty squares from which a piece could attack the king. This
 //! is a measure of the exposure of the king
-class King_Protection_Gene : public Gene
+class King_Protection_Gene : public Clonable_Gene<King_Protection_Gene>
 {
     public:
-        std::unique_ptr<Gene> duplicate() const noexcept override;
-
         std::string name() const noexcept override;
 
     private:
