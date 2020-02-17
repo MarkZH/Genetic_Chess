@@ -305,44 +305,6 @@ bool run_tests()
     }
     test_result(tests_passed, fifty_move_result.ending_reason() == "50-move limit", "50-move draw test result: Got: " + fifty_move_result.ending_reason() + " instead.");
 
-    auto original_board = Board{};
-    auto san_board = Board{};
-    auto coordinate_board = Board{};
-    #ifdef NDEBUG
-    auto test_move_count = 100'000;
-    #else
-    auto test_move_count = 1'000;
-    #endif
-    for(auto i = 0; i < test_move_count; ++i)
-    {
-        auto move = Random::random_element(original_board.legal_moves());
-        auto result = original_board.submit_move(*move);
-        auto passing = true;
-
-        function_should_not_throw(passing, "SAN move submission", [&san_board, &move]() { san_board.submit_move(move->algebraic(san_board)); });
-        if( ! passing)
-        {
-            std::cerr << "Move " << move->algebraic(san_board) << " should be legal on " << san_board.fen() << std::endl;
-            tests_passed = false;
-            break;
-        }
-
-        function_should_not_throw(passing, "Coordinate move submission", [&coordinate_board, &move]() { coordinate_board.submit_move(move->coordinates()); });
-        if( ! passing)
-        {
-            std::cerr << "Move " << move->coordinates() << " should be legal on " << coordinate_board.fen() << std::endl;
-            tests_passed = false;
-            break;
-        }
-
-        if(result.game_has_ended())
-        {
-            original_board = {};
-            san_board = {};
-            coordinate_board = {};
-        }
-    }
-
     // Move derivation test
     Board move_derivation_board;
     auto derived_fen = std::string{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
