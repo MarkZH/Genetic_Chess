@@ -79,12 +79,12 @@ int Move::rank_change() const noexcept
     return end().rank() - start().rank();
 }
 
-std::string Move::game_record_item(const Board& board) const noexcept
+std::string Move::algebraic(const Board& board) const noexcept
 {
-    return game_record_move_item(board) + game_record_ending_item(board);
+    return algebraic_base(board) + result_mark(board);
 }
 
-std::string Move::game_record_move_item(const Board& board) const noexcept
+std::string Move::algebraic_base(const Board& board) const noexcept
 {
     auto original_piece = board.piece_on_square(start());
     std::string move_record = original_piece.pgn_symbol();
@@ -126,7 +126,7 @@ std::string Move::game_record_move_item(const Board& board) const noexcept
     return move_record;
 }
 
-std::string Move::game_record_ending_item(Board board) const noexcept
+std::string Move::result_mark(Board board) const noexcept
 {
     auto result = board.submit_move(*this);
     if(board.king_is_in_check())
@@ -146,7 +146,7 @@ std::string Move::game_record_ending_item(Board board) const noexcept
     }
 }
 
-std::string Move::coordinate_move() const noexcept
+std::string Move::coordinates() const noexcept
 {
     auto result = start().string() + end().string();
 

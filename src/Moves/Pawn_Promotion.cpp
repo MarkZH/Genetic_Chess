@@ -18,9 +18,9 @@ void Pawn_Promotion::side_effects(Board& board) const noexcept
     board.place_piece(promote_to, end());
 }
 
-std::string Pawn_Promotion::game_record_move_item(const Board& board) const noexcept
+std::string Pawn_Promotion::algebraic_base(const Board& board) const noexcept
 {
-    return Pawn_Move::game_record_move_item(board) + "=" + promotion_piece_symbol();
+    return Pawn_Move::algebraic_base(board) + "=" + promotion_piece_symbol();
 }
 
 char Pawn_Promotion::promotion_piece_symbol() const noexcept

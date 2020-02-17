@@ -309,9 +309,9 @@ bool run_tests()
     auto san_board = Board{};
     auto coordinate_board = Board{};
     #ifdef NDEBUG
-    auto test_move_count = 1'000'000;
+    auto test_move_count = 100'000;
     #else
-    auto test_move_count = 10'000;
+    auto test_move_count = 1'000;
     #endif
     for(auto i = 0; i < test_move_count; ++i)
     {
@@ -319,18 +319,18 @@ bool run_tests()
         auto result = original_board.submit_move(*move);
         auto passing = true;
 
-        function_should_not_throw(passing, "SAN move submission", [&san_board, &move]() { san_board.submit_move(move->game_record_item(san_board)); });
+        function_should_not_throw(passing, "SAN move submission", [&san_board, &move]() { san_board.submit_move(move->algebraic(san_board)); });
         if( ! passing)
         {
-            std::cerr << "Move " << move->game_record_item(san_board) << " should be legal on " << san_board.fen() << std::endl;
+            std::cerr << "Move " << move->algebraic(san_board) << " should be legal on " << san_board.fen() << std::endl;
             tests_passed = false;
             break;
         }
 
-        function_should_not_throw(passing, "Coordinate move submission", [&coordinate_board, &move]() { coordinate_board.submit_move(move->coordinate_move()); });
+        function_should_not_throw(passing, "Coordinate move submission", [&coordinate_board, &move]() { coordinate_board.submit_move(move->coordinates()); });
         if( ! passing)
         {
-            std::cerr << "Move " << move->coordinate_move() << " should be legal on " << coordinate_board.fen() << std::endl;
+            std::cerr << "Move " << move->coordinates() << " should be legal on " << coordinate_board.fen() << std::endl;
             tests_passed = false;
             break;
         }

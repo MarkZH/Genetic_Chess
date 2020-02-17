@@ -31,7 +31,7 @@ void Castle::side_effects(Board& board) const noexcept
     board.castling_movement[board.whose_turn()] = file_change();
 }
 
-std::string Castle::game_record_move_item(const Board&) const noexcept
+std::string Castle::algebraic_base(const Board&) const noexcept
 {
     return file_change() > 0 ? "O-O" : "O-O-O";
 }

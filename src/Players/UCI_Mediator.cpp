@@ -242,11 +242,11 @@ Game_Result UCI_Mediator::handle_move(Board& board,
                                       std::vector<const Move*>& move_list,
                                       const Player& player) const
 {
-    auto command = "bestmove " + move.coordinate_move();
+    auto command = "bestmove " + move.coordinates();
     auto expected_move = player.expected_response();
     if(expected_move)
     {
-        command += " ponder " + expected_move->coordinate_move();
+        command += " ponder " + expected_move->coordinates();
     }
     send_command(command);
     move_list.push_back(&move);

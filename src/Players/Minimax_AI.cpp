@@ -347,7 +347,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     // Principal variation
     for(const auto& move : thought.variation)
     {
-        std::cout << move->coordinate_move() << ' ';
+        std::cout << move->coordinates() << ' ';
     }
 
     std::cout << std::endl;
@@ -364,7 +364,7 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const
               << " pv ";
     for(const auto& move : thought.variation)
     {
-        std::cout << move->coordinate_move() << " ";
+        std::cout << move->coordinates() << " ";
     }
     std::cout << "score ";
     if(thought.is_winning_for(perspective))
@@ -379,7 +379,7 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const
     {
         std::cout << "cp " << int(thought.corrected_score(perspective)/centipawn_value());
     }
-    std::cout << " currmove " << thought.variation.front()->coordinate_move();
+    std::cout << " currmove " << thought.variation.front()->coordinates();
     std::cout << std::endl;
 }
 
@@ -501,7 +501,7 @@ std::string variation_line(Board board,
     for(size_t i = 0; i < variation.size(); ++i)
     {
         const auto move_label = move_number + i/2 + move_label_offset;
-        result += (board.whose_turn() == WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->game_record_item(board) + " ";
+        result += (board.whose_turn() == WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(board) + " ";
         if(write_alternate_variation && i < alternate_variation.size() && alternate_variation[i] != variation[i])
         {
             result += variation_line(board,

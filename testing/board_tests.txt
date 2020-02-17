@@ -59,7 +59,7 @@ move count | 8/6k1/4b3/8/3N2p1/8/6q1/4n1K1 w - - 10 120 | | 0 # checkmate for bl
 last move illegal | start | Nc3 a6 Nf3 b6 Ne4 c6 Ng5
 
 # Unambiguous move check
-all moves legal | start | Ng1h3
+all moves legal | 2k1K3/8/8/8/8/8/QQ6/Q7 w - - 0 1 | Qa2b1
 
 # En passant pin
 last move illegal | 7k/4p3/8/2KP3r/8/8/8/8 b - - 0 1 | e5 dxe6

@@ -75,7 +75,7 @@ class Board
         //!        or [algebraic notation](https://en.wikipedia.org/wiki/Algebraic_notation_(chess)) ("Bb3").
         //! \returns A Move instance corresponding to the input string.
         //! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
-        const Move& create_move(const std::string& move) const;
+        const Move& create_move(std::string move) const;
 
         //! Checks if there are any legal moves from the start sqaure to the end square.
         //

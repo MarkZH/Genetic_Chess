@@ -35,7 +35,7 @@ class Pawn_Promotion : public Pawn_Move
         //! Attach an indication of the promotion piece to the normal pawn move record.
         //
         //! \param board The board state just before the move is made.
-        std::string game_record_move_item(const Board& board) const noexcept override;
+        std::string algebraic_base(const Board& board) const noexcept override;
 
     private:
         const Piece promote_to;
