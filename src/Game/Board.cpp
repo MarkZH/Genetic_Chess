@@ -550,151 +550,35 @@ int Board::castling_direction(Color player) const noexcept
     return castling_movement[player];
 }
 
-const Move& Board::create_move(const std::string& move) const
+const Move& Board::create_move(std::string move_text) const
 {
-    static const std::string pieces = "PRNBQK";
-    static const std::string valid_files = "abcdefgh";
-    static const std::string valid_rows  = "12345678";
-    static const std::string castling = "Oo";
-    static const std::string valid_characters = pieces + valid_files + valid_rows + castling;
-
-    std::string validated;
-    std::copy_if(move.begin(), move.end(), std::back_inserter(validated),
-                 [](auto c) { return String::contains(valid_characters, c); });
-
-    if(validated.size() < 2)
+    const static auto optional_end_marks = "+#?!";
+    move_text = move_text.substr(0, move_text.find_first_of(optional_end_marks));
+    auto san_move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
+                                      [this, &move_text](auto move)
+                                      {
+                                          auto legal_move_text = move->game_record_item(*this);
+                                          legal_move_text = legal_move_text.substr(0, legal_move_text.find_first_of(optional_end_marks));
+                                          return legal_move_text == move_text;
+                                      });
+    if(san_move_iter != legal_moves().end())
     {
-        throw Illegal_Move(move + " does not specify a valid move.");
+        return **san_move_iter;
     }
 
-    // Castling
-    if(String::lowercase(validated) == "oo")
+    auto coordinate_move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
+                                             [&move_text](auto move)
+                                             {
+                                                 return move->coordinate_move() == move_text;
+                                             });
+    if(coordinate_move_iter != legal_moves().end())
     {
-        auto king_square = find_king(whose_turn());
-        return create_move(king_square,
-                           king_square + Square_Difference{2, 0});
+        return **coordinate_move_iter;
     }
-
-    if(String::lowercase(validated) == "ooo")
+    else
     {
-        auto king_square = find_king(whose_turn());
-        return create_move(king_square,
-                           king_square + Square_Difference{-2, 0});
+        throw Illegal_Move("The move text is not a valid or legal move: " + move_text);
     }
-
-    // Check for and capitalize promotion piece symbol
-    if(std::islower(move.back()))
-    {
-        if(validated.back() == move.back())
-        {
-            validated.pop_back();
-        }
-        validated.push_back(std::toupper(move.back()));
-    }
-
-    std::string moving_pieces;
-    std::copy_if(validated.begin(), validated.end(), std::back_inserter(moving_pieces),
-                 [](auto c) { return std::isupper(c); });
-    std::string files;
-    std::copy_if(validated.begin(), validated.end(), std::back_inserter(files),
-                 [](auto c) { return std::islower(c); });
-    std::string ranks;
-    std::copy_if(validated.begin(), validated.end(), std::back_inserter(ranks),
-                 [](auto c) { return std::isdigit(c); });
-
-    if(files.empty() || ranks.empty())
-    {
-        throw Illegal_Move("Destination square not specified: " + move);
-    }
-    else if(files.size() > 2 || ranks.size() > 2)
-    {
-        throw Illegal_Move("Invalid move specification: " + move);
-    }
-
-    auto ending_square = Square{files.back(), ranks.back() - '0'};
-
-    char starting_file = files.size() == 2 ? files.front() : '\0';
-    int  starting_rank = ranks.size() > 1 ? ranks.front() - '0' : 0;
-
-    std::string piece_symbol;
-    char promoted_piece = '\0';
-    if(moving_pieces.size() > 2)
-    {
-        throw Illegal_Move("Too many pieces mentioned: " + move);
-    }
-    else if(moving_pieces.size() == 2)
-    {
-        if(moving_pieces.front() != 'P')
-        {
-            throw Illegal_Move("Only pawns can be promoted: " + move);
-        }
-
-        if(moving_pieces.back() == 'P')
-        {
-            throw Illegal_Move("Cannot promote to pawn: " + move);
-        }
-        promoted_piece = moving_pieces.back();
-    }
-    else if(moving_pieces.size() == 1)
-    {
-        if(String::starts_with(validated, moving_pieces))
-        {
-            if(validated.front() != 'P') // leave blank if pawn is moving
-            {
-                piece_symbol = moving_pieces.front();
-            }
-        }
-        else if(String::ends_with(validated, moving_pieces))
-        {
-            promoted_piece = moving_pieces.front();
-        }
-        else
-        {
-            throw Illegal_Move("Invalid piece location: " + move);
-        }
-    }
-
-    char file_search_start = (starting_file == 0 ? 'a' : starting_file);
-    char file_search_end   = (starting_file == 0 ? 'h' : starting_file);
-
-    int rank_search_start = (starting_rank == 0 ? 1 : starting_rank);
-    int rank_search_end   = (starting_rank == 0 ? 8 : starting_rank);
-
-    if(starting_file == 0 || starting_rank == 0)
-    {
-        for(char file = file_search_start; file <= file_search_end; ++file)
-        {
-            for(int rank = rank_search_start; rank <= rank_search_end; ++rank)
-            {
-                auto square = Square{file, rank};
-                auto piece = piece_on_square(square);
-                if(piece &&
-                   piece.pgn_symbol() == piece_symbol &&
-                   is_legal(square, ending_square))
-                {
-                    if(starting_file == 0 || starting_rank == 0)
-                    {
-                        starting_file = file;
-                        starting_rank = rank;
-                    }
-                    else
-                    {
-                        // If two moves satisfy text, argument is ambiguous.
-                        throw Illegal_Move("Ambiguous move: " + move);
-                    }
-                }
-            }
-        }
-    }
-
-    if(starting_file != 0 && starting_rank != 0)
-    {
-        return create_move({starting_file, starting_rank},
-                           ending_square,
-                           promoted_piece);
-    }
-
-    throw Illegal_Move("Malformed move: " + move);
 }
 
 void Board::move_piece(const Move& move) noexcept
