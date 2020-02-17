@@ -320,7 +320,6 @@ class Board
         Piece& piece_on_square(Square square) noexcept;
         void remove_piece(Square square) noexcept;
         void move_piece(const Move& move) noexcept;
-        const Move& create_move(Square start, Square rank, char promote = 0) const;
         bool no_legal_moves() const noexcept;
         void make_en_passant_targetable(Square square) noexcept;
         void clear_en_passant_target() noexcept;

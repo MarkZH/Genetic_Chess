@@ -409,24 +409,6 @@ std::string Board::original_fen() const noexcept
     return starting_fen;
 }
 
-const Move& Board::create_move(Square start, Square end, char promote) const
-{
-    auto result = std::find_if(legal_moves().begin(), legal_moves().end(),
-                               [start, end, promote](auto move)
-                               {
-                                   return move->start() == start &&
-                                          move->end() == end &&
-                                          move->promotion_piece_symbol() == promote;
-                               });
-
-    if(result == legal_moves().end())
-    {
-        throw Illegal_Move("No legal move found for " + start.string() + end.string() + promote);
-    }
-
-    return **result; // one star to dereference the iterator, one to dereference the pointer
-}
-
 Game_Result Board::submit_move(const Move& move) noexcept
 {
     update_board(move);
