@@ -18,7 +18,7 @@ class Pawn_Move : public Move
         Pawn_Move(Color color_in, Square start) noexcept;
 
     protected:
-        std::string game_record_move_item(const Board& board) const noexcept override;
+        std::string algebraic_base(const Board& board) const noexcept override;
 };
 
 #endif // PAWN_MOVE_H

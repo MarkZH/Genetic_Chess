@@ -22,7 +22,7 @@ bool Pawn_Capture::move_specific_legal(const Board& board) const noexcept
     return board.piece_on_square(end()); // must capture a piece
 }
 
-std::string Pawn_Capture::game_record_move_item(const Board& board) const noexcept
+std::string Pawn_Capture::algebraic_base(const Board& board) const noexcept
 {
-    return start().file() + std::string("x") + Pawn_Move::game_record_move_item(board);
+    return start().file() + std::string("x") + Pawn_Move::algebraic_base(board);
 }

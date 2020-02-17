@@ -108,7 +108,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             {
                 for(auto move : new_move_list)
                 {
-                    log("Derived move: " + move->coordinate_move());
+                    log("Derived move: " + move->coordinates());
                     setup_result = board.submit_move(*move);
                     move_list.push_back(board.last_move());
                 }
@@ -249,7 +249,7 @@ bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& 
     }
     else
     {
-        log("Undoing move: " + move_list.back()->coordinate_move());
+        log("Undoing move: " + move_list.back()->coordinates());
         move_list.pop_back();
         auto new_board = Board(board.original_fen());
         for(auto move : move_list)
@@ -271,12 +271,12 @@ Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vect
 {
     if(in_force_mode)
     {
-        log("Ignoring move: " + move.coordinate_move());
+        log("Ignoring move: " + move.coordinates());
         return {};
     }
     else
     {
-        send_command("move " + move.coordinate_move());
+        send_command("move " + move.coordinates());
         move_list.push_back(&move);
         auto result = board.submit_move(move);
         if(result.game_has_ended())

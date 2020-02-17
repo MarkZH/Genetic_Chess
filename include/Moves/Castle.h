@@ -42,7 +42,7 @@ class Castle : public Move
         //! Castling moves have a special notation in PGN.
         //
         //! \returns "O-O" for kingside castling or "O-O-O" for queenside castling.
-        std::string game_record_move_item(const Board&) const noexcept override;
+        std::string algebraic_base(const Board&) const noexcept override;
 
     private:
         Move rook_move;

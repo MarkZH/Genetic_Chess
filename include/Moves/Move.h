@@ -76,14 +76,14 @@ class Move
         //
         //! \param board A Board instance just prior to the move being made.
         //! \returns The full PGN record of a move.
-        std::string game_record_item(const Board& board) const noexcept;
+        std::string algebraic(const Board& board) const noexcept;
 
         //! Returns a textual representation of a move in coordinate notation.
         //
         //! The first two characters indicate the starting square, the next two
         //! indicate the ending square, and a final optional character to indicate
         //! a pawn promtion.
-        std::string coordinate_move() const noexcept;
+        std::string coordinates() const noexcept;
 
         //! Indicates whether this move is en passant, which needs special handling elsewhere.
         //
@@ -143,7 +143,7 @@ class Move
         //
         //! \param board The board on which the move is about to be made.
         //! \returns The movement portion of a PGN move entry.
-        virtual std::string game_record_move_item(const Board& board) const noexcept;
+        virtual std::string algebraic_base(const Board& board) const noexcept;
 
     private:
         Square origin;
@@ -153,7 +153,7 @@ class Move
         bool is_en_passant_move = false;
 
         virtual bool move_specific_legal(const Board& board) const noexcept;
-        std::string game_record_ending_item(Board board) const noexcept;
+        std::string result_mark(Board board) const noexcept;
 };
 
 #endif // MOVE_H

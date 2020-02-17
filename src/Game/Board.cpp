@@ -557,7 +557,7 @@ const Move& Board::create_move(std::string move_text) const
     auto san_move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
                                       [this, &move_text](auto move)
                                       {
-                                          auto legal_move_text = move->game_record_item(*this);
+                                          auto legal_move_text = move->algebraic(*this);
                                           legal_move_text = legal_move_text.substr(0, legal_move_text.find_first_of(optional_end_marks));
                                           return legal_move_text == move_text;
                                       });
@@ -569,7 +569,7 @@ const Move& Board::create_move(std::string move_text) const
     auto coordinate_move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
                                              [&move_text](auto move)
                                              {
-                                                 return move->coordinate_move() == move_text;
+                                                 return move->coordinates() == move_text;
                                              });
     if(coordinate_move_iter != legal_moves().end())
     {
@@ -967,7 +967,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         }
 
         auto next_move = game_record_listing.at(i);
-        out_stream << " " << next_move->game_record_item(commentary_board);
+        out_stream << " " << next_move->algebraic(commentary_board);
         auto current_player = (commentary_board.whose_turn() == WHITE ? white : black);
         if(current_player)
         {

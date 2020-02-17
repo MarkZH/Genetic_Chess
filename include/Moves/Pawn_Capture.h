@@ -23,7 +23,7 @@ class Pawn_Capture : public Pawn_Move
         //
         //! \param board The board state just before the move is to be made.
         //! \returns The string representation of a pawn capture.
-        std::string game_record_move_item(const Board& board) const noexcept override;
+        std::string algebraic_base(const Board& board) const noexcept override;
 
     private:
         //! This move must capture.
