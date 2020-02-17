@@ -109,10 +109,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     depth_one_results = depth_two_results[result.variation.front()];
     depth_two_results.clear();
 
-    if(nodes_evaluated > 0)
-    {
-        evaluation_speed = nodes_evaluated/total_evaluation_time;
-    }
+    evaluation_speed = nodes_evaluated/total_evaluation_time;
 
     return *result.variation.front();
 }
@@ -266,7 +263,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if(result.value(perspective) > best_result.value(perspective))
         {
             best_result = result;
-
             if(best_result.value(perspective) > alpha.value(perspective))
             {
                 alpha = best_result;
@@ -294,15 +290,15 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         --moves_left;
         principal_variation.clear(); // only the first move is part of the principal variation
 
-        if(clock.running_time_left() < 0 || board.must_pick_move_now())
-        {
-            break;
-        }
-
         if( ! recurse) // This move was scored by genome.evaluate().
         {
             ++nodes_evaluated;
             total_evaluation_time += setup_time_per_move + (evaluate_start_time - clock.running_time_left());
+        }
+
+        if(clock.running_time_left() < 0 || board.must_pick_move_now())
+        {
+            break;
         }
     }
 
