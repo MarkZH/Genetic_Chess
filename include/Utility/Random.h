@@ -4,6 +4,7 @@
 #include <random>
 #include <algorithm>
 #include <cassert>
+#include <string>
 
 //! A collection of functions for dealing with randomness.
 namespace Random
@@ -82,6 +83,11 @@ namespace Random
         assert( ! container.empty());
         return container[random_integer(size_t{0}, container.size() - 1)];
     }
+
+    //! Create a string of random lowercase letters.
+    //
+    //! \param size The desired size of the random string.
+    std::string random_string(size_t size) noexcept;
 }
 
 #endif // RANDOM_H

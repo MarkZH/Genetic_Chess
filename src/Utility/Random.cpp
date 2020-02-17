@@ -1,6 +1,7 @@
 #include "Utility/Random.h"
 
 #include <random>
+#include <string>
 
 double Random::random_laplace(double width) noexcept
 {
@@ -33,4 +34,14 @@ bool Random::coin_flip() noexcept
 bool Random::success_probability(double probability) noexcept
 {
     return random_real(0.0, 1.0) < probability;
+}
+
+std::string Random::random_string(size_t size) noexcept
+{
+    std::string s;
+    while(s.size() < size)
+    {
+        s.push_back('a' + random_integer(0, 25));
+    }
+    return s;
 }
