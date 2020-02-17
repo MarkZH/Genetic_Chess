@@ -311,7 +311,7 @@ bool run_tests()
     #ifdef NDEBUG
     auto test_move_count = 1'000'000;
     #else
-    auto test_move_count = 10'000;
+    auto test_move_count = 1'000;
     #endif
     for(auto i = 0; i < test_move_count; ++i)
     {
