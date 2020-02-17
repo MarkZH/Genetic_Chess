@@ -309,7 +309,7 @@ bool run_tests()
     auto san_board = Board{};
     auto coordinate_board = Board{};
     #ifdef NDEBUG
-    auto test_move_count = 1'000'000;
+    auto test_move_count = 100'000;
     #else
     auto test_move_count = 1'000;
     #endif
