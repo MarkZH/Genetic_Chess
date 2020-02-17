@@ -585,6 +585,10 @@ const Move& Board::create_move(const std::string& move) const
     // Check for and capitalize promotion piece symbol
     if(std::islower(move.back()))
     {
+        if(validated.back() == move.back())
+        {
+            validated.pop_back();
+        }
         validated.push_back(std::toupper(move.back()));
     }
 

@@ -74,6 +74,9 @@ all moves legal | k7/8/8/3pP3/2K5/8/8/8 w - d6 0 1 | exd6
 all moves legal | K1k5/3P4/8/8/8/8/8/8 b - - 0 1 | # Check Board ctor not tripped by multiple pawn captures
 all moves legal | n7/3p4/2k5/2P5/8/8/8/K6Q b - - 0 1 | d5 cxd6 # Correct checking square found after en passant capture
 
+# Promotion to bishop bug ('b' confused with file)
+all moves legal | 2R5/5P2/8/7p/3k4/8/1P6/5K2 w - - 0 1 | f7f8b
+
 # Invalid boards
 invalid board | 1k1R4/2P5/KR5q/8/8/8/8/8 b - - 0 1 # Too many attackers
 invalid board | k7/2N5/1N6/8/8/8/8/7K b - - 0 1 # Too many knights attacking
