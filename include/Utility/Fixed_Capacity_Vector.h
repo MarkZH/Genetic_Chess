@@ -6,6 +6,9 @@
 #include <algorithm>
 #include <cassert>
 
+template<typename T, size_t capacity>
+class Scoped_Push_Guard;
+
 //! A std::vector - like container with variable size but no heap allocation.
 //
 //! \tparam T The type of data to be stored.
@@ -26,6 +29,17 @@ class Fixed_Capacity_Vector
         {
             assert( ! full());
             data[insertion_point++] = new_item;
+        }
+
+        //! Add a new item to the end of the Fixed_Capacity_Vector and remove it when leaving the current scope.
+        //
+        //! \param new_item The data to be added.
+        //! \returns A Scoped_Push_Guard object that will remove the item in its destructor.
+        //! \throws assertion_failure if the Fixed_Capacity_Vector is full and in DEBUG mode.
+        auto scoped_push_back(const T& new_item) noexcept
+        {
+            assert( ! full());
+            return Scoped_Push_Guard(*this, new_item);
         }
 
         //! Remove the last item.
@@ -102,6 +116,42 @@ class Fixed_Capacity_Vector
         {
             return data.cbegin() + size();
         }
+};
+
+
+//! A guard class for automatic management of the contents of a Fixed_Capacty_Vector based on scope.
+//
+//! \tparam T The type of data used by the originating Fixed_Capacity_Vector.
+//! \tparam capacity The capacity of the originating FIxed_Capacity_Vector.
+//!
+//! Upon construction, a new value is added to the end of the Fixed_Capacity_Vector.
+//! Upon destruction, the value at the end is remvoed.
+//!
+//! No checks are performed to make sure that the item removed by the destructor is the same item that
+//! was added in the destructor. The user is encouraged to only use Fixed_Capacity_Vector::scoped_push_back()
+//! inside a scope where that method has been used once (include function calls in the same scope that take
+//! the Fixed_Capacity_Vector by reference).
+template<typename T, size_t capacity>
+class [[nodiscard]] Scoped_Push_Guard
+{
+    public:
+        //! Create an instance that adds the new item to the end of the given Fixed_Capacity_Vector.
+        //
+        //! \param vec The vector to modify.
+        //! \param new_value The item to add to the end of the vector.
+        Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, const T& new_value) noexcept : data_store(vec)
+        {
+            data_store.push_back(new_value);
+        }
+
+        //! Removes the last item (presumably the one added by the constructor) from the vector.
+        ~Scoped_Push_Guard() noexcept
+        {
+            data_store.pop_back();
+        }
+
+    private:
+        Fixed_Capacity_Vector<T, capacity>& data_store;
 };
 
 #endif // FIXED_CAPACITY_VECTOR_H

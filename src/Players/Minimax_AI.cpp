@@ -179,15 +179,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         auto evaluate_start_time = clock.running_time_left();
         ++nodes_searched;
 
-        class push_guard
-        {
-            public:
-                push_guard(current_variation_store& list, const Move* move) noexcept : push_list(list) { push_list.push_back(move); }
-                ~push_guard() noexcept { push_list.pop_back(); }
-            private:
-                current_variation_store& push_list;
-        };
-        auto variation_guard = push_guard(current_variation, move);
+        auto variation_guard = current_variation.scoped_push_back(move);
 
         auto next_board = board;
 
