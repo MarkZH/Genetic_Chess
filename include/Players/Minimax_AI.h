@@ -107,7 +107,6 @@ class Minimax_AI : public Player
         Game_Tree_Node_Result search_game_tree(const Board& board,
                                                double time_to_examine,
                                                const Clock& clock,
-                                               size_t prior_real_moves,
                                                Game_Tree_Node_Result alpha,
                                                const Game_Tree_Node_Result& beta,
                                                std::vector<const Move*>& principal_variation,
@@ -120,13 +119,10 @@ class Minimax_AI : public Player
         //!        (e.g., moves that result in a quiescent Board).
         //! \param perspective From whose perspective (Black or White) the board should be scored.
         //! \param move_result The possibly game-ending result of the move.
-        //! \param prior_real_moves The number of moves performed on the Board before the current
-        //!        game tree search.
         //! \param move_list The current move list from the game tree search.
         Game_Tree_Node_Result create_result(Board board,
                                             Color perspective,
                                             const Game_Result& move_result,
-                                            size_t prior_real_moves,
                                             const std::vector<const Move*>& move_list) const noexcept;
 
         // Output thinking to stdout

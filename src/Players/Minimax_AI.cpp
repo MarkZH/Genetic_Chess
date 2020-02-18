@@ -90,7 +90,6 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     auto result = search_game_tree(board,
                                    time_to_use,
                                    clock,
-                                   board.game_length(),
                                    alpha_start,
                                    beta_start,
                                    principal_variation,
@@ -129,14 +128,13 @@ const Move* Minimax_AI::expected_response() const noexcept
 Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const double time_to_examine,
                                                    const Clock& clock,
-                                                   const size_t prior_real_moves,
                                                    Game_Tree_Node_Result alpha,
                                                    const Game_Tree_Node_Result& beta,
                                                    std::vector<const Move*>& principal_variation,
                                                    current_variation_store& current_variation) const noexcept
 {
     const auto time_start = clock.running_time_left();
-    const auto depth = board.game_length() - prior_real_moves + 1;
+    const auto depth = current_variation.size() + 1;
     maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
 
@@ -190,7 +188,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 current_variation_store& push_list;
         };
         auto variation_guard = push_guard(current_variation, move);
-        assert(current_variation.size() == depth);
 
         auto next_board = board;
 
@@ -198,7 +195,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if(move_result.winner() != NONE)
         {
             // This move results in checkmate, no other move can be better.
-            return create_result(next_board, perspective, move_result, prior_real_moves, current_variation.to_vector());
+            return create_result(next_board, perspective, move_result, current_variation.to_vector());
         }
 
         if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
@@ -241,7 +238,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             result = search_game_tree(next_board,
                                       time_allotted_for_this_move,
                                       clock,
-                                      prior_real_moves,
                                       beta,
                                       alpha,
                                       principal_variation,
@@ -256,7 +252,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             }
             auto variation = current_variation.to_vector();
             variation.insert(variation.end(), quiescent_moves.begin(), quiescent_moves.end());
-            result = create_result(next_board, perspective, move_result, prior_real_moves, variation);
+            result = create_result(next_board, perspective, move_result, variation);
             nodes_searched += result.depth() - depth;
         }
 
@@ -391,9 +387,9 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
 Game_Tree_Node_Result Minimax_AI::create_result(Board board,
                                                 Color perspective,
                                                 const Game_Result& move_result,
-                                                size_t prior_real_moves,
                                                 const std::vector<const Move*>& move_list) const noexcept
 {
+    const auto prior_real_moves = board.game_length() - move_list.size();
     return {evaluate(board, move_result, perspective, prior_real_moves),
             perspective,
             move_list};
