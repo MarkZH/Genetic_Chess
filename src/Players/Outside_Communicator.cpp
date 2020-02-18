@@ -18,7 +18,6 @@
 
 std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player)
 {
-    Outside_Communicator::log("==================");
     auto protocol_type = Outside_Communicator::receive_command();
     if(protocol_type == "xboard")
     {
