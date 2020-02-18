@@ -18,10 +18,10 @@ template<typename T, size_t capacity>
 class Fixed_Capacity_Vector
 {
     public:
-        //! Add a new piece of data to the FCV.
+        //! Add a new item to the end of the Fixed_Capacity_Vector.
         //
-        //! \param new_item The data to be added.
-        //! \throws assertion_failure if the FCV is fulland in DEBUG mode.
+        //! \param new_item The item to be added.
+        //! \throws assertion_failure if the Fixed_Capacity_Vector is fulland in DEBUG mode.
         void push_back(const T& new_item) noexcept
         {
             assert( ! full());
@@ -30,9 +30,9 @@ class Fixed_Capacity_Vector
 
         //! Remove the last item.
         //
-        //! \throws assertion_failure if the FCV is emptyand in DEBUG mode.
+        //! \throws assertion_failure if the Fixed_Capacity_Vector is emptyand in DEBUG mode.
         //!
-        //! No destructors are called until the entire FCV is destructed.
+        //! No destructors are called until the entire Fixed_Capacity_Vector is destructed.
         void pop_back() noexcept
         {
             assert( ! empty());
@@ -41,13 +41,13 @@ class Fixed_Capacity_Vector
 
         //! Remove all data from the store.
         //
-        //! Similarly to pop_back(), no destructors are called until the entire FCV is destructed.
+        //! Similarly to pop_back(), no destructors are called until the entire Fixed_Capacity_Vector is destructed.
         void clear() noexcept
         {
             insertion_point = 0;
         }
 
-        //! Count the number of copies of a given item the FCV contains.
+        //! Count the number of copies of a given item the Fixed_Capacity_Vector contains.
         //
         //! \param item The item to count.
         constexpr size_t count(const T& item) const noexcept
@@ -55,19 +55,19 @@ class Fixed_Capacity_Vector
             return std::count(cbegin(), cend(), item);
         }
 
-        //! Return if FCV is empty.
+        //! Return if Fixed_Capacity_Vector is empty.
         constexpr bool empty() const noexcept
         {
             return size() == 0;
         }
 
-        //! Return the current size of the valid data of the FCV.
+        //! Return the current size of the valid data of the Fixed_Capacity_Vector.
         constexpr size_t size() const noexcept
         {
             return insertion_point;
         }
 
-        //! Return if the FCV is full and can take no more push_back()s.
+        //! Return if the Fixed_Capacity_Vector is full and can take no more push_back()s.
         constexpr bool full() const noexcept
         {
             return size() == data.size();
@@ -79,7 +79,7 @@ class Fixed_Capacity_Vector
             return {cbegin(), cend()};
         }
 
-        //! Returns the first item in the FCV.
+        //! Returns the first item in the Fixed_Capacity_Vector.
         //
         //! \throws assertion_failure If there is no data.
         constexpr T front() const noexcept
