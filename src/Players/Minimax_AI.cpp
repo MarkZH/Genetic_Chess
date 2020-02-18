@@ -290,7 +290,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         --moves_left;
         principal_variation.clear(); // only the first move is part of the principal variation
 
-        if( ! recurse) // This move was scored by genome.evaluate().
+        if( ! recurse)
         {
             ++nodes_evaluated;
             total_evaluation_time += setup_time_per_move + (evaluate_start_time - clock.running_time_left());
