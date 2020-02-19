@@ -59,7 +59,7 @@ class Board
         //! \param move A text string specifying a move in any notation that uniquely identifies a
         //!        legal move (PGN, coordinate, etc.).
         //! \returns A Game_Result indicating the result of the move and whether the game has ended.
-        //! \throws Illegal_Move if the text represents an illegal or ambiguous move.
+        //! \throws Illegal_Move if the text represents an illegal or ambiguous move. The Board is unchanged in this event.
         Game_Result submit_move(const std::string& move);
 
         //! Figure out a move sequence to get from the current board state to the new state given by the parameter.
@@ -77,7 +77,7 @@ class Board
         //! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
         const Move& create_move(std::string move) const;
 
-        //! Checks if there are any legal moves from the start sqaure to the end square.
+        //! Checks if there are any legal moves from the start square to the end square.
         //
         //! \param start The square where the move should start.
         //! \param end   The square where the move should end.
