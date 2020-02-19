@@ -927,13 +927,13 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         print_game_header_line(out_stream, "Termination", actual_result.ending_reason());
     }
 
-    auto commentary_board = Board(starting_fen);
     if(starting_fen != standard_starting_fen)
     {
         print_game_header_line(out_stream, "SetUp", 1);
         print_game_header_line(out_stream, "FEN", starting_fen);
     }
 
+    auto commentary_board = Board(starting_fen);
     auto starting_turn_offset = size_t(commentary_board.whose_turn() == WHITE ? 0 : 1);
 
     for(size_t i = 0; i < game_record_listing.size(); ++i)
