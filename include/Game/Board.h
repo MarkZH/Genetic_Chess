@@ -111,6 +111,17 @@ class Board
         //! \returns The number of moves made on this board since its creation.
         size_t game_length() const noexcept;
 
+        //! The number of moves since this start of the game on this board.
+        //
+        //! \returns The number of moves in this game including those before the creation of the board.
+        //!
+        //! The quantity can start as greater than zero if the FEN string used to create the board has
+        //! a full-move clock value (the sixth field) of more than 1 or if black is the first to move.
+        //! The calculation assumes that every game starts with white's move, even if the FEN string
+        //! indicates that black is the first to move, since this would indicate a game state that is
+        //! after the start of the game.
+        size_t ply_count() const noexcept;
+
         //! The direction (if any) of the castling move made by a player.
         //
         //! \param player The color of the player being queried.
@@ -288,7 +299,7 @@ class Board
         Square checking_square;
         mutable Square last_pin_check_square;
         mutable bool last_pin_result;
-        size_t move_count_start_offset;
+        size_t first_full_move_label;
 
         // Stores the moves that attack a square. The innermost array
         // is filled with bools indicating the direction the piece attacking

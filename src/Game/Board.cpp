@@ -261,7 +261,7 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
         add_to_repeat_count(Random::random_unsigned_int64());
     }
 
-    move_count_start_offset = String::string_to_number<size_t>(fen_parse.at(5));
+    first_full_move_label = String::string_to_number<size_t>(fen_parse.at(5));
 
     if(fen() != starting_fen)
     {
@@ -401,7 +401,7 @@ std::string Board::fen() const noexcept
 
     return s + " " +
         std::to_string(moves_since_pawn_or_capture()) + " " +
-        std::to_string(move_count_start_offset + game_length()/2);
+        std::to_string(1 + ply_count()/2);
 }
 
 std::string Board::original_fen() const noexcept
@@ -420,16 +420,16 @@ Game_Result Board::submit_move(const std::string& move)
     return submit_move(create_move(move));
 }
 
+size_t Board::ply_count() const noexcept
+{
+    auto first_move = game_length()%2 == 0 ? whose_turn() : opposite(whose_turn());
+    return 2*(first_full_move_label - 1) + (first_move == WHITE ? 0 : 1) + game_length();
+}
 std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
 {
-    constexpr auto moves_so_far = [](const auto& b)
-                                  {
-                                      return 2*std::stoi(String::split(b.fen()).back()) +
-                                             (b.whose_turn() == WHITE ? 0 : 1);
-                                  };
     auto new_board = Board(new_fen);
     auto goal_fen = new_board.fen();
-    auto moves_to_derive_count = moves_so_far(new_board) - moves_so_far(*this);
+    auto moves_to_derive_count = new_board.ply_count() - ply_count();
     if(moves_to_derive_count > 2 || moves_to_derive_count < 1)
     {
         return {};
@@ -938,7 +938,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
     for(size_t i = 0; i < game_record_listing.size(); ++i)
     {
-        auto step = move_count_start_offset + (i + starting_turn_offset)/2;
+        auto step = first_full_move_label + (i + starting_turn_offset)/2;
         if(commentary_board.whose_turn() == WHITE || i == 0)
         {
             out_stream << '\n' << step << ".";

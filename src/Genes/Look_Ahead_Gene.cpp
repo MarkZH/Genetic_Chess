@@ -31,7 +31,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
     auto time_left = clock.time_left(board.whose_turn());
     auto moves_to_reset = clock.moves_until_reset(board.whose_turn());
 
-    auto moves_so_far = board.game_length()/2; // only count moves by this player
+    auto moves_so_far = board.ply_count()/2; // only count moves by this player
     auto moves_left = Math::average_moves_left(mean_game_length, game_length_uncertainty, moves_so_far);
 
     return time_left/std::min(moves_left, double(moves_to_reset));
