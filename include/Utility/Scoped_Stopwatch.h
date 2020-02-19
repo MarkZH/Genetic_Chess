@@ -16,7 +16,7 @@
 //! code. The machinery of setting up and writing to a file adds about
 //! 0.1 microseconds to the measured time. Execution times smaller than this
 //! will not get accurate results.
-class Scoped_Stopwatch
+class [[nodiscard]] Scoped_Stopwatch
 {
     public:
         //! The constructor starts the stopwatch and takes a name to record.
@@ -27,7 +27,7 @@ class Scoped_Stopwatch
         //!        time elapsed in that case.
         //! The timing result will be written to a file named "timing-N.txt",
         //! where N is a random number from 0 to 2^64 - 1.
-        explicit Scoped_Stopwatch(const std::string& name) noexcept;
+        [[nodiscard]] explicit Scoped_Stopwatch(const std::string& name) noexcept;
 
         Scoped_Stopwatch(const Scoped_Stopwatch& other) = delete;
         Scoped_Stopwatch& operator=(const Scoped_Stopwatch& other) = delete;

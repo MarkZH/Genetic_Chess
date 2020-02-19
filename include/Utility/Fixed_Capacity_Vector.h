@@ -147,7 +147,7 @@ class [[nodiscard]] Scoped_Push_Guard
         //
         //! \param vec The vector to modify.
         //! \param new_value The item to add to the end of the vector.
-        Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, const T& new_value) noexcept : data_store(vec)
+        [[nodiscard]] Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, const T& new_value) noexcept : data_store(vec)
         {
             data_store.push_back(new_value);
         }
