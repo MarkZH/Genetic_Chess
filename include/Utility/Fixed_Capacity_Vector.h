@@ -130,7 +130,15 @@ class Fixed_Capacity_Vector
 //! No checks are performed to make sure that the item removed by the destructor is the same item that
 //! was added in the destructor. The user is encouraged to only use Fixed_Capacity_Vector::scoped_push_back()
 //! inside a scope where that method has been used once (include function calls in the same scope that take
-//! the Fixed_Capacity_Vector by reference).
+//! the Fixed_Capacity_Vector by reference). As an example of faulty usage, consider the following:
+//! \code{cpp}
+//! auto data = Fixed_Capacity_Vector<int, 100>{}; // insertion index == 0
+//! {
+//!     auto push_guard = data.scoped_push_back(1); // insertion index == 1
+//!     data.clear(); // insertion index == 0
+//! } // push_guard destructor calls data.pop_back(); insertion index == -1 or assert() failure in debug mode.
+//! data.push_back(2); // The value is written to index size_t{-1}; probably results in a crash with a segfault.
+//! \endcode
 template<typename T, size_t capacity>
 class [[nodiscard]] Scoped_Push_Guard
 {
