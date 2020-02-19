@@ -3,7 +3,6 @@
 
 #include "Genes/Gene.h"
 
-#include <memory>
 #include <string>
 
 #include "Game/Color.h"

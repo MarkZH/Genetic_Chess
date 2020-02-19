@@ -4,7 +4,6 @@
 #include "Genes/Gene.h"
 
 #include <string>
-#include <memory>
 #include <map>
 
 #include "Game/Color.h"

@@ -5,7 +5,6 @@
 
 #include <string>
 #include <array>
-#include <memory>
 #include <map>
 
 #include "Game/Color.h"
