@@ -12,6 +12,13 @@ done
 
 bindir="$(dirname "$0")"
 echo "# Most popular openings:"
-#  First n moves                        |                                | Delete "--"   | Merge two moves           | Take only the    | Save list to file           | sort and count unique lines
-#                                       |                                | between games | to one line               | move text.       | for other uses              | and sort by popularity
-grep -A$((moves-1)) '^1\.' "$game_file" | ./"$bindir"/delete_comments.sh | grep -v -- -- | paste -d' ' $paste_dashes | cut -d' ' -f 1-3 | tee "${1}_opening_list.txt" | sort | uniq -c | sort -n | tee >(echo $(wc -l) different openings)
+grep -A$((moves-1)) '^1\.' "$game_file" | # First n moves
+    ./"$bindir"/delete_comments.sh      |
+    grep -v -- --                       | # Delete dashes between games
+    paste -d' ' $paste_dashes           | # Combine opening moves into one line
+    cut -d' ' -f 1-3                    | # Only include move text
+    tee "${1}_opening_list.txt"         |
+    sort                                |
+    uniq -c                             |
+    sort -n                             |
+    tee >(echo $(wc -l) different openings)
