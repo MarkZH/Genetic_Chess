@@ -187,7 +187,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if(move_result.winner() != NONE)
         {
             // This move results in checkmate, no other move can be better.
-            return create_result(next_board, perspective, move_result, current_variation.to_vector());
+            return create_result(next_board, perspective, move_result, current_variation);
         }
 
         if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
@@ -210,9 +210,9 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             recurse = false;
         }
-        else if(current_variation.full())
+        else if(depth >= maximum_search_depth)
         {
-            recurse = false; // prevent stack overflow
+            recurse = false;
         }
         else if( ! principal_variation.empty())
         {
@@ -242,9 +242,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             {
                 next_board.submit_move(*quiescent_move);
             }
-            auto variation = current_variation.to_vector();
-            variation.insert(variation.end(), quiescent_moves.begin(), quiescent_moves.end());
-            result = create_result(next_board, perspective, move_result, variation);
+            auto quiescent_guard = current_variation.scoped_push_back(quiescent_moves.begin(), quiescent_moves.end());
+            result = create_result(next_board, perspective, move_result, current_variation);
             nodes_searched += result.depth() - depth;
         }
 
@@ -379,12 +378,12 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
 Game_Tree_Node_Result Minimax_AI::create_result(Board board,
                                                 Color perspective,
                                                 const Game_Result& move_result,
-                                                const std::vector<const Move*>& move_list) const noexcept
+                                                const current_variation_store& move_list) const noexcept
 {
     const auto prior_real_moves = board.game_length() - move_list.size();
     return {evaluate(board, move_result, perspective, prior_real_moves),
             perspective,
-            move_list};
+            {move_list.begin(), move_list.end()}};
 }
 
 void Minimax_AI::calibrate_thinking_speed() const noexcept

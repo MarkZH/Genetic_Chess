@@ -101,9 +101,13 @@ class Minimax_AI : public Player
         // Scoring output
         double centipawn_value() const noexcept;
 
+        // Current sequence of moves as game tree is traversed.
+        const static size_t maximum_search_depth = 100; // to prevent stack overflow
+        const static size_t maximum_quiescent_captures = 32; // to prevent overflow of current_variation_store
+        const static size_t variation_store_size = maximum_search_depth + maximum_quiescent_captures;
+        using current_variation_store = Fixed_Capacity_Vector<const Move*, variation_store_size>;
+
         // Minimax (actually negamax) with alpha-beta pruning
-        const static size_t maximum_search_depth = 100;
-        using current_variation_store = Fixed_Capacity_Vector<const Move*, maximum_search_depth>;
         Game_Tree_Node_Result search_game_tree(const Board& board,
                                                double time_to_examine,
                                                const Clock& clock,
@@ -123,7 +127,7 @@ class Minimax_AI : public Player
         Game_Tree_Node_Result create_result(Board board,
                                             Color perspective,
                                             const Game_Result& move_result,
-                                            const std::vector<const Move*>& move_list) const noexcept;
+                                            const current_variation_store& move_list) const noexcept;
 
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,
