@@ -708,11 +708,11 @@ void run_speed_tests()
     const auto time_unit = "ms";
     #endif // NDEBUG
     std::vector<std::pair<double, std::string>> timing_results;
-    auto all_genes_watch = Scoped_Stopwatch("");
+    auto all_genes_watch = Scoped_Stopwatch::start_stopwatch("");
     for(auto gene : performance_genome)
     {
         auto score = 0.0;
-        auto watch = Scoped_Stopwatch("");
+        auto watch = Scoped_Stopwatch::start_stopwatch("");
         for(int i = 1; i <= number_of_tests; ++i)
         {
             auto side = performance_board.whose_turn();
@@ -723,7 +723,7 @@ void run_speed_tests()
     timing_results.emplace_back(all_genes_watch.time_so_far(), "Complete gene scoring");
 
     std::cout << "Board::submit_move() speed ..." << std::endl;
-    auto game_watch = Scoped_Stopwatch("");
+    auto game_watch = Scoped_Stopwatch::start_stopwatch("");
     Board speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
@@ -738,7 +738,7 @@ void run_speed_tests()
     auto board_submit_time = timing_results.back().first;
 
     std::cout << "Board::submit_move() with copy speed ..." << std::endl;
-    auto copy_game_watch = Scoped_Stopwatch("");
+    auto copy_game_watch = Scoped_Stopwatch::start_stopwatch("");
     Board copy_speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
@@ -757,7 +757,7 @@ void run_speed_tests()
     timing_results.emplace_back(copy_game_watch.time_so_far(), "Board::submit_move() with copy");
 
     std::cout << "Board::quiescent() speed ... " << std::flush;
-    auto quiescent_watch = Scoped_Stopwatch("");
+    auto quiescent_watch = Scoped_Stopwatch::start_stopwatch("");
     Board quiescent_board;
     size_t move_count = 0;
     for(auto i = 0; i < number_of_tests; ++i)
@@ -815,7 +815,7 @@ bool run_perft_tests()
 
     auto test_number = 0;
     unsigned long long legal_moves_counted = 0;
-    auto perft_timer = Scoped_Stopwatch("");
+    auto perft_timer = Scoped_Stopwatch::start_stopwatch("");
     for(const auto& line : lines)
     {
         auto time_at_start = perft_timer.time_so_far();

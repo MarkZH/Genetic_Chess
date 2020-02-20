@@ -19,18 +19,18 @@
 class [[nodiscard]] Scoped_Stopwatch
 {
     public:
-        //! \brief The constructor starts the stopwatch and takes a name to record.
+        //! \brief Create a new stopwatch that records the time to the given file.
         //!
-        //! \param name The name of the section of code to be timed. This name
-        //!        will be written to the output file. If empty, nothing will
-        //!        be written to file. Other methods can be used for displaying
-        //!        time elapsed in that case.
-        //! The timing result will be written to a file named "timing-N.txt",
-        //! where N is a random number from 0 to 2^64 - 1.
-        [[nodiscard]] explicit Scoped_Stopwatch(const std::string& name) noexcept;
+        //! \param name The name of the section of code to be timed. This name will
+        //!        be used to label the timing information in the file. If the name is
+        //!        empty, then no information will be written to file. Other methods
+        //!        of the resulting Scoped_Stopwatch object can be used to access timings.
+        static Scoped_Stopwatch start_stopwatch(const std::string& name) noexcept;
 
         Scoped_Stopwatch(const Scoped_Stopwatch& other) = delete;
         Scoped_Stopwatch& operator=(const Scoped_Stopwatch& other) = delete;
+        Scoped_Stopwatch(Scoped_Stopwatch&&) = delete;
+        Scoped_Stopwatch& operator=(Scoped_Stopwatch&&) = delete;
 
         //! \brief If the method stop() has not been called already, the destructor stops the stopwatch and records the time to a file.
         ~Scoped_Stopwatch();
@@ -56,6 +56,16 @@ class [[nodiscard]] Scoped_Stopwatch
         std::string place_name;
         std::chrono::steady_clock::time_point start_time;
         bool stopped;
+
+        //! \brief The constructor starts the stopwatch and takes a name to record.
+        //!
+        //! \param name The name of the section of code to be timed. This name
+        //!        will be written to the output file. If empty, nothing will
+        //!        be written to file. Other methods can be used for displaying
+        //!        time elapsed in that case.
+        //! The timing result will be written to a file named "timing-N.txt",
+        //! where N is a random number from 0 to 2^64 - 1.
+        explicit Scoped_Stopwatch(const std::string& name) noexcept;
 };
 
 #endif // SCOPED_STOPWATCH_H

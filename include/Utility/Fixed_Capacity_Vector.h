@@ -153,11 +153,26 @@ template<typename T, size_t capacity>
 class [[nodiscard]] Scoped_Push_Guard
 {
     public:
+        //! \brief Removes the last item (presumably the one added by the constructor) from the vector.
+        ~Scoped_Push_Guard() noexcept
+        {
+            data_store.pop_back(items_added);
+        }
+
+        Scoped_Push_Guard(const Scoped_Push_Guard&) = delete;
+        Scoped_Push_Guard& operator=(const Scoped_Push_Guard&) = delete;
+        Scoped_Push_Guard(Scoped_Push_Guard&&) = delete;
+        Scoped_Push_Guard& operator=(Scoped_Push_Guard&&) = delete;
+
+    private:
+        Fixed_Capacity_Vector<T, capacity>& data_store;
+        size_t items_added;
+
         //! \brief Create an instance that adds the new item to the end of the given Fixed_Capacity_Vector.
         //!
         //! \param vec The vector to modify.
         //! \param new_value The item to add to the end of the vector.
-        [[nodiscard]] Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, const T& new_value) noexcept : data_store(vec), items_added(1)
+        Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, const T& new_value) noexcept : data_store(vec), items_added(1)
         {
             data_store.push_back(new_value);
         }
@@ -169,7 +184,7 @@ class [[nodiscard]] Scoped_Push_Guard
         //! \param begin The iterator to the first value to add.
         //! \param end The iterator marking the end of the range (one past the last item).
         template<typename Iterator>
-        [[nodiscard]] Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, Iterator begin, Iterator end) noexcept : data_store(vec), items_added(0)
+        Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, Iterator begin, Iterator end) noexcept : data_store(vec), items_added(0)
         {
             for(auto i = begin; i != end; ++i)
             {
@@ -178,15 +193,7 @@ class [[nodiscard]] Scoped_Push_Guard
             }
         }
 
-        //! \brief Removes the last item (presumably the one added by the constructor) from the vector.
-        ~Scoped_Push_Guard() noexcept
-        {
-            data_store.pop_back(items_added);
-        }
-
-    private:
-        Fixed_Capacity_Vector<T, capacity>& data_store;
-        size_t items_added;
+        friend class Fixed_Capacity_Vector<T, capacity>;
 };
 
 #endif // FIXED_CAPACITY_VECTOR_H

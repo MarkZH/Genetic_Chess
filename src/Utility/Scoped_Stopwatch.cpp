@@ -7,6 +7,11 @@
 
 #include "Utility/Random.h"
 
+Scoped_Stopwatch Scoped_Stopwatch::start_stopwatch(const std::string& file_name) noexcept
+{
+    return Scoped_Stopwatch{file_name};
+}
+
 Scoped_Stopwatch::Scoped_Stopwatch(const std::string& name) noexcept :
     place_name(name),
     start_time(std::chrono::steady_clock::now()),
