@@ -9,8 +9,8 @@
 template<typename T, size_t capacity>
 class Scoped_Push_Guard;
 
-//! A std::vector - like container with variable size but no heap allocation.
-//
+//! \brief A std::vector - like container with variable size but no heap allocation.
+//!
 //! \tparam T The type of data to be stored.
 //! \tparam capacity The maximum size of the container.
 //!
@@ -24,8 +24,8 @@ class Fixed_Capacity_Vector
         using data_store = std::array<T, capacity>;
 
     public:
-        //! Add a new item to the end of the Fixed_Capacity_Vector.
-        //
+        //! \brief Add a new item to the end of the Fixed_Capacity_Vector.
+        //!
         //! \param new_item The item to be added.
         //! \throws assertion_failure if the Fixed_Capacity_Vector is fulland in DEBUG mode.
         void push_back(const T& new_item) noexcept
@@ -34,8 +34,8 @@ class Fixed_Capacity_Vector
             data[insertion_point++] = new_item;
         }
 
-        //! Add a new item to the end of the Fixed_Capacity_Vector and remove it when leaving the current scope.
-        //
+        //! \brief Add a new item to the end of the Fixed_Capacity_Vector and remove it when leaving the current scope.
+        //!
         //! \param new_item The data to be added.
         //! \returns A Scoped_Push_Guard object that will remove the item in its destructor.
         //! \throws assertion_failure if the Fixed_Capacity_Vector is full and in DEBUG mode.
@@ -45,7 +45,7 @@ class Fixed_Capacity_Vector
             return Scoped_Push_Guard(*this, new_item);
         }
 
-        //! Push back a range of values that will be removed when the current scope ends.
+        //! \brief Push back a range of values that will be removed when the current scope ends.
         //! \tparam Iterator An iterator type ranging over values of type T.
         //! \param begin The first value to add.
         //! \param end One past the last value to add.
@@ -58,8 +58,8 @@ class Fixed_Capacity_Vector
             return Scoped_Push_Guard(*this, begin, end);
         }
 
-        //! Remove the last n items.
-        //
+        //! \brief Remove the last n items.
+        //!
         //! \param n The number of items to remove from the end of the vector.
         //! \throws assertion_failure If n is greater than the current size of the vector.
         void pop_back(size_t n = 1) noexcept
@@ -68,42 +68,42 @@ class Fixed_Capacity_Vector
             insertion_point -= n;
         }
 
-        //! Remove all data from the store.
-        //
+        //! \brief Remove all data from the store.
+        //!
         //! Similarly to pop_back(), no destructors are called until the entire Fixed_Capacity_Vector is destructed.
         void clear() noexcept
         {
             insertion_point = 0;
         }
 
-        //! Count the number of copies of a given item the Fixed_Capacity_Vector contains.
-        //
+        //! \brief Count the number of copies of a given item the Fixed_Capacity_Vector contains.
+        //!
         //! \param item The item to count.
         constexpr size_t count(const T& item) const noexcept
         {
             return std::count(begin(), end(), item);
         }
 
-        //! Return if Fixed_Capacity_Vector is empty.
+        //! \brief Return if Fixed_Capacity_Vector is empty.
         constexpr bool empty() const noexcept
         {
             return size() == 0;
         }
 
-        //! Return the current size of the valid data of the Fixed_Capacity_Vector.
+        //! \brief Return the current size of the valid data of the Fixed_Capacity_Vector.
         constexpr size_t size() const noexcept
         {
             return insertion_point;
         }
 
-        //! Return if the Fixed_Capacity_Vector is full and can take no more push_back()s.
+        //! \brief Return if the Fixed_Capacity_Vector is full and can take no more push_back()s.
         constexpr bool full() const noexcept
         {
             return size() == data.size();
         }
 
-        //! Returns the first item in the Fixed_Capacity_Vector.
-        //
+        //! \brief Returns the first item in the Fixed_Capacity_Vector.
+        //!
         //! \throws assertion_failure If there is no data.
         constexpr T front() const noexcept
         {
@@ -111,13 +111,13 @@ class Fixed_Capacity_Vector
             return data.front();
         }
 
-        //! An iterator to the beginning of the vector.
+        //! \brief An iterator to the beginning of the vector.
         constexpr typename data_store::const_iterator begin() const noexcept
         {
             return data.begin();
         }
 
-        //! An iterator to the end of the vector.
+        //! \brief An iterator to the end of the vector.
         constexpr typename data_store::const_iterator end() const noexcept
         {
             return data.begin() + size();
@@ -129,8 +129,8 @@ class Fixed_Capacity_Vector
 };
 
 
-//! A guard class for automatic management of the contents of a Fixed_Capacty_Vector based on scope.
-//
+//! \brief A guard class for automatic management of the contents of a Fixed_Capacty_Vector based on scope.
+//!
 //! \tparam T The type of data used by the originating Fixed_Capacity_Vector.
 //! \tparam capacity The capacity of the originating FIxed_Capacity_Vector.
 //!
@@ -153,8 +153,8 @@ template<typename T, size_t capacity>
 class [[nodiscard]] Scoped_Push_Guard
 {
     public:
-        //! Create an instance that adds the new item to the end of the given Fixed_Capacity_Vector.
-        //
+        //! \brief Create an instance that adds the new item to the end of the given Fixed_Capacity_Vector.
+        //!
         //! \param vec The vector to modify.
         //! \param new_value The item to add to the end of the vector.
         [[nodiscard]] Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, const T& new_value) noexcept : data_store(vec), items_added(1)
@@ -162,8 +162,8 @@ class [[nodiscard]] Scoped_Push_Guard
             data_store.push_back(new_value);
         }
 
-        //! Create an instance that adds a number of items to the given Fixed_Capacity_Vector through container iterators.
-        //
+        //! \brief Create an instance that adds a number of items to the given Fixed_Capacity_Vector through container iterators.
+        //!
         //! \tparam Iterator An iterator type that dereferences to a type T.
         //! \param vec The vector to modify.
         //! \param begin The iterator to the first value to add.
@@ -178,7 +178,7 @@ class [[nodiscard]] Scoped_Push_Guard
             }
         }
 
-        //! Removes the last item (presumably the one added by the constructor) from the vector.
+        //! \brief Removes the last item (presumably the one added by the constructor) from the vector.
         ~Scoped_Push_Guard() noexcept
         {
             data_store.pop_back(items_added);

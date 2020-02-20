@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-//! An exception class that is thrown by GUI mediators to end a game session.
+//! \brief An exception class that is thrown by GUI mediators to end a game session.
 class Game_Ended : public std::runtime_error
 {
     public:

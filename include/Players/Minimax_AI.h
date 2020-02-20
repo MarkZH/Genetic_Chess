@@ -19,15 +19,15 @@ class Game_Result;
 
 //! \file
 
-//! This Player uses a variable-depth minimax algorithm with alpha-beta pruning.
-//
+//! \brief This Player uses a variable-depth minimax algorithm with alpha-beta pruning.
+//!
 //! Minimax algorithm: https://en.wikipedia.org/wiki/Minimax
 //! Alpha-beta pruning: https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
 class Minimax_AI : public Player
 {
     public:
-        //! Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
-        //
+        //! \brief Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
+        //!
         //! The depth of the search is determined by how much time is available.
         //! At first, equal time is allocated to each legal move for examination. Time
         //! is overcommitted with the expectation that not all of the time will be used
@@ -38,8 +38,8 @@ class Minimax_AI : public Player
 
         const Move* expected_response() const noexcept override;
 
-        //! Prints the expected future variation and score for the chosen move.
-        //
+        //! \brief Prints the expected future variation and score for the chosen move.
+        //!
         //! \param board The state of the game just prior to the move being commented on.
         //! \param move_number The numeric label to use for the move (in case the current
         //!        game did not start with move 1.
@@ -48,8 +48,8 @@ class Minimax_AI : public Player
         void reset() const noexcept override;
 
     protected:
-        //! Recalculate values that will last the lifetime of the instance.
-        //
+        //! \brief Recalculate values that will last the lifetime of the instance.
+        //!
         //! In this case, the values are an initial estimate of the speed of
         //! searching the game tree and the value of a centipawn for reporting
         //! scores of board positions.
@@ -65,8 +65,8 @@ class Minimax_AI : public Player
         //! the AI has chosen a move.
         mutable std::map<const Move*, Game_Tree_Node_Result> depth_one_results;
 
-        //! Data for writing commentary for each move choice to PGN files.
-        //
+        //! \brief Data for writing commentary for each move choice to PGN files.
+        //!
         //! Each entry is a pair of results of the game search tree. The first is the predicted variation
         //! found while the AI searched for its own move. The second, if it is not default constructed,
         //! is the variation that follows the AI's opponent's actual next move.
@@ -116,8 +116,8 @@ class Minimax_AI : public Player
                                                std::vector<const Move*>& principal_variation,
                                                current_variation_store& current_variation) const noexcept;
 
-        //! Assign a score to the current board state.
-        //
+        //! \brief Assign a score to the current board state.
+        //!
         //! \param board The current state of the Board.
         //! \param extra_moves A list of moves to submit to the Board before scoring.
         //!        (e.g., moves that result in a quiescent Board).
@@ -141,14 +141,14 @@ class Minimax_AI : public Player
 
         mutable double value_of_centipawn;
 
-        //! Approximate the value of 0.01 pawns for reporting scores.
-        //
+        //! \brief Approximate the value of 0.01 pawns for reporting scores.
+        //!
         //! \returns A numerical value to normalize the scores returned by board evaluations
         //!          so that the loss of a random pawn changes the score by about 1.0.
         void calculate_centipawn_value() const noexcept;
 
-        //! Initial measurement of evaluation speed of the engine.
-        //
+        //! \brief Initial measurement of evaluation speed of the engine.
+        //!
         //! The method Minimax_AI::choose_move() keeps track of the time it takes
         //! and the number of positions it evaluates. But, it needs an accurate
         //! starting value for the first move search. So, this practice move will
@@ -156,8 +156,8 @@ class Minimax_AI : public Player
         void calibrate_thinking_speed() const noexcept;
 };
 
-//! Create a PGN variation string.
-//
+//! \brief Create a PGN variation string.
+//!
 //! \param board The board state just before any of the variation moves are played.
 //! \param move_number The index of the game move (0 for the first player's first move,
 //!        1 for first move by that player's opponent, etc.).

@@ -13,12 +13,12 @@ class Clock;
 class Move;
 class Game_Result;
 
-//! A class that mediates communication with a GUI via the UCI protocol.
+//! \brief A class that mediates communication with a GUI via the UCI protocol.
 class UCI_Mediator : public Outside_Communicator
 {
     public:
-        //! Setup a connection to the outside world with a UCI interface.
-        //
+        //! \brief Setup a connection to the outside world with a UCI interface.
+        //!
         //! \param player The chess player on the local machine whose name and author get sent to the GUI.
         explicit UCI_Mediator(const Player& player);
 

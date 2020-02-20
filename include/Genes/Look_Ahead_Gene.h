@@ -17,15 +17,15 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
     public:
         std::string name() const noexcept override;
 
-        //! How much time to search for the next move.
-        //
+        //! \brief How much time to search for the next move.
+        //!
         //! \param board The current board position.
         //! \param clock The game clock.
         //! \returns The total time in seconds to spend on searching for a move.
         double time_to_examine(const Board& board, const Clock& clock) const noexcept;
 
-        //! When searching for a move, determine how much to overcommit on time.
-        //
+        //! \brief When searching for a move, determine how much to overcommit on time.
+        //!
         //! With alpha-beta pruning, only a portion of a branch will be searched, so time
         //! will be saved that can be spent on other branches. So, this factor controls
         //! how much extra time to allocate knowing that not all of it will be used.

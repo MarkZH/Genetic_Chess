@@ -8,12 +8,12 @@
 
 #include "Utility/String.h"
 
-//! A class that reads a text file to allow easy querying of configuration data.
+//! \brief A class that reads a text file to allow easy querying of configuration data.
 class Configuration
 {
     public:
-        //! Read in a text file and organize the configuration data.
-        //
+        //! \brief Read in a text file and organize the configuration data.
+        //!
         //! \param file_name The name of the text file to be read.
         //!
         //! The file is read line-by-line and expects all configuration data in
@@ -22,15 +22,15 @@ class Configuration
         //! Comments can be added to the file by prepending them with '#'.
         explicit Configuration(const std::string& file_name);
 
-        //! Return string data as found in the file.
-        //
+        //! \brief Return string data as found in the file.
+        //!
         //! \param parameter The configuration parameter sought.
         //! \returns The string data with leading and trailing whitespace removed.
         //! \throws std::runtime_error If the named parameter was not found in the file.
         std::string as_text(const std::string& parameter) const;
 
-        //! Return numerical data from the configuration file.
-        //
+        //! \brief Return numerical data from the configuration file.
+        //!
         //! \param parameter The configuration parameter sought.
         //! \returns The data in the file converted to a floating point (double) number.
         //! \throws std::runtime_error If the named parameter was not found in the file or
@@ -41,8 +41,8 @@ class Configuration
             return String::string_to_number<Number>(as_text(parameter));
         }
 
-        //! Return numerical data from the configuration file if it is greater than zero.
-        //
+        //! \brief Return numerical data from the configuration file if it is greater than zero.
+        //!
         //! \param parameter The configuration parameter sought.
         //! \returns The data in the file converted to a floating point (double) number.
         //! \throws std::runtime_error If the named parameter was not found in the file or
@@ -62,8 +62,8 @@ class Configuration
             }
         }
 
-        //! Return true/false data from the configuration file.
-        //
+        //! \brief Return true/false data from the configuration file.
+        //!
         //! \param parameter The configuration parameter sought.
         //! \param affirmative The case-insensitive value corresponding to true.
         //! \param negative The case-insensitive value corresponding to false.
@@ -72,10 +72,10 @@ class Configuration
         //!         if the data does not match affirmative or negative.
         bool as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const;
 
-        //! Check if any parameters in the configuration file were unused.
+        //! \brief Check if any parameters in the configuration file were unused.
         bool any_unused_parameters() const noexcept;
 
-        //! Print the unused parameters in the configuration file to stdout.
+        //! \brief Print the unused parameters in the configuration file to stdout.
         void print_unused_parameters() const noexcept;
 
     private:

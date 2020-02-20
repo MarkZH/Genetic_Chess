@@ -8,14 +8,14 @@
 
 #include "Game/Color.h"
 
-//! The gene controls how much of the genome mutates per Genome::mutate() event.
+//! \brief The gene controls how much of the genome mutates per Genome::mutate() event.
 class Mutation_Rate_Gene : public Clonable_Gene<Mutation_Rate_Gene>
 {
     public:
         std::string name() const noexcept override;
 
-        //! Controls how many changes a call to Genome::mutate() makes to the Gene collections.
-        //
+        //! \brief Controls how many changes a call to Genome::mutate() makes to the Gene collections.
+        //!
         //! \returns An integer number that determines the number of point mutations the Genome::mutate() makes.
         int mutation_count() const noexcept;
 

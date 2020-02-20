@@ -9,7 +9,7 @@
 
 class Board;
 
-//! Scores a board based on the number of pawns with friendly pawns in front of them.
+//! \brief Scores a board based on the number of pawns with friendly pawns in front of them.
 class Stacked_Pawns_Gene : public Clonable_Gene<Stacked_Pawns_Gene>
 {
     public:

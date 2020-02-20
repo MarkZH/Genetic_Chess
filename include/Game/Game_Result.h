@@ -18,39 +18,39 @@ enum class Game_Result_Type
     OTHER
 };
 
-//! This class represents the result of a game action, primarily whether the game is still ongoing.
+//! \brief This class represents the result of a game action, primarily whether the game is still ongoing.
 class Game_Result
 {
     public:
-        //! The default Game_Result indicates that the game has not ended.
+        //! \brief The default Game_Result indicates that the game has not ended.
         Game_Result() noexcept;
 
-        //! This constructor creates a Game_Result indicating that the game has ended.
-        //
+        //! \brief This constructor creates a Game_Result indicating that the game has ended.
+        //!
         //! \param winner The color of the player that has won, or NONE if a draw.
         //! \param reason Explanation of why the game ended.
         Game_Result(Color winner, Game_Result_Type reason) noexcept;
 
-        //! Create a Game_Result when the game has ended for an unanticipated reason.
-        //
+        //! \brief Create a Game_Result when the game has ended for an unanticipated reason.
+        //!
         //! \param winner The declared winner of the game.
         //! \param reason The declared reason for the end of the game.
         //! \param shutdown Whether this result should shutdown the program.
         Game_Result(Color winner, const std::string& reason, bool shutdown) noexcept;
 
-        //! Indicate whether the game ended with the last action.
+        //! \brief Indicate whether the game ended with the last action.
         bool game_has_ended() const noexcept;
 
-        //! Returns the resultant winner (or NONE, if a draw) as a result of the last action.
+        //! \brief Returns the resultant winner (or NONE, if a draw) as a result of the last action.
         Color winner() const noexcept;
 
-        //! Returns the reason for the game ending.
+        //! \brief Returns the reason for the game ending.
         std::string ending_reason() const noexcept;
 
-        //! Returns the part of the PGN move annotation that goes after the # (checkmate) or + (check).
+        //! \brief Returns the part of the PGN move annotation that goes after the # (checkmate) or + (check).
         std::string game_ending_annotation() const noexcept;
 
-        //! Returns whether or not the program should shutdown after getting this result.
+        //! \brief Returns whether or not the program should shutdown after getting this result.
         bool exit_program() const noexcept;
 
     private:

@@ -9,12 +9,12 @@
 #include "Game/Color.h"
 #include "Direction.h"
 
-//! A pawn capture on the far rank that also results in a promotion.
+//! \brief A pawn capture on the far rank that also results in a promotion.
 class Pawn_Promotion_by_Capture : public Pawn_Promotion
 {
     public:
-        //! Create a pawn capture that also promotes.
-        //
+        //! \brief Create a pawn capture that also promotes.
+        //!
         //! \param promotion A type of piece the pawn will be promoted to.
         //! \param color The color of the moving pawn.
         //! \param dir The direction of the capture.
@@ -25,15 +25,15 @@ class Pawn_Promotion_by_Capture : public Pawn_Promotion
                                   char file_start) noexcept;
 
     protected:
-        //! Combine pawn capture note with a promotion note.
-        //
+        //! \brief Combine pawn capture note with a promotion note.
+        //!
         //! \param board The board state just before the move.
         //! \returns A textual record of a capture and a promotion.
         std::string algebraic_base(const Board& board) const noexcept override;
 
     private:
-        //! This move must capture.
-        //
+        //! \brief This move must capture.
+        //!
         //! \param board The board state just before the move.
         //! \returns Whether there is an opposing piece to capture.
         bool move_specific_legal(const Board& board) const noexcept override;

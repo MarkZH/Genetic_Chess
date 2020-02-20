@@ -5,7 +5,7 @@
 
 //! \file
 
-//! Used for identifying the color of a piece, player, square, or game winner.
+//! \brief Used for identifying the color of a piece, player, square, or game winner.
 enum Color : unsigned
 {
     WHITE,
@@ -13,14 +13,14 @@ enum Color : unsigned
     NONE
 };
 
-//! Returns the opposite of the input color: BLACK to WHITE or WHITE to BLACK.
-//
+//! \brief Returns the opposite of the input color: BLACK to WHITE or WHITE to BLACK.
+//!
 //! \param color The color to reverse. If called with NONE, it will trip a DEBUG assert or return WHITE in RELEASE builds.
 //! \returns Opposite color.
 Color opposite(Color color) noexcept;
 
-//! Returns a text (std::string) version of a color.
-//
+//! \brief Returns a text (std::string) version of a color.
+//!
 //! \param color The color to convert to text.
 //! \returns A textual representation of the color.
 //! \throws std::runtime_error if an invalid Color value is passed in.

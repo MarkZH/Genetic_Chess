@@ -3,7 +3,7 @@
 
 //! \file
 
-//! Indicates a horizontal direction on the chess board.
+//! \brief Indicates a horizontal direction on the chess board.
 enum class Direction { LEFT, RIGHT };
 
 #endif // DIRECTION_H

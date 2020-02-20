@@ -13,19 +13,19 @@ class UCI_Mediator;
 
 //! \file
 
-//! Specifies whether time is added or the clock reset when the moves per time period have been made.
+//! \brief Specifies whether time is added or the clock reset when the moves per time period have been made.
 enum class Time_Reset_Method
 {
     ADDITION,
     SET_TO_ORIGINAL
 };
 
-//! This class represents the dual-clock game timers used in tournament chess.
+//! \brief This class represents the dual-clock game timers used in tournament chess.
 class Clock
 {
     public:
-        //! Constructs a game clock for timing games.
-        //
+        //! \brief Constructs a game clock for timing games.
+        //!
         //! \param duration_seconds The initial amount of time on the clock.
         //!        If this is zero, then the clock is inactive and will not stop the game.
         //! \param moves_to_reset The number of moves before the clocks are reset to the initial time.
@@ -42,55 +42,55 @@ class Clock
               Color starting_turn = WHITE,
               std::chrono::system_clock::time_point previous_start_time = {}) noexcept;
 
-        //! Stop the current player's clock and restart the opponent's clock.
+        //! \brief Stop the current player's clock and restart the opponent's clock.
         Game_Result punch(const Board& board) noexcept;
 
-        //! Undo the last clock punch (time is not added).
+        //! \brief Undo the last clock punch (time is not added).
         void unpunch() noexcept;
 
-        //! Stop both clocks.
+        //! \brief Stop both clocks.
         void stop() noexcept;
 
-        //! Start the moving player's clock at the start of a game.
-        //
+        //! \brief Start the moving player's clock at the start of a game.
+        //!
         //! This method also records the start time of the game for use in Board::print_game_record().
         void start() noexcept;
 
-        //! Returns the amount of time left for the given player.
-        //
+        //! \brief Returns the amount of time left for the given player.
+        //!
         //! \param color The color of the player whose time is being queried.
         double time_left(Color color) const noexcept;
 
-        //! The number of moves left before the clocks reset to the initial time.
-        //
+        //! \brief The number of moves left before the clocks reset to the initial time.
+        //!
         //! \param color The color of the player being queried.
         size_t moves_until_reset(Color color) const noexcept;
 
-        //! The player for whom the clock is running.
+        //! \brief The player for whom the clock is running.
         Color running_for() const noexcept;
 
-        //! The amount of time left on the clock that is currently running.
+        //! \brief The amount of time left on the clock that is currently running.
         double running_time_left() const noexcept;
 
-        //! Are clocks currently running?
+        //! \brief Are clocks currently running?
         bool is_running() const noexcept;
 
-        //! Returns the date and time when start() was called.
+        //! \brief Returns the date and time when start() was called.
         std::chrono::system_clock::time_point game_start_date_and_time() const noexcept;
 
-        //! The intitial time on the clocks at the start of the game (and added after moves_to_reset()).
+        //! \brief The intitial time on the clocks at the start of the game (and added after moves_to_reset()).
         double initial_time() const noexcept;
 
-        //! How much time is added to a player's clock after every move.
+        //! \brief How much time is added to a player's clock after every move.
         double increment(Color color) const noexcept;
 
-        //! How many moves must be played before the clocks are reset to their initial times.
+        //! \brief How many moves must be played before the clocks are reset to their initial times.
         size_t moves_per_time_period() const noexcept;
 
-        //! How time is added once a timing period (moves to reset): adding or reseting to the original time.
+        //! \brief How time is added once a timing period (moves to reset): adding or reseting to the original time.
         Time_Reset_Method reset_mode() const noexcept;
 
-        //! Was the clock used for a game?
+        //! \brief Was the clock used for a game?
         bool is_in_use() const noexcept;
 
     private:
@@ -114,13 +114,13 @@ class Clock
         friend class CECP_Mediator;
         friend class UCI_Mediator;
 
-        //! Adjust the time on the clocks.
-        //
+        //! \brief Adjust the time and other aspects on the clocks.
+        //!
         //! \param player Indicates which clock to adjust.
         //! \param new_time_seconds The new amount of time left on that clock.
         //!
-        //! This method is used by the Players derived from Outside_Communicator to adjust
-        //! the clock according to instructions from chess GUIs using the CECP protocol.
+        //! These methods are used by the classes derived from Outside_Communicator to adjust
+        //! the clock according to instructions from chess GUIs.
         void set_time(Color player, double new_time_seconds) noexcept;
         void set_increment(Color player, double new_increment_time_seconds) noexcept;
         void set_next_time_reset(size_t moves_to_reset) noexcept;

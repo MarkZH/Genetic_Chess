@@ -25,23 +25,23 @@
 
 namespace
 {
-    //! Print the command-line options for this program.
+    //! \brief Print the command-line options for this program.
     void print_help();
 
-    //! Confirm that all moves in a PGN game record are legal moves.
-    //
+    //! \brief Confirm that all moves in a PGN game record are legal moves.
+    //!
     //! \param file_name The name of the file with the PGN game records. All games will be examined.
     bool confirm_game_record(const std::string& file_name);
 
-    //! Find the last ID of a Genetic_AI in a gene pool file.
-    //
+    //! \brief Find the last ID of a Genetic_AI in a gene pool file.
+    //!
     //! \param file_name The name of the file with Genetic_AI data.
     //! \returns The numerical ID of the last AI in the file.
     int find_last_id(const std::string& file_name);
 }
 
-//! The starting point for the whole program.
-//
+//! \brief The starting point for the whole program.
+//!
 //! \param argc The number of command-line arguments.
 //! \param argv The command-line arguments. See print_help() (or run the program
 //!        with no arguments) for a listing of all the options.

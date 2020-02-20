@@ -10,14 +10,14 @@
 class Piece_Strength_Gene;
 class Board;
 
-//! Scores a board based on a weighted count of how many opponent's pieces are threatened.
-//
+//! \brief Scores a board based on a weighted count of how many opponent's pieces are threatened.
+//!
 //! The weights are provided by the Piece_Strength_Gene.
 class Opponent_Pieces_Targeted_Gene : public Clonable_Gene<Opponent_Pieces_Targeted_Gene>
 {
     public:
-        //! The Opponent_Pieces_Targeted_Gene constructor requires a Piece_Strength_Gene to reference in score_board().
-        //
+        //! \brief The Opponent_Pieces_Targeted_Gene constructor requires a Piece_Strength_Gene to reference in score_board().
+        //!
         //! \param piece_strength_gene The source of piece values to weight the importance of various pieces.
         explicit Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene) noexcept;
 

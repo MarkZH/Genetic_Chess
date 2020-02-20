@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 
-//! An exception thrown when a Genetic_AI cannot be successfully constructed.
+//! \brief An exception thrown when a Genetic_AI cannot be successfully constructed.
 class Genetic_AI_Creation_Error : public std::runtime_error
 {
     using std::runtime_error::runtime_error;

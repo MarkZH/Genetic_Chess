@@ -11,7 +11,7 @@
 
 class Board;
 
-//! Scores a board based on the number of squares attacked by a side with bonus points for legality and moves close to the king.
+//! \brief Scores a board based on the number of squares attacked by a side with bonus points for legality and moves close to the king.
 class Sphere_of_Influence_Gene : public Clonable_Gene<Sphere_of_Influence_Gene>
 {
     public:

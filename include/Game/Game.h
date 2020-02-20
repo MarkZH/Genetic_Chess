@@ -10,8 +10,8 @@ class Game_Result;
 
 //! \file
 
-//! Play a game with two local players.
-//
+//! \brief Play a game with two local players.
+//!
 //! \param board The Board on which the game will be played.
 //! \param game_clock The clock used for time control.
 //! \param white The player with the white pieces.
@@ -31,8 +31,8 @@ Game_Result play_game(Board board,
                       const std::string& location,
                       const std::string& pgn_file_name);
 
-//! Play a game with an outside GUI interface.
-//
+//! \brief Play a game with an outside GUI interface.
+//!
 //! \param local_player A chess engine chosen at the command line.
 //! \param event_name The name of the event where the game will take place. May be empty.
 //! \param location The name of the location of the game. May be empty.

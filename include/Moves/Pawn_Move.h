@@ -5,12 +5,12 @@
 #include "Game/Color.h"
 #include "Game/Square.h"
 
-//! The simplest pawn move: one step forward.
+//! \brief The simplest pawn move: one step forward.
 class Pawn_Move : public Move
 {
     public:
-        //! The destination square of a pawn move is determined by the starting square and the color of the pawn.
-        //
+        //! \brief The destination square of a pawn move is determined by the starting square and the color of the pawn.
+        //!
         //! \param color_in The color of the pawn.
         //! \param start The square where the pawn starts.
         //!

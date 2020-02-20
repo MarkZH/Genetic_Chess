@@ -4,8 +4,8 @@
 #include <chrono>
 #include <string>
 
-//! A tool for timing the execution time of user-chosen sections of code.
-//
+//! \brief A tool for timing the execution time of user-chosen sections of code.
+//!
 //! The Scoped_Stopwatch is designed so that the constructor starts the
 //! timer and the destructor stops it. So, if an instance is created at
 //! the beginning of a function, the timer will stop when the function
@@ -19,8 +19,8 @@
 class [[nodiscard]] Scoped_Stopwatch
 {
     public:
-        //! The constructor starts the stopwatch and takes a name to record.
-        //
+        //! \brief The constructor starts the stopwatch and takes a name to record.
+        //!
         //! \param name The name of the section of code to be timed. This name
         //!        will be written to the output file. If empty, nothing will
         //!        be written to file. Other methods can be used for displaying
@@ -32,23 +32,23 @@ class [[nodiscard]] Scoped_Stopwatch
         Scoped_Stopwatch(const Scoped_Stopwatch& other) = delete;
         Scoped_Stopwatch& operator=(const Scoped_Stopwatch& other) = delete;
 
-        //! If the method stop() has not been called already, the destructor stops the stopwatch and records the time to a file.
+        //! \brief If the method stop() has not been called already, the destructor stops the stopwatch and records the time to a file.
         ~Scoped_Stopwatch();
 
-        //! Manually stop the timer and record the result to a file.
+        //! \brief Manually stop the timer and record the result to a file.
         void stop() noexcept;
 
-        //! Add on to the name provided in the constructor.
-        //
+        //! \brief Add on to the name provided in the constructor.
+        //!
         //! This can be useful for code with branches to label which
         //! branch a given execution took.
         void add_info(const std::string& info) noexcept;
 
-        //! Prevent the stopwatch from recording a run.
+        //! \brief Prevent the stopwatch from recording a run.
         void reject() noexcept; // do not record time
 
-        //! Find out how much time as elapsed since the stopwatch started.
-        //
+        //! \brief Find out how much time as elapsed since the stopwatch started.
+        //!
         //! \returns Time in seconds.
         double time_so_far() const noexcept;
 

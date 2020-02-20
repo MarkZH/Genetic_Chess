@@ -7,11 +7,11 @@
 #include <sstream>
 #include <type_traits>
 
-//! A collection of useful functions for dealing with text strings.
+//! \brief A collection of useful functions for dealing with text strings.
 namespace String
 {
-    //! Splits a string into a list of strings based upon a delimiter.
-    //
+    //! \brief Splits a string into a list of strings based upon a delimiter.
+    //!
     //! \param s The string to be split.
     //! \param delim The delimiter that marks where the string should be split. If empty,
     //!        any number of consecutive whitespaces will be the delimiter.
@@ -22,8 +22,8 @@ namespace String
                                    std::string delim = "",
                                    size_t count = std::string::npos) noexcept;
 
-    //! Determine whether a string exists inside another string.
-    //
+    //! \brief Determine whether a string exists inside another string.
+    //!
     //! \param container The string to search.
     //! \param target The character or string to search for.
     //! \returns True if the target is inside the container.
@@ -33,42 +33,42 @@ namespace String
         return container.find(target) != std::string::npos;
     }
 
-    //! Determine whether a strings has another string as a prefix.
-    //
+    //! \brief Determine whether a strings has another string as a prefix.
+    //!
     //! \param s The string to check.
     //! \param beginning The prefix to find.
     //! \returns True if the string starts with the beginning string.
     bool starts_with(const std::string& s, const std::string& beginning) noexcept;
 
-    //! Determine whether a strings has another string as a suffix.
-    //
+    //! \brief Determine whether a strings has another string as a suffix.
+    //!
     //! \param s The string to check.
     //! \param ending The suffix to find.
     //! \returns True if the string ends with the ending string.
     bool ends_with(const std::string& s, const std::string& ending) noexcept;
 
-    //! Remove leading and trailing whitespace from a string.
-    //
+    //! \brief Remove leading and trailing whitespace from a string.
+    //!
     //! \param s The input string.
     //! \returns The same string with no leading or trailing whitespace.
     std::string trim_outer_whitespace(const std::string& s) noexcept;
 
-    //! Remove leading, trailing, and multiple whitespaces from a string.
-    //
+    //! \brief Remove leading, trailing, and multiple whitespaces from a string.
+    //!
     //! \param s The input string.
     //! \returns The same string with no leading or trailing whitespace, and with all
     //!          runs of internal whitespace replaced with a single space.
     std::string remove_extra_whitespace(const std::string& s) noexcept;
 
-    //! Remove all text after a comment indicator.
-    //
+    //! \brief Remove all text after a comment indicator.
+    //!
     //! \param str The input string.
     //! \param comment The marker indicating the start of a comment to be removed.
     //! \returns The same string with everything after the comment marker removed.
     std::string strip_comments(const std::string& str, const std::string& comment) noexcept;
 
-    //! Remove all text between comment indicators.
-    //
+    //! \brief Remove all text between comment indicators.
+    //!
     //! \param str The input string.
     //! \param start The marker indicating the start of a comment to be removed.
     //! \param end The marker indicating the end of a comment to be removed.
@@ -77,16 +77,16 @@ namespace String
     //! Note: This function does not consider the nesting of delimited blocks of text.
     std::string strip_block_comment(const std::string& str, const std::string& start, const std::string& end);
 
-    //! Remove all text between comment indicators.
-    //
+    //! \brief Remove all text between comment indicators.
+    //!
     //! \param str The input string.
     //! \param start The marker indicating the start of a comment to be removed.
     //! \param end The marker indicating the end of a comment to be removed.
     //! \returns The same string with the markers and everything between them removed.
     std::string strip_nested_block_comments(const std::string& str, const std::string& start, const std::string& end);
 
-    //! Extract text between delimiters
-    //
+    //! \brief Extract text between delimiters
+    //!
     //! \param str The input string
     //! \param start The marker indicating the beginning of the text block.
     //! \param end The marker indicating the end of the text block.
@@ -99,14 +99,14 @@ namespace String
     //! \endcode
     std::string extract_delimited_text(const std::string& str, const std::string& start, const std::string& end);
 
-    //! Create a lowercase version of a string.
-    //
+    //! \brief Create a lowercase version of a string.
+    //!
     //! \param s The input string.
     //! \returns The same string with all letters replaced by their lowercase versions.
     std::string lowercase(std::string s) noexcept;
 
-    //! Returns a text version of an integer with thousands separators
-    //
+    //! \brief Returns a text version of an integer with thousands separators
+    //!
     //! \param n The integer.
     //! \param separator The separator between groups of thousands.
     //! \returns A text string with thousands separators.
@@ -136,15 +136,15 @@ namespace String
         return result;
     }
 
-    //! Round a number to the specified precision
-    //
+    //! \brief Round a number to the specified precision
+    //!
     //! \param x The number to be rounded.
     //! \param precision The precision of the rounding (0.01 for 2 decimal places of precision).
     //! \returns A string representation of the rounded number.
     std::string round_to_precision(double x, double precision) noexcept;
 
-    //! Convert a std::string to a numeric type.
-    //
+    //! \brief Convert a std::string to a numeric type.
+    //!
     //! \param s The input string containing a number.
     //! \tparam Number The numeric type the string should be converted to.
     //! \returns A number of type Number.
@@ -166,16 +166,16 @@ namespace String
         }
     }
 
-    //! Create a text string of the given time point in the given format
-    //
+    //! \brief Create a text string of the given time point in the given format
+    //!
     //! \param point_in_time The time point to convert.
     //! \param format The format of the date/time data (see docs for std::put_time).
     //! \returns A formatted text string of the date and/or time.
     std::string date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
                                      const std::string& format) noexcept;
 
-    //! Inserts extra text before the file name extension.
-    //
+    //! \brief Inserts extra text before the file name extension.
+    //!
     //! \param original_file_name The file name to be editted.
     //! \param addition A string to insert just before the dot before the file name extension.
     //! \returns (original file name without extention) + (addition) + (extension)
