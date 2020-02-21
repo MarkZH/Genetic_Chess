@@ -21,7 +21,7 @@
 
 namespace
 {
-    using indexed_move_array = std::array<std::array<std::array<std::vector<std::vector<const Move*>>, 64>, 6>, 2>;
+    using indexed_move_array = std::array<std::array<std::vector<std::vector<const Move*>>, 64>, 12>;
 
     void add_pawn_moves(indexed_move_array& out, Color color) noexcept;
     void add_rook_moves(indexed_move_array& out, Color color, Piece_Type type = ROOK) noexcept;
@@ -56,11 +56,12 @@ namespace
             {
                 for(auto type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
                 {
+                    auto piece = Piece{color, type};
                     for(size_t index = 0; index < 64; ++index)
                     {
-                        for(const auto& move_list : legal_moves[color][type][index])
+                        for(const auto& move_list : legal_moves[piece.index()][index])
                         {
-                            result[color][type][index].push_back({});
+                            result[piece.index()][index].push_back({});
 
                             for(auto move : move_list)
                             {
@@ -69,7 +70,7 @@ namespace
                                     && ! move->is_en_passant()
                                     && (move->promotion_piece_symbol() == 'Q' || move->promotion_piece_symbol() == '\0'))
                                 {
-                                    result[color][type][index].back().push_back(move);
+                                    result[piece.index()][index].back().push_back(move);
                                 }
                             }
                         }
@@ -84,10 +85,10 @@ namespace
     // Add a move to the list that is only legal when starting from a certain square
     // (e.g., castling, pawn double move, promotion, etc.)
     template<typename Move_Type, typename ...Parameters>
-    void add_legal_move(indexed_move_array& out, Color color, Piece_Type type, bool add_new_list, Parameters ... parameters) noexcept
+    void add_legal_move(indexed_move_array& out, Piece piece, bool add_new_list, Parameters ... parameters) noexcept
     {
         auto move = new Move_Type(parameters...);
-        auto& lists = out[color][type][move->start().index()];
+        auto& lists = out[piece.index()][move->start().index()];
         if(lists.empty() || add_new_list)
         {
             lists.push_back({});
@@ -101,20 +102,21 @@ namespace
         lists.back().push_back(move);
     }
 
-    void add_standard_legal_move(indexed_move_array& out, Color color, Piece_Type type, int file_step, int rank_step) noexcept
+    void add_standard_legal_move(indexed_move_array& out, Piece piece, int file_step, int rank_step) noexcept
     {
         for(auto start : Square::all_squares())
         {
             auto end = start + Square_Difference{file_step, rank_step};
             if(end.inside_board())
             {
-                add_legal_move<Move>(out, color, type, false, start, end);
+                add_legal_move<Move>(out, piece, false, start, end);
             }
         }
     }
 
     void add_pawn_moves(indexed_move_array& out, Color color) noexcept
     {
+        auto pawn = Piece{color, PAWN};
         auto base_rank = (color == WHITE ? 2 : 7);
         auto no_normal_move_rank = (color == WHITE ? 7 : 2);
         auto direction = (color == WHITE ? 1 : -1);
@@ -122,13 +124,13 @@ namespace
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
             {
-                add_legal_move<Pawn_Move>(out, color, PAWN, true, color, Square{file, rank});
+                add_legal_move<Pawn_Move>(out, pawn, true, color, Square{file, rank});
             }
         }
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            add_legal_move<Pawn_Double_Move>(out, color, PAWN, false, color, file);
+            add_legal_move<Pawn_Double_Move>(out, pawn, false, color, file);
         }
 
         auto possible_promotions = {QUEEN, KNIGHT, ROOK, BISHOP};
@@ -141,20 +143,20 @@ namespace
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
                 {
-                    add_legal_move<Pawn_Capture>(out, color, PAWN, true, color, dir, Square{file, rank});
+                    add_legal_move<Pawn_Capture>(out, pawn, true, color, dir, Square{file, rank});
                 }
             }
 
             for(char file = first_file; file <= last_file; ++file)
             {
-                add_legal_move<En_Passant>(out, color, PAWN, true, color, dir, file);
+                add_legal_move<En_Passant>(out, pawn, true, color, dir, file);
             }
 
             for(auto promote : possible_promotions)
             {
                 for(auto file = first_file; file <= last_file; ++file)
                 {
-                    add_legal_move<Pawn_Promotion_by_Capture>(out, color, PAWN, true, promote, color, dir, file);
+                    add_legal_move<Pawn_Promotion_by_Capture>(out, pawn, true, promote, color, dir, file);
                 }
             }
         }
@@ -163,7 +165,7 @@ namespace
         {
             for(auto file = 'a'; file <= 'h'; ++file)
             {
-                add_legal_move<Pawn_Promotion>(out, color, PAWN, true, promote, color, file);
+                add_legal_move<Pawn_Promotion>(out, pawn, true, promote, color, file);
             }
         }
     }
@@ -179,7 +181,7 @@ namespace
 
                 for(int move_size = 1; move_size <= 7; ++move_size)
                 {
-                    add_standard_legal_move(out, color, type, move_size*d_file, move_size*d_rank);
+                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank);
                 }
             }
         }
@@ -194,7 +196,7 @@ namespace
             {
                 for(auto rank_direction : {-1, 1})
                 {
-                    add_standard_legal_move(out, color, KNIGHT, d_file*file_direction, d_rank*rank_direction);
+                    add_standard_legal_move(out, {color, KNIGHT}, d_file * file_direction, d_rank * rank_direction);
                 }
             }
         }
@@ -208,7 +210,7 @@ namespace
             {
                 for(int move_size = 1; move_size <= 7; ++move_size)
                 {
-                    add_standard_legal_move(out, color, type, move_size*d_file, move_size*d_rank);
+                    add_standard_legal_move(out, {color, type}, move_size * d_file, move_size * d_rank);
                 }
             }
         }
@@ -222,19 +224,20 @@ namespace
 
     void add_king_moves(indexed_move_array& out, Color color) noexcept
     {
+        auto king = Piece{color, KING};
         for(int d_rank = -1; d_rank <= 1; ++d_rank)
         {
             for(int d_file = -1; d_file <= 1; ++d_file)
             {
                 if(d_rank == 0 && d_file == 0) { continue; }
 
-                add_standard_legal_move(out, color, KING, d_file, d_rank);
+                add_standard_legal_move(out, king, d_file, d_rank);
             }
         }
 
         int base_rank = (color == WHITE ? 1 : 8);
-        add_legal_move<Castle>(out, color, KING, true, base_rank, Direction::LEFT);
-        add_legal_move<Castle>(out, color, KING, true, base_rank, Direction::RIGHT);
+        add_legal_move<Castle>(out, king, true, base_rank, Direction::LEFT);
+        add_legal_move<Castle>(out, king, true, base_rank, Direction::RIGHT);
     }
 }
 
@@ -295,7 +298,7 @@ bool Piece::can_move(const Move* move) const noexcept
 const std::vector<std::vector<const Move*>>& Piece::move_lists(Square square) const noexcept
 {
     assert(*this);
-    return legal_moves[color()][type()][square.index()];
+    return legal_moves[index()][square.index()];
 }
 
 Piece_Type Piece::type() const noexcept
@@ -317,7 +320,7 @@ Piece::piece_code_t Piece::index() const noexcept
 const std::vector<std::vector<const Move*>>& Piece::attacking_move_lists(Square square) const noexcept
 {
     assert(*this);
-    return attack_moves[color()][type()][square.index()];
+    return attack_moves[index()][square.index()];
 }
 
 bool operator==(Piece a, Piece b) noexcept
