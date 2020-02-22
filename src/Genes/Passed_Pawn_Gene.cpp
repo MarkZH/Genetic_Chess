@@ -10,14 +10,14 @@
 #include "Game/Piece.h"
 #include "Game/Color.h"
 
-double Passed_Pawn_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
+double Passed_Pawn_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
     double score = 0.0;
-    auto own_pawn = Piece{perspective, PAWN};
-    auto other_pawn = Piece{opposite(perspective), PAWN};
-    auto near_rank = (perspective == WHITE ? 1 : 8);
-    auto far_rank  = (perspective == WHITE ? 7 : 2);
-    auto rank_step = (perspective == WHITE ? 1 : -1);
+    auto own_pawn = Piece{perspective, Piece_Type::PAWN};
+    auto other_pawn = Piece{opposite(perspective), Piece_Type::PAWN};
+    auto near_rank = (perspective == Piece_Color::WHITE ? 1 : 8);
+    auto far_rank  = (perspective == Piece_Color::WHITE ? 7 : 2);
+    auto rank_step = (perspective == Piece_Color::WHITE ? 1 : -1);
     auto other_pawn_ranks_occupied = std::array<int, 8>{};
 
     for(char file = 'a'; file <= 'h'; ++file)

@@ -6,12 +6,12 @@
 #include "Game/Color.h"
 #include "Utility/Math.h"
 
-double Game_Tree_Node_Result::corrected_score(Color query) const noexcept
+double Game_Tree_Node_Result::corrected_score(Piece_Color query) const noexcept
 {
     return query == perspective ? score : -score;
 }
 
-std::pair<double, int> Game_Tree_Node_Result::value(Color query) const noexcept
+std::pair<double, int> Game_Tree_Node_Result::value(Piece_Color query) const noexcept
 {
     auto standardized_score = corrected_score(query);
     if(std::isinf(standardized_score))
@@ -34,12 +34,12 @@ size_t Game_Tree_Node_Result::depth() const noexcept
     return variation.size();
 }
 
-bool Game_Tree_Node_Result::is_winning_for(Color query) const noexcept
+bool Game_Tree_Node_Result::is_winning_for(Piece_Color query) const noexcept
 {
     return std::isinf(score) && ((score > 0) == (query == perspective));
 }
 
-bool Game_Tree_Node_Result::is_losing_for(Color query) const noexcept
+bool Game_Tree_Node_Result::is_losing_for(Piece_Color query) const noexcept
 {
     return is_winning_for(opposite(query));
 }

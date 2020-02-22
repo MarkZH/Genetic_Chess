@@ -87,7 +87,7 @@ class Board
         //! \brief Tells which player is due to move.
         //!
         //! \returns Color of player who is next to move.
-        Color whose_turn() const noexcept;
+        Piece_Color whose_turn() const noexcept;
 
         //! \brief Returns the status of the game in FEN.
         //!
@@ -128,7 +128,7 @@ class Board
         //! \returns A number indicating the direction of the castling
         //!          (positive for kingside, negative for queenside, zero
         //!          for no castling yet).
-        int castling_direction(Color player) const noexcept;
+        int castling_direction(Piece_Color player) const noexcept;
 
         //! \brief Set the format an engine should output while picking a move.
         //!
@@ -187,14 +187,14 @@ class Board
         //! \param square The queried square.
         //! \param king_color The color of the king piece that is under potential attack.
         //! \returns Whether the king would be in check if it was placed on the square in question.
-        bool safe_for_king(Square square, Color king_color) const noexcept;
+        bool safe_for_king(Square square, Piece_Color king_color) const noexcept;
 
         //! \brief Determine if there are any attacks on a square that are blocked by other pieces.
         //!
         //! \param square The queried square.
         //! \param attacking_color The color of the attacking pieces.
         //! \returns Whether there is an attack on the square that is blocked by another piece.
-        bool blocked_attack(Square square, Color attacking_color) const noexcept;
+        bool blocked_attack(Square square, Piece_Color attacking_color) const noexcept;
 
         //! \brief Indicates whether the queried square has a piece on it that never moved.
         //!
@@ -206,7 +206,7 @@ class Board
         //!
         //! \param color Which king to find.
         //! \returns Square which contains the sought after king.
-        Square find_king(Color color) const noexcept;
+        Square find_king(Piece_Color color) const noexcept;
 
         //! \brief Find out if the king of the player to move is currently in check.
         //!
@@ -235,10 +235,20 @@ class Board
         //! - At least two bishops (of any color) on oppositely colored squares,
         //! - A bishop and knight (of an piece color or square color combination),
         //! - Two knights (of any piece color or square color combination).
-        //! \param color If NONE, check both sides for enough material. Otherwise, only check the pieces of one side.
+        //! \param color The player color of the pieces to check.
+        //! \returns If there are enough pieces on the board on one side to make a checkmate arrangement.
+        bool enough_material_to_checkmate(Piece_Color color) const noexcept;
+
+        //! \brief Checks whether there are enough pieces on the board for any possible checkmate.
+        //!
+        //! The following piece sets on the board make checkmate possible:
+        //! - Any single pawn, rook, or queen,
+        //! - At least two bishops (of any color) on oppositely colored squares,
+        //! - A bishop and knight (of an piece color or square color combination),
+        //! - Two knights (of any piece color or square color combination).
         //! \returns If there are enough pieces on the board to make a checkmate arrangement.
-        //!          If the method returns false when called with NONE, this will usually lead to a drawn game.
-        bool enough_material_to_checkmate(Color color = NONE) const noexcept;
+        //!          If the method returns false, this will usually lead to a drawn game.
+        bool enough_material_to_checkmate() const noexcept;
 
         //! \brief Determines whether a move will capture on the current board.
         //!
@@ -263,7 +273,7 @@ class Board
         //!
         //! \param player The color of the player being queried.
         //! \returns The ply count when the player castled, or MAX(size_t) if the player has not castled.
-        size_t castling_move_index(Color player) const noexcept;
+        size_t castling_move_index(Piece_Color player) const noexcept;
 
         //! \brief Create a copy of the board with a random pawn removed.
         //!
@@ -289,7 +299,7 @@ class Board
     private:
         std::array<Piece, 64> board;
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
-        Color turn_color;
+        Piece_Color turn_color;
         size_t game_move_count = 0;
         const Move* previous_move = nullptr;
         std::array<bool, 64> unmoved_positions{};
@@ -314,7 +324,7 @@ class Board
         void remove_attacks_from(Square square, Piece old_piece) noexcept;
         void modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept;
         void update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept;
-        const std::bitset<16>& moves_attacking_square(Square square, Color attacking_color) const noexcept;
+        const std::bitset<16>& moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
         const std::bitset<16>& checking_moves() const noexcept;
         Square find_checking_square() const noexcept;
 

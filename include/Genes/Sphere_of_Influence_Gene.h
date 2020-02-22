@@ -28,7 +28,7 @@ class Sphere_of_Influence_Gene : public Clonable_Gene<Sphere_of_Influence_Gene>
         double illegal_square_score = 1.0;
         double king_target_factor = 0.0;
 
-        double score_board(const Board& board, Color perspective, const size_t prior_real_moves) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, const size_t prior_real_moves) const noexcept override;
         void gene_specific_mutation() noexcept override;
 
         std::array<double, 8> scalar_cache;

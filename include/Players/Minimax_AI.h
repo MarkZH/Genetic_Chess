@@ -86,10 +86,10 @@ class Minimax_AI : public Player
         // Evaluation method
         double evaluate(const Board& board,
                         const Game_Result& move_result,
-                        Color perspective,
+                        Piece_Color perspective,
                         size_t prior_real_moves) const noexcept;
         virtual double internal_evaluate(const Board& board,
-                                         Color perspective,
+                                         Piece_Color perspective,
                                          size_t prior_real_moves) const  noexcept = 0;
 
         virtual const std::array<double, 6>& piece_values() const noexcept = 0;
@@ -125,17 +125,17 @@ class Minimax_AI : public Player
         //! \param move_result The possibly game-ending result of the move.
         //! \param move_list The current move list from the game tree search.
         Game_Tree_Node_Result create_result(Board board,
-                                            Color perspective,
+                                            Piece_Color perspective,
                                             const Game_Result& move_result,
                                             const current_variation_store& move_list) const noexcept;
 
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                   const Clock& clock,
-                                  Color perspective) const noexcept;
+                                  Piece_Color perspective) const noexcept;
         void output_thinking_uci(const Game_Tree_Node_Result& thought,
                                  const Clock& clock,
-                                 Color perspective) const noexcept;
+                                 Piece_Color perspective) const noexcept;
 
         double time_since_last_output(const Clock& clock) const noexcept;
 

@@ -77,8 +77,8 @@ class Square
         //! This function is useful for Board::enough_material_to_checkmate() since one
         //! condition is that bishops on opposite color squares are sufficient to checkmate,
         //! while bishops on the same color square are not.
-        //! \returns Color of square on board ("a1" --> BLACK; "h1" --> WHITE)
-        Color color() const noexcept;
+        //! \returns Square_Color of square on board ("a1" --> Square_Color::BLACK; "h1" --> Square_Color::WHITE)
+        Square_Color color() const noexcept;
 
         //! \brief Apply an offset to a square.
         //!

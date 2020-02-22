@@ -15,7 +15,7 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strengt
 {
 }
 
-double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
+double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
     double score = 0.0;
 

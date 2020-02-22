@@ -56,7 +56,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
         catch(const Game_Ended& game_ending_error)
         {
-            return Game_Result(NONE, game_ending_error.what(), true);
+            return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
         }
 
         if(command == "go")
@@ -70,7 +70,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         {
             log("Setting board to standard start position and resetting clock");
             board = Board{};
-            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(WHITE), clock.reset_mode(), WHITE);
+            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(Piece_Color::WHITE), clock.reset_mode(), Piece_Color::WHITE);
             move_list.clear();
             need_to_set_time = false;;
             setup_result = {};
@@ -161,7 +161,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 
             log("increment = " + split[3]);
             auto increment = std::stod(split[3]);
-            clock = Clock(game_time, reset_moves, increment, Time_Reset_Method::ADDITION, WHITE);
+            clock = Clock(game_time, reset_moves, increment, Time_Reset_Method::ADDITION, Piece_Color::WHITE);
             need_to_set_time = false;;
         }
         else if(String::starts_with(command, "st "))
@@ -170,7 +170,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             auto split = String::split(command);
             auto time_per_move = std::stoi(split[1]);
             log("game time per move = " + std::to_string(time_per_move));
-            clock = Clock(time_per_move, 1, 0, Time_Reset_Method::SET_TO_ORIGINAL, WHITE);
+            clock = Clock(time_per_move, 1, 0, Time_Reset_Method::SET_TO_ORIGINAL, Piece_Color::WHITE);
             need_to_set_time = false;
         }
         else if(String::starts_with(command, "time "))
@@ -206,15 +206,15 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             auto reason = String::extract_delimited_text(command, "{", "}");
             if(result == "1-0")
             {
-                return Game_Result(WHITE, reason, false);
+                return Game_Result(Winner_Color::WHITE, reason, false);
             }
             else if(result == "0-1")
             {
-                return Game_Result(BLACK, reason, false);
+                return Game_Result(Winner_Color::BLACK, reason, false);
             }
             else
             {
-                return Game_Result(NONE, reason, false);
+                return Game_Result(Winner_Color::NONE, reason, false);
             }
         }
     }

@@ -40,7 +40,7 @@ class Gene
         //! \param perspective For which player the board is being scored.
         //! \param prior_real_moves How many of the first moves on the board represent real moves from the current game.
         //! \returns A numerical score indicating the likelihood that the board in the first argument is winning for board.whose_turn().
-        double evaluate(const Board& board, Color perspective, size_t prior_real_moves) const noexcept;
+        double evaluate(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept;
 
         //! \brief Copies the gene data and returns a pointer to the new data
         //!
@@ -79,7 +79,7 @@ class Gene
         //! \param board The board upon which the test takes place.
         //! \param perspective The player for whom the score is being calculated.
         //! \param expected_score The expected score returned by Gene::score_board().
-        void test(bool& test_variable, const Board& board, Color perspective, double expected_score) const noexcept;
+        void test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept;
 
     protected:
         //! \brief Returns a structure relating a gene property to a numerical value.
@@ -104,7 +104,7 @@ class Gene
     private:
         double scoring_priority = 1000.0;
 
-        virtual double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept = 0;
+        virtual double score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
 
         //! \brief A method overridden by derived genes to mutate more specific gene components.

@@ -157,7 +157,7 @@ void Genome::read_from(std::istream& is)
     throw Genetic_AI_Creation_Error("Reached end of file before END of genome.");
 }
 
-double Genome::score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept
+double Genome::score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept
 {
     return std::accumulate(genome.begin(), genome.end(), 0.0,
                            [&](auto sum, const auto& gene)
@@ -166,7 +166,7 @@ double Genome::score_board(const Board& board, Color perspective, size_t prior_r
                            });
 }
 
-double Genome::evaluate(const Board& board, Color perspective, size_t prior_real_moves) const
+double Genome::evaluate(const Board& board, Piece_Color perspective, size_t prior_real_moves) const
 {
     return score_board(board, perspective, prior_real_moves) - score_board(board, opposite(perspective), prior_real_moves);
 }

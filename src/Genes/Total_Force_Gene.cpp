@@ -14,7 +14,7 @@ Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_sou
 {
 }
 
-double Total_Force_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
+double Total_Force_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
     return std::accumulate(Square::all_squares().begin(), Square::all_squares().end(), 0.0,
                            [this, &board, perspective](auto sum, auto square)

@@ -60,10 +60,10 @@ std::string Square::string() const noexcept
     return file() + std::to_string(rank());
 }
 
-Color Square::color() const noexcept
+Square_Color Square::color() const noexcept
 {
-    //return (file() - 'a')%2 == (rank() - 1)%2 ? BLACK : WHITE;
-    return (index()/8)%2 == (index()%8)%2 ? BLACK : WHITE;
+    //return (file() - 'a')%2 == (rank() - 1)%2 ? Square_Color::BLACK : Square_Color::WHITE;
+    return (index()/8)%2 == (index()%8)%2 ? Square_Color::BLACK : Square_Color::WHITE;
 }
 
 bool Square::inside_board() const noexcept

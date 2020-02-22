@@ -9,7 +9,7 @@
 #include "Game/Board.h"
 #include "Game/Square.h"
 
-Pawn_Capture::Pawn_Capture(Color color_in, Direction dir, Square start_in) :
+Pawn_Capture::Pawn_Capture(Piece_Color color_in, Direction dir, Square start_in) :
     Pawn_Move(color_in, start_in)
 {
     adjust_end_file(dir == Direction::RIGHT ? 1 : -1);

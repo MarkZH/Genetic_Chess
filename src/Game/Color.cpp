@@ -1,21 +1,29 @@
 #include "Game/Color.h"
 
-#include <cassert>
 #include <string>
 
-Color opposite(Color color) noexcept
+Piece_Color opposite(Piece_Color color) noexcept
 {
-    assert(color != NONE);
-    return (color == WHITE ? BLACK : WHITE);
+    return color == Piece_Color::WHITE ? Piece_Color::BLACK : Piece_Color::WHITE;
 }
 
-std::string color_text(Color color) noexcept
+std::string color_text(Piece_Color color) noexcept
 {
-    switch(color)
-    {
-        case WHITE: return "White";
-        case BLACK: return "Black";
-        case NONE:  return "None";
-        default:    return {};
-    }
+    return color == Piece_Color::WHITE ? "White" : "Black";
+}
+
+Square_Color opposite(Square_Color color) noexcept
+{
+    return color == Square_Color::WHITE ? Square_Color::BLACK : Square_Color::WHITE;
+}
+
+std::string color_text(Winner_Color color) noexcept
+{
+	switch(color)
+	{
+        case Winner_Color::WHITE: return "White";
+        case Winner_Color::BLACK: return "Black";
+        case Winner_Color::NONE:  return "None";
+        default: return {};
+	}
 }

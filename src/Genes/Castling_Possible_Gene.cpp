@@ -32,7 +32,7 @@ std::string Castling_Possible_Gene::name() const noexcept
     return "Castling Possible Gene";
 }
 
-double Castling_Possible_Gene::score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept
+double Castling_Possible_Gene::score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept
 {
     // check if a castling move lies between here and the actual state of the board
     if(board.game_length() > 0)

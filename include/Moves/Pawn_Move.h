@@ -15,7 +15,7 @@ class Pawn_Move : public Move
         //! \param start The square where the pawn starts.
         //!
         //! The constructor also sets able_to_capture to false.
-        Pawn_Move(Color color_in, Square start) noexcept;
+        Pawn_Move(Piece_Color color_in, Square start) noexcept;
 
     protected:
         std::string algebraic_base(const Board& board) const noexcept override;

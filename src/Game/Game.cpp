@@ -36,8 +36,8 @@ Game_Result play_game(Board board,
 
     while( ! result.game_has_ended())
     {
-        auto& player  = board.whose_turn() == WHITE ? white : black;
-        auto& thinker = board.whose_turn() == WHITE ? black : white;
+        auto& player  = board.whose_turn() == Piece_Color::WHITE ? white : black;
+        auto& thinker = board.whose_turn() == Piece_Color::WHITE ? black : white;
 
         thinker.ponder(board, game_clock, pondering_allowed);
         const auto& move_chosen = player.choose_move(board, game_clock);
@@ -76,7 +76,7 @@ void play_game_with_outsider(const Player& player,
     Clock clock;
     Game_Result game_result;
     std::vector<const Move*> game_record;
-    auto player_color = BLACK;
+    auto player_color = Piece_Color::BLACK;
     auto print_game_record = true;
 
     while(true)
@@ -107,8 +107,8 @@ void play_game_with_outsider(const Player& player,
         if(print_game_record && ! game_file_name.empty())
         {
             clock.stop();
-            auto white = (player_color == WHITE ? &player : nullptr);
-            auto black = (player_color == BLACK ? &player : nullptr);
+            auto white = (player_color == Piece_Color::WHITE ? &player : nullptr);
+            auto black = (player_color == Piece_Color::BLACK ? &player : nullptr);
             board.print_game_record(game_record,
                                     white, black,
                                     String::add_to_file_name(game_file_name, "-" + color_text(player_color)),

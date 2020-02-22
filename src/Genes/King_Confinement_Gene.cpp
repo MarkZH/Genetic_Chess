@@ -46,7 +46,7 @@ void King_Confinement_Gene::gene_specific_mutation() noexcept
     }
 }
 
-double King_Confinement_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
+double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
     std::array<Square, 64> square_queue{};
     size_t queue_insertion_point = 0;
@@ -74,7 +74,7 @@ double King_Confinement_Gene::score_board(const Board& board, Color perspective,
 
         auto piece = board.piece_on_square(square);
 
-        if(piece && piece.color() == perspective && piece.type() != KING) // Square is blocked by a friendly piece
+        if(piece && piece.color() == perspective && piece.type() != Piece_Type::KING) // Square is blocked by a friendly piece
         {
             friendly_block_total += friendly_block_score;
         }

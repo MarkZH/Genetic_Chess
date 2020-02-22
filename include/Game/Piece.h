@@ -12,7 +12,7 @@ class Square;
 //! \file
 
 //! \brief An enumeration to identify the type of a Piece.
-enum Piece_Type : unsigned
+enum class Piece_Type : unsigned
 {
     PAWN,
     ROOK,
@@ -38,7 +38,7 @@ class Piece
         //!
         //! \param color The color of the piece.
         //! \param type The type of piece.
-        Piece(Color color, Piece_Type type) noexcept;
+        Piece(Piece_Color color, Piece_Type type) noexcept;
 
         //! \brief Get the PGN symbol for the piece.
         //!
@@ -52,8 +52,8 @@ class Piece
 
         //! \brief The color of the piece.
         //!
-        //! \returns The Color of the player that controls the piece.
-        Color color() const noexcept;
+        //! \returns The Piece_Color of the player that controls the piece.
+        Piece_Color color() const noexcept;
 
         //! \brief Get the type of the piece.
         //!

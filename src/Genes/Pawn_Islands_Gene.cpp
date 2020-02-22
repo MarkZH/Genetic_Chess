@@ -9,12 +9,12 @@
 
 #include "Genes/Gene.h"
 
-double Pawn_Islands_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
+double Pawn_Islands_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
     auto islands = 0;
     auto pawn_count = 0;
     bool on_island = false;
-    auto own_pawn = Piece{perspective, PAWN};
+    auto own_pawn = Piece{perspective, Piece_Type::PAWN};
 
     for(char file = 'a'; file <= 'h'; ++file)
     {

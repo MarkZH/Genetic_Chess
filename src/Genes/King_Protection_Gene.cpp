@@ -9,7 +9,7 @@
 #include "Game/Square.h"
 #include "Moves/Move.h"
 
-double King_Protection_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
+double King_Protection_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
     auto square_count = 0;
 

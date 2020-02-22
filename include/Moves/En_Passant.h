@@ -20,7 +20,7 @@ class En_Passant : public Pawn_Capture
         //! \param color The color of the moving pawn.
         //! \param dir The direction of the capture.
         //! \param file_start The file of the square where the pawn starts.
-        En_Passant(Color color, Direction dir, char file_start) noexcept;
+        En_Passant(Piece_Color color, Direction dir, char file_start) noexcept;
 
         //! \brief Implement capturing the pawn on the square to the side of the starting square.
         //!

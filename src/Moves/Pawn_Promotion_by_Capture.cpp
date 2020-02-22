@@ -10,7 +10,7 @@
 #include "Moves/Direction.h"
 
 Pawn_Promotion_by_Capture::Pawn_Promotion_by_Capture(Piece_Type promotion,
-                                                     Color color,
+                                                     Piece_Color color,
                                                      Direction dir,
                                                      char file_start) noexcept :
     Pawn_Promotion(promotion, color, file_start)

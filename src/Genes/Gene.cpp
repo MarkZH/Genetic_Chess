@@ -147,7 +147,7 @@ void Gene::gene_specific_mutation() noexcept
 {
 }
 
-double Gene::evaluate(const Board& board, Color perspective, size_t prior_real_moves) const noexcept
+double Gene::evaluate(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept
 {
     return scoring_priority*score_board(board, perspective, prior_real_moves);
 }
@@ -167,7 +167,7 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
 {
 }
 
-void Gene::test(bool& test_variable, const Board& board, Color perspective, double expected_score) const noexcept
+void Gene::test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept
 {
     auto result = score_board(board, perspective, board.game_length() == 0 ? 0 : board.game_length() - 1);
     if(std::abs(result - expected_score) > 1e-6)

@@ -36,7 +36,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
         }
         catch(const Game_Ended& game_ending_error)
         {
-            return Game_Result(NONE, game_ending_error.what(), true);
+            return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
         }
 
         if(command == "ucinewgame")
@@ -117,10 +117,10 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
         else if(String::starts_with(command, "go "))
         {
             auto mode = clock.reset_mode();
-            auto wtime = clock.time_left(WHITE);
-            auto btime = clock.time_left(BLACK);
-            auto winc = clock.increment(WHITE);
-            auto binc = clock.increment(BLACK);
+            auto wtime = clock.time_left(Piece_Color::WHITE);
+            auto btime = clock.time_left(Piece_Color::BLACK);
+            auto winc = clock.increment(Piece_Color::WHITE);
+            auto binc = clock.increment(Piece_Color::BLACK);
             auto movestogo = size_t{0};
             auto movetime = clock.initial_time();
             auto new_mode = mode;
@@ -182,9 +182,9 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             {
                 if(new_mode == Time_Reset_Method::ADDITION)
                 {
-                    clock = Clock(board.whose_turn() == WHITE ? wtime : btime,
+                    clock = Clock(board.whose_turn() == Piece_Color::WHITE ? wtime : btime,
                                   movestogo,
-                                  board.whose_turn() == WHITE ? winc : binc,
+                                  board.whose_turn() == Piece_Color::WHITE ? winc : binc,
                                   new_mode,
                                   board.whose_turn(),
                                   clock.game_start_date_and_time());
@@ -203,10 +203,10 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             {
                 if(new_mode == Time_Reset_Method::ADDITION)
                 {
-                    clock.set_time(WHITE, wtime);
-                    clock.set_time(BLACK, btime);
-                    clock.set_increment(WHITE, winc);
-                    clock.set_increment(BLACK, binc);
+                    clock.set_time(Piece_Color::WHITE, wtime);
+                    clock.set_time(Piece_Color::BLACK, btime);
+                    clock.set_increment(Piece_Color::WHITE, winc);
+                    clock.set_increment(Piece_Color::BLACK, binc);
                     clock.set_next_time_reset(movestogo);
                 }
                 else

@@ -30,7 +30,7 @@ class King_Confinement_Gene : public Clonable_Gene<King_Confinement_Gene>
         double friendly_block_score = 0.0;
         double opponent_block_score = 0.0;
 
-        double score_board(const Board& board, Color perspective, size_t prior_real_moves) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept override;
 };
 
 #endif // KING_CONFINEMENT_GENE_H

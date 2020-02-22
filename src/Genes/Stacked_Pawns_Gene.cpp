@@ -9,11 +9,11 @@
 
 #include "Genes/Gene.h"
 
-double Stacked_Pawns_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
+double Stacked_Pawns_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
     double score = 0.0;
 
-    auto own_pawn = Piece{perspective, PAWN};
+    auto own_pawn = Piece{perspective, Piece_Type::PAWN};
     for(char file = 'a'; file <= 'h'; ++file)
     {
         int pawn_count = 0;

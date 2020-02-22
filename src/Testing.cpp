@@ -191,9 +191,9 @@ bool run_tests()
 
 
     // Piece construction tests
-    for(auto type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
+    for(auto type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
     {
-        for(auto color : {BLACK, WHITE})
+        for(auto color : {Piece_Color::BLACK, Piece_Color::WHITE})
         {
             auto piece = Piece{color, type};
             auto piece2 = Piece{piece.color(), piece.type()};
@@ -203,7 +203,7 @@ bool run_tests()
 
 
     // Check that square colors are correct
-    auto current_color = WHITE;
+    auto current_color = Square_Color::WHITE;
     for(char file = 'a'; file <= 'h'; ++file)
     {
         current_color = opposite(current_color);
@@ -214,6 +214,23 @@ bool run_tests()
             current_color = opposite(current_color);
         }
     }
+
+
+    // Check that equality between Piece_Colors and Winner_Colors are correct
+    test_result(tests_passed, Winner_Color::WHITE == Piece_Color::WHITE, "Color equality failure: WC::W == PC::W");
+    test_result(tests_passed, Piece_Color::WHITE == Winner_Color::WHITE, "Color equality failure: PC::W == WC::W");
+    test_result(tests_passed, Winner_Color::BLACK == Piece_Color::BLACK, "Color equality failure: WC::B == PC::B");
+    test_result(tests_passed, Piece_Color::BLACK == Winner_Color::BLACK, "Color equality failure: PC::B == WC::B");
+
+    // Check that inequality between Piece_Colors and Winner_Colors are correct
+    test_result(tests_passed, Winner_Color::WHITE != Piece_Color::BLACK, "Color inequality failure: WC::W != PC::B");
+    test_result(tests_passed, Piece_Color::BLACK != Winner_Color::WHITE, "Color inequality failure: PC::B != WC::W");
+    test_result(tests_passed, Winner_Color::BLACK != Piece_Color::WHITE, "Color inequality failure: WC::B != PC::W");
+    test_result(tests_passed, Piece_Color::WHITE != Winner_Color::BLACK, "Color inequality failure: PC::W != WC::B");
+    test_result(tests_passed, Piece_Color::WHITE != Winner_Color::NONE, "Color inequality failure: PC::W != WC::N");
+    test_result(tests_passed, Piece_Color::BLACK != Winner_Color::NONE, "Color inequality failure: PC::B != WC::N");
+    test_result(tests_passed, Winner_Color::NONE != Piece_Color::WHITE, "Color inequality failure: WC::N != PC::W");
+    test_result(tests_passed, Winner_Color::NONE != Piece_Color::BLACK, "Color inequality failure: WC::N != PC::B");
 
 
     // Check that Square arithmetic works
@@ -273,7 +290,7 @@ bool run_tests()
             }
 
             const auto& fifty_move_board_view = fifty_move_board;
-            if(fifty_move_board_view.piece_on_square(move->start()).type() == PAWN)
+            if(fifty_move_board_view.piece_on_square(move->start()).type() == Piece_Type::PAWN)
             {
                 continue;
             }
@@ -281,7 +298,7 @@ bool run_tests()
             auto next_board = fifty_move_board;
             auto result = next_board.submit_move(*move);
 
-            if(result.winner() != NONE)
+            if(result.winner() != Winner_Color::NONE)
             {
                 continue;
             }
@@ -380,25 +397,25 @@ bool run_tests()
     castling_possible_gene.read_from(test_genes_file_name);
     auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
     auto white_castling_score = 0.8*(5.0/6.0) + 0.2*(6.0/7.0); // maximum score with and without actually castling
-    castling_possible_gene.test(tests_passed, castling_board, WHITE, white_castling_score);
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, white_castling_score);
 
     castling_board.submit_move("O-O");
-    castling_possible_gene.test(tests_passed, castling_board, WHITE, 1.0); // full score for kingside castling
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 1.0); // full score for kingside castling
 
     auto black_castling_score = 0.2*(5.0/7.0); // castling possible
-    castling_possible_gene.test(tests_passed, castling_board, BLACK, black_castling_score);
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, black_castling_score);
 
     castling_board.submit_move("Nc6");
-    castling_possible_gene.test(tests_passed, castling_board, WHITE, 0.0); // castling no longer relevant
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.0); // castling no longer relevant
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
     auto freedom_to_move_white_score = 32.0/20.0;
-    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, WHITE, freedom_to_move_white_score);
+    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
     freedom_to_move_board.submit_move("Qd5");
     auto freedom_to_move_black_score = 3.0/20.0;
-    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, BLACK, freedom_to_move_black_score);
-    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, WHITE, freedom_to_move_white_score);
+    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::BLACK, freedom_to_move_black_score);
+    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
 
     auto king_confinement_gene = King_Confinement_Gene();
     king_confinement_gene.read_from(test_genes_file_name);
@@ -407,21 +424,21 @@ bool run_tests()
                                    (-1)*(1.0 + 1.0))/ // blocked by opponent (e1, e2)
                                    (4 + 1)/ // normalizing
                                    (1 + (1 + 1 + 1)); // free squares (h1, g1, f1)
-    king_confinement_gene.test(tests_passed, king_confinement_board, WHITE, king_confinement_score);
+    king_confinement_gene.test(tests_passed, king_confinement_board, Piece_Color::WHITE, king_confinement_score);
 
     auto king_confined_by_pawns_board = Board("k7/8/8/8/8/pppppppp/8/K7 w - - 0 1");
     auto king_confined_by_pawns_score = (4*(0.0) + // no friendly blockers
                                          (-1)*(8.0))/ // blocked by pawn attacks on second rank
                                          (4 + 1)/ // normalizing
                                          (1 + 8); // free squares (a1-h1)
-    king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, WHITE, king_confined_by_pawns_score);
+    king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, Piece_Color::WHITE, king_confined_by_pawns_score);
 
     auto king_protection_gene = King_Protection_Gene();
     auto king_protection_board = king_confinement_board;
     auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
     auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
     auto king_protection_score = double(max_square_count - square_count)/max_square_count;
-    king_protection_gene.test(tests_passed, king_protection_board, WHITE, king_protection_score);
+    king_protection_gene.test(tests_passed, king_protection_board, Piece_Color::WHITE, king_protection_score);
 
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
@@ -430,22 +447,22 @@ bool run_tests()
     auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
     auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
     auto opponent_pieces_targeted_score = (16 + 8 + 4 + 2 + 1)/piece_strength_normalizer;
-    opponent_pieces_targeted_gene.test(tests_passed, opponent_pieces_targeted_board, WHITE, opponent_pieces_targeted_score);
+    opponent_pieces_targeted_gene.test(tests_passed, opponent_pieces_targeted_board, Piece_Color::WHITE, opponent_pieces_targeted_score);
 
     auto pawn_advancement_gene = Pawn_Advancement_Gene();
     pawn_advancement_gene.read_from(test_genes_file_name);
     auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
     auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*5);
-    pawn_advancement_gene.test(tests_passed, pawn_advancement_board, WHITE, pawn_advancement_score);
+    pawn_advancement_gene.test(tests_passed, pawn_advancement_board, Piece_Color::WHITE, pawn_advancement_score);
 
     auto passed_pawn_gene = Passed_Pawn_Gene();
     auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P4/8/8/8 w - - 0 1");
     auto passed_pawn_score = (1.0 + 2.0/3.0)/8;
-    passed_pawn_gene.test(tests_passed, passed_pawn_board, WHITE, passed_pawn_score);
+    passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::WHITE, passed_pawn_score);
 
     passed_pawn_board.submit_move("Kd8");
     passed_pawn_score = (2.0/3.0)/8;
-    passed_pawn_gene.test(tests_passed, passed_pawn_board, BLACK, passed_pawn_score);
+    passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::BLACK, passed_pawn_score);
 
     auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
     sphere_of_influence_gene.read_from(test_genes_file_name);
@@ -476,23 +493,23 @@ bool run_tests()
     // ........    .4......         .5......
     // ........    44......         66......
     // K.......    K4......         K7......
-    sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, WHITE, sphere_of_influence_score);
+    sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, Piece_Color::WHITE, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    total_force_gene.test(tests_passed, Board(), WHITE, 1.0);
+    total_force_gene.test(tests_passed, Board(), Piece_Color::WHITE, 1.0);
 
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
-    stacked_pawns_gene.test(tests_passed, stacked_pawns_board, WHITE, -3.0/6);
+    stacked_pawns_gene.test(tests_passed, stacked_pawns_board, Piece_Color::WHITE, -3.0/6);
 
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-    pawn_islands_gene.test(tests_passed, pawn_islands_board, WHITE, (6.0/3)/8);
+    pawn_islands_gene.test(tests_passed, pawn_islands_board, Piece_Color::WHITE, (6.0/3)/8);
 
     auto checkmate_material_gene = Checkmate_Material_Gene();
     auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
-    checkmate_material_gene.test(tests_passed, checkmate_material_board, WHITE, 1.0); // white can checkmate
-    checkmate_material_gene.test(tests_passed, checkmate_material_board, BLACK, 0.0); // black cannot
+    checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::WHITE, 1.0); // white can checkmate
+    checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::BLACK, 0.0); // black cannot
 
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
     test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");
@@ -567,12 +584,12 @@ bool run_tests()
     for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
         std::this_thread::sleep_for(5ms);
-        expected_time_after_reset = clock.time_left(BLACK) + time;
+        expected_time_after_reset = clock.time_left(Piece_Color::BLACK) + time;
         clock.punch(timing_board);
     }
     clock.stop();
-    test_result(tests_passed, std::abs(clock.time_left(BLACK) - expected_time_after_reset) < 0.2,
-                "Clock reset incorrect: time left for black is " + std::to_string(clock.time_left(BLACK)) + " sec." +
+    test_result(tests_passed, std::abs(clock.time_left(Piece_Color::BLACK) - expected_time_after_reset) < 0.2,
+                "Clock reset incorrect: time left for black is " + std::to_string(clock.time_left(Piece_Color::BLACK)) + " sec." +
                 " Should be " + std::to_string(expected_time_after_reset) + "sec.");
 
     // Clock time increment test
@@ -590,54 +607,54 @@ bool run_tests()
         }
     }
     clock2.stop();
-    test_result(tests_passed, std::abs(clock2.time_left(BLACK) - expected_time) < 0.2,
-                std::string("Clock increment incorrect: time left for black is ") + std::to_string(clock2.time_left(BLACK)) + " sec." +
+    test_result(tests_passed, std::abs(clock2.time_left(Piece_Color::BLACK) - expected_time) < 0.2,
+                std::string("Clock increment incorrect: time left for black is ") + std::to_string(clock2.time_left(Piece_Color::BLACK)) + " sec." +
                 " Should be " + std::to_string(expected_time) + "sec.");
 
 
     // Minimax scoring comparison tests
     Game_Tree_Node_Result r1 = {10,
-                                WHITE,
+                                Piece_Color::WHITE,
                                 {nullptr, nullptr, nullptr}};
     Game_Tree_Node_Result r2 = {10,
-                                BLACK,
+                                Piece_Color::BLACK,
                                 {nullptr, nullptr, nullptr}};
 
-    test_result(tests_passed, r2.value(WHITE) < r1.value(WHITE), "1. Error in comparing Game Tree Node Results.");
-    test_result(tests_passed, r1.value(BLACK) < r2.value(BLACK), "2. Error in comparing Game Tree Node Results.");
+    test_result(tests_passed, r2.value(Piece_Color::WHITE) < r1.value(Piece_Color::WHITE), "1. Error in comparing Game Tree Node Results.");
+    test_result(tests_passed, r1.value(Piece_Color::BLACK) < r2.value(Piece_Color::BLACK), "2. Error in comparing Game Tree Node Results.");
 
     Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
-                                         WHITE,
+                                         Piece_Color::WHITE,
                                          {}};
 
     Game_Tree_Node_Result beta_start = {Game_Tree_Node_Result::win_score,
-                                        WHITE,
+                                        Piece_Color::WHITE,
                                         {}};
-    test_result(tests_passed, alpha_start.value(WHITE) < beta_start.value(WHITE), "3. Error in comparing Game Tree Node Results.");
-    test_result(tests_passed, alpha_start.value(BLACK) > beta_start.value(BLACK), "4. Error in comparing Game Tree Node Results.");
+    test_result(tests_passed, alpha_start.value(Piece_Color::WHITE) < beta_start.value(Piece_Color::WHITE), "3. Error in comparing Game Tree Node Results.");
+    test_result(tests_passed, alpha_start.value(Piece_Color::BLACK) > beta_start.value(Piece_Color::BLACK), "4. Error in comparing Game Tree Node Results.");
 
     Game_Tree_Node_Result white_win4 = {Game_Tree_Node_Result::win_score,
-                                        WHITE,
+                                        Piece_Color::WHITE,
                                         {nullptr, nullptr, nullptr,
                                          nullptr, nullptr}};
     Game_Tree_Node_Result white_win6 = {Game_Tree_Node_Result::win_score,
-                                        WHITE,
+                                        Piece_Color::WHITE,
                                         {nullptr, nullptr, nullptr,
                                          nullptr, nullptr, nullptr,
                                          nullptr}};
-    test_result(tests_passed, white_win6.value(WHITE) < white_win4.value(WHITE), "Later win preferred over earlier win.");
-    test_result(tests_passed, white_win4.value(BLACK) < white_win6.value(BLACK), "Earlier loss preferred over later win.");
+    test_result(tests_passed, white_win6.value(Piece_Color::WHITE) < white_win4.value(Piece_Color::WHITE), "Later win preferred over earlier win.");
+    test_result(tests_passed, white_win4.value(Piece_Color::BLACK) < white_win6.value(Piece_Color::BLACK), "Earlier loss preferred over later win.");
 
     Game_Tree_Node_Result black_loss6 = {Game_Tree_Node_Result::lose_score,
-                                         BLACK,
+                                         Piece_Color::BLACK,
                                          {nullptr, nullptr, nullptr,
                                           nullptr, nullptr, nullptr,
                                           nullptr}};
-    test_result(tests_passed, white_win6.value(WHITE) == black_loss6.value(WHITE), "1. White win in 6 not equal to black loss in 6.");
-    test_result(tests_passed, white_win6.value(BLACK) == black_loss6.value(BLACK), "2. White win in 6 not equal to black loss in 6.");
+    test_result(tests_passed, white_win6.value(Piece_Color::WHITE) == black_loss6.value(Piece_Color::WHITE), "1. White win in 6 not equal to black loss in 6.");
+    test_result(tests_passed, white_win6.value(Piece_Color::BLACK) == black_loss6.value(Piece_Color::BLACK), "2. White win in 6 not equal to black loss in 6.");
 
-    test_result(tests_passed, black_loss6.is_winning_for(WHITE), "Black loss in 6 returns false for is_winning_for(WHITE).");
-    test_result(tests_passed, black_loss6.is_losing_for(BLACK), "Black loss in 6 returns false for is_losing_for(BLACK).");
+    test_result(tests_passed, black_loss6.is_winning_for(Piece_Color::WHITE), "Black loss in 6 returns false for is_winning_for(Piece_Color::WHITE).");
+    test_result(tests_passed, black_loss6.is_losing_for(Piece_Color::BLACK), "Black loss in 6 returns false for is_losing_for(Piece_Color::BLACK).");
 
 
     if(tests_passed)

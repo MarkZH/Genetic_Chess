@@ -131,7 +131,7 @@ std::string Move::result_mark(Board board) const noexcept
     auto result = board.submit_move(*this);
     if(board.king_is_in_check())
     {
-        if(result.winner() == NONE)
+        if(result.winner() == Winner_Color::NONE)
         {
             return "+";
         }

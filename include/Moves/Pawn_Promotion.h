@@ -19,7 +19,7 @@ class Pawn_Promotion : public Pawn_Move
         //! \param promotion_piece The type of piece the pawn will be promoted to.
         //! \param color The color of the moving pawn.
         //! \param file_start The file of the starting square.
-        Pawn_Promotion(Piece_Type promotion_piece, Color color, char file_start) noexcept;
+        Pawn_Promotion(Piece_Type promotion_piece, Piece_Color color, char file_start) noexcept;
 
         //! \brief Replace the pawn with the promoted piece.
         //!

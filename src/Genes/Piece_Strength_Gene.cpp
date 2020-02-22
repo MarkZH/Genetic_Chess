@@ -22,9 +22,9 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 std::map<std::string, double> Piece_Strength_Gene::list_properties() const noexcept
 {
     std::map<std::string, double> properties;
-    for(auto piece_type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
+    for(auto piece_type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
     {
-        auto piece = Piece{WHITE, piece_type};
+        auto piece = Piece{Piece_Color::WHITE, piece_type};
         properties[std::string(1, piece.fen_symbol())] = piece_value(piece);
     }
     return properties;
@@ -32,9 +32,9 @@ std::map<std::string, double> Piece_Strength_Gene::list_properties() const noexc
 
 void Piece_Strength_Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    for(auto piece_type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
+    for(auto piece_type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
     {
-        auto piece = Piece{WHITE, piece_type};
+        auto piece = Piece{Piece_Color::WHITE, piece_type};
         piece_value(piece_type) = properties.at(std::string(1, piece.fen_symbol()));
     }
 
@@ -50,22 +50,22 @@ void Piece_Strength_Gene::gene_specific_mutation() noexcept
 
 void Piece_Strength_Gene::recalculate_normalizing_value() noexcept
 {
-    normalizing_value = 8*std::abs(piece_value(PAWN)) +
-                        2*std::abs(piece_value(ROOK)) +
-                        2*std::abs(piece_value(KNIGHT)) +
-                        2*std::abs(piece_value(BISHOP)) +
-                        1*std::abs(piece_value(QUEEN)) +
-                        1*std::abs(piece_value(KING));
+    normalizing_value = 8*std::abs(piece_value(Piece_Type::PAWN)) +
+                        2*std::abs(piece_value(Piece_Type::ROOK)) +
+                        2*std::abs(piece_value(Piece_Type::KNIGHT)) +
+                        2*std::abs(piece_value(Piece_Type::BISHOP)) +
+                        1*std::abs(piece_value(Piece_Type::QUEEN)) +
+                        1*std::abs(piece_value(Piece_Type::KING));
 }
 
 double Piece_Strength_Gene::piece_value(Piece_Type type) const noexcept
 {
-    return piece_strength[type];
+    return piece_strength[static_cast<unsigned>(type)];
 }
 
 double& Piece_Strength_Gene::piece_value(Piece_Type type) noexcept
 {
-    return piece_strength[type];
+    return piece_strength[static_cast<unsigned>(type)];
 }
 
 double Piece_Strength_Gene::piece_value(Piece piece) const noexcept
@@ -95,7 +95,7 @@ std::string Piece_Strength_Gene::name() const noexcept
     return "Piece Strength Gene";
 }
 
-double Piece_Strength_Gene::score_board(const Board&, Color, size_t) const noexcept
+double Piece_Strength_Gene::score_board(const Board&, Piece_Color, size_t) const noexcept
 {
     return 0.0;
 }

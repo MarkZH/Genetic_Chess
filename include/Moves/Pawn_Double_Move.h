@@ -14,7 +14,7 @@ class Pawn_Double_Move : public Pawn_Move
         //!
         //! \param color The color of the moving pawn.
         //! \param file_start The file of the starting square.
-        Pawn_Double_Move(Color color, char file_start) noexcept;
+        Pawn_Double_Move(Piece_Color color, char file_start) noexcept;
 
         //! \brief In addition to normal pawn move side effects, the pawn double move makes the square the pawn jumps over targetable by an en passant capture.
         //!

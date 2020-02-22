@@ -323,7 +323,7 @@ namespace
         auto line_number = 0;
         auto last_move_line_number = 0;
 
-        auto expected_winner = NONE;
+        auto expected_winner = Winner_Color::NONE;
         auto expect_checkmate = true;
         auto expect_fifty_move_draw = false;
         auto expect_threefold_draw = false;
@@ -358,7 +358,7 @@ namespace
                     return false;
                 }
 
-                expected_winner = NONE;
+                expected_winner = Winner_Color::NONE;
                 expect_checkmate = true;
                 expect_fifty_move_draw = false;
                 expect_threefold_draw = false;
@@ -371,11 +371,11 @@ namespace
             {
                 if(String::contains(line, "1-0"))
                 {
-                    expected_winner = WHITE;
+                    expected_winner = Winner_Color::WHITE;
                 }
                 else if(String::contains(line, "0-1"))
                 {
-                    expected_winner = BLACK;
+                    expected_winner = Winner_Color::BLACK;
                 }
                 else if(String::contains(line, "1/2-1/2"))
                 {
@@ -423,15 +423,15 @@ namespace
                         continue;
                     }
 
-                    if(board.whose_turn() == BLACK)
+                    if(board.whose_turn() == Piece_Color::BLACK)
                     {
                         move_number += "... ";
                     }
 
-                    if((move == "1/2-1/2" && expected_winner != NONE) ||
-                       (move == "1-0" && expected_winner != WHITE) ||
-                       (move == "0-1" && expected_winner != BLACK) ||
-                       (move == "*" && expected_winner != NONE))
+                    if((move == "1/2-1/2" && expected_winner != Winner_Color::NONE) ||
+                       (move == "1-0" && expected_winner != Winner_Color::WHITE) ||
+                       (move == "0-1" && expected_winner != Winner_Color::BLACK) ||
+                       (move == "*" && expected_winner != Winner_Color::NONE))
                     {
                         std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")" << std::endl;
                         return false;
@@ -493,7 +493,7 @@ namespace
                         }
                         else
                         {
-                            if(result.winner() != NONE)
+                            if(result.winner() != Winner_Color::NONE)
                             {
                                 std::cerr << "Move (" << move_number << move << ") does not indicate checkmate, but move does checkmate. (line: " << line_number << ")" << std::endl;
                                 return false;

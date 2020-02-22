@@ -27,22 +27,24 @@ class Game_Result
 
         //! \brief This constructor creates a Game_Result indicating that the game has ended.
         //!
-        //! \param winner The color of the player that has won, or NONE if a draw.
+        //! \param winner The color of the player that has won, or Winner_Color::NONE if a draw.
         //! \param reason Explanation of why the game ended.
-        Game_Result(Color winner, Game_Result_Type reason) noexcept;
+        Game_Result(Winner_Color winner, Game_Result_Type reason) noexcept;
+
+        Game_Result(Piece_Color winner, Game_Result_Type reason) noexcept;
 
         //! \brief Create a Game_Result when the game has ended for an unanticipated reason.
         //!
         //! \param winner The declared winner of the game.
         //! \param reason The declared reason for the end of the game.
         //! \param shutdown Whether this result should shutdown the program.
-        Game_Result(Color winner, const std::string& reason, bool shutdown) noexcept;
+        Game_Result(Winner_Color winner, const std::string& reason, bool shutdown) noexcept;
 
         //! \brief Indicate whether the game ended with the last action.
         bool game_has_ended() const noexcept;
 
-        //! \brief Returns the resultant winner (or NONE, if a draw) as a result of the last action.
-        Color winner() const noexcept;
+        //! \brief Returns the resultant winner (or Winner_Color::NONE, if a draw) as a result of the last action.
+        Winner_Color winner() const noexcept;
 
         //! \brief Returns the reason for the game ending.
         std::string ending_reason() const noexcept;
@@ -54,7 +56,7 @@ class Game_Result
         bool exit_program() const noexcept;
 
     private:
-        Color victor;
+        Winner_Color victor;
         Game_Result_Type cause;
         std::string alternate_reason;
         bool shutdown_program;

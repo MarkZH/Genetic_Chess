@@ -63,7 +63,7 @@ std::string Sphere_of_Influence_Gene::name() const noexcept
 
 // Count all squares potentially attacked by all pieces with bonus points if
 // the attacking move is legal.
-double Sphere_of_Influence_Gene::score_board(const Board& board, Color perspective, size_t) const noexcept
+double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
     const auto& opponent_king_square = board.find_king(opposite(perspective));
     auto opponent_king_index = opponent_king_square.index();

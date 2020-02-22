@@ -19,7 +19,7 @@ struct Game_Tree_Node_Result
     double score;
 
     //! \brief The perspective from which the score is calculated--for whom a higher score is better.
-    Color perspective;
+    Piece_Color perspective;
 
     //! \brief The sequence of moves that lead to the board position being scored.
     std::vector<const Move*> variation;
@@ -34,7 +34,7 @@ struct Game_Tree_Node_Result
     //! The score is calculated in a way that opposite perspective scores
     //! have opposite sign.
     //! \param query The color of the player for whom the value of the board is sought.
-    double corrected_score(Color query) const noexcept;
+    double corrected_score(Piece_Color query) const noexcept;
 
     //! \brief The depth in the game tree where this result was calculated.
     //!
@@ -45,12 +45,12 @@ struct Game_Tree_Node_Result
     //! \brief Determine whether the result represents a winning endgame for a player.
     //!
     //! \param query The player for whom the result may be a win.
-    bool is_winning_for(Color query) const noexcept;
+    bool is_winning_for(Piece_Color query) const noexcept;
 
     //! \brief Determine whether the result represents a losing endgame for a player.
     //!
     //! \param query The player for whom the result may be a loss.
-    bool is_losing_for(Color query) const noexcept;
+    bool is_losing_for(Piece_Color query) const noexcept;
 
     //! \brief Creates a quantity that can be compared with other Game_Tree_Node_Results
     //!
@@ -62,7 +62,7 @@ struct Game_Tree_Node_Result
     //! 4. Otherwise, the higher score prevails.
     //! \param query The color of the player whose perspective is being considered.
     //! \returns A comparable quantity for picking the best result according to the above steps.
-    std::pair<double, int> value(Color query) const noexcept;
+    std::pair<double, int> value(Piece_Color query) const noexcept;
 };
 
 #endif // GAME_TREE_NODE_RESULT_H

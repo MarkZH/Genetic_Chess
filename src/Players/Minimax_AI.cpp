@@ -184,7 +184,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         auto next_board = board;
 
         auto move_result = next_board.submit_move(*move);
-        if(move_result.winner() != NONE)
+        if(move_result.winner() != Winner_Color::NONE)
         {
             // This move results in checkmate, no other move can be better.
             return create_result(next_board, perspective, move_result, current_variation);
@@ -299,7 +299,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
 void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                       const Clock& clock,
-                                      Color perspective) const noexcept
+                                      Piece_Color perspective) const noexcept
 {
     auto score = thought.corrected_score(perspective)/centipawn_value();
 
@@ -340,7 +340,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     std::cout << std::endl;
 }
 
-void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const Clock& clock, Color perspective) const noexcept
+void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const Clock& clock, Piece_Color perspective) const noexcept
 {
     auto time_so_far = clock_start_time - clock.running_time_left();
     std::cout << "info"
@@ -376,7 +376,7 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
 }
 
 Game_Tree_Node_Result Minimax_AI::create_result(Board board,
-                                                Color perspective,
+                                                Piece_Color perspective,
                                                 const Game_Result& move_result,
                                                 const current_variation_store& move_list) const noexcept
 {
@@ -396,11 +396,11 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
     choose_move(board, clock);
 }
 
-double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Color perspective, size_t prior_real_moves) const noexcept
+double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t prior_real_moves) const noexcept
 {
     if(move_result.game_has_ended())
     {
-        if(move_result.winner() == NONE) // stalemate
+        if(move_result.winner() == Winner_Color::NONE) // stalemate
         {
             return 0;
         }
@@ -443,8 +443,8 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
         if(board_is_good)
         {
             auto board_without_pawn = board.without_random_pawn();
-            auto original_board_result = evaluate(board, {}, WHITE, 0);
-            auto minus_pawn_result = evaluate(board_without_pawn, {}, WHITE, 0);
+            auto original_board_result = evaluate(board, {}, Piece_Color::WHITE, 0);
+            auto minus_pawn_result = evaluate(board_without_pawn, {}, Piece_Color::WHITE, 0);
             auto diff = std::abs(original_board_result - minus_pawn_result);
             sum_of_diffs += diff;
 
@@ -483,12 +483,12 @@ std::string variation_line(Board board,
 {
     Game_Result move_result;
     auto write_alternate_variation = ! alternate_variation.empty();
-    const auto move_label_offset = (board.whose_turn() == WHITE ? 0 : 1);
-    std::string result = "(" + (board.whose_turn() == BLACK ? std::to_string(move_number) + ". ... " : std::string{});
+    const auto move_label_offset = (board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
+    std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + ". ... " : std::string{});
     for(size_t i = 0; i < variation.size(); ++i)
     {
         const auto move_label = move_number + i/2 + move_label_offset;
-        result += (board.whose_turn() == WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(board) + " ";
+        result += (board.whose_turn() == Piece_Color::WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(board) + " ";
         if(write_alternate_variation && i < alternate_variation.size() && alternate_variation[i] != variation[i])
         {
             result += variation_line(board,

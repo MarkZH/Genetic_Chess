@@ -75,7 +75,7 @@ void Genetic_AI::read_data(std::istream& is)
     }
 }
 
-double Genetic_AI::internal_evaluate(const Board& board, Color perspective, size_t prior_real_moves) const noexcept
+double Genetic_AI::internal_evaluate(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept
 {
     return genome.evaluate(board, perspective, prior_real_moves);
 }

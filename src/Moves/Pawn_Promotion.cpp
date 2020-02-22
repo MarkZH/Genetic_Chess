@@ -7,8 +7,8 @@
 #include "Game/Piece.h"
 #include "Game/Square.h"
 
-Pawn_Promotion::Pawn_Promotion(Piece_Type promotion_piece, Color color, char file_start) noexcept :
-    Pawn_Move(color, Square{file_start, color == WHITE ? 7 : 2}),
+Pawn_Promotion::Pawn_Promotion(Piece_Type promotion_piece, Piece_Color color, char file_start) noexcept :
+    Pawn_Move(color, Square{file_start, color == Piece_Color::WHITE ? 7 : 2}),
     promote_to{color, promotion_piece}
 {
 }

@@ -23,18 +23,18 @@ namespace
 {
     using indexed_move_array = std::array<std::array<std::vector<std::vector<const Move*>>, 64>, 12>;
 
-    void add_pawn_moves(indexed_move_array& out, Color color) noexcept;
-    void add_rook_moves(indexed_move_array& out, Color color, Piece_Type type = ROOK) noexcept;
-    void add_knight_moves(indexed_move_array& out, Color color) noexcept;
-    void add_bishop_moves(indexed_move_array& out, Color color, Piece_Type type = BISHOP) noexcept;
-    void add_queen_moves(indexed_move_array& out, Color color) noexcept;
-    void add_king_moves(indexed_move_array& out, Color color) noexcept;
+    void add_pawn_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_rook_moves(indexed_move_array& out, Piece_Color color, Piece_Type type = Piece_Type::ROOK) noexcept;
+    void add_knight_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_bishop_moves(indexed_move_array& out, Piece_Color color, Piece_Type type = Piece_Type::BISHOP) noexcept;
+    void add_queen_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_king_moves(indexed_move_array& out, Piece_Color color) noexcept;
 
     const auto legal_moves =
         []()
         {
             indexed_move_array result;
-            for(auto color : {WHITE, BLACK})
+            for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
             {
                 add_pawn_moves(result, color);
                 add_rook_moves(result, color);
@@ -52,9 +52,9 @@ namespace
         []()
         {
             indexed_move_array result;
-            for(auto color : {WHITE, BLACK})
+            for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
             {
-                for(auto type : {PAWN, ROOK, KNIGHT, BISHOP, QUEEN, KING})
+                for(auto type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
                 {
                     auto piece = Piece{color, type};
                     for(size_t index = 0; index < 64; ++index)
@@ -114,12 +114,12 @@ namespace
         }
     }
 
-    void add_pawn_moves(indexed_move_array& out, Color color) noexcept
+    void add_pawn_moves(indexed_move_array& out, Piece_Color color) noexcept
     {
-        auto pawn = Piece{color, PAWN};
-        auto base_rank = (color == WHITE ? 2 : 7);
-        auto no_normal_move_rank = (color == WHITE ? 7 : 2);
-        auto direction = (color == WHITE ? 1 : -1);
+        auto pawn = Piece{color, Piece_Type::PAWN};
+        auto base_rank = (color == Piece_Color::WHITE ? 2 : 7);
+        auto no_normal_move_rank = (color == Piece_Color::WHITE ? 7 : 2);
+        auto direction = (color == Piece_Color::WHITE ? 1 : -1);
         for(char file = 'a'; file <= 'h'; ++file)
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
@@ -133,7 +133,7 @@ namespace
             add_legal_move<Pawn_Double_Move>(out, pawn, false, color, file);
         }
 
-        auto possible_promotions = {QUEEN, KNIGHT, ROOK, BISHOP};
+        auto possible_promotions = {Piece_Type::QUEEN, Piece_Type::KNIGHT, Piece_Type::ROOK, Piece_Type::BISHOP};
 
         for(auto dir : {Direction::RIGHT, Direction::LEFT})
         {
@@ -170,7 +170,7 @@ namespace
         }
     }
 
-    void add_rook_moves(indexed_move_array& out, Color color, Piece_Type type) noexcept
+    void add_rook_moves(indexed_move_array& out, Piece_Color color, Piece_Type type) noexcept
     {
         for(int d_file = -1; d_file <= 1; ++d_file)
         {
@@ -187,7 +187,7 @@ namespace
         }
     }
 
-    void add_knight_moves(indexed_move_array& out, Color color) noexcept
+    void add_knight_moves(indexed_move_array& out, Piece_Color color) noexcept
     {
         for(auto d_file : {1, 2})
         {
@@ -196,13 +196,13 @@ namespace
             {
                 for(auto rank_direction : {-1, 1})
                 {
-                    add_standard_legal_move(out, {color, KNIGHT}, d_file * file_direction, d_rank * rank_direction);
+                    add_standard_legal_move(out, {color, Piece_Type::KNIGHT}, d_file * file_direction, d_rank * rank_direction);
                 }
             }
         }
     }
 
-    void add_bishop_moves(indexed_move_array& out, Color color, Piece_Type type) noexcept
+    void add_bishop_moves(indexed_move_array& out, Piece_Color color, Piece_Type type) noexcept
     {
         for(int d_rank : {-1, 1})
         {
@@ -216,15 +216,15 @@ namespace
         }
     }
 
-    void add_queen_moves(indexed_move_array& out, Color color) noexcept
+    void add_queen_moves(indexed_move_array& out, Piece_Color color) noexcept
     {
-        add_bishop_moves(out, color, QUEEN);
-        add_rook_moves(out, color, QUEEN);
+        add_bishop_moves(out, color, Piece_Type::QUEEN);
+        add_rook_moves(out, color, Piece_Type::QUEEN);
     }
 
-    void add_king_moves(indexed_move_array& out, Color color) noexcept
+    void add_king_moves(indexed_move_array& out, Piece_Color color) noexcept
     {
-        auto king = Piece{color, KING};
+        auto king = Piece{color, Piece_Type::KING};
         for(int d_rank = -1; d_rank <= 1; ++d_rank)
         {
             for(int d_file = -1; d_file <= 1; ++d_file)
@@ -235,50 +235,48 @@ namespace
             }
         }
 
-        int base_rank = (color == WHITE ? 1 : 8);
+        int base_rank = (color == Piece_Color::WHITE ? 1 : 8);
         add_legal_move<Castle>(out, king, true, base_rank, Direction::LEFT);
         add_legal_move<Castle>(out, king, true, base_rank, Direction::RIGHT);
     }
 }
 
-const Piece::piece_code_t Piece::invalid_code = Piece{BLACK, KING}.index() + 1;
+const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_Type::KING}.index() + 1;
 
 Piece::Piece() noexcept : piece_code(invalid_code)
 {
 }
 
-Piece::Piece(Color color, Piece_Type type) noexcept :
-    piece_code((type << 1) | color)
+Piece::Piece(Piece_Color color, Piece_Type type) noexcept :
+    piece_code((static_cast<unsigned>(type) << 1) | static_cast<unsigned>(color))
 {
     // piece_code layout: 4 bits
     // 3 most significant bits = Piece_Type (values 0-5)
-    // least significant bit = Color (0 or 1)
+    // least significant bit = Piece_Color (0 or 1)
     //
     // 101 1
-    // ^^^ ^-- BLACK
-    //  +--- KING
-
-    assert(color < 2 && type < 6);
+    // ^^^ ^-- Piece_Color::BLACK
+    //  +--- Piece_Type::KING
 }
 
-Color Piece::color() const noexcept
+Piece_Color Piece::color() const noexcept
 {
     assert(*this);
-    return static_cast<Color>(piece_code & 1);
+    return static_cast<Piece_Color>(piece_code & 1);
 }
 
 std::string Piece::pgn_symbol() const noexcept
 {
     assert(*this);
-    return type() == PAWN ? std::string{} : std::string(1, std::toupper(fen_symbol()));
+    return type() == Piece_Type::PAWN ? std::string{} : std::string(1, std::toupper(fen_symbol()));
 }
 
 char Piece::fen_symbol() const noexcept
 {
     assert(*this);
     static const auto symbols = "PRNBQK";
-    auto symbol = symbols[type()];
-    return (color() == WHITE ? symbol : std::tolower(symbol));
+    auto symbol = symbols[static_cast<unsigned>(type())];
+    return (color() == Piece_Color::WHITE ? symbol : std::tolower(symbol));
 }
 
 bool Piece::can_move(const Move* move) const noexcept

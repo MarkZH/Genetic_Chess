@@ -4,11 +4,11 @@
 
 #include "Game/Color.h"
 
-Game_Result::Game_Result() noexcept : Game_Result(NONE, Game_Result_Type::ONGOING)
+Game_Result::Game_Result() noexcept : Game_Result(Winner_Color::NONE, Game_Result_Type::ONGOING)
 {
 }
 
-Game_Result::Game_Result(Color winner, Game_Result_Type reason) noexcept :
+Game_Result::Game_Result(Winner_Color winner, Game_Result_Type reason) noexcept :
     victor(winner),
     cause(reason),
     alternate_reason(),
@@ -16,7 +16,12 @@ Game_Result::Game_Result(Color winner, Game_Result_Type reason) noexcept :
 {
 }
 
-Game_Result::Game_Result(Color winner, const std::string& reason, bool shutdown) noexcept :
+Game_Result::Game_Result(Piece_Color winner, Game_Result_Type reason) noexcept :
+    Game_Result(winner == Piece_Color::WHITE ? Winner_Color::WHITE : Winner_Color::BLACK, reason)
+{
+}
+
+Game_Result::Game_Result(Winner_Color winner, const std::string& reason, bool shutdown) noexcept :
     victor(winner),
     cause(Game_Result_Type::OTHER),
     alternate_reason(reason),
@@ -29,7 +34,7 @@ bool Game_Result::game_has_ended() const noexcept
     return cause != Game_Result_Type::ONGOING;
 }
 
-Color Game_Result::winner() const noexcept
+Winner_Color Game_Result::winner() const noexcept
 {
     return victor;
 }
@@ -39,7 +44,7 @@ std::string Game_Result::ending_reason() const noexcept
     switch(cause)
     {
         case Game_Result_Type::CHECKMATE:
-            return color_text(winner()) + " mates";
+            return color_text(winner() == Winner_Color::WHITE ? Piece_Color::WHITE : Piece_Color::BLACK) + " mates";
         case Game_Result_Type::STALEMATE:
             return "Stalemate";
         case Game_Result_Type::FIFTY_MOVE:
@@ -63,9 +68,9 @@ std::string Game_Result::game_ending_annotation() const noexcept
 {
     switch(winner())
     {
-        case WHITE:
+        case Winner_Color::WHITE:
             return "1-0";
-        case BLACK:
+        case Winner_Color::BLACK:
             return "0-1";
         default:
             return game_has_ended_by_rule() ? "1/2-1/2" : "*";

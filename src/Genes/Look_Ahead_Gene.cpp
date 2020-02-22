@@ -60,7 +60,7 @@ std::string Look_Ahead_Gene::name() const noexcept
     return "Look Ahead Gene";
 }
 
-double Look_Ahead_Gene::score_board(const Board&, Color, size_t) const noexcept
+double Look_Ahead_Gene::score_board(const Board&, Piece_Color, size_t) const noexcept
 {
     return 0.0;
 }

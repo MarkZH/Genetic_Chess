@@ -20,7 +20,7 @@ class Pawn_Promotion_by_Capture : public Pawn_Promotion
         //! \param dir The direction of the capture.
         //! \param file_start The horizontal direction of the capture.
         Pawn_Promotion_by_Capture(Piece_Type promotion,
-                                  Color color,
+                                  Piece_Color color,
                                   Direction dir,
                                   char file_start) noexcept;
 
