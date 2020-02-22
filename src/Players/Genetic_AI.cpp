@@ -28,16 +28,23 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) noexcept :
     recalibrate_self();
 }
 
-Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_in)
+Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) try : Genetic_AI(std::ifstream(file_name), id_in)
 {
-    std::ifstream ifs(file_name);
-    if( ! ifs)
+}
+catch(const Genetic_AI_Creation_Error& e)
+{
+    throw Genetic_AI_Creation_Error(e.what() + file_name);
+}
+
+Genetic_AI::Genetic_AI(std::istream& is, int id_in) : id_number(id_in)
+{
+    if( ! is)
     {
-        throw Genetic_AI_Creation_Error("Could not read: " + file_name);
+        throw Genetic_AI_Creation_Error("Could not read: ");
     }
 
     std::string line;
-    while(std::getline(ifs, line))
+    while(std::getline(is, line))
     {
         line = String::strip_comments(line, "#");
         if( ! String::starts_with(line, "ID"))
@@ -53,12 +60,12 @@ Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) : id_number(id_i
 
         if(id_in == std::stoi(param_value[1]))
         {
-            read_data(ifs);
+            read_data(is);
             return;
         }
     }
 
-    throw Genetic_AI_Creation_Error("Could not locate ID " + std::to_string(id_in) + " inside file " + file_name);
+    throw Genetic_AI_Creation_Error("Could not locate ID " + std::to_string(id_in) + " inside file ");
 }
 
 void Genetic_AI::read_data(std::istream& is)

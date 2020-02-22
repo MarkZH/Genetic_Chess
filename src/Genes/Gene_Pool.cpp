@@ -33,6 +33,7 @@ using namespace std::chrono_literals;
 #include "Utility/Random.h"
 
 #include "Exceptions/Bad_Still_Alive_Line.h"
+#include "Exceptions/Genetic_AI_Creation_Error.h"
 
 namespace
 {
@@ -531,19 +532,40 @@ namespace
             }
         }
 
+        ifs = std::ifstream(load_file);
         auto largest_pool_number = still_alive.rbegin()->first;
         Gene_Pool_Set result(largest_pool_number + 1);
+        bool search_started_from_beginning_of_file = true;
         for(const auto& [pool_number, ai_index_list] : still_alive)
         {
             for(const auto& ai_index_string : String::split(ai_index_list))
             {
-                try
+                while(true)
                 {
-                    result[pool_number].emplace_back(load_file, std::stoi(ai_index_string));
-                }
-                catch(const std::invalid_argument&)
-                {
-                    throw Bad_Still_Alive_Line(pool_line_numbers[pool_number], pool_lines[pool_number]);
+                    try
+                    {
+                        result[pool_number].emplace_back(ifs, std::stoi(ai_index_string));
+                        search_started_from_beginning_of_file = false;
+                        break;
+                    }
+                    catch(const Genetic_AI_Creation_Error& e)
+                    {
+                        if(search_started_from_beginning_of_file)
+                        {
+                            std::cerr << e.what() << load_file << "\n";
+                            throw Bad_Still_Alive_Line(pool_line_numbers[pool_number], pool_lines[pool_number]);
+                        }
+                        else
+                        {
+                            ifs = std::ifstream(load_file);
+                            search_started_from_beginning_of_file = true;
+                            continue;
+                        }
+                    }
+                    catch(const std::invalid_argument&)
+                    {
+                        throw Bad_Still_Alive_Line(pool_line_numbers[pool_number], pool_lines[pool_number]);
+                    }
                 }
             }
         }
