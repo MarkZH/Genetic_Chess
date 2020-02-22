@@ -36,6 +36,14 @@ class Genetic_AI : public Minimax_AI
         //!         the relevant AI data.
         Genetic_AI(std::istream& is, int id);
 
+        //! \brief Create a Genetic_AI from an already open input stream (as from std::ifstream(file_name)).
+        //!
+        //! \param is The input stream that is the source of genetic data.
+        //! \param id The id of the Genetic_AI to be created.
+        //! \throws Genetic_AI_Creation_Error if the stream cannot be read of if the stream does not contain
+        //!         the relevant AI data.
+        Genetic_AI(std::istream&& is, int id);
+
         //! \brief Create a new Genetic_AI via mating.
         //!
         //! The offspring is formed by randomly taking genes from each parent.
@@ -87,6 +95,7 @@ class Genetic_AI : public Minimax_AI
 
         int id_number;
 
+        void read_from(std::istream& is);
         void read_data(std::istream& is);
 
         double internal_evaluate(const Board& board,

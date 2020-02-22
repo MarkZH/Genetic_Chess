@@ -38,6 +38,16 @@ catch(const Genetic_AI_Creation_Error& e)
 
 Genetic_AI::Genetic_AI(std::istream& is, int id_in) : id_number(id_in)
 {
+    read_from(is);
+}
+
+Genetic_AI::Genetic_AI(std::istream&& is, int id_in) : id_number(id_in)
+{
+    read_from(is);
+}
+
+void Genetic_AI::read_from(std::istream& is)
+{
     if( ! is)
     {
         throw Genetic_AI_Creation_Error("Could not read: ");
@@ -58,14 +68,14 @@ Genetic_AI::Genetic_AI(std::istream& is, int id_in) : id_number(id_in)
             continue;
         }
 
-        if(id_in == std::stoi(param_value[1]))
+        if(id_number == std::stoi(param_value[1]))
         {
             read_data(is);
             return;
         }
     }
 
-    throw Genetic_AI_Creation_Error("Could not locate ID " + std::to_string(id_in) + " inside file ");
+    throw Genetic_AI_Creation_Error("Could not locate ID " + std::to_string(id_number) + " inside file ");
 }
 
 void Genetic_AI::read_data(std::istream& is)
