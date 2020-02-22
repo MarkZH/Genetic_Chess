@@ -404,7 +404,7 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
         {
             return 0;
         }
-        else if(move_result.winner() == perspective) // checkmate win
+        else if(move_result.winner()  == static_cast<Winner_Color>(perspective)) // checkmate win
         {
             return Game_Tree_Node_Result::win_score;
         }

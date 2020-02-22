@@ -479,7 +479,7 @@ namespace
 
                         if(move_checkmates)
                         {
-                            if(result.winner() != opposite(board.whose_turn()))
+                            if(result.winner() != static_cast<Winner_Color>(opposite(board.whose_turn())))
                             {
                                 std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate. (line: " << line_number << ")" << std::endl;
                                 return false;

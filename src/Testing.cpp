@@ -216,21 +216,13 @@ bool run_tests()
     }
 
 
-    // Check that equality between Piece_Colors and Winner_Colors are correct
-    test_result(tests_passed, Winner_Color::WHITE == Piece_Color::WHITE, "Color equality failure: WC::W == PC::W");
-    test_result(tests_passed, Piece_Color::WHITE == Winner_Color::WHITE, "Color equality failure: PC::W == WC::W");
-    test_result(tests_passed, Winner_Color::BLACK == Piece_Color::BLACK, "Color equality failure: WC::B == PC::B");
-    test_result(tests_passed, Piece_Color::BLACK == Winner_Color::BLACK, "Color equality failure: PC::B == WC::B");
-
-    // Check that inequality between Piece_Colors and Winner_Colors are correct
-    test_result(tests_passed, Winner_Color::WHITE != Piece_Color::BLACK, "Color inequality failure: WC::W != PC::B");
-    test_result(tests_passed, Piece_Color::BLACK != Winner_Color::WHITE, "Color inequality failure: PC::B != WC::W");
-    test_result(tests_passed, Winner_Color::BLACK != Piece_Color::WHITE, "Color inequality failure: WC::B != PC::W");
-    test_result(tests_passed, Piece_Color::WHITE != Winner_Color::BLACK, "Color inequality failure: PC::W != WC::B");
-    test_result(tests_passed, Piece_Color::WHITE != Winner_Color::NONE, "Color inequality failure: PC::W != WC::N");
-    test_result(tests_passed, Piece_Color::BLACK != Winner_Color::NONE, "Color inequality failure: PC::B != WC::N");
-    test_result(tests_passed, Winner_Color::NONE != Piece_Color::WHITE, "Color inequality failure: WC::N != PC::W");
-    test_result(tests_passed, Winner_Color::NONE != Piece_Color::BLACK, "Color inequality failure: WC::N != PC::B");
+    // Check that color equalities are correct
+    test_result(tests_passed, Winner_Color::WHITE == static_cast<Winner_Color>(Piece_Color::WHITE), "Winner_Color::WHITE != Piece_Color::WHITE");
+    test_result(tests_passed, Winner_Color::BLACK == static_cast<Winner_Color>(Piece_Color::BLACK), "Winner_Color::BLACK != Piece_Color::BLACK");
+    test_result(tests_passed, Winner_Color::WHITE != static_cast<Winner_Color>(Piece_Color::BLACK), "Winner_Color::WHITE == Piece_Color::BLACK");
+    test_result(tests_passed, Winner_Color::BLACK != static_cast<Winner_Color>(Piece_Color::WHITE), "Winner_Color::BLACK == Piece_Color::WHITE");
+    test_result(tests_passed, Winner_Color::NONE != static_cast<Winner_Color>(Piece_Color::WHITE), "Winner_Color::NONE == Piece_Color::WHITE");
+    test_result(tests_passed, Winner_Color::NONE != static_cast<Winner_Color>(Piece_Color::BLACK), "Winner_Color::NONE == Piece_Color::BLACK");
 
 
     // Check that Square arithmetic works
