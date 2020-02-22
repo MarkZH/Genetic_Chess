@@ -23,6 +23,7 @@ enc_temp_folder/
 *.vspx
 *.json
 .vscode/*
+*.sarif
 
 # Compiled output
 bin/
