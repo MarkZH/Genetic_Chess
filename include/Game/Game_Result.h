@@ -31,6 +31,10 @@ class Game_Result
         //! \param reason Explanation of why the game ended.
         Game_Result(Winner_Color winner, Game_Result_Type reason) noexcept;
 
+        //! \brief This constructor creates a Game_Result based on the color of the winning player.
+        //!
+        //! \param winner The color of the pieces of the player who won.
+        //! \param reason Explanation for why the game ended.
         Game_Result(Piece_Color winner, Game_Result_Type reason) noexcept;
 
         //! \brief Create a Game_Result when the game has ended for an unanticipated reason.
