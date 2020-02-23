@@ -58,8 +58,8 @@ leg = legend('show');
 xlabel(data.colheaders(1));
 ylabel(data.colheaders(2));
 title('Offspring Count');
-
 print([raw_data_file_name '_offspring_plot_lin.png']);
+
 set(gca, 'yscale', 'log');
 xl = xlim;
 yl = ylim;
