@@ -506,9 +506,9 @@ namespace
             return {};
         }
 
-        std::map<size_t, std::string> still_alive;
-        std::map<size_t, size_t> pool_line_numbers;
-        std::map<size_t, std::string> pool_lines;
+        std::map<size_t, std::string> still_alive; // pool number -> ID list
+        std::map<size_t, size_t> pool_line_numbers; // pool number --> gene pool file line number (error reporting)
+        std::map<size_t, std::string> pool_lines; // pool number --> line in gene pool file (error reporting)
 
         std::string line;
         size_t line_number = 0;
@@ -525,46 +525,60 @@ namespace
                     pool_line_numbers[pool_number] = line_number;
                     pool_lines[pool_number] = line;
                 }
-                catch(const std::exception&)
+                catch(...)
                 {
                     throw Bad_Still_Alive_Line(line_number, line);
                 }
             }
         }
 
-        ifs = std::ifstream(load_file);
-        auto largest_pool_number = still_alive.rbegin()->first;
-        Gene_Pool_Set result(largest_pool_number + 1);
-        bool search_started_from_beginning_of_file = true;
-        for(const auto& [pool_number, ai_index_list] : still_alive)
+        if(pool_lines.empty())
         {
-            for(const auto& ai_index_string : String::split(ai_index_list))
+            std::cout << "No \"Still Alive\" lines found. Starting with empty gene pool.";
+            return {};
+        }
+
+        std::map<int, size_t> pool_assignments; // ID --> pool number
+        for(const auto& [pool_number, id_list] : still_alive)
+        {
+            for(const auto& id_string : String::split(id_list))
             {
-                while(true)
+                try
                 {
-                    try
+                    pool_assignments[std::stoi(id_string)] = pool_number;
+                }
+                catch(...)
+                {
+                    throw Bad_Still_Alive_Line(pool_line_numbers[pool_number], pool_lines[pool_number]);
+                }
+            }
+        }
+
+        ifs = std::ifstream(load_file);
+        bool search_started_from_beginning_of_file = true;
+        Gene_Pool_Set result(still_alive.size());
+        for(auto [id, pool_number] : pool_assignments)
+        {
+            while(true)
+            {
+                try
+                {
+                    result[pool_number].emplace_back(ifs, id);
+                    search_started_from_beginning_of_file = false;
+                    break;
+                }
+                catch(const Genetic_AI_Creation_Error& e)
+                {
+                    if(search_started_from_beginning_of_file)
                     {
-                        result[pool_number].emplace_back(ifs, std::stoi(ai_index_string));
-                        search_started_from_beginning_of_file = false;
-                        break;
-                    }
-                    catch(const Genetic_AI_Creation_Error& e)
-                    {
-                        if(search_started_from_beginning_of_file)
-                        {
-                            std::cerr << e.what() << load_file << "\n";
-                            throw Bad_Still_Alive_Line(pool_line_numbers[pool_number], pool_lines[pool_number]);
-                        }
-                        else
-                        {
-                            ifs = std::ifstream(load_file);
-                            search_started_from_beginning_of_file = true;
-                            continue;
-                        }
-                    }
-                    catch(const std::invalid_argument&)
-                    {
+                        std::cerr << e.what() << load_file << "\n";
                         throw Bad_Still_Alive_Line(pool_line_numbers[pool_number], pool_lines[pool_number]);
+                    }
+                    else
+                    {
+                        ifs = std::ifstream(load_file);
+                        search_started_from_beginning_of_file = true;
+                        continue;
                     }
                 }
             }
