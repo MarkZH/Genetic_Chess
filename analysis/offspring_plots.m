@@ -61,6 +61,8 @@ title('Offspring Count');
 
 print([raw_data_file_name '_offspring_plot_lin.png']);
 set(gca, 'yscale', 'log');
-set(fit_box, 'position', [0.6*xl(2), 0.01*yl(2)]);
+xl = xlim;
+yl = ylim;
+set(fit_box, 'position', [xl(2)/10, yl(1)*((yl(2)/yl(1))^(1/5))]);
 print([raw_data_file_name '_offspring_plot_log.png']);
 close;
