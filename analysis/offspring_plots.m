@@ -4,15 +4,11 @@ function frequency_plot(data, reproduction_adjustment, raw_data_file_name, plot_
     global plot_count;
     plot_count = plot_count + 1;
 
-    unique_ids = unique(data);
-    offspring_counts = zeros(size(unique_ids));
-
-    for index = 1 : length(unique_ids)
-        id = unique_ids(index);
-        offspring_counts(index) = sum(id == data);
-    end
-    [frequency, child_count] = hist(offspring_counts, max(offspring_counts));
-    child_count = child_count - reproduction_adjustment;
+    indices = data - min(data) + 1;
+    valid_indices = unique(indices);
+    offspring_counts = accumarray(indices, 1) - reproduction_adjustment;
+    offspring_counts = offspring_counts(valid_indices);
+    [frequency, child_count] = hist(offspring_counts, min(offspring_counts) : max(offspring_counts));
     child_count = child_count(frequency > 0);
     frequency = frequency(frequency > 0);
 
