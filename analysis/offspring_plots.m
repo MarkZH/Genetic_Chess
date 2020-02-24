@@ -1,3 +1,5 @@
+warning('off', 'Octave:axis-non-positive-log-limits');
+
 global plot_count = 0;
 global text_box_references = [];
 global text_box_lin_positions = [];
