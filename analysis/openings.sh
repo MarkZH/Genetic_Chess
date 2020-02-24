@@ -16,7 +16,6 @@ grep -A$((moves-1)) '^1\.' "$game_file" | # First n moves
     ./"$bindir"/delete_comments.sh      |
     grep -v -- --                       | # Delete dashes between games
     paste -d' ' $paste_dashes           | # Combine opening moves into one line
-    cut -d' ' -f 1-3                    | # Only include move text
     sed -e 's/1-0//' -e 's/0-1//' -e 's/1\/2-1\/2//' | # delete endings
     tee "${1}_opening_list.txt"         |
     sort                                |
