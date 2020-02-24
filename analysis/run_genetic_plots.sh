@@ -37,14 +37,18 @@ octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
 # Second term here checks if argument is a number
 if [[ -n "$opening_moves" ]] && [ "$opening_moves" -eq "$opening_moves" ]
 then
-    ./analysis/openings.sh "$game_file" "$opening_moves" && octave analysis/opening_plotting.m "$opening_file" "$notes_file" &
+    if ./analysis/openings.sh "$game_file" "$opening_moves"
+    then
+        offspring_pid=$!
+        octave analysis/opening_plotting.m "$opening_file" "$notes_file" &
+    fi
 else
     echo "Invalid argument for openings analysis: $opening_moves"
 fi
 
-wait # for opening_plotting.m to finish outputing to command line
+reproduction="$(get_config_value "$config_file" reproduction)"
+./analysis/offspring_frequency.sh "$game_file" "$reproduction" &
+
+wait "$offspring_pid"
 ./analysis/promotions.sh "$game_file"
 ./analysis/castling.sh "$game_file"
-
-reproduction="$(get_config_value "$config_file" reproduction)"
-./analysis/offspring_frequency.sh "$game_file" "$reproduction"
