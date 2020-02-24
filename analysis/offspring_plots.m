@@ -1,6 +1,10 @@
 global plot_count = 0;
+global text_box_references = [];
+global text_box_lin_positions = [];
+global text_box_log_positions = [];
+global original_lin_axes = [];
 
-function frequency_plot(data, reproduction_adjustment, raw_data_file_name, plot_handle)
+function frequency_plot(data, reproduction_adjustment, raw_data_file_name, data_label, plot_handle)
     global plot_count;
     plot_count = plot_count + 1;
 
@@ -12,11 +16,14 @@ function frequency_plot(data, reproduction_adjustment, raw_data_file_name, plot_
     child_count = child_count(frequency > 0);
     frequency = frequency(frequency > 0);
 
-
-    % Data
     figure(plot_handle);
     hold all;
-    plot(child_count, frequency, '.', 'LineWidth', 3, 'DisplayName', 'Data');
+    leg = legend('show');
+    xlabel('Number of offspring');
+    ylabel('Frequency');
+    title('Offspring Count');
+
+    plot(child_count, frequency, '.', 'LineWidth', 3, 'DisplayName', ['Data (' data_label ')']);
 
     % Null-hypothesis fit
     A = sum(child_count.*frequency)/2;
@@ -26,7 +33,7 @@ function frequency_plot(data, reproduction_adjustment, raw_data_file_name, plot_
         A_text = '1/2 ';
     end
     y_fit = A*(1/2).^(x_fit);
-    plot(x_fit, y_fit, 'LineWidth', 3, 'DisplayName', 'Null hypothesis');
+    plot(x_fit, y_fit, 'LineWidth', 3, 'DisplayName', ['Null hypothesis (' data_label ')']);
 
     % Error bars
     high_err = sqrt(frequency);
@@ -34,25 +41,43 @@ function frequency_plot(data, reproduction_adjustment, raw_data_file_name, plot_
     errorbar(child_count, frequency, low_err, high_err, '.');
 
     % Info box
-    fit_text = {'y = A(1/2)^{x}',
+    fit_text = {['y = A(1/2)^{x} (' data_label ')'],
                 ['A = ' num2str(A) ' = ' A_text ' # games = ' A_text ' # offspring'],
                 'Error bars show \pm{}2 standard deviations'};
-    xl = xlim;
-    xlim([0 xl(2)]);
-    yl = ylim;
-    fit_box = text(0.5*xl(2), 0.4*yl(2), fit_text);
 
-    leg = legend('show');
-    xlabel('Number of offspring');
-    ylabel('Frequency');
-    title('Offspring Count');
+    set(gca, 'yscale', 'linear');
+    global original_lin_axes;
+    if isempty(original_lin_axes)
+        original_lin_axes = [xlim; ylim];
+    else
+        xlim(original_lin_axes(1, :));
+        ylim(original_lin_axes(2, :));
+    end
+    global text_box_references;
+    global text_box_lin_positions;
+    for row = 1 : size(text_box_references, 1)
+        set(text_box_references(row), 'position', text_box_lin_positions(row, :));
+    end
+    xl = xlim;
+    yl = ylim;
+    fit_box_lin_position = [0.5*xl(2), (0.7 - plot_count/7)*yl(2)];
+    fit_box = text(fit_box_lin_position(1), fit_box_lin_position(2), fit_text);
     print([raw_data_file_name '_offspring_plot_lin.png']);
 
     set(gca, 'yscale', 'log');
+    global text_box_log_positions;
+    for row = 1 : size(text_box_references, 1)
+        set(text_box_references(row), 'position', text_box_log_positions(row, :));
+    end
     xl = xlim;
     yl = ylim;
-    set(fit_box, 'position', [xl(2)/10, yl(1)*((yl(2)/yl(1))^(3-plot_count/5))]);
+    fit_box_log_position = [xl(2)/15, yl(1)*((yl(2)/yl(1))^((2-plot_count/2)/5))];
+    set(fit_box, 'position', fit_box_log_position);
     print([raw_data_file_name '_offspring_plot_log.png']);
+
+    text_box_references(end + 1) = fit_box;
+    text_box_lin_positions(end + 1, :) = fit_box_lin_position;
+    text_box_log_positions(end + 1, :) = fit_box_log_position;
 end
 
 isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
@@ -84,6 +109,6 @@ data = importdata(raw_data_file_name);
 data_last_10p = data(floor(0.9*length(data)) : end);
 
 f = figure;
-frequency_plot(data, adj, raw_data_file_name, f);
-frequency_plot(data_last_10p, adj, raw_data_file_name, f);
+frequency_plot(data, adj, raw_data_file_name, 'All', f);
+frequency_plot(data_last_10p, adj, raw_data_file_name, 'Last 10%', f);
 close all;
