@@ -84,6 +84,11 @@ bool Configuration::as_boolean(const std::string& parameter, const std::string& 
     }
 }
 
+bool Configuration::has_parameter(const std::string& parameter) const noexcept
+{
+    return parameters.count(standardize_text(parameter)) > 0;
+}
+
 std::string Configuration::standardize_text(const std::string& input) noexcept
 {
     return String::lowercase(String::remove_extra_whitespace(input));

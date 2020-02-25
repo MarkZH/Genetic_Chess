@@ -89,6 +89,8 @@ void gene_pool(const std::string& config_file)
     auto game_time_increment = config.as_number<double>("game time increment"); // seconds
     const auto oscillating_time = config.as_boolean("oscillating time", "yes", "no");
 
+    auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
+
     if(config.any_unused_parameters())
     {
         std::cout << "There were unused parameters in the file: " << config_file << std::endl;
@@ -107,6 +109,19 @@ void gene_pool(const std::string& config_file)
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
     auto write_new_pools = pools.empty() || pools.front().size() != gene_pool_population;
+    if(pools.empty() && ! seed_ai_specification.empty())
+    {
+        auto seed_split = String::split(seed_ai_specification, "/");
+        if(seed_split.size() > 2)
+        {
+            throw std::runtime_error("Too many parameters in the seed configuration\nseed = " + seed_ai_specification);
+        }
+        auto file_name = seed_split.front();
+        auto seed_id = seed_split.size() == 2 ? String::string_to_number<int>(seed_split.back()) : find_last_id(file_name);
+        auto seed_ai = Genetic_AI(file_name, seed_id);
+        std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
+        pools.push_back({seed_ai});
+    }
     pools.resize(gene_pool_count);
     for(size_t i = 0; i < pools.size(); ++i)
     {

@@ -161,3 +161,19 @@ bool Genetic_AI::operator<(const Genetic_AI& other) const noexcept
 {
     return id() < other.id();
 }
+
+int find_last_id(const std::string& players_file_name)
+{
+    std::ifstream player_input(players_file_name);
+    std::string line;
+    int last_player = -1;
+    while(std::getline(player_input, line))
+    {
+        if(String::starts_with(line, "ID:"))
+        {
+            last_player = std::stoi(String::split(line).back());
+        }
+    }
+
+    return last_player;
+}

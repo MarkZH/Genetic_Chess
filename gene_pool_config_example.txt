@@ -43,3 +43,11 @@ oscillating time = yes
 # then the gene pool procedue will pick up from the last
 # stopping point.
 gene pool file = pool.txt
+
+# When starting a new gene pool run, add the AI from the listed file.
+# The ID # number is separated from the file name with a slash.
+seed = genetic_ai_example.txt / 78551
+
+# Alternatively, If no ID number is listed, then the last one
+# is selected.
+#seed = genetic_ai_example.txt

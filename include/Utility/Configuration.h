@@ -72,6 +72,11 @@ class Configuration
         //!         if the data does not match affirmative or negative.
         bool as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const;
 
+        //! \brief Check if the Configuration has the given parameter.
+        //!
+        //! \param parameter The parameter that may or may not appear in the Configuration.
+        bool has_parameter(const std::string& parameter) const noexcept;
+
         //! \brief Check if any parameters in the configuration file were unused.
         bool any_unused_parameters() const noexcept;
 

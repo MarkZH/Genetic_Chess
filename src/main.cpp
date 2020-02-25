@@ -32,12 +32,6 @@ namespace
     //!
     //! \param file_name The name of the file with the PGN game records. All games will be examined.
     bool confirm_game_record(const std::string& file_name);
-
-    //! \brief Find the last ID of a Genetic_AI in a gene pool file.
-    //!
-    //! \param file_name The name of the file with Genetic_AI data.
-    //! \returns The numerical ID of the last AI in the file.
-    int find_last_id(const std::string& file_name);
 }
 
 //! \brief The starting point for the whole program.
@@ -298,22 +292,6 @@ namespace
                 << "\t\tAllow AI players to think ahead when it is not their turn.\n\n"
                 << "\t-game_file [file name]\n"
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n";
-    }
-
-    int find_last_id(const std::string& players_file_name)
-    {
-        std::ifstream player_input(players_file_name);
-        std::string line;
-        int last_player = -1;
-        while(std::getline(player_input, line))
-        {
-            if(String::starts_with(line, "ID:"))
-            {
-                last_player = std::stoi(String::split(line).back());
-            }
-        }
-
-        return last_player;
     }
 
     bool confirm_game_record(const std::string& file_name)

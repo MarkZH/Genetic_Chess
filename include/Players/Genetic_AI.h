@@ -12,6 +12,8 @@
 class Board;
 class Clock;
 
+//! \file
+
 //! \brief This classes uses evolutionary algorithms to learn how to play chess.
 //!
 //! This is the player for which this program is named.
@@ -108,5 +110,11 @@ class Genetic_AI : public Minimax_AI
         double time_to_examine(const Board& board, const Clock& clock) const noexcept override;
         double speculation_time_factor() const noexcept override;
 };
+
+//! \brief Find the last ID of a Genetic_AI in a gene pool file.
+//!
+//! \param file_name The name of the file with Genetic_AI data.
+//! \returns The numerical ID of the last AI in the file.
+int find_last_id(const std::string& file_name);
 
 #endif // GENETIC_AI_H
