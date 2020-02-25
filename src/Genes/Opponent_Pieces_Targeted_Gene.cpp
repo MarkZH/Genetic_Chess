@@ -1,6 +1,5 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 
-#include <memory>
 #include <string>
 
 #include "Game/Board.h"

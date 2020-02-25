@@ -1,7 +1,6 @@
 #include "Genes/Look_Ahead_Gene.h"
 
 #include <map>
-#include <memory>
 #include <cassert>
 
 #include "Genes/Gene.h"

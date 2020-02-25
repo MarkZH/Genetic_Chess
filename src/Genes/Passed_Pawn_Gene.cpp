@@ -1,6 +1,5 @@
 #include "Genes/Passed_Pawn_Gene.h"
 
-#include <memory>
 #include <string>
 #include <array>
 

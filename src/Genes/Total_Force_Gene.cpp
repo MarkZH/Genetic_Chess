@@ -1,6 +1,5 @@
 #include "Genes/Total_Force_Gene.h"
 
-#include <memory>
 #include <string>
 #include <numeric>
 

@@ -1,7 +1,6 @@
 #include "Genes/Mutation_Rate_Gene.h"
 
 #include <string>
-#include <memory>
 #include <map>
 
 #include "Genes/Gene.h"

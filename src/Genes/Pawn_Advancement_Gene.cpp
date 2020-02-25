@@ -1,7 +1,6 @@
 #include "Genes/Pawn_Advancement_Gene.h"
 
 #include <string>
-#include <memory>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"

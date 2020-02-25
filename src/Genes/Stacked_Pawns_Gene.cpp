@@ -1,6 +1,5 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 
-#include <memory>
 #include <string>
 
 #include "Game/Board.h"

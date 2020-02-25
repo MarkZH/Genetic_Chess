@@ -1,6 +1,5 @@
 #include "Genes/Pawn_Islands_Gene.h"
 
-#include <memory>
 #include <string>
 
 #include "Game/Board.h"

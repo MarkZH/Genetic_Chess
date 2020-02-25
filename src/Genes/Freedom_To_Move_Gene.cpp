@@ -1,6 +1,5 @@
 #include "Genes/Freedom_To_Move_Gene.h"
 
-#include <memory>
 #include <string>
 
 #include "Genes/Gene.h"

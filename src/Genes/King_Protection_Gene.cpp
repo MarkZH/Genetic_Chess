@@ -1,6 +1,5 @@
 #include "Genes/King_Protection_Gene.h"
 
-#include <memory>
 #include <string>
 
 #include "Genes/Gene.h"

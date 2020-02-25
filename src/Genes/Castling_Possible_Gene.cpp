@@ -1,13 +1,11 @@
 #include "Genes/Castling_Possible_Gene.h"
 
 #include <string>
-#include <memory>
 #include <map>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
-#include "Moves/Move.h"
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
