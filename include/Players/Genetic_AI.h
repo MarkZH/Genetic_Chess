@@ -72,7 +72,7 @@ class Genetic_AI : public Minimax_AI
         //!
         //! The printed information includes the ID number and genetic data.
         //! \param file_name The name of the text file to print to. If empty, print to stdout.
-        void print(const std::string& file_name = "") const noexcept;
+        void print(const std::string& file_name = {}) const noexcept;
 
         //! \brief Print AI information to the given std::ostream.
         //!
