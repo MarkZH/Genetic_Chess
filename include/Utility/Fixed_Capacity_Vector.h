@@ -52,7 +52,7 @@ class Fixed_Capacity_Vector
         //! \returns A Scoped_Push_Guard object that will remove the items upon exiting the current scope.
         //! \throws assertion_failure If there is not enough room for the items to be added.
         template<typename Iterator>
-        auto scoped_push_back(Iterator begin, Iterator end)
+        auto scoped_push_back(Iterator begin, Iterator end) noexcept
         {
             assert(size() + std::distance(begin, end) <= data.size());
             return Scoped_Push_Guard(*this, begin, end);
