@@ -88,7 +88,7 @@ void Genetic_AI::read_data(std::istream& is)
     }
     catch(const Genetic_AI_Creation_Error& e)
     {
-        throw Genetic_AI_Creation_Error("Error in creating Genetic AI #" + std::to_string(id()) + "\n" + e.what());
+        throw Genetic_AI_Creation_Error("Error in creating Genetic AI #" + std::to_string(id()) + "\n" + e.what() + "\nFile: ");
     }
 }
 
