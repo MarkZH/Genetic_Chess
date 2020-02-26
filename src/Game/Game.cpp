@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdexcept>
 #include <csignal>
+#include <cassert>
 
 #include "Players/Player.h"
 #include "Players/Outside_Communicator.h"
@@ -22,12 +23,9 @@ Game_Result play_game(Board board,
                       bool pondering_allowed,
                       const std::string& event_name,
                       const std::string& location,
-                      const std::string& pgn_file_name)
+                      const std::string& pgn_file_name) noexcept
 {
-    if(board.whose_turn() != game_clock.running_for())
-    {
-        throw std::invalid_argument("Board and Clock disagree on whose turn it is.");
-    }
+    assert(board.whose_turn() == game_clock.running_for());
 
     std::vector<const Move*> game_record;
     Game_Result result;
