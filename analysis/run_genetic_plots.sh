@@ -39,7 +39,7 @@ if [[ -n "$opening_moves" ]] && [ "$opening_moves" -eq "$opening_moves" ]
 then
     if ./analysis/openings.sh "$game_file" "$opening_moves"
     then
-        offspring_pid=$!
+        opening_pid=$!
         octave analysis/opening_plotting.m "$opening_file" "$notes_file" &
     fi
 else
@@ -49,6 +49,6 @@ fi
 reproduction="$(get_config_value "$config_file" reproduction)"
 ./analysis/offspring_frequency.sh "$game_file" "$reproduction" &
 
-wait "$offspring_pid"
+wait "$opening_pid"
 ./analysis/promotions.sh "$game_file"
 ./analysis/castling.sh "$game_file"
