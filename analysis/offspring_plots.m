@@ -1,15 +1,6 @@
 warning('off', 'Octave:axis-non-positive-log-limits');
 
-global plot_count = 0;
-global text_box_references = [];
-global text_box_lin_positions = [];
-global text_box_log_positions = [];
-global original_lin_axes = [];
-
-function frequency_plot(data, reproduction_adjustment, raw_data_file_name, data_label, plot_handle)
-    global plot_count;
-    plot_count = plot_count + 1;
-
+function freq_0 = frequency_plot(data, reproduction_adjustment, data_label, plot_handle)
     indices = data - min(data) + 1;
     valid_indices = unique(indices);
     offspring_counts = accumarray(indices, 1) - reproduction_adjustment;
@@ -30,10 +21,6 @@ function frequency_plot(data, reproduction_adjustment, raw_data_file_name, data_
     % Null-hypothesis fit
     A = sum(child_count.*frequency)/2;
     x_fit = linspace(min(child_count), max(child_count), 1000);
-    A_text='';
-    if min(x_fit) == 0
-        A_text = '1/2 ';
-    end
     y_fit = A*(1/2).^(x_fit);
     plot(x_fit, y_fit, 'LineWidth', 3, 'DisplayName', ['Null hypothesis (' data_label ')']);
 
@@ -42,58 +29,62 @@ function frequency_plot(data, reproduction_adjustment, raw_data_file_name, data_
     low_err = min(high_err, frequency - min(y_fit));
     errorbar(child_count, frequency, low_err, high_err, '.');
 
-    % Info box
-    fit_text = {['y = A(1/2)^{x} (' data_label ')'],
-                ['A = ' num2str(A) ' = ' A_text ' # games = ' A_text ' # offspring'],
-                'Error bars show \pm{}2 standard deviations'};
+    freq_0 = A;
+end
 
+function add_labels_and_save(raw_data_file_name, data_labels, A_text, f0s, plot_handle)
+    text_boxes = [];
+
+    figure(plot_handle);
+    text_boxes = [];
     set(gca, 'yscale', 'linear');
-    global original_lin_axes;
-    if isempty(original_lin_axes)
-        original_lin_axes = [xlim; ylim];
-    else
-        xlim(original_lin_axes(1, :));
-        ylim(original_lin_axes(2, :));
-    end
-    global text_box_references;
-    global text_box_lin_positions;
-    for row = 1 : size(text_box_references, 1)
-        set(text_box_references(row), 'position', text_box_lin_positions(row, :));
-    end
     xl = xlim;
     yl = ylim;
-    fit_box_lin_position = [0.5*xl(2), (0.7 - plot_count/7)*yl(2)];
-    fit_box = text(fit_box_lin_position(1), fit_box_lin_position(2), fit_text);
+    xlim([0 xl(2)]);
+    xl = xlim;
+    for idx = 1 : length(data_labels)
+        A = f0s(idx);
+        data_label = data_labels{idx};
+
+        % Info box
+        fit_text = {['y = A(1/2)^{x} (' data_label ')'],
+                    ['A = ' num2str(A) ' = ' A_text ' # games = ' A_text ' # offspring'],
+                    'Error bars show \pm{}2 standard deviations'};
+
+        fit_box_lin_position = [0.5*xl(2), (0.7 - idx/7)*yl(2)];
+        fit_box = text(fit_box_lin_position(1), fit_box_lin_position(2), fit_text);
+        text_boxes(end + 1) = fit_box;
+    end
     print([raw_data_file_name '_offspring_plot_lin.png']);
 
     set(gca, 'yscale', 'log');
-    global text_box_log_positions;
-    for row = 1 : size(text_box_references, 1)
-        set(text_box_references(row), 'position', text_box_log_positions(row, :));
-    end
     xl = xlim;
     yl = ylim;
-    fit_box_log_position = [xl(2)/15, yl(1)*((yl(2)/yl(1))^((2-plot_count/2)/5))];
-    set(fit_box, 'position', fit_box_log_position);
-    print([raw_data_file_name '_offspring_plot_log.png']);
+    xlim([0 xl(2)]);
+    xl = xlim;
+    for idx = 1 : length(data_labels)
+        A = f0s(idx);
+        data_label = data_labels{idx};
 
-    text_box_references(end + 1) = fit_box;
-    text_box_lin_positions(end + 1, :) = fit_box_lin_position;
-    text_box_log_positions(end + 1, :) = fit_box_log_position;
+        fit_box_log_position = [xl(2)/15, yl(1)*((yl(2)/yl(1))^((2-idx/2)/5))];
+        set(text_boxes(idx), 'position', fit_box_log_position);
+    end
+    print([raw_data_file_name '_offspring_plot_log.png']);
 end
 
 isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
 
 filename = 0;
 directory = '';
-adj = 0;
 if isOctave
     graphics_toolkit("gnuplot");
     args = argv();
     if length(args) > 0
         filename = args{1};
         if strcmp(args{2}, "cloning")
-            adj=1
+            adj=1;
+        else
+            adj=0;
         end
     end
 end
@@ -110,7 +101,15 @@ raw_data_file_name = fullfile(directory, filename);
 data = importdata(raw_data_file_name);
 data_last_10p = data(floor(0.9*length(data)) : end);
 
+if adj == 1
+    A_text = '1/2 ';
+else
+    A_text='';
+end
+
 f = figure;
-frequency_plot(data, adj, raw_data_file_name, 'All', f);
-frequency_plot(data_last_10p, adj, raw_data_file_name, 'Last 10%', f);
+data_labels = {'All', 'Last 10%'};
+f0all = frequency_plot(data, adj, data_labels{1}, f);
+f010p = frequency_plot(data_last_10p, adj, data_labels{2}, f);
+add_labels_and_save(raw_data_file_name, data_labels, A_text, [f0all, f010p], f);
 close all;
