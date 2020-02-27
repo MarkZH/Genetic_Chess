@@ -71,7 +71,7 @@ namespace Random
     typename Container::const_reference random_element(const Container& container) noexcept
     {
         assert( ! container.empty());
-        return container.at(random_integer(size_t{0}, container.size() - 1));
+        return container.at(random_integer({0}, container.size() - 1));
     }
 
     //! \brief Select random element from random-access container.
@@ -81,7 +81,7 @@ namespace Random
     typename Container::reference random_element(Container& container) noexcept
     {
         assert( ! container.empty());
-        return container[random_integer(size_t{0}, container.size() - 1)];
+        return container[random_integer({0}, container.size() - 1)];
     }
 
     //! \brief Create a string of random lowercase letters.
