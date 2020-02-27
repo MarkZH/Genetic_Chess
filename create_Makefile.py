@@ -124,7 +124,7 @@ base_linker_options = ["-pthread"]
 linker_options['debug'] = []
 linker_options['release'] = ['-flto']
 options_list['debug'] = ["-g"]
-options_list['release'] = ["-O3", "-DNDEBUG"]
+options_list['release'] = ["-O3", "-DNDEBUG", "-march=native", "-mtune=native"]
 
 system = sys.argv[1]
 if system == 'gcc':
