@@ -5,6 +5,7 @@
 #include <map>
 #include <array>
 #include <string>
+#include <cmath>
 
 class Board;
 class Clock;
@@ -110,6 +111,11 @@ double Genetic_AI::time_to_examine(const Board& board, const Clock& clock) const
 double Genetic_AI::speculation_time_factor() const noexcept
 {
     return genome.speculation_time_factor();
+}
+
+double Genetic_AI::minimum_fraction_of_alpha() const noexcept
+{
+    return genome.minimum_fraction_of_alpha();
 }
 
 void Genetic_AI::mutate(int mutation_count) noexcept
