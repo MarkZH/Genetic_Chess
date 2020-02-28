@@ -8,7 +8,6 @@
 #include <algorithm>
 #include <sstream>
 #include <bitset>
-#include <cmath>
 #include <atomic>
 #include <functional>
 using namespace std::placeholders; // for _1, _2, etc. in std::bind()
@@ -19,9 +18,7 @@ using namespace std::placeholders; // for _1, _2, etc. in std::bind()
 #include "Game/Square.h"
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
-
 #include "Moves/Move.h"
-#include "Moves/Castle.h"
 
 #include "Players/Player.h"
 
