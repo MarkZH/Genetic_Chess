@@ -19,7 +19,7 @@ class Pawn_Advancement_Gene : public Clonable_Gene<Pawn_Advancement_Gene>
         std::string name() const noexcept override;
 
     private:
-        double score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
 };
 
 #endif // GENES_PAWN_ADVANCEMENT_GENE_H

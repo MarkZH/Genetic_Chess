@@ -384,8 +384,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(Board board,
                                                 const Game_Result& move_result,
                                                 const current_variation_store& move_list) const noexcept
 {
-    const auto prior_real_moves = board.game_length() - move_list.size();
-    return {evaluate(board, move_result, perspective, prior_real_moves),
+    return {evaluate(board, move_result, perspective, move_list.size()),
             perspective,
             {move_list.begin(), move_list.end()}};
 }
@@ -400,7 +399,7 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
     choose_move(board, clock);
 }
 
-double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t prior_real_moves) const noexcept
+double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
 {
     if(move_result.game_has_ended())
     {
@@ -418,7 +417,7 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
         }
     }
 
-    return internal_evaluate(board, perspective, prior_real_moves);
+    return internal_evaluate(board, perspective, depth);
 }
 
 double Minimax_AI::centipawn_value() const noexcept

@@ -24,7 +24,7 @@ class Castling_Possible_Gene : public Clonable_Gene<Castling_Possible_Gene>
         double kingside_preference = 0.0;
         double queenside_preference = 0.0;
 
-        double score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;
 };
 

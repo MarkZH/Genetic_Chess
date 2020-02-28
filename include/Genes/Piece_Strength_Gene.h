@@ -43,7 +43,7 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
         std::array<double, 6> piece_strength;
         double normalizing_value;
 
-        double score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         double piece_value(Piece_Type type) const noexcept;
         double& piece_value(Piece_Type type) noexcept;
         void gene_specific_mutation() noexcept override;

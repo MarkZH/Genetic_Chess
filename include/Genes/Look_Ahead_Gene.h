@@ -50,7 +50,7 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         double game_length_uncertainty = 0.5; // approximately as a fraction of the mean
         double alpha_fraction = 0.0; // minimum depth to search before evaluating a board position
 
-        double score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;
 };
 

@@ -28,7 +28,7 @@ class Mutation_Rate_Gene : public Clonable_Gene<Mutation_Rate_Gene>
     private:
         double mutated_components_per_mutation = 1.0;
 
-        double score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
 };
 
 #endif // MUTATION_RATE_GENE_H

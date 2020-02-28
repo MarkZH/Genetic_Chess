@@ -102,7 +102,7 @@ class Genetic_AI : public Minimax_AI
 
         double internal_evaluate(const Board& board,
                                  Piece_Color perspective,
-                                 size_t prior_real_moves) const noexcept override;
+                                 size_t depth) const noexcept override;
 
         virtual const std::array<double, 6>& piece_values() const noexcept override;
 

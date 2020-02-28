@@ -38,9 +38,9 @@ class Gene
         //!
         //! \param board The state of the board to be evaluated--found at the leaves of the game search tree.
         //! \param perspective For which player the board is being scored.
-        //! \param prior_real_moves How many of the first moves on the board represent real moves from the current game.
+        //! \param depth The current game tree search depth.
         //! \returns A numerical score indicating the likelihood that the board in the first argument is winning for board.whose_turn().
-        double evaluate(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept;
+        double evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
 
         //! \brief Copies the gene data and returns a pointer to the new data
         //!
@@ -104,7 +104,7 @@ class Gene
     private:
         double scoring_priority = 1000.0;
 
-        virtual double score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept = 0;
+        virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
 
         //! \brief A method overridden by derived genes to mutate more specific gene components.

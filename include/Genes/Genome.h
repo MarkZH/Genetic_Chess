@@ -47,9 +47,9 @@ class Genome
         //!
         //! \param board The board position to be evaluated.
         //! \param perspective The player for whom a higher score means a greater chance of victory.
-        //! \param prior_real_moves How many moves have already been made on the original board
+        //! \param depth The current search depth on the game tree.
         //!        (i.e., at the root of the game tree).
-        double evaluate(const Board& board, Piece_Color perspective, size_t prior_real_moves) const;
+        double evaluate(const Board& board, Piece_Color perspective, size_t depth) const;
 
         //! \brief Apply a random set of mutations to the entire genome.
         //!
@@ -91,7 +91,7 @@ class Genome
     private:
         std::vector<std::unique_ptr<Gene>> genome;
 
-        double score_board(const Board& board, Piece_Color perspective, size_t prior_real_moves) const noexcept;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
 
         //! \brief Consults the Mutation_Rate_Gene to determine how many point mutations to apply to the genome.
