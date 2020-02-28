@@ -32,7 +32,7 @@ pool swap interval = 1000
 # Then, the cycle starts again. If the "oscillating time" is "no",
 # then the game time will stop and remain at the maximum time until
 # the end of the run.
-minimum game time = 5 # seconds
+minimum game time = .05 # seconds
 maximum game time = 30 # seconds
 game time increment = 0.01 # seconds
 oscillating time = yes
@@ -47,7 +47,7 @@ gene pool file = pool.txt
 # (Optional) When starting a new gene pool run, add the AI from the
 # listed file. The ID # number is separated from the file name with
 # a slash.
-seed = genetic_ai_example.txt / 78551
+seed = genetic_ai_example.txt / 197965
 
 # (Optional) Alternatively, If no ID number for the seed is listed,
 # then the last one in the file is selected.
