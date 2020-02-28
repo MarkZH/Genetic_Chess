@@ -22,6 +22,13 @@ then
     exit 1
 fi
 
+# Second term here checks if argument is a number
+if [[ -z "$opening_moves" ]] || ! [ "$opening_moves" -eq "$opening_moves" ]
+then
+    echo "Invalid argument for openings analysis: $opening_moves"
+    exit 1
+fi
+
 if [[ -n "$notes_file" ]] && ! [[ -f "$notes_file" ]]
 then
     echo "Invalid notes file: $notes_file"
@@ -30,25 +37,18 @@ fi
 
 pool_file="$(get_config_value "$config_file" file)"
 game_file="${pool_file}_games.pgn"
-opening_file="${game_file}_opening_list.txt"
+
 octave analysis/gene_plots.m "$pool_file" "$notes_file" &
 octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
-
-# Second term here checks if argument is a number
-if [[ -n "$opening_moves" ]] && [ "$opening_moves" -eq "$opening_moves" ]
-then
-    if ./analysis/openings.sh "$game_file" "$opening_moves"
-    then
-        opening_pid=$!
-        octave analysis/opening_plotting.m "$opening_file" "$notes_file" &
-    fi
-else
-    echo "Invalid argument for openings analysis: $opening_moves"
-fi
 
 reproduction="$(get_config_value "$config_file" reproduction)"
 ./analysis/offspring_frequency.sh "$game_file" "$reproduction" &
 
-wait "$opening_pid"
+if ./analysis/openings.sh "$game_file" "$opening_moves"
+then
+    opening_file="${game_file}_opening_list.txt"
+    octave analysis/opening_plotting.m "$opening_file" "$notes_file" &
+fi
+
 ./analysis/promotions.sh "$game_file"
 ./analysis/castling.sh "$game_file"
