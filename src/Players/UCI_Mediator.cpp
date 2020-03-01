@@ -116,66 +116,72 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
         }
         else if(String::starts_with(command, "go "))
         {
-            auto mode = clock.reset_mode();
+            const auto mode = clock.reset_mode();
+            auto new_mode = mode;
             auto wtime = clock.time_left(Piece_Color::WHITE);
             auto btime = clock.time_left(Piece_Color::BLACK);
             auto winc = clock.increment(Piece_Color::WHITE);
             auto binc = clock.increment(Piece_Color::BLACK);
             auto movestogo = size_t{0};
             auto movetime = clock.initial_time();
-            auto new_mode = mode;
 
-            auto go_parse = String::split(command);
-            for(size_t i = 1; i < go_parse.size(); ++i)
+            std::string previous_option;
+            for(const auto& option : String::split(command))
             {
-                auto option = go_parse.at(i);
-                double new_time = 0.0;
-                if(String::ends_with(option, "time") || String::ends_with(option, "inc"))
+                if(option == "go")
                 {
-                    // All times received are in milliseconds
-                    new_time = std::stod(go_parse.at(++i))/1000;
+                    continue;
                 }
 
-                if(option == "wtime")
+                if(previous_option.empty())
                 {
-                    log("Setting White's time to " + std::to_string(new_time));
-                    wtime = new_time;
+                    previous_option = option;
+                    continue;
+                }
+
+                auto number = std::stoi(option);
+                if(previous_option == "wtime")
+                {
+                    log("Setting White's time to " + std::to_string(number) + " ms");
+                    wtime = number/1000.0;
                     new_mode = Time_Reset_Method::ADDITION;
                 }
-                else if(option == "btime")
+                else if(previous_option == "btime")
                 {
-                    log("Setting Black's time to " + std::to_string(new_time));
-                    btime = new_time;
+                    log("Setting Black's time to " + std::to_string(number) + " ms");
+                    btime = number/1000.0;
                     new_mode = Time_Reset_Method::ADDITION;
                 }
-                else if(option == "winc")
+                else if(previous_option == "winc")
                 {
-                    log("Setting White's increment time to " + std::to_string(new_time));
-                    winc = new_time;
+                    log("Setting White's increment time to " + std::to_string(number) + " ms");
+                    winc = number/1000.0;
                     new_mode = Time_Reset_Method::ADDITION;
                 }
-                else if(option == "binc")
+                else if(previous_option == "binc")
                 {
-                    log("Setting Black's increment time to " + std::to_string(new_time));
-                    binc = new_time;
+                    log("Setting Black's increment time to " + std::to_string(number) + " ms");
+                    binc = number/1000.0;
                     new_mode = Time_Reset_Method::ADDITION;
                 }
-                else if(option == "movestogo")
+                else if(previous_option == "movestogo")
                 {
-                    movestogo = String::string_to_number<size_t>(go_parse.at(++i));
-                    log("Next time control in " + std::to_string(movestogo));
+                    log("Next time control in " + std::to_string(number) + "moves");
+                    movestogo = number;
                     new_mode = Time_Reset_Method::ADDITION;
                 }
-                else if(option == "movetime")
+                else if(previous_option == "movetime")
                 {
-                    log("Setting clock to " + std::to_string(new_time) + " seconds per move");
-                    movetime = new_time;
+                    log("Setting clock to " + std::to_string(number) + " ms per move");
+                    movetime = number/1000.0;
                     new_mode = Time_Reset_Method::SET_TO_ORIGINAL;
                 }
                 else
                 {
-                    log("Ignoring go command: " + option);
+                    log("Ignoring go command: " + previous_option);
                 }
+
+                previous_option.clear();
             }
 
             if(new_mode != mode)
