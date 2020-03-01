@@ -27,7 +27,7 @@ double Total_Force_Gene::score_board(const Board& board, Piece_Color perspective
                                {
                                    return sum;
                                }
-                           })/piece_strength_source->normalizer();
+                           });
 }
 
 std::string Total_Force_Gene::name() const noexcept

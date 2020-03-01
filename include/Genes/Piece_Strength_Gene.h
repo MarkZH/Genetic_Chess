@@ -30,24 +30,18 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
         //! \brief Returns the value of all pieces.
         const std::array<double, 6>& piece_values() const noexcept;
 
-        //! \brief Returns the total value of the pieces on the board at the start of a standard game.
-        //!
-        //! \returns A value used by other Genes to normalize their scores.
-        double normalizer() const noexcept;
-
     protected:
         std::map<std::string, double> list_properties() const noexcept override;
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
         std::array<double, 6> piece_strength;
-        double normalizing_value;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         double piece_value(Piece_Type type) const noexcept;
         double& piece_value(Piece_Type type) noexcept;
         void gene_specific_mutation() noexcept override;
-        void recalculate_normalizing_value() noexcept;
+        void renormalize_values() noexcept;
 };
 
 #endif // PIECE_STRENGTH_GENE_H

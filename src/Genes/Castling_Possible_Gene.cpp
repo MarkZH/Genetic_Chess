@@ -10,6 +10,11 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
+Castling_Possible_Gene::Castling_Possible_Gene() noexcept
+{
+    normalize(kingside_preference, queenside_preference);
+}
+
 std::map<std::string, double> Castling_Possible_Gene::list_properties() const noexcept
 {
     auto properties = Gene::list_properties();
@@ -23,6 +28,7 @@ void Castling_Possible_Gene::load_properties(const std::map<std::string, double>
     Gene::load_properties(properties);
     kingside_preference = properties.at("Kingside Preference");
     queenside_preference = properties.at("Queenside Preference");
+    normalize(kingside_preference, queenside_preference);
 }
 
 std::string Castling_Possible_Gene::name() const noexcept
@@ -96,18 +102,19 @@ double Castling_Possible_Gene::score_board(const Board& board, Piece_Color persp
         }
     }
 
-    auto normalizing_factor = std::abs(kingside_preference) + std::abs(queenside_preference);
-    return score/normalizing_factor;
+    return score;
 }
 
 void Castling_Possible_Gene::gene_specific_mutation() noexcept
 {
     if(Random::coin_flip())
     {
-        kingside_preference += Random::random_laplace(0.1);
+        kingside_preference += Random::random_laplace(0.03);
     }
     else
     {
-        queenside_preference += Random::random_laplace(0.1);
+        queenside_preference += Random::random_laplace(0.03);
     }
+
+    normalize(kingside_preference, queenside_preference);
 }

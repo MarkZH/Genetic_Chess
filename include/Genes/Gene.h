@@ -72,6 +72,14 @@ class Gene
         //! \param psg A pointer to the correct Piece Strength Gene.
         virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg) noexcept;
 
+        //! \brief Returns the priority of the gene.
+        double priority() const noexcept;
+
+        //! \brief Scales the priority by multiplying by the parameter.
+        void scale_priority(double k) noexcept;
+
+        //! Tests the board-scoring method of the Gene.
+        //
         //! \brief Tests the board-scoring method of the Gene.
         //!
         //! \param[out] test_variable If the test fails, this parameter is set to false. Otherwise, it keeps
@@ -101,8 +109,22 @@ class Gene
         //! \throws std::out_of_range When an expected property is not present in the input.
         virtual void load_properties(const std::map<std::string, double>& properties);
 
+        //! Reduce the value of gene quantities where only the ratio is meaningful.
+        //
+        //! \param[out] x First value.
+        //! \param[out] y Second value.
+        //!
+        //! The values will be divided by std::abs(x) + std::abs(y).
+        static void normalize(double& x, double& y);
+
+        //! Explicitly set priority to zero.
+        //
+        //! This is used for regulatory genes that do not record their priority
+        //! when writing to a file.
+        void zero_out_priority() noexcept;
+
     private:
-        double scoring_priority = 1000.0;
+        double scoring_priority = 1.0;
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;

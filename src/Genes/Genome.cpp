@@ -64,6 +64,8 @@ Genome::Genome()
     genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
     genome.emplace_back(std::make_unique<Pawn_Islands_Gene>());
     genome.emplace_back(std::make_unique<Checkmate_Material_Gene>());
+
+    renormalize_priorities();
 }
 
 Genome::Genome(const Genome& other)
@@ -86,6 +88,22 @@ void Genome::reset_piece_strength_gene() noexcept
     }
 }
 
+void Genome::renormalize_priorities() noexcept
+{
+    auto norm = std::accumulate(genome.begin(), genome.end(), 0.0,
+                                [](auto sum, const auto& gene)
+                                {
+                                    return sum + std::abs(gene->priority());
+                                });
+    if(norm > 0.0)
+    {
+        for(auto& gene : genome)
+        {
+            gene->scale_priority(1.0/norm);
+        }
+    }
+}
+
 Genome& Genome::operator=(Genome other)
 {
     std::swap(genome, other.genome);
@@ -104,6 +122,7 @@ Genome::Genome(const Genome& A, const Genome& B)
                    });
 
     reset_piece_strength_gene();
+    renormalize_priorities();
 }
 
 void Genome::read_from(std::istream& is)
@@ -120,6 +139,7 @@ void Genome::read_from(std::istream& is)
 
         if(line == "END")
         {
+            renormalize_priorities();
             return;
         }
 
@@ -187,6 +207,7 @@ void Genome::mutate()
     for(auto mutations = 0; mutations < mutation_count; ++mutations)
     {
         Random::random_element(genes)->mutate();
+        renormalize_priorities();
     }
 }
 

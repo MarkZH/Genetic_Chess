@@ -931,6 +931,21 @@ namespace
 
             if(line1 != line2)
             {
+                if(String::contains(line1, ':') && String::contains(line2, ':'))
+                {
+                    auto split1 = String::split(line1, ":", 1);
+                    auto split2 = String::split(line2, ":", 1);
+                    if(split1.front() == split2.front())
+                    {
+                        auto num1 = std::stod(split1.back());
+                        auto num2 = std::stod(split2.back());
+                        if(std::abs((num1 - num2)/(num1 + num2)) < 1e-6)
+                        {
+                            continue;
+                        }
+                    }
+                }
+
                 std::cerr << "Mismatch at line " << line_count << ":\n";
                 std::cerr << line1 << " != " << line2 << "\n";
                 return false;

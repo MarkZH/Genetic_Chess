@@ -12,6 +12,8 @@
 class Mutation_Rate_Gene : public Clonable_Gene<Mutation_Rate_Gene>
 {
     public:
+        Mutation_Rate_Gene() noexcept;
+
         std::string name() const noexcept override;
 
         //! \brief Controls how many changes a call to Genome::mutate() makes to the Gene collections.

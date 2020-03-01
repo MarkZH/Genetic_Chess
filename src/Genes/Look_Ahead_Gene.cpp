@@ -11,6 +11,11 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
+Look_Ahead_Gene::Look_Ahead_Gene() noexcept
+{
+    zero_out_priority();
+}
+
 std::map<std::string, double> Look_Ahead_Gene::list_properties() const noexcept
 {
     return {{"Mean Game Length", mean_game_length},

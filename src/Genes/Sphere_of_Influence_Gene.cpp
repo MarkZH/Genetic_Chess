@@ -97,10 +97,10 @@ void Sphere_of_Influence_Gene::gene_specific_mutation() noexcept
     switch(Random::random_integer(1, 3))
     {
         case 1:
-            legal_square_score += Random::random_laplace(0.5);
+            legal_square_score += Random::random_laplace(0.03);
             break;
         case 2:
-            illegal_square_score += Random::random_laplace(0.5);
+            illegal_square_score += Random::random_laplace(0.03);
             break;
         case 3:
             king_target_factor += Random::random_laplace(0.1);
@@ -114,8 +114,9 @@ void Sphere_of_Influence_Gene::gene_specific_mutation() noexcept
 
 void Sphere_of_Influence_Gene::recompute_scalar_cache() noexcept
 {
+    normalize(legal_square_score, illegal_square_score);
     for(size_t king_distance = 0; king_distance < 8; ++king_distance)
     {
-        scalar_cache[king_distance] = (1 + king_target_factor/(1 + king_distance))/(64*(std::abs(legal_square_score) + std::abs(illegal_square_score)));
+        scalar_cache[king_distance] = (1 + king_target_factor/(1 + king_distance))/64;
     }
 }

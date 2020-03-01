@@ -12,6 +12,11 @@
 
 #include "Utility/Random.h"
 
+King_Confinement_Gene::King_Confinement_Gene() noexcept
+{
+    normalize(friendly_block_score, opponent_block_score);
+}
+
 std::string King_Confinement_Gene::name() const noexcept
 {
     return "King Confinement Gene";
@@ -22,6 +27,7 @@ void King_Confinement_Gene::load_properties(const std::map<std::string, double>&
     Gene::load_properties(properties);
     friendly_block_score = properties.at("Friendly Block Score");
     opponent_block_score = properties.at("Opponent Block Score");
+    normalize(friendly_block_score, opponent_block_score);
 }
 
 std::map<std::string, double> King_Confinement_Gene::list_properties() const noexcept
@@ -34,7 +40,7 @@ std::map<std::string, double> King_Confinement_Gene::list_properties() const noe
 
 void King_Confinement_Gene::gene_specific_mutation() noexcept
 {
-    auto mutation_size = Random::random_laplace(2.0);
+    auto mutation_size = Random::random_laplace(0.03);
     if(Random::coin_flip())
     {
         friendly_block_score += mutation_size;
@@ -43,6 +49,8 @@ void King_Confinement_Gene::gene_specific_mutation() noexcept
     {
         opponent_block_score += mutation_size;
     }
+
+    normalize(friendly_block_score, opponent_block_score);
 }
 
 double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
@@ -105,6 +113,5 @@ double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspe
         }
     }
 
-    auto normalizer = std::abs(friendly_block_score) + std::abs(opponent_block_score);
-    return (friendly_block_total + opponent_block_total)/(1 + free_space_total)/normalizer;
+    return (friendly_block_total + opponent_block_total)/(1 + free_space_total);
 }

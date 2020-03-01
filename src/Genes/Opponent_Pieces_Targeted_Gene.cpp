@@ -30,7 +30,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Piece_Colo
         }
     }
 
-    return score/piece_strength_source->normalizer();
+    return score;
 }
 
 std::string Opponent_Pieces_Targeted_Gene::name() const noexcept

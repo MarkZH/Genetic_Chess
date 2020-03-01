@@ -27,6 +27,16 @@ void Gene::load_properties(const std::map<std::string, double>& properties)
     scoring_priority = properties.at("Priority");
 }
 
+void Gene::normalize(double& x, double& y)
+{
+    auto norm = std::abs(x) + std::abs(y);
+    if(norm > 0.0)
+    {
+        x /= norm;
+        y /= norm;
+    }
+}
+
 size_t Gene::mutatable_components() const noexcept
 {
     return list_properties().size();
@@ -135,7 +145,7 @@ void Gene::mutate() noexcept
     auto priority_probability = properties.count("Priority")/double(properties.size());
     if(Random::success_probability(priority_probability))
     {
-        scoring_priority += Random::random_laplace(10.0 + std::sqrt(std::abs(scoring_priority)));
+        scoring_priority += Random::random_laplace(0.005);
     }
     else
     {
@@ -165,6 +175,21 @@ void Gene::print(std::ostream& os) const noexcept
 
 void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
 {
+}
+
+double Gene::priority() const noexcept
+{
+    return scoring_priority;
+}
+
+void Gene::scale_priority(double k) noexcept
+{
+    scoring_priority *= k;
+}
+
+void Gene::zero_out_priority() noexcept
+{
+    scoring_priority = 0.0;
 }
 
 void Gene::test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept

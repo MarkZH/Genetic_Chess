@@ -14,6 +14,8 @@ class Board;
 class Castling_Possible_Gene : public Clonable_Gene<Castling_Possible_Gene>
 {
     public:
+        Castling_Possible_Gene() noexcept;
+
         std::string name() const noexcept override;
 
     protected:
@@ -21,8 +23,8 @@ class Castling_Possible_Gene : public Clonable_Gene<Castling_Possible_Gene>
         void load_properties(const std::map<std::string, double>& properties) override;
 
     private:
-        double kingside_preference = 0.0;
-        double queenside_preference = 0.0;
+        double kingside_preference = 1.0;
+        double queenside_preference = 1.0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;

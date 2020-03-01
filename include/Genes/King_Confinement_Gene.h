@@ -18,6 +18,8 @@ class Board;
 class King_Confinement_Gene : public Clonable_Gene<King_Confinement_Gene>
 {
     public:
+        King_Confinement_Gene() noexcept;
+
         void gene_specific_mutation() noexcept override;
 
         std::string name() const noexcept override;
@@ -27,8 +29,8 @@ class King_Confinement_Gene : public Clonable_Gene<King_Confinement_Gene>
         std::map<std::string, double> list_properties() const noexcept override;
 
     private:
-        double friendly_block_score = 0.0;
-        double opponent_block_score = 0.0;
+        double friendly_block_score = 1.0;
+        double opponent_block_score = 1.0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
 };

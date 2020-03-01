@@ -93,6 +93,7 @@ class Genome
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
+        void renormalize_priorities() noexcept;
 
         //! \brief Consults the Mutation_Rate_Gene to determine how many point mutations to apply to the genome.
         //!
