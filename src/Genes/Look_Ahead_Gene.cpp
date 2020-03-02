@@ -20,8 +20,7 @@ std::map<std::string, double> Look_Ahead_Gene::list_properties() const noexcept
 {
     return {{"Mean Game Length", mean_game_length},
             {"Game Length Uncertainty", game_length_uncertainty},
-            {"Speculation", speculation_constant},
-            {"Alpha Fraction", alpha_fraction}};
+            {"Speculation", speculation_constant}};
 }
 
 void Look_Ahead_Gene::load_properties(const std::map<std::string, double>& properties)
@@ -29,7 +28,6 @@ void Look_Ahead_Gene::load_properties(const std::map<std::string, double>& prope
     mean_game_length = properties.at("Mean Game Length");
     game_length_uncertainty = properties.at("Game Length Uncertainty");
     speculation_constant = properties.at("Speculation");
-    alpha_fraction = properties.at("Alpha Fraction");
 }
 
 double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
@@ -45,7 +43,7 @@ double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) 
 
 void Look_Ahead_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 4))
+    switch(Random::random_integer(1, 3))
     {
         case 1:
             mean_game_length += Random::random_laplace(0.3);
@@ -55,10 +53,6 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
             break;
         case 3:
             speculation_constant += Random::random_laplace(0.03);
-            break;
-        case 4:
-            alpha_fraction += Random::random_laplace(0.05);
-            alpha_fraction = std::max(0.0, alpha_fraction);
             break;
         default:
             assert(false);
@@ -78,9 +72,4 @@ double Look_Ahead_Gene::score_board(const Board&, Piece_Color, size_t) const noe
 double Look_Ahead_Gene::speculation_time_factor() const noexcept
 {
     return speculation_constant;
-}
-
-double Look_Ahead_Gene::minimum_fraction_of_alpha() const noexcept
-{
-    return alpha_fraction;
 }

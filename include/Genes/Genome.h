@@ -75,14 +75,6 @@ class Genome
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
         const std::array<double, 6>& piece_values() const;
 
-        //! \brief Decide on a minimum search depth based on the depth of alpha.
-        //!
-        //! When deciding whether to recurse to deeper parts of the game tree,
-        //! the player should always recurse when at a depth less than this
-        //! fraction of the current alpha result. This should prevent a move
-        //! from being picked based on much less analysis than another.
-        double minimum_fraction_of_alpha() const noexcept;
-
         //! \brief Print the genome data to the output stream (std::ofstream, std::cout, etc.).
         //!
         //! \param os The output stream.

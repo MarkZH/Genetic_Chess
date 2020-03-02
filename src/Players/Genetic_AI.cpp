@@ -113,11 +113,6 @@ double Genetic_AI::speculation_time_factor() const noexcept
     return genome.speculation_time_factor();
 }
 
-double Genetic_AI::minimum_fraction_of_alpha() const noexcept
-{
-    return genome.minimum_fraction_of_alpha();
-}
-
 void Genetic_AI::mutate(int mutation_count) noexcept
 {
     for(int i = 0; i < mutation_count; ++i)

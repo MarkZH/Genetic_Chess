@@ -229,11 +229,6 @@ double Genome::speculation_time_factor() const
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor();
 }
 
-double Genome::minimum_fraction_of_alpha() const noexcept
-{
-    return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->minimum_fraction_of_alpha();
-}
-
 const std::array<double, 6>& Genome::piece_values() const
 {
     return static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())->piece_values();

@@ -8,7 +8,6 @@ Q: 624.13
 R: 283.418
 
 Name: Look Ahead Gene
-Alpha Fraction: 0.565735
 Game Length Uncertainty: 0.686126
 Mean Game Length: 49.6035
 Speculation: 2.31473
@@ -60,4 +59,3 @@ Name: Checkmate Material Gene
 Priority: 141.95
 
 END
-

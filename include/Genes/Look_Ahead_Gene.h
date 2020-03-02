@@ -34,14 +34,6 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         //! \returns A factor that gets multiplied by the allocated time to overallocate.
         double speculation_time_factor() const noexcept;
 
-        //! \brief Decide on a minimum search depth based on the depth of alpha.
-        //!
-        //! When deciding whether to recurse to deeper parts of the game tree,
-        //! the player should always recurse when at a depth less than this
-        //! fraction of the current alpha result. This should prevent a move
-        //! from being picked based on much less analysis than another.
-        double minimum_fraction_of_alpha() const noexcept;
-
     protected:
         std::map<std::string, double> list_properties() const noexcept override;
         void load_properties(const std::map<std::string, double>& properties) override;
@@ -50,7 +42,6 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         double speculation_constant = 1.0; // controls over/under-allocation of time
         double mean_game_length = 50.0; // in moves by one player
         double game_length_uncertainty = 0.5; // approximately as a fraction of the mean
-        double alpha_fraction = 0.0; // minimum depth to search before evaluating a board position
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;
