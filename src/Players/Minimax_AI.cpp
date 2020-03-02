@@ -187,7 +187,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if(move_result.winner() != Winner_Color::NONE)
         {
             // This move results in checkmate, no other move can be better.
-            return create_result(next_board, perspective, move_result, current_variation);
+            best_result = create_result(next_board, perspective, move_result, current_variation);
+            break;
         }
 
         if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
