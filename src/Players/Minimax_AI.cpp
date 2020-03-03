@@ -290,7 +290,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
     }
 
-    if(depth == 3 && best_result.variation.size() > 2)
+    if(depth == 3)
     {
         depth_two_results[best_result.variation[0]][best_result.variation[1]] = best_result;
     }
