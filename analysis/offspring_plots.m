@@ -26,7 +26,9 @@ function freq_0 = frequency_plot(data, reproduction_adjustment, data_label, plot
 
     % Error bars
     high_err = sqrt(frequency);
-    low_err = min(high_err, frequency - min(y_fit));
+    low_err = high_err;
+    fix_range = (low_err < 1.4); % sqrt(2) with margin
+    low_err(fix_range) = 0.95*low_err(fix_range);
     errorbar(child_count, frequency, low_err, high_err, '.');
 
     freq_0 = A;
