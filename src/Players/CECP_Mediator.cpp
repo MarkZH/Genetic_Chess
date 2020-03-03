@@ -59,11 +59,12 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
         }
 
+        board.pick_move_now(); // Stop pondering
+
         if(command == "go")
         {
             log("telling local AI to move at leisure and accepting move");
             in_force_mode = false;
-            board.choose_move_at_leisure();
             break;
         }
         else if(command == "new")
@@ -130,7 +131,6 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                 if( ! in_force_mode)
                 {
                     log("Local AI now chooses a move");
-                    board.choose_move_at_leisure();
                     break;
                 }
             }
@@ -237,6 +237,8 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         clock.punch(board);
     }
 
+    board.choose_move_at_leisure();
+
     return setup_result;
 }
 
@@ -287,8 +289,17 @@ Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vect
     }
 }
 
-bool CECP_Mediator::pondering_allowed() const
+bool CECP_Mediator::pondering_allowed(Board& board)
 {
+    if(thinking_on_opponent_time)
+    {
+        log("Starting to ponder");
+        board.choose_move_at_leisure();
+    }
+    else
+    {
+        log("Skipping pondering");
+    }
     return thinking_on_opponent_time;
 }
 

@@ -49,7 +49,9 @@ class Outside_Communicator
                                         const Player& player) const = 0;
 
         //! \brief Returns whether the GUI is allowing thinking during the other player's move.
-        virtual bool pondering_allowed() const = 0;
+        //!
+        //! \param board The board being used in the current game.
+        virtual bool pondering_allowed(Board& board) = 0;
 
         //! \brief Log data to a local text file.
         //!

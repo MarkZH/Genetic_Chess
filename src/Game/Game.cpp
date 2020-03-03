@@ -98,7 +98,7 @@ void play_game_with_outsider(const Player& player,
             {
                 break;
             }
-            player.ponder(board, clock, outsider->pondering_allowed());
+            player.ponder(board, clock, outsider->pondering_allowed(board));
         }
 
         outsider->log("Game ended with: " + game_result.ending_reason());

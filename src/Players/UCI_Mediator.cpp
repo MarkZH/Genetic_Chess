@@ -39,10 +39,11 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
         }
 
+        board.pick_move_now(); // Stop pondering
+
         if(command == "ucinewgame")
         {
             log("stopping thinking and clocks");
-            board.pick_move_now();
             clock = {};
             move_list.clear();
             player.reset();
@@ -259,9 +260,21 @@ Game_Result UCI_Mediator::handle_move(Board& board,
     return board.submit_move(move);
 }
 
-bool UCI_Mediator::pondering_allowed() const
+bool UCI_Mediator::pondering_allowed(Board& board)
 {
-    return true;
+    auto command = receive_uci_command(board, false);
+    if(String::starts_with(command, "go ") && String::contains(command, "ponder"))
+    {
+        log("Starting to ponder");
+        board.choose_move_at_leisure();
+        return true;
+    }
+    else
+    {
+        log("Skipping pondering");
+        last_listening_result = std::async(std::launch::async, [command]() { return command; });
+        return false;
+    }
 }
 
 std::string UCI_Mediator::listener(Board& board)

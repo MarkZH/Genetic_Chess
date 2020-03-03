@@ -33,7 +33,7 @@ class CECP_Mediator : public Outside_Communicator
                                 const Move& move,
                                 std::vector<const Move*>& move_list,
                                 const Player& player) const override;
-        bool pondering_allowed() const override;
+        bool pondering_allowed(Board& board) override;
 
     private:
         std::future<std::string> last_listening_command;
