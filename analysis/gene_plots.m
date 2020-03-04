@@ -81,9 +81,6 @@ for yi = 2 : length(data.colheaders) - 2
     xlabel(xaxis);
     title(name);
 
-    for index = 1:length(id_marks)
-        plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
-    end
 
     leg = legend('show');
     set(leg, 'location', 'southoutside');
@@ -96,6 +93,11 @@ for yi = 2 : length(data.colheaders) - 2
     x_axis = id_list(conv_margin : end - conv_margin);
     plot(x_axis, smooth_data, 'k', 'LineWidth', 3, 'displayname', 'Average');
     plot(xlim, [0 0], 'k'); % X-axis
+
+    for index = 1:length(id_marks)
+        plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
+    end
+
     print([gene_pool_filename ' gene ' name '.png']);
     close;
 
