@@ -22,8 +22,8 @@ then
     exit 1
 fi
 
-# Second term here checks if argument is a number
-if [[ -z "$opening_moves" ]] || ! [ "$opening_moves" -eq "$opening_moves" ]
+# Checks if argument is a number
+if ! [ "$opening_moves" -eq "$opening_moves" ]
 then
     echo "Invalid argument for openings analysis: $opening_moves"
     exit 1
@@ -36,12 +36,29 @@ then
 fi
 
 pool_file="$(get_config_value "$config_file" file)"
+if ! [[ -f "$pool_file" ]]
+then
+    echo "Could not find gene pool file: $pool_file"
+    exit 1
+fi
+
 game_file="${pool_file}_games.pgn"
+if ! [[ -f "$game_file" ]]
+then
+    echo "Could not find game file: $game_file"
+    exit 1
+fi
+
+reproduction="$(get_config_value "$config_file" reproduction)"
+if [[ "$reproduction" != "cloning" ]] && [[ "$reproduction" != "mating" ]]
+then
+    echo "Invalid value for reproduction, expected \"cloning\" or \"mating\": $reproduction"
+    exit 1
+fi
 
 octave analysis/gene_plots.m "$pool_file" "$notes_file" &
 octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
 
-reproduction="$(get_config_value "$config_file" reproduction)"
 ./analysis/offspring_frequency.sh "$game_file" "$reproduction" &
 
 if ./analysis/openings.sh "$game_file" "$opening_moves"
