@@ -4,6 +4,7 @@
 #include <cctype>
 #include <algorithm>
 #include <string>
+#include <optional>
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -120,24 +121,13 @@ int main(int argc, char *argv[])
                     else if(opt == "-genetic")
                     {
                         std::string filename;
-                        int id = -1;
+                        std::optional<int> id;
                         if(i + 1 < argc)
                         {
                             filename = argv[i+1];
                             if(filename.front() == '-')
                             {
                                 filename.clear();
-                            }
-                        }
-
-                        if(i + 2 < argc)
-                        {
-                            try
-                            {
-                                id = std::stoi(argv[i+2]);
-                            }
-                            catch(const std::exception&)
-                            {
                             }
                         }
 
@@ -150,16 +140,20 @@ int main(int argc, char *argv[])
                         }
                         else
                         {
-                            if(id < 0)
+                            if(i + 2 < argc)
                             {
-                                latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
-                                i += 1;
+                                try
+                                {
+                                    id = std::stoi(argv[i + 2]);
+                                    i += 2;
+                                }
+                                catch(const std::exception&)
+                                {
+                                    i += 1;
+                                }
                             }
-                            else
-                            {
-                                latest = std::make_unique<Genetic_AI>(filename, id);
-                                i += 2;
-                            }
+
+                            latest = std::make_unique<Genetic_AI>(filename, id.has_value() ? id.value() : find_last_id(filename));
                         }
                     }
                     else if(opt == "-time" && i + 1 < argc)
