@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
         if(argc > 1)
         {
             std::string option = argv[1];
-            if(option == "-genepool")
+            if(option == "-gene-pool")
             {
                 std::string gene_pool_config_file_name;
                 if(argc > 2)
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
             {
                 return run_perft_tests() ? 0 : 1;
             }
-            else if(option == "-random_test")
+            else if(option == "-random-test")
             {
                 print_randomness_sample();
             }
@@ -160,11 +160,11 @@ int main(int argc, char *argv[])
                     {
                         game_time = std::stod(argv[++i]);
                     }
-                    else if(opt == "-reset_moves" && i + 1 < argc)
+                    else if(opt == "-reset-moves" && i + 1 < argc)
                     {
                         moves_per_reset = String::string_to_number<size_t>(argv[++i]);
                     }
-                    else if(opt == "-increment_time" && i + 1 < argc)
+                    else if(opt == "-increment-time" && i + 1 < argc)
                     {
                         increment_time = std::stod(argv[++i]);
                     }
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
                     {
                         board = Board(argv[++i]);
                     }
-                    else if(opt == "-game_file" && i + 1 < argc)
+                    else if(opt == "-game-file" && i + 1 < argc)
                     {
                         game_file_name = argv[++i];
                     }
@@ -188,7 +188,7 @@ int main(int argc, char *argv[])
                     {
                         pondering_allowed = true;
                     }
-                    else if(opt == "-short_post")
+                    else if(opt == "-short-post")
                     {
                         Player::set_short_post();
                     }
@@ -256,7 +256,7 @@ namespace
         std::cout << "\n\nGenetic Chess\n"
                 << "=============\n\n"
                 << "Standalone functions (only first is run if multiple are specified):\n\n"
-                << "\t-genepool [file name]\n"
+                << "\t-gene-pool [file name]\n"
                 << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
                 << "\t-confirm [filename]\n"
                 << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates.\n\n"
@@ -266,7 +266,7 @@ namespace
                 << "\t\tRun a speed test for gene scoring and boad move submission.\n\n"
                 << "\t-perft\n"
                 << "\t\tRun a legal move generation test.\n\n"
-                << "\t-random_test\n"
+                << "\t-random-test\n"
                 << "\t\tGenerate a sample of random numbers for a quick check of quality.\n\n"
                 << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying.\n\n"
                 << "\t-genetic [filename [number]]\n"
@@ -276,22 +276,22 @@ namespace
                 << "Other game options:\n\n"
                 << "\t-time [number]\n"
                 << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option).\n\n"
-                << "\t-reset_moves [number]\n"
+                << "\t-reset-moves [number]\n"
                 << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock adds the initial time every time this\n\t\tnumber of moves is made.\n\n"
-                << "\t-increment_time [number]\n"
+                << "\t-increment-time [number]\n"
                 << "\t\tSpecify seconds to add to time after each move.\n\n"
                 << "\t-board [FEN string]\n"
                 << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
                 << "\t-pondering\n"
                 << "\t\tAllow AI players to think ahead when it is not their turn.\n\n"
-                << "\t-short_post\n"
+                << "\t-short-post\n"
                 << "\t\tUse a shortened form of CECP/xboard thinking output. Some GUIs\n\t\tcannot handle the longer form.\n\n"
                 << "\t-event [name]\n"
                 << "\t\tAn optional name for the game to be played. This name will be\n\t\twritten to the PGN game record.\n\n"
                 << "\t-location [name]\n"
                 << "\t\tAn optional location for the game to be played. This will be\n\t\twritten to the PGN game record.\n\n"
-                << "\t-game_file [file name]\n"
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n";
+                << "\t-game-file [file name]\n"
     }
 
     bool confirm_game_record(const std::string& file_name)
