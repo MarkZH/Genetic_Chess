@@ -103,14 +103,14 @@ class Square
         //!
         //! \param rank Square rank to check (1 <= file <= 8)
         //! \returns Whether the rank meets the condition according to the parameter specification above.
-        static bool inside_board(int  rank) noexcept;
+        static bool inside_board(int rank) noexcept;
 
         //! \brief Check that a square file and rank is a valid value.
         //!
         //! \param file Square file to check ('a' <= file <= 'h')
         //! \param rank Square rank to check (1 <= file <= 8)
         //! \returns Whether the rank meets the condition according to the parameter specification above.
-        static bool inside_board(char file, int  rank) noexcept;
+        static bool inside_board(char file, int rank) noexcept;
 
         //! \brief Check if the square is a valid Board position.
         //!
