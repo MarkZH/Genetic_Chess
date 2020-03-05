@@ -268,7 +268,7 @@ namespace
                 << "\t\tRun a legal move generation test.\n\n"
                 << "\t-random-test\n"
                 << "\t\tGenerate a sample of random numbers for a quick check of quality.\n\n"
-                << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP command from outside to start\nplaying.\n\n"
+                << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP/xboard or UCI command from a GUI\nto start playing.\n\n"
                 << "\t-genetic [filename [number]]\n"
                 << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file.\n\n"
                 << "\t-random\n"
@@ -290,8 +290,9 @@ namespace
                 << "\t\tAn optional name for the game to be played. This name will be\n\t\twritten to the PGN game record.\n\n"
                 << "\t-location [name]\n"
                 << "\t\tAn optional location for the game to be played. This will be\n\t\twritten to the PGN game record.\n\n"
-                << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n";
                 << "\t-game-file [file name]\n"
+                << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n"
+                << "All game options in this section can be overriden by GUI commands except -short-post,\n-event, -location, and -game-file.\n\n";
     }
 
     bool confirm_game_record(const std::string& file_name)
