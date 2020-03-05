@@ -10,9 +10,7 @@
 #include "Game/Piece.h"
 
 
-Move::Move(Square start, Square end) noexcept :
-               origin(start),
-               destination(end)
+Move::Move(Square start, Square end) noexcept : origin(start), destination(end)
 {
     assert(start.inside_board());
     assert(end.inside_board());
@@ -25,12 +23,9 @@ void Move::side_effects(Board&) const noexcept
 
 bool Move::is_legal(const Board& board) const noexcept
 {
-#ifndef NDEBUG
-    auto moving_piece = board.piece_on_square(start());
-#endif
-    assert(moving_piece);
-    assert(moving_piece.color() == board.whose_turn());
-    assert(moving_piece.can_move(this));
+    assert(board.piece_on_square(start()));
+    assert(board.piece_on_square(start()).color() == board.whose_turn());
+    assert(board.piece_on_square(start()).can_move(this));
 
     if(auto attacked_piece = board.piece_on_square(end()))
     {
