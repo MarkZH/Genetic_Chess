@@ -298,6 +298,11 @@ namespace
     bool confirm_game_record(const std::string& file_name)
     {
         auto input = std::ifstream(file_name);
+        if( ! input)
+        {
+            throw std::runtime_error("Could not open file " + file_name + " for reading.");
+        }
+
         std::string line;
         auto line_number = 0;
         auto last_move_line_number = 0;
