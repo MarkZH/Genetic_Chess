@@ -284,6 +284,12 @@ namespace
                 << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
                 << "\t-pondering\n"
                 << "\t\tAllow AI players to think ahead when it is not their turn.\n\n"
+                << "\t-short_post\n"
+                << "\t\tUse a shortened form of CECP/xboard thinking output. Some GUIs\n\t\tcannot handle the longer form.\n\n"
+                << "\t-event [name]\n"
+                << "\t\tAn optional name for the game to be played. This name will be\n\t\twritten to the PGN game record.\n\n"
+                << "\t-location [name]\n"
+                << "\t\tAn optional location for the game to be played. This will be\n\t\twritten to the PGN game record.\n\n"
                 << "\t-game_file [file name]\n"
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n";
     }
