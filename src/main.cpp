@@ -40,7 +40,7 @@ namespace
 //! \param argc The number of command-line arguments.
 //! \param argv The command-line arguments. See print_help() (or run the program
 //!        with no arguments) for a listing of all the options.
-//! \returns Zero for normal exit, non-zero for error exits.
+//! \returns EXIT_SUCCESS or EXIT_FAILURE.
 int main(int argc, char *argv[])
 {
     try
@@ -70,18 +70,18 @@ int main(int argc, char *argv[])
                     if( ! confirm_game_record(argv[2]))
                     {
                         std::cerr << "Game contains illegal or mismarked moves." << std::endl;
-                        return 2;
+                        return EXIT_FAILURE;
                     }
                 }
                 else
                 {
                     std::cerr << "Provide a file containing a game to confirm has all legal moves." << std::endl;
-                    return 1;
+                    return EXIT_FAILURE;
                 }
             }
             else if(option == "-test")
             {
-                return run_tests() ? 0 : 1;
+                return run_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
             }
             else if(option == "-speed")
             {
@@ -89,7 +89,7 @@ int main(int argc, char *argv[])
             }
             else if(option == "-perft")
             {
-                return run_perft_tests() ? 0 : 1;
+                return run_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
             }
             else if(option == "-random-test")
             {
@@ -243,10 +243,10 @@ int main(int argc, char *argv[])
     catch(const std::exception& e)
     {
         std::cerr << "\n\nERROR: " << e.what() << std::endl;
-        return 1;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 namespace
