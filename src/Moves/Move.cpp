@@ -1,7 +1,6 @@
 #include "Moves/Move.h"
 
 #include <cassert>
-#include <cmath>
 #include <cctype>
 #include <string>
 
@@ -185,69 +184,41 @@ size_t Move::attack_index() const noexcept
 
 size_t Move::attack_index(const Square_Difference& move) noexcept
 {
-    size_t result = 0;
+    static constexpr auto xx = size_t(-1); // indicates invalid moves and should never be returned
+    static constexpr size_t array_width = 15;
+    //                                                          file change
+    //                                   -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7
+    static constexpr size_t indices[] = { 0, xx, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx, xx,  2,  //  7
+                                         xx,  0, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx,  2, xx,  //  6
+                                         xx, xx,  0, xx, xx, xx, xx,  1, xx, xx, xx, xx,  2, xx, xx,  //  5
+                                         xx, xx, xx,  0, xx, xx, xx,  1, xx, xx, xx,  2, xx, xx, xx,  //  4
+                                         xx, xx, xx, xx,  0, xx, xx,  1, xx, xx,  2, xx, xx, xx, xx,  //  3
+                                         xx, xx, xx, xx, xx,  0, 15,  1,  8,  2, xx, xx, xx, xx, xx,  //  2
+                                         xx, xx, xx, xx, xx, 14,  0,  1,  2,  9, xx, xx, xx, xx, xx,  //  1
+                                          3,  3,  3,  3,  3,  3,  3, xx,  4,  4,  4,  4,  4,  4,  4,  //  0  rank change
+                                         xx, xx, xx, xx, xx, 13,  5,  6,  7, 10, xx, xx, xx, xx, xx,  // -1
+                                         xx, xx, xx, xx, xx,  5, 12,  6, 11,  7, xx, xx, xx, xx, xx,  // -2
+                                         xx, xx, xx, xx,  5, xx, xx,  6, xx, xx,  7, xx, xx, xx, xx,  // -3
+                                         xx, xx, xx,  5, xx, xx, xx,  6, xx, xx, xx,  7, xx, xx, xx,  // -4
+                                         xx, xx,  5, xx, xx, xx, xx,  6, xx, xx, xx, xx,  7, xx, xx,  // -5
+                                         xx,  5, xx, xx, xx, xx, xx,  6, xx, xx, xx, xx, xx,  7, xx,  // -6
+                                          5, xx, xx, xx, xx, xx, xx,  6, xx, xx, xx, xx, xx, xx,  7}; // -7
 
-    // First bit == knight move or not
-    if(std::abs(move.rank_change*move.file_change) == 2) // 1x2 or 2x1
-    {
-        result += 8;
-        result += 4*(move.file_change > 0);
-        result += 2*(move.rank_change > 0);
-        result += 1*(std::abs(move.file_change) > std::abs(move.rank_change));
-    }
-    else
-    {
-        // Second bit == rook move or not
-        if(move.rank_change == 0 || move.file_change == 0)
-        {
-            result += 4;
-            result += 2*(move.rank_change != 0);
-            result += 1*(move.rank_change + move.file_change > 0);
-        }
-        else
-        {
-            // Bishop moves
-            result += 2*(move.file_change > 0);
-            result += 1*(move.rank_change > 0);
-        }
-    }
+    assert(-7 <= move.rank_change && move.rank_change <= 7);
+    assert(-7 <= move.file_change && move.file_change <= 7);
 
-    return result;
+    auto i = array_width*(7 - move.rank_change) + (move.file_change + 7);
+
+    assert(indices[i] < 16);
+    return indices[i];
 }
 
 Square_Difference Move::attack_direction_from_index(size_t index) noexcept
 {
-    if(index & 8)
-    {
-        // Knight move
-        auto file_direction = (index & 4) ? 1 : -1;
-        auto rank_direction = (index & 2) ? 1 : -1;
-        auto file_step = (index & 1) ? 2 : 1;
-        auto rank_step = 3 - file_step;
-        return {file_step*file_direction, rank_step*rank_direction};
-    }
-    else
-    {
-        if(index & 4)
-        {
-            // Rook move
-            if(index & 2)
-            {
-                // Vertical move
-                return {0, (index & 1) ? 1 : -1};
-            }
-            else
-            {
-                // Horizontal move
-                return {(index & 1) ? 1 : -1, 0};
-            }
-        }
-        else
-        {
-            // Bishop move
-            return {(index & 2) ? 1 : -1, (index & 1) ? 1 : -1};
-        }
-    }
+    //                     index: 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
+    static constexpr int dx[] = {-1,  0,  1, -1,  1, -1,  0,  1,  1,  2,  2,  1, -1, -2, -2, -1};
+    static constexpr int dy[] = { 1,  1,  1,  0,  0, -1, -1, -1,  2,  1, -1, -2, -2, -1,  1,  2};
+    return {dx[index], dy[index]};
 }
 
 void Move::disable_capturing() noexcept

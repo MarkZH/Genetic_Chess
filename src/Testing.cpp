@@ -170,7 +170,7 @@ bool run_tests()
         auto step = Move::attack_direction_from_index(i);
         auto start = Square{'e', 4};
         auto step_index = Move(start, start + step).attack_index();
-        test_result(tests_passed, step_index == i, "Direction-index mismatch: " + std::to_string(i));
+        test_result(tests_passed, step_index == i, "Direction-index mismatch: " + std::to_string(i) + " --> " + std::to_string(step_index));
     }
 
 
