@@ -422,9 +422,19 @@ size_t Board::ply_count() const noexcept
 }
 std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
 {
-    auto new_board = Board(new_fen);
-    auto goal_fen = new_board.fen();
-    auto moves_to_derive_count = new_board.ply_count() - ply_count();
+    std::string goal_fen;
+    size_t moves_to_derive_count;
+    try
+    {
+        auto new_board = Board(new_fen);
+        goal_fen = new_board.fen();
+        moves_to_derive_count = new_board.ply_count() - ply_count();
+    }
+    catch(const std::invalid_argument&)
+    {
+        return {};
+    }
+
     if(moves_to_derive_count > 2 || moves_to_derive_count < 1)
     {
         return {};
@@ -1110,9 +1120,9 @@ bool Board::enough_material_to_checkmate() const noexcept
         };
 
     auto squares = Square::all_squares();
-    auto bishops_on_white = std::any_of(squares.begin(), squares.end(), 
+    auto bishops_on_white = std::any_of(squares.begin(), squares.end(),
                                         [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
-    auto bishops_on_black = std::any_of(squares.begin(), squares.end(), 
+    auto bishops_on_black = std::any_of(squares.begin(), squares.end(),
                                         [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
     return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
