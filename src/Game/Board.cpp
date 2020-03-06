@@ -9,8 +9,6 @@
 #include <sstream>
 #include <bitset>
 #include <atomic>
-#include <functional>
-using namespace std::placeholders; // for _1, _2, etc. in std::bind()
 #include <string>
 
 #include "Game/Board.h"
@@ -1064,7 +1062,7 @@ bool Board::enough_material_to_checkmate(Piece_Color piece_color) const noexcept
         return true;
     }
 
-    auto knight_count = std::count_if(board.begin(), board.end(), std::bind(piece_is_right, _1, Piece_Type::KNIGHT));
+    auto knight_count = std::count_if(board.begin(), board.end(), [piece_is_right](auto piece) { return piece_is_right(piece, Piece_Type::KNIGHT); });
     if(knight_count > 1)
     {
         return true;
@@ -1077,8 +1075,10 @@ bool Board::enough_material_to_checkmate(Piece_Color piece_color) const noexcept
         };
 
     auto squares = Square::all_squares();
-    auto bishops_on_white = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, Square_Color::WHITE, _1));
-    auto bishops_on_black = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, Square_Color::BLACK, _1));
+    auto bishops_on_white = std::any_of(squares.begin(), squares.end(),
+                                        [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
+    auto bishops_on_black = std::any_of(squares.begin(), squares.end(),
+                                        [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
     return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
@@ -1097,7 +1097,7 @@ bool Board::enough_material_to_checkmate() const noexcept
         return true;
     }
 
-    auto knight_count = std::count_if(board.begin(), board.end(), std::bind(piece_is_right, _1, Piece_Type::KNIGHT));
+    auto knight_count = std::count_if(board.begin(), board.end(), [piece_is_right](auto piece) { return piece_is_right(piece, Piece_Type::KNIGHT); });
     if(knight_count > 1)
     {
         return true;
@@ -1110,8 +1110,10 @@ bool Board::enough_material_to_checkmate() const noexcept
         };
 
     auto squares = Square::all_squares();
-    auto bishops_on_white = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, Square_Color::WHITE, _1));
-    auto bishops_on_black = std::any_of(squares.begin(), squares.end(), std::bind(bishop_on_square_color, Square_Color::BLACK, _1));
+    auto bishops_on_white = std::any_of(squares.begin(), squares.end(), 
+                                        [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
+    auto bishops_on_black = std::any_of(squares.begin(), squares.end(), 
+                                        [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
     return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
