@@ -185,11 +185,6 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
     auto castling_parse = fen_parse.at(2);
     if(castling_parse != "-")
     {
-        if(String::contains(castling_parse, '-'))
-        {
-            fen_error("Castling section contains - and other characters: " + castling_parse + ".");
-        }
-
         for(auto c : castling_parse)
         {
             if( ! String::contains("KQkq", c))
