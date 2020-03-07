@@ -1006,26 +1006,21 @@ namespace
             }
 
             auto specification = String::split(line, "|");
-            assert(specification.size() >= 2);
+            assert(specification.size() >= 3);
 
             auto test_type = String::lowercase(String::remove_extra_whitespace(specification.at(0)));
             auto board_fen = String::remove_extra_whitespace(specification.at(1));
-            if(board_fen == "start")
-            {
-                board_fen = Board{}.fen();
-            }
-
-            assert(specification.size() >= 3);
+            auto board = board_fen == "start" ? Board{} : Board{board_fen};
             auto test_passed = true;
-            auto board = Board{board_fen};
-            auto moves = String::split(specification.at(2));
-
+            
             if(test_type == "all moves legal")
             {
+                auto moves = String::split(specification.at(2));
                 test_result(test_passed, all_moves_legal(board, moves), "");
             }
             else if(test_type == "last move illegal")
             {
+                auto moves = String::split(specification.at(2));
                 assert(moves.size() > 0);
                 auto last_move = moves.back();
                 moves.pop_back();
@@ -1033,11 +1028,12 @@ namespace
             }
             else if(test_type == "pinned piece")
             {
-                assert(moves.size() == 2);
-                assert(moves.front().size() == 2);
+                auto square_result = String::split(specification.at(2));
+                assert(square_result.size() == 2);
+                assert(square_result.front().size() == 2);
 
-                auto square = String::remove_extra_whitespace(String::lowercase(moves.front()));
-                auto expected_result = String::remove_extra_whitespace(String::lowercase(moves.back()));
+                auto square = String::remove_extra_whitespace(String::lowercase(square_result.front()));
+                auto expected_result = String::remove_extra_whitespace(String::lowercase(square_result.back()));
 
                 assert(expected_result == "true" || expected_result == "false");
                 auto expected_bool = (expected_result == "true");
@@ -1047,20 +1043,23 @@ namespace
             else if(test_type == "move count")
             {
                 assert(specification.size() == 4);
+                auto moves = String::split(specification.at(2));
                 auto expected_count = String::string_to_number<size_t>(specification.back());
                 test_result(test_passed, all_moves_legal(board, moves) && board.legal_moves().size() == expected_count,
                             "Legal moves counted: " + std::to_string(board.legal_moves().size()) + "; Expected: " + std::to_string(expected_count));
             }
             else if(test_type == "checkmate material")
             {
-                assert(moves.front() == "true" || moves.front() == "false");
-                auto expected_result = (moves.front() == "true");
+                auto result_text = String::remove_extra_whitespace(specification.back());
+                assert(result_text == "true" || result_text == "false");
+                auto expected_result = (result_text == "true");
                 test_result(test_passed, board.enough_material_to_checkmate() == expected_result,
                             std::string("This board does") + (expected_result ? "" : " not") + " have enough material to checkmate.");
             }
             else if(test_type == "king in check")
             {
                 assert(specification.size() == 4);
+                auto moves = String::split(specification.at(2));
                 auto expected_answer = String::lowercase(String::remove_extra_whitespace(specification.back()));
                 assert(expected_answer == "true" || expected_answer == "false");
                 auto expected_result = expected_answer == "true";
@@ -1074,6 +1073,7 @@ namespace
             else if(test_type == "quiescent")
             {
                 assert(specification.size() == 4);
+                auto moves = String::split(specification.at(2));
                 test_result(test_passed, all_moves_legal(board, moves), "Bad test: Illegal moves");
                 auto actual_result_board = board;
                 for(auto move : board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0}))
