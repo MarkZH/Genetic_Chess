@@ -129,7 +129,7 @@ If the best move is chosen based upon the probable resulting future board state 
 
 \subsection{Move Ordering}
 
-Besides Principal Variation Recall, those moves that capture an opponent's piece are examined before other moves. Capturing moves usually result in the largest changes in position evaluations (see Section~\ref{total-force-and-pawn-result}), so they should quickly establish alpha and beta values that will lead to quick cutoffs.
+Besides Principal Variation Recall, those moves that capture an opponent's piece are examined before other moves. Capturing moves usually result in the largest changes in position evaluations (see Section~\ref{total-force-result}), so they should quickly establish alpha and beta values that will lead to quick cutoffs.
 
 \subsection{Quiescence Search}
 
@@ -397,11 +397,9 @@ Of the games ending in checkmate, white wins about 10\% more often than black. F
 	\caption{The percentage of games won by white, black, or neither over the course of a gene pool run. The advantage that white has over black seems persistent. Also, as the AIs evolve, the rate of draws decreases, presumably because they evolve a genome that can tell the difference between a good and bad position.}\label{win-lose-plot}
 \end{figure}
 
-\subsection{The Total Force Gene and the Pawn Advancement Gene typically dominate.}\label{total-force-and-pawn-result}
+\subsection{The Total Force Gene always dominates.}\label{total-force-result}
 
 That the Total Force Gene dominates is fairly predictable. Highly skilled human players will usually resign after the loss of a minor (bishop or knight) piece without compensation.
-
-The Pawn Advancement Gene usually gains higher priority first, probably because it is the simplest gene that makes an immediate difference in the game. Push the pawns forward both threatens the opponent's pieces with low-risk attacks and increases the chances of promotion.
 
 \subsection{The Queen is the most popular piece for promotion.}
 
