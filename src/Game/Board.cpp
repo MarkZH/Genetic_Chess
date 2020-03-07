@@ -258,19 +258,6 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
         fen_error("Result: " + fen());
     }
 
-    const auto& king_square = find_king(whose_turn());
-    const auto& attacks_on_king = moves_attacking_square(king_square, opposite(whose_turn()));
-    if(attacks_on_king.count() > 2)
-    {
-        fen_error("Too many pieces attacking " + color_text(whose_turn()) + " king.");
-    }
-
-    // Count knight attacks
-    if((attacks_on_king >> 8).count() > 1)
-    {
-        fen_error("It is impossible for more than one knight to check king.");
-    }
-
     recreate_move_caches();
 
     // In case a listed en passant target is not actually a legal move.

@@ -1015,12 +1015,6 @@ namespace
                 board_fen = Board{}.fen();
             }
 
-            if(test_type == "invalid board")
-            {
-                function_should_throw(all_tests_passed, test_type, [=](){ Board{board_fen}; });
-                continue;
-            }
-
             assert(specification.size() >= 3);
             auto test_passed = true;
             auto board = Board{board_fen};
