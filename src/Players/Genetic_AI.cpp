@@ -6,6 +6,7 @@
 #include <array>
 #include <string>
 #include <cmath>
+#include <optional>
 
 class Board;
 class Clock;
@@ -166,8 +167,13 @@ bool Genetic_AI::operator<(const Genetic_AI& other) const noexcept
 int find_last_id(const std::string& players_file_name)
 {
     std::ifstream player_input(players_file_name);
+    if( ! player_input)
+    {
+        throw std::invalid_argument("File not found: " + players_file_name);
+    }
+
     std::string line;
-    int last_player = -1;
+    std::optional<int> last_player;
     while(std::getline(player_input, line))
     {
         if(String::starts_with(line, "ID:"))
@@ -176,5 +182,12 @@ int find_last_id(const std::string& players_file_name)
         }
     }
 
-    return last_player;
+    if(last_player.has_value())
+    {
+        return last_player.value();
+    }
+    else
+    {
+        throw std::runtime_error("No valid ID found in file: " + players_file_name);
+    }
 }
