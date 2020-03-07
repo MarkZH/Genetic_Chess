@@ -4,7 +4,6 @@
 #include <cctype>
 #include <algorithm>
 #include <string>
-#include <optional>
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -121,7 +120,6 @@ int main(int argc, char *argv[])
                     else if(opt == "-genetic")
                     {
                         std::string filename;
-                        std::optional<int> id;
                         if(i + 1 < argc)
                         {
                             filename = argv[i+1];
@@ -144,16 +142,19 @@ int main(int argc, char *argv[])
                             {
                                 try
                                 {
-                                    id = std::stoi(argv[i + 2]);
+                                    latest = std::make_unique<Genetic_AI>(filename, std::stoi(argv[i + 2]));
                                     i += 2;
                                 }
                                 catch(const std::exception&)
                                 {
-                                    i += 1;
                                 }
                             }
 
-                            latest = std::make_unique<Genetic_AI>(filename, id.has_value() ? id.value() : find_last_id(filename));
+                            if( ! latest)
+                            {
+                                latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
+                                i += 1;
+                            }
                         }
                     }
                     else if(opt == "-time" && i + 1 < argc)
