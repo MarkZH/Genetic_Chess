@@ -139,7 +139,15 @@ One problem with minimax search is deciding when to stop the search and evaluate
 
 The genome is the repository for genetic information in the Genetic AIs and controls all aspects of game play not mentioned in the previous section. All are subject to mutation, which can change the behavior and influence of a given gene.
 
-Every aspect of a gene is encoded in the program as \code{double} data members in each Gene class. Upon mutation, a random \code{double} is chosen and its value is shifted by an amount taken from a Laplacian distribution~\cite{laplace} (i.e., a double-sided exponential distribution). At first, a normal distribution was used, but the Laplacian distribution has fatter tails, making large mutations more likely. The width of this distribution is customized to each quantity. Where the absolute magnitude doesn't matter---the priorities of board-scoring genes (see Section~\ref{board-score-section}), for example---the width is chosen so that the resulting values take on some aesthetically pleasing value: in the thousands for priorities, in the low hundreds for piece strengths (comparable to centipawn values). For other values with more definite meaning---the values in the Look Ahead Gene (see Section~\ref{look-ahead})---smaller distribution widths are used so that mutations have a low probability of getting outside the useful range of values. If a mutation commonly resulted in a useless value (for example, a Look Ahead Gene speculation constant of 10, resulting in losing on time for the first move), then evolution will only be able to slowly optimize that value since small-enough mutations would only have a small probability of occurring.
+Every aspect of a gene is encoded in the program as \code{double} data members in each Gene class. Upon mutation, a random \code{double} is chosen and its value is shifted by an amount taken from a Laplacian distribution~\cite{laplace} (i.e., a double-sided exponential distribution). At first, a normal distribution was used, but the Laplacian distribution has fatter tails, making large mutations more likely. The width of this distribution is customized to each quantity. Where the absolute magnitude doesn't matter---the priorities of board-scoring genes (see Section~\ref{board-score-section}), for example---the width is chosen so that the resulting values stay within a range of~-1 to~1. For other values with more definite meaning---the values in the Look Ahead Gene (see Section~\ref{look-ahead})---the mutation sizes are chosen so that the value has a low probability of getting outside the useful range. If a mutation commonly resulted in a useless value (for example, a Look Ahead Gene speculation constant of 10, resulting in losing on time for the first move), then evolution will only be able to slowly optimize that value since small-enough mutations would only have a small probability of occurring.
+
+There's an interesting problem with the genetic factors where the absolute values do not matter---like the previously mentioned gene priorities. If every gene priority value were multiplied by the same positive constant, the behavior of the AI would not change. This means that there is a redundant degree of freedom that ends up wasting mutations due to them having no effect. To remove this degree of freedom, all priorities are normalized so that the sum of their absolute values is one.
+\[p_i' \to \frac{p_i}{k}, \textrm{where } k = \sum_{p_i} |p_i|\]
+where \(p_i'\) is the gene priority after normalization, \(p_i\) is the gene priority before normalization, and \(k\) is the normalization constant.
+
+The choice of normalization procedure is arbitrary as long as the resulting constant is positive, any of the following would have also worked:
+\[k = \sqrt{\sum_{p_i}p_i^2}, \qquad k = max(|p_i|), \qquad k = \left|\sum_{p_i}p_i\right|, \qquad \textrm{etc.}\]
+The method for this program was chosen for the simplicity of the required code.
 
 \subsection{Notes on Designing Genes}
 
@@ -158,7 +166,7 @@ This gene specifies the importance or strength of each different type of chess p
 
 Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and~\ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
 
-The values of the piece strengths are modified in a similar fashion and for similar reasons to the board-scoring gene priorities as described in the summary section of Section~\ref{board-score-section}.
+The values of the piece strengths are normalized so that the sum of the absolute values of all the pieces of one color is one.
 
 \subsubsection{Look Ahead Gene}\label{look-ahead}
 This gene determines all aspects of the Genetic AIs time management through a set of genetically determined components to this gene that determine how the AI spends its time:
@@ -227,13 +235,7 @@ This gene controls how many randomly chosen genes get mutated every time there's
 
 These genes are used to give a score to a board state. The higher the score, the more desirable the moves that lead to this board. The score is calculated by
 \[Score = \sum_g Priority(g) \times Score(g,B)\]
-where \(g\) represents each gene, \(Priority(g)\) is a genetically determined scalar multiplicative factor that determines how much the gene's score of the board influences the final score, and \(Score(g,B)\) is the result of the scoring procedure of that gene on a given board \(B\). During mutation, the size of the priority modification is equal to the square root of the current priority. This is done for these reasons:
-\begin{itemize}
-	\item Mutations to high priority genes can still have an effect on gameplay,
-	\item Gene priorities that have a large proper value (usually, the Total Force Gene (see Sec.~\ref{total-force-and-pawn-result}) can achieve that value quickly,
-	\item If a gene has a proper value closer to zero, then it can settle on a proper value with respect to other low-priority genes using smaller mutations.
-\end{itemize}
-The square root of the current priority value was chosen as a compromise between a constant mutation size (which would lead to linear growth at best) and a mutation size proportional to the priority value (which would lead to exponential grown and probably wild swings during mutation at all priority values). A minimum priority mutations size of 10.0 is set so that the priority does not get permanently trapped near zero.
+where \(g\) represents each gene, \(Priority(g)\) is a genetically determined scalar multiplicative factor that determines how much the gene's score of the board influences the final score, and \(Score(g,B)\) is the result of the scoring procedure of that gene on a given board \(B\).
 
 Since it is not only important to find position that are advantageous to the player, but also disadvantageous to the opponent, the final heuristic score for a board position is given by
 \[Heuristic\ Score = Score(Player) - Score(Opponent).\]
@@ -268,31 +270,29 @@ This gene counts the number of squares attacked by all pieces. Bonus points are 
 
 The effective formula for the score of this gene can be expressed as
 \[score = \sum_s legal(s)\left(1+\frac{KTF}{1+distance(s,king)}\right)\]
-where the sum is over all squares \(s\) on the board. The function \(legal(s)\) returns~0 if \(s\) is not attacked at all, or one of two genetically determined factors depending on if the the attack is legal (ignoring checks or pins) or not. An illegal move is one that is blocked by another piece. The term \(KTF\) is the king target factor and is a genetically determined weight that adjusts the importance of attacking squares close to the opposing king. The function \(distance(s_1, s_2)\) gives the distance between two squares in king moves and is equal to the maximum of the difference in file or rank between the squares. In the formula above, \(king\) represents the square the opposing king occupies.
+where the sum is over all squares \(s\) on the board. The function \(legal(s)\) returns~0 if \(s\) is not attacked at all, or one of two genetically determined factors depending on if the the attack is legal (ignoring checks or pins) or not. (These two factors are normalized so that the sum of their absolute values is one.) An illegal move is one that is blocked by another piece. The term \(KTF\) is the king target factor and is a genetically determined weight that adjusts the importance of attacking squares close to the opposing king. The function \(distance(s_1, s_2)\) gives the distance between two squares in king moves and is equal to the maximum of the difference in file or rank between the squares. In the formula above, \(king\) represents the square the opposing king occupies.
 
 \subsubsection{King Confinement Gene}
 This gene tracks the manner in which the king is prevented from moving. In general, a king is safe if it is surrounded by friendly pieces or, failing that, it is free to move around the board when there are opposing pieces near. In scoring a board, this gene tracks the squares the king can reach given unlimited consecutive legal moves up to a genetically determined maximum distance.
 
-For a more detailed picture, each square potentially reachable by the king is classified into three types given one of three genetically determined scores for each:
+For a more detailed picture, each square potentially reachable by the king is classified into three types:
 \begin{itemize}
 	\item Free: the king is free to move on to these squares,
 	\item Friendly block: the king is blocked by pieces of the same color, and
 	\item Opponent block: the king is blocked due to the square being attacked by an opponent piece.
 \end{itemize}
 Note that opponent pieces by themselves do not block the king since they can be captured. Once all reachable squares have been found within a genetically determined maximum distance (measured in king moves), the score is calculated by the following:
-\[S = \frac{W_{friendly}\sum_{s \in R}Friend(s) + W_{opponent}\sum_{s \in R}Opponent(s)}{\left(\left|W_{friendly}\right| + \left|W_{opponent}\right|\right)\left(1 + \sum_{s \in R}Free(s)\right)}
+\[S = \frac{W_{friendly}\sum_{s \in R}Friend(s) + W_{opponent}\sum_{s \in R}Opponent(s)}{1 + \sum_{s \in R}Free(s)}
 \]
-where \(S\) is the resulting score, \(\sum_{s \in R}\) is a sum over every square \(s\) on the board that is reachable (\(\in R\)) from the current king location, \(W_{friend}\) is the genetically determined weight of squares blocked by friendly pieces, \(W_{opponent}\) is the genetically determined weight of squares blocked by opponent attacks, \(Friend(s)\) returns 1 if the square \(s\) is blocked by a friendly piece and 0 otherwise, \(Opponent(s)\) returns 1 if the square \(s\) is attacked by an opposing piece and 0 otherwise, and \(Free(s)\) returns 1 if the square \(s\) is reachable by the king and 0 otherwise. One is added to the denominator to prevent division by zero in the case where the king is in check and unable to move. The further division by the sum of the absolute values of the weights normalizes the score so that the result is approximately in the range \(-1 \leq S \leq 1\).
+where \(S\) is the resulting score, \(\sum_{s \in R}\) is a sum over every square \(s\) on the board that is reachable (\(\in R\)) from the current king location, \(W_{friend}\) is the genetically determined weight of squares blocked by friendly pieces, \(W_{opponent}\) is the genetically determined weight of squares blocked by opponent attacks, \(Friend(s)\) returns 1 if the square \(s\) is blocked by a friendly piece and 0 otherwise, \(Opponent(s)\) returns 1 if the square \(s\) is attacked by an opposing piece and 0 otherwise, and \(Free(s)\) returns 1 if the square \(s\) is reachable by the king and 0 otherwise. If a square is both occupied by a friendly piece and attacked by the opponent, then the friend score prevails, since this represents an opponent's attack being blocked. One is added to the denominator to prevent division by zero in the case where the king is in check and unable to move. The further division by the sum of the absolute values of the weights normalizes the score so that the result is approximately in the range \(-1 \leq S \leq 1\).
 
-Usually, the weight \(W_{friend}\) will be positive and \(W_{opponent}\) will be negative. So, a king that is hemmed in by friendly pieces will receive a positive score while a king hemmed in by opposing attacks receives a negative score. In both cases, a greater number of reachable free squares brings the score closer to zero. A situation where the king is far from friendly protection and opponent's attacks is thus neutral.
-
-The priority of this gene is non-negative so as to hasten the evolution of the friend/opponent weights to their proper signs.
+Usually, the weight \(W_{friend}\) will end up positive and \(W_{opponent}\) will end up negative. So, a king that is hemmed in by friendly pieces will receive a positive score while a king hemmed in by opposing attacks receives a negative score. In both cases, a greater number of reachable free squares brings the score closer to zero. A situation where the king is far from friendly protection and opponent's attacks is thus neutral. The two weights are normalized so that the sum of their absolute values is one.
 
 \subsubsection{King Protection Gene}
 This gene counts the squares that have access to the king by any valid piece movement and are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a less exposed king.
 
 \subsubsection{Castling Possible Gene}
-This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away, the king and rook remaining unmoved, and opposing pieces not attacking. The score can vary based on a genetically determined preference for kingside or queenside castling. Because of these preference values, the priority is non-negative.
+This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away, the king and rook remaining unmoved, and opposing pieces not attacking. The score can vary based on a genetically determined preference for kingside or queenside castling. The numerical values of these preferences are normalized so that the sum of their absolute values is one.
 
 \subsubsection{Pawn Islands Gene}
 A pawn island is a group of pawns on neighboring files that are isolated from other pawns by empty files, and thus cannot help to defend pawns on other islands. This gene calculates the average number of pawns per island with the assumption that a greater number of islands with fewer pawns each is unwanted.
