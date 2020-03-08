@@ -37,7 +37,7 @@ Game_Result play_game(Board board,
         auto& player  = board.whose_turn() == Piece_Color::WHITE ? white : black;
         auto& thinker = board.whose_turn() == Piece_Color::WHITE ? black : white;
 
-        thinker.ponder(board, game_clock, pondering_allowed);
+        thinker.ponder(board, pondering_allowed);
         const auto& move_chosen = player.choose_move(board, game_clock);
 
         result = game_clock.punch(board);
@@ -98,7 +98,7 @@ void play_game_with_outsider(const Player& player,
             {
                 break;
             }
-            player.ponder(board, clock, outsider->pondering_allowed(board));
+            player.ponder(board, outsider->pondering_allowed(board));
         }
 
         outsider->log("Game ended with: " + game_result.ending_reason());

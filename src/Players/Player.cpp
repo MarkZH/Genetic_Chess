@@ -6,7 +6,7 @@ class Board;
 
 bool Player::use_short_cecp_post = false;
 
-void Player::ponder(const Board&, const Clock&, bool) const noexcept
+void Player::ponder(const Board&, bool) const noexcept
 {
 }
 
