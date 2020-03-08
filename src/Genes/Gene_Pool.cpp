@@ -368,9 +368,6 @@ void gene_pool(const std::string& config_file)
         }
 
         // Record best AI from all pools.
-        const auto best_file_name = genome_file_name + "_best_genome.txt";
-        const auto temp_best_file_name = best_file_name + ".tmp";
-
         static auto wins_to_beat = 0.0;
         const double decay_constant = 0.99;
         wins_to_beat *= decay_constant;
@@ -378,12 +375,14 @@ void gene_pool(const std::string& config_file)
         {
             if(win_count > wins_to_beat)
             {
+                const auto best_file_name = genome_file_name + "_best_genome.txt";
+                const auto temp_best_file_name = best_file_name + ".tmp";
+
                 wins_to_beat = win_count;
-                std::filesystem::remove(temp_best_file_name);
                 ai.print(temp_best_file_name);
+                std::filesystem::rename(temp_best_file_name, best_file_name);
             }
         }
-        std::filesystem::rename(temp_best_file_name, best_file_name);
 
         // Update game time
         game_time += game_time_increment;
