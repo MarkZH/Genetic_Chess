@@ -384,6 +384,8 @@ void gene_pool(const std::string& config_file)
             }
         }
 
+        std::cout << "\nWins to be recorded as best: " << wins_to_beat << "\n";
+
         // Update game time
         game_time += game_time_increment;
         if(game_time > maximum_game_time || game_time < minimum_game_time)
