@@ -368,15 +368,21 @@ void gene_pool(const std::string& config_file)
         }
 
         // Record best AI from all pools.
-        auto best_ai = pools.front().front();
-        for(const auto& search_pool : pools)
+        const auto best_file_name = genome_file_name + "_best_genome.txt";
+        const auto temp_best_file_name = best_file_name + ".tmp";
+
+        static auto wins_to_beat = 0.0;
+        const double decay_constant = 0.99;
+        wins_to_beat *= decay_constant;
+        for(const auto& [ai, win_count] : wins)
         {
-            // Taking the oldest AI (smallest ID) as the best
-            best_ai = std::min(best_ai, *std::min_element(search_pool.begin(), search_pool.end()));
+            if(win_count > wins_to_beat)
+            {
+                wins_to_beat = win_count;
+                std::filesystem::remove(temp_best_file_name);
+                ai.print(temp_best_file_name);
+            }
         }
-        auto best_file_name = genome_file_name + "_best_genome.txt";
-        auto temp_best_file_name = best_file_name + ".tmp";
-        best_ai.print(temp_best_file_name);
         std::filesystem::rename(temp_best_file_name, best_file_name);
 
         // Update game time
