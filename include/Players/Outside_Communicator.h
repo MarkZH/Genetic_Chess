@@ -35,7 +35,7 @@ class Outside_Communicator
         //!
         //! \param board The Board used for the game.
         //! \param clock The clock used for the game.
-        virtual void listen(Board& board, Clock& clock) = 0;
+        virtual void listen(const Board& board, Clock& clock) = 0;
 
         //! \brief When appropriate, apply the local AIs Move to Board and send results to GUI.
         //!
@@ -51,7 +51,7 @@ class Outside_Communicator
         //! \brief Returns whether the GUI is allowing thinking during the other player's move.
         //!
         //! \param board The board being used in the current game.
-        virtual bool pondering_allowed(Board& board) = 0;
+        virtual bool pondering_allowed(const Board& board) = 0;
 
         //! \brief Log data to a local text file.
         //!

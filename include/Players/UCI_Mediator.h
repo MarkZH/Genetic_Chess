@@ -26,18 +26,18 @@ class UCI_Mediator : public Outside_Communicator
                                Clock& clock,
                                std::vector<const Move*>& move_list,
                                const Player& player) override;
-        void listen(Board& board, Clock& clock) override;
+        void listen(const Board& board, Clock& clock) override;
         Game_Result handle_move(Board& board,
                                 const Move& move,
                                 std::vector<const Move*>& move_list,
                                 const Player& player) const override;
-        bool pondering_allowed(Board& board) override;
+        bool pondering_allowed(const Board& board) override;
 
     private:
         std::future<std::string> last_listening_result;
 
-        std::string listener(Board& board);
-        std::string receive_uci_command(Board& board, bool while_listening);
+        std::string listener(const Board& board);
+        std::string receive_uci_command(const Board& board, bool while_listening);
 };
 
 #endif // UCI_MEDIATOR_H

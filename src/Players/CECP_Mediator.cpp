@@ -264,7 +264,7 @@ bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& 
     }
 }
 
-void CECP_Mediator::listen(Board& board, Clock& clock)
+void CECP_Mediator::listen(const Board& board, Clock& clock)
 {
     last_listening_command = std::async(std::launch::async, &CECP_Mediator::listener, this, std::ref(board), std::ref(clock));
 }
@@ -289,7 +289,7 @@ Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vect
     }
 }
 
-bool CECP_Mediator::pondering_allowed(Board& board)
+bool CECP_Mediator::pondering_allowed(const Board& board)
 {
     if(thinking_on_opponent_time)
     {
@@ -303,7 +303,7 @@ bool CECP_Mediator::pondering_allowed(Board& board)
     return thinking_on_opponent_time;
 }
 
-std::string CECP_Mediator::receive_cecp_command(Board& board, Clock& clock, bool while_listening)
+std::string CECP_Mediator::receive_cecp_command(const Board& board, Clock& clock, bool while_listening)
 {
     while(true)
     {
@@ -361,7 +361,7 @@ void CECP_Mediator::send_error(const std::string& command, const std::string& re
     send_command("Error (" + reason + "): " + command);
 }
 
-std::string CECP_Mediator::listener(Board& board, Clock& clock)
+std::string CECP_Mediator::listener(const Board& board, Clock& clock)
 {
     while(true)
     {

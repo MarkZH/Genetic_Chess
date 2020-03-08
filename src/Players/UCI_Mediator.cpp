@@ -239,7 +239,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
     }
 }
 
-void UCI_Mediator::listen(Board& board, Clock&)
+void UCI_Mediator::listen(const Board& board, Clock&)
 {
     last_listening_result = std::async(std::launch::async, &UCI_Mediator::listener, this, std::ref(board));
 }
@@ -260,7 +260,7 @@ Game_Result UCI_Mediator::handle_move(Board& board,
     return board.submit_move(move);
 }
 
-bool UCI_Mediator::pondering_allowed(Board& board)
+bool UCI_Mediator::pondering_allowed(const Board& board)
 {
     auto command = receive_uci_command(board, false);
     if(String::starts_with(command, "go ") && String::contains(command, "ponder"))
@@ -277,7 +277,7 @@ bool UCI_Mediator::pondering_allowed(Board& board)
     }
 }
 
-std::string UCI_Mediator::listener(Board& board)
+std::string UCI_Mediator::listener(const Board& board)
 {
     try
     {
@@ -290,7 +290,7 @@ std::string UCI_Mediator::listener(Board& board)
     }
 }
 
-std::string UCI_Mediator::receive_uci_command(Board& board, bool while_listening)
+std::string UCI_Mediator::receive_uci_command(const Board& board, bool while_listening)
 {
     while(true)
     {
