@@ -1,7 +1,6 @@
 #include "Game/Piece.h"
 
 #include <cctype>
-#include <vector>
 #include <algorithm>
 #include <cassert>
 #include <array>
@@ -19,9 +18,11 @@
 #include "Moves/En_Passant.h"
 #include "Moves/Castle.h"
 
+#include "Utility/Fixed_Capacity_Vector.h"
+
 namespace
 {
-    using indexed_move_array = std::array<std::array<std::vector<std::vector<const Move*>>, 64>, 12>;
+    using indexed_move_array = std::array<std::array<Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>, 64>, 12>;
 
     void add_pawn_moves(indexed_move_array& out, Piece_Color color) noexcept;
     void add_rook_moves(indexed_move_array& out, Piece_Color color, Piece_Type type = Piece_Type::ROOK) noexcept;
@@ -293,7 +294,7 @@ bool Piece::can_move(const Move* move) const noexcept
     return false;
 }
 
-const std::vector<std::vector<const Move*>>& Piece::move_lists(Square square) const noexcept
+const Piece::list_of_move_lists& Piece::move_lists(Square square) const noexcept
 {
     assert(*this);
     return legal_moves[index()][square.index()];
@@ -315,7 +316,7 @@ Piece::piece_code_t Piece::index() const noexcept
     return piece_code;
 }
 
-const std::vector<std::vector<const Move*>>& Piece::attacking_move_lists(Square square) const noexcept
+const Piece::list_of_move_lists& Piece::attacking_move_lists(Square square) const noexcept
 {
     assert(*this);
     return attack_moves[index()][square.index()];

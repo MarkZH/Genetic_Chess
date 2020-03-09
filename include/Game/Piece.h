@@ -2,7 +2,8 @@
 #define PIECE_H
 
 #include <string>
-#include <vector>
+
+#include "Utility/Fixed_Capacity_Vector.h"
 
 #include "Game/Color.h"
 
@@ -29,6 +30,7 @@ class Piece
 {
     private:
         using piece_code_t = unsigned int;
+        using list_of_move_lists = Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>;
 
     public:
         //! \brief Create an invalid piece that can represent an unoccupied space on a Board.
@@ -77,13 +79,13 @@ class Piece
         //! \param square The square where the moves start.
         //! \returns A list of lists of legal moves starting from that square. The moves are grouped into
         //!          lists by direction and ordered by distance from the starting square.
-        const std::vector<std::vector<const Move*>>& move_lists(Square square) const noexcept;
+        const list_of_move_lists& move_lists(Square square) const noexcept;
 
         //! \brief Gives all moves that are allowed to capture other pieces.
         //!
         //! \param square The square where the attacking moves start.
         //! \returns A list of lists of moves grouped and ordered as in Piece::move_lists().
-        const std::vector<std::vector<const Move*>>& attacking_move_lists(Square square) const noexcept;
+        const list_of_move_lists& attacking_move_lists(Square square) const noexcept;
 
     private:
         piece_code_t piece_code;

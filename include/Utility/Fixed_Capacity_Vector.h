@@ -105,10 +105,37 @@ class Fixed_Capacity_Vector
         //! \brief Returns the first item in the Fixed_Capacity_Vector.
         //!
         //! \throws assertion_failure If there is no data.
-        constexpr T front() const noexcept
+        constexpr const T& front() const noexcept
         {
             assert( ! empty());
             return data.front();
+        }
+
+        //! \brief Returns the first item in the Fixed_Capacity_Vector.
+        //!
+        //! \throws assertion_failure If there is no data.
+        constexpr T& front() noexcept
+        {
+            assert( ! empty());
+            return data.front();
+        }
+
+        //! \brief Returns the last item in the Fixed_Capacity_Vector.
+        //!
+        //! \throws assertion_failure If there is no data.
+        constexpr const T& back() const noexcept
+        {
+            assert( ! empty());
+            return data[insertion_point - 1];
+        }
+
+        //! \brief Returns the last item in the Fixed_Capacity_Vector.
+        //!
+        //! \throws assertion_failure If there is no data.
+        constexpr T& back() noexcept
+        {
+            assert( ! empty());
+            return data[insertion_point - 1];
         }
 
         //! \brief An iterator to the beginning of the vector.
