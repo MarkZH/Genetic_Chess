@@ -46,10 +46,10 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
     switch(Random::random_integer(1, 3))
     {
         case 1:
-            mean_game_length += Random::random_laplace(0.3);
+            mean_game_length += Random::random_laplace(1.0);
             break;
         case 2:
-            game_length_uncertainty += Random::random_laplace(0.005);
+            game_length_uncertainty += Random::random_laplace(0.01);
             break;
         case 3:
             speculation_constant += Random::random_laplace(0.03);
