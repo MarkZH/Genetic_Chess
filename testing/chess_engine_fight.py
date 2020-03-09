@@ -21,7 +21,7 @@ while True:
     count += 1
     print('Game #' + str(count))
 
-    generator_command = [generator, '-random', '-random', '-game_file', game_file]
+    generator_command = [generator, '-random', '-random', '-game-file', game_file]
     if board:
         generator_command.extend(['-board', board])
     out = subprocess.run(generator_command)
