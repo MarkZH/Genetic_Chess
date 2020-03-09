@@ -435,8 +435,7 @@ namespace
                         last_move_line_number = line_number;
                         if(String::contains(move, 'x')) // check that move captures
                         {
-                            const Board& temp = board; // to prevent use of non-const private overload
-                            if( ! temp.piece_on_square(move_to_submit.end()) && ! move_to_submit.is_en_passant())
+                            if( ! const_cast<const Board&>(board).piece_on_square(move_to_submit.end()) && ! move_to_submit.is_en_passant())
                             {
                                 std::cerr << "Move: " << move_number << move << " indicates capture but does not capture. (line: " << line_number << ")" << std::endl;
                                 return false;
