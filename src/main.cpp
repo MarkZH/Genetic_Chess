@@ -490,6 +490,13 @@ namespace
                         std::cerr << "Move (" << move_number << move << ") is illegal: "
                                   << error.what()
                                   << ". (line: " << line_number << ")" << std::endl;
+                        std::cerr << "Legal moves: ";
+                        for(auto legal_move : board.legal_moves())
+                        {
+                            std::cerr << legal_move->algebraic(board) << " ";
+                        }
+                        std::cerr << std::endl;
+                        std::cerr << board.fen() << std::endl;
                         return false;
                     }
                 }
