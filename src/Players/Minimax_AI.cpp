@@ -43,36 +43,6 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         commentary.back().second = real_prior_result;
     }
 
-    const auto& legal_moves = board.legal_moves();
-    if(legal_moves.size() == 1)
-    {
-        if(principal_variation.size() > 3)
-        {
-            // search_game_tree() assumes the principal variation starts
-            // with the previous move of this player. If a move was forced,
-            // then the principal variation needs to be updated to start with
-            // the next move of this side after checking that the immediately
-            // preceding move was the expected one.
-            principal_variation.erase(principal_variation.begin(),
-                                      principal_variation.begin() + 2);
-        }
-        else
-        {
-            principal_variation.clear();
-        }
-
-        depth_one_results.clear();
-        commentary.push_back({real_prior_result, {}});
-        commentary.back().first.variation = principal_variation;
-
-        if(principal_variation.size() > 2)
-        {
-            depth_one_results[principal_variation[1]].variation = principal_variation;
-        }
-
-        return *legal_moves.front(); // If there's only one legal move, take it.
-    }
-
     auto time_to_use = time_to_examine(board, clock);
 
     // alpha = highest score found that opponent will allow
