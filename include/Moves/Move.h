@@ -114,11 +114,10 @@ class Move
         static Square_Difference attack_direction_from_index(size_t index) noexcept;
 
     protected:
-        //! \brief Remove the ability to capture from the Move.
-        void disable_capturing() noexcept;
-
-        //! \brief Restore the ability to capture to the Move.
-        void enable_capturing() noexcept;
+        //! \brief Change the ability of this Move to capture.
+        //!
+        //! \param capturing_ability Whether this move should be able to capture.
+        void set_capturing_ability(bool capturing_ability) noexcept;
 
         //! \brief Indicate that the Move being created is an en passant capture.
         void mark_as_en_passant() noexcept;

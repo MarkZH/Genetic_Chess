@@ -216,14 +216,9 @@ Square_Difference Move::attack_direction_from_index(size_t index) noexcept
     return {dx[index], dy[index]};
 }
 
-void Move::disable_capturing() noexcept
+void Move::set_capturing_ability(bool capturing_ability) noexcept
 {
-    able_to_capture = false;
-}
-
-void Move::enable_capturing() noexcept
-{
-    able_to_capture = true;
+    able_to_capture = capturing_ability;
 }
 
 void Move::mark_as_en_passant() noexcept

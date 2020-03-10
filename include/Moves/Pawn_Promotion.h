@@ -5,6 +5,7 @@
 
 #include <string>
 
+#include "Direction.h"
 #include "Game/Piece.h"
 #include "Game/Color.h"
 
@@ -20,6 +21,14 @@ class Pawn_Promotion : public Pawn_Move
         //! \param color The color of the moving pawn.
         //! \param file_start The file of the starting square.
         Pawn_Promotion(Piece_Type promotion_piece, Piece_Color color, char file_start) noexcept;
+
+        //! \brief Create a capturing pawn promotion move.
+        //!
+        //! \param promotion_piece The type of piece the pawn will be promoted to.
+        //! \param color The color of the moving pawn.
+        //! \param file_start The file of the starting square.
+        //! \param file_change The direction of the capture (LEFT or RIGHT).
+        Pawn_Promotion(Piece_Type promotion_piece, Piece_Color color, char file_start, Direction file_change) noexcept;
 
         //! \brief Replace the pawn with the promoted piece.
         //!

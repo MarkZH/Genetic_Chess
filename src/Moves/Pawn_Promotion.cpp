@@ -3,12 +3,19 @@
 #include <string>
 
 #include "Moves/Pawn_Move.h"
+#include "Moves/Direction.h"
 #include "Game/Board.h"
 #include "Game/Piece.h"
 #include "Game/Square.h"
 
 Pawn_Promotion::Pawn_Promotion(Piece_Type promotion_piece, Piece_Color color, char file_start) noexcept :
     Pawn_Move(color, Square{file_start, color == Piece_Color::WHITE ? 7 : 2}),
+    promote_to{color, promotion_piece}
+{
+}
+
+Pawn_Promotion::Pawn_Promotion(Piece_Type promotion_piece, Piece_Color color, char file_start, Direction dir) noexcept :
+    Pawn_Move(color, Square{file_start, color == Piece_Color::WHITE ? 7 : 2}, dir),
     promote_to{color, promotion_piece}
 {
 }

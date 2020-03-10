@@ -12,7 +12,7 @@ Castle::Castle(int base_rank, Direction direction) noexcept :
     rook_move({(direction == Direction::RIGHT ? 'h' : 'a'), base_rank},
               {(direction == Direction::RIGHT ? 'f' : 'd'), base_rank})
 {
-    disable_capturing();
+    set_capturing_ability(false);
 }
 
 bool Castle::move_specific_legal(const Board& board) const noexcept

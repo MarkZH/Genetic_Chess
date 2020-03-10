@@ -11,10 +11,8 @@
 #include "Moves/Move.h"
 #include "Moves/Direction.h"
 #include "Moves/Pawn_Move.h"
-#include "Moves/Pawn_Capture.h"
 #include "Moves/Pawn_Double_Move.h"
 #include "Moves/Pawn_Promotion.h"
-#include "Moves/Pawn_Promotion_by_Capture.h"
 #include "Moves/En_Passant.h"
 #include "Moves/Castle.h"
 
@@ -144,7 +142,7 @@ namespace
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
                 {
-                    add_legal_move<Pawn_Capture>(out, pawn, true, color, dir, Square{file, rank});
+                    add_legal_move<Pawn_Move>(out, pawn, true, color, Square{file, rank}, dir);
                 }
             }
 
@@ -157,7 +155,7 @@ namespace
             {
                 for(auto file = first_file; file <= last_file; ++file)
                 {
-                    add_legal_move<Pawn_Promotion_by_Capture>(out, pawn, true, promote, color, dir, file);
+                    add_legal_move<Pawn_Promotion>(out, pawn, true, promote, color, file, dir);
                 }
             }
         }

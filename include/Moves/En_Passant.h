@@ -1,7 +1,7 @@
 #ifndef EN_PASSANT_H
 #define EN_PASSANT_H
 
-#include "Pawn_Capture.h"
+#include "Pawn_Move.h"
 #include "Direction.h"
 
 class Board;
@@ -12,7 +12,7 @@ class Board;
 //! is different from the square the captured piece occupies.
 //!
 //! Really annoying to program; hence the is_en_passant() method.
-class En_Passant : public Pawn_Capture
+class En_Passant : public Pawn_Move
 {
     public:
         //! \brief Create an en passant move.

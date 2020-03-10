@@ -3,11 +3,11 @@
 #include <string>
 
 #include "Moves/Direction.h"
-#include "Moves/Pawn_Capture.h"
+#include "Moves/Pawn_Move.h"
 #include "Game/Board.h"
 
 En_Passant::En_Passant(Piece_Color color, Direction dir, char file_start) noexcept :
-    Pawn_Capture(color, dir, Square{file_start, color == Piece_Color::WHITE ? 5 : 4})
+    Pawn_Move(color, Square{file_start, color == Piece_Color::WHITE ? 5 : 4}, dir)
 {
     mark_as_en_passant();
 }
