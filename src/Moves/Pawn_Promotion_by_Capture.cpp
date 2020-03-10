@@ -24,8 +24,3 @@ bool Pawn_Promotion_by_Capture::move_specific_legal(const Board& board) const no
 {
     return board.piece_on_square(end()); // must capture
 }
-
-std::string Pawn_Promotion_by_Capture::algebraic_base(const Board& board) const noexcept
-{
-    return start().file() + std::string("x") + Pawn_Promotion::algebraic_base(board);
-}

@@ -12,8 +12,3 @@ Pawn_Move::Pawn_Move(Piece_Color color_in, Square start_in) noexcept :
 {
     disable_capturing();
 }
-
-std::string Pawn_Move::algebraic_base(const Board&) const noexcept
-{
-    return end().string();
-}

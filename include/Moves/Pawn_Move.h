@@ -16,9 +16,6 @@ class Pawn_Move : public Move
         //!
         //! The constructor also sets able_to_capture to false.
         Pawn_Move(Piece_Color color_in, Square start) noexcept;
-
-    protected:
-        std::string algebraic_base(const Board& board) const noexcept override;
 };
 
 #endif // PAWN_MOVE_H

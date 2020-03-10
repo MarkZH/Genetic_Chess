@@ -24,13 +24,6 @@ class Pawn_Promotion_by_Capture : public Pawn_Promotion
                                   Direction dir,
                                   char file_start) noexcept;
 
-    protected:
-        //! \brief Combine pawn capture note with a promotion note.
-        //!
-        //! \param board The board state just before the move.
-        //! \returns A textual record of a capture and a promotion.
-        std::string algebraic_base(const Board& board) const noexcept override;
-
     private:
         //! \brief This move must capture.
         //!
