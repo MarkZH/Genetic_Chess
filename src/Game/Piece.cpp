@@ -120,10 +120,10 @@ namespace
         auto pawn = Piece{color, Piece_Type::PAWN};
         auto base_rank = (color == Piece_Color::WHITE ? 2 : 7);
         auto no_normal_move_rank = (color == Piece_Color::WHITE ? 7 : 2);
-        auto direction = (color == Piece_Color::WHITE ? 1 : -1);
+        auto rank_change = (color == Piece_Color::WHITE ? 1 : -1);
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
+            for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
             {
                 add_legal_move<Pawn_Move>(out, pawn, true, color, Square{file, rank});
             }
@@ -142,7 +142,7 @@ namespace
             auto last_file = (dir == Direction::RIGHT ? 'g' : 'h');
             for(char file = first_file; file <= last_file; ++file)
             {
-                for(int rank = base_rank; rank != no_normal_move_rank; rank += direction)
+                for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
                 {
                     add_legal_move<Pawn_Capture>(out, pawn, true, color, dir, Square{file, rank});
                 }
