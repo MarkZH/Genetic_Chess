@@ -70,15 +70,6 @@ Genome::Genome() noexcept
 
 Genome::Genome(const Genome& other) noexcept
 {
-    copy_genome(other);
-}
-
-Genome::Genome(Genome&& other) noexcept : genome(std::move(other.genome))
-{
-}
-
-void Genome::copy_genome(const Genome& other) noexcept
-{
     std::transform(other.genome.begin(), other.genome.end(),
                    std::back_inserter(genome),
                    [](const auto& gene)
@@ -86,6 +77,10 @@ void Genome::copy_genome(const Genome& other) noexcept
                        return gene->duplicate();
                    });
     reset_piece_strength_gene();
+}
+
+Genome::Genome(Genome&& other) noexcept : genome(std::move(other.genome))
+{
 }
 
 void Genome::reset_piece_strength_gene() noexcept
@@ -115,7 +110,13 @@ void Genome::renormalize_priorities() noexcept
 
 Genome& Genome::operator=(const Genome& other) noexcept
 {
-    copy_genome(other);
+    std::transform(other.genome.begin(), other.genome.end(),
+                   genome.begin(),
+                   [](const auto& gene)
+                   {
+                       return gene->duplicate();
+                   });
+    reset_piece_strength_gene();
     return *this;
 }
 

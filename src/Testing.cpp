@@ -375,6 +375,32 @@ bool run_tests()
         remove(rewrite_file_name);
     }
 
+
+    // Test Genetic_AI self-assignment
+    auto self_write_file_name = "self_original.txt";
+    auto self_swap_file_name = "self_swap.txt";
+    auto self_assign_file_name = "self_assign.txt";
+    remove(self_write_file_name);
+    remove(self_swap_file_name);
+    remove(self_assign_file_name);
+
+    read_ai.print(self_write_file_name);
+
+    std::swap(read_ai, read_ai);
+    read_ai.print(self_swap_file_name);
+    auto self_swap_passed = test_result(tests_passed, files_are_identical(self_write_file_name, self_swap_file_name), "Self-swap changed AI.");
+    
+    read_ai = read_ai;
+    read_ai.print(self_assign_file_name);
+    auto self_assign_passed = test_result(tests_passed, files_are_identical(self_write_file_name, self_assign_file_name), "Self-assignment changed AI.");
+
+    if(self_swap_passed && self_assign_passed)
+    {
+        remove(self_write_file_name);
+        remove(self_swap_file_name);
+        remove(self_assign_file_name);
+    }
+
     auto file_name = "genetic_ai_example.txt";
     std::string line;
     std::getline(std::ifstream(file_name), line);
