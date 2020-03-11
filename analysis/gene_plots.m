@@ -122,9 +122,6 @@ for yi = 2 : length(data.colheaders) - 2
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
             make_dashed = (priority_count > 7);
-        elseif special_plot_index == 3
-            cutoff = strfind(name, '-');
-            name = name(cutoff + 2 : end);
         end
 
         p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
