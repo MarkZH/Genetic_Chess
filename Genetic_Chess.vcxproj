@@ -259,11 +259,9 @@
     <ClCompile Include="src\Moves\Castle.cpp" />
     <ClCompile Include="src\moves\En_Passant.cpp" />
     <ClCompile Include="src\moves\Move.cpp" />
-    <ClCompile Include="src\moves\Pawn_Capture.cpp" />
     <ClCompile Include="src\moves\Pawn_Double_Move.cpp" />
     <ClCompile Include="src\moves\Pawn_Move.cpp" />
     <ClCompile Include="src\moves\Pawn_Promotion.cpp" />
-    <ClCompile Include="src\moves\Pawn_Promotion_by_Capture.cpp" />
     <ClCompile Include="src\players\CECP_Mediator.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
     <ClCompile Include="src\players\Genetic_AI.cpp" />
@@ -313,11 +311,9 @@
     <ClInclude Include="include\Moves\Direction.h" />
     <ClInclude Include="include\moves\En_Passant.h" />
     <ClInclude Include="include\moves\Move.h" />
-    <ClInclude Include="include\moves\Pawn_Capture.h" />
     <ClInclude Include="include\moves\Pawn_Double_Move.h" />
     <ClInclude Include="include\moves\Pawn_Move.h" />
     <ClInclude Include="include\moves\Pawn_Promotion.h" />
-    <ClInclude Include="include\moves\Pawn_Promotion_by_Capture.h" />
     <ClInclude Include="include\players\CECP_Mediator.h" />
     <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
     <ClInclude Include="include\players\Genetic_AI.h" />
