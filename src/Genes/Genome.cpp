@@ -68,7 +68,12 @@ Genome::Genome()
     renormalize_priorities();
 }
 
-Genome::Genome(const Genome& other)
+Genome::Genome(const Genome& other) noexcept
+{
+    copy_genome(other);
+}
+
+void Genome::copy_genome(const Genome& other) noexcept
 {
     std::transform(other.genome.begin(), other.genome.end(),
                    std::back_inserter(genome),
@@ -104,11 +109,9 @@ void Genome::renormalize_priorities() noexcept
     }
 }
 
-Genome& Genome::operator=(Genome other)
+Genome& Genome::operator=(const Genome& other) noexcept
 {
-    std::swap(genome, other.genome);
-    reset_piece_strength_gene();
-
+    copy_genome(other);
     return *this;
 }
 

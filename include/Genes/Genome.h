@@ -21,7 +21,7 @@ class Genome
         //! \brief Clone a genome
         //!
         //! \param other The originating genome.
-        Genome(const Genome& other);
+        Genome(const Genome& other) noexcept;
 
         //! \brief Create a new genome from two existing genomes via mating
         //!
@@ -33,7 +33,7 @@ class Genome
         //! \brief Inject another genome's data into this one (i.e., assignment operator)
         //!
         //! \param other The originating genome.
-        Genome& operator=(Genome other);
+        Genome& operator=(const Genome& other) noexcept;
 
         //! \brief Read genome data from an input stream (std::ifstream, std::cin, etc.).
         //!
