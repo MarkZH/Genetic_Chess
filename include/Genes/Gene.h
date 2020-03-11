@@ -96,7 +96,7 @@ class Gene
         //! \param[out] y Second value.
         //!
         //! The values will be divided by std::abs(x) + std::abs(y).
-        static void normalize(double& x, double& y);
+        static void normalize(double& x, double& y) noexcept;
 
         //! Explicitly set priority to zero.
         //

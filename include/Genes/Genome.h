@@ -16,7 +16,7 @@ class Genome
 {
     public:
         //! \brief Create a genome with default-constructed (neutral behavior) Genes.
-        Genome();
+        Genome() noexcept;
 
         //! \brief Clone a genome
         //!
@@ -28,7 +28,7 @@ class Genome
         //! Create each Gene by copying from either parent with a 50-50 probability.
         //! \param A The first parent.
         //! \param B The second parent.
-        Genome(const Genome& B, const Genome& A);
+        Genome(const Genome& B, const Genome& A) noexcept;
 
         //! \brief Inject another genome's data into this one (i.e., assignment operator)
         //!
@@ -49,18 +49,18 @@ class Genome
         //! \param perspective The player for whom a higher score means a greater chance of victory.
         //! \param depth The current search depth on the game tree.
         //!        (i.e., at the root of the game tree).
-        double evaluate(const Board& board, Piece_Color perspective, size_t depth) const;
+        double evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
 
         //! \brief Apply a random set of mutations to the entire genome.
         //!
         //! The severity of the mutation is controlled by the Mutation_Rate_Gene.
-        void mutate();
+        void mutate() noexcept;
 
         //! \brief Determine how much time should be used to choose a move, that is, for the entire search.
         //!
         //! \param board The current board position.
         //! \param clock The game clock.
-        double time_to_examine(const Board& board, const Clock& clock) const; // how much time to use for this move
+        double time_to_examine(const Board& board, const Clock& clock) const noexcept; // how much time to use for this move
 
         //! \brief Returns a factor that is multiplied by the time allocated to examine a branch of the game tree.
         //!
@@ -70,10 +70,10 @@ class Genome
         //! allowing deeper searches of the game tree. More or less time may be allocated based on the
         //! board position being examined.
         //! \returns The multiplicative factor.
-        double speculation_time_factor() const;
+        double speculation_time_factor() const noexcept;
 
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
-        const std::array<double, 6>& piece_values() const;
+        const std::array<double, 6>& piece_values() const noexcept;
 
         //! \brief Print the genome data to the output stream (std::ofstream, std::cout, etc.).
         //!
@@ -84,13 +84,14 @@ class Genome
         std::vector<std::unique_ptr<Gene>> genome;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
+        void copy_genome(const Genome& other_genome) noexcept;
         void reset_piece_strength_gene() noexcept;
         void renormalize_priorities() noexcept;
 
         //! \brief Consults the Mutation_Rate_Gene to determine how many point mutations to apply to the genome.
         //!
         //! \returns A number of mutations to apply.
-        double components_to_mutate() const;
+        double components_to_mutate() const noexcept;
 };
 
 #endif // GENOME_H

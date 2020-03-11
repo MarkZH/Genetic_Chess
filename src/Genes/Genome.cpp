@@ -39,7 +39,7 @@ namespace
      const auto mutation_rate_gene_index = size_t(2);
 }
 
-Genome::Genome()
+Genome::Genome() noexcept
 {
     // Regulator genes
     genome.emplace_back(std::make_unique<Piece_Strength_Gene>());
@@ -115,7 +115,7 @@ Genome& Genome::operator=(const Genome& other) noexcept
     return *this;
 }
 
-Genome::Genome(const Genome& A, const Genome& B)
+Genome::Genome(const Genome& A, const Genome& B) noexcept
 {
     std::transform(A.genome.begin(), A.genome.end(), B.genome.begin(),
                    std::back_inserter(genome),
@@ -189,12 +189,12 @@ double Genome::score_board(const Board& board, Piece_Color perspective, size_t d
                            });
 }
 
-double Genome::evaluate(const Board& board, Piece_Color perspective, size_t depth) const
+double Genome::evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
     return score_board(board, perspective, depth) - score_board(board, opposite(perspective), depth);
 }
 
-void Genome::mutate()
+void Genome::mutate() noexcept
 {
     // Create copies of genes based on the number of internal components
     // that are mutatable
@@ -222,22 +222,22 @@ void Genome::print(std::ostream& os) const noexcept
     };
 }
 
-double Genome::time_to_examine(const Board& board, const Clock& clock) const
+double Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
 }
 
-double Genome::speculation_time_factor() const
+double Genome::speculation_time_factor() const noexcept
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor();
 }
 
-const std::array<double, 6>& Genome::piece_values() const
+const std::array<double, 6>& Genome::piece_values() const noexcept
 {
     return static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())->piece_values();
 }
 
-double Genome::components_to_mutate() const
+double Genome::components_to_mutate() const noexcept
 {
     return static_cast<const Mutation_Rate_Gene*>(genome[mutation_rate_gene_index].get())->mutation_count();
 }
