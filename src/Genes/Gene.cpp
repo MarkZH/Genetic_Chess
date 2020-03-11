@@ -115,8 +115,12 @@ void Gene::read_from(std::istream& is)
 void Gene::read_from(const std::string& file_name)
 {
     auto ifs = std::ifstream(file_name);
-    std::string line;
+    if( ! ifs)
+    {
+        throw Genetic_AI_Creation_Error("Could not open " + file_name + " to read.");
+    }
 
+    std::string line;
     while(std::getline(ifs, line))
     {
         if(String::starts_with(line, "Name: "))
@@ -124,8 +128,15 @@ void Gene::read_from(const std::string& file_name)
             auto gene_name = String::remove_extra_whitespace(String::split(line, ":", 1)[1]);
             if(gene_name == name())
             {
-                read_from(ifs);
-                return;
+                try
+                {
+                    read_from(ifs);
+                    return;
+                }
+                catch(const std::exception& e)
+                {
+                    throw Genetic_AI_Creation_Error("Error in reading data for " + name() + " from " + file_name + "\n" + e.what());
+                }
             }
         }
     }
