@@ -10,6 +10,7 @@
 #include "Game/Color.h"
 
 #include "Utility/Random.h"
+#include "Utility/Math.h"
 
 namespace
 {
@@ -111,7 +112,7 @@ void Sphere_of_Influence_Gene::gene_specific_mutation() noexcept
 
 void Sphere_of_Influence_Gene::recompute_scalar_cache() noexcept
 {
-    normalize(legal_square_score, illegal_square_score);
+    Math::normalize(legal_square_score, illegal_square_score);
     for(size_t king_distance = 0; king_distance < 8; ++king_distance)
     {
         scalar_cache[king_distance] = (1 + king_target_factor/(1 + king_distance))/64;

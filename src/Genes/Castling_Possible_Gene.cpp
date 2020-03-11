@@ -12,7 +12,7 @@
 
 Castling_Possible_Gene::Castling_Possible_Gene() noexcept
 {
-    normalize(kingside_preference, queenside_preference);
+    Math::normalize(kingside_preference, queenside_preference);
 }
 
 void Castling_Possible_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
@@ -25,7 +25,7 @@ void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, do
 {
     kingside_preference = properties.at("Kingside Preference");
     queenside_preference = properties.at("Queenside Preference");
-    normalize(kingside_preference, queenside_preference);
+    Math::normalize(kingside_preference, queenside_preference);
 }
 
 std::string Castling_Possible_Gene::name() const noexcept
@@ -113,5 +113,5 @@ void Castling_Possible_Gene::gene_specific_mutation() noexcept
         queenside_preference += Random::random_laplace(0.03);
     }
 
-    normalize(kingside_preference, queenside_preference);
+    Math::normalize(kingside_preference, queenside_preference);
 }

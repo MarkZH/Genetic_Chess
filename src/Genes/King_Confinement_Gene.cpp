@@ -11,10 +11,11 @@
 #include "Game/Piece.h"
 
 #include "Utility/Random.h"
+#include "Utility/Math.h"
 
 King_Confinement_Gene::King_Confinement_Gene() noexcept
 {
-    normalize(friendly_block_score, opponent_block_score);
+    Math::normalize(friendly_block_score, opponent_block_score);
 }
 
 std::string King_Confinement_Gene::name() const noexcept
@@ -26,7 +27,7 @@ void King_Confinement_Gene::load_gene_properties(const std::map<std::string, dou
 {
     friendly_block_score = properties.at("Friendly Block Score");
     opponent_block_score = properties.at("Opponent Block Score");
-    normalize(friendly_block_score, opponent_block_score);
+    Math::normalize(friendly_block_score, opponent_block_score);
 }
 
 void King_Confinement_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
@@ -47,7 +48,7 @@ void King_Confinement_Gene::gene_specific_mutation() noexcept
         opponent_block_score += mutation_size;
     }
 
-    normalize(friendly_block_score, opponent_block_score);
+    Math::normalize(friendly_block_score, opponent_block_score);
 }
 
 double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept

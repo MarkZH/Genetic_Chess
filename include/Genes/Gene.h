@@ -90,14 +90,6 @@ class Gene
         void test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept;
 
     protected:
-        //! Reduce the value of gene quantities where only the ratio is meaningful.
-        //
-        //! \param[out] x First value.
-        //! \param[out] y Second value.
-        //!
-        //! The values will be divided by std::abs(x) + std::abs(y).
-        static void normalize(double& x, double& y) noexcept;
-
         //! Explicitly set priority to zero.
         //
         //! This is used for regulatory genes that do not record their priority

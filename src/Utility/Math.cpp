@@ -41,3 +41,13 @@ double Math::average_moves_left(double mean_moves, double width, size_t moves_so
 
     return expected_mean - moves_so_far;
 }
+
+void Math::normalize(double& x, double& y) noexcept
+{
+    auto norm = std::abs(x) + std::abs(y);
+    if(norm > 0.0)
+    {
+        x /= norm;
+        y /= norm;
+    }
+}

@@ -41,16 +41,6 @@ void Gene::load_gene_properties(const std::map<std::string, double>&)
 {
 }
 
-void Gene::normalize(double& x, double& y) noexcept
-{
-    auto norm = std::abs(x) + std::abs(y);
-    if(norm > 0.0)
-    {
-        x /= norm;
-        y /= norm;
-    }
-}
-
 size_t Gene::mutatable_components() const noexcept
 {
     return list_properties().size();
