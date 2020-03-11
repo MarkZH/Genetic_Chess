@@ -675,7 +675,6 @@ void run_speed_tests()
     piece_strength_gene.read_from(test_genes_file_name);
     auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
     auto pawn_advancement_gene = Pawn_Advancement_Gene();
-    pawn_advancement_gene.read_from(test_genes_file_name);
     auto passed_pawn_gene = Passed_Pawn_Gene();
     auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
     sphere_of_influence_gene.read_from(test_genes_file_name);
