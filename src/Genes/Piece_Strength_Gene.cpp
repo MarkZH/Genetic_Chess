@@ -19,18 +19,17 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
     zero_out_priority();
 }
 
-std::map<std::string, double> Piece_Strength_Gene::list_properties() const noexcept
+void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    std::map<std::string, double> properties;
+    properties.erase("Priority");
     for(auto piece_type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
     {
         auto piece = Piece{Piece_Color::WHITE, piece_type};
         properties[std::string(1, piece.fen_symbol())] = piece_value(piece);
     }
-    return properties;
 }
 
-void Piece_Strength_Gene::load_properties(const std::map<std::string, double>& properties)
+void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
     for(auto piece_type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
     {

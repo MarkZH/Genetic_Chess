@@ -19,12 +19,26 @@
 
 std::map<std::string, double> Gene::list_properties() const noexcept
 {
-    return {{"Priority", scoring_priority}};
+    auto properties = std::map<std::string, double>{{"Priority", scoring_priority}};
+    adjust_properties(properties);
+    return properties;
+}
+
+void Gene::adjust_properties(std::map<std::string, double>&) const noexcept
+{
 }
 
 void Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    scoring_priority = properties.at("Priority");
+    if(properties.count("Priority") > 0)
+    {
+        scoring_priority = properties.at("Priority");
+    }
+    load_gene_properties(properties);
+}
+
+void Gene::load_gene_properties(const std::map<std::string, double>&)
+{
 }
 
 void Gene::normalize(double& x, double& y)

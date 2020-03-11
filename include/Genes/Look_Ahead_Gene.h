@@ -34,10 +34,6 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         //! \returns A factor that gets multiplied by the allocated time to overallocate.
         double speculation_time_factor() const noexcept;
 
-    protected:
-        std::map<std::string, double> list_properties() const noexcept override;
-        void load_properties(const std::map<std::string, double>& properties) override;
-
     private:
         double speculation_constant = 1.0; // controls over/under-allocation of time
         double mean_game_length = 50.0; // in moves by one player
@@ -45,6 +41,9 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;
+
+        void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
+        void load_gene_properties(const std::map<std::string, double>& properties) override;
 };
 
 #endif // LOOK_AHEAD_GENE_H

@@ -19,10 +19,6 @@ class Sphere_of_Influence_Gene : public Clonable_Gene<Sphere_of_Influence_Gene>
 
         std::string name() const noexcept override;
 
-    protected:
-        std::map<std::string, double> list_properties() const noexcept override;
-        void load_properties(const std::map<std::string, double>& properties) override;
-
     private:
         double legal_square_score = 1.0;
         double illegal_square_score = 1.0;
@@ -30,6 +26,9 @@ class Sphere_of_Influence_Gene : public Clonable_Gene<Sphere_of_Influence_Gene>
 
         double score_board(const Board& board, Piece_Color perspective, const size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;
+
+        void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
+        void load_gene_properties(const std::map<std::string, double>& properties) override;
 
         std::array<double, 8> scalar_cache;
         void recompute_scalar_cache() noexcept;

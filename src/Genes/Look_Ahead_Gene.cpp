@@ -16,14 +16,15 @@ Look_Ahead_Gene::Look_Ahead_Gene() noexcept
     zero_out_priority();
 }
 
-std::map<std::string, double> Look_Ahead_Gene::list_properties() const noexcept
+void Look_Ahead_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    return {{"Mean Game Length", mean_game_length},
-            {"Game Length Uncertainty", game_length_uncertainty},
-            {"Speculation", speculation_constant}};
+    properties.erase("Priority");
+    properties["Mean Game Length"] = mean_game_length;
+    properties["Game Length Uncertainty"] = game_length_uncertainty;
+    properties["Speculation"] = speculation_constant;
 }
 
-void Look_Ahead_Gene::load_properties(const std::map<std::string, double>& properties)
+void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
     mean_game_length = properties.at("Mean Game Length");
     game_length_uncertainty = properties.at("Game Length Uncertainty");

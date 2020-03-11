@@ -37,18 +37,15 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() noexcept
     recompute_scalar_cache();
 }
 
-std::map<std::string, double> Sphere_of_Influence_Gene::list_properties() const noexcept
+void Sphere_of_Influence_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    auto properties = Gene::list_properties();
     properties["Legal Square Score"] = legal_square_score;
     properties["Illegal Square Score"] = illegal_square_score;
     properties["King Target Factor"] = king_target_factor;
-    return properties;
 }
 
-void Sphere_of_Influence_Gene::load_properties(const std::map<std::string, double>& properties)
+void Sphere_of_Influence_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
-    Gene::load_properties(properties);
     legal_square_score = properties.at("Legal Square Score");
     illegal_square_score = properties.at("Illegal Square Score");
     king_target_factor = properties.at("King Target Factor");

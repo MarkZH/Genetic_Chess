@@ -30,14 +30,12 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
         //! \brief Returns the value of all pieces.
         const std::array<double, 6>& piece_values() const noexcept;
 
-    protected:
-        std::map<std::string, double> list_properties() const noexcept override;
-        void load_properties(const std::map<std::string, double>& properties) override;
-
     private:
         std::array<double, 6> piece_strength;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
+        void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
+        void load_gene_properties(const std::map<std::string, double>& properties) override;
         double piece_value(Piece_Type type) const noexcept;
         double& piece_value(Piece_Type type) noexcept;
         void gene_specific_mutation() noexcept override;

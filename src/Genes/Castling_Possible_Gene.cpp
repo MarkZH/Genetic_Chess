@@ -15,17 +15,14 @@ Castling_Possible_Gene::Castling_Possible_Gene() noexcept
     normalize(kingside_preference, queenside_preference);
 }
 
-std::map<std::string, double> Castling_Possible_Gene::list_properties() const noexcept
+void Castling_Possible_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    auto properties = Gene::list_properties();
     properties["Kingside Preference"] = kingside_preference;
     properties["Queenside Preference"] = queenside_preference;
-    return properties;
 }
 
-void Castling_Possible_Gene::load_properties(const std::map<std::string, double>& properties)
+void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
-    Gene::load_properties(properties);
     kingside_preference = properties.at("Kingside Preference");
     queenside_preference = properties.at("Queenside Preference");
     normalize(kingside_preference, queenside_preference);

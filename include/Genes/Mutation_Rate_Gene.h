@@ -23,14 +23,12 @@ class Mutation_Rate_Gene : public Clonable_Gene<Mutation_Rate_Gene>
 
         void gene_specific_mutation() noexcept override;
 
-    protected:
-        std::map<std::string, double> list_properties() const noexcept override;
-        void load_properties(const std::map<std::string, double>& properties) override;
-
     private:
         double mutated_components_per_mutation = 1.0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
+        void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
+        void load_gene_properties(const std::map<std::string, double>& properties) override;
 };
 
 #endif // MUTATION_RATE_GENE_H

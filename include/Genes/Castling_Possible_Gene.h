@@ -18,16 +18,14 @@ class Castling_Possible_Gene : public Clonable_Gene<Castling_Possible_Gene>
 
         std::string name() const noexcept override;
 
-    protected:
-        std::map<std::string, double> list_properties() const noexcept override;
-        void load_properties(const std::map<std::string, double>& properties) override;
-
     private:
         double kingside_preference = 1.0;
         double queenside_preference = 1.0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;
+        void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
+        void load_gene_properties(const std::map<std::string, double>& properties) override;
 };
 
 #endif // CASTLING_POSSIBLE_GENE_H

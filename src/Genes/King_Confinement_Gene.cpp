@@ -22,20 +22,17 @@ std::string King_Confinement_Gene::name() const noexcept
     return "King Confinement Gene";
 }
 
-void King_Confinement_Gene::load_properties(const std::map<std::string, double>& properties)
+void King_Confinement_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
-    Gene::load_properties(properties);
     friendly_block_score = properties.at("Friendly Block Score");
     opponent_block_score = properties.at("Opponent Block Score");
     normalize(friendly_block_score, opponent_block_score);
 }
 
-std::map<std::string, double> King_Confinement_Gene::list_properties() const noexcept
+void King_Confinement_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    auto properties = Gene::list_properties();
     properties["Friendly Block Score"] = friendly_block_score;
     properties["Opponent Block Score"] = opponent_block_score;
-    return properties;
 }
 
 void King_Confinement_Gene::gene_specific_mutation() noexcept

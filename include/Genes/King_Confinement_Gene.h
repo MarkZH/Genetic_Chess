@@ -24,15 +24,13 @@ class King_Confinement_Gene : public Clonable_Gene<King_Confinement_Gene>
 
         std::string name() const noexcept override;
 
-    protected:
-        void load_properties(const std::map<std::string, double>& properties) override;
-        std::map<std::string, double> list_properties() const noexcept override;
-
     private:
         double friendly_block_score = 1.0;
         double opponent_block_score = 1.0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
+        void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
+        void load_gene_properties(const std::map<std::string, double>& properties) override;
 };
 
 #endif // KING_CONFINEMENT_GENE_H

@@ -36,12 +36,13 @@ double Mutation_Rate_Gene::score_board(const Board&, Piece_Color, size_t) const 
     return 0.0;
 }
 
-std::map<std::string, double> Mutation_Rate_Gene::list_properties() const noexcept
+void Mutation_Rate_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    return {{"Mutation Rate", mutated_components_per_mutation}};
+    properties.erase("Priority");
+    properties["Mutation Rate"] = mutated_components_per_mutation;
 }
 
-void Mutation_Rate_Gene::load_properties(const std::map<std::string, double>& properties)
+void Mutation_Rate_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
     mutated_components_per_mutation = properties.at("Mutation Rate");
 }

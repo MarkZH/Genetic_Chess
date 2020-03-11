@@ -90,25 +90,6 @@ class Gene
         void test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept;
 
     protected:
-        //! \brief Returns a structure relating a gene property to a numerical value.
-        //!
-        //! By default, the only property a gene has is "Priority," a multiplicative factor
-        //! that controls how influential a gene's score is to the overall evaulation of a
-        //! board position. This method is overridden by derived Gene classes to either augment
-        //! or replace this data with more specialized properties.
-        //! \returns A collection of gene properties with their numerical values.
-        virtual std::map<std::string, double> list_properties() const noexcept;
-
-        //! \brief Reads a properties data structure and loads the data into itself.
-        //!
-        //! This method is the counterpart to Gene::list_properties() in that it
-        //! reads the same data structure as the one produced by Gene::list_properties().
-        //! This means that this method is also overridden by derived Genes that have
-        //! different properties.
-        //! \param properties A data structure with all the data needed for this gene.
-        //! \throws std::out_of_range When an expected property is not present in the input.
-        virtual void load_properties(const std::map<std::string, double>& properties);
-
         //! Reduce the value of gene quantities where only the ratio is meaningful.
         //
         //! \param[out] x First value.
@@ -133,6 +114,31 @@ class Gene
         //!
         //! By default, this method does nothing.
         virtual void gene_specific_mutation() noexcept;
+
+        //! \brief Returns a structure relating a gene property to a numerical value.
+        //!
+        //! By default, the only property a gene has is "Priority," a multiplicative factor
+        //! that controls how influential a gene's score is to the overall evaulation of a
+        //! board position. This method is overridden by derived Gene classes to either augment
+        //! or replace this data with more specialized properties.
+        //! \returns A collection of gene properties with their numerical values.
+        std::map<std::string, double> list_properties() const noexcept;
+
+        //! \brief Allow Gene subtypes to make changes to the gene properties to be recorded.
+        virtual void adjust_properties(std::map<std::string, double>& properties) const noexcept;
+
+        //! \brief Reads a properties data structure and loads the data into itself.
+        //!
+        //! This method is the counterpart to Gene::list_properties() in that it
+        //! reads the same data structure as the one produced by Gene::list_properties().
+        //! This means that this method is also overridden by derived Genes that have
+        //! different properties.
+        //! \param properties A data structure with all the data needed for this gene.
+        //! \throws std::out_of_range When an expected property is not present in the input.
+        void load_properties(const std::map<std::string, double>& properties);
+
+        //! \brief Load the properties specific to the Gene subtype.
+        virtual void load_gene_properties(const std::map<std::string, double>& properties);
 };
 
 //! \brief A template class to create the duplicate method for all Gene subtypes.
