@@ -195,7 +195,7 @@ namespace
             {
                 for(auto rank_direction : {-1, 1})
                 {
-                    add_standard_legal_move(out, {color, Piece_Type::KNIGHT}, d_file * file_direction, d_rank * rank_direction);
+                    add_standard_legal_move(out, {color, Piece_Type::KNIGHT}, d_file*file_direction, d_rank*rank_direction);
                 }
             }
         }
@@ -209,7 +209,7 @@ namespace
             {
                 for(int move_size = 1; move_size <= 7; ++move_size)
                 {
-                    add_standard_legal_move(out, {color, type}, move_size * d_file, move_size * d_rank);
+                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank);
                 }
             }
         }
