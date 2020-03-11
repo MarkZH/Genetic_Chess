@@ -23,6 +23,9 @@ class Genome
         //! \param other The originating genome.
         Genome(const Genome& other) noexcept;
 
+        //! \brief Move-contructor.
+        Genome(Genome&& other) noexcept;
+
         //! \brief Create a new genome from two existing genomes via mating
         //!
         //! Create each Gene by copying from either parent with a 50-50 probability.
@@ -34,6 +37,9 @@ class Genome
         //!
         //! \param other The originating genome.
         Genome& operator=(const Genome& other) noexcept;
+
+        //! \brief Move-assignement.
+        Genome& operator=(Genome&& other) noexcept;
 
         //! \brief Read genome data from an input stream (std::ifstream, std::cin, etc.).
         //!

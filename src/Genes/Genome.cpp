@@ -73,6 +73,10 @@ Genome::Genome(const Genome& other) noexcept
     copy_genome(other);
 }
 
+Genome::Genome(Genome&& other) noexcept : genome(std::move(other.genome))
+{
+}
+
 void Genome::copy_genome(const Genome& other) noexcept
 {
     std::transform(other.genome.begin(), other.genome.end(),
@@ -112,6 +116,12 @@ void Genome::renormalize_priorities() noexcept
 Genome& Genome::operator=(const Genome& other) noexcept
 {
     copy_genome(other);
+    return *this;
+}
+
+Genome& Genome::operator=(Genome&& other) noexcept
+{
+    genome = std::move(other.genome);
     return *this;
 }
 
