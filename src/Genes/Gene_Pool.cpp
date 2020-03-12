@@ -59,6 +59,8 @@ namespace
 
     template<typename Stat_Map>
     void purge_dead_from_map(const Gene_Pool_Set& pools, Stat_Map& stats);
+
+    int count_wins(const std::string& file_name, int id);
 }
 
 void gene_pool(const std::string& config_file)
@@ -168,6 +170,21 @@ void gene_pool(const std::string& config_file)
 
     const auto game_record_file = genome_file_name +  "_games.pgn";
     auto game_time = minimum_game_time;
+
+    std::cout << "Searching for previous best AI win counts ..." << std::endl;
+    const auto best_file_name = genome_file_name + "_best_genome.txt";
+    auto best_id = 0;
+    auto wins_to_beat = 0.0;
+    try
+    {
+        auto best = Genetic_AI(best_file_name, find_last_id(best_file_name));
+        best_id = best.id();
+        wins_to_beat = count_wins(game_record_file, best_id);
+    }
+    catch(...)
+    {
+    }
+
     if(auto ifs = std::ifstream(game_record_file))
     {
         // Use game time from last run of this gene pool
@@ -368,23 +385,23 @@ void gene_pool(const std::string& config_file)
         }
 
         // Record best AI from all pools.
-        static auto wins_to_beat = 0.0;
         const double decay_constant = 0.99;
         wins_to_beat *= decay_constant;
         for(const auto& [ai, win_count] : wins)
         {
             if(win_count > wins_to_beat)
             {
-                const auto best_file_name = genome_file_name + "_best_genome.txt";
-                const auto temp_best_file_name = best_file_name + ".tmp";
+                static const auto temp_best_file_name = best_file_name + ".tmp";
 
                 wins_to_beat = win_count;
+                best_id = ai.id();
                 ai.print(temp_best_file_name);
                 std::filesystem::rename(temp_best_file_name, best_file_name);
             }
         }
 
-        std::cout << "\nWins to be recorded as best: " << wins_to_beat << "\n";
+        std::cout << "\nWins to be recorded as best: " << wins_to_beat
+                  << "\nBest ID: " << best_id << "\n";
 
         // Update game time
         game_time += game_time_increment;
@@ -622,5 +639,45 @@ namespace
             }
         }
         stats = new_stats;
+    }
+
+    int count_wins(const std::string& file_name, int id)
+    {
+        auto input = std::ifstream(file_name);
+        if( ! input)
+        {
+            return 0;
+        }
+
+        std::string line;
+        auto win_count = 0;
+        while(std::getline(input, line))
+        {
+            line = String::remove_extra_whitespace(line);
+            auto is_white_player = String::starts_with(line, "[White");
+            auto is_black_player = String::starts_with(line, "[Black");
+            if(is_white_player || is_black_player)
+            {
+                auto player_id = std::stoi(String::split(String::split(line, "\"").at(1)).at(2));
+                if(player_id == id)
+                {
+                    while(std::getline(input, line))
+                    {
+                        line = String::remove_extra_whitespace(line);
+                        if(String::starts_with(line, "[Result"))
+                        {
+                            if((is_white_player && String::contains(line, "1-0")) ||
+                               (is_black_player && String::contains(line, "0-1")))
+                            {
+                                ++win_count;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return win_count;
     }
 }
