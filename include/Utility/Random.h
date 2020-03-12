@@ -48,11 +48,12 @@ namespace Random
     //! \returns true with probability 50%
     bool coin_flip() noexcept;
 
-    //! \brief Simulate a fair trial.
+    //! \brief Simulate a fair trial with a rational probability of success.
     //!
-    //! \param probability The probability of success.
-    //! \returns true with given probability
-    bool success_probability(double probability) noexcept;
+    //! \param successes The number of expected successes in a given number of attempts.
+    //! \param attempts The given number of attempts.
+    //! \returns true with given probability (successes/attempts).
+    bool success_probability(size_t successes, size_t attempts) noexcept;
 
     //! \brief Shuffles the order of a list.
     //!
