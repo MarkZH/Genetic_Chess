@@ -338,7 +338,7 @@ void gene_pool(const std::string& config_file)
             auto winner = result.winner();
             std::cout << color_text(winner) << " (" << result.ending_reason() << ")";
 
-            const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
+            auto winning_player = (winner == Winner_Color::WHITE ? white : black);
             if(winner != Winner_Color::NONE)
             {
                 color_wins[static_cast<unsigned>(winner)]++;
@@ -350,8 +350,8 @@ void gene_pool(const std::string& config_file)
                 draws[black]++;
                 ++draw_count;
 
-                winner = (Random::coin_flip() ? Winner_Color::WHITE : Winner_Color::BLACK);
-                std::cout << " --> " << (winner == Winner_Color::WHITE ? white : black).id() << " lives";
+                winning_player = (Random::coin_flip() ? white : black);
+                std::cout << " --> " << winning_player.id() << " lives";
             }
 
             auto offspring = mating_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);
