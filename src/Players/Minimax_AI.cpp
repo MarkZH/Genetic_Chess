@@ -346,7 +346,7 @@ double Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
     return time_at_last_output - clock.running_time_left();
 }
 
-Game_Tree_Node_Result Minimax_AI::create_result(Board board,
+Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
                                                 Piece_Color perspective,
                                                 const Game_Result& move_result,
                                                 const current_variation_store& move_list) const noexcept

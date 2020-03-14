@@ -124,7 +124,7 @@ class Minimax_AI : public Player
         //! \param perspective From whose perspective (Black or White) the board should be scored.
         //! \param move_result The possibly game-ending result of the move.
         //! \param move_list The current move list from the game tree search.
-        Game_Tree_Node_Result create_result(Board board,
+        Game_Tree_Node_Result create_result(const Board& board,
                                             Piece_Color perspective,
                                             const Game_Result& move_result,
                                             const current_variation_store& move_list) const noexcept;
