@@ -33,7 +33,7 @@ bool Random::coin_flip() noexcept
 
 bool Random::success_probability(size_t successes, size_t attempts) noexcept
 {
-    return random_integer({1}, attempts) <= successes;
+    return random_integer(size_t{1}, attempts) <= successes;
 }
 
 std::string Random::random_string(size_t size) noexcept
