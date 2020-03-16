@@ -49,6 +49,7 @@ Game_Result play_game(Board board,
     }
 
     game_clock.stop();
+    result.add_clock_data(game_clock);
     board.print_game_record(game_record,
                             &white,
                             &black,

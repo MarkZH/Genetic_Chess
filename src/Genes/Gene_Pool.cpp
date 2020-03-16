@@ -350,7 +350,7 @@ void gene_pool(const std::string& config_file)
                 draws[black]++;
                 ++draw_count;
 
-                winning_player = (Random::coin_flip() ? white : black);
+                winning_player = (result.player_used_more_time() == Winner_Color::WHITE ? white : black);
                 std::cout << " --> " << winning_player.id() << " lives";
             }
 

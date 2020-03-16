@@ -23,6 +23,8 @@ enum class Game_Result_Type
     OTHER
 };
 
+class Clock;
+
 //! \brief This class represents the result of a game action, primarily whether the game is still ongoing.
 class Game_Result
 {
@@ -61,6 +63,16 @@ class Game_Result
         //! \brief Returns the part of the PGN move annotation that goes after the # (checkmate) or + (check).
         std::string game_ending_annotation() const noexcept;
 
+        //! \brief Add information about how much time was used by each player.
+        //!
+        //! \param game_clock The clock used during the game.
+        void add_clock_data(const Clock& game_clock) noexcept;
+
+        //! \brief Returns which player used more time during the game
+        //!
+        //! Used to pick which player reproduces in a gene pool in case of draws.
+        Winner_Color player_used_more_time() const noexcept;
+
         //! \brief Returns whether or not the program should shutdown after getting this result.
         bool exit_program() const noexcept;
 
@@ -68,6 +80,7 @@ class Game_Result
         Winner_Color victor;
         Game_Result_Type cause;
         std::string alternate_reason;
+        Winner_Color used_more_time = Winner_Color::NONE;
         bool shutdown_program;
 
         bool game_has_ended_by_rule() const noexcept;
