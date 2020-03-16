@@ -264,6 +264,12 @@ class Board
         //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
         bool move_changes_material(const Move& move) const noexcept;
 
+        //! \brief Number of moves since the last pawn move or capturing move.
+        //!
+        //! If this count reaches 100 (50 moves on each side), the game ends in
+        //! a draw.
+        size_t moves_since_pawn_or_capture() const noexcept;
+
         //! \brief Returns the Zobrist hash of the current state of the board.
         //!
         //! See https://en.wikipedia.org/wiki/Zobrist_hashing for details.
@@ -357,7 +363,6 @@ class Board
         void add_to_repeat_count(uint64_t new_hash) noexcept;
         ptrdiff_t current_board_position_repeat_count() const noexcept;
         void clear_repeat_count() noexcept;
-        size_t moves_since_pawn_or_capture() const noexcept;
 
         // Zobrist hashing (implementation of threefold/fifty-move tracking)
         uint64_t current_board_hash = 0;
