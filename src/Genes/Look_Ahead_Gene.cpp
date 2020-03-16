@@ -33,6 +33,11 @@ void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& 
 
 double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
+    if( ! is_active())
+    {
+        return clock.running_time_left();
+    }
+
     auto time_left = clock.time_left(board.whose_turn());
     auto moves_to_reset = clock.moves_until_reset(board.whose_turn());
 
@@ -72,5 +77,12 @@ double Look_Ahead_Gene::score_board(const Board&, Piece_Color, size_t) const noe
 
 double Look_Ahead_Gene::speculation_time_factor() const noexcept
 {
-    return speculation_constant;
+    if(is_active())
+    {
+        return speculation_constant;
+    }
+    else
+    {
+        return 0.0;
+    }
 }

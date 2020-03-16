@@ -19,7 +19,7 @@
 
 std::map<std::string, double> Gene::list_properties() const noexcept
 {
-    auto properties = std::map<std::string, double>{{"Priority", scoring_priority}};
+    auto properties = std::map<std::string, double>{{"Priority", scoring_priority}, {"Active", double(active)}};
     adjust_properties(properties);
     return properties;
 }
@@ -34,6 +34,7 @@ void Gene::load_properties(const std::map<std::string, double>& properties)
     {
         scoring_priority = properties.at("Priority");
     }
+    active = properties.at("Active") > 0.0;
     load_gene_properties(properties);
 }
 
@@ -156,6 +157,16 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 
 void Gene::mutate() noexcept
 {
+    if(Random::success_probability(1, 1000))
+    {
+        active = ! active;
+    }
+
+    if( ! is_active())
+    {
+        return;
+    }
+
     auto properties = list_properties();
     if(Random::success_probability(properties.count("Priority"), properties.size()))
     {
@@ -173,7 +184,14 @@ void Gene::gene_specific_mutation() noexcept
 
 double Gene::evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
-    return scoring_priority*score_board(board, perspective, depth);
+    if(is_active())
+    {
+        return scoring_priority*score_board(board, perspective, depth);
+    }
+    else
+    {
+        return 0.0;
+    }
 }
 
 void Gene::print(std::ostream& os) const noexcept
@@ -204,6 +222,11 @@ void Gene::scale_priority(double k) noexcept
 void Gene::zero_out_priority() noexcept
 {
     scoring_priority = 0.0;
+}
+
+bool Gene::is_active() const noexcept
+{
+    return active;
 }
 
 void Gene::test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept

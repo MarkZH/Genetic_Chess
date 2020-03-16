@@ -102,7 +102,7 @@ for yi = 2 : length(data.colheaders) - 2
     close;
 
     special_plot_index = 0;
-    if ~isempty(strfind(name, piece_strength_prefix))
+    if ~isempty(strfind(name, piece_strength_prefix)) && isempty(strfind(name, 'Active'))
         plot_figure = piece_strength_figure;
         special_plot_index = 1;
     elseif ~isempty(strfind(name, priority_suffix))

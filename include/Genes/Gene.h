@@ -96,8 +96,12 @@ class Gene
         //! when writing to a file.
         void zero_out_priority() noexcept;
 
+        //! CHeck whether this gene is active or disabled.
+        bool is_active() const noexcept;
+
     private:
         double scoring_priority = 1.0;
+        bool active = true;
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;

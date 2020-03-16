@@ -25,7 +25,7 @@ void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& prope
     for(auto piece_type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
     {
         auto piece = Piece{Piece_Color::WHITE, piece_type};
-        properties[std::string(1, piece.fen_symbol())] = piece_value(piece);
+        properties[std::string(1, piece.fen_symbol())] = piece_value(piece_type);
     }
 }
 
@@ -77,7 +77,7 @@ double& Piece_Strength_Gene::piece_value(Piece_Type type) noexcept
 
 double Piece_Strength_Gene::piece_value(Piece piece) const noexcept
 {
-    if( ! piece)
+    if( ! piece || ! is_active())
     {
         return 0.0;
     }
@@ -89,7 +89,15 @@ double Piece_Strength_Gene::piece_value(Piece piece) const noexcept
 
 const std::array<double, 6>& Piece_Strength_Gene::piece_values() const noexcept
 {
-    return piece_strength;
+    if(is_active())
+    {
+        return piece_strength;
+    }
+    else
+    {
+        static const auto inactive_piece_values = std::array<double, 6>{};
+        return inactive_piece_values;
+    }
 }
 
 std::string Piece_Strength_Gene::name() const noexcept
