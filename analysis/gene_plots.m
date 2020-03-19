@@ -146,6 +146,7 @@ for index = 1 : length(special_plots)
     if special_plots(index) == piece_strength_figure
         yl = ylim;
         xl = xlim;
+        x_width = xl(2) - xl(1);
         for level = -10:10
             % width = fraction of full horizontal plot width
             if mod(abs(level),5) == 0
@@ -157,7 +158,7 @@ for index = 1 : length(special_plots)
             if tick_height < yl(1) || tick_height > yl(2)
                 continue;
             end
-            plot(xl(2)*[1-width 1], tick_height*[1 1], 'k');
+            plot([xl(1) + x_width*(1-width) xl(2)], tick_height*[1 1], 'k');
         end
     end
 
