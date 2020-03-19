@@ -42,8 +42,7 @@ using namespace std::chrono_literals;
 #include "Utility/Scoped_Stopwatch.h"
 #include "Utility/Random.h"
 #include "Utility/Math.h"
-
-#include "Exceptions/Illegal_Move.h"
+#include "Utility/Exceptions.h"
 
 namespace
 {

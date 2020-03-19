@@ -31,8 +31,7 @@ using namespace std::chrono_literals;
 #include "Utility/String.h"
 #include "Utility/Configuration.h"
 #include "Utility/Random.h"
-
-#include "Exceptions/Genetic_AI_Creation_Error.h"
+#include "Utility/Exceptions.h"
 
 namespace
 {

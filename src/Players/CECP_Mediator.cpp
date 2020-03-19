@@ -11,9 +11,7 @@
 
 #include "Players/Player.h"
 
-#include "Exceptions/Illegal_Move.h"
-#include "Exceptions/Game_Ended.h"
-
+#include "Utility/Exceptions.h"
 #include "Utility/String.h"
 
 CECP_Mediator::CECP_Mediator(const Player& local_player)

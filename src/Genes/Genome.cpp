@@ -10,6 +10,7 @@
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
+#include "Utility/Exceptions.h"
 
 #include "Genes/Gene.h"
 #include "Genes/Total_Force_Gene.h"
@@ -27,8 +28,6 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Mutation_Rate_Gene.h"
-
-#include "Exceptions/Genetic_AI_Creation_Error.h"
 
 class Board;
 

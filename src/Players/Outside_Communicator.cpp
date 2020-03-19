@@ -11,8 +11,7 @@
 #include "Players/CECP_Mediator.h"
 #include "Players/UCI_Mediator.h"
 
-#include "Exceptions/Game_Ended.h"
-
+#include "Utility/Exceptions.h"
 #include "Utility/String.h"
 #include "Utility/Random.h"
 

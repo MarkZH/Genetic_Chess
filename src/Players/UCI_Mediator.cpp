@@ -12,8 +12,7 @@
 #include "Moves/Move.h"
 
 #include "Utility/String.h"
-
-#include "Exceptions/Game_Ended.h"
+#include "Utility/Exceptions.h"
 
 UCI_Mediator::UCI_Mediator(const Player& player)
 {

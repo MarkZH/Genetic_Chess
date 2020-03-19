@@ -17,10 +17,9 @@
 
 #include "Genes/Gene_Pool.h"
 
-#include "Exceptions/Illegal_Move.h"
-#include "Exceptions/Genetic_AI_Creation_Error.h"
-
+#include "Utility/Exceptions.h"
 #include "Utility/String.h"
+
 #include "Testing.h"
 
 //! \file

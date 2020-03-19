@@ -14,8 +14,7 @@
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
-
-#include "Exceptions/Genetic_AI_Creation_Error.h"
+#include "Utility/Exceptions.h"
 
 std::map<std::string, double> Gene::list_properties() const noexcept
 {

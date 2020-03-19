@@ -14,8 +14,7 @@ class Clock;
 #include "Game/Color.h"
 
 #include "Utility/String.h"
-
-#include "Exceptions/Genetic_AI_Creation_Error.h"
+#include "Utility/Exceptions.h"
 
 int Genetic_AI::next_id = 0;
 
