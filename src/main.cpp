@@ -4,6 +4,7 @@
 #include <cctype>
 #include <algorithm>
 #include <string>
+#include <stdexcept>
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -17,6 +18,7 @@
 #include "Genes/Gene_Pool.h"
 
 #include "Exceptions/Illegal_Move.h"
+#include "Exceptions/Genetic_AI_Creation_Error.h"
 
 #include "Utility/String.h"
 #include "Testing.h"
@@ -145,6 +147,14 @@ int main(int argc, char *argv[])
                                     latest = std::make_unique<Genetic_AI>(filename, std::stoi(argv[i + 2]));
                                     i += 2;
                                 }
+                                catch(const Genetic_AI_Creation_Error&)
+                                {
+                                    throw;
+                                }
+                                catch(const std::out_of_range&)
+                                {
+                                    throw std::invalid_argument(std::string{"Specified ID "} + argv[i + 2] + " is not in valid range.");
+                                }
                                 catch(const std::exception&)
                                 {
                                 }
@@ -243,7 +253,7 @@ int main(int argc, char *argv[])
     }
     catch(const std::exception& e)
     {
-        std::cerr << "\n\nERROR: " << e.what() << std::endl;
+        std::cerr << "\nERROR: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
 
