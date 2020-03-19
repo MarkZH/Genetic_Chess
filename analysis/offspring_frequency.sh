@@ -5,7 +5,9 @@
 
 output_file="${1}_offspring_counts.txt"
 reproduction_type="$2"
+excluded_id="$3"
 grep "Genetic" "$1" |  # Find players
+    grep -v "Genetic AI $excluded_id" | # exclude AI ID
     cut -d\" -f2 |     # Cut out name of player
     cut -d' ' -f3 > "$output_file" # Cut out ID number
 
