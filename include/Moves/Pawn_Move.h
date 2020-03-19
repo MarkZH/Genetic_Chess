@@ -6,6 +6,8 @@
 #include "Game/Color.h"
 #include "Game/Square.h"
 
+class Board;
+
 //! \brief The simplest pawn move: one step forward.
 class Pawn_Move : public Move
 {

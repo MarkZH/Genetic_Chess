@@ -1,7 +1,5 @@
 #include "Moves/Pawn_Move.h"
 
-#include <string>
-
 #include "Moves/Move.h"
 #include "Moves/Direction.h"
 #include "Game/Board.h"
