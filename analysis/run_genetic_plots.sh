@@ -5,6 +5,11 @@ get_config_value()
     sed 's/#.*//' "$1" | grep "$2" | cut -f2 -d= | sed -e 's/^\s*//' -e 's/\s*$//'
 }
 
+is_numeric()
+{
+    [ "$1" -eq "$1" ] > /dev/null 2>&1
+}
+
 config_file="$1"
 opening_moves="$2"
 notes_file="$3"
@@ -22,8 +27,7 @@ then
     exit 1
 fi
 
-# Checks if argument is a number
-if ! [ "$opening_moves" -eq "$opening_moves" ]
+if ! is_numeric "$opening_moves"
 then
     echo "Invalid argument for openings analysis: $opening_moves"
     exit 1
