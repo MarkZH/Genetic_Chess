@@ -32,7 +32,6 @@ using namespace std::chrono_literals;
 #include "Utility/Configuration.h"
 #include "Utility/Random.h"
 
-#include "Exceptions/Bad_Still_Alive_Line.h"
 #include "Exceptions/Genetic_AI_Creation_Error.h"
 
 namespace
@@ -52,6 +51,7 @@ namespace
     using Gene_Pool_Set = std::vector<std::vector<Genetic_AI>>;
 
     Gene_Pool_Set load_gene_pool_file(const std::string& load_file);
+    [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
 
     void pause_gene_pool(int);
 
@@ -160,7 +160,7 @@ void gene_pool(const std::string& config_file)
                 }
                 catch(const std::exception&)
                 {
-                    throw Bad_Still_Alive_Line(line_number, line);
+                    throw_on_bad_still_alive_line(line_number, line);
                 }
             }
         }
@@ -566,7 +566,7 @@ namespace
                 }
                 catch(...)
                 {
-                    throw Bad_Still_Alive_Line(line_number, line);
+                    throw_on_bad_still_alive_line(line_number, line);
                 }
             }
         }
@@ -588,7 +588,7 @@ namespace
                 }
                 catch(...)
                 {
-                    throw Bad_Still_Alive_Line(pool_line_numbers[pool_number], pool_lines[pool_number]);
+                    throw_on_bad_still_alive_line(pool_line_numbers[pool_number], pool_lines[pool_number]);
                 }
             }
         }
@@ -611,7 +611,7 @@ namespace
                     if(search_started_from_beginning_of_file)
                     {
                         std::cerr << e.what() << load_file << "\n";
-                        throw Bad_Still_Alive_Line(pool_line_numbers[pool_number], pool_lines[pool_number]);
+                        throw_on_bad_still_alive_line(pool_line_numbers[pool_number], pool_lines[pool_number]);
                     }
                     else
                     {
@@ -625,6 +625,11 @@ namespace
 
         write_generation(result, "", false); // mark AIs from file as already written
         return result;
+    }
+
+    void throw_on_bad_still_alive_line(size_t line_number, const std::string& line)
+    {
+        throw std::runtime_error("Invalid \"Still Alive\" line (line# " + std::to_string(line_number) + "): " + line);
     }
 
     template<typename Stat_Map>
