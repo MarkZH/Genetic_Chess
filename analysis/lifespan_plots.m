@@ -12,9 +12,9 @@ function freq_0 = frequency_plot(data, data_label, plot_handle)
     figure(plot_handle);
     hold all;
     leg = legend('show');
-    xlabel('Number of offspring');
+    xlabel('Number of games played');
     ylabel('Frequency');
-    title('Offspring Count');
+    title('Lifespan of AIs');
 
     plot(lifespan_bins, frequency, '.', 'LineWidth', 3, 'DisplayName', ['Data (' data_label ')']);
 
