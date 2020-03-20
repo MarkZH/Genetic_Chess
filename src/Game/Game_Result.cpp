@@ -83,19 +83,6 @@ bool Game_Result::game_has_ended_by_rule() const noexcept
     return game_has_ended() && cause != Game_Result_Type::OTHER;
 }
 
-void Game_Result::add_clock_data(const Clock& clock) noexcept
-{
-    used_more_time =
-        clock.time_left(Piece_Color::WHITE) < clock.time_left(Piece_Color::BLACK) ?
-            Winner_Color::WHITE :
-            Winner_Color::BLACK;
-}
-
-Winner_Color Game_Result::player_used_more_time() const noexcept
-{
-    return used_more_time;
-}
-
 bool Game_Result::exit_program() const noexcept
 {
     return shutdown_program;

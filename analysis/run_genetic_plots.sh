@@ -53,24 +53,21 @@ then
     exit 1
 fi
 
-reproduction="$(get_config_value "$config_file" reproduction)"
-if [[ "$reproduction" != "cloning" ]] && [[ "$reproduction" != "mating" ]]
-then
-    echo "Invalid value for reproduction, expected \"cloning\" or \"mating\": $reproduction"
-    exit 1
-fi
-
 octave analysis/gene_plots.m "$pool_file" "$notes_file" &
 octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
 
+seed_id=
 seed="$(get_config_value "$config_file" seed)"
-seed_file="$(cut -d'/' -f1 <<< "$seed")"
-seed_id="$(cut -d'/' -f2 <<< "$seed")"
-if ! is_numeric "$seed_id"
+if [[ -n "$seed" ]]
 then
-    seed_id="$(grep ID: "$seed_file" | tail -n1 | cut -d' ' -f2)"
+    seed_file="$(cut -d'/' -f1 <<< "$seed")"
+    seed_id="$(cut -d'/' -f2 <<< "$seed")"
+    if ! is_numeric "$seed_id"
+    then
+        seed_id="$(grep ID: "$seed_file" | tail -n1 | cut -d' ' -f2)"
+    fi
 fi
-./analysis/offspring_frequency.sh "$game_file" "$reproduction" "$seed_id" &
+./analysis/lifespan_frequency.sh "$game_file" "$seed_id" &
 
 if ./analysis/openings.sh "$game_file" "$opening_moves"
 then

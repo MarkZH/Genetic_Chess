@@ -335,30 +335,26 @@ void gene_pool(const std::string& config_file)
 
             auto result = results[index/2].get();
             auto winner = result.winner();
-            std::cout << color_text(winner) << " (" << result.ending_reason() << ")";
+            std::cout << color_text(winner) << " (" << result.ending_reason() << ")" << std::endl;
 
-            auto winning_player = (winner == Winner_Color::WHITE ? white : black);
             if(winner != Winner_Color::NONE)
             {
+                auto winning_player = (winner == Winner_Color::WHITE ? white : black);
                 color_wins[static_cast<unsigned>(winner)]++;
                 wins[winning_player]++;
+
+                auto offspring = mating_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);
+                offspring.mutate();
+
+                auto& losing_player  = (winner == Winner_Color::WHITE ? black : white);
+                losing_player = offspring; // offspring replaces loser
             }
             else
             {
                 draws[white]++;
                 draws[black]++;
                 ++draw_count;
-
-                winning_player = (result.player_used_more_time() == Winner_Color::WHITE ? white : black);
-                std::cout << " --> " << winning_player.id() << " lives";
             }
-
-            auto offspring = mating_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);
-            offspring.mutate();
-
-            auto& losing_player  = (winner == Winner_Color::WHITE ? black : white);
-            losing_player = offspring; // offspring replaces loser
-            std::cout << std::endl;
         }
 
         std::sort(pool.begin(), pool.end());
