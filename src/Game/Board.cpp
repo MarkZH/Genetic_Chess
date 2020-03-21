@@ -10,6 +10,8 @@
 #include <bitset>
 #include <atomic>
 #include <string>
+#include <chrono>
+using namespace std::chrono_literals;
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -898,14 +900,14 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         {
             time_control_spec << game_clock.moves_per_time_period() << '/';
         }
-        time_control_spec << game_clock.initial_time();
-        if(game_clock.increment(Piece_Color::WHITE) > 0)
+        time_control_spec << game_clock.initial_time().count();
+        if(game_clock.increment(Piece_Color::WHITE) > 0s)
         {
-            time_control_spec << '+' << game_clock.increment(Piece_Color::WHITE);
+            time_control_spec << '+' << game_clock.increment(Piece_Color::WHITE).count();
         }
         print_game_header_line(out_stream, "TimeControl", time_control_spec.str());
-        print_game_header_line(out_stream, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE));
-        print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK));
+        print_game_header_line(out_stream, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
+        print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
     }
 
     if( ! actual_result.ending_reason().empty() && ! String::contains(actual_result.ending_reason(), "mates"))

@@ -6,10 +6,11 @@
 #include <iosfwd>
 
 #include "Game/Color.h"
+#include "Game/Clock.h"
+
 #include "Gene.h"
 
 class Board;
-class Clock;
 
 //! \brief A software analog to a biological chromosome containing a collection of Gene instances that control the Genetic_AI behavior.
 class Genome
@@ -66,7 +67,7 @@ class Genome
         //!
         //! \param board The current board position.
         //! \param clock The game clock.
-        double time_to_examine(const Board& board, const Clock& clock) const noexcept; // how much time to use for this move
+        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept; // how much time to use for this move
 
         //! \brief Returns a factor that is multiplied by the time allocated to examine a branch of the game tree.
         //!

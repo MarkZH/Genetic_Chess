@@ -39,8 +39,7 @@ void Scoped_Stopwatch::stop() noexcept
     static std::ofstream out_file("timings-" + std::to_string(Random::random_unsigned_int64()) + ".txt");
 
     out_file << place_name << "|"
-             << std::chrono::duration_cast<std::chrono::duration<double>>
-                (end_time - start_time).count()
+             << Scoped_Stopwatch::seconds(end_time - start_time).count()
              << '\n';
 
     stopped = true;
@@ -56,9 +55,8 @@ void Scoped_Stopwatch::reject() noexcept
     stopped = true;
 }
 
-double Scoped_Stopwatch::time_so_far() const noexcept
+Scoped_Stopwatch::seconds Scoped_Stopwatch::time_so_far() const noexcept
 {
     auto end_time = std::chrono::steady_clock::now();
-    return std::chrono::duration_cast<std::chrono::duration<double>>
-                (end_time - start_time).count();
+    return end_time - start_time;
 }

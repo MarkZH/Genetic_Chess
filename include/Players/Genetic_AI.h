@@ -8,9 +8,9 @@
 
 #include "Genes/Genome.h"
 #include "Game/Color.h"
+#include "Game/Clock.h"
 
 class Board;
-class Clock;
 
 //! \file
 
@@ -107,7 +107,7 @@ class Genetic_AI : public Minimax_AI
         virtual const std::array<double, 6>& piece_values() const noexcept override;
 
         // Time management
-        double time_to_examine(const Board& board, const Clock& clock) const noexcept override;
+        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept override;
         double speculation_time_factor() const noexcept override;
 };
 

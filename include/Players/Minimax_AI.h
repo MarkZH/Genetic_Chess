@@ -9,11 +9,12 @@
 #include <utility>
 
 #include "Game/Color.h"
+#include "Game/Clock.h"
+
 #include "Players/Game_Tree_Node_Result.h"
 #include "Utility/Fixed_Capacity_Vector.h"
 
 class Board;
-class Clock;
 class Move;
 class Game_Result;
 
@@ -74,14 +75,14 @@ class Minimax_AI : public Player
 
         // Monitor search speed to adapt to different computers/competing workloads
         mutable size_t nodes_searched;
-        mutable double clock_start_time;
+        mutable Clock::seconds clock_start_time;
         mutable size_t maximum_depth;
 
         // For thinking output
         mutable int nodes_evaluated;
-        mutable double total_evaluation_time;
+        mutable Clock::seconds total_evaluation_time;
         mutable double evaluation_speed;
-        mutable double time_at_last_output;
+        mutable Clock::seconds time_at_last_output;
 
         // Evaluation method
         double evaluate(const Board& board,
@@ -95,7 +96,7 @@ class Minimax_AI : public Player
         virtual const std::array<double, 6>& piece_values() const noexcept = 0;
 
         // Time management
-        virtual double time_to_examine(const Board& board, const Clock& clock) const noexcept = 0;
+        virtual Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept = 0;
         virtual double speculation_time_factor() const noexcept = 0;
 
         // Scoring output
@@ -109,7 +110,7 @@ class Minimax_AI : public Player
 
         // Minimax (actually negamax) with alpha-beta pruning
         Game_Tree_Node_Result search_game_tree(const Board& board,
-                                               double time_to_examine,
+                                               Clock::seconds time_to_examine,
                                                const Clock& clock,
                                                Game_Tree_Node_Result alpha,
                                                const Game_Tree_Node_Result& beta,
@@ -137,7 +138,7 @@ class Minimax_AI : public Player
                                  const Clock& clock,
                                  Piece_Color perspective) const noexcept;
 
-        double time_since_last_output(const Clock& clock) const noexcept;
+        Clock::seconds time_since_last_output(const Clock& clock) const noexcept;
 
         mutable double value_of_centipawn;
 

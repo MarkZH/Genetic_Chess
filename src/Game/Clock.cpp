@@ -9,15 +9,15 @@ using namespace std::chrono_literals;
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
 
-Clock::Clock(double duration_seconds,
+Clock::Clock(seconds duration_seconds,
              size_t moves_to_reset,
-             double increment_seconds,
+             seconds increment_seconds,
              Time_Reset_Method reset_method,
              Piece_Color starting_turn,
              std::chrono::system_clock::time_point previous_start_time) noexcept :
-    timers({fractional_seconds(duration_seconds), fractional_seconds(duration_seconds)}),
-    initial_start_time(Clock::fractional_seconds(duration_seconds)),
-    increment_time({Clock::fractional_seconds(increment_seconds), Clock::fractional_seconds(increment_seconds)}),
+    timers({duration_seconds, duration_seconds}),
+    initial_start_time(duration_seconds),
+    increment_time({increment_seconds, increment_seconds}),
     move_count_reset(moves_to_reset),
     method_of_reset(reset_method),
     whose_turn(starting_turn),
@@ -98,21 +98,21 @@ void Clock::start() noexcept
     clocks_running = true;
 }
 
-double Clock::time_left(Piece_Color color) const noexcept
+Clock::seconds Clock::time_left(Piece_Color color) const noexcept
 {
     if( ! is_in_use())
     {
-        return 0.0;
+        return 0s;
     }
 
     if(whose_turn != color || ! clocks_running)
     {
-        return timers[static_cast<unsigned>(color)].count();
+        return timers[static_cast<unsigned>(color)];
     }
     else
     {
         auto now = std::chrono::steady_clock::now();
-        return fractional_seconds(timers[static_cast<unsigned>(color)] - (now - time_previous_punch)).count();
+        return timers[static_cast<unsigned>(color)] - (now - time_previous_punch);
     }
 }
 
@@ -133,23 +133,23 @@ Piece_Color Clock::running_for() const noexcept
     return whose_turn;
 }
 
-void Clock::set_time(Piece_Color player, double new_time_seconds) noexcept
+void Clock::set_time(Piece_Color player, seconds new_time_seconds) noexcept
 {
-    timers[static_cast<unsigned>(player)] = fractional_seconds(new_time_seconds);
+    timers[static_cast<unsigned>(player)] = new_time_seconds;
 
     // This function is called by GUI mediators, so the actual
     // start time will be during one of the first two calls
     // (first if the local player is white, second if black).
     if(++initial_time_set_count <= 2)
     {
-        initial_start_time = fractional_seconds(std::max(new_time_seconds, initial_start_time.count()));
+        initial_start_time = std::max(new_time_seconds, initial_start_time);
     }
     time_previous_punch = std::chrono::steady_clock::now();
 }
 
-void Clock::set_increment(Piece_Color player, double new_increment_time_seconds) noexcept
+void Clock::set_increment(Piece_Color player, seconds new_increment_time_seconds) noexcept
 {
-    increment_time[static_cast<unsigned>(player)] = fractional_seconds(new_increment_time_seconds);
+    increment_time[static_cast<unsigned>(player)] = new_increment_time_seconds;
 }
 
 void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
@@ -169,7 +169,7 @@ void Clock::set_reset_method(Time_Reset_Method method) noexcept
     method_of_reset = method;
 }
 
-double Clock::running_time_left() const noexcept
+Clock::seconds Clock::running_time_left() const noexcept
 {
     return time_left(running_for());
 }
@@ -194,14 +194,14 @@ Time_Reset_Method Clock::reset_mode() const noexcept
     return method_of_reset;
 }
 
-double Clock::initial_time() const noexcept
+Clock::seconds Clock::initial_time() const noexcept
 {
-    return initial_start_time.count();
+    return initial_start_time;
 }
 
-double Clock::increment(Piece_Color color) const noexcept
+Clock::seconds Clock::increment(Piece_Color color) const noexcept
 {
-    return increment_time[static_cast<unsigned>(color)].count();
+    return increment_time[static_cast<unsigned>(color)];
 }
 
 bool Clock::is_in_use() const noexcept

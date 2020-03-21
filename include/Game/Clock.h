@@ -3,6 +3,7 @@
 
 #include <array>
 #include <chrono>
+using namespace std::chrono_literals;
 
 #include "Color.h"
 
@@ -24,6 +25,9 @@ enum class Time_Reset_Method
 class Clock
 {
     public:
+        //! \brief The unit of time used by this clock system is seconds represented by a double floating-point type.
+        using seconds = std::chrono::duration<double>;
+
         //! \brief Constructs a game clock for timing games.
         //!
         //! \param duration_seconds The initial amount of time on the clock.
@@ -35,9 +39,9 @@ class Clock
         //! \param previous_start_time If the clock for a game is being replaced by another clock (for example, a GUI
         //!        changes time control midgame), then this parameter can be used to preserve the actual start of the
         //!        current game.
-        Clock(double duration_seconds = 0.0,
+        Clock(seconds duration_seconds = 0s,
               size_t moves_to_reset = 0,
-              double increment_seconds = 0.0,
+              seconds increment_seconds = 0s,
               Time_Reset_Method reset_method = Time_Reset_Method::ADDITION,
               Piece_Color starting_turn = Piece_Color::WHITE,
               std::chrono::system_clock::time_point previous_start_time = {}) noexcept;
@@ -59,7 +63,7 @@ class Clock
         //! \brief Returns the amount of time left for the given player.
         //!
         //! \param color The color of the player whose time is being queried.
-        double time_left(Piece_Color color) const noexcept;
+        seconds time_left(Piece_Color color) const noexcept;
 
         //! \brief The number of moves left before the clocks reset to the initial time.
         //!
@@ -70,7 +74,7 @@ class Clock
         Piece_Color running_for() const noexcept;
 
         //! \brief The amount of time left on the clock that is currently running.
-        double running_time_left() const noexcept;
+        seconds running_time_left() const noexcept;
 
         //! \brief Are clocks currently running?
         bool is_running() const noexcept;
@@ -79,10 +83,10 @@ class Clock
         std::chrono::system_clock::time_point game_start_date_and_time() const noexcept;
 
         //! \brief The intitial time on the clocks at the start of the game (and added after moves_to_reset()).
-        double initial_time() const noexcept;
+        seconds initial_time() const noexcept;
 
         //! \brief How much time is added to a player's clock after every move.
-        double increment(Piece_Color color) const noexcept;
+        seconds increment(Piece_Color color) const noexcept;
 
         //! \brief How many moves must be played before the clocks are reset to their initial times.
         size_t moves_per_time_period() const noexcept;
@@ -94,13 +98,11 @@ class Clock
         bool is_in_use() const noexcept;
 
     private:
-        using fractional_seconds = std::chrono::duration<double>;
-
-        std::array<fractional_seconds, 2> timers;
+        std::array<seconds, 2> timers;
         std::array<size_t, 2> moves_to_reset_clocks{0, 0};
 
-        fractional_seconds initial_start_time;
-        std::array<fractional_seconds, 2> increment_time;
+        seconds initial_start_time;
+        std::array<seconds, 2> increment_time;
         size_t move_count_reset;
         int initial_time_set_count = 0;
         Time_Reset_Method method_of_reset;
@@ -121,8 +123,8 @@ class Clock
         //!
         //! These methods are used by the classes derived from Outside_Communicator to adjust
         //! the clock according to instructions from chess GUIs.
-        void set_time(Piece_Color player, double new_time_seconds) noexcept;
-        void set_increment(Piece_Color player, double new_increment_time_seconds) noexcept;
+        void set_time(Piece_Color player, seconds new_time_seconds) noexcept;
+        void set_increment(Piece_Color player, seconds new_increment_time_seconds) noexcept;
         void set_next_time_reset(size_t moves_to_reset) noexcept;
         void set_reset_method(Time_Reset_Method new_method) noexcept;
 };

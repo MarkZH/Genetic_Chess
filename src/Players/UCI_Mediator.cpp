@@ -4,6 +4,8 @@
 #include <future>
 #include <numeric>
 #include <algorithm>
+#include <chrono>
+using namespace std::chrono_literals;
 
 #include "Players/Player.h"
 #include "Game/Board.h"
@@ -143,25 +145,25 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 if(previous_option == "wtime")
                 {
                     log("Setting White's time to " + std::to_string(number) + " ms");
-                    wtime = number/1000.0;
+                    wtime = std::chrono::milliseconds{number};
                     new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(previous_option == "btime")
                 {
                     log("Setting Black's time to " + std::to_string(number) + " ms");
-                    btime = number/1000.0;
+                    btime = std::chrono::milliseconds{number};
                     new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(previous_option == "winc")
                 {
                     log("Setting White's increment time to " + std::to_string(number) + " ms");
-                    winc = number/1000.0;
+                    winc = std::chrono::milliseconds{number};
                     new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(previous_option == "binc")
                 {
                     log("Setting Black's increment time to " + std::to_string(number) + " ms");
-                    binc = number/1000.0;
+                    binc = std::chrono::milliseconds{number};
                     new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(previous_option == "movestogo")
@@ -173,7 +175,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 else if(previous_option == "movetime")
                 {
                     log("Setting clock to " + std::to_string(number) + " ms per move");
-                    movetime = number/1000.0;
+                    movetime = std::chrono::milliseconds{number};
                     new_mode = Time_Reset_Method::SET_TO_ORIGINAL;
                 }
                 else
@@ -199,7 +201,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 {
                     clock = Clock(movetime,
                                   1,
-                                  0.0,
+                                  0s,
                                   new_mode,
                                   board.whose_turn(),
                                   clock.game_start_date_and_time());

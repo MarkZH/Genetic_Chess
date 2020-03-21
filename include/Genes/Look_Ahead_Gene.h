@@ -7,9 +7,9 @@
 #include <map>
 
 #include "Game/Color.h"
+#include "Game/Clock.h"
 
 class Board;
-class Clock;
 
 //! This gene controls all aspects of time control.
 class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
@@ -24,7 +24,7 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         //! \param board The current board position.
         //! \param clock The game clock.
         //! \returns The total time in seconds to spend on searching for a move.
-        double time_to_examine(const Board& board, const Clock& clock) const noexcept;
+        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
 
         //! \brief When searching for a move, determine how much to overcommit on time.
         //!

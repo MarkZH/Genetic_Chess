@@ -102,9 +102,9 @@ int main(int argc, char *argv[])
                 std::unique_ptr<Player> black;
                 std::unique_ptr<Player> latest;
 
-                double game_time = 0;
+                Clock::seconds game_time{};
                 size_t moves_per_reset = 0;
-                double increment_time = 0;
+                Clock::seconds increment_time{};
                 Board board;
                 bool pondering_allowed = false;
                 std::string game_file_name;
@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-time" && i + 1 < argc)
                     {
-                        game_time = std::stod(argv[++i]);
+                        game_time = Clock::seconds{std::stod(argv[++i])};
                     }
                     else if(opt == "-reset-moves" && i + 1 < argc)
                     {
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-increment-time" && i + 1 < argc)
                     {
-                        increment_time = std::stod(argv[++i]);
+                        increment_time = Clock::seconds{std::stod(argv[++i])};
                     }
                     else if(opt == "-board" && i + 1 < argc)
                     {

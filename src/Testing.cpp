@@ -592,8 +592,8 @@ bool run_tests()
 
 
     // Clock time reset test
-    auto time = 30;
-    double expected_time_after_reset = 0.0;
+    auto time = Clock::seconds{30};
+    Clock::seconds expected_time_after_reset = 0s;
     size_t moves_to_reset = 40;
     Board timing_board;
     auto clock = Clock(time, moves_to_reset);
@@ -605,28 +605,28 @@ bool run_tests()
         clock.punch(timing_board);
     }
     clock.stop();
-    test_result(tests_passed, std::abs(clock.time_left(Piece_Color::BLACK) - expected_time_after_reset) < 0.2,
-                "Clock reset incorrect: time left for black is " + std::to_string(clock.time_left(Piece_Color::BLACK)) + " sec." +
-                " Should be " + std::to_string(expected_time_after_reset) + "sec.");
+    test_result(tests_passed, std::chrono::abs(clock.time_left(Piece_Color::BLACK) - expected_time_after_reset) < 200ms,
+                "Clock reset incorrect: time left for black is " + std::to_string(clock.time_left(Piece_Color::BLACK).count()) + " sec." +
+                " Should be " + std::to_string(expected_time_after_reset.count()) + "sec.");
 
     // Clock time increment test
-    auto increment = 5;
+    auto increment = 5s;
     auto clock2 = Clock(time, 0, increment);
     clock2.start();
-    double expected_time = time;
+    auto expected_time = time;
     for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
         std::this_thread::sleep_for(5ms);
         clock2.punch(timing_board);
         if(i % 2 == 1) // only on black moves
         {
-            expected_time += increment - 0.005;
+            expected_time += increment - Clock::seconds{5ms};
         }
     }
     clock2.stop();
-    test_result(tests_passed, std::abs(clock2.time_left(Piece_Color::BLACK) - expected_time) < 0.2,
-                std::string("Clock increment incorrect: time left for black is ") + std::to_string(clock2.time_left(Piece_Color::BLACK)) + " sec." +
-                " Should be " + std::to_string(expected_time) + "sec.");
+    test_result(tests_passed, std::chrono::abs(clock2.time_left(Piece_Color::BLACK) - expected_time) < 200ms,
+                std::string("Clock increment incorrect: time left for black is ") + std::to_string(clock2.time_left(Piece_Color::BLACK).count()) + " sec." +
+                " Should be " + std::to_string(expected_time.count()) + "sec.");
 
 
     // Minimax scoring comparison tests
@@ -740,7 +740,7 @@ void run_speed_tests()
     const auto number_of_tests = 1'000;
     const auto time_unit = "ms";
     #endif // NDEBUG
-    std::vector<std::pair<double, std::string>> timing_results;
+    std::vector<std::pair<Scoped_Stopwatch::seconds, std::string>> timing_results;
     auto all_genes_watch = Scoped_Stopwatch::start_stopwatch("");
     for(auto gene : performance_genome)
     {
@@ -822,7 +822,7 @@ void run_speed_tests()
     std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------" << std::endl;
     for(const auto& [time, name] : timing_results)
     {
-        std::cout << std::setw(name_width) << name << " = " << time << std::endl;
+        std::cout << std::setw(name_width) << name << " = " << time.count() << std::endl;
     }
 }
 
@@ -884,13 +884,13 @@ bool run_perft_tests()
             std::cout << "OK! ";
         }
         auto time_at_end = perft_timer.time_so_far();
-        std::cout << time_at_end - time_at_start << " / " << time_at_end << std::endl;
+        std::cout << (time_at_end - time_at_start).count() << " / " << time_at_end.count() << std::endl;
     }
 
     auto time = perft_timer.time_so_far();
-    std::cout << "Perft time: " << time << " seconds" << std::endl;
+    std::cout << "Perft time: " << time.count() << " seconds" << std::endl;
     std::cout << "Legal moves counted: " << String::format_integer(int(legal_moves_counted), ",") << std::endl;
-    std::cout << "Move generation rate: " << String::format_integer(int(legal_moves_counted/time), ",") << " moves/second." << std::endl;
+    std::cout << "Move generation rate: " << String::format_integer(int(legal_moves_counted/time.count()), ",") << " moves/second." << std::endl;
     if( ! tests_failed.empty())
     {
         std::cout << "Test" << (tests_failed.size() > 1 ? "s" : "") << " failed: ";

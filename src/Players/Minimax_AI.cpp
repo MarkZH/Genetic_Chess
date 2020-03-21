@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <chrono>
+using namespace std::chrono_literals;
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Game/Board.h"
@@ -33,7 +35,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     maximum_depth = 0;
 
     nodes_evaluated = 0;
-    total_evaluation_time = 0.0;
+    total_evaluation_time = 0s;
     time_at_last_output = clock.running_time_left();
 
     auto real_prior_result = depth_one_results[board.last_move()];
@@ -78,7 +80,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     depth_one_results = depth_two_results[result.variation.front()];
     depth_two_results.clear();
 
-    evaluation_speed = nodes_evaluated/total_evaluation_time;
+    evaluation_speed = nodes_evaluated/total_evaluation_time.count();
 
     return *result.variation.front();
 }
@@ -96,7 +98,7 @@ const Move* Minimax_AI::expected_response() const noexcept
 }
 
 Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
-                                                   const double time_to_examine,
+                                                   const Clock::seconds time_to_examine,
                                                    const Clock& clock,
                                                    Game_Tree_Node_Result alpha,
                                                    const Game_Tree_Node_Result& beta,
@@ -172,8 +174,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             continue;
         }
 
-        double time_left = time_to_examine - (time_start - clock.running_time_left());
-        double time_allotted_for_this_move = (time_left/moves_left)*speculation_time_factor();
+        auto time_left = time_to_examine - (time_start - clock.running_time_left());
+        auto time_allotted_for_this_move = (time_left/moves_left)*speculation_time_factor();
         time_allotted_for_this_move = std::min(time_allotted_for_this_move, clock.running_time_left());
 
         bool recurse;
@@ -191,7 +193,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            auto minimum_time_to_recurse = next_board.legal_moves().size()/evaluation_speed;
+            auto minimum_time_to_recurse = Clock::seconds{next_board.legal_moves().size()/evaluation_speed};
             recurse = (time_allotted_for_this_move > minimum_time_to_recurse);
         }
 
@@ -228,7 +230,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
-                else if(time_since_last_output(clock) > 1.0)
+                else if(time_since_last_output(clock) > 1s)
                 {
                     if(board.thinking_mode() == Thinking_Output_Type::CECP)
                     {
@@ -254,7 +256,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             total_evaluation_time += setup_time_per_move + (evaluate_start_time - clock.running_time_left());
         }
 
-        if(clock.running_time_left() < 0 || board.must_pick_move_now())
+        if(clock.running_time_left() < 0s || board.must_pick_move_now())
         {
             break;
         }
@@ -285,11 +287,12 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     }
 
     auto time_so_far = clock_start_time - clock.running_time_left();
+    using centiseconds = std::chrono::duration<int, std::centi>;
     std::cout << thought.depth() // ply
         << " "
         << int(score) // score in what should be centipawns
         << " "
-        << int(time_so_far*100) // search time in centiseconds
+        << std::chrono::duration_cast<centiseconds>(time_so_far).count()
         << " "
         << nodes_searched
         << " ";
@@ -298,7 +301,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     {
         std::cout << maximum_depth
             << " "
-            << int(nodes_searched/time_so_far)
+            << int(nodes_searched/time_so_far.count())
             << '\t';
     }
 
@@ -316,9 +319,9 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const
     auto time_so_far = clock_start_time - clock.running_time_left();
     std::cout << "info"
               << " depth " << thought.depth()
-              << " time " << int(time_so_far*1000)
+              << " time " << std::chrono::duration_cast<std::chrono::milliseconds>(time_so_far).count()
               << " nodes " << nodes_searched
-              << " nps " << int(nodes_searched/time_so_far)
+              << " nps " << int(nodes_searched/time_so_far.count())
               << " pv ";
     for(const auto& move : thought.variation)
     {
@@ -341,7 +344,7 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const
     std::cout << std::endl;
 }
 
-double Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
+Clock::seconds Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
 {
     return time_at_last_output - clock.running_time_left();
 }
@@ -359,9 +362,9 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
 void Minimax_AI::calibrate_thinking_speed() const noexcept
 {
     evaluation_speed = 100; // very conservative initial guess
-    auto calibration_time = 1.0; // seconds
+    auto calibration_time = 1s;
     Board board;
-    Clock clock(calibration_time, 1, 0.0);
+    Clock clock(calibration_time, 1, 0s);
     clock.start();
     choose_move(board, clock);
 }

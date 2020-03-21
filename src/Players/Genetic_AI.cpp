@@ -103,7 +103,7 @@ const std::array<double, 6>& Genetic_AI::piece_values() const noexcept
     return genome.piece_values();
 }
 
-double Genetic_AI::time_to_examine(const Board& board, const Clock& clock) const noexcept
+Clock::seconds Genetic_AI::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
     return genome.time_to_examine(board, clock);
 }

@@ -7,6 +7,7 @@
 #include <numeric>
 
 #include "Game/Color.h"
+#include "Game/Clock.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
@@ -232,7 +233,7 @@ void Genome::print(std::ostream& os) const noexcept
     };
 }
 
-double Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept
+Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
     return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
 }

@@ -31,7 +31,7 @@ void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& 
     speculation_constant = properties.at("Speculation");
 }
 
-double Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
+Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
     if( ! is_active())
     {

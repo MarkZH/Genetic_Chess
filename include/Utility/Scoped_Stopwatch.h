@@ -19,6 +19,9 @@
 class [[nodiscard]] Scoped_Stopwatch
 {
     public:
+        //! \brief The unit of time for this class is seconds represented by a double numeric type.
+        using seconds = std::chrono::duration<double>;
+
         //! \brief Create a new stopwatch that records the time to the given file.
         //!
         //! \param name The name of the section of code to be timed. This name will
@@ -50,7 +53,7 @@ class [[nodiscard]] Scoped_Stopwatch
         //! \brief Find out how much time as elapsed since the stopwatch started.
         //!
         //! \returns Time in seconds.
-        double time_so_far() const noexcept;
+        seconds time_so_far() const noexcept;
 
     private:
         std::string place_name;
