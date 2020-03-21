@@ -229,7 +229,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\Exceptions\Bad_Still_Alive_Line.cpp" />
     <ClCompile Include="src\game\Board.cpp" />
     <ClCompile Include="src\game\Clock.cpp" />
     <ClCompile Include="src\game\Color.cpp" />
@@ -278,10 +277,6 @@
     <ClCompile Include="src\Utility\String.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Exceptions\Bad_Still_Alive_Line.h" />
-    <ClInclude Include="include\Exceptions\Game_Ended.h" />
-    <ClInclude Include="include\Exceptions\Genetic_AI_Creation_Error.h" />
-    <ClInclude Include="include\Exceptions\Illegal_Move.h" />
     <ClInclude Include="include\game\Board.h" />
     <ClInclude Include="include\game\Clock.h" />
     <ClInclude Include="include\game\Color.h" />
@@ -325,6 +320,7 @@
     <ClInclude Include="include\Players\UCI_Mediator.h" />
     <ClInclude Include="include\Testing.h" />
     <ClInclude Include="include\Utility\Configuration.h" />
+    <ClInclude Include="include\Utility\Exceptions.h" />
     <ClInclude Include="include\Utility\Fixed_Capacity_Vector.h" />
     <ClInclude Include="include\Utility\Math.h" />
     <ClInclude Include="include\Utility\Random.h" />
