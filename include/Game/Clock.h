@@ -104,7 +104,6 @@ class Clock
         seconds initial_start_time;
         std::array<seconds, 2> increment_time;
         size_t move_count_reset;
-        int initial_time_set_count = 0;
         Time_Reset_Method method_of_reset;
 
         Piece_Color whose_turn;

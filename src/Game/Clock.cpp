@@ -135,14 +135,6 @@ Piece_Color Clock::running_for() const noexcept
 void Clock::set_time(Piece_Color player, seconds new_time_seconds) noexcept
 {
     timers[static_cast<unsigned>(player)] = new_time_seconds;
-
-    // This function is called by GUI mediators, so the actual
-    // start time will be during one of the first two calls
-    // (first if the local player is white, second if black).
-    if(++initial_time_set_count <= 2)
-    {
-        initial_start_time = std::max(new_time_seconds, initial_start_time);
-    }
     time_previous_punch = std::chrono::steady_clock::now();
 }
 
