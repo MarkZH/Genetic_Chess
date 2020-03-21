@@ -28,7 +28,7 @@ uint64_t Random::random_unsigned_int64() noexcept
 
 bool Random::coin_flip() noexcept
 {
-    return random_integer(0, 1) == 1;
+    return success_probability(1, 2);
 }
 
 bool Random::success_probability(size_t successes, size_t attempts) noexcept
