@@ -38,23 +38,7 @@ Game_Result Clock::punch(const Board& board) noexcept
 
     auto player_index = static_cast<unsigned>(whose_turn);
     timers[player_index] -= (time_this_punch - time_previous_punch);
-
-    if(++moves_to_reset_clocks[player_index] == move_count_reset)
-    {
-        if(method_of_reset == Time_Reset_Method::ADDITION)
-        {
-            timers[player_index] += initial_start_time;
-        }
-        else
-        {
-            timers[player_index] = initial_start_time;
-        }
-        moves_to_reset_clocks[player_index] = 0;
-    }
-
     time_previous_punch = time_this_punch;
-    timers[player_index] += increment_time[player_index];
-
     whose_turn = opposite(whose_turn);
 
     if(time_left(opposite(whose_turn)) < 0s)
@@ -70,6 +54,20 @@ Game_Result Clock::punch(const Board& board) noexcept
     }
     else
     {
+        if(++moves_to_reset_clocks[player_index] == move_count_reset)
+        {
+            if(method_of_reset == Time_Reset_Method::ADDITION)
+            {
+                timers[player_index] += initial_start_time;
+            }
+            else
+            {
+                timers[player_index] = initial_start_time;
+            }
+            moves_to_reset_clocks[player_index] = 0;
+        }
+        timers[player_index] += increment_time[player_index];
+
         return {};
     }
 }
