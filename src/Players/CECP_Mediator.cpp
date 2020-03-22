@@ -153,12 +153,12 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             if(time_split.size() == 1)
             {
                 log("game time = " + time_split[0] + " minutes");
-                game_time = 60s*std::stoi(time_split[0]);
+                game_time = std::chrono::minutes{std::stoi(time_split[0])};
             }
             else
             {
                 log("game time = " + time_split[0] + " minutes and " + time_split[1] + " seconds");
-                game_time = 60s*std::stoi(time_split[0]) + std::chrono::seconds{std::stoi(time_split[1])};
+                game_time = std::chrono::minutes{std::stoi(time_split[0])} + std::chrono::seconds{std::stoi(time_split[1])};
             }
 
             log("increment = " + split[3]);
