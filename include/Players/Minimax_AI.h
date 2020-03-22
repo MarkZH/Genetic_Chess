@@ -81,7 +81,7 @@ class Minimax_AI : public Player
         // For thinking output
         mutable int nodes_evaluated;
         mutable Clock::seconds total_evaluation_time;
-        mutable double evaluation_speed;
+        mutable Clock::seconds node_evaluation_time;
         mutable Clock::seconds time_at_last_output;
 
         // Evaluation method

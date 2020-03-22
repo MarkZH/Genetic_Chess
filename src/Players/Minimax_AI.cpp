@@ -80,7 +80,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     depth_one_results = depth_two_results[result.variation.front()];
     depth_two_results.clear();
 
-    evaluation_speed = nodes_evaluated/total_evaluation_time.count();
+    node_evaluation_time = total_evaluation_time/nodes_evaluated;
 
     return *result.variation.front();
 }
@@ -193,7 +193,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            auto minimum_time_to_recurse = Clock::seconds{next_board.legal_moves().size()/evaluation_speed};
+            auto minimum_time_to_recurse = next_board.legal_moves().size()*node_evaluation_time;
             recurse = (time_allotted_for_this_move > minimum_time_to_recurse);
         }
 
@@ -361,10 +361,9 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
 
 void Minimax_AI::calibrate_thinking_speed() const noexcept
 {
-    evaluation_speed = 100; // very conservative initial guess
-    auto calibration_time = 1s;
+    node_evaluation_time = 1ms; // very conservative initial guess
     Board board;
-    Clock clock(calibration_time, 1, 0s);
+    Clock clock(1s, 1, 0s);
     clock.start();
     choose_move(board, clock);
 }
