@@ -8,7 +8,7 @@
 
 double Freedom_To_Move_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
-    static auto initial_score = double(Board().legal_moves().size());
+    static const auto initial_score = double(Board().legal_moves().size());
     if(perspective == board.whose_turn())
     {
         return board.legal_moves().size()/initial_score;
