@@ -248,7 +248,7 @@ const std::array<double, 6>& Genome::piece_values() const noexcept
     return static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())->piece_values();
 }
 
-double Genome::components_to_mutate() const noexcept
+int Genome::components_to_mutate() const noexcept
 {
     return static_cast<const Mutation_Rate_Gene*>(genome[mutation_rate_gene_index].get())->mutation_count();
 }

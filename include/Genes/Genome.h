@@ -97,7 +97,7 @@ class Genome
         //! \brief Consults the Mutation_Rate_Gene to determine how many point mutations to apply to the genome.
         //!
         //! \returns A number of mutations to apply.
-        double components_to_mutate() const noexcept;
+        int components_to_mutate() const noexcept;
 };
 
 #endif // GENOME_H
