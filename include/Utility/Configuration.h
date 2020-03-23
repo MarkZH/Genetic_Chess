@@ -64,6 +64,32 @@ class Configuration
             }
         }
 
+        //! \brief Returns a std::chrono::duration from numerical parameter data value
+        //!
+        //! \param parameter The configuration parameter sought.
+        //! \tparam Duration The specific std::chrono::duration type to be returned.
+        //! \returns A std::chrono::duration instance that represents the textual parameter data.
+        //! \throws std::runtime_error If the parameter could not be found or if the conversion
+        //!         to a number or duration failed
+        template<typename Duration>
+        Duration as_time_duration(const std::string& parameter) const
+        {
+            return String::to_duration<Duration>(as_text(parameter));
+        }
+
+        //! \brief Returns a time duration as a std::chrono::duration type if it is greater than zero.
+        //!
+        //! \param parameter The configuration parameter sought.
+        //! \tparam Duration The type of the std::chrono::duration instance.
+        //! \returns A std::chrono::duration instance that represents the textual parameter data.
+        //! \throws std::runtime_error If the parameter could not be found, if the conversion
+        //!         to a number or duration failed, or if the resulting duration is negative.
+        template<typename Duration>
+        Duration as_positive_time_duration(const std::string& parameter) const
+        {
+            return Duration{as_positive_number<typename Duration::rep>(parameter)};
+        }
+
         //! \brief Return true/false data from the configuration file.
         //!
         //! \param parameter The configuration parameter sought.
