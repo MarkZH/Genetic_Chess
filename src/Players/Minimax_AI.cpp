@@ -386,7 +386,15 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
         }
     }
 
-    return internal_evaluate(board, perspective, depth)*(100 - board.moves_since_pawn_or_capture());
+    auto score = internal_evaluate(board, perspective, depth);
+    if(board.moves_since_pawn_or_capture() >= depth)
+    {
+        return score*(100 - board.moves_since_pawn_or_capture())/100.0;
+    }
+    else
+    {
+        return score;
+    }
 }
 
 double Minimax_AI::centipawn_value() const noexcept
