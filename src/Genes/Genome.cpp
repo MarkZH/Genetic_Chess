@@ -34,9 +34,9 @@ class Board;
 
 namespace
 {
-     const auto piece_strength_gene_index = size_t(0);
-     const auto look_ahead_gene_index = size_t(1);
-     const auto mutation_rate_gene_index = size_t(2);
+     constexpr auto piece_strength_gene_index = size_t(0);
+     constexpr auto look_ahead_gene_index = size_t(1);
+     constexpr auto mutation_rate_gene_index = size_t(2);
 }
 
 Genome::Genome() noexcept
@@ -235,20 +235,20 @@ void Genome::print(std::ostream& os) const noexcept
 
 Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
-    return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->time_to_examine(board, clock);
+    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().time_to_examine(board, clock);
 }
 
 double Genome::speculation_time_factor() const noexcept
 {
-    return static_cast<const Look_Ahead_Gene*>(genome[look_ahead_gene_index].get())->speculation_time_factor();
+    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().speculation_time_factor();
 }
 
 const std::array<double, 6>& Genome::piece_values() const noexcept
 {
-    return static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get())->piece_values();
+    return gene_reference<Piece_Strength_Gene, piece_strength_gene_index>().piece_values();
 }
 
 int Genome::components_to_mutate() const noexcept
 {
-    return static_cast<const Mutation_Rate_Gene*>(genome[mutation_rate_gene_index].get())->mutation_count();
+    return gene_reference<Mutation_Rate_Gene, mutation_rate_gene_index>().mutation_count();
 }

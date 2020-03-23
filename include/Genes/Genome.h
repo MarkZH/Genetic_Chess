@@ -98,6 +98,12 @@ class Genome
         //!
         //! \returns A number of mutations to apply.
         int components_to_mutate() const noexcept;
+
+        template<typename Gene_Type, size_t index>
+        constexpr const Gene_Type& gene_reference() const noexcept
+        {
+            return static_cast<const Gene_Type&>(*genome[index]);
+        }
 };
 
 #endif // GENOME_H
