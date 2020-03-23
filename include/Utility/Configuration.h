@@ -32,6 +32,7 @@ class Configuration
         //! \brief Return numerical data from the configuration file.
         //!
         //! \param parameter The configuration parameter sought.
+        //! \tparam Number The numerical type to be returned.
         //! \returns The data in the file converted to a floating point (double) number.
         //! \throws std::runtime_error If the named parameter was not found in the file or
         //!         if the data could not be converted to a numerical value.
@@ -44,6 +45,7 @@ class Configuration
         //! \brief Return numerical data from the configuration file if it is greater than zero.
         //!
         //! \param parameter The configuration parameter sought.
+        //! \tparam Number The numerical type to be returned.
         //! \returns The data in the file converted to a floating point (double) number.
         //! \throws std::runtime_error If the named parameter was not found in the file or
         //!         if the data could not be converted to a numerical value or if the
