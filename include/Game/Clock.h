@@ -39,9 +39,9 @@ class Clock
         //! \param previous_start_time If the clock for a game is being replaced by another clock (for example, a GUI
         //!        changes time control midgame), then this parameter can be used to preserve the actual start of the
         //!        current game.
-        Clock(seconds duration_seconds = 0s,
+        Clock(seconds duration_seconds = 0.0s,
               size_t moves_to_reset = 0,
-              seconds increment_seconds = 0s,
+              seconds increment_seconds = 0.0s,
               Time_Reset_Method reset_method = Time_Reset_Method::ADDITION,
               Piece_Color starting_turn = Piece_Color::WHITE,
               std::chrono::system_clock::time_point previous_start_time = {}) noexcept;

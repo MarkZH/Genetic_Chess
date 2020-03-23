@@ -41,7 +41,7 @@ Game_Result Clock::punch(const Board& board) noexcept
     time_previous_punch = time_this_punch;
     whose_turn = opposite(whose_turn);
 
-    if(time_left(opposite(whose_turn)) < 0s)
+    if(time_left(opposite(whose_turn)) < 0.0s)
     {
         if(board.enough_material_to_checkmate(whose_turn))
         {
@@ -101,7 +101,7 @@ Clock::seconds Clock::time_left(Piece_Color color) const noexcept
 {
     if( ! is_in_use())
     {
-        return 0s;
+        return 0.0s;
     }
 
     if(whose_turn != color || ! clocks_running)
@@ -197,5 +197,5 @@ Clock::seconds Clock::increment(Piece_Color color) const noexcept
 
 bool Clock::is_in_use() const noexcept
 {
-    return initial_start_time > 0s;
+    return initial_start_time > 0.0s;
 }

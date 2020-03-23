@@ -901,7 +901,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
             time_control_spec << game_clock.moves_per_time_period() << '/';
         }
         time_control_spec << game_clock.initial_time().count();
-        if(game_clock.increment(Piece_Color::WHITE) > 0s)
+        if(game_clock.increment(Piece_Color::WHITE) > 0.0s)
         {
             time_control_spec << '+' << game_clock.increment(Piece_Color::WHITE).count();
         }

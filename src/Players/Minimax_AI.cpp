@@ -35,7 +35,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     maximum_depth = 0;
 
     nodes_evaluated = 0;
-    total_evaluation_time = 0s;
+    total_evaluation_time = 0.0s;
     time_at_last_output = clock.running_time_left();
 
     auto real_prior_result = depth_one_results[board.last_move()];
@@ -256,7 +256,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             total_evaluation_time += setup_time_per_move + (evaluate_start_time - clock.running_time_left());
         }
 
-        if(clock.running_time_left() < 0s || board.must_pick_move_now())
+        if(clock.running_time_left() < 0.0s || board.must_pick_move_now())
         {
             break;
         }
@@ -363,7 +363,7 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
 {
     node_evaluation_time = 1ms; // very conservative initial guess
     Board board;
-    Clock clock(1s, 1, 0s);
+    Clock clock(1s, 1, 0.0s);
     clock.start();
     choose_move(board, clock);
 }

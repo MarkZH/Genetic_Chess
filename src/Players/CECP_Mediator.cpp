@@ -172,7 +172,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             auto split = String::split(command);
             auto time_per_move = String::to_duration<std::chrono::seconds>(split[1]);
             log("game time per move = " + std::to_string(time_per_move.count()));
-            clock = Clock(time_per_move, 1, 0s, Time_Reset_Method::SET_TO_ORIGINAL, Piece_Color::WHITE);
+            clock = Clock(time_per_move, 1, 0.0s, Time_Reset_Method::SET_TO_ORIGINAL, Piece_Color::WHITE);
             need_to_set_time = false;
         }
         else if(String::starts_with(command, "time "))

@@ -593,7 +593,7 @@ bool run_tests()
 
     // Clock time reset test
     auto time = Clock::seconds{30};
-    Clock::seconds expected_time_after_reset = 0s;
+    Clock::seconds expected_time_after_reset = 0.0s;
     size_t moves_to_reset = 40;
     Board timing_board;
     auto clock = Clock(time, moves_to_reset);

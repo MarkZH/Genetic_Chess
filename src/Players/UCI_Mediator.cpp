@@ -201,7 +201,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 {
                     clock = Clock(movetime,
                                   1,
-                                  0s,
+                                  0.0s,
                                   new_mode,
                                   board.whose_turn(),
                                   clock.game_start_date_and_time());
