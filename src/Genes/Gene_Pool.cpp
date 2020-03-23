@@ -88,7 +88,6 @@ void gene_pool(const std::string& config_file)
         throw std::invalid_argument("Maximum game time must be greater than the minimum game time.");
     }
     auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
-    const auto oscillating_time = config.as_boolean("oscillating time", "yes", "no");
 
     auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
 
@@ -168,7 +167,7 @@ void gene_pool(const std::string& config_file)
     const auto starting_pool = (last_pool + 1) % gene_pool_count;
 
     const auto game_record_file = genome_file_name +  "_games.pgn";
-    auto game_time = minimum_game_time;
+    auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
 
     std::cout << "Searching for previous best AI win counts ..." << std::endl;
     const auto best_file_name = genome_file_name + "_best_genome.txt";
@@ -189,18 +188,12 @@ void gene_pool(const std::string& config_file)
         // Use game time from last run of this gene pool
         std::cout << "Searching " << game_record_file << " for last game time and stats ..." << std::endl;
         std::string line;
-        std::string time_line;
-        std::string previous_time_line;
         while(std::getline(ifs, line))
         {
             line = String::trim_outer_whitespace(line);
             if(String::starts_with(line, "[TimeControl"))
             {
-                if(line != time_line)
-                {
-                    previous_time_line = time_line;
-                    time_line = line;
-                }
+                game_time = String::to_duration<Clock::seconds>(String::split(line, "\"").at(1));
             }
             else if(String::starts_with(line, "[Result"))
             {
@@ -224,25 +217,7 @@ void gene_pool(const std::string& config_file)
             }
         }
 
-        if( ! time_line.empty())
-        {
-            game_time = String::to_duration<Clock::seconds>(String::split(time_line, "\"").at(1));
-            game_time = std::clamp(game_time, minimum_game_time, maximum_game_time);
-        }
-
-        auto previous_game_time = game_time;
-        if( ! previous_time_line.empty())
-        {
-            previous_game_time = String::to_duration<Clock::seconds>(String::split(previous_time_line, "\"").at(1));
-        }
-
-        if(previous_game_time > game_time)
-        {
-            game_time_increment = -std::chrono::abs(game_time_increment);
-        }
-
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
-
         std::cout << "Done." << std::endl;
     }
 
@@ -399,19 +374,7 @@ void gene_pool(const std::string& config_file)
                   << "\nBest ID: " << best_id << "\n";
 
         // Update game time
-        game_time += game_time_increment;
-        if(game_time > maximum_game_time || game_time < minimum_game_time)
-        {
-            if(oscillating_time)
-            {
-                game_time_increment *= -1;
-            }
-            else
-            {
-                game_time_increment = 0s;
-            }
-        }
-        game_time = std::clamp(game_time, minimum_game_time, maximum_game_time);
+        game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
 
         // Mix up the populations of all the gene pools
         if(pools.size() > 1 && pool_index == pools.size() - 1 && ++rounds_since_last_swap >= pool_swap_interval)

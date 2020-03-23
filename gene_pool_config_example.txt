@@ -23,19 +23,19 @@ initial mutations = 100
 # swapping players between pools
 pool swap interval = 1000
 
-# Oscillating game time
+# Game time
 #
-# If "oscillating time" is "yes", the time for each game starts
-# at the minimum, then goes up by the increment after each round
-# of games. When it reaches the maximum, the increment is reversed
-# and the time for each game goes down until it reaches the minimum.
-# Then, the cycle starts again. If the "oscillating time" is "no",
-# then the game time will stop and remain at the maximum time until
-# the end of the run.
+# If the game time increment is positive, the time for each game
+# starts at the minimum, then goes up by the increment after each
+# round of games. When it reaches the maximum, the game time will
+# remain at the maximum time until the end of the run. If the game
+# time increment is negative, then the game time will start at the
+# maximum game time and go down by the increment until it reaches the
+# minimum game time, where it will remain thereafter.
+
 minimum game time = .05 # seconds
 maximum game time = 30 # seconds
 game time increment = 0.01 # seconds
-oscillating time = yes
 
 # The name of the file where the genomes will be recorded.
 # Games will be recorded in a file with "_games.txt" appended
