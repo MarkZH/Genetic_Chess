@@ -163,7 +163,12 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 
             log("increment = " + split[3]);
             auto increment = String::to_duration<Clock::seconds>(split[3]);
-            clock = Clock(game_time, reset_moves, increment, Time_Reset_Method::ADDITION, Piece_Color::WHITE);
+            clock = Clock(game_time,
+                          reset_moves,
+                          increment,
+                          Time_Reset_Method::ADDITION,
+                          board.whose_turn(),
+                          clock.game_start_date_and_time());
             need_to_set_time = false;;
         }
         else if(String::starts_with(command, "st "))
@@ -172,7 +177,12 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             auto split = String::split(command);
             auto time_per_move = String::to_duration<std::chrono::seconds>(split[1]);
             log("game time per move = " + std::to_string(time_per_move.count()));
-            clock = Clock(time_per_move, 1, 0.0s, Time_Reset_Method::SET_TO_ORIGINAL, Piece_Color::WHITE);
+            clock = Clock(time_per_move,
+                          1,
+                          0.0s,
+                          Time_Reset_Method::SET_TO_ORIGINAL,
+                          board.whose_turn(),
+                          clock.game_start_date_and_time());
             need_to_set_time = false;
         }
         else if(String::starts_with(command, "time "))
