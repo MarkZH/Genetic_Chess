@@ -38,7 +38,7 @@ class Configuration
         template<typename Number>
         Number as_number(const std::string& parameter) const
         {
-            return String::string_to_number<Number>(as_text(parameter));
+            return String::to_number<Number>(as_text(parameter));
         }
 
         //! \brief Return numerical data from the configuration file if it is greater than zero.

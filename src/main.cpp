@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-reset-moves" && i + 1 < argc)
                     {
-                        moves_per_reset = String::string_to_number<size_t>(argv[++i]);
+                        moves_per_reset = String::to_number<size_t>(argv[++i]);
                     }
                     else if(opt == "-increment-time" && i + 1 < argc)
                     {

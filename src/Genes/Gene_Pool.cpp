@@ -118,7 +118,7 @@ void gene_pool(const std::string& config_file)
             throw std::runtime_error("Too many parameters in the seed configuration\nseed = " + seed_ai_specification);
         }
         auto file_name = seed_split.front();
-        auto seed_id = seed_split.size() == 2 ? String::string_to_number<int>(seed_split.back()) : find_last_id(file_name);
+        auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
         auto seed_ai = Genetic_AI(file_name, seed_id);
         std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
         pools = Gene_Pool_Set{gene_pool_count, {gene_pool_population, seed_ai}};
@@ -151,7 +151,7 @@ void gene_pool(const std::string& config_file)
                 try
                 {
                     auto alive_split = String::split(line, ":");
-                    last_pool = String::string_to_number<size_t>(alive_split.at(1));
+                    last_pool = String::to_number<size_t>(alive_split.at(1));
                     if(last_pool == gene_pool_count - 1)
                     {
                         ++rounds;
@@ -554,7 +554,7 @@ namespace
                 try
                 {
                     auto parse = String::split(line, ":", 2);
-                    auto pool_number = String::string_to_number<size_t>(parse.at(1));
+                    auto pool_number = String::to_number<size_t>(parse.at(1));
                     still_alive[pool_number] = parse.at(2);
                     pool_line_numbers[pool_number] = line_number;
                     pool_lines[pool_number] = line;

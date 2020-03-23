@@ -147,7 +147,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             auto split = String::split(command);
 
             log("moves to reset clock = " + split[1]);
-            auto reset_moves = String::string_to_number<size_t>(split[1]);
+            auto reset_moves = String::to_number<size_t>(split[1]);
             auto time_split = String::split(split[2], ":");
             auto game_time = 0s;
             if(time_split.size() == 1)
