@@ -166,6 +166,19 @@ namespace String
         }
     }
 
+    //! \brief Convert a string to a type derived from std::chrono::duration.
+    //!
+    //! \param s The string to be converted.
+    //! \tparam Duration The std::chrono::duration type.
+    //! \returns A time duration of type Duration.
+    //! \throws std::invalid_argument If no conversion could be made or if there are any
+    //!         non-numeric characters in the input string.
+    template<typename Duration>
+    Duration to_duration(const std::string& s)
+    {
+        return Duration{to_number<typename Duration::rep>(s)};
+    }
+
     //! \brief Create a text string of the given time point in the given format
     //!
     //! \param point_in_time The time point to convert.

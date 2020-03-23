@@ -168,7 +168,7 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-time" && i + 1 < argc)
                     {
-                        game_time = Clock::seconds{std::stod(argv[++i])};
+                        game_time = String::to_duration<Clock::seconds>(argv[++i]);
                     }
                     else if(opt == "-reset-moves" && i + 1 < argc)
                     {
@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-increment-time" && i + 1 < argc)
                     {
-                        increment_time = Clock::seconds{std::stod(argv[++i])};
+                        increment_time = String::to_duration<Clock::seconds>(argv[++i]);
                     }
                     else if(opt == "-board" && i + 1 < argc)
                     {

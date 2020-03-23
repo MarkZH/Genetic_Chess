@@ -153,16 +153,16 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             if(time_split.size() == 1)
             {
                 log("game time = " + time_split[0] + " minutes");
-                game_time = std::chrono::minutes{std::stoi(time_split[0])};
+                game_time = String::to_duration<std::chrono::minutes>(time_split[0]);
             }
             else
             {
                 log("game time = " + time_split[0] + " minutes and " + time_split[1] + " seconds");
-                game_time = std::chrono::minutes{std::stoi(time_split[0])} + std::chrono::seconds{std::stoi(time_split[1])};
+                game_time = String::to_duration<std::chrono::minutes>(time_split[0]) + String::to_duration<std::chrono::seconds>(time_split[1]);
             }
 
             log("increment = " + split[3]);
-            auto increment = Clock::seconds{std::stod(split[3])};
+            auto increment = String::to_duration<Clock::seconds>(split[3]);
             clock = Clock(game_time, reset_moves, increment, Time_Reset_Method::ADDITION, Piece_Color::WHITE);
             need_to_set_time = false;;
         }
@@ -170,20 +170,20 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         {
             log("got time specs: " + command);
             auto split = String::split(command);
-            auto time_per_move = std::chrono::seconds{std::stoi(split[1])};
+            auto time_per_move = String::to_duration<std::chrono::seconds>(split[1]);
             log("game time per move = " + std::to_string(time_per_move.count()));
             clock = Clock(time_per_move, 1, 0s, Time_Reset_Method::SET_TO_ORIGINAL, Piece_Color::WHITE);
             need_to_set_time = false;
         }
         else if(String::starts_with(command, "time "))
         {
-            own_time_left = centiseconds{std::stoi(String::split(command, " ")[1])};
+            own_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
             need_to_set_time = true;
             log("Will set own time to " + std::to_string(own_time_left.count()) + " seconds.");
         }
         else if(String::starts_with(command, "otim "))
         {
-            opponent_time_left = centiseconds{std::stoi(String::split(command, " ")[1])};
+            opponent_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
             need_to_set_time = true;
             log("Will set opponent's time to " + std::to_string(opponent_time_left.count()) + " seconds.");
         }

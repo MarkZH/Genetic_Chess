@@ -226,14 +226,14 @@ void gene_pool(const std::string& config_file)
 
         if( ! time_line.empty())
         {
-            game_time = Clock::seconds{std::stod(String::split(time_line, "\"").at(1))};
+            game_time = String::to_duration<Clock::seconds>(String::split(time_line, "\"").at(1));
             game_time = std::clamp(game_time, minimum_game_time, maximum_game_time);
         }
 
         auto previous_game_time = game_time;
         if( ! previous_time_line.empty())
         {
-            previous_game_time = Clock::seconds{std::stod(String::split(previous_time_line, "\"").at(1))};
+            previous_game_time = String::to_duration<Clock::seconds>(String::split(previous_time_line, "\"").at(1));
         }
 
         if(previous_game_time > game_time)
