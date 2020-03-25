@@ -220,7 +220,7 @@ void Genome::print(std::ostream& os) const noexcept
     for(const auto& gene : genome)
     {
         gene->print(os);
-    };
+    }
 }
 
 Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept
