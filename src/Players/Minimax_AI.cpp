@@ -146,10 +146,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     // Pre-loop time to assign to each move for more accurate speed calculations
     auto setup_time_per_move = (time_start - clock.running_time_left())/moves_left;
 
+    ++moves_left; // So the decrement can take place immediately on entering the loop.
     for(const auto& move : all_legal_moves)
     {
         auto evaluate_start_time = clock.running_time_left();
         ++nodes_searched;
+        --moves_left;
 
         auto variation_guard = current_variation.scoped_push_back(move);
 
@@ -247,7 +249,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             }
         }
 
-        --moves_left;
         principal_variation.clear(); // only the first move is part of the principal variation
 
         if( ! recurse)
