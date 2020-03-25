@@ -53,7 +53,16 @@ priority_suffix = ' Gene - Priority';
 priority_count = 0;
 title('Gene Priority Evolution');
 
-special_plots = [0, 0];
+active_suffix = ' Gene - Active';
+active_figure = figure;
+gene_count = 0;
+total_active = 0;
+title('Total Genome Active');
+
+special_plots = [piece_strength_figure, priority_figure, active_figure];
+file_name_suffixes = {'piece strength', 'gene priorities', 'genome active'};
+draw_special = [false, false, false];
+
 
 % Plot evolution of individual genes
 for yi = 2 : length(data.colheaders) - 2
@@ -102,12 +111,19 @@ for yi = 2 : length(data.colheaders) - 2
     close;
 
     special_plot_index = 0;
+    draw_now = true;
     if ~isempty(strfind(name, piece_strength_prefix)) && isempty(strfind(name, 'Active'))
         plot_figure = piece_strength_figure;
         special_plot_index = 1;
     elseif ~isempty(strfind(name, priority_suffix))
         plot_figure = priority_figure;
         special_plot_index = 2;
+    elseif ~isempty(strfind(name, active_suffix))
+        plot_figure = active_figure;
+        special_plot_index = 3;
+        total_active = total_active + smooth_data;
+        gene_count = gene_count + 1;
+        draw_now = false;
     end
 
     if special_plot_index > 0 && length(this_data) > conv_window
@@ -124,18 +140,19 @@ for yi = 2 : length(data.colheaders) - 2
             make_dashed = (priority_count > 7);
         end
 
-        p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
-        if make_dashed
-            set(p, 'LineStyle', ':');
+        if draw_now
+            p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
+            if make_dashed
+                set(p, 'LineStyle', ':');
+            end
         end
-        special_plots(special_plot_index) = plot_figure;
+        draw_special(special_plot_index) = true;
     end
 end
 
 % Create special summary plots
-file_name_suffixes = {'piece strength', 'gene priorities'};
 for index = 1 : length(special_plots)
-    if ~special_plots(index)
+    if ~draw_special(index)
         continue;
     end
 
@@ -160,16 +177,20 @@ for index = 1 : length(special_plots)
             end
             plot([xl(1) + x_width*(1-width) xl(2)], tick_height*[1 1], 'k');
         end
+    elseif special_plots(index) == active_figure
+        plot(x_axis, total_active/gene_count, 'LineWidth', 3);
     end
 
     for id_index = 1:length(id_marks)
         plot(id_marks(id_index)*[1 1], ylim, 'displayname', id_notes{id_index});
     end
 
-    leg = legend('show');
-    set(leg, 'orientation', 'horizontal');
-    set(leg, 'location', 'southoutside');
-    legend left;
+    if special_plots(index) != active_figure
+        leg = legend('show');
+        set(leg, 'orientation', 'horizontal');
+        set(leg, 'location', 'southoutside');
+        legend left;
+    end
 
     xlabel('ID');
 
