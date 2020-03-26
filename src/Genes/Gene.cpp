@@ -34,7 +34,7 @@ void Gene::load_properties(const std::map<std::string, double>& properties)
         scoring_priority = properties.at("Priority");
     }
 
-    if(properties.count("Active"))
+    if(properties.count("Active") > 0)
     {
         active = properties.at("Active") > 0.0;
     }
