@@ -27,7 +27,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
     while(commentary.size() < board.game_length()/2)
     {
-        commentary.push_back({});
+        commentary.emplace_back();
     }
 
     nodes_searched = 0;
@@ -67,11 +67,11 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
                                    principal_variation,
                                    current_variation);
 
-    if(board.thinking_mode() == Thinking_Output_Type::CECP)
+    if(Board::thinking_mode() == Thinking_Output_Type::CECP)
     {
         output_thinking_cecp(result, clock, board.whose_turn());
     }
-    else if(board.thinking_mode() == Thinking_Output_Type::UCI)
+    else if(Board::thinking_mode() == Thinking_Output_Type::UCI)
     {
         output_thinking_uci(result, clock, board.whose_turn());
     }
@@ -234,12 +234,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 }
                 else if(time_since_last_output(clock) > 1s)
                 {
-                    if(board.thinking_mode() == Thinking_Output_Type::CECP)
+                    if(Board::thinking_mode() == Thinking_Output_Type::CECP)
                     {
                         output_thinking_cecp(alpha, clock,
                                              depth % 2 == 1 ? perspective : opposite(perspective));
                     }
-                    else if(board.thinking_mode() == Thinking_Output_Type::UCI)
+                    else if(Board::thinking_mode() == Thinking_Output_Type::UCI)
                     {
                         output_thinking_uci(alpha, clock,
                                             depth % 2 == 1 ? perspective : opposite(perspective));
@@ -257,7 +257,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             total_evaluation_time += setup_time_per_move + (evaluate_start_time - clock.running_time_left());
         }
 
-        if(clock.running_time_left() < 0.0s || board.must_pick_move_now())
+        if(clock.running_time_left() < 0.0s || Board::must_pick_move_now())
         {
             break;
         }
