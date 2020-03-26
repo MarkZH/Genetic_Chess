@@ -33,7 +33,12 @@ void Gene::load_properties(const std::map<std::string, double>& properties)
     {
         scoring_priority = properties.at("Priority");
     }
-    active = properties.at("Active") > 0.0;
+
+    if(properties.count("Active"))
+    {
+        active = properties.at("Active") > 0.0;
+    }
+
     load_gene_properties(properties);
 }
 

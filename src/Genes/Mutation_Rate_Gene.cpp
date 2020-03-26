@@ -22,7 +22,7 @@ std::string Mutation_Rate_Gene::name() const noexcept
 
 int Mutation_Rate_Gene::mutation_count() const noexcept
 {
-    return is_active() ? int(mutated_components_per_mutation) : 0;
+    return int(mutated_components_per_mutation);
 }
 
 void Mutation_Rate_Gene::gene_specific_mutation() noexcept
@@ -39,6 +39,7 @@ double Mutation_Rate_Gene::score_board(const Board&, Piece_Color, size_t) const 
 void Mutation_Rate_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
     properties.erase("Priority");
+    properties.erase("Active");
     properties["Mutation Rate"] = mutated_components_per_mutation;
 }
 

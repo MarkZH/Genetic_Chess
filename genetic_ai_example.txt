@@ -16,7 +16,6 @@ Speculation Default: 2.31473
 Speculation Material Change: 2.31473
 
 Name: Mutation Rate Gene
-Active: 1
 Mutation Rate: 1.06623
 
 Name: Total Force Gene
