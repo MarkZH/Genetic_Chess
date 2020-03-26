@@ -12,7 +12,8 @@ Name: Look Ahead Gene
 Active: 1
 Game Length Uncertainty: 0.686126
 Mean Game Length: 49.6035
-Speculation: 2.31473
+Speculation Default: 2.31473
+Speculation Material Change: 2.31473
 
 Name: Mutation Rate Gene
 Active: 1

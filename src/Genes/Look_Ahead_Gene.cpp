@@ -21,14 +21,16 @@ void Look_Ahead_Gene::adjust_properties(std::map<std::string, double>& propertie
     properties.erase("Priority");
     properties["Mean Game Length"] = mean_game_length;
     properties["Game Length Uncertainty"] = game_length_uncertainty;
-    properties["Speculation"] = speculation_constant;
+    properties["Speculation Default"] = speculation_default_constant;
+    properties["Speculation Material Change"] = speculation_material_change_constant;
 }
 
 void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
     mean_game_length = properties.at("Mean Game Length");
     game_length_uncertainty = properties.at("Game Length Uncertainty");
-    speculation_constant = properties.at("Speculation");
+    speculation_default_constant = properties.at("Speculation Default");
+    speculation_material_change_constant = properties.at("Speculation Material Change");
 }
 
 Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
@@ -49,7 +51,7 @@ Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock&
 
 void Look_Ahead_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 3))
+    switch(Random::random_integer(1, 4))
     {
         case 1:
             mean_game_length += Random::random_laplace(1.0);
@@ -58,7 +60,10 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
             game_length_uncertainty += Random::random_laplace(0.01);
             break;
         case 3:
-            speculation_constant += Random::random_laplace(0.03);
+            speculation_default_constant += Random::random_laplace(0.05);
+            break;
+        case 4:
+            speculation_material_change_constant += Random::random_laplace(0.05);
             break;
         default:
             assert(false);
@@ -75,11 +80,18 @@ double Look_Ahead_Gene::score_board(const Board&, Piece_Color, size_t) const noe
     return 0.0;
 }
 
-double Look_Ahead_Gene::speculation_time_factor() const noexcept
+double Look_Ahead_Gene::speculation_time_factor(const Board& board) const noexcept
 {
     if(is_active())
     {
-        return speculation_constant;
+        if(board.material_change_possible())
+        {
+            return speculation_material_change_constant;
+        }
+        else
+        {
+            return speculation_default_constant;
+        }
     }
     else
     {

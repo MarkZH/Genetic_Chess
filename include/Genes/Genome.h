@@ -71,13 +71,16 @@ class Genome
 
         //! \brief Returns a factor that is multiplied by the time allocated to examine a branch of the game tree.
         //!
+        //! \param board The current position in the game tree search. How much speculation to use can
+        //!        be affected by the state of the game.
+        //!
         //! With alpha-beta pruning, the search for the best move often cuts off before the entire branch
         //! of the game tree is explored, using less time than expected. The value returned by this function
         //! is multiplied by the time allocated for a branch to make sure the time allocated is actually used,
         //! allowing deeper searches of the game tree. More or less time may be allocated based on the
         //! board position being examined.
         //! \returns The multiplicative factor.
-        double speculation_time_factor() const noexcept;
+        double speculation_time_factor(const Board& board) const noexcept;
 
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
         const std::array<double, 6>& piece_values() const noexcept;

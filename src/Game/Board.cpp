@@ -1024,6 +1024,12 @@ void Board::recreate_move_caches() noexcept
     {
         clear_en_passant_target();
     }
+
+    material_changing_move_available = std::any_of(legal_moves_cache.begin(), legal_moves_cache.end(),
+                                                   [this](auto move)
+                                                   {
+                                                       return move_changes_material(*move);
+                                                   });
 }
 
 Square Board::find_checking_square() const noexcept
@@ -1190,6 +1196,11 @@ bool Board::move_captures(const Move& move) const noexcept
 bool Board::move_changes_material(const Move& move) const noexcept
 {
     return move_captures(move) || move.promotion_piece_symbol();
+}
+
+bool Board::material_change_possible() const noexcept
+{
+    return material_changing_move_available;
 }
 
 bool Board::king_multiply_checked() const noexcept
