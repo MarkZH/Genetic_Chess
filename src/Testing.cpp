@@ -593,19 +593,24 @@ bool run_tests()
 
     // Clock time reset test
     auto time = Clock::seconds{30};
-    Clock::seconds expected_time_after_reset = 0.0s;
+    Clock::seconds expected_time_after_reset = 2*time;
     size_t moves_to_reset = 40;
     Board timing_board;
     auto clock = Clock(time, moves_to_reset);
     clock.start();
     for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
+        auto pause_start = std::chrono::steady_clock::now();
         std::this_thread::sleep_for(5ms);
-        expected_time_after_reset = clock.time_left(Piece_Color::BLACK) + time;
         clock.punch(timing_board);
+        if(clock.running_for() == Piece_Color::WHITE)
+        {
+            auto pause_end = std::chrono::steady_clock::now();
+            expected_time_after_reset -= (pause_end - pause_start);
+        }
     }
     clock.stop();
-    test_result(tests_passed, std::chrono::abs(clock.time_left(Piece_Color::BLACK) - expected_time_after_reset) < 200ms,
+    test_result(tests_passed, std::chrono::abs(clock.time_left(Piece_Color::BLACK) - expected_time_after_reset) < 1ms,
                 "Clock reset incorrect: time left for black is " + std::to_string(clock.time_left(Piece_Color::BLACK).count()) + " sec." +
                 " Should be " + std::to_string(expected_time_after_reset.count()) + "sec.");
 
@@ -616,15 +621,17 @@ bool run_tests()
     auto expected_time = time;
     for(size_t i = 0; i < 2*moves_to_reset; ++i)
     {
+        auto pause_start = std::chrono::steady_clock::now();
         std::this_thread::sleep_for(5ms);
         clock2.punch(timing_board);
-        if(i % 2 == 1) // only on black moves
+        if(clock2.running_for() == Piece_Color::WHITE)
         {
-            expected_time += increment - Clock::seconds{5ms};
+            auto pause_end = std::chrono::steady_clock::now();
+            expected_time += increment - (pause_end - pause_start);
         }
     }
     clock2.stop();
-    test_result(tests_passed, std::chrono::abs(clock2.time_left(Piece_Color::BLACK) - expected_time) < 200ms,
+    test_result(tests_passed, std::chrono::abs(clock2.time_left(Piece_Color::BLACK) - expected_time) < 1ms,
                 std::string("Clock increment incorrect: time left for black is ") + std::to_string(clock2.time_left(Piece_Color::BLACK).count()) + " sec." +
                 " Should be " + std::to_string(expected_time.count()) + "sec.");
 
