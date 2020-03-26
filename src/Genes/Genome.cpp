@@ -79,10 +79,6 @@ Genome::Genome(const Genome& other) noexcept
     reset_piece_strength_gene();
 }
 
-Genome::Genome(Genome&& other) noexcept : genome(std::move(other.genome))
-{
-}
-
 void Genome::reset_piece_strength_gene() noexcept
 {
     auto piece_strength_gene = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
@@ -117,12 +113,6 @@ Genome& Genome::operator=(const Genome& other) noexcept
                        return gene->duplicate();
                    });
     reset_piece_strength_gene();
-    return *this;
-}
-
-Genome& Genome::operator=(Genome&& other) noexcept
-{
-    genome = std::move(other.genome);
     return *this;
 }
 

@@ -4,6 +4,7 @@
 #include <future>
 #include <chrono>
 using namespace std::chrono_literals;
+#include <optional>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -44,9 +45,8 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 {
     using centiseconds = std::chrono::duration<int, std::centi>;
 
-    auto own_time_left = clock.time_left(opposite(board.whose_turn()));
-    auto opponent_time_left = clock.time_left(board.whose_turn());
-    auto need_to_set_time = false;
+    std::optional<Clock::seconds> own_time_left;
+    std::optional<Clock::seconds> opponent_time_left;
     Game_Result setup_result;
 
     while(true)
@@ -74,8 +74,9 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             log("Setting board to standard start position and resetting clock");
             board = Board{};
             clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(Piece_Color::WHITE), clock.reset_mode(), Piece_Color::WHITE);
+            own_time_left.reset();
+            opponent_time_left.reset();
             move_list.clear();
-            need_to_set_time = false;;
             setup_result = {};
             player.reset();
             in_force_mode = false;
@@ -169,7 +170,8 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                           Time_Reset_Method::ADDITION,
                           board.whose_turn(),
                           clock.game_start_date_and_time());
-            need_to_set_time = false;;
+            own_time_left.reset();
+            opponent_time_left.reset();
         }
         else if(String::starts_with(command, "st "))
         {
@@ -183,19 +185,18 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                           Time_Reset_Method::SET_TO_ORIGINAL,
                           board.whose_turn(),
                           clock.game_start_date_and_time());
-            need_to_set_time = false;
+            own_time_left.reset();
+            opponent_time_left.reset();
         }
         else if(String::starts_with(command, "time "))
         {
             own_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
-            need_to_set_time = true;
-            log("Will set own time to " + std::to_string(own_time_left.count()) + " seconds.");
+            log("Will set own time to " + std::to_string(own_time_left->count()) + " seconds.");
         }
         else if(String::starts_with(command, "otim "))
         {
             opponent_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
-            need_to_set_time = true;
-            log("Will set opponent's time to " + std::to_string(opponent_time_left.count()) + " seconds.");
+            log("Will set opponent's time to " + std::to_string(opponent_time_left->count()) + " seconds.");
         }
         else if(command == "undo")
         {
@@ -229,12 +230,16 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
     }
 
-    if(need_to_set_time)
+    if(own_time_left.has_value())
     {
-        log("Setting own time (" + color_text(board.whose_turn()) + ") to " + std::to_string(own_time_left.count()) + " seconds.");
-        clock.set_time(board.whose_turn(), own_time_left);
-        log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time_left.count()) + " seconds.");
-        clock.set_time(opposite(board.whose_turn()), opponent_time_left);
+        log("Setting own time (" + color_text(board.whose_turn()) + ") to " + std::to_string(own_time_left->count()) + " seconds.");
+        clock.set_time(board.whose_turn(), own_time_left.value());
+    }
+
+    if(opponent_time_left.has_value())
+    {
+        log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time_left->count()) + " seconds.");
+        clock.set_time(opposite(board.whose_turn()), opponent_time_left.value());
     }
 
     if( ! clock.is_running())

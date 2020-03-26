@@ -292,7 +292,7 @@ void gene_pool(const std::string& config_file)
             results.emplace_back(std::async(std::launch::async, play_game,
                                             Board{},
                                             Clock(game_time),
-                                            white, black,
+                                            std::cref(white), std::cref(black),
                                             false,
                                             "Gene pool",
                                             "Local computer",
@@ -314,7 +314,7 @@ void gene_pool(const std::string& config_file)
 
             if(winner != Winner_Color::NONE)
             {
-                auto winning_player = (winner == Winner_Color::WHITE ? white : black);
+                const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
                 color_wins[static_cast<unsigned>(winner)]++;
                 wins[winning_player]++;
 

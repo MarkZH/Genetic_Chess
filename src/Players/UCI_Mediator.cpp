@@ -27,6 +27,7 @@ UCI_Mediator::UCI_Mediator(const Player& player)
 Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
 {
     Game_Result setup_result;
+    clock.punch(board);
 
     while(true)
     {

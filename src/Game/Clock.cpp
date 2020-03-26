@@ -27,9 +27,7 @@ Clock::Clock(seconds duration_seconds,
 
 Game_Result Clock::punch(const Board& board) noexcept
 {
-    assert(clocks_running);
-
-    if( ! is_in_use())
+    if( ! is_in_use() || ! is_running())
     {
         return {};
     }
