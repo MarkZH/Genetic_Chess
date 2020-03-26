@@ -43,20 +43,20 @@ pool_ids = data.data(:, end);
 xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
 
-piece_strength_prefix = 'Piece Strength Gene';
 piece_strength_figure = figure;
+piece_strength_prefix = 'Piece Strength Gene';
 title('Piece Strength Evolution');
 max_piece_score = -inf;
 
 priority_figure = figure;
 priority_suffix = ' Gene - Priority';
-priority_count = 0;
 title('Gene Priority Evolution');
+priority_count = 0;
 
-active_suffix = ' Gene - Active';
 active_figure = figure;
-total_active = 0;
+active_suffix = ' Gene - Active';
 title('Total Genome Active');
+total_active = 0;
 
 special_plots = [piece_strength_figure, priority_figure, active_figure];
 file_name_suffixes = {'piece strength', 'gene priorities', 'genome active'};
