@@ -1045,7 +1045,7 @@ namespace
             else if(test_type == "last move illegal")
             {
                 auto moves = String::split(specification.at(2));
-                assert(moves.size() > 0);
+                assert( ! moves.empty());
                 auto last_move = moves.back();
                 moves.pop_back();
                 test_result(test_passed, all_moves_legal(board, moves) && move_is_illegal(board, last_move), "");

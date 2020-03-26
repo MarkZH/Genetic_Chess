@@ -25,9 +25,7 @@ class Fixed_Capacity_Vector
 
     public:
         //! Create an empty Fixed_Capacity_Vector.
-        constexpr Fixed_Capacity_Vector()
-        {
-        }
+        constexpr Fixed_Capacity_Vector() = default;
 
         //! \brief Add a new item to the end of the Fixed_Capacity_Vector.
         //!
