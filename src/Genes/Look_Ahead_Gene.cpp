@@ -35,12 +35,13 @@ void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& 
 
 Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
+    auto time_left = clock.running_time_left();
+
     if( ! is_active())
     {
-        return clock.running_time_left();
+        return time_left;
     }
 
-    auto time_left = clock.time_left(board.whose_turn());
     auto moves_to_reset = clock.moves_until_reset(board.whose_turn());
 
     auto moves_so_far = board.ply_count()/2; // only count moves by this player
