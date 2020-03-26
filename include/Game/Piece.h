@@ -13,7 +13,7 @@ class Square;
 //! \file
 
 //! \brief An enumeration to identify the type of a Piece.
-enum class Piece_Type : unsigned
+enum class Piece_Type
 {
     PAWN,
     ROOK,

@@ -6,7 +6,7 @@
 //! \file
 
 //! \brief Used for identifying the color of a piece and the player controlling those pieces.
-enum class Piece_Color : unsigned
+enum class Piece_Color
 {
     WHITE,
     BLACK
@@ -37,7 +37,7 @@ enum class Square_Color
 Square_Color opposite(Square_Color color) noexcept;
 
 //! \brief A representation of the winner of a game.
-enum class Winner_Color : unsigned
+enum class Winner_Color
 {
     WHITE,
     BLACK,

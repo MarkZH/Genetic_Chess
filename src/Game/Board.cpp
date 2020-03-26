@@ -507,7 +507,7 @@ const Move* Board::last_move() const noexcept
 
 int Board::castling_direction(Piece_Color player) const noexcept
 {
-    return castling_movement[static_cast<unsigned>(player)];
+    return castling_movement[static_cast<int>(player)];
 }
 
 const Move& Board::create_move(std::string move_text) const
@@ -607,7 +607,7 @@ void Board::place_piece(Piece piece, Square square) noexcept
 
     if(piece && piece.type() == Piece_Type::KING)
     {
-        king_location[static_cast<unsigned>(piece.color())] = square;
+        king_location[static_cast<int>(piece.color())] = square;
     }
 }
 
@@ -635,13 +635,13 @@ void Board::modify_attacks(Square square, Piece piece, bool adding_attacks) noex
 
             if(move_blocked)
             {
-                blocked_attacks[static_cast<unsigned>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
+                blocked_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
             }
             else
             {
                 auto blocking_piece = piece_on_square(attacked_square);
 
-                potential_attacks[static_cast<unsigned>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
+                potential_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
 
                 if(blocking_piece && blocking_piece != vulnerable_king)
                 {
@@ -678,7 +678,7 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexc
             continue;
         }
 
-        const auto& attack_direction_list = potential_attacks[static_cast<unsigned>(attacking_color)][origin_square_index];
+        const auto& attack_direction_list = potential_attacks[static_cast<int>(attacking_color)][origin_square_index];
         for(size_t index = 0; index < attack_direction_list.size()/2; ++index) // /2 to exclude knight moves, which are never blocked
         {
             if(attack_direction_list[index])
@@ -695,8 +695,8 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexc
                     auto target_index = target_square.index();
                     auto piece = piece_on_square(target_square);
 
-                    potential_attacks[static_cast<unsigned>(attacking_color)][target_index][index] = add_new_attacks;
-                    blocked_attacks[static_cast<unsigned>(attacking_color)][target_index][index] = ! add_new_attacks;
+                    potential_attacks[static_cast<int>(attacking_color)][target_index][index] = add_new_attacks;
+                    blocked_attacks[static_cast<int>(attacking_color)][target_index][index] = ! add_new_attacks;
 
                     if(piece && piece != vulnerable_king)
                     {
@@ -710,7 +710,7 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexc
 
 const std::bitset<16>& Board::moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept
 {
-    return potential_attacks[static_cast<unsigned>(attacking_color)][square.index()];
+    return potential_attacks[static_cast<int>(attacking_color)][square.index()];
 }
 
 const std::bitset<16>& Board::checking_moves() const noexcept
@@ -730,7 +730,7 @@ bool Board::safe_for_king(Square square, Piece_Color king_color) const noexcept
 
 bool Board::blocked_attack(Square square, Piece_Color attacking_color) const noexcept
 {
-    return blocked_attacks[static_cast<unsigned>(attacking_color)][square.index()].any();
+    return blocked_attacks[static_cast<int>(attacking_color)][square.index()].any();
 }
 
 bool Board::king_is_in_check_after_move(const Move& move) const noexcept
@@ -976,7 +976,7 @@ bool Board::piece_has_moved(Square square) const noexcept
 
 Square Board::find_king(Piece_Color color) const noexcept
 {
-    return king_location[static_cast<unsigned>(color)];
+    return king_location[static_cast<int>(color)];
 }
 
 void Board::recreate_move_caches() noexcept
@@ -1151,7 +1151,7 @@ uint64_t Board::square_hash(Square square) const noexcept
     if(piece &&
        piece.type() == Piece_Type::ROOK &&
        ! piece_has_moved(square) &&
-       ! piece_has_moved(king_location[static_cast<unsigned>(piece.color())]))
+       ! piece_has_moved(king_location[static_cast<int>(piece.color())]))
     {
         auto on_first_rank = (index%8 == 0);
         auto on_first_file = (index/8 == 0);
@@ -1225,7 +1225,7 @@ bool Board::piece_is_pinned(Square square) const noexcept
     }
 
     auto diff = king_square - square;
-    if(potential_attacks[static_cast<unsigned>(opposite(whose_turn()))][square.index()][Move::attack_index(diff)])
+    if(potential_attacks[static_cast<int>(opposite(whose_turn()))][square.index()][Move::attack_index(diff)])
     {
         // The potential_attacks check guarantees that there is an opposing piece attacking
         // the queried square in the same direction towards the friendly king. This next check
@@ -1267,7 +1267,7 @@ void Board::clear_repeat_count() noexcept
 
 size_t Board::castling_move_index(Piece_Color player) const noexcept
 {
-    return castling_index[static_cast<unsigned>(player)];
+    return castling_index[static_cast<int>(player)];
 }
 
 Board Board::without_random_pawn() const noexcept
@@ -1318,8 +1318,8 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
         auto move = *std::min_element(capturing_moves.begin(), capturing_moves.end(),
                                       [&piece_values, &current_board](auto move1, auto move2)
                                       {
-                                          return piece_values[static_cast<unsigned>(current_board.piece_on_square(move1->start()).type())] <
-                                                 piece_values[static_cast<unsigned>(current_board.piece_on_square(move2->start()).type())];
+                                          return piece_values[static_cast<int>(current_board.piece_on_square(move1->start()).type())] <
+                                                 piece_values[static_cast<int>(current_board.piece_on_square(move2->start()).type())];
                                       });
 
         // Make sure that an exchange does not lose material
@@ -1327,7 +1327,7 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
         auto attacked_piece = current_board.piece_on_square(move->end());
         current_board.submit_move(*move);
         capture_moves.push_back(move);
-        state_values.push_back(state_values.back() + (moving_piece.color() == player_color ? +1 : -1)*piece_values[static_cast<unsigned>(attacked_piece.type())]);
+        state_values.push_back(state_values.back() + (moving_piece.color() == player_color ? +1 : -1)*piece_values[static_cast<int>(attacked_piece.type())]);
     }
 
 

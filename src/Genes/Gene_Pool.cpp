@@ -200,11 +200,11 @@ void gene_pool(const std::string& config_file)
                 auto result = String::split(line, "\"").at(1);
                 if(result == "1-0")
                 {
-                    color_wins[static_cast<unsigned>(Piece_Color::WHITE)]++;
+                    color_wins[static_cast<int>(Piece_Color::WHITE)]++;
                 }
                 else if(result == "0-1")
                 {
-                    color_wins[static_cast<unsigned>(Piece_Color::BLACK)]++;
+                    color_wins[static_cast<int>(Piece_Color::BLACK)]++;
                 }
                 else if(result == "1/2-1/2")
                 {
@@ -247,9 +247,9 @@ void gene_pool(const std::string& config_file)
                   << "Gene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
                   << "  Rounds since pool swaps: " << rounds_since_last_swap << "/" << pool_swap_interval
-                  << "\nGames: " << color_wins[static_cast<unsigned>(Piece_Color::WHITE)] + color_wins[static_cast<unsigned>(Piece_Color::BLACK)] + draw_count
-                  << "  White wins: " << color_wins[static_cast<unsigned>(Piece_Color::WHITE)]
-                  << "  Black wins: " << color_wins[static_cast<unsigned>(Piece_Color::BLACK)]
+                  << "\nGames: " << color_wins[static_cast<int>(Piece_Color::WHITE)] + color_wins[static_cast<int>(Piece_Color::BLACK)] + draw_count
+                  << "  White wins: " << color_wins[static_cast<int>(Piece_Color::WHITE)]
+                  << "  Black wins: " << color_wins[static_cast<int>(Piece_Color::BLACK)]
                   << "  Draws: " << draw_count
                   << "\nTime: " << game_time.count() << " sec"
                   << "   Gene pool file name: " << genome_file_name << "\n\n";
@@ -315,7 +315,7 @@ void gene_pool(const std::string& config_file)
             if(winner != Winner_Color::NONE)
             {
                 const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
-                color_wins[static_cast<unsigned>(winner)]++;
+                color_wins[static_cast<int>(winner)]++;
                 wins[winning_player]++;
 
                 auto offspring = mating_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);

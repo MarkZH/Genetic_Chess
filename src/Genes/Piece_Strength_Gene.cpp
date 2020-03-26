@@ -67,12 +67,12 @@ void Piece_Strength_Gene::renormalize_values() noexcept
 
 double Piece_Strength_Gene::piece_value(Piece_Type type) const noexcept
 {
-    return piece_strength[static_cast<unsigned>(type)];
+    return piece_strength[static_cast<int>(type)];
 }
 
 double& Piece_Strength_Gene::piece_value(Piece_Type type) noexcept
 {
-    return piece_strength[static_cast<unsigned>(type)];
+    return piece_strength[static_cast<int>(type)];
 }
 
 double Piece_Strength_Gene::piece_value(Piece piece) const noexcept

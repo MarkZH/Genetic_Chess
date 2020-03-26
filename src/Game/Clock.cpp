@@ -34,7 +34,7 @@ Game_Result Clock::punch(const Board& board) noexcept
 
     auto time_this_punch = std::chrono::steady_clock::now();
 
-    auto player_index = static_cast<unsigned>(whose_turn);
+    auto player_index = static_cast<int>(whose_turn);
     timers[player_index] -= (time_this_punch - time_previous_punch);
     time_previous_punch = time_this_punch;
     whose_turn = opposite(whose_turn);
@@ -72,15 +72,15 @@ Game_Result Clock::punch(const Board& board) noexcept
 
 void Clock::unpunch() noexcept
 {
-    moves_to_reset_clocks[static_cast<unsigned>(whose_turn)] -= 1;
-    moves_to_reset_clocks[static_cast<unsigned>(opposite(whose_turn))] -= 1;
+    moves_to_reset_clocks[static_cast<int>(whose_turn)] -= 1;
+    moves_to_reset_clocks[static_cast<int>(opposite(whose_turn))] -= 1;
     punch({});
 }
 
 void Clock::stop() noexcept
 {
     auto time_stop = std::chrono::steady_clock::now();
-    timers[static_cast<unsigned>(whose_turn)] -= (time_stop - time_previous_punch);
+    timers[static_cast<int>(whose_turn)] -= (time_stop - time_previous_punch);
     clocks_running = false;
 }
 
@@ -104,12 +104,12 @@ Clock::seconds Clock::time_left(Piece_Color color) const noexcept
 
     if(whose_turn != color || ! clocks_running)
     {
-        return timers[static_cast<unsigned>(color)];
+        return timers[static_cast<int>(color)];
     }
     else
     {
         auto now = std::chrono::steady_clock::now();
-        return timers[static_cast<unsigned>(color)] - (now - time_previous_punch);
+        return timers[static_cast<int>(color)] - (now - time_previous_punch);
     }
 }
 
@@ -117,7 +117,7 @@ size_t Clock::moves_until_reset(Piece_Color color) const noexcept
 {
     if(move_count_reset > 0)
     {
-        return move_count_reset - moves_to_reset_clocks[static_cast<unsigned>(color)];
+        return move_count_reset - moves_to_reset_clocks[static_cast<int>(color)];
     }
     else
     {
@@ -132,13 +132,13 @@ Piece_Color Clock::running_for() const noexcept
 
 void Clock::set_time(Piece_Color player, seconds new_time_seconds) noexcept
 {
-    timers[static_cast<unsigned>(player)] = new_time_seconds;
+    timers[static_cast<int>(player)] = new_time_seconds;
     time_previous_punch = std::chrono::steady_clock::now();
 }
 
 void Clock::set_increment(Piece_Color player, seconds new_increment_time_seconds) noexcept
 {
-    increment_time[static_cast<unsigned>(player)] = new_increment_time_seconds;
+    increment_time[static_cast<int>(player)] = new_increment_time_seconds;
 }
 
 void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
@@ -149,7 +149,7 @@ void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
     }
     else
     {
-        move_count_reset = moves_to_reset_clocks[static_cast<unsigned>(running_for())] + moves_to_reset;
+        move_count_reset = moves_to_reset_clocks[static_cast<int>(running_for())] + moves_to_reset;
     }
 }
 
@@ -190,7 +190,7 @@ Clock::seconds Clock::initial_time() const noexcept
 
 Clock::seconds Clock::increment(Piece_Color color) const noexcept
 {
-    return increment_time[static_cast<unsigned>(color)];
+    return increment_time[static_cast<int>(color)];
 }
 
 bool Clock::is_in_use() const noexcept
