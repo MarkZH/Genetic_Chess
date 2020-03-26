@@ -50,7 +50,7 @@ Genome::Genome() noexcept
     assert(genome[mutation_rate_gene_index]->name() == "Mutation Rate Gene");
 
     // Normal genes
-    auto psg = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
+    auto psg = &gene_reference<Piece_Strength_Gene, piece_strength_gene_index>();
 
     genome.emplace_back(std::make_unique<Total_Force_Gene>(psg));
     genome.emplace_back(std::make_unique<Freedom_To_Move_Gene>());
