@@ -77,13 +77,6 @@ class Board
         //! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
         const Move& create_move(std::string move) const;
 
-        //! \brief Checks if there are any legal moves from the start square to the end square.
-        //!
-        //! \param start The square where the move should start.
-        //! \param end   The square where the move should end.
-        //! \returns True if there is a legal move between the given squares.
-        bool is_legal(Square start, Square end) const noexcept;
-
         //! \brief Tells which player is due to move.
         //!
         //! \returns Color of player who is next to move.

@@ -85,16 +85,21 @@ std::string Move::algebraic_base(const Board& board) const noexcept
 
     auto record_file = original_piece.type() == Piece_Type::PAWN && board.move_captures(*this);
     auto record_rank = false;
-    for(auto other_square : Square::all_squares())
+    for(auto other_move : board.legal_moves())
     {
-        auto new_piece = board.piece_on_square(other_square);
-        if(original_piece == new_piece && board.is_legal(other_square, end()))
+        if(other_move->start() == start())
         {
-            if(other_square.file() != start().file() && ! record_file)
+            continue;
+        }
+
+        auto new_piece = board.piece_on_square(other_move->start());
+        if(original_piece == new_piece && end() == other_move->end())
+        {
+            if(other_move->start().file() != start().file() && ! record_file)
             {
                 record_file = true;
             }
-            else if(other_square.rank() != start().rank())
+            else if(other_move->start().rank() != start().rank())
             {
                 record_rank = true;
             }

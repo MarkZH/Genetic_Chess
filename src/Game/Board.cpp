@@ -288,16 +288,6 @@ void Board::set_unmoved(Square square) noexcept
     update_board_hash(square);
 }
 
-bool Board::is_legal(Square start, Square end) const noexcept
-{
-    return std::any_of(legal_moves().begin(), legal_moves().end(),
-                       [&](auto move)
-                       {
-                           return move->start() == start &&
-                                  move->end() == end;
-                       });
-}
-
 bool Board::is_in_legal_moves_list(const Move& move) const noexcept
 {
     return std::find(legal_moves().begin(), legal_moves().end(), &move) != legal_moves().end();
