@@ -55,7 +55,6 @@ title('Gene Priority Evolution');
 
 active_suffix = ' Gene - Active';
 active_figure = figure;
-gene_count = 0;
 total_active = 0;
 title('Total Genome Active');
 
@@ -122,7 +121,6 @@ for yi = 2 : length(data.colheaders) - 2
         plot_figure = active_figure;
         special_plot_index = 3;
         total_active = total_active + smooth_data;
-        gene_count = gene_count + 1;
         draw_now = false;
     end
 
@@ -178,7 +176,8 @@ for index = 1 : length(special_plots)
             plot([xl(1) + x_width*(1-width) xl(2)], tick_height*[1 1], 'k');
         end
     elseif special_plots(index) == active_figure
-        plot(x_axis, total_active/gene_count, 'LineWidth', 3);
+        plot(x_axis, total_active, 'LineWidth', 3);
+        grid on;
     end
 
     for id_index = 1:length(id_marks)
