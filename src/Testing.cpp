@@ -990,7 +990,7 @@ namespace
                     {
                         auto num1 = std::stod(split1.back());
                         auto num2 = std::stod(split2.back());
-                        if(std::abs((num1 - num2)/(num1 + num2)) < 1e-6)
+                        if(std::abs((num1 - num2)/(num1 + num2)) < 1e-5)
                         {
                             continue;
                         }
