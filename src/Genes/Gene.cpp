@@ -95,16 +95,23 @@ void Gene::read_from(std::istream& is)
 
         try
         {
-            properties.at(property_name) = std::stod(property_data);
+            properties.at(property_name) = String::to_number<double>(property_data);
             property_found.at(property_name) = true;
         }
-        catch(const std::out_of_range&)
+        catch(const std::out_of_range& e)
         {
-            throw_on_invalid_line(line, "Unrecognized parameter name.");
+            if(String::contains(e.what(), "at"))
+            {
+                throw_on_invalid_line(line, "Unrecognized parameter name:" + property_name);
+            }
+            else if(String::contains(e.what(), "stod"))
+            {
+                throw_on_invalid_line(line, "Bad parameter value: " + property_data);
+            }
         }
         catch(const std::invalid_argument&)
         {
-            throw_on_invalid_line(line, "Bad parameter value.");
+            throw_on_invalid_line(line, "Bad parameter value: " + property_data);
         }
     }
 
