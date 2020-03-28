@@ -153,7 +153,6 @@ void Gene::read_from(const std::string& file_name)
     throw Genetic_AI_Creation_Error(name() + " not found in " + file_name);
 }
 
-
 void Gene::throw_on_invalid_line(const std::string& line, const std::string& reason) const
 {
     throw Genetic_AI_Creation_Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
