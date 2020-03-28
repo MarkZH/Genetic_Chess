@@ -28,11 +28,19 @@ this project.
 2. Open Genetic_Chess.sln in Visual Studio and compile.
 
 #### More documentation
-- `make user_manual`, or
-- Compile `doc/reference.tex` with TexWriter or similar.
+- `make user_manual` for the User Manual pdf
+    - Or compile `doc/reference.tex` with [TexWriter](https://www.xm1math.net/texmaker/) or similar.
+- `make code_docs` for HTML source code references
+    - Or generate with [Doxygen](http://www.doxygen.nl/)
+- `make docs` for both
 
 ### Start a game
-Install a chess GUI (e.g., [PyChess](http://www.pychess.org/)): `$cwd/bin/release/genetic_chess -genetic genetic_ai_example.txt`
+1. Install a chess GUI (e.g., [PyChess](http://www.pychess.org/))
+2. Create a new engine with the compiled executable and with the command-line
+   parameters `-genetic genetic_ai_example.txt`
+    - After running a gene pool, you can replace the `genetic_ai_example.txt`
+      argument with the file name and ID number of the best specimen from the
+      gene pool.
 
 ### Start a gene pool
 1. Edit `gene_pool_config_example.txt` to adjust the number of simultaneous
