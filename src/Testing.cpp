@@ -50,22 +50,63 @@ namespace
     // fail_message to std::cerr. Otherwise, do nothing.
     bool test_result(bool& all_tests_passed, bool expected_result, const std::string& fail_message) noexcept;
 
-    void print() noexcept
+
+    void print_argument_leader()
     {
-        std::cerr << std::endl;
+        std::cerr << "Argument: (";
+    }
+
+    void print_argument_trailer()
+    {
+        std::cerr << ")" << std::endl;
+    }
+
+    void print_arguments() noexcept
+    {
+        print_argument_leader();
+        print_argument_trailer();
     }
 
     template<typename Argument_Type>
-    void print(const Argument_Type& arg) noexcept
+    void print_list(const Argument_Type& arg) noexcept
     {
-        std::cerr << "'" << arg << "'" << std::endl;
+        std::cerr << "'" << arg << "'";
     }
 
     template<typename First_Argument_Type, typename ...Rest_Argument_Types>
-    void print(const First_Argument_Type& first, const Rest_Argument_Types& ... rest) noexcept
+    void print_list(const First_Argument_Type& first, const Rest_Argument_Types& ... rest) noexcept
     {
-        std::cerr << "'" << first << "', ";
-        print(rest...);
+        print_list(first);
+        std::cerr << ", ";
+        print_list(rest ...);
+    }
+    template<typename ...Argument_Types>
+    void print_arguments(const Argument_Types& ... arguments) noexcept
+    {
+        print_argument_leader();
+        print_list(arguments...);
+        print_argument_trailer();
+    }
+
+    template<typename Result_Type>
+    void print_result(const Result_Type& result)
+    {
+        std::cerr << result;
+    }
+
+    template<>
+    void print_result(const std::vector<std::string>& results)
+    {
+        std::cerr << "{";
+        if(results.empty())
+        {
+            std::cerr << "}";
+            return;
+        }
+
+        std::cerr << results.front();
+        std::for_each(std::next(results.begin()), results.end(), [](auto s) { std::cerr << ", " << s; });
+        std::cerr << "}";
     }
 
     // Run the callable f on the arguments. If the result of the argument is not
@@ -77,33 +118,12 @@ namespace
         auto result = f(arguments...);
         if(result != expected_result)
         {
-            std::cerr << test_name << " failed. Expected result: '" << expected_result << "'; Got: '" << result << "'" << std::endl;
-            std::cerr << "Arguments: ";
-            print(arguments...);
-            tests_passed = false;
-        }
-    }
-
-    // A specialization of the test_function() template that handles
-    // functions that return a std::vector<std::string>.
-    template<typename ...Argument_Types, typename Function>
-    void test_function(bool& tests_passed, const std::string& test_name, const std::vector<std::string>& expected_result, Function f, const Argument_Types& ... arguments)  noexcept(noexcept(f))
-    {
-        auto result = f(arguments...);
-        if(result != expected_result)
-        {
             std::cerr << test_name << " failed. Expected result: '";
-            for(const auto& s : expected_result)
-            {
-                std::cerr << s << ", ";
-            }
+            print_result(expected_result);
             std::cerr << "'; Got: '";
-            for(const auto& s : result)
-            {
-                std::cerr << s << ", ";
-            }
-            std::cerr << "'\nArguments: ";
-            print(arguments...);
+            print_result(result);
+            std::cerr << "'" << std::endl;
+            print_arguments(arguments...);
             tests_passed = false;
         }
     }
@@ -126,8 +146,7 @@ namespace
         if(function_threw_exception != should_throw)
         {
             std::cerr << test_name << " failed. Function should" << (should_throw ? " " : " not ") << "have thrown." << std::endl;
-            std::cerr << "Arguments: ";
-            print(arguments...);
+            print_arguments(arguments...);
             if( ! error_message.empty())
             {
                 std::cerr << error_message << std::endl;
@@ -549,11 +568,12 @@ bool run_tests()
     test_function(tests_passed, "String::add_to_file_name() with dot", "a-b.c", String::add_to_file_name, "a.c", "-b");
     test_function(tests_passed, "String::add_to_file_name() with no dot", "a-b", String::add_to_file_name, "a", "-b");
 
-    test_function(tests_passed, "String::split()", {"a", "b", "c", "d", "e"}, String::split, "\t a b c d e ", "", -1);
-    test_function(tests_passed, "Split on comma", {"", ""}, String::split, ",", ",", 1);
-    test_function(tests_passed, "Ellipses split", {"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", -1);
-    test_function(tests_passed, "Ellipses split", {"", "a", "b", "c", "d.."}, String::split, "..a..b..c..d..", "..", 4);
-    test_function(tests_passed, "Ellipses split", {"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", 5);
+    using vs = std::vector<std::string>;
+    test_function(tests_passed, "String::split()", vs{"a", "b", "c", "d", "e"}, String::split, "\t a b c d e ", "", -1);
+    test_function(tests_passed, "Split on comma", vs{"", ""}, String::split, ",", ",", 1);
+    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", -1);
+    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, String::split, "..a..b..c..d..", "..", 4);
+    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", 5);
 
     // Number formating
     std::vector<std::pair<int, std::string>> tests =
