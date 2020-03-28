@@ -161,9 +161,19 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 
 void Gene::mutate() noexcept
 {
-    if(Random::success_probability(1, 1000))
+    if(is_active())
     {
-        active = ! active;
+        if(Random::success_probability(1, 1000))
+        {
+            active = false;
+        }
+    }
+    else
+    {
+        if(Random::success_probability(1, 100))
+        {
+            active = true;
+        }
     }
 
     if( ! is_active())
