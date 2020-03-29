@@ -103,14 +103,14 @@ namespace
         lists.back().push_back(move);
     }
 
-    void add_standard_legal_move(indexed_move_array& out, Piece piece, int file_step, int rank_step) noexcept
+    void add_standard_legal_move(indexed_move_array& out, Piece piece, int file_step, int rank_step, bool blockable) noexcept
     {
         for(auto start : Square::all_squares())
         {
             auto end = start + Square_Difference{file_step, rank_step};
             if(end.inside_board())
             {
-                add_legal_move<Move>(out, piece, true, start, end);
+                add_legal_move<Move>(out, piece, blockable, start, end);
             }
         }
     }
@@ -182,7 +182,7 @@ namespace
 
                 for(int move_size = 1; move_size <= 7; ++move_size)
                 {
-                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank);
+                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank, true);
                 }
             }
         }
@@ -197,7 +197,7 @@ namespace
             {
                 for(auto rank_direction : {-1, 1})
                 {
-                    add_standard_legal_move(out, {color, Piece_Type::KNIGHT}, d_file*file_direction, d_rank*rank_direction);
+                    add_standard_legal_move(out, {color, Piece_Type::KNIGHT}, d_file*file_direction, d_rank*rank_direction, false);
                 }
             }
         }
@@ -211,7 +211,7 @@ namespace
             {
                 for(int move_size = 1; move_size <= 7; ++move_size)
                 {
-                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank);
+                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank, true);
                 }
             }
         }
@@ -235,7 +235,7 @@ namespace
             {
                 if(d_rank == 0 && d_file == 0) { continue; }
 
-                add_standard_legal_move(out, king, d_file, d_rank);
+                add_standard_legal_move(out, king, d_file, d_rank, true);
                 if(d_rank == 0)
                 {
                     if(d_file > 0)
