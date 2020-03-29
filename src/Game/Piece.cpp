@@ -84,11 +84,11 @@ namespace
     // Add a move to the list that is only legal when starting from a certain square
     // (e.g., castling, pawn double move, promotion, etc.)
     template<typename Move_Type, typename ...Parameters>
-    void add_legal_move(indexed_move_array& out, Piece piece, bool add_new_list, Parameters ... parameters) noexcept
+    void add_legal_move(indexed_move_array& out, Piece piece, bool blockable, Parameters ... parameters) noexcept
     {
         auto move = new Move_Type(parameters...);
         auto& lists = out[piece.index()][move->start().index()];
-        if(lists.empty() || add_new_list)
+        if(lists.empty() || ! blockable)
         {
             lists.push_back({});
         }
@@ -108,7 +108,7 @@ namespace
             auto end = start + Square_Difference{file_step, rank_step};
             if(end.inside_board())
             {
-                add_legal_move<Move>(out, piece, false, start, end);
+                add_legal_move<Move>(out, piece, true, start, end);
             }
         }
     }
@@ -129,7 +129,7 @@ namespace
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            add_legal_move<Pawn_Double_Move>(out, pawn, false, color, file);
+            add_legal_move<Pawn_Double_Move>(out, pawn, true, color, file);
         }
 
         auto possible_promotions = {Piece_Type::QUEEN, Piece_Type::KNIGHT, Piece_Type::ROOK, Piece_Type::BISHOP};
@@ -155,7 +155,7 @@ namespace
             {
                 for(auto file = first_file; file <= last_file; ++file)
                 {
-                    add_legal_move<Pawn_Promotion>(out, pawn, true, promote, color, file, dir);
+                    add_legal_move<Pawn_Promotion>(out, pawn, false, promote, color, file, dir);
                 }
             }
         }
@@ -164,7 +164,7 @@ namespace
         {
             for(auto file = 'a'; file <= 'h'; ++file)
             {
-                add_legal_move<Pawn_Promotion>(out, pawn, true, promote, color, file);
+                add_legal_move<Pawn_Promotion>(out, pawn, false, promote, color, file);
             }
         }
     }
