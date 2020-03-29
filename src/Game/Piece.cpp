@@ -18,23 +18,45 @@
 
 #include "Utility/Fixed_Capacity_Vector.h"
 
-const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_Type::KING}.index() + 1;
+const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_Type::SPIDER}.index() + 1;
 
 namespace
 {
-    using indexed_move_array = std::array<std::array<Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>, 64>, 12>;
+    constexpr const auto number_of_pieces = 32; // black and white
+    constexpr const auto number_of_starting_squares = 64;
+    constexpr const auto number_of_move_directions = 16;
+    constexpr const auto maximum_moves_per_direction = 7;
+    using indexed_move_array =
+        std::array<
+            std::array<
+                Fixed_Capacity_Vector<
+                    Fixed_Capacity_Vector<const Move*, maximum_moves_per_direction>,
+                number_of_move_directions>,
+            number_of_starting_squares>,
+        number_of_pieces>;
 
     void add_pawn_moves(indexed_move_array& out, Piece_Color color) noexcept;
-    void add_rook_moves(indexed_move_array& out, Piece_Color color, Piece_Type type = Piece_Type::ROOK) noexcept;
-    void add_knight_moves(indexed_move_array& out, Piece_Color color) noexcept;
-    void add_bishop_moves(indexed_move_array& out, Piece_Color color, Piece_Type type = Piece_Type::BISHOP) noexcept;
+    void add_rook_moves(indexed_move_array& out, Piece_Color color, Piece_Type type = Piece_Type::ROOK, int maximum_range = 7) noexcept;
+    void add_knight_moves(indexed_move_array& out, Piece_Color color, Piece_Type type = Piece_Type::KNIGHT) noexcept;
+    void add_bishop_moves(indexed_move_array& out, Piece_Color color, Piece_Type type = Piece_Type::BISHOP, int maximum_range = 7) noexcept;
     void add_queen_moves(indexed_move_array& out, Piece_Color color) noexcept;
     void add_king_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_leopard_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_cannon_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_unicorn_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_dragon_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_chancellor_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_archbishop_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_elephant_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_hawk_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_fortress_moves(indexed_move_array& out, Piece_Color color) noexcept;
+    void add_spider_moves(indexed_move_array& out, Piece_Color color) noexcept;
 
     const auto legal_moves =
         []()
         {
-            indexed_move_array result;
+            auto result_heap = new indexed_move_array;
+            auto& result = *result_heap;
             for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
             {
                 add_pawn_moves(result, color);
@@ -43,16 +65,27 @@ namespace
                 add_bishop_moves(result, color);
                 add_queen_moves(result, color);
                 add_king_moves(result, color);
+                add_leopard_moves(result, color);
+                add_cannon_moves(result, color);
+                add_unicorn_moves(result, color);
+                add_dragon_moves(result, color);
+                add_chancellor_moves(result, color);
+                add_archbishop_moves(result, color);
+                add_elephant_moves(result, color);
+                add_hawk_moves(result, color);
+                add_fortress_moves(result, color);
+                add_spider_moves(result, color);
             }
 
-            return result;
+            return result_heap;
         }();
 
 
     const auto attack_moves =
         []()
         {
-            indexed_move_array result;
+            auto result_heap = new indexed_move_array;
+            auto& result = *result_heap;
             for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
             {
                 for(auto type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
@@ -60,7 +93,7 @@ namespace
                     auto piece = Piece{color, type};
                     for(size_t index = 0; index < 64; ++index)
                     {
-                        for(const auto& move_list : legal_moves[piece.index()][index])
+                        for(const auto& move_list : (*legal_moves)[piece.index()][index])
                         {
                             result[piece.index()][index].push_back({});
 
@@ -79,7 +112,7 @@ namespace
                 }
             }
 
-            return result;
+            return result_heap;
         }();
 
 
@@ -171,7 +204,7 @@ namespace
         }
     }
 
-    void add_rook_moves(indexed_move_array& out, Piece_Color color, Piece_Type type) noexcept
+    void add_rook_moves(indexed_move_array& out, Piece_Color color, Piece_Type type, int maximum_range) noexcept
     {
         for(int d_file = -1; d_file <= 1; ++d_file)
         {
@@ -180,7 +213,7 @@ namespace
                 if(d_file == 0 && d_rank == 0) { continue; }
                 if(d_file != 0 && d_rank != 0) { continue; }
 
-                for(int move_size = 1; move_size <= 7; ++move_size)
+                for(int move_size = 1; move_size <= maximum_range; ++move_size)
                 {
                     add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank, true);
                 }
@@ -188,7 +221,7 @@ namespace
         }
     }
 
-    void add_knight_moves(indexed_move_array& out, Piece_Color color) noexcept
+    void add_knight_moves(indexed_move_array& out, Piece_Color color, Piece_Type type) noexcept
     {
         for(auto d_file : {1, 2})
         {
@@ -197,19 +230,19 @@ namespace
             {
                 for(auto rank_direction : {-1, 1})
                 {
-                    add_standard_legal_move(out, {color, Piece_Type::KNIGHT}, d_file*file_direction, d_rank*rank_direction, false);
+                    add_standard_legal_move(out, {color, type}, d_file*file_direction, d_rank*rank_direction, false);
                 }
             }
         }
     }
 
-    void add_bishop_moves(indexed_move_array& out, Piece_Color color, Piece_Type type) noexcept
+    void add_bishop_moves(indexed_move_array& out, Piece_Color color, Piece_Type type, int maximum_range) noexcept
     {
         for(int d_rank : {-1, 1})
         {
             for(int d_file : {-1, 1})
             {
-                for(int move_size = 1; move_size <= 7; ++move_size)
+                for(int move_size = 1; move_size <= maximum_range; ++move_size)
                 {
                     add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank, true);
                 }
@@ -257,6 +290,154 @@ namespace
             }
         }
     }
+    
+    void add_leopard_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        add_bishop_moves(out, color, Piece_Type::LEOPARD, 2);
+        add_knight_moves(out, color, Piece_Type::LEOPARD);
+    }
+
+    void add_cannon_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        auto piece = Piece{color, Piece_Type::CANNON};
+        add_rook_moves(out, piece.color(), piece.type(), 1);
+        add_bishop_moves(out, piece.color(), piece.type(), 1);
+        
+        for(auto rank_change : {-2, 2})
+        {
+            add_standard_legal_move(out, piece, 0, rank_change, false);
+        }
+
+        for(auto rank_change : {-1, 0, 1})
+        {
+            for(auto file_change : {-2, +2})
+            {
+                add_standard_legal_move(out, piece, file_change, rank_change, false);
+            }
+        }
+    }
+
+    void add_unicorn_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        auto piece = Piece{color, Piece_Type::UNICORN};
+        add_knight_moves(out, piece.color(), piece.type());
+
+        for(auto file_change : {1, 3})
+        {
+            auto rank_change = (file_change == 1 ? 3 : 1);
+            for(auto file_direction : {-1, 1})
+            {
+                for(auto rank_direction : {-1, 1})
+                {
+                    add_standard_legal_move(out, piece, file_direction*file_change, rank_direction*rank_change, false);
+                }
+            }
+        }
+    }
+
+    void add_dragon_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        auto piece = Piece{color, Piece_Type::DRAGON};
+        add_rook_moves(out, piece.color(), piece.type());
+        add_bishop_moves(out, piece.color(), piece.type());
+        add_knight_moves(out, piece.color(), piece.type());
+    }
+
+    void add_chancellor_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        auto piece = Piece{color, Piece_Type::CHANCELLOR};
+        add_rook_moves(out, piece.color(), piece.type());
+        add_knight_moves(out, piece.color(), piece.type());
+    }
+
+    void add_archbishop_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        auto piece = Piece{color, Piece_Type::ARCHBISHOP};
+        add_bishop_moves(out, piece.color(), piece.type());
+        add_knight_moves(out, piece.color(), piece.type());
+    }
+
+    void add_elephant_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        auto piece = Piece{color, Piece_Type::ELEPHANT};
+        add_rook_moves(out, piece.color(), piece.type(), 1);
+        add_bishop_moves(out, piece.color(), piece.type(), 1);
+
+        for(auto file_change : {-2, 0, 2})
+        {
+            for(auto rank_change : {-2, 0, 2})
+            {
+                if(file_change == 0 && rank_change == 0)
+                {
+                    continue;
+                }
+
+                add_standard_legal_move(out, piece, file_change, rank_change, false);
+            }
+        }
+    }
+    
+    void add_hawk_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        for(auto file_step : {-1, 0, 1})
+        {
+            for(auto rank_step : {-1, 0, 1})
+            {
+                for(auto step_size : {2, 3})
+                {
+                    if(file_step == 0 && rank_step == 0)
+                    {
+                        continue;
+                    }
+
+                    add_standard_legal_move(out, Piece{color, Piece_Type::HAWK}, file_step*step_size, rank_step*step_size, false);
+                }
+            }
+        }
+    }
+    
+    void add_fortress_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        auto piece = Piece{color, Piece_Type::FORTRESS};
+        add_bishop_moves(out, piece.color(), piece.type(), 3);
+
+        for(auto file_change : {-2, 2})
+        {
+            add_standard_legal_move(out, piece, file_change, 0, false);
+        }
+
+        for(auto rank_change : {-2, 2})
+        {
+            for(auto file_change : {-1, 0, 1})
+            {
+                add_standard_legal_move(out, piece, file_change, rank_change, false);
+            }
+        }
+    }
+    
+    void add_spider_moves(indexed_move_array& out, Piece_Color color) noexcept
+    {
+        auto piece = Piece{color, Piece_Type::SPIDER};
+        add_bishop_moves(out, piece.color(), piece.type(), 2);
+        
+        for(auto file_change = -2; file_change <= 2; ++file_change)
+        {
+            for(auto rank_change = -2; rank_change <= 2; ++rank_change)
+            {
+                if(std::abs(file_change) < 2 && std::abs(rank_change) < 2)
+                {
+                    continue;
+                }
+
+                if(std::abs(file_change) == 2 && std::abs(rank_change) == 2)
+                {
+                    continue;
+                }
+
+                add_standard_legal_move(out, piece, file_change, rank_change, false);
+            }
+        }
+    }
 }
 
 Piece::Piece() noexcept : piece_code(invalid_code)
@@ -290,7 +471,7 @@ std::string Piece::pgn_symbol() const noexcept
 char Piece::fen_symbol() const noexcept
 {
     assert(*this);
-    static const auto symbols = "PRNBQK";
+    static const auto symbols = "PRNBQKLCUDMAEHFS";
     auto symbol = symbols[static_cast<int>(type())];
     return (color() == Piece_Color::WHITE ? symbol : std::tolower(symbol));
 }
@@ -312,7 +493,7 @@ bool Piece::can_move(const Move* move) const noexcept
 const Piece::list_of_move_lists& Piece::move_lists(Square square) const noexcept
 {
     assert(*this);
-    return legal_moves[index()][square.index()];
+    return (*legal_moves)[index()][square.index()];
 }
 
 Piece_Type Piece::type() const noexcept
@@ -334,7 +515,7 @@ Piece::piece_code_t Piece::index() const noexcept
 const Piece::list_of_move_lists& Piece::attacking_move_lists(Square square) const noexcept
 {
     assert(*this);
-    return attack_moves[index()][square.index()];
+    return (*attack_moves)[index()][square.index()];
 }
 
 bool operator==(Piece a, Piece b) noexcept

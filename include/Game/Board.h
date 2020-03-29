@@ -38,6 +38,8 @@ class Board
         //! \brief Constructs a board in the standard starting position.
         Board() noexcept;
 
+        virtual ~Board() = default;
+
         //! \brief Constructs a board according to an FEN string.
         //!
         //! \param fen An text string given in FEN.
@@ -298,6 +300,10 @@ class Board
         //! Returns 0 if no moves have been made on the board.
         size_t previous_moves_count() const noexcept;
 
+    protected:
+        void place_piece(Piece piece, Square square) noexcept;
+        virtual void other_move_effects(const Move& move) noexcept;
+
     private:
         std::array<Piece, 64> board;
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
@@ -349,7 +355,6 @@ class Board
         void clear_en_passant_target() noexcept;
         bool is_en_passant_targetable(Square square) const noexcept;
         bool is_in_legal_moves_list(const Move& move) const noexcept;
-        void place_piece(Piece piece, Square square) noexcept;
         bool all_empty_between(Square start, Square end) const noexcept;
         void set_unmoved(Square square) noexcept;
         void update_board(const Move& move) noexcept;

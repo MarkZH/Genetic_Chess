@@ -20,7 +20,17 @@ enum class Piece_Type
     KNIGHT,
     BISHOP,
     QUEEN,
-    KING
+    KING,
+    LEOPARD,
+    CANNON,
+    UNICORN,
+    DRAGON,
+    CHANCELLOR,
+    ARCHBISHOP,
+    ELEPHANT,
+    HAWK,
+    FORTRESS,
+    SPIDER
 };
 
 //! \brief A class to represent chess pieces.
@@ -30,7 +40,7 @@ class Piece
 {
     private:
         using piece_code_t = unsigned int;
-        using list_of_move_lists = Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>;
+        using list_of_move_lists = Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 16>;
 
     public:
         //! \brief Create an invalid piece that can represent an unoccupied space on a Board.

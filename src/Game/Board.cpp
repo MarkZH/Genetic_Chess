@@ -33,7 +33,7 @@ namespace
     []()
     {
         // One entry for each piece on each square (including no piece)
-        std::array<std::array<uint64_t, 13>, 64> hash_cache;
+        std::array<std::array<uint64_t, 33>, 64> hash_cache;
         for(auto& square_indexed_row : hash_cache)
         {
             std::generate(square_indexed_row.begin(),
@@ -138,6 +138,36 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
                             fen_error("More than one " + color_text(color) + " king.");
                         }
                         place_piece({color, Piece_Type::KING}, {file, rank});
+                        break;
+                    case 'L':
+                        place_piece({color, Piece_Type::LEOPARD}, {file, rank});
+                        break;
+                    case 'C':
+                        place_piece({color, Piece_Type::CANNON}, {file, rank});
+                        break;
+                    case 'U':
+                        place_piece({color, Piece_Type::UNICORN}, {file, rank});
+                        break;
+                    case 'D':
+                        place_piece({color, Piece_Type::DRAGON}, {file, rank});
+                        break;
+                    case 'M':
+                        place_piece({color, Piece_Type::CHANCELLOR}, {file, rank});
+                        break;
+                    case 'A':
+                        place_piece({color, Piece_Type::ARCHBISHOP}, {file, rank});
+                        break;
+                    case 'E':
+                        place_piece({color, Piece_Type::ELEPHANT}, {file, rank});
+                        break;
+                    case 'H':
+                        place_piece({color, Piece_Type::HAWK}, {file, rank});
+                        break;
+                    case 'F':
+                        place_piece({color, Piece_Type::FORTRESS}, {file, rank});
+                        break;
+                    case 'S':
+                        place_piece({color, Piece_Type::SPIDER}, {file, rank});
                         break;
                     default:
                         fen_error(std::string("Invalid symbol in FEN string: ") + symbol);
@@ -554,6 +584,7 @@ void Board::move_piece(const Move& move) noexcept
     {
         clear_repeat_count();
     }
+    other_move_effects(move);
     remove_piece(move.start());
     place_piece(moving_piece, move.end());
 
@@ -1370,4 +1401,8 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
 size_t Board::previous_moves_count() const noexcept
 {
     return prior_moves_count;
+}
+
+void Board::other_move_effects(const Move& move) noexcept
+{
 }
