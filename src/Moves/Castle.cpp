@@ -10,7 +10,8 @@ Castle::Castle(int base_rank, Direction direction) noexcept :
     Move({'e', base_rank},
          {(direction == Direction::RIGHT ? 'g' : 'c'), base_rank}),
     rook_move({(direction == Direction::RIGHT ? 'h' : 'a'), base_rank},
-              {(direction == Direction::RIGHT ? 'f' : 'd'), base_rank})
+              {(direction == Direction::RIGHT ? 'f' : 'd'), base_rank}),
+    last_empty_square(direction == Direction::LEFT ? end() + Square_Difference{-1, 0} : Square{})
 {
     set_capturing_ability(false);
 }
@@ -21,7 +22,7 @@ bool Castle::move_specific_legal(const Board& board) const noexcept
             && ! board.piece_has_moved(rook_move.start())
             && ! board.king_is_in_check()
             && board.safe_for_king(rook_move.end(), board.whose_turn())
-            && board.all_empty_between(start(), rook_move.start());
+            && ! (last_empty_square.inside_board() && board.piece_on_square(last_empty_square));
 }
 
 void Castle::side_effects(Board& board) const noexcept

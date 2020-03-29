@@ -46,6 +46,7 @@ class Castle : public Move
 
     private:
         Move rook_move;
+        Square last_empty_square;
 };
 
 #endif // CASTLE_H

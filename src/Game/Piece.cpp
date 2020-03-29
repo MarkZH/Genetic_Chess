@@ -224,6 +224,9 @@ namespace
     void add_king_moves(indexed_move_array& out, Piece_Color color) noexcept
     {
         auto king = Piece{color, Piece_Type::KING};
+        auto kingside_castle_added = false;
+        auto queenside_castle_added = false;
+        int base_rank = (color == Piece_Color::WHITE ? 1 : 8);
         for(int d_rank = -1; d_rank <= 1; ++d_rank)
         {
             for(int d_file = -1; d_file <= 1; ++d_file)
@@ -231,12 +234,26 @@ namespace
                 if(d_rank == 0 && d_file == 0) { continue; }
 
                 add_standard_legal_move(out, king, d_file, d_rank);
+                if(d_rank == 0)
+                {
+                    if(d_file > 0)
+                    {
+                        if( ! kingside_castle_added)
+                        {
+                            add_legal_move<Castle>(out, king, true, base_rank, Direction::RIGHT);
+                            kingside_castle_added = true;
+                        }
+                    }
+                    else
+                    {
+                        if( ! queenside_castle_added)
+                        {
+                            add_legal_move<Castle>(out, king, true, base_rank, Direction::LEFT);
+                        }
+                    }
+                }
             }
         }
-
-        int base_rank = (color == Piece_Color::WHITE ? 1 : 8);
-        add_legal_move<Castle>(out, king, true, base_rank, Direction::LEFT);
-        add_legal_move<Castle>(out, king, true, base_rank, Direction::RIGHT);
     }
 }
 
