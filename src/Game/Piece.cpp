@@ -18,6 +18,8 @@
 
 #include "Utility/Fixed_Capacity_Vector.h"
 
+const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_Type::KING}.index() + 1;
+
 namespace
 {
     using indexed_move_array = std::array<std::array<Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>, 64>, 12>;
@@ -256,8 +258,6 @@ namespace
         }
     }
 }
-
-const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_Type::KING}.index() + 1;
 
 Piece::Piece() noexcept : piece_code(invalid_code)
 {
