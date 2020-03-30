@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cassert>
 #include <array>
+#include <cctype>
 
 #include "Game/Square.h"
 #include "Game/Color.h"
@@ -22,6 +23,8 @@ const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_
 
 namespace
 {
+    const std::string pgn_symbols = "PRNBQKLCUDMAEHFS";
+
     constexpr const auto number_of_pieces = 32; // black and white
     constexpr const auto number_of_starting_squares = 64;
     constexpr const auto number_of_move_directions = 16;
@@ -419,7 +422,7 @@ namespace
     {
         auto piece = Piece{color, Piece_Type::SPIDER};
         add_bishop_moves(out, piece.color(), piece.type(), 2);
-        
+
         for(auto file_change = -2; file_change <= 2; ++file_change)
         {
             for(auto rank_change = -2; rank_change <= 2; ++rank_change)
@@ -437,6 +440,16 @@ namespace
                 add_standard_legal_move(out, piece, file_change, rank_change, false);
             }
         }
+    }
+
+    Piece_Type piece_type_from_char(char pgn_symbol)
+    {
+        auto i = pgn_symbols.find(std::toupper(pgn_symbol));
+        if(i == std::string::npos)
+        {
+            throw std::invalid_argument(pgn_symbol + std::string{" is not a valid piece PGN symbol."});
+        }
+        return static_cast<Piece_Type>(i);
     }
 }
 
@@ -456,6 +469,11 @@ Piece::Piece(Piece_Color color, Piece_Type type) noexcept :
     //  +--- Piece_Type::KING
 }
 
+Piece::Piece(char pgn_symbol) : Piece(std::isupper(pgn_symbol) ? Piece_Color::WHITE : Piece_Color::BLACK,
+                                      piece_type_from_char(pgn_symbol))
+{
+}
+
 Piece_Color Piece::color() const noexcept
 {
     assert(*this);
@@ -471,8 +489,7 @@ std::string Piece::pgn_symbol() const noexcept
 char Piece::fen_symbol() const noexcept
 {
     assert(*this);
-    static const auto symbols = "PRNBQKLCUDMAEHFS";
-    auto symbol = symbols[static_cast<int>(type())];
+    auto symbol = pgn_symbols[static_cast<int>(type())];
     return (color() == Piece_Color::WHITE ? symbol : std::tolower(symbol));
 }
 
