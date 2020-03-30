@@ -18,6 +18,8 @@ class Musketeer_Board : public Board
 
     private:
         std::array<std::array<Piece, 8>, 2> gated_pieces{}; // indexed by gated_pieces[Color index][File index]
+
+        void pick_and_place_random_gated_pieces() noexcept;
 };
 
 #endif // MUSKETEER_BOARD_H

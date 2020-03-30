@@ -2,22 +2,58 @@
 
 #include <string>
 #include <array>
+#include <algorithm>
+#include <stdexcept>
 
 #include "Game/Piece.h"
 #include "Moves/Move.h"
+#include "Game/Color.h"
+
 #include "Utility/String.h"
+#include "Utility/Random.h"
 
 namespace
 {
     std::string extract_standard_fen(const std::string& original_fen)
     {
-        return std::string();
+        if( ! String::contains(original_fen, "*"))
+        {
+            throw std::runtime_error("No gate rows in board field: " + original_fen);
+        }
+
+        auto tokens = String::split(original_fen);
+        auto board_rows = String::split(tokens.front(), "/");
+        if(board_rows.size() != 10)
+        {
+            throw std::runtime_error("Wrong number of rows in board field: " + original_fen);
+        }
+
+        auto standard_board = String::join(std::next(board_rows.begin()), std::prev(board_rows.end()), "/");
+        auto standard_fen = standard_board + " " + String::join(std::next(tokens.begin()), tokens.end(), " ");
     }
 }
 
 Musketeer_Board::Musketeer_Board(const std::string& input_fen) : Board(extract_standard_fen(input_fen))
 {
-    // interpret other fields
+    auto tokens = String::split(input_fen);
+    auto board_rows = String::split(tokens.front(), "/");
+    for(auto gate_index : {0, 9})
+    {
+        auto gate = board_rows[gate_index];
+        auto gate_color = gate_index == 0 ? Piece_Color::BLACK : Piece_Color::WHITE;
+        for(auto i = 0; i < gate.size(); ++i)
+        {
+            if(gate[i] != '*')
+            {
+                gated_pieces[static_cast<int>(gate_color)][i] = Piece{gate[i]};
+            }
+        }
+    }
+
+    if(ply_count() == 0)
+    {
+        pick_and_place_random_gated_pieces();
+    }
 }
 
 void Musketeer_Board::other_move_effects(const Move& move) noexcept
@@ -30,6 +66,55 @@ void Musketeer_Board::other_move_effects(const Move& move) noexcept
         {
             place_piece(gated_piece, move.start());
             gated_piece = {};
+        }
+    }
+}
+
+void Musketeer_Board::pick_and_place_random_gated_pieces() noexcept
+{
+    static const auto choices = std::array<Piece_Type, 10>{Piece_Type::LEOPARD,
+                                                           Piece_Type::CANNON,
+                                                           Piece_Type::UNICORN,
+                                                           Piece_Type::DRAGON,
+                                                           Piece_Type::CHANCELLOR,
+                                                           Piece_Type::ARCHBISHOP,
+                                                           Piece_Type::ELEPHANT,
+                                                           Piece_Type::HAWK,
+                                                           Piece_Type::FORTRESS,
+                                                           Piece_Type::SPIDER};
+    auto blank_gates = std::count(gated_pieces.front().begin(), gated_pieces.front().end(), Piece{});
+    auto pieces_needed = blank_gates - 6; // maximum of 2
+    for(auto i = 0; i < pieces_needed; ++i)
+    {
+        auto type = Random::random_element(choices);
+        while(true)
+        {
+            if(std::any_of(gated_pieces.front().begin(), gated_pieces.front().end(),
+                           [type](auto piece)
+                           {
+                               return piece.type() == type;
+                           }))
+            {
+                type = Random::random_element(choices);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
+        {
+            auto gated_piece = Piece{color, type};
+            while(true)
+            {
+                auto& current_piece = Random::random_element(gated_pieces[static_cast<int>(color)]);
+                if( ! current_piece)
+                {
+                    current_piece = gated_piece;
+                    break;
+                }
+            }
         }
     }
 }
