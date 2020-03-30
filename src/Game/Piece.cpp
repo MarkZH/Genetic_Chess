@@ -293,7 +293,7 @@ namespace
             }
         }
     }
-    
+
     void add_leopard_moves(indexed_move_array& out, Piece_Color color) noexcept
     {
         add_bishop_moves(out, color, Piece_Type::LEOPARD, 2);
@@ -305,7 +305,7 @@ namespace
         auto piece = Piece{color, Piece_Type::CANNON};
         add_rook_moves(out, piece.color(), piece.type(), 1);
         add_bishop_moves(out, piece.color(), piece.type(), 1);
-        
+
         for(auto rank_change : {-2, 2})
         {
             add_standard_legal_move(out, piece, 0, rank_change, false);
@@ -379,7 +379,7 @@ namespace
             }
         }
     }
-    
+
     void add_hawk_moves(indexed_move_array& out, Piece_Color color) noexcept
     {
         for(auto file_step : {-1, 0, 1})
@@ -398,7 +398,7 @@ namespace
             }
         }
     }
-    
+
     void add_fortress_moves(indexed_move_array& out, Piece_Color color) noexcept
     {
         auto piece = Piece{color, Piece_Type::FORTRESS};
