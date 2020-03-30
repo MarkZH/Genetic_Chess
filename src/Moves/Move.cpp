@@ -125,11 +125,12 @@ std::string Move::algebraic_base(const Board& board) const noexcept
     return move_record;
 }
 
-std::string Move::result_mark(const Board& board) const noexcept
+std::string Move::result_mark(const Board& current_board) const noexcept
 {
-    auto mark = board.extra_move_mark(*this);
-    auto result = board.copy()->submit_move(*this);
-    if(board.king_is_in_check())
+    auto board = current_board.copy();
+    auto mark = board->extra_move_mark(*this);
+    auto result = board->submit_move(*this);
+    if(board->king_is_in_check())
     {
         if(result.winner() == Winner_Color::NONE)
         {
