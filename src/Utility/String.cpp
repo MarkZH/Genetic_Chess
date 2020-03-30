@@ -12,7 +12,7 @@
 
 namespace
 {
-    const auto whitespace = " \t\n";
+    const auto whitespace = " \t\n\r";
 }
 
 std::vector<std::string> String::split(std::string s, std::string delim, size_t count) noexcept
