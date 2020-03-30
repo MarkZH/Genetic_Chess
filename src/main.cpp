@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
                 Clock::seconds game_time{};
                 size_t moves_per_reset = 0;
                 Clock::seconds increment_time{};
-                std::unique_ptr<Board> board;
+                auto board = std::make_unique<Board>();
                 bool pondering_allowed = false;
                 std::string game_file_name;
                 std::string event_name;
@@ -332,7 +332,7 @@ namespace
         auto expect_fifty_move_draw = false;
         auto expect_threefold_draw = false;
         auto in_game = false;
-        std::unique_ptr<Board> board;
+        auto board = std::make_unique<Board>();
         Game_Result result;
 
         while(std::getline(input, line))
