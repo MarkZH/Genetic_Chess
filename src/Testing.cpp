@@ -934,8 +934,6 @@ bool run_perft_tests()
 
 bool run_musketeer_perft_tests()
 {
-    auto all_results = std::ofstream("musketeer_perft_results_all.txt");
-    auto good_results = std::ofstream("musketeer_perft_results_good.txt");
     auto bad_results = std::ofstream("musketeer_perft_results_bad.txt");
 
     auto test_result = true;
@@ -961,21 +959,15 @@ bool run_musketeer_perft_tests()
                     auto actual_count = move_count(board, depth);
                     auto expected_count = String::to_number<decltype(actual_count)>(split.back());
                     std::cout << board.fen();
-                    all_results << board.fen();
                     if(actual_count == expected_count)
                     {
                         std::cout << " OK!" << std::endl;
-                        all_results << " OK!" << std::endl;
-                        good_results << board.fen() << std::endl;
                     }
                     else
                     {
                         std::cout << " Wrong answer. Expected: " << expected_count
                                   << " Got: " << actual_count
                                   << " Difference: " << int(actual_count) - int(expected_count) << std::endl;
-                        all_results << " Wrong answer. Expected: " << expected_count
-                                    << " Got: " << actual_count
-                                    << " Difference: " << int(actual_count) - int(expected_count) << std::endl;
                         bad_results << board.fen() << std::endl;
 
                         test_result = false;
