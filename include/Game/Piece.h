@@ -42,6 +42,8 @@ class Piece
         //! \param type The type of piece.
         Piece(Piece_Color color, Piece_Type type) noexcept;
 
+        explicit Piece(char pgn_symbol);
+
         //! \brief Get the PGN symbol for the piece.
         //!
         //! \returns The symbol for the moving piece when writing a game record. A pawn is represented by an empty string.

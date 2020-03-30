@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cassert>
 #include <array>
+#include <cctype>
 
 #include "Game/Square.h"
 #include "Game/Color.h"
@@ -22,6 +23,8 @@ const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_
 
 namespace
 {
+    const std::string pgn_symbols = "PRNBQK";
+
     using indexed_move_array = std::array<std::array<Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>, 64>, 12>;
 
     void add_pawn_moves(indexed_move_array& out, Piece_Color color) noexcept;
@@ -257,6 +260,16 @@ namespace
             }
         }
     }
+
+    Piece_Type piece_type_from_char(char pgn_symbol)
+    {
+        auto i = pgn_symbols.find(std::toupper(pgn_symbol));
+        if(i == std::string::npos)
+        {
+            throw std::invalid_argument(pgn_symbol + std::string{" is not a valid piece PGN symbol."});
+        }
+        return static_cast<Piece_Type>(i);
+    }
 }
 
 Piece::Piece() noexcept : piece_code(invalid_code)
@@ -275,6 +288,11 @@ Piece::Piece(Piece_Color color, Piece_Type type) noexcept :
     //  +--- Piece_Type::KING
 }
 
+Piece::Piece(char pgn_symbol) : Piece(std::isupper(pgn_symbol) ? Piece_Color::WHITE : Piece_Color::BLACK,
+                                      piece_type_from_char(pgn_symbol))
+{
+}
+
 Piece_Color Piece::color() const noexcept
 {
     assert(*this);
@@ -290,8 +308,7 @@ std::string Piece::pgn_symbol() const noexcept
 char Piece::fen_symbol() const noexcept
 {
     assert(*this);
-    static const auto symbols = "PRNBQK";
-    auto symbol = symbols[static_cast<int>(type())];
+    auto symbol = pgn_symbols[static_cast<int>(type())];
     return (color() == Piece_Color::WHITE ? symbol : std::tolower(symbol));
 }
 

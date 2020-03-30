@@ -110,38 +110,19 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
                     fen_error("Too many squares in rank " + std::to_string(rank));
                 }
 
-                Piece_Color color = (isupper(symbol) ? Piece_Color::WHITE : Piece_Color::BLACK);
-                switch(toupper(symbol))
+                auto piece = Piece{symbol};
+                
+                if(piece.type() == Piece_Type::PAWN && (rank == 1 || rank == 8))
                 {
-                    case 'P':
-                        if(rank == 1 || rank == 8)
-                        {
-                            fen_error("Pawns cannot be placed on the home ranks.");
-                        }
-                        place_piece({color, Piece_Type::PAWN}, {file, rank});
-                        break;
-                    case 'R':
-                        place_piece({color, Piece_Type::ROOK}, {file, rank});
-                        break;
-                    case 'N':
-                        place_piece({color, Piece_Type::KNIGHT}, {file, rank});
-                        break;
-                    case 'B':
-                        place_piece({color, Piece_Type::BISHOP}, {file, rank});
-                        break;
-                    case 'Q':
-                        place_piece({color, Piece_Type::QUEEN}, {file, rank});
-                        break;
-                    case 'K':
-                        if(find_king(color).is_set())
-                        {
-                            fen_error("More than one " + color_text(color) + " king.");
-                        }
-                        place_piece({color, Piece_Type::KING}, {file, rank});
-                        break;
-                    default:
-                        fen_error(std::string("Invalid symbol in FEN string: ") + symbol);
+                    fen_error("Pawns cannot be placed on the home ranks.");
                 }
+
+                if(piece.type() == Piece_Type::KING && find_king(piece.color()).is_set())
+                {
+                    fen_error("More than one " + color_text(piece.color()) + " king.");
+                }
+                
+                place_piece(piece, {file, rank});
                 ++file;
             }
         }
