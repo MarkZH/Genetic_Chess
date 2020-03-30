@@ -50,7 +50,7 @@ Musketeer_Board::Musketeer_Board(const std::string& input_fen) :
     {
         auto gate = board_rows[gate_index];
         auto gate_color = gate_index == 0 ? Piece_Color::BLACK : Piece_Color::WHITE;
-        for(auto i = 0; i < gate.size(); ++i)
+        for(size_t i = 0; i < gate.size(); ++i)
         {
             if(gate[i] != '*')
             {
