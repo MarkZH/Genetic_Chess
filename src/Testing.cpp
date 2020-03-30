@@ -946,7 +946,7 @@ bool run_musketeer_perft_tests()
         {
             if(test_file.is_regular_file() && test_file.path().extension() == ".csv")
             {
-                auto input = std::ifstream(test_file);
+                auto input = std::ifstream(test_file.path());
                 std::string line;
                 while(std::getline(input, line))
                 {
