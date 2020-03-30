@@ -1368,12 +1368,12 @@ size_t Board::previous_moves_count() const noexcept
     return prior_moves_count;
 }
 
-std::string Board::extra_move_mark(const Move& move) const noexcept
+std::string Board::extra_move_mark(const Move&) const noexcept
 {
     return {};
 }
 
-void Board::other_move_effects(const Move& move) noexcept
+void Board::other_move_effects(const Move&) noexcept
 {
 }
 
