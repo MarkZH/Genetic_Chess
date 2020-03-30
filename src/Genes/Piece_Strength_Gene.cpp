@@ -22,19 +22,19 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
     properties.erase("Priority");
-    for(auto piece_type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
+    for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
-        auto piece = Piece{Piece_Color::WHITE, piece_type};
-        properties[std::string(1, piece.fen_symbol())] = piece_value(piece_type);
+        auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
+        properties[std::string(1, piece.fen_symbol())] = piece_value(piece);
     }
 }
 
 void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
-    for(auto piece_type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
+    for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
-        auto piece = Piece{Piece_Color::WHITE, piece_type};
-        piece_value(piece_type) = properties.at(std::string(1, piece.fen_symbol()));
+        auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
+        piece_value(piece.type()) = properties.at(std::string(1, piece.fen_symbol()));
     }
 
     renormalize_values();
