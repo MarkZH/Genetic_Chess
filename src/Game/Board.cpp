@@ -111,7 +111,7 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
                 }
 
                 auto piece = Piece{symbol};
-                
+
                 if(piece.type() == Piece_Type::PAWN && (rank == 1 || rank == 8))
                 {
                     fen_error("Pawns cannot be placed on the home ranks.");
@@ -121,7 +121,7 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
                 {
                     fen_error("More than one " + color_text(piece.color()) + " king.");
                 }
-                
+
                 place_piece(piece, {file, rank});
                 ++file;
             }
