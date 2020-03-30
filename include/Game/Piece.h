@@ -42,6 +42,10 @@ class Piece
         //! \param type The type of piece.
         Piece(Piece_Color color, Piece_Type type) noexcept;
 
+        //! \brief Create a piece from a single character PGN symbol
+        //!
+        //! \param pgn_symbol A character indicating a piece in PGN format (uppercase for white,
+        //!        lowercase for black, and the letter indicating the piece type).
         explicit Piece(char pgn_symbol);
 
         //! \brief Get the PGN symbol for the piece.
