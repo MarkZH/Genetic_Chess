@@ -152,7 +152,7 @@ class Move
         bool is_en_passant_move = false;
 
         virtual bool move_specific_legal(const Board& board) const noexcept;
-        std::string result_mark(Board board) const noexcept;
+        std::string result_mark(const Board& board) const noexcept;
 };
 
 #endif // MOVE_H

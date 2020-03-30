@@ -5,8 +5,10 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <optional>
+#include <memory>
 
 #include "Game/Board.h"
+#include "Game/Board_Factory.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 
@@ -41,7 +43,7 @@ CECP_Mediator::CECP_Mediator(const Player& local_player)
     }
 }
 
-Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
+Game_Result CECP_Mediator::setup_turn(std::unique_ptr<Board>& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
 {
     using centiseconds = std::chrono::duration<int, std::centi>;
 
@@ -54,14 +56,14 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         std::string command;
         try
         {
-            command = receive_cecp_command(board, clock, false);
+            command = receive_cecp_command(*board, clock, false);
         }
         catch(const Game_Ended& game_ending_error)
         {
             return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
         }
 
-        board.pick_move_now(); // Stop pondering
+        board->pick_move_now(); // Stop pondering
 
         if(command == "go")
         {
@@ -72,7 +74,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         else if(command == "new")
         {
             log("Setting board to standard start position and resetting clock");
-            board = Board{};
+            board = std::make_unique<Board>();
             clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(Piece_Color::WHITE), clock.reset_mode(), Piece_Color::WHITE);
             own_time_left.reset();
             opponent_time_left.reset();
@@ -93,13 +95,13 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 
             // Handle GUIs that send the next board position
             // instead of a move.
-            auto new_move_list = board.derive_moves(fen);
+            auto new_move_list = board->derive_moves(fen);
             if(new_move_list.empty())
             {
                 try
                 {
                     log("Rearranging board to: " + fen);
-                    board = Board(fen);
+                    board = board_factory(fen);
                     move_list.clear();
                     setup_result = {};
                 }
@@ -113,8 +115,8 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                 for(auto move : new_move_list)
                 {
                     log("Derived move: " + move->coordinates());
-                    setup_result = board.submit_move(*move);
-                    move_list.push_back(board.last_move());
+                    setup_result = board->submit_move(*move);
+                    move_list.push_back(board->last_move());
                 }
             }
         }
@@ -124,8 +126,8 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             try
             {
                 log("Applying move: " + move);
-                setup_result = board.submit_move(move);
-                move_list.push_back(board.last_move());
+                setup_result = board->submit_move(move);
+                move_list.push_back(board->last_move());
                 if(setup_result.game_has_ended())
                 {
                     report_end_of_game(setup_result);
@@ -168,7 +170,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                           reset_moves,
                           increment,
                           Time_Reset_Method::ADDITION,
-                          board.whose_turn(),
+                          board->whose_turn(),
                           clock.game_start_date_and_time());
             own_time_left.reset();
             opponent_time_left.reset();
@@ -183,7 +185,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                           1,
                           0.0s,
                           Time_Reset_Method::SET_TO_ORIGINAL,
-                          board.whose_turn(),
+                          board->whose_turn(),
                           clock.game_start_date_and_time());
             own_time_left.reset();
             opponent_time_left.reset();
@@ -232,14 +234,14 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 
     if(own_time_left.has_value())
     {
-        log("Setting own time (" + color_text(board.whose_turn()) + ") to " + std::to_string(own_time_left->count()) + " seconds.");
-        clock.set_time(board.whose_turn(), own_time_left.value());
+        log("Setting own time (" + color_text(board->whose_turn()) + ") to " + std::to_string(own_time_left->count()) + " seconds.");
+        clock.set_time(board->whose_turn(), own_time_left.value());
     }
 
     if(opponent_time_left.has_value())
     {
-        log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time_left->count()) + " seconds.");
-        clock.set_time(opposite(board.whose_turn()), opponent_time_left.value());
+        log("Setting opponent's time (" + color_text(opposite(board->whose_turn())) + ") to " + std::to_string(opponent_time_left->count()) + " seconds.");
+        clock.set_time(opposite(board->whose_turn()), opponent_time_left.value());
     }
 
     if( ! clock.is_running())
@@ -247,17 +249,17 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         clock.start();
     }
 
-    if(clock.running_for() != board.whose_turn())
+    if(clock.running_for() != board->whose_turn())
     {
-        clock.punch(board);
+        clock.punch(*board);
     }
 
-    board.choose_move_at_leisure();
+    board->choose_move_at_leisure();
 
     return setup_result;
 }
 
-bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock)
+bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& command, std::unique_ptr<Board>& board, Clock& clock)
 {
     if(move_list.empty())
     {
@@ -268,12 +270,12 @@ bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& 
     {
         log("Undoing move: " + move_list.back()->coordinates());
         move_list.pop_back();
-        auto new_board = Board(board.original_fen());
+        auto new_board = board_factory(board->original_fen());
         for(auto move : move_list)
         {
-            new_board.submit_move(*move);
+            new_board->submit_move(*move);
         }
-        board = new_board;
+        board = std::move(new_board);
         clock.unpunch();
         return true;
     }
@@ -284,7 +286,7 @@ void CECP_Mediator::listen(const Board& board, Clock& clock)
     last_listening_command = std::async(std::launch::async, &CECP_Mediator::listener, this, std::ref(board), std::ref(clock));
 }
 
-Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list, const Player&) const
+Game_Result CECP_Mediator::handle_move(std::unique_ptr<Board>& board, const Move& move, std::vector<const Move*>& move_list, const Player&) const
 {
     if(in_force_mode)
     {
@@ -295,7 +297,7 @@ Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vect
     {
         send_command("move " + move.coordinates());
         move_list.push_back(&move);
-        auto result = board.submit_move(move);
+        auto result = board->submit_move(move);
         if(result.game_has_ended())
         {
             report_end_of_game(result);

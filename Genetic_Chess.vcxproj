@@ -230,6 +230,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\game\Board.cpp" />
+    <ClCompile Include="src\Game\Board_Factory.cpp" />
     <ClCompile Include="src\game\Clock.cpp" />
     <ClCompile Include="src\game\Color.cpp" />
     <ClCompile Include="src\game\Game.cpp" />
@@ -279,6 +280,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game\Board.h" />
+    <ClInclude Include="include\Game\Board_Factory.h" />
     <ClInclude Include="include\game\Clock.h" />
     <ClInclude Include="include\game\Color.h" />
     <ClInclude Include="include\game\Game.h" />

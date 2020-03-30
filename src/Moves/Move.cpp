@@ -125,24 +125,23 @@ std::string Move::algebraic_base(const Board& board) const noexcept
     return move_record;
 }
 
-std::string Move::result_mark(Board board) const noexcept
+std::string Move::result_mark(const Board& board) const noexcept
 {
-    auto result = board.submit_move(*this);
+    auto mark = board.extra_move_mark(*this);
+    auto result = board.copy()->submit_move(*this);
     if(board.king_is_in_check())
     {
         if(result.winner() == Winner_Color::NONE)
         {
-            return "+";
+            mark += "+";
         }
         else
         {
-            return "#";
+            mark += "#";
         }
     }
-    else
-    {
-        return {};
-    }
+
+    return mark;
 }
 
 std::string Move::coordinates() const noexcept

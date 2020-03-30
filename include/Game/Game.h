@@ -22,7 +22,7 @@ class Game_Result;
 //! \param pgn_file_name The name of the file where the game record will be written. If empty,
 //!        the game will be written to stdout.
 //! \returns The result of the game.
-Game_Result play_game(Board board,
+Game_Result play_game(const Board& board,
                       Clock game_clock,
                       const Player& white,
                       const Player& black,

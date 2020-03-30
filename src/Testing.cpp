@@ -13,8 +13,10 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <string>
+#include <filesystem>
 
 #include "Game/Board.h"
+#include "Game/Musketeer_Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
@@ -305,8 +307,8 @@ bool run_tests()
                 continue;
             }
 
-            auto next_board = fifty_move_board;
-            auto result = next_board.submit_move(*move);
+            auto next_board = fifty_move_board.copy();
+            auto result = next_board->submit_move(*move);
 
             if(result.winner() != Winner_Color::NONE)
             {
@@ -349,21 +351,21 @@ bool run_tests()
     auto castling_hash_board = Board("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
 
     // Lose all castling rights due to king moving
-    auto just_kings_move_board = castling_hash_board;
+    auto just_kings_move_board = castling_hash_board.copy();
     for(auto move : {"Ke2", "Ke7", "Ke1", "Ke8"})
     {
-        just_kings_move_board.submit_move(move);
+        just_kings_move_board->submit_move(move);
     }
 
     // Lose all castling rights due to rooks moving
-    auto just_rooks_move_board = castling_hash_board;
+    auto just_rooks_move_board = castling_hash_board.copy();
     for(auto move : {"Ra2", "Ra7", "Ra1", "Ra8", "Rh2", "Rh7", "Rh1", "Rh8"})
     {
-        just_rooks_move_board.submit_move(move);
+        just_rooks_move_board->submit_move(move);
     }
 
-    test_result(tests_passed, just_kings_move_board.board_hash() == just_rooks_move_board.board_hash(), "Boards should have same hash after castling rights lost");
-    test_result(tests_passed, just_kings_move_board.board_hash() != castling_hash_board.board_hash(), "Boards should have different hashes with different castling rights");
+    test_result(tests_passed, just_kings_move_board->board_hash() == just_rooks_move_board->board_hash(), "Boards should have same hash after castling rights lost");
+    test_result(tests_passed, just_kings_move_board->board_hash() != castling_hash_board.board_hash(), "Boards should have different hashes with different castling rights");
 
 
     // Test Genetic_AI file loading
@@ -471,11 +473,11 @@ bool run_tests()
     king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, Piece_Color::WHITE, king_confined_by_pawns_score);
 
     auto king_protection_gene = King_Protection_Gene();
-    auto king_protection_board = king_confinement_board;
+    auto king_protection_board = king_confinement_board.copy();
     auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
     auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
     auto king_protection_score = double(max_square_count - square_count)/max_square_count;
-    king_protection_gene.test(tests_passed, king_protection_board, Piece_Color::WHITE, king_protection_score);
+    king_protection_gene.test(tests_passed, *king_protection_board, Piece_Color::WHITE, king_protection_score);
 
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
@@ -784,14 +786,14 @@ void run_speed_tests()
 
     std::cout << "Board::submit_move() speed ..." << std::endl;
     auto game_watch = Scoped_Stopwatch::start_stopwatch("");
-    Board speed_board;
+    auto speed_board = std::make_unique<Board>();
     for(auto i = 0; i < number_of_tests; ++i)
     {
-        auto move = Random::random_element(speed_board.legal_moves());
-        auto move_result = speed_board.submit_move(*move);
+        auto move = Random::random_element(speed_board->legal_moves());
+        auto move_result = speed_board->submit_move(*move);
         if(move_result.game_has_ended())
         {
-            speed_board = Board{};
+            speed_board = std::make_unique<Board>();
         }
     }
     timing_results.emplace_back(game_watch.time_so_far(), "Board::submit_move()");
@@ -799,45 +801,45 @@ void run_speed_tests()
 
     std::cout << "Board::submit_move() with copy speed ..." << std::endl;
     auto copy_game_watch = Scoped_Stopwatch::start_stopwatch("");
-    Board copy_speed_board;
+    auto copy_speed_board = std::make_unique<Board>();
     for(auto i = 0; i < number_of_tests; ++i)
     {
-        auto move = Random::random_element(copy_speed_board.legal_moves());
-        auto copy = copy_speed_board;
-        auto move_result = copy.submit_move(*move);
+        auto move = Random::random_element(copy_speed_board->legal_moves());
+        auto copy = copy_speed_board->copy();
+        auto move_result = copy->submit_move(*move);
         if(move_result.game_has_ended())
         {
-            copy_speed_board = Board{};
+            copy_speed_board = std::make_unique<Board>();
         }
         else
         {
-            copy_speed_board = copy;
+            copy_speed_board = std::move(copy);
         }
     }
     timing_results.emplace_back(copy_game_watch.time_so_far(), "Board::submit_move() with copy");
 
     std::cout << "Board::quiescent() speed ... " << std::flush;
     auto quiescent_watch = Scoped_Stopwatch::start_stopwatch("");
-    Board quiescent_board;
+    auto quiescent_board = std::make_unique<Board>();
     size_t move_count = 0;
     for(auto i = 0; i < number_of_tests; ++i)
     {
         while(true)
         {
-            auto move = Random::random_element(quiescent_board.legal_moves());
-            auto move_result = quiescent_board.submit_move(*move);
+            auto move = Random::random_element(quiescent_board->legal_moves());
+            auto move_result = quiescent_board->submit_move(*move);
             ++move_count;
             if(move_result.game_has_ended())
             {
-                quiescent_board = Board{};
+                quiescent_board = std::make_unique<Board>();
             }
-            else if( ! quiescent_board.safe_for_king(move->end(), opposite(quiescent_board.whose_turn())))
+            else if( ! quiescent_board->safe_for_king(move->end(), opposite(quiescent_board->whose_turn())))
             {
                 break;
             }
         }
 
-        auto quiescent_result_board = quiescent_board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0});
+        auto quiescent_result_board = quiescent_board->quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0});
     }
     timing_results.emplace_back(quiescent_watch.time_so_far() - (board_submit_time*move_count)/number_of_tests, "Board::quiescent()");
     std::cout << "(non-quiescent moves = " << String::format_integer(move_count, ",") << ")" << std::endl;
@@ -928,6 +930,62 @@ bool run_perft_tests()
         std::cout << std::endl;
     }
     return tests_failed.empty();
+}
+
+bool run_musketeer_perft_tests()
+{
+    auto all_results = std::ofstream("musketeer_perft_results_all.txt");
+    auto good_results = std::ofstream("musketeer_perft_results_good.txt");
+    auto bad_results = std::ofstream("musketeer_perft_results_bad.txt");
+
+    auto test_result = true;
+    auto base_directory = std::filesystem::path{"../musketeer-chess/Perft/"};
+    for(auto test_directory : std::filesystem::directory_iterator(base_directory))
+    {
+        for(auto test_file : std::filesystem::directory_iterator(test_directory))
+        {
+            if(test_file.is_regular_file() && test_file.path().extension() == ".csv")
+            {
+                auto input = std::ifstream(test_file);
+                std::string line;
+                while(std::getline(input, line))
+                {
+                    auto split = String::split(line, ",");
+                    if(split.size() != 2)
+                    {
+                        std::cout << " XXX Bad test" << std::endl;
+                        continue;
+                    }
+                    const auto depth = 4;
+                    auto board = Musketeer_Board(split.front());
+                    auto actual_count = move_count(board, depth);
+                    auto expected_count = String::to_number<decltype(actual_count)>(split.back());
+                    std::cout << board.fen();
+                    all_results << board.fen();
+                    if(actual_count == expected_count)
+                    {
+                        std::cout << " OK!" << std::endl;
+                        all_results << " OK!" << std::endl;
+                        good_results << board.fen() << std::endl;
+                    }
+                    else
+                    {
+                        std::cout << " Wrong answer. Expected: " << expected_count
+                                  << " Got: " << actual_count
+                                  << " Difference: " << int(actual_count) - int(expected_count) << std::endl;
+                        all_results << " Wrong answer. Expected: " << expected_count
+                                    << " Got: " << actual_count
+                                    << " Difference: " << int(actual_count) - int(expected_count) << std::endl;
+                        bad_results << board.fen() << std::endl;
+
+                        test_result = false;
+                    }
+                }
+            }
+        }
+    }
+
+    return test_result;
 }
 
 void print_randomness_sample()
@@ -1033,9 +1091,9 @@ namespace
         unsigned long long count = 0;
         for(auto move : board.legal_moves())
         {
-            auto next_board = board;
-            next_board.submit_move(*move);
-            count += move_count(next_board, maximum_depth - 1);
+            auto next_board = board.copy();
+            next_board->submit_move(*move);
+            count += move_count(*next_board, maximum_depth - 1);
         }
 
         return count;
@@ -1061,7 +1119,8 @@ namespace
 
             auto test_type = String::lowercase(String::remove_extra_whitespace(specification.at(0)));
             auto board_fen = String::remove_extra_whitespace(specification.at(1));
-            auto board = board_fen == "start" ? Board{} : Board{board_fen};
+            board_fen = board_fen == "start" ? Board{}.fen() : board_fen;
+            auto board = Board(board_fen);
             auto test_passed = true;
 
             if(test_type == "all moves legal")
@@ -1126,18 +1185,18 @@ namespace
                 assert(specification.size() == 4);
                 auto moves = String::split(specification.at(2));
                 test_result(test_passed, all_moves_legal(board, moves), "Bad test: Illegal moves");
-                auto actual_result_board = board;
+                auto actual_result_board = board.copy();
                 for(auto move : board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0}))
                 {
-                    actual_result_board.submit_move(*move);
+                    actual_result_board->submit_move(*move);
                 }
                 for(auto quiescent_move : String::split(specification.at(3)))
                 {
                     board.submit_move(quiescent_move);
                 }
                 test_result(test_passed,
-                            board.fen() == actual_result_board.fen(),
-                            "Expected: " + board.fen() + "\nGot:      " + actual_result_board.fen());
+                            board.fen() == actual_result_board->fen(),
+                            "Expected: " + board.fen() + "\nGot:      " + actual_result_board->fen());
             }
             else
             {

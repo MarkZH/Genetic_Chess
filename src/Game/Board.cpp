@@ -12,8 +12,10 @@
 #include <string>
 #include <chrono>
 using namespace std::chrono_literals;
+#include <memory>
 
 #include "Game/Board.h"
+#include "Game/Board_Factory.h"
 #include "Game/Clock.h"
 #include "Game/Square.h"
 #include "Game/Game_Result.h"
@@ -250,6 +252,11 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
 void Board::fen_error(const std::string& reason) const
 {
     throw std::invalid_argument("Bad FEN input: " + starting_fen + "\n" + reason);
+}
+
+std::unique_ptr<Board> Board::copy() const noexcept
+{
+    return std::unique_ptr<Board>(new Board(*this));
 }
 
 Piece& Board::piece_on_square(Square square) noexcept
@@ -524,6 +531,9 @@ const Move& Board::create_move(std::string move_text) const
 
 void Board::move_piece(const Move& move) noexcept
 {
+    auto piece_first_move = ! piece_has_moved(move.start());
+    auto moving_king_from_check = king_is_in_check() && piece_on_square(move.start()).type() == Piece_Type::KING;
+    
     if(piece_on_square(move.end()))
     {
         remove_piece(move.end());
@@ -535,9 +545,13 @@ void Board::move_piece(const Move& move) noexcept
     {
         clear_repeat_count();
     }
-    other_move_effects(move);
     remove_piece(move.start());
     place_piece(moving_piece, move.end());
+    
+    if(piece_first_move && ! moving_king_from_check)
+    {
+        other_move_effects(move);
+    }
 
     clear_en_passant_target();
 }
@@ -893,37 +907,37 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         print_game_header_line(out_stream, "FEN", starting_fen);
     }
 
-    auto commentary_board = Board(starting_fen);
-    auto starting_turn_offset = size_t(commentary_board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
+    auto commentary_board = board_factory(starting_fen);
+    auto starting_turn_offset = size_t(commentary_board->whose_turn() == Piece_Color::WHITE ? 0 : 1);
 
     for(size_t i = 0; i < game_record_listing.size(); ++i)
     {
         auto step = first_full_move_label + (i + starting_turn_offset)/2;
-        if(commentary_board.whose_turn() == Piece_Color::WHITE || i == 0)
+        if(commentary_board->whose_turn() == Piece_Color::WHITE || i == 0)
         {
             out_stream << '\n' << step << ".";
-            if(i == 0 && commentary_board.whose_turn() == Piece_Color::BLACK)
+            if(i == 0 && commentary_board->whose_turn() == Piece_Color::BLACK)
             {
                 out_stream << " ...";
             }
         }
 
         auto next_move = game_record_listing.at(i);
-        out_stream << " " << next_move->algebraic(commentary_board);
-        auto current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
+        out_stream << " " << next_move->algebraic(*commentary_board);
+        auto current_player = (commentary_board->whose_turn() == Piece_Color::WHITE ? white : black);
         if(current_player)
         {
-            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(commentary_board, step));
+            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(*commentary_board, step));
             if( ! commentary.empty())
             {
                 out_stream << " " << commentary;
             }
         }
-        commentary_board.submit_move(*next_move);
+        commentary_board->submit_move(*next_move);
     }
     out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
 
-    assert(commentary_board.fen() == fen());
+    assert(commentary_board->fen() == fen());
 }
 
 void Board::make_en_passant_targetable(Square square) noexcept
@@ -1354,6 +1368,16 @@ size_t Board::previous_moves_count() const noexcept
     return prior_moves_count;
 }
 
+std::string Board::extra_move_mark(const Move& move) const noexcept
+{
+    return {};
+}
+
 void Board::other_move_effects(const Move& move) noexcept
 {
+}
+
+void Board::set_initial_fen(const std::string& fen) noexcept
+{
+    starting_fen = fen;
 }

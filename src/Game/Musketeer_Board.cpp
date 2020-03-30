@@ -33,7 +33,16 @@ namespace
     }
 }
 
-Musketeer_Board::Musketeer_Board(const std::string& input_fen) : Board(extract_standard_fen(input_fen))
+Musketeer_Board::Musketeer_Board() noexcept : Board()
+{
+    pick_and_place_random_gated_pieces();
+    set_unmoved_gate_guardians();
+    set_initial_fen(fen());
+}
+
+Musketeer_Board::Musketeer_Board(const std::string& input_fen) :
+    Board(extract_standard_fen(input_fen)),
+    starting_fen(String::remove_extra_whitespace(input_fen))
 {
     auto tokens = String::split(input_fen);
     auto board_rows = String::split(tokens.front(), "/");
@@ -50,10 +59,47 @@ Musketeer_Board::Musketeer_Board(const std::string& input_fen) : Board(extract_s
         }
     }
 
+    if(fen() != starting_fen)
+    {
+        throw std::runtime_error("Input FEN not preserved.\nOriginal: " + input_fen + "\nResult: " + fen());
+    }
+
     if(ply_count() == 0)
     {
         pick_and_place_random_gated_pieces();
     }
+
+    set_unmoved_gate_guardians();
+
+    set_initial_fen(fen());
+}
+
+std::unique_ptr<Board> Musketeer_Board::copy() const noexcept
+{
+    return std::unique_ptr<Musketeer_Board>(new Musketeer_Board(*this));
+}
+
+std::string Musketeer_Board::fen() const noexcept
+{
+    auto standard_fen = Board::fen();
+    auto tokens = String::split(standard_fen);
+    auto board_spec = gate_fen(Piece_Color::BLACK) + "/" + tokens.front() + "/" + gate_fen(Piece_Color::WHITE);
+    return board_spec + " " + String::join(std::next(tokens.begin()), tokens.end(), " ");
+}
+
+std::string Musketeer_Board::extra_move_mark(const Move& move) const noexcept
+{
+    auto base_rank = whose_turn() == Piece_Color::WHITE ? 1 : 8;
+    if(move.start().rank() == base_rank)
+    {
+        const auto& gated_piece = gated_pieces[static_cast<int>(whose_turn())][move.start().file() - 'a'];
+        if(gated_piece)
+        {
+            return "/" + gated_piece.pgn_symbol();
+        }
+    }
+
+    return {};
 }
 
 void Musketeer_Board::other_move_effects(const Move& move) noexcept
@@ -61,11 +107,13 @@ void Musketeer_Board::other_move_effects(const Move& move) noexcept
     auto base_rank = whose_turn() == Piece_Color::WHITE ? 1 : 8;
     if(move.start().rank() == base_rank)
     {
-        auto& gated_piece = gated_pieces[static_cast<int>(whose_turn())][move.start().file() - 'a'];
+        auto color_index = static_cast<int>(whose_turn());
+        auto file_index = move.start().file() - 'a';
+        auto gated_piece = gated_pieces[color_index][file_index];
         if(gated_piece)
         {
             place_piece(gated_piece, move.start());
-            gated_piece = {};
+            gated_pieces[color_index][file_index] = {};
         }
     }
 }
@@ -92,7 +140,7 @@ void Musketeer_Board::pick_and_place_random_gated_pieces() noexcept
             if(std::any_of(gated_pieces.front().begin(), gated_pieces.front().end(),
                            [type](auto piece)
                            {
-                               return piece.type() == type;
+                               return piece && piece.type() == type;
                            }))
             {
                 type = Random::random_element(choices);
@@ -109,7 +157,7 @@ void Musketeer_Board::pick_and_place_random_gated_pieces() noexcept
             while(true)
             {
                 auto& current_piece = Random::random_element(gated_pieces[static_cast<int>(color)]);
-                if( ! current_piece)
+                if(!current_piece)
                 {
                     current_piece = gated_piece;
                     break;
@@ -117,4 +165,30 @@ void Musketeer_Board::pick_and_place_random_gated_pieces() noexcept
             }
         }
     }
+}
+
+void Musketeer_Board::set_unmoved_gate_guardians() noexcept
+{
+    for(auto base_rank : {1, 8})
+    {
+        for(auto file = 'a'; file <= 'h'; ++file)
+        {
+            auto gate_index = file - 'a';
+            const auto& player_gated_pieces = gated_pieces[base_rank == 1 ? 0 : 1];
+            if(player_gated_pieces[gate_index])
+            {
+                set_unmoved({file, base_rank});
+            }
+        }
+    }
+}
+
+std::string Musketeer_Board::gate_fen(Piece_Color color) const noexcept
+{
+    std::string result;
+    for(auto piece : gated_pieces[static_cast<int>(color)])
+    {
+        result.push_back(piece ? piece.fen_symbol() : '*');
+    }
+    return result;
 }

@@ -9,6 +9,7 @@ using namespace std::chrono_literals;
 
 #include "Players/Player.h"
 #include "Game/Board.h"
+#include "Game/Board_Factory.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
@@ -24,24 +25,24 @@ UCI_Mediator::UCI_Mediator(const Player& player)
     send_command("uciok");
 }
 
-Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
+Game_Result UCI_Mediator::setup_turn(std::unique_ptr<Board>& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
 {
     Game_Result setup_result;
-    clock.punch(board);
+    clock.punch(*board);
 
     while(true)
     {
         std::string command;
         try
         {
-            command = receive_uci_command(board, false);
+            command = receive_uci_command(*board, false);
         }
         catch(const Game_Ended& game_ending_error)
         {
             return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
         }
 
-        board.pick_move_now(); // Stop pondering
+        board->pick_move_now(); // Stop pondering
 
         if(command == "ucinewgame")
         {
@@ -88,17 +89,12 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             auto parse = String::split(command);
             if(parse.at(1) == "startpos")
             {
-                board = Board();
+                board = std::make_unique<Board>();
             }
             else if(parse.at(1) == "fen")
             {
-                auto fen = std::accumulate(std::next(parse.begin(), 3), std::next(parse.begin(), 8),
-                                           parse.at(2),
-                                           [](const auto& so_far, const auto& next)
-                                           {
-                                               return so_far + " " + next;
-                                           });
-                board = Board(fen);
+                auto fen = String::join(std::next(parse.begin(), 2), std::next(parse.begin(), 8), " ");
+                board = board_factory(fen);
             }
 
             move_list.clear();
@@ -108,14 +104,14 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 std::for_each(std::next(moves_iter), parse.end(),
                               [&board, &move_list, &setup_result](const auto& move)
                               {
-                                  setup_result = board.submit_move(move);
-                                  move_list.push_back(board.last_move());
+                                  setup_result = board->submit_move(move);
+                                  move_list.push_back(board->last_move());
                               });
                 log("All moves applied");
             }
 
             log("Board ready for play");
-            board.set_thinking_mode(Thinking_Output_Type::UCI);
+            board->set_thinking_mode(Thinking_Output_Type::UCI);
         }
         else if(String::starts_with(command, "go "))
         {
@@ -191,11 +187,11 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             {
                 if(new_mode == Time_Reset_Method::ADDITION)
                 {
-                    clock = Clock(board.whose_turn() == Piece_Color::WHITE ? wtime : btime,
+                    clock = Clock(board->whose_turn() == Piece_Color::WHITE ? wtime : btime,
                                   movestogo,
-                                  board.whose_turn() == Piece_Color::WHITE ? winc : binc,
+                                  board->whose_turn() == Piece_Color::WHITE ? winc : binc,
                                   new_mode,
-                                  board.whose_turn(),
+                                  board->whose_turn(),
                                   clock.game_start_date_and_time());
                 }
                 else
@@ -204,7 +200,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                                   1,
                                   0.0s,
                                   new_mode,
-                                  board.whose_turn(),
+                                  board->whose_turn(),
                                   clock.game_start_date_and_time());
                 }
             }
@@ -220,7 +216,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 }
                 else
                 {
-                    clock.set_time(board.whose_turn(), movetime);
+                    clock.set_time(board->whose_turn(), movetime);
                 }
             }
 
@@ -229,13 +225,13 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 clock.start();
             }
 
-            if(clock.running_for() != board.whose_turn())
+            if(clock.running_for() != board->whose_turn())
             {
-                clock.punch(board);
+                clock.punch(*board);
             }
 
             log("Telling AI to choose a move at leisure");
-            board.choose_move_at_leisure();
+            board->choose_move_at_leisure();
             return setup_result;
         }
     }
@@ -246,7 +242,7 @@ void UCI_Mediator::listen(const Board& board, Clock&)
     last_listening_result = std::async(std::launch::async, &UCI_Mediator::listener, this, std::ref(board));
 }
 
-Game_Result UCI_Mediator::handle_move(Board& board,
+Game_Result UCI_Mediator::handle_move(std::unique_ptr<Board>& board,
                                       const Move& move,
                                       std::vector<const Move*>& move_list,
                                       const Player& player) const
@@ -259,7 +255,7 @@ Game_Result UCI_Mediator::handle_move(Board& board,
     }
     send_command(command);
     move_list.push_back(&move);
-    return board.submit_move(move);
+    return board->submit_move(move);
 }
 
 bool UCI_Mediator::pondering_allowed(const Board& board)

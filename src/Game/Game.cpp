@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <csignal>
 #include <cassert>
+#include <memory>
 
 #include "Players/Player.h"
 #include "Players/Outside_Communicator.h"
@@ -16,7 +17,7 @@
 
 #include "Utility/String.h"
 
-Game_Result play_game(Board board,
+Game_Result play_game(const Board& initial_board,
                       Clock game_clock,
                       const Player& white,
                       const Player& black,
@@ -25,8 +26,9 @@ Game_Result play_game(Board board,
                       const std::string& location,
                       const std::string& pgn_file_name) noexcept
 {
-    assert(board.whose_turn() == game_clock.running_for());
+    assert(initial_board.whose_turn() == game_clock.running_for());
 
+    auto board = initial_board.copy();
     std::vector<const Move*> game_record;
     Game_Result result;
 
@@ -34,29 +36,29 @@ Game_Result play_game(Board board,
 
     while( ! result.game_has_ended())
     {
-        auto& player  = board.whose_turn() == Piece_Color::WHITE ? white : black;
-        auto& thinker = board.whose_turn() == Piece_Color::WHITE ? black : white;
+        auto& player  = board->whose_turn() == Piece_Color::WHITE ? white : black;
+        auto& thinker = board->whose_turn() == Piece_Color::WHITE ? black : white;
 
-        thinker.ponder(board, pondering_allowed);
-        const auto& move_chosen = player.choose_move(board, game_clock);
+        thinker.ponder(*board, pondering_allowed);
+        const auto& move_chosen = player.choose_move(*board, game_clock);
 
-        result = game_clock.punch(board);
+        result = game_clock.punch(*board);
         if( ! result.game_has_ended())
         {
-            result = board.submit_move(move_chosen);
+            result = board->submit_move(move_chosen);
             game_record.push_back(&move_chosen);
         }
     }
 
     game_clock.stop();
-    board.print_game_record(game_record,
-                            &white,
-                            &black,
-                            pgn_file_name,
-                            result,
-                            game_clock,
-                            event_name,
-                            location);
+    board->print_game_record(game_record,
+                             &white,
+                             &black,
+                             pgn_file_name,
+                             result,
+                             game_clock,
+                             event_name,
+                             location);
     return result;
 }
 
@@ -70,7 +72,7 @@ void play_game_with_outsider(const Player& player,
     signal(SIGINT, SIG_IGN);
     signal(SIGTERM, SIG_IGN);
 
-    Board board;
+    auto board = std::make_unique<Board>();
     Clock clock;
     Game_Result game_result;
     std::vector<const Move*> game_record;
@@ -86,19 +88,19 @@ void play_game_with_outsider(const Player& player,
             {
                 break;
             }
-            outsider->listen(board, clock);
+            outsider->listen(*board, clock);
             print_game_record = true;
 
-            player_color = board.whose_turn();
-            const auto& chosen_move = player.choose_move(board, clock);
-            clock.punch(board);
+            player_color = board->whose_turn();
+            const auto& chosen_move = player.choose_move(*board, clock);
+            clock.punch(*board);
 
             game_result = outsider->handle_move(board, chosen_move, game_record, player);
             if(game_result.game_has_ended())
             {
                 break;
             }
-            player.ponder(board, outsider->pondering_allowed(board));
+            player.ponder(*board, outsider->pondering_allowed(*board));
         }
 
         outsider->log("Game ended with: " + game_result.ending_reason());
@@ -107,13 +109,13 @@ void play_game_with_outsider(const Player& player,
             clock.stop();
             auto white = (player_color == Piece_Color::WHITE ? &player : nullptr);
             auto black = (player_color == Piece_Color::BLACK ? &player : nullptr);
-            board.print_game_record(game_record,
-                                    white, black,
-                                    String::add_to_file_name(game_file_name, "-" + color_text(player_color)),
-                                    game_result,
-                                    clock,
-                                    event_name,
-                                    location);
+            board->print_game_record(game_record,
+                                     white, black,
+                                     String::add_to_file_name(game_file_name, "-" + color_text(player_color)),
+                                     game_result,
+                                     clock,
+                                     event_name,
+                                     location);
             print_game_record = false;
         }
 

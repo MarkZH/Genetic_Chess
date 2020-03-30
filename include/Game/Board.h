@@ -5,6 +5,7 @@
 #include <string>
 #include <array>
 #include <bitset>
+#include <memory>
 
 #include "Game/Color.h"
 #include "Game/Square.h"
@@ -40,11 +41,16 @@ class Board
 
         virtual ~Board() = default;
 
+        Board& operator=(const Board&) = delete;
+        Board& operator=(Board&&) = delete;
+
         //! \brief Constructs a board according to an FEN string.
         //!
         //! \param fen An text string given in FEN.
         //! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
         explicit Board(const std::string& fen);
+
+        virtual std::unique_ptr<Board> copy() const noexcept;
 
         //! \brief Updates the state of the board according to a Player-selected Move.
         //!
@@ -91,7 +97,7 @@ class Board
         //! This may slightly differ from the output of other programs
         //! in that the en passant target is only listed if there is a
         //! legal en passant move to be made.
-        std::string fen() const noexcept;
+        virtual std::string fen() const noexcept;
 
         //! \brief Returns the FEN string that was used to create the Board.
         std::string original_fen() const noexcept;
@@ -300,9 +306,16 @@ class Board
         //! Returns 0 if no moves have been made on the board.
         size_t previous_moves_count() const noexcept;
 
+        virtual std::string extra_move_mark(const Move& move) const noexcept;
+
     protected:
+        Board(const Board&) = default;
+        Board(Board&&) = default;
+
         void place_piece(Piece piece, Square square) noexcept;
+        void set_unmoved(Square square) noexcept;
         virtual void other_move_effects(const Move& move) noexcept;
+        void set_initial_fen(const std::string& fen) noexcept;
 
     private:
         std::array<Piece, 64> board;
@@ -356,7 +369,6 @@ class Board
         bool is_en_passant_targetable(Square square) const noexcept;
         bool is_in_legal_moves_list(const Move& move) const noexcept;
         bool all_empty_between(Square start, Square end) const noexcept;
-        void set_unmoved(Square square) noexcept;
         void update_board(const Move& move) noexcept;
         Game_Result move_result() const noexcept;
 
