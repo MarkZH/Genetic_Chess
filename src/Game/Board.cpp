@@ -533,7 +533,7 @@ void Board::move_piece(const Move& move) noexcept
 {
     auto piece_first_move = ! piece_has_moved(move.start());
     auto moving_king_from_check = king_is_in_check() && piece_on_square(move.start()).type() == Piece_Type::KING;
-    
+
     if(piece_on_square(move.end()))
     {
         remove_piece(move.end());
@@ -547,7 +547,7 @@ void Board::move_piece(const Move& move) noexcept
     }
     remove_piece(move.start());
     place_piece(moving_piece, move.end());
-    
+
     if(piece_first_move && ! moving_king_from_check)
     {
         other_move_effects(move);
