@@ -4,7 +4,7 @@ import subprocess, os, sys
 
 generator = './' + sys.argv[1]
 checker = './' + sys.argv[2]
-board = '' if len(sys.argv) == 3 else sys.argv[3]
+extra_options = sys.argv[3:]
 
 game_file = 'engine_fight.pgn'
 count = 0
@@ -22,8 +22,7 @@ while True:
     print('Game #' + str(count))
 
     generator_command = [generator, '-random', '-random', '-game-file', game_file]
-    if board:
-        generator_command.extend(['-board', board])
+    generator_command.extend(extra_options)
     out = subprocess.run(generator_command)
 
     if not os.path.isfile(game_file):
