@@ -29,7 +29,7 @@ namespace
         }
 
         auto standard_board = String::join(std::next(board_rows.begin()), std::prev(board_rows.end()), "/");
-        auto standard_fen = standard_board + " " + String::join(std::next(tokens.begin()), tokens.end(), " ");
+        return standard_board + " " + String::join(std::next(tokens.begin()), tokens.end(), " ");
     }
 }
 
