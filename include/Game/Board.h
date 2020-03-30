@@ -299,7 +299,7 @@ class Board
         //! values array.
         //! \param piece_values An array indexed by Piece::type() that gives
         //!        the value of the piece.
-        std::vector<const Move*> quiescent(const std::array<double, 6>& piece_values) const noexcept;
+        std::vector<const Move*> quiescent(const std::array<double, 16>& piece_values) const noexcept;
 
         //! \brief Returns the number of moves available to the opponent prior to the opponent's last move.
         //!

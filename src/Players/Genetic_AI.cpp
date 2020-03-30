@@ -98,7 +98,7 @@ double Genetic_AI::internal_evaluate(const Board& board, Piece_Color perspective
     return genome.evaluate(board, perspective, depth);
 }
 
-const std::array<double, 6>& Genetic_AI::piece_values() const noexcept
+const std::array<double, 16>& Genetic_AI::piece_values() const noexcept
 {
     return genome.piece_values();
 }

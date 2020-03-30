@@ -1283,7 +1283,7 @@ Board Board::without_random_pawn() const noexcept
     }
 }
 
-std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
+std::vector<const Move*> Board::quiescent(const std::array<double, 16>& piece_values) const noexcept
 {
     if( ! previous_move)
     {

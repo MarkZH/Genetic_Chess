@@ -8,6 +8,16 @@ N: 4
 R: 8
 Q: 16
 K: 32
+A: 64
+C: 128
+D: 256
+E: 512
+F: 1024
+H: 2048
+L: 4096
+M: 8192
+S: 16384
+U: 32768
 
 Name: Sphere of Influence Gene
 Active: 1

@@ -93,7 +93,7 @@ class Minimax_AI : public Player
                                          Piece_Color perspective,
                                          size_t depth) const  noexcept = 0;
 
-        virtual const std::array<double, 6>& piece_values() const noexcept = 0;
+        virtual const std::array<double, 16>& piece_values() const noexcept = 0;
 
         // Time management
         virtual Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept = 0;

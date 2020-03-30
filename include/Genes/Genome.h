@@ -83,7 +83,7 @@ class Genome
         double speculation_time_factor(const Board& board) const noexcept;
 
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
-        const std::array<double, 6>& piece_values() const noexcept;
+        const std::array<double, 16>& piece_values() const noexcept;
 
         //! \brief Print the genome data to the output stream (std::ofstream, std::cout, etc.).
         //!

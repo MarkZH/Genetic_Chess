@@ -104,7 +104,7 @@ class Genetic_AI : public Minimax_AI
                                  Piece_Color perspective,
                                  size_t depth) const noexcept override;
 
-        virtual const std::array<double, 6>& piece_values() const noexcept override;
+        virtual const std::array<double, 16>& piece_values() const noexcept override;
 
         // Time management
         Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept override;

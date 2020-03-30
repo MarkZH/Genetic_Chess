@@ -87,7 +87,7 @@ double Piece_Strength_Gene::piece_value(Piece piece) const noexcept
     }
 }
 
-const std::array<double, 6>& Piece_Strength_Gene::piece_values() const noexcept
+const std::array<double, 16>& Piece_Strength_Gene::piece_values() const noexcept
 {
     if(is_active())
     {
@@ -95,7 +95,7 @@ const std::array<double, 6>& Piece_Strength_Gene::piece_values() const noexcept
     }
     else
     {
-        static const auto inactive_piece_values = std::array<double, 6>{};
+        static const auto inactive_piece_values = std::array<double, 16>{};
         return inactive_piece_values;
     }
 }

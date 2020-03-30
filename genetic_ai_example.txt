@@ -7,7 +7,37 @@ N: 180.501
 P: 0.44133
 Q: 624.13
 R: 283.418
+A: 414 # New piece values manually added by scaling scores from
+C: 403 # https://musketeerchess.net/site/musketeer-chess-relative-piece-value/
+D: 699
+E: 339
+F: 408
+H: 296
+L: 360
+M: 430
+S: 438
+U: 301
 
+Name: Sphere of Influence Gene
+Active: 1
+King Target Factor: 2
+Legal Square Score: 4
+Illegal Square Score: 1
+Priority: 1
+
+Name: King   Confinement Gene
+Active: 1
+Friendly Block Score : 4
+Opponent Block Score: -1
+Priority: 1
+
+Name: Castling Possible Gene
+Active: 1
+Kingside Preference: 0.8
+Queenside Preference: 0.2
+Priority: 1
+
+END
 Name: Look Ahead Gene
 Active: 1
 Game Length Uncertainty: 0.686126
