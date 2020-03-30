@@ -8,6 +8,8 @@
 #include "Game/Piece.h"
 #include "Moves/Move.h"
 #include "Game/Color.h"
+#include "Game/Board.h"
+#include "Game/Game_Result.h"
 
 #include "Utility/String.h"
 #include "Utility/Random.h"
@@ -89,17 +91,17 @@ std::string Musketeer_Board::fen() const noexcept
 
 std::string Musketeer_Board::extra_move_mark(const Move& move) const noexcept
 {
-    auto base_rank = whose_turn() == Piece_Color::WHITE ? 1 : 8;
-    if(move.start().rank() == base_rank)
+    auto next_board = copy();
+    next_board->submit_move(move);
+    auto gated_piece = const_cast<const Board*>(next_board.get())->piece_on_square(move.start());
+    if(gated_piece)
     {
-        const auto& gated_piece = gated_pieces[static_cast<int>(whose_turn())][move.start().file() - 'a'];
-        if(gated_piece)
-        {
-            return "/" + gated_piece.pgn_symbol();
-        }
+        return "/" + gated_piece.pgn_symbol();
     }
-
-    return {};
+    else
+    {
+        return {};
+    }
 }
 
 void Musketeer_Board::other_move_effects(const Move& move) noexcept
