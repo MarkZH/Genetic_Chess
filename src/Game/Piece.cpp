@@ -386,13 +386,13 @@ namespace
         {
             for(auto rank_step : {-1, 0, 1})
             {
+                if(file_step == 0 && rank_step == 0)
+                {
+                    continue;
+                }
+
                 for(auto step_size : {2, 3})
                 {
-                    if(file_step == 0 && rank_step == 0)
-                    {
-                        continue;
-                    }
-
                     add_standard_legal_move(out, Piece{color, Piece_Type::HAWK}, file_step*step_size, rank_step*step_size, false);
                 }
             }
