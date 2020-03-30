@@ -417,7 +417,7 @@ namespace
             }
         }
     }
-    
+
     void add_spider_moves(indexed_move_array& out, Piece_Color color) noexcept
     {
         auto piece = Piece{color, Piece_Type::SPIDER};
