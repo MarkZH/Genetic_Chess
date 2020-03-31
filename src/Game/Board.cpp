@@ -660,7 +660,7 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexc
         }
 
         const auto& attack_direction_list = potential_attacks[static_cast<int>(attacking_color)][origin_square_index];
-        for(size_t index = 0; index < attack_direction_list.size()/2; ++index) // /2 to exclude knight moves, which are never blocked
+        for(size_t index = 0; index < 8; ++index) // < 8 to exclude knight moves, which are never blocked
         {
             if(attack_direction_list[index])
             {
