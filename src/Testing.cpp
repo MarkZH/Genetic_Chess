@@ -209,8 +209,9 @@ bool run_tests()
 
 
     // Piece construction tests
-    for(auto type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
+    for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
     {
+        auto type = static_cast<Piece_Type>(type_index);
         for(auto color : {Piece_Color::BLACK, Piece_Color::WHITE})
         {
             auto piece = Piece{color, type};
