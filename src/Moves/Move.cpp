@@ -192,13 +192,13 @@ size_t Move::attack_index(const Square_Difference& move) noexcept
                                          xx,  0, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx,  2, xx,  //  6
                                          xx, xx,  0, xx, xx, xx, xx,  1, xx, xx, xx, xx,  2, xx, xx,  //  5
                                          xx, xx, xx,  0, xx, xx, xx,  1, xx, xx, xx,  2, xx, xx, xx,  //  4
-                                         xx, xx, xx, xx,  0, xx, xx,  1, xx, xx,  2, xx, xx, xx, xx,  //  3
+                                         xx, xx, xx, xx,  0, xx, 23,  1, 16, xx,  2, xx, xx, xx, xx,  //  3
                                          xx, xx, xx, xx, xx,  0, 15,  1,  8,  2, xx, xx, xx, xx, xx,  //  2
-                                         xx, xx, xx, xx, xx, 14,  0,  1,  2,  9, xx, xx, xx, xx, xx,  //  1
+                                         xx, xx, xx, xx, 22, 14,  0,  1,  2,  9, 17, xx, xx, xx, xx,  //  1
                                           3,  3,  3,  3,  3,  3,  3, xx,  4,  4,  4,  4,  4,  4,  4,  //  0  rank change
-                                         xx, xx, xx, xx, xx, 13,  5,  6,  7, 10, xx, xx, xx, xx, xx,  // -1
+                                         xx, xx, xx, xx, 21, 13,  5,  6,  7, 10, 18, xx, xx, xx, xx,  // -1
                                          xx, xx, xx, xx, xx,  5, 12,  6, 11,  7, xx, xx, xx, xx, xx,  // -2
-                                         xx, xx, xx, xx,  5, xx, xx,  6, xx, xx,  7, xx, xx, xx, xx,  // -3
+                                         xx, xx, xx, xx,  5, xx, 20,  6, 19, xx,  7, xx, xx, xx, xx,  // -3
                                          xx, xx, xx,  5, xx, xx, xx,  6, xx, xx, xx,  7, xx, xx, xx,  // -4
                                          xx, xx,  5, xx, xx, xx, xx,  6, xx, xx, xx, xx,  7, xx, xx,  // -5
                                          xx,  5, xx, xx, xx, xx, xx,  6, xx, xx, xx, xx, xx,  7, xx,  // -6
@@ -209,15 +209,15 @@ size_t Move::attack_index(const Square_Difference& move) noexcept
 
     auto i = array_width*(7 - move.rank_change) + (move.file_change + 7);
 
-    assert(indices[i] < 16);
+    assert(indices[i] < 24);
     return indices[i];
 }
 
 Square_Difference Move::attack_direction_from_index(size_t index) noexcept
 {
-    //                     index: 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
-    static constexpr int dx[] = {-1,  0,  1, -1,  1, -1,  0,  1,  1,  2,  2,  1, -1, -2, -2, -1};
-    static constexpr int dy[] = { 1,  1,  1,  0,  0, -1, -1, -1,  2,  1, -1, -2, -2, -1,  1,  2};
+    //                     index: 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23
+    static constexpr int dx[] = {-1,  0,  1, -1,  1, -1,  0,  1,  1,  2,  2,  1, -1, -2, -2, -1,  1,  3,  3,  1, -1, -3, -3, -1};
+    static constexpr int dy[] = { 1,  1,  1,  0,  0, -1, -1, -1,  2,  1, -1, -2, -2, -1,  1,  2,  3,  1, -1, -3, -3, -1,  1,  3};
     return {dx[index], dy[index]};
 }
 

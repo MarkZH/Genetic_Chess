@@ -338,16 +338,17 @@ class Board
         // the square moves to reach that square: (from white's perspective)
         // up, down, left, right, up-left, up-right, down-left, down-right,
         // 2x1 up-left, 1x2 up-left, 2x1 up-right, 1x2 up-right,
-        // 2x1 down-left, 1x2 down-left, 2x1 down-right, 1x2 down-right
-        std::array<std::array<std::bitset<16>, 64>, 2> potential_attacks{}; // indexed by [attacker color][square index];
-        std::array<std::array<std::bitset<16>, 64>, 2> blocked_attacks{};
+        // 2x1 down-left, 1x2 down-left, 2x1 down-right, 1x2 down-right,
+        // plus the 1x3 unicorn versions of knight moves
+        std::array<std::array<std::bitset<24>, 64>, 2> potential_attacks{}; // indexed by [attacker color][square index];
+        std::array<std::array<std::bitset<24>, 64>, 2> blocked_attacks{};
 
         void add_attacks_from(Square square, Piece piece) noexcept;
         void remove_attacks_from(Square square, Piece old_piece) noexcept;
         void modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept;
         void update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept;
-        const std::bitset<16>& moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
-        const std::bitset<16>& checking_moves() const noexcept;
+        const std::bitset<24>& moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
+        const std::bitset<24>& checking_moves() const noexcept;
         Square find_checking_square() const noexcept;
 
         // Information cache for gene reference

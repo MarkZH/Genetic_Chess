@@ -704,12 +704,12 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexc
     }
 }
 
-const std::bitset<16>& Board::moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept
+const std::bitset<24>& Board::moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept
 {
     return potential_attacks[static_cast<int>(attacking_color)][square.index()];
 }
 
-const std::bitset<16>& Board::checking_moves() const noexcept
+const std::bitset<24>& Board::checking_moves() const noexcept
 {
     return moves_attacking_square(find_king(whose_turn()), opposite(whose_turn()));
 }

@@ -185,7 +185,7 @@ bool run_tests()
     bool tests_passed = true;
 
     // Move direction indexing
-    for(size_t i = 0; i < 16; ++i)
+    for(size_t i = 0; i < 24; ++i)
     {
         auto step = Move::attack_direction_from_index(i);
         auto start = Square{'e', 4};
