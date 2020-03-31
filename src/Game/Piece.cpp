@@ -58,9 +58,9 @@ namespace
             indexed_move_array result;
             for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
             {
-                for(auto type : {Piece_Type::PAWN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP, Piece_Type::QUEEN, Piece_Type::KING})
+                for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
                 {
-                    auto piece = Piece{color, type};
+                    auto piece = Piece{color, static_cast<Piece_Type>(type_index)};
                     for(size_t index = 0; index < 64; ++index)
                     {
                         for(const auto& move_list : legal_moves[piece.index()][index])
@@ -137,7 +137,16 @@ namespace
             add_legal_move<Pawn_Double_Move>(out, pawn, true, color, file);
         }
 
-        auto possible_promotions = {Piece_Type::QUEEN, Piece_Type::KNIGHT, Piece_Type::ROOK, Piece_Type::BISHOP};
+        std::vector<Piece_Type> possible_promotions;
+        for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+        {
+            auto type = static_cast<Piece_Type>(type_index);
+            if(type == Piece_Type::PAWN || type == Piece_Type::KING)
+            {
+                continue;
+            }
+            possible_promotions.push_back(type);
+        }
 
         for(auto dir : {Direction::RIGHT, Direction::LEFT})
         {
