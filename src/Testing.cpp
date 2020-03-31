@@ -216,7 +216,9 @@ bool run_tests()
         {
             auto piece = Piece{color, type};
             auto piece2 = Piece{piece.color(), piece.type()};
+            auto piece3 = Piece(piece.fen_symbol());
             test_result(tests_passed, piece == piece2, std::string("Inconsistent construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
+            test_result(tests_passed, piece == piece3, std::string("Inconsistent FEN construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
         }
     }
 
