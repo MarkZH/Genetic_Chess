@@ -285,7 +285,10 @@ void Musketeer_Board::add_other_moves(std::vector<const Move*>& move_list) noexc
     {
         if(const_cast<const Musketeer_Board&>(*this).piece_on_square(move->start()) == pawn)
         {
-            move_list.push_back(move.get());
+            if(move->is_legal(*this))
+            {
+                move_list.push_back(move.get());
+            }
         }
     }
 }
