@@ -44,9 +44,7 @@ Musketeer_Board::Musketeer_Board() noexcept : Board()
     set_initial_fen(fen());
 }
 
-Musketeer_Board::Musketeer_Board(const std::string& input_fen) :
-    Board(extract_standard_fen(input_fen)),
-    starting_fen(String::remove_extra_whitespace(input_fen))
+Musketeer_Board::Musketeer_Board(const std::string& input_fen) : Board(extract_standard_fen(input_fen))
 {
     auto tokens = String::split(input_fen);
     auto board_rows = String::split(tokens.front(), "/");
@@ -63,7 +61,7 @@ Musketeer_Board::Musketeer_Board(const std::string& input_fen) :
         }
     }
 
-    if(fen() != starting_fen)
+    if(fen() != String::remove_extra_whitespace(input_fen))
     {
         throw std::runtime_error("Input FEN not preserved.\nOriginal: " + input_fen + "\nResult: " + fen());
     }

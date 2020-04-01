@@ -27,7 +27,7 @@ class Musketeer_Board : public Board
 
     private:
         std::array<std::array<Piece, 8>, 2> gated_pieces{}; // indexed by gated_pieces[Color index][File index]
-        std::string starting_fen;
+
 
         void pick_and_place_random_gated_pieces() noexcept;
         std::string gate_fen(Piece_Color color) const noexcept;
