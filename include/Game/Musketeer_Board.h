@@ -24,6 +24,9 @@ class Musketeer_Board : public Board
         std::string extra_move_mark(const Move& move) const noexcept override;
 
     protected:
+        Musketeer_Board(const Musketeer_Board&) = default;
+        Musketeer_Board(Musketeer_Board&&) = default;
+
         void other_move_effects(const Move& move) noexcept override;
 
     private:
