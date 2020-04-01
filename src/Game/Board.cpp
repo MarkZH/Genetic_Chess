@@ -1005,6 +1005,8 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
+    add_other_moves(legal_moves_cache);
+
     if(std::none_of(legal_moves_cache.begin(),
                     legal_moves_cache.end(),
                     [](auto move) { return move->is_en_passant(); }))
@@ -1017,6 +1019,10 @@ void Board::recreate_move_caches() noexcept
                                                    {
                                                        return move_changes_material(*move);
                                                    });
+}
+
+void Board::add_other_moves(std::vector<const Move*>&) noexcept
+{
 }
 
 Square Board::find_checking_square() const noexcept

@@ -362,6 +362,7 @@ class Board
         size_t prior_moves_count = 0;
 
         void recreate_move_caches() noexcept;
+        virtual void add_other_moves(std::vector<const Move*>& move_list) noexcept;
 
         Piece& piece_on_square(Square square) noexcept;
         void remove_piece(Square square) noexcept;

@@ -9,6 +9,8 @@
 
 #include "Game/Piece.h"
 #include "Moves/Move.h"
+#include "Moves/Pawn_Promotion.h"
+#include "Moves/Direction.h"
 #include "Game/Color.h"
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
@@ -167,6 +169,30 @@ void Musketeer_Board::pick_and_place_random_gated_pieces() noexcept
             }
         }
     }
+
+    for(const auto& piece : gated_pieces.front())
+    {
+        if(piece)
+        {
+            for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
+            {
+                auto& promotion_list = gated_pawn_promotions[static_cast<int>(color)];
+                for(auto file = 'a'; file <= 'h'; ++file)
+                {
+                    promotion_list.emplace_back(std::make_shared<const Pawn_Promotion>(piece.type(), color, file));
+                    if(file > 'a')
+                    {
+                        promotion_list.emplace_back(std::make_shared<const Pawn_Promotion>(piece.type(), color, file, Direction::LEFT));
+                    }
+
+                    if(file < 'h')
+                    {
+                        promotion_list.emplace_back(std::make_shared<const Pawn_Promotion>(piece.type(), color, file, Direction::RIGHT));
+                    }
+                }
+            }
+        }
+    }
 }
 
 void Musketeer_Board::set_unmoved_gate_guardians() noexcept
@@ -220,4 +246,16 @@ void Musketeer_Board::ascii_draw_gate(Piece_Color color, int indentation, int sy
 void Musketeer_Board::ascii_draw_below_board(int indentation, int symbol_width) const noexcept
 {
     ascii_draw_gate(Piece_Color::WHITE, indentation, symbol_width);
+}
+
+void Musketeer_Board::add_other_moves(std::vector<const Move*>& move_list) noexcept
+{
+    auto pawn = Piece{whose_turn(), Piece_Type::PAWN};
+    for(const auto& move : gated_pawn_promotions[static_cast<int>(whose_turn())])
+    {
+        if(const_cast<const Musketeer_Board&>(*this).piece_on_square(move->start()) == pawn)
+        {
+            move_list.push_back(move.get());
+        }
+    }
 }
