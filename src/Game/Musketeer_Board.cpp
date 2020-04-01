@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <iomanip>
+#include <iterator>
 
 #include "Game/Piece.h"
 #include "Moves/Move.h"
@@ -134,61 +135,90 @@ void Musketeer_Board::pick_and_place_random_gated_pieces() noexcept
                                                            Piece_Type::HAWK,
                                                            Piece_Type::FORTRESS,
                                                            Piece_Type::SPIDER};
-    auto blank_gates = std::count(gated_pieces.front().begin(), gated_pieces.front().end(), Piece{});
-    auto pieces_needed = blank_gates - 6; // maximum of 2
-    for(auto i = 0; i < pieces_needed; ++i)
+    std::vector<Piece_Type> gated_piece_types;
+    for(const auto& list : gated_pieces)
     {
-        auto type = Random::random_element(choices);
-        while(true)
+        for(const auto& piece : list)
         {
-            if(std::any_of(gated_pieces.front().begin(), gated_pieces.front().end(),
-                           [type](auto piece)
-                           {
-                               return piece && piece.type() == type;
-                           }))
+            if(piece && gated_piece_types.size() < 2)
             {
-                type = Random::random_element(choices);
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
-        {
-            auto gated_piece = Piece{color, type};
-            while(true)
-            {
-                auto& current_piece = Random::random_element(gated_pieces[static_cast<int>(color)]);
-                if(!current_piece)
+                if(gated_piece_types.empty() || gated_piece_types.front() != piece.type())
                 {
-                    current_piece = gated_piece;
-                    break;
+                    gated_piece_types.push_back(piece.type());
                 }
             }
         }
     }
 
-    for(const auto& piece : gated_pieces.front())
+    while(gated_piece_types.size() < 2)
     {
-        if(piece)
+        auto type = Random::random_element(choices);
+        if(gated_piece_types.empty() || gated_piece_types.front() != type)
         {
-            for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
-            {
-                auto& promotion_list = gated_pawn_promotions[static_cast<int>(color)];
-                for(auto file = 'a'; file <= 'h'; ++file)
-                {
-                    promotion_list.emplace_back(std::make_shared<const Pawn_Promotion>(piece.type(), color, file));
-                    if(file > 'a')
-                    {
-                        promotion_list.emplace_back(std::make_shared<const Pawn_Promotion>(piece.type(), color, file, Direction::LEFT));
-                    }
+            gated_piece_types.push_back(type);
+        }
+    }
 
-                    if(file < 'h')
-                    {
-                        promotion_list.emplace_back(std::make_shared<const Pawn_Promotion>(piece.type(), color, file, Direction::RIGHT));
-                    }
+    for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
+    {
+        auto& gate_list = gated_pieces[static_cast<int>(color)];
+        for(auto type : gated_piece_types)
+        {
+            auto gated_piece = Piece{color, type};
+            if(std::find(gate_list.begin(), gate_list.end(), gated_piece) != gate_list.end())
+            {
+                continue;
+            }
+
+            auto other_index = std::distance(gate_list.begin(),
+                                             std::find_if(gate_list.begin(), gate_list.end(),
+                                                          [](const auto& piece)
+                                                          {
+                                                              return bool(piece);
+                                                          }));
+
+            while(true)
+            {
+                auto file_index = Random::random_integer(0, 7);
+                if(file_index == other_index)
+                {
+                    continue;
+                }
+
+                // Cannot place gated pieces behind rook and king
+                if(file_index == 4 && (other_index == 0 || other_index == 7))
+                {
+                    continue;
+                }
+
+                // Cannot place gated pieces behind rook and king
+                if(other_index == 4 && (file_index == 0 || file_index == 7))
+                {
+                    continue;
+                }
+
+                gate_list[file_index] = gated_piece;
+                break;
+            }
+        }
+    }
+
+    for(const auto& piece_type : gated_piece_types)
+    {
+        for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
+        {
+            auto& promotion_list = gated_pawn_promotions[static_cast<int>(color)];
+            for(auto file = 'a'; file <= 'h'; ++file)
+            {
+                promotion_list.emplace_back(std::make_shared<const Pawn_Promotion>(piece_type, color, file));
+                if(file > 'a')
+                {
+                    promotion_list.emplace_back(std::make_shared<const Pawn_Promotion>(piece_type, color, file, Direction::LEFT));
+                }
+
+                if(file < 'h')
+                {
+                    promotion_list.emplace_back(std::make_shared<const Pawn_Promotion>(piece_type, color, file, Direction::RIGHT));
                 }
             }
         }
