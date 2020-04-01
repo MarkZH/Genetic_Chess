@@ -4,6 +4,8 @@
 #include <array>
 #include <algorithm>
 #include <stdexcept>
+#include <iostream>
+#include <iomanip>
 
 #include "Game/Piece.h"
 #include "Moves/Move.h"
@@ -193,4 +195,31 @@ std::string Musketeer_Board::gate_fen(Piece_Color color) const noexcept
         result.push_back(piece ? piece.fen_symbol() : '*');
     }
     return result;
+}
+
+void Musketeer_Board::ascii_draw_above_board(int indentation, int symbol_width) const noexcept
+{
+    ascii_draw_gate(Piece_Color::BLACK, indentation, symbol_width);
+}
+
+void Musketeer_Board::ascii_draw_gate(Piece_Color color, int indentation, int symbol_width) const noexcept
+{
+    std::cout << std::setw(indentation) << std::left << "" << std::right;
+    for(auto piece : gated_pieces[static_cast<int>(color)])
+    {
+        if(piece)
+        {
+            std::cout << std::setw(symbol_width) << piece.fen_symbol();
+        }
+        else
+        {
+            std::cout << std::setw(symbol_width) << '#';
+        }
+    }
+    std::cout << std::endl;
+}
+
+void Musketeer_Board::ascii_draw_below_board(int indentation, int symbol_width) const noexcept
+{
+    ascii_draw_gate(Piece_Color::WHITE, indentation, symbol_width);
 }

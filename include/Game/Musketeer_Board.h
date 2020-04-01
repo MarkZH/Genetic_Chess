@@ -32,6 +32,9 @@ class Musketeer_Board : public Board
         void pick_and_place_random_gated_pieces() noexcept;
         std::string gate_fen(Piece_Color color) const noexcept;
         void set_unmoved_gate_guardians() noexcept;
+        void ascii_draw_above_board(int indentation, int symbol_width) const noexcept override;
+        void ascii_draw_below_board(int indentation, int symbol_width) const noexcept override;
+        void ascii_draw_gate(Piece_Color color, int indentation, int symbol_width) const noexcept;
 };
 
 #endif // MUSKETEER_BOARD_H

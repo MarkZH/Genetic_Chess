@@ -308,6 +308,8 @@ class Board
 
         virtual std::string extra_move_mark(const Move& move) const noexcept;
 
+        void ascii_draw() const noexcept;
+
     protected:
         Board(const Board&) = default;
         Board(Board&&) = default;
@@ -372,6 +374,8 @@ class Board
         bool all_empty_between(Square start, Square end) const noexcept;
         void update_board(const Move& move) noexcept;
         Game_Result move_result() const noexcept;
+        virtual void ascii_draw_above_board(int indentation, int symbol_width) const noexcept;
+        virtual void ascii_draw_below_board(int indentation, int symbol_width) const noexcept;
 
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record() noexcept;

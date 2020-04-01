@@ -13,6 +13,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <memory>
+#include <iomanip>
 
 #include "Game/Board.h"
 #include "Game/Board_Factory.h"
@@ -1371,6 +1372,58 @@ size_t Board::previous_moves_count() const noexcept
 std::string Board::extra_move_mark(const Move&) const noexcept
 {
     return {};
+}
+
+void Board::ascii_draw() const noexcept
+{
+    const auto symbol_slot_width = 2;
+    const auto indentation = 2;
+    const auto file_label_location = 0;
+
+    std::cout << std::endl;
+    ascii_draw_above_board(indentation, symbol_slot_width);
+    for(auto rank = 8; rank >= 0; --rank)
+    {
+        if(rank == file_label_location)
+        {
+            ascii_draw_below_board(indentation, symbol_slot_width);
+            std::cout << std::setw(indentation) << std::right << "";
+        }
+        else
+        {
+            std::cout << std::setw(indentation) << std::left << rank << std::right;
+        }
+
+        for(auto file = 'a'; file <= 'h'; ++file)
+        {
+            if(rank == file_label_location)
+            {
+                std::cout << std::setw(symbol_slot_width) << file;
+            }
+            else
+            {
+                auto piece = piece_on_square({file, rank});
+                if(piece)
+                {
+                    std::cout << std::setw(symbol_slot_width) << piece.fen_symbol();
+                }
+                else
+                {
+                    std::cout << std::setw(symbol_slot_width) << ".";
+                }
+            }
+        }
+
+        std::cout << std::endl;
+    }
+}
+
+void Board::ascii_draw_above_board(int, int) const noexcept
+{
+}
+
+void Board::ascii_draw_below_board(int, int) const noexcept
+{
 }
 
 void Board::other_move_effects(const Move&) noexcept

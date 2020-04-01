@@ -448,6 +448,15 @@ namespace
 
                     try
                     {
+                        if( ! board->safe_for_king(board->find_king(opposite(board->whose_turn())), opposite(board->whose_turn())))
+                        {
+                            board->ascii_draw();
+                            std::cerr << "Before move " << move_number << move << ", "
+                                      << color_text(opposite(board->whose_turn())) << "'s king is in check but it is "
+                                      << color_text(board->whose_turn()) << "'s turn." << std::endl;
+                            return false;
+                        }
+
                         auto move_checkmates = move.back() == '#';
                         auto move_checks = move_checkmates || move.back() == '+';
                         auto& move_to_submit = board->create_move(move);
@@ -457,6 +466,13 @@ namespace
                             if( ! const_cast<const Board&>(*board).piece_on_square(move_to_submit.end()) && ! move_to_submit.is_en_passant())
                             {
                                 std::cerr << "Move: " << move_number << move << " indicates capture but does not capture. (line: " << line_number << ")" << std::endl;
+                                return false;
+                            }
+
+                            if(board->find_king(opposite(board->whose_turn())) == move_to_submit.end())
+                            {
+                                board->ascii_draw();
+                                std::cerr << move_number << move << " captures king. Board is in invalid state." << std::endl;
                                 return false;
                             }
                         }
