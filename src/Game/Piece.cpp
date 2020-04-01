@@ -91,7 +91,7 @@ namespace
             auto& result = *result_heap;
             for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
             {
-                for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+                for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::SPIDER); ++type_index)
                 {
                     auto piece = Piece{color, static_cast<Piece_Type>(type_index)};
                     for(size_t index = 0; index < 64; ++index)
