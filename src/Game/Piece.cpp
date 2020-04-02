@@ -5,6 +5,7 @@
 #include <cassert>
 #include <array>
 #include <cctype>
+#include <vector>
 
 #include "Game/Square.h"
 #include "Game/Color.h"
