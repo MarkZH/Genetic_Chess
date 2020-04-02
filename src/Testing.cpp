@@ -174,6 +174,7 @@ namespace
     }
 
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2) noexcept;
+    int line_count(const std::string& file_name);
     unsigned long long move_count(const Board& board, unsigned long long maximum_depth) noexcept;
     bool run_board_tests(const std::string& file_name);
     bool all_moves_legal(Board& board, const std::vector<std::string>& moves) noexcept;
@@ -941,14 +942,20 @@ bool run_musketeer_perft_tests()
 
     auto test_result = true;
     auto base_directory = std::filesystem::path{"../musketeer-chess/Perft/"};
+    auto total_file_count = std::distance(std::filesystem::directory_iterator(base_directory), std::filesystem::directory_iterator());
+    auto file_number = 0;
+    auto start_time = std::chrono::steady_clock::now();
     for(auto test_directory : std::filesystem::directory_iterator(base_directory))
     {
         for(auto test_file : std::filesystem::directory_iterator(test_directory))
         {
             if(test_file.is_regular_file() && test_file.path().extension() == ".csv")
             {
+                ++file_number;
+                auto total_test_count = line_count(test_file.path());
                 auto input = std::ifstream(test_file.path());
                 std::string line;
+                auto test_number = 0;
                 while(std::getline(input, line))
                 {
                     auto split = String::split(line, ",");
@@ -961,7 +968,10 @@ bool run_musketeer_perft_tests()
                     auto board = Musketeer_Board(split.front());
                     auto actual_count = move_count(board, depth);
                     auto expected_count = String::to_number<decltype(actual_count)>(split.back());
-                    std::cout << board.fen();
+                    auto time_so_far = std::chrono::steady_clock::now() - start_time;
+                    std::cout << "[" << file_number << "/" << total_file_count
+                              << " | " << ++test_number << "/" << total_test_count
+                              << " | " << std::chrono::floor<std::chrono::seconds>(time_so_far).count() << " sec] " << board.fen();
                     if(actual_count == expected_count)
                     {
                         std::cout << " OK!" << std::endl;
@@ -1069,6 +1079,18 @@ namespace
         }
 
         return true;
+    }
+
+    int line_count(const std::string& file_name)
+    {
+        auto line_count = 0;
+        std::string line;
+        auto file = std::ifstream(file_name);
+        while(std::getline(file, line))
+        {
+            ++line_count;
+        }
+        return line_count;
     }
 
     unsigned long long move_count(const Board& board, unsigned long long maximum_depth) noexcept
