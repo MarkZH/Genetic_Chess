@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <iostream>
 #include <fstream>
 
 //! \brief A tool for timing the execution of user-chosen sections of code.
