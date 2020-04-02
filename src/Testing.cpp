@@ -951,7 +951,7 @@ bool run_musketeer_perft_tests()
             if(test_file.is_regular_file() && test_file.path().extension() == ".csv")
             {
                 ++file_number;
-                auto total_test_count = line_count(test_file.path());
+                auto total_test_count = line_count(test_file.path().string());
                 auto input = std::ifstream(test_file.path());
                 std::string line;
                 auto test_number = 0;
