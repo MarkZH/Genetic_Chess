@@ -939,11 +939,10 @@ bool run_perft_tests()
 bool run_musketeer_perft_tests()
 {
     auto bad_results = std::ofstream("musketeer_perft_results_bad.txt");
-
-    auto test_result = true;
     auto base_directory = std::filesystem::path{"../musketeer-chess/Perft/"};
     auto total_file_count = std::distance(std::filesystem::directory_iterator(base_directory), std::filesystem::directory_iterator());
     auto file_number = 0;
+    auto failure_count = 0;
     auto start_time = std::chrono::steady_clock::now();
     for(auto test_directory : std::filesystem::directory_iterator(base_directory))
     {
@@ -971,10 +970,11 @@ bool run_musketeer_perft_tests()
                     auto time_so_far = std::chrono::steady_clock::now() - start_time;
                     std::cout << "[" << file_number << "/" << total_file_count
                               << " | " << ++test_number << "/" << total_test_count
-                              << " | " << std::chrono::floor<std::chrono::seconds>(time_so_far).count() << " sec] " << board.fen();
+                              << " | " << std::chrono::floor<std::chrono::seconds>(time_so_far).count() << " sec | "
+                              << failure_count << " fails] " << board.fen();
                     if(actual_count == expected_count)
                     {
-                        std::cout << " OK!" << std::endl;
+                        std::cout << " OK!\n";
                     }
                     else
                     {
@@ -982,15 +982,14 @@ bool run_musketeer_perft_tests()
                                   << " Got: " << actual_count
                                   << " Difference: " << int(actual_count) - int(expected_count) << std::endl;
                         bad_results << board.fen() << std::endl;
-
-                        test_result = false;
+                        ++failure_count;
                     }
                 }
             }
         }
     }
 
-    return test_result;
+    return failure_count == 0;
 }
 
 void print_randomness_sample()
