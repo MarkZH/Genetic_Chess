@@ -15,7 +15,7 @@ class Move
         //!
         //! \param start The Square where move starts.
         //! \param end   The Square where move ends.
-        Move(Square start, Square end) noexcept;
+        Move(Square start, Square end, bool can_be_blocked) noexcept;
 
         virtual ~Move() = default;
 
@@ -90,6 +90,8 @@ class Move
         //! \returns Whether this is an instance of the En_Passant class.
         bool is_en_passant() const noexcept;
 
+        bool is_blockable() const noexcept;
+
         //! \brief Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.
         //!
         //! \returns the PGN symbol of the promotion piece, if any.
@@ -150,6 +152,7 @@ class Move
 
         bool able_to_capture = true;
         bool is_en_passant_move = false;
+        bool blockable;
 
         virtual bool move_specific_legal(const Board& board) const noexcept;
         std::string result_mark(const Board& board) const noexcept;

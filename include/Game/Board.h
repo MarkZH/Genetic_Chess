@@ -342,15 +342,16 @@ class Board
         // 2x1 up-left, 1x2 up-left, 2x1 up-right, 1x2 up-right,
         // 2x1 down-left, 1x2 down-left, 2x1 down-right, 1x2 down-right,
         // plus the 1x3 unicorn versions of knight moves
-        std::array<std::array<std::bitset<24>, 64>, 2> potential_attacks{}; // indexed by [attacker color][square index];
+        std::array<std::array<std::bitset<24>, 64>, 2> blockable_attacks{}; // indexed by [attacker color][square index];
+        std::array<std::array<std::bitset<24>, 64>, 2> unblockable_attacks{};
         std::array<std::array<std::bitset<24>, 64>, 2> blocked_attacks{};
 
         void add_attacks_from(Square square, Piece piece) noexcept;
         void remove_attacks_from(Square square, Piece old_piece) noexcept;
         void modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept;
         void update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept;
-        const std::bitset<24>& moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
-        const std::bitset<24>& checking_moves() const noexcept;
+        std::bitset<24> moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
+        std::bitset<24> checking_moves() const noexcept;
         Square find_checking_square() const noexcept;
 
         // Information cache for gene reference
@@ -373,6 +374,7 @@ class Board
         bool is_en_passant_targetable(Square square) const noexcept;
         bool is_in_legal_moves_list(const Move& move) const noexcept;
         bool all_empty_between(Square start, Square end) const noexcept;
+        bool check_is_blockable() const noexcept;
         void update_board(const Move& move) noexcept;
         Game_Result move_result() const noexcept;
         virtual void ascii_draw_above_board(int indentation, int symbol_width) const noexcept;

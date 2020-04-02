@@ -10,7 +10,10 @@
 #include "Game/Piece.h"
 
 
-Move::Move(Square start, Square end) noexcept : origin(start), destination(end)
+Move::Move(Square start, Square end, bool can_be_blocked) noexcept :
+    origin(start),
+    destination(end),
+    blockable(can_be_blocked)
 {
     assert(start.inside_board());
     assert(end.inside_board());
@@ -160,6 +163,11 @@ std::string Move::coordinates() const noexcept
 bool Move::is_en_passant() const noexcept
 {
     return is_en_passant_move;
+}
+
+bool Move::is_blockable() const noexcept
+{
+    return blockable;
 }
 
 char Move::promotion_piece_symbol() const noexcept

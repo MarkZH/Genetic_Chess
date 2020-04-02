@@ -5,6 +5,7 @@
 #include <cassert>
 #include <array>
 #include <cctype>
+#include <vector>
 
 #include "Game/Square.h"
 #include "Game/Color.h"
@@ -122,11 +123,11 @@ namespace
     // Add a move to the list that is only legal when starting from a certain square
     // (e.g., castling, pawn double move, promotion, etc.)
     template<typename Move_Type, typename ...Parameters>
-    void add_legal_move(indexed_move_array& out, Piece piece, bool blockable, Parameters ... parameters) noexcept
+    void add_legal_move(indexed_move_array& out, Piece piece, Parameters ... parameters) noexcept
     {
         auto move = new Move_Type(parameters...);
         auto& lists = out[piece.index()][move->start().index()];
-        if(lists.empty() || ! blockable)
+        if(lists.empty() || ! move->is_blockable())
         {
             lists.push_back({});
         }
@@ -146,7 +147,7 @@ namespace
             auto end = start + Square_Difference{file_step, rank_step};
             if(end.inside_board())
             {
-                add_legal_move<Move>(out, piece, blockable, start, end);
+                add_legal_move<Move>(out, piece, start, end, blockable);
             }
         }
     }
@@ -161,13 +162,13 @@ namespace
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
             {
-                add_legal_move<Pawn_Move>(out, pawn, true, color, Square{file, rank});
+                add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank});
             }
         }
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            add_legal_move<Pawn_Double_Move>(out, pawn, true, color, file);
+            add_legal_move<Pawn_Double_Move>(out, pawn, color, file);
         }
 
         std::vector<Piece_Type> possible_promotions;
@@ -189,20 +190,20 @@ namespace
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
                 {
-                    add_legal_move<Pawn_Move>(out, pawn, true, color, Square{file, rank}, dir);
+                    add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, dir);
                 }
             }
 
             for(char file = first_file; file <= last_file; ++file)
             {
-                add_legal_move<En_Passant>(out, pawn, true, color, dir, file);
+                add_legal_move<En_Passant>(out, pawn, color, dir, file);
             }
 
             for(auto promote : possible_promotions)
             {
                 for(auto file = first_file; file <= last_file; ++file)
                 {
-                    add_legal_move<Pawn_Promotion>(out, pawn, false, promote, color, file, dir);
+                    add_legal_move<Pawn_Promotion>(out, pawn, promote, color, file, dir);
                 }
             }
         }
@@ -211,7 +212,7 @@ namespace
         {
             for(auto file = 'a'; file <= 'h'; ++file)
             {
-                add_legal_move<Pawn_Promotion>(out, pawn, false, promote, color, file);
+                add_legal_move<Pawn_Promotion>(out, pawn, promote, color, file);
             }
         }
     }
@@ -280,7 +281,7 @@ namespace
             {
                 if(d_rank == 0 && d_file == 0) { continue; }
 
-                add_standard_legal_move(out, king, d_file, d_rank, true);
+                add_standard_legal_move(out, king, d_file, d_rank, false);
                 if(d_rank == 0)
                 {
                     if(d_file > 0)

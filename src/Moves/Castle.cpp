@@ -8,9 +8,11 @@
 
 Castle::Castle(int base_rank, Direction direction) noexcept :
     Move({'e', base_rank},
-         {(direction == Direction::RIGHT ? 'g' : 'c'), base_rank}),
+         {(direction == Direction::RIGHT ? 'g' : 'c'), base_rank},
+         true),
     rook_move({(direction == Direction::RIGHT ? 'h' : 'a'), base_rank},
-              {(direction == Direction::RIGHT ? 'f' : 'd'), base_rank}),
+              {(direction == Direction::RIGHT ? 'f' : 'd'), base_rank},
+              false),
     last_empty_square(direction == Direction::LEFT ? end() + Square_Difference{-1, 0} : Square{})
 {
     set_capturing_ability(false);
