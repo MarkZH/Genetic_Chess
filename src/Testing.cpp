@@ -39,7 +39,6 @@ using namespace std::chrono_literals;
 #include "Genes/Checkmate_Material_Gene.h"
 
 #include "Utility/String.h"
-#include "Utility/Scoped_Stopwatch.h"
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 #include "Utility/Exceptions.h"
@@ -770,23 +769,23 @@ void run_speed_tests()
     const auto number_of_tests = 1'000;
     const auto time_unit = "ms";
     #endif // NDEBUG
-    std::vector<std::pair<Scoped_Stopwatch::seconds, std::string>> timing_results;
-    auto all_genes_watch = Scoped_Stopwatch::start_stopwatch("");
+    std::vector<std::pair<std::chrono::steady_clock::duration, std::string>> timing_results;
+    auto all_genes_start = std::chrono::steady_clock::now();
     for(auto gene : performance_genome)
     {
         auto score = 0.0;
-        auto watch = Scoped_Stopwatch::start_stopwatch("");
+        auto gene_start = std::chrono::steady_clock::now();
         for(int i = 1; i <= number_of_tests; ++i)
         {
             auto side = performance_board.whose_turn();
             score += gene->evaluate(performance_board, opposite(side), performance_board.game_length());
         }
-        timing_results.emplace_back(watch.time_so_far(), gene->name());
+        timing_results.emplace_back(std::chrono::steady_clock::now() - gene_start, gene->name());
     }
-    timing_results.emplace_back(all_genes_watch.time_so_far(), "Complete gene scoring");
+    timing_results.emplace_back(std::chrono::steady_clock::now() - all_genes_start, "Complete gene scoring");
 
     std::cout << "Board::submit_move() speed ..." << std::endl;
-    auto game_watch = Scoped_Stopwatch::start_stopwatch("");
+    auto game_time_start = std::chrono::steady_clock::now();
     Board speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
@@ -797,11 +796,11 @@ void run_speed_tests()
             speed_board = Board{};
         }
     }
-    timing_results.emplace_back(game_watch.time_so_far(), "Board::submit_move()");
+    timing_results.emplace_back(std::chrono::steady_clock::now() - game_time_start, "Board::submit_move()");
     auto board_submit_time = timing_results.back().first;
 
     std::cout << "Board::submit_move() with copy speed ..." << std::endl;
-    auto copy_game_watch = Scoped_Stopwatch::start_stopwatch("");
+    auto copy_game_start = std::chrono::steady_clock::now();
     Board copy_speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
@@ -817,10 +816,10 @@ void run_speed_tests()
             copy_speed_board = copy;
         }
     }
-    timing_results.emplace_back(copy_game_watch.time_so_far(), "Board::submit_move() with copy");
+    timing_results.emplace_back(std::chrono::steady_clock::now() - copy_game_start, "Board::submit_move() with copy");
 
     std::cout << "Board::quiescent() speed ... " << std::flush;
-    auto quiescent_watch = Scoped_Stopwatch::start_stopwatch("");
+    auto quiescent_time_start = std::chrono::steady_clock::now();
     Board quiescent_board;
     size_t move_count = 0;
     for(auto i = 0; i < number_of_tests; ++i)
@@ -842,7 +841,8 @@ void run_speed_tests()
 
         auto quiescent_result_board = quiescent_board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0});
     }
-    timing_results.emplace_back(quiescent_watch.time_so_far() - (board_submit_time*move_count)/number_of_tests, "Board::quiescent()");
+    auto quiescent_time = std::chrono::steady_clock::now() - quiescent_time_start;
+    timing_results.emplace_back(quiescent_time - (board_submit_time*move_count)/number_of_tests, "Board::quiescent()");
     std::cout << "(non-quiescent moves = " << String::format_integer(move_count, ",") << ")" << std::endl;
 
     std::sort(timing_results.begin(), timing_results.end());
@@ -852,7 +852,7 @@ void run_speed_tests()
     std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------" << std::endl;
     for(const auto& [time, name] : timing_results)
     {
-        std::cout << std::setw(name_width) << name << " = " << time.count() << std::endl;
+        std::cout << std::setw(name_width) << name << " = " << std::chrono::duration<double>(time).count() << std::endl;
     }
 }
 
@@ -878,10 +878,10 @@ bool run_perft_tests()
 
     auto test_number = 0;
     unsigned long long legal_moves_counted = 0;
-    auto perft_timer = Scoped_Stopwatch::start_stopwatch("");
+    auto time_at_start_of_all = std::chrono::steady_clock::now();
     for(const auto& line : lines)
     {
-        auto time_at_start = perft_timer.time_so_far();
+        auto time_at_start = std::chrono::steady_clock::now();
         auto line_parts = String::split(line, ";");
         auto fen = line_parts.front();
         std::cout << '[' << ++test_number << '/' << lines.size() << "] " << fen << std::flush;
@@ -913,12 +913,14 @@ bool run_perft_tests()
         {
             std::cout << "OK! ";
         }
-        auto time_at_end = perft_timer.time_so_far();
-        std::cout << (time_at_end - time_at_start).count() << " / " << time_at_end.count() << std::endl;
+        auto time_at_end = std::chrono::steady_clock::now();
+        auto time_for_test = time_at_end - time_at_start;
+        auto time_so_far = time_at_end - time_at_start_of_all;
+        std::cout << std::chrono::duration<double>(time_for_test).count() << " / " << std::chrono::duration<double>(time_so_far).count() << std::endl;
     }
 
-    auto time = perft_timer.time_so_far();
-    std::cout << "Perft time: " << time.count() << " seconds" << std::endl;
+    auto time = std::chrono::steady_clock::now() - time_at_start_of_all;
+    std::cout << "Perft time: " << std::chrono::duration<double>(time).count() << " seconds" << std::endl;
     std::cout << "Legal moves counted: " << String::format_integer(int(legal_moves_counted), ",") << std::endl;
     std::cout << "Move generation rate: " << String::format_integer(int(legal_moves_counted/time.count()), ",") << " moves/second." << std::endl;
     if( ! tests_failed.empty())
