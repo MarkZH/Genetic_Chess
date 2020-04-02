@@ -21,6 +21,7 @@
 
 #include "Utility/Exceptions.h"
 #include "Utility/String.h"
+#include "Utility/Scoped_Stopwatch.h"
 
 #include "Testing.h"
 
@@ -45,6 +46,8 @@ namespace
 //! \returns EXIT_SUCCESS or EXIT_FAILURE.
 int main(int argc, char *argv[])
 {
+    auto printer = Scoped_Stopwatch::print_guard();
+
     try
     {
         if(argc > 1)
