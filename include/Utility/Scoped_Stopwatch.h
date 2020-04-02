@@ -3,8 +3,11 @@
 
 #include <chrono>
 #include <string>
+#include <vector>
+#include <tuple>
+#include <fstream>
 
-//! \brief A tool for timing the execution time of user-chosen sections of code.
+//! \brief A tool for timing the execution of user-chosen sections of code.
 //!
 //! The Scoped_Stopwatch is designed so that the constructor starts the
 //! timer and the destructor stops it. So, if an instance is created at
@@ -12,10 +15,8 @@
 //! exits, however that happens, whether a normal return or a thrown
 //! exception. The stopwatch can also be manually stopped anywhere as well.
 //!
-//! Some care is needed when using this class with very fast sections of
-//! code. The machinery of setting up and writing to a file adds about
-//! 0.1 microseconds to the measured time. Execution times smaller than this
-//! will not get accurate results.
+//! The accumulated timings can be printed to a file or the console using
+//! print_all_timings() method.
 class [[nodiscard]] Scoped_Stopwatch
 {
     public:
@@ -30,15 +31,28 @@ class [[nodiscard]] Scoped_Stopwatch
         //!        of the resulting Scoped_Stopwatch object can be used to access timings.
         static Scoped_Stopwatch start_stopwatch(const std::string& name) noexcept;
 
+        template<typename Duration = std::chrono::duration<double>>
+        [[nodiscard]] static auto print_guard(const std::string& file_name = "") noexcept
+        {
+            struct Print_Guard
+            {
+                Print_Guard(const std::string& file_name_in) noexcept : file_name(file_name_in) {}
+                ~Print_Guard() noexcept { Scoped_Stopwatch::print_all_timings<Duration>(file_name); }
+                void set_file_name(const std::string& new_file_name) noexcept { file_name = new_file_name;  }
+                std::string file_name;
+            };
+            return Print_Guard(file_name);
+        }
+
         Scoped_Stopwatch(const Scoped_Stopwatch& other) = delete;
         Scoped_Stopwatch& operator=(const Scoped_Stopwatch& other) = delete;
         Scoped_Stopwatch(Scoped_Stopwatch&&) = delete;
         Scoped_Stopwatch& operator=(Scoped_Stopwatch&&) = delete;
 
-        //! \brief If the method stop() has not been called already, the destructor stops the stopwatch and records the time to a file.
+        //! \brief If the method stop() has not been called already, the destructor stops the stopwatch and records the time.
         ~Scoped_Stopwatch();
 
-        //! \brief Manually stop the timer and record the result to a file.
+        //! \brief Manually stop the timer.
         void stop() noexcept;
 
         //! \brief Add on to the name provided in the constructor.
@@ -50,15 +64,34 @@ class [[nodiscard]] Scoped_Stopwatch
         //! \brief Prevent the stopwatch from recording a run.
         void reject() noexcept; // do not record time
 
-        //! \brief Find out how much time as elapsed since the stopwatch started.
+        //! \brief Print the timings from all stopped timer instances.
         //!
-        //! \returns Time in seconds.
-        seconds time_so_far() const noexcept;
+        //! \param The name of the file where the data will be printed.
+        //!
+        //! If the file_name parameter is empty, the data will be printed to stdout.
+        //! If any Scoped_Stopwatch instances are still running, their data will not
+        //! be included in the output.
+        template<typename Duration = Scoped_Stopwatch::seconds>
+        static void print_all_timings(const std::string& file_name = "") noexcept
+        {
+            if(data.empty())
+            {
+                return;
+            }
+
+            auto file_output = std::ofstream(file_name);
+            std::ostream& output = file_name.empty() ? std::cout : file_output;
+            for(const auto& [name, time] : data)
+            {
+                output << name << " | " << std::chrono::duration_cast<Duration>(time).count() << '\n';
+            }
+        }
 
     private:
         std::string place_name;
         std::chrono::steady_clock::time_point start_time;
         bool stopped;
+        static std::vector<std::tuple<std::string, std::chrono::steady_clock::duration>> data;
 
         //! \brief The constructor starts the stopwatch and takes a name to record.
         //!
@@ -66,8 +99,6 @@ class [[nodiscard]] Scoped_Stopwatch
         //!        will be written to the output file. If empty, nothing will
         //!        be written to file. Other methods can be used for displaying
         //!        time elapsed in that case.
-        //! The timing result will be written to a file named "timing-N.txt",
-        //! where N is a random number from 0 to 2^64 - 1.
         explicit Scoped_Stopwatch(const std::string& name) noexcept;
 };
 
