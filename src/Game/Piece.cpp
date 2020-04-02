@@ -284,11 +284,11 @@ namespace
                 {
                     if(d_file > 0)
                     {
-                        add_legal_move<Castle>(out, king, true, base_rank, Direction::RIGHT);
+                        add_legal_move<Castle>(out, king, base_rank, Direction::RIGHT);
                     }
                     else
                     {
-                        add_legal_move<Castle>(out, king, true, base_rank, Direction::LEFT);
+                        add_legal_move<Castle>(out, king, base_rank, Direction::LEFT);
                     }
                 }
             }
