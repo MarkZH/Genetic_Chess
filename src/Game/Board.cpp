@@ -659,7 +659,7 @@ std::bitset<24> Board::moves_attacking_square(Square square, Piece_Color attacki
     auto result = blockable_attacks[static_cast<int>(attacking_color)][square.index()];
     for(size_t i = 0; i < result.size(); ++i)
     {
-        result[i] = result[i] || (unblockable_attacks[static_cast<int>(attacking_color)][square.index()][i] > 0);
+        result[i] = result[i] || unblockable_attacks[static_cast<int>(attacking_color)][square.index()][i];
     }
     return result;
 }
