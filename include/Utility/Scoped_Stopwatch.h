@@ -32,7 +32,7 @@ class [[nodiscard]] Scoped_Stopwatch
         //!        of the resulting Scoped_Stopwatch object can be used to access timings.
         static Scoped_Stopwatch start_stopwatch(const std::string& name) noexcept;
 
-        template<typename Duration = std::chrono::duration<double>>
+        template<typename Duration = Scoped_Stopwatch::seconds>
         [[nodiscard]] static auto print_guard(const std::string& file_name = "") noexcept
         {
             struct Print_Guard
