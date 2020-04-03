@@ -98,7 +98,7 @@ king in check | start | e4 g5 h3 f6 e5 a6 Rh2 g4 Ne2 g3 f3 d5 | false
 
 # Quiescent tests: test proper resolution of quiescent search
 # quiescent | (starting FEN) | (move list) | (expected subsequent moves)
-quiescent | start | |  # If there are no captures available, a copy of the board is returned
+quiescent | start | |  # If there are no captures available, an empty move list is returned
 quiescent | start | e4 d5 Nc3 dxe4 | Nxe4
 quiescent | 4k3/4r2q/2b5/8/4p3/3P1P2/5N2/4K3 w - - 0 1 | fxe4 | # Not worth recapturing for black
 quiescent | 4k3/4r2q/2b5/8/4p3/3Q1P2/5N2/4K3 w - - 0 1 | fxe4 | Bxe4 Nxe4 Rxe4
