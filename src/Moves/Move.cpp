@@ -28,7 +28,7 @@ bool Move::is_legal(const Board& board) const noexcept
 {
     assert(board.piece_on_square(start()));
     assert(board.piece_on_square(start()).color() == board.whose_turn());
-    assert(board.piece_on_square(start()).can_move(this));
+    //assert(board.piece_on_square(start()).can_move(this));
 
     if(auto attacked_piece = board.piece_on_square(end()))
     {
