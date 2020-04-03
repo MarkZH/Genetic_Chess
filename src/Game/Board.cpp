@@ -580,10 +580,6 @@ void Board::place_piece(Piece piece, Square square) noexcept
     auto old_piece = piece_on_square(square);
     piece_on_square(square) = piece;
 
-    remove_attacks_from(square, old_piece);
-    update_blocks(square, old_piece, piece);
-    add_attacks_from(square, piece);
-
     auto update_rook_hashes = old_piece && old_piece.type() == Piece_Type::KING && unmoved_positions[square.index()];
     if(update_rook_hashes)
     {
@@ -609,109 +605,49 @@ void Board::place_piece(Piece piece, Square square) noexcept
     }
 }
 
-void Board::add_attacks_from(Square square, Piece piece) noexcept
+void Board::recreate_attacks() noexcept
 {
-    modify_attacks(square, piece, true);
-}
+    blockable_attacks = {};
+    unblockable_attacks = {};
+    blocked_attacks = {};
 
-void Board::modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept
-{
-    if( ! piece)
+    for(auto square : Square::all_squares())
     {
-        return;
-    }
-
-    auto attacking_color = piece.color();
-    auto vulnerable_king = Piece{opposite(attacking_color), Piece_Type::KING};
-    for(const auto& attack_move_list : piece.attacking_move_lists(square))
-    {
-        if(attack_move_list.empty())
+        auto piece = piece_on_square(square);
+        if( ! piece)
         {
             continue;
         }
-        if(attack_move_list.front()->is_blockable())
+
+        auto attacking_color = piece.color();
+        auto vulnerable_king = Piece{opposite(attacking_color), Piece_Type::KING};
+        for(const auto& attack_move_list : piece.attacking_move_lists(square))
         {
-            bool move_blocked = false;
+            auto blocked = false;
             for(auto attack : attack_move_list)
             {
                 auto attacked_square = attack->end();
                 auto attacked_index = attacked_square.index();
-
-                if(move_blocked)
+                if(attack->is_blockable())
                 {
-                    blocked_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
+                    if(blocked)
+                    {
+                        blocked_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = true;
+                    }
+                    else
+                    {
+                        blockable_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = true;
+
+                        auto blocking_piece = piece_on_square(attacked_square);
+                        if(blocking_piece && blocking_piece != vulnerable_king)
+                        {
+                            blocked = true;
+                        }
+                    }
                 }
                 else
                 {
-                    auto blocking_piece = piece_on_square(attacked_square);
-
-                    blockable_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
-
-                    if(blocking_piece && blocking_piece != vulnerable_king)
-                    {
-                        move_blocked = true;
-                    }
-                }
-            }
-        }
-        else
-        {
-            auto attack = attack_move_list.front();
-            unblockable_attacks[static_cast<int>(attacking_color)][attack->end().index()][attack->attack_index()] = adding_attacks;
-        }
-    }
-}
-
-void Board::remove_attacks_from(Square square, Piece old_piece) noexcept
-{
-    modify_attacks(square, old_piece, false);
-}
-
-void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept
-{
-    // Replacing nothing with nothing changes nothing.
-    // Replacing one piece with another does not change which
-    // moves are blocked. Only happens during pawn promotions.
-    if(bool(old_piece) == bool(new_piece))
-    {
-        return;
-    }
-
-    auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
-    auto origin_square_index = square.index();
-
-    for(auto attacking_color : {Piece_Color::WHITE, Piece_Color::BLACK})
-    {
-        auto vulnerable_king = Piece{opposite(attacking_color), Piece_Type::KING};
-        if(new_piece == vulnerable_king)
-        {
-            continue;
-        }
-
-        const auto& attack_direction_list = blockable_attacks[static_cast<int>(attacking_color)][origin_square_index];
-        for(size_t index = 0; index < 8; ++index) // < 8 to exclude knight-like moves, which are never blocked
-        {
-            if(attack_direction_list[index])
-            {
-                auto step = Move::attack_direction_from_index(index);
-                auto revealed_attacker = piece_on_square(square - step);
-                if(revealed_attacker && (revealed_attacker.type() == Piece_Type::PAWN || revealed_attacker.type() == Piece_Type::KING))
-                {
-                    continue; // Pawns and kings are never blocked
-                }
-
-                for(auto target_square : Square::square_line_from(square, step))
-                {
-                    auto target_index = target_square.index();
-                    auto piece = piece_on_square(target_square);
-
-                    blockable_attacks[static_cast<int>(attacking_color)][target_index][index] = add_new_attacks;
-                    blocked_attacks[static_cast<int>(attacking_color)][target_index][index] = ! add_new_attacks;
-
-                    if(piece && piece != vulnerable_king)
-                    {
-                        break;
-                    }
+                    unblockable_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = true;
                 }
             }
         }
@@ -720,7 +656,12 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexc
 
 std::bitset<24> Board::moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept
 {
-    return blockable_attacks[static_cast<int>(attacking_color)][square.index()] | unblockable_attacks[static_cast<int>(attacking_color)][square.index()];
+    auto result = blockable_attacks[static_cast<int>(attacking_color)][square.index()];
+    for(size_t i = 0; i < result.size(); ++i)
+    {
+        result[i] = result[i] || (unblockable_attacks[static_cast<int>(attacking_color)][square.index()][i] > 0);
+    }
+    return result;
 }
 
 std::bitset<24> Board::checking_moves() const noexcept
@@ -776,7 +717,8 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
 
     if(piece_is_pinned(move.start()))
     {
-        return ! moves_are_parallel(move.movement(), king_square - move.start());
+        return ! moves_are_parallel(move.movement(), king_square - move.start()) ||
+               ! all_empty_between(move.start(), move.end());
     }
 
     if(move.is_en_passant())
@@ -991,6 +933,7 @@ Square Board::find_king(Piece_Color color) const noexcept
 
 void Board::recreate_move_caches() noexcept
 {
+    recreate_attacks();
     last_pin_check_square = Square{};
     checking_square = king_is_in_check() ? find_checking_square() : Square{};
     prior_moves_count = legal_moves_cache.size();
@@ -1040,7 +983,7 @@ void Board::add_other_moves(std::vector<const Move*>&) noexcept
 
 Square Board::find_checking_square() const noexcept
 {
-    const auto& checks = checking_moves();
+    auto checks = checking_moves();
     size_t checking_index = 0;
     while( ! checks[checking_index])
     {
@@ -1049,7 +992,38 @@ Square Board::find_checking_square() const noexcept
     auto step = Move::attack_direction_from_index(checking_index);
     const auto& king_square = find_king(whose_turn());
     auto squares = Square::square_line_from(king_square, -step);
-    return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
+    return *std::find_if(squares.begin(), squares.end(),
+                         [this, &king_square](auto square)
+                         {
+                             auto attacker = piece_on_square(square);
+                             if( ! attacker)
+                             {
+                                 return false;
+                             }
+
+                             if(check_is_blockable())
+                             {
+                                 return true;
+                             }
+
+                             if(attacker.color() != opposite(whose_turn()))
+                             {
+                                 return false;
+                             }
+
+                             for(auto attack_list : attacker.attacking_move_lists(square))
+                             {
+                                 for(auto attack : attack_list)
+                                 {
+                                     if( ! attack->is_blockable() && attack->end() == king_square)
+                                     {
+                                         return true;
+                                     }
+                                 }
+                             }
+
+                             return false;
+                         });
 }
 
 bool Board::enough_material_to_checkmate(Piece_Color piece_color) const noexcept
@@ -1211,7 +1185,11 @@ bool Board::material_change_possible() const noexcept
 
 bool Board::king_multiply_checked() const noexcept
 {
-    return checking_moves().count() > 1;
+    auto attacker_index = static_cast<int>(opposite(whose_turn()));
+    auto king_square_index = find_king(whose_turn()).index();
+    auto blockable_attack_count = blockable_attacks[attacker_index][king_square_index].count();
+    auto unblockable_attack_count = unblockable_attacks[attacker_index][king_square_index].count();
+    return blockable_attack_count + unblockable_attack_count > 1;
 }
 
 bool Board::all_empty_between(Square start, Square end) const noexcept
@@ -1223,7 +1201,7 @@ bool Board::all_empty_between(Square start, Square end) const noexcept
 
 bool Board::check_is_blockable() const noexcept
 {
-    return ! unblockable_attacks[static_cast<int>(opposite(whose_turn()))][find_king(whose_turn()).index()].any();
+    return unblockable_attacks[static_cast<int>(opposite(whose_turn()))][find_king(whose_turn()).index()].none();
 }
 
 bool Board::piece_is_pinned(Square square) const noexcept

@@ -1199,6 +1199,20 @@ namespace
                                 (expected_result ? "" : "not ") +
                                 "be in check.");
             }
+            else if(test_type == "king multiply checked")
+            {
+                assert(specification.size() == 4);
+                auto moves = String::split(specification.at(2));
+                auto expected_answer = String::lowercase(String::remove_extra_whitespace(specification.back()));
+                assert(expected_answer == "true" || expected_answer == "false");
+                auto expected_result = expected_answer == "true";
+                test_result(test_passed, all_moves_legal(*board, moves) && board->king_is_in_check() && board->king_multiply_checked() == expected_result,
+                            std::string("King is ") +
+                                (expected_result ? "not " : "") +
+                                "in multiple checks when it should " +
+                                (expected_result ? "" : "not ") +
+                                "be in multiple checks.");
+            }
             else if(test_type == "quiescent")
             {
                 assert(specification.size() == 4);

@@ -214,6 +214,8 @@ class Board
         //! \returns If the current player is in check.
         bool king_is_in_check() const noexcept;
 
+        bool king_multiply_checked() const noexcept;
+
         //! \brief Check if a move will leave the player making the move in check.
         //!
         //! \param move A possibly legal move to check.
@@ -347,10 +349,7 @@ class Board
         std::array<std::array<std::bitset<24>, 64>, 2> unblockable_attacks{};
         std::array<std::array<std::bitset<24>, 64>, 2> blocked_attacks{};
 
-        void add_attacks_from(Square square, Piece piece) noexcept;
-        void remove_attacks_from(Square square, Piece old_piece) noexcept;
-        void modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept;
-        void update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept;
+        void recreate_attacks() noexcept;
         std::bitset<24> moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
         std::bitset<24> checking_moves() const noexcept;
         Square find_checking_square() const noexcept;
@@ -393,8 +392,6 @@ class Board
         void update_board_hash(Square square) noexcept;
         uint64_t square_hash(Square square) const noexcept;
         void update_whose_turn_hash() noexcept;
-
-        bool king_multiply_checked() const noexcept;
 
         [[noreturn]] void fen_error(const std::string& reason) const;
 
