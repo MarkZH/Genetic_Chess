@@ -336,8 +336,6 @@ namespace
         auto expect_threefold_draw = false;
         auto in_game = false;
         auto board = std::make_unique<Board>();
-        std::cout << "\n\nNew board" << std::endl;
-        board->ascii_draw();
         Game_Result result;
 
         while(std::getline(input, line))
@@ -373,8 +371,6 @@ namespace
                 expect_threefold_draw = false;
                 in_game = false;
                 board = std::make_unique<Board>();
-                std::cout << "\n\nNew board" << std::endl;
-                board->ascii_draw();
                 result = {};
             }
 
@@ -417,8 +413,6 @@ namespace
             else if(String::starts_with(line, "[FEN"))
             {
                 board = board_factory(String::split(line, "\"").at(1));
-                std::cout << "\n\nNew board from FEN: " << board->fen() << std::endl;
-                board->ascii_draw();
             }
             else if(String::starts_with(line, "["))
             {
@@ -490,8 +484,6 @@ namespace
                         }
 
                         result = board->submit_move(move_to_submit);
-                        std::cout << "\n\nAfter move: " << move << std::endl;
-                        board->ascii_draw();
 
                         if(move_checks)
                         {
