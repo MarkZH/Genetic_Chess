@@ -941,7 +941,6 @@ bool run_perft_tests()
 
 bool run_musketeer_perft_tests()
 {
-    auto bad_results = std::ofstream("musketeer_perft_results_bad.txt");
     auto base_directory = std::filesystem::path{"../musketeer-chess/Perft/"};
     auto total_file_count = std::distance(std::filesystem::directory_iterator(base_directory), std::filesystem::directory_iterator());
     auto file_number = 0;
@@ -981,6 +980,7 @@ bool run_musketeer_perft_tests()
                     }
                     else
                     {
+                        static auto bad_results = std::ofstream("musketeer_perft_results_bad.txt");
                         std::cout << " Wrong answer. Expected: " << expected_count
                                   << " Got: " << actual_count
                                   << " Difference: " << int(actual_count) - int(expected_count) << std::endl;
