@@ -1439,6 +1439,19 @@ void Board::ascii_draw() const noexcept
     }
 }
 
+Square_Difference Board::check_origin() const noexcept
+{
+    auto checks = moves_attacking_square(find_king(opposite(whose_turn())), whose_turn());
+    for(size_t i = 0; i < checks.size(); ++i)
+    {
+        if(checks[i])
+        {
+            return Move::attack_direction_from_index(i);
+        }
+    }
+    return {0, 0};
+}
+
 void Board::ascii_draw_above_board(int, int) const noexcept
 {
 }

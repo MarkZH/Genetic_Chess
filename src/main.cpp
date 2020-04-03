@@ -460,8 +460,11 @@ namespace
                         if( ! board->safe_for_king(board->find_king(opposite(board->whose_turn())), opposite(board->whose_turn())))
                         {
                             board->ascii_draw();
+                            std::cerr << board->fen() << std::endl;
+                            auto check = board->check_origin();
                             std::cerr << "Before move " << move_number << move << ", "
-                                      << color_text(opposite(board->whose_turn())) << "'s king is in check but it is "
+                                      << color_text(opposite(board->whose_turn())) << "'s king is in check from direction ("
+                                      << check.file_change << ", " << check.rank_change << ") but it is "
                                       << color_text(board->whose_turn()) << "'s turn." << std::endl;
                             return false;
                         }

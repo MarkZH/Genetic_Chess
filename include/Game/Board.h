@@ -309,6 +309,7 @@ class Board
         virtual std::string extra_move_mark(const Move& move) const noexcept;
 
         void ascii_draw() const noexcept;
+        Square_Difference check_origin() const noexcept;
 
     protected:
         Board(const Board&) = default;
