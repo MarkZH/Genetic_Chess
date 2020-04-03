@@ -50,6 +50,9 @@ class Board
         //! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
         explicit Board(const std::string& fen);
 
+        //! \brief Create a copy of the Board. A pointer is returned to avoid slicing.
+        //!
+        //! \returns A pointer to a newly created copy of the Board, whatever it's underlying class.
         virtual std::unique_ptr<Board> copy() const noexcept;
 
         //! \brief Updates the state of the board according to a Player-selected Move.
@@ -214,6 +217,7 @@ class Board
         //! \returns If the current player is in check.
         bool king_is_in_check() const noexcept;
 
+        //! \brief Check if the king of the player to move is in check from multiple pieces.
         bool king_multiply_checked() const noexcept;
 
         //! \brief Check if a move will leave the player making the move in check.
@@ -308,18 +312,35 @@ class Board
         //! Returns 0 if no moves have been made on the board.
         size_t previous_moves_count() const noexcept;
 
+        //! \brief Extra information to append to a PGN movetext.
         virtual std::string extra_move_mark(const Move& move) const noexcept;
 
+        //! \brief Draw a representation of the board to a text console.
         void ascii_draw() const noexcept;
+
+        //! \brief THe direction the piece checking the king moves to reach the king.
         Square_Difference check_origin() const noexcept;
 
     protected:
+        //! \brief Copy constructor is protected to force the use of the copy() method.
         Board(const Board&) = default;
+
+        //! \brief Move constructor is protected to force the use of the copy() method.
         Board(Board&&) = default;
 
+        //! \brief Put a piece on a square.
+        //!
+        //! \param piece The piece. This may be a default-constructed (invalid) piece to make the square empty.
+        //! \param square The destination square.
         void place_piece(Piece piece, Square square) noexcept;
+
+        //! \brief Mark the square as containing an unmoved piece.
         void set_unmoved(Square square) noexcept;
+
+        //! \brief Modify the board in other ways not specified by Move::side_effects().
         virtual void other_move_effects(const Move& move) noexcept;
+
+        //! \brief Set the actual starting FEN, if different from the one received by the Board() constructor.
         void set_initial_fen(const std::string& fen) noexcept;
 
     private:

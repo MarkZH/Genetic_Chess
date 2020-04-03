@@ -16,6 +16,11 @@ void run_speed_tests();
 //! \returns True if all tests pass.
 bool run_perft_tests();
 
+//! \brief Run a timed test of legal move generation for Musketeer chess boards to check for correct rule implementation.
+//!
+//! \returns True if all tests pass.
+//!
+//! Test files are read from clone of https://github.com/fsmosca/musketeer-chess/
 bool run_musketeer_perft_tests();
 
 //! \brief Print a sample of random numbers from various distributions as a quick quality check.

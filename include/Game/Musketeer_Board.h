@@ -12,10 +12,18 @@
 
 class Move;
 
+//! \brief A Board on which Musketeer Chess is played.
+//!
+//! https://musketeerchess.net/home/index.html
 class Musketeer_Board : public Board
 {
     public:
+        //! \brief Create a board in the standard chess setup with randomly chosen and placed gated pieces.
         Musketeer_Board() noexcept;
+
+        //! \brief Create a board according to a given FEN string.
+        //!
+        //! \param input_fen A string specifying the state of a Musketeer Chess board
         explicit Musketeer_Board(const std::string& input_fen);
 
         std::unique_ptr<Board> copy() const noexcept override;
@@ -24,7 +32,10 @@ class Musketeer_Board : public Board
         std::string extra_move_mark(const Move& move) const noexcept override;
 
     protected:
+        //! \brief Copy constructor is protected to force use of copy() method.
         Musketeer_Board(const Musketeer_Board&) = default;
+
+        //! \brief Move constructor is protected to force use of copy() method.
         Musketeer_Board(Musketeer_Board&&) = default;
 
         void other_move_effects(const Move& move) noexcept override;

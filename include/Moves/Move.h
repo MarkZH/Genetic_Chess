@@ -15,6 +15,7 @@ class Move
         //!
         //! \param start The Square where move starts.
         //! \param end   The Square where move ends.
+        //! \param can_be_blocked Whether the move slides (true) or jumps (false).
         Move(Square start, Square end, bool can_be_blocked) noexcept;
 
         virtual ~Move() = default;
@@ -90,6 +91,7 @@ class Move
         //! \returns Whether this is an instance of the En_Passant class.
         bool is_en_passant() const noexcept;
 
+        //! \brief Return whether the move is blockable (a sliding move) or not (a jumping move).
         bool is_blockable() const noexcept;
 
         //! \brief Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.

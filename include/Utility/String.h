@@ -23,6 +23,12 @@ namespace String
                                    std::string delim = "",
                                    size_t count = std::string::npos) noexcept;
 
+    //! \brief Join a sequece of strings into a single string with joiner strings in between.
+    //!
+    //! \tparam Iter An iterator type.
+    //! \param begin An iterator to the first string in the sequence.
+    //! \param end An iterator past the end of the sequence.
+    //! \param joiner A string that will be placed between every string in the sequence.
     template<typename Iter>
     std::string join(Iter begin, Iter end, const std::string& joiner) noexcept
     {
