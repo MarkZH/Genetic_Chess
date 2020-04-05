@@ -70,7 +70,7 @@ void gene_pool(const std::string& config_file)
     auto config = Configuration(config_file);
 
     // Environment variables
-    const auto maximum_simultaneous_games = config.as_positive_number<size_t>("maximum simultaneous games");
+    const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
     const auto gene_pool_count = config.as_positive_number<size_t>("gene pool count");
     const auto pool_swap_interval = config.as_positive_number<size_t>("pool swap interval");
@@ -263,25 +263,19 @@ void gene_pool(const std::string& config_file)
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
         Random::shuffle(pool);
-
-        std::vector<std::future<Game_Result>> results; // map from matchups to winners (half the size of pool)
+        std::vector<std::future<Game_Result>> results;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
-            // Limit the number of simultaneous games by waiting for earlier games to finish
-            // before starting a new one.
-            while(true)
+            while(int(results.size()) >= maximum_simultaneous_games)
             {
-                auto in_progress_games = size_t(std::count_if(results.begin(),
-                                                              results.end(),
-                                                              [](const auto& r)
-                                                              { return r.wait_for(0s) != std::future_status::ready; }));
+                auto in_progress_games = std::count_if(results.begin(),
+                                                       results.end(),
+                                                       [](const auto& r)
+                                                       {
+                                                           return r.wait_for(100ms) != std::future_status::ready;
+                                                       });
 
-                if(gene_pool_population > 2*maximum_simultaneous_games &&
-                   in_progress_games >= maximum_simultaneous_games)
-                {
-                    std::this_thread::sleep_for(100ms);
-                }
-                else
+                if(in_progress_games < maximum_simultaneous_games)
                 {
                     break;
                 }
