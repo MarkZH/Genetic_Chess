@@ -37,7 +37,7 @@ class [[nodiscard]] Scoped_Stopwatch
         //! \tparam Duration The time unit representation to use for printing. Defaults to seconds
         //!         represented as a double.
         //! \param file_name The name of the file where the timings will be printed. If empty or
-        //!        left out, the timings will be printed to stdout.
+        //!        left out, the timings will be printed to the console.
         template<typename Duration = Scoped_Stopwatch::seconds>
         [[nodiscard]] static auto print_guard(const std::string& file_name = "") noexcept
         {
@@ -73,9 +73,9 @@ class [[nodiscard]] Scoped_Stopwatch
 
         //! \brief Print the timings from all stopped timer instances.
         //!
-        //! \tparam Duration The time unit representation to use for printing. Defaults to seconds
-        //!         represented as a double.
-        //! \param file_name The name of the file where the data will be printed.
+        //! \tparam Duration The name of the file where the data will be printed.
+        //! \param file_name The name of the file where the timing data will be written.
+        //!        If blank or empty, the data will be written to the console.
         //!
         //! If the file_name parameter is empty, the data will be printed to stdout.
         //! If any Scoped_Stopwatch instances are still running, their data will not
