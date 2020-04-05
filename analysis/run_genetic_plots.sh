@@ -77,3 +77,5 @@ fi
 
 ./analysis/promotions.sh "$game_file"
 ./analysis/castling.sh "$game_file"
+
+wait
