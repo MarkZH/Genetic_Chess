@@ -6,6 +6,7 @@
 #include <chrono>
 #include <sstream>
 #include <type_traits>
+#include <numeric>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
@@ -21,6 +22,27 @@ namespace String
     std::vector<std::string> split(std::string s,
                                    std::string delim = "",
                                    size_t count = std::string::npos) noexcept;
+
+    //! \brief Join a sequece of strings into a single string with joiner strings in between.
+    //!
+    //! \tparam Iter An iterator type.
+    //! \param begin An iterator to the first string in the sequence.
+    //! \param end An iterator past the end of the sequence.
+    //! \param joiner A string that will be placed between every string in the sequence.
+    template<typename Iter>
+    std::string join(Iter begin, Iter end, const std::string& joiner) noexcept
+    {
+        if(begin == end)
+        {
+            return {};
+        }
+
+        return std::accumulate(std::next(begin), end, *begin,
+                               [&joiner](const auto& so_far, const auto& s)
+                               {
+                                   return so_far + joiner + s;
+                               });
+    }
 
     //! \brief Determine whether a string exists inside another string.
     //!

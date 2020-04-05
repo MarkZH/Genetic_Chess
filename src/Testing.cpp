@@ -576,6 +576,11 @@ bool run_tests()
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", -1);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, String::split, "..a..b..c..d..", "..", 4);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", 5);
+    auto split_join_input = "a/b/c/d";
+    auto splitter = "/";
+    auto split = String::split(split_join_input, splitter);
+    auto rejoin = String::join(split.begin(), split.end(), splitter);
+    test_result(tests_passed, split_join_input == rejoin, std::string{"Split-join failed: "} + split_join_input + " --> " + rejoin);
 
     // Number formating
     std::vector<std::pair<int, std::string>> tests =
