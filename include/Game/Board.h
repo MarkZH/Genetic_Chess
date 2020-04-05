@@ -366,9 +366,7 @@ class Board
         void add_other_moves() noexcept;
 
         Piece& piece_on_square(Square square) noexcept;
-        void place_piece(Piece piece, Square square) noexcept;
         void remove_piece(Square square) noexcept;
-        void set_unmoved(Square square) noexcept;
         void move_piece(const Move& move) noexcept;
         void other_move_effects(const Move& move) noexcept;
         bool no_legal_moves() const noexcept;
@@ -376,7 +374,9 @@ class Board
         void clear_en_passant_target() noexcept;
         bool is_en_passant_targetable(Square square) const noexcept;
         bool is_in_legal_moves_list(const Move& move) const noexcept;
+        void place_piece(Piece piece, Square square) noexcept;
         bool all_empty_between(Square start, Square end) const noexcept;
+        void set_unmoved(Square square) noexcept;
         bool check_is_blockable() const noexcept;
         void update_board(const Move& move) noexcept;
         Game_Result move_result() const noexcept;
