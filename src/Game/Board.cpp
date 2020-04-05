@@ -1031,11 +1031,13 @@ bool Board::enough_material_to_checkmate(Piece_Color piece_color) const noexcept
     auto piece_is_right = [piece_color](auto piece, auto type) { return piece == Piece{piece_color, type}; };
 
     if(std::any_of(board.begin(), board.end(),
-                   [piece_is_right](auto piece)
+                   [piece_is_right, piece_color](auto piece)
                    {
                        return piece_is_right(piece, Piece_Type::QUEEN) ||
                               piece_is_right(piece, Piece_Type::ROOK) ||
-                              piece_is_right(piece, Piece_Type::PAWN);
+                              piece_is_right(piece, Piece_Type::PAWN) ||
+                              (piece && piece.color() == piece_color &&
+                               static_cast<int>(piece.type()) > static_cast<int>(Piece_Type::KING));
                    }))
     {
         return true;
@@ -1070,7 +1072,8 @@ bool Board::enough_material_to_checkmate() const noexcept
                    {
                        return piece_is_right(piece, Piece_Type::QUEEN) ||
                               piece_is_right(piece, Piece_Type::ROOK) ||
-                              piece_is_right(piece, Piece_Type::PAWN);
+                              piece_is_right(piece, Piece_Type::PAWN) ||
+                              (piece && static_cast<int>(piece.type()) > static_cast<int>(Piece_Type::KING));
                    }))
     {
         return true;
