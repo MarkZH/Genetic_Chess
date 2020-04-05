@@ -26,7 +26,7 @@ class Outside_Communicator
         //! \param clock The clock used for the game.
         //! \param move_list The list of moves in the game so far.
         //! \param player The local AI.
-        virtual Game_Result setup_turn(std::unique_ptr<Board>& board,
+        virtual Game_Result setup_turn(Board& board,
                                        Clock& clock,
                                        std::vector<const Move*>& move_list,
                                        const Player& player) = 0;
@@ -43,7 +43,7 @@ class Outside_Communicator
         //! \param move The move picked by the local AI.
         //! \param move_list The list of moves in the game so far.
         //! \param player The local AI>
-        virtual Game_Result handle_move(std::unique_ptr<Board>& board,
+        virtual Game_Result handle_move(Board& board,
                                         const Move& move,
                                         std::vector<const Move*>& move_list,
                                         const Player& player) const = 0;

@@ -6,7 +6,6 @@
 #include <array>
 #include <chrono>
 using namespace std::chrono_literals;
-#include <memory>
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Game/Board.h"
@@ -156,13 +155,13 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
         auto variation_guard = current_variation.scoped_push_back(move);
 
-        auto next_board = board.copy();
+        auto next_board = board;
 
-        auto move_result = next_board->submit_move(*move);
+        auto move_result = next_board.submit_move(*move);
         if(move_result.winner() != Winner_Color::NONE)
         {
             // This move results in checkmate, no other move can be better.
-            best_result = create_result(*next_board, perspective, move_result, current_variation);
+            best_result = create_result(next_board, perspective, move_result, current_variation);
             break;
         }
 
@@ -196,14 +195,14 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            auto minimum_time_to_recurse = next_board->legal_moves().size()*node_evaluation_time;
+            auto minimum_time_to_recurse = next_board.legal_moves().size()*node_evaluation_time;
             recurse = (time_allotted_for_this_move > minimum_time_to_recurse);
         }
 
         Game_Tree_Node_Result result;
         if(recurse)
         {
-            result = search_game_tree(*next_board,
+            result = search_game_tree(next_board,
                                       time_allotted_for_this_move,
                                       clock,
                                       beta,
@@ -213,13 +212,13 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            auto quiescent_moves = next_board->quiescent(piece_values());
+            auto quiescent_moves = next_board.quiescent(piece_values());
             for(auto quiescent_move : quiescent_moves)
             {
-                next_board->submit_move(*quiescent_move);
+                next_board.submit_move(*quiescent_move);
             }
             auto quiescent_guard = current_variation.scoped_push_back(quiescent_moves.begin(), quiescent_moves.end());
-            result = create_result(*next_board, perspective, move_result, current_variation);
+            result = create_result(next_board, perspective, move_result, current_variation);
             nodes_searched += result.depth() - depth;
         }
 
@@ -456,25 +455,24 @@ std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move
     return variation_line(board, move_number, variation, score, alternate_variation, alternate_score);
 }
 
-std::string variation_line(const Board& initial_board,
+std::string variation_line(Board board,
                            const size_t move_number,
                            const std::vector<const Move*>& variation,
                            const double score,
                            const std::vector<const Move*>& alternate_variation,
                            const double alternate_score)
 {
-    auto board = initial_board.copy();
     Game_Result move_result;
     auto write_alternate_variation = ! alternate_variation.empty();
-    const auto move_label_offset = (board->whose_turn() == Piece_Color::WHITE ? 0 : 1);
-    std::string result = "(" + (board->whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + ". ... " : std::string{});
+    const auto move_label_offset = (board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
+    std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + ". ... " : std::string{});
     for(size_t i = 0; i < variation.size(); ++i)
     {
         const auto move_label = move_number + i/2 + move_label_offset;
-        result += (board->whose_turn() == Piece_Color::WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(*board) + " ";
+        result += (board.whose_turn() == Piece_Color::WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(board) + " ";
         if(write_alternate_variation && i < alternate_variation.size() && alternate_variation[i] != variation[i])
         {
-            result += variation_line(*board,
+            result += variation_line(board,
                                      move_label,
                                      {alternate_variation.begin() + i, alternate_variation.end()},
                                      alternate_score,
@@ -482,7 +480,7 @@ std::string variation_line(const Board& initial_board,
                                      {}) + " ";
             write_alternate_variation = false;
         }
-        move_result = board->submit_move(*variation[i]);
+        move_result = board.submit_move(*variation[i]);
     }
 
     if( ! move_result.game_has_ended())

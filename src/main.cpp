@@ -8,8 +8,6 @@
 
 #include "Game/Game.h"
 #include "Game/Board.h"
-#include "Game/Musketeer_Board.h"
-#include "Game/Board_Factory.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
@@ -114,7 +112,7 @@ int main(int argc, char *argv[])
                 Clock::seconds game_time{};
                 size_t moves_per_reset = 0;
                 Clock::seconds increment_time{};
-                auto board = std::make_unique<Board>();
+                auto board = Board();
                 bool pondering_allowed = false;
                 std::string game_file_name;
                 std::string event_name;
@@ -189,11 +187,11 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-board" && i + 1 < argc)
                     {
-                        board = board_factory(argv[++i]);
+                        board = Board(argv[++i]);
                     }
                     else if(opt == "-musketeer")
                     {
-                        board = std::make_unique<Musketeer_Board>();
+                        board = Board(Board_Type::MUSKETEER);
                     }
                     else if(opt == "-game-file" && i + 1 < argc)
                     {
@@ -248,8 +246,8 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    play_game(*board,
-                              Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board->whose_turn()),
+                    play_game(board,
+                              Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board.whose_turn()),
                               *white, *black,
                               pondering_allowed,
                               event_name,
@@ -335,7 +333,7 @@ namespace
         auto expect_fifty_move_draw = false;
         auto expect_threefold_draw = false;
         auto in_game = false;
-        auto board = std::make_unique<Board>();
+        auto board = Board();
         Game_Result result;
 
         while(std::getline(input, line))
@@ -370,7 +368,7 @@ namespace
                 expect_fifty_move_draw = false;
                 expect_threefold_draw = false;
                 in_game = false;
-                board = std::make_unique<Board>();
+                board = Board();
                 result = {};
             }
 
@@ -412,7 +410,7 @@ namespace
             }
             else if(String::starts_with(line, "[FEN"))
             {
-                board = board_factory(String::split(line, "\"").at(1));
+                board = Board(String::split(line, "\"").at(1));
             }
             else if(String::starts_with(line, "["))
             {
@@ -430,7 +428,7 @@ namespace
                         continue;
                     }
 
-                    if(board->whose_turn() == Piece_Color::BLACK)
+                    if(board.whose_turn() == Piece_Color::BLACK)
                     {
                         move_number += "... ";
                     }
@@ -451,43 +449,43 @@ namespace
 
                     try
                     {
-                        if( ! board->safe_for_king(board->find_king(opposite(board->whose_turn())), opposite(board->whose_turn())))
+                        if( ! board.safe_for_king(board.find_king(opposite(board.whose_turn())), opposite(board.whose_turn())))
                         {
-                            board->ascii_draw();
-                            std::cerr << board->fen() << std::endl;
-                            auto check = board->check_origin();
+                            board.ascii_draw();
+                            std::cerr << board.fen() << std::endl;
+                            auto check = board.check_origin();
                             std::cerr << "Before move " << move_number << move << ", "
-                                      << color_text(opposite(board->whose_turn())) << "'s king is in check from direction ("
+                                      << color_text(opposite(board.whose_turn())) << "'s king is in check from direction ("
                                       << check.file_change << ", " << check.rank_change << ") but it is "
-                                      << color_text(board->whose_turn()) << "'s turn." << std::endl;
+                                      << color_text(board.whose_turn()) << "'s turn." << std::endl;
                             return false;
                         }
 
                         auto move_checkmates = move.back() == '#';
                         auto move_checks = move_checkmates || move.back() == '+';
-                        auto& move_to_submit = board->create_move(move);
+                        auto& move_to_submit = board.create_move(move);
                         last_move_line_number = line_number;
                         if(String::contains(move, 'x')) // check that move captures
                         {
-                            if( ! const_cast<const Board&>(*board).piece_on_square(move_to_submit.end()) && ! move_to_submit.is_en_passant())
+                            if( ! const_cast<const Board&>(board).piece_on_square(move_to_submit.end()) && ! move_to_submit.is_en_passant())
                             {
                                 std::cerr << "Move: " << move_number << move << " indicates capture but does not capture. (line: " << line_number << ")" << std::endl;
                                 return false;
                             }
 
-                            if(board->find_king(opposite(board->whose_turn())) == move_to_submit.end())
+                            if(board.find_king(opposite(board.whose_turn())) == move_to_submit.end())
                             {
-                                board->ascii_draw();
+                                board.ascii_draw();
                                 std::cerr << move_number << move << " captures king. Board is in invalid state." << std::endl;
                                 return false;
                             }
                         }
 
-                        result = board->submit_move(move_to_submit);
+                        result = board.submit_move(move_to_submit);
 
                         if(move_checks)
                         {
-                            if( ! board->king_is_in_check())
+                            if( ! board.king_is_in_check())
                             {
                                 std::cerr << "Move (" << move_number << move << ") indicates check but does not check. (line: " << line_number << ")" << std::endl;
                                 return false;
@@ -495,7 +493,7 @@ namespace
                         }
                         else
                         {
-                            if(board->king_is_in_check())
+                            if(board.king_is_in_check())
                             {
                                 std::cerr << "Move (" << move_number << move << ") indicates no check but does check. (line: " << line_number << ")" << std::endl;
                                 return false;
@@ -504,7 +502,7 @@ namespace
 
                         if(move_checkmates)
                         {
-                            if(result.winner() != static_cast<Winner_Color>(opposite(board->whose_turn())))
+                            if(result.winner() != static_cast<Winner_Color>(opposite(board.whose_turn())))
                             {
                                 std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate. (line: " << line_number << ")" << std::endl;
                                 return false;
@@ -531,12 +529,12 @@ namespace
                                   << error.what()
                                   << ". (line: " << line_number << ")" << std::endl;
                         std::cerr << "Legal moves: ";
-                        for(auto legal_move : board->legal_moves())
+                        for(auto legal_move : board.legal_moves())
                         {
-                            std::cerr << legal_move->algebraic(*board) << " ";
+                            std::cerr << legal_move->algebraic(board) << " ";
                         }
                         std::cerr << std::endl;
-                        std::cerr << board->fen() << std::endl;
+                        std::cerr << board.fen() << std::endl;
                         return false;
                     }
                 }

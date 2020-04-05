@@ -12,16 +12,16 @@
 #include <string>
 #include <chrono>
 using namespace std::chrono_literals;
-#include <memory>
 #include <iomanip>
 
 #include "Game/Board.h"
-#include "Game/Board_Factory.h"
 #include "Game/Clock.h"
 #include "Game/Square.h"
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
 #include "Moves/Move.h"
+#include "Moves/Pawn_Promotion.h"
+#include "Moves/Direction.h"
 
 #include "Players/Player.h"
 
@@ -68,6 +68,24 @@ namespace
         return castling_hash_cache;
     }();
 
+    std::string extract_standard_fen(const std::string& original_fen)
+    {
+        if( ! String::contains(original_fen, "*"))
+        {
+            return original_fen;
+        }
+
+        auto tokens = String::split(original_fen);
+        auto board_rows = String::split(tokens.front(), "/");
+        if(board_rows.size() != 10)
+        {
+            throw std::runtime_error("Wrong number of rows in board field: " + original_fen);
+        }
+
+        auto standard_board = String::join(std::next(board_rows.begin()), std::prev(board_rows.end()), "/");
+        return standard_board + " " + String::join(std::next(tokens.begin()), tokens.end(), " ");
+    }
+
     const uint64_t switch_turn_board_hash = Random::random_unsigned_int64();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -75,12 +93,23 @@ namespace
     std::atomic_bool move_immediately = false;
 }
 
-Board::Board() noexcept : Board(standard_starting_fen)
+Board::Board(Board_Type type) noexcept : Board(standard_starting_fen)
 {
+    if(type == Board_Type::MUSKETEER)
+    {
+        board_type = type;
+        pick_and_place_random_gated_pieces();
+        set_unmoved_gate_guardians();
+        set_initial_fen(fen());
+    }
 }
 
-Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_whitespace(input_fen))
+Board::Board(const std::string& original_fen) :
+    starting_fen(String::remove_extra_whitespace(original_fen)),
+    board_type(String::contains(original_fen, '*') ? Board_Type::MUSKETEER : Board_Type::STANDARD)
 {
+    auto input_fen = extract_standard_fen(original_fen);
+
     auto fen_parse = String::split(input_fen);
     if(fen_parse.size() != 6)
     {
@@ -238,6 +267,32 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
 
     first_full_move_label = String::to_number<size_t>(fen_parse.at(5));
 
+    // Musketeer Board gates
+    if(String::contains(original_fen, '*'))
+    {
+        auto tokens = String::split(original_fen);
+        auto board_rows = String::split(tokens.front(), "/");
+        for(auto gate_index : {0, 9})
+        {
+            auto gate = board_rows[gate_index];
+            auto gate_color = gate_index == 0 ? Piece_Color::BLACK : Piece_Color::WHITE;
+            for(size_t i = 0; i < gate.size(); ++i)
+            {
+                if(gate[i] != '*')
+                {
+                    gated_pieces[static_cast<int>(gate_color)][i] = Piece{gate[i]};
+                }
+            }
+        }
+
+        if(ply_count() == 0)
+        {
+            pick_and_place_random_gated_pieces();
+        }
+
+        set_unmoved_gate_guardians();
+    }
+
     if(fen() != starting_fen)
     {
         fen_error("Result: " + fen());
@@ -253,11 +308,6 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
 void Board::fen_error(const std::string& reason) const
 {
     throw std::invalid_argument("Bad FEN input: " + starting_fen + "\n" + reason);
-}
-
-std::unique_ptr<Board> Board::copy() const noexcept
-{
-    return std::unique_ptr<Board>(new Board(*this));
 }
 
 Piece& Board::piece_on_square(Square square) noexcept
@@ -286,6 +336,11 @@ bool Board::is_in_legal_moves_list(const Move&) const noexcept
 std::string Board::fen() const noexcept
 {
     std::string s;
+
+    if(board_type == Board_Type::MUSKETEER)
+    {
+        s += gate_fen(Piece_Color::BLACK) + '/';
+    }
 
     for(int rank = 8; rank >= 1; --rank)
     {
@@ -317,6 +372,11 @@ std::string Board::fen() const noexcept
         {
             s += std::to_string(empty_count);
         }
+    }
+
+    if(board_type == Board_Type::MUSKETEER)
+    {
+        s += '/' + gate_fen(Piece_Color::WHITE);
     }
 
     s.push_back(' ');
@@ -360,6 +420,16 @@ std::string Board::fen() const noexcept
     return s + " " +
         std::to_string(moves_since_pawn_or_capture()) + " " +
         std::to_string(1 + ply_count()/2);
+}
+
+std::string Board::gate_fen(Piece_Color color) const noexcept
+{
+    std::string result;
+    for(auto piece : gated_pieces[static_cast<int>(color)])
+    {
+        result.push_back(piece ? piece.fen_symbol() : '*');
+    }
+    return result;
 }
 
 std::string Board::original_fen() const noexcept
@@ -863,37 +933,37 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         print_game_header_line(out_stream, "FEN", starting_fen);
     }
 
-    auto commentary_board = board_factory(starting_fen);
-    auto starting_turn_offset = size_t(commentary_board->whose_turn() == Piece_Color::WHITE ? 0 : 1);
+    auto commentary_board = Board(original_fen());
+    auto starting_turn_offset = size_t(commentary_board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
 
     for(size_t i = 0; i < game_record_listing.size(); ++i)
     {
         auto step = first_full_move_label + (i + starting_turn_offset)/2;
-        if(commentary_board->whose_turn() == Piece_Color::WHITE || i == 0)
+        if(commentary_board.whose_turn() == Piece_Color::WHITE || i == 0)
         {
             out_stream << '\n' << step << ".";
-            if(i == 0 && commentary_board->whose_turn() == Piece_Color::BLACK)
+            if(i == 0 && commentary_board.whose_turn() == Piece_Color::BLACK)
             {
                 out_stream << " ...";
             }
         }
 
         auto next_move = game_record_listing.at(i);
-        out_stream << " " << next_move->algebraic(*commentary_board);
-        auto current_player = (commentary_board->whose_turn() == Piece_Color::WHITE ? white : black);
+        out_stream << " " << next_move->algebraic(commentary_board);
+        auto current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
         if(current_player)
         {
-            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(*commentary_board, step));
+            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(commentary_board, step));
             if( ! commentary.empty())
             {
                 out_stream << " " << commentary;
             }
         }
-        commentary_board->submit_move(*next_move);
+        commentary_board.submit_move(*next_move);
     }
     out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
 
-    assert(commentary_board->fen() == fen());
+    assert(commentary_board.fen() == fen());
 }
 
 void Board::make_en_passant_targetable(Square square) noexcept
@@ -961,7 +1031,7 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
-    add_other_moves(legal_moves_cache);
+    add_other_moves();
 
     if(std::none_of(legal_moves_cache.begin(),
                     legal_moves_cache.end(),
@@ -977,8 +1047,24 @@ void Board::recreate_move_caches() noexcept
                                                    });
 }
 
-void Board::add_other_moves(std::vector<const Move*>&) noexcept
+void Board::add_other_moves() noexcept
 {
+    if(board_type != Board_Type::MUSKETEER)
+    {
+        return;
+    }
+
+    auto pawn = Piece{whose_turn(), Piece_Type::PAWN};
+    for(const auto& move : gated_pawn_promotions[static_cast<int>(whose_turn())])
+    {
+        if(const_cast<const Board&>(*this).piece_on_square(move->start()) == pawn)
+        {
+            if(move->is_legal(*this))
+            {
+                legal_moves_cache.push_back(move.get());
+            }
+        }
+    }
 }
 
 Square Board::find_checking_square() const noexcept
@@ -1372,9 +1458,19 @@ size_t Board::previous_moves_count() const noexcept
     return prior_moves_count;
 }
 
-std::string Board::extra_move_mark(const Move&) const noexcept
+std::string Board::extra_move_mark(const Move& move) const noexcept
 {
-    return {};
+    auto next_board = *this;
+    next_board.submit_move(move);
+    auto gated_piece = const_cast<const Board&>(next_board).piece_on_square(move.start());
+    if(gated_piece)
+    {
+        return "/" + gated_piece.pgn_symbol();
+    }
+    else
+    {
+        return {};
+    }
 }
 
 void Board::ascii_draw() const noexcept
@@ -1421,6 +1517,38 @@ void Board::ascii_draw() const noexcept
     }
 }
 
+void Board::ascii_draw_above_board(int indentation, int symbol_width) const noexcept
+{
+    ascii_draw_gate(Piece_Color::BLACK, indentation, symbol_width);
+}
+
+void Board::ascii_draw_gate(Piece_Color color, int indentation, int symbol_width) const noexcept
+{
+    if(board_type != Board_Type::MUSKETEER)
+    {
+        return;
+    }
+
+    std::cout << std::setw(indentation) << std::left << "" << std::right;
+    for(auto piece : gated_pieces[static_cast<int>(color)])
+    {
+        if(piece)
+        {
+            std::cout << std::setw(symbol_width) << piece.fen_symbol();
+        }
+        else
+        {
+            std::cout << std::setw(symbol_width) << '#';
+        }
+    }
+    std::cout << std::endl;
+}
+
+void Board::ascii_draw_below_board(int indentation, int symbol_width) const noexcept
+{
+    ascii_draw_gate(Piece_Color::WHITE, indentation, symbol_width);
+}
+
 Square_Difference Board::check_origin() const noexcept
 {
     auto checks = moves_attacking_square(find_king(opposite(whose_turn())), whose_turn());
@@ -1434,19 +1562,141 @@ Square_Difference Board::check_origin() const noexcept
     return {0, 0};
 }
 
-void Board::ascii_draw_above_board(int, int) const noexcept
+void Board::other_move_effects(const Move& move) noexcept
 {
-}
-
-void Board::ascii_draw_below_board(int, int) const noexcept
-{
-}
-
-void Board::other_move_effects(const Move&) noexcept
-{
+    auto base_rank = whose_turn() == Piece_Color::WHITE ? 1 : 8;
+    if(move.start().rank() == base_rank)
+    {
+        auto color_index = static_cast<int>(whose_turn());
+        auto file_index = move.start().file() - 'a';
+        auto gated_piece = gated_pieces[color_index][file_index];
+        if(gated_piece)
+        {
+            place_piece(gated_piece, move.start());
+            gated_pieces[color_index][file_index] = {};
+        }
+    }
 }
 
 void Board::set_initial_fen(const std::string& fen) noexcept
 {
     starting_fen = fen;
+}
+
+void Board::set_unmoved_gate_guardians() noexcept
+{
+    for(auto base_rank : {1, 8})
+    {
+        for(auto file = 'a'; file <= 'h'; ++file)
+        {
+            auto gate_index = file - 'a';
+            const auto& player_gated_pieces = gated_pieces[base_rank == 1 ? 0 : 1];
+            if(player_gated_pieces[gate_index])
+            {
+                set_unmoved({file, base_rank});
+            }
+        }
+    }
+}
+
+void Board::pick_and_place_random_gated_pieces() noexcept
+{
+    static const auto choices = std::array<Piece_Type, 10>{Piece_Type::LEOPARD,
+                                                           Piece_Type::CANNON,
+                                                           Piece_Type::UNICORN,
+                                                           Piece_Type::DRAGON,
+                                                           Piece_Type::CHANCELLOR,
+                                                           Piece_Type::ARCHBISHOP,
+                                                           Piece_Type::ELEPHANT,
+                                                           Piece_Type::HAWK,
+                                                           Piece_Type::FORTRESS,
+                                                           Piece_Type::SPIDER};
+    std::vector<Piece_Type> gated_piece_types;
+    for(const auto& list : gated_pieces)
+    {
+        for(const auto& piece : list)
+        {
+            if(piece && gated_piece_types.size() < 2)
+            {
+                if(gated_piece_types.empty() || gated_piece_types.front() != piece.type())
+                {
+                    gated_piece_types.push_back(piece.type());
+                }
+            }
+        }
+    }
+
+    while(gated_piece_types.size() < 2)
+    {
+        auto type = Random::random_element(choices);
+        if(gated_piece_types.empty() || gated_piece_types.front() != type)
+        {
+            gated_piece_types.push_back(type);
+        }
+    }
+
+    for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
+    {
+        auto& gate_list = gated_pieces[static_cast<int>(color)];
+        for(auto type : gated_piece_types)
+        {
+            auto gated_piece = Piece{color, type};
+            if(std::find(gate_list.begin(), gate_list.end(), gated_piece) != gate_list.end())
+            {
+                continue;
+            }
+
+            auto other_index = std::distance(gate_list.begin(),
+                                             std::find_if(gate_list.begin(), gate_list.end(),
+                                                          [](const auto& piece)
+                                                          {
+                                                              return bool(piece);
+                                                          }));
+
+            while(true)
+            {
+                auto file_index = Random::random_integer(0, 7);
+                if(file_index == other_index)
+                {
+                    continue;
+                }
+
+                // Cannot place gated pieces behind rook and king
+                if(file_index == 4 && (other_index == 0 || other_index == 7))
+                {
+                    continue;
+                }
+
+                // Cannot place gated pieces behind rook and king
+                if(other_index == 4 && (file_index == 0 || file_index == 7))
+                {
+                    continue;
+                }
+
+                gate_list[file_index] = gated_piece;
+                break;
+            }
+        }
+    }
+
+    for(const auto& piece_type : gated_piece_types)
+    {
+        for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
+        {
+            auto& promotion_list = gated_pawn_promotions[static_cast<int>(color)];
+            for(auto file = 'a'; file <= 'h'; ++file)
+            {
+                promotion_list.push_back(std::shared_ptr<const Move>(new Pawn_Promotion(piece_type, color, file)));
+                if(file > 'a')
+                {
+                    promotion_list.push_back(std::shared_ptr<const Move>(new Pawn_Promotion(piece_type, color, file, Direction::LEFT)));
+                }
+
+                if(file < 'h')
+                {
+                    promotion_list.push_back(std::shared_ptr<const Move>(new Pawn_Promotion(piece_type, color, file, Direction::RIGHT)));
+                }
+            }
+        }
+    }
 }

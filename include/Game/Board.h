@@ -25,6 +25,12 @@ class Pawn_Promotion;
 class Pawn_Double_Move;
 class Pawn_Move;
 
+enum class Board_Type
+{
+    STANDARD,
+    MUSKETEER
+};
+
 //! \brief This class represents the physical chess board.
 //!
 //! Each instance contains data to track the position of pieces, move history,
@@ -37,23 +43,17 @@ class Board
 {
     public:
         //! \brief Constructs a board in the standard starting position.
-        Board() noexcept;
-
-        virtual ~Board() = default;
-
-        Board& operator=(const Board&) = delete;
-        Board& operator=(Board&&) = delete;
+        //!
+        //! \param type The type of game to be played. Default is standard chess.
+        //!        If MUSKETEER is chosen, then the gated pieces will be randomly chosen
+        //!        and placed.
+        Board(Board_Type type = Board_Type::STANDARD) noexcept;
 
         //! \brief Constructs a board according to an FEN string.
         //!
         //! \param fen An text string given in FEN.
         //! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
         explicit Board(const std::string& fen);
-
-        //! \brief Create a copy of the Board. A pointer is returned to avoid slicing.
-        //!
-        //! \returns A pointer to a newly created copy of the Board, whatever it's underlying class.
-        virtual std::unique_ptr<Board> copy() const noexcept;
 
         //! \brief Updates the state of the board according to a Player-selected Move.
         //!
@@ -100,7 +100,7 @@ class Board
         //! This may slightly differ from the output of other programs
         //! in that the en passant target is only listed if there is a
         //! legal en passant move to be made.
-        virtual std::string fen() const noexcept;
+        std::string fen() const noexcept;
 
         //! \brief Returns the FEN string that was used to create the Board.
         std::string original_fen() const noexcept;
@@ -313,35 +313,13 @@ class Board
         size_t previous_moves_count() const noexcept;
 
         //! \brief Extra information to append to a PGN movetext.
-        virtual std::string extra_move_mark(const Move& move) const noexcept;
+        std::string extra_move_mark(const Move& move) const noexcept;
 
         //! \brief Draw a representation of the board to a text console.
         void ascii_draw() const noexcept;
 
         //! \brief THe direction the piece checking the king moves to reach the king.
         Square_Difference check_origin() const noexcept;
-
-    protected:
-        //! \brief Copy constructor is protected to force the use of the copy() method.
-        Board(const Board&) = default;
-
-        //! \brief Move constructor is protected to force the use of the copy() method.
-        Board(Board&&) = default;
-
-        //! \brief Put a piece on a square.
-        //!
-        //! \param piece The piece. This may be a default-constructed (invalid) piece to make the square empty.
-        //! \param square The destination square.
-        void place_piece(Piece piece, Square square) noexcept;
-
-        //! \brief Mark the square as containing an unmoved piece.
-        void set_unmoved(Square square) noexcept;
-
-        //! \brief Modify the board in other ways not specified by Move::side_effects().
-        virtual void other_move_effects(const Move& move) noexcept;
-
-        //! \brief Set the actual starting FEN, if different from the one received by the Board() constructor.
-        void set_initial_fen(const std::string& fen) noexcept;
 
     private:
         std::array<Piece, 64> board;
@@ -358,6 +336,7 @@ class Board
         mutable bool last_pin_result;
         bool material_changing_move_available;
         size_t first_full_move_label;
+        Board_Type board_type = Board_Type::STANDARD;
 
         // Stores the moves that attack a square. The innermost array
         // is filled with bools indicating the direction the piece attacking
@@ -384,11 +363,14 @@ class Board
         size_t prior_moves_count = 0;
 
         void recreate_move_caches() noexcept;
-        virtual void add_other_moves(std::vector<const Move*>& move_list) noexcept;
+        void add_other_moves() noexcept;
 
         Piece& piece_on_square(Square square) noexcept;
+        void place_piece(Piece piece, Square square) noexcept;
         void remove_piece(Square square) noexcept;
+        void set_unmoved(Square square) noexcept;
         void move_piece(const Move& move) noexcept;
+        void other_move_effects(const Move& move) noexcept;
         bool no_legal_moves() const noexcept;
         void make_en_passant_targetable(Square square) noexcept;
         void clear_en_passant_target() noexcept;
@@ -398,8 +380,8 @@ class Board
         bool check_is_blockable() const noexcept;
         void update_board(const Move& move) noexcept;
         Game_Result move_result() const noexcept;
-        virtual void ascii_draw_above_board(int indentation, int symbol_width) const noexcept;
-        virtual void ascii_draw_below_board(int indentation, int symbol_width) const noexcept;
+        void ascii_draw_above_board(int indentation, int symbol_width) const noexcept;
+        void ascii_draw_below_board(int indentation, int symbol_width) const noexcept;
 
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record() noexcept;
@@ -415,6 +397,16 @@ class Board
         void update_whose_turn_hash() noexcept;
 
         [[noreturn]] void fen_error(const std::string& reason) const;
+
+        // Musketeer board members
+        std::array<std::array<Piece, 8>, 2> gated_pieces{}; // indexed by gated_pieces[Color index][File index]
+        std::array<Fixed_Capacity_Vector<std::shared_ptr<const Move>, 44>, 2> gated_pawn_promotions{};
+
+        void pick_and_place_random_gated_pieces() noexcept;
+        std::string gate_fen(Piece_Color color) const noexcept;
+        void set_unmoved_gate_guardians() noexcept;
+        void ascii_draw_gate(Piece_Color color, int indentation, int symbol_width) const noexcept;
+        void set_initial_fen(const std::string& initial_fen) noexcept;
 
         // Moves with side effects are friends of Board
         friend class Castle; // moves second piece

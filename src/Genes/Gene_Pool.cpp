@@ -25,7 +25,6 @@ using namespace std::chrono_literals;
 #include "Players/Genetic_AI.h"
 #include "Game/Game.h"
 #include "Game/Board.h"
-#include "Game/Musketeer_Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 
@@ -265,7 +264,6 @@ void gene_pool(const std::string& config_file)
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
         Random::shuffle(pool);
-        std::vector<std::unique_ptr<Board>> game_boards;
         std::vector<std::future<Game_Result>> results;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
@@ -286,16 +284,8 @@ void gene_pool(const std::string& config_file)
 
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
-            if(use_musketeer_board)
-            {
-                game_boards.push_back(std::make_unique<Musketeer_Board>());
-            }
-            else
-            {
-                game_boards.push_back(std::make_unique<Board>());
-            }
             results.emplace_back(std::async(std::launch::async, play_game,
-                                            std::cref(*game_boards.back()),
+                                            Board(use_musketeer_board ? Board_Type::MUSKETEER : Board_Type::STANDARD),
                                             Clock(game_time),
                                             std::cref(white), std::cref(black),
                                             false,
