@@ -47,6 +47,8 @@ piece_strength_figure = figure;
 piece_strength_prefix = 'Piece Strength Gene';
 title('Piece Strength Evolution');
 max_piece_score = -inf;
+piece_count = 0;
+piece_end_values = containers.Map;
 
 priority_figure = figure;
 priority_suffix = ' Gene - Priority';
@@ -132,6 +134,9 @@ for yi = 2 : length(data.colheaders) - 2
         if special_plot_index == 1
             name = name(end);
             max_piece_score = max(abs(smooth_data(end)), max_piece_score);
+            piece_count = piece_count + 1;
+            make_dashed = (piece_count > 7);
+            piece_end_values(name) = smooth_data(end);
         elseif special_plot_index == 2
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
@@ -139,7 +144,7 @@ for yi = 2 : length(data.colheaders) - 2
         end
 
         if draw_now
-            p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', name);
+            p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', [name ' (' num2str(smooth_data(end)) ')']);
             if make_dashed
                 set(p, 'LineStyle', ':');
             end
@@ -175,6 +180,13 @@ for index = 1 : length(special_plots)
             end
             plot([xl(1) + x_width*(1-width) xl(2)], tick_height*[1 1], 'k');
         end
+
+        disp('# Piece values (Q = 900)');
+        norm = piece_end_values('Q')/900;
+        for piece = piece_end_values.keys()
+            disp([piece{1} ' = ' num2str(round(piece_end_values(piece{1})/norm))]);
+        end
+
     elseif special_plots(index) == active_figure
         plot(x_axis, total_active, 'LineWidth', 3);
         grid on;
