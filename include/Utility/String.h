@@ -37,11 +37,12 @@ namespace String
             return {};
         }
 
-        return std::accumulate(std::next(begin), end, *begin,
-                               [&joiner](const auto& so_far, const auto& s)
-                               {
-                                   return so_far + joiner + s;
-                               });
+        auto result = *begin;
+        for(auto i = std::next(begin); i != end; ++i)
+        {
+            result += joiner + *i;
+        }
+        return result;
     }
 
     //! \brief Determine whether a string exists inside another string.
