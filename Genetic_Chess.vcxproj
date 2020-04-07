@@ -230,12 +230,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\game\Board.cpp" />
-    <ClCompile Include="src\Game\Board_Factory.cpp" />
     <ClCompile Include="src\game\Clock.cpp" />
     <ClCompile Include="src\game\Color.cpp" />
     <ClCompile Include="src\game\Game.cpp" />
     <ClCompile Include="src\game\Game_Result.cpp" />
-    <ClCompile Include="src\Game\Musketeer_Board.cpp" />
     <ClCompile Include="src\Game\Piece.cpp" />
     <ClCompile Include="src\game\Square.cpp" />
     <ClCompile Include="src\genes\Castling_Possible_Gene.cpp" />
@@ -280,12 +278,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game\Board.h" />
-    <ClInclude Include="include\Game\Board_Factory.h" />
     <ClInclude Include="include\game\Clock.h" />
     <ClInclude Include="include\game\Color.h" />
     <ClInclude Include="include\game\Game.h" />
     <ClInclude Include="include\game\Game_Result.h" />
-    <ClInclude Include="include\Game\Musketeer_Board.h" />
     <ClInclude Include="include\Game\Piece.h" />
     <ClInclude Include="include\game\Square.h" />
     <ClInclude Include="include\genes\Castling_Possible_Gene.h" />
