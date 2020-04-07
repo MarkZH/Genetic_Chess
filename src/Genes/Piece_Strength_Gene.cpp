@@ -25,7 +25,7 @@ void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& prope
     for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
         auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
-        properties[std::string(1, piece.fen_symbol())] = piece_value(piece);
+        properties[std::string(1, piece.fen_symbol())] = piece_value(piece.type());
     }
 }
 
