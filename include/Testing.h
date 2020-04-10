@@ -23,7 +23,4 @@ bool run_perft_tests();
 //! Test files are read from clone of https://github.com/fsmosca/musketeer-chess/
 bool run_musketeer_perft_tests();
 
-//! \brief Print a sample of random numbers from various distributions as a quick quality check.
-void print_randomness_sample();
-
 #endif // TESTING_H
