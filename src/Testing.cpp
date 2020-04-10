@@ -946,51 +946,53 @@ bool run_perft_tests()
 
 bool run_musketeer_perft_tests(const std::filesystem::path& base_directory)
 {
-    auto total_file_count = std::distance(std::filesystem::directory_iterator(base_directory), std::filesystem::directory_iterator());
+    auto total_file_count = std::count_if(std::filesystem::recursive_directory_iterator(base_directory),
+                                          std::filesystem::recursive_directory_iterator(),
+                                          [](const auto& path)
+                                          {
+                                              return path.is_regular_file() && path.path().extension() == ".csv";
+                                          });
     auto file_number = 0;
     auto failure_count = 0;
     auto start_time = std::chrono::steady_clock::now();
-    for(auto test_directory : std::filesystem::directory_iterator(base_directory))
+    for(auto test_file : std::filesystem::recursive_directory_iterator(base_directory))
     {
-        for(auto test_file : std::filesystem::directory_iterator(test_directory))
+        if(test_file.is_regular_file() && test_file.path().extension() == ".csv")
         {
-            if(test_file.is_regular_file() && test_file.path().extension() == ".csv")
+            ++file_number;
+            auto total_test_count = line_count(test_file.path().string());
+            auto input = std::ifstream(test_file.path());
+            std::string line;
+            auto test_number = 0;
+            while(std::getline(input, line))
             {
-                ++file_number;
-                auto total_test_count = line_count(test_file.path().string());
-                auto input = std::ifstream(test_file.path());
-                std::string line;
-                auto test_number = 0;
-                while(std::getline(input, line))
+                auto split = String::split(line, ",");
+                if(split.size() != 2)
                 {
-                    auto split = String::split(line, ",");
-                    if(split.size() != 2)
-                    {
-                        std::cout << " XXX Bad test" << std::endl;
-                        continue;
-                    }
-                    const auto depth = 4;
-                    auto board = Board(split.front());
-                    auto actual_count = move_count(board, depth);
-                    auto expected_count = String::to_number<decltype(actual_count)>(split.back());
-                    auto time_so_far = std::chrono::steady_clock::now() - start_time;
-                    std::cout << "[" << file_number << "/" << total_file_count
-                              << " | " << ++test_number << "/" << total_test_count
-                              << " | " << std::chrono::floor<std::chrono::seconds>(time_so_far).count() << " sec | "
-                              << failure_count << " fails] " << board.fen();
-                    if(actual_count == expected_count)
-                    {
-                        std::cout << " OK!\n";
-                    }
-                    else
-                    {
-                        static auto bad_results = std::ofstream("musketeer_perft_results_bad.txt");
-                        std::cout << " Wrong answer. Expected: " << expected_count
-                                  << " Got: " << actual_count
-                                  << " Difference: " << int(actual_count) - int(expected_count) << std::endl;
-                        bad_results << board.fen() << std::endl;
-                        ++failure_count;
-                    }
+                    std::cout << " XXX Bad test" << std::endl;
+                    continue;
+                }
+                const auto depth = 4;
+                auto board = Board(split.front());
+                auto actual_count = move_count(board, depth);
+                auto expected_count = String::to_number<decltype(actual_count)>(split.back());
+                auto time_so_far = std::chrono::steady_clock::now() - start_time;
+                std::cout << "[" << file_number << "/" << total_file_count
+                    << " | " << ++test_number << "/" << total_test_count
+                    << " | " << std::chrono::floor<std::chrono::seconds>(time_so_far).count() << " sec | "
+                    << failure_count << " fails] " << board.fen();
+                if(actual_count == expected_count)
+                {
+                    std::cout << " OK!\n";
+                }
+                else
+                {
+                    static auto bad_results = std::ofstream("musketeer_perft_results_bad.txt");
+                    std::cout << " Wrong answer. Expected: " << expected_count
+                        << " Got: " << actual_count
+                        << " Difference: " << int(actual_count) - int(expected_count) << std::endl;
+                    bad_results << board.fen() << std::endl;
+                    ++failure_count;
                 }
             }
         }
