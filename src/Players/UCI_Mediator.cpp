@@ -137,7 +137,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                     continue;
                 }
 
-                auto number = std::stoi(option);
+                auto number = String::to_number<int>(option);
                 if(previous_option == "wtime")
                 {
                     log("Setting White's time to " + std::to_string(number) + " ms");

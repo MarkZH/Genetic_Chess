@@ -536,7 +536,7 @@ namespace
             {
                 try
                 {
-                    pool_assignments[std::stoi(id_string)] = pool_number;
+                    pool_assignments[String::to_number<int>(id_string)] = pool_number;
                 }
                 catch(...)
                 {
@@ -615,7 +615,7 @@ namespace
             auto is_black_player = String::starts_with(line, "[Black");
             if(is_white_player || is_black_player)
             {
-                auto player_id = std::stoi(String::split(String::split(line, "\"").at(1)).at(2));
+                auto player_id = String::to_number<int>(String::split(String::split(line, "\"").at(1)).at(2));
                 if(player_id == id)
                 {
                     while(std::getline(input, line))

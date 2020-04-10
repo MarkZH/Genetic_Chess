@@ -425,7 +425,7 @@ bool run_tests()
     auto file_name = "genetic_ai_example.txt";
     std::string line;
     std::getline(std::ifstream(file_name), line);
-    auto id = std::stoi(String::split(line).at(1));
+    auto id = String::to_number<int>(String::split(line).at(1));
     function_should_not_throw(tests_passed, "Genetic_AI ctor", [=]() { Genetic_AI{file_name, id}; });
 
 
@@ -878,7 +878,8 @@ bool run_perft_tests()
     std::sort(lines.begin(), lines.end(),
               [](auto x, auto y)
               {
-                  return std::stoull(String::split(x).back()) < std::stoull(String::split(y).back());
+                  auto f = [](auto s) { return String::to_number<unsigned long long>(String::split(s).back()); };
+                  return f(x) < f(y);
               });
 
     auto test_number = 0;
@@ -897,8 +898,8 @@ bool run_perft_tests()
             auto depth_leaves = String::split(test);
             assert(depth_leaves.size() == 2);
             assert(depth_leaves.front().front() == 'D');
-            auto depth = std::stoull(depth_leaves.front().substr(1));
-            auto expected_leaves = std::stoull(depth_leaves.back());
+            auto depth = String::to_number<unsigned long long>(depth_leaves.front().substr(1));
+            auto expected_leaves = String::to_number<unsigned long long>(depth_leaves.back());
             auto leaf_count = move_count(perft_board, depth);
             legal_moves_counted += leaf_count;
             if(leaf_count != expected_leaves)
@@ -998,8 +999,8 @@ namespace
                     auto split2 = String::split(line2, ":", 1);
                     if(split1.front() == split2.front())
                     {
-                        auto num1 = std::stod(split1.back());
-                        auto num2 = std::stod(split2.back());
+                        auto num1 = String::to_number<double>(split1.back());
+                        auto num2 = String::to_number<double>(split2.back());
                         if(std::abs((num1 - num2)/(num1 + num2)) < 1e-5)
                         {
                             continue;

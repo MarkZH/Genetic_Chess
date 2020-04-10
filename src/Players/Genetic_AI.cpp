@@ -69,7 +69,7 @@ void Genetic_AI::read_from(std::istream& is)
             continue;
         }
 
-        if(id_number == std::stoi(param_value[1]))
+        if(id_number == String::to_number<int>(param_value[1]))
         {
             read_data(is);
             return;
@@ -177,7 +177,7 @@ int find_last_id(const std::string& players_file_name)
     {
         if(String::starts_with(line, "ID:"))
         {
-            last_player = std::stoi(String::split(line).back());
+            last_player = String::to_number<int>(String::split(line).back());
         }
     }
 

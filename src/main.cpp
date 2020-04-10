@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
                             {
                                 try
                                 {
-                                    latest = std::make_unique<Genetic_AI>(filename, std::stoi(argv[i + 2]));
+                                    latest = std::make_unique<Genetic_AI>(filename, String::to_number<int>(argv[i + 2]));
                                     i += 2;
                                 }
                                 catch(const Genetic_AI_Creation_Error&)

@@ -827,7 +827,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         {
             if(String::starts_with(line, "[Round"))
             {
-                auto round_number = std::stoi(String::split(line, "\"").at(1));
+                auto round_number = String::to_number<int>(String::split(line, "\"").at(1));
                 if(round_number >= game_number)
                 {
                     game_number = round_number + 1;
