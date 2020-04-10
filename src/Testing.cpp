@@ -171,7 +171,7 @@ namespace
     }
 
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2) noexcept;
-    unsigned long long move_count(const Board& board, unsigned long long maximum_depth) noexcept;
+    size_t move_count(const Board& board, size_t maximum_depth) noexcept;
     bool run_board_tests(const std::string& file_name);
     bool all_moves_legal(Board& board, const std::vector<std::string>& moves) noexcept;
     bool move_is_illegal(const Board& board, const std::string& move) noexcept;
@@ -878,12 +878,12 @@ bool run_perft_tests()
     std::sort(lines.begin(), lines.end(),
               [](auto x, auto y)
               {
-                  auto f = [](auto s) { return String::to_number<unsigned long long>(String::split(s).back()); };
+                  auto f = [](auto s) { return String::to_number<size_t>(String::split(s).back()); };
                   return f(x) < f(y);
               });
 
     auto test_number = 0;
-    unsigned long long legal_moves_counted = 0;
+    size_t legal_moves_counted = 0;
     auto time_at_start_of_all = std::chrono::steady_clock::now();
     for(const auto& line : lines)
     {
@@ -898,8 +898,8 @@ bool run_perft_tests()
             auto depth_leaves = String::split(test);
             assert(depth_leaves.size() == 2);
             assert(depth_leaves.front().front() == 'D');
-            auto depth = String::to_number<unsigned long long>(depth_leaves.front().substr(1));
-            auto expected_leaves = String::to_number<unsigned long long>(depth_leaves.back());
+            auto depth = String::to_number<size_t>(depth_leaves.front().substr(1));
+            auto expected_leaves = String::to_number<size_t>(depth_leaves.back());
             auto leaf_count = move_count(perft_board, depth);
             legal_moves_counted += leaf_count;
             if(leaf_count != expected_leaves)
@@ -1029,7 +1029,7 @@ namespace
         return true;
     }
 
-    unsigned long long move_count(const Board& board, unsigned long long maximum_depth) noexcept
+    size_t move_count(const Board& board, size_t maximum_depth) noexcept
     {
         if(maximum_depth == 0)
         {
@@ -1041,7 +1041,7 @@ namespace
             return board.legal_moves().size();
         }
 
-        unsigned long long count = 0;
+        size_t count = 0;
         for(auto move : board.legal_moves())
         {
             auto next_board = board;
