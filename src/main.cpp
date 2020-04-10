@@ -283,6 +283,8 @@ namespace
                 << "\t\tRun a speed test for gene scoring and boad move submission.\n\n"
                 << "\t-perft\n"
                 << "\t\tRun a legal move generation test.\n\n"
+                << "\t-musketeer-perft [directory of test files]\n"
+                << "\t\tRun a performance test on Musketeer Chess boards. The argument\n\t\tindicates the folder containing the test files that have a .csv extentsion.\n\n"
                 << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP/xboard or UCI command from a GUI\nto start playing.\n\n"
                 << "\t-genetic [filename [number]]\n"
                 << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file.\n\n"
@@ -307,6 +309,8 @@ namespace
                 << "\t\tAn optional location for the game to be played. This will be\n\t\twritten to the PGN game record.\n\n"
                 << "\t-game-file [file name]\n"
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n"
+                << "\t-musketeer\n"
+                << "\t\tIndicate that the game should be played on a Musketeer Chess\n\t\tboard with randomly selected and placed gated pieces.\n\n"
                 << "All game options in this section can be overriden by GUI commands except -short-post,\n-event, -location, and -game-file.\n\n";
     }
 
