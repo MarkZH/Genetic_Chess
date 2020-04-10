@@ -94,10 +94,6 @@ int main(int argc, char *argv[])
             {
                 return run_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
             }
-            else if(option == "-random-test")
-            {
-                print_randomness_sample();
-            }
             else
             {
                 // Use pointers since each player could be Genetic, Random, etc.
@@ -279,8 +275,6 @@ namespace
                 << "\t\tRun a speed test for gene scoring and boad move submission.\n\n"
                 << "\t-perft\n"
                 << "\t\tRun a legal move generation test.\n\n"
-                << "\t-random-test\n"
-                << "\t\tGenerate a sample of random numbers for a quick check of quality.\n\n"
                 << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP/xboard or UCI command from a GUI\nto start playing.\n\n"
                 << "\t-genetic [filename [number]]\n"
                 << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file.\n\n"

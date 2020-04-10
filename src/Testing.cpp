@@ -942,30 +942,6 @@ bool run_perft_tests()
     return tests_failed.empty();
 }
 
-void print_randomness_sample()
-{
-    // Random number generation sample
-    int int_width = 10;
-    int real_width = 15;
-    int norm_width = 15;
-    int uint_width = 30;
-    std::cout << std::setw(int_width) << "Integers"
-              << std::setw(real_width) << "Reals"
-              << std::setw(norm_width) << "Laplace"
-              << std::setw(uint_width) << "Unsigned Ints" << '\n';
-    std::cout << std::setw(int_width) << "+/-1000"
-              << std::setw(real_width) << "[0,2]"
-              << std::setw(norm_width) << "width = 3"
-              << std::setw(uint_width) << "[0," + std::to_string(std::numeric_limits<uint64_t>::max()) + "]" << "\n";
-    for(int i = 0; i < 10; ++i)
-    {
-        std::cout << std::setw(int_width) << Random::random_integer(-1000, 1000)
-                  << std::setw(real_width) << Random::random_real(0, 2)
-                  << std::setw(norm_width) << Random::random_laplace(3)
-                  << std::setw(uint_width) << Random::random_unsigned_int64() << '\n';
-    }
-}
-
 namespace
 {
     bool test_result(bool& all_tests_passed, bool expected_result, const std::string& fail_message) noexcept

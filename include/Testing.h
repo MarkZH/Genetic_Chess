@@ -16,7 +16,4 @@ void run_speed_tests();
 //! \returns True if all tests pass.
 bool run_perft_tests();
 
-//! \brief Print a sample of random numbers from various distributions as a quick quality check.
-void print_randomness_sample();
-
 #endif // TESTING_H
