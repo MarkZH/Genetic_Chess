@@ -944,9 +944,8 @@ bool run_perft_tests()
     return tests_failed.empty();
 }
 
-bool run_musketeer_perft_tests()
+bool run_musketeer_perft_tests(const std::filesystem::path& base_directory)
 {
-    auto base_directory = std::filesystem::path{"../musketeer-chess/Perft/"};
     auto total_file_count = std::distance(std::filesystem::directory_iterator(base_directory), std::filesystem::directory_iterator());
     auto file_number = 0;
     auto failure_count = 0;

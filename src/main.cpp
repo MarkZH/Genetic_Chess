@@ -94,9 +94,9 @@ int main(int argc, char *argv[])
             {
                 return run_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
             }
-            else if(option == "-musketeer-perft")
+            else if(option == "-musketeer-perft" && argc >= 3)
             {
-                return run_musketeer_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
+                return run_musketeer_perft_tests(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
             }
             else
             {

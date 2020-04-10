@@ -1,6 +1,8 @@
 #ifndef TESTING_H
 #define TESTING_H
 
+#include <filesystem>
+
 //! \file
 
 //! \brief Run through a battery of tests to verify the operation of most of the program.
@@ -21,6 +23,6 @@ bool run_perft_tests();
 //! \returns True if all tests pass.
 //!
 //! Test files are read from clone of https://github.com/fsmosca/musketeer-chess/
-bool run_musketeer_perft_tests();
+bool run_musketeer_perft_tests(const std::filesystem::path& test_directory);
 
 #endif // TESTING_H
