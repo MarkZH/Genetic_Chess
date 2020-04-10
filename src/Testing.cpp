@@ -885,12 +885,13 @@ bool run_perft_tests()
     auto test_number = 0;
     size_t legal_moves_counted = 0;
     auto time_at_start_of_all = std::chrono::steady_clock::now();
+    auto test_count_space = std::to_string(lines.size()).size();
     for(const auto& line : lines)
     {
         auto time_at_start = std::chrono::steady_clock::now();
         auto line_parts = String::split(line, ";");
         auto fen = line_parts.front();
-        std::cout << '[' << ++test_number << '/' << lines.size() << "] " << fen << std::flush;
+        std::cout << '[' << std::setw(test_count_space) << ++test_number << '/' << lines.size() << "] " << fen << std::flush;
         auto perft_board = Board(fen);
         auto tests = std::vector<std::string>(line_parts.begin() + 1, line_parts.end());
         for(const auto& test : tests)
