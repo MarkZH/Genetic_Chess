@@ -25,6 +25,7 @@ bool Random::coin_flip() noexcept
 
 bool Random::success_probability(size_t successes, size_t attempts) noexcept
 {
+    assert(attempts > 0);
     return random_integer(size_t{1}, attempts) <= successes;
 }
 
