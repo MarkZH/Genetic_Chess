@@ -11,14 +11,6 @@ double Random::random_laplace(double width) noexcept
     return (coin_flip() ? 1 : -1)*dist(generator, ed::param_type{1.0/width});
 }
 
-double Random::random_real(double min, double max) noexcept
-{
-    thread_local static std::mt19937_64 generator(std::random_device{}());
-    using urd = std::uniform_real_distribution<double>;
-    thread_local static auto dist = urd{};
-    return dist(generator, urd::param_type{min, max});
-}
-
 uint64_t Random::random_unsigned_int64() noexcept
 {
     thread_local static std::mt19937_64 generator(std::random_device{}());

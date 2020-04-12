@@ -17,13 +17,6 @@ namespace Random
     //! See https://en.wikipedia.org/wiki/Laplace_distribution.
     double random_laplace(double width) noexcept;
 
-    //! \brief Random floating point number with inclusive range from a uniform distribution.
-    //!
-    //! \param min The minimum number to return.
-    //! \param max The maximum number to return.
-    //! \returns A random number in the range [min, max].
-    double random_real(double min, double max) noexcept;
-
     //! \brief Random integral number with inclusive range from a uniform distribution.
     //!
     //! \param min The minimum number to return.
