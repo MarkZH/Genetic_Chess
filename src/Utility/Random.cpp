@@ -2,6 +2,7 @@
 
 #include <random>
 #include <string>
+#include <limits>
 
 double Random::random_laplace(double width) noexcept
 {
@@ -11,19 +12,10 @@ double Random::random_laplace(double width) noexcept
     return (coin_flip() ? 1 : -1)*dist(generator, ed::param_type{1.0/width});
 }
 
-double Random::random_real(double min, double max) noexcept
-{
-    thread_local static std::mt19937_64 generator(std::random_device{}());
-    using urd = std::uniform_real_distribution<double>;
-    thread_local static auto dist = urd{};
-    return dist(generator, urd::param_type{min, max});
-}
-
 uint64_t Random::random_unsigned_int64() noexcept
 {
-    thread_local static std::mt19937_64 generator(std::random_device{}());
-    thread_local static std::uniform_int_distribution<uint64_t> dist;
-    return dist(generator);
+    return random_integer(std::numeric_limits<uint64_t>::min(),
+                          std::numeric_limits<uint64_t>::max());
 }
 
 bool Random::coin_flip() noexcept
@@ -33,6 +25,7 @@ bool Random::coin_flip() noexcept
 
 bool Random::success_probability(size_t successes, size_t attempts) noexcept
 {
+    assert(attempts > 0);
     return random_integer(size_t{1}, attempts) <= successes;
 }
 
