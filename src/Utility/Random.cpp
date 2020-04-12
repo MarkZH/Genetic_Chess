@@ -2,6 +2,7 @@
 
 #include <random>
 #include <string>
+#include <limits>
 
 double Random::random_laplace(double width) noexcept
 {
@@ -13,9 +14,8 @@ double Random::random_laplace(double width) noexcept
 
 uint64_t Random::random_unsigned_int64() noexcept
 {
-    thread_local static std::mt19937_64 generator(std::random_device{}());
-    thread_local static std::uniform_int_distribution<uint64_t> dist;
-    return dist(generator);
+    return random_integer(std::numeric_limits<uint64_t>::min(),
+                          std::numeric_limits<uint64_t>::max());
 }
 
 bool Random::coin_flip() noexcept
