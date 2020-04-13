@@ -51,10 +51,8 @@ class [[nodiscard]] Scoped_Stopwatch
             return Print_Guard(file_name);
         }
 
-        Scoped_Stopwatch(const Scoped_Stopwatch& other) = delete;
-        Scoped_Stopwatch& operator=(const Scoped_Stopwatch& other) = delete;
-        Scoped_Stopwatch(Scoped_Stopwatch&&) = delete;
-        Scoped_Stopwatch& operator=(Scoped_Stopwatch&&) = delete;
+        Scoped_Stopwatch(const Scoped_Stopwatch&) = delete;
+        Scoped_Stopwatch& operator=(const Scoped_Stopwatch&) = delete;
 
         //! \brief If the method stop() has not been called already, the destructor stops the stopwatch and records the time.
         ~Scoped_Stopwatch();

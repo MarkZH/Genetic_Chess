@@ -191,8 +191,6 @@ class [[nodiscard]] Scoped_Push_Guard
 
         Scoped_Push_Guard(const Scoped_Push_Guard&) = delete;
         Scoped_Push_Guard& operator=(const Scoped_Push_Guard&) = delete;
-        Scoped_Push_Guard(Scoped_Push_Guard&&) = delete;
-        Scoped_Push_Guard& operator=(Scoped_Push_Guard&&) = delete;
 
     private:
         Fixed_Capacity_Vector<T, capacity>& data_store;
