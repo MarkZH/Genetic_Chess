@@ -17,7 +17,7 @@ gene pool count = 3
 
 # How many mutations a newly created Genetic AI should undergo
 # at the start of a gene pool run
-initial mutations = 100
+initial mutations = 10
 
 # Complete rounds (in which all pools play a set of games) in between
 # swapping players between pools
@@ -33,7 +33,7 @@ pool swap interval = 1000
 # maximum game time and go down by the increment until it reaches the
 # minimum game time, where it will remain thereafter.
 
-minimum game time = .05 # seconds
+minimum game time = .5 # seconds
 maximum game time = 30 # seconds
 game time increment = 0.01 # seconds
 
@@ -47,7 +47,7 @@ gene pool file = pool.txt
 # (Optional) When starting a new gene pool run, add the AI from the
 # listed file. The ID # number is separated from the file name with
 # a slash.
-seed = genetic_ai_example.txt / 197965
+#seed = genetic_ai_example.txt / 197965
 
 # (Optional) Alternatively, If no ID number for the seed is listed,
 # then the last one in the file is selected.
