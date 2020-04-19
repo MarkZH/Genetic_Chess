@@ -78,6 +78,10 @@ void gene_pool(const std::string& config_file)
     const auto genome_file_name = config.as_text("gene pool file");
     const auto scramble_mutations = config.as_positive_number<int>("initial mutations");
 
+    // Elimination condition
+    const auto elimination_on_losses = config.as_boolean("elimination cause", "loss", "deficit");
+    const auto elimination_count = config.as_positive_number<int>("elimination count");
+
     // Oscillating game time
     const auto minimum_game_time = config.as_positive_time_duration<Clock::seconds>("minimum game time");
     const auto maximum_game_time = config.as_positive_time_duration<Clock::seconds>("maximum game time");
@@ -105,6 +109,7 @@ void gene_pool(const std::string& config_file)
     // Individual Genetic AI stats
     std::map<Genetic_AI, int> wins;
     std::map<Genetic_AI, int> draws;
+    std::map<Genetic_AI, int> losses;
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
@@ -309,14 +314,10 @@ void gene_pool(const std::string& config_file)
             if(winner != Winner_Color::NONE)
             {
                 const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
+                const auto& losing_player  = (winner == Winner_Color::WHITE ? black : white);
                 color_wins[static_cast<int>(winner)]++;
                 wins[winning_player]++;
-
-                auto offspring = mating_reproduction ? Genetic_AI(white, black) : Genetic_AI(winning_player, winning_player);
-                offspring.mutate();
-
-                auto& losing_player  = (winner == Winner_Color::WHITE ? black : white);
-                losing_player = offspring; // offspring replaces loser
+                losses[losing_player]++;
             }
             else
             {
@@ -326,11 +327,49 @@ void gene_pool(const std::string& config_file)
             }
         }
 
+        // Eliminate AIs with too many losses
+        if(elimination_on_losses)
+        {
+            pool.erase(std::remove_if(pool.begin(), pool.end(),
+                                      [elimination_count, &losses](const auto& ai)
+                                      {
+                                          return losses[ai] >= elimination_count;
+                                      }), pool.end());
+        }
+        else
+        {
+            pool.erase(std::remove_if(pool.begin(), pool.end(),
+                                      [elimination_count, &wins, &losses](const auto& ai)
+                                      {
+                                          return losses[ai] - wins[ai] >= elimination_count;
+                                      }), pool.end());
+        }
+
+        // Create new AIs from survivors to repopulate the pool
+        while(pool.size() < gene_pool_population)
+        {
+            if(mating_reproduction)
+            {
+                auto first_index = Random::random_integer({0}, pool.size() - 1);
+                auto second_index = Random::random_integer({0}, pool.size() - 2);
+                second_index += (second_index >= first_index ? 1 : 0);
+                auto offspring = Genetic_AI(pool[first_index], pool[second_index]);
+                pool.push_back(offspring);
+            }
+            else
+            {
+                const auto& parent = Random::random_element(pool);
+                auto offspring = Genetic_AI(parent, parent);
+                pool.push_back(offspring);
+            }
+        }
+
         std::sort(pool.begin(), pool.end());
         write_generation(pools, genome_file_name, false);
 
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
+        purge_dead_from_map(pools, losses);
 
         // widths of columns for stats printout
         auto id_digits = std::to_string(pool.back().id()).size();
@@ -338,14 +377,16 @@ void gene_pool(const std::string& config_file)
         // Write stat headers
         std::cout << '\n' << std::setw(id_digits + 1)  << "ID"
                   << std::setw(7) << "Wins"
-                  << std::setw(7) << "Draws" << "\n";
+                  << std::setw(7) << "Draws"
+                  << std::setw(7) << "Losses" << "\n";
 
         // Write stats for each specimen
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_digits + 1) << ai.id();
             std::cout << std::setw(7) << wins[ai]
-                      << std::setw(7) << draws[ai] << "\n";
+                      << std::setw(7) << draws[ai]
+                      << std::setw(7) << losses[ai] << "\n";
         }
 
         // Record best AI from all pools.
