@@ -55,6 +55,14 @@ class Board
         //! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
         explicit Board(const std::string& fen);
 
+        //! \brief Constructs a Musketeer board using the chosen gated pieces.
+        //!
+        //! \param first_gated_piece The first choice for gated special pieces.
+        //! \param second_gated_piece The second choice for gated special pieces.
+        //!
+        //! The gated pieces will be randomly placed on the gate rows.
+        Board(Piece_Type first_gated_piece, Piece_Type second_gated_piece);
+
         //! \brief Updates the state of the board according to a Player-selected Move.
         //!
         //! \param move A Move-class instance. This must be an item taken from Board::legal_moves().
@@ -403,6 +411,8 @@ class Board
         std::array<Fixed_Capacity_Vector<std::shared_ptr<const Move>, 44>, 2> gated_pawn_promotions{};
 
         void pick_and_place_random_gated_pieces() noexcept;
+        void randomly_place_gated_pieces(Piece_Type first_gated_piece, Piece_Type second_gated_piece) noexcept;
+        void create_gated_promotion_moves(const std::vector<Piece_Type>& gated_piece_types) noexcept;
         std::string gate_fen(Piece_Color color) const noexcept;
         void set_unmoved_gate_guardians() noexcept;
         void ascii_draw_gate(Piece_Color color, int indentation, int symbol_width) const noexcept;

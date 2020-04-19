@@ -270,6 +270,7 @@ Board::Board(const std::string& original_fen) :
     // Musketeer Board gates
     if(String::contains(original_fen, '*'))
     {
+        auto gated_piece_types = std::vector<Piece_Type>{};
         auto tokens = String::split(original_fen);
         auto board_rows = String::split(tokens.front(), "/");
         for(auto gate_index : {0, 9})
@@ -280,17 +281,18 @@ Board::Board(const std::string& original_fen) :
             {
                 if(gate[i] != '*')
                 {
-                    gated_pieces[static_cast<int>(gate_color)][i] = Piece{gate[i]};
+                    auto gated_piece = Piece{gate[i]};
+                    gated_pieces[static_cast<int>(gate_color)][i] = gated_piece;
+                    if(std::count(gated_piece_types.begin(), gated_piece_types.end(), gated_piece.type()) == 0)
+                    {
+                        gated_piece_types.push_back(gated_piece.type());
+                    }
                 }
             }
         }
 
-        if(ply_count() == 0)
-        {
-            pick_and_place_random_gated_pieces();
-        }
-
         set_unmoved_gate_guardians();
+        create_gated_promotion_moves(gated_piece_types);
     }
 
     if(fen() != starting_fen)
@@ -303,6 +305,25 @@ Board::Board(const std::string& original_fen) :
     // In case a listed en passant target is not actually a legal move.
     repeat_count.pop_back();
     add_board_position_to_repeat_record();
+}
+
+Board::Board(Piece_Type first_gated_piece, Piece_Type second_gated_piece) : Board(standard_starting_fen)
+{
+    auto valid_gated_piece = [](auto piece_type) { return static_cast<int>(piece_type) > static_cast<int>(Piece_Type::KING); };
+    if( ! valid_gated_piece(first_gated_piece) || 
+        ! valid_gated_piece(second_gated_piece) ||
+       first_gated_piece == second_gated_piece)
+    {
+        throw std::invalid_argument("Gated pieces must be of fairy type and different. Invalid choices: " +
+                                    Piece{Piece_Color::WHITE, first_gated_piece}.pgn_symbol() +
+                                    ", " +
+                                    Piece{Piece_Color::WHITE, second_gated_piece}.pgn_symbol());
+    }
+
+    board_type = Board_Type::MUSKETEER;
+    randomly_place_gated_pieces(first_gated_piece, second_gated_piece);
+    set_unmoved_gate_guardians();
+    set_initial_fen(fen());
 }
 
 void Board::fen_error(const std::string& reason) const
@@ -1611,30 +1632,18 @@ void Board::pick_and_place_random_gated_pieces() noexcept
                                                            Piece_Type::HAWK,
                                                            Piece_Type::FORTRESS,
                                                            Piece_Type::SPIDER};
-    std::vector<Piece_Type> gated_piece_types;
-    for(const auto& list : gated_pieces)
+    auto first_index = Random::random_integer({0}, choices.size() - 1);
+    auto second_index = Random::random_integer({0}, choices.size() - 2);
+    if(second_index >= first_index)
     {
-        for(const auto& piece : list)
-        {
-            if(piece && gated_piece_types.size() < 2)
-            {
-                if(gated_piece_types.empty() || gated_piece_types.front() != piece.type())
-                {
-                    gated_piece_types.push_back(piece.type());
-                }
-            }
-        }
+        ++second_index;
     }
+    randomly_place_gated_pieces(choices[first_index], choices[second_index]);
+}
 
-    while(gated_piece_types.size() < 2)
-    {
-        auto type = Random::random_element(choices);
-        if(gated_piece_types.empty() || gated_piece_types.front() != type)
-        {
-            gated_piece_types.push_back(type);
-        }
-    }
-
+void Board::randomly_place_gated_pieces(Piece_Type first_gated_piece, Piece_Type second_gated_piece) noexcept
+{
+    auto gated_piece_types = {first_gated_piece, second_gated_piece};
     for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
     {
         auto& gate_list = gated_pieces[static_cast<int>(color)];
@@ -1679,6 +1688,11 @@ void Board::pick_and_place_random_gated_pieces() noexcept
         }
     }
 
+    create_gated_promotion_moves(gated_piece_types);
+}
+
+void Board::create_gated_promotion_moves(const std::vector<Piece_Type>& gated_piece_types) noexcept
+{
     for(const auto& piece_type : gated_piece_types)
     {
         for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
