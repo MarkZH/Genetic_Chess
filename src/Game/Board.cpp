@@ -1,3 +1,5 @@
+#include "Game/Board.h"
+
 #include <iostream>
 #include <fstream>
 #include <cctype>
@@ -15,7 +17,6 @@ using namespace std::chrono_literals;
 #include <iomanip>
 #include <optional>
 
-#include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Square.h"
 #include "Game/Game_Result.h"
