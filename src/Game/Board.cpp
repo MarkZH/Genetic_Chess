@@ -291,6 +291,11 @@ Board::Board(const std::string& original_fen) :
             }
         }
 
+        if(gated_piece_types.size() != 2)
+        {
+            fen_error("Could not identify the two gated pieces");
+        }
+
         set_unmoved_gate_guardians();
         create_gated_promotion_moves(gated_piece_types);
     }
