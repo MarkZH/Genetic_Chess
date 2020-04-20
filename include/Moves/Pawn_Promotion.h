@@ -47,7 +47,7 @@ class Pawn_Promotion : public Pawn_Move
         std::string algebraic_base(const Board& board) const noexcept override;
 
     private:
-        const Piece promote_to;
+        Piece promote_to;
 };
 
 #endif // PAWN_PROMOTION_H

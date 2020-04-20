@@ -13,6 +13,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <iomanip>
+#include <optional>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -270,7 +271,6 @@ Board::Board(const std::string& original_fen) :
     // Musketeer Board gates
     if(String::contains(original_fen, '*'))
     {
-        auto gated_piece_types = std::vector<Piece_Type>{};
         auto tokens = String::split(original_fen);
         auto board_rows = String::split(tokens.front(), "/");
         for(auto gate_index : {0, 9})
@@ -297,7 +297,6 @@ Board::Board(const std::string& original_fen) :
         }
 
         set_unmoved_gate_guardians();
-        create_gated_promotion_moves(gated_piece_types);
     }
 
     if(fen() != starting_fen)
@@ -1080,16 +1079,44 @@ void Board::add_other_moves() noexcept
         return;
     }
 
+    gated_pawn_promotions.clear();
     auto pawn = Piece{whose_turn(), Piece_Type::PAWN};
-    for(const auto& move : gated_pawn_promotions[static_cast<int>(whose_turn())])
+    auto pre_promotion_rank = whose_turn() == Piece_Color::WHITE ? 7 : 2;
+    for(auto file = 'a'; file <= 'h'; ++file)
     {
-        if(const_cast<const Board&>(*this).piece_on_square(move->start()) == pawn)
+        auto square = Square{file, pre_promotion_rank};
+        if(piece_on_square(square) == pawn)
         {
-            if(move->is_legal(*this))
+            for(auto gated_piece_type : gated_piece_types)
             {
-                legal_moves_cache.push_back(move.get());
+                for(auto file_change : {-1, 0, 1})
+                {
+                    std::optional<Pawn_Promotion> move;
+                    if(file_change == 0)
+                    {
+                        move = Pawn_Promotion(gated_piece_type, pawn.color(), square.file());
+                    }
+                    else
+                    {
+                        if((file_change == 1 && file == 'h') || (file_change == -1 && file == 'a'))
+                        {
+                            continue;
+                        }
+                        move = Pawn_Promotion(gated_piece_type, pawn.color(), file, file_change == 1 ? Direction::RIGHT : Direction::LEFT);
+                    }
+
+                    if(move->is_legal(*this))
+                    {
+                        gated_pawn_promotions.push_back(*move);
+                    }
+                }
             }
         }
+    }
+
+    for(const auto& move : gated_pawn_promotions)
+    {
+        legal_moves_cache.push_back(&move);
     }
 }
 
@@ -1648,7 +1675,7 @@ void Board::pick_and_place_random_gated_pieces() noexcept
 
 void Board::randomly_place_gated_pieces(Piece_Type first_gated_piece, Piece_Type second_gated_piece) noexcept
 {
-    auto gated_piece_types = {first_gated_piece, second_gated_piece};
+    gated_piece_types = {first_gated_piece, second_gated_piece};
     for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
     {
         auto& gate_list = gated_pieces[static_cast<int>(color)];
@@ -1689,32 +1716,6 @@ void Board::randomly_place_gated_pieces(Piece_Type first_gated_piece, Piece_Type
 
                 gate_list[file_index] = gated_piece;
                 break;
-            }
-        }
-    }
-
-    create_gated_promotion_moves(gated_piece_types);
-}
-
-void Board::create_gated_promotion_moves(const std::vector<Piece_Type>& gated_piece_types) noexcept
-{
-    for(const auto& piece_type : gated_piece_types)
-    {
-        for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
-        {
-            auto& promotion_list = gated_pawn_promotions[static_cast<int>(color)];
-            for(auto file = 'a'; file <= 'h'; ++file)
-            {
-                promotion_list.push_back(std::shared_ptr<const Move>(new Pawn_Promotion(piece_type, color, file)));
-                if(file > 'a')
-                {
-                    promotion_list.push_back(std::shared_ptr<const Move>(new Pawn_Promotion(piece_type, color, file, Direction::LEFT)));
-                }
-
-                if(file < 'h')
-                {
-                    promotion_list.push_back(std::shared_ptr<const Move>(new Pawn_Promotion(piece_type, color, file, Direction::RIGHT)));
-                }
             }
         }
     }

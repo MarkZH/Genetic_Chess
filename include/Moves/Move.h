@@ -20,12 +20,6 @@ class Move
 
         virtual ~Move() = default;
 
-        //! \brief This saves work by preventing all unnecessary copying (which is all copying).
-        Move(const Move&) = delete;
-
-        //! \brief Since there's only one instance of every Move, assignment can only lose information.
-        Move& operator=(const Move&) = delete;
-
         //! \brief Further modifies the state of the board.
         //!
         //! Side effects are changes to the state of the board beyond the change

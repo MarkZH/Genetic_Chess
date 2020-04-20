@@ -5,12 +5,12 @@
 #include <string>
 #include <array>
 #include <bitset>
-#include <memory>
 
 #include "Game/Color.h"
 #include "Game/Square.h"
 #include "Game/Piece.h"
 #include "Players/Thinking.h"
+#include "Moves/Pawn_Promotion.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
 
@@ -21,7 +21,6 @@ class Player;
 class Move;
 class Castle;
 class En_Passant;
-class Pawn_Promotion;
 class Pawn_Double_Move;
 class Pawn_Move;
 
@@ -408,11 +407,11 @@ class Board
 
         // Musketeer board members
         std::array<std::array<Piece, 8>, 2> gated_pieces{}; // indexed by gated_pieces[Color index][File index]
-        std::array<Fixed_Capacity_Vector<std::shared_ptr<const Move>, 44>, 2> gated_pawn_promotions{};
+        std::vector<Piece_Type> gated_piece_types{};
+        std::vector<Pawn_Promotion> gated_pawn_promotions{};
 
         void pick_and_place_random_gated_pieces() noexcept;
         void randomly_place_gated_pieces(Piece_Type first_gated_piece, Piece_Type second_gated_piece) noexcept;
-        void create_gated_promotion_moves(const std::vector<Piece_Type>& gated_piece_types) noexcept;
         std::string gate_fen(Piece_Color color) const noexcept;
         void set_unmoved_gate_guardians() noexcept;
         void ascii_draw_gate(Piece_Color color, int indentation, int symbol_width) const noexcept;
