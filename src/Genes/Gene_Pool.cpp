@@ -346,22 +346,19 @@ void gene_pool(const std::string& config_file)
         }
 
         // Create new AIs from survivors to repopulate the pool
+        auto max_index = pool.size() - 1;
         while(pool.size() < gene_pool_population)
         {
+            auto first_parent_index = Random::random_integer({0}, max_index);
+            auto second_parent_index = first_parent_index;
             if(mating_reproduction)
             {
-                auto first_index = Random::random_integer({0}, pool.size() - 1);
-                auto second_index = Random::random_integer({0}, pool.size() - 2);
-                second_index += (second_index >= first_index ? 1 : 0);
-                auto offspring = Genetic_AI(pool[first_index], pool[second_index]);
-                pool.push_back(offspring);
+                second_parent_index = Random::random_integer({0}, max_index - 1);
+                second_parent_index += (second_parent_index >= first_parent_index ? 1 : 0);
             }
-            else
-            {
-                const auto& parent = Random::random_element(pool);
-                auto offspring = Genetic_AI(parent, parent);
-                pool.push_back(offspring);
-            }
+            auto offspring = Genetic_AI(pool[first_parent_index], pool[second_parent_index]);
+            offspring.mutate();
+            pool.push_back(offspring);
         }
 
         std::sort(pool.begin(), pool.end());
