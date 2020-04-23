@@ -112,6 +112,11 @@ class Move
         static Square_Difference attack_direction_from_index(size_t index) noexcept;
 
     protected:
+        //! \brief Method overridden by subclasses to implement special rules.
+        //!
+        //! \param board The board on which the move will be made.
+        virtual bool move_specific_legal(const Board& board) const noexcept;
+
         //! \brief Change the ability of this Move to capture.
         //!
         //! \param capturing_ability Whether this move should be able to capture.
@@ -150,7 +155,6 @@ class Move
         bool is_en_passant_move = false;
         bool blockable;
 
-        virtual bool move_specific_legal(const Board& board) const noexcept;
         std::string result_mark(Board board) const noexcept;
 };
 

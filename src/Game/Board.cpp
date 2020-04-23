@@ -315,7 +315,7 @@ Board::Board(const std::string& original_fen) :
 Board::Board(Piece_Type first_gated_piece, Piece_Type second_gated_piece) : Board(standard_starting_fen)
 {
     auto valid_gated_piece = [](auto piece_type) { return static_cast<int>(piece_type) > static_cast<int>(Piece_Type::KING); };
-    if( ! valid_gated_piece(first_gated_piece) || 
+    if( ! valid_gated_piece(first_gated_piece) ||
         ! valid_gated_piece(second_gated_piece) ||
        first_gated_piece == second_gated_piece)
     {
@@ -987,7 +987,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         }
         commentary_board.submit_move(*next_move);
     }
-    out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
+    out_stream << " " << actual_result.game_ending_annotation() << "\n\n" << std::endl;
 
     assert(commentary_board.fen() == fen());
 }
@@ -1057,8 +1057,6 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
-    add_other_moves();
-
     if(std::none_of(legal_moves_cache.begin(),
                     legal_moves_cache.end(),
                     [](auto move) { return move->is_en_passant(); }))
@@ -1071,54 +1069,6 @@ void Board::recreate_move_caches() noexcept
                                                    {
                                                        return move_changes_material(*move);
                                                    });
-}
-
-void Board::add_other_moves() noexcept
-{
-    if(board_type != Board_Type::MUSKETEER)
-    {
-        return;
-    }
-
-    gated_pawn_promotions.clear();
-    auto pawn = Piece{whose_turn(), Piece_Type::PAWN};
-    auto pre_promotion_rank = whose_turn() == Piece_Color::WHITE ? 7 : 2;
-    for(auto file = 'a'; file <= 'h'; ++file)
-    {
-        auto square = Square{file, pre_promotion_rank};
-        if(piece_on_square(square) == pawn)
-        {
-            for(auto gated_piece_type : gated_piece_types)
-            {
-                for(auto file_change : {-1, 0, 1})
-                {
-                    std::optional<Pawn_Promotion> move;
-                    if(file_change == 0)
-                    {
-                        move = Pawn_Promotion(gated_piece_type, pawn.color(), square.file());
-                    }
-                    else
-                    {
-                        if((file_change == 1 && file == 'h') || (file_change == -1 && file == 'a'))
-                        {
-                            continue;
-                        }
-                        move = Pawn_Promotion(gated_piece_type, pawn.color(), file, file_change == 1 ? Direction::RIGHT : Direction::LEFT);
-                    }
-
-                    if(move->is_legal(*this))
-                    {
-                        gated_pawn_promotions.push_back(*move);
-                    }
-                }
-            }
-        }
-    }
-
-    for(const auto& move : gated_pawn_promotions)
-    {
-        legal_moves_cache.push_back(&move);
-    }
 }
 
 Square Board::find_checking_square() const noexcept
@@ -1719,5 +1669,19 @@ void Board::randomly_place_gated_pieces(Piece_Type first_gated_piece, Piece_Type
                 break;
             }
         }
+    }
+}
+
+bool Board::has_piece(Piece_Type type) const noexcept
+{
+    switch(type)
+    {
+        case Piece_Type::ROOK:
+        case Piece_Type::KNIGHT:
+        case Piece_Type::BISHOP:
+        case Piece_Type::QUEEN:
+            return true;
+        default:
+            return std::find(gated_piece_types.begin(), gated_piece_types.end(), type) != gated_piece_types.end();
     }
 }

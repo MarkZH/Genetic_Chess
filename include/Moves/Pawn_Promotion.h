@@ -41,6 +41,8 @@ class Pawn_Promotion : public Pawn_Move
         char promotion_piece_symbol() const noexcept override;
 
     protected:
+        bool move_specific_legal(const Board& board) const noexcept override;
+
         //! \brief Attach an indication of the promotion piece to the normal pawn move record.
         //!
         //! \param board The board state just before the move is made.

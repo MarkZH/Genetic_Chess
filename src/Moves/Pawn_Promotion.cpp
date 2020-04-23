@@ -34,3 +34,8 @@ char Pawn_Promotion::promotion_piece_symbol() const noexcept
 {
     return promote_to.pgn_symbol().front();
 }
+
+bool Pawn_Promotion::move_specific_legal(const Board& board) const noexcept
+{
+    return Pawn_Move::move_specific_legal(board) && board.has_piece(promote_to.type());
+}

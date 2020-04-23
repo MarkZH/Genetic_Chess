@@ -534,6 +534,7 @@ namespace
                         }
                         std::cerr << std::endl;
                         std::cerr << board.fen() << std::endl;
+                        board.ascii_draw();
                         return false;
                     }
                 }

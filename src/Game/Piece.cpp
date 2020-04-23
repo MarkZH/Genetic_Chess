@@ -28,8 +28,8 @@ namespace
 
     constexpr const auto number_of_pieces = 32; // black and white
     constexpr const auto number_of_starting_squares = 64;
-    constexpr const auto number_of_move_directions = 16;
-    constexpr const auto maximum_moves_per_direction = 7;
+    constexpr const auto number_of_move_directions = 42;
+    constexpr const auto maximum_moves_per_direction = 14;
     using indexed_move_array =
         std::array<
             std::array<
@@ -172,7 +172,7 @@ namespace
         }
 
         std::vector<Piece_Type> possible_promotions;
-        for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+        for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::SPIDER); ++type_index)
         {
             auto type = static_cast<Piece_Type>(type_index);
             if(type == Piece_Type::PAWN || type == Piece_Type::KING)

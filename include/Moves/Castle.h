@@ -27,6 +27,7 @@ class Castle : public Move
         //! \param board The board on which the move is being made.
         void side_effects(Board& board) const noexcept override;
 
+    protected:
         //! \brief Implements the rules for castling.
         //!
         //! Namely:
@@ -38,7 +39,6 @@ class Castle : public Move
         //! \returns Whether the current board position allows for castling.
         bool move_specific_legal(const Board& board) const noexcept override;
 
-    protected:
         //! \brief Castling moves have a special notation in PGN.
         //!
         //! \returns "O-O" for kingside castling or "O-O-O" for queenside castling.

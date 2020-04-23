@@ -40,7 +40,7 @@ class Piece
 {
     private:
         using piece_code_t = unsigned int;
-        using list_of_move_lists = Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 16>;
+        using list_of_move_lists = Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 14>, 42>;
 
     public:
         //! \brief Create an invalid piece that can represent an unoccupied space on a Board.

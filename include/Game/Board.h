@@ -370,7 +370,6 @@ class Board
         size_t prior_moves_count = 0;
 
         void recreate_move_caches() noexcept;
-        void add_other_moves() noexcept;
 
         Piece& piece_on_square(Square square) noexcept;
         void remove_piece(Square square) noexcept;
@@ -408,7 +407,6 @@ class Board
         // Musketeer board members
         std::array<std::array<Piece, 8>, 2> gated_pieces{}; // indexed by gated_pieces[Color index][File index]
         std::vector<Piece_Type> gated_piece_types{};
-        std::vector<Pawn_Promotion> gated_pawn_promotions{};
 
         void pick_and_place_random_gated_pieces() noexcept;
         void randomly_place_gated_pieces(Piece_Type first_gated_piece, Piece_Type second_gated_piece) noexcept;
@@ -416,6 +414,7 @@ class Board
         void set_unmoved_gate_guardians() noexcept;
         void ascii_draw_gate(Piece_Color color, int indentation, int symbol_width) const noexcept;
         void set_initial_fen(const std::string& initial_fen) noexcept;
+        bool has_piece(Piece_Type type) const noexcept;
 
         // Moves with side effects are friends of Board
         friend class Castle; // moves second piece

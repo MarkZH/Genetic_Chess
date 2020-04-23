@@ -27,7 +27,7 @@ class En_Passant : public Pawn_Move
         //! \param board The board on which the capture is occurring.
         void side_effects(Board& board) const noexcept override;
 
-    private:
+    protected:
         //! \brief The pawn must end up on the square that was skipped by an immediately preceding Pawn_Double_Move.
         //!
         //! \param board The board state just prior to the move.

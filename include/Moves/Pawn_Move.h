@@ -27,7 +27,7 @@ class Pawn_Move : public Move
         //! \param file_change The direction (LEFT or RIGHT) of the capture.
         Pawn_Move(Piece_Color color_in, Square start, Direction file_change) noexcept;
 
-    private:
+    protected:
         bool move_specific_legal(const Board& board) const noexcept override;
 };
 
