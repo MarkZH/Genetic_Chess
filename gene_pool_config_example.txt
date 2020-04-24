@@ -23,18 +23,6 @@ initial mutations = 10
 # swapping players between pools
 pool swap interval = 1000
 
-# The cause for an AI to be eliminated from the gene pool. The count parameter
-# determines when an AI is eliminated and must be a positive integer.
-#  1. "loss" : The AI is eliminated when its losses are greater than or equal
-#              to the count parameter.
-#  2. "deficit" : The AI is eliminated when losses minus wins is greater than
-#                 or equal to the count parameter.
-# The maximum number of losses or the maximum deficit of wins is indicated by the
-# elimination count parameter.
-
-elimination cause = deficit
-elimination count = 3
-
 # Game time
 #
 # If the game time increment is positive, the time for each game
