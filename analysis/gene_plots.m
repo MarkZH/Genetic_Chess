@@ -131,20 +131,23 @@ for yi = 2 : length(data.colheaders) - 2
         hold all;
 
         make_dashed = false;
+        display_name = '';
         if special_plot_index == 1
             name = name(end);
             max_piece_score = max(abs(smooth_data(end)), max_piece_score);
             piece_count = piece_count + 1;
             make_dashed = (piece_count > 7);
             piece_end_values(name) = smooth_data(end);
+            display_name = [name ' (' num2str(round(smooth_data(end))) ')'];
         elseif special_plot_index == 2
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
             make_dashed = (priority_count > 7);
+            display_name = [name ' (' num2str(smooth_data(end)) ')'];
         end
 
         if draw_now
-            p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', [name ' (' num2str(round(smooth_data(end))) ')']);
+            p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', display_name);
             if make_dashed
                 set(p, 'LineStyle', ':');
             end
