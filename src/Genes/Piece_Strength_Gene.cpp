@@ -22,10 +22,12 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
     properties.erase("Priority");
+    auto standardize = std::abs(piece_value(Piece_Type::QUEEN))/900.0;
+    standardize = standardize > 0.0 ? standardize : 1.0;
     for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
         auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
-        properties[std::string(1, piece.fen_symbol())] = piece_value(piece.type());
+        properties[std::string(1, piece.fen_symbol())] = piece_value(piece.type())/standardize;
     }
 }
 
