@@ -144,7 +144,7 @@ for yi = 2 : length(data.colheaders) - 2
         end
 
         if draw_now
-            p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', [name ' (' num2str(smooth_data(end)) ')']);
+            p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', [name ' (' num2str(round(smooth_data(end))) ')']);
             if make_dashed
                 set(p, 'LineStyle', ':');
             end
@@ -164,29 +164,10 @@ for index = 1 : length(special_plots)
     plot(xlim, [0 0], 'k'); % X-axis
 
     if special_plots(index) == piece_strength_figure
-        yl = ylim;
-        xl = xlim;
-        x_width = xl(2) - xl(1);
-        for level = -10:10
-            % width = fraction of full horizontal plot width
-            if mod(abs(level),5) == 0
-                width = 0.1;
-            else
-                width = 0.05;
-            end
-            tick_height = max_piece_score*(level/10);
-            if tick_height < yl(1) || tick_height > yl(2)
-                continue;
-            end
-            plot([xl(1) + x_width*(1-width) xl(2)], tick_height*[1 1], 'k');
-        end
-
-        disp('# Piece values (Q = 900)');
-        norm = piece_end_values('Q')/900;
+        disp('# Piece values');
         for piece = piece_end_values.keys()
-            disp([piece{1} ' = ' num2str(round(piece_end_values(piece{1})/norm))]);
+            disp([piece{1} ' = ' num2str(round(piece_end_values(piece{1})))]);
         end
-
     elseif special_plots(index) == active_figure
         plot(x_axis, total_active, 'LineWidth', 3);
         grid on;
