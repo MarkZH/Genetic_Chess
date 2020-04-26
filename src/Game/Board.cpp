@@ -274,10 +274,18 @@ Board::Board(const std::string& original_fen) :
     {
         auto tokens = String::split(original_fen);
         auto board_rows = String::split(tokens.front(), "/");
+        if(board_rows.size() != 10)
+        {
+            fen_error("Wrong number of rows for Musketeer chess board.");
+        }
         for(auto gate_index : {0, 9})
         {
             auto gate = board_rows[gate_index];
             auto gate_color = gate_index == 0 ? Piece_Color::BLACK : Piece_Color::WHITE;
+            if(gate.size() != 8)
+            {
+                fen_error("Wrong number of characters in gated row for " + color_text(gate_color) + ".");
+            }
             for(size_t i = 0; i < gate.size(); ++i)
             {
                 if(gate[i] != '*')
@@ -294,7 +302,7 @@ Board::Board(const std::string& original_fen) :
 
         if(gated_piece_types.size() != 2)
         {
-            fen_error("Could not identify the two gated pieces");
+            fen_error("Could not identify the two gated pieces.");
         }
 
         set_unmoved_gate_guardians();
