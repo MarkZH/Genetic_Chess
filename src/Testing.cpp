@@ -536,6 +536,7 @@ bool run_tests()
     sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, Piece_Color::WHITE, sphere_of_influence_score);
 
     auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
+    total_force_gene.read_from(test_genes_file_name);
     total_force_gene.test(tests_passed, Board(), Piece_Color::WHITE, 1.0);
 
     auto stacked_pawns_gene = Stacked_Pawns_Gene();

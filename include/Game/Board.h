@@ -328,6 +328,11 @@ class Board
         //! \brief THe direction the piece checking the king moves to reach the king.
         Square_Difference check_origin() const noexcept;
 
+        //! \brief The set of gated pieces for a player.
+        //!
+        //! \param color The piece color of the player.
+        const std::array<Piece, 8>& gate_row(Piece_Color color) const noexcept;
+
     private:
         std::array<Piece, 64> board;
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
