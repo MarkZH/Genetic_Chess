@@ -4,6 +4,7 @@
 # Basic rules check
 move count | start | | 20
 move count | start | e4 | 20
+move count | ******dh/k7/8/8/8/3D4/8/K7/8/******** w - - 0 1 | | 40
 
 # Castling with attacking piece
 all moves legal  |1k6/r7/8/8/8/8/8/R3K2R w KQ   - 0 1 |O-O
