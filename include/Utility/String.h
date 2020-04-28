@@ -6,7 +6,6 @@
 #include <chrono>
 #include <sstream>
 #include <type_traits>
-#include <numeric>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
