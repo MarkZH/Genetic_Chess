@@ -277,16 +277,11 @@ bool Board::is_in_legal_moves_list(const Move& move) const noexcept
 
 std::string Board::fen() const noexcept
 {
-    std::string s;
-
+    std::vector<std::string> rows;
     for(int rank = 8; rank >= 1; --rank)
     {
+        rows.push_back("");
         int empty_count = 0;
-        if(rank < 8)
-        {
-            s.push_back('/');
-        }
-
         for(char file = 'a'; file <= 'h'; ++file)
         {
             auto piece = piece_on_square({file, rank});
@@ -298,60 +293,44 @@ std::string Board::fen() const noexcept
             {
                 if(empty_count > 0)
                 {
-                    s += std::to_string(empty_count);
+                    rows.back() += std::to_string(empty_count);
                     empty_count = 0;
                 }
-                s.push_back(piece.fen_symbol());
+                rows.back() += piece.fen_symbol();
             }
         }
 
         if(empty_count > 0)
         {
-            s += std::to_string(empty_count);
+            rows.back() += std::to_string(empty_count);
         }
     }
+    auto fen_parts = std::vector<std::string>{String::join(rows.begin(), rows.end(), "/")};
+    
+    fen_parts.push_back(whose_turn() == Piece_Color::WHITE ? "w" : "b");
 
-    s.push_back(' ');
-    s.push_back(whose_turn() == Piece_Color::WHITE ? 'w' : 'b');
-    s.push_back(' ');
-
-    for(int base_rank : {1, 8})
+    std::string castling_mark;
+    for(auto player : {Piece_Color::WHITE, Piece_Color::BLACK})
     {
-        if( ! piece_has_moved({'e', base_rank})) // has king moved?
+        auto king_square = find_king(player);
+        if( ! piece_has_moved(king_square))
         {
             for(char rook_file : {'h', 'a'})
             {
-                if( ! piece_has_moved({rook_file, base_rank})) // has rook moved?
+                if( ! piece_has_moved({rook_file, king_square.rank()})) // has rook moved?
                 {
-                    char mark = (rook_file == 'h' ? 'K' : 'Q');
-                    if(base_rank == 8)
-                    {
-                        mark = std::tolower(mark);
-                    }
-                    s.push_back(mark);
+                    auto mark = (rook_file == 'h' ? 'K' : 'Q');
+                    castling_mark.push_back(player == Piece_Color::BLACK ? mark = std::tolower(mark) : mark);
                 }
             }
         }
     }
+    fen_parts.push_back(castling_mark.empty() ? "-" : castling_mark);
 
-    if(s.back() == ' ')
-    {
-        s.push_back('-');
-    }
-    s.push_back(' ');
-
-    if(en_passant_target.is_set())
-    {
-        s += en_passant_target.string();
-    }
-    else
-    {
-        s.push_back('-');
-    }
-
-    return s + " " +
-        std::to_string(moves_since_pawn_or_capture()) + " " +
-        std::to_string(1 + ply_count()/2);
+    fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.string() : "-");
+    fen_parts.push_back(std::to_string(moves_since_pawn_or_capture()));
+    fen_parts.push_back(std::to_string(1 + ply_count()/2));
+    return String::join(fen_parts.begin(), fen_parts.end(), " ");
 }
 
 std::string Board::original_fen() const noexcept
