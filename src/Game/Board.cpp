@@ -178,10 +178,10 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
             Piece_Color piece_color = std::isupper(c) ? Piece_Color::WHITE : Piece_Color::BLACK;
             auto rook_square = Square{std::toupper(c) == 'K' ? 'h' : 'a', std::isupper(c) ? 1 : 8};
             auto king_square = Square{'e', rook_square.rank()};
-            std::string side = std::toupper(c) == 'K' ? "king" : "queen";
 
             if(piece_on_square(rook_square) != Piece{piece_color, Piece_Type::ROOK})
             {
+                std::string side = std::toupper(c) == 'K' ? "king" : "queen";
                 fen_error("There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.string() + " to castle " + side + "side.");
             }
             set_unmoved(rook_square);
