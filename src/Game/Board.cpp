@@ -211,10 +211,10 @@ Board::Board(const std::string& original_fen) :
             Piece_Color piece_color = std::isupper(c) ? Piece_Color::WHITE : Piece_Color::BLACK;
             auto rook_square = Square{std::toupper(c) == 'K' ? 'h' : 'a', std::isupper(c) ? 1 : 8};
             auto king_square = Square{'e', rook_square.rank()};
-            std::string side = std::toupper(c) == 'K' ? "king" : "queen";
 
             if(piece_on_square(rook_square) != Piece{piece_color, Piece_Type::ROOK})
             {
+                std::string side = std::toupper(c) == 'K' ? "king" : "queen";
                 fen_error("There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.string() + " to castle " + side + "side.");
             }
             set_unmoved(rook_square);
@@ -274,10 +274,18 @@ Board::Board(const std::string& original_fen) :
     {
         auto tokens = String::split(original_fen);
         auto board_rows = String::split(tokens.front(), "/");
+        if(board_rows.size() != 10)
+        {
+            fen_error("Wrong number of rows for Musketeer chess board.");
+        }
         for(auto gate_index : {0, 9})
         {
             auto gate = board_rows[gate_index];
             auto gate_color = gate_index == 0 ? Piece_Color::BLACK : Piece_Color::WHITE;
+            if(gate.size() != 8)
+            {
+                fen_error("Wrong number of characters in gated row for " + color_text(gate_color) + ".");
+            }
             for(size_t i = 0; i < gate.size(); ++i)
             {
                 if(gate[i] != '*')
@@ -294,7 +302,7 @@ Board::Board(const std::string& original_fen) :
 
         if(gated_piece_types.size() != 2)
         {
-            fen_error("Could not identify the two gated pieces");
+            fen_error("Could not identify the two gated pieces.");
         }
 
         set_unmoved_gate_guardians();
@@ -361,21 +369,16 @@ bool Board::is_in_legal_moves_list(const Move&) const noexcept
 
 std::string Board::fen() const noexcept
 {
-    std::string s;
-
+    std::vector<std::string> rows;
     if(board_type == Board_Type::MUSKETEER)
     {
-        s += gate_fen(Piece_Color::BLACK) + '/';
+        rows.push_back(gate_fen(Piece_Color::BLACK));
     }
 
     for(int rank = 8; rank >= 1; --rank)
     {
+        rows.push_back("");
         int empty_count = 0;
-        if(rank < 8)
-        {
-            s.push_back('/');
-        }
-
         for(char file = 'a'; file <= 'h'; ++file)
         {
             auto piece = piece_on_square({file, rank});
@@ -387,65 +390,52 @@ std::string Board::fen() const noexcept
             {
                 if(empty_count > 0)
                 {
-                    s += std::to_string(empty_count);
+                    rows.back() += std::to_string(empty_count);
                     empty_count = 0;
                 }
-                s.push_back(piece.fen_symbol());
+                rows.back() += piece.fen_symbol();
             }
         }
 
         if(empty_count > 0)
         {
-            s += std::to_string(empty_count);
+            rows.back() += std::to_string(empty_count);
         }
     }
 
     if(board_type == Board_Type::MUSKETEER)
     {
-        s += '/' + gate_fen(Piece_Color::WHITE);
+        rows.push_back(gate_fen(Piece_Color::WHITE));
     }
 
-    s.push_back(' ');
-    s.push_back(whose_turn() == Piece_Color::WHITE ? 'w' : 'b');
-    s.push_back(' ');
+    auto fen_parts = std::vector<std::string>{String::join(rows.begin(), rows.end(), "/")};
+    
+    fen_parts.push_back(whose_turn() == Piece_Color::WHITE ? "w" : "b");
 
-    for(int base_rank : {1, 8})
+    std::string castling_mark;
+    for(auto player : {Piece_Color::WHITE, Piece_Color::BLACK})
     {
-        if( ! piece_has_moved({'e', base_rank})) // has king moved?
+        auto king_square = find_king(player);
+        if( ! piece_has_moved(king_square))
         {
             for(char rook_file : {'h', 'a'})
             {
-                if( ! piece_has_moved({rook_file, base_rank})) // has rook moved?
+                auto rook_square = Square{rook_file, king_square.rank()};
+                auto piece = piece_on_square(rook_square);
+                if(piece && piece.type() == Piece_Type::ROOK && ! piece_has_moved(rook_square))
                 {
-                    char mark = (rook_file == 'h' ? 'K' : 'Q');
-                    if(base_rank == 8)
-                    {
-                        mark = std::tolower(mark);
-                    }
-                    s.push_back(mark);
+                    auto mark = (rook_file == 'h' ? 'K' : 'Q');
+                    castling_mark.push_back(player == Piece_Color::BLACK ? mark = std::tolower(mark) : mark);
                 }
             }
         }
     }
+    fen_parts.push_back(castling_mark.empty() ? "-" : castling_mark);
 
-    if(s.back() == ' ')
-    {
-        s.push_back('-');
-    }
-    s.push_back(' ');
-
-    if(en_passant_target.is_set())
-    {
-        s += en_passant_target.string();
-    }
-    else
-    {
-        s.push_back('-');
-    }
-
-    return s + " " +
-        std::to_string(moves_since_pawn_or_capture()) + " " +
-        std::to_string(1 + ply_count()/2);
+    fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.string() : "-");
+    fen_parts.push_back(std::to_string(moves_since_pawn_or_capture()));
+    fen_parts.push_back(std::to_string(1 + ply_count()/2));
+    return String::join(fen_parts.begin(), fen_parts.end(), " ");
 }
 
 std::string Board::gate_fen(Piece_Color color) const noexcept
