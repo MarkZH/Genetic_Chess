@@ -88,7 +88,7 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
     for(int rank = 8; rank >= 1; --rank)
     {
         char file = 'a';
-        for(auto symbol : board_parse.at(size_t(8)-rank))
+        for(auto symbol : board_parse.at(size_t(8) - rank))
         {
             if(isdigit(symbol))
             {
