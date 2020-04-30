@@ -342,7 +342,7 @@ std::string Board::fen() const noexcept
     }
 
     auto fen_parts = std::vector<std::string>{String::join(rows.begin(), rows.end(), "/")};
-    
+
     fen_parts.push_back(whose_turn() == Piece_Color::WHITE ? "w" : "b");
 
     std::string castling_mark;
