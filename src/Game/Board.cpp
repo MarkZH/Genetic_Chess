@@ -1608,3 +1608,8 @@ bool Board::has_piece(Piece_Type type) const noexcept
             return std::find(gated_piece_types.begin(), gated_piece_types.end(), type) != gated_piece_types.end();
     }
 }
+
+const std::array<Piece, 8>& Board::gate_row(Piece_Color color) const noexcept
+{
+    return gated_pieces[static_cast<int>(color)];
+}

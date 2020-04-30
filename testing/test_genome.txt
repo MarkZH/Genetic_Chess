@@ -19,6 +19,11 @@ M: 8192
 S: 16384
 U: 32768
 
+Name: Total Force Gene
+Active: 1
+Gate Factor: 0.5
+Priority: 1
+
 Name: Sphere of Influence Gene
 Active: 1
 King Target Factor: 2

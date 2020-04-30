@@ -27,8 +27,12 @@ class Total_Force_Gene : public Clonable_Gene<Total_Force_Gene>
 
     private:
         const Piece_Strength_Gene* piece_strength_source;
+        double gate_factor = 1.0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
+        void gene_specific_mutation() noexcept override;
+        void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
+        void load_gene_properties(const std::map<std::string, double>& properties) override;
 };
 
 #endif // TOTAL_FORCE_GENE_H

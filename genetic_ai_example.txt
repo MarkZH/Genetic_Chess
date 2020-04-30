@@ -30,6 +30,7 @@ Mutation Rate: 1.06623
 
 Name: Total Force Gene
 Active: 1
+Gate Factor: 0.5
 Priority: 5324.83
 
 Name: Freedom to Move Gene
