@@ -402,7 +402,7 @@ class Board
         uint64_t square_hash(Square square) const noexcept;
         void update_whose_turn_hash() noexcept;
 
-        [[noreturn]] void fen_parse_assert(bool assertion, const std::string& failure_message) const;
+        void fen_parse_assert(bool assertion, const std::string& failure_message) const;
 
         // Musketeer board members
         std::array<std::array<Piece, 8>, 2> gated_pieces{}; // indexed by gated_pieces[Color index][File index]
