@@ -1538,8 +1538,8 @@ void Board::pick_and_place_random_gated_pieces() noexcept
                                                            Piece_Type::HAWK,
                                                            Piece_Type::FORTRESS,
                                                            Piece_Type::SPIDER};
-    auto first_index = Random::random_integer({0}, choices.size() - 1);
-    auto second_index = Random::random_integer({0}, choices.size() - 2);
+    auto first_index = Random::random_integer(size_t{0}, choices.size() - 1);
+    auto second_index = Random::random_integer(size_t{0}, choices.size() - 2);
     if(second_index >= first_index)
     {
         ++second_index;
