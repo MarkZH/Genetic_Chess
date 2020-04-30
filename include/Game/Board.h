@@ -370,7 +370,7 @@ class Board
 
         bool king_multiply_checked() const noexcept;
 
-        [[noreturn]] void fen_error(const std::string& reason) const;
+        [[noreturn]] void fen_parse_assert(bool assertion, const std::string& failure_message) const;
 
         // Moves with side effects are friends of Board
         friend class Castle; // moves second piece
