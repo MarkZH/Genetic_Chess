@@ -266,6 +266,11 @@ class Board
         //! a draw.
         size_t moves_since_pawn_or_capture() const noexcept;
 
+        //! \brief Counts the number of times the current board position has been seen in the last few plies.
+        //!
+        //! \param depth The number of plies to look back for equivalent positions.
+        std::ptrdiff_t repeat_count_from_depth(size_t depth) const noexcept;
+
         //! \brief Returns the Zobrist hash of the current state of the board.
         //!
         //! See https://en.wikipedia.org/wiki/Zobrist_hashing for details.

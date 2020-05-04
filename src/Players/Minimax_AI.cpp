@@ -189,6 +189,11 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             recurse = false;
         }
+        else if(next_board.repeat_count_from_depth(depth) >= 2)
+        {
+            move_result = Game_Result(Winner_Color::NONE, Game_Result_Type::THREEFOLD_REPETITION);
+            recurse = false;
+        }
         else if( ! principal_variation.empty())
         {
             recurse = true;
