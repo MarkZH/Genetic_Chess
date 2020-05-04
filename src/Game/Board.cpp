@@ -1156,7 +1156,7 @@ void Board::add_to_repeat_count(uint64_t new_hash) noexcept
 
 ptrdiff_t Board::current_board_position_repeat_count() const noexcept
 {
-    return repeat_count.count(board_hash());
+    return std::count(repeat_count.begin(), repeat_count.end(), board_hash());
 }
 
 size_t Board::moves_since_pawn_or_capture() const noexcept

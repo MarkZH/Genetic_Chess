@@ -79,14 +79,6 @@ class Fixed_Capacity_Vector
             insertion_point = 0;
         }
 
-        //! \brief Count the number of copies of a given item the Fixed_Capacity_Vector contains.
-        //!
-        //! \param item The item to count.
-        constexpr size_t count(const T& item) const noexcept
-        {
-            return std::count(begin(), end(), item);
-        }
-
         //! \brief Return if Fixed_Capacity_Vector is empty.
         constexpr bool empty() const noexcept
         {
