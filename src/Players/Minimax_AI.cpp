@@ -212,7 +212,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            auto quiescent_moves = next_board.quiescent(piece_values());
+            auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values());
             for(auto quiescent_move : quiescent_moves)
             {
                 next_board.submit_move(*quiescent_move);
