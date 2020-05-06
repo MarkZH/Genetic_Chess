@@ -75,14 +75,14 @@ class Minimax_AI : public Player
 
         // Monitor search speed to adapt to different computers/competing workloads
         mutable size_t nodes_searched;
-        mutable Clock::seconds clock_start_time;
+        mutable std::chrono::steady_clock::time_point clock_start_time;
         mutable size_t maximum_depth;
 
         // For thinking output
         mutable int nodes_evaluated;
         mutable Clock::seconds total_evaluation_time;
         mutable Clock::seconds node_evaluation_time;
-        mutable Clock::seconds time_at_last_output;
+        mutable std::chrono::steady_clock::time_point time_at_last_output;
 
         // Evaluation method
         double evaluate(const Board& board,
@@ -132,13 +132,11 @@ class Minimax_AI : public Player
 
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,
-                                  const Clock& clock,
                                   Piece_Color perspective) const noexcept;
         void output_thinking_uci(const Game_Tree_Node_Result& thought,
-                                 const Clock& clock,
                                  Piece_Color perspective) const noexcept;
 
-        Clock::seconds time_since_last_output(const Clock& clock) const noexcept;
+        std::chrono::duration<double> time_since_last_output() const noexcept;
 
         mutable double value_of_centipawn;
 

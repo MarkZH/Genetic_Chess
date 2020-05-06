@@ -99,7 +99,7 @@ class Clock
 
     private:
         std::array<seconds, 2> timers;
-        std::array<size_t, 2> moves_to_reset_clocks{0, 0};
+        std::array<size_t, 2> moves_since_clock_reset{0, 0};
 
         seconds initial_start_time;
         std::array<seconds, 2> increment_time;

@@ -1265,12 +1265,18 @@ void Board::add_to_repeat_count(uint64_t new_hash) noexcept
 
 ptrdiff_t Board::current_board_position_repeat_count() const noexcept
 {
-    return repeat_count.count(board_hash());
+    return std::count(repeat_count.begin(), repeat_count.end(), board_hash());
 }
 
 size_t Board::moves_since_pawn_or_capture() const noexcept
 {
     return repeat_count.size() - 1;
+}
+
+std::ptrdiff_t Board::repeat_count_from_depth(size_t depth) const noexcept
+{
+    depth = std::min(depth, repeat_count.size() - 1);
+    return std::count(repeat_count.end() - depth - 1, repeat_count.end(), board_hash());
 }
 
 void Board::clear_repeat_count() noexcept

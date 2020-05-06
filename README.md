@@ -46,7 +46,7 @@ this project.
 1. Edit `gene_pool_config_example.txt` to adjust the number of simultaneous
    games to a number less than or equal to the number of processors on your
    computer.
-2. `<bin location>/genetic_chess -genepool gene_pool_config_example.txt`
+2. `<bin location>/genetic_chess -gene-pool gene_pool_config_example.txt`
     * If compiling with Visual Studio, look in x86/Release or x64/Release
       for the compiled program.
 3. Every few hours or days, pause the gene pool with `Ctrl-Z` (Linux) or `Ctrl-C`
