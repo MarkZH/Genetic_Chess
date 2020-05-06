@@ -52,7 +52,7 @@ Game_Result Clock::punch(const Board& board) noexcept
     }
     else
     {
-        if(++moves_to_reset_clocks[player_index] == move_count_reset)
+        if(++moves_since_clock_reset[player_index] == move_count_reset)
         {
             if(method_of_reset == Time_Reset_Method::ADDITION)
             {
@@ -62,7 +62,7 @@ Game_Result Clock::punch(const Board& board) noexcept
             {
                 timers[player_index] = initial_start_time;
             }
-            moves_to_reset_clocks[player_index] = 0;
+            moves_since_clock_reset[player_index] = 0;
         }
         timers[player_index] += increment_time[player_index];
 
@@ -72,8 +72,8 @@ Game_Result Clock::punch(const Board& board) noexcept
 
 void Clock::unpunch() noexcept
 {
-    moves_to_reset_clocks[static_cast<int>(whose_turn)] -= 1;
-    moves_to_reset_clocks[static_cast<int>(opposite(whose_turn))] -= 1;
+    moves_since_clock_reset[static_cast<int>(whose_turn)] -= 1;
+    moves_since_clock_reset[static_cast<int>(opposite(whose_turn))] -= 1;
     punch({});
 }
 
@@ -117,7 +117,7 @@ size_t Clock::moves_until_reset(Piece_Color color) const noexcept
 {
     if(move_count_reset > 0)
     {
-        return move_count_reset - moves_to_reset_clocks[static_cast<int>(color)];
+        return move_count_reset - moves_since_clock_reset[static_cast<int>(color)];
     }
     else
     {
@@ -149,7 +149,7 @@ void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
     }
     else
     {
-        move_count_reset = moves_to_reset_clocks[static_cast<int>(running_for())] + moves_to_reset;
+        move_count_reset = moves_since_clock_reset[static_cast<int>(running_for())] + moves_to_reset;
     }
 }
 
