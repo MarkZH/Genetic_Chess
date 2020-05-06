@@ -141,7 +141,7 @@ void Clock::set_increment(Piece_Color player, seconds new_increment_time_seconds
     increment_time[static_cast<int>(player)] = new_increment_time_seconds;
 }
 
-void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
+void Clock::set_next_time_reset(Piece_Color player, size_t moves_to_reset) noexcept
 {
     if(moves_to_reset == 0)
     {
@@ -149,7 +149,7 @@ void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
     }
     else
     {
-        move_count_reset = moves_since_clock_reset[static_cast<int>(running_for())] + moves_to_reset;
+        move_count_reset = moves_since_clock_reset[static_cast<int>(player)] + moves_to_reset;
     }
 }
 
