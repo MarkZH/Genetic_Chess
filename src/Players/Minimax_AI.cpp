@@ -36,7 +36,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
     nodes_evaluated = 0;
     total_evaluation_time = 0.0s;
-    time_at_last_output = clock.running_time_left();
+    time_at_last_output = std::chrono::steady_clock::now();
 
     auto real_prior_result = depth_one_results[board.last_move()];
     auto principal_variation = real_prior_result.variation;
@@ -237,7 +237,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     break;
                 }
-                else if(time_since_last_output(clock) > 1s)
+                else if(time_since_last_output() > 1s)
                 {
                     if(Board::thinking_mode() == Thinking_Output_Type::CECP)
                     {
@@ -249,7 +249,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                         output_thinking_uci(alpha, clock,
                                             depth % 2 == 1 ? perspective : opposite(perspective));
                     }
-                    time_at_last_output = clock.running_time_left();
+                    time_at_last_output = std::chrono::steady_clock::now();
                 }
             }
         }
@@ -350,9 +350,9 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const
     std::cout << std::endl;
 }
 
-Clock::seconds Minimax_AI::time_since_last_output(const Clock& clock) const noexcept
+Clock::seconds Minimax_AI::time_since_last_output() const noexcept
 {
-    return time_at_last_output - clock.running_time_left();
+    return std::chrono::steady_clock::now() - time_at_last_output;
 }
 
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
