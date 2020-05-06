@@ -146,7 +146,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     ++moves_left; // So the decrement can take place immediately on entering the loop.
     for(const auto& move : all_legal_moves)
     {
-        auto evaluate_start_time = clock.running_time_left();
+        auto evaluate_start_time = std::chrono::steady_clock::now();
         ++nodes_searched;
         --moves_left;
 
@@ -256,7 +256,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         if( ! recurse)
         {
             ++nodes_evaluated;
-            total_evaluation_time += evaluate_start_time - clock.running_time_left();
+            total_evaluation_time += std::chrono::steady_clock::now() - evaluate_start_time;
         }
 
         if(clock.running_time_left() < 0.0s || Board::must_pick_move_now())
