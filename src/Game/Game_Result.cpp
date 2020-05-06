@@ -3,7 +3,6 @@
 #include <string>
 
 #include "Game/Color.h"
-#include "Game/Clock.h"
 
 Game_Result::Game_Result() noexcept : Game_Result(Winner_Color::NONE, Game_Result_Type::ONGOING)
 {

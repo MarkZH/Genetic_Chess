@@ -124,7 +124,7 @@ class Clock
         //! the clock according to instructions from chess GUIs.
         void set_time(Piece_Color player, seconds new_time_seconds) noexcept;
         void set_increment(Piece_Color player, seconds new_increment_time_seconds) noexcept;
-        void set_next_time_reset(size_t moves_to_reset) noexcept;
+        void set_next_time_reset(Piece_Color player, size_t moves_to_reset) noexcept;
 };
 
 #endif // Clock_H
