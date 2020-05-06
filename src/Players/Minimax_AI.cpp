@@ -31,7 +31,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     }
 
     nodes_searched = 0;
-    clock_start_time = clock.running_time_left();
+    clock_start_time = std::chrono::steady_clock::now();
     maximum_depth = 0;
 
     nodes_evaluated = 0;
@@ -69,11 +69,11 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
     if(Board::thinking_mode() == Thinking_Output_Type::CECP)
     {
-        output_thinking_cecp(result, clock, board.whose_turn());
+        output_thinking_cecp(result, board.whose_turn());
     }
     else if(Board::thinking_mode() == Thinking_Output_Type::UCI)
     {
-        output_thinking_uci(result, clock, board.whose_turn());
+        output_thinking_uci(result, board.whose_turn());
     }
 
     commentary.push_back({result, {}});
@@ -241,12 +241,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     if(Board::thinking_mode() == Thinking_Output_Type::CECP)
                     {
-                        output_thinking_cecp(alpha, clock,
+                        output_thinking_cecp(alpha,
                                              depth % 2 == 1 ? perspective : opposite(perspective));
                     }
                     else if(Board::thinking_mode() == Thinking_Output_Type::UCI)
                     {
-                        output_thinking_uci(alpha, clock,
+                        output_thinking_uci(alpha,
                                             depth % 2 == 1 ? perspective : opposite(perspective));
                     }
                     time_at_last_output = std::chrono::steady_clock::now();
@@ -277,7 +277,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 }
 
 void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
-                                      const Clock& clock,
                                       Piece_Color perspective) const noexcept
 {
     auto score = thought.corrected_score(perspective)/centipawn_value();
@@ -292,7 +291,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         score = -(10000.0 - thought.depth());
     }
 
-    auto time_so_far = clock_start_time - clock.running_time_left();
+    auto time_so_far = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - clock_start_time);
     using centiseconds = std::chrono::duration<int, std::centi>;
     std::cout << thought.depth() // ply
         << " "
@@ -320,9 +319,10 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     std::cout << std::endl;
 }
 
-void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought, const Clock& clock, Piece_Color perspective) const noexcept
+void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
+                                     Piece_Color perspective) const noexcept
 {
-    auto time_so_far = clock_start_time - clock.running_time_left();
+    auto time_so_far = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - clock_start_time);
     std::cout << "info"
               << " depth " << thought.depth()
               << " time " << std::chrono::duration_cast<std::chrono::milliseconds>(time_so_far).count()

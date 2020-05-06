@@ -75,7 +75,7 @@ class Minimax_AI : public Player
 
         // Monitor search speed to adapt to different computers/competing workloads
         mutable size_t nodes_searched;
-        mutable Clock::seconds clock_start_time;
+        mutable std::chrono::steady_clock::time_point clock_start_time;
         mutable size_t maximum_depth;
 
         // For thinking output
@@ -132,10 +132,8 @@ class Minimax_AI : public Player
 
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,
-                                  const Clock& clock,
                                   Piece_Color perspective) const noexcept;
         void output_thinking_uci(const Game_Tree_Node_Result& thought,
-                                 const Clock& clock,
                                  Piece_Color perspective) const noexcept;
 
         Clock::seconds time_since_last_output() const noexcept;
