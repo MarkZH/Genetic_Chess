@@ -136,7 +136,7 @@ class Minimax_AI : public Player
         void output_thinking_uci(const Game_Tree_Node_Result& thought,
                                  Piece_Color perspective) const noexcept;
 
-        Clock::seconds time_since_last_output() const noexcept;
+        std::chrono::duration<double> time_since_last_output() const noexcept;
 
         mutable double value_of_centipawn;
 

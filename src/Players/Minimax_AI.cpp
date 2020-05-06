@@ -350,7 +350,7 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
     std::cout << std::endl;
 }
 
-Clock::seconds Minimax_AI::time_since_last_output() const noexcept
+std::chrono::duration<double> Minimax_AI::time_since_last_output() const noexcept
 {
     return std::chrono::steady_clock::now() - time_at_last_output;
 }
