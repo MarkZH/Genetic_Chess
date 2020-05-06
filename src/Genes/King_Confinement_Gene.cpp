@@ -3,6 +3,7 @@
 #include <cmath>
 #include <array>
 #include <map>
+#include <vector>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -36,7 +37,7 @@ void King_Confinement_Gene::adjust_properties(std::map<std::string, double>& pro
     properties["Opponent Block Score"] = opponent_block_score;
 }
 
-void King_Confinement_Gene::gene_specific_mutation() noexcept
+void King_Confinement_Gene::gene_specific_mutation(const std::vector<Piece_Type>&) noexcept
 {
     auto mutation_size = Random::random_laplace(0.03);
     if(Random::coin_flip())

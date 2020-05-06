@@ -3,6 +3,7 @@
 #include <string>
 #include <array>
 #include <map>
+#include <vector>
 
 #include "Genes/Gene.h"
 #include "Game/Piece.h"
@@ -42,10 +43,12 @@ void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, doubl
     renormalize_values();
 }
 
-void Piece_Strength_Gene::gene_specific_mutation() noexcept
+void Piece_Strength_Gene::gene_specific_mutation(const std::vector<Piece_Type>& gated_piece_types) noexcept
 {
-    auto& value = Random::random_element(piece_strength);
-    value += Random::random_laplace(0.005);
+    const auto king_value = static_cast<int>(Piece_Type::KING);
+    auto index = Random::random_integer(size_t{0}, king_value + gated_piece_types.size());
+    auto type = index <= king_value ? static_cast<Piece_Type>(index) : gated_piece_types[index - king_value - 1];
+    piece_value(type) += Random::random_laplace(0.005);
     renormalize_values();
 }
 

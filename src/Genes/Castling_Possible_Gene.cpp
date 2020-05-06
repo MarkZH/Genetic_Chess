@@ -2,10 +2,12 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
@@ -102,7 +104,7 @@ double Castling_Possible_Gene::score_board(const Board& board, Piece_Color persp
     return score;
 }
 
-void Castling_Possible_Gene::gene_specific_mutation() noexcept
+void Castling_Possible_Gene::gene_specific_mutation(const std::vector<Piece_Type>&) noexcept
 {
     if(Random::coin_flip())
     {

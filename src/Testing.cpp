@@ -381,7 +381,8 @@ bool run_tests()
     std::vector<Genetic_AI> test_pool(10);
     for(auto& ai : test_pool)
     {
-        ai.mutate(100);
+        auto board = Board(Board_Type::MUSKETEER);
+        ai.mutate(board.gated_piece_type_list(), 100);
         ai.print(pool_file_name);
     }
 

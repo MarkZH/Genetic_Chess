@@ -5,8 +5,10 @@
 #include <string>
 #include <iosfwd>
 #include <memory>
+#include <vector>
 
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 class Board;
 class Piece_Strength_Gene;
@@ -32,7 +34,7 @@ class Gene
         void read_from(const std::string& file_name);
 
         //! \brief Applies a random mutation to the priority or other aspect of a gene.
-        void mutate() noexcept;
+        void mutate(const std::vector<Piece_Type>& gated_piece_types) noexcept;
 
         //! \brief Gives a numerical score to the board in the arguments.
         //!
@@ -109,7 +111,7 @@ class Gene
         //! \brief A method overridden by derived genes to mutate more specific gene components.
         //!
         //! By default, this method does nothing.
-        virtual void gene_specific_mutation() noexcept;
+        virtual void gene_specific_mutation(const std::vector<Piece_Type>& gated_piece_types) noexcept;
 
         //! \brief Returns a structure relating a gene property to a numerical value.
         //!

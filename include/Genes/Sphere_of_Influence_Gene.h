@@ -4,10 +4,11 @@
 #include "Gene.h"
 
 #include <string>
-#include <array>
+#include <vector>
 #include <map>
 
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 class Board;
 
@@ -25,7 +26,7 @@ class Sphere_of_Influence_Gene : public Clonable_Gene<Sphere_of_Influence_Gene>
         double king_target_factor = 0.0;
 
         double score_board(const Board& board, Piece_Color perspective, const size_t depth) const noexcept override;
-        void gene_specific_mutation() noexcept override;
+        void gene_specific_mutation(const std::vector<Piece_Type>&) noexcept override;
 
         void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
         void load_gene_properties(const std::map<std::string, double>& properties) override;

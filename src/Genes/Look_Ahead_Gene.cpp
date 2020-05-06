@@ -2,11 +2,13 @@
 
 #include <map>
 #include <cassert>
+#include <vector>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
@@ -50,7 +52,7 @@ Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock&
     return time_left/std::min(moves_left, double(moves_to_reset));
 }
 
-void Look_Ahead_Gene::gene_specific_mutation() noexcept
+void Look_Ahead_Gene::gene_specific_mutation(const std::vector<Piece_Type>&) noexcept
 {
     switch(Random::random_integer(1, 4))
     {

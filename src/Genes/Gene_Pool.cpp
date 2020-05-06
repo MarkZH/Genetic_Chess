@@ -27,6 +27,7 @@ using namespace std::chrono_literals;
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
+#include "Game/Piece.h"
 
 #include "Utility/String.h"
 #include "Utility/Configuration.h"
@@ -90,6 +91,34 @@ void gene_pool(const std::string& config_file)
     }
     auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
 
+    // Gated piece selection
+    std::vector<Piece_Type> gated_piece_types;
+    if(use_musketeer_board)
+    {
+        const auto gated_pieces_text = String::remove_extra_whitespace(config.as_text("gated pieces"));
+        auto spaces = std::count(gated_pieces_text.begin(), gated_pieces_text.end(), ' ');
+        if(gated_pieces_text.size() - spaces != 2)
+        {
+            throw std::invalid_argument("Invalid gated piece specification: " + gated_pieces_text);
+        }
+        try
+        {
+            gated_piece_types = {Piece(gated_pieces_text.front()).type(), Piece(gated_pieces_text.back()).type()};
+        }
+        catch(const std::invalid_argument& e)
+        {
+            throw std::invalid_argument("Invalid gate piece from specification: " + gated_pieces_text + "\n" + e.what());
+        }
+        if(std::any_of(gated_piece_types.begin(), gated_piece_types.end(),
+                    [](auto piece_type)
+                    {
+                        return static_cast<int>(piece_type) <= static_cast<int>(Piece_Type::KING);
+                    }))
+        {
+            throw std::invalid_argument("Gated piece types must not be standard piece types: " + gated_pieces_text);
+        }
+    }
+
     auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
 
     if(config.any_unused_parameters())
@@ -130,7 +159,7 @@ void gene_pool(const std::string& config_file)
         pools[i].resize(gene_pool_population);
         for(auto ai_index = new_ai_index; ai_index < pools[i].size(); ++ai_index)
         {
-            pools[i][ai_index].mutate(scramble_mutations);
+            pools[i][ai_index].mutate(gated_piece_types, scramble_mutations);
         }
     }
     write_generation(pools, genome_file_name, write_new_pools);
@@ -284,8 +313,9 @@ void gene_pool(const std::string& config_file)
 
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
+            auto board = use_musketeer_board ? Board(gated_piece_types[0], gated_piece_types[1]) : Board();
             results.emplace_back(std::async(std::launch::async, play_game,
-                                            Board(use_musketeer_board ? Board_Type::MUSKETEER : Board_Type::STANDARD),
+                                            board,
                                             Clock(game_time),
                                             std::cref(white), std::cref(black),
                                             false,
@@ -316,7 +346,7 @@ void gene_pool(const std::string& config_file)
                 auto offspring = mating_reproduction ?
                                     Genetic_AI(winning_player, losing_player) :
                                     winning_player.clone();
-                offspring.mutate();
+                offspring.mutate(gated_piece_types);
                 losing_player = offspring;
             }
             else

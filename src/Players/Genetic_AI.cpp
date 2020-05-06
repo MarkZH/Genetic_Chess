@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <fstream>
-#include <array>
+#include <vector>
 #include <string>
 #include <cmath>
 #include <optional>
@@ -11,6 +11,7 @@ class Board;
 class Clock;
 
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 #include "Utility/String.h"
 #include "Utility/Exceptions.h"
@@ -117,11 +118,11 @@ Genetic_AI Genetic_AI::clone() const noexcept
     return Genetic_AI(*this, *this);
 }
 
-void Genetic_AI::mutate(int mutation_count) noexcept
+void Genetic_AI::mutate(const std::vector<Piece_Type>& gated_piece_types, int mutation_count) noexcept
 {
     for(int i = 0; i < mutation_count; ++i)
     {
-        genome.mutate();
+        genome.mutate(gated_piece_types);
     }
 
     recalibrate_self();

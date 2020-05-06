@@ -1619,3 +1619,8 @@ const std::array<Piece, 8>& Board::gate_row(Piece_Color color) const noexcept
 {
     return gated_pieces[static_cast<int>(color)];
 }
+
+const std::vector<Piece_Type>& Board::gated_piece_type_list() const noexcept
+{
+    return gated_piece_types;
+}

@@ -5,9 +5,11 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
+#include "Game/Piece.h"
 
 class Board;
 
@@ -47,7 +49,7 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         double game_length_uncertainty = 0.5; // approximately as a fraction of the mean
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
-        void gene_specific_mutation() noexcept override;
+        void gene_specific_mutation(const std::vector<Piece_Type>&) noexcept override;
 
         void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
         void load_gene_properties(const std::map<std::string, double>& properties) override;

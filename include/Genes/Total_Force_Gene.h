@@ -4,8 +4,10 @@
 #include "Gene.h"
 
 #include <string>
+#include <vector>
 
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 class Board;
 class Piece_Strength_Gene;
@@ -30,7 +32,7 @@ class Total_Force_Gene : public Clonable_Gene<Total_Force_Gene>
         double gate_factor = 1.0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
-        void gene_specific_mutation() noexcept override;
+        void gene_specific_mutation(const std::vector<Piece_Type>&) noexcept override;
         void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
         void load_gene_properties(const std::map<std::string, double>& properties) override;
 };

@@ -338,6 +338,9 @@ class Board
         //! \param color The piece color of the player.
         const std::array<Piece, 8>& gate_row(Piece_Color color) const noexcept;
 
+        //! \brief The set of gated piece types available for promotion.
+        const std::vector<Piece_Type>& gated_piece_type_list() const noexcept;
+
     private:
         std::array<Piece, 64> board;
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;

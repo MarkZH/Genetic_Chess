@@ -2,9 +2,11 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 #include "Genes/Gene.h"
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 #include "Utility/Random.h"
 
@@ -25,7 +27,7 @@ int Mutation_Rate_Gene::mutation_count() const noexcept
     return int(mutated_components_per_mutation);
 }
 
-void Mutation_Rate_Gene::gene_specific_mutation() noexcept
+void Mutation_Rate_Gene::gene_specific_mutation(const std::vector<Piece_Type>&) noexcept
 {
     mutated_components_per_mutation += Random::random_laplace(1.0);
     mutated_components_per_mutation = std::max(3.0, mutated_components_per_mutation);

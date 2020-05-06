@@ -109,7 +109,8 @@ int main(int argc, char *argv[])
                 Clock::seconds game_time{};
                 size_t moves_per_reset = 0;
                 Clock::seconds increment_time{};
-                auto board = Board();
+                auto board = Board(Board_Type::MUSKETEER);
+                bool musketeer_option = false;
                 bool pondering_allowed = false;
                 std::string game_file_name;
                 std::string event_name;
@@ -137,7 +138,7 @@ int main(int argc, char *argv[])
                         if(filename.empty())
                         {
                             auto genetic_player = std::make_unique<Genetic_AI>();
-                            genetic_player->mutate(10000);
+                            genetic_player->mutate(board.gated_piece_type_list(), 10000);
                             genetic_player->print("single_game_player.txt");
                             latest = std::move(genetic_player);
                         }
@@ -188,7 +189,7 @@ int main(int argc, char *argv[])
                     }
                     else if(opt == "-musketeer")
                     {
-                        board = Board(Board_Type::MUSKETEER);
+                        musketeer_option = true;
                     }
                     else if(opt == "-game-file" && i + 1 < argc)
                     {
@@ -235,6 +236,11 @@ int main(int argc, char *argv[])
                 if( ! white)
                 {
                     throw std::invalid_argument("At least one player must be specified.");
+                }
+
+                if( ! musketeer_option)
+                {
+                    board = Board();
                 }
 
                 if( ! black)

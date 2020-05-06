@@ -53,7 +53,9 @@ then
     exit 1
 fi
 
-octave analysis/gene_plots.m "$pool_file" "$notes_file" &
+gated_pieces=$(get_config_value "$config_file" "gated pieces" | sed 's/\s*//g')
+
+octave analysis/gene_plots.m "$pool_file" "$notes_file" "$gated_pieces" &
 octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
 
 seed_id=

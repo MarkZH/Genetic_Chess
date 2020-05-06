@@ -3,12 +3,14 @@
 
 #include <iosfwd>
 #include <string>
+#include <vector>
 
 #include "Minimax_AI.h"
 
 #include "Genes/Genome.h"
 #include "Game/Color.h"
 #include "Game/Clock.h"
+#include "Game/Piece.h"
 
 class Board;
 
@@ -60,8 +62,9 @@ class Genetic_AI : public Minimax_AI
 
         //! \brief Apply random mutations to the Genome of the Genetic_AI
         //!
+        //! \param gated_piece_types A list of gated piece types for gene pool purposes.
         //! \param mutation_count The number of mutation actions to apply to the genome. Defaults to 1 if unspecified.
-        void mutate(int mutation_count = 1) noexcept;
+        void mutate(const std::vector<Piece_Type>& gated_piece_types, int mutation_count = 1) noexcept;
 
         //! \brief Reports the name of the AI and ID number.
         //!

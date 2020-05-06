@@ -6,6 +6,7 @@
 #include <string>
 #include <array>
 #include <map>
+#include <vector>
 
 #include "Game/Color.h"
 #include "Game/Piece.h"
@@ -38,7 +39,7 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
         void load_gene_properties(const std::map<std::string, double>& properties) override;
         double piece_value(Piece_Type type) const noexcept;
         double& piece_value(Piece_Type type) noexcept;
-        void gene_specific_mutation() noexcept override;
+        void gene_specific_mutation(const std::vector<Piece_Type>& gated_piece_types) noexcept override;
         void renormalize_values() noexcept;
 };
 

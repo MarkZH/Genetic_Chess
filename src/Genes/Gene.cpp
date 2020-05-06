@@ -8,9 +8,11 @@
 #include <fstream>
 #include <numeric>
 #include <iterator>
+#include <vector>
 
 #include "Game/Board.h"
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
@@ -165,7 +167,7 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
     throw Genetic_AI_Creation_Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
 }
 
-void Gene::mutate() noexcept
+void Gene::mutate(const std::vector<Piece_Type>& gated_piece_types) noexcept
 {
     if(is_active())
     {
@@ -194,11 +196,11 @@ void Gene::mutate() noexcept
     }
     else
     {
-        gene_specific_mutation();
+        gene_specific_mutation(gated_piece_types);
     }
 }
 
-void Gene::gene_specific_mutation() noexcept
+void Gene::gene_specific_mutation(const std::vector<Piece_Type>&) noexcept
 {
 }
 

@@ -7,6 +7,7 @@
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
+#include "Game/Piece.h"
 
 #include "Gene.h"
 
@@ -61,7 +62,7 @@ class Genome
         //! \brief Apply a random set of mutations to the entire genome.
         //!
         //! The severity of the mutation is controlled by the Mutation_Rate_Gene.
-        void mutate() noexcept;
+        void mutate(const std::vector<Piece_Type>& gated_piece_types) noexcept;
 
         //! \brief Determine how much time should be used to choose a move, that is, for the entire search.
         //!

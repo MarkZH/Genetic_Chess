@@ -3,11 +3,13 @@
 #include <cmath>
 #include <array>
 #include <map>
+#include <vector>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Square.h"
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
@@ -90,7 +92,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color per
 }
 
 
-void Sphere_of_Influence_Gene::gene_specific_mutation() noexcept
+void Sphere_of_Influence_Gene::gene_specific_mutation(const std::vector<Piece_Type>&) noexcept
 {
     switch(Random::random_integer(1, 3))
     {

@@ -5,8 +5,10 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 //! \brief The gene controls how much of the genome mutates per Genome::mutate() event.
 class Mutation_Rate_Gene : public Clonable_Gene<Mutation_Rate_Gene>
@@ -21,7 +23,7 @@ class Mutation_Rate_Gene : public Clonable_Gene<Mutation_Rate_Gene>
         //! \returns An integer number that determines the number of point mutations the Genome::mutate() makes.
         int mutation_count() const noexcept;
 
-        void gene_specific_mutation() noexcept override;
+        void gene_specific_mutation(const std::vector<Piece_Type>&) noexcept override;
 
     private:
         double mutated_components_per_mutation = 3.0;

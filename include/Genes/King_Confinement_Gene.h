@@ -5,8 +5,10 @@
 
 #include <string>
 #include <map>
+#include <vector>
 
 #include "Game/Color.h"
+#include "Game/Piece.h"
 
 class Board;
 
@@ -20,7 +22,7 @@ class King_Confinement_Gene : public Clonable_Gene<King_Confinement_Gene>
     public:
         King_Confinement_Gene() noexcept;
 
-        void gene_specific_mutation() noexcept override;
+        void gene_specific_mutation(const std::vector<Piece_Type>&) noexcept override;
 
         std::string name() const noexcept override;
 

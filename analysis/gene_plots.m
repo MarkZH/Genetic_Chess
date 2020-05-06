@@ -2,6 +2,7 @@ isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
 
 filename = 0;
 directory = '';
+pieces = 'PRNBQK';
 if isOctave
     graphics_toolkit('gnuplot'); % Octave only
     args = argv();
@@ -14,6 +15,9 @@ if isOctave
                 data = importdata(marks_file_name, ';', 1);
                 id_marks = data.data(:,1)';
                 id_notes = data.textdata(2:end);
+            end
+            if length(args) > 2
+                pieces = [pieces args{3}];
             end
         end
     end
@@ -70,6 +74,10 @@ for yi = 2 : length(data.colheaders) - 2
     this_data = data.data(:, yi);
     name_list = data.colheaders(yi);
     name = name_list{1};
+
+    if ~isempty(strfind(name, piece_strength_prefix)) && isempty(strfind(name, 'Active')) && isempty(strfind(pieces, name(end)))
+        continue;
+    end
 
     figure;
     hold all;

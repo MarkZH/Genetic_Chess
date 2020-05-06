@@ -2,6 +2,7 @@
 
 #include <string>
 #include <numeric>
+#include <vector>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
@@ -56,7 +57,7 @@ void Total_Force_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* psg)
     piece_strength_source = psg;
 }
 
-void Total_Force_Gene::gene_specific_mutation() noexcept
+void Total_Force_Gene::gene_specific_mutation(const std::vector<Piece_Type>&) noexcept
 {
     gate_factor += Random::random_laplace(0.03);
 }

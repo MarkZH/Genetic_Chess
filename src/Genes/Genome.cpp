@@ -5,9 +5,11 @@
 #include <iostream>
 #include <algorithm>
 #include <numeric>
+#include <array>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
+#include "Game/Piece.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
@@ -195,7 +197,7 @@ double Genome::evaluate(const Board& board, Piece_Color perspective, size_t dept
     return score_board(board, perspective, depth) - score_board(board, opposite(perspective), depth);
 }
 
-void Genome::mutate() noexcept
+void Genome::mutate(const std::vector<Piece_Type>& gated_piece_types) noexcept
 {
     // Create copies of genes based on the number of internal components
     // that are mutatable
@@ -210,7 +212,7 @@ void Genome::mutate() noexcept
     auto mutation_count = components_to_mutate();
     for(auto mutations = 0; mutations < mutation_count; ++mutations)
     {
-        Random::random_element(genes)->mutate();
+        Random::random_element(genes)->mutate(gated_piece_types);
         renormalize_priorities();
     }
 }

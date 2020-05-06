@@ -30,6 +30,10 @@ pool swap interval = 1000
 #    and placed gated pieces
 board type = musketeer
 
+# Gated pieces
+# Pick two fairy pieces to be used for all boards in the gene pool run.
+gated pieces = L C
+
 # Game time
 #
 # If the game time increment is positive, the time for each game
