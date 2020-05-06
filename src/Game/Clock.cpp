@@ -153,11 +153,6 @@ void Clock::set_next_time_reset(size_t moves_to_reset) noexcept
     }
 }
 
-void Clock::set_reset_method(Time_Reset_Method method) noexcept
-{
-    method_of_reset = method;
-}
-
 Clock::seconds Clock::running_time_left() const noexcept
 {
     return time_left(running_for());

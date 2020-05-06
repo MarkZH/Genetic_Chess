@@ -125,7 +125,6 @@ class Clock
         void set_time(Piece_Color player, seconds new_time_seconds) noexcept;
         void set_increment(Piece_Color player, seconds new_increment_time_seconds) noexcept;
         void set_next_time_reset(size_t moves_to_reset) noexcept;
-        void set_reset_method(Time_Reset_Method new_method) noexcept;
 };
 
 #endif // Clock_H
