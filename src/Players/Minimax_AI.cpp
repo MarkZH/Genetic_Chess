@@ -105,7 +105,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    std::vector<const Move*>& principal_variation,
                                                    current_variation_store& current_variation) const noexcept
 {
-    const auto time_start = clock.running_time_left();
+    const auto time_end = std::chrono::steady_clock::now() + time_to_examine;
     const auto depth = current_variation.size() + 1;
     maximum_depth = std::max(maximum_depth, depth);
     auto all_legal_moves = board.legal_moves();
@@ -173,7 +173,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             continue;
         }
 
-        auto time_left = time_to_examine - (time_start - clock.running_time_left());
+        auto time_left = Clock::seconds(time_end - std::chrono::steady_clock::now());
         auto time_allotted_for_this_move = (time_left/moves_left)*speculation_time_factor(board);
         time_allotted_for_this_move = std::min(time_allotted_for_this_move, clock.running_time_left());
 
