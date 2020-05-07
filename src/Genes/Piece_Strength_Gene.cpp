@@ -105,6 +105,11 @@ const std::array<double, 16>& Piece_Strength_Gene::piece_values() const noexcept
     }
 }
 
+size_t Piece_Strength_Gene::mutatable_components() const noexcept
+{
+    return 8;
+}
+
 std::string Piece_Strength_Gene::name() const noexcept
 {
     return "Piece Strength Gene";

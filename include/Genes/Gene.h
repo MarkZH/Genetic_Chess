@@ -54,7 +54,7 @@ class Gene
         //! The more components a gene has, the more likely it will be mutated by a call
         //! to Genome::mutate().
         //! \returns How many individually mutatable components exist in a gene.
-        size_t mutatable_components() const noexcept;
+        virtual size_t mutatable_components() const noexcept;
 
         //! \brief Returns the name of the gene.
         //!

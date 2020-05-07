@@ -31,6 +31,8 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
         //! \brief Returns the value of all pieces.
         const std::array<double, 16>& piece_values() const noexcept;
 
+        size_t mutatable_components() const noexcept override;
+
     private:
         std::array<double, 16> piece_strength;
 
