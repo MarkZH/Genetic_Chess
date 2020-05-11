@@ -926,8 +926,8 @@ bool run_perft_tests()
         std::cout << std::chrono::duration<double>(time_for_test).count() << " / " << std::chrono::duration<double>(time_so_far).count() << std::endl;
     }
 
-    auto time = std::chrono::steady_clock::now() - time_at_start_of_all;
-    std::cout << "Perft time: " << std::chrono::duration<double>(time).count() << " seconds" << std::endl;
+    auto time = std::chrono::duration<double>(std::chrono::steady_clock::now() - time_at_start_of_all);
+    std::cout << "Perft time: " << time.count() << " seconds" << std::endl;
     std::cout << "Legal moves counted: " << String::format_integer(int(legal_moves_counted), ",") << std::endl;
     std::cout << "Move generation rate: " << String::format_integer(int(legal_moves_counted/time.count()), ",") << " moves/second." << std::endl;
     if( ! tests_failed.empty())
