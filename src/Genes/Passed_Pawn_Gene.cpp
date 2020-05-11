@@ -21,15 +21,16 @@ double Passed_Pawn_Gene::score_board(const Board& board, Piece_Color perspective
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
+        auto left_file  = std::max('a', char(file - 1));
+        auto right_file = std::min('h', char(file + 1));
+        auto score_diff = 1.0/(right_file - left_file + 1);
+
         for(int rank = far_rank; rank != near_rank; rank -= rank_step)
         {
             auto piece = board.piece_on_square({file, rank});
             if(piece == own_pawn)
             {
                 score += 1.0;
-                auto left_file  = std::max('a', char(file - 1));
-                auto right_file = std::min('h', char(file + 1));
-                auto score_diff = 1.0/(right_file - left_file + 1);
 
                 for(char pawn_file = left_file; pawn_file <= right_file; ++pawn_file)
                 {
