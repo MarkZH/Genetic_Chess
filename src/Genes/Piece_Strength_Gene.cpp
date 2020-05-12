@@ -48,7 +48,7 @@ void Piece_Strength_Gene::gene_specific_mutation(const std::vector<Piece_Type>& 
     const auto king_value = static_cast<int>(Piece_Type::KING);
     auto index = Random::random_integer(size_t{0}, king_value + gated_piece_types.size());
     auto type = index <= king_value ? static_cast<Piece_Type>(index) : gated_piece_types[index - king_value - 1];
-    piece_value(type) += Random::random_laplace(0.005);
+    piece_value(type) += Random::random_laplace(0.003);
     renormalize_values();
 }
 
