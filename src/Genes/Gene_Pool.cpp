@@ -376,7 +376,7 @@ void gene_pool(const std::string& config_file)
             rounds_since_last_swap = 0;
 
             std::cout << "\n=======================\n\n";
-            std::cout << "Shuffling pools ... ";
+            std::cout << "Shuffling pools ...\n";
 
             std::vector<Genetic_AI> all_players;
             for(const auto& gene_pool : pools)
