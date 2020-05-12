@@ -167,27 +167,30 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 
 void Gene::mutate() noexcept
 {
-    if(is_active())
-    {
-        if(Random::success_probability(1, 1000))
-        {
-            active = false;
-        }
-    }
-    else
-    {
-        if(Random::success_probability(1, 100))
-        {
-            active = true;
-        }
-    }
-
-    if( ! is_active())
-    {
-        return;
-    }
-
     auto properties = list_properties();
+    if(properties.count("Active") > 0)
+    {
+        if(is_active())
+        {
+            if(Random::success_probability(1, 1000))
+            {
+                active = false;
+            }
+        }
+        else
+        {
+            if(Random::success_probability(1, 100))
+            {
+                active = true;
+            }
+        }
+
+        if( ! is_active())
+        {
+            return;
+        }
+    }
+
     if(Random::success_probability(properties.count("Priority"), properties.size()))
     {
         scoring_priority += Random::random_laplace(0.005);
