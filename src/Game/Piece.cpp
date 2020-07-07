@@ -6,6 +6,7 @@
 #include <array>
 #include <cctype>
 #include <vector>
+#include <stdexcept>
 
 #include "Game/Square.h"
 #include "Game/Color.h"
