@@ -102,7 +102,7 @@ void Gene::read_from(std::istream& is)
         {
             if(String::contains(e.what(), "at") || String::contains(e.what(), "invalid map<K, T> key"))
             {
-                throw_on_invalid_line(line, "Unrecognized parameter name:" + property_name);
+                throw_on_invalid_line(line, "Unrecognized parameter name: " + property_name);
             }
             else if(String::contains(e.what(), "stod"))
             {
