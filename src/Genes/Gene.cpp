@@ -108,6 +108,10 @@ void Gene::read_from(std::istream& is)
             {
                 throw_on_invalid_line(line, "Bad parameter value: " + property_data);
             }
+            else
+            {
+                throw_on_invalid_line(line, e.what());
+            }
         }
         catch(const std::invalid_argument&)
         {
