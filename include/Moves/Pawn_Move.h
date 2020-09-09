@@ -27,6 +27,13 @@ class Pawn_Move : public Move
         //! \param file_change The direction (LEFT or RIGHT) of the capture.
         Pawn_Move(Piece_Color color_in, Square start, Direction file_change) noexcept;
 
+    protected:
+        //! Generic pawn move constructor to be called by other constuctors.
+        //!
+        //! \param start Square where the pawn move starts.
+        //! \param end Square where the pawn move ends.
+        Pawn_Move(Square start, Square end) noexcept;
+
     private:
         bool move_specific_legal(const Board& board) const noexcept override;
 };

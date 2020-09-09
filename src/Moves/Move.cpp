@@ -167,16 +167,6 @@ char Move::promotion_piece_symbol() const noexcept
     return '\0';
 }
 
-void Move::adjust_end_file(int adjust) noexcept
-{
-    destination += Square_Difference{adjust, 0};
-}
-
-void Move::adjust_end_rank(int adjust) noexcept
-{
-    destination += Square_Difference{0, adjust};
-}
-
 size_t Move::attack_index() const noexcept
 {
     return attack_index(movement());

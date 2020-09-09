@@ -1,16 +1,13 @@
 #include "Moves/Pawn_Double_Move.h"
 
-#include <cassert>
-
 #include "Moves/Pawn_Move.h"
 #include "Game/Board.h"
 #include "Game/Square.h"
 
 Pawn_Double_Move::Pawn_Double_Move(Piece_Color color, char file_start) noexcept :
-    Pawn_Move(color, Square{file_start, color == Piece_Color::WHITE ? 2 : 7})
+    Pawn_Move({file_start, color == Piece_Color::WHITE ? 2 : 7},
+              {file_start, color == Piece_Color::WHITE ? 4 : 5})
 {
-    adjust_end_rank(rank_change());
-    assert(end().inside_board());
 }
 
 void Pawn_Double_Move::side_effects(Board& board) const noexcept

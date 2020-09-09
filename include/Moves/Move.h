@@ -122,22 +122,6 @@ class Move
         //! \brief Indicate that the Move being created is an en passant capture.
         void mark_as_en_passant() noexcept;
 
-        //! \brief Adjust the file of the square a move ends on.
-        //!
-        //! This is used for Pawn_Move derivitives since that constructor
-        //! forces single moves.
-        //!
-        //! \param adjust The size of the adjustment.
-        void adjust_end_file(int adjust) noexcept;
-
-        //! \brief Adjust the rank of the square a move ends on.
-        //!
-        //! This is used for Pawn_Move derivitives since that constructor
-        //! forces single moves.
-        //!
-        //! \param adjust The size of the adjustment.
-        void adjust_end_rank(int adjust) noexcept;
-
         //! \brief A textual representation of a move in PGN format without consequences ('+' for check, etc.).
         //!
         //! \param board The board on which the move is about to be made.
