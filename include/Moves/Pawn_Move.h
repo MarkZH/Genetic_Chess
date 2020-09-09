@@ -28,6 +28,13 @@ class Pawn_Move : public Move
         Pawn_Move(Piece_Color color_in, Square start, Direction file_change) noexcept;
 
     protected:
+        //! Generic pawn move constructor to be called by other constuctors.
+        //!
+        //! \param start Square where the pawn move starts.
+        //! \param end Square where the pawn move ends.
+        //! \param can_be_blocked Whether the pawn move can be blocked by another piece.
+        Pawn_Move(Square start, Square end, bool can_be_blocked) noexcept;
+
         bool move_specific_legal(const Board& board) const noexcept override;
 };
 
