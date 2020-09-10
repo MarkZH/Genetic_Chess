@@ -78,7 +78,6 @@ void gene_pool(const std::string& config_file)
     const auto genome_file_name = config.as_text("gene pool file");
     const auto scramble_mutations = config.as_positive_number<int>("initial mutations");
 
-    // Oscillating game time
     const auto minimum_game_time = config.as_positive_time_duration<Clock::seconds>("minimum game time");
     const auto maximum_game_time = config.as_positive_time_duration<Clock::seconds>("maximum game time");
     if(maximum_game_time < minimum_game_time)
