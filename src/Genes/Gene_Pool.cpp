@@ -624,8 +624,8 @@ namespace
                                (is_black_player && String::contains(line, "0-1")))
                             {
                                 ++win_count;
-                                break;
                             }
+                            break;
                         }
                     }
                 }
