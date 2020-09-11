@@ -75,8 +75,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    std::cerr << "Provide a file containing a game to confirm has all legal moves." << std::endl;
-                    return EXIT_FAILURE;
+                    throw std::invalid_argument("Provide a file containing a game to confirm has all legal moves.");
                 }
             }
             else if(option == "-test")
