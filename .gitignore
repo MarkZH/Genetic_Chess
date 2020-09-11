@@ -24,6 +24,7 @@ enc_temp_folder/
 *.json
 .vscode/*
 *.sarif
+*.recipe
 
 # Compiled output
 bin/
