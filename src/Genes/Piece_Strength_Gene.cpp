@@ -44,8 +44,7 @@ void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, doubl
 
 void Piece_Strength_Gene::gene_specific_mutation() noexcept
 {
-    auto& value = Random::random_element(piece_strength);
-    value += Random::random_laplace(0.005);
+    Random::random_element(piece_strength) += Random::random_laplace(0.005);
     renormalize_values();
 }
 
