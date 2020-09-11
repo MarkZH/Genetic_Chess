@@ -65,13 +65,9 @@ int main(int argc, char *argv[])
             }
             else if(option == "-confirm")
             {
-                if(argc >= 3)
+                if(argc > 2)
                 {
-                    if( ! confirm_game_record(argv[2]))
-                    {
-                        std::cerr << "Game contains illegal or mismarked moves." << std::endl;
-                        return EXIT_FAILURE;
-                    }
+                    return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
                 }
                 else
                 {
