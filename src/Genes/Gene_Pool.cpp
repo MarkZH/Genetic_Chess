@@ -15,7 +15,6 @@ using namespace std::chrono_literals;
 #include <array>
 #include <cstdio>
 #include <filesystem>
-#include <utility>
 #include <string>
 
 #ifndef _WIN32
