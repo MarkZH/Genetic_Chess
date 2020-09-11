@@ -57,7 +57,7 @@ double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspe
     size_t queue_insertion_point = 0;
     std::array<bool, 64> in_queue{};
 
-    const auto& king_square = board.find_king(perspective);
+    const auto king_square = board.find_king(perspective);
 
     square_queue[queue_insertion_point++] = king_square;
     in_queue[king_square.index()] = true;
