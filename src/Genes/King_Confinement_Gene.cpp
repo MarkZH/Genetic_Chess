@@ -1,6 +1,5 @@
 #include "Genes/King_Confinement_Gene.h"
 
-#include <cmath>
 #include <array>
 #include <map>
 
