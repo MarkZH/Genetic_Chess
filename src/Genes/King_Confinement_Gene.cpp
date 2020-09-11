@@ -64,7 +64,7 @@ double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspe
 
     double friendly_block_total = 0.0;
     double opponent_block_total = 0.0;
-    int free_space_total = 0;
+    double free_space_total = 0.0;
 
     for(auto square : square_queue)
     {
@@ -89,7 +89,7 @@ double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspe
         }
         else
         {
-            ++free_space_total;
+            free_space_total += 1.0;
             add_surrounding_squares = true;
         }
 
@@ -111,5 +111,5 @@ double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspe
         }
     }
 
-    return (friendly_block_total + opponent_block_total)/(1 + free_space_total);
+    return (friendly_block_total + opponent_block_total)/(1.0 + free_space_total);
 }
