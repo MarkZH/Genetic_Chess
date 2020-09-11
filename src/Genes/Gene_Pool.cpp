@@ -15,7 +15,6 @@ using namespace std::chrono_literals;
 #include <array>
 #include <cstdio>
 #include <filesystem>
-#include <utility>
 #include <string>
 
 #ifndef _WIN32
@@ -80,7 +79,6 @@ void gene_pool(const std::string& config_file)
     const auto scramble_mutations = config.as_positive_number<int>("initial mutations");
     const auto use_musketeer_board = config.as_boolean("board type", "musketeer", "standard");
 
-    // Oscillating game time
     const auto minimum_game_time = config.as_positive_time_duration<Clock::seconds>("minimum game time");
     const auto maximum_game_time = config.as_positive_time_duration<Clock::seconds>("maximum game time");
     if(maximum_game_time < minimum_game_time)
@@ -656,8 +654,8 @@ namespace
                                (is_black_player && String::contains(line, "0-1")))
                             {
                                 ++win_count;
-                                break;
                             }
+                            break;
                         }
                     }
                 }

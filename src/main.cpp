@@ -54,18 +54,14 @@ int main(int argc, char *argv[])
             std::string option = argv[1];
             if(option == "-gene-pool")
             {
-                std::string gene_pool_config_file_name;
                 if(argc > 2)
                 {
-                    gene_pool_config_file_name = argv[2];
+                    gene_pool(argv[2]);
                 }
-
-                if(gene_pool_config_file_name.empty())
+                else
                 {
                     throw std::invalid_argument("Specify a configuration file to run a gene pool.");
                 }
-
-                gene_pool(gene_pool_config_file_name);
             }
             else if(option == "-confirm")
             {
@@ -79,8 +75,7 @@ int main(int argc, char *argv[])
                 }
                 else
                 {
-                    std::cerr << "Provide a file containing a game to confirm has all legal moves." << std::endl;
-                    return EXIT_FAILURE;
+                    throw std::invalid_argument("Provide a file containing a game to confirm has all legal moves.");
                 }
             }
             else if(option == "-test")
@@ -159,7 +154,7 @@ int main(int argc, char *argv[])
                                 {
                                     throw std::invalid_argument(std::string{"Specified ID "} + argv[i + 2] + " is not in valid range.");
                                 }
-                                catch(const std::exception&)
+                                catch(const std::invalid_argument&) // Could not convert argv[i + 2] to an int.
                                 {
                                 }
                             }
