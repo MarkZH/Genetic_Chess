@@ -18,7 +18,8 @@
 
 std::map<std::string, double> Gene::list_properties() const noexcept
 {
-    auto properties = std::map<std::string, double>{{"Priority", scoring_priority}, {"Active", double(active)}};
+    auto properties = std::map<std::string, double>{{"Priority", scoring_priority},
+                                                    {"Active", double(active)}};
     adjust_properties(properties);
     return properties;
 }

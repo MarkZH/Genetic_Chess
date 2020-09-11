@@ -93,7 +93,7 @@ class Gene
         void test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept;
 
     protected:
-        //! CHeck whether this gene is active or disabled.
+        //! Check whether this gene is active or disabled.
         bool is_active() const noexcept;
 
     private:
