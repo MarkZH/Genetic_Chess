@@ -35,6 +35,12 @@ namespace
     //!
     //! \param file_name The name of the file with the PGN game records. All games will be examined.
     bool confirm_game_record(const std::string& file_name);
+
+    //! \brief Starts a single game according to command line options.
+    //!
+    //! \param argc The number of command line options (same as for main(int argc, char *argv[])).
+    //! \param argv The command line options (same as for main(int argc, char *argv[])).
+    void start_game(int argc, char* argv[]);
 }
 
 //! \brief The starting point for the whole program.
@@ -88,152 +94,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                // Use pointers since each player could be Genetic, Random, etc.
-                std::unique_ptr<Player> white;
-                std::unique_ptr<Player> black;
-                std::unique_ptr<Player> latest;
-
-                Clock::seconds game_time{};
-                size_t moves_per_reset = 0;
-                Clock::seconds increment_time{};
-                Board board;
-                bool pondering_allowed = false;
-                std::string game_file_name;
-                std::string event_name;
-                std::string location;
-
-                for(int i = 1; i < argc; ++i)
-                {
-                    std::string opt = argv[i];
-                    if(opt == "-random")
-                    {
-                        latest = std::make_unique<Random_AI>();
-                    }
-                    else if(opt == "-genetic")
-                    {
-                        std::string filename;
-                        if(i + 1 < argc)
-                        {
-                            filename = argv[i+1];
-                            if(filename.front() == '-')
-                            {
-                                filename.clear();
-                            }
-                        }
-
-                        if(filename.empty())
-                        {
-                            auto genetic_player = std::make_unique<Genetic_AI>();
-                            genetic_player->mutate(10000);
-                            genetic_player->print("single_game_player.txt");
-                            latest = std::move(genetic_player);
-                        }
-                        else
-                        {
-                            if(i + 2 < argc)
-                            {
-                                try
-                                {
-                                    latest = std::make_unique<Genetic_AI>(filename, String::to_number<int>(argv[i + 2]));
-                                    i += 2;
-                                }
-                                catch(const Genetic_AI_Creation_Error&)
-                                {
-                                    throw;
-                                }
-                                catch(const std::out_of_range&)
-                                {
-                                    throw std::invalid_argument(std::string{"Specified ID "} + argv[i + 2] + " is not in valid range.");
-                                }
-                                catch(const std::invalid_argument&) // Could not convert argv[i + 2] to an int.
-                                {
-                                }
-                            }
-
-                            if( ! latest)
-                            {
-                                latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
-                                i += 1;
-                            }
-                        }
-                    }
-                    else if(opt == "-time" && i + 1 < argc)
-                    {
-                        game_time = String::to_duration<Clock::seconds>(argv[++i]);
-                    }
-                    else if(opt == "-reset-moves" && i + 1 < argc)
-                    {
-                        moves_per_reset = String::to_number<size_t>(argv[++i]);
-                    }
-                    else if(opt == "-increment-time" && i + 1 < argc)
-                    {
-                        increment_time = String::to_duration<Clock::seconds>(argv[++i]);
-                    }
-                    else if(opt == "-board" && i + 1 < argc)
-                    {
-                        board = Board(argv[++i]);
-                    }
-                    else if(opt == "-game-file" && i + 1 < argc)
-                    {
-                        game_file_name = argv[++i];
-                    }
-                    else if(opt == "-event" && i + 1 < argc)
-                    {
-                        event_name = argv[++i];
-                    }
-                    else if(opt == "-location" && i + 1 < argc)
-                    {
-                        location = argv[++i];
-                    }
-                    else if(opt == "-pondering")
-                    {
-                        pondering_allowed = true;
-                    }
-                    else if(opt == "-short-post")
-                    {
-                        Player::set_short_post();
-                    }
-                    else
-                    {
-                        throw std::invalid_argument("Invalid or incomplete game option: " + opt);
-                    }
-
-                    if(latest)
-                    {
-                        if( ! white)
-                        {
-                            white = std::move(latest);
-                        }
-                        else if( ! black)
-                        {
-                            black = std::move(latest);
-                        }
-                        else
-                        {
-                            throw std::invalid_argument("More than two players specified.");
-                        }
-                    }
-                }
-
-                if( ! white)
-                {
-                    throw std::invalid_argument("At least one player must be specified.");
-                }
-
-                if( ! black)
-                {
-                    play_game_with_outsider(*white, event_name, location, game_file_name);
-                }
-                else
-                {
-                    play_game(board,
-                              Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board.whose_turn()),
-                              *white, *black,
-                              pondering_allowed,
-                              event_name,
-                              location,
-                              game_file_name);
-                }
+                start_game(argc, argv);
             }
         }
         else
@@ -501,5 +362,155 @@ namespace
         }
 
         return true;
+    }
+
+    void start_game(int argc, char* argv[])
+    {
+        // Use pointers since each player could be Genetic, Random, etc.
+        std::unique_ptr<Player> white;
+        std::unique_ptr<Player> black;
+        std::unique_ptr<Player> latest;
+
+        Clock::seconds game_time{};
+        size_t moves_per_reset = 0;
+        Clock::seconds increment_time{};
+        Board board;
+        bool pondering_allowed = false;
+        std::string game_file_name;
+        std::string event_name;
+        std::string location;
+
+        for(int i = 1; i < argc; ++i)
+        {
+            std::string opt = argv[i];
+            if(opt == "-random")
+            {
+                latest = std::make_unique<Random_AI>();
+            }
+            else if(opt == "-genetic")
+            {
+                std::string filename;
+                if(i + 1 < argc)
+                {
+                    filename = argv[i + 1];
+                    if(filename.front() == '-')
+                    {
+                        filename.clear();
+                    }
+                }
+
+                if(filename.empty())
+                {
+                    auto genetic_player = std::make_unique<Genetic_AI>();
+                    genetic_player->mutate(10000);
+                    genetic_player->print("single_game_player.txt");
+                    latest = std::move(genetic_player);
+                }
+                else
+                {
+                    if(i + 2 < argc)
+                    {
+                        try
+                        {
+                            latest = std::make_unique<Genetic_AI>(filename, String::to_number<int>(argv[i + 2]));
+                            i += 2;
+                        }
+                        catch(const Genetic_AI_Creation_Error&)
+                        {
+                            throw;
+                        }
+                        catch(const std::out_of_range&)
+                        {
+                            throw std::invalid_argument(std::string{"Specified ID "} + argv[i + 2] + " is not in valid range.");
+                        }
+                        catch(const std::invalid_argument&) // Could not convert argv[i + 2] to an int.
+                        {
+                        }
+                    }
+
+                    if( ! latest)
+                    {
+                        latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
+                        i += 1;
+                    }
+                }
+            }
+            else if(opt == "-time" && i + 1 < argc)
+            {
+                game_time = String::to_duration<Clock::seconds>(argv[++i]);
+            }
+            else if(opt == "-reset-moves" && i + 1 < argc)
+            {
+                moves_per_reset = String::to_number<size_t>(argv[++i]);
+            }
+            else if(opt == "-increment-time" && i + 1 < argc)
+            {
+                increment_time = String::to_duration<Clock::seconds>(argv[++i]);
+            }
+            else if(opt == "-board" && i + 1 < argc)
+            {
+                board = Board(argv[++i]);
+            }
+            else if(opt == "-game-file" && i + 1 < argc)
+            {
+                game_file_name = argv[++i];
+            }
+            else if(opt == "-event" && i + 1 < argc)
+            {
+                event_name = argv[++i];
+            }
+            else if(opt == "-location" && i + 1 < argc)
+            {
+                location = argv[++i];
+            }
+            else if(opt == "-pondering")
+            {
+                pondering_allowed = true;
+            }
+            else if(opt == "-short-post")
+            {
+                Player::set_short_post();
+            }
+            else
+            {
+                throw std::invalid_argument("Invalid or incomplete game option: " + opt);
+            }
+
+            if(latest)
+            {
+                if( ! white)
+                {
+                    white = std::move(latest);
+                }
+                else if( ! black)
+                {
+                    black = std::move(latest);
+                }
+                else
+                {
+                    throw std::invalid_argument("More than two players specified.");
+                }
+            }
+        }
+
+        if( ! white)
+        {
+            throw std::invalid_argument("At least one player must be specified.");
+        }
+
+        if( ! black)
+        {
+            play_game_with_outsider(*white, event_name, location, game_file_name);
+        }
+        else
+        {
+            play_game(board,
+                      Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board.whose_turn()),
+                      *white, *black,
+                      pondering_allowed,
+                      event_name,
+                      location,
+                      game_file_name);
+        }
     }
 }
