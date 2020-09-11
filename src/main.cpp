@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
                                 {
                                     throw std::invalid_argument(std::string{"Specified ID "} + argv[i + 2] + " is not in valid range.");
                                 }
-                                catch(const std::exception&)
+                                catch(const std::invalid_argument&) // Could not convert argv[i + 2] to an int.
                                 {
                                 }
                             }
