@@ -241,14 +241,14 @@ double Gene::priority() const noexcept
     return scoring_priority;
 }
 
+bool Gene::has_priority() const noexcept
+{
+    return list_properties().count("Priority") != 0;
+}
+
 void Gene::scale_priority(double k) noexcept
 {
     scoring_priority *= k;
-}
-
-void Gene::zero_out_priority() noexcept
-{
-    scoring_priority = 0.0;
 }
 
 bool Gene::is_active() const noexcept

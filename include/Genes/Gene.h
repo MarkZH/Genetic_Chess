@@ -75,6 +75,9 @@ class Gene
         //! \brief Returns the priority of the gene.
         double priority() const noexcept;
 
+        //! \brief Returns whether the gene has a Priority component
+        bool has_priority() const noexcept;
+
         //! \brief Scales the priority by multiplying by the parameter.
         void scale_priority(double k) noexcept;
 
@@ -90,12 +93,6 @@ class Gene
         void test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept;
 
     protected:
-        //! Explicitly set priority to zero.
-        //
-        //! This is used for regulatory genes that do not record their priority
-        //! when writing to a file.
-        void zero_out_priority() noexcept;
-
         //! CHeck whether this gene is active or disabled.
         bool is_active() const noexcept;
 

@@ -16,7 +16,6 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 {
     piece_strength.fill(100.0);
     renormalize_values();
-    zero_out_priority();
 }
 
 void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept

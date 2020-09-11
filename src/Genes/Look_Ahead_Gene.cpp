@@ -11,11 +11,6 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
-Look_Ahead_Gene::Look_Ahead_Gene() noexcept
-{
-    zero_out_priority();
-}
-
 void Look_Ahead_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
     properties.erase("Priority");

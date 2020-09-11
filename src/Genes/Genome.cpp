@@ -93,7 +93,7 @@ void Genome::renormalize_priorities() noexcept
     auto norm = std::accumulate(genome.begin(), genome.end(), 0.0,
                                 [](auto sum, const auto& gene)
                                 {
-                                    return sum + std::abs(gene->priority());
+                                    return sum + (gene->has_priority() ? std::abs(gene->priority()) : 0.0);
                                 });
     if(norm > 0.0)
     {

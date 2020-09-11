@@ -10,11 +10,6 @@
 
 class Board;
 
-Mutation_Rate_Gene::Mutation_Rate_Gene() noexcept
-{
-    zero_out_priority();
-}
-
 std::string Mutation_Rate_Gene::name() const noexcept
 {
     return "Mutation Rate Gene";
