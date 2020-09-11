@@ -54,18 +54,14 @@ int main(int argc, char *argv[])
             std::string option = argv[1];
             if(option == "-gene-pool")
             {
-                std::string gene_pool_config_file_name;
                 if(argc > 2)
                 {
-                    gene_pool_config_file_name = argv[2];
+                    gene_pool(argv[2]);
                 }
-
-                if(gene_pool_config_file_name.empty())
+                else
                 {
                     throw std::invalid_argument("Specify a configuration file to run a gene pool.");
                 }
-
-                gene_pool(gene_pool_config_file_name);
             }
             else if(option == "-confirm")
             {
