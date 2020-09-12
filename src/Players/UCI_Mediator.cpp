@@ -258,17 +258,29 @@ Game_Result UCI_Mediator::handle_move(Board& board,
 
 bool UCI_Mediator::pondering_allowed(const Board& board)
 {
-    auto command = receive_uci_command(board, false);
-    if(String::starts_with(command, "go ") && String::contains(command, "ponder"))
+    try
     {
-        log("Starting to ponder");
-        board.choose_move_at_leisure();
-        return true;
+        auto command = receive_uci_command(board, false);
+        if(String::starts_with(command, "go ") && String::contains(command, "ponder"))
+        {
+            log("Starting to ponder");
+            board.choose_move_at_leisure();
+            return true;
+        }
+        else
+        {
+            log("Skipping pondering");
+            last_listening_result = std::async(std::launch::async, [command]() { return command; });
+            return false;
+        }
     }
-    else
+    catch(const Game_Ended& ending)
     {
-        log("Skipping pondering");
-        last_listening_result = std::async(std::launch::async, [command]() { return command; });
+        last_listening_result = std::async(std::launch::async,
+                                           [ending]() -> std::string
+                                           {
+                                               throw ending;
+                                           });
         return false;
     }
 }
