@@ -53,11 +53,6 @@ bool String::starts_with(const std::string& s, const std::string& beginning) noe
     return std::mismatch(beginning.begin(), beginning.end(), s.begin(), s.end()).first == beginning.end();
 }
 
-bool String::ends_with(const std::string& s, const std::string& ending) noexcept
-{
-    return std::mismatch(ending.rbegin(), ending.rend(), s.rbegin(), s.rend()).first == ending.rend();
-}
-
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
     auto text_start = s.find_first_not_of(whitespace);
