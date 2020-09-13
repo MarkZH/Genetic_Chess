@@ -223,16 +223,16 @@ bool run_tests()
 
 
     // Check that square colors are correct
-    auto current_color = Square_Color::WHITE;
+    auto current_color = Square_Color::BLACK;
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        current_color = opposite(current_color);
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto square = Square{file, rank};
             test_result(tests_passed, square.color() == current_color, "Wrong color for square " + square.string());
             current_color = opposite(current_color);
         }
+        current_color = opposite(current_color);
     }
 
 
