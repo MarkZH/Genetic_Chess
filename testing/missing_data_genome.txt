@@ -1,0 +1,11 @@
+ID: 1
+
+Name: Piece Strength Gene
+Active: 1
+P: 1
+B: 2
+N: 4
+Q: 16
+K: 32
+
+END

@@ -8,6 +8,7 @@
 #include <fstream>
 #include <numeric>
 #include <iterator>
+#include <limits>
 
 #include "Game/Board.h"
 #include "Game/Color.h"
@@ -55,12 +56,10 @@ size_t Gene::mutatable_components() const noexcept
 void Gene::read_from(std::istream& is)
 {
     auto properties = list_properties();
-    std::map<std::string, bool> property_found;
-    std::transform(properties.begin(), properties.end(), std::inserter(property_found, property_found.begin()),
-                   [](const auto& key_value)
-                   {
-                       return std::make_pair(key_value.first, false);
-                   });
+    for(auto& [key, value] : properties)
+    {
+        value = std::numeric_limits<double>::quiet_NaN();
+    }
 
     std::string line;
     while(std::getline(is, line))
@@ -96,8 +95,15 @@ void Gene::read_from(std::istream& is)
 
         try
         {
-            properties.at(property_name) = String::to_number<double>(property_data);
-            property_found.at(property_name) = true;
+            auto& current_value = properties.at(property_name);
+            if(std::isnan(current_value))
+            {
+                current_value = String::to_number<double>(property_data);
+            }
+            else
+            {
+                throw std::runtime_error("Duplicate parameter: " + property_name);
+            }
         }
         catch(const std::out_of_range& e)
         {
@@ -118,12 +124,16 @@ void Gene::read_from(std::istream& is)
         {
             throw_on_invalid_line(line, "Bad parameter value: " + property_data);
         }
+        catch(const std::exception& e)
+        {
+            throw_on_invalid_line(line, e.what());
+        }
     }
 
-    auto missing_data = std::accumulate(property_found.begin(), property_found.end(), std::string{},
-                        [](const auto& so_far, const auto& name_found)
+    auto missing_data = std::accumulate(properties.begin(), properties.end(), std::string{},
+                        [](const auto& so_far, const auto& key_value)
                         {
-                            return so_far + ( ! name_found.second ? "\n" + name_found.first : "");
+                            return so_far + (std::isnan(key_value.second) ? "\n" + key_value.first : "");
                         });
     if( ! missing_data.empty())
     {

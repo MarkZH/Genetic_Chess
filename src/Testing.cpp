@@ -549,6 +549,9 @@ bool run_tests()
     checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::WHITE, 1.0); // white can checkmate
     checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::BLACK, 0.0); // black cannot
 
+    function_should_throw(tests_passed, "Missing gene data", [&piece_strength_gene](){piece_strength_gene.read_from("testing/missing_data_genome.txt");});
+    function_should_throw(tests_passed, "Duplicate gene data", [&sphere_of_influence_gene](){sphere_of_influence_gene.read_from("testing/duplicate_data_genome.txt");});
+
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
     test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");
 
