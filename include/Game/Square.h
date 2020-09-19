@@ -132,13 +132,17 @@ class Square
         //!     {
         //!         for(int rank = 1; rank <= 8; ++rank)
         //!         {
+        //!             auto square = Square{file, rank};
         //!             // ...
+        //!         }
+        //!     }
         //! \endcode
         //! with
         //! \code{cpp}
         //!     for(auto square : Square::all_squares())
         //!     {
         //!         // ...
+        //!     }
         //! \endcode
         //!
         //! Use when the order of Square iteration doesn't matter.

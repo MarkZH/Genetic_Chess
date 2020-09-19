@@ -43,6 +43,8 @@ namespace Random
 
     //! \brief Simulate a fair trial with a rational probability of success.
     //!
+    //! To be specific, \code{cpp}success_probability(3, 4)\endcode returns true with probability 3/4.
+    //!
     //! \param successes The number of expected successes in a given number of attempts.
     //! \param attempts The given number of attempts.
     //! \returns true with given probability (successes/attempts).
