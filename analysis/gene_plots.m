@@ -137,8 +137,8 @@ for yi = 2 : length(data.colheaders) - 2
             max_piece_score = max(abs(smooth_data(end)), max_piece_score);
             piece_count = piece_count + 1;
             make_dashed = (piece_count > 7);
-            piece_end_values(name) = smooth_data(end);
-            display_name = [name ' (' num2str(round(smooth_data(end))) ')'];
+            piece_end_values(name) = num2str(round(100*smooth_data(end))/100); % Round to 2 decimal places
+            display_name = [name ' (' piece_end_values(name) ')'];
         elseif special_plot_index == 2
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
@@ -169,7 +169,7 @@ for index = 1 : length(special_plots)
     if special_plots(index) == piece_strength_figure
         disp('# Piece values');
         for piece = piece_end_values.keys()
-            disp([piece{1} ' = ' num2str(round(piece_end_values(piece{1})))]);
+            disp([piece{1} ' = ' piece_end_values(piece{1})]);
         end
     elseif special_plots(index) == active_figure
         plot(x_axis, total_active, 'LineWidth', 3);

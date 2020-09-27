@@ -21,8 +21,14 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
     properties.erase("Priority");
-    auto standardize = std::abs(piece_value(Piece_Type::QUEEN))/900.0;
-    standardize = standardize > 0.0 ? standardize : 1.0;
+
+    const auto standard_all_pieces_score = 8*1.0 + // pawns
+                                           2*5.0 + // rooks
+                                           2*3.0 + // knights
+                                           2*3.0 + // bishops
+                                           1*9.0;  // queen
+    auto standardize = (normalization() - std::abs(piece_value(Piece_Type::KING)))/standard_all_pieces_score;
+
     for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
         auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
@@ -49,12 +55,7 @@ void Piece_Strength_Gene::gene_specific_mutation() noexcept
 
 void Piece_Strength_Gene::renormalize_values() noexcept
 {
-    auto normalizing_value = 8*std::abs(piece_value(Piece_Type::PAWN)) +
-                             2*std::abs(piece_value(Piece_Type::ROOK)) +
-                             2*std::abs(piece_value(Piece_Type::KNIGHT)) +
-                             2*std::abs(piece_value(Piece_Type::BISHOP)) +
-                             1*std::abs(piece_value(Piece_Type::QUEEN)) +
-                             1*std::abs(piece_value(Piece_Type::KING));
+    auto normalizing_value = normalization();
 
     if(normalizing_value > 0.0)
     {
@@ -63,6 +64,16 @@ void Piece_Strength_Gene::renormalize_values() noexcept
             v /= normalizing_value;
         }
     }
+}
+
+double Piece_Strength_Gene::normalization() const noexcept
+{
+    return 8*std::abs(piece_value(Piece_Type::PAWN)) +
+           2*std::abs(piece_value(Piece_Type::ROOK)) +
+           2*std::abs(piece_value(Piece_Type::KNIGHT)) +
+           2*std::abs(piece_value(Piece_Type::BISHOP)) +
+           1*std::abs(piece_value(Piece_Type::QUEEN)) +
+           1*std::abs(piece_value(Piece_Type::KING));
 }
 
 double Piece_Strength_Gene::piece_value(Piece_Type type) const noexcept
