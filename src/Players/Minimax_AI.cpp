@@ -85,18 +85,6 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     return *result.variation.front();
 }
 
-const Move* Minimax_AI::expected_response() const noexcept
-{
-    if( ! commentary.empty() && commentary.back().first.variation.size() > 1)
-    {
-        return commentary.back().first.variation.at(1);
-    }
-    else
-    {
-        return nullptr;
-    }
-}
-
 Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const Clock::seconds time_to_examine,
                                                    const Clock& clock,

@@ -142,8 +142,6 @@ namespace
                 << "\t\tSpecify seconds to add to time after each move.\n\n"
                 << "\t-board [FEN string]\n"
                 << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
-                << "\t-pondering\n"
-                << "\t\tAllow AI players to think ahead when it is not their turn.\n\n"
                 << "\t-short-post\n"
                 << "\t\tUse a shortened form of CECP/xboard thinking output. Some GUIs\n\t\tcannot handle the longer form.\n\n"
                 << "\t-event [name]\n"
@@ -375,7 +373,6 @@ namespace
         size_t moves_per_reset = 0;
         Clock::seconds increment_time{};
         Board board;
-        bool pondering_allowed = false;
         std::string game_file_name;
         std::string event_name;
         std::string location;
@@ -463,10 +460,6 @@ namespace
             {
                 location = argv[++i];
             }
-            else if(opt == "-pondering")
-            {
-                pondering_allowed = true;
-            }
             else if(opt == "-short-post")
             {
                 Player::set_short_post();
@@ -507,7 +500,6 @@ namespace
             play_game(board,
                       Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board.whose_turn()),
                       *white, *black,
-                      pondering_allowed,
                       event_name,
                       location,
                       game_file_name);

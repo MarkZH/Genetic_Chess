@@ -16,7 +16,6 @@ class Game_Result;
 //! \param game_clock The clock used for time control.
 //! \param white The player with the white pieces.
 //! \param black The player with the black pieces.
-//! \param pondering_allowed Whether AIs are allowed to think during an opponent's move.
 //! \param event_name The name of the event where the game will take place. May be empty.
 //! \param location The name of the location of the game. May be empty.
 //! \param pgn_file_name The name of the file where the game record will be written. If empty,
@@ -26,7 +25,6 @@ Game_Result play_game(Board board,
                       Clock game_clock,
                       const Player& white,
                       const Player& black,
-                      bool pondering_allowed,
                       const std::string& event_name,
                       const std::string& location,
                       const std::string& pgn_file_name) noexcept;

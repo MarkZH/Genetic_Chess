@@ -242,47 +242,11 @@ void UCI_Mediator::listen(const Board& board, Clock&)
 
 Game_Result UCI_Mediator::handle_move(Board& board,
                                       const Move& move,
-                                      std::vector<const Move*>& move_list,
-                                      const Player& player) const
+                                      std::vector<const Move*>& move_list) const
 {
-    auto command = "bestmove " + move.coordinates();
-    auto expected_move = player.expected_response();
-    if(expected_move)
-    {
-        command += " ponder " + expected_move->coordinates();
-    }
-    send_command(command);
+    send_command("bestmove " + move.coordinates());
     move_list.push_back(&move);
     return board.submit_move(move);
-}
-
-bool UCI_Mediator::pondering_allowed(const Board& board)
-{
-    try
-    {
-        auto command = receive_uci_command(board, false);
-        if(String::starts_with(command, "go ") && String::contains(command, "ponder"))
-        {
-            log("Starting to ponder");
-            board.choose_move_at_leisure();
-            return true;
-        }
-        else
-        {
-            log("Skipping pondering");
-            last_listening_result = std::async(std::launch::async, [command]() { return command; });
-            return false;
-        }
-    }
-    catch(const Game_Ended& ending)
-    {
-        last_listening_result = std::async(std::launch::async,
-                                           [ending]() -> std::string
-                                           {
-                                               throw ending;
-                                           });
-        return false;
-    }
 }
 
 std::string UCI_Mediator::listener(const Board& board)

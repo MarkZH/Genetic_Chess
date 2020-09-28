@@ -285,7 +285,6 @@ void gene_pool(const std::string& config_file)
                                             Board{},
                                             Clock(game_time),
                                             std::cref(white), std::cref(black),
-                                            false,
                                             "Gene pool",
                                             "Local computer",
                                             game_record_file));

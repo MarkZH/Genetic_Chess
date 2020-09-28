@@ -20,7 +20,6 @@ Game_Result play_game(Board board,
                       Clock game_clock,
                       const Player& white,
                       const Player& black,
-                      bool pondering_allowed,
                       const std::string& event_name,
                       const std::string& location,
                       const std::string& pgn_file_name) noexcept
@@ -35,9 +34,6 @@ Game_Result play_game(Board board,
     while( ! result.game_has_ended())
     {
         auto& player  = board.whose_turn() == Piece_Color::WHITE ? white : black;
-        auto& thinker = board.whose_turn() == Piece_Color::WHITE ? black : white;
-
-        thinker.ponder(board, pondering_allowed);
         const auto& move_chosen = player.choose_move(board, game_clock);
 
         result = game_clock.punch(board);
@@ -93,12 +89,11 @@ void play_game_with_outsider(const Player& player,
             const auto& chosen_move = player.choose_move(board, clock);
             clock.punch(board);
 
-            game_result = outsider->handle_move(board, chosen_move, game_record, player);
+            game_result = outsider->handle_move(board, chosen_move, game_record);
             if(game_result.game_has_ended())
             {
                 break;
             }
-            player.ponder(board, outsider->pondering_allowed(board));
         }
 
         outsider->log("Game ended with: " + game_result.ending_reason());

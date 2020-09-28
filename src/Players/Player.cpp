@@ -6,15 +6,6 @@ class Board;
 
 bool Player::use_short_cecp_post = false;
 
-void Player::ponder(const Board&, bool) const noexcept
-{
-}
-
-const Move* Player::expected_response() const noexcept
-{
-    return nullptr;
-}
-
 void Player::reset() const noexcept
 {
 }
