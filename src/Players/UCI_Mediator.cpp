@@ -2,7 +2,6 @@
 
 #include <string>
 #include <future>
-#include <numeric>
 #include <algorithm>
 #include <chrono>
 using namespace std::chrono_literals;
