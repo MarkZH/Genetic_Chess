@@ -50,53 +50,52 @@ namespace
 //! \returns EXIT_SUCCESS or EXIT_FAILURE.
 int main(int argc, char *argv[])
 {
+    if(argc <= 1)
+    {
+        print_help();
+        return 0;
+    }
+
     try
     {
-        if(argc > 1)
+        std::string option = argv[1];
+        if(option == "-gene-pool")
         {
-            std::string option = argv[1];
-            if(option == "-gene-pool")
+            if(argc > 2)
             {
-                if(argc > 2)
-                {
-                    gene_pool(argv[2]);
-                }
-                else
-                {
-                    throw std::invalid_argument("Specify a configuration file to run a gene pool.");
-                }
-            }
-            else if(option == "-confirm")
-            {
-                if(argc > 2)
-                {
-                    return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
-                }
-                else
-                {
-                    throw std::invalid_argument("Provide a file containing a game to confirm has all legal moves.");
-                }
-            }
-            else if(option == "-test")
-            {
-                return run_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
-            }
-            else if(option == "-speed")
-            {
-                run_speed_tests();
-            }
-            else if(option == "-perft")
-            {
-                return run_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
+                gene_pool(argv[2]);
             }
             else
             {
-                start_game(argc, argv);
+                throw std::invalid_argument("Specify a configuration file to run a gene pool.");
             }
+        }
+        else if(option == "-confirm")
+        {
+            if(argc > 2)
+            {
+                return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
+            }
+            else
+            {
+                throw std::invalid_argument("Provide a file containing a game to confirm has all legal moves.");
+            }
+        }
+        else if(option == "-test")
+        {
+            return run_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
+        }
+        else if(option == "-speed")
+        {
+            run_speed_tests();
+        }
+        else if(option == "-perft")
+        {
+            return run_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
         }
         else
         {
-            print_help();
+            start_game(argc, argv);
         }
     }
     catch(const std::exception& e)
