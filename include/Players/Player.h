@@ -21,17 +21,6 @@ class Player
         //! \param clock The game clock--allowing the player to decide how much time to spend choosing a move.
         virtual const Move& choose_move(const Board& board, const Clock& clock) const noexcept = 0;
 
-        //! \brief Think when it is not the Player's turn to move
-        //!
-        //! \param board The board to ponder on (just after this player's last move).
-        //! \param thinking_allowed Allow thinking about the next move during opponent's move.
-        virtual void ponder(const Board& board, bool thinking_allowed) const noexcept;
-
-        //! \brief The move that this player expects in response to the chosen move (i.e., the result of Player::choose_move()).
-        //!
-        //! \returns A pointer to a move or nullptr if there is no prediction.
-        virtual const Move* expected_response() const noexcept;
-
         //! \brief Reset player internals (if any) for a new game
         virtual void reset() const noexcept;
 

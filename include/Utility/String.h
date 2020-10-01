@@ -62,13 +62,6 @@ namespace String
     //! \returns True if the string starts with the beginning string.
     bool starts_with(const std::string& s, const std::string& beginning) noexcept;
 
-    //! \brief Determine whether a strings has another string as a suffix.
-    //!
-    //! \param s The string to check.
-    //! \param ending The suffix to find.
-    //! \returns True if the string ends with the ending string.
-    bool ends_with(const std::string& s, const std::string& ending) noexcept;
-
     //! \brief Remove leading and trailing whitespace from a string.
     //!
     //! \param s The input string.

@@ -225,16 +225,16 @@ bool run_tests()
 
 
     // Check that square colors are correct
-    auto current_color = Square_Color::WHITE;
+    auto current_color = Square_Color::BLACK;
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        current_color = opposite(current_color);
         for(int rank = 1; rank <= 8; ++rank)
         {
             auto square = Square{file, rank};
             test_result(tests_passed, square.color() == current_color, "Wrong color for square " + square.string());
             current_color = opposite(current_color);
         }
+        current_color = opposite(current_color);
     }
 
 
@@ -553,6 +553,9 @@ bool run_tests()
     checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::WHITE, 1.0); // white can checkmate
     checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::BLACK, 0.0); // black cannot
 
+    function_should_throw(tests_passed, "Missing gene data", [&piece_strength_gene](){piece_strength_gene.read_from("testing/missing_data_genome.txt");});
+    function_should_throw(tests_passed, "Duplicate gene data", [&sphere_of_influence_gene](){sphere_of_influence_gene.read_from("testing/duplicate_data_genome.txt");});
+
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
     test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");
 
@@ -568,8 +571,6 @@ bool run_tests()
     test_function(tests_passed, "Multicharacter block comment", "a c", String::strip_block_comment, "a /* b  */ c", "/*", "*/");
     test_function(tests_passed, "String::starts_with()", true, String::starts_with, "abcdefg", "abc");
     test_function(tests_passed, "String::starts_with()", false, String::starts_with, "abcdefg", "abd");
-    test_function(tests_passed, "String::ends_with()", true, String::ends_with, "abcdefg", "efg");
-    test_function(tests_passed, "String::ends_with()", false, String::ends_with, "abcdefg", "efh");
     test_function(tests_passed, "String::lowercase()", "abc def", String::lowercase, "AbC dEf");
     test_function(tests_passed, "String::add_to_file_name() with dot", "a-b.c", String::add_to_file_name, "a.c", "-b");
     test_function(tests_passed, "String::add_to_file_name() with no dot", "a-b", String::add_to_file_name, "a", "-b");

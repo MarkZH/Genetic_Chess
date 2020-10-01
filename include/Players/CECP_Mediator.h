@@ -31,13 +31,10 @@ class CECP_Mediator : public Outside_Communicator
         void listen(const Board& board, Clock& clock) override;
         Game_Result handle_move(Board& board,
                                 const Move& move,
-                                std::vector<const Move*>& move_list,
-                                const Player& player) const override;
-        bool pondering_allowed(const Board& board) override;
+                                std::vector<const Move*>& move_list) const override;
 
     private:
         std::future<std::string> last_listening_command;
-        bool thinking_on_opponent_time = false;
         bool in_force_mode = true;
 
         std::string receive_cecp_command(const Board& board, Clock& clock, bool while_listening);

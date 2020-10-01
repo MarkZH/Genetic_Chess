@@ -43,6 +43,7 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
         double& piece_value(Piece_Type type) noexcept;
         void gene_specific_mutation(const std::vector<Piece_Type>& gated_piece_types) noexcept override;
         void renormalize_values() noexcept;
+        double normalization() const noexcept;
 };
 
 #endif // PIECE_STRENGTH_GENE_H

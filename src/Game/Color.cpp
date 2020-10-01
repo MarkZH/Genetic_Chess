@@ -9,7 +9,7 @@ Piece_Color opposite(Piece_Color color) noexcept
 
 std::string color_text(Piece_Color color) noexcept
 {
-    return color == Piece_Color::WHITE ? "White" : "Black";
+    return color_text(static_cast<Winner_Color>(color));
 }
 
 Square_Color opposite(Square_Color color) noexcept

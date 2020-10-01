@@ -37,8 +37,6 @@ class Minimax_AI : public Player
         //! \param clock The game clock telling how much time is left in the game.
         const Move& choose_move(const Board& board, const Clock& clock) const noexcept override;
 
-        const Move* expected_response() const noexcept override;
-
         //! \brief Prints the expected future variation and score for the chosen move.
         //!
         //! \param board The state of the game just prior to the move being commented on.

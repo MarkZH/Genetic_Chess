@@ -20,7 +20,6 @@
 
 #include "Utility/Exceptions.h"
 #include "Utility/String.h"
-#include "Utility/Scoped_Stopwatch.h"
 
 #include "Testing.h"
 
@@ -51,59 +50,63 @@ namespace
 //! \returns EXIT_SUCCESS or EXIT_FAILURE.
 int main(int argc, char *argv[])
 {
-    auto printer = Scoped_Stopwatch::print_guard();
+    if(argc <= 1)
+    {
+        print_help();
+        return 0;
+    }
 
     try
     {
-        if(argc > 1)
+        std::string option = argv[1];
+        if(option == "-gene-pool")
         {
-            std::string option = argv[1];
-            if(option == "-gene-pool")
+            if(argc > 2)
             {
-                if(argc > 2)
-                {
-                    gene_pool(argv[2]);
-                }
-                else
-                {
-                    throw std::invalid_argument("Specify a configuration file to run a gene pool.");
-                }
+                gene_pool(argv[2]);
             }
-            else if(option == "-confirm")
+            else
             {
-                if(argc > 2)
-                {
-                    return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
-                }
-                else
-                {
-                    throw std::invalid_argument("Provide a file containing a game to confirm has all legal moves.");
-                }
+                throw std::invalid_argument("Specify a configuration file to run a gene pool.");
             }
-            else if(option == "-test")
+        }
+        else if(option == "-confirm")
+        {
+            if(argc > 2)
             {
-                return run_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
+                return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
             }
-            else if(option == "-speed")
+            else
             {
-                run_speed_tests();
+                throw std::invalid_argument("Provide a file containing a game to confirm has all legal moves.");
             }
-            else if(option == "-perft")
-            {
-                return run_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
-            }
-            else if(option == "-musketeer-perft" && argc >= 3)
+        }
+        else if(option == "-test")
+        {
+            return run_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
+        }
+        else if(option == "-speed")
+        {
+            run_speed_tests();
+        }
+        else if(option == "-perft")
+        {
+            return run_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
+        }
+        else if(option == "-musketeer-perft")
+        {
+            if(argc > 2)
             {
                 return run_musketeer_perft_tests(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
             }
             else
             {
-                start_game(argc, argv);
+                throw std::invalid_argument("Provide a directory of Musketeer Chess perft files.");
             }
         }
         else
         {
-            print_help();
+            start_game(argc, argv);
         }
     }
     catch(const std::exception& e)
@@ -148,8 +151,6 @@ namespace
                 << "\t\tSpecify seconds to add to time after each move.\n\n"
                 << "\t-board [FEN string]\n"
                 << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
-                << "\t-pondering\n"
-                << "\t\tAllow AI players to think ahead when it is not their turn.\n\n"
                 << "\t-short-post\n"
                 << "\t\tUse a shortened form of CECP/xboard thinking output. Some GUIs\n\t\tcannot handle the longer form.\n\n"
                 << "\t-event [name]\n"
@@ -160,7 +161,7 @@ namespace
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n"
                 << "\t-musketeer\n"
                 << "\t\tIndicate that the game should be played on a Musketeer Chess\n\t\tboard with randomly selected and placed gated pieces.\n\n"
-                << "All game options in this section can be overriden by GUI commands except -short-post,\n-event, -location, and -game-file.\n\n";
+                << "All game options in this section can be overriden by GUI commands except\n-short-post, -event, -location, and -game-file.\n\n";
     }
 
     bool confirm_game_record(const std::string& file_name)
@@ -404,7 +405,6 @@ namespace
         Clock::seconds increment_time{};
         auto board = Board(Board_Type::MUSKETEER);
         bool musketeer_option = false;
-        bool pondering_allowed = false;
         std::string game_file_name;
         std::string event_name;
         std::string location;
@@ -496,10 +496,6 @@ namespace
             {
                 location = argv[++i];
             }
-            else if(opt == "-pondering")
-            {
-                pondering_allowed = true;
-            }
             else if(opt == "-short-post")
             {
                 Player::set_short_post();
@@ -545,7 +541,6 @@ namespace
             play_game(board,
                       Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board.whose_turn()),
                       *white, *black,
-                      pondering_allowed,
                       event_name,
                       location,
                       game_file_name);

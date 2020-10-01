@@ -17,7 +17,7 @@ Game_Result::Game_Result(Winner_Color winner, Game_Result_Type reason) noexcept 
 }
 
 Game_Result::Game_Result(Piece_Color winner, Game_Result_Type reason) noexcept :
-    Game_Result(winner == Piece_Color::WHITE ? Winner_Color::WHITE : Winner_Color::BLACK, reason)
+    Game_Result(static_cast<Winner_Color>(winner), reason)
 {
 }
 
@@ -44,7 +44,7 @@ std::string Game_Result::ending_reason() const noexcept
     switch(cause)
     {
         case Game_Result_Type::CHECKMATE:
-            return color_text(winner() == Winner_Color::WHITE ? Piece_Color::WHITE : Piece_Color::BLACK) + " mates";
+            return color_text(winner()) + " mates";
         case Game_Result_Type::STALEMATE:
             return "Stalemate";
         case Game_Result_Type::FIFTY_MOVE:
