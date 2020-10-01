@@ -125,13 +125,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                    [&board](auto move){ return board.move_changes_material(*move); });
 
     const auto perspective = board.whose_turn();
-    auto moves_left = all_legal_moves.size();
+    auto moves_left = all_legal_moves.size() + 1; // + 1 so decrement can go at top of next loop
 
     Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
                                          perspective,
                                          {current_variation.empty() ? all_legal_moves.front() : current_variation.front()}};
 
-    ++moves_left; // So the decrement can take place immediately on entering the loop.
     for(const auto& move : all_legal_moves)
     {
         auto evaluate_start_time = std::chrono::steady_clock::now();
