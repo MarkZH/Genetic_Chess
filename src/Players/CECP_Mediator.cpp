@@ -200,14 +200,14 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
         else if(command == "undo")
         {
-            undo_move(move_list, command, board, clock);
+            undo_move(move_list, command, board, clock, player);
             setup_result = {};
         }
         else if(command == "remove")
         {
-            if(undo_move(move_list, command, board, clock))
+            if(undo_move(move_list, command, board, clock, player))
             {
-                undo_move(move_list, command, board, clock);
+                undo_move(move_list, command, board, clock, player);
             }
             setup_result = {};
         }
@@ -257,7 +257,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
     return setup_result;
 }
 
-bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock)
+bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock, const Player& player)
 {
     if(move_list.empty())
     {
@@ -267,6 +267,7 @@ bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& 
     else
     {
         log("Undoing move: " + move_list.back()->coordinates());
+        player.undo_move(board.last_move());
         move_list.pop_back();
         auto new_board = Board(board.original_fen());
         for(auto move : move_list)

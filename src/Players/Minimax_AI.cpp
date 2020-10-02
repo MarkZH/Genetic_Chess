@@ -488,6 +488,19 @@ std::string variation_line(Board board,
     }
 }
 
+void Minimax_AI::undo_move(const Move* last_move) const noexcept
+{
+    if(commentary.empty())
+    {
+        return;
+    }
+
+    if(commentary.back().first.variation.front() == last_move)
+    {
+        commentary.pop_back();
+    }
+}
+
 void Minimax_AI::recalibrate_self() const noexcept
 {
     calibrate_thinking_speed();
