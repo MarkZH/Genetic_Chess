@@ -356,6 +356,7 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
     Clock clock(1s, 1, 0.0s);
     clock.start();
     choose_move(board, clock);
+    reset();
 }
 
 double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
