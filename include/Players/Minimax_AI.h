@@ -44,6 +44,8 @@ class Minimax_AI : public Player
         //!        game did not start with move 1.
         std::string commentary_for_next_move(const Board& board, size_t move_number) const noexcept override;
 
+        void undo_move(const Move* last_move) const noexcept override;
+
         void reset() const noexcept override;
 
     protected:

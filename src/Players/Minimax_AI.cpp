@@ -356,6 +356,7 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
     Clock clock(1s, 1, 0.0s);
     clock.start();
     choose_move(board, clock);
+    reset();
 }
 
 double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
@@ -484,6 +485,19 @@ std::string variation_line(Board board,
     else
     {
         return String::trim_outer_whitespace(result) + ")";
+    }
+}
+
+void Minimax_AI::undo_move(const Move* last_move) const noexcept
+{
+    if(commentary.empty())
+    {
+        return;
+    }
+
+    if(commentary.back().first.variation.front() == last_move)
+    {
+        commentary.pop_back();
     }
 }
 

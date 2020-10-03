@@ -41,6 +41,11 @@ class Player
         //! \returns A text string commenting on the move that will follow the input position.
         virtual std::string commentary_for_next_move(const Board& board, size_t move_number) const noexcept;
 
+        //! \brief Remove the data for the last move from the chess engine.
+        //!
+        //! \param last_move The last move made on the board for use by the internals of the chess engine.
+        virtual void undo_move(const Move* last_move) const noexcept;
+
         //! \brief Get the name of this player's opponent when playing through a GUI.
         //!
         //! \param name The GUI-provided name of the opponent.

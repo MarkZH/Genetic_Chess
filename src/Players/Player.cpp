@@ -15,6 +15,10 @@ std::string Player::commentary_for_next_move(const Board&, size_t) const noexcep
     return {};
 }
 
+void Player::undo_move(const Move*) const noexcept
+{
+}
+
 void Player::set_opponent_name(const std::string& name) const noexcept
 {
     opposing_player_name = name;
