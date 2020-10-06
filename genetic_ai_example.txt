@@ -73,4 +73,8 @@ Name: Checkmate Material Gene
 Active: 1
 Priority: 141.95
 
+Name: Active Pieces Gene
+Active: 1
+Priority: 0
+
 END

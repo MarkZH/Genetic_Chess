@@ -37,6 +37,7 @@ using namespace std::chrono_literals;
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
+#include "Genes/Active_Pieces_Gene.h"
 
 #include "Utility/String.h"
 #include "Utility/Random.h"
@@ -548,6 +549,14 @@ bool run_tests()
     auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
     checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::WHITE, 1.0); // white can checkmate
     checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::BLACK, 0.0); // black cannot
+
+    auto active_pieces_gene = Active_Pieces_Gene();
+    auto active_pieces_board = Board();
+    active_pieces_gene.test(tests_passed, active_pieces_board, Piece_Color::WHITE, 0.0);
+    active_pieces_board.submit_move("e4");
+    active_pieces_gene.test(tests_passed, active_pieces_board, Piece_Color::BLACK, 0.0);
+    active_pieces_board.submit_move("e5");
+    active_pieces_gene.test(tests_passed, active_pieces_board, Piece_Color::WHITE, 1.0/16.0);
 
     function_should_throw(tests_passed, "Missing gene data", [&piece_strength_gene](){piece_strength_gene.read_from("testing/missing_data_genome.txt");});
     function_should_throw(tests_passed, "Duplicate gene data", [&sphere_of_influence_gene](){sphere_of_influence_gene.read_from("testing/duplicate_data_genome.txt");});
