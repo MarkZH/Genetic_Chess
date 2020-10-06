@@ -113,6 +113,15 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
     fen_parse_assert(find_king(Piece_Color::WHITE).is_set(), "White king not in FEN string");
     fen_parse_assert(find_king(Piece_Color::BLACK).is_set(), "Black king not in FEN string");
 
+    for(auto square : Square::all_squares())
+    {
+        auto piece = piece_on_square(square);
+        if(piece && piece.type() != Piece_Type::ROOK && piece.type() != Piece_Type::KING)
+        {
+            set_already_moved(square, false);
+        }
+    }
+
     if(fen_parse[1] == "w")
     {
         turn_color = Piece_Color::WHITE;
@@ -145,11 +154,11 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
             std::string side = std::toupper(c) == 'K' ? "king" : "queen";
             fen_parse_assert(piece_on_square(rook_square) == Piece{piece_color, Piece_Type::ROOK},
                              "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.string() + " to castle " + side + "side.");
-            set_unmoved(rook_square);
+            set_already_moved(rook_square, false);
 
             fen_parse_assert(piece_on_square(king_square) == Piece{piece_color, Piece_Type::KING},
                              "There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.string() + " to castle.");
-            set_unmoved(king_square);
+            set_already_moved(king_square, false);
         }
     }
 
@@ -206,10 +215,10 @@ Piece Board::piece_on_square(Square square) const noexcept
     return board[square.index()];
 }
 
-void Board::set_unmoved(Square square) noexcept
+void Board::set_already_moved(Square square, bool piece_has_already_moved) noexcept
 {
     update_board_hash(square); // remove reference to moved piece
-    unmoved_positions[square.index()] = true;
+    unmoved_positions[square.index()] = ! piece_has_already_moved;
     update_board_hash(square);
 }
 
@@ -490,7 +499,7 @@ void Board::place_piece(Piece piece, Square square) noexcept
     update_blocks(square, old_piece, piece);
     add_attacks_from(square, piece);
 
-    auto update_rook_hashes = old_piece && old_piece.type() == Piece_Type::KING && unmoved_positions[square.index()];
+    auto update_rook_hashes = old_piece && old_piece.type() == Piece_Type::KING && ! piece_has_moved(square);
     if(update_rook_hashes)
     {
         // XOR out castling rights on rook squares
@@ -498,7 +507,7 @@ void Board::place_piece(Piece piece, Square square) noexcept
         update_board_hash({'h', square.rank()});
     }
 
-    unmoved_positions[square.index()] = false;
+    set_already_moved(square, true);
 
     if(update_rook_hashes)
     {
