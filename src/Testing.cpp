@@ -752,6 +752,7 @@ void run_speed_tests()
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto checkmate_material_gene = Checkmate_Material_Gene();
+    auto active_pieces_gene = Active_Pieces_Gene();
 
     auto performance_board = Board();
     for(const auto& move : String::split("e4 e6 d4 h5 d5 b5 Qf3 g6 Be2 Bg7 Bd2 h4 Nh3 Na6 Nc3 b4 Nf4 Nc5 Nd3 Na4 Ne5 Nb6 Qd3 Qe7 Qe3 Ba6 Qf3 Nf6 Qe3 h3 Qf4 Qc5 Qf3 Qe7"))
@@ -775,7 +776,8 @@ void run_speed_tests()
                                                    &pawn_islands_gene,
                                                    &sphere_of_influence_gene,
                                                    &stacked_pawns_gene,
-                                                   &total_force_gene};
+                                                   &total_force_gene,
+                                                   &active_pieces_gene};
 
     #ifdef NDEBUG
     const auto number_of_tests = 1'000'000;
