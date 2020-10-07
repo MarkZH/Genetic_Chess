@@ -40,6 +40,12 @@ namespace
     //! \param argc The number of command line options (same as for main(int argc, char *argv[])).
     //! \param argv The command line options (same as for main(int argc, char *argv[])).
     void start_game(int argc, char* argv[]);
+
+    //! \brief Reads a genome file and rewrites it in the latest style.
+    //!
+    //! \param file_name The name of the file to update.
+    //! \throws Genetic_AI_Creation_Error If the genome file is invalid.
+    void update_genome_file(const std::string& file_name);
 }
 
 //! \brief The starting point for the whole program.
@@ -93,6 +99,17 @@ int main(int argc, char *argv[])
         {
             return run_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
         }
+        else if(option == "-update")
+        {
+            if(argc > 2)
+            {
+                update_genome_file(argv[2]);
+            }
+            else
+            {
+                throw std::invalid_argument("Provide a file containing Genetic AI data.");
+            }
+        }
         else
         {
             start_game(argc, argv);
@@ -124,6 +141,8 @@ namespace
                 << "\t\tRun a speed test for gene scoring and boad move submission.\n\n"
                 << "\t-perft\n"
                 << "\t\tRun a legal move generation test.\n\n"
+                << "\t-update [filename]\n"
+                << "\t\tIf genetic_chess has changed how genomes are written, use\n\t\tthis option to update the file to the latest format.\n\n"
                 << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP/xboard or UCI command from a GUI\nto start playing.\n\n"
                 << "\t-genetic [filename [number]]\n"
                 << "\t\tSelect a genetic AI player for a game. Optional file name and\n\t\tID number to load an AI from a file.\n\n"
@@ -499,6 +518,35 @@ namespace
                       event_name,
                       location,
                       game_file_name);
+        }
+    }
+
+    void update_genome_file(const std::string& file_name)
+    {
+        auto input = std::ifstream(file_name);
+        std::string line;
+        std::vector<size_t> id_list;
+        while(std::getline(input, line))
+        {
+            if(String::starts_with(line, "ID:"))
+            {
+                id_list.push_back(String::to_number<size_t>(String::split(line, ":", 1).back()));
+            }
+        }
+        input = std::ifstream(file_name);
+        auto output_file_name = String::add_to_file_name(file_name, "-updated");
+        auto output = std::ofstream(output_file_name);
+        std::cout << "Writing to: " << output_file_name << std::endl;
+        for(auto id : id_list)
+        {
+            try
+            {
+                Genetic_AI(input, id).print(output);
+            }
+            catch(const Genetic_AI_Creation_Error& e)
+            {
+                std::cerr << e.what() << '\n';
+            }
         }
     }
 }
