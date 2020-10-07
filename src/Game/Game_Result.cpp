@@ -64,6 +64,11 @@ std::string Game_Result::ending_reason() const noexcept
     }
 }
 
+Game_Result_Type Game_Result::ending_type() const noexcept
+{
+    return cause;
+}
+
 std::string Game_Result::game_ending_annotation() const noexcept
 {
     switch(winner())

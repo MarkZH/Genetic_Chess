@@ -292,6 +292,10 @@ std::string Board::original_fen() const noexcept
 
 Game_Result Board::submit_move(const Move& move) noexcept
 {
+    if(repeat_count.full())
+    {
+        repeat_count.shift_left();
+    }
     update_board(move);
     return move_result();
 }
