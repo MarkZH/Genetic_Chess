@@ -236,6 +236,7 @@
     <ClCompile Include="src\game\Game_Result.cpp" />
     <ClCompile Include="src\Game\Piece.cpp" />
     <ClCompile Include="src\game\Square.cpp" />
+    <ClCompile Include="src\Genes\Active_Pieces_Gene.cpp" />
     <ClCompile Include="src\genes\Castling_Possible_Gene.cpp" />
     <ClCompile Include="src\Genes\Checkmate_Material_Gene.cpp" />
     <ClCompile Include="src\genes\Freedom_To_Move_Gene.cpp" />
@@ -273,7 +274,6 @@
     <ClCompile Include="src\Utility\Configuration.cpp" />
     <ClCompile Include="src\Utility\Math.cpp" />
     <ClCompile Include="src\Utility\Random.cpp" />
-    <ClCompile Include="src\Utility\Scoped_Stopwatch.cpp" />
     <ClCompile Include="src\Utility\String.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -284,6 +284,7 @@
     <ClInclude Include="include\game\Game_Result.h" />
     <ClInclude Include="include\Game\Piece.h" />
     <ClInclude Include="include\game\Square.h" />
+    <ClInclude Include="include\Genes\Active_Pieces_Gene.h" />
     <ClInclude Include="include\genes\Castling_Possible_Gene.h" />
     <ClInclude Include="include\Genes\Checkmate_Material_Gene.h" />
     <ClInclude Include="include\genes\Freedom_To_Move_Gene.h" />
@@ -324,7 +325,6 @@
     <ClInclude Include="include\Utility\Fixed_Capacity_Vector.h" />
     <ClInclude Include="include\Utility\Math.h" />
     <ClInclude Include="include\Utility\Random.h" />
-    <ClInclude Include="include\Utility\Scoped_Stopwatch.h" />
     <ClInclude Include="include\Utility\String.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -71,6 +71,15 @@ class Fixed_Capacity_Vector
             insertion_point -= n;
         }
 
+        //! \brief Shift all items one place to the left, discarding the first element.
+        //! \throws assertion_failure If the vector is empty.
+        constexpr void shift_left() noexcept
+        {
+            assert( ! empty());
+            std::move(std::next(data.begin()), data.end(), data.begin());
+            --insertion_point;
+        }
+
         //! \brief Remove all data from the store.
         //!
         //! Similarly to pop_back(), no destructors are called until the entire Fixed_Capacity_Vector is destructed.
