@@ -525,12 +525,12 @@ namespace
     {
         auto input = std::ifstream(file_name);
         std::string line;
-        std::vector<size_t> id_list;
+        std::vector<int> id_list;
         while(std::getline(input, line))
         {
             if(String::starts_with(line, "ID:"))
             {
-                id_list.push_back(String::to_number<size_t>(String::split(line, ":", 1).back()));
+                id_list.push_back(String::to_number<int>(String::split(line, ":", 1).back()));
             }
         }
         input = std::ifstream(file_name);
