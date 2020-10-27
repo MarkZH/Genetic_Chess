@@ -450,10 +450,10 @@ bool run_tests()
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
-    auto freedom_to_move_white_score = 32.0/20.0;
+    auto freedom_to_move_white_score = 32.0/100.0;
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
     freedom_to_move_board.submit_move("Qd5");
-    auto freedom_to_move_black_score = 3.0/20.0;
+    auto freedom_to_move_black_score = 3.0/100.0;
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::BLACK, freedom_to_move_black_score);
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
 
