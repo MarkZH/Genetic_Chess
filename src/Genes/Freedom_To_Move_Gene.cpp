@@ -8,14 +8,14 @@
 
 double Freedom_To_Move_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
 {
-    static const auto initial_score = double(Board().legal_moves().size());
+    const auto maximum_moves_per_turn = 100.0;
     if(perspective == board.whose_turn())
     {
-        return board.legal_moves().size()/initial_score;
+        return board.legal_moves().size()/maximum_moves_per_turn;
     }
     else
     {
-        return board.previous_moves_count()/initial_score;
+        return board.previous_moves_count()/maximum_moves_per_turn;
     }
 }
 

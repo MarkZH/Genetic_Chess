@@ -58,9 +58,6 @@ class Game_Result
         //! \brief Returns the reason for the game ending as a text string.
         std::string ending_reason() const noexcept;
 
-        //! \brief Returns the reason for the game ending as an enum.
-        Game_Result_Type ending_type() const noexcept;
-
         //! \brief Returns the part of the PGN move annotation that goes after the # (checkmate) or + (check).
         std::string game_ending_annotation() const noexcept;
 
