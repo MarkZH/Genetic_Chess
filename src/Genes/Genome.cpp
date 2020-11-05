@@ -28,7 +28,6 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Mutation_Rate_Gene.h"
-#include "Genes/Active_Pieces_Gene.h"
 
 class Board;
 
@@ -63,7 +62,6 @@ Genome::Genome() noexcept
     genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
     genome.emplace_back(std::make_unique<Pawn_Islands_Gene>());
     genome.emplace_back(std::make_unique<Checkmate_Material_Gene>());
-    genome.emplace_back(std::make_unique<Active_Pieces_Gene>());
 
     renormalize_priorities();
 }

@@ -36,7 +36,6 @@ using namespace std::chrono_literals;
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
-#include "Genes/Active_Pieces_Gene.h"
 
 #include "Utility/String.h"
 #include "Utility/Random.h"
@@ -533,14 +532,6 @@ bool run_tests()
     checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::WHITE, 1.0); // white can checkmate
     checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::BLACK, 0.0); // black cannot
 
-    auto active_pieces_gene = Active_Pieces_Gene();
-    auto active_pieces_board = Board();
-    active_pieces_gene.test(tests_passed, active_pieces_board, Piece_Color::WHITE, 0.0);
-    active_pieces_board.submit_move("e4");
-    active_pieces_gene.test(tests_passed, active_pieces_board, Piece_Color::BLACK, 0.0);
-    active_pieces_board.submit_move("e5");
-    active_pieces_gene.test(tests_passed, active_pieces_board, Piece_Color::WHITE, 1.0/16.0);
-
     function_should_throw(tests_passed, "Missing gene data", [&piece_strength_gene](){piece_strength_gene.read_from("testing/missing_data_genome.txt");});
     function_should_throw(tests_passed, "Duplicate gene data", [&sphere_of_influence_gene](){sphere_of_influence_gene.read_from("testing/duplicate_data_genome.txt");});
 
@@ -733,7 +724,6 @@ void run_speed_tests()
     auto stacked_pawns_gene = Stacked_Pawns_Gene();
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto checkmate_material_gene = Checkmate_Material_Gene();
-    auto active_pieces_gene = Active_Pieces_Gene();
 
     auto performance_board = Board();
     for(const auto& move : String::split("e4 e6 d4 h5 d5 b5 Qf3 g6 Be2 Bg7 Bd2 h4 Nh3 Na6 Nc3 b4 Nf4 Nc5 Nd3 Na4 Ne5 Nb6 Qd3 Qe7 Qe3 Ba6 Qf3 Nf6 Qe3 h3 Qf4 Qc5 Qf3 Qe7"))
@@ -756,8 +746,7 @@ void run_speed_tests()
                                                    &pawn_islands_gene,
                                                    &sphere_of_influence_gene,
                                                    &stacked_pawns_gene,
-                                                   &total_force_gene,
-                                                   &active_pieces_gene};
+                                                   &total_force_gene};
 
     #ifdef NDEBUG
     const auto number_of_tests = 1'000'000;
