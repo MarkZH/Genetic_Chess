@@ -314,10 +314,10 @@ void gene_pool(const std::string& config_file)
             else
             {
                 ++draw_count;
-                auto offspring = std::array<Genetic_AI, 2>{Genetic_AI{white, black}, Genetic_AI{white, black}};
-                for(auto& specimen : offspring) { specimen.mutate(); }
-                white = offspring[0];
-                black = offspring[1];
+                auto offspring = Genetic_AI{white, black};
+                offspring.mutate();
+                auto& chance_loser = Random::coin_flip() ? white : black;
+                chance_loser = offspring;
             }
         }
 
