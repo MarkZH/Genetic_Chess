@@ -96,10 +96,7 @@ void gene_pool(const std::string& config_file)
         std::cin.get();
     }
 
-    std::array<size_t, 2> color_wins{}; // indexed with [Color]
-    size_t draw_count = 0;
-
-    // Individual Genetic AI stats
+    std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     std::map<Genetic_AI, int> wins;
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
@@ -196,15 +193,15 @@ void gene_pool(const std::string& config_file)
                 auto result = String::split(line, "\"").at(1);
                 if(result == "1-0")
                 {
-                    color_wins[static_cast<int>(Piece_Color::WHITE)]++;
+                    color_wins[static_cast<int>(Winner_Color::WHITE)]++;
                 }
                 else if(result == "0-1")
                 {
-                    color_wins[static_cast<int>(Piece_Color::BLACK)]++;
+                    color_wins[static_cast<int>(Winner_Color::BLACK)]++;
                 }
                 else if(result == "1/2-1/2")
                 {
-                    draw_count++;
+                    color_wins[static_cast<int>(Winner_Color::NONE)]++;
                 }
                 else
                 {
@@ -243,10 +240,10 @@ void gene_pool(const std::string& config_file)
                   << "Gene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
                   << "  Rounds since pool swaps: " << rounds_since_last_swap << "/" << pool_swap_interval
-                  << "\nGames: " << color_wins[static_cast<int>(Piece_Color::WHITE)] + color_wins[static_cast<int>(Piece_Color::BLACK)] + draw_count
-                  << "  White wins: " << color_wins[static_cast<int>(Piece_Color::WHITE)]
-                  << "  Black wins: " << color_wins[static_cast<int>(Piece_Color::BLACK)]
-                  << "  Draws: " << draw_count
+                  << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), 0)
+                  << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
+                  << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
+                  << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
                   << "\nTime: " << game_time.count() << " sec"
                   << "   Gene pool file name: " << genome_file_name << "\n\n";
 
@@ -303,17 +300,16 @@ void gene_pool(const std::string& config_file)
 
             auto offspring = Genetic_AI(white, black);
             offspring.mutate();
+            ++color_wins[static_cast<int>(winner)];
             if(winner != Winner_Color::NONE)
             {
                 const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
                 auto& losing_player  = (winner == Winner_Color::WHITE ? black : white);
-                color_wins[static_cast<int>(winner)]++;
                 wins[winning_player]++;
                 losing_player = offspring;
             }
             else
             {
-                ++draw_count;
                 auto& chance_loser = Random::coin_flip() ? white : black;
                 chance_loser = offspring;
             }
