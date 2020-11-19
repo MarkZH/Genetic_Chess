@@ -45,6 +45,12 @@ King Target Factor: -1.25991
 Legal Square Score: 0.522247
 Priority: 0.224313
 
+Name: King Confinement Gene
+Active: 1
+Friendly Block Score: 0.713896
+Opponent Block Score: -0.286104
+Priority: 0.00373243
+
 Name: King Protection Gene
 Active: 1
 Priority: 0.0348404
