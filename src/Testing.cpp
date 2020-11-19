@@ -949,18 +949,18 @@ bool run_perft_tests()
 
 bool run_musketeer_perft_tests(const std::filesystem::path& base_directory)
 {
-    auto total_file_count = std::count_if(std::filesystem::recursive_directory_iterator(base_directory),
-                                          std::filesystem::recursive_directory_iterator(),
-                                          [](const auto& path)
-                                          {
-                                              return path.is_regular_file() && path.path().extension() == ".csv";
-                                          });
+    auto is_usable = [](const auto& path)
+                     {
+                         return path.is_regular_file() && path.path().extension() == ".csv";
+                     };
+    using dir_iter = std::filesystem::recursive_directory_iterator;
+    auto total_file_count = std::count_if(dir_iter(base_directory), dir_iter(), is_usable);
     auto file_number = 0;
     auto failure_count = 0;
     auto start_time = std::chrono::steady_clock::now();
-    for(auto test_file : std::filesystem::recursive_directory_iterator(base_directory))
+    for(auto test_file : dir_iter(base_directory))
     {
-        if(test_file.is_regular_file() && test_file.path().extension() == ".csv")
+        if(is_usable(test_file))
         {
             ++file_number;
             auto total_test_count = line_count(test_file.path().string());
