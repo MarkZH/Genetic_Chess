@@ -25,9 +25,9 @@ struct Game_Tree_Node_Result
     std::vector<const Move*> variation;
 
     //! \brief The score assigned to a checkmate board position for the winning Minimax_AI.
-    static constexpr auto win_score = std::numeric_limits<double>::infinity();
+    static constexpr const auto win_score = std::numeric_limits<double>::infinity();
     //! \brief The score assigned to a checkmate board position for the losing Minimax_AI.
-    static constexpr auto lose_score = -win_score;
+    static constexpr const auto lose_score = -win_score;
 
     //! \brief Gives the score of the board position from the indicated side.
     //!

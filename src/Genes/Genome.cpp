@@ -33,9 +33,9 @@ class Board;
 
 namespace
 {
-     constexpr auto piece_strength_gene_index = size_t(0);
-     constexpr auto look_ahead_gene_index = size_t(1);
-     constexpr auto mutation_rate_gene_index = size_t(2);
+     constexpr const auto piece_strength_gene_index = size_t(0);
+     constexpr const auto look_ahead_gene_index = size_t(1);
+     constexpr const auto mutation_rate_gene_index = size_t(2);
 }
 
 Genome::Genome() noexcept
