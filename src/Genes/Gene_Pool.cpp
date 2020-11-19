@@ -301,21 +301,19 @@ void gene_pool(const std::string& config_file)
             auto winner = result.winner();
             std::cout << color_text(winner) << " (" << result.ending_reason() << ")" << std::endl;
 
+            auto offspring = Genetic_AI(white, black);
+            offspring.mutate();
             if(winner != Winner_Color::NONE)
             {
                 const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
                 auto& losing_player  = (winner == Winner_Color::WHITE ? black : white);
                 color_wins[static_cast<int>(winner)]++;
                 wins[winning_player]++;
-                auto offspring = Genetic_AI(winning_player, losing_player);
-                offspring.mutate();
                 losing_player = offspring;
             }
             else
             {
                 ++draw_count;
-                auto offspring = Genetic_AI{white, black};
-                offspring.mutate();
                 auto& chance_loser = Random::coin_flip() ? white : black;
                 chance_loser = offspring;
             }
