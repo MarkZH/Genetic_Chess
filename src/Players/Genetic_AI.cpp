@@ -112,11 +112,6 @@ double Genetic_AI::speculation_time_factor(const Board& board) const noexcept
     return genome.speculation_time_factor(board);
 }
 
-Genetic_AI Genetic_AI::clone() const noexcept
-{
-    return Genetic_AI(*this, *this);
-}
-
 void Genetic_AI::mutate(int mutation_count) noexcept
 {
     for(int i = 0; i < mutation_count; ++i)

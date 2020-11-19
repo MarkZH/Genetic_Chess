@@ -53,11 +53,6 @@ class Genetic_AI : public Minimax_AI
         //! \param B The second parent.
         Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) noexcept;
 
-        //! \brief Create a new Genetic_AI by cloning this one.
-        //!
-        //! This will be a different Genetic_AI with a different ID that can be mutated separately.
-        Genetic_AI clone() const noexcept;
-
         //! \brief Apply random mutations to the Genome of the Genetic_AI
         //!
         //! \param mutation_count The number of mutation actions to apply to the genome. Defaults to 1 if unspecified.
