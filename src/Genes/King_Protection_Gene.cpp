@@ -15,7 +15,7 @@ double King_Protection_Gene::score_board(const Board& board, Piece_Color perspec
     for(size_t attack_index = 0; attack_index < 16; ++attack_index)
     {
         auto step = Move::attack_direction_from_index(attack_index);
-        for (auto square : Square::square_line_from(board.find_king(perspective), step))
+        for(auto square : Square::square_line_from(board.find_king(perspective), step))
         {
             if(board.piece_on_square(square))
             {
