@@ -31,15 +31,14 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Mutation_Rate_Gene.h"
-#include "Genes/Active_Pieces_Gene.h"
 
 class Board;
 
 namespace
 {
-     constexpr auto piece_strength_gene_index = size_t(0);
-     constexpr auto look_ahead_gene_index = size_t(1);
-     constexpr auto mutation_rate_gene_index = size_t(2);
+     constexpr const auto piece_strength_gene_index = size_t(0);
+     constexpr const auto look_ahead_gene_index = size_t(1);
+     constexpr const auto mutation_rate_gene_index = size_t(2);
 }
 
 Genome::Genome() noexcept
@@ -67,7 +66,6 @@ Genome::Genome() noexcept
     genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
     genome.emplace_back(std::make_unique<Pawn_Islands_Gene>());
     genome.emplace_back(std::make_unique<Checkmate_Material_Gene>());
-    genome.emplace_back(std::make_unique<Active_Pieces_Gene>());
 
     renormalize_priorities();
 }

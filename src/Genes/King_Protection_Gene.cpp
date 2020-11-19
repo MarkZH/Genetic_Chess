@@ -15,7 +15,7 @@ double King_Protection_Gene::score_board(const Board& board, Piece_Color perspec
     for(size_t attack_index = 0; attack_index < 16; ++attack_index)
     {
         auto step = Move::attack_direction_from_index(attack_index);
-        for (auto square : Square::square_line_from(board.find_king(perspective), step))
+        for(auto square : Square::square_line_from(board.find_king(perspective), step))
         {
             if(board.piece_on_square(square))
             {
@@ -33,9 +33,9 @@ double King_Protection_Gene::score_board(const Board& board, Piece_Color perspec
         }
     }
 
-    constexpr int max_square_count =  8      // knight attack
-                                    + 7 + 7  // rooks/queen row/column attack
-                                    + 7 + 6; // bishop/queen/pawn attack
+    constexpr const int max_square_count =  8      // knight attack
+                                          + 7 + 7  // rooks/queen row/column attack
+                                          + 7 + 6; // bishop/queen/pawn attack
     return double(max_square_count - square_count)/max_square_count; // return score [0, 1]
 }
 

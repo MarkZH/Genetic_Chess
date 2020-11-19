@@ -7,11 +7,6 @@ maximum simultaneous games = 8
 # How many players in each pool
 gene pool population = 16
 
-# There are two possible values for reproduction type:
-#  1. "mating" : in which the winner and the loser create the offspring
-#  2. "cloning" : in which the offspring is a mutated clone of the winner
-reproduction type = mating
-
 # How many gene pools
 gene pool count = 3
 

@@ -74,7 +74,6 @@ void gene_pool(const std::string& config_file)
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
     const auto gene_pool_count = config.as_positive_number<size_t>("gene pool count");
     const auto pool_swap_interval = config.as_positive_number<size_t>("pool swap interval");
-    const auto mating_reproduction = config.as_boolean("reproduction type", "mating", "cloning");
     const auto genome_file_name = config.as_text("gene pool file");
     const auto scramble_mutations = config.as_positive_number<int>("initial mutations");
     const auto use_musketeer_board = config.as_boolean("board type", "musketeer", "standard");
@@ -132,7 +131,6 @@ void gene_pool(const std::string& config_file)
 
     // Individual Genetic AI stats
     std::map<Genetic_AI, int> wins;
-    std::map<Genetic_AI, int> draws;
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
@@ -340,17 +338,17 @@ void gene_pool(const std::string& config_file)
                 auto& losing_player  = (winner == Winner_Color::WHITE ? black : white);
                 color_wins[static_cast<int>(winner)]++;
                 wins[winning_player]++;
-                auto offspring = mating_reproduction ?
-                                    Genetic_AI(winning_player, losing_player) :
-                                    winning_player.clone();
+                auto offspring = Genetic_AI(winning_player, losing_player);
                 offspring.mutate(gated_piece_types);
                 losing_player = offspring;
             }
             else
             {
-                draws[white]++;
-                draws[black]++;
                 ++draw_count;
+                auto offspring = Genetic_AI{white, black};
+                offspring.mutate(gated_piece_types);
+                auto& chance_loser = Random::coin_flip() ? white : black;
+                chance_loser = offspring;
             }
         }
 
@@ -358,22 +356,21 @@ void gene_pool(const std::string& config_file)
         write_generation(pools, genome_file_name, false);
 
         purge_dead_from_map(pools, wins);
-        purge_dead_from_map(pools, draws);
 
         // widths of columns for stats printout
         auto id_digits = std::to_string(pool.back().id()).size();
+        auto win_column_width = 7;
 
         // Write stat headers
-        std::cout << '\n' << std::setw(id_digits + 1)  << "ID"
-                  << std::setw(7) << "Wins"
-                  << std::setw(7) << "Draws" << "\n";
+        std::cout << "\n"
+                  << std::setw(id_digits + 1)  << "ID"
+                  << std::setw(win_column_width) << "Wins" << "\n";
 
         // Write stats for each specimen
         for(const auto& ai : pool)
         {
-            std::cout << std::setw(id_digits + 1) << ai.id();
-            std::cout << std::setw(7) << wins[ai]
-                      << std::setw(7) << draws[ai] << "\n";
+            std::cout << std::setw(id_digits + 1) << ai.id()
+                      << std::setw(win_column_width) << wins[ai] << "\n";
         }
 
         // Record best AI from all pools.
