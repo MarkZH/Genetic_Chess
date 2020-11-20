@@ -32,7 +32,6 @@ def main(files):
             #   6 = Insufficient material
             #   7 = No legal moves
             #   8 = Time expired with insufficient material
-            game_section = False
             for line in f:
                 if line.startswith('[Result'):
                     game += 1
@@ -70,7 +69,7 @@ def main(files):
                     white_time_left = line.split('"')[1]
                 elif line.startswith('[TimeLeftBlack'):
                     black_time_left = line.split('"')[1]
-                elif game_section and not line.strip():
+                elif line.startswith('[Event') and game > 0:
                     w.write('\t'.join(str(x) for x in [game,
                                                        white_wins,
                                                        black_wins,
@@ -80,7 +79,6 @@ def main(files):
                                                        white_time_left,
                                                        black_time_left,
                                                        number_of_moves]) + '\n')
-                    game_section = False
                     number_of_moves = 0
 
             if game > 0:
