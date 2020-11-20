@@ -83,5 +83,16 @@ def main(files):
                     game_section = False
                     number_of_moves = 0
 
+            if game > 0:
+                w.write('\t'.join(str(x) for x in [game,
+                                                   white_wins,
+                                                   black_wins,
+                                                   draws,
+                                                   time,
+                                                   result_type,
+                                                   white_time_left,
+                                                   black_time_left,
+                                                   number_of_moves]) + '\n')
+
 if __name__ == '__main__':
     main(sys.argv[1:])
