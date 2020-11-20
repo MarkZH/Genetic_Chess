@@ -13,10 +13,11 @@ def main(files):
         white_time_left = 0
         black_time_left = 0
         with open(file_name) as f, open(file_name + '_plots.txt', 'w') as w:
-            w.write('\t'.join(['Game', \
-                               'White Wins', \
-                               'Black Wins', \
-                               'Draws', \
+            w.write('\t'.join(['Game',
+                               'White Wins',
+                               'Black Wins',
+                               'Draws',
+                               'Result TYpe',
                                'Time',
                                'White Time Left',
                                'Black Time Left',
