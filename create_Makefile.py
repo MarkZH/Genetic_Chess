@@ -71,19 +71,19 @@ depends[user_manual_var] = [
 operations[user_manual_var] = [f'latexmk -synctex=1 -pdf -cd {user_manual_tex}', f'touch {user_manual_var}']
 
 for target in final_targets:
-    out_variable = f"$(OUT_{target.upper()})"
-    all_objects = f"$(OBJ_{target.upper()})"
+    out_variable = f"$({target.upper()}_OUT)"
+    all_objects = f"$({target.upper()}_OBJ)"
     bin_dest = f"$({target.upper()}_BIN_DIR)"
     operations[out_variable] = [f"mkdir -p {bin_dest}",
                                 ' '.join(["$(LD)",
                                           "-o", out_variable,
                                           all_objects,
                                           "$(LDFLAGS)",
-                                          f"$(LDFLAGS_{target.upper()})",
+                                          f"$({target.upper()}_LDFLAGS)",
                                           "$(CFLAGS)",
-                                          f"$(CFLAGS_{target.upper()})"])]
+                                          f"$({target.upper()}CFLAGS)"])]
     link_dirs[target] = os.path.join('bin', target)
-    link_dir_variable = f"$(LINK_DIR_{target.upper()})"
+    link_dir_variable = f"$({target.upper()}_LINK_DIR)"
     operations[os.path.join(link_dir_variable, '$(BIN)')] = [f'mkdir -p {link_dir_variable}',
                                                              f'ln -sf -t {link_dir_variable} `realpath {out_variable}`',
                                                              f'touch {out_variable}']
@@ -96,8 +96,8 @@ for target in final_targets:
     operations[f'clean_{target}'] = [f"rm -rf {obj_dest[target]} {bin_dest}"]
 
     bins[target] = os.path.join(bin_dest, '$(BIN)')
-    depends[f'test_{target}'] = [target]
-    operations[f'test_{target}'] = [f'{bins[target]} -{opt}' for opt in ['test', 'perft', 'speed']]
+    depends[f'{target}_test'] = [target]
+    operations[f'{target}_test'] = [f'{bins[target]} -{opt}' for opt in ['test', 'perft', 'speed']]
 
 operations['clean_code_docs'] = ['rm -rf $(DOC_DIR)']
 operations['clean_user_manual'] = [f'latexmk -C -cd {user_manual_tex}']
@@ -158,7 +158,7 @@ for target in final_targets:
                 continue
             obj_file = os.path.join(obj_dest[target], f"{os.path.splitext(source_file)[0]}.o")
             operations[obj_file] = [f"mkdir -p {os.path.dirname(obj_file)}",
-                                    f"$(CXX) $(CFLAGS) $(LDFLAGS) $(CFLAGS_{target.upper()}) $(LDFLAGS_{target.upper()}) -c {source_file} -o {obj_file}"]
+                                    f"$(CXX) $(CFLAGS) $(LDFLAGS) $({target.upper()}_CFLAGS) $({target.upper()}_LDFLAGS) -c {source_file} -o {obj_file}"]
 
             compiler_command = [compiler] + base_options + options_list[target] + ['-MM', source_file]
             compile_depends = subprocess.check_output(compiler_command).decode('ascii').split(':', 1)[1].split()
@@ -176,14 +176,14 @@ with open("Makefile", 'w') as make_file:
     make_file.write(f"USER_MANUAL = {user_manual}\n\n")
     for target in final_targets:
         make_file.write(f"{target.upper()}_BIN_DIR = bin/{system}/{target}\n")
-        make_file.write(f"OUT_{target.upper()} = {bins[target]}\n")
-        make_file.write(f"LINK_DIR_{target.upper()} = {link_dirs[target]}\n")
+        make_file.write(f"{target.upper()}_OUT = {bins[target]}\n")
+        make_file.write(f"{target.upper()}_LINK_DIR = {link_dirs[target]}\n")
         make_file.write(f"{target.upper()}_OBJ_DIR = obj/{system}/{target}\n")
-        make_file.write(f"OBJ_{target.upper()} = ")
+        make_file.write(f"{target.upper()}_OBJ = ")
         make_file.write(' '.join([x for x in all_targets_so_far(depends, operations) if x.endswith('.o') and x.startswith(f"$({target.upper()}")]))
         make_file.write('\n')
-        make_file.write(f"CFLAGS_{target.upper()} = {' '.join(options_list[target])}\n")
-        make_file.write(f"LDFLAGS_{target.upper()} = {' '.join(linker_options[target])}\n\n")
+        make_file.write(f"{target.upper()}_CFLAGS = {' '.join(options_list[target])}\n")
+        make_file.write(f"{target.upper()}_LDFLAGS = {' '.join(linker_options[target])}\n\n")
 
     for target in all_targets_so_far(depends, operations):
         make_file.write(f"{target} : {' '.join(depends.get(target, []))}\n")
