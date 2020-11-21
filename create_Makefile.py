@@ -162,7 +162,7 @@ for target in final_targets:
 
             compiler_command = [compiler] + base_options + options_list[target] + ['-MM', source_file]
             compile_depends = subprocess.check_output(compiler_command).decode('ascii').split(':', 1)[1].split()
-            depends[obj_file] = list(set(d for d in compile_depends if d != '\\'))
+            depends[obj_file] = sorted(list(set(d for d in compile_depends if d != '\\')))
 
 with open("Makefile", 'w') as make_file:
     make_file.write(f"BIN = {program_name}\n")
