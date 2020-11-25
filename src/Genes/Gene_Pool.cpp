@@ -100,6 +100,7 @@ void gene_pool(const std::string& config_file)
 
     std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     std::map<Genetic_AI, int> wins;
+    std::map<Genetic_AI, int> draws;
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
@@ -310,7 +311,9 @@ void gene_pool(const std::string& config_file)
             else
             {
                 auto& chance_loser = Random::coin_flip() ? white : black;
+                const auto& chance_winner = chance_loser.id() == black.id() ? white : black;
                 chance_loser = offspring;
+                draws[chance_winner]++;
             }
         }
 
@@ -319,21 +322,25 @@ void gene_pool(const std::string& config_file)
         write_generation(pools, genome_file_name, false);
 
         purge_dead_from_map(pools, wins);
+        purge_dead_from_map(pools, draws);
 
         // widths of columns for stats printout
         auto id_digits = std::to_string(pool.back().id()).size();
         auto win_column_width = 7;
+        auto draw_column_width = 7;
 
         // Write stat headers
         std::cout << "\n"
                   << std::setw(id_digits + 1)  << "ID"
-                  << std::setw(win_column_width) << "Wins" << "\n";
+                  << std::setw(win_column_width) << "Wins"
+                  << std::setw(draw_column_width) << "Draws" << "\n";
 
         // Write stats for each specimen
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_digits + 1) << ai.id()
-                      << std::setw(win_column_width) << wins[ai] << "\n";
+                      << std::setw(win_column_width) << wins[ai]
+                      << std::setw(draw_column_width) << draws[ai] << "\n";
         }
 
         // Record best AI from all pools.
