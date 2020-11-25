@@ -17,6 +17,7 @@ using namespace std::chrono_literals;
 #include <filesystem>
 #include <string>
 #include <numeric>
+#include <sstream>
 
 #ifndef _WIN32
 #include <mutex>
@@ -287,17 +288,16 @@ void gene_pool(const std::string& config_file)
         }
 
         // Get results as they come in
+        std::stringstream result_printer;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
             auto& white = pool[index];
             auto& black = pool[index + 1];
-
-            std::cout << white.id() << " vs "
-                      << black.id() << ": " << std::flush;
+            result_printer << white.id() << " vs " << black.id() << ": ";
 
             auto result = results[index/2].get();
             auto winner = result.winner();
-            std::cout << color_text(winner) << " (" << result.ending_reason() << ")" << std::endl;
+            result_printer << color_text(winner) << " (" << result.ending_reason() << ")\n";
 
             auto offspring = Genetic_AI(white, black);
             offspring.mutate();
@@ -316,6 +316,7 @@ void gene_pool(const std::string& config_file)
             }
         }
 
+        std::cout << result_printer.str();
         std::sort(pool.begin(), pool.end());
         write_generation(pools, genome_file_name, false);
 
