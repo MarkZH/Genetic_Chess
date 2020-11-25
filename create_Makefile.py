@@ -96,8 +96,8 @@ for target in final_targets:
     operations[f'clean_{target}'] = [f"rm -rf {obj_dest[target]} {bin_dest}"]
 
     bins[target] = os.path.join(bin_dest, '$(BIN)')
-    depends[f'{target}_test'] = [target]
-    operations[f'{target}_test'] = [f'{bins[target]} -{opt}' for opt in ['test', 'perft', 'speed']]
+    depends[f'test_{target}'] = [target]
+    operations[f'test_{target}'] = [f'{bins[target]} -{opt}' for opt in ['test', 'perft', 'speed']]
 
 operations['clean_code_docs'] = ['rm -rf $(DOC_DIR)']
 operations['clean_user_manual'] = [f'latexmk -C -cd {user_manual_tex}']
