@@ -758,8 +758,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         game_number = 1;
         last_used_file_name = file_name;
         std::ifstream ifs(file_name);
-        std::string line;
-        while(std::getline(ifs, line))
+        for(std::string line; std::getline(ifs, line);)
         {
             if(String::starts_with(line, "[Round"))
             {

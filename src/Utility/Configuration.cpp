@@ -18,8 +18,7 @@ Configuration::Configuration(const std::string& file_name)
         throw std::runtime_error("Could not open configuration file: " + file_name);
     }
 
-    std::string line;
-    while(std::getline(ifs, line))
+    for(std::string line; std::getline(ifs, line);)
     {
         line = String::strip_comments(line, "#");
         if(line.empty())

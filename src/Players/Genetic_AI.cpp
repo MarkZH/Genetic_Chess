@@ -53,8 +53,7 @@ void Genetic_AI::read_from(std::istream& is)
         throw Genetic_AI_Creation_Error("Could not read: ");
     }
 
-    std::string line;
-    while(std::getline(is, line))
+    for(std::string line; std::getline(is, line);)
     {
         line = String::strip_comments(line, "#");
         if( ! String::starts_with(line, "ID"))
@@ -175,9 +174,8 @@ int find_last_id(const std::string& players_file_name)
         throw std::invalid_argument("File not found: " + players_file_name);
     }
 
-    std::string line;
     std::optional<int> last_player;
-    while(std::getline(player_input, line))
+    for(std::string line; std::getline(player_input, line);)
     {
         if(String::starts_with(line, "ID:"))
         {

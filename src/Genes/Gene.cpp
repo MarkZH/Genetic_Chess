@@ -61,8 +61,7 @@ void Gene::read_from(std::istream& is)
         value = std::numeric_limits<double>::quiet_NaN();
     }
 
-    std::string line;
-    while(std::getline(is, line))
+    for(std::string line; std::getline(is, line);)
     {
         if(String::trim_outer_whitespace(line).empty())
         {
@@ -151,8 +150,7 @@ void Gene::read_from(const std::string& file_name)
         throw Genetic_AI_Creation_Error("Could not open " + file_name + " to read.");
     }
 
-    std::string line;
-    while(std::getline(ifs, line))
+    for(std::string line; std::getline(ifs, line);)
     {
         if(String::starts_with(line, "Name: "))
         {

@@ -870,9 +870,8 @@ bool run_perft_tests()
 
     std::vector<int> tests_failed;
     auto perft_suite_input = std::ifstream("testing/perftsuite.epd");
-    std::string input_line;
     std::vector<std::string> lines;
-    while(std::getline(perft_suite_input, input_line))
+    for(std::string input_line; std::getline(perft_suite_input, input_line);)
     {
         lines.push_back(input_line);
     }
@@ -1034,10 +1033,9 @@ namespace
     {
         auto input = std::ifstream(file_name);
         assert(input);
-        std::string line;
         auto all_tests_passed = true;
 
-        while(std::getline(input, line))
+        for(std::string line; std::getline(input, line);)
         {
             line = String::strip_comments(line, "#");
             if(line.empty())

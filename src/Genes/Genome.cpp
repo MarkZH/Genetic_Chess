@@ -131,8 +131,7 @@ Genome::Genome(const Genome& A, const Genome& B) noexcept
 
 void Genome::read_from(std::istream& is)
 {
-    std::string line;
-    while(std::getline(is, line))
+    for(std::string line; std::getline(is, line);)
     {
         line = String::strip_comments(line, "#");
 
