@@ -16,6 +16,7 @@ using namespace std::chrono_literals;
 #include <cstdio>
 #include <filesystem>
 #include <string>
+#include <numeric>
 
 #ifndef _WIN32
 #include <mutex>
@@ -240,7 +241,7 @@ void gene_pool(const std::string& config_file)
                   << "Gene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
                   << "  Rounds since pool swaps: " << rounds_since_last_swap << "/" << pool_swap_interval
-                  << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), 0)
+                  << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), size_t{0})
                   << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
                   << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
                   << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
