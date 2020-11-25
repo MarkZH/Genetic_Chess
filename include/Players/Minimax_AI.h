@@ -98,6 +98,7 @@ class Minimax_AI : public Player
         // Time management
         virtual Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept = 0;
         virtual double speculation_time_factor(const Board& board) const noexcept = 0;
+        virtual double branching_factor() const noexcept = 0;
 
         // Scoring output
         double centipawn_value() const noexcept;
@@ -111,6 +112,7 @@ class Minimax_AI : public Player
         // Minimax (actually negamax) with alpha-beta pruning
         Game_Tree_Node_Result search_game_tree(const Board& board,
                                                Clock::seconds time_to_examine,
+                                               size_t minimum_search_depth,
                                                const Clock& clock,
                                                Game_Tree_Node_Result alpha,
                                                const Game_Tree_Node_Result& beta,

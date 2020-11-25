@@ -15,7 +15,7 @@ if isOctave
         if isempty(option) || option(1) == '-'
             continue;
         end
-        
+
         if filename == 0
             filename = option;
         else
@@ -82,38 +82,18 @@ close;
 
 
 
-white_checkmates = zeros(size(game_number));
-black_checkmates = zeros(size(game_number));
-fifty_moves = zeros(size(game_number));
-threefold = zeros(size(game_number));
-white_time_win = zeros(size(game_number));
-black_time_win = zeros(size(game_number));
-material = zeros(size(game_number));
-no_legal = zeros(size(game_number));
-time_and_material = zeros(size(game_number));
+white_checkmates = result_type == 0;
+black_checkmates = result_type == 1;
+fifty_moves = result_type == 2;
+threefold = result_type == 3;
+white_time_win = result_type == 4;
+black_time_win = result_type == 5;
+material = result_type == 6;
+no_legal = result_type == 7;
+time_and_material = result_type == 8;
 number_of_games = length(game_number);
-for index = 1 : number_of_games
-    if result_type(index) == 0
-        white_checkmates(index) = 1;
-    elseif result_type(index) == 1
-        black_checkmates(index) = 1;
-    elseif result_type(index) == 2
-        fifty_moves(index) = 1;
-    elseif result_type(index) == 3
-        threefold(index) = 1;
-    elseif result_type(index) == 4
-        white_time_win(index) = 1;
-    elseif result_type(index) == 5
-        black_time_win(index) = 1;
-    elseif result_type(index) == 6
-        material(index) = 1;
-    elseif result_type(index) == 7
-        no_legal(index) = 1;
-    elseif result_type(index) == 8
-        time_and_material(index) = 1;
-    else
-        disp(['Unknown result type' num2str(result_type(index))]);
-    end
+if any(result_type > 8 | result_type < 0)
+    disp('Unknown result types found.');
 end
 
 figure;
@@ -233,16 +213,18 @@ mode_moves = mode(moves_in_game);
 std_dev = std(moves_in_game);
 
 % Log-normal fit
-mean_log = mean(log(moves_in_game));
-std_log = std(log(moves_in_game));
-fit = number_of_games*exp(-.5*((log(bins) - mean_log)/std_log).^2)./(bins*std_log*sqrt(2*pi));
-plot(bins, fit, 'linewidth', 3);
+moves_in_game_fit = moves_in_game(moves_in_game > 0);
+bins_fit = bins(bins > 0);
+mean_log = mean(log(moves_in_game_fit));
+std_log = std(log(moves_in_game_fit));
+fit = number_of_games*exp(-.5*((log(bins_fit) - mean_log)/std_log).^2)./(bins_fit*std_log*sqrt(2*pi));
+plot(bins_fit, fit, 'linewidth', 3);
 
-last10p = [floor(.9*length(moves_in_game)) : length(moves_in_game)];
-mean_log10p = mean(log(moves_in_game(last10p)));
-std_log10p = std(log(moves_in_game(last10p)));
-fit10p = number_of_games*exp(-.5*((log(bins) - mean_log10p)/std_log10p).^2)./(bins*std_log10p*sqrt(2*pi));
-plot(bins, fit10p, 'k', 'linewidth', 3);
+last10p = [floor(.9*length(moves_in_game_fit)) : length(moves_in_game_fit)];
+mean_log10p = mean(log(moves_in_game_fit(last10p)));
+std_log10p = std(log(moves_in_game_fit(last10p)));
+fit10p = number_of_games*exp(-.5*((log(bins_fit) - mean_log10p)/std_log10p).^2)./(bins_fit*std_log10p*sqrt(2*pi));
+plot(bins_fit, fit10p, 'k', 'linewidth', 3);
 
 legend('Histogram', 'Log-Normal distribution (all games)', 'Log-normal distribution (last 10%)');
 

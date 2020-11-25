@@ -13,10 +13,11 @@ def main(files):
         white_time_left = 0
         black_time_left = 0
         with open(file_name) as f, open(file_name + '_plots.txt', 'w') as w:
-            w.write('\t'.join(['Game', \
-                               'White Wins', \
-                               'Black Wins', \
-                               'Draws', \
+            w.write('\t'.join(['Game',
+                               'White Wins',
+                               'Black Wins',
+                               'Draws',
+                               'Result TYpe',
                                'Time',
                                'White Time Left',
                                'Black Time Left',
@@ -31,7 +32,6 @@ def main(files):
             #   6 = Insufficient material
             #   7 = No legal moves
             #   8 = Time expired with insufficient material
-            game_section = False
             for line in f:
                 if line.startswith('[Result'):
                     game += 1
@@ -69,7 +69,7 @@ def main(files):
                     white_time_left = line.split('"')[1]
                 elif line.startswith('[TimeLeftBlack'):
                     black_time_left = line.split('"')[1]
-                elif game_section and not line.strip():
+                elif line.startswith('[Event') and game > 0:
                     w.write('\t'.join(str(x) for x in [game,
                                                        white_wins,
                                                        black_wins,
@@ -79,8 +79,18 @@ def main(files):
                                                        white_time_left,
                                                        black_time_left,
                                                        number_of_moves]) + '\n')
-                    game_section = False
                     number_of_moves = 0
+
+            if game > 0:
+                w.write('\t'.join(str(x) for x in [game,
+                                                   white_wins,
+                                                   black_wins,
+                                                   draws,
+                                                   time,
+                                                   result_type,
+                                                   white_time_left,
+                                                   black_time_left,
+                                                   number_of_moves]) + '\n')
 
 if __name__ == '__main__':
     main(sys.argv[1:])
