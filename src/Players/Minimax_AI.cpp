@@ -6,6 +6,7 @@
 #include <array>
 #include <chrono>
 using namespace std::chrono_literals;
+#include <cmath>
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Game/Board.h"
@@ -46,6 +47,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     }
 
     auto time_to_use = time_to_examine(board, clock);
+    auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor()));
 
     // alpha = highest score found that opponent will allow
     Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
@@ -61,6 +63,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
     auto result = search_game_tree(board,
                                    time_to_use,
+                                   minimum_search_depth,
                                    clock,
                                    alpha_start,
                                    beta_start,
@@ -80,13 +83,17 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     depth_one_results = depth_two_results[result.variation.front()];
     depth_two_results.clear();
 
-    node_evaluation_time = total_evaluation_time/nodes_evaluated;
+    if(nodes_evaluated > 0)
+    {
+        node_evaluation_time = total_evaluation_time/nodes_evaluated;
+    }
 
     return *result.variation.front();
 }
 
 Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const Clock::seconds time_to_examine,
+                                                   const size_t minimum_search_depth,
                                                    const Clock& clock,
                                                    Game_Tree_Node_Result alpha,
                                                    const Game_Tree_Node_Result& beta,
@@ -182,6 +189,10 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             recurse = true;
         }
+        else if(depth < minimum_search_depth)
+        {
+            recurse = true;
+        }
         else
         {
             auto minimum_time_to_recurse = next_board.legal_moves().size()*node_evaluation_time;
@@ -193,6 +204,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         {
             result = search_game_tree(next_board,
                                       time_allotted_for_this_move,
+                                      minimum_search_depth,
                                       clock,
                                       beta,
                                       alpha,

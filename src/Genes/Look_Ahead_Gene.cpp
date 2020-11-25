@@ -18,6 +18,7 @@ void Look_Ahead_Gene::adjust_properties(std::map<std::string, double>& propertie
     properties["Game Length Uncertainty"] = game_length_uncertainty;
     properties["Speculation Default"] = speculation_default_constant;
     properties["Speculation Material Change"] = speculation_material_change_constant;
+    properties["Branching Factor"] = branching_factor_estimate;
 }
 
 void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& properties)
@@ -26,6 +27,7 @@ void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& 
     game_length_uncertainty = properties.at("Game Length Uncertainty");
     speculation_default_constant = properties.at("Speculation Default");
     speculation_material_change_constant = properties.at("Speculation Material Change");
+    branching_factor_estimate = properties.at("Branching Factor");
 }
 
 Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
@@ -47,7 +49,7 @@ Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock&
 
 void Look_Ahead_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 4))
+    switch(Random::random_integer(1, 5))
     {
         case 1:
             mean_game_length += Random::random_laplace(1.0);
@@ -60,6 +62,9 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
             break;
         case 4:
             speculation_material_change_constant += Random::random_laplace(0.05);
+            break;
+        case 5:
+            branching_factor_estimate += Random::random_laplace(1.0);
             break;
         default:
             assert(false);
@@ -93,4 +98,9 @@ double Look_Ahead_Gene::speculation_time_factor(const Board& board) const noexce
     {
         return 0.0;
     }
+}
+
+double Look_Ahead_Gene::branching_factor() const noexcept
+{
+    return is_active() ? branching_factor_estimate : 1000.0;
 }

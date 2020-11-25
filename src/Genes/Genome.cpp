@@ -233,6 +233,11 @@ double Genome::speculation_time_factor(const Board& board) const noexcept
     return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().speculation_time_factor(board);
 }
 
+double Genome::branching_factor() const noexcept
+{
+    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().branching_factor();
+}
+
 const std::array<double, 6>& Genome::piece_values() const noexcept
 {
     return gene_reference<Piece_Strength_Gene, piece_strength_gene_index>().piece_values();

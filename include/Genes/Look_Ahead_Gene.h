@@ -35,11 +35,16 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         //! \returns A factor that gets multiplied by the allocated time to overallocate.
         double speculation_time_factor(const Board& board) const noexcept;
 
+        //! \brief Returns an estimate of the number of moves in an average board position (i.e., the branching factor of the game tree).
+        double branching_factor() const noexcept;
+
     private:
         // controls over/under-allocation of time
         double speculation_default_constant = 1.0;
         // controls over/under-allocation of time if there are legal capturing or promotion moves
         double speculation_material_change_constant = 1.0;
+        // estimates the average number of moves in a board position (the branching factor of the game tree)
+        double branching_factor_estimate = 40.0;
 
         double mean_game_length = 50.0; // in moves by one player
         double game_length_uncertainty = 0.5; // approximately as a fraction of the mean

@@ -82,6 +82,9 @@ class Genome
         //! \returns The multiplicative factor.
         double speculation_time_factor(const Board& board) const noexcept;
 
+        //! \brief Returns an estimate of the number of moves in an average board position (i.e., the branching factor of the game tree).
+        double branching_factor() const noexcept;
+
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
         const std::array<double, 6>& piece_values() const noexcept;
 
