@@ -17,6 +17,7 @@ using namespace std::chrono_literals;
 #include <filesystem>
 #include <string>
 #include <numeric>
+#include <sstream>
 
 #ifndef _WIN32
 #include <mutex>
@@ -162,9 +163,8 @@ void gene_pool(const std::string& config_file)
     size_t rounds = 0; // Count of complete gene pool rounds where all pools have played a set of games
     if(auto genome_file = std::ifstream(genome_file_name))
     {
-        std::string line;
         size_t line_number = 0;
-        while(std::getline(genome_file, line))
+        for(std::string line; std::getline(genome_file, line);)
         {
             line = String::trim_outer_whitespace(line);
             ++line_number;
@@ -211,8 +211,7 @@ void gene_pool(const std::string& config_file)
     {
         // Use game time from last run of this gene pool
         std::cout << "Searching " << game_record_file << " for last game time and stats ..." << std::endl;
-        std::string line;
-        while(std::getline(ifs, line))
+        for(std::string line; std::getline(ifs, line);)
         {
             line = String::trim_outer_whitespace(line);
             if(String::starts_with(line, "[TimeControl"))
@@ -318,17 +317,16 @@ void gene_pool(const std::string& config_file)
         }
 
         // Get results as they come in
+        std::stringstream result_printer;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
             auto& white = pool[index];
             auto& black = pool[index + 1];
-
-            std::cout << white.id() << " vs "
-                      << black.id() << ": " << std::flush;
+            result_printer << white.id() << " vs " << black.id() << ": ";
 
             auto result = results[index/2].get();
             auto winner = result.winner();
-            std::cout << color_text(winner) << " (" << result.ending_reason() << ")" << std::endl;
+            result_printer << color_text(winner) << " (" << result.ending_reason() << ")\n";
 
             auto offspring = Genetic_AI(white, black);
             offspring.mutate(gated_piece_types);
@@ -347,6 +345,7 @@ void gene_pool(const std::string& config_file)
             }
         }
 
+        std::cout << result_printer.str();
         std::sort(pool.begin(), pool.end());
         write_generation(pools, genome_file_name, false);
 
@@ -519,9 +518,8 @@ namespace
         std::map<size_t, size_t> pool_line_numbers; // pool number --> gene pool file line number (error reporting)
         std::map<size_t, std::string> pool_lines; // pool number --> line in gene pool file (error reporting)
 
-        std::string line;
         size_t line_number = 0;
-        while(std::getline(ifs, line))
+        for(std::string line; std::getline(ifs, line);)
         {
             ++line_number;
             if(String::contains(line, "Still Alive"))
@@ -624,9 +622,8 @@ namespace
             return 0;
         }
 
-        std::string line;
         auto win_count = 0;
-        while(std::getline(input, line))
+        for(std::string line; std::getline(input, line);)
         {
             line = String::remove_extra_whitespace(line);
             auto is_white_player = String::starts_with(line, "[White");

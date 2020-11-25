@@ -191,7 +191,6 @@ namespace
             throw std::runtime_error("Could not open file " + file_name + " for reading.");
         }
 
-        std::string line;
         auto line_number = 0;
         auto last_move_line_number = 0;
 
@@ -203,7 +202,7 @@ namespace
         auto board = Board();
         Game_Result result;
 
-        while(std::getline(input, line))
+        for(std::string line; std::getline(input, line);)
         {
             ++line_number;
             line = String::strip_block_comment(line, "{", "}");
@@ -569,9 +568,8 @@ namespace
     void update_genome_file(const std::string& file_name)
     {
         auto input = std::ifstream(file_name);
-        std::string line;
         std::vector<int> id_list;
-        while(std::getline(input, line))
+        for(std::string line; std::getline(input, line);)
         {
             if(String::starts_with(line, "ID:"))
             {
