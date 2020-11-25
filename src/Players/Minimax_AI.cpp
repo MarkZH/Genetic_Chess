@@ -220,7 +220,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             }
             auto quiescent_guard = current_variation.scoped_push_back(quiescent_moves.begin(), quiescent_moves.end());
             result = create_result(next_board, perspective, move_result, current_variation);
-            nodes_searched += result.depth() - depth;
+            nodes_searched += quiescent_moves.size();
         }
 
         if(result.value(perspective) > best_result.value(perspective))
