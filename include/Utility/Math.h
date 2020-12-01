@@ -39,7 +39,7 @@ namespace Math
     }
 
     //! Scale values of both numbers so their absolute values sum to one.
-    //
+    //!
     //! \param[out] x First value.
     //! \param[out] y Second value.
     //!
