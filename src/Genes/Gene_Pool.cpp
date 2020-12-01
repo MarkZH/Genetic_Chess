@@ -228,7 +228,7 @@ void gene_pool(const std::string& config_file)
         #else
         if(auto pause_lock = std::unique_lock(pause_mutex, std::try_to_lock); ! pause_lock.owns_lock())
         {
-            std::cout << "\nGene pool paused. Press " << pause_key << " to continue" << std::endl;
+            std::cout << "\nGene pool paused. Press " << pause_key << " to continue ";
             std::cout << "or " << stop_key << " to quit." << std::endl;
             pause_lock.lock();
         }
