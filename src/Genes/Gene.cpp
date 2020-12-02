@@ -199,11 +199,6 @@ void Gene::mutate(const std::vector<Piece_Type>& gated_piece_types) noexcept
                 active = true;
             }
         }
-
-        if( ! is_active())
-        {
-            return;
-        }
     }
 
     if(Random::success_probability(properties.count("Priority"), properties.size()))

@@ -3,6 +3,7 @@
 #include <map>
 #include <cassert>
 #include <vector>
+#include <cmath>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -61,9 +62,11 @@ void Look_Ahead_Gene::gene_specific_mutation(const std::vector<Piece_Type>&) noe
             break;
         case 3:
             speculation_default_constant += Random::random_laplace(0.05);
+            speculation_default_constant = std::max(speculation_default_constant, 0.0);
             break;
         case 4:
             speculation_material_change_constant += Random::random_laplace(0.05);
+            speculation_material_change_constant = std::max(speculation_material_change_constant, 0.0);
             break;
         case 5:
             branching_factor_estimate += Random::random_laplace(1.0);

@@ -462,17 +462,11 @@ bool run_tests()
     auto king_confinement_gene = King_Confinement_Gene();
     king_confinement_gene.read_from(test_genes_file_name);
     auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
-    auto king_confinement_score = (4*(1.0 + 1.0 + 1.0) + // blocked by friendlies (h2, g2, f2)
-                                   (-1)*(1.0 + 1.0))/ // blocked by opponent (e1, e2)
-                                   (4 + 1)/ // normalizing
-                                   (1 + (1 + 1 + 1)); // free squares (h1, g1, f1)
+    auto king_confinement_score = 3.0/64; // free squares (h1, g1, f1)
     king_confinement_gene.test(tests_passed, king_confinement_board, Piece_Color::WHITE, king_confinement_score);
 
     auto king_confined_by_pawns_board = Board("k7/8/8/8/8/pppppppp/8/K7 w - - 0 1");
-    auto king_confined_by_pawns_score = (4*(0.0) + // no friendly blockers
-                                         (-1)*(8.0))/ // blocked by pawn attacks on second rank
-                                         (4 + 1)/ // normalizing
-                                         (1 + 8); // free squares (a1-h1)
+    auto king_confined_by_pawns_score = 8.0/64; // free squares (a1-h1)
     king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, Piece_Color::WHITE, king_confined_by_pawns_score);
 
     auto king_protection_gene = King_Protection_Gene();
@@ -546,7 +540,7 @@ bool run_tests()
 
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-    pawn_islands_gene.test(tests_passed, pawn_islands_board, Piece_Color::WHITE, (6.0/3)/8);
+    pawn_islands_gene.test(tests_passed, pawn_islands_board, Piece_Color::WHITE, -3.0/4.0);
 
     auto checkmate_material_gene = Checkmate_Material_Gene();
     auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
