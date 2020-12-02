@@ -197,11 +197,6 @@ void Gene::mutate() noexcept
                 active = true;
             }
         }
-
-        if( ! is_active())
-        {
-            return;
-        }
     }
 
     if(Random::success_probability(properties.count("Priority"), properties.size()))
