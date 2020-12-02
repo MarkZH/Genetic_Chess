@@ -542,7 +542,7 @@ bool run_tests()
 
     auto pawn_islands_gene = Pawn_Islands_Gene();
     auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-    pawn_islands_gene.test(tests_passed, pawn_islands_board, Piece_Color::WHITE, (6.0/3)/8);
+    pawn_islands_gene.test(tests_passed, pawn_islands_board, Piece_Color::WHITE, -3.0/4.0);
 
     auto checkmate_material_gene = Checkmate_Material_Gene();
     auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
