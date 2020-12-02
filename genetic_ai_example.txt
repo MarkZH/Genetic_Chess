@@ -48,8 +48,6 @@ Priority: 0.0647232
 
 Name: King Confinement Gene
 Active: 0
-Friendly Block Score: 0.208302
-Opponent Block Score: -0.791698
 Priority: 0.0233947
 
 Name: King Protection Gene

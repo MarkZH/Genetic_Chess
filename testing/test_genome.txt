@@ -18,8 +18,6 @@ Priority: 1
 
 Name: King   Confinement Gene
 Active: 1
-Friendly Block Score : 4
-Opponent Block Score: -1
 Priority: 1
 
 Name: Castling Possible Gene
