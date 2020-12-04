@@ -106,9 +106,9 @@ Clock::seconds Genetic_AI::time_to_examine(const Board& board, const Clock& cloc
     return genome.time_to_examine(board, clock);
 }
 
-double Genetic_AI::speculation_time_factor(const Board& board) const noexcept
+double Genetic_AI::speculation_time_factor() const noexcept
 {
-    return genome.speculation_time_factor(board);
+    return genome.speculation_time_factor();
 }
 
 double Genetic_AI::branching_factor() const noexcept

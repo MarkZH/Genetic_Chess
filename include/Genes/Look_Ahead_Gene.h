@@ -26,23 +26,18 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
 
         //! \brief When searching for a move, determine how much to overcommit on time.
         //!
-        //! \param board The current state of the Board in the game tree search. Different
-        //!        speculation values can be returned based on the position.
-        //!
         //! With alpha-beta pruning, only a portion of a branch will be searched, so time
         //! will be saved that can be spent on other branches. So, this factor controls
         //! how much extra time to allocate knowing that not all of it will be used.
         //! \returns A factor that gets multiplied by the allocated time to overallocate.
-        double speculation_time_factor(const Board& board) const noexcept;
+        double speculation_time_factor() const noexcept;
 
         //! \brief Returns an estimate of the number of moves in an average board position (i.e., the branching factor of the game tree).
         double branching_factor() const noexcept;
 
     private:
         // controls over/under-allocation of time
-        double speculation_default_constant = 1.0;
-        // controls over/under-allocation of time if there are legal capturing or promotion moves
-        double speculation_material_change_constant = 1.0;
+        double speculation_constant = 1.0;
         // estimates the average number of moves in a board position (the branching factor of the game tree)
         double branching_factor_estimate = 40.0;
 

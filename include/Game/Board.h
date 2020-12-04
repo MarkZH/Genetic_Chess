@@ -257,9 +257,6 @@ class Board
         //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
         bool move_changes_material(const Move& move) const noexcept;
 
-        //! \brief Whether any currently legal move changes material (by capture or promotion).
-        bool material_change_possible() const noexcept;
-
         //! \brief Number of moves since the last pawn move or capturing move.
         //!
         //! If this count reaches 100 (50 moves on each side), the game ends in
@@ -316,7 +313,6 @@ class Board
         Square checking_square;
         mutable Square last_pin_check_square;
         mutable bool last_pin_result;
-        bool material_changing_move_available;
         size_t first_full_move_label;
 
         // Stores the moves that attack a square. The innermost array

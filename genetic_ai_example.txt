@@ -13,8 +13,7 @@ Active: 1
 Branching Factor: 8.64069
 Game Length Uncertainty: 0.53755
 Mean Game Length: 63.559
-Speculation Default: 3.20621
-Speculation Material Change: 1.95543
+Speculation: 3.20621
 
 Name: Mutation Rate Gene
 Mutation Rate: 9.84043

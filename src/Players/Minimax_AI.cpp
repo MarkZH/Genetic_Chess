@@ -168,7 +168,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
 
         auto time_left = Clock::seconds(time_end - std::chrono::steady_clock::now());
-        auto time_allotted_for_this_move = (time_left/moves_left)*speculation_time_factor(board);
+        auto time_allotted_for_this_move = (time_left/moves_left)*speculation_time_factor();
         time_allotted_for_this_move = std::min(time_allotted_for_this_move, clock.running_time_left());
 
         bool recurse;
