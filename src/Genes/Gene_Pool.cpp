@@ -74,6 +74,10 @@ void gene_pool(const std::string& config_file)
     // Environment variables
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
+    if(gene_pool_population % 2 != 0)
+    {
+        throw std::invalid_argument("Gene pool population must be even. Current value = " + std::to_string(gene_pool_population));
+    }
     const auto gene_pool_count = config.as_positive_number<size_t>("gene pool count");
     const auto pool_swap_interval = config.as_positive_number<size_t>("pool swap interval");
     const auto genome_file_name = config.as_text("gene pool file");
@@ -317,35 +321,26 @@ void gene_pool(const std::string& config_file)
                                             game_record_file));
         }
 
-        // Get results as they come in
         std::stringstream result_printer;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
             auto& white = pool[index];
             auto& black = pool[index + 1];
-            result_printer << white.id() << " vs " << black.id() << ": ";
 
             auto result = results[index/2].get();
             auto winner = result.winner();
-            result_printer << color_text(winner) << " (" << result.ending_reason() << ")\n";
+            result_printer << white.id() << " vs " << black.id() << ": " << color_text(winner) << " (" << result.ending_reason() << ")\n";
+
+            // A player survives if it wins or draws as black
+            const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
+            auto& losing_player = (winning_player.id() == white.id() ? black : white);
 
             auto offspring = Genetic_AI(white, black);
             offspring.mutate(gated_piece_types);
+            losing_player = offspring;
+
             ++color_wins[static_cast<int>(winner)];
-            if(winner != Winner_Color::NONE)
-            {
-                const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
-                auto& losing_player  = (winner == Winner_Color::WHITE ? black : white);
-                wins[winning_player]++;
-                losing_player = offspring;
-            }
-            else
-            {
-                auto& chance_loser = Random::coin_flip() ? white : black;
-                const auto& chance_winner = chance_loser.id() == black.id() ? white : black;
-                chance_loser = offspring;
-                draws[chance_winner]++;
-            }
+            ++(winner == Winner_Color::NONE ? draws : wins)[winning_player];
         }
 
         std::cout << result_printer.str();

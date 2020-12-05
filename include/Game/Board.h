@@ -278,9 +278,6 @@ class Board
         //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
         bool move_changes_material(const Move& move) const noexcept;
 
-        //! \brief Whether any currently legal move changes material (by capture or promotion).
-        bool material_change_possible() const noexcept;
-
         //! \brief Number of moves since the last pawn move or capturing move.
         //!
         //! If this count reaches 100 (50 moves on each side), the game ends in
@@ -349,12 +346,11 @@ class Board
         const Move* previous_move = nullptr;
         std::array<bool, 64> unmoved_positions{};
         Square en_passant_target;
-        std::string starting_fen;
+        uint64_t starting_hash;
         std::array<Square, 2> king_location;
         Square checking_square;
         mutable Square last_pin_check_square;
         mutable bool last_pin_result;
-        bool material_changing_move_available;
         size_t first_full_move_label;
         Board_Type board_type = Board_Type::STANDARD;
 
@@ -415,7 +411,7 @@ class Board
         uint64_t square_hash(Square square) const noexcept;
         void update_whose_turn_hash() noexcept;
 
-        void fen_parse_assert(bool assertion, const std::string& failure_message) const;
+        static void fen_parse_assert(bool assertion, const std::string& input_fen, const std::string& failure_message);
 
         // Musketeer board members
         std::array<std::array<Piece, 8>, 2> gated_pieces{}; // indexed by gated_pieces[Color index][File index]

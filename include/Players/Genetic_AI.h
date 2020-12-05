@@ -40,7 +40,7 @@ class Genetic_AI : public Minimax_AI
         //!         the relevant AI data.
         Genetic_AI(std::istream& is, int id);
 
-        //! \brief Create a Genetic_AI from an already open input stream (as from std::ifstream(file_name)).
+        //! \brief Create a Genetic_AI from a (possibly temporary) input stream (as from std::ifstream(file_name)).
         //!
         //! \param is The input stream that is the source of genetic data.
         //! \param id The id of the Genetic_AI to be created.
@@ -111,7 +111,7 @@ class Genetic_AI : public Minimax_AI
 
         // Time management
         Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept override;
-        double speculation_time_factor(const Board& board) const noexcept override;
+        double speculation_time_factor() const noexcept override;
         double branching_factor() const noexcept override;
 };
 

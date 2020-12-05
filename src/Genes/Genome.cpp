@@ -23,7 +23,6 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 #include "Genes/Sphere_of_Influence_Gene.h"
 #include "Genes/Look_Ahead_Gene.h"
-#include "Genes/King_Confinement_Gene.h"
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
@@ -60,7 +59,6 @@ Genome::Genome() noexcept
     genome.emplace_back(std::make_unique<Passed_Pawn_Gene>());
     genome.emplace_back(std::make_unique<Opponent_Pieces_Targeted_Gene>(psg));
     genome.emplace_back(std::make_unique<Sphere_of_Influence_Gene>());
-    genome.emplace_back(std::make_unique<King_Confinement_Gene>());
     genome.emplace_back(std::make_unique<King_Protection_Gene>());
     genome.emplace_back(std::make_unique<Castling_Possible_Gene>());
     genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
@@ -229,9 +227,9 @@ Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) c
     return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().time_to_examine(board, clock);
 }
 
-double Genome::speculation_time_factor(const Board& board) const noexcept
+double Genome::speculation_time_factor() const noexcept
 {
-    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().speculation_time_factor(board);
+    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().speculation_time_factor();
 }
 
 double Genome::branching_factor() const noexcept
