@@ -73,6 +73,10 @@ void gene_pool(const std::string& config_file)
     // Environment variables
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
+    if(gene_pool_population % 2 != 0)
+    {
+        throw std::invalid_argument("Gene pool population must be even. Current value = " + std::to_string(gene_pool_population));
+    }
     const auto gene_pool_count = config.as_positive_number<size_t>("gene pool count");
     const auto pool_swap_interval = config.as_positive_number<size_t>("pool swap interval");
     const auto genome_file_name = config.as_text("gene pool file");
