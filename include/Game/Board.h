@@ -308,7 +308,7 @@ class Board
         const Move* previous_move = nullptr;
         std::array<bool, 64> unmoved_positions{};
         Square en_passant_target;
-        std::string starting_fen;
+        uint64_t starting_hash;
         std::array<Square, 2> king_location;
         Square checking_square;
         mutable Square last_pin_check_square;
@@ -371,7 +371,7 @@ class Board
 
         bool king_multiply_checked() const noexcept;
 
-        void fen_parse_assert(bool assertion, const std::string& failure_message) const;
+        static void fen_parse_assert(bool assertion, const std::string& input_fen, const std::string& failure_message);
 
         // Moves with side effects are friends of Board
         friend class Castle; // moves second piece

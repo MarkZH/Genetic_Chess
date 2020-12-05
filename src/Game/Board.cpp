@@ -14,6 +14,7 @@
 #include <string>
 #include <chrono>
 using namespace std::chrono_literals;
+#include <map>
 
 #include "Game/Clock.h"
 #include "Game/Square.h"
@@ -71,19 +72,20 @@ namespace
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     std::atomic<Thinking_Output_Type> thinking_indicator = Thinking_Output_Type::NO_THINKING;
     std::atomic_bool move_immediately = false;
+    std::map<uint64_t, std::string> starting_fen_from_starting_hash;
 }
 
 Board::Board() noexcept : Board(standard_starting_fen)
 {
 }
 
-Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_whitespace(input_fen))
+Board::Board(const std::string& input_fen)
 {
     auto fen_parse = String::split(input_fen);
-    fen_parse_assert(fen_parse.size() == 6, "Wrong number of fields (should be 6)");
+    fen_parse_assert(fen_parse.size() == 6, input_fen, "Wrong number of fields (should be 6)");
 
     auto board_parse = String::split(fen_parse.at(0), "/");
-    fen_parse_assert(board_parse.size() == 8, "Board has wrong number of rows (should be 8)");
+    fen_parse_assert(board_parse.size() == 8, input_fen, "Board has wrong number of rows (should be 8)");
 
     for(int rank = 8; rank >= 1; --rank)
     {
@@ -93,25 +95,25 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
             if(isdigit(symbol))
             {
                 file += symbol - '0';
-                fen_parse_assert(file <= 'h' + 1, "Too many squares in rank " + std::to_string(rank));
+                fen_parse_assert(file <= 'h' + 1, input_fen, "Too many squares in rank " + std::to_string(rank));
             }
             else
             {
-                fen_parse_assert(file <= 'h', "Too many squares in rank " + std::to_string(rank));
+                fen_parse_assert(file <= 'h', input_fen, "Too many squares in rank " + std::to_string(rank));
                 auto piece = Piece{symbol};
-                fen_parse_assert(piece.type() != Piece_Type::PAWN || ! (rank == 1 || rank == 8), "Pawns cannot be placed on the home ranks.");
-                fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), "More than one " + color_text(piece.color()) + " king.");
+                fen_parse_assert(piece.type() != Piece_Type::PAWN || ! (rank == 1 || rank == 8), input_fen, "Pawns cannot be placed on the home ranks.");
+                fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), input_fen, "More than one " + color_text(piece.color()) + " king.");
 
                 place_piece(piece, {file, rank});
                 ++file;
             }
         }
 
-        fen_parse_assert(file == 'h' + 1, "Too few squares in rank " + std::to_string(rank));
+        fen_parse_assert(file == 'h' + 1, input_fen, "Too few squares in rank " + std::to_string(rank));
     }
 
-    fen_parse_assert(find_king(Piece_Color::WHITE).is_set(), "White king not in FEN string");
-    fen_parse_assert(find_king(Piece_Color::BLACK).is_set(), "Black king not in FEN string");
+    fen_parse_assert(find_king(Piece_Color::WHITE).is_set(), input_fen, "White king not in FEN string");
+    fen_parse_assert(find_king(Piece_Color::BLACK).is_set(), input_fen, "Black king not in FEN string");
 
     for(auto square : Square::all_squares())
     {
@@ -132,11 +134,12 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
     }
     else
     {
-        fen_parse_assert(false, "Invalid character for whose turn: " + fen_parse[1]);
+        fen_parse_assert(false, input_fen, "Invalid character for whose turn: " + fen_parse[1]);
     }
 
     auto non_turn_color = opposite(whose_turn());
-    fen_parse_assert(safe_for_king(find_king(non_turn_color), non_turn_color), color_text(non_turn_color) +
+    fen_parse_assert(safe_for_king(find_king(non_turn_color), non_turn_color), input_fen,
+                     color_text(non_turn_color) +
                      " is in check but it is " +
                      color_text(whose_turn()) + "'s turn.");
 
@@ -145,18 +148,18 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
     {
         for(auto c : castling_parse)
         {
-            fen_parse_assert(String::contains("KQkq", c), std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
+            fen_parse_assert(String::contains("KQkq", c), input_fen, std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
 
             Piece_Color piece_color = std::isupper(c) ? Piece_Color::WHITE : Piece_Color::BLACK;
             auto rook_square = Square{std::toupper(c) == 'K' ? 'h' : 'a', std::isupper(c) ? 1 : 8};
             auto king_square = Square{'e', rook_square.rank()};
 
             std::string side = std::toupper(c) == 'K' ? "king" : "queen";
-            fen_parse_assert(piece_on_square(rook_square) == Piece{piece_color, Piece_Type::ROOK},
+            fen_parse_assert(piece_on_square(rook_square) == Piece{piece_color, Piece_Type::ROOK}, input_fen,
                              "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.string() + " to castle " + side + "side.");
             set_already_moved(rook_square, false);
 
-            fen_parse_assert(piece_on_square(king_square) == Piece{piece_color, Piece_Type::KING},
+            fen_parse_assert(piece_on_square(king_square) == Piece{piece_color, Piece_Type::KING}, input_fen,
                              "There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.string() + " to castle.");
             set_already_moved(king_square, false);
         }
@@ -165,21 +168,21 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
     auto en_passant_parse = fen_parse.at(3);
     if(en_passant_parse != "-")
     {
-        fen_parse_assert(en_passant_parse.size() == 2, "Invalid en passant square.");
+        fen_parse_assert(en_passant_parse.size() == 2, input_fen, "Invalid en passant square.");
 
         make_en_passant_targetable({en_passant_parse[0], en_passant_parse[1] - '0'});
 
-        fen_parse_assert(en_passant_target.is_set(), "Invalid en passant square.");
-        fen_parse_assert( ! piece_on_square(en_passant_target), "Piece is not allowed on en passant target square.");
+        fen_parse_assert(en_passant_target.is_set(), input_fen, "Invalid en passant square.");
+        fen_parse_assert( ! piece_on_square(en_passant_target), input_fen, "Piece is not allowed on en passant target square.");
 
         auto last_move_pawn = piece_on_square(en_passant_target + Square_Difference{0, whose_turn() == Piece_Color::WHITE ? -1 : 1});;
-        fen_parse_assert(last_move_pawn == Piece{opposite(whose_turn()), Piece_Type::PAWN}, "There must be a pawn past the en passant target square.");
+        fen_parse_assert(last_move_pawn == Piece{opposite(whose_turn()), Piece_Type::PAWN}, input_fen, "There must be a pawn past the en passant target square.");
     }
 
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
     auto fifty_move_count_input = String::to_number<size_t>(fen_parse.at(4));
-    fen_parse_assert(fifty_move_count_input <= 100, "Halfmove clock value too large.");
+    fen_parse_assert(fifty_move_count_input <= 100, input_fen, "Halfmove clock value too large.");
     add_board_position_to_repeat_record();
     while(moves_since_pawn_or_capture() < fifty_move_count_input)
     {
@@ -188,20 +191,23 @@ Board::Board(const std::string& input_fen) : starting_fen(String::remove_extra_w
 
     first_full_move_label = String::to_number<size_t>(fen_parse.at(5));
 
-    fen_parse_assert(fen() == starting_fen, "Result: " + fen());
+    auto starting_fen = String::remove_extra_whitespace(input_fen);
+    fen_parse_assert(fen() == starting_fen, input_fen, "Result: " + fen());
 
     recreate_move_caches();
 
     // In case a listed en passant target is not actually a legal move.
     repeat_count.pop_back();
     add_board_position_to_repeat_record();
+    starting_hash = board_hash();
+    starting_fen_from_starting_hash[starting_hash] = starting_fen;
 }
 
-void Board::fen_parse_assert(bool condition, const std::string& failure_message) const
+void Board::fen_parse_assert(bool condition, const std::string& input_fen, const std::string& failure_message)
 {
     if( ! condition)
     {
-        throw std::invalid_argument("Bad FEN input: " + starting_fen + "\n" + failure_message);
+        throw std::invalid_argument("Bad FEN input: " + input_fen + "\n" + failure_message);
     }
 }
 
@@ -287,7 +293,7 @@ std::string Board::fen() const noexcept
 
 std::string Board::original_fen() const noexcept
 {
-    return starting_fen;
+    return starting_fen_from_starting_hash[starting_hash];
 }
 
 Game_Result Board::submit_move(const Move& move) noexcept
@@ -821,6 +827,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         print_game_header_line(out_stream, "Termination", actual_result.ending_reason());
     }
 
+    auto starting_fen = original_fen();
     if(starting_fen != standard_starting_fen)
     {
         print_game_header_line(out_stream, "SetUp", 1);
