@@ -300,23 +300,16 @@ void gene_pool(const std::string& config_file)
             auto winner = result.winner();
             result_printer << white.id() << " vs " << black.id() << ": " << color_text(winner) << " (" << result.ending_reason() << ")\n";
 
+            // A player survives if it wins or draws as black
+            const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
+            auto& losing_player = (winning_player.id() == white.id() ? black : white);
+
             auto offspring = Genetic_AI(white, black);
             offspring.mutate();
+            losing_player = offspring;
+
             ++color_wins[static_cast<int>(winner)];
-            if(winner != Winner_Color::NONE)
-            {
-                const auto& winning_player = (winner == Winner_Color::WHITE ? white : black);
-                auto& losing_player  = (winner == Winner_Color::WHITE ? black : white);
-                wins[winning_player]++;
-                losing_player = offspring;
-            }
-            else
-            {
-                auto& chance_loser = Random::coin_flip() ? white : black;
-                const auto& chance_winner = chance_loser.id() == black.id() ? white : black;
-                chance_loser = offspring;
-                draws[chance_winner]++;
-            }
+            ++(winner == Winner_Color::NONE ? draws : wins)[winning_player];
         }
 
         std::cout << result_printer.str();
