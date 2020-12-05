@@ -295,11 +295,10 @@ void gene_pool(const std::string& config_file)
         {
             auto& white = pool[index];
             auto& black = pool[index + 1];
-            result_printer << white.id() << " vs " << black.id() << ": ";
 
             auto result = results[index/2].get();
             auto winner = result.winner();
-            result_printer << color_text(winner) << " (" << result.ending_reason() << ")\n";
+            result_printer << white.id() << " vs " << black.id() << ": " << color_text(winner) << " (" << result.ending_reason() << ")\n";
 
             auto offspring = Genetic_AI(white, black);
             offspring.mutate();
