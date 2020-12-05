@@ -290,7 +290,6 @@ void gene_pool(const std::string& config_file)
                                             game_record_file));
         }
 
-        // Get results as they come in
         std::stringstream result_printer;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
