@@ -58,7 +58,7 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
             break;
         case 3:
             speculation_constant += Random::random_laplace(0.05);
-            speculation_constant = std::max(speculation_constant, 0.0);
+            speculation_constant = std::max(speculation_constant, 1.0);
             break;
         case 4:
             branching_factor_estimate += Random::random_laplace(1.0);
