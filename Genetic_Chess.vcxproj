@@ -242,7 +242,6 @@
     <ClCompile Include="src\genes\Gene.cpp" />
     <ClCompile Include="src\Genes\Gene_Pool.cpp" />
     <ClCompile Include="src\genes\Genome.cpp" />
-    <ClCompile Include="src\genes\King_Confinement_Gene.cpp" />
     <ClCompile Include="src\genes\King_Protection_Gene.cpp" />
     <ClCompile Include="src\genes\Look_Ahead_Gene.cpp" />
     <ClCompile Include="src\Genes\Mutation_Rate_Gene.cpp" />
@@ -289,7 +288,6 @@
     <ClInclude Include="include\genes\Gene.h" />
     <ClInclude Include="include\Genes\Gene_Pool.h" />
     <ClInclude Include="include\genes\Genome.h" />
-    <ClInclude Include="include\genes\King_Confinement_Gene.h" />
     <ClInclude Include="include\genes\King_Protection_Gene.h" />
     <ClInclude Include="include\genes\Look_Ahead_Gene.h" />
     <ClInclude Include="include\Genes\Mutation_Rate_Gene.h" />
