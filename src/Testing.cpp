@@ -26,6 +26,7 @@ using namespace std::chrono_literals;
 
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Freedom_To_Move_Gene.h"
+#include "Genes/King_Confinement_Gene.h"
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 #include "Genes/Pawn_Advancement_Gene.h"
@@ -455,8 +456,18 @@ bool run_tests()
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::BLACK, freedom_to_move_black_score);
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
 
+    auto king_confinement_gene = King_Confinement_Gene();
+    king_confinement_gene.read_from(test_genes_file_name);
+    auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+    auto king_confinement_score = 3.0/64; // free squares (h1, g1, f1)
+    king_confinement_gene.test(tests_passed, king_confinement_board, Piece_Color::WHITE, king_confinement_score);
+
+    auto king_confined_by_pawns_board = Board("k7/8/8/8/8/pppppppp/8/K7 w - - 0 1");
+    auto king_confined_by_pawns_score = 8.0/64; // free squares (a1-h1)
+    king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, Piece_Color::WHITE, king_confined_by_pawns_score);
+
     auto king_protection_gene = King_Protection_Gene();
-    auto king_protection_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+    auto king_protection_board = king_confinement_board;
     auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
     auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
     auto king_protection_score = double(max_square_count - square_count)/max_square_count;
@@ -712,6 +723,8 @@ void run_speed_tests()
     auto castling_possible_gene = Castling_Possible_Gene();
     castling_possible_gene.read_from(test_genes_file_name);
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
+    auto king_confinement_gene = King_Confinement_Gene();
+    king_confinement_gene.read_from(test_genes_file_name);
     auto king_protection_gene = King_Protection_Gene();
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
@@ -739,6 +752,7 @@ void run_speed_tests()
     std::vector<const Gene*> performance_genome = {&castling_possible_gene,
                                                    &checkmate_material_gene,
                                                    &freedom_to_move_gene,
+                                                   &king_confinement_gene,
                                                    &king_protection_gene,
                                                    &opponent_pieces_targeted_gene,
                                                    &passed_pawn_gene,

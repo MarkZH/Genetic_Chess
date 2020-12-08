@@ -16,7 +16,11 @@ Legal Square Score: 4
 Illegal Square Score: 1
 Priority: 1
 
-Name: Castling Possible    Gene
+Name: King   Confinement Gene
+Active: 1
+Priority: 1
+
+Name: Castling Possible Gene
 Active: 1
 Kingside Preference: 0.8
 Queenside Preference: 0.2
