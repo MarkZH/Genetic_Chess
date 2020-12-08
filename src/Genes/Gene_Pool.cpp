@@ -70,7 +70,6 @@ void gene_pool(const std::string& config_file)
 
     auto config = Configuration(config_file);
 
-    // Environment variables
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
     if(gene_pool_population % 2 != 0)
