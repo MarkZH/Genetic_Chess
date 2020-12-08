@@ -89,7 +89,7 @@ void gene_pool(const std::string& config_file)
         std::cerr << "Maximum game time = " << maximum_game_time.count() << "\n";
         throw std::invalid_argument("Maximum game time must be greater than the minimum game time.");
     }
-    auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
+    const auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
 
     auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
 
