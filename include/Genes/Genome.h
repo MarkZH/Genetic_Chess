@@ -97,11 +97,6 @@ class Genome
         void reset_piece_strength_gene() noexcept;
         void renormalize_priorities() noexcept;
 
-        //! \brief Consults the Mutation_Rate_Gene to determine how many point mutations to apply to the genome.
-        //!
-        //! \returns A number of mutations to apply.
-        int components_to_mutate() const noexcept;
-
         template<typename Gene_Type, size_t index>
         constexpr const Gene_Type& gene_reference() const noexcept
         {

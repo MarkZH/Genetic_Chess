@@ -55,8 +55,8 @@ class Genetic_AI : public Minimax_AI
 
         //! \brief Apply random mutations to the Genome of the Genetic_AI
         //!
-        //! \param mutation_count The number of mutation actions to apply to the genome. Defaults to 1 if unspecified.
-        void mutate(int mutation_count = 1) noexcept;
+        //! \param mutation_count The number of mutation actions to apply to the genome.
+        void mutate(size_t mutation_count) noexcept;
 
         //! \brief Reports the name of the AI and ID number.
         //!
