@@ -70,7 +70,6 @@ void gene_pool(const std::string& config_file)
 
     auto config = Configuration(config_file);
 
-    // Environment variables
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
     if(gene_pool_population % 2 != 0)
@@ -80,7 +79,13 @@ void gene_pool(const std::string& config_file)
     const auto gene_pool_count = config.as_positive_number<size_t>("gene pool count");
     const auto pool_swap_interval = config.as_positive_number<size_t>("pool swap interval");
     const auto genome_file_name = config.as_text("gene pool file");
-    const auto scramble_mutations = config.as_positive_number<int>("initial mutations");
+
+    const auto low_mutation_rate = config.as_positive_number<size_t>("low mutation rate");
+    const auto low_mutation_interval = config.as_positive_number<size_t>("low mutation interval");
+    const auto high_mutation_rate = config.as_positive_number<size_t>("high mutation rate");
+    const auto high_mutation_interval = config.as_positive_number<size_t>("high mutation interval");
+
+    auto mutation_rate = high_mutation_rate;
 
     const auto minimum_game_time = config.as_positive_time_duration<Clock::seconds>("minimum game time");
     const auto maximum_game_time = config.as_positive_time_duration<Clock::seconds>("maximum game time");
@@ -90,7 +95,7 @@ void gene_pool(const std::string& config_file)
         std::cerr << "Maximum game time = " << maximum_game_time.count() << "\n";
         throw std::invalid_argument("Maximum game time must be greater than the minimum game time.");
     }
-    auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
+    const auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
 
     auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
 
@@ -129,13 +134,13 @@ void gene_pool(const std::string& config_file)
         pools[i].resize(gene_pool_population);
         for(auto ai_index = new_ai_index; ai_index < pools[i].size(); ++ai_index)
         {
-            pools[i][ai_index].mutate(scramble_mutations);
+            pools[i][ai_index].mutate(mutation_rate);
         }
     }
     write_generation(pools, genome_file_name, write_new_pools);
 
     size_t last_pool = gene_pool_count;
-    size_t rounds = 0; // Count of complete gene pool rounds where all pools have played a set of games
+    size_t round_count = 0; // Count of complete gene pool rounds where all pools have played a set of games
     if(auto genome_file = std::ifstream(genome_file_name))
     {
         size_t line_number = 0;
@@ -152,7 +157,7 @@ void gene_pool(const std::string& config_file)
                     last_pool = String::to_number<size_t>(alive_split.at(1));
                     if(last_pool == gene_pool_count - 1)
                     {
-                        ++rounds;
+                        ++round_count;
                     }
                 }
                 catch(const std::exception&)
@@ -162,7 +167,6 @@ void gene_pool(const std::string& config_file)
             }
         }
     }
-    auto rounds_since_last_swap = rounds % pool_swap_interval;
     const auto starting_pool = (last_pool + 1) % gene_pool_count;
 
     const auto game_record_file = genome_file_name +  "_games.pgn";
@@ -244,13 +248,12 @@ void gene_pool(const std::string& config_file)
         std::cout << "\n=======================\n\n"
                   << "Gene pool ID: " << pool_index
                   << "  Gene pool size: " << pool.size()
-                  << "  Rounds since pool swaps: " << rounds_since_last_swap << "/" << pool_swap_interval
+                  << "  Rounds since pool swaps: " << round_count % pool_swap_interval << "/" << pool_swap_interval
                   << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), size_t{0})
                   << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
                   << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
                   << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
-                  << "\nTime: " << game_time.count() << " sec"
-                  << "   Gene pool file name: " << genome_file_name << "\n\n";
+                  << "\nGene pool file name: " << genome_file_name << "  Current mutation rate: " << mutation_rate << "  Time: " << game_time.count() << " sec\n\n";
 
         #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
@@ -305,7 +308,7 @@ void gene_pool(const std::string& config_file)
             auto& losing_player = (winning_player.id() == white.id() ? black : white);
 
             auto offspring = Genetic_AI(white, black);
-            offspring.mutate();
+            offspring.mutate(mutation_rate);
             losing_player = offspring;
 
             ++color_wins[static_cast<int>(winner)];
@@ -360,11 +363,18 @@ void gene_pool(const std::string& config_file)
         // Update game time
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
 
-        // Mix up the populations of all the gene pools
-        if(pools.size() > 1 && pool_index == pools.size() - 1 && ++rounds_since_last_swap >= pool_swap_interval)
+        const auto round_complete = pool_index == pools.size() - 1;
+        if(round_complete)
         {
-            rounds_since_last_swap = 0;
+            ++round_count;
+        }
 
+        const auto mutation_phase = round_count % (high_mutation_interval + low_mutation_interval);
+        mutation_rate = mutation_phase < high_mutation_interval ? high_mutation_rate : low_mutation_rate;
+
+        // Mix up the populations of all the gene pools
+        if(round_complete && pools.size() > 1 && round_count % pool_swap_interval == 0)
+        {
             std::cout << "\n=======================\n\n";
             std::cout << "Shuffling pools ...\n";
 

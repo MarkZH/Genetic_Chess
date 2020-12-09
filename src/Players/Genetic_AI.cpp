@@ -116,9 +116,9 @@ double Genetic_AI::branching_factor() const noexcept
     return genome.branching_factor();
 }
 
-void Genetic_AI::mutate(int mutation_count) noexcept
+void Genetic_AI::mutate(size_t mutation_count) noexcept
 {
-    for(int i = 0; i < mutation_count; ++i)
+    for(size_t i = 0; i < mutation_count; ++i)
     {
         genome.mutate();
     }

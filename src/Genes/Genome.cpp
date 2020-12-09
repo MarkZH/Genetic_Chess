@@ -28,7 +28,6 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
-#include "Genes/Mutation_Rate_Gene.h"
 
 class Board;
 
@@ -36,7 +35,6 @@ namespace
 {
      constexpr const auto piece_strength_gene_index = size_t(0);
      constexpr const auto look_ahead_gene_index = size_t(1);
-     constexpr const auto mutation_rate_gene_index = size_t(2);
 }
 
 Genome::Genome() noexcept
@@ -46,8 +44,6 @@ Genome::Genome() noexcept
     assert(genome[piece_strength_gene_index]->name() == "Piece Strength Gene");
     genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
     assert(genome[look_ahead_gene_index]->name() == "Look Ahead Gene");
-    genome.emplace_back(std::make_unique<Mutation_Rate_Gene>());
-    assert(genome[mutation_rate_gene_index]->name() == "Mutation Rate Gene");
 
     // Normal genes
     auto psg = &gene_reference<Piece_Strength_Gene, piece_strength_gene_index>();
@@ -206,12 +202,8 @@ void Genome::mutate() noexcept
 
     // Pick randomly from the list of copies to make sure genes with
     // more components don't lack for mutations.
-    auto mutation_count = components_to_mutate();
-    for(auto mutations = 0; mutations < mutation_count; ++mutations)
-    {
-        Random::random_element(genes)->mutate();
-        renormalize_priorities();
-    }
+    Random::random_element(genes)->mutate();
+    renormalize_priorities();
 }
 
 void Genome::print(std::ostream& os) const noexcept
@@ -240,9 +232,4 @@ double Genome::branching_factor() const noexcept
 const std::array<double, 6>& Genome::piece_values() const noexcept
 {
     return gene_reference<Piece_Strength_Gene, piece_strength_gene_index>().piece_values();
-}
-
-int Genome::components_to_mutate() const noexcept
-{
-    return gene_reference<Mutation_Rate_Gene, mutation_rate_gene_index>().mutation_count();
 }

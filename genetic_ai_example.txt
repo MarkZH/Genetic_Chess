@@ -15,9 +15,6 @@ Game Length Uncertainty: 0.53755
 Mean Game Length: 63.559
 Speculation: 3.20621
 
-Name: Mutation Rate Gene
-Mutation Rate: 9.84043
-
 Name: Total Force Gene
 Active: 1
 Priority: 0.653576

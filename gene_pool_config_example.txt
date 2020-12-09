@@ -10,13 +10,18 @@ gene pool population = 16
 # How many gene pools
 gene pool count = 3
 
-# How many mutations a newly created Genetic AI should undergo
-# at the start of a gene pool run
-initial mutations = 10
-
 # Complete rounds (in which all pools play a set of games) in between
 # swapping players between pools
 pool swap interval = 1000
+
+# How many mutations a newly created Genetic AI should undergo.
+# The gene pool starts with high mutations and then switches back
+# and forth. How many rounds each mutation rate lasts is controlled
+# by the interval options.
+high mutation rate = 30
+high mutation interval = 20
+low mutation rate = 1
+low mutation interval = 1000
 
 # Game time
 #
