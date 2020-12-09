@@ -86,6 +86,7 @@ void gene_pool(const std::string& config_file)
     const auto high_mutation_interval = config.as_positive_number<size_t>("high mutation interval");
 
     auto mutation_rate = high_mutation_rate;
+    const auto mutation_period = high_mutation_interval + low_mutation_interval;
 
     const auto minimum_game_time = config.as_positive_time_duration<Clock::seconds>("minimum game time");
     const auto maximum_game_time = config.as_positive_time_duration<Clock::seconds>("maximum game time");
@@ -253,7 +254,10 @@ void gene_pool(const std::string& config_file)
                   << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
                   << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
                   << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
-                  << "\nGene pool file name: " << genome_file_name << "  Current mutation rate: " << mutation_rate << "  Time: " << game_time.count() << " sec\n\n";
+                  << "\nGene pool file name: " << genome_file_name << "  Time: " << game_time.count() << " sec"
+                  << "\nRounds since high mutation interval = " << round_count % mutation_period
+                  << " (" << high_mutation_interval << "/" << low_mutation_interval << ")"
+                  << "  Mutation rate = " << mutation_rate << "\n\n";
 
         #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
@@ -369,7 +373,7 @@ void gene_pool(const std::string& config_file)
             ++round_count;
         }
 
-        const auto mutation_phase = round_count % (high_mutation_interval + low_mutation_interval);
+        const auto mutation_phase = round_count % mutation_period;
         mutation_rate = mutation_phase < high_mutation_interval ? high_mutation_rate : low_mutation_rate;
 
         // Mix up the populations of all the gene pools
