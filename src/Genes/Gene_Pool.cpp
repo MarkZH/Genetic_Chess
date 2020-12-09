@@ -140,7 +140,7 @@ void gene_pool(const std::string& config_file)
     }
     write_generation(pools, genome_file_name, write_new_pools);
 
-    size_t last_pool = gene_pool_count;
+    size_t last_pool = gene_pool_count - 1;
     size_t round_count = 0; // Count of complete gene pool rounds where all pools have played a set of games
     if(auto genome_file = std::ifstream(genome_file_name))
     {
@@ -247,17 +247,18 @@ void gene_pool(const std::string& config_file)
 
         // Write overall stats
         std::cout << "\n=======================\n\n"
-                  << "Gene pool ID: " << pool_index
-                  << "  Gene pool size: " << pool.size()
-                  << "  Rounds since pool swaps: " << round_count % pool_swap_interval << "/" << pool_swap_interval
+                  << "Gene pool size: " << pool.size()
+                  << "  Gene pool file name: " << genome_file_name
                   << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), size_t{0})
                   << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
                   << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
                   << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
-                  << "\nGene pool file name: " << genome_file_name << "  Time: " << game_time.count() << " sec"
-                  << "\nRounds since high mutation interval = " << round_count % mutation_period
+                  << "\nRounds: " << round_count
+                  << "  Rounds since pool swaps: " << round_count % pool_swap_interval << "/" << pool_swap_interval
+                  << "\nRounds since high mutation interval: " << round_count % mutation_period
                   << " (" << high_mutation_interval << "/" << low_mutation_interval << ")"
-                  << "  Mutation rate = " << mutation_rate << "\n\n";
+                  << "  Mutation rate: " << mutation_rate
+                  << "\n\nGene pool ID: " << pool_index << "  Game time: " << game_time.count() << " sec\n\n";
 
         #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
