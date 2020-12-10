@@ -144,7 +144,8 @@ namespace
 
         if(function_threw_exception != should_throw)
         {
-            std::cerr << test_name << " failed. Function should" << (should_throw ? " " : " not ") << "have thrown." << std::endl;
+            std::cerr << (test_name.empty() ? "Test" : test_name) << " failed. Function should"
+                      << (should_throw ? " " : " not ") << "have thrown." << std::endl;
             print_arguments(arguments...);
             if( ! error_message.empty())
             {
