@@ -1043,8 +1043,15 @@ namespace
 
             auto test_type = String::lowercase(String::remove_extra_whitespace(specification.at(0)));
             auto board_fen = String::remove_extra_whitespace(specification.at(1));
-            auto board = board_fen == "start" ? Board{} : Board{board_fen};
             auto test_passed = true;
+            if(test_type == "illegal position")
+            {
+                function_should_throw(test_passed, "", [](const std::string& s) { Board{s}; }, board_fen);
+                test_result(all_tests_passed, test_passed, line + " -- FAILED\n");
+                continue;
+            }
+
+            auto board = board_fen == "start" ? Board{} : Board{board_fen};
 
             if(test_type == "all moves legal")
             {
