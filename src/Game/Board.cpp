@@ -101,7 +101,7 @@ Board::Board(const std::string& input_fen)
             {
                 fen_parse_assert(file <= 'h', input_fen, "Too many squares in rank " + std::to_string(rank));
                 auto piece = Piece{symbol};
-                fen_parse_assert(piece.type() != Piece_Type::PAWN || ! (rank == 1 || rank == 8), input_fen, "Pawns cannot be placed on the home ranks.");
+                fen_parse_assert(piece.type() != Piece_Type::PAWN || (rank != 1 && rank != 8), input_fen, "Pawns cannot be placed on the home ranks.");
                 fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), input_fen, "More than one " + color_text(piece.color()) + " king.");
 
                 place_piece(piece, {file, rank});
