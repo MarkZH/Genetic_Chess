@@ -38,14 +38,14 @@ namespace
 {
     const std::string stop_key = "Ctrl-c";
 
-    #ifdef _WIN32
+#ifdef _WIN32
     const auto PAUSE_SIGNAL = SIGINT;
     auto quit_gene_pool = false;
-    #else
+#else
     const auto PAUSE_SIGNAL = SIGTSTP;
     const std::string pause_key = "Ctrl-z";
     std::mutex pause_mutex;
-    #endif
+#endif
     bool gene_pool_started = false;
 
     using Gene_Pool_Set = std::vector<std::vector<Genetic_AI>>;
@@ -228,20 +228,20 @@ void gene_pool(const std::string& config_file)
     for(size_t pool_index = starting_pool; true; pool_index = (pool_index + 1) % pools.size()) // run forever
     {
         // Pause gene pool
-        #ifdef _WIN32
+    #ifdef _WIN32
         if(quit_gene_pool)
         {
             std::cout << "Done." << std::endl;
             break;
         }
-        #else
-        if(auto pause_lock = std::unique_lock(pause_mutex, std::try_to_lock); ! pause_lock.owns_lock())
+    #else
+        if(auto pause_lock = std::unique_lock(pause_mutex, std::try_to_lock); !pause_lock.owns_lock())
         {
             std::cout << "\nGene pool paused. Press " << pause_key << " to continue ";
             std::cout << "or " << stop_key << " to quit." << std::endl;
             pause_lock.lock();
         }
-        #endif // _WIN32
+    #endif // _WIN32
 
         auto& pool = pools[pool_index];
 
@@ -260,11 +260,11 @@ void gene_pool(const std::string& config_file)
                   << "  Mutation rate: " << mutation_rate
                   << "\n\nGene pool ID: " << pool_index << "  Game time: " << game_time.count() << " sec\n\n";
 
-        #ifdef _WIN32
+    #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
-        #else
+    #else
         std::cout << "Pause: " << pause_key << "    Abort: " << stop_key << "\n" << std::endl;
-        #endif // _WIN32
+    #endif // _WIN32
 
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
@@ -412,7 +412,7 @@ namespace
 {
     void pause_gene_pool(int)
     {
-        #ifdef _WIN32
+    #ifdef _WIN32
         if(gene_pool_started)
         {
             quit_gene_pool = true;
@@ -422,7 +422,7 @@ namespace
         {
             exit(1);
         }
-        #else
+    #else
         static auto pause_lock = std::unique_lock(pause_mutex, std::defer_lock);
 
         if(pause_lock.owns_lock())
@@ -442,7 +442,7 @@ namespace
                 std::cout << "\n\nWill pause once the loading of files finishes ..." << std::endl;
             }
         }
-        #endif // _WIN32
+    #endif // _WIN32
     }
 
     void write_generation(const Gene_Pool_Set& pools, const std::string& genome_file_name, bool force_write_still_alive)

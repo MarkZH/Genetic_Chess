@@ -762,13 +762,13 @@ void run_speed_tests()
                                                    &stacked_pawns_gene,
                                                    &total_force_gene};
 
-    #ifdef NDEBUG
+#ifdef NDEBUG
     const auto number_of_tests = 1'000'000;
     const auto time_unit = "us";
-    #else
+#else
     const auto number_of_tests = 1'000;
     const auto time_unit = "ms";
-    #endif // NDEBUG
+#endif // NDEBUG
     std::vector<std::pair<std::chrono::steady_clock::duration, std::string>> timing_results;
     auto all_genes_start = std::chrono::steady_clock::now();
     for(auto gene : performance_genome)
