@@ -437,26 +437,16 @@ const Move& Board::create_move(std::string move_text) const
 {
     const static auto optional_end_marks = "+#?!";
     move_text = move_text.substr(0, move_text.find_first_of(optional_end_marks));
-    auto san_move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
-                                      [this, &move_text](auto move)
-                                      {
-                                          auto legal_move_text = move->algebraic(*this);
-                                          legal_move_text = legal_move_text.substr(0, legal_move_text.find_first_of(optional_end_marks));
-                                          return legal_move_text == move_text;
-                                      });
-    if(san_move_iter != legal_moves().end())
+    auto move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
+                                  [this, &move_text](auto move)
+                                  {
+                                      auto legal_move_text = move->algebraic(*this);
+                                      legal_move_text = legal_move_text.substr(0, legal_move_text.find_first_of(optional_end_marks));
+                                      return legal_move_text == move_text || move->coordinates() == move_text;
+                                  });
+    if(move_iter != legal_moves().end())
     {
-        return **san_move_iter;
-    }
-
-    auto coordinate_move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
-                                             [&move_text](auto move)
-                                             {
-                                                 return move->coordinates() == move_text;
-                                             });
-    if(coordinate_move_iter != legal_moves().end())
-    {
-        return **coordinate_move_iter;
+        return **move_iter;
     }
     else
     {
