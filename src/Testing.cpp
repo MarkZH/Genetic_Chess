@@ -1039,7 +1039,7 @@ namespace
             }
 
             auto specification = String::split(line, "|");
-            assert(specification.size() >= 3);
+            assert(specification.size() >= 2);
 
             auto test_type = String::lowercase(String::remove_extra_whitespace(specification.at(0)));
             auto board_fen = String::remove_extra_whitespace(specification.at(1));
@@ -1052,6 +1052,7 @@ namespace
             }
 
             auto board = board_fen == "start" ? Board{} : Board{board_fen};
+            assert(specification.size() >= 3);
 
             if(test_type == "all moves legal")
             {
