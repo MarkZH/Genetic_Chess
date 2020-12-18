@@ -23,6 +23,7 @@ using namespace std::chrono_literals;
 
 #include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
+#include "Players/Alpha_Beta_Value.h"
 
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Freedom_To_Move_Gene.h"
@@ -670,6 +671,11 @@ bool run_tests()
     test_result(tests_passed, r2.value(Piece_Color::WHITE) < r1.value(Piece_Color::WHITE), "1. Error in comparing Game Tree Node Results.");
     test_result(tests_passed, r1.value(Piece_Color::BLACK) < r2.value(Piece_Color::BLACK), "2. Error in comparing Game Tree Node Results.");
 
+    Alpha_Beta_Value abv(0, Piece_Color::BLACK, 0);
+    abv = r1;
+    test_result(tests_passed, abv.value(Piece_Color::WHITE) == r1.value(Piece_Color::WHITE), "1. Incorrect construction of Alpha-Beta Value");
+    test_result(tests_passed, abv.value(Piece_Color::BLACK) == r2.value(Piece_Color::WHITE), "2. Incorrect construction of Alpha-Beta Value");
+
     Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
                                          Piece_Color::WHITE,
                                          {}};
@@ -679,6 +685,16 @@ bool run_tests()
                                         {}};
     test_result(tests_passed, alpha_start.value(Piece_Color::WHITE) < beta_start.value(Piece_Color::WHITE), "3. Error in comparing Game Tree Node Results.");
     test_result(tests_passed, alpha_start.value(Piece_Color::BLACK) > beta_start.value(Piece_Color::BLACK), "4. Error in comparing Game Tree Node Results.");
+
+    auto alpha_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,
+                                         Piece_Color::WHITE,
+                                         0};
+
+    auto beta_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::win_score,
+                                        Piece_Color::WHITE,
+                                        0};
+    test_result(tests_passed, alpha_start2.value(Piece_Color::WHITE) < beta_start2.value(Piece_Color::WHITE), "1. Error in comparing Alpha-Beta Values.");
+    test_result(tests_passed, alpha_start2.value(Piece_Color::BLACK) > beta_start2.value(Piece_Color::BLACK), "2. Error in comparing Alpha-Beta Values.");
 
     Game_Tree_Node_Result white_win4 = {Game_Tree_Node_Result::win_score,
                                         Piece_Color::WHITE,

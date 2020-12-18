@@ -9,6 +9,7 @@ using namespace std::chrono_literals;
 #include <cmath>
 
 #include "Players/Game_Tree_Node_Result.h"
+#include "Players/Alpha_Beta_Value.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
@@ -50,14 +51,14 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor()));
 
     // alpha = highest score found that opponent will allow
-    Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
-                                         board.whose_turn(),
-                                         {}};
+    auto alpha_start = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,
+                                        board.whose_turn(),
+                                        0};
 
     // beta = score that will cause opponent to choose a different prior move
-    Game_Tree_Node_Result beta_start = {Game_Tree_Node_Result::win_score,
-                                        board.whose_turn(),
-                                        {}};
+    auto beta_start = Alpha_Beta_Value{Game_Tree_Node_Result::win_score,
+                                       board.whose_turn(),
+                                       0};
 
     current_variation_store current_variation;
 
@@ -95,8 +96,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const Clock::seconds time_to_examine,
                                                    const size_t minimum_search_depth,
                                                    const Clock& clock,
-                                                   Game_Tree_Node_Result alpha,
-                                                   const Game_Tree_Node_Result& beta,
+                                                   Alpha_Beta_Value alpha,
+                                                   const Alpha_Beta_Value& beta,
                                                    std::vector<const Move*>& principal_variation,
                                                    current_variation_store& current_variation) const noexcept
 {
@@ -237,12 +238,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 {
                     if(Board::thinking_mode() == Thinking_Output_Type::CECP)
                     {
-                        output_thinking_cecp(alpha,
+                        output_thinking_cecp(best_result,
                                              depth % 2 == 1 ? perspective : opposite(perspective));
                     }
                     else if(Board::thinking_mode() == Thinking_Output_Type::UCI)
                     {
-                        output_thinking_uci(alpha,
+                        output_thinking_uci(best_result,
                                             depth % 2 == 1 ? perspective : opposite(perspective));
                     }
                     time_at_last_output = std::chrono::steady_clock::now();
