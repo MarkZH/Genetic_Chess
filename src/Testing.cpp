@@ -448,6 +448,7 @@ bool run_tests()
 
     castling_board.submit_move("Nc6");
     castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.0); // castling no longer relevant
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2*(6.0/7.0));
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
