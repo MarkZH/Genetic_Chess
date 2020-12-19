@@ -1178,6 +1178,11 @@ size_t Board::castling_move_index(Piece_Color player) const noexcept
     return castling_index[static_cast<int>(player)];
 }
 
+bool Board::player_castled(Piece_Color player) const noexcept
+{
+    return castling_direction(player) != 0;
+}
+
 Board Board::without_random_pawn() const noexcept
 {
     assert(std::any_of(board.begin(), board.end(), [](auto p) { return p && p.type() == Piece_Type::PAWN; }));

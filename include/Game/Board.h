@@ -273,6 +273,11 @@ class Board
         //! See https://en.wikipedia.org/wiki/Zobrist_hashing for details.
         uint64_t board_hash() const noexcept;
 
+        //! \brief Returns whether the specified player has castled.
+        //!
+        //! \param player The color of the player being queried.
+        bool player_castled(Piece_Color player) const noexcept;
+
         //! \brief Gets the ply move during which a player castled.
         //!
         //! \param player The color of the player being queried.

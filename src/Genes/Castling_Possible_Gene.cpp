@@ -36,23 +36,18 @@ std::string Castling_Possible_Gene::name() const noexcept
 double Castling_Possible_Gene::score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
     // check if a castling move lies between here and the actual state of the board
-    if(board.game_length() > 0)
+    if(board.player_castled(perspective))
     {
         auto castling_index = board.castling_move_index(perspective);
-        auto last_move_index = board.game_length() - 1;
-
-        if(castling_index <= last_move_index) // castling has occurred in the past of this board
+        auto first_searched_move_index = board.game_length() - depth;
+        if(castling_index >= first_searched_move_index) // castling has not occurred on the actual board
         {
-            auto first_searched_move_index = board.game_length() - depth;
-            if(castling_index >= first_searched_move_index) // castling has not occurred on the actual board
-            {
-                return Math::sign(board.castling_direction(perspective) > 0 ?
-                                  kingside_preference : queenside_preference);
-            }
-            else // castling already happened in past of actual board, no longer relevant
-            {
-                return 0.0;
-            }
+            return Math::sign(board.castling_direction(perspective) > 0 ?
+                              kingside_preference : queenside_preference);
+        }
+        else // castling already happened in past of actual board, no longer relevant
+        {
+            return 0.0;
         }
     }
 
