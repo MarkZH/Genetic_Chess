@@ -42,7 +42,7 @@ game time increment = 0.01 # seconds
 # to the name. If the file already exists from a previous run,
 # then the gene pool procedue will pick up from the last
 # stopping point.
-gene pool file = pool.txt
+gene pool file = example_pool.txt
 
 # (Optional) When starting a new gene pool run, add the AI from the
 # listed file. The ID # number is separated from the file name with
