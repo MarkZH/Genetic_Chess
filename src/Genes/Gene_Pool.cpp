@@ -408,7 +408,6 @@ void gene_pool(const std::string& config_file)
             {
                 std::sort(new_pool.begin(), new_pool.end());
             }
-            write_generation(pools, genome_file_name, true);
         }
     }
 }
