@@ -80,13 +80,13 @@ void gene_pool(const std::string& config_file)
     const auto pool_swap_interval = config.as_positive_number<size_t>("pool swap interval");
     const auto genome_file_name = config.as_text("gene pool file");
 
-    const auto low_mutation_rate = config.as_positive_number<size_t>("low mutation rate");
-    const auto low_mutation_interval = config.as_positive_number<size_t>("low mutation interval");
-    const auto high_mutation_rate = config.as_positive_number<size_t>("high mutation rate");
-    const auto high_mutation_interval = config.as_positive_number<size_t>("high mutation interval");
+    const auto first_mutation_rate = config.as_positive_number<size_t>("first mutation rate");
+    const auto first_mutation_interval = config.as_positive_number<size_t>("first mutation interval");
+    const auto second_mutation_rate = config.as_positive_number<size_t>("second mutation rate");
+    const auto second_mutation_interval = config.as_positive_number<size_t>("second mutation interval");
 
-    auto mutation_rate = high_mutation_rate;
-    const auto mutation_period = high_mutation_interval + low_mutation_interval;
+    auto mutation_rate = first_mutation_rate;
+    const auto mutation_period = first_mutation_interval + second_mutation_interval;
 
     const auto minimum_game_time = config.as_positive_time_duration<Clock::seconds>("minimum game time");
     const auto maximum_game_time = config.as_positive_time_duration<Clock::seconds>("maximum game time");
@@ -256,7 +256,7 @@ void gene_pool(const std::string& config_file)
                   << "\nRounds: " << round_count
                   << "  Rounds since pool swaps: " << round_count % pool_swap_interval << "/" << pool_swap_interval
                   << "\nRounds since high mutation interval: " << round_count % mutation_period
-                  << " (" << high_mutation_interval << "/" << low_mutation_interval << ")"
+                  << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
                   << "  Mutation rate: " << mutation_rate
                   << "\n\nGene pool ID: " << pool_index << "  Game time: " << game_time.count() << " sec\n\n";
 
@@ -375,7 +375,7 @@ void gene_pool(const std::string& config_file)
         }
 
         const auto mutation_phase = round_count % mutation_period;
-        mutation_rate = mutation_phase < high_mutation_interval ? high_mutation_rate : low_mutation_rate;
+        mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
 
         // Mix up the populations of all the gene pools
         if(round_complete && pools.size() > 1 && round_count % pool_swap_interval == 0)

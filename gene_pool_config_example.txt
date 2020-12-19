@@ -15,13 +15,13 @@ gene pool count = 3
 pool swap interval = 1000
 
 # How many mutations a newly created Genetic AI should undergo.
-# The gene pool starts with high mutations and then switches back
+# The gene pool starts with first mutations and then switches back
 # and forth. How many rounds each mutation rate lasts is controlled
 # by the interval options.
-high mutation rate = 30
-high mutation interval = 20
-low mutation rate = 1
-low mutation interval = 1000
+first mutation rate = 30
+first mutation interval = 20
+second mutation rate = 1
+second mutation interval = 1000
 
 # Game time
 #
