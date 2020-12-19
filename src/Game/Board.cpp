@@ -123,7 +123,7 @@ Board::Board(const std::string& original_fen) : board_type(String::contains(orig
         char file = 'a';
         for(auto symbol : board_parse.at(size_t(8) - rank))
         {
-            if(isdigit(symbol))
+            if(std::isdigit(symbol))
             {
                 file += symbol - '0';
                 fen_parse_assert(file <= 'h' + 1, input_fen, "Too many squares in rank " + std::to_string(rank));
@@ -132,7 +132,7 @@ Board::Board(const std::string& original_fen) : board_type(String::contains(orig
             {
                 fen_parse_assert(file <= 'h', input_fen, "Too many squares in rank " + std::to_string(rank));
                 auto piece = Piece{symbol};
-                fen_parse_assert(piece.type() != Piece_Type::PAWN || ! (rank == 1 || rank == 8), input_fen, "Pawns cannot be placed on the home ranks.");
+                fen_parse_assert(piece.type() != Piece_Type::PAWN || (rank != 1 && rank != 8), input_fen, "Pawns cannot be placed on the home ranks.");
                 fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), input_fen, "More than one " + color_text(piece.color()) + " king.");
 
                 place_piece(piece, {file, rank});
@@ -540,26 +540,16 @@ const Move& Board::create_move(std::string move_text) const
 {
     const static auto optional_end_marks = "+#?!";
     move_text = move_text.substr(0, move_text.find_first_of(optional_end_marks));
-    auto san_move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
-                                      [this, &move_text](auto move)
-                                      {
-                                          auto legal_move_text = move->algebraic(*this);
-                                          legal_move_text = legal_move_text.substr(0, legal_move_text.find_first_of(optional_end_marks));
-                                          return legal_move_text == move_text;
-                                      });
-    if(san_move_iter != legal_moves().end())
+    auto move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
+                                  [this, &move_text](auto move)
+                                  {
+                                      auto legal_move_text = move->algebraic(*this);
+                                      legal_move_text = legal_move_text.substr(0, legal_move_text.find_first_of(optional_end_marks));
+                                      return legal_move_text == move_text || move->coordinates() == move_text;
+                                  });
+    if(move_iter != legal_moves().end())
     {
-        return **san_move_iter;
-    }
-
-    auto coordinate_move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
-                                             [&move_text](auto move)
-                                             {
-                                                 return move->coordinates() == move_text;
-                                             });
-    if(coordinate_move_iter != legal_moves().end())
-    {
-        return **coordinate_move_iter;
+        return **move_iter;
     }
     else
     {
@@ -1293,6 +1283,11 @@ void Board::clear_repeat_count() noexcept
 size_t Board::castling_move_index(Piece_Color player) const noexcept
 {
     return castling_index[static_cast<int>(player)];
+}
+
+bool Board::player_castled(Piece_Color player) const noexcept
+{
+    return castling_direction(player) != 0;
 }
 
 Board Board::without_random_pawn() const noexcept

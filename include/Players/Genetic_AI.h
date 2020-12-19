@@ -59,7 +59,7 @@ class Genetic_AI : public Minimax_AI
         //!
         //! \param gated_piece_types A list of gated piece types for gene pool purposes.
         //! \param mutation_count The number of mutation actions to apply to the genome. Defaults to 1 if unspecified.
-        void mutate(const std::vector<Piece_Type>& gated_piece_types, int mutation_count = 1) noexcept;
+        void mutate(const std::vector<Piece_Type>& gated_piece_types, size_t mutation_count) noexcept;
 
         //! \brief Reports the name of the AI and ID number.
         //!

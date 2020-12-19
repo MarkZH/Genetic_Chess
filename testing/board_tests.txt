@@ -6,6 +6,9 @@ move count | start | | 20
 move count | start | e4 | 20
 move count | ******dh/k7/8/8/8/3D4/8/K7/8/******** w - - 0 1 | | 40
 
+illegal position | k7/8/8/8/8/8/8/KP6 w - - 0 1
+illegal position | kp6/8/8/8/8/8/8/K7 w - - 0 1
+
 # Castling with attacking piece
 all moves legal  |1k6/r7/8/8/8/8/8/R3K2R w KQ   - 0 1 |O-O
 all moves legal  |1k6/r7/8/8/8/8/8/R3K2R w KQ   - 0 1 |O-O-O

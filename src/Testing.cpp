@@ -24,9 +24,11 @@ using namespace std::chrono_literals;
 
 #include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
+#include "Players/Alpha_Beta_Value.h"
 
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Freedom_To_Move_Gene.h"
+#include "Genes/King_Confinement_Gene.h"
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 #include "Genes/Pawn_Advancement_Gene.h"
@@ -144,7 +146,8 @@ namespace
 
         if(function_threw_exception != should_throw)
         {
-            std::cerr << test_name << " failed. Function should" << (should_throw ? " " : " not ") << "have thrown." << std::endl;
+            std::cerr << (test_name.empty() ? "Test" : test_name) << " failed. Function should"
+                      << (should_throw ? " " : " not ") << "have thrown." << std::endl;
             print_arguments(arguments...);
             if( ! error_message.empty())
             {
@@ -448,6 +451,7 @@ bool run_tests()
 
     castling_board.submit_move("Nc6");
     castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.0); // castling no longer relevant
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2*(6.0/7.0));
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
@@ -458,8 +462,18 @@ bool run_tests()
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::BLACK, freedom_to_move_black_score);
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
 
+    auto king_confinement_gene = King_Confinement_Gene();
+    king_confinement_gene.read_from(test_genes_file_name);
+    auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+    auto king_confinement_score = 3.0/64; // free squares (h1, g1, f1)
+    king_confinement_gene.test(tests_passed, king_confinement_board, Piece_Color::WHITE, king_confinement_score);
+
+    auto king_confined_by_pawns_board = Board("k7/8/8/8/8/pppppppp/8/K7 w - - 0 1");
+    auto king_confined_by_pawns_score = 8.0/64; // free squares (a1-h1)
+    king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, Piece_Color::WHITE, king_confined_by_pawns_score);
+
     auto king_protection_gene = King_Protection_Gene();
-    auto king_protection_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+    auto king_protection_board = king_confinement_board;
     auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
     auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
     auto king_protection_score = double(max_square_count - square_count)/max_square_count;
@@ -662,6 +676,11 @@ bool run_tests()
     test_result(tests_passed, r2.value(Piece_Color::WHITE) < r1.value(Piece_Color::WHITE), "1. Error in comparing Game Tree Node Results.");
     test_result(tests_passed, r1.value(Piece_Color::BLACK) < r2.value(Piece_Color::BLACK), "2. Error in comparing Game Tree Node Results.");
 
+    Alpha_Beta_Value abv(0, Piece_Color::BLACK, 0);
+    abv = r1;
+    test_result(tests_passed, abv.value(Piece_Color::WHITE) == r1.value(Piece_Color::WHITE), "1. Incorrect construction of Alpha-Beta Value");
+    test_result(tests_passed, abv.value(Piece_Color::BLACK) == r2.value(Piece_Color::WHITE), "2. Incorrect construction of Alpha-Beta Value");
+
     Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
                                          Piece_Color::WHITE,
                                          {}};
@@ -671,6 +690,16 @@ bool run_tests()
                                         {}};
     test_result(tests_passed, alpha_start.value(Piece_Color::WHITE) < beta_start.value(Piece_Color::WHITE), "3. Error in comparing Game Tree Node Results.");
     test_result(tests_passed, alpha_start.value(Piece_Color::BLACK) > beta_start.value(Piece_Color::BLACK), "4. Error in comparing Game Tree Node Results.");
+
+    auto alpha_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,
+                                         Piece_Color::WHITE,
+                                         0};
+
+    auto beta_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::win_score,
+                                        Piece_Color::WHITE,
+                                        0};
+    test_result(tests_passed, alpha_start2.value(Piece_Color::WHITE) < beta_start2.value(Piece_Color::WHITE), "1. Error in comparing Alpha-Beta Values.");
+    test_result(tests_passed, alpha_start2.value(Piece_Color::BLACK) > beta_start2.value(Piece_Color::BLACK), "2. Error in comparing Alpha-Beta Values.");
 
     Game_Tree_Node_Result white_win4 = {Game_Tree_Node_Result::win_score,
                                         Piece_Color::WHITE,
@@ -716,6 +745,8 @@ void run_speed_tests()
     auto castling_possible_gene = Castling_Possible_Gene();
     castling_possible_gene.read_from(test_genes_file_name);
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
+    auto king_confinement_gene = King_Confinement_Gene();
+    king_confinement_gene.read_from(test_genes_file_name);
     auto king_protection_gene = King_Protection_Gene();
     auto piece_strength_gene = Piece_Strength_Gene();
     piece_strength_gene.read_from(test_genes_file_name);
@@ -743,6 +774,7 @@ void run_speed_tests()
     std::vector<const Gene*> performance_genome = {&castling_possible_gene,
                                                    &checkmate_material_gene,
                                                    &freedom_to_move_gene,
+                                                   &king_confinement_gene,
                                                    &king_protection_gene,
                                                    &opponent_pieces_targeted_gene,
                                                    &passed_pawn_gene,
@@ -752,13 +784,13 @@ void run_speed_tests()
                                                    &stacked_pawns_gene,
                                                    &total_force_gene};
 
-    #ifdef NDEBUG
+#ifdef NDEBUG
     const auto number_of_tests = 1'000'000;
     const auto time_unit = "us";
-    #else
+#else
     const auto number_of_tests = 1'000;
     const auto time_unit = "ms";
-    #endif // NDEBUG
+#endif // NDEBUG
     std::vector<std::pair<std::chrono::steady_clock::duration, std::string>> timing_results;
     auto all_genes_start = std::chrono::steady_clock::now();
     for(auto gene : performance_genome)
@@ -1097,13 +1129,21 @@ namespace
             }
 
             auto specification = String::split(line, "|");
-            assert(specification.size() >= 3);
+            assert(specification.size() >= 2);
 
             auto test_type = String::lowercase(String::remove_extra_whitespace(specification.at(0)));
             auto board_fen = String::remove_extra_whitespace(specification.at(1));
             board_fen = board_fen == "start" ? Board{}.fen() : board_fen;
-            auto board = Board(board_fen);
             auto test_passed = true;
+            if(test_type == "illegal position")
+            {
+                function_should_throw(test_passed, "", [](const std::string& s) { Board{s}; }, board_fen);
+                test_result(all_tests_passed, test_passed, line + " -- FAILED\n");
+                continue;
+            }
+
+            auto board = board_fen == "start" ? Board{} : Board{board_fen};
+            assert(specification.size() >= 3);
 
             if(test_type == "all moves legal")
             {

@@ -25,9 +25,6 @@ Game Length Uncertainty: 0.53755
 Mean Game Length: 63.559
 Speculation: 3.20621
 
-Name: Mutation Rate Gene
-Mutation Rate: 9.84043
-
 Name: Total Force Gene
 Active: 1
 Gate Factor: 0.5
@@ -55,6 +52,10 @@ Illegal Square Score: -0.163346
 King Target Factor: -1.46532
 Legal Square Score: 0.836654
 Priority: 0.0647232
+
+Name: King Confinement Gene
+Active: 0
+Priority: 0.0233947
 
 Name: King Protection Gene
 Active: 1

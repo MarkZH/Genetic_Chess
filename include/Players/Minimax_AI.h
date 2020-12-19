@@ -12,6 +12,7 @@
 #include "Game/Clock.h"
 
 #include "Players/Game_Tree_Node_Result.h"
+#include "Players/Alpha_Beta_Value.h"
 #include "Utility/Fixed_Capacity_Vector.h"
 
 class Board;
@@ -114,8 +115,8 @@ class Minimax_AI : public Player
                                                Clock::seconds time_to_examine,
                                                size_t minimum_search_depth,
                                                const Clock& clock,
-                                               Game_Tree_Node_Result alpha,
-                                               const Game_Tree_Node_Result& beta,
+                                               Alpha_Beta_Value alpha,
+                                               const Alpha_Beta_Value& beta,
                                                std::vector<const Move*>& principal_variation,
                                                current_variation_store& current_variation) const noexcept;
 
