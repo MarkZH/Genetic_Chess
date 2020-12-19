@@ -327,25 +327,25 @@ void gene_pool(const std::string& config_file)
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
 
-        // widths of columns for stats printout
-        auto id_digits = std::to_string(pool.back().id()).size();
-        auto win_column_width = 7;
-        auto draw_column_width = 7;
-
         if(verbose_output)
         {
             std::cout << result_printer.str();
 
+            // widths of columns for stats printout
+            auto id_column_width = std::to_string(pool.back().id()).size() + 1;
+            auto win_column_width = 7;
+            auto draw_column_width = 7;
+
             // Write stat headers
             std::cout << "\n"
-                      << std::setw(id_digits + 1)  << "ID"
+                      << std::setw(id_column_width)  << "ID"
                       << std::setw(win_column_width) << "Wins"
                       << std::setw(draw_column_width) << "Draws" << "\n";
 
             // Write stats for each specimen
             for(const auto& ai : pool)
             {
-                std::cout << std::setw(id_digits + 1) << ai.id()
+                std::cout << std::setw(id_column_width) << ai.id()
                           << std::setw(win_column_width) << wins[ai]
                           << std::setw(draw_column_width) << draws[ai] << "\n";
             }
