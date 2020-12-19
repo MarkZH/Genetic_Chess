@@ -146,7 +146,7 @@ void gene_pool(const std::string& config_file)
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
-    auto write_new_pools = pools.empty() || pools.front().size() != gene_pool_population;
+    auto write_new_pools = pools.size() != gene_pool_count || pools.front().size() != gene_pool_population;
     if(pools.empty() && ! seed_ai_specification.empty())
     {
         auto seed_split = String::split(seed_ai_specification, "/");
@@ -359,25 +359,25 @@ void gene_pool(const std::string& config_file)
         purge_dead_from_map(pools, wins);
         purge_dead_from_map(pools, draws);
 
-        // widths of columns for stats printout
-        auto id_digits = std::to_string(pool.back().id()).size();
-        auto win_column_width = 7;
-        auto draw_column_width = 7;
-
         if(verbose_output)
         {
             std::cout << result_printer.str();
 
+            // widths of columns for stats printout
+            auto id_column_width = std::to_string(pool.back().id()).size() + 1;
+            auto win_column_width = 7;
+            auto draw_column_width = 7;
+
             // Write stat headers
             std::cout << "\n"
-                      << std::setw(id_digits + 1)  << "ID"
+                      << std::setw(id_column_width)  << "ID"
                       << std::setw(win_column_width) << "Wins"
                       << std::setw(draw_column_width) << "Draws" << "\n";
 
             // Write stats for each specimen
             for(const auto& ai : pool)
             {
-                std::cout << std::setw(id_digits + 1) << ai.id()
+                std::cout << std::setw(id_column_width) << ai.id()
                           << std::setw(win_column_width) << wins[ai]
                           << std::setw(draw_column_width) << draws[ai] << "\n";
             }
@@ -428,19 +428,12 @@ void gene_pool(const std::string& config_file)
 
             Random::shuffle(all_players);
             pools.clear();
-            auto begin_iter = all_players.begin();
-            while(begin_iter != all_players.end())
+            for(auto begin_iter = all_players.begin();
+                begin_iter != all_players.end();
+                std::advance(begin_iter, gene_pool_population))
             {
-                auto end_iter = std::next(begin_iter, gene_pool_population);
-                pools.emplace_back(begin_iter, end_iter);
-                begin_iter = end_iter;
+                pools.emplace_back(begin_iter, std::next(begin_iter, gene_pool_population));
             }
-
-            for(auto& new_pool : pools)
-            {
-                std::sort(new_pool.begin(), new_pool.end());
-            }
-            write_generation(pools, genome_file_name, true);
         }
     }
 }
