@@ -65,6 +65,24 @@ std::string Configuration::as_text(const std::string& parameter) const
     }
 }
 
+bool Configuration::as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const
+{
+    auto response = standardize_text(as_text(parameter));
+    if(response == standardize_text(affirmative))
+    {
+        return true;
+    }
+    else if(response == standardize_text(negative))
+    {
+        return false;
+    }
+    else
+    {
+        throw std::runtime_error("Invalid value for \"" + parameter + "\" : \"" + as_text(parameter) + "\"" +
+                                 "\nExpected \"" + affirmative + "\" or \"" + negative + "\".");
+    }
+}
+
 bool Configuration::has_parameter(const std::string& parameter) const noexcept
 {
     return parameters.count(standardize_text(parameter)) > 0;
