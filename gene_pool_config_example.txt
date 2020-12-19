@@ -53,7 +53,7 @@ game time increment = 0.01 # seconds
 # to the name. If the file already exists from a previous run,
 # then the gene pool procedue will pick up from the last
 # stopping point.
-gene pool file = pool.txt
+gene pool file = example_pool.txt
 
 # (Optional) When starting a new gene pool run, add the AI from the
 # listed file. The ID # number is separated from the file name with
@@ -63,3 +63,10 @@ gene pool file = pool.txt
 # (Optional) Alternatively, If no ID number for the seed is listed,
 # then the last one in the file is selected.
 #seed = genetic_ai_example.txt
+
+# Controls how much information is printed during a gene pool run.
+#   "verbose" - Print the outcomes of games and the win/draw counts
+#               of each AI after each round
+#
+#   "quiet" -   Only print information about the round
+output volume = verbose
