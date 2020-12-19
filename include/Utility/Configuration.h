@@ -89,16 +89,6 @@ class Configuration
             return Duration{as_positive_number<typename Duration::rep>(parameter)};
         }
 
-        //! \brief Return true/false data from the configuration file.
-        //!
-        //! \param parameter The configuration parameter sought.
-        //! \param affirmative The case-insensitive value corresponding to true.
-        //! \param negative The case-insensitive value corresponding to false.
-        //! \returns True if the data matches affirmative, false if it matches negative.
-        //! \throws std::runtime_error If the named parameter was not found in the file or
-        //!         if the data does not match affirmative or negative.
-        bool as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const;
-
         //! \brief Check if the Configuration has the given parameter.
         //!
         //! \param parameter The parameter that may or may not appear in the Configuration.
