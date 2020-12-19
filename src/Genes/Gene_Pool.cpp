@@ -115,7 +115,7 @@ void gene_pool(const std::string& config_file)
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pools = load_gene_pool_file(genome_file_name);
-    auto write_new_pools = pools.empty() || pools.front().size() != gene_pool_population;
+    auto write_new_pools = pools.size() != gene_pool_count || pools.front().size() != gene_pool_population;
     if(pools.empty() && ! seed_ai_specification.empty())
     {
         auto seed_split = String::split(seed_ai_specification, "/");
