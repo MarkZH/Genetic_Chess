@@ -4,7 +4,6 @@
 #include <string>
 #include <map>
 #include <stdexcept>
-#include <type_traits>
 
 #include "Utility/String.h"
 
