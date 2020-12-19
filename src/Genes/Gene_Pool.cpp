@@ -99,6 +99,7 @@ void gene_pool(const std::string& config_file)
     const auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
 
     auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
+    auto verbose_output = config.as_boolean("output volume", "verbose", "quiet");
 
     if(config.any_unused_parameters())
     {
@@ -320,7 +321,6 @@ void gene_pool(const std::string& config_file)
             ++(winner == Winner_Color::NONE ? draws : wins)[winning_player];
         }
 
-        std::cout << result_printer.str();
         std::sort(pool.begin(), pool.end());
         write_generation(pools, genome_file_name, false);
 
@@ -332,18 +332,23 @@ void gene_pool(const std::string& config_file)
         auto win_column_width = 7;
         auto draw_column_width = 7;
 
-        // Write stat headers
-        std::cout << "\n"
-                  << std::setw(id_digits + 1)  << "ID"
-                  << std::setw(win_column_width) << "Wins"
-                  << std::setw(draw_column_width) << "Draws" << "\n";
-
-        // Write stats for each specimen
-        for(const auto& ai : pool)
+        if(verbose_output)
         {
-            std::cout << std::setw(id_digits + 1) << ai.id()
-                      << std::setw(win_column_width) << wins[ai]
-                      << std::setw(draw_column_width) << draws[ai] << "\n";
+            std::cout << result_printer.str();
+
+            // Write stat headers
+            std::cout << "\n"
+                      << std::setw(id_digits + 1)  << "ID"
+                      << std::setw(win_column_width) << "Wins"
+                      << std::setw(draw_column_width) << "Draws" << "\n";
+
+            // Write stats for each specimen
+            for(const auto& ai : pool)
+            {
+                std::cout << std::setw(id_digits + 1) << ai.id()
+                          << std::setw(win_column_width) << wins[ai]
+                          << std::setw(draw_column_width) << draws[ai] << "\n";
+            }
         }
 
         // Record best AI from all pools.

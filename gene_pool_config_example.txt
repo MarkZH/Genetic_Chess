@@ -52,3 +52,10 @@ gene pool file = example_pool.txt
 # (Optional) Alternatively, If no ID number for the seed is listed,
 # then the last one in the file is selected.
 #seed = genetic_ai_example.txt
+
+# Controls how much information is printed during a gene pool run.
+#   "verbose" - Print the outcomes of games and the win/draw counts
+#               of each AI after each round
+#
+#   "quiet" -   Only print information about the round
+output volume = verbose
