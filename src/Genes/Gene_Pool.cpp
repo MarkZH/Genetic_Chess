@@ -396,17 +396,11 @@ void gene_pool(const std::string& config_file)
 
             Random::shuffle(all_players);
             pools.clear();
-            auto begin_iter = all_players.begin();
-            while(begin_iter != all_players.end())
+            for(auto begin_iter = all_players.begin();
+                begin_iter != all_players.end();
+                std::advance(begin_iter, gene_pool_population))
             {
-                auto end_iter = std::next(begin_iter, gene_pool_population);
-                pools.emplace_back(begin_iter, end_iter);
-                begin_iter = end_iter;
-            }
-
-            for(auto& new_pool : pools)
-            {
-                std::sort(new_pool.begin(), new_pool.end());
+                pools.emplace_back(begin_iter, std::next(begin_iter, gene_pool_population));
             }
         }
     }
