@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     if(argc <= 1)
     {
         print_help();
-        return 0;
+        return EXIT_SUCCESS;
     }
 
     try
