@@ -154,9 +154,9 @@ namespace String
     //! \brief Round a number to the specified precision
     //!
     //! \param x The number to be rounded.
-    //! \param precision The precision of the rounding (0.01 for 2 decimal places of precision).
+    //! \param decimal_places The number of digits to include after the decimal point.
     //! \returns A string representation of the rounded number.
-    std::string round_to_precision(double x, double precision) noexcept;
+    std::string round_to_decimals(double x, size_t decimal_places) noexcept;
 
     //! \brief Convert a std::string to a numeric type.
     //!
