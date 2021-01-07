@@ -46,6 +46,12 @@ namespace
     //! \param file_name The name of the file to update.
     //! \throws Genetic_AI_Creation_Error If the genome file is invalid.
     void update_genome_file(const std::string& file_name);
+
+    //! \brief Throws std::invalid_argument if assertion fails
+    //!
+    //! \param condition A condition that must be true to continue.
+    //! \param failure_message A message to display if the assertion fails.
+    void argument_assert(bool condition, const std::string& failure_message);
 }
 
 //! \brief The starting point for the whole program.
@@ -67,25 +73,13 @@ int main(int argc, char *argv[])
         std::string option = argv[1];
         if(option == "-gene-pool")
         {
-            if(argc > 2)
-            {
-                gene_pool(argv[2]);
-            }
-            else
-            {
-                throw std::invalid_argument("Specify a configuration file to run a gene pool.");
-            }
+            argument_assert(argc > 2, "Specify a configuration file to run a gene pool.");
+            gene_pool(argv[2]);
         }
         else if(option == "-confirm")
         {
-            if(argc > 2)
-            {
-                return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
-            }
-            else
-            {
-                throw std::invalid_argument("Provide a file containing a game to confirm has all legal moves.");
-            }
+            argument_assert(argc > 2, "Provide a file containing a game to confirm has all legal moves.");
+            return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
         }
         else if(option == "-test")
         {
@@ -101,14 +95,8 @@ int main(int argc, char *argv[])
         }
         else if(option == "-update")
         {
-            if(argc > 2)
-            {
-                update_genome_file(argv[2]);
-            }
-            else
-            {
-                throw std::invalid_argument("Provide a file containing Genetic AI data.");
-            }
+            argument_assert(argc > 2, "Provide a file containing Genetic AI data.");
+            update_genome_file(argv[2]);
         }
         else
         {
@@ -545,6 +533,14 @@ namespace
             {
                 std::cerr << e.what() << '\n';
             }
+        }
+    }
+
+    void argument_assert(bool condition, const std::string& failure_message)
+    {
+        if( ! condition)
+        {
+            throw std::invalid_argument(failure_message);
         }
     }
 }
