@@ -388,50 +388,18 @@ namespace
             }
             else if(opt == "-genetic")
             {
-                std::string filename;
-                if(i + 1 < argc)
-                {
-                    filename = argv[i + 1];
-                    if(filename.front() == '-')
-                    {
-                        filename.clear();
-                    }
-                }
+                argument_assert(i + 1 < argc, "Genome file needed for Genetic AI player");
+                std::string filename = argv[++i];
 
-                if(filename.empty())
+                try
                 {
-                    auto genetic_player = std::make_unique<Genetic_AI>();
-                    genetic_player->mutate(10000);
-                    genetic_player->print("single_game_player.txt");
-                    latest = std::move(genetic_player);
+                    auto id = i + 1 < argc ? argv[i + 1] : std::string{};
+                    latest = std::make_unique<Genetic_AI>(filename, String::to_number<int>(id));
+                    ++i;
                 }
-                else
+                catch(const std::invalid_argument&) // Could not convert id to an int.
                 {
-                    if(i + 2 < argc)
-                    {
-                        try
-                        {
-                            latest = std::make_unique<Genetic_AI>(filename, String::to_number<int>(argv[i + 2]));
-                            i += 2;
-                        }
-                        catch(const Genetic_AI_Creation_Error&)
-                        {
-                            throw;
-                        }
-                        catch(const std::out_of_range&)
-                        {
-                            throw std::invalid_argument(std::string{"Specified ID "} + argv[i + 2] + " is not in valid range.");
-                        }
-                        catch(const std::invalid_argument&) // Could not convert argv[i + 2] to an int.
-                        {
-                        }
-                    }
-
-                    if( ! latest)
-                    {
-                        latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
-                        i += 1;
-                    }
+                    latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
                 }
             }
             else if(opt == "-time" && i + 1 < argc)
