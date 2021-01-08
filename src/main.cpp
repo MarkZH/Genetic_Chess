@@ -409,8 +409,7 @@ namespace
         Clock::seconds game_time{};
         size_t moves_per_reset = 0;
         Clock::seconds increment_time{};
-        auto board = Board(Board_Type::MUSKETEER);
-        bool musketeer_option = false;
+        auto board = Board();
         std::string game_file_name;
         std::string event_name;
         std::string location;
@@ -456,7 +455,7 @@ namespace
             }
             else if(opt == "-musketeer")
             {
-                musketeer_option = true;
+                board = Board(Board_Type::MUSKETEER);
             }
             else if(opt == "-game-file" && i + 1 < argc)
             {
@@ -499,11 +498,6 @@ namespace
         if( ! white)
         {
             throw std::invalid_argument("At least one player must be specified.");
-        }
-
-        if( ! musketeer_option)
-        {
-            board = Board();
         }
 
         if( ! black)
