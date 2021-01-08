@@ -44,8 +44,14 @@ namespace
     //! \brief Reads a genome file and rewrites it in the latest style.
     //!
     //! \param file_name The name of the file to update.
-    //! \throws Genetic_AI_Creation_Error If the genome file is invalid.
+    //! \exception Genetic_AI_Creation_Error If the genome file is invalid.
     void update_genome_file(const std::string& file_name);
+
+    //! \brief Throws std::invalid_argument if assertion fails
+    //!
+    //! \param condition A condition that must be true to continue.
+    //! \param failure_message A message to display if the assertion fails.
+    void argument_assert(bool condition, const std::string& failure_message);
 }
 
 //! \brief The starting point for the whole program.
@@ -59,7 +65,7 @@ int main(int argc, char *argv[])
     if(argc <= 1)
     {
         print_help();
-        return 0;
+        return EXIT_SUCCESS;
     }
 
     try
@@ -67,25 +73,13 @@ int main(int argc, char *argv[])
         std::string option = argv[1];
         if(option == "-gene-pool")
         {
-            if(argc > 2)
-            {
-                gene_pool(argv[2]);
-            }
-            else
-            {
-                throw std::invalid_argument("Specify a configuration file to run a gene pool.");
-            }
+            argument_assert(argc > 2, "Specify a configuration file to run a gene pool.");
+            gene_pool(argv[2]);
         }
         else if(option == "-confirm")
         {
-            if(argc > 2)
-            {
-                return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
-            }
-            else
-            {
-                throw std::invalid_argument("Provide a file containing a game to confirm has all legal moves.");
-            }
+            argument_assert(argc > 2, "Provide a file containing a game to confirm has all legal moves.");
+            return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
         }
         else if(option == "-test")
         {
@@ -112,14 +106,8 @@ int main(int argc, char *argv[])
         }
         else if(option == "-update")
         {
-            if(argc > 2)
-            {
-                update_genome_file(argv[2]);
-            }
-            else
-            {
-                throw std::invalid_argument("Provide a file containing Genetic AI data.");
-            }
+            argument_assert(argc > 2, "Provide a file containing Genetic AI data.");
+            update_genome_file(argv[2]);
         }
         else
         {
@@ -436,50 +424,18 @@ namespace
             }
             else if(opt == "-genetic")
             {
-                std::string filename;
-                if(i + 1 < argc)
-                {
-                    filename = argv[i + 1];
-                    if(filename.front() == '-')
-                    {
-                        filename.clear();
-                    }
-                }
+                argument_assert(i + 1 < argc, "Genome file needed for Genetic AI player");
+                std::string filename = argv[++i];
 
-                if(filename.empty())
+                try
                 {
-                    auto genetic_player = std::make_unique<Genetic_AI>();
-                    genetic_player->mutate(board.gated_piece_type_list(), 10000);
-                    genetic_player->print("single_game_player.txt");
-                    latest = std::move(genetic_player);
+                    auto id = i + 1 < argc ? argv[i + 1] : std::string{};
+                    latest = std::make_unique<Genetic_AI>(filename, String::to_number<int>(id));
+                    ++i;
                 }
-                else
+                catch(const std::invalid_argument&) // Could not convert id to an int.
                 {
-                    if(i + 2 < argc)
-                    {
-                        try
-                        {
-                            latest = std::make_unique<Genetic_AI>(filename, String::to_number<int>(argv[i + 2]));
-                            i += 2;
-                        }
-                        catch(const Genetic_AI_Creation_Error&)
-                        {
-                            throw;
-                        }
-                        catch(const std::out_of_range&)
-                        {
-                            throw std::invalid_argument(std::string{"Specified ID "} + argv[i + 2] + " is not in valid range.");
-                        }
-                        catch(const std::invalid_argument&) // Could not convert argv[i + 2] to an int.
-                        {
-                        }
-                    }
-
-                    if( ! latest)
-                    {
-                        latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
-                        i += 1;
-                    }
+                    latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
                 }
             }
             else if(opt == "-time" && i + 1 < argc)
@@ -590,6 +546,14 @@ namespace
             {
                 std::cerr << e.what() << '\n';
             }
+        }
+    }
+
+    void argument_assert(bool condition, const std::string& failure_message)
+    {
+        if( ! condition)
+        {
+            throw std::invalid_argument(failure_message);
         }
     }
 }

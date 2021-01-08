@@ -186,35 +186,11 @@ std::string String::lowercase(std::string s) noexcept
     return s;
 }
 
-std::string String::round_to_precision(double x, double precision) noexcept
+std::string String::round_to_decimals(double x, size_t decimal_places) noexcept
 {
-    auto result = std::to_string(std::round(x/precision)*precision);
-    auto last_significant_index = result.find_last_not_of('0');
-    if(last_significant_index == std::string::npos)
-    {
-        return result;
-    }
-    else
-    {
-        if(result[last_significant_index] == '.')
-        {
-            if(precision < 1.0)
-            {
-                // Include ".0"
-                return result.substr(0, last_significant_index + 2);
-            }
-            else
-            {
-                // Precision is greater than one, so delete fractional part
-                return result.substr(0, last_significant_index);
-            }
-        }
-        else
-        {
-            // Include first non-significant digit
-            return result.substr(0, last_significant_index + 1);
-        }
-    }
+    auto result = std::ostringstream();
+    result << std::fixed << std::setprecision(decimal_places) << x;
+    return result.str();
 }
 
 std::string String::date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,

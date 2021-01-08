@@ -488,7 +488,7 @@ std::string variation_line(Board board,
 
     if( ! move_result.game_has_ended())
     {
-        return result + "{" + String::round_to_precision(score, 0.01) + "})";
+        return result + "{" + String::round_to_decimals(score, 2) + "})";
     }
     else if(variation.size() == 1)
     {
