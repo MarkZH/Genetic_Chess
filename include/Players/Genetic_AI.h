@@ -116,6 +116,7 @@ class Genetic_AI : public Minimax_AI
 //!
 //! \param file_name The name of the file with Genetic_AI data.
 //! \returns The numerical ID of the last AI in the file.
+//! \exception std::runtime_error if no valid ID line can be found.
 int find_last_id(const std::string& file_name);
 
 #endif // GENETIC_AI_H

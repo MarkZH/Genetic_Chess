@@ -5,7 +5,6 @@
 #include <array>
 #include <string>
 #include <cmath>
-#include <optional>
 
 class Board;
 class Clock;
@@ -174,21 +173,32 @@ int find_last_id(const std::string& players_file_name)
         throw std::invalid_argument("File not found: " + players_file_name);
     }
 
-    std::optional<int> last_player;
+    std::string last_player;
     for(std::string line; std::getline(player_input, line);)
     {
         if(String::starts_with(line, "ID:"))
         {
-            last_player = String::to_number<int>(String::split(line).back());
+            last_player = line;
         }
     }
 
-    if(last_player.has_value())
-    {
-        return last_player.value();
-    }
-    else
+    if(last_player.empty())
     {
         throw std::runtime_error("No valid ID found in file: " + players_file_name);
+    }
+
+    auto split = String::split(last_player, ":", 1);
+    if(split.size() != 2)
+    {
+        throw std::runtime_error("Invalid ID line: " + last_player);
+    }
+
+    try
+    {
+        return String::to_number<int>(split.back());
+    }
+    catch(const std::exception&)
+    {
+        throw std::runtime_error("Could not convert to ID number: " + last_player);
     }
 }
