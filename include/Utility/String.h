@@ -163,7 +163,7 @@ namespace String
     //! \param s The input string containing a number.
     //! \tparam Number The numeric type the string should be converted to.
     //! \returns A number of type Number.
-    //! \throws std::invalid_argument if no conversion could be made or if there are extra characters
+    //! \exception std::invalid_argument if no conversion could be made or if there are extra characters
     //!         that cannot be converted to a number.
     template<typename Number>
     std::enable_if_t<std::is_arithmetic_v<Number>, Number> to_number(const std::string& s)
@@ -186,7 +186,7 @@ namespace String
     //! \param s The string to be converted.
     //! \tparam Duration The std::chrono::duration type.
     //! \returns A time duration of type Duration.
-    //! \throws std::invalid_argument If no conversion could be made or if there are any
+    //! \exception std::invalid_argument If no conversion could be made or if there are any
     //!         non-numeric characters in the input string.
     template<typename Duration>
     Duration to_duration(const std::string& s)

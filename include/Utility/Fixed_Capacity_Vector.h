@@ -30,7 +30,7 @@ class Fixed_Capacity_Vector
         //! \brief Add a new item to the end of the Fixed_Capacity_Vector.
         //!
         //! \param new_item The item to be added.
-        //! \throws assertion_failure if the Fixed_Capacity_Vector is fulland in DEBUG mode.
+        //! \exception assertion_failure if the Fixed_Capacity_Vector is fulland in DEBUG mode.
         constexpr void push_back(const T& new_item) noexcept
         {
             assert( ! full());
@@ -41,7 +41,7 @@ class Fixed_Capacity_Vector
         //!
         //! \param new_item The data to be added.
         //! \returns A Scoped_Push_Guard object that will remove the item in its destructor.
-        //! \throws assertion_failure if the Fixed_Capacity_Vector is full and in DEBUG mode.
+        //! \exception assertion_failure if the Fixed_Capacity_Vector is full and in DEBUG mode.
         constexpr auto scoped_push_back(const T& new_item) noexcept
         {
             assert( ! full());
@@ -53,7 +53,7 @@ class Fixed_Capacity_Vector
         //! \param begin The first value to add.
         //! \param end One past the last value to add.
         //! \returns A Scoped_Push_Guard object that will remove the items upon exiting the current scope.
-        //! \throws assertion_failure If there is not enough room for the items to be added.
+        //! \exception assertion_failure If there is not enough room for the items to be added.
         template<typename Iterator>
         constexpr auto scoped_push_back(Iterator begin, Iterator end) noexcept
         {
@@ -64,7 +64,7 @@ class Fixed_Capacity_Vector
         //! \brief Remove the last n items.
         //!
         //! \param n The number of items to remove from the end of the vector.
-        //! \throws assertion_failure If n is greater than the current size of the vector.
+        //! \exception assertion_failure If n is greater than the current size of the vector.
         constexpr void pop_back(size_t n = 1) noexcept
         {
             assert(size() >= n);
@@ -72,7 +72,7 @@ class Fixed_Capacity_Vector
         }
 
         //! \brief Shift all items one place to the left, discarding the first element.
-        //! \throws assertion_failure If the vector is empty.
+        //! \exception assertion_failure If the vector is empty.
         constexpr void shift_left() noexcept
         {
             assert( ! empty());
@@ -108,7 +108,7 @@ class Fixed_Capacity_Vector
 
         //! \brief Returns the first item in the Fixed_Capacity_Vector.
         //!
-        //! \throws assertion_failure If there is no data.
+        //! \exception assertion_failure If there is no data.
         constexpr const T& front() const noexcept
         {
             assert( ! empty());
@@ -117,7 +117,7 @@ class Fixed_Capacity_Vector
 
         //! \brief Returns the first item in the Fixed_Capacity_Vector.
         //!
-        //! \throws assertion_failure If there is no data.
+        //! \exception assertion_failure If there is no data.
         constexpr T& front() noexcept
         {
             assert( ! empty());
@@ -126,7 +126,7 @@ class Fixed_Capacity_Vector
 
         //! \brief Returns the last item in the Fixed_Capacity_Vector.
         //!
-        //! \throws assertion_failure If there is no data.
+        //! \exception assertion_failure If there is no data.
         constexpr const T& back() const noexcept
         {
             assert( ! empty());
@@ -135,7 +135,7 @@ class Fixed_Capacity_Vector
 
         //! \brief Returns the last item in the Fixed_Capacity_Vector.
         //!
-        //! \throws assertion_failure If there is no data.
+        //! \exception assertion_failure If there is no data.
         constexpr T& back() noexcept
         {
             assert( ! empty());

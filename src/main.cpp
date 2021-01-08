@@ -44,7 +44,7 @@ namespace
     //! \brief Reads a genome file and rewrites it in the latest style.
     //!
     //! \param file_name The name of the file to update.
-    //! \throws Genetic_AI_Creation_Error If the genome file is invalid.
+    //! \exception Genetic_AI_Creation_Error If the genome file is invalid.
     void update_genome_file(const std::string& file_name);
 
     //! \brief Throws std::invalid_argument if assertion fails

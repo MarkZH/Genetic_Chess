@@ -25,7 +25,7 @@ class Configuration
         //!
         //! \param parameter The configuration parameter sought.
         //! \returns The string data with leading and trailing whitespace removed.
-        //! \throws std::runtime_error If the named parameter was not found in the file.
+        //! \exception std::runtime_error If the named parameter was not found in the file.
         std::string as_text(const std::string& parameter) const;
 
         //! \brief Return numerical data from the configuration file.
@@ -33,7 +33,7 @@ class Configuration
         //! \param parameter The configuration parameter sought.
         //! \tparam Number The numerical type to be returned.
         //! \returns The data in the file converted to a floating point (double) number.
-        //! \throws std::runtime_error If the named parameter was not found in the file or
+        //! \exception std::runtime_error If the named parameter was not found in the file or
         //!         if the data could not be converted to a numerical value.
         template<typename Number>
         Number as_number(const std::string& parameter) const
@@ -46,7 +46,7 @@ class Configuration
         //! \param parameter The configuration parameter sought.
         //! \tparam Number The numerical type to be returned.
         //! \returns The data in the file converted to a floating point (double) number.
-        //! \throws std::runtime_error If the named parameter was not found in the file or
+        //! \exception std::runtime_error If the named parameter was not found in the file or
         //!         if the data could not be converted to a numerical value or if the
         //!         numerical value is not greater than zero.
         template<typename Number>
@@ -68,7 +68,7 @@ class Configuration
         //! \param parameter The configuration parameter sought.
         //! \tparam Duration The specific std::chrono::duration type to be returned.
         //! \returns A std::chrono::duration instance that represents the textual parameter data.
-        //! \throws std::runtime_error If the parameter could not be found or if the conversion
+        //! \exception std::runtime_error If the parameter could not be found or if the conversion
         //!         to a number or duration failed
         template<typename Duration>
         Duration as_time_duration(const std::string& parameter) const
@@ -81,7 +81,7 @@ class Configuration
         //! \param parameter The configuration parameter sought.
         //! \tparam Duration The type of the std::chrono::duration instance.
         //! \returns A std::chrono::duration instance that represents the textual parameter data.
-        //! \throws std::runtime_error If the parameter could not be found, if the conversion
+        //! \exception std::runtime_error If the parameter could not be found, if the conversion
         //!         to a number or duration failed, or if the resulting duration is negative.
         template<typename Duration>
         Duration as_positive_time_duration(const std::string& parameter) const
@@ -95,7 +95,7 @@ class Configuration
         //! \param affirmative The case-insensitive value corresponding to true.
         //! \param negative The case-insensitive value corresponding to false.
         //! \returns True if the data matches affirmative, false if it matches negative.
-        //! \throws std::runtime_error If the named parameter was not found in the file or
+        //! \exception std::runtime_error If the named parameter was not found in the file or
         //!         if the data does not match affirmative or negative.
         bool as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const;
 

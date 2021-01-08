@@ -22,7 +22,7 @@ class Gene
         //! Every line should be of the form: \<property\> = \<value\> with optional comments at the end preceded by '#'.
         //! A blank line marks the end of the gene data.
         //! \param is An input stream (std::ifstream, std::iostream, or similar).
-        //! \throws Genetic_AI_Creation_Error If there is an invalid line or an unexpected property
+        //! \exception Genetic_AI_Creation_Error If there is an invalid line or an unexpected property
         void read_from(std::istream& is);
 
         //! \brief Read gene data from a text file.
@@ -127,7 +127,7 @@ class Gene
         //! This means that this method is also overridden by derived Genes that have
         //! different properties.
         //! \param properties A data structure with all the data needed for this gene.
-        //! \throws std::out_of_range When an expected property is not present in the input.
+        //! \exception std::out_of_range When an expected property is not present in the input.
         void load_properties(const std::map<std::string, double>& properties);
 
         //! \brief Load the properties specific to the Gene subtype.

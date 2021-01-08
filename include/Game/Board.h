@@ -41,7 +41,7 @@ class Board
         //! \brief Constructs a board according to an FEN string.
         //!
         //! \param fen An text string given in FEN.
-        //! \throws std::invalid_argument Thrown if the FEN string does not represent a valid board state.
+        //! \exception std::invalid_argument Thrown if the FEN string does not represent a valid board state.
         explicit Board(const std::string& fen);
 
         //! \brief Updates the state of the board according to a Player-selected Move.
@@ -59,7 +59,7 @@ class Board
         //! \param move A text string specifying a move in any notation that uniquely identifies a
         //!        legal move (PGN, coordinate, etc.).
         //! \returns A Game_Result indicating the result of the move and whether the game has ended.
-        //! \throws Illegal_Move if the text represents an illegal or ambiguous move. The Board is unchanged in this event.
+        //! \exception Illegal_Move if the text represents an illegal or ambiguous move. The Board is unchanged in this event.
         Game_Result submit_move(const std::string& move);
 
         //! \brief Figure out a move sequence to get from the current board state to the new state given by the parameter.
@@ -74,7 +74,7 @@ class Board
         //! \param move A string using coordinate notation ("a2b3")
         //!        or [algebraic notation](https://en.wikipedia.org/wiki/Algebraic_notation_(chess)) ("Bb3").
         //! \returns A Move instance corresponding to the input string.
-        //! \throws Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
+        //! \exception Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
         const Move& create_move(std::string move) const;
 
         //! \brief Tells which player is due to move.
@@ -247,14 +247,14 @@ class Board
         //!
         //! \param move Move to check.
         //! \returns If the move captures an opponent's piece.
-        //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
+        //! \exception assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
         bool move_captures(const Move& move) const noexcept;
 
         //! \brief Determines whether a move will change the material on the current board.
         //!
         //! \param move Move to check.
         //! \returns If the move captures an opponent's piece or promotes a pawn.
-        //! \throws assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
+        //! \exception assertion_failure In DEBUG builds, if the move to check is not legal, an assert fails.
         bool move_changes_material(const Move& move) const noexcept;
 
         //! \brief Number of moves since the last pawn move or capturing move.
@@ -287,7 +287,7 @@ class Board
         //! \brief Create a copy of the board with a random pawn removed.
         //!
         //! This can be used by a Player to calibrate the value of a centipawn.
-        //! \throws Debug assertion failure if there are no pawns on the board.
+        //! \exception Debug assertion failure if there are no pawns on the board.
         Board without_random_pawn() const noexcept;
 
         //! \brief Returns a list of moves that results in a quiescent version of the board.
