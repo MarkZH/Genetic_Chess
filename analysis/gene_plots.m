@@ -50,7 +50,6 @@ xaxis = xaxis_list{1};
 piece_strength_figure = figure;
 piece_strength_prefix = 'Piece Strength Gene';
 title('Piece Strength Evolution');
-max_piece_score = -inf;
 piece_count = 0;
 piece_end_values = containers.Map;
 
@@ -66,8 +65,6 @@ total_active = 0;
 
 special_plots = [piece_strength_figure, priority_figure, active_figure];
 file_name_suffixes = {'piece strength', 'gene priorities', 'genome active'};
-draw_special = [false, false, false];
-
 
 % Plot evolution of individual genes
 for yi = 2 : length(data.colheaders) - 2
@@ -142,7 +139,6 @@ for yi = 2 : length(data.colheaders) - 2
         display_name = '';
         if special_plot_index == 1
             name = name(end);
-            max_piece_score = max(abs(smooth_data(end)), max_piece_score);
             piece_count = piece_count + 1;
             make_dashed = (piece_count > 7);
             piece_end_values(name) = num2str(round(100*smooth_data(end))/100); % Round to 2 decimal places
@@ -160,16 +156,11 @@ for yi = 2 : length(data.colheaders) - 2
                 set(p, 'LineStyle', ':');
             end
         end
-        draw_special(special_plot_index) = true;
     end
 end
 
 % Create special summary plots
 for index = 1 : length(special_plots)
-    if ~draw_special(index)
-        continue;
-    end
-
     figure(special_plots(index));
 
     plot(xlim, [0 0], '--k'); % X-axis
