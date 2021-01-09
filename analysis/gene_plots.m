@@ -46,7 +46,6 @@ xaxis = xaxis_list{1};
 piece_strength_figure = figure;
 piece_strength_prefix = 'Piece Strength Gene';
 title('Piece Strength Evolution');
-max_piece_score = -inf;
 piece_count = 0;
 piece_end_values = containers.Map;
 
@@ -134,7 +133,6 @@ for yi = 2 : length(data.colheaders) - 2
         display_name = '';
         if special_plot_index == 1
             name = name(end);
-            max_piece_score = max(abs(smooth_data(end)), max_piece_score);
             piece_count = piece_count + 1;
             make_dashed = (piece_count > 7);
             piece_end_values(name) = num2str(round(100*smooth_data(end))/100); % Round to 2 decimal places
