@@ -61,8 +61,6 @@ total_active = 0;
 
 special_plots = [piece_strength_figure, priority_figure, active_figure];
 file_name_suffixes = {'piece strength', 'gene priorities', 'genome active'};
-draw_special = [false, false, false];
-
 
 % Plot evolution of individual genes
 for yi = 2 : length(data.colheaders) - 2
@@ -150,16 +148,11 @@ for yi = 2 : length(data.colheaders) - 2
                 set(p, 'LineStyle', ':');
             end
         end
-        draw_special(special_plot_index) = true;
     end
 end
 
 % Create special summary plots
 for index = 1 : length(special_plots)
-    if ~draw_special(index)
-        continue;
-    end
-
     figure(special_plots(index));
 
     plot(xlim, [0 0], '--k'); % X-axis
