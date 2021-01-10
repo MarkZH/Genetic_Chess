@@ -44,18 +44,21 @@ xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
 
 piece_strength_figure = figure;
+hold all;
 piece_strength_prefix = 'Piece Strength Gene';
 title('Piece Strength Evolution');
 piece_count = 0;
 piece_end_values = containers.Map;
 
 priority_figure = figure;
+hold all;
 priority_suffix = ' Gene - Priority';
 title('Gene Priority Evolution');
 priority_count = 0;
 
-special_plots = [piece_strength_figure, priority_figure];
-file_name_suffixes = {'piece strength', 'gene priorities'};
+special_plots = containers.Map;
+special_plots('piece strength') = piece_strength_figure;
+special_plots('gene priorities') = priority_figure;
 
 % Plot evolution of individual genes
 for yi = 2 : length(data.colheaders) - 2
@@ -114,8 +117,6 @@ for yi = 2 : length(data.colheaders) - 2
 
     if plot_figure != invalid_plot
         figure(plot_figure);
-        hold all;
-
         make_dashed = false;
         display_name = '';
         if plot_figure == piece_strength_figure
@@ -138,18 +139,17 @@ for yi = 2 : length(data.colheaders) - 2
     end
 end
 
+disp('# Piece values');
+for piece = piece_end_values.keys()
+    disp([piece{1} ' = ' piece_end_values(piece{1})]);
+end
+
 % Create special summary plots
-for index = 1 : length(special_plots)
-    figure(special_plots(index));
-
+for name = special_plots.keys()
+    name = name{1};
+    special_plot = special_plots(name);
+    figure(special_plot);
     plot(xlim, [0 0], '--k'); % X-axis
-
-    if special_plots(index) == piece_strength_figure
-        disp('# Piece values');
-        for piece = piece_end_values.keys()
-            disp([piece{1} ' = ' piece_end_values(piece{1})]);
-        end
-    end
 
     for id_index = 1:length(id_marks)
         plot(id_marks(id_index)*[1 1], ylim, 'displayname', id_notes{id_index});
@@ -162,6 +162,6 @@ for index = 1 : length(special_plots)
 
     xlabel('ID');
 
-    print([gene_pool_filename ' special ' file_name_suffixes{index} '.png']);
+    print([gene_pool_filename ' special ' name '.png']);
     close;
 end
