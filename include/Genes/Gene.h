@@ -92,13 +92,8 @@ class Gene
         //! \param expected_score The expected score returned by Gene::score_board().
         void test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept;
 
-    protected:
-        //! Check whether this gene is active or disabled.
-        bool is_active() const noexcept;
-
     private:
         double scoring_priority = 1.0;
-        bool active = true;
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;

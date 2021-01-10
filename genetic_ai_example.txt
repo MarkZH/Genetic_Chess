@@ -1,6 +1,5 @@
 ID: 123256
 Name: Piece Strength Gene
-Active: 1
 B: 3.7738
 K: -2.07793
 N: 2.9748
@@ -9,63 +8,50 @@ Q: 7.6931
 R: 4.5215
 
 Name: Look Ahead Gene
-Active: 1
 Branching Factor: 8.64069
 Game Length Uncertainty: 0.53755
 Mean Game Length: 63.559
 Speculation: 3.20621
 
 Name: Total Force Gene
-Active: 1
 Priority: 0.653576
 
 Name: Freedom to Move Gene
-Active: 1
 Priority: 0.038222
 
 Name: Pawn Advancement Gene
-Active: 1
 Priority: 0.0318562
 
 Name: Passed Pawn Gene
-Active: 1
 Priority: 0.0414863
 
 Name: Opponent Pieces Targeted Gene
-Active: 1
 Priority: 0.0617405
 
 Name: Sphere of Influence Gene
-Active: 1
 Illegal Square Score: -0.163346
 King Target Factor: -1.46532
 Legal Square Score: 0.836654
 Priority: 0.0647232
 
 Name: King Confinement Gene
-Active: 0
 Priority: 0.0233947
 
 Name: King Protection Gene
-Active: 1
 Priority: -0.00053861
 
 Name: Castling Possible Gene
-Active: 0
 Kingside Preference: -0.323355
 Priority: 0.00659666
 Queenside Preference: -0.676645
 
 Name: Stacked Pawns Gene
-Active: 1
 Priority: 0.0165249
 
 Name: Pawn Islands Gene
-Active: 0
 Priority: 0.00492635
 
 Name: Checkmate Material Gene
-Active: 1
 Priority: -0.0564146
 
 END

@@ -54,13 +54,8 @@ priority_suffix = ' Gene - Priority';
 title('Gene Priority Evolution');
 priority_count = 0;
 
-active_figure = figure;
-active_suffix = ' Gene - Active';
-title('Total Genome Active');
-total_active = 0;
-
-special_plots = [piece_strength_figure, priority_figure, active_figure];
-file_name_suffixes = {'piece strength', 'gene priorities', 'genome active'};
+special_plots = [piece_strength_figure, priority_figure];
+file_name_suffixes = {'piece strength', 'gene priorities'};
 
 % Plot evolution of individual genes
 for yi = 2 : length(data.colheaders) - 2
@@ -110,17 +105,12 @@ for yi = 2 : length(data.colheaders) - 2
 
     special_plot_index = 0;
     draw_now = true;
-    if ~isempty(strfind(name, piece_strength_prefix)) && isempty(strfind(name, 'Active'))
+    if ~isempty(strfind(name, piece_strength_prefix))
         plot_figure = piece_strength_figure;
         special_plot_index = 1;
     elseif ~isempty(strfind(name, priority_suffix))
         plot_figure = priority_figure;
         special_plot_index = 2;
-    elseif ~isempty(strfind(name, active_suffix))
-        plot_figure = active_figure;
-        special_plot_index = 3;
-        total_active = total_active + smooth_data;
-        draw_now = false;
     end
 
     if special_plot_index > 0 && length(this_data) > conv_window
@@ -162,21 +152,16 @@ for index = 1 : length(special_plots)
         for piece = piece_end_values.keys()
             disp([piece{1} ' = ' piece_end_values(piece{1})]);
         end
-    elseif special_plots(index) == active_figure
-        plot(x_axis, total_active, 'LineWidth', 3);
-        grid on;
     end
 
     for id_index = 1:length(id_marks)
         plot(id_marks(id_index)*[1 1], ylim, 'displayname', id_notes{id_index});
     end
 
-    if special_plots(index) != active_figure
-        leg = legend('show');
-        set(leg, 'orientation', 'horizontal');
-        set(leg, 'location', 'southoutside');
-        legend left;
-    end
+    leg = legend('show');
+    set(leg, 'orientation', 'horizontal');
+    set(leg, 'location', 'southoutside');
+    legend left;
 
     xlabel('ID');
 

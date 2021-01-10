@@ -32,17 +32,9 @@ void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& 
 Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
     auto time_left = clock.running_time_left();
-
-    if( ! is_active())
-    {
-        return time_left;
-    }
-
     auto moves_to_reset = clock.moves_until_reset(board.whose_turn());
-
     auto moves_so_far = board.ply_count()/2; // only count moves by this player
     auto moves_left = Math::average_moves_left(mean_game_length, game_length_uncertainty, moves_so_far);
-
     return time_left/std::min(moves_left, double(moves_to_reset));
 }
 
@@ -80,10 +72,10 @@ double Look_Ahead_Gene::score_board(const Board&, Piece_Color, size_t) const noe
 
 double Look_Ahead_Gene::speculation_time_factor() const noexcept
 {
-    return is_active() ? speculation_constant : 0.0;
+    return speculation_constant;
 }
 
 double Look_Ahead_Gene::branching_factor() const noexcept
 {
-    return is_active() ? branching_factor_estimate : 1000.0;
+    return branching_factor_estimate;
 }
