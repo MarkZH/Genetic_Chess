@@ -92,27 +92,12 @@ double& Piece_Strength_Gene::piece_value(Piece_Type type) noexcept
 
 double Piece_Strength_Gene::piece_value(Piece piece) const noexcept
 {
-    if( ! piece || ! is_active())
-    {
-        return 0.0;
-    }
-    else
-    {
-        return piece_value(piece.type());
-    }
+    return piece ? piece_value(piece.type()) : 0.0;
 }
 
 const std::array<double, 16>& Piece_Strength_Gene::piece_values() const noexcept
 {
-    if(is_active())
-    {
-        return piece_strength;
-    }
-    else
-    {
-        static const auto inactive_piece_values = std::array<double, 16>{};
-        return inactive_piece_values;
-    }
+    return piece_strength;
 }
 
 size_t Piece_Strength_Gene::mutatable_components() const noexcept

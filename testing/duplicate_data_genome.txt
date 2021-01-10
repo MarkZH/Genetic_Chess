@@ -1,7 +1,6 @@
 ID: 1
 
 Name: Sphere of Influence Gene
-Active: 1
 King Target Factor: 2
 Legal Square Score: 4
 Illegal Square Score: 1

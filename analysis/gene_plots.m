@@ -48,23 +48,21 @@ xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
 
 piece_strength_figure = figure;
+hold all;
 piece_strength_prefix = 'Piece Strength Gene';
 title('Piece Strength Evolution');
 piece_count = 0;
 piece_end_values = containers.Map;
 
 priority_figure = figure;
+hold all;
 priority_suffix = ' Gene - Priority';
 title('Gene Priority Evolution');
 priority_count = 0;
 
-active_figure = figure;
-active_suffix = ' Gene - Active';
-title('Total Genome Active');
-total_active = 0;
-
-special_plots = [piece_strength_figure, priority_figure, active_figure];
-file_name_suffixes = {'piece strength', 'gene priorities', 'genome active'};
+special_plots = containers.Map;
+special_plots('piece strength') = piece_strength_figure;
+special_plots('gene priorities') = priority_figure;
 
 % Plot evolution of individual genes
 for yi = 2 : length(data.colheaders) - 2
@@ -116,78 +114,62 @@ for yi = 2 : length(data.colheaders) - 2
     print([gene_pool_filename ' gene ' name '.png']);
     close;
 
-    special_plot_index = 0;
-    draw_now = true;
-    if ~isempty(strfind(name, piece_strength_prefix)) && isempty(strfind(name, 'Active'))
+    invalid_plot = figure;
+    close(invalid_plot);
+    plot_figure = invalid_plot;
+    if ~isempty(strfind(name, piece_strength_prefix))
         plot_figure = piece_strength_figure;
-        special_plot_index = 1;
     elseif ~isempty(strfind(name, priority_suffix))
         plot_figure = priority_figure;
-        special_plot_index = 2;
-    elseif ~isempty(strfind(name, active_suffix))
-        plot_figure = active_figure;
-        special_plot_index = 3;
-        total_active = total_active + smooth_data;
-        draw_now = false;
     end
 
-    if special_plot_index > 0 && length(this_data) > conv_window
+    if plot_figure != invalid_plot
         figure(plot_figure);
-        hold all;
-
         make_dashed = false;
         display_name = '';
-        if special_plot_index == 1
+        if plot_figure == piece_strength_figure
             name = name(end);
             piece_count = piece_count + 1;
             make_dashed = (piece_count > 7);
             piece_end_values(name) = num2str(round(100*smooth_data(end))/100); % Round to 2 decimal places
             display_name = [name ' (' piece_end_values(name) ')'];
-        elseif special_plot_index == 2
+        elseif plot_figure == priority_figure
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
             make_dashed = (priority_count > 7);
-            display_name = [name ' (' num2str(smooth_data(end)) ')'];
+            display_name = name;
         end
 
-        if draw_now
-            p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', display_name);
-            if make_dashed
-                set(p, 'LineStyle', ':');
-            end
+        p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', display_name);
+        if make_dashed
+            set(p, 'LineStyle', ':');
         end
     end
 end
 
+disp('# Piece values');
+for piece = piece_end_values.keys()
+    disp([piece{1} ' = ' piece_end_values(piece{1})]);
+end
+
 % Create special summary plots
-for index = 1 : length(special_plots)
-    figure(special_plots(index));
-
+for name = special_plots.keys()
+    name = name{1};
+    special_plot = special_plots(name);
+    figure(special_plot);
     plot(xlim, [0 0], '--k'); % X-axis
-
-    if special_plots(index) == piece_strength_figure
-        disp('# Piece values');
-        for piece = piece_end_values.keys()
-            disp([piece{1} ' = ' piece_end_values(piece{1})]);
-        end
-    elseif special_plots(index) == active_figure
-        plot(x_axis, total_active, 'LineWidth', 3);
-        grid on;
-    end
 
     for id_index = 1:length(id_marks)
         plot(id_marks(id_index)*[1 1], ylim, 'displayname', id_notes{id_index});
     end
 
-    if special_plots(index) != active_figure
-        leg = legend('show');
-        set(leg, 'orientation', 'horizontal');
-        set(leg, 'location', 'southoutside');
-        legend left;
-    end
+    leg = legend('show');
+    set(leg, 'orientation', 'horizontal');
+    set(leg, 'location', 'southoutside');
+    legend left;
 
     xlabel('ID');
 
-    print([gene_pool_filename ' special ' file_name_suffixes{index} '.png']);
+    print([gene_pool_filename ' special ' name '.png']);
     close;
 end
