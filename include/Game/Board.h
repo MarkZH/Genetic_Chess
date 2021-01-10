@@ -414,6 +414,7 @@ class Board
 
         void update_board_hash(Square square) noexcept;
         uint64_t square_hash(Square square) const noexcept;
+        static uint64_t gate_hash(Piece piece, char file, Piece_Color color) noexcept;
         void update_whose_turn_hash() noexcept;
 
         static void fen_parse_assert(bool assertion, const std::string& input_fen, const std::string& failure_message);

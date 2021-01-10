@@ -49,6 +49,20 @@ namespace
         return hash_cache;
     }();
 
+    const auto gated_square_hash_values =
+    []()
+    {
+        // One entry for each piece on each gated square (including no piece)
+        std::array<std::array<uint64_t, 33>, 16> gated_hash_cache;
+        for(auto& square_indexed_gate_row : gated_hash_cache)
+        {
+            std::generate(square_indexed_gate_row.begin(),
+                          square_indexed_gate_row.end(),
+                          Random::random_unsigned_int64);
+        }
+        return gated_hash_cache;
+    }();
+
     const auto en_passant_hash_values =
     []()
     {
@@ -239,6 +253,7 @@ Board::Board(const std::string& original_fen) : board_type(String::contains(orig
                 {
                     auto gated_piece = Piece{gate[i]};
                     gated_pieces[static_cast<int>(gate_color)][i] = gated_piece;
+                    current_board_hash ^= gate_hash(gated_piece, 'a' + i, gated_piece.color());
                     if(std::count(gated_piece_types.begin(), gated_piece_types.end(), gated_piece.type()) == 0)
                     {
                         gated_piece_types.push_back(gated_piece.type());
@@ -1508,6 +1523,7 @@ void Board::other_move_effects(const Move& move) noexcept
         {
             place_piece(gated_piece, move.start());
             gated_pieces[color_index][file_index] = {};
+            current_board_hash ^= gate_hash(gated_piece, 'a' + file_index, gated_piece.color());
         }
     }
 }
@@ -1597,10 +1613,17 @@ void Board::randomly_place_gated_pieces(Piece_Type first_gated_piece, Piece_Type
                 }
 
                 gate_list[file_index] = gated_piece;
+                current_board_hash ^= gate_hash(gated_piece, 'a' + file_index, color);
                 break;
             }
         }
     }
+}
+
+uint64_t Board::gate_hash(Piece piece, char file, Piece_Color color) noexcept
+{
+    auto file_index = file - 'a' + 8*static_cast<int>(color);
+    return gated_square_hash_values[file_index][piece.index()];
 }
 
 bool Board::has_piece(Piece_Type type) const noexcept
