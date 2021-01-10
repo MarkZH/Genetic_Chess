@@ -103,28 +103,28 @@ for yi = 2 : length(data.colheaders) - 2
     print([gene_pool_filename ' gene ' name '.png']);
     close;
 
-    special_plot_index = 0;
+    invalid_plot = figure;
+    close(invalid_plot);
+    plot_figure = invalid_plot;
     if ~isempty(strfind(name, piece_strength_prefix))
         plot_figure = piece_strength_figure;
-        special_plot_index = 1;
     elseif ~isempty(strfind(name, priority_suffix))
         plot_figure = priority_figure;
-        special_plot_index = 2;
     end
 
-    if special_plot_index > 0 && length(this_data) > conv_window
+    if plot_figure != invalid_plot
         figure(plot_figure);
         hold all;
 
         make_dashed = false;
         display_name = '';
-        if special_plot_index == 1
+        if plot_figure == piece_strength_figure
             name = name(end);
             piece_count = piece_count + 1;
             make_dashed = (piece_count > 7);
             piece_end_values(name) = num2str(round(100*smooth_data(end))/100); % Round to 2 decimal places
             display_name = [name ' (' piece_end_values(name) ')'];
-        elseif special_plot_index == 2
+        elseif plot_figure == priority_figure
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
             make_dashed = (priority_count > 7);
