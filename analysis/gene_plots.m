@@ -129,7 +129,7 @@ for yi = 2 : length(data.colheaders) - 2
             name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
             make_dashed = (priority_count > 7);
-            display_name = [name ' (' num2str(smooth_data(end)) ')'];
+            display_name = name;
         end
 
         if draw_now
