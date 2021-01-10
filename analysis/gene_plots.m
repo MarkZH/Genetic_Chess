@@ -104,7 +104,6 @@ for yi = 2 : length(data.colheaders) - 2
     close;
 
     special_plot_index = 0;
-    draw_now = true;
     if ~isempty(strfind(name, piece_strength_prefix))
         plot_figure = piece_strength_figure;
         special_plot_index = 1;
@@ -132,11 +131,9 @@ for yi = 2 : length(data.colheaders) - 2
             display_name = name;
         end
 
-        if draw_now
-            p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', display_name);
-            if make_dashed
-                set(p, 'LineStyle', ':');
-            end
+        p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', display_name);
+        if make_dashed
+            set(p, 'LineStyle', ':');
         end
     end
 end
