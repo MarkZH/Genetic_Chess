@@ -370,35 +370,34 @@ void gene_pool(const std::string& config_file)
         std::cout << "\nWins to be recorded as best: " << wins_to_beat
                   << "\nBest ID: " << best_id << "\n";
 
-        const auto round_complete = pool_index == pools.size() - 1;
-        if(round_complete)
+        if(pool_index == pools.size() - 1) // round is complete
         {
             ++round_count;
             game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
-        }
 
-        const auto mutation_phase = round_count % mutation_period;
-        mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
+            const auto mutation_phase = round_count % mutation_period;
+            mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
 
-        // Mix up the populations of all the gene pools
-        if(round_complete && pools.size() > 1 && round_count % pool_swap_interval == 0)
-        {
-            std::cout << "\n=======================\n\n";
-            std::cout << "Shuffling pools ...\n";
-
-            std::vector<Genetic_AI> all_players;
-            for(const auto& gene_pool : pools)
+            // Mix up the populations of all the gene pools
+            if(pools.size() > 1 && round_count % pool_swap_interval == 0)
             {
-                all_players.insert(all_players.end(), gene_pool.begin(), gene_pool.end());
-            }
+                std::cout << "\n=======================\n\n";
+                std::cout << "Shuffling pools ...\n";
 
-            Random::shuffle(all_players);
-            pools.clear();
-            for(auto begin_iter = all_players.begin();
-                begin_iter != all_players.end();
-                std::advance(begin_iter, gene_pool_population))
-            {
-                pools.emplace_back(begin_iter, std::next(begin_iter, gene_pool_population));
+                std::vector<Genetic_AI> all_players;
+                for(const auto& gene_pool : pools)
+                {
+                    all_players.insert(all_players.end(), gene_pool.begin(), gene_pool.end());
+                }
+
+                Random::shuffle(all_players);
+                pools.clear();
+                for(auto begin_iter = all_players.begin();
+                    begin_iter != all_players.end();
+                    std::advance(begin_iter, gene_pool_population))
+                {
+                    pools.emplace_back(begin_iter, std::next(begin_iter, gene_pool_population));
+                }
             }
         }
     }
