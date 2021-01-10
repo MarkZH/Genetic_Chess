@@ -370,13 +370,11 @@ void gene_pool(const std::string& config_file)
         std::cout << "\nWins to be recorded as best: " << wins_to_beat
                   << "\nBest ID: " << best_id << "\n";
 
-        // Update game time
-        game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
-
         const auto round_complete = pool_index == pools.size() - 1;
         if(round_complete)
         {
             ++round_count;
+            game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
         }
 
         const auto mutation_phase = round_count % mutation_period;
