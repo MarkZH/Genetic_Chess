@@ -221,7 +221,10 @@ void gene_pool(const std::string& config_file)
             }
         }
 
-        game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
+        if(starting_pool == 0)
+        {
+            game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
+        }
         std::cout << "Done." << std::endl;
     }
 
