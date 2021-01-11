@@ -117,19 +117,16 @@ for yi = 2 : length(data.colheaders) - 2
 
     if plot_figure != invalid_plot
         figure(plot_figure);
-        make_dashed = false;
-        display_name = '';
         if plot_figure == piece_strength_figure
             name = name(end);
             piece_count = piece_count + 1;
             make_dashed = (piece_count > 7);
-            piece_end_values(name) = num2str(round(100*smooth_data(end))/100); % Round to 2 decimal places
+            piece_end_values(name) = num2str(smooth_data(end), '%.2f');
             display_name = [name ' (' piece_end_values(name) ')'];
         elseif plot_figure == priority_figure
-            name = name(1 : end - length(priority_suffix));
+            display_name = name(1 : end - length(priority_suffix));
             priority_count = priority_count + 1;
             make_dashed = (priority_count > 7);
-            display_name = name;
         end
 
         p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', display_name);
