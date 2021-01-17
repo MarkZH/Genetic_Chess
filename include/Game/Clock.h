@@ -97,6 +97,9 @@ class Clock
         //! \brief Was the clock used for a game?
         bool is_in_use() const noexcept;
 
+        //! \brief Returns a string representing the time control of the game
+        std::string time_control_string() const noexcept;
+
     private:
         std::array<seconds, 2> timers;
         std::array<size_t, 2> moves_since_clock_reset{0, 0};

@@ -8,7 +8,6 @@
 #include <array>
 #include <mutex>
 #include <algorithm>
-#include <sstream>
 #include <bitset>
 #include <atomic>
 #include <string>
@@ -790,24 +789,13 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     // Get actual result
     auto last_move_result = move_result();
     auto actual_result = last_move_result.game_has_ended() ? last_move_result : result;
-
     print_game_header_line(out_stream, "Result", actual_result.game_ending_annotation());
 
     print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
     if(game_clock.is_in_use())
     {
-        std::ostringstream time_control_spec;
-        if(game_clock.moves_per_time_period() > 0)
-        {
-            time_control_spec << game_clock.moves_per_time_period() << '/';
-        }
-        time_control_spec << game_clock.initial_time().count();
-        if(game_clock.increment(Piece_Color::WHITE) > 0.0s)
-        {
-            time_control_spec << '+' << game_clock.increment(Piece_Color::WHITE).count();
-        }
-        print_game_header_line(out_stream, "TimeControl", time_control_spec.str());
+        print_game_header_line(out_stream, "TimeControl", game_clock.time_control_string());
         print_game_header_line(out_stream, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
         print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
     }
