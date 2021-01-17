@@ -5,6 +5,7 @@
 using namespace std::chrono_literals;
 #include <cassert>
 #include <limits>
+#include <sstream>
 
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
@@ -191,4 +192,19 @@ Clock::seconds Clock::increment(Piece_Color color) const noexcept
 bool Clock::is_in_use() const noexcept
 {
     return initial_start_time > 0.0s;
+}
+
+std::string Clock::time_control_string() const noexcept
+{
+    std::ostringstream time_control_spec;
+    if(moves_per_time_period() > 0)
+    {
+        time_control_spec << moves_per_time_period() << '/';
+    }
+    time_control_spec << initial_time().count();
+    if(increment(Piece_Color::WHITE) > 0.0s)
+    {
+        time_control_spec << '+' << increment(Piece_Color::WHITE).count();
+    }
+    return time_control_spec.str();
 }
