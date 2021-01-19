@@ -228,6 +228,30 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                 return Game_Result(Winner_Color::NONE, reason, false);
             }
         }
+        else if( ! usermove_prefix)
+        {
+            try
+            {
+                log("Attempting to interpret as move: " + command);
+                setup_result = board.submit_move(command);
+                log("Applied move: " + command);
+                move_list.push_back(board.last_move());
+                if(setup_result.game_has_ended())
+                {
+                    report_end_of_game(setup_result);
+                }
+
+                if( ! in_force_mode)
+                {
+                    log("Local AI now chooses a move");
+                    break;
+                }
+            }
+            catch(const Illegal_Move& e)
+            {
+                log("Not a move, ignoring.");
+            }
+        }
     }
 
     if(own_time_left.has_value())
@@ -340,6 +364,11 @@ std::string CECP_Mediator::receive_cecp_command(const Board& board, Clock& clock
         {
             board.set_thinking_mode(Thinking_Output_Type::NO_THINKING);
             log("turning off thinking output for CECP");
+        }
+        else if(command == "rejected usermove")
+        {
+            usermove_prefix = false;
+            log("Moves will not be preceded by \"usermove\"");
         }
         else
         {
