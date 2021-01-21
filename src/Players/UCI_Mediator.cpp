@@ -19,7 +19,7 @@ UCI_Mediator::UCI_Mediator(const Player& player)
 {
     send_command("id name " + player.name());
     send_command("id author " + player.author());
-    send_command("option name UCI_Opponent type string default <empty>");
+    send_command("option name UCI_Opponent type string");
     send_command("uciok");
 }
 
