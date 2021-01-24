@@ -20,7 +20,8 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 
 void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    properties.erase("Priority");
+    properties.erase("Opening Priority");
+    properties.erase("Endgame Priority");
 
     const auto standard_all_pieces_score = 8*1.0 + // pawns
                                            2*5.0 + // rooks
