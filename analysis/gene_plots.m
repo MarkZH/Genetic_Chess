@@ -52,13 +52,13 @@ piece_end_values = containers.Map;
 
 opening_priority_figure = figure;
 hold all;
-opening_priority_suffix = ' Gene - Opening Priority';
+opening_priority_suffix = ' Gene - Priority - Opening';
 title('Opening Gene Priority Evolution');
 opening_priority_count = 0;
 
 endgame_priority_figure = figure;
 hold all;
-endgame_priority_suffix = ' Gene - Endgame Priority';
+endgame_priority_suffix = ' Gene - Priority - Endgame';
 title('Endgame Gene Priority Evolution');
 endgame_priority_count = 0;
 

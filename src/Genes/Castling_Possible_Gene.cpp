@@ -23,18 +23,18 @@ void Castling_Possible_Gene::normalize_sides() noexcept
 
 void Castling_Possible_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    properties["Opening Kingside Preference"] = opening_kingside_preference;
-    properties["Opening Queenside Preference"] = opening_queenside_preference;
-    properties["Endgame Kingside Preference"] = endgame_kingside_preference;
-    properties["Endgame Queenside Preference"] = endgame_queenside_preference;
+    properties["Kingside Preference - Opening"] = opening_kingside_preference;
+    properties["Queenside Preference - Opening"] = opening_queenside_preference;
+    properties["Kingside Preference - Endgame"] = endgame_kingside_preference;
+    properties["Queenside Preference - Endgame"] = endgame_queenside_preference;
 }
 
 void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
-    opening_kingside_preference = properties.at("Opening Kingside Preference");
-    opening_queenside_preference = properties.at("Opening Queenside Preference");
-    endgame_kingside_preference = properties.at("Endgame Kingside Preference");
-    endgame_queenside_preference = properties.at("Endgame Queenside Preference");
+    opening_kingside_preference = properties.at("Kingside Preference - Opening");
+    opening_queenside_preference = properties.at("Queenside Preference - Opening");
+    endgame_kingside_preference = properties.at("Kingside Preference - Endgame");
+    endgame_queenside_preference = properties.at("Queenside Preference - Endgame");
     normalize_sides();
 }
 

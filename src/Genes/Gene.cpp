@@ -20,8 +20,8 @@
 
 std::map<std::string, double> Gene::list_properties() const noexcept
 {
-    auto properties = std::map<std::string, double>{{"Opening Priority", opening_priority},
-                                                    {"Endgame Priority", endgame_priority}};
+    auto properties = std::map<std::string, double>{{"Priority - Opening", opening_priority},
+                                                    {"Priority - Endgame", endgame_priority}};
     adjust_properties(properties);
     return properties;
 }
@@ -32,14 +32,14 @@ void Gene::adjust_properties(std::map<std::string, double>&) const noexcept
 
 void Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    if(properties.count("Opening Priority") > 0)
+    if(properties.count("Priority - Opening") > 0)
     {
-        opening_priority = properties.at("Opening Priority");
+        opening_priority = properties.at("Priority - Opening");
     }
 
-    if(properties.count("Endgame Priority") > 0)
+    if(properties.count("Priority - Endgame") > 0)
     {
-        endgame_priority = properties.at("Endgame Priority");
+        endgame_priority = properties.at("Priority - Endgame");
     }
 
     load_gene_properties(properties);
@@ -226,7 +226,7 @@ double Gene::priority(Game_Stage stage) const noexcept
 
 bool Gene::has_priority() const noexcept
 {
-    return list_properties().count("Opening Priority") != 0;
+    return list_properties().count("Priority - Opening") != 0;
 }
 
 void Gene::scale_priority(Game_Stage stage, double k) noexcept

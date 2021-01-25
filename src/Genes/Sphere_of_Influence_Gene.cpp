@@ -39,24 +39,24 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() noexcept
 
 void Sphere_of_Influence_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    properties["Opening Legal Square Score"] = opening_legal_square_score;
-    properties["Opening Illegal Square Score"] = opening_illegal_square_score;
-    properties["Opening King Target Factor"] = opening_king_target_factor;
+    properties["Legal Square Score - Opening"] = opening_legal_square_score;
+    properties["Illegal Square Score - Opening"] = opening_illegal_square_score;
+    properties["King Target Factor - Opening"] = opening_king_target_factor;
 
-    properties["Endgame Legal Square Score"] = endgame_legal_square_score;
-    properties["Endgame Illegal Square Score"] = endgame_illegal_square_score;
-    properties["Endgame King Target Factor"] = endgame_king_target_factor;
+    properties["Legal Square Score - Endgame"] = endgame_legal_square_score;
+    properties["Illegal Square Score - Endgame"] = endgame_illegal_square_score;
+    properties["King Target Factor - Endgame"] = endgame_king_target_factor;
 }
 
 void Sphere_of_Influence_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
-    opening_legal_square_score = properties.at("Opening Legal Square Score");
-    opening_illegal_square_score = properties.at("Opening Illegal Square Score");
-    opening_king_target_factor = properties.at("Opening King Target Factor");
+    opening_legal_square_score = properties.at("Legal Square Score - Opening");
+    opening_illegal_square_score = properties.at("Illegal Square Score - Opening");
+    opening_king_target_factor = properties.at("King Target Factor - Opening");
 
-    endgame_legal_square_score = properties.at("Endgame Legal Square Score");
-    endgame_illegal_square_score = properties.at("Endgame Illegal Square Score");
-    endgame_king_target_factor = properties.at("Endgame King Target Factor");
+    endgame_legal_square_score = properties.at("Legal Square Score - Endgame");
+    endgame_illegal_square_score = properties.at("Illegal Square Score - Endgame");
+    endgame_king_target_factor = properties.at("King Target Factor - Endgame");
 
     normalize_square_scores();
 }

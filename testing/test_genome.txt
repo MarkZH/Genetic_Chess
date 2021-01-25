@@ -9,25 +9,25 @@ Q: 16
 K: 32
 
 Name: Sphere of Influence Gene
-Opening King Target Factor: 2
-Opening Legal Square Score: 4
-Opening Illegal Square Score: 1
-Endgame King Target Factor: 2
-Endgame Legal Square Score: 4
-Endgame Illegal Square Score: 1
-Opening Priority: 1
-Endgame Priority: 1
+King Target Factor - Opening: 2
+Legal Square Score - Opening: 4
+Illegal Square Score - Opening: 1
+King Target Factor - Endgame: 2
+Legal Square Score - Endgame: 4
+Illegal Square Score - Endgame: 1
+Priority - Opening: 1
+Priority - Endgame: 1
 
 Name: King   Confinement Gene
-Opening Priority: 1
-Endgame Priority: 1
+Priority - Opening: 1
+Priority - Endgame: 1
 
 Name: Castling Possible Gene
-Opening Kingside Preference: 0.8
-Endgame Kingside Preference: 0.8
-Opening Queenside Preference: 0.2
-Endgame Queenside Preference: 0.2
-Opening Priority: 1
-Endgame Priority: 1
+Kingside Preference - Opening: 0.8
+Kingside Preference - Endgame: 0.8
+Queenside Preference - Opening: 0.2
+Queenside Preference - Endgame: 0.2
+Priority - Opening: 1
+Priority - Endgame: 1
 
 END
