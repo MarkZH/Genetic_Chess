@@ -108,7 +108,7 @@ class Gene
         double opening_priority = 1.0;
         double endgame_priority = 1.0;
 
-        virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
+        virtual double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept = 0;
 
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
 

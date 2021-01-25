@@ -28,7 +28,7 @@ class Total_Force_Gene : public Clonable_Gene<Total_Force_Gene>
     private:
         const Piece_Strength_Gene* piece_strength_source;
 
-        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
 };
 
 #endif // TOTAL_FORCE_GENE_H

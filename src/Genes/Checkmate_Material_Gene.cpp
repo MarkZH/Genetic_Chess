@@ -6,7 +6,7 @@
 #include "Game/Board.h"
 #include "Game/Color.h"
 
-double Checkmate_Material_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
+double Checkmate_Material_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
 {
     return board.enough_material_to_checkmate(perspective);
 }

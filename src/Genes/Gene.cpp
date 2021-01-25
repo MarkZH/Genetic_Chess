@@ -16,6 +16,7 @@
 #include "Utility/Random.h"
 #include "Utility/String.h"
 #include "Utility/Exceptions.h"
+#include "Utility/Math.h"
 
 std::map<std::string, double> Gene::list_properties() const noexcept
 {
@@ -199,8 +200,8 @@ double Gene::evaluate(const Board& board, Piece_Color perspective, size_t depth,
 {
     auto moves_so_Far = board.ply_count()/2;
     auto game_progress = moves_so_Far/(moves_so_Far + probable_moves_left);
-    auto scoring_priority = opening_priority + game_progress*(endgame_priority - opening_priority);
-    return scoring_priority*score_board(board, perspective, depth);
+    auto scoring_priority = Math::interpolate(opening_priority, endgame_priority, game_progress);
+    return scoring_priority*score_board(board, perspective, depth, game_progress);
 }
 
 void Gene::print(std::ostream& os) const noexcept
@@ -235,7 +236,7 @@ void Gene::scale_priority(Game_Stage stage, double k) noexcept
 
 void Gene::test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept
 {
-    auto result = score_board(board, perspective, board.game_length() == 0 ? 0 : 1);
+    auto result = score_board(board, perspective, board.game_length() == 0 ? 0 : 1, 0.0);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';

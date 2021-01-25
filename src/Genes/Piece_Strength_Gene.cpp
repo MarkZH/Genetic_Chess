@@ -102,7 +102,7 @@ std::string Piece_Strength_Gene::name() const noexcept
     return "Piece Strength Gene";
 }
 
-double Piece_Strength_Gene::score_board(const Board&, Piece_Color, size_t) const noexcept
+double Piece_Strength_Gene::score_board(const Board&, Piece_Color, size_t, double) const noexcept
 {
     return 0.0;
 }
