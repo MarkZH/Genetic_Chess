@@ -198,8 +198,8 @@ void Gene::gene_specific_mutation() noexcept
 double Gene::evaluate(const Board& board, Piece_Color perspective, size_t depth, double probable_moves_left) const noexcept
 {
     auto moves_so_Far = board.ply_count()/2;
-    auto t = moves_so_Far/(moves_so_Far + probable_moves_left);
-    auto scoring_priority = opening_priority + t*(endgame_priority - opening_priority);
+    auto game_progress = moves_so_Far/(moves_so_Far + probable_moves_left);
+    auto scoring_priority = opening_priority + game_progress*(endgame_priority - opening_priority);
     return scoring_priority*score_board(board, perspective, depth);
 }
 
