@@ -36,6 +36,7 @@ class CECP_Mediator : public Outside_Communicator
     private:
         std::future<std::string> last_listening_command;
         bool in_force_mode = true;
+        bool usermove_prefix = true;
 
         std::string receive_cecp_command(const Board& board, Clock& clock, bool while_listening);
         bool undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock, const Player& player);

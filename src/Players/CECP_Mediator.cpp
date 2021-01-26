@@ -175,10 +175,10 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
         else if(String::starts_with(command, "st "))
         {
-            log("got time specs: " + command);
+            log("got time specs: " + command + " seconds");
             auto split = String::split(command);
             auto time_per_move = String::to_duration<std::chrono::seconds>(split[1]);
-            log("game time per move = " + std::to_string(time_per_move.count()));
+            log("game time per move = " + std::to_string(time_per_move.count()) + " seconds");
             clock = Clock(time_per_move,
                           1,
                           0.0s,
@@ -226,6 +226,30 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             else
             {
                 return Game_Result(Winner_Color::NONE, reason, false);
+            }
+        }
+        else if( ! usermove_prefix)
+        {
+            try
+            {
+                log("Attempting to interpret as move: " + command);
+                setup_result = board.submit_move(command);
+                log("Applied move: " + command);
+                move_list.push_back(board.last_move());
+                if(setup_result.game_has_ended())
+                {
+                    report_end_of_game(setup_result);
+                }
+
+                if( ! in_force_mode)
+                {
+                    log("Local AI now chooses a move");
+                    break;
+                }
+            }
+            catch(const Illegal_Move&)
+            {
+                log("Not a move, ignoring.");
             }
         }
     }
@@ -340,6 +364,11 @@ std::string CECP_Mediator::receive_cecp_command(const Board& board, Clock& clock
         {
             board.set_thinking_mode(Thinking_Output_Type::NO_THINKING);
             log("turning off thinking output for CECP");
+        }
+        else if(command == "rejected usermove")
+        {
+            usermove_prefix = false;
+            log("Moves will not be preceded by \"usermove\"");
         }
         else
         {
