@@ -252,7 +252,7 @@ Board::Board(const std::string& original_fen) : board_type(String::contains(orig
                 {
                     auto gated_piece = Piece{gate[i]};
                     gated_pieces[static_cast<int>(gate_color)][i] = gated_piece;
-                    current_board_hash ^= gate_hash(gated_piece, 'a' + i, gated_piece.color());
+                    current_board_hash ^= gate_hash(gated_piece, char('a' + i), gated_piece.color());
                     if(std::count(gated_piece_types.begin(), gated_piece_types.end(), gated_piece.type()) == 0)
                     {
                         gated_piece_types.push_back(gated_piece.type());
