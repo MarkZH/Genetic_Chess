@@ -247,7 +247,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                     break;
                 }
             }
-            catch(const Illegal_Move& e)
+            catch(const Illegal_Move&)
             {
                 log("Not a move, ignoring.");
             }
