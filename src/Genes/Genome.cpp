@@ -77,7 +77,7 @@ Genome::Genome(const Genome& other) noexcept
 
 void Genome::reset_piece_strength_gene() noexcept
 {
-    auto piece_strength_gene = static_cast<const Piece_Strength_Gene*>(genome[piece_strength_gene_index].get());
+    auto piece_strength_gene = &gene_reference<Piece_Strength_Gene, piece_strength_gene_index>();
     for(auto& gene : genome)
     {
         gene->reset_piece_strength_gene(piece_strength_gene);
