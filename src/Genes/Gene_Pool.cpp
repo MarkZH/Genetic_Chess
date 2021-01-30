@@ -127,7 +127,26 @@ void gene_pool(const std::string& config_file)
         auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
         auto seed_ai = Genetic_AI(file_name, seed_id);
         std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
-        pools = Gene_Pool_Set{gene_pool_count, {gene_pool_population, seed_ai}};
+        pools = {{seed_ai}};
+        while(true)
+        {
+            auto& pool = pools.back();
+            while(pool.size() < gene_pool_population)
+            {
+                auto& new_ai = pool.emplace_back(seed_ai, seed_ai);
+                new_ai.mutate(mutation_rate);
+            }
+
+            if(pools.size() < gene_pool_count)
+            {
+                pools.push_back({});
+                std::cout << std::endl;
+            }
+            else
+            {
+                break;
+            }
+        }
     }
     pools.resize(gene_pool_count);
     for(size_t i = 0; i < pools.size(); ++i)
