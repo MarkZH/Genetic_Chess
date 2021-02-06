@@ -101,7 +101,7 @@ for target in final_targets:
 
 operations['clean_code_docs'] = ['rm -rf $(DOC_DIR)']
 operations['clean_user_manual'] = [f'latexmk -C -cd {user_manual_tex}']
-depends['test_all'] = [f'test_{x}' for x in final_targets]
+depends['test'] = [f'test_{x}' for x in final_targets]
 depends['.PHONY'] = [t for t in all_targets_so_far(depends, operations) if not t.startswith('$')]
 
 options_list = dict()
