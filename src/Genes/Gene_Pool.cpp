@@ -140,7 +140,6 @@ void gene_pool(const std::string& config_file)
             if(pools.size() < gene_pool_count)
             {
                 pools.push_back({});
-                std::cout << std::endl;
             }
             else
             {
