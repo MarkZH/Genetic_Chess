@@ -150,10 +150,11 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         auto next_board = board;
 
         auto move_result = next_board.submit_move(*move);
+        auto game_progress = estimated_game_progress(next_board);
         if(move_result.winner() != Winner_Color::NONE)
         {
             // This move results in checkmate, no other move can be better.
-            best_result = create_result(next_board, perspective, move_result, current_variation);
+            best_result = create_result(next_board, perspective, move_result, current_variation, game_progress);
             break;
         }
 
@@ -214,13 +215,13 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
         else
         {
-            auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values());
+            auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values(game_progress));
             for(auto quiescent_move : quiescent_moves)
             {
                 next_board.submit_move(*quiescent_move);
             }
             auto quiescent_guard = current_variation.scoped_push_back(quiescent_moves.begin(), quiescent_moves.end());
-            result = create_result(next_board, perspective, move_result, current_variation);
+            result = create_result(next_board, perspective, move_result, current_variation, game_progress);
             nodes_searched += quiescent_moves.size();
         }
 
@@ -355,9 +356,10 @@ std::chrono::duration<double> Minimax_AI::time_since_last_output() const noexcep
 Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
                                                 Piece_Color perspective,
                                                 const Game_Result& move_result,
-                                                const current_variation_store& move_list) const noexcept
+                                                const current_variation_store& move_list,
+                                                double game_progress) const noexcept
 {
-    return {evaluate(board, move_result, perspective, move_list.size()),
+    return {evaluate(board, move_result, perspective, move_list.size(), game_progress),
             perspective,
             {move_list.begin(), move_list.end()}};
 }
@@ -372,7 +374,7 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
     reset();
 }
 
-double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
+double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth, double game_progress) const noexcept
 {
     if(move_result.game_has_ended())
     {
@@ -390,7 +392,7 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
         }
     }
 
-    auto score = internal_evaluate(board, perspective, depth);
+    auto score = internal_evaluate(board, perspective, depth, game_progress);
     if(board.moves_since_pawn_or_capture() >= depth)
     {
         return score*(100 - board.moves_since_pawn_or_capture())/100.0;
@@ -427,8 +429,8 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
         if(board_is_good)
         {
             auto board_without_pawn = board.without_random_pawn();
-            auto original_board_result = evaluate(board, {}, Piece_Color::WHITE, 0);
-            auto minus_pawn_result = evaluate(board_without_pawn, {}, Piece_Color::WHITE, 0);
+            auto original_board_result = evaluate(board, {}, Piece_Color::WHITE, 0, estimated_game_progress(board));
+            auto minus_pawn_result = evaluate(board_without_pawn, {}, Piece_Color::WHITE, 0, estimated_game_progress(board_without_pawn));
             auto diff = std::abs(original_board_result - minus_pawn_result);
             sum_of_diffs += diff;
 

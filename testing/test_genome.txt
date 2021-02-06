@@ -1,12 +1,18 @@
 ID: 1
 
 Name: Piece Strength Gene
-P: 1
-B: 2
-N: 4
-R: 8
-Q: 16
-K: 32
+P - Opening: 1
+B - Opening: 2
+N - Opening: 4
+R - Opening: 8
+Q - Opening: 16
+K - Opening: 32
+P - Endgame: 1
+B - Endgame: 2
+N - Endgame: 4
+R - Endgame: 8
+Q - Endgame: 16
+K - Endgame: 32
 
 Name: Sphere of Influence Gene
 King Target Factor - Opening: 2

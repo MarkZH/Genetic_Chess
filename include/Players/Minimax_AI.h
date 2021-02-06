@@ -89,12 +89,15 @@ class Minimax_AI : public Player
         double evaluate(const Board& board,
                         const Game_Result& move_result,
                         Piece_Color perspective,
-                        size_t depth) const noexcept;
+                        size_t depth,
+                        double game_progress) const noexcept;
         virtual double internal_evaluate(const Board& board,
                                          Piece_Color perspective,
-                                         size_t depth) const  noexcept = 0;
+                                         size_t depth,
+                                         double game_progress) const  noexcept = 0;
 
-        virtual const std::array<double, 6>& piece_values() const noexcept = 0;
+        virtual std::array<double, 6> piece_values(double game_progress) const noexcept = 0;
+        virtual double estimated_game_progress(const Board& board) const noexcept = 0;
 
         // Time management
         virtual Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept = 0;
@@ -128,10 +131,12 @@ class Minimax_AI : public Player
         //! \param perspective From whose perspective (Black or White) the board should be scored.
         //! \param move_result The possibly game-ending result of the move.
         //! \param move_list The current move list from the game tree search.
+        //! \param game_progress Estimate of how much of the game is complete as a fraction.
         Game_Tree_Node_Result create_result(const Board& board,
                                             Piece_Color perspective,
                                             const Game_Result& move_result,
-                                            const current_variation_store& move_list) const noexcept;
+                                            const current_variation_store& move_list,
+                                            double game_progress) const noexcept;
 
         // Output thinking to stdout
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,

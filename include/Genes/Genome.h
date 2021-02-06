@@ -56,7 +56,8 @@ class Genome
         //! \param perspective The player for whom a higher score means a greater chance of victory.
         //! \param depth The current search depth on the game tree.
         //!        (i.e., at the root of the game tree).
-        double evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
+        //! \param game_progress The estimated fraction of the game that has been played.
+        double evaluate(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept;
 
         //! \brief Apply a random set of mutations to the entire genome.
         //!
@@ -83,7 +84,15 @@ class Genome
         double branching_factor() const noexcept;
 
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
-        const std::array<double, 6>& piece_values() const noexcept;
+        //!
+        //! \param game_progress An estimate of how much of the game has elapsed as a fractional value: [0.0, 1.0].
+        std::array<double, 6> piece_values(double game_progress) const noexcept;
+
+        //! \brief Estimates the number of moves left in the game.
+        //!
+        //! \param board The current state of the game board.
+        //! \returns An estimate of the number of moves left in the game for one player.
+        double expected_number_of_moves_left(const Board& board) const noexcept;
 
         //! \brief Print the genome data to the output stream (std::ofstream, std::cout, etc.).
         //!
@@ -93,10 +102,9 @@ class Genome
     private:
         std::vector<std::unique_ptr<Gene>> genome;
 
-        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept;
         void reset_piece_strength_gene() noexcept;
         void renormalize_priorities() noexcept;
-        double expected_number_of_moves_left(const Board& board) const noexcept;
 
         template<typename Gene_Type, size_t index>
         constexpr const Gene_Type& gene_reference() const noexcept
