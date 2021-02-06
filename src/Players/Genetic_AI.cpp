@@ -6,13 +6,13 @@
 #include <string>
 #include <cmath>
 
-class Clock;
-
 #include "Game/Color.h"
 #include "Game/Board.h"
 
 #include "Utility/String.h"
 #include "Utility/Exceptions.h"
+
+class Clock;
 
 int Genetic_AI::next_id = 0;
 
