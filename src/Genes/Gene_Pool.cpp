@@ -165,7 +165,7 @@ void gene_pool(const std::string& config_file)
             while(pool.size() < gene_pool_population)
             {
                 auto& new_ai = pool.emplace_back(seed_ai, seed_ai);
-                new_ai.mutate(mutation_rate);
+                new_ai.mutate(gated_piece_types, mutation_rate);
             }
 
             if(pools.size() < gene_pool_count)
