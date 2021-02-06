@@ -54,6 +54,10 @@ then
 fi
 
 gated_pieces=$(get_config_value "$config_file" "gated pieces" | sed 's/\s*//g')
+if [[ -z "$gated_pieces" ]]
+then
+    gated_pieces="LCUDMAEHFS"
+fi
 
 octave analysis/gene_plots.m "$pool_file" "$notes_file" "$gated_pieces" &
 octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &

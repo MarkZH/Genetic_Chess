@@ -105,27 +105,43 @@ void gene_pool(const std::string& config_file)
     std::vector<Piece_Type> gated_piece_types;
     if(use_musketeer_board)
     {
-        const auto gated_pieces_text = String::remove_extra_whitespace(config.as_text("gated pieces"));
-        auto spaces = std::count(gated_pieces_text.begin(), gated_pieces_text.end(), ' ');
-        if(gated_pieces_text.size() - spaces != 2)
+        if(config.has_parameter("gated pieces"))
         {
-            throw std::invalid_argument("Invalid gated piece specification: " + gated_pieces_text);
+            const auto gated_pieces_text = String::remove_extra_whitespace(config.as_text("gated pieces"));
+            auto spaces = std::count(gated_pieces_text.begin(), gated_pieces_text.end(), ' ');
+            if(gated_pieces_text.size() - spaces != 2)
+            {
+                throw std::invalid_argument("Invalid gated piece specification: " + gated_pieces_text);
+            }
+            try
+            {
+                gated_piece_types = {Piece(gated_pieces_text.front()).type(), Piece(gated_pieces_text.back()).type()};
+            }
+            catch(const std::invalid_argument& e)
+            {
+                throw std::invalid_argument("Invalid gate piece from specification: " + gated_pieces_text + "\n" + e.what());
+            }
+            if(std::any_of(gated_piece_types.begin(), gated_piece_types.end(),
+                           [](auto piece_type)
+                           {
+                               return static_cast<int>(piece_type) <= static_cast<int>(Piece_Type::KING);
+                           }))
+            {
+                throw std::invalid_argument("Gated piece types must not be standard piece types: " + gated_pieces_text);
+            }
         }
-        try
+        else
         {
-            gated_piece_types = {Piece(gated_pieces_text.front()).type(), Piece(gated_pieces_text.back()).type()};
-        }
-        catch(const std::invalid_argument& e)
-        {
-            throw std::invalid_argument("Invalid gate piece from specification: " + gated_pieces_text + "\n" + e.what());
-        }
-        if(std::any_of(gated_piece_types.begin(), gated_piece_types.end(),
-                       [](auto piece_type)
-                       {
-                           return static_cast<int>(piece_type) <= static_cast<int>(Piece_Type::KING);
-                       }))
-        {
-            throw std::invalid_argument("Gated piece types must not be standard piece types: " + gated_pieces_text);
+            gated_piece_types = {Piece_Type::LEOPARD,
+                                 Piece_Type::CANNON,
+                                 Piece_Type::UNICORN,
+                                 Piece_Type::DRAGON,
+                                 Piece_Type::CHANCELLOR,
+                                 Piece_Type::ARCHBISHOP,
+                                 Piece_Type::ELEPHANT,
+                                 Piece_Type::HAWK,
+                                 Piece_Type::FORTRESS,
+                                 Piece_Type::SPIDER};
         }
     }
 
@@ -343,7 +359,18 @@ void gene_pool(const std::string& config_file)
 
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
-            auto board = use_musketeer_board ? Board(gated_piece_types[0], gated_piece_types[1]) : Board();
+            auto board = Board();
+            if(use_musketeer_board)
+            {
+                if(gated_piece_types.size() == 2)
+                {
+                    board = Board(gated_piece_types[0], gated_piece_types[1]);
+                }
+                else
+                {
+                    board = Board(Board_Type::MUSKETEER);
+                }
+            }
             results.emplace_back(std::async(std::launch::async, play_game,
                                             board,
                                             Clock(game_time),
