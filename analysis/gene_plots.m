@@ -43,12 +43,17 @@ pool_ids = data.data(:, end);
 xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
 
-piece_strength_figure = figure;
+opening_piece_strength_figure = figure;
 hold all;
 piece_strength_prefix = 'Piece Strength Gene';
-title('Piece Strength Evolution');
-piece_count = 0;
+title('Piece Strength Evolution - Opening');
+opening_piece_count = 0;
 piece_end_values = containers.Map;
+
+endgame_piece_strength_figure = figure;
+hold all;
+title('Piece Strength Evolution - Endgame');
+endgame_piece_count = 0;
 
 opening_priority_figure = figure;
 hold all;
@@ -63,7 +68,8 @@ title('Endgame Gene Priority Evolution');
 endgame_priority_count = 0;
 
 special_plots = containers.Map;
-special_plots('piece strength') = piece_strength_figure;
+special_plots('piece strength opening') = opening_piece_strength_figure;
+special_plots('piece strength endgame') = endgame_piece_strength_figure;
 special_plots('gene priorities opening') = opening_priority_figure;
 special_plots('gene priorities endgame') = endgame_priority_figure;
 
@@ -117,7 +123,11 @@ for yi = 2 : length(data.colheaders) - 2
     close(invalid_plot);
     plot_figure = invalid_plot;
     if ~isempty(strfind(name, piece_strength_prefix))
-        plot_figure = piece_strength_figure;
+        if ~isempty(strfind(name, 'Opening'))
+            plot_figure = opening_piece_strength_figure;
+        else
+            plot_figure = endgame_piece_strength_figure;
+        end
     elseif ~isempty(strfind(name, opening_priority_suffix))
         plot_figure = opening_priority_figure;
     elseif ~isempty(strfind(name, endgame_priority_suffix))
@@ -126,12 +136,18 @@ for yi = 2 : length(data.colheaders) - 2
 
     if plot_figure != invalid_plot
         figure(plot_figure);
-        if plot_figure == piece_strength_figure
-            name = name(end);
-            piece_count = piece_count + 1;
-            make_dashed = (piece_count > 7);
+        if plot_figure == opening_piece_strength_figure
+            name = name(length(piece_strength_prefix) + 4 : end);
+            opening_piece_count = opening_piece_count + 1;
+            make_dashed = (opening_piece_count > 7);
             piece_end_values(name) = num2str(smooth_data(end), '%.2f');
-            display_name = [name ' (' piece_end_values(name) ')'];
+            display_name = [name(1) ' (' piece_end_values(name) ')'];
+        elseif plot_figure == endgame_piece_strength_figure
+            name = name(length(piece_strength_prefix) + 4 : end);
+            endgame_piece_count = endgame_piece_count + 1;
+            make_dashed = (endgame_piece_count > 7);
+            piece_end_values(name) = num2str(smooth_data(end), '%.2f');
+            display_name = [name(1) ' (' piece_end_values(name) ')'];
         elseif plot_figure == opening_priority_figure
             display_name = name(1 : end - length(opening_priority_suffix));
             opening_priority_count = opening_priority_count + 1;
