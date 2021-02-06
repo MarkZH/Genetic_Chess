@@ -120,10 +120,10 @@ void gene_pool(const std::string& config_file)
             throw std::invalid_argument("Invalid gate piece from specification: " + gated_pieces_text + "\n" + e.what());
         }
         if(std::any_of(gated_piece_types.begin(), gated_piece_types.end(),
-                    [](auto piece_type)
-                    {
-                        return static_cast<int>(piece_type) <= static_cast<int>(Piece_Type::KING);
-                    }))
+                       [](auto piece_type)
+                       {
+                           return static_cast<int>(piece_type) <= static_cast<int>(Piece_Type::KING);
+                       }))
         {
             throw std::invalid_argument("Gated piece types must not be standard piece types: " + gated_pieces_text);
         }
