@@ -7,11 +7,11 @@
 #include <cmath>
 
 #include "Game/Color.h"
-#include "Game/Board.h"
 
 #include "Utility/String.h"
 #include "Utility/Exceptions.h"
 
+class Board;
 class Clock;
 
 int Genetic_AI::next_id = 0;
@@ -90,21 +90,14 @@ void Genetic_AI::read_data(std::istream& is)
     }
 }
 
-double Genetic_AI::internal_evaluate(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept
+double Genetic_AI::internal_evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
-    return genome.evaluate(board, perspective, depth, game_progress);
+    return genome.evaluate(board, perspective, depth);
 }
 
-std::array<double, 6> Genetic_AI::piece_values(double game_progress) const noexcept
+const std::array<double, 6>& Genetic_AI::piece_values() const noexcept
 {
-    return genome.piece_values(game_progress);
-}
-
-double Genetic_AI::estimated_game_progress(const Board& board) const noexcept
-{
-    auto moves_so_far = board.ply_count()/2;
-    auto moves_left = genome.expected_number_of_moves_left(board);
-    return moves_so_far/(moves_so_far + moves_left);
+    return genome.piece_values();
 }
 
 Clock::seconds Genetic_AI::time_to_examine(const Board& board, const Clock& clock) const noexcept

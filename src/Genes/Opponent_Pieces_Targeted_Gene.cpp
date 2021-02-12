@@ -14,7 +14,7 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strengt
 {
 }
 
-double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double game_progress) const noexcept
+double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
 {
     double score = 0.0;
 
@@ -25,7 +25,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Piece_Colo
         {
             if( ! board.safe_for_king(square, opposite(perspective)))
             {
-                score += piece_strength_source->piece_value(piece, game_progress);
+                score += piece_strength_source->piece_value(piece);
             }
         }
     }

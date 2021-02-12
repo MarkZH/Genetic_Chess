@@ -1,17 +1,11 @@
 ID: 123256
 Name: Piece Strength Gene
-B - Opening: 3.7738
-K - Opening: -2.07793
-N - Opening: 2.9748
-P - Opening: 1.09584
-Q - Opening: 7.6931
-R - Opening: 4.5215
-B - Endgame: 3.7738
-K - Endgame: -2.07793
-N - Endgame: 2.9748
-P - Endgame: 1.09584
-Q - Endgame: 7.6931
-R - Endgame: 4.5215
+B: 3.7738
+K: -2.07793
+N: 2.9748
+P: 1.09584
+Q: 7.6931
+R: 4.5215
 
 Name: Look Ahead Gene
 Branching Factor: 8.64069

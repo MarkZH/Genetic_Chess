@@ -8,7 +8,6 @@
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
-#include "Game/Board.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
@@ -29,6 +28,8 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
+
+class Board;
 
 namespace
 {
@@ -178,18 +179,19 @@ void Genome::read_from(std::istream& is)
     throw Genetic_AI_Creation_Error("Reached end of file before END of genome.");
 }
 
-double Genome::score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept
+double Genome::score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
+    auto moves_left = expected_number_of_moves_left(board);
     return std::accumulate(genome.begin(), genome.end(), 0.0,
                            [&](auto sum, const auto& gene)
                            {
-                               return sum + gene->evaluate(board, perspective, depth, game_progress);
+                               return sum + gene->evaluate(board, perspective, depth, moves_left);
                            });
 }
 
-double Genome::evaluate(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept
+double Genome::evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
-    return score_board(board, perspective, depth, game_progress) - score_board(board, opposite(perspective), depth, game_progress);
+    return score_board(board, perspective, depth) - score_board(board, opposite(perspective), depth);
 }
 
 void Genome::mutate() noexcept
@@ -236,7 +238,7 @@ double Genome::expected_number_of_moves_left(const Board& board) const noexcept
     return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().expected_moves_left(board);
 }
 
-std::array<double, 6> Genome::piece_values(double game_progress) const noexcept
+const std::array<double, 6>& Genome::piece_values() const noexcept
 {
-    return gene_reference<Piece_Strength_Gene, piece_strength_gene_index>().piece_values(game_progress);
+    return gene_reference<Piece_Strength_Gene, piece_strength_gene_index>().piece_values();
 }

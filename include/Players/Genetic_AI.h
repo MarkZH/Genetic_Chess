@@ -102,11 +102,9 @@ class Genetic_AI : public Minimax_AI
 
         double internal_evaluate(const Board& board,
                                  Piece_Color perspective,
-                                 size_t depth,
-                                 double game_progress) const noexcept override;
+                                 size_t depth) const noexcept override;
 
-        std::array<double, 6> piece_values(double game_progress) const noexcept override;
-        double estimated_game_progress(const Board& board) const noexcept override;
+        virtual const std::array<double, 6>& piece_values() const noexcept override;
 
         // Time management
         Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept override;
