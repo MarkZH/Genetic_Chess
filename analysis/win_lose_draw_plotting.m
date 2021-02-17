@@ -140,7 +140,7 @@ if max(game_time) > 0
 
     scatter(game_number, white_time_left, 'k');
     scatter(game_number, black_time_left, 'k');
-    window = 1000;
+    window = 100;
     x_margin = floor(window/2);
     avg_x_axis = game_number(x_margin : end - x_margin);
     avg_time_left = (white_time_left + black_time_left)/2;
