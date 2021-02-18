@@ -42,7 +42,6 @@ double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspe
     std::array<bool, 64> in_queue{};
 
     const auto king_square = board.find_king(perspective);
-    square_queue.push_back(king_square);
     in_queue[king_square.index()] = true;
 
     // Always check the squares surrounding the king's current positions, even if
@@ -51,7 +50,7 @@ double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspe
 
     double free_space_total = board.safe_for_king(king_square, perspective) ? 1.0 : 0.0;
 
-    for(auto iter = std::next(square_queue.begin());
+    for(auto iter = square_queue.begin();
         iter != square_queue.end();
         ++iter)
     {
