@@ -14,7 +14,7 @@ namespace
 {
     void add_surrounding_squares(Square square,
                                  Fixed_Capacity_Vector<Square, 64>& square_queue,
-                                 std::array<bool, 64>& in_queue)
+                                 std::array<bool, 64>& in_queue) noexcept
     {
         for(auto file_step = -1; file_step <= 1; ++file_step)
         {
