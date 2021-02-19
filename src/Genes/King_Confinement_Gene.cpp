@@ -53,11 +53,7 @@ double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspe
     for(auto iter = square_queue.begin(); iter != square_queue.end(); ++iter)
     {
         auto square = *iter;
-        auto piece = board.piece_on_square(square);
-        auto blocked_by_friendly = piece && piece.color() == perspective && piece.type() != Piece_Type::KING;
-        auto attacked_by_opposing =  ! board.safe_for_king(square, perspective);
-
-        if( ! blocked_by_friendly && ! attacked_by_opposing)
+        if( ! board.piece_on_square(square) && board.safe_for_king(square, perspective))
         {
             free_space_total += 1.0;
             add_surrounding_squares(square, square_queue, in_queue);
