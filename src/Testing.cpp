@@ -237,16 +237,6 @@ bool run_tests()
         current_color = opposite(current_color);
     }
 
-
-    // Check that color equalities are correct
-    test_result(tests_passed, Winner_Color::WHITE == static_cast<Winner_Color>(Piece_Color::WHITE), "Winner_Color::WHITE != Piece_Color::WHITE");
-    test_result(tests_passed, Winner_Color::BLACK == static_cast<Winner_Color>(Piece_Color::BLACK), "Winner_Color::BLACK != Piece_Color::BLACK");
-    test_result(tests_passed, Winner_Color::WHITE != static_cast<Winner_Color>(Piece_Color::BLACK), "Winner_Color::WHITE == Piece_Color::BLACK");
-    test_result(tests_passed, Winner_Color::BLACK != static_cast<Winner_Color>(Piece_Color::WHITE), "Winner_Color::BLACK == Piece_Color::WHITE");
-    test_result(tests_passed, Winner_Color::NONE != static_cast<Winner_Color>(Piece_Color::WHITE), "Winner_Color::NONE == Piece_Color::WHITE");
-    test_result(tests_passed, Winner_Color::NONE != static_cast<Winner_Color>(Piece_Color::BLACK), "Winner_Color::NONE == Piece_Color::BLACK");
-
-
     // Check that Square arithmetic works
     for(auto a : Square::all_squares())
     {
