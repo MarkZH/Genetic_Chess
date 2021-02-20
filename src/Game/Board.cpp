@@ -710,28 +710,31 @@ bool Board::no_legal_moves() const noexcept
     return legal_moves().empty();
 }
 
-template<typename OutputStream, typename DataType>
-void output_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
+namespace
 {
-    output << "[" << heading << " \"" << data << "\"]\n";
-}
+    template<typename OutputStream, typename DataType>
+    void output_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
+    {
+        output << "[" << heading << " \"" << data << "\"]\n";
+    }
 
-template<typename OutputStream, typename DataType>
-void print_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
-{
-    output_game_header_line(output, heading, data);
-}
+    template<typename OutputStream, typename DataType>
+    void print_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
+    {
+        output_game_header_line(output, heading, data);
+    }
 
-template<typename OutputStream>
-void print_game_header_line(OutputStream& output, const std::string& heading, const std::string& data)
-{
-    output_game_header_line(output, heading, data.empty() ? "?" : data);
-}
+    template<typename OutputStream>
+    void print_game_header_line(OutputStream& output, const std::string& heading, const std::string& data)
+    {
+        output_game_header_line(output, heading, data.empty() ? "?" : data);
+    }
 
-template<typename OutputStream>
-void print_game_header_line(OutputStream& output, const std::string& heading, const char* data)
-{
-    print_game_header_line(output, heading, std::string{data});
+    template<typename OutputStream>
+    void print_game_header_line(OutputStream& output, const std::string& heading, const char* data)
+    {
+        print_game_header_line(output, heading, std::string{data});
+    }
 }
 
 void Board::print_game_record(const std::vector<const Move*>& game_record_listing,
