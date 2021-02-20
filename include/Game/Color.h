@@ -49,4 +49,7 @@ enum class Winner_Color
 //! \param color The given Square_Color.
 std::string color_text(Winner_Color color) noexcept;
 
+static_assert(static_cast<Piece_Color>(Winner_Color::WHITE) == Piece_Color::WHITE);
+static_assert(static_cast<Piece_Color>(Winner_Color::BLACK) == Piece_Color::BLACK);
+
 #endif // COLOR_H
