@@ -178,10 +178,7 @@ namespace
         for(std::string line; std::getline(input, line);)
         {
             ++line_number;
-            line = String::strip_block_comment(line, "{", "}");
-            line = String::strip_nested_block_comments(line, "(", ")");
-            line = String::strip_comments(line, ";");
-            line = String::remove_extra_whitespace(line);
+            line = String::remove_pgn_comments(line);
             if(line.empty())
             {
                 continue;

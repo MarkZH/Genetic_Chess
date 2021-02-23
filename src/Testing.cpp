@@ -594,6 +594,13 @@ bool run_tests()
     function_should_not_throw(tests_passed, "Non-throwing string to size_t with whitespace", String::to_number<size_t>, " 456  ");
     function_should_throw(tests_passed, "Throwing string to size_t", String::to_number<size_t>, "78x9");
 
+    // Comment removal
+    test_function(tests_passed,
+                  "PGN comment removal",
+                  "49. f8=N Bxf8",
+                  String::remove_pgn_comments,
+                  "49. f8=N (49. f8=N Bxf8 50. Kf3 {-12.60}) Bxf8 (49. ... Bxf8 50. Kf1 (50. Kf3 Rd7 {16.43}) {16.43}) { Test block } ; Test line");
+
 
     // Log-Norm distribution check
     const double mean_moves = 26.0;
