@@ -46,17 +46,6 @@ class Player
         //! \param last_move The last move made on the board for use by the internals of the chess engine.
         virtual void undo_move(const Move* last_move) const noexcept;
 
-        //! \brief Get the name of this player's opponent when playing through a GUI.
-        //!
-        //! \param name The GUI-provided name of the opponent.
-        void set_opponent_name(const std::string& name) const noexcept;
-
-        //! \brief Provide the name of the opponent if the opponent cannot do so itself.
-        //!
-        //! If playing through a GUI, the opponent will not be a part of the same process
-        //! as this player.
-        std::string opponent_name() const noexcept;
-
         //! \brief Use the short version of CECP thinking output.
         //!
         //! Some GUIs cannot handle the optional data.

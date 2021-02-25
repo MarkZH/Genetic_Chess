@@ -7,6 +7,7 @@
 #include <cassert>
 
 #include "Players/Player.h"
+#include "Players/Proxy_Player.h"
 #include "Players/Outside_Communicator.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -46,8 +47,8 @@ Game_Result play_game(Board board,
 
     game_clock.stop();
     board.print_game_record(game_record,
-                            &white,
-                            &black,
+                            white,
+                            black,
                             pgn_file_name,
                             result,
                             game_clock,
@@ -100,8 +101,9 @@ void play_game_with_outsider(const Player& player,
         if(print_game_record && ! game_file_name.empty())
         {
             clock.stop();
-            auto white = (player_color == Piece_Color::WHITE ? &player : nullptr);
-            auto black = (player_color == Piece_Color::BLACK ? &player : nullptr);
+            auto opponent_proxy = outsider->create_proxy_player();
+            const Player& white = (player_color == Piece_Color::WHITE ? player : opponent_proxy);
+            const Player& black = (player_color == Piece_Color::BLACK ? player : opponent_proxy);
             board.print_game_record(game_record,
                                     white, black,
                                     String::add_to_file_name(game_file_name, "-" + color_text(player_color)),

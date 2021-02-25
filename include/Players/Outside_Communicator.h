@@ -11,6 +11,7 @@ class Clock;
 class Board;
 class Move;
 class Player;
+class Proxy_Player;
 class Game_Result;
 
 //! \brief A class to facilitate interfacing with outside programs.
@@ -46,6 +47,9 @@ class Outside_Communicator
                                         const Move& move,
                                         std::vector<const Move*>& move_list) const = 0;
 
+        //! \brief Create a player for the purposes of calling Board::print_game_record()
+        Proxy_Player create_proxy_player() const noexcept;
+
         //! \brief Log data to a local text file.
         //!
         //! \param data A text string to write.
@@ -55,11 +59,16 @@ class Outside_Communicator
         //! \brief Constructor is protected so that it is only called by connect_to_outside().
         Outside_Communicator() = default;
 
+        //! \brief Record the opponent's name when told by GUI or internet mediator.
+        //!
+        //! \param opponent_name The received name
+        void record_opponent_name(const std::string& opponent_name) noexcept;
+
         //! \brief Output the given string to the outside interface.
         //!
         //! The outgoing string is also logged to a local file.
         //! \param cmd The string to send to the outside interface.
-        void send_command(const std::string& cmd) const noexcept;
+        static void send_command(const std::string& cmd) noexcept;
 
         //! \brief Wait for a command from the outside interface and pass it on to derived class instances.
         //!
@@ -69,6 +78,9 @@ class Outside_Communicator
         static std::string receive_command();
 
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
+
+    private:
+        std::string remote_opponent_name;
 };
 
 //! \brief Initialize communication with an outside program.

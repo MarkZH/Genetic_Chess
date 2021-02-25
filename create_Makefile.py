@@ -40,7 +40,7 @@ if len(sys.argv) == 1 or sys.argv[1] not in ['gcc', 'clang']:
 program_name = 'genetic_chess'
 final_targets = ["release", "debug"]
 depends = dict()
-depends['all'] = final_targets + ["docs"]
+depends['all'] = ["docs"] + final_targets
 depends['clean'] = (f"clean_{target}" for target in depends['all'])
 depends["docs"] = ["user_manual", "code_docs"]
 depends['clean_docs'] = (f"clean_{target}" for target in depends['docs'])

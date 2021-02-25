@@ -738,8 +738,8 @@ namespace
 }
 
 void Board::print_game_record(const std::vector<const Move*>& game_record_listing,
-                              const Player* white,
-                              const Player* black,
+                              const Player& white,
+                              const Player& black,
                               const std::string& file_name,
                               const Game_Result& result,
                               const Clock& game_clock,
@@ -776,18 +776,8 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     print_game_header_line(out_stream, "Site", location);
     print_game_header_line(out_stream, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
     print_game_header_line(out_stream, "Round", game_number++);
-
-    for(auto player_color : {Piece_Color::WHITE, Piece_Color::BLACK})
-    {
-        auto player = player_color == Piece_Color::WHITE ? white : black;
-        auto player_name = player ? player->name() : std::string{};
-        if(player_name.empty())
-        {
-            auto other_player = player_color == Piece_Color::WHITE ? black : white;
-            player_name = other_player ? other_player->opponent_name() : std::string{};
-        }
-        print_game_header_line(out_stream, color_text(player_color), player_name);
-    }
+    print_game_header_line(out_stream, "White", white.name());
+    print_game_header_line(out_stream, "Black", black.name());
 
     // Get actual result
     auto last_move_result = move_result();
@@ -832,14 +822,11 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
         auto next_move = game_record_listing.at(i);
         out_stream << " " << next_move->algebraic(commentary_board);
-        auto current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
-        if(current_player)
+        const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
+        auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));
+        if( ! commentary.empty())
         {
-            auto commentary = String::trim_outer_whitespace(current_player->commentary_for_next_move(commentary_board, step));
-            if( ! commentary.empty())
-            {
-                out_stream << " " << commentary;
-            }
+            out_stream << " " << commentary;
         }
         commentary_board.submit_move(*next_move);
     }
