@@ -20,7 +20,8 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 
 void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    properties.erase("Priority");
+    properties.erase("Priority - Opening");
+    properties.erase("Priority - Endgame");
 
     const auto standard_all_pieces_score = 8*1.0 + // pawns
                                            2*5.0 + // rooks
@@ -101,7 +102,7 @@ std::string Piece_Strength_Gene::name() const noexcept
     return "Piece Strength Gene";
 }
 
-double Piece_Strength_Gene::score_board(const Board&, Piece_Color, size_t) const noexcept
+double Piece_Strength_Gene::score_board(const Board&, Piece_Color, size_t, double) const noexcept
 {
     return 0.0;
 }

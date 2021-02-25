@@ -86,16 +86,19 @@ void Genome::reset_piece_strength_gene() noexcept
 
 void Genome::renormalize_priorities() noexcept
 {
-    auto norm = std::accumulate(genome.begin(), genome.end(), 0.0,
-                                [](auto sum, const auto& gene)
-                                {
-                                    return sum + (gene->has_priority() ? std::abs(gene->priority()) : 0.0);
-                                });
-    if(norm > 0.0)
+    for(auto stage : {Game_Stage::OPENING, Game_Stage::ENDGAME})
     {
-        for(auto& gene : genome)
+        auto norm = std::accumulate(genome.begin(), genome.end(), 0.0,
+                                    [stage](auto sum, const auto& gene)
+                                    {
+                                        return sum + (gene->has_priority() ? std::abs(gene->priority(stage)) : 0.0);
+                                    });
+        if(norm > 0.0)
         {
-            gene->scale_priority(1.0/norm);
+            for(auto& gene : genome)
+            {
+                gene->scale_priority(stage, 1.0/norm);
+            }
         }
     }
 }
@@ -178,10 +181,11 @@ void Genome::read_from(std::istream& is)
 
 double Genome::score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
+    auto moves_left = expected_number_of_moves_left(board);
     return std::accumulate(genome.begin(), genome.end(), 0.0,
                            [&](auto sum, const auto& gene)
                            {
-                               return sum + gene->evaluate(board, perspective, depth);
+                               return sum + gene->evaluate(board, perspective, depth, moves_left);
                            });
 }
 
@@ -227,6 +231,11 @@ double Genome::speculation_time_factor() const noexcept
 double Genome::branching_factor() const noexcept
 {
     return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().branching_factor();
+}
+
+double Genome::expected_number_of_moves_left(const Board& board) const noexcept
+{
+    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().expected_moves_left(board);
 }
 
 const std::array<double, 6>& Genome::piece_values() const noexcept

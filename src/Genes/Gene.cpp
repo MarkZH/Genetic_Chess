@@ -16,10 +16,12 @@
 #include "Utility/Random.h"
 #include "Utility/String.h"
 #include "Utility/Exceptions.h"
+#include "Utility/Math.h"
 
 std::map<std::string, double> Gene::list_properties() const noexcept
 {
-    auto properties = std::map<std::string, double>{{"Priority", scoring_priority}};
+    auto properties = std::map<std::string, double>{{"Priority - Opening", opening_priority},
+                                                    {"Priority - Endgame", endgame_priority}};
     adjust_properties(properties);
     return properties;
 }
@@ -30,9 +32,14 @@ void Gene::adjust_properties(std::map<std::string, double>&) const noexcept
 
 void Gene::load_properties(const std::map<std::string, double>& properties)
 {
-    if(properties.count("Priority") > 0)
+    if(properties.count("Priority - Opening") > 0)
     {
-        scoring_priority = properties.at("Priority");
+        opening_priority = properties.at("Priority - Opening");
+    }
+
+    if(properties.count("Priority - Endgame") > 0)
+    {
+        endgame_priority = properties.at("Priority - Endgame");
     }
 
     load_gene_properties(properties);
@@ -175,9 +182,9 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 void Gene::mutate() noexcept
 {
     auto properties = list_properties();
-    if(Random::success_probability(properties.count("Priority"), properties.size()))
+    if(has_priority() && Random::success_probability(2, properties.size()))
     {
-        scoring_priority += Random::random_laplace(0.005);
+        (Random::coin_flip() ? opening_priority : endgame_priority) += Random::random_laplace(0.005);
     }
     else
     {
@@ -189,9 +196,12 @@ void Gene::gene_specific_mutation() noexcept
 {
 }
 
-double Gene::evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept
+double Gene::evaluate(const Board& board, Piece_Color perspective, size_t depth, double probable_moves_left) const noexcept
 {
-    return scoring_priority*score_board(board, perspective, depth);
+    auto moves_so_Far = board.ply_count()/2;
+    auto game_progress = moves_so_Far/(moves_so_Far + probable_moves_left);
+    auto scoring_priority = Math::interpolate(opening_priority, endgame_priority, game_progress);
+    return scoring_priority*score_board(board, perspective, depth, game_progress);
 }
 
 void Gene::print(std::ostream& os) const noexcept
@@ -209,24 +219,24 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
 {
 }
 
-double Gene::priority() const noexcept
+double Gene::priority(Game_Stage stage) const noexcept
 {
-    return scoring_priority;
+    return stage == Game_Stage::OPENING ? opening_priority : endgame_priority;
 }
 
 bool Gene::has_priority() const noexcept
 {
-    return list_properties().count("Priority") != 0;
+    return list_properties().count("Priority - Opening") != 0;
 }
 
-void Gene::scale_priority(double k) noexcept
+void Gene::scale_priority(Game_Stage stage, double k) noexcept
 {
-    scoring_priority *= k;
+    (stage == Game_Stage::OPENING ? opening_priority : endgame_priority) *= k;
 }
 
 void Gene::test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept
 {
-    auto result = score_board(board, perspective, board.game_length() == 0 ? 0 : 1);
+    auto result = score_board(board, perspective, board.game_length() == 0 ? 0 : 1, 0.0);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';

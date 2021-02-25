@@ -11,6 +11,12 @@
 class Board;
 class Piece_Strength_Gene;
 
+enum class Game_Stage
+{
+    OPENING,
+    ENDGAME
+};
+
 //! \brief The base class of all genes that control the behavior of Genetic AIs.
 class Gene
 {
@@ -39,8 +45,9 @@ class Gene
         //! \param board The state of the board to be evaluated--found at the leaves of the game search tree.
         //! \param perspective For which player the board is being scored.
         //! \param depth The current game tree search depth.
+        //! \param probable_moves_left The expected number of moves left in the game.
         //! \returns A numerical score indicating the likelihood that the board in the first argument is winning for board.whose_turn().
-        double evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
+        double evaluate(const Board& board, Piece_Color perspective, size_t depth, double probable_moves_left) const noexcept;
 
         //! \brief Copies the gene data and returns a pointer to the new data
         //!
@@ -73,13 +80,18 @@ class Gene
         virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg) noexcept;
 
         //! \brief Returns the priority of the gene.
-        double priority() const noexcept;
+        //!
+        //! \param stage Which stage of the game to query for the priority.
+        double priority(Game_Stage stage) const noexcept;
 
         //! \brief Returns whether the gene has a Priority component
         bool has_priority() const noexcept;
 
         //! \brief Scales the priority by multiplying by the parameter.
-        void scale_priority(double k) noexcept;
+        //!
+        //! \param stage Which stage of the game to query for the priority.
+        //! \param k Number to multiply priority by.
+        void scale_priority(Game_Stage stage, double k) noexcept;
 
         //! Tests the board-scoring method of the Gene.
         //
@@ -93,9 +105,10 @@ class Gene
         void test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept;
 
     private:
-        double scoring_priority = 1.0;
+        double opening_priority = 1.0;
+        double endgame_priority = 1.0;
 
-        virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
+        virtual double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept = 0;
 
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
 

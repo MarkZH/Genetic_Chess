@@ -6,7 +6,7 @@
 #include "Game/Board.h"
 #include "Game/Color.h"
 
-double Freedom_To_Move_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
+double Freedom_To_Move_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
 {
     const auto maximum_moves_per_turn = 100.0;
     if(perspective == board.whose_turn())

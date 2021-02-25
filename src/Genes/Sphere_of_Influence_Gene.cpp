@@ -1,7 +1,6 @@
 #include "Genes/Sphere_of_Influence_Gene.h"
 
 #include <cmath>
-#include <array>
 #include <map>
 
 #include "Genes/Gene.h"
@@ -35,22 +34,31 @@ namespace
 
 Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() noexcept
 {
-    recompute_scalar_cache();
+    normalize_square_scores();
 }
 
 void Sphere_of_Influence_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    properties["Legal Square Score"] = legal_square_score;
-    properties["Illegal Square Score"] = illegal_square_score;
-    properties["King Target Factor"] = king_target_factor;
+    properties["Legal Square Score - Opening"] = opening_legal_square_score;
+    properties["Illegal Square Score - Opening"] = opening_illegal_square_score;
+    properties["King Target Factor - Opening"] = opening_king_target_factor;
+
+    properties["Legal Square Score - Endgame"] = endgame_legal_square_score;
+    properties["Illegal Square Score - Endgame"] = endgame_illegal_square_score;
+    properties["King Target Factor - Endgame"] = endgame_king_target_factor;
 }
 
 void Sphere_of_Influence_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
-    legal_square_score = properties.at("Legal Square Score");
-    illegal_square_score = properties.at("Illegal Square Score");
-    king_target_factor = properties.at("King Target Factor");
-    recompute_scalar_cache();
+    opening_legal_square_score = properties.at("Legal Square Score - Opening");
+    opening_illegal_square_score = properties.at("Illegal Square Score - Opening");
+    opening_king_target_factor = properties.at("King Target Factor - Opening");
+
+    endgame_legal_square_score = properties.at("Legal Square Score - Endgame");
+    endgame_illegal_square_score = properties.at("Illegal Square Score - Endgame");
+    endgame_king_target_factor = properties.at("King Target Factor - Endgame");
+
+    normalize_square_scores();
 }
 
 std::string Sphere_of_Influence_Gene::name() const noexcept
@@ -60,10 +68,11 @@ std::string Sphere_of_Influence_Gene::name() const noexcept
 
 // Count all squares potentially attacked by all pieces with bonus points if
 // the attacking move is legal.
-double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
+double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double game_progress) const noexcept
 {
-    const auto& opponent_king_square = board.find_king(opposite(perspective));
-    auto opponent_king_index = opponent_king_square.index();
+    auto legal_square_score = Math::interpolate(opening_legal_square_score, endgame_legal_square_score, game_progress);
+    auto illegal_square_score = Math::interpolate(opening_illegal_square_score, endgame_illegal_square_score, game_progress);
+    auto king_target_factor = Math::interpolate(opening_king_target_factor, endgame_king_target_factor, game_progress);
 
     double score = 0.0;
     for(auto square : Square::all_squares())
@@ -82,8 +91,9 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color per
             continue;
         }
 
-        auto distance_to_king = king_distances[square.index()][opponent_king_index];
-        score += square_score*scalar_cache[distance_to_king];
+        const auto& opponent_king_square = board.find_king(opposite(perspective));
+        auto distance_to_king = king_distances[square.index()][opponent_king_square.index()];
+        score += square_score*(1 + king_target_factor/(1 + distance_to_king))/64;
     }
 
     return score;
@@ -92,29 +102,35 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color per
 
 void Sphere_of_Influence_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 3))
+    switch(Random::random_integer(1, 6))
     {
         case 1:
-            legal_square_score += Random::random_laplace(0.03);
+            opening_legal_square_score += Random::random_laplace(0.03);
             break;
         case 2:
-            illegal_square_score += Random::random_laplace(0.03);
+            opening_illegal_square_score += Random::random_laplace(0.03);
             break;
         case 3:
-            king_target_factor += Random::random_laplace(0.1);
+            opening_king_target_factor += Random::random_laplace(0.1);
+            break;
+        case 4:
+            endgame_legal_square_score += Random::random_laplace(0.03);
+            break;
+        case 5:
+            endgame_illegal_square_score += Random::random_laplace(0.03);
+            break;
+        case 6:
+            endgame_king_target_factor += Random::random_laplace(0.1);
             break;
         default:
             assert(false);
     }
 
-    recompute_scalar_cache();
+    normalize_square_scores();
 }
 
-void Sphere_of_Influence_Gene::recompute_scalar_cache() noexcept
+void Sphere_of_Influence_Gene::normalize_square_scores() noexcept
 {
-    Math::normalize(legal_square_score, illegal_square_score);
-    for(size_t king_distance = 0; king_distance < 8; ++king_distance)
-    {
-        scalar_cache[king_distance] = (1 + king_target_factor/(1 + king_distance))/64;
-    }
+    Math::normalize(opening_legal_square_score, opening_illegal_square_score);
+    Math::normalize(endgame_legal_square_score, endgame_illegal_square_score);
 }

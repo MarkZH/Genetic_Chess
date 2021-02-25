@@ -12,20 +12,30 @@
 
 Castling_Possible_Gene::Castling_Possible_Gene() noexcept
 {
-    Math::normalize(kingside_preference, queenside_preference);
+    normalize_sides();
+}
+
+void Castling_Possible_Gene::normalize_sides() noexcept
+{
+    Math::normalize(opening_kingside_preference, opening_queenside_preference);
+    Math::normalize(endgame_kingside_preference, endgame_queenside_preference);
 }
 
 void Castling_Possible_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
 {
-    properties["Kingside Preference"] = kingside_preference;
-    properties["Queenside Preference"] = queenside_preference;
+    properties["Kingside Preference - Opening"] = opening_kingside_preference;
+    properties["Queenside Preference - Opening"] = opening_queenside_preference;
+    properties["Kingside Preference - Endgame"] = endgame_kingside_preference;
+    properties["Queenside Preference - Endgame"] = endgame_queenside_preference;
 }
 
 void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, double>& properties)
 {
-    kingside_preference = properties.at("Kingside Preference");
-    queenside_preference = properties.at("Queenside Preference");
-    Math::normalize(kingside_preference, queenside_preference);
+    opening_kingside_preference = properties.at("Kingside Preference - Opening");
+    opening_queenside_preference = properties.at("Queenside Preference - Opening");
+    endgame_kingside_preference = properties.at("Kingside Preference - Endgame");
+    endgame_queenside_preference = properties.at("Queenside Preference - Endgame");
+    normalize_sides();
 }
 
 std::string Castling_Possible_Gene::name() const noexcept
@@ -33,8 +43,11 @@ std::string Castling_Possible_Gene::name() const noexcept
     return "Castling Possible Gene";
 }
 
-double Castling_Possible_Gene::score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept
+double Castling_Possible_Gene::score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept
 {
+    auto kingside_preference = Math::interpolate(opening_kingside_preference, endgame_kingside_preference, game_progress);
+    auto queenside_preference = Math::interpolate(opening_queenside_preference, endgame_queenside_preference, game_progress);
+
     // check if a castling move lies between here and the actual state of the board
     if(board.player_castled(perspective))
     {
@@ -99,14 +112,23 @@ double Castling_Possible_Gene::score_board(const Board& board, Piece_Color persp
 
 void Castling_Possible_Gene::gene_specific_mutation() noexcept
 {
-    if(Random::coin_flip())
+    switch(Random::random_integer(1, 4))
     {
-        kingside_preference += Random::random_laplace(0.03);
-    }
-    else
-    {
-        queenside_preference += Random::random_laplace(0.03);
+        case 1:
+            opening_kingside_preference += Random::random_laplace(0.03);
+            break;
+        case 2:
+            endgame_kingside_preference += Random::random_laplace(0.03);
+            break;
+        case 3:
+            opening_queenside_preference += Random::random_laplace(0.03);
+            break;
+        case 4:
+            endgame_queenside_preference += Random::random_laplace(0.03);
+            break;
+        default:
+            assert(false);
     }
 
-    Math::normalize(kingside_preference, queenside_preference);
+    normalize_sides();
 }

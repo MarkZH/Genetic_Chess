@@ -5,6 +5,7 @@
 
 #include <string>
 #include <map>
+#include <array>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
@@ -35,6 +36,11 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         //! \brief Returns an estimate of the number of moves in an average board position (i.e., the branching factor of the game tree).
         double branching_factor() const noexcept;
 
+        //! \brief Estimates the number of remaining moves (by one player) in a board position.
+        //!
+        //! \param board The board position in the game.
+        double expected_moves_left(const Board& board) const noexcept;
+
     private:
         // controls over/under-allocation of time
         double speculation_constant = 1.0;
@@ -44,11 +50,15 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         double mean_game_length = 50.0; // in moves by one player
         double game_length_uncertainty = 0.5; // approximately as a fraction of the mean
 
-        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;
 
         void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
         void load_gene_properties(const std::map<std::string, double>& properties) override;
+
+        // Precalculation of game lengths (out to absurdly long games)
+        std::array<double, 1000> moves_left_lookup{};
+        void recalculate_game_lengths() noexcept;
 };
 
 #endif // LOOK_AHEAD_GENE_H

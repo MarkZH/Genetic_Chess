@@ -16,7 +16,7 @@ class Passed_Pawn_Gene : public Clonable_Gene<Passed_Pawn_Gene>
         std::string name() const noexcept override;
 
     private:
-        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
 };
 
 #endif // PASSED_PAWN_GENE_H

@@ -45,6 +45,14 @@ namespace Math
     //!
     //! The values will be divided by std::abs(x) + std::abs(y).
     void normalize(double& x, double& y) noexcept;
+
+    //! Linearly interpolates a value.
+    //!
+    //! \param start_value The value returned when fraction == 0.0.
+    //! \param end_value The value returned when fraction == 1.0.
+    //! \param fraction A fractional value from 0.0 to 1.0 (inclusive) to indicate how close
+    //!        the return value should be to one of the input values.
+    double interpolate(double start_value, double end_value, double fraction) noexcept;
 }
 
 #endif // MATH_H

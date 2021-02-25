@@ -50,15 +50,22 @@ title('Piece Strength Evolution');
 piece_count = 0;
 piece_end_values = containers.Map;
 
-priority_figure = figure;
+opening_priority_figure = figure;
 hold all;
-priority_suffix = ' Gene - Priority';
-title('Gene Priority Evolution');
-priority_count = 0;
+opening_priority_suffix = ' Gene - Priority - Opening';
+title('Opening Gene Priority Evolution');
+opening_priority_count = 0;
+
+endgame_priority_figure = figure;
+hold all;
+endgame_priority_suffix = ' Gene - Priority - Endgame';
+title('Endgame Gene Priority Evolution');
+endgame_priority_count = 0;
 
 special_plots = containers.Map;
 special_plots('piece strength') = piece_strength_figure;
-special_plots('gene priorities') = priority_figure;
+special_plots('gene priorities opening') = opening_priority_figure;
+special_plots('gene priorities endgame') = endgame_priority_figure;
 
 % Plot evolution of individual genes
 for yi = 2 : length(data.colheaders) - 2
@@ -111,8 +118,10 @@ for yi = 2 : length(data.colheaders) - 2
     plot_figure = invalid_plot;
     if ~isempty(strfind(name, piece_strength_prefix))
         plot_figure = piece_strength_figure;
-    elseif ~isempty(strfind(name, priority_suffix))
-        plot_figure = priority_figure;
+    elseif ~isempty(strfind(name, opening_priority_suffix))
+        plot_figure = opening_priority_figure;
+    elseif ~isempty(strfind(name, endgame_priority_suffix))
+        plot_figure = endgame_priority_figure;
     end
 
     if plot_figure != invalid_plot
@@ -123,10 +132,14 @@ for yi = 2 : length(data.colheaders) - 2
             make_dashed = (piece_count > 7);
             piece_end_values(name) = num2str(smooth_data(end), '%.2f');
             display_name = [name ' (' piece_end_values(name) ')'];
-        elseif plot_figure == priority_figure
-            display_name = name(1 : end - length(priority_suffix));
-            priority_count = priority_count + 1;
-            make_dashed = (priority_count > 7);
+        elseif plot_figure == opening_priority_figure
+            display_name = name(1 : end - length(opening_priority_suffix));
+            opening_priority_count = opening_priority_count + 1;
+            make_dashed = (opening_priority_count > 7);
+        elseif plot_figure == endgame_priority_figure
+            display_name = name(1 : end - length(endgame_priority_suffix));
+            endgame_priority_count = endgame_priority_count + 1;
+            make_dashed = (endgame_priority_count > 7);
         end
 
         p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', display_name);
