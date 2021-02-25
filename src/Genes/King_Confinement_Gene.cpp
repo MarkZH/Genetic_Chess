@@ -36,7 +36,7 @@ std::string King_Confinement_Gene::name() const noexcept
     return "King Confinement Gene";
 }
 
-double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
+double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
 {
     Fixed_Capacity_Vector<Square, 64> square_queue{};
     std::array<bool, 64> in_queue{};

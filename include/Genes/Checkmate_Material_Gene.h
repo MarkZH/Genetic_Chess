@@ -16,7 +16,7 @@ class Checkmate_Material_Gene : public Clonable_Gene<Checkmate_Material_Gene>
         std::string name() const noexcept override;
 
     private:
-        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
 };
 
 #endif // CHECKMATE_MATERIAL_GENE_H

@@ -9,7 +9,7 @@
 #include "Game/Piece.h"
 #include "Game/Color.h"
 
-double Passed_Pawn_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept
+double Passed_Pawn_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
 {
     double score = 0.0;
     auto own_pawn = Piece{perspective, Piece_Type::PAWN};

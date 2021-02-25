@@ -1,68 +1,86 @@
-ID: 123256
+ID: 336682
 Name: Piece Strength Gene
-B: 171.861
-K: 77.446
-N: 180.501
-P: 0.44133
-Q: 624.13
-R: 283.418
-A: 414 # New piece values manually added by scaling scores from
-C: 403 # https://musketeerchess.net/site/musketeer-chess-relative-piece-value/
-D: 699
-E: 339
-F: 408
-H: 296
-L: 360
-M: 430
-S: 438
-U: 301
+A: 8.50138
+B: 3.52912
+C: 8.2755
+D: 14.3538
+E: 6.96128
+F: 8.37817
+H: 6.07828
+K: 1.59033
+L: 7.39251
+M: 8.82994
+N: 3.70654
+P: 0.0090626
+Q: 12.8163
+R: 5.81991
+S: 8.99422
+U: 6.18096
 
 Name: Look Ahead Gene
-Branching Factor: 8.64069
-Game Length Uncertainty: 0.53755
-Mean Game Length: 63.559
-Speculation: 3.20621
+Branching Factor: 9.39341
+Game Length Uncertainty: 0.353513
+Mean Game Length: 55.1586
+Speculation: 1.58982
 
 Name: Total Force Gene
 Gate Factor: 0.5
-Priority: 0.653576
+Priority - Endgame: 0.50647
+Priority - Opening: 0.467311
 
 Name: Freedom to Move Gene
-Priority: 0.038222
+Priority - Endgame: 0.0657689
+Priority - Opening: 0.0503603
 
 Name: Pawn Advancement Gene
-Priority: 0.0318562
+Priority - Endgame: 0.0917938
+Priority - Opening: -0.0142559
 
 Name: Passed Pawn Gene
-Priority: 0.0414863
+Priority - Endgame: 0.117961
+Priority - Opening: 0.0149519
 
 Name: Opponent Pieces Targeted Gene
-Priority: 0.0617405
+Priority - Endgame: 0.0071906
+Priority - Opening: 0.0450775
 
 Name: Sphere of Influence Gene
-Illegal Square Score: -0.163346
-King Target Factor: -1.46532
-Legal Square Score: 0.836654
-Priority: 0.0647232
+Illegal Square Score - Endgame: -0.208303
+Illegal Square Score - Opening: 0.336353
+King Target Factor - Endgame: -2.69943
+King Target Factor - Opening: -2.44173
+Legal Square Score - Endgame: 0.791697
+Legal Square Score - Opening: 0.663647
+Priority - Endgame: 0.0516316
+Priority - Opening: 0.119181
 
 Name: King Confinement Gene
-Priority: 0.0233947
+Priority - Endgame: 0.0210629
+Priority - Opening: -0.0286779
 
 Name: King Protection Gene
-Priority: -0.00053861
+Priority - Endgame: -0.0249017
+Priority - Opening: 0.079547
 
 Name: Castling Possible Gene
-Kingside Preference: -0.323355
-Priority: 0.00659666
-Queenside Preference: -0.676645
+Kingside Preference - Endgame: 0.775246
+Kingside Preference - Opening: 0.720044
+Priority - Endgame: 0.0750699
+Priority - Opening: -0.00770926
+Queenside Preference - Endgame: 0.224754
+Queenside Preference - Opening: 0.279956
 
 Name: Stacked Pawns Gene
-Priority: 0.0165249
+Priority - Endgame: -0.00360586
+Priority - Opening: -0.0362107
 
 Name: Pawn Islands Gene
-Priority: 0.00492635
+Priority - Endgame: -0.00321323
+Priority - Opening: 0.00562083
 
 Name: Checkmate Material Gene
-Priority: -0.0564146
+Priority - Endgame: -0.031331
+Priority - Opening: 0.131097
 
 END
+
