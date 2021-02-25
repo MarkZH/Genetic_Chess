@@ -19,16 +19,6 @@ void Player::undo_move(const Move*) const noexcept
 {
 }
 
-void Player::set_opponent_name(const std::string& name) const noexcept
-{
-    opposing_player_name = name;
-}
-
-std::string Player::opponent_name() const noexcept
-{
-    return opposing_player_name;
-}
-
 void Player::set_short_post() noexcept
 {
     use_short_cecp_post = true;

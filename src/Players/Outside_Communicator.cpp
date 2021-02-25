@@ -8,6 +8,8 @@
 #include <stdexcept>
 
 #include "Game/Color.h"
+#include "Players/Proxy_Player.h"
+
 #include "Players/CECP_Mediator.h"
 #include "Players/UCI_Mediator.h"
 
@@ -35,6 +37,16 @@ std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player)
 Outside_Communicator::~Outside_Communicator()
 {
     log("Shutting down.");
+}
+
+void Outside_Communicator::record_opponent_name(const std::string& opponent_name) noexcept
+{
+    remote_opponent_name = opponent_name;
+}
+
+Proxy_Player Outside_Communicator::create_proxy_player() const noexcept
+{
+    return {remote_opponent_name};
 }
 
 std::string Outside_Communicator::receive_command()

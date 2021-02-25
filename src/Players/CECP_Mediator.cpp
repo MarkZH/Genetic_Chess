@@ -85,7 +85,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         {
             auto name = String::split(command, " ", 1).back();
             log("Getting other player's name: " + name);
-            player.set_opponent_name(name);
+            record_opponent_name(name);
         }
         else if(String::starts_with(command, "setboard "))
         {

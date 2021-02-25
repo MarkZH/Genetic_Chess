@@ -154,8 +154,8 @@ class Board
         //! \param event_name The name of the event where the game will take place. May be empty.
         //! \param location The name of the location of the game. May be empty.
         void print_game_record(const std::vector<const Move*>& game_record_listing,
-                               const Player* white,
-                               const Player* black,
+                               const Player& white,
+                               const Player& black,
                                const std::string& file_name,
                                const Game_Result& result,
                                const Clock& game_clock,

@@ -77,7 +77,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 log("Opponent type: " + type);
 
                 auto name = opponent_split[7];
-                player.set_opponent_name(title + name);
+                record_opponent_name(title + name);
                 log("Opponent's name: " + name);
             }
         }
