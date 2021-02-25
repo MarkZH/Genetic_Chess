@@ -71,14 +71,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
                                    principal_variation,
                                    current_variation);
 
-    if(Board::thinking_mode() == Thinking_Output_Type::CECP)
-    {
-        output_thinking_cecp(result, board.whose_turn());
-    }
-    else if(Board::thinking_mode() == Thinking_Output_Type::UCI)
-    {
-        output_thinking_uci(result, board.whose_turn());
-    }
+    output_thinking(Board::thinking_mode(), result, board.whose_turn());
 
     commentary.push_back({result, {}});
     depth_one_results = depth_two_results[result.variation.front()];
@@ -236,16 +229,9 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 }
                 else if(time_since_last_output() > 1s)
                 {
-                    if(Board::thinking_mode() == Thinking_Output_Type::CECP)
-                    {
-                        output_thinking_cecp(best_result,
-                                             depth % 2 == 1 ? perspective : opposite(perspective));
-                    }
-                    else if(Board::thinking_mode() == Thinking_Output_Type::UCI)
-                    {
-                        output_thinking_uci(best_result,
-                                            depth % 2 == 1 ? perspective : opposite(perspective));
-                    }
+                    output_thinking(Board::thinking_mode(),
+                                    best_result,
+                                    depth % 2 == 1 ? perspective : opposite(perspective));
                     time_at_last_output = std::chrono::steady_clock::now();
                 }
             }
@@ -271,6 +257,20 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     }
 
     return best_result;
+}
+
+void Minimax_AI::output_thinking(Thinking_Output_Type format,
+                                 const Game_Tree_Node_Result& thought,
+                                 Piece_Color perspective) const noexcept
+{
+    if(format == Thinking_Output_Type::CECP)
+    {
+        output_thinking_cecp(thought, perspective);
+    }
+    else if(format == Thinking_Output_Type::UCI)
+    {
+        output_thinking_uci(thought, perspective);
+    }
 }
 
 void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
