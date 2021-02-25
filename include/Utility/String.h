@@ -100,6 +100,12 @@ namespace String
     //! \returns The same string with the markers and everything between them removed.
     std::string strip_nested_block_comments(const std::string& str, const std::string& start, const std::string& end);
 
+    //! \brief Remove all comments from a PGN game line.
+    //!
+    //! \param line A line of text potentially containing moves in a PGN game record file.
+    //! \returns The line without any commentary (commetns, alternate lines, etc.)
+    std::string remove_pgn_comments(const std::string& line);
+
     //! \brief Extract text between delimiters
     //!
     //! \param str The input string

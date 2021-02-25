@@ -164,6 +164,20 @@ std::string String::strip_nested_block_comments(const std::string& str, const st
     return result;
 }
 
+std::string String::remove_pgn_comments(const std::string& line)
+{
+    auto index = line.find_first_of(";({");
+    auto delimiter = index < std::string::npos ? line[index] : '\0';
+
+    switch(delimiter)
+    {
+        case ';' : return remove_pgn_comments(strip_comments(line, ";"));
+        case '(' : return remove_pgn_comments(strip_nested_block_comments(line, "(", ")"));
+        case '{' : return remove_pgn_comments(strip_block_comment(line, "{", "}"));
+        default  : return remove_extra_whitespace(line);
+    }
+}
+
 std::string String::extract_delimited_text(const std::string& str, const std::string& start, const std::string& end)
 {
     auto start_split = split(str, start, 1);
