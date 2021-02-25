@@ -91,7 +91,7 @@ void Outside_Communicator::log(const std::string& data)
         << std::endl;
 }
 
-void Outside_Communicator::send_command(const std::string& cmd) const noexcept
+void Outside_Communicator::send_command(const std::string& cmd) noexcept
 {
     log("SENDING: " + cmd);
     std::cout << cmd << std::endl;
