@@ -267,6 +267,7 @@
     <ClCompile Include="src\Players\Minimax_AI.cpp" />
     <ClCompile Include="src\players\Outside_Communicator.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
+    <ClCompile Include="src\Players\Proxy_Player.cpp" />
     <ClCompile Include="src\players\Random_AI.cpp" />
     <ClCompile Include="src\Players\UCI_Mediator.cpp" />
     <ClCompile Include="src\Testing.cpp" />
@@ -314,6 +315,7 @@
     <ClInclude Include="include\Players\Minimax_AI.h" />
     <ClInclude Include="include\players\Outside_Communicator.h" />
     <ClInclude Include="include\players\Player.h" />
+    <ClInclude Include="include\Players\Proxy_Player.h" />
     <ClInclude Include="include\players\Random_AI.h" />
     <ClInclude Include="include\players\Thinking.h" />
     <ClInclude Include="include\Players\UCI_Mediator.h" />
