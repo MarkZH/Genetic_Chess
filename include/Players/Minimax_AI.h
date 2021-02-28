@@ -100,7 +100,8 @@ class Minimax_AI : public Player
         // Time management
         virtual Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept = 0;
         virtual double speculation_time_factor() const noexcept = 0;
-        virtual double branching_factor() const noexcept = 0;
+        virtual double branching_factor(double game_progress) const noexcept = 0;
+        virtual double game_progress(const Board& board) const noexcept = 0;
 
         // Scoring output
         double centipawn_value() const noexcept;

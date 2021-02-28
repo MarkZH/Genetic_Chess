@@ -45,9 +45,9 @@ class Gene
         //! \param board The state of the board to be evaluated--found at the leaves of the game search tree.
         //! \param perspective For which player the board is being scored.
         //! \param depth The current game tree search depth.
-        //! \param probable_moves_left The expected number of moves left in the game.
+        //! \param game_progress An estimate of the fraction of the game that has been played.
         //! \returns A numerical score indicating the likelihood that the board in the first argument is winning for board.whose_turn().
-        double evaluate(const Board& board, Piece_Color perspective, size_t depth, double probable_moves_left) const noexcept;
+        double evaluate(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept;
 
         //! \brief Copies the gene data and returns a pointer to the new data
         //!

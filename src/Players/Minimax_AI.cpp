@@ -48,7 +48,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     }
 
     auto time_to_use = time_to_examine(board, clock);
-    auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor()));
+    auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor(game_progress(board))));
 
     // alpha = highest score found that opponent will allow
     auto alpha_start = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,

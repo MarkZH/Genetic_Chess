@@ -34,7 +34,9 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         double speculation_time_factor() const noexcept;
 
         //! \brief Returns an estimate of the number of moves in an average board position (i.e., the branching factor of the game tree).
-        double branching_factor() const noexcept;
+        //!
+        //! \param game_progress An estimate of how much of the game has been played (0.0 to 1.0).
+        double branching_factor(double game_progress) const noexcept;
 
         //! \brief Estimates the number of remaining moves (by one player) in a board position.
         //!
@@ -45,7 +47,8 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         // controls over/under-allocation of time
         double speculation_constant = 1.0;
         // estimates the average number of moves in a board position (the branching factor of the game tree)
-        double branching_factor_estimate = 20.0;
+        double opening_branching_factor_estimate = 20.0;
+        double endgame_branching_factor_estimate = 20.0;
 
         double mean_game_length = 50.0; // in moves by one player
         double game_length_uncertainty = 0.5; // approximately as a fraction of the mean

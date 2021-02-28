@@ -80,7 +80,14 @@ class Genome
         double speculation_time_factor() const noexcept;
 
         //! \brief Returns an estimate of the number of moves in an average board position (i.e., the branching factor of the game tree).
-        double branching_factor() const noexcept;
+        //!
+        //! \param game_progress An estimate of the amount of the game that has been played on a scale from 0.0 to 1.0.
+        double branching_factor(double game_progress) const noexcept;
+
+        //! \brief Estimates how much of the game has happened on the given board.
+        //!
+        //! \param board The current state of the game.
+        double game_progress(const Board& board) const noexcept;
 
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
         const std::array<double, 6>& piece_values() const noexcept;

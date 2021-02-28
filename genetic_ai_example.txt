@@ -8,7 +8,8 @@ Q: 11.1597
 R: 5.91018
 
 Name: Look Ahead Gene
-Branching Factor: 9.39341
+Branching Factor - Opening: 9.39341
+Branching Factor - Endgame: 9.39341
 Game Length Uncertainty: 0.353513
 Mean Game Length: 55.1586
 Speculation: 1.58982

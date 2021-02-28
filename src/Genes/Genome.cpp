@@ -8,6 +8,7 @@
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
+#include "Game/Board.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
@@ -28,8 +29,6 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
-
-class Board;
 
 namespace
 {
@@ -181,11 +180,11 @@ void Genome::read_from(std::istream& is)
 
 double Genome::score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
-    auto moves_left = expected_number_of_moves_left(board);
+    auto progress_in_game = game_progress(board);
     return std::accumulate(genome.begin(), genome.end(), 0.0,
                            [&](auto sum, const auto& gene)
                            {
-                               return sum + gene->evaluate(board, perspective, depth, moves_left);
+                               return sum + gene->evaluate(board, perspective, depth, progress_in_game);
                            });
 }
 
@@ -228,14 +227,21 @@ double Genome::speculation_time_factor() const noexcept
     return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().speculation_time_factor();
 }
 
-double Genome::branching_factor() const noexcept
+double Genome::branching_factor(double game_progress) const noexcept
 {
-    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().branching_factor();
+    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().branching_factor(game_progress);
 }
 
 double Genome::expected_number_of_moves_left(const Board& board) const noexcept
 {
     return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().expected_moves_left(board);
+}
+
+double Genome::game_progress(const Board& board) const noexcept
+{
+    auto moves_so_far = board.ply_count()/2;
+    auto moves_to_go = expected_number_of_moves_left(board);
+    return moves_so_far/(moves_so_far + moves_to_go);
 }
 
 const std::array<double, 6>& Genome::piece_values() const noexcept

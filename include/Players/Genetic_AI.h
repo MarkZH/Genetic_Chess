@@ -109,7 +109,8 @@ class Genetic_AI : public Minimax_AI
         // Time management
         Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept override;
         double speculation_time_factor() const noexcept override;
-        double branching_factor() const noexcept override;
+        double branching_factor(double game_progress) const noexcept override;
+        double game_progress(const Board& board) const noexcept override;
 };
 
 //! \brief Find the last ID of a Genetic_AI in a gene pool file.

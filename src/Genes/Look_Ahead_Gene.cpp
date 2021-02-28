@@ -19,7 +19,8 @@ void Look_Ahead_Gene::adjust_properties(std::map<std::string, double>& propertie
     properties["Mean Game Length"] = mean_game_length;
     properties["Game Length Uncertainty"] = game_length_uncertainty;
     properties["Speculation"] = speculation_constant;
-    properties["Branching Factor"] = branching_factor_estimate;
+    properties["Branching Factor - Opening"] = opening_branching_factor_estimate;
+    properties["Branching Factor - Endgame"] = endgame_branching_factor_estimate;
 }
 
 void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& properties)
@@ -27,7 +28,8 @@ void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& 
     mean_game_length = properties.at("Mean Game Length");
     game_length_uncertainty = properties.at("Game Length Uncertainty");
     speculation_constant = properties.at("Speculation");
-    branching_factor_estimate = properties.at("Branching Factor");
+    opening_branching_factor_estimate = properties.at("Branching Factor - Opening");
+    endgame_branching_factor_estimate = properties.at("Branching Factor - Endgame");
     recalculate_game_lengths();
 }
 
@@ -41,7 +43,7 @@ Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock&
 
 void Look_Ahead_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 4))
+    switch(Random::random_integer(1, 5))
     {
         case 1:
             mean_game_length += Random::random_laplace(1.0);
@@ -53,7 +55,10 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
             speculation_constant += Random::random_laplace(0.05);
             break;
         case 4:
-            branching_factor_estimate += Random::random_laplace(1.0);
+            opening_branching_factor_estimate += Random::random_laplace(1.0);
+            break;
+        case 5:
+            endgame_branching_factor_estimate += Random::random_laplace(1.0);
             break;
         default:
             assert(false);
@@ -77,9 +82,11 @@ double Look_Ahead_Gene::speculation_time_factor() const noexcept
     return speculation_constant;
 }
 
-double Look_Ahead_Gene::branching_factor() const noexcept
+double Look_Ahead_Gene::branching_factor(double game_progress) const noexcept
 {
-    return branching_factor_estimate;
+    return Math::interpolate(opening_branching_factor_estimate,
+                             endgame_branching_factor_estimate,
+                             game_progress);
 }
 
 double Look_Ahead_Gene::expected_moves_left(const Board& board) const noexcept

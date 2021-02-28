@@ -110,9 +110,14 @@ double Genetic_AI::speculation_time_factor() const noexcept
     return genome.speculation_time_factor();
 }
 
-double Genetic_AI::branching_factor() const noexcept
+double Genetic_AI::branching_factor(double game_progress) const noexcept
 {
-    return genome.branching_factor();
+    return genome.branching_factor(game_progress);
+}
+
+double Genetic_AI::game_progress(const Board& board) const noexcept
+{
+    return genome.game_progress(board);
 }
 
 void Genetic_AI::mutate(size_t mutation_count) noexcept
