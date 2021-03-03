@@ -191,7 +191,7 @@ Clock::seconds Clock::increment(Piece_Color color) const noexcept
 
 bool Clock::is_in_use() const noexcept
 {
-    return initial_start_time > 0.0s;
+    return initial_time() > 0.0s || increment(Piece_Color::WHITE) > 0.0s || increment(Piece_Color::BLACK) > 0.0s;
 }
 
 std::string Clock::time_control_string() const noexcept
