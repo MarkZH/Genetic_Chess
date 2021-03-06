@@ -189,7 +189,7 @@ void gene_pool(const std::string& config_file)
     }
     const auto starting_pool = (last_pool + 1) % gene_pool_count;
 
-    const auto game_record_file = genome_file_name +  "_games.pgn";
+    const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
 
     std::cout << "Searching for previous best AI win counts ..." << std::endl;
@@ -359,7 +359,7 @@ void gene_pool(const std::string& config_file)
 
             // Write stat headers
             std::cout << "\n"
-                      << std::setw(id_column_width)  << "ID"
+                      << std::setw(id_column_width) << "ID"
                       << std::setw(win_column_width) << "Wins"
                       << std::setw(draw_column_width) << "Draws" << "\n";
 

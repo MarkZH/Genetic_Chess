@@ -73,7 +73,7 @@ std::string String::remove_extra_whitespace(const std::string& s) noexcept
     std::copy_if(s2.begin(), s2.end(), std::back_inserter(result),
                  [&result](auto c)
                  {
-                     return  c != ' ' || result.back() != ' ';
+                     return c != ' ' || result.back() != ' ';
                  });
 
     return result;

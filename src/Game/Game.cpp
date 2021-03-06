@@ -34,7 +34,7 @@ Game_Result play_game(Board board,
 
     while( ! result.game_has_ended())
     {
-        auto& player  = board.whose_turn() == Piece_Color::WHITE ? white : black;
+        auto& player = board.whose_turn() == Piece_Color::WHITE ? white : black;
         const auto& move_chosen = player.choose_move(board, game_clock);
 
         result = game_clock.punch(board);
