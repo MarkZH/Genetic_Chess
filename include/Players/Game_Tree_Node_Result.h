@@ -29,6 +29,9 @@ struct Game_Tree_Node_Result
     //! \brief The score assigned to a checkmate board position for the losing Minimax_AI.
     static constexpr const auto lose_score = -win_score;
 
+    //! Indicates the result is a draw, which requires some special handling.
+    bool is_draw;
+
     //! \brief Gives the score of the board position from the indicated side.
     //!
     //! The score is calculated in a way that opposite perspective scores

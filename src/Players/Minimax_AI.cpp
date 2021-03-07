@@ -131,7 +131,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
     Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
                                          perspective,
-                                         {current_variation.empty() ? all_legal_moves.front() : current_variation.front()}};
+                                         {current_variation.empty() ? all_legal_moves.front() : current_variation.front()},
+                                         false};
 
     for(const auto& move : all_legal_moves)
     {
@@ -360,7 +361,8 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
 {
     return {evaluate(board, move_result, perspective, move_list.size()),
             perspective,
-            {move_list.begin(), move_list.end()}};
+            {move_list.begin(), move_list.end()},
+            move_result.game_has_ended() && move_result.winner() == Winner_Color::NONE};
 }
 
 void Minimax_AI::calibrate_thinking_speed() const noexcept
