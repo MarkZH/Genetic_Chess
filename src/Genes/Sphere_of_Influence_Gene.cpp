@@ -13,10 +13,10 @@
 
 namespace
 {
-    const auto king_distances =
+    const auto inv_king_dist_plus_one =
         []()
         {
-            std::array<std::array<size_t, 64>, 64> result;
+            std::array<std::array<double, 64>, 64> result;
             for(auto square_a : Square::all_squares())
             {
                 for(auto square_b : Square::all_squares())
@@ -25,7 +25,7 @@ namespace
                     // of moves a king needs to get from one square to the other.
                     auto diff = square_a - square_b;
                     result[square_a.index()][square_b.index()] =
-                        size_t(std::max(std::abs(diff.file_change), std::abs(diff.rank_change)));
+                        1.0/(1.0 + std::max(std::abs(diff.file_change), std::abs(diff.rank_change)));
                 }
             }
             return result;
@@ -70,9 +70,11 @@ std::string Sphere_of_Influence_Gene::name() const noexcept
 // the attacking move is legal.
 double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double game_progress) const noexcept
 {
-    auto legal_square_score = Math::interpolate(opening_legal_square_score, endgame_legal_square_score, game_progress);
-    auto illegal_square_score = Math::interpolate(opening_illegal_square_score, endgame_illegal_square_score, game_progress);
-    auto king_target_factor = Math::interpolate(opening_king_target_factor, endgame_king_target_factor, game_progress);
+    const auto legal_square_score = Math::interpolate(opening_legal_square_score, endgame_legal_square_score, game_progress);
+    const auto illegal_square_score = Math::interpolate(opening_illegal_square_score, endgame_illegal_square_score, game_progress);
+    const auto king_target_factor = Math::interpolate(opening_king_target_factor, endgame_king_target_factor, game_progress);
+    const auto opponent_king_square = board.find_king(opposite(perspective));
+    const auto& inv_dist_plus_one = inv_king_dist_plus_one[opponent_king_square.index()];
 
     double score = 0.0;
     for(auto square : Square::all_squares())
@@ -91,12 +93,11 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color per
             continue;
         }
 
-        const auto& opponent_king_square = board.find_king(opposite(perspective));
-        auto distance_to_king = king_distances[square.index()][opponent_king_square.index()];
-        score += square_score*(1 + king_target_factor/(1 + distance_to_king))/64;
+        auto inv_dist_to_king_plus_one = inv_dist_plus_one[square.index()];
+        score += square_score*(1 + king_target_factor*inv_dist_to_king_plus_one);
     }
 
-    return score;
+    return score/64;
 }
 
 
