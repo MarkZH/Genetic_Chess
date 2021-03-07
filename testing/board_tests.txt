@@ -97,6 +97,9 @@ checkmate material | k1KBn3/8/8/8/8/8/8/8 w - - 0 1 | true
 last move illegal | start | g3 c5 c3 Nc6 h4 Qb6 b4 c4 Bg2 Nh6 Na3 Rb8 f3 Rg8 Bb2 f6 Nb1 a6 Kf2
 king in check | start | f4 g6 Nf3 h6 d3 c5 b4 a5 bxc5 b5 | false
 king in check | start | e4 g5 h3 f6 e5 a6 Rh2 g4 Ne2 g3 f3 d5 | false
+last move illegal | 8/2r5/4Kn2/1kqRn3/2bNP3/P6P/8/5B2 b - - 13 65 | Qxd4
+last move illegal | 2R5/7r/4P1k1/2B5/3KB2N/8/5n2/8 b - - 7 138 | Nxe4
+last move illegal | 2R5/7r/4P1k1/2B5/3KB2N/8/5n2/8 b - - 7 138 | Rxh4
 
 # Quiescent tests: test proper resolution of quiescent search
 # quiescent | (starting FEN) | (move list) | (expected subsequent moves)
