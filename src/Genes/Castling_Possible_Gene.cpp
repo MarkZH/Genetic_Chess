@@ -27,6 +27,8 @@ void Castling_Possible_Gene::adjust_properties(std::map<std::string, double>& pr
     properties["Queenside Preference - Opening"] = opening_queenside_preference;
     properties["Kingside Preference - Endgame"] = endgame_kingside_preference;
     properties["Queenside Preference - Endgame"] = endgame_queenside_preference;
+    properties["Unmoved Rook Bonus - Opening"] = opening_rook_unmoved_score;
+    properties["Unmoved Rook Bonus - Endgame"] = endgame_rook_unmoved_score;
 }
 
 void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, double>& properties)
@@ -35,6 +37,8 @@ void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, do
     opening_queenside_preference = properties.at("Queenside Preference - Opening");
     endgame_kingside_preference = properties.at("Kingside Preference - Endgame");
     endgame_queenside_preference = properties.at("Queenside Preference - Endgame");
+    opening_rook_unmoved_score = properties.at("Unmoved Rook Bonus - Opening");
+    endgame_rook_unmoved_score = properties.at("Unmoved Rook Bonus - Endgame");
     normalize_sides();
 }
 
@@ -55,64 +59,37 @@ double Castling_Possible_Gene::score_board(const Board& board, Piece_Color persp
         auto first_searched_move_index = board.game_length() - depth;
         if(castling_index >= first_searched_move_index) // castling has not occurred on the actual board
         {
-            return Math::sign(board.castling_direction(perspective) > 0 ?
-                              kingside_preference : queenside_preference);
-        }
-        else // castling already happened in past of actual board, no longer relevant
-        {
-            return 0.0;
+            auto castling_distance = castling_index - first_searched_move_index + 1;
+            return (board.castling_direction(perspective) > 0 ? kingside_preference : queenside_preference)/castling_distance;
         }
     }
 
-    auto king_square = board.find_king(perspective);
-    if(board.piece_has_moved(king_square))
+    if( ! board.piece_has_moved(board.find_king(perspective)))
     {
-        return 0.0;
-    }
-
-    // King has not moved, check rooks and intervening pieces
-    auto score = 0.0;
-
-    for(auto rook_file : {'a', 'h'})
-    {
-        auto preference = (rook_file == 'h' ? kingside_preference : queenside_preference);
-        int files_to_clear = std::abs(rook_file - king_square.file()) - 1;
-
-        // Factors to count: 1) Rook not moved
-        //                   2,3) squares king crosses are not attacked
-        //                   4,5) empty squares between king and rook
-        //                   6) extra empty square for queenside castling
-        //                   +1) Only get full marks for actually castling.
-        double score_per_clear_square = preference/(files_to_clear + 4);
-
-        if( ! board.piece_has_moved({rook_file, king_square.rank()}))
+        auto score = 0.0;
+        auto base_rank = perspective == Piece_Color::WHITE ? 1 : 8;
+        auto unmoved_rook_bonus = Math::interpolate(opening_rook_unmoved_score,
+                                                    endgame_rook_unmoved_score,
+                                                    game_progress);
+        if( ! board.piece_has_moved({'a', base_rank}))
         {
-            score += score_per_clear_square; // score for keeping rook unmoved
-
-            // Add score for clearing pieces between king and rook
-            auto first_file = std::min(king_square.file(), rook_file) + 1;
-            auto last_file = std::max(king_square.file(), rook_file);
-            for(char file = first_file; file < last_file; ++file)
-            {
-                if( ! board.piece_on_square({file, king_square.rank()}))
-                {
-                    score += score_per_clear_square;
-
-                    if(std::abs(king_square.file() - file) <= 2 && board.safe_for_king({file, king_square.rank()}, perspective))
-                    {
-                        score += score_per_clear_square;
-                    }
-                }
-            }
+            score += queenside_preference;
         }
+
+        if( ! board.piece_has_moved({'h', base_rank}))
+        {
+            score += kingside_preference;
+        }
+
+        return score*unmoved_rook_bonus;
     }
 
-    return score;
+    return 0.0;
 }
 
 void Castling_Possible_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 4))
+    switch(Random::random_integer(1, 6))
     {
         case 1:
             opening_kingside_preference += Random::random_laplace(0.03);
@@ -125,6 +102,12 @@ void Castling_Possible_Gene::gene_specific_mutation() noexcept
             break;
         case 4:
             endgame_queenside_preference += Random::random_laplace(0.03);
+            break;
+        case 5:
+            opening_rook_unmoved_score += Random::random_laplace(0.001);
+            break;
+        case 6:
+            endgame_rook_unmoved_score += Random::random_laplace(0.001);
             break;
         default:
             assert(false);

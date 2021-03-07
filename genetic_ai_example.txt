@@ -62,6 +62,8 @@ Priority - Endgame: 0.07507
 Priority - Opening: -0.00770926
 Queenside Preference - Endgame: 0.224754
 Queenside Preference - Opening: 0.279956
+Unmoved Rook Bonus - Endgame: 0.0
+Unmoved Rook Bonus - Opening: 0.0
 
 Name: Stacked Pawns Gene
 Priority - Endgame: -0.00360586

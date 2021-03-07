@@ -234,7 +234,7 @@ void Gene::scale_priority(Game_Stage stage, double k) noexcept
 
 void Gene::test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept
 {
-    auto result = score_board(board, perspective, board.game_length() == 0 ? 0 : 1, 0.0);
+    auto result = score_board(board, perspective, board.game_length(), 0.0);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << ": Expected " << expected_score << ", Got: " << result << '\n';

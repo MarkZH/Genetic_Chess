@@ -427,18 +427,14 @@ bool run_tests()
     auto castling_possible_gene = Castling_Possible_Gene();
     castling_possible_gene.read_from(test_genes_file_name);
     auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
-    auto white_castling_score = 0.8*(5.0/6.0) + 0.2*(6.0/7.0); // maximum score with and without actually castling
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, white_castling_score);
-
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8*0.1 + 0.2*0.1);
     castling_board.submit_move("O-O");
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 1.0); // full score for kingside castling
-
-    auto black_castling_score = 0.2*(5.0/7.0); // castling possible
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, black_castling_score);
-
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8/1); // castled at depth 1
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2*0.1);
     castling_board.submit_move("Nc6");
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.0); // castling no longer relevant
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2*(6.0/7.0));
+    castling_board.submit_move("Rab1");
+    castling_board.submit_move("O-O-O");
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2/4); // castled at depth 4
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
@@ -754,12 +750,12 @@ void run_speed_tests()
     auto checkmate_material_gene = Checkmate_Material_Gene();
 
     auto performance_board = Board();
-    for(const auto& move : String::split("e4 e6 d4 h5 d5 b5 Qf3 g6 Be2 Bg7 Bd2 h4 Nh3 Na6 Nc3 b4 Nf4 Nc5 Nd3 Na4 Ne5 Nb6 Qd3 Qe7 Qe3 Ba6 Qf3 Nf6 Qe3 h3 Qf4 Qc5 Qf3 Qe7"))
+    for(const auto& move : String::split("e4 e6 d4 h5 d5 b5 Qf3 g6 Be2 Bg7 Bd2 h4 Nh3 Na6 Nc3 b4 Nf4 Nc5 Nd3 Na4 Ne5 Nb6 Qd3 Qe7 Qe3 Ba6 Qf3 Nf6 Qe3 h3 Qf4 Qc5 Qf3 Qe7 O-O-O"))
     {
         performance_board.submit_move(move);
     }
 
-    if(performance_board.fen() != "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/R3K2R w KQkq - 4 18")
+    if(performance_board.fen() != "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/2KR3R b kq - 5 18")
     {
         throw std::logic_error("Different FEN from previous tests.");
     }
