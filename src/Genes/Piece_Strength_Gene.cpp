@@ -23,12 +23,11 @@ void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& prope
     properties.erase("Priority - Opening");
     properties.erase("Priority - Endgame");
 
-    const auto standard_all_pieces_score = 8*1.0 + // pawns
-                                           2*5.0 + // rooks
+    const auto standard_all_pieces_score = 2*5.0 + // rooks
                                            2*3.0 + // knights
                                            2*3.0 + // bishops
                                            1*9.0;  // queen
-    auto standardize = (normalization() - std::abs(piece_value(Piece_Type::KING)))/standard_all_pieces_score;
+    auto standardize = file_normalization()/standard_all_pieces_score;
 
     for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
@@ -75,6 +74,12 @@ double Piece_Strength_Gene::normalization() const noexcept
            2*std::abs(piece_value(Piece_Type::BISHOP)) +
            1*std::abs(piece_value(Piece_Type::QUEEN)) +
            1*std::abs(piece_value(Piece_Type::KING));
+}
+
+double Piece_Strength_Gene::file_normalization() const noexcept
+{
+    return normalization() - std::abs(piece_value(Piece_Type::KING))
+                           - 8*std::abs(piece_value(Piece_Type::PAWN));
 }
 
 double Piece_Strength_Gene::piece_value(Piece_Type type) const noexcept

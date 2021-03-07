@@ -41,6 +41,7 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
         void gene_specific_mutation() noexcept override;
         void renormalize_values() noexcept;
         double normalization() const noexcept;
+        double file_normalization() const noexcept;
 };
 
 #endif // PIECE_STRENGTH_GENE_H
