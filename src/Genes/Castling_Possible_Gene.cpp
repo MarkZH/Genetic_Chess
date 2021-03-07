@@ -104,10 +104,10 @@ void Castling_Possible_Gene::gene_specific_mutation() noexcept
             endgame_queenside_preference += Random::random_laplace(0.03);
             break;
         case 5:
-            opening_rook_unmoved_score += Random::random_laplace(0.001);
+            opening_rook_unmoved_score += Random::random_laplace(0.03);
             break;
         case 6:
-            endgame_rook_unmoved_score += Random::random_laplace(0.001);
+            endgame_rook_unmoved_score += Random::random_laplace(0.03);
             break;
         default:
             assert(false);
