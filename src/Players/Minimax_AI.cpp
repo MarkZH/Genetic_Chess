@@ -18,6 +18,7 @@ using namespace std::chrono_literals;
 #include "Utility/String.h"
 #include "Utility/Random.h"
 #include "Utility/Fixed_Capacity_Vector.h"
+#include "Utility/Math.h"
 
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
@@ -374,11 +375,16 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
 
 double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
 {
+    // From the perspective of the player who is ultimately picking the move (the root
+    // of the game tree), it doesn't matter who causes the draw. The score of a draw
+    // should be the same no matter who causes it.
+    const auto draw_score = draw_value()*centipawn_value()*(depth % 2 == 0 ? -1 : 1);
+
     if(move_result.game_has_ended())
     {
-        if(move_result.winner() == Winner_Color::NONE) // stalemate
+        if(move_result.winner() == Winner_Color::NONE) // draw by rule
         {
-            return 0;
+            return draw_score;
         }
         else if(move_result.winner() == static_cast<Winner_Color>(perspective)) // checkmate win
         {
@@ -391,9 +397,10 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
     }
 
     auto score = internal_evaluate(board, perspective, depth);
-    if(board.moves_since_pawn_or_capture() >= depth)
+    auto non_progress_moves = board.moves_since_pawn_or_capture();
+    if(non_progress_moves >= depth)
     {
-        return score*(100 - board.moves_since_pawn_or_capture())/100.0;
+        return Math::interpolate(score, draw_score, non_progress_moves/100.0);
     }
     else
     {
