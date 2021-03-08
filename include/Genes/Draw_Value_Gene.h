@@ -21,6 +21,9 @@ class Board;
 class Draw_Value_Gene : public Clonable_Gene<Draw_Value_Gene>
 {
     public:
+        //! \brief Index for locating the gene in the genome
+        static const size_t genome_index = 2;
+
         std::string name() const noexcept override;
 
         //! Return the genetically determined draw value in centipawns.

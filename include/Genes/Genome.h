@@ -110,10 +110,10 @@ class Genome
         void renormalize_priorities() noexcept;
         double expected_number_of_moves_left(const Board& board) const noexcept;
 
-        template<typename Gene_Type, size_t index>
+        template<typename Gene_Type>
         constexpr const Gene_Type& gene_reference() const noexcept
         {
-            return static_cast<const Gene_Type&>(*genome[index]);
+            return static_cast<const Gene_Type&>(*genome[Gene_Type::genome_index]);
         }
 };
 

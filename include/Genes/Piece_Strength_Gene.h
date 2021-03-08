@@ -16,6 +16,9 @@ class Board;
 class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
 {
     public:
+        //! \brief Index for locating the gene in the genome
+        static const size_t genome_index = 0;
+
         //! \brief Initialize the Piece values to zero.
         Piece_Strength_Gene() noexcept;
 

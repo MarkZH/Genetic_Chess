@@ -31,25 +31,18 @@
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Draw_Value_Gene.h"
 
-namespace
-{
-     constexpr const auto piece_strength_gene_index = size_t(0);
-     constexpr const auto look_ahead_gene_index = size_t(1);
-     constexpr const auto draw_value_gene_index = size_t(2);
-}
-
 Genome::Genome() noexcept
 {
     // Regulator genes
     genome.emplace_back(std::make_unique<Piece_Strength_Gene>());
-    assert(genome[piece_strength_gene_index]->name() == "Piece Strength Gene");
+    assert(genome[Piece_Strength_Gene::genome_index]->name() == "Piece Strength Gene");
     genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
-    assert(genome[look_ahead_gene_index]->name() == "Look Ahead Gene");
+    assert(genome[Look_Ahead_Gene::genome_index]->name() == "Look Ahead Gene");
     genome.emplace_back(std::make_unique<Draw_Value_Gene>());
-    assert(genome[draw_value_gene_index]->name() == "Draw Value Gene");
+    assert(genome[Draw_Value_Gene::genome_index]->name() == "Draw Value Gene");
 
     // Normal genes
-    auto psg = &gene_reference<Piece_Strength_Gene, piece_strength_gene_index>();
+    auto psg = &gene_reference<Piece_Strength_Gene>();
 
     genome.emplace_back(std::make_unique<Total_Force_Gene>(psg));
     genome.emplace_back(std::make_unique<Freedom_To_Move_Gene>());
@@ -80,7 +73,7 @@ Genome::Genome(const Genome& other) noexcept
 
 void Genome::reset_piece_strength_gene() noexcept
 {
-    auto piece_strength_gene = &gene_reference<Piece_Strength_Gene, piece_strength_gene_index>();
+    auto piece_strength_gene = &gene_reference<Piece_Strength_Gene>();
     for(auto& gene : genome)
     {
         gene->reset_piece_strength_gene(piece_strength_gene);
@@ -223,22 +216,22 @@ void Genome::print(std::ostream& os) const noexcept
 
 Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
-    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().time_to_examine(board, clock);
+    return gene_reference<Look_Ahead_Gene>().time_to_examine(board, clock);
 }
 
 double Genome::speculation_time_factor() const noexcept
 {
-    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().speculation_time_factor();
+    return gene_reference<Look_Ahead_Gene>().speculation_time_factor();
 }
 
 double Genome::branching_factor(double game_progress) const noexcept
 {
-    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().branching_factor(game_progress);
+    return gene_reference<Look_Ahead_Gene>().branching_factor(game_progress);
 }
 
 double Genome::expected_number_of_moves_left(const Board& board) const noexcept
 {
-    return gene_reference<Look_Ahead_Gene, look_ahead_gene_index>().expected_moves_left(board);
+    return gene_reference<Look_Ahead_Gene>().expected_moves_left(board);
 }
 
 double Genome::game_progress(const Board& board) const noexcept
@@ -250,10 +243,10 @@ double Genome::game_progress(const Board& board) const noexcept
 
 const std::array<double, 6>& Genome::piece_values() const noexcept
 {
-    return gene_reference<Piece_Strength_Gene, piece_strength_gene_index>().piece_values();
+    return gene_reference<Piece_Strength_Gene>().piece_values();
 }
 
 double Genome::draw_value() const noexcept
 {
-    return gene_reference<Draw_Value_Gene, draw_value_gene_index>().draw_value();
+    return gene_reference<Draw_Value_Gene>().draw_value();
 }

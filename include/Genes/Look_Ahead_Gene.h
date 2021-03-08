@@ -16,6 +16,9 @@ class Board;
 class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
 {
     public:
+        //! \brief Index for locating the gene in the genome
+        static const size_t genome_index = 1;
+
         std::string name() const noexcept override;
 
         //! \brief How much time to search for the next move.
