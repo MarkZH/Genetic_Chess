@@ -17,6 +17,7 @@ Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strengt
 double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
 {
     double score = 0.0;
+    auto values = piece_strength_source->piece_values();
 
     for(auto square : Square::all_squares())
     {
@@ -25,7 +26,7 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, Piece_Colo
         {
             if( ! board.safe_for_king(square, opposite(perspective)))
             {
-                score += piece_strength_source->piece_value(piece);
+                score += values[static_cast<size_t>(piece.type())];
             }
         }
     }
