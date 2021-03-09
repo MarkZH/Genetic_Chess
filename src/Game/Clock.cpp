@@ -40,35 +40,35 @@ Game_Result Clock::punch(const Board& board) noexcept
     time_previous_punch = time_this_punch;
     whose_turn = opposite(whose_turn);
 
+    auto punch_result = Game_Result{};
+
     if(time_left(opposite(whose_turn)) < 0.0s)
     {
         if(board.enough_material_to_checkmate(whose_turn))
         {
-            return Game_Result(whose_turn, Game_Result_Type::TIME_FORFEIT);
+            punch_result = Game_Result(whose_turn, Game_Result_Type::TIME_FORFEIT);
         }
         else
         {
-            return Game_Result(Winner_Color::NONE, Game_Result_Type::TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL);
+            punch_result = Game_Result(Winner_Color::NONE, Game_Result_Type::TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL);
         }
     }
-    else
-    {
-        if(++moves_since_clock_reset[player_index] == move_count_reset)
-        {
-            if(method_of_reset == Time_Reset_Method::ADDITION)
-            {
-                timers[player_index] += initial_start_time;
-            }
-            else
-            {
-                timers[player_index] = initial_start_time;
-            }
-            moves_since_clock_reset[player_index] = 0;
-        }
-        timers[player_index] += increment_time[player_index];
 
-        return {};
+    if(++moves_since_clock_reset[player_index] == move_count_reset)
+    {
+        if(method_of_reset == Time_Reset_Method::ADDITION)
+        {
+            timers[player_index] += initial_start_time;
+        }
+        else
+        {
+            timers[player_index] = initial_start_time;
+        }
+        moves_since_clock_reset[player_index] = 0;
     }
+    timers[player_index] += increment_time[player_index];
+
+    return punch_result;
 }
 
 void Clock::unpunch() noexcept
