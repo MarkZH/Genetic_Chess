@@ -380,7 +380,7 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
     // From the perspective of the player who is ultimately picking the move (the root
     // of the game tree), it doesn't matter who causes the draw. The score of a draw
     // should be the same no matter who causes it.
-    const auto draw_score = draw_value()*centipawn_value()*(depth % 2 == 0 ? -1 : 1);
+    const auto draw_score = draw_value()*centipawn_value();
 
     if(move_result.game_has_ended())
     {
