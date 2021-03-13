@@ -45,9 +45,6 @@ class Player
         //!
         //! \param last_move The last move made on the board for use by the internals of the chess engine.
         virtual void undo_move(const Move* last_move) const noexcept;
-
-    private:
-        mutable std::string opposing_player_name;
 };
 
 #endif // PLAYER_H
