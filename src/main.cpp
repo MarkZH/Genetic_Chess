@@ -145,8 +145,6 @@ namespace
                 << "\t\tSpecify seconds to add to time after each move.\n\n"
                 << "\t-board [FEN string]\n"
                 << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
-                << "\t-short-post\n"
-                << "\t\tUse a shortened form of CECP/xboard thinking output. Some GUIs\n\t\tcannot handle the longer form.\n\n"
                 << "\t-event [name]\n"
                 << "\t\tAn optional name for the game to be played. This name will be\n\t\twritten to the PGN game record.\n\n"
                 << "\t-location [name]\n"
@@ -426,10 +424,6 @@ namespace
             else if(opt == "-location" && i + 1 < argc)
             {
                 location = argv[++i];
-            }
-            else if(opt == "-short-post")
-            {
-                Player::set_short_post();
             }
             else
             {

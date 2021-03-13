@@ -299,15 +299,11 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         << std::chrono::duration_cast<centiseconds>(time_so_far).count()
         << " "
         << nodes_searched
-        << " ";
-
-    if( ! use_short_post())
-    {
-        std::cout << maximum_depth
-            << " "
-            << int(nodes_searched/time_so_far.count())
-            << '\t';
-    }
+        << " "
+        << maximum_depth
+        << " "
+        << int(nodes_searched/time_so_far.count())
+        << '\t';
 
     // Principal variation
     for(const auto& move : thought.variation)

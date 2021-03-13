@@ -46,17 +46,8 @@ class Player
         //! \param last_move The last move made on the board for use by the internals of the chess engine.
         virtual void undo_move(const Move* last_move) const noexcept;
 
-        //! \brief Use the short version of CECP thinking output.
-        //!
-        //! Some GUIs cannot handle the optional data.
-        static void set_short_post() noexcept;
-
-        //! \brief Check whether to use the short version of CECP thinking output.
-        static bool use_short_post() noexcept;
-
     private:
         mutable std::string opposing_player_name;
-        static bool use_short_cecp_post;
 };
 
 #endif // PLAYER_H
