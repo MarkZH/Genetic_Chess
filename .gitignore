@@ -25,6 +25,7 @@ enc_temp_folder/
 .vscode/*
 *.sarif
 *.recipe
+*.iobj
 
 # Compiled output
 bin/
