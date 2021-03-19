@@ -8,7 +8,7 @@
 
 double Game_Tree_Node_Result::corrected_score(Piece_Color query) const noexcept
 {
-    return query == perspective || is_draw ? score : -score;
+    return query == perspective ? score : -score;
 }
 
 std::pair<double, int> Game_Tree_Node_Result::value(Piece_Color query) const noexcept

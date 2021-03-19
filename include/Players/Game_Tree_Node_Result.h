@@ -26,11 +26,10 @@ struct Game_Tree_Node_Result
 
     //! \brief The score assigned to a checkmate board position for the winning Minimax_AI.
     static constexpr auto win_score = std::numeric_limits<double>::infinity();
+    //! \brief The score assigned to a draw of any sort.
+    static constexpr auto draw_score = 0.0;
     //! \brief The score assigned to a checkmate board position for the losing Minimax_AI.
     static constexpr auto lose_score = -win_score;
-
-    //! Indicates the result is a draw, which requires some special handling.
-    bool is_draw;
 
     //! \brief Gives the score of the board position from the indicated side.
     //!

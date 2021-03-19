@@ -44,7 +44,6 @@ class Alpha_Beta_Value
         double score;
         Piece_Color perspective;
         size_t variation_depth;
-        bool is_draw;
 };
 
 #endif // ALPHA_BETA_VALUE_H

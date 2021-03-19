@@ -238,7 +238,6 @@
     <ClCompile Include="src\game\Square.cpp" />
     <ClCompile Include="src\genes\Castling_Possible_Gene.cpp" />
     <ClCompile Include="src\Genes\Checkmate_Material_Gene.cpp" />
-    <ClCompile Include="src\Genes\Draw_Value_Gene.cpp" />
     <ClCompile Include="src\genes\Freedom_To_Move_Gene.cpp" />
     <ClCompile Include="src\genes\Gene.cpp" />
     <ClCompile Include="src\Genes\Gene_Pool.cpp" />
@@ -287,7 +286,6 @@
     <ClInclude Include="include\game\Square.h" />
     <ClInclude Include="include\genes\Castling_Possible_Gene.h" />
     <ClInclude Include="include\Genes\Checkmate_Material_Gene.h" />
-    <ClInclude Include="include\Genes\Draw_Value_Gene.h" />
     <ClInclude Include="include\genes\Freedom_To_Move_Gene.h" />
     <ClInclude Include="include\genes\Gene.h" />
     <ClInclude Include="include\Genes\Gene_Pool.h" />
