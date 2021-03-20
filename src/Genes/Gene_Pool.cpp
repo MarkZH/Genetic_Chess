@@ -48,17 +48,17 @@ namespace
 #endif
     bool gene_pool_started = false;
 
-    using Gene_Pool_Set = std::vector<std::vector<Genetic_AI>>;
+    using Gene_Pool = std::vector<Genetic_AI>;
 
-    Gene_Pool_Set load_gene_pool_file(const std::string& load_file);
+    Gene_Pool load_gene_pool_file(const std::string& load_file);
     [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
 
     void pause_gene_pool(int);
 
-    void write_generation(const Gene_Pool_Set& pools, const std::string& genome_file_name, bool force_write_still_alive);
+    void write_generation(const Gene_Pool& pool, const std::string& genome_file_name, bool force_write_still_alive);
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const Gene_Pool_Set& pools, Stat_Map& stats);
+    void purge_dead_from_map(const Gene_Pool& pool, Stat_Map& stats);
 
     int count_wins(const std::string& file_name, int id);
 }
@@ -76,8 +76,7 @@ void gene_pool(const std::string& config_file)
     {
         throw std::invalid_argument("Gene pool population must be even. Current value = " + std::to_string(gene_pool_population));
     }
-    const auto gene_pool_count = config.as_positive_number<size_t>("gene pool count");
-    const auto pool_swap_interval = config.as_positive_number<size_t>("pool swap interval");
+    const auto roaming_distance = config.as_positive_number<double>("roaming distance");
     const auto genome_file_name = config.as_text("gene pool file");
 
     const auto first_mutation_rate = config.as_positive_number<size_t>("first mutation rate");
@@ -114,9 +113,9 @@ void gene_pool(const std::string& config_file)
     std::map<Genetic_AI, int> draws;
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
-    auto pools = load_gene_pool_file(genome_file_name);
-    auto write_new_pools = pools.size() != gene_pool_count || pools.front().size() != gene_pool_population;
-    if(pools.empty() && ! seed_ai_specification.empty())
+    auto pool = load_gene_pool_file(genome_file_name);
+    auto write_new_pools = pool.size() != gene_pool_population;
+    if(pool.empty() && ! seed_ai_specification.empty())
     {
         auto seed_split = String::split(seed_ai_specification, "/");
         if(seed_split.size() > 2)
@@ -127,67 +126,28 @@ void gene_pool(const std::string& config_file)
         auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
         auto seed_ai = Genetic_AI(file_name, seed_id);
         std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
-        pools = {{seed_ai}};
-        while(true)
-        {
-            auto& pool = pools.back();
-            while(pool.size() < gene_pool_population)
-            {
-                auto& new_ai = pool.emplace_back(seed_ai, seed_ai);
-                new_ai.mutate(mutation_rate);
-            }
-
-            if(pools.size() < gene_pool_count)
-            {
-                pools.push_back({});
-            }
-            else
-            {
-                break;
-            }
-        }
+        pool = {seed_ai};
     }
-    pools.resize(gene_pool_count);
-    for(size_t i = 0; i < pools.size(); ++i)
+    auto new_ai_index = pool.size();
+    pool.resize(gene_pool_population);
+    for(auto ai_index = new_ai_index; ai_index < pool.size(); ++ai_index)
     {
-        auto new_ai_index = pools[i].size();
-        pools[i].resize(gene_pool_population);
-        for(auto ai_index = new_ai_index; ai_index < pools[i].size(); ++ai_index)
-        {
-            pools[i][ai_index].mutate(mutation_rate);
-        }
+        pool[ai_index].mutate(mutation_rate);
     }
-    write_generation(pools, genome_file_name, write_new_pools);
+    write_generation(pool, genome_file_name, write_new_pools);
 
-    size_t last_pool = gene_pool_count - 1;
     size_t round_count = 0; // Count of complete gene pool rounds where all pools have played a set of games
     if(auto genome_file = std::ifstream(genome_file_name))
     {
-        size_t line_number = 0;
         for(std::string line; std::getline(genome_file, line);)
         {
             line = String::trim_outer_whitespace(line);
-            ++line_number;
-
             if(String::starts_with(line, "Still Alive"))
             {
-                try
-                {
-                    auto alive_split = String::split(line, ":");
-                    last_pool = String::to_number<size_t>(alive_split.at(1));
-                    if(last_pool == gene_pool_count - 1)
-                    {
-                        ++round_count;
-                    }
-                }
-                catch(const std::exception&)
-                {
-                    throw_on_bad_still_alive_line(line_number, line);
-                }
+                ++round_count;
             }
         }
     }
-    const auto starting_pool = (last_pool + 1) % gene_pool_count;
 
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
@@ -239,15 +199,11 @@ void gene_pool(const std::string& config_file)
             }
         }
 
-        if(starting_pool == 0)
-        {
-            game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
-        }
         std::cout << "Done." << std::endl;
     }
 
     gene_pool_started = true;
-    for(size_t pool_index = starting_pool; true; pool_index = (pool_index + 1) % pools.size()) // run forever
+    while(true)
     {
         // Pause gene pool
     #ifdef _WIN32
@@ -265,8 +221,6 @@ void gene_pool(const std::string& config_file)
         }
     #endif // _WIN32
 
-        auto& pool = pools[pool_index];
-
         // Write overall stats
         std::cout << "\n=======================\n\n"
                   << "Gene pool size: " << pool.size()
@@ -276,11 +230,9 @@ void gene_pool(const std::string& config_file)
                   << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
                   << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
                   << "\nRounds: " << round_count
-                  << "  Rounds since pool swaps: " << round_count % pool_swap_interval << "/" << pool_swap_interval
-                  << "\nRounds since high mutation interval: " << round_count % mutation_period
+                  << "  Rounds since high mutation interval: " << round_count % mutation_period
                   << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
-                  << "  Mutation rate: " << mutation_rate
-                  << "\n\nGene pool ID: " << pool_index << "  Game time: " << game_time.count() << " sec\n\n";
+                  << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec\n\n";
 
     #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
@@ -290,7 +242,7 @@ void gene_pool(const std::string& config_file)
 
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
-        Random::shuffle(pool);
+        Random::stir_order(pool, roaming_distance);
         std::vector<std::future<Game_Result>> results;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
@@ -342,18 +294,19 @@ void gene_pool(const std::string& config_file)
             ++(winner == Winner_Color::NONE ? draws : wins)[winning_player];
         }
 
-        std::sort(pool.begin(), pool.end());
-        write_generation(pools, genome_file_name, false);
+        auto pool_copy = pool;
+        std::sort(pool_copy.begin(), pool_copy.end());
+        write_generation(pool_copy, genome_file_name, false);
 
-        purge_dead_from_map(pools, wins);
-        purge_dead_from_map(pools, draws);
+        purge_dead_from_map(pool, wins);
+        purge_dead_from_map(pool, draws);
 
         if(verbose_output)
         {
             std::cout << result_printer.str();
 
             // widths of columns for stats printout
-            auto id_column_width = std::to_string(pool.back().id()).size() + 1;
+            auto id_column_width = std::to_string(pool_copy.back().id()).size() + 1;
             auto win_column_width = 7;
             auto draw_column_width = 7;
 
@@ -364,7 +317,7 @@ void gene_pool(const std::string& config_file)
                       << std::setw(draw_column_width) << "Draws" << "\n";
 
             // Write stats for each specimen
-            for(const auto& ai : pool)
+            for(const auto& ai : pool_copy)
             {
                 std::cout << std::setw(id_column_width) << ai.id()
                           << std::setw(win_column_width) << wins[ai]
@@ -391,36 +344,11 @@ void gene_pool(const std::string& config_file)
         std::cout << "\nWins to be recorded as best: " << wins_to_beat
                   << "\nBest ID: " << best_id << "\n";
 
-        if(pool_index == pools.size() - 1) // round is complete
-        {
-            ++round_count;
-            game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
+        ++round_count;
+        game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
 
-            const auto mutation_phase = round_count % mutation_period;
-            mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
-
-            // Mix up the populations of all the gene pools
-            if(pools.size() > 1 && round_count % pool_swap_interval == 0)
-            {
-                std::cout << "\n=======================\n\n";
-                std::cout << "Shuffling pools ...\n";
-
-                std::vector<Genetic_AI> all_players;
-                for(const auto& gene_pool : pools)
-                {
-                    all_players.insert(all_players.end(), gene_pool.begin(), gene_pool.end());
-                }
-
-                Random::shuffle(all_players);
-                pools.clear();
-                for(auto begin_iter = all_players.begin();
-                    begin_iter != all_players.end();
-                    std::advance(begin_iter, gene_pool_population))
-                {
-                    pools.emplace_back(begin_iter, std::next(begin_iter, gene_pool_population));
-                }
-            }
-        }
+        const auto mutation_phase = round_count % mutation_period;
+        mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
     }
 }
 
@@ -461,7 +389,7 @@ namespace
     #endif // _WIN32
     }
 
-    void write_generation(const Gene_Pool_Set& pools, const std::string& genome_file_name, bool force_write_still_alive)
+    void write_generation(const Gene_Pool& pool, const std::string& genome_file_name, bool force_write_still_alive)
     {
         static std::map<Genetic_AI, bool> written_before;
         static std::string last_file_name;
@@ -478,35 +406,31 @@ namespace
             throw std::runtime_error("Could not write to file:" + genome_file_name);
         }
 
-        for(size_t i = 0; i < pools.size(); ++i)
+        auto needs_still_alive_line = false;
+        for(const auto& ai : pool)
         {
-            auto needs_still_alive_line = false;
-            const auto& pool = pools.at(i);
-            for(const auto& ai : pool)
+            if( ! written_before[ai])
             {
-                if( ! written_before[ai])
-                {
-                    ai.print(ofs);
-                    written_before[ai] = true;
-                    needs_still_alive_line = true;
-                }
-            }
-
-            if(needs_still_alive_line || force_write_still_alive)
-            {
-                ofs << "\nStill Alive: " << i << " : ";
-                for(const auto& ai : pool)
-                {
-                    ofs << ai.id() << " ";
-                }
-                ofs << "\n\n" << std::flush;
+                ai.print(ofs);
+                written_before[ai] = true;
+                needs_still_alive_line = true;
             }
         }
 
-        purge_dead_from_map(pools, written_before);
+        if(needs_still_alive_line || force_write_still_alive)
+        {
+            ofs << "\nStill Alive: ";
+            for(const auto& ai : pool)
+            {
+                ofs << ai.id() << " ";
+            }
+            ofs << "\n\n" << std::flush;
+        }
+
+        purge_dead_from_map(pool, written_before);
     }
 
-    Gene_Pool_Set load_gene_pool_file(const std::string& load_file)
+    Gene_Pool load_gene_pool_file(const std::string& load_file)
     {
         std::ifstream ifs(load_file);
         if( ! ifs)
@@ -516,9 +440,9 @@ namespace
             return {};
         }
 
-        std::map<size_t, std::string> still_alive; // pool number -> ID list
-        std::map<size_t, size_t> pool_line_numbers; // pool number --> gene pool file line number (error reporting)
-        std::map<size_t, std::string> pool_lines; // pool number --> line in gene pool file (error reporting)
+        std::string still_alive;
+        size_t pool_line_number;
+        std::string pool_line;
 
         size_t line_number = 0;
         for(std::string line; std::getline(ifs, line);)
@@ -528,11 +452,10 @@ namespace
             {
                 try
                 {
-                    auto parse = String::split(line, ":", 2);
-                    auto pool_number = String::to_number<size_t>(parse.at(1));
-                    still_alive[pool_number] = parse.at(2);
-                    pool_line_numbers[pool_number] = line_number;
-                    pool_lines[pool_number] = line;
+                    auto parse = String::split(line, ":", 1);
+                    still_alive = parse.at(1);
+                    pool_line_number = line_number;
+                    pool_line = line;
                 }
                 catch(...)
                 {
@@ -541,38 +464,22 @@ namespace
             }
         }
 
-        if(pool_lines.empty())
+        if(pool_line.empty())
         {
             std::cout << "No \"Still Alive\" lines found. Starting with empty gene pool.";
             return {};
         }
 
-        std::map<int, size_t> pool_assignments; // ID --> pool number
-        for(const auto& [pool_number, id_list] : still_alive)
-        {
-            for(const auto& id_string : String::split(id_list))
-            {
-                try
-                {
-                    pool_assignments[String::to_number<int>(id_string)] = pool_number;
-                }
-                catch(...)
-                {
-                    throw_on_bad_still_alive_line(pool_line_numbers[pool_number], pool_lines[pool_number]);
-                }
-            }
-        }
-
         ifs = std::ifstream(load_file);
         bool search_started_from_beginning_of_file = true;
-        Gene_Pool_Set result(still_alive.size());
-        for(auto [id, pool_number] : pool_assignments)
+        Gene_Pool result;
+        for(auto id_string : String::split(still_alive))
         {
             while(true)
             {
                 try
                 {
-                    result[pool_number].emplace_back(ifs, id);
+                    result.emplace_back(ifs, std::stoi(id_string));
                     search_started_from_beginning_of_file = false;
                     break;
                 }
@@ -581,7 +488,7 @@ namespace
                     if(search_started_from_beginning_of_file)
                     {
                         std::cerr << e.what() << load_file << "\n";
-                        throw_on_bad_still_alive_line(pool_line_numbers[pool_number], pool_lines[pool_number]);
+                        throw_on_bad_still_alive_line(pool_line_number, pool_line);
                     }
                     else
                     {
@@ -589,6 +496,10 @@ namespace
                         search_started_from_beginning_of_file = true;
                         continue;
                     }
+                }
+                catch(...)
+                {
+                    throw_on_bad_still_alive_line(pool_line_number, pool_line);
                 }
             }
         }
@@ -603,15 +514,12 @@ namespace
     }
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const Gene_Pool_Set& pools, Stat_Map& stats)
+    void purge_dead_from_map(const Gene_Pool& pool, Stat_Map& stats)
     {
         Stat_Map new_stats;
-        for(const auto& pool : pools)
+        for(const auto& ai : pool)
         {
-            for(const auto& ai : pool)
-            {
-                new_stats[ai] = stats[ai];
-            }
+            new_stats[ai] = stats[ai];
         }
         stats = new_stats;
     }

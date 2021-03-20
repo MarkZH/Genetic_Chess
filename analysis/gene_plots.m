@@ -37,8 +37,7 @@ filename = [gene_pool_filename '_parsed.txt'];
 
 data = importdata(filename, ',');
 id_list = data.data(:, 1);
-still_alive = logical(data.data(:, end - 1));
-pool_ids = data.data(:, end);
+still_alive = logical(data.data(:, end));
 
 xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
@@ -75,21 +74,14 @@ for yi = 2 : length(data.colheaders) - 2
 
     figure;
     hold all;
-    for pool_id = 0 : max(pool_ids)
-        id_right = (pool_ids == pool_id);
-        good = (still_alive & id_right);
-        plot(id_list(id_right), this_data(id_right), ...
-             '.', ...
-             'markersize', 10, ...
-             'displayname', ['Pool ' num2str(pool_id)]);
-        h = plot(id_list(good), this_data(good), ...
-                 'ok', ...
-                 'markersize', 10, ...
-                 'linewidth', 1);
-        if pool_id == max(pool_ids)
-            set(h, 'displayname', 'Still Alive');
-        end
-    end
+    plot(id_list, this_data, ...
+         '.', ...
+         'markersize', 10);
+    plot(id_list(still_alive), this_data(still_alive), ...
+         'ok', ...
+         'markersize', 10, ...
+         'linewidth', 1, ...
+         'displayname', 'Still Alive');
     xlabel(xaxis);
     title(name);
 
