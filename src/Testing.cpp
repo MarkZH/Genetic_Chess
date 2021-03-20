@@ -657,10 +657,12 @@ bool run_tests()
     // Minimax scoring comparison tests
     Game_Tree_Node_Result r1 = {10,
                                 Piece_Color::WHITE,
-                                {nullptr, nullptr, nullptr}};
+                                {nullptr, nullptr, nullptr},
+                                false};
     Game_Tree_Node_Result r2 = {10,
                                 Piece_Color::BLACK,
-                                {nullptr, nullptr, nullptr}};
+                                {nullptr, nullptr, nullptr},
+                                false};
 
     test_result(tests_passed, r2.value(Piece_Color::WHITE) < r1.value(Piece_Color::WHITE), "1. Error in comparing Game Tree Node Results.");
     test_result(tests_passed, r1.value(Piece_Color::BLACK) < r2.value(Piece_Color::BLACK), "2. Error in comparing Game Tree Node Results.");
@@ -672,15 +674,17 @@ bool run_tests()
     test_result(tests_passed, abv.value(Piece_Color::WHITE) == r1.value(Piece_Color::WHITE), "1. Incorrect construction of Alpha-Beta Value");
     test_result(tests_passed, abv.value(Piece_Color::BLACK) == r2.value(Piece_Color::WHITE), "2. Incorrect construction of Alpha-Beta Value");
 
-    auto draw_result = Game_Tree_Node_Result{Game_Tree_Node_Result::draw_score, Piece_Color::WHITE, {nullptr}};
+    auto draw_result = Game_Tree_Node_Result{2.0, Piece_Color::WHITE, {nullptr}, true};
     test_result(tests_passed, draw_result.value(Piece_Color::WHITE) == draw_result.value(Piece_Color::BLACK), "Draw values should be the same for both players.");
     Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
                                          Piece_Color::WHITE,
-                                         {}};
+                                         {},
+                                         false};
 
     Game_Tree_Node_Result beta_start = {Game_Tree_Node_Result::win_score,
                                         Piece_Color::WHITE,
-                                        {}};
+                                        {},
+                                        false};
     test_result(tests_passed, alpha_start.value(Piece_Color::WHITE) < beta_start.value(Piece_Color::WHITE), "3. Error in comparing Game Tree Node Results.");
     test_result(tests_passed, alpha_start.value(Piece_Color::BLACK) > beta_start.value(Piece_Color::BLACK), "4. Error in comparing Game Tree Node Results.");
 
@@ -697,12 +701,14 @@ bool run_tests()
     Game_Tree_Node_Result white_win4 = {Game_Tree_Node_Result::win_score,
                                         Piece_Color::WHITE,
                                         {nullptr, nullptr, nullptr,
-                                         nullptr, nullptr}};
+                                         nullptr, nullptr},
+                                         false};
     Game_Tree_Node_Result white_win6 = {Game_Tree_Node_Result::win_score,
                                         Piece_Color::WHITE,
                                         {nullptr, nullptr, nullptr,
                                          nullptr, nullptr, nullptr,
-                                         nullptr}};
+                                         nullptr},
+                                         false};
     test_result(tests_passed, white_win6.value(Piece_Color::WHITE) < white_win4.value(Piece_Color::WHITE), "Later win preferred over earlier win.");
     test_result(tests_passed, white_win4.value(Piece_Color::BLACK) < white_win6.value(Piece_Color::BLACK), "Earlier loss preferred over later win.");
 
@@ -710,7 +716,8 @@ bool run_tests()
                                          Piece_Color::BLACK,
                                          {nullptr, nullptr, nullptr,
                                           nullptr, nullptr, nullptr,
-                                          nullptr}};
+                                          nullptr},
+                                          false};
     test_result(tests_passed, white_win6.value(Piece_Color::WHITE) == black_loss6.value(Piece_Color::WHITE), "1. White win in 6 not equal to black loss in 6.");
     test_result(tests_passed, white_win6.value(Piece_Color::BLACK) == black_loss6.value(Piece_Color::BLACK), "2. White win in 6 not equal to black loss in 6.");
 

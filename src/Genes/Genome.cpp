@@ -29,6 +29,7 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
+#include "Genes/Draw_Value_Gene.h"
 
 Genome::Genome() noexcept
 {
@@ -37,6 +38,8 @@ Genome::Genome() noexcept
     assert(genome[Piece_Strength_Gene::genome_index]->name() == "Piece Strength Gene");
     genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
     assert(genome[Look_Ahead_Gene::genome_index]->name() == "Look Ahead Gene");
+    genome.emplace_back(std::make_unique<Draw_Value_Gene>());
+    assert(genome[Draw_Value_Gene::genome_index]->name() == "Draw Value Gene");
 
     // Normal genes
     auto psg = &gene_reference<Piece_Strength_Gene>();
@@ -241,4 +244,9 @@ double Genome::game_progress(const Board& board) const noexcept
 const std::array<double, 6>& Genome::piece_values() const noexcept
 {
     return gene_reference<Piece_Strength_Gene>().piece_values();
+}
+
+double Genome::draw_value() const noexcept
+{
+    return gene_reference<Draw_Value_Gene>().draw_value();
 }
