@@ -567,6 +567,8 @@ bool run_tests()
     test_result(tests_passed, split_join_input == rejoin, std::string{"Split-join failed: "} + split_join_input + " --> " + rejoin);
 
     // Number formating
+    test_function(tests_passed, "Format integer (zero)",  "0", String::format_integer<int>,  0, ",");
+    test_function(tests_passed, "Format integer (-zero)", "0", String::format_integer<int>, -0, ",");
     std::vector<std::pair<int, std::string>> tests =
         {{1, "1"},
          {22, "22"},

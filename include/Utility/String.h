@@ -6,6 +6,7 @@
 #include <chrono>
 #include <sstream>
 #include <type_traits>
+#include <algorithm>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
@@ -134,27 +135,18 @@ namespace String
     template<typename Integer>
     constexpr std::enable_if_t<std::is_integral_v<Integer>, std::string> format_integer(Integer n, const std::string& separator) noexcept
     {
-        if constexpr (std::is_signed_v<Integer>)
+        if(n == 0) { return "0"; }
+        if(n < 0)  { return '-' + format_integer(-n, separator); }
+
+        std::vector<std::string> groups;
+        for( ; n > 0; n /= 1000)
         {
-            if(n < 0)
-            {
-                return '-' + format_integer(-n, separator);
-            }
+            groups.push_back(std::to_string(n % 1000));
         }
-
-        auto s = std::to_string(n);
-        auto group_size = 3;
-        auto index = s.size() % group_size;
-        index = (index == 0 ? group_size : index);
-        auto result = s.substr(0, index);
-
-        for(; index < s.size(); index += group_size)
-        {
-            result += separator;
-            result += s.substr(index, group_size);
-        }
-
-        return result;
+        std::reverse(groups.begin(), groups.end());
+        std::transform(std::next(groups.begin()), groups.end(), std::next(groups.begin()),
+                       [](const auto& s) { return std::string(3 - s.size(), '0') + s; });
+        return String::join(groups.begin(), groups.end(), separator);
     }
 
     //! \brief Round a number to the specified precision
