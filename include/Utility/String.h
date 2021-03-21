@@ -143,10 +143,9 @@ namespace String
         {
             groups.push_back(std::to_string(n % 1000));
         }
-        std::reverse(groups.begin(), groups.end());
-        std::transform(std::next(groups.begin()), groups.end(), std::next(groups.begin()),
+        std::transform(std::next(groups.rbegin()), groups.rend(), std::next(groups.rbegin()),
                        [](const auto& s) { return std::string(3 - s.size(), '0') + s; });
-        return String::join(groups.begin(), groups.end(), separator);
+        return String::join(groups.rbegin(), groups.rend(), separator);
     }
 
     //! \brief Round a number to the specified precision
