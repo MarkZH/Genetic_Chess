@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <iosfwd>
+#include <cassert>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
@@ -113,6 +114,7 @@ class Genome
         template<typename Gene_Type>
         constexpr const Gene_Type& gene_reference() const noexcept
         {
+            assert(Gene_Type::genome_index < genome.size());
             return static_cast<const Gene_Type&>(*genome[Gene_Type::genome_index]);
         }
 };
