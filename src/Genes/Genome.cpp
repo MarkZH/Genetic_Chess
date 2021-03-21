@@ -35,11 +35,11 @@ Genome::Genome() noexcept
 {
     // Regulator genes
     genome.emplace_back(std::make_unique<Piece_Strength_Gene>());
-    assert(genome[Piece_Strength_Gene::genome_index]->name() == "Piece Strength Gene");
+    assert(gene_reference<Piece_Strength_Gene>().name() == "Piece Strength Gene");
     genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
-    assert(genome[Look_Ahead_Gene::genome_index]->name() == "Look Ahead Gene");
+    assert(gene_reference<Look_Ahead_Gene>().name() == "Look Ahead Gene");
     genome.emplace_back(std::make_unique<Draw_Value_Gene>());
-    assert(genome[Draw_Value_Gene::genome_index]->name() == "Draw Value Gene");
+    assert(gene_reference<Draw_Value_Gene>().name() == "Draw Value Gene");
 
     // Normal genes
     auto psg = &gene_reference<Piece_Strength_Gene>();
