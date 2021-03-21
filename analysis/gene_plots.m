@@ -67,7 +67,7 @@ special_plots('gene priorities opening') = opening_priority_figure;
 special_plots('gene priorities endgame') = endgame_priority_figure;
 
 % Plot evolution of individual genes
-for yi = 2 : length(data.colheaders) - 2
+for yi = 2 : length(data.colheaders) - 1
     this_data = data.data(:, yi);
     name_list = data.colheaders(yi);
     name = name_list{1};
