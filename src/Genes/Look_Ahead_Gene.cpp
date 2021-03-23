@@ -55,10 +55,10 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
             speculation_constant += Random::random_laplace(0.05);
             break;
         case 4:
-            opening_branching_factor_estimate += Random::random_laplace(1.0);
+            opening_branching_factor_estimate += Random::random_laplace(0.2);
             break;
         case 5:
-            endgame_branching_factor_estimate += Random::random_laplace(1.0);
+            endgame_branching_factor_estimate += Random::random_laplace(0.2);
             break;
         default:
             assert(false);
