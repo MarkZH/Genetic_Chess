@@ -133,7 +133,7 @@ namespace String
     //! \param separator The separator between groups of thousands.
     //! \returns A text string with thousands separators.
     template<typename Integer>
-    constexpr std::enable_if_t<std::is_integral_v<Integer>, std::string> format_integer(Integer n, const std::string& separator) noexcept
+    std::enable_if_t<std::is_integral_v<Integer>, std::string> format_integer(Integer n, const std::string& separator) noexcept
     {
         if(n == 0) { return "0"; }
         if constexpr(std::is_signed_v<Integer>)
