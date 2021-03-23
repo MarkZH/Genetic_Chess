@@ -25,7 +25,7 @@ double Draw_Value_Gene::score_board(const Board&, Piece_Color, size_t, double) c
 
 void Draw_Value_Gene::gene_specific_mutation() noexcept
 {
-    value_of_draw_in_centipawns += Random::random_laplace(1.0);
+    value_of_draw_in_centipawns += Random::random_laplace(3.0);
 }
 
 void Draw_Value_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
