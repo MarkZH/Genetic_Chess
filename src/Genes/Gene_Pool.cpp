@@ -155,12 +155,14 @@ void gene_pool(const std::string& config_file)
     std::cout << "Searching for previous best AI win counts ..." << std::endl;
     const auto best_file_name = genome_file_name + "_best_genome.txt";
     auto best_id = 0;
+    auto best_id_wins = 0;
     auto wins_to_beat = 0.0;
     try
     {
         auto best = Genetic_AI(best_file_name, find_last_id(best_file_name));
         best_id = best.id();
-        wins_to_beat = count_wins(game_record_file, best_id);
+        best_id_wins = count_wins(game_record_file, best_id);
+        wins_to_beat = best_id_wins;
     }
     catch(...)
     {
@@ -336,13 +338,14 @@ void gene_pool(const std::string& config_file)
 
                 wins_to_beat = win_count;
                 best_id = ai.id();
+                best_id_wins = win_count;
                 ai.print(temp_best_file_name);
                 std::filesystem::rename(temp_best_file_name, best_file_name);
             }
         }
 
         std::cout << "\nWins to be recorded as best: " << wins_to_beat
-                  << "\nBest ID: " << best_id << "\n";
+                  << "\nBest ID: " << best_id << " with " << best_id_wins << " wins\n";
 
         ++round_count;
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
