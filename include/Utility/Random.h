@@ -60,7 +60,7 @@ namespace Random
         std::vector<std::pair<double, typename List::value_type>> positions;
         for(const auto& item : list)
         {
-            positions.emplace_back(positions.size(), item);
+            positions.emplace_back(double(positions.size()), item);
         }
 
         for(auto& [position, item] : positions)

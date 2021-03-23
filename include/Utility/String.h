@@ -136,7 +136,10 @@ namespace String
     constexpr std::enable_if_t<std::is_integral_v<Integer>, std::string> format_integer(Integer n, const std::string& separator) noexcept
     {
         if(n == 0) { return "0"; }
-        if(n < 0)  { return '-' + format_integer(-n, separator); }
+        if constexpr(std::is_signed_v<Integer>)
+        {
+            if(n < 0) { return '-' + format_integer(-n, separator); }
+        }
 
         std::vector<std::string> groups;
         for( ; n > 0; n /= 1000)
