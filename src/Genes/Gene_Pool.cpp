@@ -296,9 +296,9 @@ void gene_pool(const std::string& config_file)
             ++(winner == Winner_Color::NONE ? draws : wins)[winning_player];
         }
 
-        auto pool_copy = pool;
-        std::sort(pool_copy.begin(), pool_copy.end());
-        write_generation(pool_copy, genome_file_name, false);
+        auto sorted_pool = pool;
+        std::sort(sorted_pool.begin(), sorted_pool.end());
+        write_generation(sorted_pool, genome_file_name, false);
 
         purge_dead_from_map(pool, wins);
         purge_dead_from_map(pool, draws);
@@ -308,7 +308,7 @@ void gene_pool(const std::string& config_file)
             std::cout << result_printer.str();
 
             // widths of columns for stats printout
-            auto id_column_width = std::to_string(pool_copy.back().id()).size() + 1;
+            auto id_column_width = std::to_string(sorted_pool.back().id()).size() + 1;
             auto win_column_width = 7;
             auto draw_column_width = 7;
 
@@ -319,7 +319,7 @@ void gene_pool(const std::string& config_file)
                       << std::setw(draw_column_width) << "Draws" << "\n";
 
             // Write stats for each specimen
-            for(const auto& ai : pool_copy)
+            for(const auto& ai : sorted_pool)
             {
                 std::cout << std::setw(id_column_width) << ai.id()
                           << std::setw(win_column_width) << wins[ai]
