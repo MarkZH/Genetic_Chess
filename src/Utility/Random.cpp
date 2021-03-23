@@ -20,7 +20,8 @@ namespace
 
 Random::Random_Bits_Generator Random::get_new_seeded_random_bit_source() noexcept
 {
-    return Random_Bits_Generator{Seeder{}};
+    auto seeder = Seeder{};
+    return Random_Bits_Generator(seeder);
 }
 
 double Random::random_laplace(double width) noexcept
