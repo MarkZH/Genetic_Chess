@@ -4,9 +4,28 @@
 #include <string>
 #include <limits>
 
+namespace
+{
+    struct Seeder
+    {
+        using result_type = unsigned int;
+        template<typename Iterator>
+        void generate(Iterator begin, Iterator end)
+        {
+            std::random_device rd;
+            std::generate(begin, end, [&rd]() { return rd(); });
+        }
+    };
+}
+
+Random::Random_Bits_Generator Random::get_new_seeded_random_bit_source() noexcept
+{
+    return Random_Bits_Generator{Seeder{}};
+}
+
 double Random::random_laplace(double width) noexcept
 {
-    thread_local static std::mt19937_64 generator(std::random_device{}());
+    thread_local static auto generator = get_new_seeded_random_bit_source();
     using ed = std::exponential_distribution<double>;
     thread_local static auto dist = ed{};
     return (coin_flip() ? 1 : -1)*dist(generator, ed::param_type{1.0/width});

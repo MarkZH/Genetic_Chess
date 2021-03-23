@@ -9,6 +9,12 @@
 //! \brief A collection of functions for dealing with randomness.
 namespace Random
 {
+    //! \brief Specifying the type of random number generator used.
+    using Random_Bits_Generator = std::mt19937_64;
+
+    //! Creates and returns a randomly seeded random bit generator.
+    Random_Bits_Generator get_new_seeded_random_bit_source() noexcept;
+
     //! \brief Random number with Laplace distribution (double-sided exponential) and mean of zero
     //!
     //! \param width The inverse of the rate of drop-off as one gets further from zero.
@@ -25,7 +31,7 @@ namespace Random
     template<typename Integer>
     Integer random_integer(Integer min, Integer max) noexcept
     {
-        thread_local static std::mt19937_64 generator(std::random_device{}());
+        thread_local static auto generator = get_new_seeded_random_bit_source();
         using uid = std::uniform_int_distribution<Integer>;
         thread_local static auto dist = uid{};
         return dist(generator, typename uid::param_type{min, max});
