@@ -1,7 +1,7 @@
 #include "Genes/Genome.h"
 
 #include <string>
-#include <vector>
+#include <array>
 #include <iostream>
 #include <algorithm>
 #include <numeric>
@@ -31,39 +31,37 @@
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Draw_Value_Gene.h"
 
-Genome::Genome() noexcept
+Genome::Genome() noexcept :
+    genome{
+        std::make_unique<Piece_Strength_Gene>(),
+        std::make_unique<Look_Ahead_Gene>(),
+        std::make_unique<Draw_Value_Gene>(),
+        std::make_unique<Total_Force_Gene>(nullptr),
+        std::make_unique<Freedom_To_Move_Gene>(),
+        std::make_unique<Pawn_Advancement_Gene>(),
+        std::make_unique<Passed_Pawn_Gene>(),
+        std::make_unique<Opponent_Pieces_Targeted_Gene>(nullptr),
+        std::make_unique<Sphere_of_Influence_Gene>(),
+        std::make_unique<King_Confinement_Gene>(),
+        std::make_unique<King_Protection_Gene>(),
+        std::make_unique<Castling_Possible_Gene>(),
+        std::make_unique<Stacked_Pawns_Gene>(),
+        std::make_unique<Pawn_Islands_Gene>(),
+        std::make_unique<Checkmate_Material_Gene>()
+    }
 {
-    // Regulator genes
-    genome.emplace_back(std::make_unique<Piece_Strength_Gene>());
-    assert(gene_reference<Piece_Strength_Gene>().name() == "Piece Strength Gene");
-    genome.emplace_back(std::make_unique<Look_Ahead_Gene>());
-    assert(gene_reference<Look_Ahead_Gene>().name() == "Look Ahead Gene");
-    genome.emplace_back(std::make_unique<Draw_Value_Gene>());
-    assert(gene_reference<Draw_Value_Gene>().name() == "Draw Value Gene");
-
-    // Normal genes
-    auto psg = &gene_reference<Piece_Strength_Gene>();
-
-    genome.emplace_back(std::make_unique<Total_Force_Gene>(psg));
-    genome.emplace_back(std::make_unique<Freedom_To_Move_Gene>());
-    genome.emplace_back(std::make_unique<Pawn_Advancement_Gene>());
-    genome.emplace_back(std::make_unique<Passed_Pawn_Gene>());
-    genome.emplace_back(std::make_unique<Opponent_Pieces_Targeted_Gene>(psg));
-    genome.emplace_back(std::make_unique<Sphere_of_Influence_Gene>());
-    genome.emplace_back(std::make_unique<King_Confinement_Gene>());
-    genome.emplace_back(std::make_unique<King_Protection_Gene>());
-    genome.emplace_back(std::make_unique<Castling_Possible_Gene>());
-    genome.emplace_back(std::make_unique<Stacked_Pawns_Gene>());
-    genome.emplace_back(std::make_unique<Pawn_Islands_Gene>());
-    genome.emplace_back(std::make_unique<Checkmate_Material_Gene>());
-
     renormalize_priorities();
+    reset_piece_strength_gene();
+
+    assert(gene_reference<Piece_Strength_Gene>().name() == "Piece Strength Gene");
+    assert(gene_reference<Look_Ahead_Gene>().name() == "Look Ahead Gene");
+    assert(gene_reference<Draw_Value_Gene>().name() == "Draw Value Gene");
 }
 
 Genome::Genome(const Genome& other) noexcept
 {
     std::transform(other.genome.begin(), other.genome.end(),
-                   std::back_inserter(genome),
+                   genome.begin(),
                    [](const auto& gene)
                    {
                        return gene->duplicate();
@@ -114,7 +112,7 @@ Genome& Genome::operator=(const Genome& other) noexcept
 Genome::Genome(const Genome& A, const Genome& B) noexcept
 {
     std::transform(A.genome.begin(), A.genome.end(), B.genome.begin(),
-                   std::back_inserter(genome),
+                   genome.begin(),
                    [](const auto& gene_a, const auto& gene_b)
                    {
                        return (Random::coin_flip() ? gene_a : gene_b)->duplicate();

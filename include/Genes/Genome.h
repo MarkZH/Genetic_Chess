@@ -1,7 +1,7 @@
 #ifndef GENOME_H
 #define GENOME_H
 
-#include <vector>
+#include <array>
 #include <memory>
 #include <iosfwd>
 #include <cassert>
@@ -104,7 +104,7 @@ class Genome
         void print(std::ostream& os) const noexcept;
 
     private:
-        std::vector<std::unique_ptr<Gene>> genome;
+        std::array<std::unique_ptr<Gene>, 15> genome;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
