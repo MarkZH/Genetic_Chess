@@ -9,7 +9,7 @@
 
 class Board;
 
-//! \brief Scores the board based on how confined the king is by friendly pieces or opponent attacks.
+//! \brief Scores a board based on how confined the king is by friendly pieces or opponent attacks.
 //!
 //! This gene uses a flood-fill-like algorithm to count the squares that are reachable by the
 //! king from its current positions with unlimited consecutive moves. The boundaries of this

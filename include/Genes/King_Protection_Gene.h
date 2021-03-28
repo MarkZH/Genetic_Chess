@@ -9,7 +9,7 @@
 
 class Board;
 
-//! \brief Scores the board based on how many lines of attack to king there are.
+//! \brief Scores a board based on how many lines of attack to king there are.
 //!
 //! Counts the number of empty squares from which a piece could attack the king. This
 //! is a measure of the exposure of the king

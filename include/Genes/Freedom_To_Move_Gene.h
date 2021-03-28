@@ -9,10 +9,7 @@
 
 class Board;
 
-//! \brief Scores board based on the number of attacking moves available.
-//!
-//! The scoring of this gene counts empty squares and squares occupied
-//! by opposing pieces. It does not take into account check or pins.
+//! \brief Scores a board based on the number of legal moves available.
 class Freedom_To_Move_Gene : public Clonable_Gene<Freedom_To_Move_Gene>
 {
     public:

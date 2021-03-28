@@ -10,7 +10,7 @@
 
 class Board;
 
-//! \brief This gene scores a board based of if castling is possible or has already happened.
+//! \brief Scores a board based on if castling is possible or has already happened.
 class Castling_Possible_Gene : public Clonable_Gene<Castling_Possible_Gene>
 {
     public:
