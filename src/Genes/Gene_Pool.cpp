@@ -345,7 +345,7 @@ void gene_pool(const std::string& config_file)
         }
 
         std::cout << "\nWins to be recorded as best: " << wins_to_beat
-                  << "\nBest ID: " << best_id << " with " << best_id_wins << " wins\n";
+                  << "\nBest ID: " << best_id << " with " << best_id_wins << " win" << (best_id_wins != 1 ? "s" : "") << "\n";
 
         ++round_count;
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
