@@ -247,3 +247,63 @@ text(0.5*xl(2), 0.5*yl(2), stats);
 
 print([raw_data '_moves_in_game_histogram.png']);
 close;
+
+winning_games_lengths = moves_in_game(white_checkmates | black_checkmates);
+[counts, bins] = hist(winning_games_lengths, (1 : max(moves_in_game)));
+figure;
+hold all;
+bar(bins, counts, 'barwidth', 1, 'facecolor', 'y');
+title('Checkmate game lengths');
+xlim([0, max_game_length_display]);
+set(gca, 'xtick', 0 : 10 : max_game_length_display);
+% Log-normal fit
+bins_fit = bins(bins > 0);
+mean_log = mean(log(winning_games_lengths));
+std_log = std(log(winning_games_lengths));
+winning_games_count = length(winning_games_lengths);
+fit = winning_games_count*exp(-.5*((log(bins_fit) - mean_log)/std_log).^2)./(bins_fit*std_log*sqrt(2*pi));
+plot(bins_fit, fit, 'linewidth', 3, 'displayname', 'Log-normal fit');
+
+xlabel('Moves in Game');
+ylabel(['Counts (total = ' num2str(winning_games_count) ')']);
+
+stats = {['Mean = ' num2str(mean(winning_games_lengths))], ...
+         ['Median = ' num2str(median(winning_games_lengths))], ...
+         ['Mode = ' num2str(mode(winning_games_lengths))], ...
+         ['Std. Dev. = ' num2str(std(winning_games_lengths))], ...
+         ['Min = ' num2str(min(winning_games_lengths))], ...
+         ['Max = ' num2str(max(winning_games_lengths))], ...
+         [''], ...
+         ['Log-Norm Peak = ' num2str(exp(mean_log - std_log^2))], ...
+         ['Log-Norm Width = ' num2str(std_log)]};
+
+xl = xlim;
+yl = ylim;
+text(0.5*xl(2), 0.5*yl(2), stats);
+
+legend show;
+
+print([raw_data '_moves_in_game_histogram_checkmate.png']);
+
+
+drawn_games = (fifty_moves | threefold | material | no_legal);
+[counts, bins] = hist(moves_in_game(drawn_games), (1 : max(moves_in_game)));
+figure;
+bar(bins, counts, 'barwidth', 1, 'facecolor', 'y');
+title ('Draw game lengths');
+xlabel('Moves in Game');
+ylabel(['Counts (total = ' num2str(sum(drawn_games)) ')']);
+xlim([0, max_game_length_display]);
+set(gca, 'xtick', 0 : 10 : max_game_length_display);
+print([raw_data '_moves_in_game_histogram_draw.png']);
+
+timeout_games = (white_time_win | black_time_win | time_and_material);
+[counts, bins] = hist(moves_in_game(timeout_games), (1 : max(moves_in_game)));
+figure;
+bar(bins, counts, 'barwidth', 1, 'facecolor', 'y');
+title ('Timeout game lengths');
+xlabel('Moves in Game');
+ylabel(['Counts (total = ' num2str(sum(timeout_games)) ')']);
+xlim([0, max_game_length_display]);
+set(gca, 'xtick', 0 : 10 : max_game_length_display);
+print([raw_data '_moves_in_game_histogram_timeout.png']);
