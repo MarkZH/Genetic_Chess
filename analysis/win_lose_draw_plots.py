@@ -17,8 +17,8 @@ def main(files):
                                'White Wins',
                                'Black Wins',
                                'Draws',
-                               'Result TYpe',
                                'Time',
+                               'Result TYpe',
                                'White Time Left',
                                'Black Time Left',
                                'Number of Moves']) + '\n')
@@ -61,7 +61,6 @@ def main(files):
                     else:
                         raise Exception('Unrecognized result type: ' + result_text)
                 elif line and line[0] in '123456789':
-                    game_section = True
                     number_of_moves = line.split('. ')[0]
                 elif line.startswith('[TimeControl'):
                     time = line.split('"')[1]
