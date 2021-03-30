@@ -218,15 +218,15 @@ bins_fit = bins(bins > 0);
 mean_log = mean(log(moves_in_game_fit));
 std_log = std(log(moves_in_game_fit));
 fit = number_of_games*exp(-.5*((log(bins_fit) - mean_log)/std_log).^2)./(bins_fit*std_log*sqrt(2*pi));
-plot(bins_fit, fit, 'linewidth', 3);
+plot(bins_fit, fit, 'linewidth', 3, 'displayname', 'Log-Normal fit (all games)');
 
 last10p = [floor(.9*length(moves_in_game_fit)) : length(moves_in_game_fit)];
 mean_log10p = mean(log(moves_in_game_fit(last10p)));
 std_log10p = std(log(moves_in_game_fit(last10p)));
 fit10p = number_of_games*exp(-.5*((log(bins_fit) - mean_log10p)/std_log10p).^2)./(bins_fit*std_log10p*sqrt(2*pi));
-plot(bins_fit, fit10p, 'k', 'linewidth', 3);
+plot(bins_fit, fit10p, 'k', 'linewidth', 3, 'displayname', 'Log-normal fit (last 10%)');
 
-legend('Histogram', 'Log-Normal distribution (all games)', 'Log-normal distribution (last 10%)');
+legend show;
 
 stats = {['Mean = ' num2str(mean_moves)], ...
          ['Median = ' num2str(median(moves_in_game))], ...
