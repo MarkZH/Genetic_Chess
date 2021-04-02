@@ -132,6 +132,7 @@ if max(game_time) > 0
     figure;
     hold all;
 
+    avg_time_left = (white_time_left + black_time_left)/2;
     max_time_left = max(max(white_time_left), max(black_time_left));
     below_zero = -0.05*max_time_left;
     below_zero_random = below_zero*(1.5 - rand(size(white_time_left)));
@@ -143,7 +144,6 @@ if max(game_time) > 0
     window = 100;
     x_margin = floor(window/2);
     avg_x_axis = game_number(x_margin : end - x_margin);
-    avg_time_left = (white_time_left + black_time_left)/2;
     plot(avg_x_axis,
          movmean(avg_time_left, window, 'endpoints', 'discard'),
          'r',
