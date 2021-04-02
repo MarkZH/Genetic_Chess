@@ -915,7 +915,7 @@ Square Board::find_checking_square() const noexcept
         ++checking_index;
     }
     auto step = Move::attack_direction_from_index(checking_index);
-    const auto& king_square = find_king(whose_turn());
+    const auto king_square = find_king(whose_turn());
     auto squares = Square::square_line_from(king_square, -step);
     return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
 }
@@ -1086,7 +1086,7 @@ bool Board::all_empty_between(Square start, Square end) const noexcept
 
 bool Board::piece_is_pinned(Square square) const noexcept
 {
-    const auto& king_square = find_king(whose_turn());
+    const auto king_square = find_king(whose_turn());
     if(king_square == square)
     {
         return false; // king is never pinned
