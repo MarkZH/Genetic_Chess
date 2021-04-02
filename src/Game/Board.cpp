@@ -872,7 +872,6 @@ Square Board::find_king(Piece_Color color) const noexcept
 
 void Board::recreate_move_caches() noexcept
 {
-    last_pin_check_square = Square{};
     checking_square = king_is_in_check() ? find_checking_square() : Square{};
     prior_moves_count = legal_moves_cache.size();
     legal_moves_cache.clear();
@@ -1087,21 +1086,15 @@ bool Board::all_empty_between(Square start, Square end) const noexcept
 
 bool Board::piece_is_pinned(Square square) const noexcept
 {
-    if(square == last_pin_check_square)
-    {
-        return last_pin_result;
-    }
-    last_pin_check_square = square;
-
     const auto& king_square = find_king(whose_turn());
     if(king_square == square)
     {
-        return last_pin_result = false; // king is never pinned
+        return false; // king is never pinned
     }
 
     if( ! straight_line_move(square, king_square))
     {
-        return last_pin_result = false;
+        return false;
     }
 
     auto diff = king_square - square;
@@ -1111,12 +1104,12 @@ bool Board::piece_is_pinned(Square square) const noexcept
         // the queried square in the same direction towards the friendly king. This next check
         // is to make sure the attacking piece is not a limited range piece--i.e., a pawn or king.
         auto attacker = piece_on_square(square - diff.step());
-        return last_pin_result = ( ! attacker || (attacker.type() != Piece_Type::PAWN && attacker.type() != Piece_Type::KING)) &&
-                                 all_empty_between(king_square, square);
+        return ( ! attacker || (attacker.type() != Piece_Type::PAWN && attacker.type() != Piece_Type::KING)) &&
+               all_empty_between(king_square, square);
     }
     else
     {
-        return last_pin_result = false;
+        return false;
     }
 }
 

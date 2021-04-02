@@ -316,8 +316,6 @@ class Board
         uint64_t starting_hash;
         std::array<Square, 2> king_location;
         Square checking_square;
-        mutable Square last_pin_check_square;
-        mutable bool last_pin_result;
         size_t first_full_move_label;
 
         // Stores the moves that attack a square. The innermost array
