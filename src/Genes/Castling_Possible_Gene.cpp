@@ -64,10 +64,11 @@ double Castling_Possible_Gene::score_board(const Board& board, Piece_Color persp
         }
     }
 
-    if( ! board.piece_has_moved(board.find_king(perspective)))
+    auto king_square = board.find_king(perspective);
+    if( ! board.piece_has_moved(king_square))
     {
         auto score = 0.0;
-        auto base_rank = perspective == Piece_Color::WHITE ? 1 : 8;
+        auto base_rank = king_square.rank();
         auto unmoved_rook_bonus = Math::interpolate(opening_rook_unmoved_score,
                                                     endgame_rook_unmoved_score,
                                                     game_progress);
