@@ -127,24 +127,21 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                    [&board](auto move){ return board.move_changes_material(*move); });
 
     const auto perspective = board.whose_turn();
-    auto moves_left = all_legal_moves.size() + 1; // + 1 so decrement can go at top of next loop
-
     Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
                                          perspective,
                                          {current_variation.empty() ? all_legal_moves.front() : current_variation.front()},
                                          false};
 
-    for(const auto& move : all_legal_moves)
+    for(auto moves_left = all_legal_moves.size(); moves_left > 0; --moves_left)
     {
         auto evaluate_start_time = std::chrono::steady_clock::now();
         ++nodes_searched;
-        --moves_left;
 
+        const auto move = all_legal_moves[all_legal_moves.size() - moves_left];
         auto variation_guard = current_variation.scoped_push_back(move);
-
         auto next_board = board;
-
         auto move_result = next_board.submit_move(*move);
+
         if(move_result.winner() != Winner_Color::NONE)
         {
             // This move results in checkmate, no other move can be better.
