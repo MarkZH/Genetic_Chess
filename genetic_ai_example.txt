@@ -14,9 +14,6 @@ Game Length Uncertainty: 0.353513
 Mean Game Length: 55.1586
 Speculation: 1.58982
 
-Name: Draw Value Gene
-Draw Value: 0
-
 Name: Total Force Gene
 Priority - Endgame: 0.50647
 Priority - Opening: 0.467311

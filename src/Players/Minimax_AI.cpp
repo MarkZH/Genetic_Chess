@@ -129,8 +129,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     const auto perspective = board.whose_turn();
     Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
                                          perspective,
-                                         {current_variation.empty() ? all_legal_moves.front() : current_variation.front()},
-                                         false};
+                                         {current_variation.empty() ? all_legal_moves.front() : current_variation.front()}};
 
     for(auto moves_left = all_legal_moves.size(); moves_left > 0; --moves_left)
     {
@@ -354,8 +353,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
 {
     return {evaluate(board, move_result, perspective, move_list.size()),
             perspective,
-            {move_list.begin(), move_list.end()},
-            move_result.game_has_ended() && move_result.winner() == Winner_Color::NONE};
+            {move_list.begin(), move_list.end()}};
 }
 
 void Minimax_AI::calibrate_thinking_speed() const noexcept
@@ -370,16 +368,11 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
 
 double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
 {
-    // From the perspective of the player who is ultimately picking the move (the root
-    // of the game tree), it doesn't matter who causes the draw. The score of a draw
-    // should be the same no matter who causes it.
-    const auto draw_score = draw_value()*centipawn_value();
-
     if(move_result.game_has_ended())
     {
         if(move_result.winner() == Winner_Color::NONE) // draw by rule
         {
-            return draw_score;
+            return Game_Tree_Node_Result::draw_score;
         }
         else if(move_result.winner() == static_cast<Winner_Color>(perspective)) // checkmate win
         {
@@ -395,7 +388,7 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
     auto non_progress_moves = board.moves_since_pawn_or_capture();
     if(non_progress_moves >= depth)
     {
-        return Math::interpolate(score, draw_score, non_progress_moves/100.0);
+        return Math::interpolate(score, Game_Tree_Node_Result::draw_score, non_progress_moves/100.0);
     }
     else
     {

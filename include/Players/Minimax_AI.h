@@ -94,7 +94,6 @@ class Minimax_AI : public Player
         virtual double internal_evaluate(const Board& board,
                                          Piece_Color perspective,
                                          size_t depth) const noexcept = 0;
-        virtual double draw_value() const noexcept = 0;
 
         virtual const std::array<double, 6>& piece_values() const noexcept = 0;
 

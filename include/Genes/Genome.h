@@ -59,11 +59,6 @@ class Genome
         //!        (i.e., at the root of the game tree).
         double evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
 
-        //! \brief Returns the genetically determined effective score of a draw.
-        //!
-        //! Value is in centipawns.
-        double draw_value() const noexcept;
-
         //! \brief Apply a random set of mutations to the entire genome.
         //!
         //! The severity of the mutation is controlled by the Mutation_Rate_Gene.
@@ -104,7 +99,7 @@ class Genome
         void print(std::ostream& os) const noexcept;
 
     private:
-        std::array<std::unique_ptr<Gene>, 15> genome;
+        std::array<std::unique_ptr<Gene>, 14> genome;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
