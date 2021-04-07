@@ -14,14 +14,6 @@ Alpha_Beta_Value::Alpha_Beta_Value(double score_in, Piece_Color perspective_in, 
 {
 }
 
-Alpha_Beta_Value& Alpha_Beta_Value::operator=(const Game_Tree_Node_Result& node_value) noexcept
-{
-    score = node_value.score;
-    perspective = node_value.perspective;
-    variation_depth = node_value.depth();
-    return *this;
-}
-
 size_t Alpha_Beta_Value::depth() const noexcept
 {
     return variation_depth;

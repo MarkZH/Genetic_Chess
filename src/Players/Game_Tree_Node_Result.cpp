@@ -5,6 +5,14 @@
 
 #include "Game/Color.h"
 #include "Utility/Math.h"
+#include "Players/Alpha_Beta_Value.h"
+
+Game_Tree_Node_Result::Game_Tree_Node_Result(double score_in, Piece_Color perspective_in, const std::vector<const Move*>& variation_in) noexcept :
+    score(score_in),
+    perspective(perspective_in),
+    variation(variation_in)
+{
+}
 
 double Game_Tree_Node_Result::corrected_score(Piece_Color query) const noexcept
 {
@@ -29,6 +37,15 @@ std::pair<double, int> Game_Tree_Node_Result::value(Piece_Color query) const noe
     }
 }
 
+const std::vector<const Move*> Game_Tree_Node_Result::variation_line() const noexcept
+{
+    return variation;
+}
+
+Alpha_Beta_Value Game_Tree_Node_Result::alpha_beta_value() const noexcept
+{
+    return {score, perspective, depth()};
+}
 size_t Game_Tree_Node_Result::depth() const noexcept
 {
     return variation.size();

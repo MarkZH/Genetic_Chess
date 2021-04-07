@@ -42,8 +42,8 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     time_at_last_output = std::chrono::steady_clock::now();
 
     auto real_prior_result = depth_one_results[board.last_move()];
-    auto principal_variation = real_prior_result.variation;
-    if( ! commentary.empty() && commentary.back().first.variation != principal_variation)
+    auto principal_variation = real_prior_result.variation_line();
+    if( ! commentary.empty() && commentary.back().first.variation_line() != principal_variation)
     {
         commentary.back().second = real_prior_result;
     }
@@ -75,7 +75,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     output_thinking(Board::thinking_mode(), result, board.whose_turn());
 
     commentary.push_back({result, {}});
-    depth_one_results = depth_two_results[result.variation.front()];
+    depth_one_results = depth_two_results[result.variation_line().front()];
     depth_two_results.clear();
 
     if(nodes_evaluated > 0)
@@ -83,7 +83,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
         node_evaluation_time = total_evaluation_time/nodes_evaluated;
     }
 
-    return *result.variation.front();
+    return *result.variation_line().front();
 }
 
 Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
@@ -220,7 +220,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             best_result = result;
             if(best_result.value(perspective) > alpha.value(perspective))
             {
-                alpha = best_result;
+                alpha = best_result.alpha_beta_value();
                 if(alpha.value(perspective) >= beta.value(perspective))
                 {
                     break;
@@ -251,7 +251,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
     if(depth == 3)
     {
-        depth_two_results[best_result.variation[0]][best_result.variation[1]] = best_result;
+        depth_two_results[best_result.variation_line()[0]][best_result.variation_line()[1]] = best_result;
     }
 
     return best_result;
@@ -302,7 +302,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         << '\t';
 
     // Principal variation
-    for(const auto& move : thought.variation)
+    for(const auto& move : thought.variation_line())
     {
         std::cout << move->coordinates() << ' ';
     }
@@ -320,7 +320,7 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
               << " nodes " << nodes_searched
               << " nps " << int(nodes_searched/time_so_far.count())
               << " pv ";
-    for(const auto& move : thought.variation)
+    for(const auto& move : thought.variation_line())
     {
         std::cout << move->coordinates() << " ";
     }
@@ -337,7 +337,7 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
     {
         std::cout << "cp " << int(thought.corrected_score(perspective)/centipawn_value());
     }
-    std::cout << " currmove " << thought.variation.front()->coordinates();
+    std::cout << " currmove " << thought.variation_line().front()->coordinates();
     std::cout << std::endl;
 }
 
@@ -440,15 +440,15 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
 std::string Minimax_AI::commentary_for_next_move(const Board& board, size_t move_number) const noexcept
 {
     auto comment_index = board.game_length()/2;
-    if(comment_index >= commentary.size() || commentary.at(comment_index).first.variation.empty())
+    if(comment_index >= commentary.size() || commentary.at(comment_index).first.variation_line().empty())
     {
         return {};
     }
 
     const auto& comment = commentary.at(comment_index);
-    auto variation = comment.first.variation;
+    auto variation = comment.first.variation_line();
     auto score = comment.first.corrected_score(board.whose_turn())/centipawn_value()/100.0;
-    auto alternate_variation = comment.second.variation;
+    auto alternate_variation = comment.second.variation_line();
     auto alternate_score = comment.second.corrected_score(board.whose_turn())/centipawn_value()/100.0;
     return variation_line(board, move_number, variation, score, alternate_variation, alternate_score);
 }
@@ -503,7 +503,7 @@ void Minimax_AI::undo_move(const Move* last_move) const noexcept
         return;
     }
 
-    if(commentary.back().first.variation.front() == last_move)
+    if(commentary.back().first.variation_line().front() == last_move)
     {
         commentary.pop_back();
     }

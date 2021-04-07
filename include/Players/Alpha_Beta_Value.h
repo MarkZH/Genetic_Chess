@@ -4,7 +4,6 @@
 #include <utility>
 
 #include "Game/Color.h"
-#include "Players/Game_Tree_Node_Result.h"
 
 //! \brief A class for tracking Alpha and Beta values through a minimax search.
 //!
@@ -19,11 +18,6 @@ class Alpha_Beta_Value
         //! \param perspective_in The player perspective from which the score is derived.
         //! \param depth_in The depth of the search that produced the score.
         Alpha_Beta_Value(double score_in, Piece_Color perspective_in, size_t depth_in) noexcept;
-
-        //! \brief Alter this value according to a Game_Tree Node Result
-        //!
-        //! \param node_value The value from which to take the value, perspective, and search depth
-        Alpha_Beta_Value& operator=(const Game_Tree_Node_Result& node_value) noexcept;
 
         //! \brief The depth of search that created this value
         size_t depth() const noexcept;

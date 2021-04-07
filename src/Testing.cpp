@@ -669,8 +669,7 @@ bool run_tests()
     test_result(tests_passed, r1.value(Piece_Color::WHITE) > r1.value(Piece_Color::BLACK), "1. Error in comparing Game Tree Node Results after color switch.");
     test_result(tests_passed, r2.value(Piece_Color::BLACK) > r2.value(Piece_Color::WHITE), "2. Error in comparing Game Tree Node Results after color switch.");
 
-    Alpha_Beta_Value abv(0, Piece_Color::BLACK, 0);
-    abv = r1;
+    auto abv = r1.alpha_beta_value();
     test_result(tests_passed, abv.value(Piece_Color::WHITE) == r1.value(Piece_Color::WHITE), "1. Incorrect construction of Alpha-Beta Value");
     test_result(tests_passed, abv.value(Piece_Color::BLACK) == r2.value(Piece_Color::WHITE), "2. Incorrect construction of Alpha-Beta Value");
 
