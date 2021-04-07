@@ -12,7 +12,8 @@ Branching Factor - Opening: 9.39341
 Branching Factor - Endgame: 9.39341
 Game Length Uncertainty: 0.353513
 Mean Game Length: 55.1586
-Speculation: 1.58982
+Speculation - Opening: 1.58982
+Speculation - Endgame: 1.58982
 
 Name: Total Force Gene
 Priority - Endgame: 0.50647

@@ -214,9 +214,9 @@ Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) c
     return gene_reference<Look_Ahead_Gene>().time_to_examine(board, clock);
 }
 
-double Genome::speculation_time_factor() const noexcept
+double Genome::speculation_time_factor(double game_progress) const noexcept
 {
-    return gene_reference<Look_Ahead_Gene>().speculation_time_factor();
+    return gene_reference<Look_Ahead_Gene>().speculation_time_factor(game_progress);
 }
 
 double Genome::branching_factor(double game_progress) const noexcept

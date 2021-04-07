@@ -72,13 +72,14 @@ class Genome
 
         //! \brief Returns a factor that is multiplied by the time allocated to examine a branch of the game tree.
         //!
+        //! \param game_progress An estimate of the amount of the game that has been played on a scale from 0.0 to 1.0.
         //! With alpha-beta pruning, the search for the best move often cuts off before the entire branch
         //! of the game tree is explored, using less time than expected. The value returned by this function
         //! is multiplied by the time allocated for a branch to make sure the time allocated is actually used,
         //! allowing deeper searches of the game tree. More or less time may be allocated based on the
         //! board position being examined.
         //! \returns The multiplicative factor.
-        double speculation_time_factor() const noexcept;
+        double speculation_time_factor(double game_progress) const noexcept;
 
         //! \brief Returns an estimate of the number of moves in an average board position (i.e., the branching factor of the game tree).
         //!
