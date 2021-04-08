@@ -860,8 +860,8 @@ void run_speed_tests()
     std::cout << "(non-quiescent moves = " << String::format_integer(move_count, ",") << ")" << std::endl;
 
     std::sort(timing_results.begin(), timing_results.end());
-    const int name_width = std::max_element(timing_results.begin(), timing_results.end(),
-                                             [](const auto& x, const auto& y){ return x.second.size() < y.second.size(); })->second.size();
+    const auto name_width = int(std::max_element(timing_results.begin(), timing_results.end(),
+                                                 [](const auto& x, const auto& y){ return x.second.size() < y.second.size(); })->second.size());
     std::cout << "\n" << std::setw(name_width) << "Test Item" << "   " << "Time (" << time_unit << ")";
     std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------" << std::endl;
     for(const auto& [time, name] : timing_results)
@@ -893,7 +893,7 @@ bool run_perft_tests()
     auto test_number = 0;
     size_t legal_moves_counted = 0;
     auto time_at_start_of_all = std::chrono::steady_clock::now();
-    const int test_count_space = std::to_string(lines.size()).size();
+    const auto test_count_space = int(std::to_string(lines.size()).size());
     for(const auto& line : lines)
     {
         auto time_at_start = std::chrono::steady_clock::now();
