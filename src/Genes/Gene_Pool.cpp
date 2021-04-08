@@ -444,7 +444,7 @@ namespace
         }
 
         std::string still_alive;
-        size_t pool_line_number;
+        size_t pool_line_number = 0;
         std::string pool_line;
 
         size_t line_number = 0;

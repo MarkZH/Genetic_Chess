@@ -20,6 +20,7 @@
 #include "Moves/Castle.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
+#include "Utility/String.h"
 
 const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_Type::KING}.index() + 1;
 
@@ -265,7 +266,7 @@ namespace
 
     Piece_Type piece_type_from_char(char pgn_symbol)
     {
-        auto i = pgn_symbols.find(std::toupper(pgn_symbol));
+        auto i = pgn_symbols.find(String::toupper(pgn_symbol));
         if(i == std::string::npos)
         {
             throw std::invalid_argument(pgn_symbol + std::string{" is not a valid piece PGN symbol."});
@@ -304,14 +305,14 @@ Piece_Color Piece::color() const noexcept
 std::string Piece::pgn_symbol() const noexcept
 {
     assert(*this);
-    return type() == Piece_Type::PAWN ? std::string{} : std::string(1, std::toupper(fen_symbol()));
+    return type() == Piece_Type::PAWN ? std::string{} : std::string(1, String::toupper(fen_symbol()));
 }
 
 char Piece::fen_symbol() const noexcept
 {
     assert(*this);
     auto symbol = pgn_symbols[static_cast<int>(type())];
-    return (color() == Piece_Color::WHITE ? symbol : std::tolower(symbol));
+    return (color() == Piece_Color::WHITE ? symbol : String::tolower(symbol));
 }
 
 bool Piece::can_move(const Move* move) const noexcept

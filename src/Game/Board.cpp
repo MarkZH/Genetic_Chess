@@ -277,7 +277,7 @@ std::string Board::fen() const noexcept
                 if( ! piece_has_moved({rook_file, king_square.rank()})) // has rook moved?
                 {
                     auto mark = (rook_file == 'h' ? 'K' : 'Q');
-                    castling_mark.push_back(player == Piece_Color::BLACK ? mark = std::tolower(mark) : mark);
+                    castling_mark.push_back(player == Piece_Color::BLACK ? mark = String::tolower(mark) : mark);
                 }
             }
         }
@@ -1161,7 +1161,7 @@ Board Board::without_random_pawn() const noexcept
     auto result = *this;
     while(true)
     {
-        auto square = Square('a' + Random::random_integer(0, 7), Random::random_integer(1, 8));
+        auto square = Square('a' + char(Random::random_integer(0, 7)), Random::random_integer(1, 8));
         auto piece = result.piece_on_square(square);
         if(piece && piece.type() == Piece_Type::PAWN)
         {

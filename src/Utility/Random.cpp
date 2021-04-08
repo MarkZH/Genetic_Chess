@@ -54,7 +54,7 @@ std::string Random::random_string(size_t size) noexcept
     std::string s;
     while(s.size() < size)
     {
-        s.push_back('a' + random_integer(0, 25));
+        s.push_back('a' + char(random_integer(0, 25)));
     }
     return s;
 }

@@ -194,9 +194,19 @@ std::string String::extract_delimited_text(const std::string& str, const std::st
     return inside_split[0];
 }
 
+char String::tolower(char letter) noexcept
+{
+    return char(std::tolower(letter));
+}
+
+char String::toupper(char letter) noexcept
+{
+    return char(std::toupper(letter));
+}
+
 std::string String::lowercase(std::string s) noexcept
 {
-    for(auto& c : s){ c = std::tolower(c); }
+    std::transform(s.begin(), s.end(), s.begin(), String::tolower);
     return s;
 }
 
