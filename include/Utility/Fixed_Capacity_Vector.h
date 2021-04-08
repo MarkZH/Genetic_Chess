@@ -100,6 +100,12 @@ class Fixed_Capacity_Vector
             return insertion_point;
         }
 
+        //! \brief Return the maximum size of the Fixed_Capacity_Vector.
+        constexpr size_t max_size() const noexcept
+        {
+            return data.size();
+        }
+
         //! \brief Return if the Fixed_Capacity_Vector is full and can take no more push_back()s.
         constexpr bool full() const noexcept
         {
