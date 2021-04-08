@@ -60,7 +60,7 @@ double Castling_Possible_Gene::score_board(const Board& board, Piece_Color persp
         if(castling_index >= first_searched_move_index) // castling has not occurred on the actual board
         {
             auto castling_distance = castling_index - first_searched_move_index + 1;
-            return (board.castling_direction(perspective) > 0 ? kingside_preference : queenside_preference)/castling_distance;
+            return (board.castling_direction(perspective) > 0 ? kingside_preference : queenside_preference)/double(castling_distance);
         }
     }
 

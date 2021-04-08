@@ -308,7 +308,7 @@ void gene_pool(const std::string& config_file)
             std::cout << result_printer.str();
 
             // widths of columns for stats printout
-            auto id_column_width = std::to_string(sorted_pool.back().id()).size() + 1;
+            auto id_column_width = int(std::to_string(sorted_pool.back().id()).size() + 1);
             auto win_column_width = 7;
             auto draw_column_width = 7;
 

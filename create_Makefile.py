@@ -132,7 +132,8 @@ if system == 'gcc':
     base_options.extend([
         "-Wzero-as-null-pointer-constant",
         "-Wmain",
-        "-Wno-maybe-uninitialized"])
+        "-Wno-maybe-uninitialized",
+        "-Wconversion"])
 elif system == 'clang':
     compiler = 'clang++'
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]

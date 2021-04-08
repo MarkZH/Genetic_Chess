@@ -93,7 +93,7 @@ Board::Board(const std::string& input_fen)
         {
             if(std::isdigit(symbol))
             {
-                file += symbol - '0';
+                file += char(symbol - '0');
                 fen_parse_assert(file <= 'h' + 1, input_fen, "Too many squares in rank " + std::to_string(rank));
             }
             else

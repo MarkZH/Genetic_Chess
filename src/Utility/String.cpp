@@ -213,7 +213,7 @@ std::string String::lowercase(std::string s) noexcept
 std::string String::round_to_decimals(double x, size_t decimal_places) noexcept
 {
     auto result = std::ostringstream();
-    result << std::fixed << std::setprecision(decimal_places) << x;
+    result << std::fixed << std::setprecision(int(decimal_places)) << x;
     return result.str();
 }
 

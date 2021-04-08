@@ -279,11 +279,11 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
     // Indicate "mate in N moves" where N == thought.depth
     if(thought.is_winning_for(perspective))
     {
-        score = 10000.0 - thought.depth();
+        score = 10000.0 - double(thought.depth());
     }
     else if(thought.is_losing_for(perspective))
     {
-        score = -(10000.0 - thought.depth());
+        score = -(10000.0 - double(thought.depth()));
     }
 
     auto time_so_far = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - clock_start_time);
@@ -298,7 +298,7 @@ void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
         << " "
         << maximum_depth
         << " "
-        << int(nodes_searched/time_so_far.count())
+        << int(double(nodes_searched)/time_so_far.count())
         << '\t';
 
     // Principal variation
@@ -318,7 +318,7 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
               << " depth " << thought.depth()
               << " time " << std::chrono::duration_cast<std::chrono::milliseconds>(time_so_far).count()
               << " nodes " << nodes_searched
-              << " nps " << int(nodes_searched/time_so_far.count())
+              << " nps " << int(double(nodes_searched)/time_so_far.count())
               << " pv ";
     for(const auto& move : thought.variation_line())
     {
@@ -388,7 +388,7 @@ double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, 
     auto non_progress_moves = board.moves_since_pawn_or_capture();
     if(non_progress_moves >= depth)
     {
-        return Math::interpolate(score, Game_Tree_Node_Result::draw_score, non_progress_moves/100.0);
+        return Math::interpolate(score, Game_Tree_Node_Result::draw_score, double(non_progress_moves)/100.0);
     }
     else
     {

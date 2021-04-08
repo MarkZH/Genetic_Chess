@@ -75,13 +75,14 @@ namespace Random
 
             // Items whose new position is off the end of the list
             // reappear on the other side.
+            auto right_border = double(positions.size());
             while(position < 0.0)
             {
-                position += positions.size();
+                position += right_border;
             }
-            while(position > positions.size())
+            while(position > right_border)
             {
-                position -= positions.size();
+                position -= right_border;
             }
         }
 

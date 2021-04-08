@@ -39,7 +39,7 @@ double Math::average_moves_left(double mean_moves, double width, size_t moves_so
         return 1.0;
     }
 
-    return expected_mean - moves_so_far;
+    return expected_mean - double(moves_so_far);
 }
 
 void Math::normalize(double& x, double& y) noexcept

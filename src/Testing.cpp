@@ -860,7 +860,7 @@ void run_speed_tests()
     std::cout << "(non-quiescent moves = " << String::format_integer(move_count, ",") << ")" << std::endl;
 
     std::sort(timing_results.begin(), timing_results.end());
-    const auto name_width = std::max_element(timing_results.begin(), timing_results.end(),
+    const int name_width = std::max_element(timing_results.begin(), timing_results.end(),
                                              [](const auto& x, const auto& y){ return x.second.size() < y.second.size(); })->second.size();
     std::cout << "\n" << std::setw(name_width) << "Test Item" << "   " << "Time (" << time_unit << ")";
     std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------" << std::endl;
@@ -893,7 +893,7 @@ bool run_perft_tests()
     auto test_number = 0;
     size_t legal_moves_counted = 0;
     auto time_at_start_of_all = std::chrono::steady_clock::now();
-    auto test_count_space = std::to_string(lines.size()).size();
+    const int test_count_space = std::to_string(lines.size()).size();
     for(const auto& line : lines)
     {
         auto time_at_start = std::chrono::steady_clock::now();
@@ -936,8 +936,7 @@ bool run_perft_tests()
 
     auto time = std::chrono::duration<double>(std::chrono::steady_clock::now() - time_at_start_of_all);
     std::cout << "Perft time: " << time.count() << " seconds" << std::endl;
-    std::cout << "Legal moves counted: " << String::format_integer(int(legal_moves_counted), ",") << std::endl;
-    std::cout << "Move generation rate: " << String::format_integer(int(legal_moves_counted/time.count()), ",") << " moves/second." << std::endl;
+    std::cout << "Move generation rate: " << String::format_integer(int(double(legal_moves_counted)/time.count()), ",") << " moves/second." << std::endl;
     if( ! tests_failed.empty())
     {
         std::cout << "Test" << (tests_failed.size() > 1 ? "s" : "") << " failed: ";

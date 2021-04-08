@@ -231,7 +231,7 @@ double Genome::expected_number_of_moves_left(const Board& board) const noexcept
 
 double Genome::game_progress(const Board& board) const noexcept
 {
-    auto moves_so_far = board.ply_count()/2;
+    auto moves_so_far = double(board.ply_count()/2);
     auto moves_to_go = expected_number_of_moves_left(board);
     return moves_so_far/(moves_so_far + moves_to_go);
 }

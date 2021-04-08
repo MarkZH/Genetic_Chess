@@ -11,11 +11,11 @@ double Freedom_To_Move_Gene::score_board(const Board& board, Piece_Color perspec
     const auto maximum_moves_per_turn = 128.0;
     if(perspective == board.whose_turn())
     {
-        return board.legal_moves().size()/maximum_moves_per_turn;
+        return double(board.legal_moves().size())/maximum_moves_per_turn;
     }
     else
     {
-        return board.previous_moves_count()/maximum_moves_per_turn;
+        return double(board.previous_moves_count())/maximum_moves_per_turn;
     }
 }
 
