@@ -884,9 +884,9 @@ bool run_perft_tests()
         lines.push_back(input_line);
     }
     std::sort(lines.begin(), lines.end(),
-              [](auto x, auto y)
+              [](const auto& x, const auto& y)
               {
-                  auto f = [](auto s) { return String::to_number<size_t>(String::split(s).back()); };
+                  auto f = [](const auto& s) { return String::to_number<size_t>(String::split(s).back()); };
                   return f(x) < f(y);
               });
 
