@@ -296,9 +296,7 @@ void gene_pool(const std::string& config_file)
             ++(winner == Winner_Color::NONE ? draws : wins)[winning_player];
         }
 
-        auto sorted_pool = pool;
-        std::sort(sorted_pool.begin(), sorted_pool.end());
-        write_generation(sorted_pool, genome_file_name, false);
+        write_generation(pool, genome_file_name, false);
 
         purge_dead_from_map(pool, wins);
         purge_dead_from_map(pool, draws);
@@ -308,7 +306,8 @@ void gene_pool(const std::string& config_file)
             std::cout << result_printer.str();
 
             // widths of columns for stats printout
-            auto id_column_width = int(std::to_string(sorted_pool.back().id()).size() + 1);
+            const auto largest_id = std::max_element(pool.begin(), pool.end())->id();
+            auto id_column_width = int(std::to_string(largest_id).size() + 1);
             auto win_column_width = 7;
             auto draw_column_width = 7;
 
@@ -319,7 +318,7 @@ void gene_pool(const std::string& config_file)
                       << std::setw(draw_column_width) << "Draws" << "\n";
 
             // Write stats for each specimen
-            for(const auto& ai : sorted_pool)
+            for(const auto& ai : pool)
             {
                 std::cout << std::setw(id_column_width) << ai.id()
                           << std::setw(win_column_width) << wins[ai]
@@ -409,8 +408,10 @@ namespace
             throw std::runtime_error("Could not write to file:" + genome_file_name);
         }
 
+        auto sorted_pool = pool;
+        std::sort(sorted_pool.begin(), sorted_pool.end());
         auto needs_still_alive_line = false;
-        for(const auto& ai : pool)
+        for(const auto& ai : sorted_pool)
         {
             if( ! written_before[ai])
             {
