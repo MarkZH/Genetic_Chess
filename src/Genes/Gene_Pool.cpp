@@ -68,7 +68,7 @@ void gene_pool(const std::string& config_file)
     // Signal to pause gene pool
     signal(PAUSE_SIGNAL, pause_gene_pool);
 
-    auto config = Configuration(config_file);
+    const auto config = Configuration(config_file);
 
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
@@ -97,8 +97,8 @@ void gene_pool(const std::string& config_file)
     }
     const auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
 
-    auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
-    auto verbose_output = config.as_boolean("output volume", "verbose", "quiet");
+    const auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
+    const auto verbose_output = config.as_boolean("output volume", "verbose", "quiet");
 
     if(config.any_unused_parameters())
     {
@@ -114,21 +114,21 @@ void gene_pool(const std::string& config_file)
 
     std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
     auto pool = load_gene_pool_file(genome_file_name);
-    auto write_new_pools = pool.size() != gene_pool_population;
+    const auto write_new_pools = pool.size() != gene_pool_population;
     if(pool.empty() && ! seed_ai_specification.empty())
     {
-        auto seed_split = String::split(seed_ai_specification, "/");
+        const auto seed_split = String::split(seed_ai_specification, "/");
         if(seed_split.size() > 2)
         {
             throw std::runtime_error("Too many parameters in the seed configuration\nseed = " + seed_ai_specification);
         }
-        auto file_name = seed_split.front();
-        auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
-        auto seed_ai = Genetic_AI(file_name, seed_id);
+        const auto file_name = seed_split.front();
+        const auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
+        const auto seed_ai = Genetic_AI(file_name, seed_id);
         std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
         pool = {seed_ai};
     }
-    auto new_ai_index = pool.size();
+    const auto new_ai_index = pool.size();
     pool.resize(gene_pool_population);
     for(auto ai_index = new_ai_index; ai_index < pool.size(); ++ai_index)
     {
@@ -250,12 +250,13 @@ void gene_pool(const std::string& config_file)
         {
             while(int(results.size()) >= maximum_simultaneous_games)
             {
-                auto in_progress_games = std::count_if(results.begin(),
-                                                       results.end(),
-                                                       [](const auto& r)
-                                                       {
-                                                           return r.wait_for(100ms) != std::future_status::ready;
-                                                       });
+                const auto in_progress_games =
+                    std::count_if(results.begin(),
+                                  results.end(),
+                                  [](const auto& r)
+                                  {
+                                      return r.wait_for(100ms) != std::future_status::ready;
+                                  });
 
                 if(in_progress_games < maximum_simultaneous_games)
                 {
@@ -280,8 +281,8 @@ void gene_pool(const std::string& config_file)
             auto& white = pool[index];
             auto& black = pool[index + 1];
 
-            auto result = results[index/2].get();
-            auto winner = result.winner();
+            const auto result = results[index/2].get();
+            const auto winner = result.winner();
             result_printer << white.id() << " vs " << black.id() << ": " << color_text(winner) << " (" << result.ending_reason() << ")\n";
 
             const auto mating_winner = (winner == Winner_Color::NONE ? (Random::coin_flip() ? Winner_Color::WHITE : Winner_Color::BLACK) : winner);
@@ -307,9 +308,9 @@ void gene_pool(const std::string& config_file)
 
             // widths of columns for stats printout
             const auto largest_id = std::max_element(pool.begin(), pool.end())->id();
-            auto id_column_width = int(std::to_string(largest_id).size() + 1);
-            auto win_column_width = 7;
-            auto draw_column_width = 7;
+            const auto id_column_width = int(std::to_string(largest_id).size() + 1);
+            const auto win_column_width = 7;
+            const auto draw_column_width = 7;
 
             // Write stat headers
             std::cout << "\n"
@@ -540,11 +541,11 @@ namespace
         for(std::string line; std::getline(input, line);)
         {
             line = String::remove_extra_whitespace(line);
-            auto is_white_player = String::starts_with(line, "[White");
-            auto is_black_player = String::starts_with(line, "[Black");
+            const auto is_white_player = String::starts_with(line, "[White");
+            const auto is_black_player = String::starts_with(line, "[Black");
             if(is_white_player || is_black_player)
             {
-                auto player_id = String::to_number<int>(String::split(String::split(line, "\"").at(1)).at(2));
+                const auto player_id = String::to_number<int>(String::split(String::split(line, "\"").at(1)).at(2));
                 if(player_id == id)
                 {
                     while(std::getline(input, line))
