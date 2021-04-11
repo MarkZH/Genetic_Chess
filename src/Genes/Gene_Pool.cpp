@@ -473,16 +473,34 @@ namespace
             return {};
         }
 
+        const auto id_strings = String::split(still_alive);
+        std::vector<int> ids;
+        try
+        {
+            std::transform(id_strings.begin(),
+                           id_strings.end(),
+                           std::back_inserter(ids),
+                           [](const auto& s) { return std::stoi(s); });
+        }
+        catch(...)
+        {
+            throw_on_bad_still_alive_line(pool_line_number, pool_line);
+        }
+
+        auto sorted_ids = ids;
+        std::sort(sorted_ids.begin(), sorted_ids.end());
+
+
         ifs = std::ifstream(load_file);
         bool search_started_from_beginning_of_file = true;
         std::vector<Genetic_AI> result;
-        for(auto id_string : String::split(still_alive))
+        for(auto id : sorted_ids)
         {
             while(true)
             {
                 try
                 {
-                    result.emplace_back(ifs, std::stoi(id_string));
+                    result.emplace_back(ifs, id);
                     search_started_from_beginning_of_file = false;
                     break;
                 }
@@ -500,11 +518,27 @@ namespace
                         continue;
                     }
                 }
-                catch(...)
-                {
-                    throw_on_bad_still_alive_line(pool_line_number, pool_line);
-                }
             }
+        }
+
+        auto result_destination = result.begin();
+        for(auto id : ids)
+        {
+            const auto result_source = std::find_if(result_destination, result.end(), [id](const auto& ai) { return ai.id() == id; });
+            std::iter_swap(result_destination++, result_source);
+        }
+
+        std::vector<int> loaded_ids;
+        std::transform(result.begin(), result.end(), std::back_inserter(loaded_ids), [](const auto& ai) { return ai.id(); });
+        if(ids != loaded_ids)
+        {
+            std::cerr << "Mismatch in file IDs vs. loaded IDs.";
+            std::cerr << "Still Alive IDs:\n";
+            auto osi = std::ostream_iterator<int>(std::cout, " ");
+            std::copy(ids.begin(), ids.end(), osi);
+            std::cerr << "\nLoaded IDs:\n";
+            std::copy(loaded_ids.begin(), loaded_ids.end(), osi);
+            throw_on_bad_still_alive_line(pool_line_number, pool_line);
         }
 
         write_generation(result, "", false); // mark AIs from file as already written
