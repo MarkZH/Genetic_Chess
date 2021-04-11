@@ -48,17 +48,15 @@ namespace
 #endif
     bool gene_pool_started = false;
 
-    using Gene_Pool = std::vector<Genetic_AI>;
-
-    Gene_Pool load_gene_pool_file(const std::string& load_file);
+    std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file);
     [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
 
     void pause_gene_pool(int);
 
-    void write_generation(const Gene_Pool& pool, const std::string& genome_file_name, bool force_write_still_alive);
+    void write_generation(const std::vector<Genetic_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive);
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const Gene_Pool& pool, Stat_Map& stats);
+    void purge_dead_from_map(const std::vector<Genetic_AI>& pool, Stat_Map& stats);
 
     int count_wins(const std::string& file_name, int id);
 }
@@ -392,7 +390,7 @@ namespace
     #endif // _WIN32
     }
 
-    void write_generation(const Gene_Pool& pool, const std::string& genome_file_name, bool force_write_still_alive)
+    void write_generation(const std::vector<Genetic_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive)
     {
         static std::map<Genetic_AI, bool> written_before;
         static std::string last_file_name;
@@ -435,7 +433,7 @@ namespace
         purge_dead_from_map(pool, written_before);
     }
 
-    Gene_Pool load_gene_pool_file(const std::string& load_file)
+    std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file)
     {
         std::ifstream ifs(load_file);
         if( ! ifs)
@@ -477,7 +475,7 @@ namespace
 
         ifs = std::ifstream(load_file);
         bool search_started_from_beginning_of_file = true;
-        Gene_Pool result;
+        std::vector<Genetic_AI> result;
         for(auto id_string : String::split(still_alive))
         {
             while(true)
@@ -519,7 +517,7 @@ namespace
     }
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const Gene_Pool& pool, Stat_Map& stats)
+    void purge_dead_from_map(const std::vector<Genetic_AI>& pool, Stat_Map& stats)
     {
         Stat_Map new_stats;
         for(const auto& ai : pool)
