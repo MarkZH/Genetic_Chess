@@ -287,12 +287,22 @@ print([raw_data '_moves_in_game_histogram_checkmate.png']);
 
 
 drawn_games = (fifty_moves | threefold | material | no_legal);
-[counts, bins] = hist(moves_in_game(drawn_games), (1 : max(moves_in_game)));
+[drawn_counts, drawn_bins] = hist(moves_in_game(drawn_games), (1 : max(moves_in_game)));
+[fifty_counts, fifty_bins] = hist(moves_in_game(fifty_moves), (1 : max(moves_in_game)));
+[threefold_counts, threefold_bins] = hist(moves_in_game(threefold), (1 : max(moves_in_game)));
+[material_counts, material_bins] = hist(moves_in_game(material), (1 : max(moves_in_game)));
+[no_legal_counts, no_legal_bins] = hist(moves_in_game(no_legal), (1 : max(moves_in_game)));
 figure;
-bar(bins, counts, 'barwidth', 1, 'facecolor', 'y');
+hold all;
+bar(drawn_bins, drawn_counts, 'barwidth', 1, 'facecolor', 'y');
+plot(fifty_bins, fifty_counts, 'displayname', 'Fifty moves', 'linewidth', 6);
+plot(threefold_bins, threefold_counts, 'displayname', '3-fold', 'linewidth', 6);
+plot(material_bins, material_counts, 'displayname', 'Material', 'linewidth', 6);
+plot(no_legal_bins, no_legal_counts, 'displayname', 'Stalemate', 'linewidth', 6);
 title ('Draw game lengths');
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(sum(drawn_games)) ')']);
+legend show;
 xlim([0, max_game_length_display]);
 set(gca, 'xtick', 0 : 10 : max_game_length_display);
 print([raw_data '_moves_in_game_histogram_draw.png']);
