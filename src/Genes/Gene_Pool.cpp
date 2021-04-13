@@ -106,6 +106,19 @@ void gene_pool(const std::string& config_file)
         std::cin.get();
     }
 
+    size_t round_count = 0; // Count of complete gene pool rounds where all pools have played a set of games
+    if(auto genome_file = std::ifstream(genome_file_name))
+    {
+        for(std::string line; std::getline(genome_file, line);)
+        {
+            line = String::trim_outer_whitespace(line);
+            if(String::starts_with(line, "Still Alive"))
+            {
+                ++round_count;
+            }
+        }
+    }
+
     std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     std::map<Genetic_AI, int> wins;
     std::map<Genetic_AI, int> draws;
@@ -133,19 +146,6 @@ void gene_pool(const std::string& config_file)
         pool[ai_index].mutate(mutation_rate);
     }
     write_generation(pool, genome_file_name, write_new_pools);
-
-    size_t round_count = 0; // Count of complete gene pool rounds where all pools have played a set of games
-    if(auto genome_file = std::ifstream(genome_file_name))
-    {
-        for(std::string line; std::getline(genome_file, line);)
-        {
-            line = String::trim_outer_whitespace(line);
-            if(String::starts_with(line, "Still Alive"))
-            {
-                ++round_count;
-            }
-        }
-    }
 
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
