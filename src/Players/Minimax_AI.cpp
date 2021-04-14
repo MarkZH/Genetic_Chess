@@ -160,8 +160,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         }
 
         const auto time_left = Clock::seconds(time_end - std::chrono::steady_clock::now());
-        const auto time_allotted_for_this_move = std::min((time_left/moves_left)*speculation_time_factor(game_progress(next_board)),
-                                                          clock.running_time_left());
+        const auto time_allotted_for_this_move = std::min(time_left*speculation_time_factor(game_progress(next_board)),
+                                                          clock.running_time_left())/moves_left;
 
         bool recurse;
         if(move_result.game_has_ended())
