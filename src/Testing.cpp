@@ -427,10 +427,10 @@ bool run_tests()
     auto castling_possible_gene = Castling_Possible_Gene();
     castling_possible_gene.read_from(test_genes_file_name);
     auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8*0.1 + 0.2*0.1);
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, (0.8 + 0.2)/1.0);
     castling_board.submit_move("O-O");
     castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8/1); // castled at depth 1
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2*0.1);
+    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2/3.0);
     castling_board.submit_move("Nc6");
     castling_board.submit_move("Rab1");
     castling_board.submit_move("O-O-O");

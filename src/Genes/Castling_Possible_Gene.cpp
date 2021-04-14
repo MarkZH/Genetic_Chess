@@ -27,8 +27,6 @@ void Castling_Possible_Gene::adjust_properties(std::map<std::string, double>& pr
     properties["Queenside Preference - Opening"] = opening_queenside_preference;
     properties["Kingside Preference - Endgame"] = endgame_kingside_preference;
     properties["Queenside Preference - Endgame"] = endgame_queenside_preference;
-    properties["Unmoved Rook Bonus - Opening"] = opening_rook_unmoved_score;
-    properties["Unmoved Rook Bonus - Endgame"] = endgame_rook_unmoved_score;
 }
 
 void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, double>& properties)
@@ -37,8 +35,6 @@ void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, do
     opening_queenside_preference = properties.at("Queenside Preference - Opening");
     endgame_kingside_preference = properties.at("Kingside Preference - Endgame");
     endgame_queenside_preference = properties.at("Queenside Preference - Endgame");
-    opening_rook_unmoved_score = properties.at("Unmoved Rook Bonus - Opening");
-    endgame_rook_unmoved_score = properties.at("Unmoved Rook Bonus - Endgame");
     normalize_sides();
 }
 
@@ -69,9 +65,6 @@ double Castling_Possible_Gene::score_board(const Board& board, Piece_Color persp
     {
         auto score = 0.0;
         auto base_rank = king_square.rank();
-        auto unmoved_rook_bonus = Math::interpolate(opening_rook_unmoved_score,
-                                                    endgame_rook_unmoved_score,
-                                                    game_progress);
         if( ! board.piece_has_moved({'a', base_rank}))
         {
             score += queenside_preference;
@@ -82,7 +75,7 @@ double Castling_Possible_Gene::score_board(const Board& board, Piece_Color persp
             score += kingside_preference;
         }
 
-        return score*unmoved_rook_bonus;
+        return score/(1.0 + double(2*depth));
     }
 
     return 0.0;
@@ -90,7 +83,7 @@ double Castling_Possible_Gene::score_board(const Board& board, Piece_Color persp
 
 void Castling_Possible_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 6))
+    switch(Random::random_integer(1, 4))
     {
         case 1:
             opening_kingside_preference += Random::random_laplace(0.03);
@@ -103,12 +96,6 @@ void Castling_Possible_Gene::gene_specific_mutation() noexcept
             break;
         case 4:
             endgame_queenside_preference += Random::random_laplace(0.03);
-            break;
-        case 5:
-            opening_rook_unmoved_score += Random::random_laplace(0.03);
-            break;
-        case 6:
-            endgame_rook_unmoved_score += Random::random_laplace(0.03);
             break;
         default:
             assert(false);

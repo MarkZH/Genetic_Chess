@@ -29,7 +29,5 @@ Queenside Preference - Opening: 0.2
 Queenside Preference - Endgame: 0.2
 Priority - Opening: 1
 Priority - Endgame: 1
-Unmoved Rook Bonus - Endgame: 0.1
-Unmoved Rook Bonus - Opening: 0.1
 
 END
