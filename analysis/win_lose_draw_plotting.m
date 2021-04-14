@@ -298,7 +298,7 @@ bar(drawn_bins, drawn_counts, 'barwidth', 1, 'facecolor', 'y');
 plot(fifty_bins, fifty_counts, 'displayname', 'Fifty moves', 'linewidth', 6);
 plot(threefold_bins, threefold_counts, 'displayname', '3-fold', 'linewidth', 6);
 plot(material_bins, material_counts, 'k', 'displayname', 'Material', 'linewidth', 6);
-plot(no_legal_bins, no_legal_counts, 'displayname', 'Stalemate', 'linewidth', 6);
+plot(no_legal_bins, no_legal_counts, 'k.', 'displayname', 'Stalemate', 'linewidth', 6);
 title ('Draw game lengths');
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(sum(drawn_games)) ')']);
