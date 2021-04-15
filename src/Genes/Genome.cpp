@@ -144,19 +144,17 @@ void Genome::read_from(std::istream& is)
 
         if(String::trim_outer_whitespace(line_split[0]) == "Name")
         {
-            auto gene_name = String::remove_extra_whitespace(line_split[1]);
-            bool gene_found = false;
-            for(auto& gene : genome)
+            const auto gene_name = String::remove_extra_whitespace(line_split[1]);
+            const auto found_gene = std::find_if(genome.begin(), genome.end(),
+                                                 [&gene_name](const auto& gene)
+                                                 {
+                                                     return gene->name() == gene_name;
+                                                 });
+            if(found_gene != genome.end())
             {
-                if(gene->name() == gene_name)
-                {
-                    gene->read_from(is);
-                    gene_found = true;
-                    break;
-                }
+                (*found_gene)->read_from(is);
             }
-
-            if( ! gene_found)
+            else
             {
                 throw Genetic_AI_Creation_Error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
             }
