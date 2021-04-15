@@ -54,13 +54,13 @@ bool String::starts_with(const std::string& s, const std::string& beginning) noe
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
-    auto text_start = s.find_first_not_of(whitespace);
+    const auto text_start = s.find_first_not_of(whitespace);
     if(text_start == std::string::npos)
     {
         return {};
     }
 
-    auto text_end = s.find_last_not_of(whitespace);
+    const auto text_end = s.find_last_not_of(whitespace);
     return s.substr(text_start, text_end - text_start + 1);
 }
 
@@ -85,8 +85,8 @@ std::string String::strip_comments(const std::string& str, const std::string& co
 
 std::string String::strip_block_comment(const std::string& str, const std::string& start, const std::string& end)
 {
-    auto start_comment_index = str.find(start);
-    auto end_comment_index = str.find(end);
+    const auto start_comment_index = str.find(start);
+    const auto end_comment_index = str.find(end);
 
     if(start_comment_index == std::string::npos && end_comment_index == std::string::npos)
     {
@@ -103,10 +103,10 @@ std::string String::strip_block_comment(const std::string& str, const std::strin
         throw std::invalid_argument("\"" + str + "\" contains bad comment delimiters: " + start + end);
     }
 
-    auto first_part = str.substr(0, start_comment_index);
-    auto last_part = str.substr(end_comment_index + end.size());
     try
     {
+        const auto first_part = str.substr(0, start_comment_index);
+        const auto last_part = str.substr(end_comment_index + end.size());
         return strip_block_comment(trim_outer_whitespace(first_part) + " " + trim_outer_whitespace(last_part), start, end);
     }
     catch(const std::invalid_argument& e)
@@ -122,7 +122,7 @@ std::string String::strip_nested_block_comments(const std::string& str, const st
         throw std::invalid_argument("Delimiters cannot share substrings: " + start + "," + end + ".");
     }
 
-    auto error_message = "Invalid nesting of delimiters " + start + "," + end + ": " + str;
+    const auto error_message = "Invalid nesting of delimiters " + start + "," + end + ": " + str;
     std::string result;
     auto depth = 0;
     size_t index = 0;
@@ -165,8 +165,8 @@ std::string String::strip_nested_block_comments(const std::string& str, const st
 
 std::string String::remove_pgn_comments(const std::string& line)
 {
-    auto index = line.find_first_of(";({");
-    auto delimiter = index < std::string::npos ? line[index] : '\0';
+    const auto index = line.find_first_of(";({");
+    const auto delimiter = index < std::string::npos ? line[index] : '\0';
 
     switch(delimiter)
     {
@@ -179,13 +179,13 @@ std::string String::remove_pgn_comments(const std::string& line)
 
 std::string String::extract_delimited_text(const std::string& str, const std::string& start, const std::string& end)
 {
-    auto start_split = split(str, start, 1);
+    const auto start_split = split(str, start, 1);
     if(start_split.size() != 2)
     {
         throw std::invalid_argument("Starting delimiter not found in \"" + str + "\": " + start + " " + end);
     }
-    auto start_of_inside = start_split[1];
-    auto inside_split = split(start_of_inside, end, 1);
+    const auto start_of_inside = start_split[1];
+    const auto inside_split = split(start_of_inside, end, 1);
     if(inside_split.size() != 2)
     {
         throw std::invalid_argument("Ending delimiter not found in \"" + str + "\": " + start + " " + end);
@@ -193,12 +193,12 @@ std::string String::extract_delimited_text(const std::string& str, const std::st
     return inside_split[0];
 }
 
-char String::tolower(char letter) noexcept
+char String::tolower(const char letter) noexcept
 {
     return char(std::tolower(letter));
 }
 
-char String::toupper(char letter) noexcept
+char String::toupper(const char letter) noexcept
 {
     return char(std::toupper(letter));
 }
@@ -209,7 +209,7 @@ std::string String::lowercase(std::string s) noexcept
     return s;
 }
 
-std::string String::round_to_decimals(double x, size_t decimal_places) noexcept
+std::string String::round_to_decimals(const double x, const size_t decimal_places) noexcept
 {
     auto result = std::ostringstream();
     result << std::fixed << std::setprecision(int(decimal_places)) << x;
@@ -219,7 +219,7 @@ std::string String::round_to_decimals(double x, size_t decimal_places) noexcept
 std::string String::date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
                                          const std::string& format) noexcept
 {
-    auto time_c = std::chrono::system_clock::to_time_t(point_in_time);
+    const auto time_c = std::chrono::system_clock::to_time_t(point_in_time);
     std::tm time_out;
 #ifdef _WIN32
     localtime_s(&time_out, &time_c);
@@ -233,6 +233,6 @@ std::string String::date_and_time_format(const std::chrono::system_clock::time_p
 
 std::string String::add_to_file_name(const std::string& original_file_name, const std::string& addition) noexcept
 {
-    auto dot_index = std::min(original_file_name.find_last_of('.'), original_file_name.size());
+    const auto dot_index = std::min(original_file_name.find_last_of('.'), original_file_name.size());
     return original_file_name.substr(0, dot_index) + addition + original_file_name.substr(dot_index);
 }

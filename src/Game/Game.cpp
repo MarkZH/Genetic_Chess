@@ -34,7 +34,7 @@ Game_Result play_game(Board board,
 
     while( ! result.game_has_ended())
     {
-        auto& player = board.whose_turn() == Piece_Color::WHITE ? white : black;
+        const auto& player = board.whose_turn() == Piece_Color::WHITE ? white : black;
         const auto& move_chosen = player.choose_move(board, game_clock);
 
         result = game_clock.punch(board);
@@ -62,7 +62,7 @@ void play_game_with_outsider(const Player& player,
                              const std::string& location,
                              const std::string& game_file_name)
 {
-    auto outsider = connect_to_outside(player);
+    const auto outsider = connect_to_outside(player);
 
     signal(SIGINT, SIG_IGN);
     signal(SIGTERM, SIG_IGN);
@@ -101,7 +101,7 @@ void play_game_with_outsider(const Player& player,
         if(print_game_record && ! game_file_name.empty())
         {
             clock.stop();
-            auto opponent_proxy = outsider->create_proxy_player();
+            const auto opponent_proxy = outsider->create_proxy_player();
             const Player& white = (player_color == Piece_Color::WHITE ? player : opponent_proxy);
             const Player& black = (player_color == Piece_Color::BLACK ? player : opponent_proxy);
             board.print_game_record(game_record,

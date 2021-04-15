@@ -19,7 +19,7 @@ using namespace std::chrono_literals;
 
 CECP_Mediator::CECP_Mediator(const Player& local_player)
 {
-    std::string expected = "protover 2";
+    const std::string expected = "protover 2";
     if(receive_command() == expected)
     {
         send_command("feature "
@@ -83,17 +83,17 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
         else if(String::starts_with(command, "name "))
         {
-            auto name = String::split(command, " ", 1).back();
+            const auto name = String::split(command, " ", 1).back();
             log("Getting other player's name: " + name);
             record_opponent_name(name);
         }
         else if(String::starts_with(command, "setboard "))
         {
-            auto fen = String::split(command, " ", 1).back();
+            const auto fen = String::split(command, " ", 1).back();
 
             // Handle GUIs that send the next board position
             // instead of a move.
-            auto new_move_list = board.derive_moves(fen);
+            const auto new_move_list = board.derive_moves(fen);
             if(new_move_list.empty())
             {
                 try
@@ -120,7 +120,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
         else if(String::starts_with(command, "usermove "))
         {
-            auto move = String::split(command).back();
+            const auto move = String::split(command).back();
             try
             {
                 log("Applying move: " + move);
@@ -145,11 +145,11 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         else if(String::starts_with(command, "level "))
         {
             log("got time specs: " + command);
-            auto split = String::split(command);
+            const auto split = String::split(command);
 
             log("moves to reset clock = " + split[1]);
-            auto reset_moves = String::to_number<size_t>(split[1]);
-            auto time_split = String::split(split[2], ":");
+            const auto reset_moves = String::to_number<size_t>(split[1]);
+            const auto time_split = String::split(split[2], ":");
             auto game_time = 0s;
             if(time_split.size() == 1)
             {
@@ -163,7 +163,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             }
 
             log("increment = " + split[3]);
-            auto increment = String::to_duration<Clock::seconds>(split[3]);
+            const auto increment = String::to_duration<Clock::seconds>(split[3]);
             clock = Clock(game_time,
                           reset_moves,
                           increment,
@@ -176,8 +176,8 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         else if(String::starts_with(command, "st "))
         {
             log("got time specs: " + command + " seconds");
-            auto split = String::split(command);
-            auto time_per_move = String::to_duration<std::chrono::seconds>(split[1]);
+            const auto split = String::split(command);
+            const auto time_per_move = String::to_duration<Clock::seconds>(split[1]);
             log("game time per move = " + std::to_string(time_per_move.count()) + " seconds");
             clock = Clock(time_per_move,
                           1,
@@ -213,8 +213,8 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
         else if(String::starts_with(command, "result "))
         {
-            auto result = String::split(command).at(1);
-            auto reason = String::extract_delimited_text(command, "{", "}");
+            const auto result = String::split(command).at(1);
+            const auto reason = String::extract_delimited_text(command, "{", "}");
             if(result == "1-0")
             {
                 return Game_Result(Winner_Color::WHITE, reason, false);
@@ -320,7 +320,7 @@ Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vect
     {
         send_command("move " + move.coordinates());
         move_list.push_back(&move);
-        auto result = board.play_move(move);
+        const auto result = board.play_move(move);
         if(result.game_has_ended())
         {
             report_end_of_game(result);

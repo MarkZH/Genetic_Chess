@@ -23,15 +23,15 @@ void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& prope
     properties.erase("Priority - Opening");
     properties.erase("Priority - Endgame");
 
-    const auto standard_all_pieces_score = 2*5.0 + // rooks
-                                           2*3.0 + // knights
-                                           2*3.0 + // bishops
-                                           1*9.0;  // queen
-    auto standardize = file_normalization()/standard_all_pieces_score;
+    static constexpr auto standard_all_pieces_score = 2*5.0 + // rooks
+                                                      2*3.0 + // knights
+                                                      2*3.0 + // bishops
+                                                      1*9.0;  // queen
+    const auto standardize = file_normalization()/standard_all_pieces_score;
 
     for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
-        auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
+        const auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
         properties[std::string(1, piece.fen_symbol())] = piece_value(piece.type())/standardize;
     }
 }
@@ -40,7 +40,7 @@ void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, doubl
 {
     for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
-        auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
+        const auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
         piece_value(piece.type()) = properties.at(std::string(1, piece.fen_symbol()));
     }
 
@@ -55,7 +55,7 @@ void Piece_Strength_Gene::gene_specific_mutation() noexcept
 
 void Piece_Strength_Gene::renormalize_values() noexcept
 {
-    auto normalizing_value = normalization();
+    const auto normalizing_value = normalization();
 
     if(normalizing_value > 0.0)
     {
@@ -82,17 +82,17 @@ double Piece_Strength_Gene::file_normalization() const noexcept
                            - 8*std::abs(piece_value(Piece_Type::PAWN));
 }
 
-double Piece_Strength_Gene::piece_value(Piece_Type type) const noexcept
+double Piece_Strength_Gene::piece_value(const Piece_Type type) const noexcept
 {
     return piece_strength[static_cast<int>(type)];
 }
 
-double& Piece_Strength_Gene::piece_value(Piece_Type type) noexcept
+double& Piece_Strength_Gene::piece_value(const Piece_Type type) noexcept
 {
     return piece_strength[static_cast<int>(type)];
 }
 
-double Piece_Strength_Gene::piece_value(Piece piece) const noexcept
+double Piece_Strength_Gene::piece_value(const Piece piece) const noexcept
 {
     return piece ? piece_value(piece.type()) : 0.0;
 }

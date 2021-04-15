@@ -165,7 +165,7 @@ class Square
         //!        on the direction or length of the difference. A knight move is valid.
         //!
         //! The end of the collection is when the squares leave the Board.
-        static Squares_in_a_Line square_line_from(Square origin, Square_Difference direction) noexcept;
+        static Squares_in_a_Line square_line_from(Square origin, const Square_Difference& direction) noexcept;
 
     private:
         square_index_t square_index;

@@ -12,7 +12,7 @@
 
 namespace
 {
-    void add_surrounding_squares(Square square,
+    void add_surrounding_squares(const Square square,
                                  Fixed_Capacity_Vector<Square, 64>& square_queue,
                                  std::array<bool, 64>& in_queue) noexcept
     {
@@ -20,7 +20,7 @@ namespace
         {
             for(auto rank_step = -1; rank_step <= 1; ++rank_step)
             {
-                auto new_square = square + Square_Difference{file_step, rank_step};
+                const auto new_square = square + Square_Difference{file_step, rank_step};
                 if(new_square.inside_board() && ! in_queue[new_square.index()])
                 {
                     square_queue.push_back(new_square);
@@ -36,7 +36,7 @@ std::string King_Confinement_Gene::name() const noexcept
     return "King Confinement Gene";
 }
 
-double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
+double King_Confinement_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
 {
     Fixed_Capacity_Vector<Square, 64> square_queue{};
     std::array<bool, 64> in_queue{};
@@ -52,7 +52,7 @@ double King_Confinement_Gene::score_board(const Board& board, Piece_Color perspe
 
     for(auto iter = square_queue.begin(); iter != square_queue.end(); ++iter)
     {
-        auto square = *iter;
+        const auto square = *iter;
         if( ! board.piece_on_square(square) && board.safe_for_king(square, perspective))
         {
             free_space_total += 1.0;

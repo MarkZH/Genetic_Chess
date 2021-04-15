@@ -55,7 +55,7 @@ class Fixed_Capacity_Vector
         //! \returns A Scoped_Push_Guard object that will remove the items upon exiting the current scope.
         //! \exception assertion_failure If there is not enough room for the items to be added.
         template<typename Iterator>
-        constexpr auto scoped_push_back(Iterator begin, Iterator end) noexcept
+        constexpr auto scoped_push_back(const Iterator begin, const Iterator end) noexcept
         {
             assert(size() + std::distance(begin, end) <= data.size());
             return Scoped_Push_Guard(*this, begin, end);
@@ -65,7 +65,7 @@ class Fixed_Capacity_Vector
         //!
         //! \param n The number of items to remove from the end of the vector.
         //! \exception assertion_failure If n is greater than the current size of the vector.
-        constexpr void pop_back(size_t n = 1) noexcept
+        constexpr void pop_back(const size_t n = 1) noexcept
         {
             assert(size() >= n);
             insertion_point -= n;
@@ -219,7 +219,7 @@ class [[nodiscard]] Scoped_Push_Guard
         //! \param begin The iterator to the first value to add.
         //! \param end The iterator marking the end of the range (one past the last item).
         template<typename Iterator>
-        constexpr Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, Iterator begin, Iterator end) noexcept : data_store(vec), items_added(0)
+        constexpr Scoped_Push_Guard(Fixed_Capacity_Vector<T, capacity>& vec, const Iterator begin, const Iterator end) noexcept : data_store(vec), items_added(0)
         {
             for(auto i = begin; i != end; ++i)
             {

@@ -8,7 +8,7 @@
 
 #include "Genes/Gene.h"
 
-double Pawn_Islands_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
+double Pawn_Islands_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
 {
     auto islands = 0;
     bool on_island = false;

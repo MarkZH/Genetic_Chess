@@ -52,7 +52,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
         else if(String::starts_with(command, "setoption name UCI_Opponent value "))
         {
             // command has 8 fields requiring 7 cuts to get name
-            auto opponent_split = String::split(command, " ", 7);
+            const auto opponent_split = String::split(command, " ", 7);
             if(opponent_split.size() != 8)
             {
                 log("Malformed UCI_Opponent line: " + command);
@@ -70,32 +70,32 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                     title = title + " ";
                 }
 
-                auto rating = opponent_split[5];
+                const auto rating = opponent_split[5];
                 log("Opponent rating: " + rating);
 
-                auto type = opponent_split[6];
+                const auto type = opponent_split[6];
                 log("Opponent type: " + type);
 
-                auto name = opponent_split[7];
+                const auto name = opponent_split[7];
                 record_opponent_name(title + name);
                 log("Opponent's name: " + name);
             }
         }
         else if(String::starts_with(command, "position "))
         {
-            auto parse = String::split(command);
+            const auto parse = String::split(command);
             if(parse.at(1) == "startpos")
             {
                 board = Board();
             }
             else if(parse.at(1) == "fen")
             {
-                auto fen = String::join(std::next(parse.begin(), 2), std::next(parse.begin(), 8), " ");
+                const auto fen = String::join(std::next(parse.begin(), 2), std::next(parse.begin(), 8), " ");
                 board = Board(fen);
             }
 
             move_list.clear();
-            auto moves_iter = std::find(parse.begin(), parse.end(), "moves");
+            const auto moves_iter = std::find(parse.begin(), parse.end(), "moves");
             if(moves_iter != parse.end())
             {
                 std::for_each(std::next(moves_iter), parse.end(),

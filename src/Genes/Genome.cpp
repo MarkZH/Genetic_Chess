@@ -79,11 +79,12 @@ void Genome::renormalize_priorities() noexcept
 {
     for(auto stage : {Game_Stage::OPENING, Game_Stage::ENDGAME})
     {
-        auto norm = std::accumulate(genome.begin(), genome.end(), 0.0,
-                                    [stage](auto sum, const auto& gene)
-                                    {
-                                        return sum + (gene->has_priority() ? std::abs(gene->priority(stage)) : 0.0);
-                                    });
+        const auto norm =
+            std::accumulate(genome.begin(), genome.end(), 0.0,
+                            [stage](auto sum, const auto& gene)
+                            {
+                                return sum + (gene->has_priority() ? std::abs(gene->priority(stage)) : 0.0);
+                            });
         if(norm > 0.0)
         {
             for(auto& gene : genome)
@@ -136,7 +137,7 @@ void Genome::read_from(std::istream& is)
             return;
         }
 
-        auto line_split = String::split(line, ":", 1);
+        const auto line_split = String::split(line, ":", 1);
         if(line_split.size() != 2)
         {
             throw Genetic_AI_Creation_Error("No colon in parameter line: " + line);
@@ -168,9 +169,9 @@ void Genome::read_from(std::istream& is)
     throw Genetic_AI_Creation_Error("Reached end of file before END of genome.");
 }
 
-double Genome::score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept
+double Genome::score_board(const Board& board, const Piece_Color perspective, size_t depth) const noexcept
 {
-    auto progress_in_game = game_progress(board);
+    const auto progress_in_game = game_progress(board);
     return std::accumulate(genome.begin(), genome.end(), 0.0,
                            [&](auto sum, const auto& gene)
                            {
@@ -178,7 +179,7 @@ double Genome::score_board(const Board& board, Piece_Color perspective, size_t d
                            });
 }
 
-double Genome::evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept
+double Genome::evaluate(const Board& board, const Piece_Color perspective, size_t depth) const noexcept
 {
     return score_board(board, perspective, depth) - score_board(board, opposite(perspective), depth);
 }
@@ -212,12 +213,12 @@ Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) c
     return gene_reference<Look_Ahead_Gene>().time_to_examine(board, clock);
 }
 
-double Genome::speculation_time_factor(double game_progress) const noexcept
+double Genome::speculation_time_factor(const double game_progress) const noexcept
 {
     return gene_reference<Look_Ahead_Gene>().speculation_time_factor(game_progress);
 }
 
-double Genome::branching_factor(double game_progress) const noexcept
+double Genome::branching_factor(const double game_progress) const noexcept
 {
     return gene_reference<Look_Ahead_Gene>().branching_factor(game_progress);
 }
@@ -229,8 +230,8 @@ double Genome::expected_number_of_moves_left(const Board& board) const noexcept
 
 double Genome::game_progress(const Board& board) const noexcept
 {
-    auto moves_so_far = double(board.ply_count()/2);
-    auto moves_to_go = expected_number_of_moves_left(board);
+    const auto moves_so_far = double(board.ply_count()/2);
+    const auto moves_to_go = expected_number_of_moves_left(board);
     return moves_so_far/(moves_so_far + moves_to_go);
 }
 

@@ -8,7 +8,7 @@ Game_Result::Game_Result() noexcept : Game_Result(Winner_Color::NONE, Game_Resul
 {
 }
 
-Game_Result::Game_Result(Winner_Color winner, Game_Result_Type reason) noexcept :
+Game_Result::Game_Result(const Winner_Color winner, const Game_Result_Type reason) noexcept :
     victor(winner),
     cause(reason),
     alternate_reason(),
@@ -16,12 +16,12 @@ Game_Result::Game_Result(Winner_Color winner, Game_Result_Type reason) noexcept 
 {
 }
 
-Game_Result::Game_Result(Piece_Color winner, Game_Result_Type reason) noexcept :
+Game_Result::Game_Result(const Piece_Color winner, const Game_Result_Type reason) noexcept :
     Game_Result(static_cast<Winner_Color>(winner), reason)
 {
 }
 
-Game_Result::Game_Result(Winner_Color winner, const std::string& reason, bool shutdown) noexcept :
+Game_Result::Game_Result(const Winner_Color winner, const std::string& reason, const bool shutdown) noexcept :
     victor(winner),
     cause(Game_Result_Type::OTHER),
     alternate_reason(reason),

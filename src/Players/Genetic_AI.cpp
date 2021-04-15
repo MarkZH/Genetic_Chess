@@ -28,7 +28,7 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) noexcept :
     recalibrate_self();
 }
 
-Genetic_AI::Genetic_AI(const std::string& file_name, int id_in) try : Genetic_AI(std::ifstream(file_name), id_in)
+Genetic_AI::Genetic_AI(const std::string& file_name, const int id_in) try : Genetic_AI(std::ifstream(file_name), id_in)
 {
 }
 catch(const Genetic_AI_Creation_Error& e)
@@ -36,12 +36,12 @@ catch(const Genetic_AI_Creation_Error& e)
     throw Genetic_AI_Creation_Error(e.what() + file_name);
 }
 
-Genetic_AI::Genetic_AI(std::istream& is, int id_in) : id_number(id_in)
+Genetic_AI::Genetic_AI(std::istream& is, const int id_in) : id_number(id_in)
 {
     read_from(is);
 }
 
-Genetic_AI::Genetic_AI(std::istream&& is, int id_in) : id_number(id_in)
+Genetic_AI::Genetic_AI(std::istream&& is, const int id_in) : id_number(id_in)
 {
     read_from(is);
 }
@@ -61,7 +61,7 @@ void Genetic_AI::read_from(std::istream& is)
             continue;
         }
 
-        auto param_value = String::split(line, ":", 1);
+        const auto param_value = String::split(line, ":", 1);
         if(param_value.size() != 2 || String::trim_outer_whitespace(param_value[0]) != "ID")
         {
             continue;
@@ -193,7 +193,7 @@ int find_last_id(const std::string& players_file_name)
         throw std::runtime_error("No valid ID found in file: " + players_file_name);
     }
 
-    auto split = String::split(last_player, ":", 1);
+    const auto split = String::split(last_player, ":", 1);
     if(split.size() != 2)
     {
         throw std::runtime_error("Invalid ID line: " + last_player);

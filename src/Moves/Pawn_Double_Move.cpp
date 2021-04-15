@@ -4,7 +4,7 @@
 #include "Game/Board.h"
 #include "Game/Square.h"
 
-Pawn_Double_Move::Pawn_Double_Move(Piece_Color color, char file_start) noexcept :
+Pawn_Double_Move::Pawn_Double_Move(const Piece_Color color, const char file_start) noexcept :
     Pawn_Move({file_start, color == Piece_Color::WHITE ? 2 : 7},
               {file_start, color == Piece_Color::WHITE ? 4 : 5})
 {

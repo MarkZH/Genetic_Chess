@@ -7,14 +7,14 @@
 #include "Game/Piece.h"
 #include "Game/Color.h"
 
-double Pawn_Advancement_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
+double Pawn_Advancement_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
 {
-    auto own_pawn = Piece{perspective, Piece_Type::PAWN};
+    const auto own_pawn = Piece{perspective, Piece_Type::PAWN};
 
     // Skip starting rank since those get zero score.
-    int first_rank = (perspective == Piece_Color::WHITE ? 3 : 6);
-    int last_rank = (perspective == Piece_Color::WHITE ? 7 : 2);
-    int rank_step = (perspective == Piece_Color::WHITE ? 1 : -1);
+    const int first_rank = (perspective == Piece_Color::WHITE ? 3 : 6);
+    const int last_rank = (perspective == Piece_Color::WHITE ? 7 : 2);
+    const int rank_step = (perspective == Piece_Color::WHITE ? 1 : -1);
 
     double score = 0.0;
     for(char file = 'a'; file <= 'h'; ++file)

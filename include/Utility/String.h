@@ -30,7 +30,7 @@ namespace String
     //! \param end An iterator past the end of the sequence.
     //! \param joiner A string that will be placed between every string in the sequence.
     template<typename Iter>
-    std::string join(Iter begin, Iter end, const std::string& joiner) noexcept
+    std::string join(const Iter begin, const Iter end, const std::string& joiner) noexcept
     {
         if(begin == end)
         {

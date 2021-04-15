@@ -10,7 +10,7 @@ namespace
     {
         using result_type = unsigned int;
         template<typename Iterator>
-        void generate(Iterator begin, Iterator end)
+        void generate(const Iterator begin, const Iterator end) const
         {
             std::random_device rd;
             std::generate(begin, end, [&rd]() { return rd(); });
@@ -20,11 +20,11 @@ namespace
 
 Random::Random_Bits_Generator Random::get_new_seeded_random_bit_source() noexcept
 {
-    auto seeder = Seeder{};
+    const auto seeder = Seeder{};
     return Random_Bits_Generator(seeder);
 }
 
-double Random::random_laplace(double width) noexcept
+double Random::random_laplace(const double width) noexcept
 {
     thread_local static auto generator = get_new_seeded_random_bit_source();
     using ed = std::exponential_distribution<double>;
@@ -43,7 +43,7 @@ bool Random::coin_flip() noexcept
     return success_probability(1, 2);
 }
 
-bool Random::success_probability(size_t successes, size_t attempts) noexcept
+bool Random::success_probability(const size_t successes, const size_t attempts) noexcept
 {
     assert(attempts > 0);
     return random_integer(size_t{1}, attempts) <= successes;

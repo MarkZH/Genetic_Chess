@@ -29,7 +29,7 @@ namespace Random
     //! \param max The maximum number to return.
     //! \returns A random number in the range [min, max].
     template<typename Integer>
-    Integer random_integer(Integer min, Integer max) noexcept
+    Integer random_integer(const Integer min, const Integer max) noexcept
     {
         thread_local static auto generator = get_new_seeded_random_bit_source();
         using uid = std::uniform_int_distribution<Integer>;
@@ -61,7 +61,7 @@ namespace Random
     //! \param[out] list A sequential collection of items whose order will be shuffled after the call.
     //! \param stir_width The average distance each item should move.
     template<class List>
-    void stir_order(List& list, double stir_width) noexcept
+    void stir_order(List& list, const double stir_width) noexcept
     {
         std::vector<std::pair<double, typename List::value_type>> positions;
         for(const auto& item : list)

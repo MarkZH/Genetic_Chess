@@ -8,15 +8,15 @@
 #include "Game/Square.h"
 #include "Moves/Move.h"
 
-double King_Protection_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
+double King_Protection_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
 {
     auto square_count = 0;
-    auto king_square = board.find_king(perspective);
+    const auto king_square = board.find_king(perspective);
 
     for(size_t attack_index = 0; attack_index < 16; ++attack_index)
     {
-        auto step = Move::attack_direction_from_index(attack_index);
-        for(auto square : Square::square_line_from(king_square, step))
+        const auto step = Move::attack_direction_from_index(attack_index);
+        for(const auto square : Square::square_line_from(king_square, step))
         {
             if(board.piece_on_square(square))
             {

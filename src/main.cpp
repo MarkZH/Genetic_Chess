@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 
     try
     {
-        std::string option = argv[1];
+        const std::string option = argv[1];
         if(option == "-gene-pool")
         {
             argument_assert(argc > 2, "Specify a configuration file to run a gene pool.");
@@ -283,9 +283,9 @@ namespace
 
                     try
                     {
-                        auto move_checkmates = move.back() == '#';
-                        auto move_checks = move_checkmates || move.back() == '+';
-                        auto& move_to_play = board.interpret_move(move);
+                        const auto move_checkmates = move.back() == '#';
+                        const auto move_checks = move_checkmates || move.back() == '+';
+                        const auto& move_to_play = board.interpret_move(move);
                         last_move_line_number = line_number;
                         if(String::contains(move, 'x')) // check that move captures
                         {
@@ -344,7 +344,7 @@ namespace
                                   << error.what()
                                   << ". (line: " << line_number << ")" << std::endl;
                         std::cerr << "Legal moves: ";
-                        for(auto legal_move : board.legal_moves())
+                        for(const auto legal_move : board.legal_moves())
                         {
                             std::cerr << legal_move->algebraic(board) << " ";
                         }
@@ -376,7 +376,7 @@ namespace
 
         for(int i = 1; i < argc; ++i)
         {
-            std::string opt = argv[i];
+            const std::string opt = argv[i];
             if(opt == "-random")
             {
                 latest = std::make_unique<Random_AI>();
@@ -388,7 +388,7 @@ namespace
 
                 try
                 {
-                    auto id = i + 1 < argc ? argv[i + 1] : std::string{};
+                    const auto id = i + 1 < argc ? argv[i + 1] : std::string{};
                     latest = std::make_unique<Genetic_AI>(filename, String::to_number<int>(id));
                     ++i;
                 }
@@ -479,7 +479,7 @@ namespace
             }
         }
         input = std::ifstream(file_name);
-        auto output_file_name = String::add_to_file_name(file_name, "-updated");
+        const auto output_file_name = String::add_to_file_name(file_name, "-updated");
         auto output = std::ofstream(output_file_name);
         std::cout << "Writing to: " << output_file_name << std::endl;
         for(auto id : id_list)
@@ -495,7 +495,7 @@ namespace
         }
     }
 
-    void argument_assert(bool condition, const std::string& failure_message)
+    void argument_assert(const bool condition, const std::string& failure_message)
     {
         if( ! condition)
         {

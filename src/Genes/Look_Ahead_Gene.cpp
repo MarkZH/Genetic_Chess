@@ -38,9 +38,9 @@ void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& 
 
 Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
-    auto time_left = clock.running_time_left();
-    auto moves_to_reset = clock.moves_until_reset(board.whose_turn());
-    auto moves_left = expected_moves_left(board);
+    const auto time_left = clock.running_time_left();
+    const auto moves_to_reset = clock.moves_until_reset(board.whose_turn());
+    const auto moves_left = expected_moves_left(board);
     return time_left/std::min(moves_left, double(moves_to_reset));
 }
 
@@ -78,19 +78,19 @@ std::string Look_Ahead_Gene::name() const noexcept
     return "Look Ahead Gene";
 }
 
-double Look_Ahead_Gene::score_board(const Board&, Piece_Color, size_t, double) const noexcept
+double Look_Ahead_Gene::score_board(const Board&, const Piece_Color, const size_t, double) const noexcept
 {
     return 0.0;
 }
 
-double Look_Ahead_Gene::speculation_time_factor(double game_progress) const noexcept
+double Look_Ahead_Gene::speculation_time_factor(const double game_progress) const noexcept
 {
     return Math::interpolate(opening_speculation_constant,
                              endgame_speculation_constant,
                              game_progress);
 }
 
-double Look_Ahead_Gene::branching_factor(double game_progress) const noexcept
+double Look_Ahead_Gene::branching_factor(const double game_progress) const noexcept
 {
     return Math::interpolate(opening_branching_factor_estimate,
                              endgame_branching_factor_estimate,
@@ -99,7 +99,7 @@ double Look_Ahead_Gene::branching_factor(double game_progress) const noexcept
 
 double Look_Ahead_Gene::expected_moves_left(const Board& board) const noexcept
 {
-    auto moves_so_far = board.ply_count()/2;
+    const auto moves_so_far = board.ply_count()/2;
     if(moves_so_far < moves_left_lookup.size())
     {
         return moves_left_lookup[moves_so_far];

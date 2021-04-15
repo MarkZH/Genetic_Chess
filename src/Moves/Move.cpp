@@ -9,8 +9,10 @@
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
 
+#include "Utility/String.h"
 
-Move::Move(Square start, Square end) noexcept : origin(start), destination(end)
+
+Move::Move(const Square start, const Square end) noexcept : origin(start), destination(end)
 {
     assert(start.inside_board());
     assert(end.inside_board());
@@ -27,7 +29,7 @@ bool Move::is_legal(const Board& board) const noexcept
     assert(board.piece_on_square(start()).color() == board.whose_turn());
     assert(board.piece_on_square(start()).can_move(this));
 
-    if(auto attacked_piece = board.piece_on_square(end()))
+    if(const auto attacked_piece = board.piece_on_square(end()))
     {
         if( ! can_capture() || board.whose_turn() == attacked_piece.color())
         {
@@ -80,7 +82,7 @@ std::string Move::algebraic(const Board& board) const noexcept
 
 std::string Move::algebraic_base(const Board& board) const noexcept
 {
-    auto original_piece = board.piece_on_square(start());
+    const auto original_piece = board.piece_on_square(start());
     std::string move_record = original_piece.pgn_symbol();
 
     auto record_file = original_piece.type() == Piece_Type::PAWN && board.move_captures(*this);
@@ -92,7 +94,7 @@ std::string Move::algebraic_base(const Board& board) const noexcept
             continue;
         }
 
-        auto new_piece = board.piece_on_square(other_move->start());
+        const auto new_piece = board.piece_on_square(other_move->start());
         if(original_piece == new_piece && end() == other_move->end())
         {
             if(other_move->start().file() != start().file() && ! record_file)
@@ -127,7 +129,7 @@ std::string Move::algebraic_base(const Board& board) const noexcept
 
 std::string Move::result_mark(Board board) const noexcept
 {
-    auto result = board.play_move(*this);
+    const auto result = board.play_move(*this);
     if(board.king_is_in_check())
     {
         if(result.winner() == Winner_Color::NONE)
@@ -147,14 +149,15 @@ std::string Move::result_mark(Board board) const noexcept
 
 std::string Move::coordinates() const noexcept
 {
-    auto result = start().string() + end().string();
-
+    const auto result = start().string() + end().string();
     if(promotion_piece_symbol())
     {
-        result += char(std::tolower(promotion_piece_symbol()));
+        return result + String::tolower(promotion_piece_symbol());
     }
-
-    return result;
+    else
+    {
+        return result;
+    }
 }
 
 bool Move::is_en_passant() const noexcept
@@ -174,25 +177,25 @@ size_t Move::attack_index() const noexcept
 
 size_t Move::attack_index(const Square_Difference& move) noexcept
 {
-    static const auto xx = size_t(-1); // indicates invalid moves and should never be returned
-    static const size_t array_width = 15;
+    constexpr auto xx = size_t(-1); // indicates invalid moves and should never be returned
+    constexpr size_t array_width = 15;
     //                                                      file change
     //                               -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7
-    static const size_t indices[] = { 0, xx, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx, xx,  2,  //  7
-                                     xx,  0, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx,  2, xx,  //  6
-                                     xx, xx,  0, xx, xx, xx, xx,  1, xx, xx, xx, xx,  2, xx, xx,  //  5
-                                     xx, xx, xx,  0, xx, xx, xx,  1, xx, xx, xx,  2, xx, xx, xx,  //  4
-                                     xx, xx, xx, xx,  0, xx, xx,  1, xx, xx,  2, xx, xx, xx, xx,  //  3
-                                     xx, xx, xx, xx, xx,  0, 15,  1,  8,  2, xx, xx, xx, xx, xx,  //  2
-                                     xx, xx, xx, xx, xx, 14,  0,  1,  2,  9, xx, xx, xx, xx, xx,  //  1
-                                      3,  3,  3,  3,  3,  3,  3, xx,  4,  4,  4,  4,  4,  4,  4,  //  0  rank change
-                                     xx, xx, xx, xx, xx, 13,  5,  6,  7, 10, xx, xx, xx, xx, xx,  // -1
-                                     xx, xx, xx, xx, xx,  5, 12,  6, 11,  7, xx, xx, xx, xx, xx,  // -2
-                                     xx, xx, xx, xx,  5, xx, xx,  6, xx, xx,  7, xx, xx, xx, xx,  // -3
-                                     xx, xx, xx,  5, xx, xx, xx,  6, xx, xx, xx,  7, xx, xx, xx,  // -4
-                                     xx, xx,  5, xx, xx, xx, xx,  6, xx, xx, xx, xx,  7, xx, xx,  // -5
-                                     xx,  5, xx, xx, xx, xx, xx,  6, xx, xx, xx, xx, xx,  7, xx,  // -6
-                                      5, xx, xx, xx, xx, xx, xx,  6, xx, xx, xx, xx, xx, xx,  7}; // -7
+    static constexpr size_t indices[] = { 0, xx, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx, xx,  2,  //  7
+                                         xx,  0, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx,  2, xx,  //  6
+                                         xx, xx,  0, xx, xx, xx, xx,  1, xx, xx, xx, xx,  2, xx, xx,  //  5
+                                         xx, xx, xx,  0, xx, xx, xx,  1, xx, xx, xx,  2, xx, xx, xx,  //  4
+                                         xx, xx, xx, xx,  0, xx, xx,  1, xx, xx,  2, xx, xx, xx, xx,  //  3
+                                         xx, xx, xx, xx, xx,  0, 15,  1,  8,  2, xx, xx, xx, xx, xx,  //  2
+                                         xx, xx, xx, xx, xx, 14,  0,  1,  2,  9, xx, xx, xx, xx, xx,  //  1
+                                          3,  3,  3,  3,  3,  3,  3, xx,  4,  4,  4,  4,  4,  4,  4,  //  0  rank change
+                                         xx, xx, xx, xx, xx, 13,  5,  6,  7, 10, xx, xx, xx, xx, xx,  // -1
+                                         xx, xx, xx, xx, xx,  5, 12,  6, 11,  7, xx, xx, xx, xx, xx,  // -2
+                                         xx, xx, xx, xx,  5, xx, xx,  6, xx, xx,  7, xx, xx, xx, xx,  // -3
+                                         xx, xx, xx,  5, xx, xx, xx,  6, xx, xx, xx,  7, xx, xx, xx,  // -4
+                                         xx, xx,  5, xx, xx, xx, xx,  6, xx, xx, xx, xx,  7, xx, xx,  // -5
+                                         xx,  5, xx, xx, xx, xx, xx,  6, xx, xx, xx, xx, xx,  7, xx,  // -6
+                                          5, xx, xx, xx, xx, xx, xx,  6, xx, xx, xx, xx, xx, xx,  7}; // -7
 
     assert(-7 <= move.rank_change && move.rank_change <= 7);
     assert(-7 <= move.file_change && move.file_change <= 7);
@@ -203,15 +206,15 @@ size_t Move::attack_index(const Square_Difference& move) noexcept
     return indices[i];
 }
 
-Square_Difference Move::attack_direction_from_index(size_t index) noexcept
+Square_Difference Move::attack_direction_from_index(const size_t index) noexcept
 {
     //                 index: 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
-    static const int dx[] = {-1,  0,  1, -1,  1, -1,  0,  1,  1,  2,  2,  1, -1, -2, -2, -1};
-    static const int dy[] = { 1,  1,  1,  0,  0, -1, -1, -1,  2,  1, -1, -2, -2, -1,  1,  2};
+    static constexpr int dx[] = {-1,  0,  1, -1,  1, -1,  0,  1,  1,  2,  2,  1, -1, -2, -2, -1};
+    static constexpr int dy[] = { 1,  1,  1,  0,  0, -1, -1, -1,  2,  1, -1, -2, -2, -1,  1,  2};
     return {dx[index], dy[index]};
 }
 
-void Move::set_capturing_ability(bool capturing_ability) noexcept
+void Move::set_capturing_ability(const bool capturing_ability) noexcept
 {
     able_to_capture = capturing_ability;
 }

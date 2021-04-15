@@ -6,7 +6,7 @@
 #include "Moves/Direction.h"
 #include "Game/Board.h"
 
-Castle::Castle(int base_rank, Direction direction) noexcept :
+Castle::Castle(const int base_rank, const Direction direction) noexcept :
     Move({'e', base_rank},
          {(direction == Direction::RIGHT ? 'g' : 'c'), base_rank}),
     rook_move({(direction == Direction::RIGHT ? 'h' : 'a'), base_rank},

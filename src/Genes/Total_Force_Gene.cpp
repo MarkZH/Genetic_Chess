@@ -9,18 +9,18 @@
 #include "Genes/Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 
-Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source_in) noexcept : piece_strength_source(piece_strength_source_in)
+Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* const piece_strength_source_in) noexcept : piece_strength_source(piece_strength_source_in)
 {
 }
 
-double Total_Force_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double) const noexcept
+double Total_Force_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
 {
     assert(piece_strength_source);
-    auto values = piece_strength_source->piece_values();
+    const auto& values = piece_strength_source->piece_values();
     return std::accumulate(Square::all_squares().begin(), Square::all_squares().end(), 0.0,
                            [&values, &board, perspective](auto sum, auto square)
                            {
-                               auto piece = board.piece_on_square(square);
+                               const auto piece = board.piece_on_square(square);
                                if(piece && piece.color() == perspective)
                                {
                                    return sum + values[static_cast<size_t>(piece.type())];
@@ -37,7 +37,7 @@ std::string Total_Force_Gene::name() const noexcept
     return "Total Force Gene";
 }
 
-void Total_Force_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* psg) noexcept
+void Total_Force_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* const psg) noexcept
 {
     piece_strength_source = psg;
 }

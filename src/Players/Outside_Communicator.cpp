@@ -19,7 +19,7 @@
 
 std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player)
 {
-    auto protocol_type = Outside_Communicator::receive_command();
+    const auto protocol_type = Outside_Communicator::receive_command();
     if(protocol_type == "xboard")
     {
         return std::make_unique<CECP_Mediator>(player);

@@ -30,9 +30,10 @@ Configuration::Configuration(const std::string& file_name)
         {
             throw std::runtime_error("Configuration file lines must be of form \"Name = Value\"\n" + line);
         }
-        auto line_split = String::split(line, "=", 1);
-        auto parameter = standardize_text(line_split[0]);
-        auto value = String::trim_outer_whitespace(line_split[1]);
+
+        const auto line_split = String::split(line, "=", 1);
+        const auto parameter = standardize_text(line_split[0]);
+        const auto value = String::trim_outer_whitespace(line_split[1]);
         if(value.empty())
         {
             throw std::runtime_error("Configuration parameter cannot be empty.\n" + line);
@@ -42,6 +43,7 @@ Configuration::Configuration(const std::string& file_name)
         {
             throw std::runtime_error("Configuration parameter used more than once: " + parameter);
         }
+
         parameters[parameter] = value;
         used[parameter] = false;
     }
@@ -51,7 +53,7 @@ std::string Configuration::as_text(const std::string& parameter) const
 {
     try
     {
-        auto key = standardize_text(parameter);
+        const auto key = standardize_text(parameter);
         used.at(key) = true;
         return parameters.at(key);
     }
@@ -67,7 +69,7 @@ std::string Configuration::as_text(const std::string& parameter) const
 
 bool Configuration::as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const
 {
-    auto response = standardize_text(as_text(parameter));
+    const auto response = standardize_text(as_text(parameter));
     if(response == standardize_text(affirmative))
     {
         return true;

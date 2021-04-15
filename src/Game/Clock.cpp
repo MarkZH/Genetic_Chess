@@ -10,12 +10,12 @@ using namespace std::chrono_literals;
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
 
-Clock::Clock(seconds duration_seconds,
-             size_t moves_to_reset,
-             seconds increment_seconds,
-             Time_Reset_Method reset_method,
-             Piece_Color starting_turn,
-             std::chrono::system_clock::time_point previous_start_time) noexcept :
+Clock::Clock(const seconds duration_seconds,
+             const size_t moves_to_reset,
+             const seconds increment_seconds,
+             const Time_Reset_Method reset_method,
+             const Piece_Color starting_turn,
+             const std::chrono::system_clock::time_point previous_start_time) noexcept :
     timers({duration_seconds, duration_seconds}),
     initial_start_time(duration_seconds),
     increment_time({increment_seconds, increment_seconds}),
@@ -33,9 +33,9 @@ Game_Result Clock::punch(const Board& board) noexcept
         return {};
     }
 
-    auto time_this_punch = std::chrono::steady_clock::now();
+    const auto time_this_punch = std::chrono::steady_clock::now();
 
-    auto player_index = static_cast<int>(whose_turn);
+    const auto player_index = static_cast<int>(whose_turn);
     timers[player_index] -= (time_this_punch - time_previous_punch);
     time_previous_punch = time_this_punch;
     whose_turn = opposite(whose_turn);
@@ -80,14 +80,14 @@ void Clock::unpunch() noexcept
 
 void Clock::stop() noexcept
 {
-    auto time_stop = std::chrono::steady_clock::now();
+    const auto time_stop = std::chrono::steady_clock::now();
     timers[static_cast<int>(whose_turn)] -= (time_stop - time_previous_punch);
     clocks_running = false;
 }
 
 void Clock::start() noexcept
 {
-    static const auto default_game_start_date_time = std::chrono::system_clock::time_point{};
+    static constexpr auto default_game_start_date_time = std::chrono::system_clock::time_point{};
     time_previous_punch = std::chrono::steady_clock::now();
     if(game_start_date_time == default_game_start_date_time)
     {
@@ -96,7 +96,7 @@ void Clock::start() noexcept
     clocks_running = true;
 }
 
-Clock::seconds Clock::time_left(Piece_Color color) const noexcept
+Clock::seconds Clock::time_left(const Piece_Color color) const noexcept
 {
     if( ! is_in_use())
     {
@@ -109,12 +109,12 @@ Clock::seconds Clock::time_left(Piece_Color color) const noexcept
     }
     else
     {
-        auto now = std::chrono::steady_clock::now();
+        const auto now = std::chrono::steady_clock::now();
         return timers[static_cast<int>(color)] - (now - time_previous_punch);
     }
 }
 
-size_t Clock::moves_until_reset(Piece_Color color) const noexcept
+size_t Clock::moves_until_reset(const Piece_Color color) const noexcept
 {
     if(move_count_reset > 0)
     {
@@ -131,18 +131,18 @@ Piece_Color Clock::running_for() const noexcept
     return whose_turn;
 }
 
-void Clock::set_time(Piece_Color player, seconds new_time_seconds) noexcept
+void Clock::set_time(const Piece_Color player, const seconds new_time_seconds) noexcept
 {
     timers[static_cast<int>(player)] = new_time_seconds;
     time_previous_punch = std::chrono::steady_clock::now();
 }
 
-void Clock::set_increment(Piece_Color player, seconds new_increment_time_seconds) noexcept
+void Clock::set_increment(const Piece_Color player, const seconds new_increment_time_seconds) noexcept
 {
     increment_time[static_cast<int>(player)] = new_increment_time_seconds;
 }
 
-void Clock::set_next_time_reset(Piece_Color player, size_t moves_to_reset) noexcept
+void Clock::set_next_time_reset(const Piece_Color player, const size_t moves_to_reset) noexcept
 {
     if(moves_to_reset == 0)
     {
@@ -184,7 +184,7 @@ Clock::seconds Clock::initial_time() const noexcept
     return initial_start_time;
 }
 
-Clock::seconds Clock::increment(Piece_Color color) const noexcept
+Clock::seconds Clock::increment(const Piece_Color color) const noexcept
 {
     return increment_time[static_cast<int>(color)];
 }

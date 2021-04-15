@@ -17,13 +17,13 @@ namespace
         []()
         {
             std::array<std::array<double, 64>, 64> result;
-            for(auto square_a : Square::all_squares())
+            for(const auto square_a : Square::all_squares())
             {
-                for(auto square_b : Square::all_squares())
+                for(const auto square_b : Square::all_squares())
                 {
                     // The "king distance" between two squares is the minimum number
                     // of moves a king needs to get from one square to the other.
-                    auto diff = square_a - square_b;
+                    const auto diff = square_a - square_b;
                     result[square_a.index()][square_b.index()] =
                         1.0/(1.0 + std::max(std::abs(diff.file_change), std::abs(diff.rank_change)));
                 }

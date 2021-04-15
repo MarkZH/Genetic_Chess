@@ -74,13 +74,13 @@ void Gene::read_from(std::istream& is)
             continue;
         }
 
-        auto split_line = String::split(line, ":");
+        const auto split_line = String::split(line, ":");
         if(split_line.size() != 2)
         {
             throw_on_invalid_line(line, "There should be exactly one colon per gene property line.");
         }
-        auto property_name = String::remove_extra_whitespace(split_line[0]);
-        auto property_data = String::remove_extra_whitespace(split_line[1]);
+        const auto property_name = String::remove_extra_whitespace(split_line[0]);
+        const auto property_data = String::remove_extra_whitespace(split_line[1]);
         if(property_name == "Name")
         {
             if(String::remove_extra_whitespace(property_data) == name())
@@ -130,7 +130,8 @@ void Gene::read_from(std::istream& is)
         }
     }
 
-    auto missing_data = std::accumulate(properties.begin(), properties.end(), std::string{},
+    const auto missing_data =
+        std::accumulate(properties.begin(), properties.end(), std::string{},
                         [](const auto& so_far, const auto& key_value)
                         {
                             return so_far + (std::isnan(key_value.second) ? "\n" + key_value.first : "");
@@ -155,7 +156,7 @@ void Gene::read_from(const std::string& file_name)
     {
         if(String::starts_with(line, "Name: "))
         {
-            auto gene_name = String::remove_extra_whitespace(String::split(line, ":", 1)[1]);
+            const auto gene_name = String::remove_extra_whitespace(String::split(line, ":", 1)[1]);
             if(gene_name == name())
             {
                 try
@@ -181,7 +182,7 @@ void Gene::throw_on_invalid_line(const std::string& line, const std::string& rea
 
 void Gene::mutate() noexcept
 {
-    auto properties = list_properties();
+    const auto properties = list_properties();
     if(has_priority() && Random::success_probability(2, properties.size()))
     {
         (Random::coin_flip() ? opening_priority : endgame_priority) += Random::random_laplace(0.005);
@@ -196,17 +197,16 @@ void Gene::gene_specific_mutation() noexcept
 {
 }
 
-double Gene::evaluate(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept
+double Gene::evaluate(const Board& board, const Piece_Color perspective, const size_t depth, const double game_progress) const noexcept
 {
-    auto scoring_priority = Math::interpolate(opening_priority, endgame_priority, game_progress);
+    const auto scoring_priority = Math::interpolate(opening_priority, endgame_priority, game_progress);
     return scoring_priority*score_board(board, perspective, depth, game_progress);
 }
 
 void Gene::print(std::ostream& os) const noexcept
 {
-    auto properties = list_properties();
     os << "Name: " << name() << "\n";
-    for(const auto& [name, value] : properties)
+    for(const auto& [name, value] : list_properties())
     {
         os << name << ": " << value << "\n";
     }
@@ -217,7 +217,7 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
 {
 }
 
-double Gene::priority(Game_Stage stage) const noexcept
+double Gene::priority(const Game_Stage stage) const noexcept
 {
     return stage == Game_Stage::OPENING ? opening_priority : endgame_priority;
 }
@@ -227,12 +227,12 @@ bool Gene::has_priority() const noexcept
     return list_properties().count("Priority - Opening") != 0;
 }
 
-void Gene::scale_priority(Game_Stage stage, double k) noexcept
+void Gene::scale_priority(const Game_Stage stage, const double k) noexcept
 {
     (stage == Game_Stage::OPENING ? opening_priority : endgame_priority) *= k;
 }
 
-void Gene::test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept
+void Gene::test(bool& test_variable, const Board& board, const Piece_Color perspective, const double expected_score) const noexcept
 {
     static auto test_number = 0;
     static auto last_gene_name = std::string{};
@@ -247,7 +247,7 @@ void Gene::test(bool& test_variable, const Board& board, Piece_Color perspective
         ++test_number;
     }
 
-    auto result = score_board(board, perspective, board.game_length(), 0.0);
+    const auto result = score_board(board, perspective, board.game_length(), 0.0);
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << " Test #" << test_number << ": Expected " << expected_score << ", Got: " << result << '\n';

@@ -63,7 +63,7 @@ namespace
             {
                 for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
                 {
-                    auto piece = Piece{color, static_cast<Piece_Type>(type_index)};
+                    const auto piece = Piece{color, static_cast<Piece_Type>(type_index)};
                     for(size_t index = 0; index < 64; ++index)
                     {
                         for(const auto& move_list : legal_moves[piece.index()][index])
@@ -92,9 +92,9 @@ namespace
     // Add a move to the list that is only legal when starting from a certain square
     // (e.g., castling, pawn double move, promotion, etc.)
     template<typename Move_Type, typename ...Parameters>
-    void add_legal_move(indexed_move_array& out, Piece piece, bool blockable, Parameters ... parameters) noexcept
+    void add_legal_move(indexed_move_array& out, const Piece piece, const bool blockable, const Parameters ... parameters) noexcept
     {
-        auto move = new Move_Type(parameters...);
+        const auto move = new Move_Type(parameters...);
         auto& lists = out[piece.index()][move->start().index()];
         if(lists.empty() || ! blockable)
         {
@@ -109,11 +109,11 @@ namespace
         lists.back().push_back(move);
     }
 
-    void add_standard_legal_move(indexed_move_array& out, Piece piece, int file_step, int rank_step, bool blockable) noexcept
+    void add_standard_legal_move(indexed_move_array& out, const Piece piece, const int file_step, const int rank_step, const bool blockable) noexcept
     {
         for(auto start : Square::all_squares())
         {
-            auto end = start + Square_Difference{file_step, rank_step};
+            const auto end = start + Square_Difference{file_step, rank_step};
             if(end.inside_board())
             {
                 add_legal_move<Move>(out, piece, blockable, start, end);
@@ -121,12 +121,12 @@ namespace
         }
     }
 
-    void add_pawn_moves(indexed_move_array& out, Piece_Color color) noexcept
+    void add_pawn_moves(indexed_move_array& out, const Piece_Color color) noexcept
     {
-        auto pawn = Piece{color, Piece_Type::PAWN};
-        auto base_rank = (color == Piece_Color::WHITE ? 2 : 7);
-        auto no_normal_move_rank = (color == Piece_Color::WHITE ? 7 : 2);
-        auto rank_change = (color == Piece_Color::WHITE ? 1 : -1);
+        const auto pawn = Piece{color, Piece_Type::PAWN};
+        const auto base_rank = (color == Piece_Color::WHITE ? 2 : 7);
+        const auto no_normal_move_rank = (color == Piece_Color::WHITE ? 7 : 2);
+        const auto rank_change = (color == Piece_Color::WHITE ? 1 : -1);
         for(char file = 'a'; file <= 'h'; ++file)
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
@@ -143,7 +143,7 @@ namespace
         std::vector<Piece_Type> possible_promotions;
         for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
         {
-            auto type = static_cast<Piece_Type>(type_index);
+            const auto type = static_cast<Piece_Type>(type_index);
             if(type == Piece_Type::PAWN || type == Piece_Type::KING)
             {
                 continue;
@@ -151,10 +151,10 @@ namespace
             possible_promotions.push_back(type);
         }
 
-        for(auto dir : {Direction::RIGHT, Direction::LEFT})
+        for(const auto dir : {Direction::RIGHT, Direction::LEFT})
         {
-            auto first_file = (dir == Direction::RIGHT ? 'a' : 'b');
-            auto last_file = (dir == Direction::RIGHT ? 'g' : 'h');
+            const auto first_file = (dir == Direction::RIGHT ? 'a' : 'b');
+            const auto last_file = (dir == Direction::RIGHT ? 'g' : 'h');
             for(char file = first_file; file <= last_file; ++file)
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
@@ -186,7 +186,7 @@ namespace
         }
     }
 
-    void add_rook_moves(indexed_move_array& out, Piece_Color color, Piece_Type type) noexcept
+    void add_rook_moves(indexed_move_array& out, const Piece_Color color, const Piece_Type type) noexcept
     {
         for(int d_file = -1; d_file <= 1; ++d_file)
         {
@@ -203,11 +203,11 @@ namespace
         }
     }
 
-    void add_knight_moves(indexed_move_array& out, Piece_Color color) noexcept
+    void add_knight_moves(indexed_move_array& out, const Piece_Color color) noexcept
     {
         for(auto d_file : {1, 2})
         {
-            auto d_rank = 3 - d_file;
+            const auto d_rank = 3 - d_file;
             for(auto file_direction : {-1, 1})
             {
                 for(auto rank_direction : {-1, 1})
@@ -218,7 +218,7 @@ namespace
         }
     }
 
-    void add_bishop_moves(indexed_move_array& out, Piece_Color color, Piece_Type type) noexcept
+    void add_bishop_moves(indexed_move_array& out, const Piece_Color color, const Piece_Type type) noexcept
     {
         for(int d_rank : {-1, 1})
         {
@@ -232,16 +232,16 @@ namespace
         }
     }
 
-    void add_queen_moves(indexed_move_array& out, Piece_Color color) noexcept
+    void add_queen_moves(indexed_move_array& out, const Piece_Color color) noexcept
     {
         add_bishop_moves(out, color, Piece_Type::QUEEN);
         add_rook_moves(out, color, Piece_Type::QUEEN);
     }
 
-    void add_king_moves(indexed_move_array& out, Piece_Color color) noexcept
+    void add_king_moves(indexed_move_array& out, const Piece_Color color) noexcept
     {
-        auto king = Piece{color, Piece_Type::KING};
-        int base_rank = (color == Piece_Color::WHITE ? 1 : 8);
+        const auto king = Piece{color, Piece_Type::KING};
+        const int base_rank = (color == Piece_Color::WHITE ? 1 : 8);
         for(int d_rank = -1; d_rank <= 1; ++d_rank)
         {
             for(int d_file = -1; d_file <= 1; ++d_file)
@@ -264,9 +264,9 @@ namespace
         }
     }
 
-    Piece_Type piece_type_from_char(char pgn_symbol)
+    Piece_Type piece_type_from_char(const char pgn_symbol)
     {
-        auto i = pgn_symbols.find(String::toupper(pgn_symbol));
+        const auto i = pgn_symbols.find(String::toupper(pgn_symbol));
         if(i == std::string::npos)
         {
             throw std::invalid_argument(pgn_symbol + std::string{" is not a valid piece PGN symbol."});
@@ -279,7 +279,7 @@ Piece::Piece() noexcept : piece_code(invalid_code)
 {
 }
 
-Piece::Piece(Piece_Color color, Piece_Type type) noexcept :
+Piece::Piece(const Piece_Color color, const Piece_Type type) noexcept :
     piece_code((static_cast<int>(type) << 1) | static_cast<int>(color))
 {
     // piece_code layout: 4 bits
@@ -291,8 +291,8 @@ Piece::Piece(Piece_Color color, Piece_Type type) noexcept :
     //  +--- Piece_Type::KING
 }
 
-Piece::Piece(char pgn_symbol) : Piece(std::isupper(pgn_symbol) ? Piece_Color::WHITE : Piece_Color::BLACK,
-                                      piece_type_from_char(pgn_symbol))
+Piece::Piece(const char pgn_symbol) : Piece(std::isupper(pgn_symbol) ? Piece_Color::WHITE : Piece_Color::BLACK,
+                                            piece_type_from_char(pgn_symbol))
 {
 }
 
@@ -311,11 +311,11 @@ std::string Piece::pgn_symbol() const noexcept
 char Piece::fen_symbol() const noexcept
 {
     assert(*this);
-    auto symbol = pgn_symbols[static_cast<int>(type())];
+    const auto symbol = pgn_symbols[static_cast<int>(type())];
     return (color() == Piece_Color::WHITE ? symbol : String::tolower(symbol));
 }
 
-bool Piece::can_move(const Move* move) const noexcept
+bool Piece::can_move(const Move* const move) const noexcept
 {
     assert(*this);
     for(const auto& moves : move_lists(move->start()))
@@ -329,7 +329,7 @@ bool Piece::can_move(const Move* move) const noexcept
     return false;
 }
 
-const Piece::list_of_move_lists& Piece::move_lists(Square square) const noexcept
+const Piece::list_of_move_lists& Piece::move_lists(const Square square) const noexcept
 {
     assert(*this);
     return legal_moves[index()][square.index()];
@@ -351,18 +351,18 @@ Piece::piece_code_t Piece::index() const noexcept
     return piece_code;
 }
 
-const Piece::list_of_move_lists& Piece::attacking_move_lists(Square square) const noexcept
+const Piece::list_of_move_lists& Piece::attacking_move_lists(const Square square) const noexcept
 {
     assert(*this);
     return attack_moves[index()][square.index()];
 }
 
-bool operator==(Piece a, Piece b) noexcept
+bool operator==(const Piece a, const Piece b) noexcept
 {
     return a.index() == b.index();
 }
 
-bool operator!=(Piece a, Piece b) noexcept
+bool operator!=(const Piece a, const Piece b) noexcept
 {
-    return !(a == b);
+    return ! (a == b);
 }

@@ -80,16 +80,16 @@ Board::Board() noexcept : Board(standard_starting_fen)
 
 Board::Board(const std::string& input_fen)
 {
-    auto fen_parse = String::split(input_fen);
+    const auto fen_parse = String::split(input_fen);
     fen_parse_assert(fen_parse.size() == 6, input_fen, "Wrong number of fields (should be 6)");
 
-    auto board_parse = String::split(fen_parse.at(0), "/");
+    const auto board_parse = String::split(fen_parse.at(0), "/");
     fen_parse_assert(board_parse.size() == 8, input_fen, "Board has wrong number of rows (should be 8)");
 
     for(int rank = 8; rank >= 1; --rank)
     {
         char file = 'a';
-        for(auto symbol : board_parse.at(size_t(8) - rank))
+        for(const auto symbol : board_parse.at(size_t(8) - rank))
         {
             if(std::isdigit(symbol))
             {
@@ -99,7 +99,7 @@ Board::Board(const std::string& input_fen)
             else
             {
                 fen_parse_assert(file <= 'h', input_fen, "Too many squares in rank " + std::to_string(rank));
-                auto piece = Piece{symbol};
+                const auto piece = Piece{symbol};
                 fen_parse_assert(piece.type() != Piece_Type::PAWN || (rank != 1 && rank != 8), input_fen, "Pawns cannot be placed on the home ranks.");
                 fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), input_fen, "More than one " + color_text(piece.color()) + " king.");
 
@@ -114,9 +114,9 @@ Board::Board(const std::string& input_fen)
     fen_parse_assert(find_king(Piece_Color::WHITE).is_set(), input_fen, "White king not in FEN string");
     fen_parse_assert(find_king(Piece_Color::BLACK).is_set(), input_fen, "Black king not in FEN string");
 
-    for(auto square : Square::all_squares())
+    for(const auto square : Square::all_squares())
     {
-        auto piece = piece_on_square(square);
+        const auto piece = piece_on_square(square);
         if(piece && piece.type() != Piece_Type::ROOK && piece.type() != Piece_Type::KING)
         {
             set_already_moved(square, false);
@@ -136,24 +136,24 @@ Board::Board(const std::string& input_fen)
         fen_parse_assert(false, input_fen, "Invalid character for whose turn: " + fen_parse[1]);
     }
 
-    auto non_turn_color = opposite(whose_turn());
+    const auto non_turn_color = opposite(whose_turn());
     fen_parse_assert(safe_for_king(find_king(non_turn_color), non_turn_color), input_fen,
                      color_text(non_turn_color) +
                      " is in check but it is " +
                      color_text(whose_turn()) + "'s turn.");
 
-    auto castling_parse = fen_parse.at(2);
+    const auto castling_parse = fen_parse.at(2);
     if(castling_parse != "-")
     {
-        for(auto c : castling_parse)
+        for(const auto c : castling_parse)
         {
             fen_parse_assert(String::contains("KQkq", c), input_fen, std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
 
             Piece_Color piece_color = std::isupper(c) ? Piece_Color::WHITE : Piece_Color::BLACK;
-            auto rook_square = Square{std::toupper(c) == 'K' ? 'h' : 'a', std::isupper(c) ? 1 : 8};
-            auto king_square = Square{'e', rook_square.rank()};
+            const auto rook_square = Square{std::toupper(c) == 'K' ? 'h' : 'a', std::isupper(c) ? 1 : 8};
+            const auto king_square = Square{'e', rook_square.rank()};
 
-            std::string side = std::toupper(c) == 'K' ? "king" : "queen";
+            const std::string side = std::toupper(c) == 'K' ? "king" : "queen";
             fen_parse_assert(piece_on_square(rook_square) == Piece{piece_color, Piece_Type::ROOK}, input_fen,
                              "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.string() + " to castle " + side + "side.");
             set_already_moved(rook_square, false);
@@ -164,7 +164,7 @@ Board::Board(const std::string& input_fen)
         }
     }
 
-    auto en_passant_parse = fen_parse.at(3);
+    const auto en_passant_parse = fen_parse.at(3);
     if(en_passant_parse != "-")
     {
         fen_parse_assert(en_passant_parse.size() == 2, input_fen, "Invalid en passant square.");
@@ -174,13 +174,13 @@ Board::Board(const std::string& input_fen)
         fen_parse_assert(en_passant_target.is_set(), input_fen, "Invalid en passant square.");
         fen_parse_assert( ! piece_on_square(en_passant_target), input_fen, "Piece is not allowed on en passant target square.");
 
-        auto last_move_pawn = piece_on_square(en_passant_target + Square_Difference{0, whose_turn() == Piece_Color::WHITE ? -1 : 1});
+        const auto last_move_pawn = piece_on_square(en_passant_target + Square_Difference{0, whose_turn() == Piece_Color::WHITE ? -1 : 1});
         fen_parse_assert(last_move_pawn == Piece{opposite(whose_turn()), Piece_Type::PAWN}, input_fen, "There must be a pawn past the en passant target square.");
     }
 
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
-    auto fifty_move_count_input = String::to_number<size_t>(fen_parse.at(4));
+    const auto fifty_move_count_input = String::to_number<size_t>(fen_parse.at(4));
     fen_parse_assert(fifty_move_count_input < repeat_count.max_size(), input_fen, "Halfmove clock value too large.");
     add_board_position_to_repeat_record();
     while(moves_since_pawn_or_capture() < fifty_move_count_input)
@@ -190,7 +190,7 @@ Board::Board(const std::string& input_fen)
 
     first_full_move_label = String::to_number<size_t>(fen_parse.at(5));
 
-    auto starting_fen = String::remove_extra_whitespace(input_fen);
+    const auto starting_fen = String::remove_extra_whitespace(input_fen);
     fen_parse_assert(fen() == starting_fen, input_fen, "Result: " + fen());
 
     recreate_move_caches();
@@ -202,7 +202,7 @@ Board::Board(const std::string& input_fen)
     starting_fen_from_starting_hash[starting_hash] = starting_fen;
 }
 
-void Board::fen_parse_assert(bool condition, const std::string& input_fen, const std::string& failure_message)
+void Board::fen_parse_assert(const bool condition, const std::string& input_fen, const std::string& failure_message)
 {
     if( ! condition)
     {
@@ -210,17 +210,17 @@ void Board::fen_parse_assert(bool condition, const std::string& input_fen, const
     }
 }
 
-Piece& Board::piece_on_square(Square square) noexcept
+Piece& Board::piece_on_square(const Square square) noexcept
 {
     return board[square.index()];
 }
 
-Piece Board::piece_on_square(Square square) const noexcept
+Piece Board::piece_on_square(const Square square) const noexcept
 {
     return board[square.index()];
 }
 
-void Board::set_already_moved(Square square, bool piece_has_already_moved) noexcept
+void Board::set_already_moved(const Square square, const bool piece_has_already_moved) noexcept
 {
     update_board_hash(square); // remove reference to moved piece
     unmoved_positions[square.index()] = ! piece_has_already_moved;
@@ -241,7 +241,7 @@ std::string Board::fen() const noexcept
         int empty_count = 0;
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            auto piece = piece_on_square({file, rank});
+            const auto piece = piece_on_square({file, rank});
             if( ! piece)
             {
                 ++empty_count;
@@ -269,15 +269,15 @@ std::string Board::fen() const noexcept
     std::string castling_mark;
     for(auto player : {Piece_Color::WHITE, Piece_Color::BLACK})
     {
-        auto king_square = find_king(player);
+        const auto king_square = find_king(player);
         if( ! piece_has_moved(king_square))
         {
             for(char rook_file : {'h', 'a'})
             {
                 if( ! piece_has_moved({rook_file, king_square.rank()})) // has rook moved?
                 {
-                    auto mark = (rook_file == 'h' ? 'K' : 'Q');
-                    castling_mark.push_back(player == Piece_Color::BLACK ? mark = String::tolower(mark) : mark);
+                    const auto mark = (rook_file == 'h' ? 'K' : 'Q');
+                    castling_mark.push_back(player == Piece_Color::BLACK ? String::tolower(mark) : mark);
                 }
             }
         }
@@ -312,7 +312,7 @@ Game_Result Board::play_move(const std::string& move)
 
 size_t Board::ply_count() const noexcept
 {
-    auto first_move = game_length()%2 == 0 ? whose_turn() : opposite(whose_turn());
+    const auto first_move = game_length()%2 == 0 ? whose_turn() : opposite(whose_turn());
     return 2*(first_full_move_label - 1) + (first_move == Piece_Color::WHITE ? 0 : 1) + game_length();
 }
 std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
@@ -335,7 +335,7 @@ std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const n
         return {};
     }
 
-    for(auto first_move : legal_moves())
+    for(const auto first_move : legal_moves())
     {
         auto first_move_board = *this;
         first_move_board.play_move(*first_move);
@@ -461,7 +461,7 @@ void Board::move_piece(const Move& move) noexcept
         clear_repeat_count();
     }
 
-    auto moving_piece = piece_on_square(move.start());
+    const auto moving_piece = piece_on_square(move.start());
     if(moving_piece.type() == Piece_Type::PAWN)
     {
         clear_repeat_count();
@@ -482,23 +482,23 @@ const std::vector<const Move*>& Board::legal_moves() const noexcept
     return legal_moves_cache;
 }
 
-void Board::remove_piece(Square square) noexcept
+void Board::remove_piece(const Square square) noexcept
 {
     place_piece({}, square);
 }
 
-void Board::place_piece(Piece piece, Square square) noexcept
+void Board::place_piece(const Piece piece, const Square square) noexcept
 {
     update_board_hash(square); // XOR out piece on square
 
-    auto old_piece = piece_on_square(square);
+    const auto old_piece = piece_on_square(square);
     piece_on_square(square) = piece;
 
     remove_attacks_from(square, old_piece);
     update_blocks(square, old_piece, piece);
     add_attacks_from(square, piece);
 
-    auto update_rook_hashes = old_piece && old_piece.type() == Piece_Type::KING && ! piece_has_moved(square);
+    const auto update_rook_hashes = old_piece && old_piece.type() == Piece_Type::KING && ! piece_has_moved(square);
     if(update_rook_hashes)
     {
         // XOR out castling rights on rook squares
@@ -523,27 +523,27 @@ void Board::place_piece(Piece piece, Square square) noexcept
     }
 }
 
-void Board::add_attacks_from(Square square, Piece piece) noexcept
+void Board::add_attacks_from(const Square square, const Piece piece) noexcept
 {
     modify_attacks(square, piece, true);
 }
 
-void Board::modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept
+void Board::modify_attacks(const Square square, const Piece piece, const bool adding_attacks) noexcept
 {
     if( ! piece)
     {
         return;
     }
 
-    auto attacking_color = piece.color();
-    auto vulnerable_king = Piece{opposite(attacking_color), Piece_Type::KING};
+    const auto attacking_color = piece.color();
+    const auto vulnerable_king = Piece{opposite(attacking_color), Piece_Type::KING};
     for(const auto& attack_move_list : piece.attacking_move_lists(square))
     {
         bool move_blocked = false;
-        for(auto attack : attack_move_list)
+        for(const auto attack : attack_move_list)
         {
-            auto attacked_square = attack->end();
-            auto attacked_index = attacked_square.index();
+            const auto attacked_square = attack->end();
+            const auto attacked_index = attacked_square.index();
 
             if(move_blocked)
             {
@@ -551,10 +551,9 @@ void Board::modify_attacks(Square square, Piece piece, bool adding_attacks) noex
             }
             else
             {
-                auto blocking_piece = piece_on_square(attacked_square);
-
                 potential_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
 
+                const auto blocking_piece = piece_on_square(attacked_square);
                 if(blocking_piece && blocking_piece != vulnerable_king)
                 {
                     move_blocked = true;
@@ -564,12 +563,12 @@ void Board::modify_attacks(Square square, Piece piece, bool adding_attacks) noex
     }
 }
 
-void Board::remove_attacks_from(Square square, Piece old_piece) noexcept
+void Board::remove_attacks_from(const Square square, const Piece old_piece) noexcept
 {
     modify_attacks(square, old_piece, false);
 }
 
-void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept
+void Board::update_blocks(const Square square, const Piece old_piece, const Piece new_piece) noexcept
 {
     // Replacing nothing with nothing changes nothing.
     // Replacing one piece with another does not change which
@@ -579,12 +578,12 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexc
         return;
     }
 
-    auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
-    auto origin_square_index = square.index();
+    const auto add_new_attacks = ! new_piece; // New pieces block; no new pieces allow new moves through
+    const auto origin_square_index = square.index();
 
-    for(auto attacking_color : {Piece_Color::WHITE, Piece_Color::BLACK})
+    for(const auto attacking_color : {Piece_Color::WHITE, Piece_Color::BLACK})
     {
-        auto vulnerable_king = Piece{opposite(attacking_color), Piece_Type::KING};
+        const auto vulnerable_king = Piece{opposite(attacking_color), Piece_Type::KING};
         if(new_piece == vulnerable_king)
         {
             continue;
@@ -595,21 +594,20 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexc
         {
             if(attack_direction_list[index])
             {
-                auto step = Move::attack_direction_from_index(index);
-                auto revealed_attacker = piece_on_square(square - step);
+                const auto step = Move::attack_direction_from_index(index);
+                const auto revealed_attacker = piece_on_square(square - step);
                 if(revealed_attacker && (revealed_attacker.type() == Piece_Type::PAWN || revealed_attacker.type() == Piece_Type::KING))
                 {
                     continue; // Pawns and kings are never blocked
                 }
 
-                for(auto target_square : Square::square_line_from(square, step))
+                for(const auto target_square : Square::square_line_from(square, step))
                 {
-                    auto target_index = target_square.index();
-                    auto piece = piece_on_square(target_square);
-
+                    const auto target_index = target_square.index();
                     potential_attacks[static_cast<int>(attacking_color)][target_index][index] = add_new_attacks;
                     blocked_attacks[static_cast<int>(attacking_color)][target_index][index] = ! add_new_attacks;
 
+                    const auto piece = piece_on_square(target_square);
                     if(piece && piece != vulnerable_king)
                     {
                         break;
@@ -620,7 +618,7 @@ void Board::update_blocks(Square square, Piece old_piece, Piece new_piece) noexc
     }
 }
 
-const std::bitset<16>& Board::moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept
+const std::bitset<16>& Board::moves_attacking_square(const Square square, const Piece_Color attacking_color) const noexcept
 {
     return potential_attacks[static_cast<int>(attacking_color)][square.index()];
 }
@@ -635,19 +633,19 @@ bool Board::king_is_in_check() const noexcept
     return checking_moves().any();
 }
 
-bool Board::safe_for_king(Square square, Piece_Color king_color) const noexcept
+bool Board::safe_for_king(const Square square, const Piece_Color king_color) const noexcept
 {
     return moves_attacking_square(square, opposite(king_color)).none();
 }
 
-bool Board::blocked_attack(Square square, Piece_Color attacking_color) const noexcept
+bool Board::blocked_attack(const Square square, const Piece_Color attacking_color) const noexcept
 {
     return blocked_attacks[static_cast<int>(attacking_color)][square.index()].any();
 }
 
 bool Board::king_is_in_check_after_move(const Move& move) const noexcept
 {
-    auto king_square = find_king(whose_turn());
+    const auto king_square = find_king(whose_turn());
     if(move.start() == king_square)
     {
         return ! safe_for_king(move.end(), whose_turn());
@@ -668,7 +666,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
 
         if(move.is_en_passant())
         {
-            auto captured_pawn_square = Square{move.end().file(), move.start().rank()};
+            const auto captured_pawn_square = Square{move.end().file(), move.start().rank()};
             return checking_square != captured_pawn_square || piece_is_pinned(move.start());
         }
 
@@ -688,14 +686,14 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
             return false;
         }
 
-        auto squares = Square::square_line_from(king_square, (move.start() - king_square).step());
-        auto revealed_attacker = std::find_if(squares.begin(), squares.end(),
-                                              [this](auto square)
-                                              {
-                                                  auto piece = piece_on_square(square);
-                                                  return piece && piece.color() == opposite(whose_turn()) &&
-                                                      (piece.type() == Piece_Type::QUEEN || piece.type() == Piece_Type::ROOK);
-                                              });
+        const auto squares = Square::square_line_from(king_square, (move.start() - king_square).step());
+        const auto revealed_attacker = std::find_if(squares.begin(), squares.end(),
+                                                    [this](auto square)
+                                                    {
+                                                        const auto piece = piece_on_square(square);
+                                                        return piece && piece.color() == opposite(whose_turn()) &&
+                                                            (piece.type() == Piece_Type::QUEEN || piece.type() == Piece_Type::ROOK);
+                                                    });
 
         return revealed_attacker != squares.end() &&
                in_line_in_order(king_square, move.start(), *revealed_attacker) &&
@@ -731,7 +729,7 @@ namespace
     }
 
     template<typename OutputStream>
-    void print_game_header_line(OutputStream& output, const std::string& heading, const char* data)
+    void print_game_header_line(OutputStream& output, const std::string& heading, const char* const data)
     {
         print_game_header_line(output, heading, std::string{data});
     }
@@ -747,7 +745,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
                               const std::string& location) const noexcept
 {
     static std::mutex write_lock;
-    auto write_lock_guard = std::lock_guard(write_lock);
+    const auto write_lock_guard = std::lock_guard(write_lock);
 
     static int game_number = 0;
     static std::string last_used_file_name;
@@ -760,7 +758,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         {
             if(String::starts_with(line, "[Round"))
             {
-                auto round_number = String::to_number<int>(String::split(line, "\"").at(1));
+                const auto round_number = String::to_number<int>(String::split(line, "\"").at(1));
                 if(round_number >= game_number)
                 {
                     game_number = round_number + 1;
@@ -780,8 +778,8 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     print_game_header_line(out_stream, "Black", black.name());
 
     // Get actual result
-    auto last_move_result = move_result();
-    auto actual_result = last_move_result.game_has_ended() ? last_move_result : result;
+    const auto last_move_result = move_result();
+    const auto& actual_result = last_move_result.game_has_ended() ? last_move_result : result;
     print_game_header_line(out_stream, "Result", actual_result.game_ending_annotation());
 
     print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
@@ -806,11 +804,11 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     }
 
     auto commentary_board = Board(starting_fen);
-    auto starting_turn_offset = size_t(commentary_board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
+    const auto starting_turn_offset = size_t(commentary_board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
 
     for(size_t i = 0; i < game_record_listing.size(); ++i)
     {
-        auto step = first_full_move_label + (i + starting_turn_offset)/2;
+        const auto step = first_full_move_label + (i + starting_turn_offset)/2;
         if(commentary_board.whose_turn() == Piece_Color::WHITE || i == 0)
         {
             out_stream << '\n' << step << ".";
@@ -820,10 +818,10 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
             }
         }
 
-        auto next_move = game_record_listing.at(i);
+        const auto next_move = game_record_listing.at(i);
         out_stream << " " << next_move->algebraic(commentary_board);
         const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
-        auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));
+        const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));
         if( ! commentary.empty())
         {
             out_stream << " " << commentary;
@@ -835,7 +833,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     assert(commentary_board.fen() == fen());
 }
 
-void Board::make_en_passant_targetable(Square square) noexcept
+void Board::make_en_passant_targetable(const Square square) noexcept
 {
     if(en_passant_target.is_set())
     {
@@ -850,7 +848,7 @@ void Board::make_en_passant_targetable(Square square) noexcept
     }
 }
 
-bool Board::is_en_passant_targetable(Square square) const noexcept
+bool Board::is_en_passant_targetable(const Square square) const noexcept
 {
     return en_passant_target == square;
 }
@@ -860,12 +858,12 @@ void Board::clear_en_passant_target() noexcept
     make_en_passant_targetable({});
 }
 
-bool Board::piece_has_moved(Square square) const noexcept
+bool Board::piece_has_moved(const Square square) const noexcept
 {
     return ! unmoved_positions[square.index()];
 }
 
-Square Board::find_king(Piece_Color color) const noexcept
+Square Board::find_king(const Piece_Color color) const noexcept
 {
     return king_location[static_cast<int>(color)];
 }
@@ -875,14 +873,14 @@ void Board::recreate_move_caches() noexcept
     checking_square = king_is_in_check() ? find_checking_square() : Square{};
     prior_moves_count = legal_moves_cache.size();
     legal_moves_cache.clear();
-    for(auto square : Square::all_squares())
+    for(const auto square : Square::all_squares())
     {
-        auto piece = piece_on_square(square);
+        const auto piece = piece_on_square(square);
         if(piece && piece.color() == whose_turn())
         {
             for(const auto& move_list : piece.move_lists(square))
             {
-                for(auto move : move_list)
+                for(const auto move : move_list)
                 {
                     if(move->is_legal(*this))
                     {
@@ -914,18 +912,18 @@ Square Board::find_checking_square() const noexcept
     {
         ++checking_index;
     }
-    auto step = Move::attack_direction_from_index(checking_index);
+    const auto step = Move::attack_direction_from_index(checking_index);
     const auto king_square = find_king(whose_turn());
-    auto squares = Square::square_line_from(king_square, -step);
+    const auto squares = Square::square_line_from(king_square, -step);
     return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
 }
 
-bool Board::enough_material_to_checkmate(Piece_Color piece_color) const noexcept
+bool Board::enough_material_to_checkmate(const Piece_Color piece_color) const noexcept
 {
-    auto piece_is_right = [piece_color](auto piece, auto type) { return piece == Piece{piece_color, type}; };
+    auto piece_is_right = [piece_color](const auto piece, const auto type) { return piece == Piece{piece_color, type}; };
 
     if(std::any_of(board.begin(), board.end(),
-                   [piece_is_right](auto piece)
+                   [piece_is_right](const auto piece)
                    {
                        return piece_is_right(piece, Piece_Type::QUEEN) ||
                               piece_is_right(piece, Piece_Type::ROOK) ||
@@ -935,23 +933,23 @@ bool Board::enough_material_to_checkmate(Piece_Color piece_color) const noexcept
         return true;
     }
 
-    auto knight_count = std::count_if(board.begin(), board.end(), [piece_is_right](auto piece) { return piece_is_right(piece, Piece_Type::KNIGHT); });
+    const auto knight_count = std::count_if(board.begin(), board.end(), [piece_is_right](const auto piece) { return piece_is_right(piece, Piece_Type::KNIGHT); });
     if(knight_count > 1)
     {
         return true;
     }
 
     auto bishop_on_square_color =
-        [this, piece_is_right](Square_Color square_color, Square square)
+        [this, piece_is_right](const Square_Color square_color, const Square square)
         {
             return piece_is_right(piece_on_square(square), Piece_Type::BISHOP) && square.color() == square_color;
         };
 
-    auto squares = Square::all_squares();
-    auto bishops_on_white = std::any_of(squares.begin(), squares.end(),
-                                        [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
-    auto bishops_on_black = std::any_of(squares.begin(), squares.end(),
-                                        [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
+    const auto squares = Square::all_squares();
+    const auto bishops_on_white = std::any_of(squares.begin(), squares.end(),
+                                              [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
+    const auto bishops_on_black = std::any_of(squares.begin(), squares.end(),
+                                              [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
     return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
@@ -960,7 +958,7 @@ bool Board::enough_material_to_checkmate() const noexcept
     auto piece_is_right = [](auto piece, auto type) { return piece && piece.type() == type; };
 
     if(std::any_of(board.begin(), board.end(),
-                   [piece_is_right](auto piece)
+                   [piece_is_right](const auto piece)
                    {
                        return piece_is_right(piece, Piece_Type::QUEEN) ||
                               piece_is_right(piece, Piece_Type::ROOK) ||
@@ -970,27 +968,27 @@ bool Board::enough_material_to_checkmate() const noexcept
         return true;
     }
 
-    auto knight_count = std::count_if(board.begin(), board.end(), [piece_is_right](auto piece) { return piece_is_right(piece, Piece_Type::KNIGHT); });
+    const auto knight_count = std::count_if(board.begin(), board.end(), [piece_is_right](const auto piece) { return piece_is_right(piece, Piece_Type::KNIGHT); });
     if(knight_count > 1)
     {
         return true;
     }
 
     auto bishop_on_square_color =
-        [this, piece_is_right](Square_Color square_color, Square square)
+        [this, piece_is_right](const Square_Color square_color, const Square square)
         {
             return piece_is_right(piece_on_square(square), Piece_Type::BISHOP) && square.color() == square_color;
         };
 
-    auto squares = Square::all_squares();
-    auto bishops_on_white = std::any_of(squares.begin(), squares.end(),
-                                        [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
-    auto bishops_on_black = std::any_of(squares.begin(), squares.end(),
-                                        [bishop_on_square_color](auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
+    const auto squares = Square::all_squares();
+    const auto bishops_on_white = std::any_of(squares.begin(), squares.end(),
+                                              [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
+    const auto bishops_on_black = std::any_of(squares.begin(), squares.end(),
+                                              [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
     return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
-void Board::set_thinking_mode(Thinking_Output_Type mode) noexcept
+void Board::set_thinking_mode(const Thinking_Output_Type mode) noexcept
 {
     thinking_indicator = mode;
 }
@@ -1015,7 +1013,7 @@ bool Board::must_pick_move_now() noexcept
     return move_immediately;
 }
 
-void Board::update_board_hash(Square square) noexcept
+void Board::update_board_hash(const Square square) noexcept
 {
     current_board_hash ^= square_hash(square);
 }
@@ -1029,22 +1027,22 @@ uint64_t Board::square_hash(Square square) const noexcept
 {
     assert(square.inside_board());
 
-    auto piece = piece_on_square(square);
-    auto index = square.index();
+    const auto piece = piece_on_square(square);
+    const auto index = square.index();
     auto result = square_hash_values[index][piece.index()];
     if(piece &&
        piece.type() == Piece_Type::ROOK &&
        ! piece_has_moved(square) &&
        ! piece_has_moved(king_location[static_cast<int>(piece.color())]))
     {
-        auto on_first_rank = (index%8 == 0);
-        auto on_first_file = (index/8 == 0);
+        const auto on_first_rank = (index%8 == 0);
+        const auto on_first_file = (index/8 == 0);
         result ^= castling_hash_values[2*on_first_file + on_first_rank];
     }
 
     if( ! piece && is_en_passant_targetable(square))
     {
-        auto file_index = index/8;
+        const auto file_index = index/8;
         result = en_passant_hash_values[file_index];
     }
 
@@ -1058,7 +1056,7 @@ uint64_t Board::board_hash() const noexcept
 
 bool Board::move_captures(const Move& move) const noexcept
 {
-    auto attacked_piece = piece_on_square(move.end());
+    const auto attacked_piece = piece_on_square(move.end());
 
     // Assert move is actually legal
     assert(is_in_legal_moves_list(move));
@@ -1077,14 +1075,14 @@ bool Board::king_multiply_checked() const noexcept
     return checking_moves().count() > 1;
 }
 
-bool Board::all_empty_between(Square start, Square end) const noexcept
+bool Board::all_empty_between(const Square start, const Square end) const noexcept
 {
     assert(straight_line_move(start, end));
-    auto squares = Square::squares_between(start, end);
+    const auto squares = Square::squares_between(start, end);
     return std::all_of(squares.begin(), squares.end(), [this](auto square) { return ! piece_on_square(square); });
 }
 
-bool Board::piece_is_pinned(Square square) const noexcept
+bool Board::piece_is_pinned(const Square square) const noexcept
 {
     const auto king_square = find_king(whose_turn());
     if(king_square == square)
@@ -1097,13 +1095,13 @@ bool Board::piece_is_pinned(Square square) const noexcept
         return false;
     }
 
-    auto diff = king_square - square;
+    const auto diff = king_square - square;
     if(potential_attacks[static_cast<int>(opposite(whose_turn()))][square.index()][Move::attack_index(diff)])
     {
         // The potential_attacks check guarantees that there is an opposing piece attacking
         // the queried square in the same direction towards the friendly king. This next check
         // is to make sure the attacking piece is not a limited range piece--i.e., a pawn or king.
-        auto attacker = piece_on_square(square - diff.step());
+        const auto attacker = piece_on_square(square - diff.step());
         return ( ! attacker || (attacker.type() != Piece_Type::PAWN && attacker.type() != Piece_Type::KING)) &&
                all_empty_between(king_square, square);
     }
@@ -1118,7 +1116,7 @@ void Board::add_board_position_to_repeat_record() noexcept
     add_to_repeat_count(board_hash());
 }
 
-void Board::add_to_repeat_count(uint64_t new_hash) noexcept
+void Board::add_to_repeat_count(const uint64_t new_hash) noexcept
 {
     repeat_count.push_back(new_hash);
 }
@@ -1144,12 +1142,12 @@ void Board::clear_repeat_count() noexcept
     repeat_count.clear();
 }
 
-size_t Board::castling_move_index(Piece_Color player) const noexcept
+size_t Board::castling_move_index(const Piece_Color player) const noexcept
 {
     return castling_index[static_cast<int>(player)];
 }
 
-bool Board::player_castled(Piece_Color player) const noexcept
+bool Board::player_castled(const Piece_Color player) const noexcept
 {
     return castling_direction(player) != 0;
 }
@@ -1161,8 +1159,8 @@ Board Board::without_random_pawn() const noexcept
     auto result = *this;
     while(true)
     {
-        auto square = Square('a' + char(Random::random_integer(0, 7)), Random::random_integer(1, 8));
-        auto piece = result.piece_on_square(square);
+        const auto square = Square('a' + char(Random::random_integer(0, 7)), Random::random_integer(1, 8));
+        const auto piece = result.piece_on_square(square);
         if(piece && piece.type() == Piece_Type::PAWN)
         {
             result.remove_piece(square);
@@ -1199,16 +1197,16 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
         }
 
         // Attack with the weakest piece first
-        auto move = *std::min_element(capturing_moves.begin(), capturing_moves.end(),
-                                      [&piece_values, &current_board](auto move1, auto move2)
-                                      {
-                                          return piece_values[static_cast<int>(current_board.piece_on_square(move1->start()).type())] <
-                                                 piece_values[static_cast<int>(current_board.piece_on_square(move2->start()).type())];
-                                      });
+        const auto move = *std::min_element(capturing_moves.begin(), capturing_moves.end(),
+                                            [&piece_values, &current_board](auto move1, auto move2)
+                                            {
+                                                return piece_values[static_cast<int>(current_board.piece_on_square(move1->start()).type())] <
+                                                    piece_values[static_cast<int>(current_board.piece_on_square(move2->start()).type())];
+                                            });
 
         // Make sure that an exchange does not lose material
-        auto moving_piece = current_board.piece_on_square(move->start());
-        auto attacked_piece = current_board.piece_on_square(move->end());
+        const auto moving_piece = current_board.piece_on_square(move->start());
+        const auto attacked_piece = current_board.piece_on_square(move->end());
         current_board.play_move(*move);
         capture_moves.push_back(move);
         state_values.push_back(state_values.back() + (moving_piece.color() == player_color ? +1 : -1)*piece_values[static_cast<int>(attacked_piece.type())]);

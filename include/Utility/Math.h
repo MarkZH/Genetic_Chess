@@ -23,7 +23,7 @@ namespace Math
     //! \param x The input nuber.
     //! \returns +1 for positive numbers, -1 for negative, and 0 otherwise.
     template<typename Number>
-    constexpr int sign(Number x) noexcept
+    constexpr int sign(const Number x) noexcept
     {
         if(x > 0)
         {
