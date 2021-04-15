@@ -48,19 +48,19 @@ class Board
         //!
         //! \param move A Move-class instance. This must be an item taken from Board::legal_moves().
         //!        The input move is only checked for legality in DEBUG builds, where illegal moves
-        //!        will trip an assert. In RELEASE builds, submitting an illegal move is undefined,
+        //!        will trip an assert. In RELEASE builds, playing an illegal move is undefined,
         //!        resulting in anything from an invalid board state to a crash due to segfault.
         //! \returns Returns a Game_Result indicating the result of the move and whether the game has ended.
-        Game_Result submit_move(const Move& move) noexcept;
+        Game_Result play_move(const Move& move) noexcept;
 
         //! \brief Updates the state of the board according to the text-based move.
         //!
-        //! This is equivalent to calling board.submit_move(board.create_move(move)).
+        //! This is equivalent to calling board.play_move(board.create_move(move)).
         //! \param move A text string specifying a move in any notation that uniquely identifies a
         //!        legal move (PGN, coordinate, etc.).
         //! \returns A Game_Result indicating the result of the move and whether the game has ended.
         //! \exception Illegal_Move if the text represents an illegal or ambiguous move. The Board is unchanged in this event.
-        Game_Result submit_move(const std::string& move);
+        Game_Result play_move(const std::string& move);
 
         //! \brief Figure out a move sequence to get from the current board state to the new state given by the parameter.
         //!
@@ -170,7 +170,7 @@ class Board
 
         //! \brief Get a list of all legal moves for the current player.
         //!
-        //! \returns A list of pointers to legal moves. Any call to Board::submit_move() must take
+        //! \returns A list of pointers to legal moves. Any call to Board::play_move() must take
         //!          its argument from this list.
         const std::vector<const Move*>& legal_moves() const noexcept;
 

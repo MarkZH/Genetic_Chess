@@ -139,7 +139,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         const auto move = all_legal_moves[all_legal_moves.size() - moves_left];
         auto variation_guard = current_variation.scoped_push_back(move);
         auto next_board = board;
-        auto move_result = next_board.submit_move(*move);
+        auto move_result = next_board.play_move(*move);
 
         if(move_result.winner() != Winner_Color::NONE)
         {
@@ -208,7 +208,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values());
             for(auto quiescent_move : quiescent_moves)
             {
-                next_board.submit_move(*quiescent_move);
+                next_board.play_move(*quiescent_move);
             }
             auto quiescent_guard = current_variation.scoped_push_back(quiescent_moves.begin(), quiescent_moves.end());
             result = create_result(next_board, perspective, move_result, current_variation);
@@ -412,7 +412,7 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
         for(int move = 0; move < 40; ++move)
         {
             auto next_move = Random::random_element(board.legal_moves());
-            if(board.submit_move(*next_move).game_has_ended() || board.fen().find_first_of("pP") == std::string::npos)
+            if(board.play_move(*next_move).game_has_ended() || board.fen().find_first_of("pP") == std::string::npos)
             {
                 board_is_good = false;
                 break;
@@ -478,7 +478,7 @@ std::string variation_line(Board board,
                                      {}) + " ";
             write_alternate_variation = false;
         }
-        move_result = board.submit_move(*variation[i]);
+        move_result = board.play_move(*variation[i]);
     }
 
     if( ! move_result.game_has_ended())

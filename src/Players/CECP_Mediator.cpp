@@ -113,7 +113,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                 for(auto move : new_move_list)
                 {
                     log("Derived move: " + move->coordinates());
-                    setup_result = board.submit_move(*move);
+                    setup_result = board.play_move(*move);
                     move_list.push_back(board.last_move());
                 }
             }
@@ -124,7 +124,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             try
             {
                 log("Applying move: " + move);
-                setup_result = board.submit_move(move);
+                setup_result = board.play_move(move);
                 move_list.push_back(board.last_move());
                 if(setup_result.game_has_ended())
                 {
@@ -233,7 +233,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             try
             {
                 log("Attempting to interpret as move: " + command);
-                setup_result = board.submit_move(command);
+                setup_result = board.play_move(command);
                 log("Applied move: " + command);
                 move_list.push_back(board.last_move());
                 if(setup_result.game_has_ended())
@@ -296,7 +296,7 @@ bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& 
         auto new_board = Board(board.original_fen());
         for(auto move : move_list)
         {
-            new_board.submit_move(*move);
+            new_board.play_move(*move);
         }
         board = new_board;
         clock.unpunch();
@@ -320,7 +320,7 @@ Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vect
     {
         send_command("move " + move.coordinates());
         move_list.push_back(&move);
-        auto result = board.submit_move(move);
+        auto result = board.play_move(move);
         if(result.game_has_ended())
         {
             report_end_of_game(result);

@@ -270,7 +270,7 @@ bool run_tests()
         for(const auto& move : {"Nc3", "Nc6", "Nb1", "Nb8"})
         {
             ++repeat_move_count;
-            repeat_result = repeat_board.submit_move(move);
+            repeat_result = repeat_board.play_move(move);
             if(repeat_result.game_has_ended())
             {
                 test_result(tests_passed, repeat_move_count == 8, "Threefold repetition triggered early.");
@@ -300,7 +300,7 @@ bool run_tests()
             }
 
             auto next_board = fifty_move_board;
-            auto result = next_board.submit_move(*move);
+            auto result = next_board.play_move(*move);
 
             if(result.winner() != Winner_Color::NONE)
             {
@@ -317,7 +317,7 @@ bool run_tests()
                 test_result(tests_passed, move_counter == 100, "Fifty-move stalemate triggered early.");
             }
 
-            fifty_move_result = fifty_move_board.submit_move(*move);
+            fifty_move_result = fifty_move_board.play_move(*move);
             move_chosen = true;
             break;
         }
@@ -332,7 +332,7 @@ bool run_tests()
     auto derived_moves = move_derivation_board.derive_moves(derived_fen);
     for(auto move : derived_moves)
     {
-        move_derivation_board.submit_move(*move);
+        move_derivation_board.play_move(*move);
     }
     test_result(tests_passed, move_derivation_board.fen() == derived_fen, "Wrong moves derived.");
 
@@ -346,14 +346,14 @@ bool run_tests()
     auto just_kings_move_board = castling_hash_board;
     for(auto move : {"Ke2", "Ke7", "Ke1", "Ke8"})
     {
-        just_kings_move_board.submit_move(move);
+        just_kings_move_board.play_move(move);
     }
 
     // Lose all castling rights due to rooks moving
     auto just_rooks_move_board = castling_hash_board;
     for(auto move : {"Ra2", "Ra7", "Ra1", "Ra8", "Rh2", "Rh7", "Rh1", "Rh8"})
     {
-        just_rooks_move_board.submit_move(move);
+        just_rooks_move_board.play_move(move);
     }
 
     test_result(tests_passed, just_kings_move_board.board_hash() == just_rooks_move_board.board_hash(), "Boards should have same hash after castling rights lost");
@@ -428,19 +428,19 @@ bool run_tests()
     castling_possible_gene.read_from(test_genes_file_name);
     auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
     castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, (0.8 + 0.2)/1.0);
-    castling_board.submit_move("O-O");
+    castling_board.play_move("O-O");
     castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8/1); // castled at depth 1
     castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2/3.0);
-    castling_board.submit_move("Nc6");
-    castling_board.submit_move("Rab1");
-    castling_board.submit_move("O-O-O");
+    castling_board.play_move("Nc6");
+    castling_board.play_move("Rab1");
+    castling_board.play_move("O-O-O");
     castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2/4); // castled at depth 4
 
     auto freedom_to_move_gene = Freedom_To_Move_Gene();
     auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
     auto freedom_to_move_white_score = 32.0/128.0;
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
-    freedom_to_move_board.submit_move("Qd5");
+    freedom_to_move_board.play_move("Qd5");
     auto freedom_to_move_black_score = 3.0/128.0;
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::BLACK, freedom_to_move_black_score);
     freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
@@ -481,7 +481,7 @@ bool run_tests()
     auto passed_pawn_score = (1.0 + 2.0/3.0)/8;
     passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::WHITE, passed_pawn_score);
 
-    passed_pawn_board.submit_move("Kd8");
+    passed_pawn_board.play_move("Kd8");
     passed_pawn_score = (2.0/3.0)/8;
     passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::BLACK, passed_pawn_score);
 
@@ -755,7 +755,7 @@ void run_speed_tests()
     auto performance_board = Board();
     for(const auto& move : String::split("e4 e6 d4 h5 d5 b5 Qf3 g6 Be2 Bg7 Bd2 h4 Nh3 Na6 Nc3 b4 Nf4 Nc5 Nd3 Na4 Ne5 Nb6 Qd3 Qe7 Qe3 Ba6 Qf3 Nf6 Qe3 h3 Qf4 Qc5 Qf3 Qe7 O-O-O"))
     {
-        performance_board.submit_move(move);
+        performance_board.play_move(move);
     }
 
     if(performance_board.fen() != "r3k2r/p1ppqpb1/bn2pnp1/3PN3/1p2P3/2N2Q1p/PPPBBPPP/2KR3R b kq - 5 18")
@@ -798,29 +798,29 @@ void run_speed_tests()
     }
     timing_results.emplace_back(std::chrono::steady_clock::now() - all_genes_start, "Complete gene scoring");
 
-    std::cout << "Board::submit_move() speed ..." << std::endl;
+    std::cout << "Board::play_move() speed ..." << std::endl;
     auto game_time_start = std::chrono::steady_clock::now();
     Board speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
         auto move = Random::random_element(speed_board.legal_moves());
-        auto move_result = speed_board.submit_move(*move);
+        auto move_result = speed_board.play_move(*move);
         if(move_result.game_has_ended())
         {
             speed_board = Board{};
         }
     }
-    timing_results.emplace_back(std::chrono::steady_clock::now() - game_time_start, "Board::submit_move()");
-    auto board_submit_time = timing_results.back().first;
+    timing_results.emplace_back(std::chrono::steady_clock::now() - game_time_start, "Board::play_move()");
+    auto board_play_move_time = timing_results.back().first;
 
-    std::cout << "Board::submit_move() with copy speed ..." << std::endl;
+    std::cout << "Board::play_move() with copy speed ..." << std::endl;
     auto copy_game_start = std::chrono::steady_clock::now();
     Board copy_speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
         auto move = Random::random_element(copy_speed_board.legal_moves());
         auto copy = copy_speed_board;
-        auto move_result = copy.submit_move(*move);
+        auto move_result = copy.play_move(*move);
         if(move_result.game_has_ended())
         {
             copy_speed_board = Board{};
@@ -830,7 +830,7 @@ void run_speed_tests()
             copy_speed_board = copy;
         }
     }
-    timing_results.emplace_back(std::chrono::steady_clock::now() - copy_game_start, "Board::submit_move() with copy");
+    timing_results.emplace_back(std::chrono::steady_clock::now() - copy_game_start, "Board::play_move() with copy");
 
     std::cout << "Board::quiescent() speed ... " << std::flush;
     auto quiescent_time_start = std::chrono::steady_clock::now();
@@ -841,7 +841,7 @@ void run_speed_tests()
         while(true)
         {
             auto move = Random::random_element(quiescent_board.legal_moves());
-            auto move_result = quiescent_board.submit_move(*move);
+            auto move_result = quiescent_board.play_move(*move);
             ++move_count;
             if(move_result.game_has_ended())
             {
@@ -856,7 +856,7 @@ void run_speed_tests()
         auto quiescent_result_board = quiescent_board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0});
     }
     auto quiescent_time = std::chrono::steady_clock::now() - quiescent_time_start;
-    timing_results.emplace_back(quiescent_time - (board_submit_time*move_count)/number_of_tests, "Board::quiescent()");
+    timing_results.emplace_back(quiescent_time - (board_play_move_time*move_count)/number_of_tests, "Board::quiescent()");
     std::cout << "(non-quiescent moves = " << String::format_integer(move_count, ",") << ")" << std::endl;
 
     std::sort(timing_results.begin(), timing_results.end());
@@ -1030,7 +1030,7 @@ namespace
         for(auto move : board.legal_moves())
         {
             auto next_board = board;
-            next_board.submit_move(*move);
+            next_board.play_move(*move);
             count += move_count(next_board, maximum_depth - 1);
         }
 
@@ -1132,11 +1132,11 @@ namespace
                 auto actual_result_board = board;
                 for(auto move : board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0}))
                 {
-                    actual_result_board.submit_move(*move);
+                    actual_result_board.play_move(*move);
                 }
                 for(auto quiescent_move : String::split(specification.at(3)))
                 {
-                    board.submit_move(quiescent_move);
+                    board.play_move(quiescent_move);
                 }
                 test_result(test_passed,
                             board.fen() == actual_result_board.fen(),
@@ -1167,7 +1167,7 @@ namespace
                         throw Illegal_Move("");
                     }
 
-                    game_has_ended = board.submit_move(move).game_has_ended();
+                    game_has_ended = board.play_move(move).game_has_ended();
                 });
         }
 

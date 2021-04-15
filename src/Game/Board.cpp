@@ -295,7 +295,7 @@ std::string Board::original_fen() const noexcept
     return starting_fen_from_starting_hash[starting_hash];
 }
 
-Game_Result Board::submit_move(const Move& move) noexcept
+Game_Result Board::play_move(const Move& move) noexcept
 {
     if(repeat_count.full())
     {
@@ -305,9 +305,9 @@ Game_Result Board::submit_move(const Move& move) noexcept
     return move_result();
 }
 
-Game_Result Board::submit_move(const std::string& move)
+Game_Result Board::play_move(const std::string& move)
 {
-    return submit_move(create_move(move));
+    return play_move(create_move(move));
 }
 
 size_t Board::ply_count() const noexcept
@@ -338,7 +338,7 @@ std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const n
     for(auto first_move : legal_moves())
     {
         auto first_move_board = *this;
-        first_move_board.submit_move(*first_move);
+        first_move_board.play_move(*first_move);
         if(moves_to_derive_count == 1)
         {
             if(first_move_board.fen() == goal_fen)
@@ -351,7 +351,7 @@ std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const n
             for(auto second_move : first_move_board.legal_moves())
             {
                 auto second_move_board = first_move_board;
-                second_move_board.submit_move(*second_move);
+                second_move_board.play_move(*second_move);
                 if(second_move_board.fen() == goal_fen)
                 {
                     return {first_move, second_move};
@@ -828,7 +828,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         {
             out_stream << " " << commentary;
         }
-        commentary_board.submit_move(*next_move);
+        commentary_board.play_move(*next_move);
     }
     out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
 
@@ -1209,7 +1209,7 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
         // Make sure that an exchange does not lose material
         auto moving_piece = current_board.piece_on_square(move->start());
         auto attacked_piece = current_board.piece_on_square(move->end());
-        current_board.submit_move(*move);
+        current_board.play_move(*move);
         capture_moves.push_back(move);
         state_values.push_back(state_values.back() + (moving_piece.color() == player_color ? +1 : -1)*piece_values[static_cast<int>(attacked_piece.type())]);
     }

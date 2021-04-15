@@ -127,7 +127,7 @@ std::string Move::algebraic_base(const Board& board) const noexcept
 
 std::string Move::result_mark(Board board) const noexcept
 {
-    auto result = board.submit_move(*this);
+    auto result = board.play_move(*this);
     if(board.king_is_in_check())
     {
         if(result.winner() == Winner_Color::NONE)

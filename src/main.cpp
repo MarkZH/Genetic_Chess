@@ -285,18 +285,18 @@ namespace
                     {
                         auto move_checkmates = move.back() == '#';
                         auto move_checks = move_checkmates || move.back() == '+';
-                        auto& move_to_submit = board.create_move(move);
+                        auto& move_to_play = board.create_move(move);
                         last_move_line_number = line_number;
                         if(String::contains(move, 'x')) // check that move captures
                         {
-                            if( ! std::as_const(board).piece_on_square(move_to_submit.end()) && ! move_to_submit.is_en_passant())
+                            if( ! std::as_const(board).piece_on_square(move_to_play.end()) && ! move_to_play.is_en_passant())
                             {
                                 std::cerr << "Move: " << move_number << move << " indicates capture but does not capture. (line: " << line_number << ")" << std::endl;
                                 return false;
                             }
                         }
 
-                        result = board.submit_move(move_to_submit);
+                        result = board.play_move(move_to_play);
 
                         if(move_checks)
                         {

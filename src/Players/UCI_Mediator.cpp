@@ -101,7 +101,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 std::for_each(std::next(moves_iter), parse.end(),
                               [&board, &move_list, &setup_result](const auto& move)
                               {
-                                  setup_result = board.submit_move(move);
+                                  setup_result = board.play_move(move);
                                   move_list.push_back(board.last_move());
                               });
                 log("All moves applied");
@@ -245,7 +245,7 @@ Game_Result UCI_Mediator::handle_move(Board& board,
 {
     send_command("bestmove " + move.coordinates());
     move_list.push_back(&move);
-    return board.submit_move(move);
+    return board.play_move(move);
 }
 
 std::string UCI_Mediator::listener(const Board& board)
