@@ -285,7 +285,7 @@ namespace
                     {
                         auto move_checkmates = move.back() == '#';
                         auto move_checks = move_checkmates || move.back() == '+';
-                        auto& move_to_play = board.create_move(move);
+                        auto& move_to_play = board.interpret_move(move);
                         last_move_line_number = line_number;
                         if(String::contains(move, 'x')) // check that move captures
                         {

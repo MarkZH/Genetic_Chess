@@ -307,7 +307,7 @@ Game_Result Board::play_move(const Move& move) noexcept
 
 Game_Result Board::play_move(const std::string& move)
 {
-    return play_move(create_move(move));
+    return play_move(interpret_move(move));
 }
 
 size_t Board::ply_count() const noexcept
@@ -432,7 +432,7 @@ int Board::castling_direction(Piece_Color player) const noexcept
     return castling_movement[static_cast<int>(player)];
 }
 
-const Move& Board::create_move(std::string move_text) const
+const Move& Board::interpret_move(std::string move_text) const
 {
     const static auto optional_end_marks = "+#?!";
     move_text = move_text.substr(0, move_text.find_first_of(optional_end_marks));

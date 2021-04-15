@@ -1177,7 +1177,7 @@ namespace
     bool move_is_illegal(const Board& board, const std::string& move) noexcept
     {
         bool result = true;
-        function_should_throw(result, move + " should be illegal", [&](){ board.create_move(move); });
+        function_should_throw(result, move + " should be illegal", [&](){ board.interpret_move(move); });
         return result;
     }
 }

@@ -55,7 +55,7 @@ class Board
 
         //! \brief Updates the state of the board according to the text-based move.
         //!
-        //! This is equivalent to calling board.play_move(board.create_move(move)).
+        //! This is equivalent to calling board.play_move(board.interpret_move(move)).
         //! \param move A text string specifying a move in any notation that uniquely identifies a
         //!        legal move (PGN, coordinate, etc.).
         //! \returns A Game_Result indicating the result of the move and whether the game has ended.
@@ -75,7 +75,7 @@ class Board
         //!        or [algebraic notation](https://en.wikipedia.org/wiki/Algebraic_notation_(chess)) ("Bb3").
         //! \returns A Move instance corresponding to the input string.
         //! \exception Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
-        const Move& create_move(std::string move) const;
+        const Move& interpret_move(std::string move) const;
 
         //! \brief Tells which player is due to move.
         //!
