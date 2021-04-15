@@ -49,12 +49,9 @@ bool Random::success_probability(size_t successes, size_t attempts) noexcept
     return random_integer(size_t{1}, attempts) <= successes;
 }
 
-std::string Random::random_string(size_t size) noexcept
+std::string Random::random_string(const size_t size) noexcept
 {
-    std::string s;
-    while(s.size() < size)
-    {
-        s.push_back('a' + char(random_integer(0, 25)));
-    }
+    std::string s(size, ' ');
+    std::generate(s.begin(), s.end(), []() -> char { return 'a' + char(random_integer(0, 25)); });
     return s;
 }
