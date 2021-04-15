@@ -46,6 +46,7 @@ Alpha_Beta_Value Game_Tree_Node_Result::alpha_beta_value() const noexcept
 {
     return {score, perspective, depth()};
 }
+
 size_t Game_Tree_Node_Result::depth() const noexcept
 {
     return variation.size();
