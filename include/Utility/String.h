@@ -19,8 +19,8 @@ namespace String
     //! \param count The maximum number of splits. The final number of strings will be
     //!        count + 1 at most.
     //! \returns A list of strings that were separated by the delimiter.
-    std::vector<std::string> split(std::string s,
-                                   std::string delim = "",
+    std::vector<std::string> split(const std::string& s,
+                                   const std::string& delim = "",
                                    size_t count = std::string::npos) noexcept;
 
     //! \brief Join a sequece of strings into a single string with joiner strings in between.

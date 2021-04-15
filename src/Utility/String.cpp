@@ -15,12 +15,11 @@ namespace
     const auto whitespace = " \t\n\r";
 }
 
-std::vector<std::string> String::split(std::string s, std::string delim, size_t count) noexcept
+std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
     if(delim.empty())
     {
-        s = remove_extra_whitespace(s);
-        delim = " ";
+        return split(remove_extra_whitespace(s), " ", count);
     }
 
     if(s.empty())
