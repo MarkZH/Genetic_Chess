@@ -360,7 +360,7 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
 {
     node_evaluation_time = 1ms; // very conservative initial guess
     Board board;
-    Clock clock(1s);
+    Clock clock(0.1s);
     clock.start();
     choose_move(board, clock);
     reset();
