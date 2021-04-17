@@ -34,6 +34,7 @@ Configuration::Configuration(const std::string& file_name)
         const auto line_split = String::split(line, "=", 1);
         const auto parameter = standardize_text(line_split[0]);
         const auto value = String::trim_outer_whitespace(line_split[1]);
+
         if(value.empty())
         {
             throw std::runtime_error("Configuration parameter cannot be empty.\n" + line);
