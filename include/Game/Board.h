@@ -313,7 +313,7 @@ class Board
         const Move* previous_move = nullptr;
         std::array<bool, 64> unmoved_positions{};
         Square en_passant_target;
-        uint64_t starting_hash;
+        uint64_t starting_hash{};
         std::array<Square, 2> king_location;
         Square checking_square;
         size_t first_full_move_label;
