@@ -308,7 +308,7 @@ class Board
     private:
         std::array<Piece, 64> board;
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
-        Piece_Color turn_color;
+        Piece_Color turn_color = Piece_Color::WHITE;
         size_t game_move_count = 0;
         const Move* previous_move = nullptr;
         std::array<bool, 64> unmoved_positions{};
@@ -357,6 +357,7 @@ class Board
         bool all_empty_between(Square start, Square end) const noexcept;
         void set_already_moved(Square square, bool piece_has_already_moved) noexcept;
         void update_board(const Move& move) noexcept;
+        void switch_turn() noexcept;
         Game_Result move_result() const noexcept;
 
         // Track threefold repetition and fifty-move rule

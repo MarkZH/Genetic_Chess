@@ -123,16 +123,11 @@ Board::Board(const std::string& input_fen)
         }
     }
 
-    if(fen_parse[1] == "w")
+    if(fen_parse[1] == "b")
     {
-        turn_color = Piece_Color::WHITE;
+        switch_turn();
     }
-    else if(fen_parse[1] == "b")
-    {
-        turn_color = Piece_Color::BLACK;
-        update_whose_turn_hash();
-    }
-    else
+    else if(fen_parse[1] != "w")
     {
         fen_parse_assert(false, input_fen, "Invalid character for whose turn: " + fen_parse[1]);
     }
@@ -409,13 +404,17 @@ void Board::update_board(const Move& move) noexcept
     previous_move = &move;
     move_piece(move);
     move.side_effects(*this);
-
-    turn_color = opposite(turn_color);
-    update_whose_turn_hash();
+    switch_turn();
 
     recreate_move_caches();
 
     add_board_position_to_repeat_record();
+}
+
+void Board::switch_turn() noexcept
+{
+    turn_color = opposite(turn_color);
+    update_whose_turn_hash();
 }
 
 size_t Board::game_length() const noexcept
