@@ -130,6 +130,7 @@ Board::Board(const std::string& input_fen)
     else if(fen_parse[1] == "b")
     {
         turn_color = Piece_Color::BLACK;
+        update_whose_turn_hash();
     }
     else
     {
