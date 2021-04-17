@@ -28,6 +28,13 @@ class Configuration
         //! \exception std::runtime_error If the named parameter was not found in the file.
         std::string as_text(const std::string& parameter) const;
 
+        //! \brief Return string data if found in file. Retrun an optional value otherwise.
+        //!
+        //! \param parameter The configuration parameter sought.
+        //! \param default_value The value to be returned if the parameter is not found.
+        //! \returns The string data from the file or a default value.
+        std::string as_text_or_default(const std::string& parameter, const std::string& default_value) const noexcept;
+
         //! \brief Return numerical data from the configuration file.
         //!
         //! \param parameter The configuration parameter sought.

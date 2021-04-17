@@ -68,6 +68,11 @@ std::string Configuration::as_text(const std::string& parameter) const
     }
 }
 
+std::string Configuration::as_text_or_default(const std::string& parameter, const std::string& default_value) const noexcept
+{
+    return has_parameter(parameter) ? as_text(parameter) : String::trim_outer_whitespace(default_value);
+}
+
 bool Configuration::as_boolean(const std::string& parameter, const std::string& affirmative, const std::string& negative) const
 {
     const auto response = standardize_text(as_text(parameter));

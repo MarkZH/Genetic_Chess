@@ -95,6 +95,8 @@ void gene_pool(const std::string& config_file)
     }
     const auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
 
+    const auto board_fen = config.as_text_or_default("FEN", Board().fen());
+
     const auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
     const auto verbose_output = config.as_boolean("output volume", "verbose", "quiet");
 
@@ -264,9 +266,11 @@ void gene_pool(const std::string& config_file)
 
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
+            auto board = Board(board_fen);
+            auto clock = Clock(game_time, 0, Clock::seconds(0.0), Time_Reset_Method::ADDITION, board.whose_turn());
             results.emplace_back(std::async(std::launch::async, play_game,
-                                            Board{},
-                                            Clock(game_time),
+                                            board,
+                                            clock,
                                             std::cref(white), std::cref(black),
                                             "Gene pool",
                                             "Local computer",
