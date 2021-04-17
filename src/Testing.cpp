@@ -1040,7 +1040,12 @@ namespace
     bool run_board_tests(const std::string& file_name)
     {
         auto input = std::ifstream(file_name);
-        assert(input);
+        if( ! input)
+        {
+            std::cerr << "Could not open board test file.\n";
+            return false;
+        }
+
         auto all_tests_passed = true;
 
         for(std::string line; std::getline(input, line);)
@@ -1051,12 +1056,23 @@ namespace
                 continue;
             }
 
+            auto test_assert = [&line, &all_tests_passed](bool expected)
+                               {
+                                    if( ! expected)
+                                    {
+                                        std::cerr << "Malformed test: " << line << '\n';
+                                        all_tests_passed = false;
+                                    }
+                                    return expected;
+                                };
+
             const auto specification = String::split(line, "|");
-            assert(specification.size() >= 2);
+            if( ! test_assert(specification.size() >= 2)) { continue; }
 
             const auto test_type = String::lowercase(String::remove_extra_whitespace(specification.at(0)));
             const auto board_fen = String::remove_extra_whitespace(specification.at(1));
             auto test_passed = true;
+
             if(test_type == "illegal position")
             {
                 function_should_throw(test_passed, "", [](const std::string& s) { Board{s}; }, board_fen);
@@ -1065,7 +1081,7 @@ namespace
             }
 
             auto board = board_fen == "start" ? Board{} : Board{board_fen};
-            assert(specification.size() >= 3);
+            if( ! test_assert(specification.size() >= 3)) { continue; }
 
             if(test_type == "all moves legal")
             {
@@ -1075,7 +1091,7 @@ namespace
             else if(test_type == "last move illegal")
             {
                 auto moves = String::split(specification.at(2));
-                assert( ! moves.empty());
+                if( ! test_assert(! moves.empty())) { continue; }
                 const auto last_move = moves.back();
                 moves.pop_back();
                 test_result(test_passed, all_moves_legal(board, moves) && move_is_illegal(board, last_move), "");
@@ -1083,20 +1099,20 @@ namespace
             else if(test_type == "pinned piece")
             {
                 const auto square_result = String::split(specification.at(2));
-                assert(square_result.size() == 2);
-                assert(square_result.front().size() == 2);
+                if( ! test_assert(square_result.size() == 2)) { continue; }
+                if( ! test_assert(square_result.front().size() == 2)) { continue; }
 
                 const auto square = String::remove_extra_whitespace(String::lowercase(square_result.front()));
                 const auto expected_result = String::remove_extra_whitespace(String::lowercase(square_result.back()));
 
-                assert(expected_result == "true" || expected_result == "false");
+                if( ! test_assert(expected_result == "true" || expected_result == "false")) { continue; }
                 const auto expected_bool = (expected_result == "true");
                 test_result(test_passed, board.piece_is_pinned(Square(square.front(), square.back() - '0')) == expected_bool,
                             "Expected result of " + square + " being pinned: " + expected_result);
             }
             else if(test_type == "move count")
             {
-                assert(specification.size() == 4);
+                if( ! test_assert(specification.size() == 4)) { continue; }
                 const auto moves = String::split(specification.at(2));
                 const auto expected_count = String::to_number<size_t>(specification.back());
                 test_result(test_passed, all_moves_legal(board, moves) && board.legal_moves().size() == expected_count,
@@ -1105,17 +1121,17 @@ namespace
             else if(test_type == "checkmate material")
             {
                 const auto result_text = String::remove_extra_whitespace(specification.back());
-                assert(result_text == "true" || result_text == "false");
+                if( ! test_assert(result_text == "true" || result_text == "false")) { continue; }
                 const auto expected_result = (result_text == "true");
                 test_result(test_passed, board.enough_material_to_checkmate() == expected_result,
                             std::string("This board does") + (expected_result ? "" : " not") + " have enough material to checkmate.");
             }
             else if(test_type == "king in check")
             {
-                assert(specification.size() == 4);
+                if( ! test_assert(specification.size() == 4)) { continue; }
                 const auto moves = String::split(specification.at(2));
                 const auto expected_answer = String::lowercase(String::remove_extra_whitespace(specification.back()));
-                assert(expected_answer == "true" || expected_answer == "false");
+                if( ! test_assert(expected_answer == "true" || expected_answer == "false")) { continue; }
                 const auto expected_result = expected_answer == "true";
                 test_result(test_passed, all_moves_legal(board, moves) && board.king_is_in_check() == expected_result,
                             std::string("King is ") +
@@ -1126,7 +1142,7 @@ namespace
             }
             else if(test_type == "quiescent")
             {
-                assert(specification.size() == 4);
+                if( ! test_assert(specification.size() == 4)) { continue; }
                 const auto moves = String::split(specification.at(2));
                 test_result(test_passed, all_moves_legal(board, moves), "Bad test: Illegal moves");
                 auto actual_result_board = board;
