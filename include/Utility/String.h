@@ -122,12 +122,12 @@ namespace String
     std::string extract_delimited_text(const std::string& str, const std::string& start, const std::string& end);
 
     //! \brief Typesafe single-character lowercase function.
-    //! 
+    //!
     //! \param letter The letter to change to lowercase.
     char tolower(char letter) noexcept;
 
     //! \brief Typesafe single-character uppercase function.
-    //! 
+    //!
     //! \param letter The letter to change to uppercase.
     char toupper(char letter) noexcept;
 
