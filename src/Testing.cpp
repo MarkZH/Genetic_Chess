@@ -1066,11 +1066,13 @@ namespace
                                     return expected;
                                 };
 
-            const auto specification = String::split(line, "|");
+            auto specification = String::split(line, "|");
             if( ! test_assert(specification.size() >= 2)) { continue; }
 
-            const auto test_type = String::lowercase(String::remove_extra_whitespace(specification.at(0)));
-            const auto board_fen = String::remove_extra_whitespace(specification.at(1));
+            std::transform(specification.begin(), specification.end(), specification.begin(), String::remove_extra_whitespace);
+
+            const auto test_type = String::lowercase(specification.at(0));
+            const auto board_fen = specification.at(1);
             auto test_passed = true;
 
             if(test_type == "illegal position")
@@ -1102,8 +1104,8 @@ namespace
                 if( ! test_assert(square_result.size() == 2)) { continue; }
                 if( ! test_assert(square_result.front().size() == 2)) { continue; }
 
-                const auto square = String::remove_extra_whitespace(String::lowercase(square_result.front()));
-                const auto expected_result = String::remove_extra_whitespace(String::lowercase(square_result.back()));
+                const auto square = String::lowercase(square_result.front());
+                const auto expected_result = String::lowercase(square_result.back());
 
                 if( ! test_assert(expected_result == "true" || expected_result == "false")) { continue; }
                 const auto expected_bool = (expected_result == "true");
@@ -1120,7 +1122,7 @@ namespace
             }
             else if(test_type == "checkmate material")
             {
-                const auto result_text = String::remove_extra_whitespace(specification.back());
+                const auto result_text = specification.back();
                 if( ! test_assert(result_text == "true" || result_text == "false")) { continue; }
                 const auto expected_result = (result_text == "true");
                 test_result(test_passed, board.enough_material_to_checkmate() == expected_result,
@@ -1130,7 +1132,7 @@ namespace
             {
                 if( ! test_assert(specification.size() == 4)) { continue; }
                 const auto moves = String::split(specification.at(2));
-                const auto expected_answer = String::lowercase(String::remove_extra_whitespace(specification.back()));
+                const auto expected_answer = String::lowercase(specification.back());
                 if( ! test_assert(expected_answer == "true" || expected_answer == "false")) { continue; }
                 const auto expected_result = expected_answer == "true";
                 test_result(test_passed, all_moves_legal(board, moves) && board.king_is_in_check() == expected_result,
