@@ -23,9 +23,12 @@ Game_Result play_game(Board board,
                       const Player& black,
                       const std::string& event_name,
                       const std::string& location,
-                      const std::string& pgn_file_name) noexcept
+                      const std::string& pgn_file_name)
 {
-    assert(board.whose_turn() == game_clock.running_for());
+    if(game_clock.is_in_use() && board.whose_turn() != game_clock.running_for())
+    {
+        throw std::runtime_error("Board and Clock do not agree on whose turn it is.");
+    }
 
     std::vector<const Move*> game_record;
     Game_Result result;
