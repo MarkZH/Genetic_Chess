@@ -184,7 +184,8 @@ Board::Board(const std::string& input_fen)
         add_to_repeat_count(Random::random_unsigned_int64());
     }
 
-    first_full_move_label = String::to_number<size_t>(fen_parse.at(5));
+    const auto first_full_move_label = String::to_number<size_t>(fen_parse.at(5));
+    plies_at_construction = 2*(first_full_move_label - 1) + (whose_turn() == Piece_Color::WHITE ? 0 : 1);
 
     const auto starting_fen = String::remove_extra_whitespace(input_fen);
     fen_parse_assert(fen() == starting_fen, input_fen, "Result: " + fen());
@@ -308,8 +309,7 @@ Game_Result Board::play_move(const std::string& move)
 
 size_t Board::ply_count() const noexcept
 {
-    const auto first_move = game_length()%2 == 0 ? whose_turn() : opposite(whose_turn());
-    return 2*(first_full_move_label - 1) + (first_move == Piece_Color::WHITE ? 0 : 1) + game_length();
+    return plies_at_construction + game_length();
 }
 
 std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
@@ -805,21 +805,18 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     }
 
     auto commentary_board = Board(starting_fen);
-    const auto starting_turn_offset = size_t(commentary_board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
-
-    for(size_t i = 0; i < game_record_listing.size(); ++i)
+    for(const auto next_move : game_record_listing)
     {
-        const auto step = first_full_move_label + (i + starting_turn_offset)/2;
-        if(commentary_board.whose_turn() == Piece_Color::WHITE || i == 0)
+        const auto step = commentary_board.ply_count()/2 + 1;
+        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.game_length() == 0)
         {
             out_stream << '\n' << step << ".";
-            if(i == 0 && commentary_board.whose_turn() == Piece_Color::BLACK)
+            if(commentary_board.game_length() == 0 && commentary_board.whose_turn() == Piece_Color::BLACK)
             {
                 out_stream << " ...";
             }
         }
 
-        const auto next_move = game_record_listing.at(i);
         out_stream << " " << next_move->algebraic(commentary_board);
         const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
         const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));

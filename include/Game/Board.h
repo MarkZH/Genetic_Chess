@@ -316,7 +316,7 @@ class Board
         uint64_t starting_hash{};
         std::array<Square, 2> king_location;
         Square checking_square;
-        size_t first_full_move_label;
+        size_t plies_at_construction;
 
         // Stores the moves that attack a square. The innermost array
         // is filled with bools indicating the direction the piece attacking
