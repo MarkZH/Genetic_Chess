@@ -58,6 +58,7 @@ namespace
     template<typename Stat_Map>
     void purge_dead_from_map(const std::vector<Genetic_AI>& pool, Stat_Map& stats);
 
+    size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
     int count_wins(const std::string& file_name, int id);
     std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
 }
@@ -108,19 +109,8 @@ void gene_pool(const std::string& config_file)
         std::cin.get();
     }
 
-    size_t round_count = 0; // Count of complete gene pool rounds where all pools have played a set of games
-    if(auto genome_file = std::ifstream(genome_file_name))
-    {
-        for(std::string line; std::getline(genome_file, line);)
-        {
-            line = String::trim_outer_whitespace(line);
-            if(String::starts_with(line, "Still Alive"))
-            {
-                ++round_count;
-            }
-        }
-    }
     auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, mutation_rate);
+    auto round_count = count_still_alive_lines(genome_file_name); // Count of complete gene pool rounds where all pools have played a set of games
 
     std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     std::map<Genetic_AI, int> wins;
@@ -569,6 +559,27 @@ namespace
             new_stats[ai] = stats[ai];
         }
         stats = new_stats;
+    }
+
+    size_t count_still_alive_lines(const std::string& genome_file_name) noexcept
+    {
+        auto genome_file = std::ifstream(genome_file_name);
+        if( ! genome_file)
+        {
+            return 0;
+        }
+
+        size_t round_count = 0;
+        for(std::string line; std::getline(genome_file, line);)
+        {
+            line = String::trim_outer_whitespace(line);
+            if(String::starts_with(line, "Still Alive"))
+            {
+                ++round_count;
+            }
+        }
+
+        return round_count;
     }
 
     int count_wins(const std::string& file_name, int id)
