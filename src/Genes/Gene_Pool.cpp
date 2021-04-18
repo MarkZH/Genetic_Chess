@@ -59,6 +59,7 @@ namespace
     void purge_dead_from_map(const std::vector<Genetic_AI>& pool, Stat_Map& stats);
 
     int count_wins(const std::string& file_name, int id);
+    std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
 }
 
 void gene_pool(const std::string& config_file)
@@ -119,34 +120,12 @@ void gene_pool(const std::string& config_file)
             }
         }
     }
+    auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, mutation_rate);
 
     std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     std::map<Genetic_AI, int> wins;
     std::map<Genetic_AI, int> draws;
 
-    std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
-    auto pool = load_gene_pool_file(genome_file_name);
-    const auto write_new_pools = pool.size() != gene_pool_population;
-    if(pool.empty() && ! seed_ai_specification.empty())
-    {
-        const auto seed_split = String::split(seed_ai_specification, "/");
-        if(seed_split.size() > 2)
-        {
-            throw std::runtime_error("Too many parameters in the seed configuration\nseed = " + seed_ai_specification);
-        }
-        const auto file_name = seed_split.front();
-        const auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
-        const auto seed_ai = Genetic_AI(file_name, seed_id);
-        std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
-        pool = {seed_ai};
-    }
-    const auto new_ai_index = pool.size();
-    pool.resize(gene_pool_population);
-    for(auto ai_index = new_ai_index; ai_index < pool.size(); ++ai_index)
-    {
-        pool[ai_index].mutate(mutation_rate);
-    }
-    write_generation(pool, genome_file_name, write_new_pools);
 
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
@@ -391,6 +370,34 @@ namespace
             }
         }
     #endif // _WIN32
+    }
+
+    std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate)
+    {
+        std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
+        auto pool = load_gene_pool_file(genome_file_name);
+        const auto write_new_pools = pool.size() != gene_pool_population;
+        if(pool.empty() && ! seed_ai_specification.empty())
+        {
+            const auto seed_split = String::split(seed_ai_specification, "/");
+            if(seed_split.size() > 2)
+            {
+                throw std::runtime_error("Too many parameters in the seed configuration\nseed = " + seed_ai_specification);
+            }
+            const auto file_name = seed_split.front();
+            const auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
+            const auto seed_ai = Genetic_AI(file_name, seed_id);
+            std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
+            pool = {seed_ai};
+        }
+        const auto new_ai_index = pool.size();
+        pool.resize(gene_pool_population);
+        for(auto ai_index = new_ai_index; ai_index < pool.size(); ++ai_index)
+        {
+            pool[ai_index].mutate(mutation_rate);
+        }
+        write_generation(pool, genome_file_name, write_new_pools);
+        return pool;
     }
 
     void write_generation(const std::vector<Genetic_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive)
