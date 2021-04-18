@@ -609,6 +609,14 @@ bool run_tests()
     test_result(tests_passed, std::abs(moves_left - expected_moves_left) < 1e-4,
                 std::string("Log-Norm failed: Expected: ") + std::to_string(expected_moves_left) +
                 " --- Got: " + std::to_string(moves_left));
+    const size_t moves_played_at_start = 0;
+    const auto moves_left_at_start = Math::average_moves_left(mean_moves, width, moves_played_at_start);
+    test_result(tests_passed, std::isfinite(moves_left_at_start),
+                std::string("Log-Norm failed with zero moves: Expected finite answer, Got: ") + std::to_string(moves_left_at_start));
+    const size_t moves_played_after_one_move = 1;
+    const auto moves_left_after_one_move = Math::average_moves_left(mean_moves, width, moves_played_after_one_move);
+    test_result(tests_passed, std::isfinite(moves_left_after_one_move),
+                std::string("Log-Norm failed after one move: Expected finite answer, Got: ") + std::to_string(moves_left_at_start));
 
 
     // Clock time reset test
