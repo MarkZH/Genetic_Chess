@@ -40,7 +40,8 @@ namespace String
         auto result = *begin;
         for(auto i = std::next(begin); i != end; ++i)
         {
-            result += joiner + *i;
+            result += joiner;
+            result += *i;
         }
         return result;
     }
