@@ -797,7 +797,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         print_game_header_line(out_stream, "Termination", actual_result.ending_reason());
     }
 
-    auto starting_fen = original_fen();
+    const auto starting_fen = original_fen();
     if(starting_fen != standard_starting_fen)
     {
         print_game_header_line(out_stream, "SetUp", 1);
