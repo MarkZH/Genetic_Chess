@@ -311,6 +311,7 @@ size_t Board::ply_count() const noexcept
     const auto first_move = game_length()%2 == 0 ? whose_turn() : opposite(whose_turn());
     return 2*(first_full_move_label - 1) + (first_move == Piece_Color::WHITE ? 0 : 1) + game_length();
 }
+
 std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
 {
     std::string goal_fen;
