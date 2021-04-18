@@ -61,6 +61,7 @@ namespace
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
     int count_wins(const std::string& file_name, int id);
     std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
+    void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
 }
 
 void gene_pool(const std::string& config_file)
@@ -112,13 +113,13 @@ void gene_pool(const std::string& config_file)
     auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, mutation_rate);
     auto round_count = count_still_alive_lines(genome_file_name); // Count of complete gene pool rounds where all pools have played a set of games
 
-    std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
-    std::map<Genetic_AI, int> wins;
-    std::map<Genetic_AI, int> draws;
-
-
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
+    std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
+    load_previous_game_stats(game_record_file, game_time, color_wins);
+
+    std::map<Genetic_AI, int> wins;
+    std::map<Genetic_AI, int> draws;
 
     const auto best_file_name = genome_file_name + "_best_genome.txt";
     auto best_id = 0;
@@ -136,41 +137,6 @@ void gene_pool(const std::string& config_file)
     {
     }
 
-    if(auto ifs = std::ifstream(game_record_file))
-    {
-        // Use game time from last run of this gene pool
-        std::cout << "Searching " << game_record_file << " for last game time and stats ..." << std::endl;
-        for(std::string line; std::getline(ifs, line);)
-        {
-            line = String::trim_outer_whitespace(line);
-            if(String::starts_with(line, "[TimeControl"))
-            {
-                game_time = String::to_duration<Clock::seconds>(String::split(line, "\"").at(1));
-            }
-            else if(String::starts_with(line, "[Result"))
-            {
-                auto result = String::split(line, "\"").at(1);
-                if(result == "1-0")
-                {
-                    color_wins[static_cast<int>(Winner_Color::WHITE)]++;
-                }
-                else if(result == "0-1")
-                {
-                    color_wins[static_cast<int>(Winner_Color::BLACK)]++;
-                }
-                else if(result == "1/2-1/2")
-                {
-                    color_wins[static_cast<int>(Winner_Color::NONE)]++;
-                }
-                else
-                {
-                    throw std::invalid_argument("Bad PGN Result line: " + line);
-                }
-            }
-        }
-
-        std::cout << "Done." << std::endl;
-    }
 
     gene_pool_started = true;
     while(true)
@@ -431,6 +397,48 @@ namespace
         }
 
         purge_dead_from_map(pool, written_before);
+    }
+
+    void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins)
+    {
+        auto ifs = std::ifstream(game_record_file);
+        if( ! ifs)
+        {
+            return;
+        }
+
+        // Use game time from last run of this gene pool
+        std::cout << "Searching " << game_record_file << " for last game time and stats ..." << std::endl;
+        for(std::string line; std::getline(ifs, line);)
+        {
+            line = String::trim_outer_whitespace(line);
+            if(String::starts_with(line, "[TimeControl"))
+            {
+                game_time = String::to_duration<Clock::seconds>(String::split(line, "\"").at(1));
+            }
+            else if(String::starts_with(line, "[Result"))
+            {
+                auto result = String::split(line, "\"").at(1);
+                if(result == "1-0")
+                {
+                    color_wins[static_cast<int>(Winner_Color::WHITE)]++;
+                }
+                else if(result == "0-1")
+                {
+                    color_wins[static_cast<int>(Winner_Color::BLACK)]++;
+                }
+                else if(result == "1/2-1/2")
+                {
+                    color_wins[static_cast<int>(Winner_Color::NONE)]++;
+                }
+                else
+                {
+                    throw std::invalid_argument("Bad PGN Result line: " + line);
+                }
+            }
+        }
+
+        std::cout << "Done." << std::endl;
     }
 
     std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file)
