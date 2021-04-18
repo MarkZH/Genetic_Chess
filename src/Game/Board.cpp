@@ -192,9 +192,6 @@ Board::Board(const std::string& input_fen)
 
     recreate_move_caches();
 
-    // In case a listed en passant target is not actually a legal move.
-    repeat_count.pop_back();
-    add_board_position_to_repeat_record();
     starting_hash = board_hash();
     starting_fen_from_starting_hash[starting_hash] = starting_fen;
 }
@@ -892,13 +889,6 @@ void Board::recreate_move_caches() noexcept
                 }
             }
         }
-    }
-
-    if(std::none_of(legal_moves_cache.begin(),
-                    legal_moves_cache.end(),
-                    [](auto move) { return move->is_en_passant(); }))
-    {
-        clear_en_passant_target();
     }
 }
 
