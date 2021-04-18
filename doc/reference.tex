@@ -187,13 +187,13 @@ where \(S\) and \(M\) are the standard deviation and mean of the logarithm of th
 \begin{align*}
 \sum_{i = n + 1}^\infty P(i)\times{}i &\approx \int_{n+1}^\infty P(t)t dt \\
 	&= \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty e^{-\frac{1}{2}{\left(\frac{\ln{t} - M}{S}\right)}^2}dt\\
-	&= \frac{1}{2}e^{M + S^2/2}{\left[1 + \textrm{erf}{\left(\frac{M + S^2 - \ln n}{S\sqrt{2}}\right)}\right]}
+	&= \frac{1}{2}e^{M + S^2/2}{\left[1 + \textrm{erf}{\left(\frac{M + S^2 - \ln (n+1)}{S\sqrt{2}}\right)}\right]}
 \end{align*}
 and
 \begin{align*}
 \sum_{i = n + 1}^\infty P(i) &\approx \int_{n+1}^\infty P(t)dt \\
 	&= \frac{1}{S\sqrt{2\pi}} \int_{n+1}^\infty \frac{1}{t} e^{-\frac{1}{2}{\left(\frac{\ln{t} - M}{S}\right)}^2}dt \\
-	&= \frac{1}{2}\left[1 + \textrm{erf}\left(\frac{M-\ln n}{S\sqrt{2}}\right)\right].
+	&= \frac{1}{2}\left[1 + \textrm{erf}\left(\frac{M-\ln (n+1)}{S\sqrt{2}}\right)\right].
 \end{align*}
 Here, \(\textrm{erf}\) is the error function given by
 \[
@@ -202,8 +202,8 @@ Here, \(\textrm{erf}\) is the error function given by
 This results in the number of moves left in a game (\(N(n)\)) after \(n\) moves is
 \[
 N(n) = \left(e^{M + S^2/2}\right) \frac
-{1 + \textrm{erf}\left(\frac{M + S^2 - \ln n}{S\sqrt{2}}\right)}
-{1 + \textrm{erf}\left(\frac{M-\ln n}{S\sqrt{2}}\right)}
+{1 + \textrm{erf}\left(\frac{M + S^2 - \ln (n+1)}{S\sqrt{2}}\right)}
+{1 + \textrm{erf}\left(\frac{M-\ln (n+1)}{S\sqrt{2}}\right)}
 - n.
 \]
 \begin{figure}[tbh]

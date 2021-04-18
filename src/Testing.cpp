@@ -605,7 +605,7 @@ bool run_tests()
     const double width = .5;
     const size_t moves_so_far = 22;
     const auto moves_left = Math::average_moves_left(mean_moves, width, moves_so_far);
-    const auto expected_moves_left = 15.2629;
+    const auto expected_moves_left = 16.103940;
     test_result(tests_passed, std::abs(moves_left - expected_moves_left) < 1e-4,
                 std::string("Log-Norm failed: Expected: ") + std::to_string(expected_moves_left) +
                 " --- Got: " + std::to_string(moves_left));
