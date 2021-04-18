@@ -96,8 +96,7 @@ void gene_pool(const std::string& config_file)
     const auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
 
     const auto board_fen = config.as_text_or_default("FEN", Board().fen());
-
-    const auto seed_ai_specification = config.has_parameter("seed") ? config.as_text("seed") : std::string{};
+    const auto seed_ai_specification = config.as_text_or_default("seed", "");
     const auto verbose_output = config.as_boolean("output volume", "verbose", "quiet");
 
     if(config.any_unused_parameters())
