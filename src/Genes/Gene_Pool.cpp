@@ -62,6 +62,7 @@ namespace
     int count_wins(const std::string& file_name, int id);
     std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
+    void find_previous_best_ai(const std::string& best_file_name, const std::string& game_record_file, int& best_id, int& best_id_wins, double& wins_to_beat) noexcept;
 }
 
 void gene_pool(const std::string& config_file)
@@ -125,18 +126,7 @@ void gene_pool(const std::string& config_file)
     auto best_id = 0;
     auto best_id_wins = 0;
     auto wins_to_beat = 0.0;
-    try
-    {
-        const auto best = Genetic_AI(best_file_name, find_last_id(best_file_name));
-        std::cout << "Searching for previous best AI win counts ..." << std::endl;
-        best_id = best.id();
-        best_id_wins = count_wins(game_record_file, best_id);
-        wins_to_beat = best_id_wins;
-    }
-    catch(...)
-    {
-    }
-
+    find_previous_best_ai(best_file_name, game_record_file, best_id, best_id_wins, wins_to_beat);
 
     gene_pool_started = true;
     while(true)
@@ -439,6 +429,21 @@ namespace
         }
 
         std::cout << "Done." << std::endl;
+    }
+
+    void find_previous_best_ai(const std::string& best_file_name, const std::string& game_record_file, int& best_id, int& best_id_wins, double& wins_to_beat) noexcept
+    {
+        try
+        {
+            const auto best = Genetic_AI(best_file_name, find_last_id(best_file_name));
+            std::cout << "Searching for previous best AI win counts ..." << std::endl;
+            best_id = best.id();
+            best_id_wins = count_wins(game_record_file, best_id);
+            wins_to_beat = best_id_wins;
+        }
+        catch(...)
+        {
+        }
     }
 
     std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file)
