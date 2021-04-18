@@ -26,8 +26,6 @@ const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_
 
 namespace
 {
-    const std::string pgn_symbols = "PRNBQK";
-
     using indexed_move_array = std::array<std::array<Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>, 64>, 12>;
 
     void add_pawn_moves(indexed_move_array& out, Piece_Color color) noexcept;
@@ -264,6 +262,7 @@ namespace
         }
     }
 
+    const std::string pgn_symbols = "PRNBQK";
     Piece_Type piece_type_from_char(const char pgn_symbol)
     {
         const auto i = pgn_symbols.find(String::toupper(pgn_symbol));
