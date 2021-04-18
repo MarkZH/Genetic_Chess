@@ -157,7 +157,7 @@ void gene_pool(const std::string& config_file)
     auto wins_to_beat = 0.0;
     try
     {
-        auto best = Genetic_AI(best_file_name, find_last_id(best_file_name));
+        const auto best = Genetic_AI(best_file_name, find_last_id(best_file_name));
         std::cout << "Searching for previous best AI win counts ..." << std::endl;
         best_id = best.id();
         best_id_wins = count_wins(game_record_file, best_id);
