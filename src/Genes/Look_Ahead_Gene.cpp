@@ -99,7 +99,7 @@ double Look_Ahead_Gene::branching_factor(const double game_progress) const noexc
 
 double Look_Ahead_Gene::expected_moves_left(const Board& board) const noexcept
 {
-    const auto moves_so_far = board.ply_count()/2;
+    const auto moves_so_far = board.all_ply_count()/2;
     if(moves_so_far < moves_left_lookup.size())
     {
         return moves_left_lookup[moves_so_far];

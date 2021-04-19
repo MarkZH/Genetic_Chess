@@ -104,16 +104,16 @@ class Board
         //! \returns The number of plies (1. e4 e5 is two plies) made on this board since its construction.
         size_t played_ply_count() const noexcept;
 
-        //! \brief The number of moves since this start of the game on this board.
+        //! \brief The number of plies since the start of the game on this board.
         //!
-        //! \returns The number of moves in this game including those before the creation of the board.
+        //! \returns The number of plies (1. e4 e5 is two plies) on this board including those before the construction of the board.
         //!
         //! The quantity can start as greater than zero if the FEN string used to create the board has
         //! a full-move clock value (the sixth field) of more than 1 or if black is the first to move.
         //! The calculation assumes that every game starts with white's move, even if the FEN string
         //! indicates that black is the first to move, since this would indicate a game state that is
         //! after the start of the game.
-        size_t ply_count() const noexcept;
+        size_t all_ply_count() const noexcept;
 
         //! \brief The direction (if any) of the castling move made by a player.
         //!

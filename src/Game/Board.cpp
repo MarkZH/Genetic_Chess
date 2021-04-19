@@ -280,7 +280,7 @@ std::string Board::fen() const noexcept
 
     fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.string() : "-");
     fen_parts.push_back(std::to_string(moves_since_pawn_or_capture()));
-    fen_parts.push_back(std::to_string(1 + ply_count()/2));
+    fen_parts.push_back(std::to_string(1 + all_ply_count()/2));
     return String::join(fen_parts.begin(), fen_parts.end(), " ");
 }
 
@@ -304,7 +304,7 @@ Game_Result Board::play_move(const std::string& move)
     return play_move(interpret_move(move));
 }
 
-size_t Board::ply_count() const noexcept
+size_t Board::all_ply_count() const noexcept
 {
     return plies_at_construction + played_ply_count();
 }
@@ -317,7 +317,7 @@ std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const n
     {
         auto new_board = Board(new_fen);
         goal_fen = new_board.fen();
-        moves_to_derive_count = new_board.ply_count() - ply_count();
+        moves_to_derive_count = new_board.all_ply_count() - all_ply_count();
     }
     catch(const std::invalid_argument&)
     {
@@ -804,7 +804,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     auto commentary_board = Board(starting_fen);
     for(const auto next_move : game_record_listing)
     {
-        const auto step = commentary_board.ply_count()/2 + 1;
+        const auto step = commentary_board.all_ply_count()/2 + 1;
         if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0)
         {
             out_stream << '\n' << step << ".";
