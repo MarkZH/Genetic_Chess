@@ -253,21 +253,27 @@ void gene_pool(const std::string& config_file)
             }
         }
 
-        // Record best AI from all pools.
+        // Slowly reduce the wins required to be recorded as best to allow
+        // later AIs that are playing against a better field to be recorded.
         const double decay_constant = 0.99;
         wins_to_beat *= decay_constant;
-        for(const auto& [ai, win_count] : wins)
-        {
-            if(win_count > wins_to_beat)
-            {
-                static const auto temp_best_file_name = best_file_name + ".tmp";
 
-                wins_to_beat = win_count;
-                best_id = ai.id();
-                best_id_wins = win_count;
-                ai.print(temp_best_file_name);
-                std::filesystem::rename(temp_best_file_name, best_file_name);
-            }
+        const auto& winningest_live_ai =
+            *std::max_element(pool.begin(), pool.end(),
+                              [&wins](const auto& a, const auto& b)
+                              {
+                                  return wins[a] < wins[b];
+                              });
+        const auto win_count = wins[winningest_live_ai];
+
+        if(win_count > wins_to_beat)
+        {
+            static const auto temp_best_file_name = best_file_name + ".tmp";
+            wins_to_beat = win_count;
+            best_id = winningest_live_ai.id();
+            best_id_wins = win_count;
+            winningest_live_ai.print(temp_best_file_name);
+            std::filesystem::rename(temp_best_file_name, best_file_name);
         }
 
         std::cout << "\nWins to be recorded as best: " << wins_to_beat
