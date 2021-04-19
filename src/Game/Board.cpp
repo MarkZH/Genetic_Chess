@@ -306,7 +306,7 @@ Game_Result Board::play_move(const std::string& move)
 
 size_t Board::ply_count() const noexcept
 {
-    return plies_at_construction + game_length();
+    return plies_at_construction + played_ply_count();
 }
 
 std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
@@ -415,7 +415,7 @@ void Board::switch_turn() noexcept
     update_whose_turn_hash();
 }
 
-size_t Board::game_length() const noexcept
+size_t Board::played_ply_count() const noexcept
 {
     return game_move_count;
 }
@@ -805,10 +805,10 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     for(const auto next_move : game_record_listing)
     {
         const auto step = commentary_board.ply_count()/2 + 1;
-        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.game_length() == 0)
+        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0)
         {
             out_stream << '\n' << step << ".";
-            if(commentary_board.game_length() == 0 && commentary_board.whose_turn() == Piece_Color::BLACK)
+            if(commentary_board.played_ply_count() == 0 && commentary_board.whose_turn() == Piece_Color::BLACK)
             {
                 out_stream << " ...";
             }

@@ -800,7 +800,7 @@ void run_speed_tests()
         for(int i = 1; i <= number_of_tests; ++i)
         {
             const auto side = performance_board.whose_turn();
-            score += gene->evaluate(performance_board, opposite(side), performance_board.game_length(), 20);
+            score += gene->evaluate(performance_board, opposite(side), performance_board.played_ply_count(), 20);
         }
         timing_results.emplace_back(std::chrono::steady_clock::now() - gene_start, gene->name());
     }

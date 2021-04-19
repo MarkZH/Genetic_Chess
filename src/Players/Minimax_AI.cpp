@@ -23,12 +23,12 @@ using namespace std::chrono_literals;
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
     // Erase data from previous board when starting new game
-    if(board.game_length() <= 1)
+    if(board.played_ply_count() <= 1)
     {
         reset();
     }
 
-    while(commentary.size() < board.game_length()/2)
+    while(commentary.size() < board.played_ply_count()/2)
     {
         commentary.emplace_back();
     }
@@ -439,7 +439,7 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
 
 std::string Minimax_AI::commentary_for_next_move(const Board& board, const size_t move_number) const noexcept
 {
-    const auto comment_index = board.game_length()/2;
+    const auto comment_index = board.played_ply_count()/2;
     if(comment_index >= commentary.size() || commentary.at(comment_index).first.variation_line().empty())
     {
         return {};

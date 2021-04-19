@@ -99,10 +99,10 @@ class Board
         //! \returns A pointer representing the last move made.
         const Move* last_move() const noexcept;
 
-        //! \brief The length of the game on this Board.
+        //! \brief The number of plies played on this Board.
         //!
-        //! \returns The number of moves made on this board since its creation.
-        size_t game_length() const noexcept;
+        //! \returns The number of plies (1. e4 e5 is two plies) made on this board since its construction.
+        size_t played_ply_count() const noexcept;
 
         //! \brief The number of moves since this start of the game on this board.
         //!

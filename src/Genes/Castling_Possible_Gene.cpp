@@ -52,7 +52,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
     if(board.player_castled(perspective))
     {
         const auto castling_index = board.castling_move_index(perspective);
-        const auto first_searched_move_index = board.game_length() - depth;
+        const auto first_searched_move_index = board.played_ply_count() - depth;
         if(castling_index >= first_searched_move_index) // castling has not occurred on the actual board
         {
             const auto castling_distance = castling_index - first_searched_move_index + 1;
