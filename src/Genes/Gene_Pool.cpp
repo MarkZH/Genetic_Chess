@@ -46,7 +46,6 @@ namespace
     const std::string pause_key = "Ctrl-z";
     std::mutex pause_mutex;
 #endif
-    bool gene_pool_started = false;
     bool keep_going();
 
     std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file);
@@ -124,7 +123,6 @@ void gene_pool(const std::string& config_file)
     auto wins_to_beat = 0.0;
     find_previous_best_ai(best_file_name, game_record_file, best_id, best_id_wins, wins_to_beat);
 
-    gene_pool_started = true;
     while(keep_going())
     {
         std::cout << "\n=======================\n\n"
@@ -286,16 +284,9 @@ namespace
 
     void pause_gene_pool(int)
     {
+        std::cout << "\nGetting to a good stopping point ..." << std::endl;
     #ifdef _WIN32
-        if(gene_pool_started)
-        {
-            quit_gene_pool = true;
-            std::cout << "\nQuitting program after current games are finished ..." << std::endl;
-        }
-        else
-        {
-            exit(1);
-        }
+        quit_gene_pool = true;
     #else
         static auto pause_lock = std::unique_lock(pause_mutex, std::defer_lock);
 
@@ -307,14 +298,6 @@ namespace
         else
         {
             pause_lock.lock();
-            if(gene_pool_started)
-            {
-                std::cout << "\nWaiting for games to end and be recorded before pausing ..." << std::endl;
-            }
-            else
-            {
-                std::cout << "\n\nWill pause once the loading of files finishes ..." << std::endl;
-            }
         }
     #endif // _WIN32
     }
