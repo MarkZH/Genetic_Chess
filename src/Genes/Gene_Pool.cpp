@@ -47,6 +47,7 @@ namespace
     std::mutex pause_mutex;
 #endif
     bool gene_pool_started = false;
+    bool keep_going();
 
     std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file);
     [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
@@ -125,25 +126,8 @@ void gene_pool(const std::string& config_file)
     find_previous_best_ai(best_file_name, game_record_file, best_id, best_id_wins, wins_to_beat);
 
     gene_pool_started = true;
-    while(true)
+    while(keep_going())
     {
-        // Pause gene pool
-    #ifdef _WIN32
-        if(quit_gene_pool)
-        {
-            std::cout << "Done." << std::endl;
-            break;
-        }
-    #else
-        if(auto pause_lock = std::unique_lock(pause_mutex, std::try_to_lock); !pause_lock.owns_lock())
-        {
-            std::cout << "\nGene pool paused. Press " << pause_key << " to continue ";
-            std::cout << "or " << stop_key << " to quit." << std::endl;
-            pause_lock.lock();
-        }
-    #endif // _WIN32
-
-        // Write overall stats
         std::cout << "\n=======================\n\n"
                   << "Gene pool size: " << pool.size()
                   << "  Gene pool file name: " << genome_file_name
@@ -281,10 +265,26 @@ void gene_pool(const std::string& config_file)
         const auto mutation_phase = round_count % mutation_period;
         mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
     }
+    std::cout << "Done." << std::endl;
 }
 
 namespace
 {
+    bool keep_going()
+    {
+    #ifdef _WIN32
+        return ! quit_gene_pool;
+    #else
+        if(auto pause_lock = std::unique_lock(pause_mutex, std::try_to_lock); ! pause_lock.owns_lock())
+        {
+            std::cout << "\nGene pool paused. Press " << pause_key << " to continue ";
+            std::cout << "or " << stop_key << " to quit." << std::endl;
+            pause_lock.lock();
+        }
+        return true;
+    #endif // _WIN32
+    }
+
     void pause_gene_pool(int)
     {
     #ifdef _WIN32
