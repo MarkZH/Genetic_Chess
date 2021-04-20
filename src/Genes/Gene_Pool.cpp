@@ -68,7 +68,6 @@ namespace
 
 void gene_pool(const std::string& config_file)
 {
-    // Signal to pause gene pool
     signal(PAUSE_SIGNAL, pause_gene_pool);
 
     const auto config = Configuration(config_file);
@@ -109,7 +108,7 @@ void gene_pool(const std::string& config_file)
     }
 
     auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, mutation_rate);
-    auto round_count = count_still_alive_lines(genome_file_name); // Count of complete gene pool rounds where all pools have played a set of games
+    auto round_count = count_still_alive_lines(genome_file_name);
 
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
