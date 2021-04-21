@@ -18,7 +18,6 @@ int Genetic_AI::next_id = 0;
 
 Genetic_AI::Genetic_AI() noexcept : id_number(next_id++)
 {
-    recalibrate_self();
 }
 
 Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) noexcept :
