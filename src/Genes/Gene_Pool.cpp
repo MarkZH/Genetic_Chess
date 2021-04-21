@@ -90,9 +90,6 @@ void gene_pool(const std::string& config_file)
     const auto second_mutation_rate = config.as_positive_number<size_t>("second mutation rate");
     const auto second_mutation_interval = config.as_positive_number<size_t>("second mutation interval");
 
-    auto mutation_rate = first_mutation_rate;
-    const auto mutation_period = first_mutation_interval + second_mutation_interval;
-
     const auto minimum_game_time = config.as_positive_time_duration<Clock::seconds>("minimum game time");
     const auto maximum_game_time = config.as_positive_time_duration<Clock::seconds>("maximum game time");
     if(maximum_game_time < minimum_game_time)
@@ -115,7 +112,7 @@ void gene_pool(const std::string& config_file)
         std::cin.get();
     }
 
-    auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, mutation_rate);
+    auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, first_mutation_rate);
     auto round_count = count_still_alive_lines(genome_file_name);
 
     const auto game_record_file = genome_file_name + "_games.pgn";
@@ -134,6 +131,9 @@ void gene_pool(const std::string& config_file)
 
     while(keep_going())
     {
+        const auto mutation_phase = round_count++ % (first_mutation_interval + second_mutation_interval);
+        const auto mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
+
         print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time);
 
         // The shuffled pool list determines the match-ups. After shuffling the list,
@@ -229,11 +229,7 @@ void gene_pool(const std::string& config_file)
         std::cout << "\nWins to be recorded as best: " << wins_to_beat
                   << "\nBest ID: " << best_id << " with " << best_id_wins << " win" << (best_id_wins != 1 ? "s" : "") << "\n";
 
-        ++round_count;
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
-
-        const auto mutation_phase = round_count % mutation_period;
-        mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
     }
     std::cout << "Done." << std::endl;
 }
