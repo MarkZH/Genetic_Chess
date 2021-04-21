@@ -62,7 +62,9 @@ namespace
     int count_wins(const std::string& file_name, int id);
     std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
-    void find_previous_best_ai(const std::string& best_file_name, const std::string& game_record_file, int& best_id, int& best_id_wins, double& wins_to_beat) noexcept;
+    struct best_ai_stats { int id = 0; int wins = 0; double wins_to_beat = 0.0; };
+    best_ai_stats recall_previous_best_stats(const std::string& best_file_name, const std::string& game_record_file) noexcept;
+    void update_best_stats(best_ai_stats& best_stats, const std::vector<Genetic_AI>& pool, std::map<Genetic_AI, int>& wins, const std::string& best_file_name) noexcept;
     void print_round_header(const std::vector<Genetic_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins,
@@ -124,10 +126,7 @@ void gene_pool(const std::string& config_file)
     std::map<Genetic_AI, int> draws;
 
     const auto best_file_name = genome_file_name + "_best_genome.txt";
-    auto best_id = 0;
-    auto best_id_wins = 0;
-    auto wins_to_beat = 0.0;
-    find_previous_best_ai(best_file_name, game_record_file, best_id, best_id_wins, wins_to_beat);
+    auto best_stats = recall_previous_best_stats(best_file_name, game_record_file);
 
     while(keep_going())
     {
@@ -194,40 +193,14 @@ void gene_pool(const std::string& config_file)
         }
 
         write_generation(pool, genome_file_name, false);
-
         purge_dead_from_map(pool, wins);
         purge_dead_from_map(pool, draws);
+        update_best_stats(best_stats, pool, wins, best_file_name);
 
         if(verbose_output)
         {
             print_verbose_output(result_printer, pool, wins, draws);
         }
-
-        // Slowly reduce the wins required to be recorded as best to allow
-        // later AIs that are playing against a better field to be recorded.
-        const double decay_constant = 0.99;
-        wins_to_beat *= decay_constant;
-
-        const auto& winningest_live_ai =
-            *std::max_element(pool.begin(), pool.end(),
-                              [&wins](const auto& a, const auto& b)
-                              {
-                                  return wins[a] < wins[b];
-                              });
-        const auto win_count = wins[winningest_live_ai];
-
-        if(win_count > wins_to_beat)
-        {
-            static const auto temp_best_file_name = best_file_name + ".tmp";
-            wins_to_beat = win_count;
-            best_id = winningest_live_ai.id();
-            best_id_wins = win_count;
-            winningest_live_ai.print(temp_best_file_name);
-            std::filesystem::rename(temp_best_file_name, best_file_name);
-        }
-
-        std::cout << "\nWins to be recorded as best: " << wins_to_beat
-                  << "\nBest ID: " << best_id << " with " << best_id_wins << " win" << (best_id_wins != 1 ? "s" : "") << "\n";
 
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
     }
@@ -437,19 +410,48 @@ namespace
         std::cout << "Done." << std::endl;
     }
 
-    void find_previous_best_ai(const std::string& best_file_name, const std::string& game_record_file, int& best_id, int& best_id_wins, double& wins_to_beat) noexcept
+    best_ai_stats recall_previous_best_stats(const std::string& best_file_name, const std::string& game_record_file) noexcept
     {
         try
         {
             const auto best = Genetic_AI(best_file_name, find_last_id(best_file_name));
             std::cout << "Searching for previous best AI win counts ..." << std::endl;
-            best_id = best.id();
-            best_id_wins = count_wins(game_record_file, best_id);
-            wins_to_beat = best_id_wins;
+            auto wins = count_wins(game_record_file, best.id());
+            return {best.id(), wins, double(wins)};
         }
         catch(...)
         {
+            return {};
         }
+    }
+
+    void update_best_stats(best_ai_stats& best_stats, const std::vector<Genetic_AI>& pool, std::map<Genetic_AI, int>& wins, const std::string& best_file_name) noexcept
+    {
+        // Slowly reduce the wins required to be recorded as best to allow
+        // later AIs that are playing against a better field to be recorded.
+        const double decay_constant = 0.99;
+        best_stats.wins_to_beat *= decay_constant;
+
+        const auto& winningest_live_ai =
+            *std::max_element(pool.begin(), pool.end(),
+                              [&wins](const auto& a, const auto& b)
+                              {
+                                  return wins[a] < wins[b];
+                              });
+        const auto win_count = wins[winningest_live_ai];
+
+        if(win_count > best_stats.wins_to_beat)
+        {
+            static const auto temp_best_file_name = best_file_name + ".tmp";
+            best_stats.wins_to_beat = win_count;
+            best_stats.id = winningest_live_ai.id();
+            best_stats.wins = win_count;
+            winningest_live_ai.print(temp_best_file_name);
+            std::filesystem::rename(temp_best_file_name, best_file_name);
+        }
+
+        std::cout << "\nWins to be recorded as best: " << best_stats.wins_to_beat
+                  << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n";
     }
 
     std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file)
