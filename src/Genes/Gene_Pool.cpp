@@ -63,6 +63,7 @@ namespace
     std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
     void find_previous_best_ai(const std::string& best_file_name, const std::string& game_record_file, int& best_id, int& best_id_wins, double& wins_to_beat) noexcept;
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Genetic_AI>& pool, std::map<Genetic_AI, int>& wins, std::map<Genetic_AI, int>& draws);
 }
 
 void gene_pool(const std::string& config_file)
@@ -207,27 +208,7 @@ void gene_pool(const std::string& config_file)
 
         if(verbose_output)
         {
-            std::cout << result_printer.str();
-
-            // widths of columns for stats printout
-            const auto largest_id = std::max_element(pool.begin(), pool.end())->id();
-            const auto id_column_width = int(std::to_string(largest_id).size() + 1);
-            const auto win_column_width = 7;
-            const auto draw_column_width = 7;
-
-            // Write stat headers
-            std::cout << "\n"
-                      << std::setw(id_column_width) << "ID"
-                      << std::setw(win_column_width) << "Wins"
-                      << std::setw(draw_column_width) << "Draws" << "\n";
-
-            // Write stats for each specimen
-            for(const auto& ai : pool)
-            {
-                std::cout << std::setw(id_column_width) << ai.id()
-                          << std::setw(win_column_width) << wins[ai]
-                          << std::setw(draw_column_width) << draws[ai] << "\n";
-            }
+            print_verbose_output(result_printer, pool, wins, draws);
         }
 
         // Slowly reduce the wins required to be recorded as best to allow
@@ -371,6 +352,31 @@ namespace
         }
 
         purge_dead_from_map(pool, written_before);
+    }
+
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Genetic_AI>& pool, std::map<Genetic_AI, int>& wins, std::map<Genetic_AI, int>& draws)
+    {
+        std::cout << result_printer.str();
+
+        // widths of columns for stats printout
+        const auto largest_id = std::max_element(pool.begin(), pool.end())->id();
+        const auto id_column_width = int(std::to_string(largest_id).size() + 1);
+        const auto win_column_width = 7;
+        const auto draw_column_width = 7;
+
+        // Write stat headers
+        std::cout << "\n"
+                  << std::setw(id_column_width) << "ID"
+                  << std::setw(win_column_width) << "Wins"
+                  << std::setw(draw_column_width) << "Draws" << "\n";
+
+        // Write stats for each specimen
+        for(const auto& ai : pool)
+        {
+            std::cout << std::setw(id_column_width) << ai.id()
+                      << std::setw(win_column_width) << wins[ai]
+                      << std::setw(draw_column_width) << draws[ai] << "\n";
+        }
     }
 
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins)
