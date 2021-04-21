@@ -63,6 +63,14 @@ namespace
     std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
     void find_previous_best_ai(const std::string& best_file_name, const std::string& game_record_file, int& best_id, int& best_id_wins, double& wins_to_beat) noexcept;
+    void print_round_header(const std::vector<Genetic_AI>& pool,
+                            const std::string& genome_file_name,
+                            const std::array<size_t, 3>& color_wins,
+                            size_t round_count, 
+                            size_t first_mutation_interval,
+                            size_t second_mutation_interval, 
+                            size_t mutation_rate, 
+                            Clock::seconds game_time) noexcept;
     void print_verbose_output(const std::stringstream& result_printer, const std::vector<Genetic_AI>& pool, std::map<Genetic_AI, int>& wins, std::map<Genetic_AI, int>& draws);
 }
 
@@ -126,23 +134,7 @@ void gene_pool(const std::string& config_file)
 
     while(keep_going())
     {
-        std::cout << "\n=======================\n\n"
-                  << "Gene pool size: " << pool.size()
-                  << "  Gene pool file name: " << genome_file_name
-                  << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), size_t{0})
-                  << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
-                  << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
-                  << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
-                  << "\nRounds: " << round_count
-                  << "  Rounds since high mutation interval: " << round_count % mutation_period
-                  << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
-                  << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec\n\n";
-
-    #ifdef _WIN32
-        std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
-    #else
-        std::cout << "Pause: " << pause_key << "    Abort: " << stop_key << "\n" << std::endl;
-    #endif // _WIN32
+        print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time);
 
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
@@ -352,6 +344,34 @@ namespace
         }
 
         purge_dead_from_map(pool, written_before);
+    }
+
+    void print_round_header(const std::vector<Genetic_AI>& pool,
+                            const std::string& genome_file_name,
+                            const std::array<size_t, 3>& color_wins, \
+                            size_t round_count,
+                            size_t first_mutation_interval,
+                            size_t second_mutation_interval,
+                            size_t mutation_rate,
+                            Clock::seconds game_time) noexcept
+    {
+        std::cout << "\n=======================\n\n"
+                  << "Gene pool size: " << pool.size()
+                  << "  Gene pool file name: " << genome_file_name
+                  << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), size_t{0})
+                  << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
+                  << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
+                  << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
+                  << "\nRounds: " << round_count
+                  << "  Mutation rate phase: " << round_count % (first_mutation_interval + second_mutation_interval)
+                  << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
+                  << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec\n\n";
+
+    #ifdef _WIN32
+        std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
+    #else
+        std::cout << "Pause: " << pause_key << "    Abort: " << stop_key << "\n" << std::endl;
+    #endif // _WIN32
     }
 
     void print_verbose_output(const std::stringstream& result_printer, const std::vector<Genetic_AI>& pool, std::map<Genetic_AI, int>& wins, std::map<Genetic_AI, int>& draws)
