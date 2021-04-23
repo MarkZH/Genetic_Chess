@@ -58,10 +58,13 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
             const auto castling_distance = castling_index - first_searched_move_index + 1;
             return (board.castling_direction(perspective) > 0 ? kingside_preference : queenside_preference)/double(castling_distance);
         }
+        else
+        {
+            return 0.0;
+        }
     }
-
-    const auto king_square = board.find_king(perspective);
-    if( ! board.piece_has_moved(king_square))
+    else if(const auto king_square = board.find_king(perspective);
+            ! board.piece_has_moved(king_square))
     {
         auto score = 0.0;
         const auto base_rank = king_square.rank();
@@ -72,7 +75,9 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
             {
                 const auto preference = file == 'a' ? queenside_preference : kingside_preference;
                 const auto between_squares = Squares_in_a_Line(king_square, rook_square);
-                const auto moves_to_go = std::count_if(between_squares.begin(), between_squares.end(), [&board](const auto square)
+                const auto moves_to_go = std::count_if(between_squares.begin(),
+                                                       between_squares.end(),
+                                                       [&board](const auto square)
                                                        {
                                                            return board.piece_on_square(square);
                                                        });
@@ -82,8 +87,10 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
 
         return score;
     }
-
-    return 0.0;
+    else
+    {
+        return 0.0;
+    }
 }
 
 void Castling_Possible_Gene::gene_specific_mutation() noexcept
