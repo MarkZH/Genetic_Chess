@@ -1073,12 +1073,7 @@ bool Board::all_empty_between(const Square start, const Square end) const noexce
 bool Board::piece_is_pinned(const Square square) const noexcept
 {
     const auto king_square = find_king(whose_turn());
-    if(king_square == square)
-    {
-        return false; // king is never pinned
-    }
-
-    if( ! straight_line_move(square, king_square))
+    if(king_square == square || ! straight_line_move(square, king_square))
     {
         return false;
     }
