@@ -65,17 +65,22 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
     {
         auto score = 0.0;
         const auto base_rank = king_square.rank();
-        if( ! board.piece_has_moved({'a', base_rank}))
+        for(const auto file : {'a', 'h'})
         {
-            score += queenside_preference;
+            const auto rook_square = Square{file, base_rank};
+            if(!board.piece_has_moved(rook_square))
+            {
+                const auto preference = file == 'a' ? queenside_preference : kingside_preference;
+                const auto between_squares = Squares_in_a_Line(king_square, rook_square);
+                const auto moves_to_go = std::count_if(between_squares.begin(), between_squares.end(), [&board](const auto square)
+                                                       {
+                                                           return board.piece_on_square(square);
+                                                       });
+                score += preference/(depth + 2*moves_to_go + 1);
+            }
         }
 
-        if( ! board.piece_has_moved({'h', base_rank}))
-        {
-            score += kingside_preference;
-        }
-
-        return score/(1.0 + double(2*depth));
+        return score;
     }
 
     return 0.0;
