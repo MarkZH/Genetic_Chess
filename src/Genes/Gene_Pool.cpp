@@ -114,8 +114,8 @@ void gene_pool(const std::string& config_file)
         std::cin.get();
     }
 
-    auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, first_mutation_rate);
     auto round_count = count_still_alive_lines(genome_file_name);
+    auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, first_mutation_rate);
 
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
