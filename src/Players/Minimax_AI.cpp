@@ -163,30 +163,10 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         const auto time_allotted_for_this_move = std::min(time_left*speculation_time_factor(game_progress(next_board)),
                                                           clock.running_time_left())/moves_left;
 
-        Game_Tree_Node_Result result;
-        if(recurse)
-        {
-            result = search_game_tree(next_board,
-                                      time_allotted_for_this_move,
-                                      minimum_search_depth,
-                                      clock,
-                                      beta,
-                                      alpha,
-                                      principal_variation,
-                                      current_variation);
-        }
-        else
-        {
-            const auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values());
-            for(auto quiescent_move : quiescent_moves)
-            {
-                next_board.play_move(*quiescent_move);
-            }
-            const auto quiescent_guard = current_variation.scoped_push_back(quiescent_moves.begin(), quiescent_moves.end());
-            result = create_result(next_board, perspective, move_result, current_variation);
-            nodes_searched += quiescent_moves.size();
-        }
         const bool recurse = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, time_allotted_for_this_move);
+        const auto result = recurse ?
+            search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, clock, beta, alpha, principal_variation, current_variation) :
+            evaluate(move_result, next_board, current_variation, perspective);
 
         if(result.value(perspective) > best_result.value(perspective))
         {
@@ -228,6 +208,18 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     }
 
     return best_result;
+}
+
+Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result, Board& next_board, Minimax_AI::current_variation_store& current_variation, const Piece_Color perspective) const
+{
+    const auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values());
+    for(auto quiescent_move : quiescent_moves)
+    {
+        next_board.play_move(*quiescent_move);
+    }
+    const auto quiescent_guard = current_variation.scoped_push_back(quiescent_moves.begin(), quiescent_moves.end());
+    nodes_searched += quiescent_moves.size();
+    return create_result(next_board, perspective, move_result, current_variation);
 }
 
 bool Minimax_AI::search_further(Game_Result& move_result,

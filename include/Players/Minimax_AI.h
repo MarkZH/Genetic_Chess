@@ -122,6 +122,11 @@ class Minimax_AI : public Player
                                                std::vector<const Move*>& principal_variation,
                                                current_variation_store& current_variation) const noexcept;
 
+        Game_Tree_Node_Result evaluate(const Game_Result& move_result,
+                                       Board& next_board,
+                                       Minimax_AI::current_variation_store& current_variation,
+                                       Piece_Color perspective) const;
+
         bool search_further(Game_Result& move_result,
                             size_t depth,
                             const Board& next_board,
