@@ -125,7 +125,8 @@ class Minimax_AI : public Player
         Game_Tree_Node_Result evaluate(const Game_Result& move_result,
                                        Board& next_board,
                                        Minimax_AI::current_variation_store& current_variation,
-                                       Piece_Color perspective) const;
+                                       Piece_Color perspective,
+                                       std::chrono::steady_clock::time_point evaluate_start_time) const noexcept;
 
         bool search_further(Game_Result& move_result,
                             size_t depth,

@@ -163,10 +163,9 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         const auto time_allotted_for_this_move = std::min(time_left*speculation_time_factor(game_progress(next_board)),
                                                           clock.running_time_left())/moves_left;
 
-        const bool recurse = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, time_allotted_for_this_move);
-        const auto result = recurse ?
+        const auto result = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, time_allotted_for_this_move) ?
             search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, clock, beta, alpha, principal_variation, current_variation) :
-            evaluate(move_result, next_board, current_variation, perspective);
+            evaluate(move_result, next_board, current_variation, perspective, evaluate_start_time);
 
         if(result.value(perspective) > best_result.value(perspective))
         {
@@ -190,12 +189,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
         principal_variation.clear(); // only the first move is part of the principal variation
 
-        if( ! recurse)
-        {
-            ++nodes_evaluated;
-            total_evaluation_time += std::chrono::steady_clock::now() - evaluate_start_time;
-        }
-
         if(clock.running_time_left() < 0.0s || Board::must_pick_move_now())
         {
             break;
@@ -210,8 +203,26 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     return best_result;
 }
 
-Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result, Board& next_board, Minimax_AI::current_variation_store& current_variation, const Piece_Color perspective) const
+Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
+                                           Board& next_board,
+                                           Minimax_AI::current_variation_store& current_variation, 
+                                           const Piece_Color perspective,
+                                           const std::chrono::steady_clock::time_point evaluate_start_time) const noexcept
 {
+    struct [[nodiscard]] evaluate_time_guard
+    {
+        Clock::seconds& evaluation_time_total;
+        std::chrono::steady_clock::time_point evaluation_start_time;
+        
+        evaluate_time_guard(Clock::seconds& evaluation_time, std::chrono::steady_clock::time_point evaluation_time_start) noexcept :
+            evaluation_time_total(evaluation_time),
+            evaluation_start_time(evaluation_time_start)
+        {
+        }
+        ~evaluate_time_guard() noexcept { evaluation_time_total += std::chrono::steady_clock::now() - evaluation_start_time; }
+    };
+    auto guard = evaluate_time_guard{total_evaluation_time, evaluate_start_time};
+
     const auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values());
     for(auto quiescent_move : quiescent_moves)
     {
@@ -219,6 +230,7 @@ Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result, Board
     }
     const auto quiescent_guard = current_variation.scoped_push_back(quiescent_moves.begin(), quiescent_moves.end());
     nodes_searched += quiescent_moves.size();
+    ++nodes_evaluated;
     return create_result(next_board, perspective, move_result, current_variation);
 }
 
