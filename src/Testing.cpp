@@ -1160,7 +1160,7 @@ namespace
                 {
                     actual_result_board.play_move(*move);
                 }
-                for(const auto quiescent_move : String::split(specification.at(3)))
+                for(const auto& quiescent_move : String::split(specification.at(3)))
                 {
                     board.play_move(quiescent_move);
                 }
