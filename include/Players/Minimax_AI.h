@@ -122,6 +122,13 @@ class Minimax_AI : public Player
                                                std::vector<const Move*>& principal_variation,
                                                current_variation_store& current_variation) const noexcept;
 
+        bool search_further(Game_Result& move_result,
+                            size_t depth,
+                            const Board& next_board,
+                            const std::vector<const Move*>& principal_variation,
+                            size_t minimum_search_depth,
+                            Clock::seconds time_allotted_for_this_move) const noexcept;
+
         //! \brief Assign a score to the current board state.
         //!
         //! \param board The current state of the Board.

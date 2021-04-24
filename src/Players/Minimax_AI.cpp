@@ -163,34 +163,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         const auto time_allotted_for_this_move = std::min(time_left*speculation_time_factor(game_progress(next_board)),
                                                           clock.running_time_left())/moves_left;
 
-        bool recurse;
-        if(move_result.game_has_ended())
-        {
-            recurse = false;
-        }
-        else if(depth >= maximum_search_depth)
-        {
-            recurse = false;
-        }
-        else if(next_board.repeat_count_from_depth(depth) >= 2)
-        {
-            move_result = Game_Result(Winner_Color::NONE, Game_Result_Type::THREEFOLD_REPETITION);
-            recurse = false;
-        }
-        else if( ! principal_variation.empty())
-        {
-            recurse = true;
-        }
-        else if(depth < minimum_search_depth)
-        {
-            recurse = true;
-        }
-        else
-        {
-            const auto minimum_time_to_recurse = next_board.legal_moves().size()*node_evaluation_time;
-            recurse = (time_allotted_for_this_move > minimum_time_to_recurse);
-        }
-
         Game_Tree_Node_Result result;
         if(recurse)
         {
@@ -214,6 +186,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             result = create_result(next_board, perspective, move_result, current_variation);
             nodes_searched += quiescent_moves.size();
         }
+        const bool recurse = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, time_allotted_for_this_move);
 
         if(result.value(perspective) > best_result.value(perspective))
         {
@@ -255,6 +228,41 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     }
 
     return best_result;
+}
+
+bool Minimax_AI::search_further(Game_Result& move_result,
+                                const size_t depth,
+                                const Board& next_board,
+                                const std::vector<const Move*>& principal_variation,
+                                const size_t minimum_search_depth, 
+                                const Clock::seconds time_allotted_for_this_move) const noexcept
+{
+    if(move_result.game_has_ended())
+    {
+        return false;
+    }
+    else if(depth >= maximum_search_depth)
+    {
+        return false;
+    }
+    else if(next_board.repeat_count_from_depth(depth) >= 2)
+    {
+        move_result = Game_Result(Winner_Color::NONE, Game_Result_Type::THREEFOLD_REPETITION);
+        return false;
+    }
+    else if( ! principal_variation.empty())
+    {
+        return true;
+    }
+    else if(depth < minimum_search_depth)
+    {
+        return true;
+    }
+    else
+    {
+        const auto minimum_time_to_recurse = next_board.legal_moves().size()*node_evaluation_time;
+        return time_allotted_for_this_move > minimum_time_to_recurse;
+    }
 }
 
 void Minimax_AI::output_thinking(const Thinking_Output_Type format,
