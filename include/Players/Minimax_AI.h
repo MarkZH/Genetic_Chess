@@ -187,6 +187,6 @@ std::string variation_line(Board board,
                            const std::vector<const Move*>& variation,
                            double score,
                            const std::vector<const Move*>& alternate_variation,
-                           double alternate_score);
+                           double alternate_score) noexcept;
 
 #endif // MINIMAX_AI_H

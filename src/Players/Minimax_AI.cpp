@@ -458,7 +458,7 @@ std::string variation_line(Board board,
                            const std::vector<const Move*>& variation,
                            const double score,
                            const std::vector<const Move*>& alternate_variation,
-                           const double alternate_score)
+                           const double alternate_score) noexcept
 {
     Game_Result move_result;
     auto write_alternate_variation = ! alternate_variation.empty();
