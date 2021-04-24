@@ -68,10 +68,10 @@ namespace
     void print_round_header(const std::vector<Genetic_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins,
-                            size_t round_count, 
+                            size_t round_count,
                             size_t first_mutation_interval,
-                            size_t second_mutation_interval, 
-                            size_t mutation_rate, 
+                            size_t second_mutation_interval,
+                            size_t mutation_rate,
                             Clock::seconds game_time) noexcept;
     void print_verbose_output(const std::stringstream& result_printer, const std::vector<Genetic_AI>& pool, std::map<Genetic_AI, int>& wins, std::map<Genetic_AI, int>& draws);
 }
@@ -114,8 +114,8 @@ void gene_pool(const std::string& config_file)
         std::cin.get();
     }
 
-    auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, first_mutation_rate);
     auto round_count = count_still_alive_lines(genome_file_name);
+    auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, first_mutation_rate);
 
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
@@ -318,11 +318,11 @@ namespace
     void print_round_header(const std::vector<Genetic_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins, \
-                            size_t round_count,
-                            size_t first_mutation_interval,
-                            size_t second_mutation_interval,
-                            size_t mutation_rate,
-                            Clock::seconds game_time) noexcept
+                            const size_t round_count,
+                            const size_t first_mutation_interval,
+                            const size_t second_mutation_interval,
+                            const size_t mutation_rate,
+                            const Clock::seconds game_time) noexcept
     {
         std::cout << "\n=======================\n\n"
                   << "Gene pool size: " << pool.size()
