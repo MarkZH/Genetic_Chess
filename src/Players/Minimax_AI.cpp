@@ -205,7 +205,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
 Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
                                            Board& next_board,
-                                           Minimax_AI::current_variation_store& current_variation, 
+                                           Minimax_AI::current_variation_store& current_variation,
                                            const Piece_Color perspective,
                                            const std::chrono::steady_clock::time_point evaluate_start_time) const noexcept
 {
@@ -213,7 +213,7 @@ Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
     {
         Clock::seconds& evaluation_time_total;
         std::chrono::steady_clock::time_point evaluation_start_time;
-        
+
         evaluate_time_guard(Clock::seconds& evaluation_time, std::chrono::steady_clock::time_point evaluation_time_start) noexcept :
             evaluation_time_total(evaluation_time),
             evaluation_start_time(evaluation_time_start)
@@ -238,7 +238,7 @@ bool Minimax_AI::search_further(Game_Result& move_result,
                                 const size_t depth,
                                 const Board& next_board,
                                 const std::vector<const Move*>& principal_variation,
-                                const size_t minimum_search_depth, 
+                                const size_t minimum_search_depth,
                                 const Clock::seconds time_allotted_for_this_move) const noexcept
 {
     if(move_result.game_has_ended())
