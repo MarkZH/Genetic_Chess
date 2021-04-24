@@ -68,10 +68,10 @@ namespace
     void print_round_header(const std::vector<Genetic_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins,
-                            size_t round_count, 
+                            size_t round_count,
                             size_t first_mutation_interval,
-                            size_t second_mutation_interval, 
-                            size_t mutation_rate, 
+                            size_t second_mutation_interval,
+                            size_t mutation_rate,
                             Clock::seconds game_time) noexcept;
     void print_verbose_output(const std::stringstream& result_printer, const std::vector<Genetic_AI>& pool, std::map<Genetic_AI, int>& wins, std::map<Genetic_AI, int>& draws);
 }
