@@ -177,9 +177,9 @@ namespace
     bool run_board_tests(const std::string& file_name);
     bool all_moves_legal(Board& board, const std::vector<std::string>& moves) noexcept;
     bool move_is_illegal(const Board& board, const std::string& move) noexcept;
-    
+
     void move_attack_indices_are_consistenly_defined(bool& tests_passed);
-    
+
     void squares_with_unique_coordinates_have_unique_indices(bool& tests_passed);
     void constructed_squares_retain_coordinates(bool& tests_passed);
     void pieces_can_be_constructed_from_piece_data(bool& tests_passed);
@@ -190,7 +190,7 @@ namespace
 
     void repeating_board_position_three_times_results_in_threefold_game_result(bool& tests_passed);
     void one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(bool& tests_passed);
-    
+
     void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed);
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed);
@@ -263,7 +263,7 @@ bool run_tests()
     self_assigned_genetic_ai_is_unchanged(tests_passed);
 
     function_should_not_throw(tests_passed, "Genetic_AI ctor",
-                              []() 
+                              []()
                               {
                                   const auto file_name = "genetic_ai_example.txt";
                                   return Genetic_AI{file_name, find_last_id(file_name)};
@@ -913,7 +913,7 @@ namespace
             }
         }
     }
-    
+
     void all_squares_yields_all_squares(bool& tests_passed)
     {
         std::array<bool, 64> squares_visited{};
@@ -947,7 +947,7 @@ namespace
         }
         test_result(tests_passed, repeat_result.ending_reason() == "Threefold repetition", "Threefold stalemate not triggered.");
     }
-    
+
     void one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(bool& tests_passed)
     {
         auto fifty_move_board = Board();
@@ -994,7 +994,7 @@ namespace
         }
         test_result(tests_passed, fifty_move_result.ending_reason() == "50-move limit", "50-move draw test result: Got: " + fifty_move_result.ending_reason() + " instead.");
     }
-    
+
     void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed)
     {
         Board move_derivation_board;
@@ -1006,7 +1006,7 @@ namespace
         }
         test_result(tests_passed, move_derivation_board.fen() == derived_fen, "Wrong moves derived.");
     }
-    
+
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed)
     {
         const auto castling_hash_board = Board("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
@@ -1041,7 +1041,7 @@ namespace
 
         test_result(tests_passed, just_kings_move_board.board_hash() != castling_hash_board.board_hash(), "Boards should have different hashes with different castling rights");
     }
-    
+
     void genetic_ai_loaded_from_file_writes_identical_file(bool& tests_passed)
     {
         const auto pool_file_name = "test_gene_pool.txt";
@@ -1070,7 +1070,7 @@ namespace
             remove(rewrite_file_name);
         }
     }
-    
+
     void self_swapped_genetic_ai_is_unchanged(bool& tests_passed)
     {
         auto self_swap_ai = Genetic_AI();
@@ -1090,7 +1090,7 @@ namespace
             remove(self_swap_file_name);
         }
     }
-    
+
     void self_assigned_genetic_ai_is_unchanged(bool& tests_passed)
     {
         auto self_assign_ai = Genetic_AI();
@@ -1098,7 +1098,7 @@ namespace
         auto self_write_file_name = "self_assign_original.txt";
         remove(self_write_file_name);
         self_assign_ai.print(self_write_file_name);
-        
+
         const auto& copy_ai = self_assign_ai;
         self_assign_ai = copy_ai;
         auto self_assign_file_name = "self_assign_post_assignment.txt";
@@ -1120,11 +1120,11 @@ namespace
 
         auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
         castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, (0.8 + 0.2) / 1.0);
-        
+
         castling_board.play_move("O-O");
         castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8 / 1); // castled at depth 1
         castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2 / (1.0 + 2.0 + 1.0));
-        
+
         castling_board.play_move("Nc6");
         castling_board.play_move("Rab1");
         castling_board.play_move("O-O-O");
