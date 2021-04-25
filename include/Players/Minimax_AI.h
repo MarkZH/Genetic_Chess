@@ -87,10 +87,10 @@ class Minimax_AI : public Player
         mutable std::chrono::steady_clock::time_point time_at_last_output;
 
         // Evaluation method
-        double evaluate(const Board& board,
-                        const Game_Result& move_result,
-                        Piece_Color perspective,
-                        size_t depth) const noexcept;
+        double assign_score(const Board& board,
+                            const Game_Result& move_result,
+                            Piece_Color perspective,
+                            size_t depth) const noexcept;
         virtual double internal_evaluate(const Board& board,
                                          Piece_Color perspective,
                                          size_t depth) const noexcept = 0;

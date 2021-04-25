@@ -363,7 +363,7 @@ Game_Tree_Node_Result Minimax_AI::create_result(const Board& board,
                                                 const Game_Result& move_result,
                                                 const current_variation_store& move_list) const noexcept
 {
-    return {evaluate(board, move_result, perspective, move_list.size()),
+    return {assign_score(board, move_result, perspective, move_list.size()),
             perspective,
             {move_list.begin(), move_list.end()}};
 }
@@ -378,7 +378,7 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
     reset();
 }
 
-double Minimax_AI::evaluate(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
+double Minimax_AI::assign_score(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
 {
     if(move_result.game_has_ended())
     {
@@ -434,8 +434,8 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
         if(board_is_good)
         {
             const auto board_without_pawn = board.without_random_pawn();
-            const auto original_board_result = evaluate(board, {}, Piece_Color::WHITE, 0);
-            const auto minus_pawn_result = evaluate(board_without_pawn, {}, Piece_Color::WHITE, 0);
+            const auto original_board_result = assign_score(board, {}, Piece_Color::WHITE, 0);
+            const auto minus_pawn_result = assign_score(board_without_pawn, {}, Piece_Color::WHITE, 0);
             const auto diff = std::abs(original_board_result - minus_pawn_result);
             sum_of_diffs += diff;
 
