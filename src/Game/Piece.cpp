@@ -280,7 +280,7 @@ Piece::Piece() noexcept : piece_code(invalid_code)
 }
 
 Piece::Piece(const Piece_Color color, const Piece_Type type) noexcept :
-    piece_code((static_cast<int>(type) << 1) | static_cast<int>(color))
+    piece_code((static_cast<piece_code_t>(type) << 1) | static_cast<piece_code_t>(color))
 {
     // piece_code layout: 4 bits
     // 3 most significant bits = Piece_Type (values 0-5)
@@ -311,7 +311,7 @@ std::string Piece::pgn_symbol() const noexcept
 char Piece::fen_symbol() const noexcept
 {
     assert(*this);
-    const auto symbol = pgn_symbols[static_cast<int>(type())];
+    const auto symbol = pgn_symbols[static_cast<size_t>(type())];
     return (color() == Piece_Color::WHITE ? symbol : String::tolower(symbol));
 }
 

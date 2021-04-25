@@ -200,7 +200,7 @@ size_t Move::attack_index(const Square_Difference& move) noexcept
     assert(-7 <= move.rank_change && move.rank_change <= 7);
     assert(-7 <= move.file_change && move.file_change <= 7);
 
-    const auto i = array_width*(7 - move.rank_change) + (move.file_change + 7);
+    const auto i = array_width*size_t(7 - move.rank_change) + size_t(move.file_change + 7);
 
     assert(indices[i] < 16);
     return indices[i];

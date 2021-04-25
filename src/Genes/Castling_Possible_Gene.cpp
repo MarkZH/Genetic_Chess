@@ -81,7 +81,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
                                                        {
                                                            return board.piece_on_square(square);
                                                        });
-                score += preference/double(depth + 2*moves_to_go + 1);
+                score += preference/double(depth + 2*size_t(moves_to_go) + 1);
             }
         }
 

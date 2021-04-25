@@ -57,7 +57,7 @@ class Fixed_Capacity_Vector
         template<typename Iterator>
         constexpr auto scoped_push_back(const Iterator begin, const Iterator end) noexcept
         {
-            assert(size() + std::distance(begin, end) <= data.size());
+            assert(size() + size_t(std::distance(begin, end)) <= data.size());
             return Scoped_Push_Guard(*this, begin, end);
         }
 

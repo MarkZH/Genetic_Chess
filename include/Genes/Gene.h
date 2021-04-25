@@ -11,7 +11,7 @@
 class Board;
 class Piece_Strength_Gene;
 
-enum class Game_Stage
+enum class Game_Stage : size_t
 {
     OPENING,
     ENDGAME

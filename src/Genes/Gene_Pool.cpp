@@ -188,7 +188,7 @@ void gene_pool(const std::string& config_file)
             offspring.mutate(mutation_rate);
             losing_player = offspring;
 
-            ++color_wins[static_cast<int>(winner)];
+            ++color_wins[static_cast<size_t>(winner)];
             ++(winner == Winner_Color::NONE ? draws : wins)[winning_player];
         }
 
@@ -328,9 +328,9 @@ namespace
                   << "Gene pool size: " << pool.size()
                   << "  Gene pool file name: " << genome_file_name
                   << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), size_t{0})
-                  << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
-                  << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
-                  << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
+                  << "  White wins: " << color_wins[static_cast<size_t>(Winner_Color::WHITE)]
+                  << "  Black wins: " << color_wins[static_cast<size_t>(Winner_Color::BLACK)]
+                  << "  Draws: " << color_wins[static_cast<size_t>(Winner_Color::NONE)]
                   << "\nRounds: " << round_count
                   << "  Mutation rate phase: " << round_count % (first_mutation_interval + second_mutation_interval)
                   << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
@@ -390,15 +390,15 @@ namespace
                 auto result = String::split(line, "\"").at(1);
                 if(result == "1-0")
                 {
-                    color_wins[static_cast<int>(Winner_Color::WHITE)]++;
+                    color_wins[static_cast<size_t>(Winner_Color::WHITE)]++;
                 }
                 else if(result == "0-1")
                 {
-                    color_wins[static_cast<int>(Winner_Color::BLACK)]++;
+                    color_wins[static_cast<size_t>(Winner_Color::BLACK)]++;
                 }
                 else if(result == "1/2-1/2")
                 {
-                    color_wins[static_cast<int>(Winner_Color::NONE)]++;
+                    color_wins[static_cast<size_t>(Winner_Color::NONE)]++;
                 }
                 else
                 {

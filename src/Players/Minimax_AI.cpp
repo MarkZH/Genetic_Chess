@@ -476,7 +476,7 @@ std::string variation_line(Board board,
     const auto first_difference = std::mismatch(variation.begin(), variation.end(),
                                                 alternate_variation.begin(), alternate_variation.end());
     const auto variation_index = size_t(std::distance(alternate_variation.begin(), first_difference.second));
-    const auto move_label_offset = (board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
+    const auto move_label_offset = size_t(board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
     std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + ". ... " : std::string{});
     for(size_t i = 0; i < variation.size(); ++i)
     {
@@ -486,7 +486,7 @@ std::string variation_line(Board board,
         {
             result += variation_line(board,
                                      move_label,
-                                     {alternate_variation.begin() + i, alternate_variation.end()},
+                                     {alternate_variation.begin() + int(i), alternate_variation.end()},
                                      alternate_score,
                                      {},
                                      {}) + " ";

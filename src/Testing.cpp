@@ -305,11 +305,11 @@ bool run_tests()
     test_function(tests_passed, "String::add_to_file_name() with no dot", "a-b", String::add_to_file_name, "a", "-b");
 
     using vs = std::vector<std::string>;
-    test_function(tests_passed, "String::split()", vs{"a", "b", "c", "d", "e"}, String::split, "\t a b c d e ", "", -1);
-    test_function(tests_passed, "Split on comma", vs{"", ""}, String::split, ",", ",", 1);
-    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", -1);
-    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, String::split, "..a..b..c..d..", "..", 4);
-    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", 5);
+    test_function(tests_passed, "String::split()", vs{"a", "b", "c", "d", "e"}, String::split, "\t a b c d e ", "", size_t(-1));
+    test_function(tests_passed, "Split on comma", vs{"", ""}, String::split, ",", ",", size_t(1));
+    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", size_t(-1));
+    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, String::split, "..a..b..c..d..", "..", size_t(4));
+    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", size_t(5));
     split_and_join_are_inverse_operations(tests_passed);
 
     test_function(tests_passed, "Format integer (zero)",  "0", String::format_integer<int>,  0, ",");
@@ -1289,7 +1289,7 @@ namespace
              {1000000000, "1,000,000,000"}};
         for(const auto& [number, text] : tests)
         {
-            test_function(tests_passed, "Format integer (size_t)", text, String::format_integer<size_t>, number, ",");
+            test_function(tests_passed, "Format integer (size_t)", text, String::format_integer<size_t>, size_t(number), ",");
             test_function(tests_passed, "Format integer (int)", text, String::format_integer<int>, number, ",");
             test_function(tests_passed, "Format integer (negative int)", "-" + text, String::format_integer<int>, -number, ",");
         }

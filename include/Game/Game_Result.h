@@ -10,7 +10,7 @@
 //! \brief All game-ending results.
 //!
 //! The value OTHER is used for non-game endings like program shutdown.
-enum class Game_Result_Type
+enum class Game_Result_Type : size_t
 {
     ONGOING,
     CHECKMATE,

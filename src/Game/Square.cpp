@@ -35,7 +35,7 @@ Square::Square() noexcept : square_index(invalid_index)
 {
 }
 
-Square::Square(const char file, const int rank) noexcept : square_index(8*(file - 'a') + (rank - 1))
+Square::Square(const char file, const int rank) noexcept : square_index(8*square_index_t(file - 'a') + square_index_t(rank - 1))
 {
     assert(inside_board());
 }
@@ -79,14 +79,14 @@ bool Square::is_set() const noexcept
 Square& Square::operator+=(const Square_Difference& diff) noexcept
 {
     assert(std::abs(diff.file_change) < 8 && std::abs(diff.rank_change) < 8);
-    const square_index_t new_rank_index = square_index + diff.rank_change;
+    const auto new_rank_index = square_index_t(int(square_index) + diff.rank_change);
     if(new_rank_index/8 != square_index/8) // make sure file did not change (happens if new square is off the board vertically)
     {
         square_index = invalid_index;
         return *this;
     }
 
-    square_index = new_rank_index + 8*(diff.file_change);
+    square_index = square_index_t(int(new_rank_index) + 8*(diff.file_change));
     return *this;
 }
 
