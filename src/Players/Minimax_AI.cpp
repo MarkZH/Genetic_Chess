@@ -182,7 +182,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                     output_thinking(Board::thinking_mode(),
                                     best_result,
                                     depth % 2 == 1 ? perspective : opposite(perspective));
-                    time_at_last_output = std::chrono::steady_clock::now();
                 }
             }
         }
@@ -281,6 +280,7 @@ void Minimax_AI::output_thinking(const Thinking_Output_Type format,
     {
         output_thinking_uci(thought, perspective);
     }
+    time_at_last_output = std::chrono::steady_clock::now();
 }
 
 void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
