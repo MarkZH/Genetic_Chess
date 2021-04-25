@@ -31,11 +31,6 @@ enum class Square_Color : size_t
     BLACK
 };
 
-//! \brief Returns the opposite of a given Square_Color.
-//!
-//! \param color The color whose opposite is sought.
-Square_Color opposite(Square_Color color) noexcept;
-
 //! \brief A representation of the winner of a game.
 enum class Winner_Color : size_t
 {
