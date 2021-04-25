@@ -177,363 +177,113 @@ namespace
     bool run_board_tests(const std::string& file_name);
     bool all_moves_legal(Board& board, const std::vector<std::string>& moves) noexcept;
     bool move_is_illegal(const Board& board, const std::string& move) noexcept;
+    
+    void move_attack_indices_are_consistenly_defined(bool& tests_passed);
+    
+    void squares_with_unique_coordinates_have_unique_indices(bool& tests_passed);
+    void constructed_squares_retain_coordinates(bool& tests_passed);
+    void pieces_can_be_constructed_from_piece_data(bool& tests_passed);
+    void pieces_can_be_constructed_from_fen_symbols(bool& tests_passed);
+    void no_pair_of_adjacent_squares_are_the_same_color(bool& tests_passed);
+    void difference_between_two_squares_added_to_one_squares_gives_other_square(bool& tests_passed);
+    void all_squares_yields_all_squares(bool& tests_passed);
+
+    void repeating_board_position_three_times_results_in_threefold_game_result(bool& tests_passed);
+    void one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(bool& tests_passed);
+    
+    void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed);
+
+    void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed);
+    void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed);
+
+    void genetic_ai_loaded_from_file_writes_identical_file(bool& tests_passed);
+    void self_swapped_genetic_ai_is_unchanged(bool& tests_passed);
+    void self_assigned_genetic_ai_is_unchanged(bool& tests_passed);
+
+    void castling_possible_gene_tests(bool& tests_passed);
+    void freedom_to_move_gene_tests(bool& tests_passed);
+    void king_confinement_gene_tests(bool& tests_passed);
+    void king_protection_gene_tests(bool& tests_passed);
+    void opponent_pieces_targeted_gene_tests(bool& tests_passed);
+    void pawn_advancement_gene_tests(bool& tests_passed);
+    void passed_pawn_gene_tests(bool& tests_passed);
+    void total_force_gene_tests(bool& tests_passed);
+    void stacked_pawns_gene_tests(bool& tests_passed);
+    void pawn_islands_gene_tests(bool& tests_passed);
+    void checkmate_material_gene_tests(bool& tests_passed);
+    void sphere_of_influence_gene_tests(bool& tests_passed);
+
+    void split_and_join_are_inverse_operations(bool& tests_passed);
+    void commas_as_thousands_separators_correctly_placed(bool& tests_passed);
+
+    void specified_time_added_to_clock_after_specified_number_of_punches(bool& tests_passed);
+    void clock_with_increment_gets_time_added_on_every_punch(bool& tests_passed);
+
+    void midgame_node_result_values_compare_correctly(bool& tests_passed);
+    void midgame_alpha_beta_values_compare_correctly_with_node_values(bool& tests_passed);
+    void alpha_beta_result_values_compare_in_line_with_algorithm(bool& tests_passed);
+    void alpha_and_beta_value_comparisons_fit_algorithm_definitions(bool& tests_passed);
+    void endgame_node_result_tests(bool& tests_passed);
+
+    void average_moves_left_matches_precalculated_value(bool& tests_passed);
+    void average_moves_left_returns_finite_result_after_zero_moves(bool& tests_passed);
+    void average_moves_left_returns_finite_result_after_one_move(bool& tests_passed);
 }
 
 bool run_tests()
 {
     bool tests_passed = true;
 
-    // Move direction indexing
-    for(size_t i = 0; i < 16; ++i)
-    {
-        const auto step = Move::attack_direction_from_index(i);
-        const auto start = Square{'e', 4};
-        const auto step_index = Move(start, start + step).attack_index();
-        test_result(tests_passed, step_index == i, "Direction-index mismatch: " + std::to_string(i) + " --> " + std::to_string(step_index));
-    }
+    move_attack_indices_are_consistenly_defined(tests_passed);
 
+    pieces_can_be_constructed_from_piece_data(tests_passed);
+    pieces_can_be_constructed_from_fen_symbols(tests_passed);
 
-    // Square indexing tests
-    std::array<bool, 64> visited{};
-    for(char file = 'a'; file <= 'h'; ++file)
-    {
-        for(int rank = 1; rank <= 8; ++rank)
-        {
-            const auto square = Square{file, rank};
-            test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.string());
-            visited[square.index()] = true;
-            const auto indexed_square = Square(square.file(), square.rank());
-            test_result(tests_passed, square == indexed_square, "Incorrect square indexing: " + square.string() + " --> " + indexed_square.string());
-        }
-    }
-    test_result(tests_passed, std::all_of(visited.begin(), visited.end(), [](auto x){ return x; }), "Not all indices visited by iterating through all squares.");
+    test_result(tests_passed, Square{'a', 1}.color() == Square_Color::BLACK, "Square a1 is not black.");
+    no_pair_of_adjacent_squares_are_the_same_color(tests_passed);
 
+    squares_with_unique_coordinates_have_unique_indices(tests_passed);
+    constructed_squares_retain_coordinates(tests_passed);
+    difference_between_two_squares_added_to_one_squares_gives_other_square(tests_passed);
+    all_squares_yields_all_squares(tests_passed);
 
-    // Piece construction tests
-    for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
-    {
-        const auto type = static_cast<Piece_Type>(type_index);
-        for(auto color : {Piece_Color::BLACK, Piece_Color::WHITE})
-        {
-            const auto piece = Piece{color, type};
-            const auto piece2 = Piece{piece.color(), piece.type()};
-            const auto piece3 = Piece(piece.fen_symbol());
-            test_result(tests_passed, piece == piece2, std::string("Inconsistent construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
-            test_result(tests_passed, piece == piece3, std::string("Inconsistent FEN construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
-        }
-    }
+    repeating_board_position_three_times_results_in_threefold_game_result(tests_passed);
+    one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(tests_passed);
 
-
-    // Check that square colors are correct
-    auto current_color = Square_Color::BLACK;
-    for(char file = 'a'; file <= 'h'; ++file)
-    {
-        for(int rank = 1; rank <= 8; ++rank)
-        {
-            const auto square = Square{file, rank};
-            test_result(tests_passed, square.color() == current_color, "Wrong color for square " + square.string());
-            current_color = opposite(current_color);
-        }
-        current_color = opposite(current_color);
-    }
-
-    // Check that Square arithmetic works
-    for(const auto a : Square::all_squares())
-    {
-        for(const auto b : Square::all_squares())
-        {
-            test_result(tests_passed, a + (b - a) == b,
-                "Square arithetic problem: " +
-                a.string() + " + (" + b.string() + " - " + a.string() + ") != " + b.string());
-        }
-    }
-
-    // Check square iteration
-    std::array<bool, 64> squares_visited{};
-    for(const auto square : Square::all_squares())
-    {
-        test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.string() + " already visited.");
-        squares_visited[square.index()] = true;
-    }
-    test_result(tests_passed, std::all_of(squares_visited.begin(), squares_visited.end(), [](auto tf) { return tf; }), "Square iterator missed some squares.");
-
-
-    // Threefold repetition rule test
-    auto repeat_board = Board();
-    Game_Result repeat_result;
-    auto repeat_move_count = 0;
-
-    // Repeating the sequence of moves twice creates a board with the starting position
-    // three times (including the state before any moves).
-    for(int repetition = 0; repetition < 2; ++repetition)
-    {
-        for(const auto& move : {"Nc3", "Nc6", "Nb1", "Nb8"})
-        {
-            ++repeat_move_count;
-            repeat_result = repeat_board.play_move(move);
-            if(repeat_result.game_has_ended())
-            {
-                test_result(tests_passed, repeat_move_count == 8, "Threefold repetition triggered early.");
-            }
-        }
-    }
-    test_result(tests_passed, repeat_result.ending_reason() == "Threefold repetition", "Threefold stalemate not triggered.");
-
-
-    // Fifty-move stalemate test (100 plies with no capture or pawn movement)
-    auto fifty_move_board = Board();
-    auto fifty_move_result = Game_Result();
-    for(int move_counter = 1; move_counter <= 100; ++move_counter)
-    {
-        auto move_chosen = false;
-        for(const auto& move : fifty_move_board.legal_moves())
-        {
-            if(fifty_move_board.move_captures(*move))
-            {
-                continue;
-            }
-
-            const auto& fifty_move_board_view = fifty_move_board;
-            if(fifty_move_board_view.piece_on_square(move->start()).type() == Piece_Type::PAWN)
-            {
-                continue;
-            }
-
-            auto next_board = fifty_move_board;
-            auto result = next_board.play_move(*move);
-
-            if(result.winner() != Winner_Color::NONE)
-            {
-                continue;
-            }
-
-            if(result.game_has_ended())
-            {
-                if(result.ending_reason() == "Threefold repetition")
-                {
-                    continue;
-                }
-
-                test_result(tests_passed, move_counter == 100, "Fifty-move stalemate triggered early.");
-            }
-
-            fifty_move_result = fifty_move_board.play_move(*move);
-            move_chosen = true;
-            break;
-        }
-
-        test_result(tests_passed, move_chosen, "Unable to choose next move (moves made = " + std::to_string(move_counter) + ").");
-    }
-    test_result(tests_passed, fifty_move_result.ending_reason() == "50-move limit", "50-move draw test result: Got: " + fifty_move_result.ending_reason() + " instead.");
-
-    // Move derivation test
-    Board move_derivation_board;
-    const auto derived_fen = std::string{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
-    const auto derived_moves = move_derivation_board.derive_moves(derived_fen);
-    for(const auto move : derived_moves)
-    {
-        move_derivation_board.play_move(*move);
-    }
-    test_result(tests_passed, move_derivation_board.fen() == derived_fen, "Wrong moves derived.");
+    derived_moves_applied_to_earlier_board_result_in_later_board(tests_passed);
 
     test_result(tests_passed, run_board_tests("testing/board_tests.txt"), "");
 
-
-    // Board hash with castling tests
-    const auto castling_hash_board = Board("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
-
-    // Lose all castling rights due to king moving
-    auto just_kings_move_board = castling_hash_board;
-    for(auto move : {"Ke2", "Ke7", "Ke1", "Ke8"})
-    {
-        just_kings_move_board.play_move(move);
-    }
-
-    // Lose all castling rights due to rooks moving
-    auto just_rooks_move_board = castling_hash_board;
-    for(auto move : {"Ra2", "Ra7", "Ra1", "Ra8", "Rh2", "Rh7", "Rh1", "Rh8"})
-    {
-        just_rooks_move_board.play_move(move);
-    }
-
-    test_result(tests_passed, just_kings_move_board.board_hash() == just_rooks_move_board.board_hash(), "Boards should have same hash after castling rights lost");
-    test_result(tests_passed, just_kings_move_board.board_hash() != castling_hash_board.board_hash(), "Boards should have different hashes with different castling rights");
+    same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(tests_passed);
+    same_board_position_with_different_castling_rights_has_different_hash(tests_passed);
 
 
-    // Test Genetic_AI file loading
-    const auto pool_file_name = "test_gene_pool.txt";
-    const auto write_file_name = "test_genome_write.txt";
-    const auto rewrite_file_name = "test_genome_rewrite.txt";
-    remove(pool_file_name);
-    remove(write_file_name);
-    remove(rewrite_file_name);
+    genetic_ai_loaded_from_file_writes_identical_file(tests_passed);
+    self_swapped_genetic_ai_is_unchanged(tests_passed);
+    self_assigned_genetic_ai_is_unchanged(tests_passed);
 
-    std::vector<Genetic_AI> test_pool(10);
-    for(auto& ai : test_pool)
-    {
-        ai.mutate(100);
-        ai.print(pool_file_name);
-    }
+    function_should_not_throw(tests_passed, "Genetic_AI ctor",
+                              []() 
+                              {
+                                  const auto file_name = "genetic_ai_example.txt";
+                                  return Genetic_AI{file_name, find_last_id(file_name)};
+                              });
 
-    const auto& test_ai = Random::random_element(test_pool);
-    test_ai.print(write_file_name);
-    auto read_ai = Genetic_AI(pool_file_name, test_ai.id());
-    read_ai.print(rewrite_file_name);
+    castling_possible_gene_tests(tests_passed);
+    freedom_to_move_gene_tests(tests_passed);
+    king_confinement_gene_tests(tests_passed);
+    king_protection_gene_tests(tests_passed);
+    opponent_pieces_targeted_gene_tests(tests_passed);
+    pawn_advancement_gene_tests(tests_passed);
+    passed_pawn_gene_tests(tests_passed);
+    sphere_of_influence_gene_tests(tests_passed);
+    total_force_gene_tests(tests_passed);
+    stacked_pawns_gene_tests(tests_passed);
+    pawn_islands_gene_tests(tests_passed);
+    checkmate_material_gene_tests(tests_passed);
 
-    if(test_result(tests_passed, files_are_identical(write_file_name, rewrite_file_name), "Genome loaded from gene pool file not preserved."))
-    {
-        remove(pool_file_name);
-        remove(write_file_name);
-        remove(rewrite_file_name);
-    }
-
-
-    // Test Genetic_AI self-assignment
-    const auto self_write_file_name = "self_original.txt";
-    const auto self_swap_file_name = "self_swap.txt";
-    const auto self_assign_file_name = "self_assign.txt";
-    remove(self_write_file_name);
-    remove(self_swap_file_name);
-    remove(self_assign_file_name);
-
-    read_ai.print(self_write_file_name);
-
-    std::swap(read_ai, read_ai);
-    read_ai.print(self_swap_file_name);
-    const auto self_swap_passed = test_result(tests_passed, files_are_identical(self_write_file_name, self_swap_file_name), "Self-swap changed AI.");
-
-    const auto& copy_ai = read_ai;
-    read_ai = copy_ai;
-    read_ai.print(self_assign_file_name);
-    const auto self_assign_passed = test_result(tests_passed, files_are_identical(self_write_file_name, self_assign_file_name), "Self-assignment changed AI.");
-
-    if(self_swap_passed && self_assign_passed)
-    {
-        remove(self_write_file_name);
-        remove(self_swap_file_name);
-        remove(self_assign_file_name);
-    }
-
-    const auto file_name = "genetic_ai_example.txt";
-    std::string line;
-    std::getline(std::ifstream(file_name), line);
-    auto id = String::to_number<int>(String::split(line).at(1));
-    function_should_not_throw(tests_passed, "Genetic_AI ctor", [=]() { Genetic_AI{file_name, id}; });
-
-
-    // Test individual board-scoring genes
-    const auto test_genes_file_name = "testing/test_genome.txt";
-
-    auto castling_possible_gene = Castling_Possible_Gene();
-    castling_possible_gene.read_from(test_genes_file_name);
-    auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, (0.8 + 0.2)/1.0);
-    castling_board.play_move("O-O");
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8/1); // castled at depth 1
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2/(1.0 + 2.0 + 1.0));
-    castling_board.play_move("Nc6");
-    castling_board.play_move("Rab1");
-    castling_board.play_move("O-O-O");
-    castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2/4); // castled at depth 4
-
-    const auto freedom_to_move_gene = Freedom_To_Move_Gene();
-    auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
-    const auto freedom_to_move_white_score = 32.0/128.0;
-    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
-    freedom_to_move_board.play_move("Qd5");
-    const auto freedom_to_move_black_score = 3.0/128.0;
-    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::BLACK, freedom_to_move_black_score);
-    freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
-
-    auto king_confinement_gene = King_Confinement_Gene();
-    king_confinement_gene.read_from(test_genes_file_name);
-    const auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
-    const auto king_confinement_score = 3.0/64; // free squares (h1, g1, f1)
-    king_confinement_gene.test(tests_passed, king_confinement_board, Piece_Color::WHITE, king_confinement_score);
-
-    const auto king_confined_by_pawns_board = Board("k7/8/8/8/8/pppppppp/8/K7 w - - 0 1");
-    const auto king_confined_by_pawns_score = 8.0/64; // free squares (a1-h1)
-    king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, Piece_Color::WHITE, king_confined_by_pawns_score);
-
-    const auto king_protection_gene = King_Protection_Gene();
-    const auto king_protection_board = king_confinement_board;
-    const auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
-    const auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
-    const auto king_protection_score = double(max_square_count - square_count)/max_square_count;
-    king_protection_gene.test(tests_passed, king_protection_board, Piece_Color::WHITE, king_protection_score);
-
-    auto piece_strength_gene = Piece_Strength_Gene();
-    piece_strength_gene.read_from(test_genes_file_name);
-    const auto piece_strength_normalizer = double(32 + 16 + 2*8 + 2*4 + 2*2 + 8*1);
-
-    const auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&piece_strength_gene);
-    const auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
-    const auto opponent_pieces_targeted_score = (16 + 8 + 4 + 2 + 1)/piece_strength_normalizer;
-    opponent_pieces_targeted_gene.test(tests_passed, opponent_pieces_targeted_board, Piece_Color::WHITE, opponent_pieces_targeted_score);
-
-    const auto pawn_advancement_gene = Pawn_Advancement_Gene();
-    const auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
-    const auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5)/(8*5);
-    pawn_advancement_gene.test(tests_passed, pawn_advancement_board, Piece_Color::WHITE, pawn_advancement_score);
-
-    const auto passed_pawn_gene = Passed_Pawn_Gene();
-    auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P4/8/8/8 w - - 0 1");
-    auto passed_pawn_score = (1.0 + 2.0/3.0)/8;
-    passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::WHITE, passed_pawn_score);
-
-    passed_pawn_board.play_move("Kd8");
-    passed_pawn_score = (2.0/3.0)/8;
-    passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::BLACK, passed_pawn_score);
-
-    auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
-    sphere_of_influence_gene.read_from(test_genes_file_name);
-    const auto sphere_of_influence_board = Board("k7/8/8/8/1R3p2/8/8/K7 w - - 0 1");
-    const auto sphere_of_influence_score =
-          ((4.0*(1 + (2.0/(1 + 1.0))))  // b8
-         + (4.0*(1 + (2.0/(1 + 1.0))))  // b7
-         + (4.0*(1 + (2.0/(1 + 2.0))))  // b6
-         + (4.0*(1 + (2.0/(1 + 3.0))))  // b5
-         + (4.0*(1 + (2.0/(1 + 5.0))))  // b3
-         + (4.0*(1 + (2.0/(1 + 6.0))))  // b2
-         + (4.0*(1 + (2.0/(1 + 7.0))))  // b1
-         + (4.0*(1 + (2.0/(1 + 4.0))))  // a4
-         + (4.0*(1 + (2.0/(1 + 6.0))))  // a2
-         + (4.0*(1 + (2.0/(1 + 4.0))))  // c4
-         + (4.0*(1 + (2.0/(1 + 4.0))))  // d4
-         + (4.0*(1 + (2.0/(1 + 4.0))))  // e4
-         + (4.0*(1 + (2.0/(1 + 5.0))))  // f4
-         + (1.0*(1 + (2.0/(1 + 6.0))))  // g4
-         + (1.0*(1 + (2.0/(1 + 7.0)))))  // h4
-         /(64 *(4.0 + 1.0));
-    // Setup       Square score     King distance (from black king)
-    // k.......    k4......         k1......
-    // ........    .4......         .1......
-    // ........    .4......         .2......
-    // ........    .4......         .3......
-    // .R...p..    4R444411         4R444567
-    // ........    .4......         .5......
-    // ........    44......         66......
-    // K.......    K4......         K7......
-    sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, Piece_Color::WHITE, sphere_of_influence_score);
-
-    const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    total_force_gene.test(tests_passed, Board(), Piece_Color::WHITE, 1.0);
-
-    const auto stacked_pawns_gene = Stacked_Pawns_Gene();
-    const auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
-    stacked_pawns_gene.test(tests_passed, stacked_pawns_board, Piece_Color::WHITE, -3.0/6);
-
-    const auto pawn_islands_gene = Pawn_Islands_Gene();
-    const auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-    pawn_islands_gene.test(tests_passed, pawn_islands_board, Piece_Color::WHITE, -3.0/4.0);
-
-    const auto checkmate_material_gene = Checkmate_Material_Gene();
-    const auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
-    checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::WHITE, 1.0); // white can checkmate
-    checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::BLACK, 0.0); // black cannot
-
-    function_should_throw(tests_passed, "Missing gene data", [&piece_strength_gene](){piece_strength_gene.read_from("testing/missing_data_genome.txt");});
-    function_should_throw(tests_passed, "Duplicate gene data", [&sphere_of_influence_gene](){sphere_of_influence_gene.read_from("testing/duplicate_data_genome.txt");});
+    function_should_throw(tests_passed, "Missing gene data", [](){ return Piece_Strength_Gene().read_from("testing/missing_data_genome.txt");});
+    function_should_throw(tests_passed, "Duplicate gene data", [](){ return Sphere_of_Influence_Gene().read_from("testing/duplicate_data_genome.txt");});
 
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
     test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");
@@ -560,39 +310,16 @@ bool run_tests()
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", -1);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, String::split, "..a..b..c..d..", "..", 4);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", 5);
-    const auto split_join_input = "a/b/c/d";
-    const auto splitter = "/";
-    const auto split = String::split(split_join_input, splitter);
-    const auto rejoin = String::join(split.begin(), split.end(), splitter);
-    test_result(tests_passed, split_join_input == rejoin, std::string{"Split-join failed: "} + split_join_input + " --> " + rejoin);
+    split_and_join_are_inverse_operations(tests_passed);
 
-    // Number formating
     test_function(tests_passed, "Format integer (zero)",  "0", String::format_integer<int>,  0, ",");
     test_function(tests_passed, "Format integer (-zero)", "0", String::format_integer<int>, -0, ",");
-    const std::vector<std::pair<int, std::string>> tests =
-        {{1, "1"},
-         {22, "22"},
-         {333, "333"},
-         {4444, "4,444"},
-         {55555, "55,555"},
-         {666666, "666,666"},
-         {7777777, "7,777,777"},
-         {88888888, "88,888,888"},
-         {999999999, "999,999,999"},
-         {1000000000, "1,000,000,000"}};
-    for(const auto& [number, text] : tests)
-    {
-        test_function(tests_passed, "Format integer (size_t)", text, String::format_integer<size_t>, number, ",");
-        test_function(tests_passed, "Format integer (int)", text, String::format_integer<int>, number, ",");
-        test_function(tests_passed, "Format integer (negative int)", "-" + text, String::format_integer<int>, -number, ",");
-    }
+    commas_as_thousands_separators_correctly_placed(tests_passed);
 
-    // String to size_t number conversion
     function_should_not_throw(tests_passed, "Non-throwing string to size_t", String::to_number<size_t>, "123");
     function_should_not_throw(tests_passed, "Non-throwing string to size_t with whitespace", String::to_number<size_t>, " 456  ");
     function_should_throw(tests_passed, "Throwing string to size_t", String::to_number<size_t>, "78x9");
 
-    // Comment removal
     test_function(tests_passed,
                   "PGN comment removal",
                   "49. f8=N Bxf8",
@@ -600,140 +327,21 @@ bool run_tests()
                   "49. f8=N (49. f8=N Bxf8 50. Kf3 {-12.60}) Bxf8 (49. ... Bxf8 50. Kf1 (50. Kf3 Rd7 {16.43}) {16.43}) { Test block } ; Test line");
 
 
-    // Log-Norm distribution check
-    const double mean_moves = 26.0;
-    const double width = .5;
-    const size_t moves_so_far = 22;
-    const auto moves_left = Math::average_moves_left(mean_moves, width, moves_so_far);
-    const auto expected_moves_left = 16.103940;
-    test_result(tests_passed, std::abs(moves_left - expected_moves_left) < 1e-4,
-                std::string("Log-Norm failed: Expected: ") + std::to_string(expected_moves_left) +
-                " --- Got: " + std::to_string(moves_left));
-    const size_t moves_played_at_start = 0;
-    const auto moves_left_at_start = Math::average_moves_left(mean_moves, width, moves_played_at_start);
-    test_result(tests_passed, std::isfinite(moves_left_at_start),
-                std::string("Log-Norm failed with zero moves: Expected finite answer, Got: ") + std::to_string(moves_left_at_start));
-    const size_t moves_played_after_one_move = 1;
-    const auto moves_left_after_one_move = Math::average_moves_left(mean_moves, width, moves_played_after_one_move);
-    test_result(tests_passed, std::isfinite(moves_left_after_one_move),
-                std::string("Log-Norm failed after one move: Expected finite answer, Got: ") + std::to_string(moves_left_at_start));
+    average_moves_left_matches_precalculated_value(tests_passed);
+    average_moves_left_returns_finite_result_after_zero_moves(tests_passed);
+    average_moves_left_returns_finite_result_after_one_move(tests_passed);
+
+    specified_time_added_to_clock_after_specified_number_of_punches(tests_passed);
+    clock_with_increment_gets_time_added_on_every_punch(tests_passed);
+
+    midgame_node_result_values_compare_correctly(tests_passed);
+    midgame_alpha_beta_values_compare_correctly_with_node_values(tests_passed);
+    alpha_beta_result_values_compare_in_line_with_algorithm(tests_passed);
+    alpha_and_beta_value_comparisons_fit_algorithm_definitions(tests_passed);
+    endgame_node_result_tests(tests_passed);
 
 
-    // Clock time reset test
-    const auto time = Clock::seconds{30};
-    Clock::seconds expected_time_after_reset = 2*time;
-    size_t moves_to_reset = 40;
-    Board timing_board;
-    auto clock = Clock(time, moves_to_reset);
-    clock.start();
-    for(size_t i = 0; i < 2*moves_to_reset; ++i)
-    {
-        const auto pause_start = std::chrono::steady_clock::now();
-        std::this_thread::sleep_for(5ms);
-        clock.punch(timing_board);
-        if(clock.running_for() == Piece_Color::WHITE)
-        {
-            const auto pause_end = std::chrono::steady_clock::now();
-            expected_time_after_reset -= (pause_end - pause_start);
-        }
-    }
-    clock.stop();
-    test_result(tests_passed, std::chrono::abs(clock.time_left(Piece_Color::BLACK) - expected_time_after_reset) < 1ms,
-                "Clock reset incorrect: time left for black is " + std::to_string(clock.time_left(Piece_Color::BLACK).count()) + " sec." +
-                " Should be " + std::to_string(expected_time_after_reset.count()) + "sec.");
-
-    // Clock time increment test
-    const auto increment = 5s;
-    auto clock2 = Clock(time, 0, increment);
-    clock2.start();
-    auto expected_time = time;
-    for(size_t i = 0; i < 2*moves_to_reset; ++i)
-    {
-        auto pause_start = std::chrono::steady_clock::now();
-        std::this_thread::sleep_for(5ms);
-        clock2.punch(timing_board);
-        if(clock2.running_for() == Piece_Color::WHITE)
-        {
-            auto pause_end = std::chrono::steady_clock::now();
-            expected_time += increment - (pause_end - pause_start);
-        }
-    }
-    clock2.stop();
-    test_result(tests_passed, std::chrono::abs(clock2.time_left(Piece_Color::BLACK) - expected_time) < 1ms,
-                std::string("Clock increment incorrect: time left for black is ") + std::to_string(clock2.time_left(Piece_Color::BLACK).count()) + " sec." +
-                " Should be " + std::to_string(expected_time.count()) + "sec.");
-
-
-    // Minimax scoring comparison tests
-    const Game_Tree_Node_Result r1 = {10,
-                                      Piece_Color::WHITE,
-                                      {nullptr, nullptr, nullptr}};
-    const Game_Tree_Node_Result r2 = {10,
-                                      Piece_Color::BLACK,
-                                      {nullptr, nullptr, nullptr}};
-
-    test_result(tests_passed, r2.value(Piece_Color::WHITE) < r1.value(Piece_Color::WHITE), "1. Error in comparing Game Tree Node Results.");
-    test_result(tests_passed, r1.value(Piece_Color::BLACK) < r2.value(Piece_Color::BLACK), "2. Error in comparing Game Tree Node Results.");
-    test_result(tests_passed, r1.value(Piece_Color::WHITE) > r1.value(Piece_Color::BLACK), "1. Error in comparing Game Tree Node Results after color switch.");
-    test_result(tests_passed, r2.value(Piece_Color::BLACK) > r2.value(Piece_Color::WHITE), "2. Error in comparing Game Tree Node Results after color switch.");
-
-    const auto abv = r1.alpha_beta_value();
-    test_result(tests_passed, abv.value(Piece_Color::WHITE) == r1.value(Piece_Color::WHITE), "1. Incorrect construction of Alpha-Beta Value");
-    test_result(tests_passed, abv.value(Piece_Color::BLACK) == r2.value(Piece_Color::WHITE), "2. Incorrect construction of Alpha-Beta Value");
-
-    const Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
-                                               Piece_Color::WHITE,
-                                               {}};
-
-    const Game_Tree_Node_Result beta_start = {Game_Tree_Node_Result::win_score,
-                                              Piece_Color::WHITE,
-                                              {}};
-    test_result(tests_passed, alpha_start.value(Piece_Color::WHITE) < beta_start.value(Piece_Color::WHITE), "3. Error in comparing Game Tree Node Results.");
-    test_result(tests_passed, alpha_start.value(Piece_Color::BLACK) > beta_start.value(Piece_Color::BLACK), "4. Error in comparing Game Tree Node Results.");
-
-    const auto alpha_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,
-                                               Piece_Color::WHITE,
-                                               0};
-
-    const auto beta_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::win_score,
-                                              Piece_Color::WHITE,
-                                              0};
-    test_result(tests_passed, alpha_start2.value(Piece_Color::WHITE) < beta_start2.value(Piece_Color::WHITE), "1. Error in comparing Alpha-Beta Values.");
-    test_result(tests_passed, alpha_start2.value(Piece_Color::BLACK) > beta_start2.value(Piece_Color::BLACK), "2. Error in comparing Alpha-Beta Values.");
-
-    const Game_Tree_Node_Result white_win4 = {Game_Tree_Node_Result::win_score,
-                                              Piece_Color::WHITE,
-                                              {nullptr, nullptr, nullptr,
-                                               nullptr, nullptr}};
-    const Game_Tree_Node_Result white_win6 = {Game_Tree_Node_Result::win_score,
-                                              Piece_Color::WHITE,
-                                              {nullptr, nullptr, nullptr,
-                                               nullptr, nullptr, nullptr,
-                                               nullptr}};
-    test_result(tests_passed, white_win6.value(Piece_Color::WHITE) < white_win4.value(Piece_Color::WHITE), "Later win preferred over earlier win.");
-    test_result(tests_passed, white_win4.value(Piece_Color::BLACK) < white_win6.value(Piece_Color::BLACK), "Earlier loss preferred over later win.");
-
-    const Game_Tree_Node_Result black_loss6 = {Game_Tree_Node_Result::lose_score,
-                                               Piece_Color::BLACK,
-                                               {nullptr, nullptr, nullptr,
-                                                nullptr, nullptr, nullptr,
-                                                nullptr}};
-    test_result(tests_passed, white_win6.value(Piece_Color::WHITE) == black_loss6.value(Piece_Color::WHITE), "1. White win in 6 not equal to black loss in 6.");
-    test_result(tests_passed, white_win6.value(Piece_Color::BLACK) == black_loss6.value(Piece_Color::BLACK), "2. White win in 6 not equal to black loss in 6.");
-
-    test_result(tests_passed, black_loss6.is_winning_for(Piece_Color::WHITE), "Black loss in 6 returns false for is_winning_for(Piece_Color::WHITE).");
-    test_result(tests_passed, black_loss6.is_losing_for(Piece_Color::BLACK), "Black loss in 6 returns false for is_losing_for(Piece_Color::BLACK).");
-
-
-    if(tests_passed)
-    {
-        std::cout << "All tests passed." << std::endl;
-    }
-    else
-    {
-        std::cout << "Tests failed." << std::endl;
-    }
-
+    std::cout << (tests_passed ? "All tests passed." : "Tests failed.") << std::endl;
     return tests_passed;
 }
 
@@ -1085,7 +693,7 @@ namespace
 
             if(test_type == "illegal position")
             {
-                function_should_throw(test_passed, "", [](const std::string& s) { Board{s}; }, board_fen);
+                function_should_throw(test_passed, "", [](const std::string& s) { return Board{s}; }, board_fen);
                 test_result(all_tests_passed, test_passed, line + " -- FAILED\n");
                 continue;
             }
@@ -1205,5 +813,645 @@ namespace
         bool result = true;
         function_should_throw(result, move + " should be illegal", [&](){ board.interpret_move(move); });
         return result;
+    }
+
+    void move_attack_indices_are_consistenly_defined(bool& tests_passed)
+    {
+        for(size_t i = 0; i < 16; ++i)
+        {
+            const auto step = Move::attack_direction_from_index(i);
+            const auto start = Square{'e', 4};
+            const auto step_index = Move(start, start + step).attack_index();
+            test_result(tests_passed, step_index == i, "Direction-index mismatch: " + std::to_string(i) + " --> " + std::to_string(step_index));
+        }
+    }
+
+    void squares_with_unique_coordinates_have_unique_indices(bool& tests_passed)
+    {
+        std::array<bool, 64> visited{};
+        for(char file = 'a'; file <= 'h'; ++file)
+        {
+            for(int rank = 1; rank <= 8; ++rank)
+            {
+                const auto square = Square{file, rank};
+                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.string());
+                visited[square.index()] = true;
+            }
+        }
+        test_result(tests_passed, std::all_of(visited.begin(), visited.end(), [](auto x) { return x; }), "Not all indices visited by iterating through all squares.");
+    }
+
+    void constructed_squares_retain_coordinates(bool& tests_passed)
+    {
+        for(char file = 'a'; file <= 'h'; ++file)
+        {
+            for(int rank = 1; rank <= 8; ++rank)
+            {
+                const auto square = Square{file, rank};
+                test_result(tests_passed,
+                            square.file() == file && square.rank() == rank,
+                            std::string{"Square constructed with "} + file + std::to_string(rank) + " results in " + square.string());
+            }
+        }
+    }
+
+    void pieces_can_be_constructed_from_piece_data(bool& tests_passed)
+    {
+        for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+        {
+            const auto type = static_cast<Piece_Type>(type_index);
+            for(auto color : {Piece_Color::BLACK, Piece_Color::WHITE})
+            {
+                const auto piece = Piece{color, type};
+                const auto piece2 = Piece{piece.color(), piece.type()};
+                test_result(tests_passed, piece == piece2, std::string("Inconsistent construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
+            }
+        }
+    }
+
+    void pieces_can_be_constructed_from_fen_symbols(bool& tests_passed)
+    {
+        for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+        {
+            const auto type = static_cast<Piece_Type>(type_index);
+            for(auto color : {Piece_Color::BLACK, Piece_Color::WHITE})
+            {
+                const auto piece = Piece{color, type};
+                const auto piece2 = Piece(piece.fen_symbol());
+                test_result(tests_passed, piece == piece2, std::string("Inconsistent FEN construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
+            }
+        }
+    }
+
+    void no_pair_of_adjacent_squares_are_the_same_color(bool& tests_passed)
+    {
+        for(const auto square1 : Square::all_squares())
+        {
+            for(const auto square2 : Square::all_squares())
+            {
+                const auto diff = square1 - square2;
+                const auto df = std::abs(diff.file_change);
+                const auto dr = std::abs(diff.rank_change);
+                if((dr == 0 && df == 1) || (df == 0 && dr == 1)) // square are adjacent in same row or column
+                {
+                    test_result(tests_passed, square1.color() != square2.color(), "Adjacent squares " + square1.string() + " and " + square2.string() + " have same color.");
+                }
+            }
+        }
+    }
+
+    void difference_between_two_squares_added_to_one_squares_gives_other_square(bool& tests_passed)
+    {
+        for(const auto a : Square::all_squares())
+        {
+            for(const auto b : Square::all_squares())
+            {
+                test_result(tests_passed,
+                            a + (b - a) == b,
+                            "Square arithetic problem: " +
+                            a.string() + " + (" + b.string() + " - " + a.string() + ") != " + b.string());
+            }
+        }
+    }
+    
+    void all_squares_yields_all_squares(bool& tests_passed)
+    {
+        std::array<bool, 64> squares_visited{};
+        for(const auto square : Square::all_squares())
+        {
+            test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.string() + " already visited.");
+            squares_visited[square.index()] = true;
+        }
+        test_result(tests_passed,
+                    std::all_of(squares_visited.begin(), squares_visited.end(), [](auto tf) { return tf; }),
+                    "Square iterator missed some squares.");
+    }
+
+    void repeating_board_position_three_times_results_in_threefold_game_result(bool& tests_passed)
+    {
+        auto repeat_board = Board();
+        Game_Result repeat_result;
+        auto repeat_move_count = 0;
+
+        for(int repetition = 0; repetition < 2; ++repetition)
+        {
+            for(const auto& move : {"Nc3", "Nc6", "Nb1", "Nb8"})
+            {
+                ++repeat_move_count;
+                repeat_result = repeat_board.play_move(move);
+                if(repeat_result.game_has_ended())
+                {
+                    test_result(tests_passed, repeat_move_count == 8, "Threefold repetition triggered early.");
+                }
+            }
+        }
+        test_result(tests_passed, repeat_result.ending_reason() == "Threefold repetition", "Threefold stalemate not triggered.");
+    }
+    
+    void one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(bool& tests_passed)
+    {
+        auto fifty_move_board = Board();
+        auto fifty_move_result = Game_Result();
+        for(int move_counter = 1; move_counter <= 100; ++move_counter)
+        {
+            auto move_chosen = false;
+            for(const auto move : fifty_move_board.legal_moves())
+            {
+                if(fifty_move_board.move_captures(*move))
+                {
+                    continue;
+                }
+
+                if(std::as_const(fifty_move_board).piece_on_square(move->start()).type() == Piece_Type::PAWN)
+                {
+                    continue;
+                }
+
+                auto next_board = fifty_move_board;
+                auto result = next_board.play_move(*move);
+
+                if(result.winner() != Winner_Color::NONE)
+                {
+                    continue;
+                }
+
+                if(result.game_has_ended())
+                {
+                    if(result.ending_reason() == "Threefold repetition")
+                    {
+                        continue;
+                    }
+
+                    test_result(tests_passed, move_counter == 100, "Fifty-move stalemate triggered early.");
+                }
+
+                fifty_move_result = fifty_move_board.play_move(*move);
+                move_chosen = true;
+                break;
+            }
+
+            test_result(tests_passed, move_chosen, "Unable to choose next move (moves made = " + std::to_string(move_counter) + ").");
+        }
+        test_result(tests_passed, fifty_move_result.ending_reason() == "50-move limit", "50-move draw test result: Got: " + fifty_move_result.ending_reason() + " instead.");
+    }
+    
+    void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed)
+    {
+        Board move_derivation_board;
+        const auto derived_fen = std::string{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
+        const auto derived_moves = move_derivation_board.derive_moves(derived_fen);
+        for(const auto move : derived_moves)
+        {
+            move_derivation_board.play_move(*move);
+        }
+        test_result(tests_passed, move_derivation_board.fen() == derived_fen, "Wrong moves derived.");
+    }
+    
+    void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed)
+    {
+        const auto castling_hash_board = Board("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
+
+        // Lose all castling rights due to king moving
+        auto just_kings_move_board = castling_hash_board;
+        for(auto move : {"Ke2", "Ke7", "Ke1", "Ke8"})
+        {
+            just_kings_move_board.play_move(move);
+        }
+
+        // Lose all castling rights due to rooks moving
+        auto just_rooks_move_board = castling_hash_board;
+        for(auto move : {"Ra2", "Ra7", "Ra1", "Ra8", "Rh2", "Rh7", "Rh1", "Rh8"})
+        {
+            just_rooks_move_board.play_move(move);
+        }
+
+        test_result(tests_passed, just_kings_move_board.board_hash() == just_rooks_move_board.board_hash(), "Boards should have same hash after castling rights lost");
+    }
+
+    void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed)
+    {
+        const auto castling_hash_board = Board("r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1");
+
+        // Lose all castling rights due to king moving
+        auto just_kings_move_board = castling_hash_board;
+        for(auto move : {"Ke2", "Ke7", "Ke1", "Ke8"})
+        {
+            just_kings_move_board.play_move(move);
+        }
+
+        test_result(tests_passed, just_kings_move_board.board_hash() != castling_hash_board.board_hash(), "Boards should have different hashes with different castling rights");
+    }
+    
+    void genetic_ai_loaded_from_file_writes_identical_file(bool& tests_passed)
+    {
+        const auto pool_file_name = "test_gene_pool.txt";
+        const auto write_file_name = "test_genome_write.txt";
+        const auto rewrite_file_name = "test_genome_rewrite.txt";
+        remove(pool_file_name);
+        remove(write_file_name);
+        remove(rewrite_file_name);
+
+        std::vector<Genetic_AI> test_pool(10);
+        for(auto& ai : test_pool)
+        {
+            ai.mutate(100);
+            ai.print(pool_file_name);
+        }
+
+        const auto& test_ai = Random::random_element(test_pool);
+        test_ai.print(write_file_name);
+        auto read_ai = Genetic_AI(pool_file_name, test_ai.id());
+        read_ai.print(rewrite_file_name);
+
+        if(test_result(tests_passed, files_are_identical(write_file_name, rewrite_file_name), "Genome loaded from gene pool file not preserved."))
+        {
+            remove(pool_file_name);
+            remove(write_file_name);
+            remove(rewrite_file_name);
+        }
+    }
+    
+    void self_swapped_genetic_ai_is_unchanged(bool& tests_passed)
+    {
+        auto self_swap_ai = Genetic_AI();
+        self_swap_ai.mutate(100);
+        const auto self_write_file_name = "self_original.txt";
+        remove(self_write_file_name);
+        self_swap_ai.print(self_write_file_name);
+
+        std::swap(self_swap_ai, self_swap_ai);
+        const auto self_swap_file_name = "self_swap.txt";
+        remove(self_swap_file_name);
+        self_swap_ai.print(self_swap_file_name);
+
+        if(test_result(tests_passed, files_are_identical(self_write_file_name, self_swap_file_name), "Self-swap changed AI."))
+        {
+            remove(self_write_file_name);
+            remove(self_swap_file_name);
+        }
+    }
+    
+    void self_assigned_genetic_ai_is_unchanged(bool& tests_passed)
+    {
+        auto self_assign_ai = Genetic_AI();
+        self_assign_ai.mutate(100);
+        auto self_write_file_name = "self_assign_original.txt";
+        remove(self_write_file_name);
+        self_assign_ai.print(self_write_file_name);
+        
+        const auto& copy_ai = self_assign_ai;
+        self_assign_ai = copy_ai;
+        auto self_assign_file_name = "self_assign_post_assignment.txt";
+        remove(self_assign_file_name);
+        self_assign_ai.print(self_assign_file_name);
+
+        if(test_result(tests_passed, files_are_identical(self_write_file_name, self_assign_file_name), "Self-assignment changed AI."))
+        {
+            remove(self_write_file_name);
+            remove(self_assign_file_name);
+        }
+    }
+
+
+    void castling_possible_gene_tests(bool& tests_passed)
+    {
+        auto castling_possible_gene = Castling_Possible_Gene();
+        castling_possible_gene.read_from("testing/test_genome.txt");
+
+        auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
+        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, (0.8 + 0.2) / 1.0);
+        
+        castling_board.play_move("O-O");
+        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8 / 1); // castled at depth 1
+        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2 / (1.0 + 2.0 + 1.0));
+        
+        castling_board.play_move("Nc6");
+        castling_board.play_move("Rab1");
+        castling_board.play_move("O-O-O");
+        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2 / 4); // castled at depth 4
+    }
+
+    void freedom_to_move_gene_tests(bool& tests_passed)
+    {
+        const auto freedom_to_move_gene = Freedom_To_Move_Gene();
+        auto freedom_to_move_board = Board("5k2/8/8/8/4Q3/8/8/3K4 w - - 0 1");
+
+        const auto freedom_to_move_white_score = 32.0/128.0;
+        freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
+
+        freedom_to_move_board.play_move("Qd5");
+        const auto freedom_to_move_black_score = 3.0/128.0;
+        freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::BLACK, freedom_to_move_black_score);
+        freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
+    }
+
+    void king_confinement_gene_tests(bool& tests_passed)
+    {
+        auto king_confinement_gene = King_Confinement_Gene();
+        king_confinement_gene.read_from("testing/test_genome.txt");
+
+        const auto king_confinement_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+        const auto king_confinement_score = 3.0 / 64; // free squares (h1, g1, f1)
+        king_confinement_gene.test(tests_passed, king_confinement_board, Piece_Color::WHITE, king_confinement_score);
+
+        const auto king_confined_by_pawns_board = Board("k7/8/8/8/8/pppppppp/8/K7 w - - 0 1");
+        const auto king_confined_by_pawns_score = 8.0 / 64; // free squares (a1-h1)
+        king_confinement_gene.test(tests_passed, king_confined_by_pawns_board, Piece_Color::WHITE, king_confined_by_pawns_score);
+    }
+
+    void king_protection_gene_tests(bool& tests_passed)
+    {
+        const auto king_protection_gene = King_Protection_Gene();
+        const auto king_protection_board = Board("k3r3/8/8/8/8/8/5PPP/7K w - - 0 1");
+        const auto max_square_count = 8 + 7 + 7 + 7 + 6; // max_square_count in King_Protection_Gene.cpp
+        const auto square_count = 7 + 1; // row attack along rank 1 + knight attack from g3
+        const auto king_protection_score = double(max_square_count - square_count)/max_square_count;
+        king_protection_gene.test(tests_passed, king_protection_board, Piece_Color::WHITE, king_protection_score);
+    }
+
+    void pawn_advancement_gene_tests(bool& tests_passed)
+    {
+        const auto pawn_advancement_gene = Pawn_Advancement_Gene();
+        const auto pawn_advancement_board = Board("7k/4P3/3P4/2P5/1P6/P7/8/K7 w - - 0 1");
+        const auto pawn_advancement_score = double(1 + 2 + 3 + 4 + 5) / (8 * 5);
+        pawn_advancement_gene.test(tests_passed, pawn_advancement_board, Piece_Color::WHITE, pawn_advancement_score);
+    }
+
+    void passed_pawn_gene_tests(bool& tests_passed)
+    {
+        const auto passed_pawn_gene = Passed_Pawn_Gene();
+        auto passed_pawn_board = Board("k1K5/8/8/3pP3/3P4/8/8/8 w - - 0 1");
+        auto passed_pawn_score = (1.0 + 2.0 / 3.0) / 8;
+        passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::WHITE, passed_pawn_score);
+
+        passed_pawn_board.play_move("Kd8");
+        passed_pawn_score = (2.0 / 3.0) / 8;
+        passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::BLACK, passed_pawn_score);
+    }
+
+    void stacked_pawns_gene_tests(bool& tests_passed)
+    {
+        const auto stacked_pawns_gene = Stacked_Pawns_Gene();
+        const auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
+        stacked_pawns_gene.test(tests_passed, stacked_pawns_board, Piece_Color::WHITE, -3.0 / 6);
+    }
+
+    void pawn_islands_gene_tests(bool& tests_passed)
+    {
+        const auto pawn_islands_gene = Pawn_Islands_Gene();
+        const auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
+        pawn_islands_gene.test(tests_passed, pawn_islands_board, Piece_Color::WHITE, -3.0 / 4.0);
+    }
+
+    void checkmate_material_gene_tests(bool& tests_passed)
+    {
+        const auto checkmate_material_gene = Checkmate_Material_Gene();
+        const auto checkmate_material_board = Board("k7/8/8/8/8/8/8/6RK w - - 0 1");
+        checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::WHITE, 1.0); // white can checkmate
+        checkmate_material_gene.test(tests_passed, checkmate_material_board, Piece_Color::BLACK, 0.0); // black cannot
+    }
+
+    void opponent_pieces_targeted_gene_tests(bool& tests_passed)
+    {
+        auto target_piece_strength_gene = Piece_Strength_Gene();
+        target_piece_strength_gene.read_from("testing/test_genome.txt");
+        const auto piece_strength_normalizer = double(32 + 16 + 2 * 8 + 2 * 4 + 2 * 2 + 8 * 1);
+
+        const auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&target_piece_strength_gene);
+        const auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
+        const auto opponent_pieces_targeted_score = (16 + 8 + 4 + 2 + 1) / piece_strength_normalizer;
+        opponent_pieces_targeted_gene.test(tests_passed, opponent_pieces_targeted_board, Piece_Color::WHITE, opponent_pieces_targeted_score);
+    }
+
+    void total_force_gene_tests(bool& tests_passed)
+    {
+        auto total_piece_strength_gene = Piece_Strength_Gene();
+        total_piece_strength_gene.read_from("testing/test_genome.txt");
+        const auto total_force_gene = Total_Force_Gene(&total_piece_strength_gene);
+        total_force_gene.test(tests_passed, Board(), Piece_Color::WHITE, 1.0);
+    }
+
+    void sphere_of_influence_gene_tests(bool& tests_passed)
+    {
+        auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
+        sphere_of_influence_gene.read_from("testing/test_genome.txt");
+        const auto sphere_of_influence_board = Board("k7/8/8/8/1R3p2/8/8/K7 w - - 0 1");
+        const auto sphere_of_influence_score =
+              ((4.0 * (1 + (2.0/(1 + 1.0))))  // b8
+             + (4.0 * (1 + (2.0/(1 + 1.0))))  // b7
+             + (4.0 * (1 + (2.0/(1 + 2.0))))  // b6
+             + (4.0 * (1 + (2.0/(1 + 3.0))))  // b5
+             + (4.0 * (1 + (2.0/(1 + 5.0))))  // b3
+             + (4.0 * (1 + (2.0/(1 + 6.0))))  // b2
+             + (4.0 * (1 + (2.0/(1 + 7.0))))  // b1
+             + (4.0 * (1 + (2.0/(1 + 4.0))))  // a4
+             + (4.0 * (1 + (2.0/(1 + 6.0))))  // a2
+             + (4.0 * (1 + (2.0/(1 + 4.0))))  // c4
+             + (4.0 * (1 + (2.0/(1 + 4.0))))  // d4
+             + (4.0 * (1 + (2.0/(1 + 4.0))))  // e4
+             + (4.0 * (1 + (2.0/(1 + 5.0))))  // f4
+             + (1.0 * (1 + (2.0/(1 + 6.0))))  // g4
+             + (1.0 * (1 + (2.0/(1 + 7.0)))))  // h4
+            /(64*(4.0 + 1.0));
+        // Setup       Square score     King distance (from black king)
+        // k.......    k4......         k1......
+        // ........    .4......         .1......
+        // ........    .4......         .2......
+        // ........    .4......         .3......
+        // .R...p..    4R444411         4R444567
+        // ........    .4......         .5......
+        // ........    44......         66......
+        // K.......    K4......         K7......
+        sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, Piece_Color::WHITE, sphere_of_influence_score);
+    }
+
+    void split_and_join_are_inverse_operations(bool& tests_passed)
+    {
+        const auto split_join_input = "a/b/c/d";
+        const auto splitter = "/";
+        const auto split = String::split(split_join_input, splitter);
+        const auto rejoin = String::join(split.begin(), split.end(), splitter);
+        test_result(tests_passed, split_join_input == rejoin, std::string{"Split-join failed: "} + split_join_input + " --> " + rejoin);
+    }
+
+    void commas_as_thousands_separators_correctly_placed(bool& tests_passed)
+    {
+        const std::vector<std::pair<int, std::string>> tests =
+            {{1, "1"},
+             {22, "22"},
+             {333, "333"},
+             {4444, "4,444"},
+             {55555, "55,555"},
+             {666666, "666,666"},
+             {7777777, "7,777,777"},
+             {88888888, "88,888,888"},
+             {999999999, "999,999,999"},
+             {1000000000, "1,000,000,000"}};
+        for(const auto& [number, text] : tests)
+        {
+            test_function(tests_passed, "Format integer (size_t)", text, String::format_integer<size_t>, number, ",");
+            test_function(tests_passed, "Format integer (int)", text, String::format_integer<int>, number, ",");
+            test_function(tests_passed, "Format integer (negative int)", "-" + text, String::format_integer<int>, -number, ",");
+        }
+    }
+
+    void specified_time_added_to_clock_after_specified_number_of_punches(bool& tests_passed)
+    {
+        const auto time = Clock::seconds{30};
+        Clock::seconds expected_time_after_reset = 2 * time;
+        size_t moves_to_reset = 40;
+        auto clock = Clock(time, moves_to_reset);
+        clock.start();
+        for(size_t i = 0; i < 2 * moves_to_reset; ++i)
+        {
+            const auto pause_start = std::chrono::steady_clock::now();
+            std::this_thread::sleep_for(5ms);
+            Board timing_board;
+            clock.punch(timing_board);
+            if(clock.running_for() == Piece_Color::WHITE)
+            {
+                const auto pause_end = std::chrono::steady_clock::now();
+                expected_time_after_reset -= (pause_end - pause_start);
+            }
+        }
+        clock.stop();
+        test_result(tests_passed, std::chrono::abs(clock.time_left(Piece_Color::BLACK) - expected_time_after_reset) < 1ms,
+                    "Clock reset incorrect: time left for black is " + std::to_string(clock.time_left(Piece_Color::BLACK).count()) + " sec." +
+                    " Should be " + std::to_string(expected_time_after_reset.count()) + "sec.");
+    }
+
+    void clock_with_increment_gets_time_added_on_every_punch(bool& tests_passed)
+    {
+        const auto increment = 5s;
+        auto clock2 = Clock(Clock::seconds{30}, 0, increment);
+        clock2.start();
+        auto expected_time = clock2.initial_time();
+        for(size_t i = 0; i < 100; ++i)
+        {
+            auto pause_start = std::chrono::steady_clock::now();
+            std::this_thread::sleep_for(5ms);
+            Board timing_board;
+            clock2.punch(timing_board);
+            if(clock2.running_for() == Piece_Color::WHITE)
+            {
+                auto pause_end = std::chrono::steady_clock::now();
+                expected_time += increment - (pause_end - pause_start);
+            }
+        }
+        clock2.stop();
+        test_result(tests_passed, std::chrono::abs(clock2.time_left(Piece_Color::BLACK) - expected_time) < 1ms,
+                    std::string("Clock increment incorrect: time left for black is ") + std::to_string(clock2.time_left(Piece_Color::BLACK).count()) + " sec." +
+                    " Should be " + std::to_string(expected_time.count()) + "sec.");
+    }
+
+    void midgame_node_result_values_compare_correctly(bool& tests_passed)
+    {
+        const Game_Tree_Node_Result r1 = {10,
+                                          Piece_Color::WHITE,
+                                          {nullptr, nullptr, nullptr}};
+        const Game_Tree_Node_Result r2 = {10,
+                                          Piece_Color::BLACK,
+                                          {nullptr, nullptr, nullptr}};
+        test_result(tests_passed, r2.value(Piece_Color::WHITE) < r1.value(Piece_Color::WHITE), "1. Error in comparing Game Tree Node Results.");
+        test_result(tests_passed, r1.value(Piece_Color::BLACK) < r2.value(Piece_Color::BLACK), "2. Error in comparing Game Tree Node Results.");
+        test_result(tests_passed, r1.value(Piece_Color::WHITE) > r1.value(Piece_Color::BLACK), "1. Error in comparing Game Tree Node Results after color switch.");
+        test_result(tests_passed, r2.value(Piece_Color::BLACK) > r2.value(Piece_Color::WHITE), "2. Error in comparing Game Tree Node Results after color switch.");
+    }
+
+    void midgame_alpha_beta_values_compare_correctly_with_node_values(bool& tests_passed)
+    {
+        const Game_Tree_Node_Result r1 = {10,
+                                          Piece_Color::WHITE,
+                                          {nullptr, nullptr, nullptr}};
+        const Game_Tree_Node_Result r2 = {10,
+                                          Piece_Color::BLACK,
+                                          {nullptr, nullptr, nullptr}};
+        const auto abv = r1.alpha_beta_value();
+        test_result(tests_passed, abv.value(Piece_Color::WHITE) == r1.value(Piece_Color::WHITE), "1. Incorrect construction of Alpha-Beta Value");
+        test_result(tests_passed, abv.value(Piece_Color::BLACK) == r2.value(Piece_Color::WHITE), "2. Incorrect construction of Alpha-Beta Value");
+    }
+
+    void alpha_beta_result_values_compare_in_line_with_algorithm(bool& tests_passed)
+    {
+        const Game_Tree_Node_Result alpha_start = {Game_Tree_Node_Result::lose_score,
+                                                   Piece_Color::WHITE,
+                                                   {}};
+
+        const Game_Tree_Node_Result beta_start = {Game_Tree_Node_Result::win_score,
+                                                  Piece_Color::WHITE,
+                                                  {}};
+        test_result(tests_passed, alpha_start.value(Piece_Color::WHITE) < beta_start.value(Piece_Color::WHITE), "3. Error in comparing Game Tree Node Results.");
+        test_result(tests_passed, alpha_start.value(Piece_Color::BLACK) > beta_start.value(Piece_Color::BLACK), "4. Error in comparing Game Tree Node Results.");
+    }
+
+    void alpha_and_beta_value_comparisons_fit_algorithm_definitions(bool& tests_passed)
+    {
+        const auto alpha_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,
+                                                   Piece_Color::WHITE,
+                                                   0};
+
+        const auto beta_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::win_score,
+                                                  Piece_Color::WHITE,
+                                                  0};
+        test_result(tests_passed, alpha_start2.value(Piece_Color::WHITE) < beta_start2.value(Piece_Color::WHITE), "1. Error in comparing Alpha-Beta Values.");
+        test_result(tests_passed, alpha_start2.value(Piece_Color::BLACK) > beta_start2.value(Piece_Color::BLACK), "2. Error in comparing Alpha-Beta Values.");
+    }
+
+    void endgame_node_result_tests(bool& tests_passed)
+    {
+        const Game_Tree_Node_Result white_win4 = {Game_Tree_Node_Result::win_score,
+                                                  Piece_Color::WHITE,
+                                                  {nullptr, nullptr, nullptr,
+                                                   nullptr, nullptr}};
+        const Game_Tree_Node_Result white_win6 = {Game_Tree_Node_Result::win_score,
+                                                  Piece_Color::WHITE,
+                                                  {nullptr, nullptr, nullptr,
+                                                   nullptr, nullptr, nullptr,
+                                                   nullptr}};
+        test_result(tests_passed, white_win6.value(Piece_Color::WHITE) < white_win4.value(Piece_Color::WHITE), "Later win preferred over earlier win.");
+        test_result(tests_passed, white_win4.value(Piece_Color::BLACK) < white_win6.value(Piece_Color::BLACK), "Earlier loss preferred over later win.");
+
+        const Game_Tree_Node_Result black_loss6 = {Game_Tree_Node_Result::lose_score,
+                                                   Piece_Color::BLACK,
+                                                   {nullptr, nullptr, nullptr,
+                                                    nullptr, nullptr, nullptr,
+                                                    nullptr}};
+        test_result(tests_passed, white_win6.value(Piece_Color::WHITE) == black_loss6.value(Piece_Color::WHITE), "1. White win in 6 not equal to black loss in 6.");
+        test_result(tests_passed, white_win6.value(Piece_Color::BLACK) == black_loss6.value(Piece_Color::BLACK), "2. White win in 6 not equal to black loss in 6.");
+
+        test_result(tests_passed, black_loss6.is_winning_for(Piece_Color::WHITE), "Black loss in 6 returns false for is_winning_for(Piece_Color::WHITE).");
+        test_result(tests_passed, black_loss6.is_losing_for(Piece_Color::BLACK), "Black loss in 6 returns false for is_losing_for(Piece_Color::BLACK).");
+    }
+
+    void average_moves_left_matches_precalculated_value(bool& tests_passed)
+    {
+        const double mean_moves = 26.0;
+        const double width = .5;
+        const size_t moves_so_far = 22;
+        const auto moves_left = Math::average_moves_left(mean_moves, width, moves_so_far);
+        const auto expected_moves_left = 16.103940;
+        test_result(tests_passed, std::abs(moves_left - expected_moves_left) < 1e-4,
+                    std::string("Log-Norm failed: Expected: ") + std::to_string(expected_moves_left) +
+                    " --- Got: " + std::to_string(moves_left));
+    }
+
+    void average_moves_left_returns_finite_result_after_zero_moves(bool& tests_passed)
+    {
+        const double mean_moves = 26.0;
+        const double width = .5;
+        const size_t moves_played_at_start = 0;
+        const auto moves_left_at_start = Math::average_moves_left(mean_moves, width, moves_played_at_start);
+        test_result(tests_passed, std::isfinite(moves_left_at_start),
+                    std::string("Log-Norm failed with zero moves: Expected finite answer, Got: ") + std::to_string(moves_left_at_start));
+    }
+
+    void average_moves_left_returns_finite_result_after_one_move(bool& tests_passed)
+    {
+        const double mean_moves = 26.0;
+        const double width = .5;
+        const size_t moves_played_after_one_move = 1;
+        const auto moves_left_after_one_move = Math::average_moves_left(mean_moves, width, moves_played_after_one_move);
+        test_result(tests_passed, std::isfinite(moves_left_after_one_move),
+                    std::string("Log-Norm failed after one move: Expected finite answer, Got: ") + std::to_string(moves_left_after_one_move));
     }
 }
