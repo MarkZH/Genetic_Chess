@@ -473,14 +473,16 @@ std::string variation_line(Board board,
                            const double alternate_score) noexcept
 {
     Game_Result move_result;
-    auto write_alternate_variation = ! alternate_variation.empty();
+    const auto first_difference = std::mismatch(variation.begin(), variation.end(),
+                                                alternate_variation.begin(), alternate_variation.end());
+    const auto variation_index = size_t(std::distance(alternate_variation.begin(), first_difference.second));
     const auto move_label_offset = (board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
     std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + ". ... " : std::string{});
     for(size_t i = 0; i < variation.size(); ++i)
     {
         const auto move_label = move_number + i/2 + move_label_offset;
         result += (board.whose_turn() == Piece_Color::WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(board) + " ";
-        if(write_alternate_variation && i < alternate_variation.size() && alternate_variation[i] != variation[i])
+        if(i == variation_index && variation_index < alternate_variation.size())
         {
             result += variation_line(board,
                                      move_label,
@@ -488,7 +490,6 @@ std::string variation_line(Board board,
                                      alternate_score,
                                      {},
                                      {}) + " ";
-            write_alternate_variation = false;
         }
         move_result = board.play_move(*variation[i]);
     }
