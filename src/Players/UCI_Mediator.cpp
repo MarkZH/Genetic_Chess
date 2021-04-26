@@ -163,7 +163,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 else if(previous_option == "movestogo")
                 {
                     log("Next time control in " + std::to_string(number) + " moves");
-                    movestogo = size_t(number);
+                    movestogo = number;
                     new_mode = Time_Reset_Method::ADDITION;
                 }
                 else if(previous_option == "movetime")

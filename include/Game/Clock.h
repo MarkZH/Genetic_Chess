@@ -15,7 +15,7 @@ class UCI_Mediator;
 //! \file
 
 //! \brief Specifies whether time is added or the clock reset when the moves per time period have been made.
-enum class Time_Reset_Method : size_t
+enum class Time_Reset_Method
 {
     ADDITION,
     SET_TO_ORIGINAL

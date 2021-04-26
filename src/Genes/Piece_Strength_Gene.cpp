@@ -84,12 +84,12 @@ double Piece_Strength_Gene::file_normalization() const noexcept
 
 double Piece_Strength_Gene::piece_value(const Piece_Type type) const noexcept
 {
-    return piece_strength[static_cast<size_t>(type)];
+    return piece_strength[static_cast<int>(type)];
 }
 
 double& Piece_Strength_Gene::piece_value(const Piece_Type type) noexcept
 {
-    return piece_strength[static_cast<size_t>(type)];
+    return piece_strength[static_cast<int>(type)];
 }
 
 double Piece_Strength_Gene::piece_value(const Piece piece) const noexcept

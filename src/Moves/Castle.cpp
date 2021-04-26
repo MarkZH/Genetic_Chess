@@ -28,8 +28,8 @@ bool Castle::move_specific_legal(const Board& board) const noexcept
 void Castle::side_effects(Board& board) const noexcept
 {
     board.move_piece(rook_move);
-    board.castling_index[static_cast<size_t>(board.whose_turn())] = board.played_ply_count() - 1;
-    board.castling_movement[static_cast<size_t>(board.whose_turn())] = file_change();
+    board.castling_index[static_cast<int>(board.whose_turn())] = board.played_ply_count() - 1;
+    board.castling_movement[static_cast<int>(board.whose_turn())] = file_change();
 }
 
 std::string Castle::algebraic_base(const Board&) const noexcept

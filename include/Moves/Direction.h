@@ -4,10 +4,6 @@
 //! \file
 
 //! \brief Indicates a horizontal direction on the chess board.
-enum class Direction : size_t
-{
-    LEFT,
-    RIGHT
-};
+enum class Direction { LEFT, RIGHT };
 
 #endif // DIRECTION_H

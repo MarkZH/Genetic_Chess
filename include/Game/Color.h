@@ -6,7 +6,7 @@
 //! \file
 
 //! \brief Used for identifying the color of a piece and the player controlling those pieces.
-enum class Piece_Color : size_t
+enum class Piece_Color
 {
     WHITE,
     BLACK
@@ -25,14 +25,14 @@ Piece_Color opposite(Piece_Color color) noexcept;
 std::string color_text(Piece_Color color) noexcept;
 
 //! \brief A representation of the color of Squares on a Board.
-enum class Square_Color : size_t
+enum class Square_Color
 {
     WHITE,
     BLACK
 };
 
 //! \brief A representation of the winner of a game.
-enum class Winner_Color : size_t
+enum class Winner_Color
 {
     WHITE,
     BLACK,

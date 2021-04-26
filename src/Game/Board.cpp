@@ -86,7 +86,7 @@ Board::Board(const std::string& input_fen)
     const auto board_parse = String::split(fen_parse.at(0), "/");
     fen_parse_assert(board_parse.size() == 8, input_fen, "Board has wrong number of rows (should be 8)");
 
-    for(size_t rank = 8; rank >= 1; --rank)
+    for(int rank = 8; rank >= 1; --rank)
     {
         char file = 'a';
         for(const auto symbol : board_parse.at(size_t(8) - rank))
@@ -103,7 +103,7 @@ Board::Board(const std::string& input_fen)
                 fen_parse_assert(piece.type() != Piece_Type::PAWN || (rank != 1 && rank != 8), input_fen, "Pawns cannot be placed on the home ranks.");
                 fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), input_fen, "More than one " + color_text(piece.color()) + " king.");
 
-                place_piece(piece, {file, int(rank)});
+                place_piece(piece, {file, rank});
                 ++file;
             }
         }
@@ -427,7 +427,7 @@ const Move* Board::last_move() const noexcept
 
 int Board::castling_direction(Piece_Color player) const noexcept
 {
-    return castling_movement[static_cast<size_t>(player)];
+    return castling_movement[static_cast<int>(player)];
 }
 
 const Move& Board::interpret_move(std::string move_text) const
@@ -517,7 +517,7 @@ void Board::place_piece(const Piece piece, const Square square) noexcept
 
     if(piece && piece.type() == Piece_Type::KING)
     {
-        king_location[static_cast<size_t>(piece.color())] = square;
+        king_location[static_cast<int>(piece.color())] = square;
     }
 }
 
@@ -545,11 +545,11 @@ void Board::modify_attacks(const Square square, const Piece piece, const bool ad
 
             if(move_blocked)
             {
-                blocked_attacks[static_cast<size_t>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
+                blocked_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
             }
             else
             {
-                potential_attacks[static_cast<size_t>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
+                potential_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
 
                 const auto blocking_piece = piece_on_square(attacked_square);
                 if(blocking_piece && blocking_piece != vulnerable_king)
@@ -587,7 +587,7 @@ void Board::update_blocks(const Square square, const Piece old_piece, const Piec
             continue;
         }
 
-        const auto& attack_direction_list = potential_attacks[static_cast<size_t>(attacking_color)][origin_square_index];
+        const auto& attack_direction_list = potential_attacks[static_cast<int>(attacking_color)][origin_square_index];
         for(size_t index = 0; index < 8; ++index) // < 8 to exclude knight moves, which are never blocked
         {
             if(attack_direction_list[index])
@@ -602,8 +602,8 @@ void Board::update_blocks(const Square square, const Piece old_piece, const Piec
                 for(const auto target_square : Square::square_line_from(square, step))
                 {
                     const auto target_index = target_square.index();
-                    potential_attacks[static_cast<size_t>(attacking_color)][target_index][index] = add_new_attacks;
-                    blocked_attacks[static_cast<size_t>(attacking_color)][target_index][index] = ! add_new_attacks;
+                    potential_attacks[static_cast<int>(attacking_color)][target_index][index] = add_new_attacks;
+                    blocked_attacks[static_cast<int>(attacking_color)][target_index][index] = ! add_new_attacks;
 
                     const auto piece = piece_on_square(target_square);
                     if(piece && piece != vulnerable_king)
@@ -618,7 +618,7 @@ void Board::update_blocks(const Square square, const Piece old_piece, const Piec
 
 const std::bitset<16>& Board::moves_attacking_square(const Square square, const Piece_Color attacking_color) const noexcept
 {
-    return potential_attacks[static_cast<size_t>(attacking_color)][square.index()];
+    return potential_attacks[static_cast<int>(attacking_color)][square.index()];
 }
 
 const std::bitset<16>& Board::checking_moves() const noexcept
@@ -638,7 +638,7 @@ bool Board::safe_for_king(const Square square, const Piece_Color king_color) con
 
 bool Board::blocked_attack(const Square square, const Piece_Color attacking_color) const noexcept
 {
-    return blocked_attacks[static_cast<size_t>(attacking_color)][square.index()].any();
+    return blocked_attacks[static_cast<int>(attacking_color)][square.index()].any();
 }
 
 bool Board::king_is_in_check_after_move(const Move& move) const noexcept
@@ -860,7 +860,7 @@ bool Board::piece_has_moved(const Square square) const noexcept
 
 Square Board::find_king(const Piece_Color color) const noexcept
 {
-    return king_location[static_cast<size_t>(color)];
+    return king_location[static_cast<int>(color)];
 }
 
 void Board::recreate_move_caches() noexcept
@@ -1021,7 +1021,7 @@ uint64_t Board::square_hash(Square square) const noexcept
     if(piece &&
        piece.type() == Piece_Type::ROOK &&
        ! piece_has_moved(square) &&
-       ! piece_has_moved(king_location[static_cast<size_t>(piece.color())]))
+       ! piece_has_moved(king_location[static_cast<int>(piece.color())]))
     {
         const auto on_first_rank = (index%8 == 0);
         const auto on_first_file = (index/8 == 0);
@@ -1079,7 +1079,7 @@ bool Board::piece_is_pinned(const Square square) const noexcept
     }
 
     const auto diff = king_square - square;
-    if(potential_attacks[static_cast<size_t>(opposite(whose_turn()))][square.index()][Move::attack_index(diff)])
+    if(potential_attacks[static_cast<int>(opposite(whose_turn()))][square.index()][Move::attack_index(diff)])
     {
         // The potential_attacks check guarantees that there is an opposing piece attacking
         // the queried square in the same direction towards the friendly king. This next check
@@ -1127,7 +1127,7 @@ void Board::clear_repeat_count() noexcept
 
 size_t Board::castling_move_index(const Piece_Color player) const noexcept
 {
-    return castling_index[static_cast<size_t>(player)];
+    return castling_index[static_cast<int>(player)];
 }
 
 bool Board::player_castled(const Piece_Color player) const noexcept
@@ -1183,8 +1183,8 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
         const auto move = *std::min_element(capturing_moves.begin(), capturing_moves.end(),
                                             [&piece_values, &current_board](auto move1, auto move2)
                                             {
-                                                return piece_values[static_cast<size_t>(current_board.piece_on_square(move1->start()).type())] <
-                                                       piece_values[static_cast<size_t>(current_board.piece_on_square(move2->start()).type())];
+                                                return piece_values[static_cast<int>(current_board.piece_on_square(move1->start()).type())] <
+                                                    piece_values[static_cast<int>(current_board.piece_on_square(move2->start()).type())];
                                             });
 
         // Make sure that an exchange does not lose material
@@ -1192,7 +1192,7 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
         const auto attacked_piece = current_board.piece_on_square(move->end());
         current_board.play_move(*move);
         capture_moves.push_back(move);
-        state_values.push_back(state_values.back() + (moving_piece.color() == player_color ? +1 : -1)*piece_values[static_cast<size_t>(attacked_piece.type())]);
+        state_values.push_back(state_values.back() + (moving_piece.color() == player_color ? +1 : -1)*piece_values[static_cast<int>(attacked_piece.type())]);
     }
 
 
@@ -1229,7 +1229,7 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
         }
     }
 
-    return {capture_moves.begin(), capture_moves.begin() + int(minimax_index)};
+    return {capture_moves.begin(), capture_moves.begin() + minimax_index};
 }
 
 size_t Board::previous_moves_count() const noexcept
