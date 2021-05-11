@@ -75,7 +75,7 @@ class Board
         //!        or [algebraic notation](https://en.wikipedia.org/wiki/Algebraic_notation_(chess)) ("Bb3").
         //! \returns A Move instance corresponding to the input string.
         //! \exception Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
-        const Move& interpret_move(std::string move) const;
+        const Move& interpret_move(const std::string& move) const;
 
         //! \brief Tells which player is due to move.
         //!

@@ -430,16 +430,16 @@ int Board::castling_direction(Piece_Color player) const noexcept
     return castling_movement[static_cast<int>(player)];
 }
 
-const Move& Board::interpret_move(std::string move_text) const
+const Move& Board::interpret_move(const std::string& move_text) const
 {
-    const static auto optional_end_marks = "+#?!";
-    move_text = move_text.substr(0, move_text.find_first_of(optional_end_marks));
+    const static auto end_marks = "+#?!";
+    auto raw = [](const auto& text) { return text.substr(0, text.find_first_of(end_marks)); };
+    const auto raw_move_text = raw(move_text);
     auto move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
-                                  [this, &move_text](auto move)
+                                  [this, &raw_move_text, raw](auto move)
                                   {
-                                      auto legal_move_text = move->algebraic(*this);
-                                      legal_move_text = legal_move_text.substr(0, legal_move_text.find_first_of(optional_end_marks));
-                                      return legal_move_text == move_text || move->coordinates() == move_text;
+                                      return raw(move->algebraic(*this)) == raw_move_text ||
+                                          move->coordinates() == raw_move_text;
                                   });
     if(move_iter != legal_moves().end())
     {
