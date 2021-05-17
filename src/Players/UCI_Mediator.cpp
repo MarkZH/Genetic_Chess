@@ -236,7 +236,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
 
 void UCI_Mediator::listen(const Board& board, Clock&)
 {
-    last_listening_result = std::async(std::launch::async, &UCI_Mediator::listener, this, std::ref(board));
+    last_listening_result = std::async(std::launch::async, &UCI_Mediator::listener, this, std::cref(board));
 }
 
 Game_Result UCI_Mediator::handle_move(Board& board,
