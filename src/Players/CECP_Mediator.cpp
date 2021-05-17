@@ -63,7 +63,12 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 
         board.pick_move_now(); // Stop pondering
 
-        if(command == "go")
+        if(String::starts_with(command, "ping "))
+        {
+            command[1] = 'o'; // change "ping" to "pong"
+            send_command(command);
+        }
+        else if(command == "go")
         {
             log("telling local AI to move at leisure and accepting move");
             in_force_mode = false;
@@ -343,12 +348,7 @@ std::string CECP_Mediator::receive_cecp_command(const Board& board, Clock& clock
             command = last_listening_command.valid() ? last_listening_command.get() : receive_command();
         }
 
-        if(String::starts_with(command, "ping "))
-        {
-            command[1] = 'o'; // change "ping" to "pong"
-            send_command(command);
-        }
-        else if(command == "force")
+        if(command == "force")
         {
             log("Entering force mode");
             board.pick_move_now();
