@@ -63,7 +63,7 @@ depends[user_manual_var] = [
     'gene_pool_config_example.txt',
     'genetic_ai_example.txt',
     'doc/game-endings-log-plot.png',
-    'doc/game_length_distribution.png',
+    'doc/divergence-example.png',
     'doc/game_length_log_norm_distribution.png',
     'doc/pawn-crash-strength-plot.png',
     'doc/piece-strength-with-king-plot.png',
