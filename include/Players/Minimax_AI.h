@@ -172,8 +172,6 @@ class Minimax_AI : public Player
 //!        1 for first move by that player's opponent, etc.).
 //! \param variation A sequence of moves from the current board position.
 //! \param score The score assigned to the resulting board after the sequence of moves.
-//! \param alternate_variation Another sequence of moves starting from the same board position.
-//! \param alternate_score The score assigned to the board after the alternate sequence of moves.
 std::string variation_line(Board board,
                            size_t move_number,
                            const std::vector<const Move*>& variation,
