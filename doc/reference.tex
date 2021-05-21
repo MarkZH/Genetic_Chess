@@ -40,9 +40,9 @@ Required software: GCC\footnote{\url{https://gcc.gnu.org/}} or clang\footnote{\u
 			\item \code{all}: The default, creates \code{release} and \code{debug} builds as well as the documentation: a PDF user manual and Doxygen code documentation in HTML.
 			\item \code{release} The build that is optimized for speed.
 			\item \code{debug} The build that contains symbols for debugging.
-			\item \code{test\_all}, \code{test\_release}, \code{test\_debug}: Runs test suites on the named builds to ensure proper functioning and to measure performance.
+			\item \code{test}, \code{test\_release}, \code{test\_debug}: Runs test suites on the named builds to ensure proper functioning and to measure performance.
 			\item \code{docs}, \code{user\_manual}, \code{code\_docs}: Generate documentation. The target \code{docs} implies the other two. The \code{user\_manual} is a PDF document detailing how to run the program; the \code{code\_docs} target is a series of HTML pages detailing the public interfaces of the \cpp{} code.
-			\item \code{clean\_all}, \code{clean\_release}, \code{clean\_debug}: Deletes build files and (in the case of \code{clean\_all}) generated documentation files.
+			\item \code{clean}, \code{clean\_release}, \code{clean\_debug}: Deletes build files and (in the case of \code{clean\_all}) generated documentation files.
 		\end{itemize}
 		\item The executable files will be placed in the directory \code{./bin/<compiler>/<build>/\allowbreak{}genetic\_chess}, where \code{<compiler>} is either \code{gcc} or \code{clang} from step 1 and \code{<build>} is either \code{release} or \code{debug}. For convenience, symbolic links to the last made executable file will placed in \code{./bin/<build>/}.
 \end{enumerate}
@@ -61,13 +61,13 @@ These first options are standalone operations. If multiple options are used, all
 	\item[\code{genetic\_chess -test}] Run tests of the program for chess rule conformance and for Genetic AIs working properly.
 	\item[\code{genetic\_chess -perft}:] Test game logic and speed by counting legal moves from a list of board positions.
 	\item[\code{genetic\_chess -speed}:] Measure the speed of various components of the chess engine.
-	\item[\code{genetic\_chess -confirm <file name>}] Analyze a game recod in Portable Game Notation (PGN) to check that all moves listed are legal and all move are correctly noted with respect to check (+), capture (x), and checkmate (\#).
+	\item[\code{genetic\_chess -confirm <file name>}] Analyze a game recod in Portable Game Notation (PGN \cite{pgn-file-format}) to check that all moves listed are legal and all move are correctly noted with respect to check (+), capture (x), and checkmate (\#).
 	\item[\code{genetic\_chess -genepool <file name>}]
 This will start up a gene pool with Genetic\_AIs playing against each other---mating, killing, mutating, all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
 \end{description}
 The following options can be used together to start a single chess game.
 \begin{description}
-	\item[\code{genetic\_chess <player> [<player>]}] Starts a local game played in the terminal with an ASCII art board. If two players are specified, the first parameter is the white player, and the second is black. If only one player is specified, the program waits for GUI input on stdin. The \code{<player>} argument is replaced with one of the following:
+	\item[\code{genetic\_chess <player> [<player>]}] Starts a local game. If two players are specified, the first parameter is the white player, and the second is black. If only one player is specified, the program waits for GUI input on stdin. The \code{<player>} argument is replaced with one of the following:
 	\begin{description}
 		\item[\code{-genetic [<file name> [<number>]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID\@. If no number is specified, then the last genome in the file is loaded (presumably this one is the most evolved)..
 		\item[\code{-random}:] an AI player that chooses a random legal move at each turn.
@@ -78,10 +78,8 @@ Other game options that can be added:
 	\item[\code{-time <number>}:] The starting about of time on the game clocks in seconds.
 	\item[\code{-repeat\_moves <number>}:] The number of moves a player must make before the clocks are reset to their starting time.
 	\item[\code{-increment <number>}:] The amount of time to add to the clocks after every move.
-	\item[\code{-pondering}:] Allow chess engines/AIs to think while it is not their turn to move.
-	\item[\code{-board <FEN>}] A description of a board setup in \href{https://en.wikipedia.org/wiki/Forsyth\%E2\%80\%93Edwards_Notation}{Forsyth-Edwards Notation} on which to start the game.
+	\item[\code{-board <FEN>}] A description of a board setup in \href{https://en.wikipedia.org/wiki/Forsyth\%E2\%80\%93Edwards_Notation}{Forsyth-Edwards Notation}~\cite{fen-notation} on which to start the game. The entire FEN should be quoted.
 	\item[\code{-game\_file <file name>}] The name of a file for recording the moves of the game and other information. If the file exists, the game record will be appended.
-	\item[\code{-short\_post}] When sending thinking output to a GUI, send a shortened version that is compatible with more GUIs (\url{lichess.org} for one).
 \end{description}
 Genetic Chess can communicate with GUI chess programs (xboard, PyChess, Cute Chess, and \href{https://lichess.org}{lichess.org} among others) through the \href{https://www.gnu.org/software/xboard/engine-intf.html}{Chess Engine Communication Protocol (CECP or, often, xboard)} or the \href{http://wbec-ridderkerk.nl/html/UCIProtocol.html}{Universal Chess Interface (UCI)}. When using Genetic Chess this way, only specify the arguments for a single player. The program will then wait for communication from the GUI through stdin.
 
@@ -146,8 +144,8 @@ There's an interesting problem with the genetic factors where the absolute value
 where \(p_i'\) is the gene priority after normalization, \(p_i\) is the gene priority before normalization, and \(k\) is the normalization constant.
 
 The choice of normalization procedure is arbitrary as long as the resulting constant is positive, any of the following would have also worked:
-\[k = \sqrt{\sum_{p_i}p_i^2}, \qquad k = max(|p_i|), \qquad k = \left|\sum_{p_i}p_i\right|, \qquad \textrm{etc.}\]
-The method for this program was chosen for the simplicity of the required code.
+\[k = \sqrt{\sum_{p_i}p_i^2}, \qquad k = max(|p_i|), \qquad \textrm{etc.}\]
+The method for this program was chosen for the simplicity of the required code and the low probability of dividing by zero.
 
 \subsection{Notes on Designing Genes}
 
@@ -156,26 +154,33 @@ Evolution is an effective means of optimizing when every mutation makes a differ
 	\item a continuous function of the parameters of its genome and
 	\item without flat sections.
 \end{enumerate}
-The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. This is why the deactivating-gene mutation was discarded. It is better to let a gene fall in importance by gradually reducing its priority. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI\@. This random walk period only represents wasted time. To this end, certain gene parameters are restricted to, for example, non-negative values.
+The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI\@. This random walk period only represents wasted time. To this end, certain gene parameters are restricted to, for example, non-negative values.
+
+Most aspects of each gene vary based on the progress through the current game--that is, what percentage of the game has elapsed. For these genetic aspects, two values are defined: one for the start of the game and one for the end. The value used during the game is a linear interpolation of the two values:
+\[
+V = V_1 + (V_2 - V_1)r
+\]
+where \(V\) is the value to use in the current computation, \(V_1\) is the value at the start of the game, \(V_2\) is the value at the end of the game, and \(r\) is the fraction of the game that has been played. In the example genome file (Section~\ref{genome-file-format}), genes that are interpolated have \code{- Opening} and \code{- Endgame} suffixes with the same meaning as \(V_1\) and \(V_2\), respectively.
 
 \subsection{Regulatory Genes}
-A regulator gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
+A regulatory gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
 
 \subsubsection{Piece Strength Gene}\label{piece-strength}
 This gene specifies the importance or strength of each different type of chess piece. Other genes like the Total Force Gene (Section~\ref{total-force}) reference this one for their own evaluation purposes.
 
 Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and~\ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
 
-The values of the piece strengths are normalized so that the sum of the absolute values of all the pieces of one color is one.
+Internally, the values of the piece strengths are normalized so that the sum of the absolute values of all the pieces of one color is one so that the priorities of the Total Force Gene and the Opponent Pieces Targeted Gene can mutate independently.
 
 \subsubsection{Look Ahead Gene}\label{look-ahead}
 This gene determines all aspects of the Genetic AIs time management through a set of genetically determined components to this gene that determine how the AI spends its time:
 \begin{enumerate}
 	\item the average number of moves per game,
 	\item the uncertainty in the above average.
-	\item a constant related to over-allocating search time while counting on alpha-beta pruning to not use too much
+	\item constants related to over-allocating search time while counting on alpha-beta pruning to not use too much
+	\item estimates of the effective number of legal moves on a random board.
 \end{enumerate}
-When the AI starts the algorithm to choose a move, it allocates a fraction of the time left on the clock so that all subsequent moves get equal time. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a log-normal distribution~\cite{log-norm-wiki}\cite{log-norm-chess-se} with a mean and spread given by the first two parameters listed above. Originally, it was assumed that the number of moves in a game was well-modeled by a Poisson distribution. This proved to be false (see Figure~\ref{game-length-plot}), and the log-normal distribution---wherein the logarithm of the variable is normally distributed---is now used.
+When the AI starts the algorithm to choose a move, it estimates the number of move left in the game and allocates equal time for all of them. That is, if there are 20~moves estimated to be left in the game, then \(1/20\)~of the remaining time is used for this move. The number of moves left is estimated by assuming the number of moves in a game is modeled by a log-normal distribution~\cite{log-norm-wiki}\cite{log-norm-chess-se} with a mean and spread given by the first two parameters listed above.
 
 The number of moves left in the game is estimated by
 \[N(n) = \frac{\sum_{i = n + 1}^\infty P(i)\times{}i}{\sum_{i = n + 1}^\infty P(i)} - n\]
@@ -206,11 +211,6 @@ N(n) = \left(e^{M + S^2/2}\right) \frac
 {1 + \textrm{erf}\left(\frac{M-\ln (n+1)}{S\sqrt{2}}\right)}
 - n.
 \]
-\begin{figure}[tbh]
-	\centering
-	\includegraphics[width=0.7\textwidth]{game_length_distribution.png}
-	\caption{First attempts at determining the distribution of moves in chess games. The black histogram shows the distribution of the number of moves in a game (with one move consisting of both a black and white play). The (mean) and (mode) designations in the legend indicate which statistic was used as the mean parameter of the fitted Poisson and normal distributions (neither of which are a good fit). The spike at 9~moves was created just after a change to the program that resulted in much faster changes in board state.}\label{game-length-plot}
-\end{figure}
 
 \begin{figure}[tbh]
 	\centering
@@ -218,7 +218,7 @@ N(n) = \left(e^{M + S^2/2}\right) \frac
 	\caption{The distribution of the number of moves in a game with a log-normal fit. The Log-Norm parameters listed are \(M\) for the Peak parameter and \(S\) for the Width parameter. To obtain a better fit, only games longer than 15~moves were considered, as shorter games were primarily by ill-adapted AIs (especially the spike at 9-move games), especially at the beginning of the gene pool run.}\label{log-norm-plot}
 \end{figure}
 
-If the number of moves left in the game is greater than the number of moves that will result in a clock reset, then the latter will determine how much time will be used. In a game with 40/5~time control, where five minutes are added to the clock every 40~moves, every 40th move can use all the remaining time since an extra five minutes will be added after the move. Whatever the final number of moves left is used, the time on the clock is divided by that number to determine how much time to take to choose a move.
+If the number of moves left in the game is greater than the number of moves that will result in a clock reset, then the latter will determine how much time will be used. In a game with, say, 40/5~time control, where five minutes are added to the clock every 40~moves, every 40th move can use all the remaining time since an extra five minutes will be added after the move. Whatever the final number of moves left is used, the time on the clock is divided by that number to determine how much time to take to choose a move.
 
 When choosing a move from the current board, the amount of time to consider a move is equal to the amount of time left for this board position divided by the number of legal moves left to consider. This naturally limits the depth of search while allowing deeper searches for positions with fewer legal moves, which are often a series of forced moves due to check and so deserve deeper inspection. If a move examination is cut off early for whatever reason (e.g., a game-ending move is found or through alpha-beta pruning), then the remaining time is available for as yet unexamined moves.
 
@@ -228,8 +228,19 @@ T = k\frac{N_{\textrm{legal}}}{v}
 \]
 where \(T\) is the time needed to look ahead on this move, \(N_{\textrm{legal}}\) is the number of legal moves on the board after the move is made, \(v\) is the rate of position examinations, and \(k\) is a genetically determined speculation constant that adjusts the amount of time to use. The speed \(v\) is determined by counting the number of positions evaluated (leaf nodes in the game tree) and dividing by the amount of time spent evaluating during the previous move. If the time \(T\) is less than the time allocated for the move, the algorithm looks ahead (the search function recurses) to examine the moves the opponent can make in response. Otherwise, it evaluates the current position and moves on to the next legal move.
 
-\subsubsection{Mutation Rate Gene}\label{mutation-rate-gene}
-This gene controls how many randomly chosen genes get mutated every time there's a call to \code{Genome::mutate()}. The unique aspect of this gene is that it is the only one that does not change the behavior of the AI during its lifespan. Mutations only occur upon birth, so this gene only controls how the offspring of the containing AI are modified. There is a risk that a moderately successful AI will shutdown mutation to preserve a currently winning genome. Thus, the minimum number of mutations is one.
+In order to force every move to be examined to a useful depth, a minimum depth is computed based upon an estimate of how many effective moves there are on a random board. By ``effective'' move, I mean one that unlikely to be pruned from the search tree. If the effective move estimate is less than the actual number of legal moves, then the search can go deeper than one would expect based on a more realistic estimate because it is expected that many move variations will be skipped due to pruning. The computation starts with the observation that, in a game tree of depth \(D\) and branching factor \(B\), the number of leaf nodes that will be evaluated is
+\[
+N = B^D.
+\]
+Since the number of leaf nodes greatly outnumbers the non-leaf nodes and the time to evaluate a node is much greater than the time to pass through a non-leaf node, only these nodes matter. Then, if nodes can be evaluated at a rate of \(v\) nodes per second and time \(T\) is allocated for choosing a move, then
+\[
+N = vT,
+\]
+which results in
+\[
+vT = B^D \implies D = \frac{\log{vT}}{\log{B}}.
+\]
+If, during a search, the AI has the option to search deeper into the game and the current depth is less than \(D\), then it will choose to go deeper.
 
 \subsection{Board-Scoring Genes}\label{board-score-section}
 
@@ -240,17 +251,15 @@ where \(g\) represents each gene, \(Priority(g)\) is a genetically determined sc
 Since it is not only important to find position that are advantageous to the player, but also disadvantageous to the opponent, the final heuristic score for a board position is given by
 \[Heuristic\ Score = Score(Player) - Score(Opponent).\]
 
-In general, the scoring function outputs of each gene are scaled so that a typical board state gets a score near one. For example, the Freedom to Move Gene divides the number of legal moves by the number of legal moves at the start of the game (20 for standard chess). This way, the priorities of genes can be easily compared as evolution progresses.
+In general, the scoring function outputs of each gene are scaled so that a typical board state gets a score between zero and one. For example, the Freedom to Move Gene divides the number of legal moves by a large number that represents slightly more legal moves than would be found on most chess boards (128 was chosen to be large enough and for fast division). This way, the priorities of genes can be easily compared as evolution progresses.
 
 \subsubsection{Total Force Gene}\label{total-force}
-This gene sums the strength of all the player's pieces on the board according to the Piece Strength Gene (see Section~\ref{piece-strength}). The score returned is divided by the total value of the starting set of pieces (8~pawns, 2~rooks, 2~knights, 2~bishops, and 1~queen) so that the result is between~0 and~1.
+This gene sums the strength of all the player's pieces on the board according to the Piece Strength Gene (see Section~\ref{piece-strength}). The score returned is divided by the total value of the starting set of pieces (8~pawns, 2~rooks, 2~knights, 2~bishops, 1~queen, and 1~king) so that the result is between~0 and~1.
 
 Since there is always a black king and a white king on the board, the king values cancel in this gene's scoring method. So, the king value is only determined by the Opponent Pieces Targeted Gene (Section~\ref{opponent-pieces-targeted}). This may be interpreted as the value of putting the other player in check.
 
-As noted in Section~\ref{board-score-section} above, the priority of this gene is restricted to be non-negative.
-
 \subsubsection{Freedom to Move Gene}
-This gene counts the number of squares under attack by a side that are also not occupied by friendly pieces. This represents how many moves are available without considering whether the king is in check or if any pieces are pinned. This count is divided by the number of squares under attack at the beginning of a game to bring the maximum score near one.
+This gene counts the number of legal moves in a position and divides it by a large number (128, as noted in Section~\ref{board-score-section}) to bring the maximum score near one.
 
 \subsubsection{Pawn Advancement Gene}
 This gene measures the progress of all pawns towards the opposite side of the board.
@@ -261,7 +270,7 @@ Here, \(S\) is the total score, the sum is over all pawns \(p\) of the scoring s
 The gene counts the number of pawns that cannot be stopped or captured by an opponent's pawns. That is, a pawn is a passed pawn if there are no pawns ahead of it in its file or any directly adjacent files. Partial points are awarded for pawns that have fewer pawns ahead than usual (\(1/3\) for each free column ahead of mid-board pawns, \(1/2\) for for pawns on the edge).
 
 \subsubsection{Opponent Pieces Targeted Gene}\label{opponent-pieces-targeted}
-This gene sums the total strength (as determined by the Piece Strength Gene) of the opponent's pieces currently under attack. The returned result is divided by the total score of pieces at the start of the game, similarly to the Total Force Gene, although the value of the king is included in this divisor. Despite relying on values from the Piece Strength Gene, it is not restricted to non-negative priorities like the Total Force Gene because the Total Force Gene provides enough evolutionary pressure on the Piece Strength Gene to force it to a consistent sign.
+This gene sums the total strength (as determined by the Piece Strength Gene) of the opponent's pieces currently under attack. The returned result is divided by the total score of pieces at the start of the game, similarly to the Total Force Gene.
 
 Interestingly, since both kings are always on the board, they always cancel each others effect in the Total Force Gene, leaving this gene alone to drive their strength value. The result of this is discussed in the results section (Section~\ref{piece-strength-with-king}).
 
@@ -273,26 +282,13 @@ The effective formula for the score of this gene can be expressed as
 where the sum is over all squares \(s\) on the board. The function \(legal(s)\) returns~0 if \(s\) is not attacked at all, or one of two genetically determined factors depending on if the the attack is legal (ignoring checks or pins) or not. (These two factors are normalized so that the sum of their absolute values is one.) An illegal move is one that is blocked by another piece. The term \(KTF\) is the king target factor and is a genetically determined weight that adjusts the importance of attacking squares close to the opposing king. The function \(distance(s_1, s_2)\) gives the distance between two squares in king moves and is equal to the maximum of the difference in file or rank between the squares. In the formula above, \(king\) represents the square the opposing king occupies.
 
 \subsubsection{King Confinement Gene}
-This gene tracks the manner in which the king is prevented from moving. In general, a king is safe if it is surrounded by friendly pieces or, failing that, it is free to move around the board when there are opposing pieces near. In scoring a board, this gene tracks the squares the king can reach given unlimited consecutive legal moves up to a genetically determined maximum distance.
-
-For a more detailed picture, each square potentially reachable by the king is classified into three types:
-\begin{itemize}
-	\item Free: the king is free to move on to these squares,
-	\item Friendly block: the king is blocked by pieces of the same color, and
-	\item Opponent block: the king is blocked due to the square being attacked by an opponent piece.
-\end{itemize}
-Note that opponent pieces by themselves do not block the king since they can be captured. Once all reachable squares have been found within a genetically determined maximum distance (measured in king moves), the score is calculated by the following:
-\[S = \frac{W_{friendly}\sum_{s \in R}Friend(s) + W_{opponent}\sum_{s \in R}Opponent(s)}{1 + \sum_{s \in R}Free(s)}
-\]
-where \(S\) is the resulting score, \(\sum_{s \in R}\) is a sum over every square \(s\) on the board that is reachable (\(\in R\)) from the current king location, \(W_{friend}\) is the genetically determined weight of squares blocked by friendly pieces, \(W_{opponent}\) is the genetically determined weight of squares blocked by opponent attacks, \(Friend(s)\) returns 1 if the square \(s\) is blocked by a friendly piece and 0 otherwise, \(Opponent(s)\) returns 1 if the square \(s\) is attacked by an opposing piece and 0 otherwise, and \(Free(s)\) returns 1 if the square \(s\) is reachable by the king and 0 otherwise. If a square is both occupied by a friendly piece and attacked by the opponent, then the friend score prevails, since this represents an opponent's attack being blocked. One is added to the denominator to prevent division by zero in the case where the king is in check and unable to move. The further division by the sum of the absolute values of the weights normalizes the score so that the result is approximately in the range \(-1 \leq S \leq 1\).
-
-Usually, the weight \(W_{friend}\) will end up positive and \(W_{opponent}\) will end up negative. So, a king that is hemmed in by friendly pieces will receive a positive score while a king hemmed in by opposing attacks receives a negative score. In both cases, a greater number of reachable free squares brings the score closer to zero. A situation where the king is far from friendly protection and opponent's attacks is thus neutral. The two weights are normalized so that the sum of their absolute values is one.
+This gene tracks the manner in which the king is prevented from moving. In scoring a board, this gene counts the squares the king can reach given unlimited consecutive moves that do not land on attacked squares or are occupied by pieces of either side. The count is divided by 64 to give a score between zero and one. The priority of this gene is usually slightly negative at the beginning of the game (to encourage hiding the king away) and higher at the end of the game (to encourage the king to escape from restricted areas).
 
 \subsubsection{King Protection Gene}
 This gene counts the squares that have access to the king by any valid piece movement and are unguarded by that king's other pieces. In other words, it measures how exposed the king is to hypothetical attacks. A higher score means a less exposed king.
 
 \subsubsection{Castling Possible Gene}
-This gene returns a positive score to indicate that castling is possible or has already happened. A higher score indicates that castling is closer to being a legal move due to intervening pieces being moved away, the king and rook remaining unmoved, and opposing pieces not attacking. The score can vary based on a genetically determined preference for kingside or queenside castling. The numerical values of these preferences are normalized so that the sum of their absolute values is one.
+This gene returns a positive score to indicate that castling is possible in the near future. A higher score indicates that castling is closer to being a legal move due a castling move happening in the current variation. The score can vary based on a genetically determined preference for kingside or queenside castling. The numerical values of these preferences are normalized so that the sum of their absolute values is one.
 
 \subsubsection{Pawn Islands Gene}
 A pawn island is a group of pawns on neighboring files that are isolated from other pawns by empty files, and thus cannot help to defend pawns on other islands. This gene calculates the average number of pawns per island with the assumption that a greater number of islands with fewer pawns each is unwanted.
@@ -304,35 +300,46 @@ This gene counts the pawns that have a pawn of the same color ahead of them in t
 This gene returns a score of one if the scoring side has enough pieces to checkmate a lone king. Otherwise, it returns zero. This should help avoid piece trade-offs resulting in one side having a material advantage but unable to checkmate---king and knight vs\@. king and pawn, for example.
 
 
-\subsection{Genome File Format}
+\subsection{Genome File Format}\label{genome-file-format}
 An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line. Each component of a gene is a single line and specified by a name followed by a colon and the numerical value. Spacing within the line does not matter.
 \verbatiminput{../genetic_ai_example.txt}
 
-In genome files that are the output of gene pool runs (see Section~\ref{gene-pool-section}) there will also be lines in the following format:\\\\
-\verb|Still Alive: 2 : 759 849 872 896 899 901 902 903 # ... etc.|\\\\
+In genome files that are the output of gene pool runs (see Section~\ref{gene-pool-section}) there will also be lines in the following format:
+
+\vspace{1ex}
+\verb|Still Alive: 2 : 759 849 872 896 899 901 902 903 # ... etc.|
+\vspace{1ex}
+
 This line lists the ID numbers (after the second colon) of the AIs that are still alive within gene pool \#2 (the number after the first colon).
 
 \section{The Gene Pool: On the Care and Feeding of Chess AIs}\label{gene-pool-section}
-In each generation, the players in a gene pool are randomly matched up with each other to play a single game of chess. After the game, the two players mate to produce one offspring by picking each gene randomly from either parent with equal probability (recombination~\cite{recombination-wiki}). The offspring is then subject to a single extra mutation procedure wherein a number genes are individually mutated (that number being controlled by a dedicated gene, see Section~\ref{mutation-rate-gene}). Finally, the offspring replaces the loser in the gene pool. If the game ended in a draw, the player to be replaced by the offspring is picked by coin flip. In the literature, this setup is classified under Evolutionary Strategies~\cite{evolution-strategy-wiki}, more specifically \((N/2+N)\)-ES~\cite{evolution-strategy-glossary}, where \(N\) is the population size after the chess games (half the initial population), \(/2\) refers to two parents producing one offspring through recombination, \(+\) means that the offspring compete with the parents (elitism), and the final \(N\) refers to how many offspring are generated to keep a constant population of \(2N\), half of which are killed off every generation.
+In each generation, the players in the gene pool are shuffled in order to form pairs for a single game of chess. After the game, the two players mate to produce one offspring by picking each gene randomly from either parent with equal probability (recombination~\cite{recombination-wiki}). The offspring is then subject to a bout of the mutation procedure wherein a number genes are individually mutated (that number being controlled by periodically varying mutation rate specified in the gene pool configuration file shown in Section~\ref{gene-pool-config}). Finally, the offspring replaces the loser in the gene pool. If the game ended in a draw, the player to be replaced by the offspring is picked by coin flip. In the literature, this setup is classified under Evolutionary Strategies~\cite{evolution-strategy-wiki}, more specifically \((N/2+N)\)-ES~\cite{evolution-strategy-glossary}, where \(N\) is the population size after the chess games (half the initial population), \(/2\) refers to two parents producing one offspring through recombination, \(+\) means that the offspring compete with the parents (elitism), and the final \(N\) refers to how many offspring are generated to keep a constant population of \(2N\), half of which are killed off every generation.
 
 In this procedure, some the genes of losing players are passed on and are only slowly weeded out since a single game does not actually provide much information about the fitness of any gene with respect to game play. The removal of individuals destroys genetic information. By ``information,'' I mean filtered genomes. If a gene (including small variations, given the continuous nature of these genotypes) is present is a large percentage of the species, then that gene must have been present in a great number of AIs that were victorious in their games through many generations and many different opponents. Genes found in losing organisms slowly fade away as their host organisms fail to survive long enough reproduce multiple times. On average, a gene from a losing AI will be present in 0.5~AIs (50\% chance of being passed on) in the next generation; a gene from a winning AI will be present in 1.5~AIs (1.0 from the parent and another 0.5 from the 50\% chance of being passed on) in the next generation.
 
-One final means of preventing gene pool stagnation and preserving genetic diversity is the use of multiple gene pools. Each gene pool evolves separately for a long time, allowing each to genetically diverge. Then, every once in a long while (the time being user-specified), all of the AIs are shuffled between all of the gene pools. Thus, the best genes are further spread afield so that they can be tested against a wide range of opponents and combined with the best genes from other pools to create stronger offspring.
+One final means of preventing gene pool stagnation and preserving genetic diversity is to limit the amount of shuffling when creating matchups. The order is randomized, but most AIs end up near where they started. This way, widely separated AIs can evolve in independent communities. An example is shown in Figure~\ref{gene-pool-divergence}.
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[width=\textwidth]{divergence-example}
+	\caption{An example of diverging communities in a single gene pool (\(N=100\)). Near ID 35,000, a small offshoot community with a larger queen value can be seen to grow and eventually take over the whole pool. Near ID 60,000, the pool can be seen to split in half with the higher queen value again winning out.}\label{gene-pool-divergence}
+\end{figure}
 
 On Linux, the gene pool can be paused by pressing Ctrl-z. After the key press, the currently running games will finish and the results recorded before pausing. Pressing Ctrl-c exits the program immediately without waiting for current games to finish. To exit the program after the current round of games finish, pause first with Ctrl-z, then exit with Ctrl-c.
 
 On Windows, pressing Ctrl-c exits the program after the current round of games is finished and recorded. Pressing Ctrl-c twice ends the program immediately without waiting for current games to finish.
 
-\subsection{Gene Pool Configuration File}
+\subsection{Gene Pool Configuration File}\label{gene-pool-config}
 A gene pool is configured with a text file that is referenced in the program starting arguments (see Section~\ref{running}). An explanatory example gene pool configuration file is presented below.
 \verbatiminput{../gene_pool_config_example.txt}
 
 \subsection{Gene Pool Terminal Output}
-An example of typical output during a gene pool run is shown below. First, some general information about the pool is shown, then the results of the random matchups, and finally the new makeup of this gene pool in the aftermath of the games.
+An example of typical output during a gene pool run is shown below. First, some general information about the pool is shown, then the results of the random matchups, and finally the new makeup of this gene pool in the aftermath of the games. If \code{output volume} is set to \code{quiet}, then the game matchups and gene pool population and standings will not be printed to the screen.
 \begin{verbatim}
-Gene pool ID: 0  Gene pool size: 16  Rounds since pool swaps: 2/1000
+Gene pool size: 100  Gene pool file name: pool.txt
 Games: 6000  White wins: 3402  Black wins: 2511  Draws: 87
-Time: 16.65 sec   Gene pool file name: pool.txt
+Rounds: 2170  Mutation rate phase: 70 (10/90)
+Mutation rate: 2  Game time: 6.65 sec   
 
 106514 vs 106495: Black (Time forfeiture)
 106531 vs 106513: White (White mates)
@@ -342,6 +349,7 @@ Time: 16.65 sec   Gene pool file name: pool.txt
 106532 vs 106530: White (White mates)
 106529 vs 106433: White (White mates)
 106533 vs 106534: White (White mates)
+... etc. ...
 
      ID   Wins  Draws
  106457      2      3
@@ -360,6 +368,7 @@ Time: 16.65 sec   Gene pool file name: pool.txt
  106554      0      0
  106555      0      0
  106556      0      0
+... etc. ...
 \end{verbatim}
 
 
@@ -436,25 +445,24 @@ It seems that the Look Ahead Gene does not experience significant evolutionary p
 
 This was unexpected. I thought that the legal moves would count more since they present a greater threat to the opponent. You cannot capture your opponent's Queen if your own King is in check. Perhaps Genetic\_AIs find this gene more useful as a forward-looking view of the game. Or, the Opponent Pieces Targeted Gene relieves this gene of having to consider legal moves.
 
-\section{Programming Quirks}
-
-The representation of the Board state went through several phases:
-\begin{enumerate}
-	\item Originally, the state of the Board was represented by an array of \code{std::shared\_ptr}s to subclasses of a \code{Piece} class. Using \code{std::shared\_ptr}s meant that copying a board (for when computer players needed to think ahead) did not present difficulties in managing the piece resources (namely, when to call \code{delete}). While easy to code, the bookkeeping required by shared pointer copying slowed down the speed of the AIs traversal of the game tree.
-	\item Then, each type and color of piece was stored as a static instance in the \code{Board} class and pointers to these instances are used as markers for board positions. While this does mean that \code{Piece} classes are treated like singletons (or, rather, doubletons, since there are black and white instances), this was simpler and faster. The pieces in this code do not have any modifiable internal state after creation, so any two white pawns---even ones taken from different boards---should be completely indistinguishable.
-	\item The realization that \code{Piece}s didn't have internal state lead to the most recent version, every piece is simply an unsigned integer where individual bits represent the color and type of a piece. This is the simplest and fastest way to represent an entity with no state other than its identity. The integer representation is used to access arrays of pointers to \code{Move}s. There is no subclassing required since a piece is fully identified by its type, color, and list of legal moves. There are no methods to override with different behavior, only different member data to construct.
-\end{enumerate}
-
-If a function or method returns a pointer, the caller of that function is not responsible for deleting the data pointed to by the pointer (and, in fact, should not). Most public methods and functions take reference arguments to prevent problems with null pointers. Where functions do take pointer arguments (such as \code{Board::print\_game\_record()} for the player instances), that argument is optional parameter that can take a \code{nullptr} to indicate no data.
 
 
 \begin{thebibliography}{99}
+
+\bibitem{pgn-file-format}
+\url{http://www.thechessdrum.net/PGN_Reference.txt}
+
+\bibitem{fen-notation}
+\url{http://www.thechessdrum.net/PGN_Reference.txt} Section~16.1
 
 \bibitem{evolved-antenna}
 G.S. Hornby, A. Globus, D.S. Linden, J.D. Lohn, ``Automated Antenna Design with Evolutionary Algorithms.'' AIAA
 
 \bibitem{evolved-stellarator}
 W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a genetic algorithm for compact stellarator coil design.'' IAEA Nuclear Fusion, Vol. 41, No. 9. 1185--1195
+
+\bibitem{quiescence-ref}
+\url{https://www.chessprogramming.org/Quiescence_Search}
 
 \bibitem{laplace}
 \url{https://en.wikipedia.org/wiki/Laplace_distribution}
@@ -464,12 +472,6 @@ W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a
 
 \bibitem{log-norm-chess-se}
 \url{https://chess.stackexchange.com/a/4899/5819}
-
-\bibitem{quiescence-ref}
-\url{https://www.chessprogramming.org/Quiescence_Search}
-
-\bibitem{fen-notation}
-\url{http://www.thechessdrum.net/PGN_Reference.txt} Section~16.1
 
 \bibitem{recombination-wiki}
 \url{https://en.wikipedia.org/wiki/Genetic_recombination}

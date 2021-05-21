@@ -34,7 +34,8 @@ maximum game time = 30 # seconds
 game time increment = 0.01 # seconds
 
 # (Optional) Start every game with the board specified by the FEN below
-# FEN = rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1 # After 1. e4
+# FEN = rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq e3 0 1
+# The above board is after 1. e4
 
 # The name of the file where the genomes will be recorded.
 # Games will be recorded in a file with "_games.txt" appended
