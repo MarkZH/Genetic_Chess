@@ -42,6 +42,10 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     time_at_last_output = std::chrono::steady_clock::now();
 
     auto principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
+    if(principal_variation.size() <= 2 || principal_variation[1] != board.last_move())
+    {
+        principal_variation.clear();
+    }
 
     const auto time_to_use = time_to_examine(board, clock);
     const auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor(game_progress(board))));
