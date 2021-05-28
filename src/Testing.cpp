@@ -1225,9 +1225,9 @@ namespace
 
     void total_force_gene_tests(bool& tests_passed)
     {
-        auto total_piece_strength_gene = Piece_Strength_Gene();
-        total_piece_strength_gene.read_from("testing/test_genome.txt");
-        const auto total_force_gene = Total_Force_Gene(&total_piece_strength_gene);
+        auto piece_strength_gene = Piece_Strength_Gene();
+        piece_strength_gene.read_from("testing/test_genome.txt");
+        const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
         total_force_gene.test(tests_passed, Board(), Piece_Color::WHITE, 1.0);
     }
 
