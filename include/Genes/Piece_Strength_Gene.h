@@ -19,14 +19,14 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
         //! \brief Index for locating the gene in the genome
         static const size_t genome_index = 0;
 
-        //! \brief Initialize the Piece values to zero.
+        //! \brief Initialize the Piece values to all be the same.
         Piece_Strength_Gene() noexcept;
 
         std::string name() const noexcept override;
 
         //! \brief This method is queried by other Genes to determine the value of various Pieces.
         //!
-        //! \param piece A pointer to a Piece. A nullptr represents no piece (as from an empty square).
+        //! \param piece A piece--which may be from an empty square--to valuate.
         //! \returns A numerical value of the Piece.
         double piece_value(Piece piece) const noexcept;
 
