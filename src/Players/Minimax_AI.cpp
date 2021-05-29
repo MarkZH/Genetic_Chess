@@ -144,6 +144,13 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
             best_result = evaluate(move_result, next_board, current_variation, perspective, evaluate_start_time);
             break;
         }
+        else if(next_board.repeat_count_from_depth(depth) >= 2)
+        {
+            // This move repeats a searched position. If this is the best line,
+            // then searching further will find this position again, resulting
+            // threefold repetition. So, cut off the search here.
+            move_result = Game_Result(Winner_Color::NONE, Game_Result_Type::THREEFOLD_REPETITION);
+        }
 
         if(alpha.depth() <= depth + 2 && alpha.is_winning_for(perspective))
         {
@@ -225,7 +232,7 @@ Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
     return create_result(next_board, perspective, move_result, current_variation);
 }
 
-bool Minimax_AI::search_further(Game_Result& move_result,
+bool Minimax_AI::search_further(const Game_Result& move_result,
                                 const size_t depth,
                                 const Board& next_board,
                                 const std::vector<const Move*>& principal_variation,
@@ -238,11 +245,6 @@ bool Minimax_AI::search_further(Game_Result& move_result,
     }
     else if(depth >= maximum_search_depth)
     {
-        return false;
-    }
-    else if(next_board.repeat_count_from_depth(depth) >= 2)
-    {
-        move_result = Game_Result(Winner_Color::NONE, Game_Result_Type::THREEFOLD_REPETITION);
         return false;
     }
     else if( ! principal_variation.empty())

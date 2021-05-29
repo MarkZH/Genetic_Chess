@@ -119,7 +119,7 @@ class Minimax_AI : public Player
                                        Piece_Color perspective,
                                        std::chrono::steady_clock::time_point evaluate_start_time) const noexcept;
 
-        bool search_further(Game_Result& move_result,
+        bool search_further(const Game_Result& move_result,
                             size_t depth,
                             const Board& next_board,
                             const std::vector<const Move*>& principal_variation,
