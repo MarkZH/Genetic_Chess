@@ -11,7 +11,8 @@
 #include "Genes/Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
 
-Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* const piece_strength_source_in) noexcept : piece_strength_source(piece_strength_source_in)
+Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* const piece_strength_source_in) noexcept :
+    piece_strength_source(piece_strength_source_in)
 {
 }
 
