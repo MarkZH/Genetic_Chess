@@ -213,6 +213,10 @@ namespace
     void checkmate_material_gene_tests(bool& tests_passed);
     void sphere_of_influence_gene_tests(bool& tests_passed);
 
+    void game_progress_on_new_board_is_zero(bool& tests_passed);
+    void game_progress_where_one_side_has_only_king_is_one(bool& tests_passed);
+    void game_progress_with_one_queen_removed_makes_sense(bool& tests_passed);
+
     void split_and_join_are_inverse_operations(bool& tests_passed);
     void commas_as_thousands_separators_correctly_placed(bool& tests_passed);
 
@@ -281,6 +285,10 @@ bool run_tests()
     stacked_pawns_gene_tests(tests_passed);
     pawn_islands_gene_tests(tests_passed);
     checkmate_material_gene_tests(tests_passed);
+
+    game_progress_on_new_board_is_zero(tests_passed);
+    game_progress_where_one_side_has_only_king_is_one(tests_passed);
+    game_progress_with_one_queen_removed_makes_sense(tests_passed);
 
     function_should_throw(tests_passed, "Missing gene data", [](){ return Piece_Strength_Gene().read_from("testing/missing_data_genome.txt");});
     function_should_throw(tests_passed, "Duplicate gene data", [](){ return Sphere_of_Influence_Gene().read_from("testing/duplicate_data_genome.txt");});
@@ -1263,6 +1271,47 @@ namespace
         // ........    44......         66......
         // K.......    K4......         K7......
         sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, Piece_Color::WHITE, sphere_of_influence_score);
+    }
+
+    void game_progress_on_new_board_is_zero(bool& tests_passed)
+    {
+        auto piece_strength_gene = Piece_Strength_Gene();
+        piece_strength_gene.read_from("testing/test_genome.txt");
+        const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
+        const auto game_progress = total_force_gene.game_progress(Board{});
+        test_result(tests_passed,
+                    std::abs(game_progress) < 1e-8,
+                    "Game progress at beginning of game is not zero: " + std::to_string(game_progress));
+    }
+
+    void game_progress_where_one_side_has_only_king_is_one(bool& tests_passed)
+    {
+        auto piece_strength_gene = Piece_Strength_Gene();
+        piece_strength_gene.read_from("testing/test_genome.txt");
+        const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
+        const auto board = Board("4k3/8/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1");
+        const auto game_progress = total_force_gene.game_progress(board);
+        test_result(tests_passed,
+                    std::abs(game_progress - 1.0) < 1e-8,
+                    "Game progress with one size having only one king is not one: " + std::to_string(game_progress));
+    }
+
+    void game_progress_with_one_queen_removed_makes_sense(bool& tests_passed)
+    {
+        auto piece_strength_gene = Piece_Strength_Gene();
+        piece_strength_gene.read_from("testing/test_genome.txt");
+        const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
+        const auto board = Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1");
+        const auto game_progress = total_force_gene.game_progress(board);
+
+        const auto queen_value = std::abs(piece_strength_gene.piece_value({Piece_Color::WHITE, Piece_Type::QUEEN}));
+        const auto king_value = std::abs(piece_strength_gene.piece_value({Piece_Color::WHITE, Piece_Type::KING}));
+        const auto expected_progress = queen_value/(1.0 - king_value);
+
+        test_result(tests_passed,
+                    std::abs(game_progress - expected_progress) < 1e-8,
+                    "Game progress with one queen missing not as expected: "
+                    + std::to_string(game_progress) + " != " + std::to_string(expected_progress));
     }
 
     void split_and_join_are_inverse_operations(bool& tests_passed)
