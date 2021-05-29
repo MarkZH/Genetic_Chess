@@ -78,10 +78,6 @@ for yi = 2 : length(data.colheaders)
          'markersize', 10);
     xlabel(xaxis);
     title(name);
-
-    conv_window = 100;
-    conv_margin = floor(conv_window/2);
-    x_axis = id_list(conv_margin : end - conv_margin);
     plot(xlim, [0 0], '--k'); % X-axis
 
     for index = 1:length(id_marks)
@@ -103,6 +99,7 @@ for yi = 2 : length(data.colheaders)
     end
 
     if plot_figure != invalid_plot
+        conv_window = 100;
         smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
         figure(plot_figure);
         if plot_figure == piece_strength_figure
@@ -121,6 +118,8 @@ for yi = 2 : length(data.colheaders)
             make_dashed = (endgame_priority_count > 7);
         end
 
+        conv_margin = floor(conv_window/2);
+        x_axis = id_list(conv_margin : end - conv_margin);
         p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', display_name);
         if make_dashed
             set(p, 'LineStyle', ':');
