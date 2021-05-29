@@ -1277,8 +1277,7 @@ namespace
     {
         auto piece_strength_gene = Piece_Strength_Gene();
         piece_strength_gene.read_from("testing/test_genome.txt");
-        const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-        const auto game_progress = total_force_gene.game_progress(Board{});
+        const auto game_progress = piece_strength_gene.game_progress(Board{});
         test_result(tests_passed,
                     std::abs(game_progress) < 1e-8,
                     "Game progress at beginning of game is not zero: " + std::to_string(game_progress));
@@ -1288,9 +1287,8 @@ namespace
     {
         auto piece_strength_gene = Piece_Strength_Gene();
         piece_strength_gene.read_from("testing/test_genome.txt");
-        const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
         const auto board = Board("4k3/8/8/8/8/8/PPPPPPPP/RNBQKBNR w KQ - 0 1");
-        const auto game_progress = total_force_gene.game_progress(board);
+        const auto game_progress = piece_strength_gene.game_progress(board);
         test_result(tests_passed,
                     std::abs(game_progress - 1.0) < 1e-8,
                     "Game progress with one size having only one king is not one: " + std::to_string(game_progress));
@@ -1300,9 +1298,8 @@ namespace
     {
         auto piece_strength_gene = Piece_Strength_Gene();
         piece_strength_gene.read_from("testing/test_genome.txt");
-        const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
         const auto board = Board("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNB1KBNR w KQkq - 0 1");
-        const auto game_progress = total_force_gene.game_progress(board);
+        const auto game_progress = piece_strength_gene.game_progress(board);
 
         const auto queen_value = std::abs(piece_strength_gene.piece_value({Piece_Color::WHITE, Piece_Type::QUEEN}));
         const auto king_value = std::abs(piece_strength_gene.piece_value({Piece_Color::WHITE, Piece_Type::KING}));

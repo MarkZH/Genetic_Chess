@@ -33,6 +33,14 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
         //! \brief Returns the value of all pieces.
         const std::array<double, 6>& piece_values() const noexcept;
 
+        //! \brief Estimate the fraction of the game completed by the value of all pieces removed from the board.
+        //!
+        //! \param board The board to consider.
+        //! \returns The total value of the pieces removed from the board from the side that has lost the most
+        //!          pieces in terms of value. Only the side that has lost the most pieces is considered since,
+        //!          if one side has lost a lot more pieces than the other, then the game is nearly over.
+        double game_progress(const Board& board) const noexcept;
+
     private:
         std::array<double, 6> piece_strength;
 

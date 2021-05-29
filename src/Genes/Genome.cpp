@@ -230,7 +230,7 @@ double Genome::expected_number_of_moves_left(const Board& board) const noexcept
 
 double Genome::game_progress(const Board& board) const noexcept
 {
-    return gene_reference<Total_Force_Gene>().game_progress(board);
+    return gene_reference<Piece_Strength_Gene>().game_progress(board);
 }
 
 const std::array<double, 6>& Genome::piece_values() const noexcept
