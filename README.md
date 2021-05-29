@@ -26,7 +26,7 @@ tends to be zero instead of the traditional one.
 2. Open Genetic_Chess.sln in Visual Studio and compile.
 
 #### Documentation
-- `make user_manual` for the User Manual pdf (requires `pdflatex`)
+- `make user_manual` for the User Manual PDF (requires `pdflatex`)
     - Or compile `doc/reference.tex` with [TexWriter](https://www.xm1math.net/texmaker/) or similar.
 - `make code_docs` for HTML source code references
     - Or generate with [Doxygen](http://www.doxygen.nl/)
