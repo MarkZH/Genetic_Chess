@@ -37,7 +37,6 @@ filename = [gene_pool_filename '_parsed.txt'];
 
 data = importdata(filename, ',');
 id_list = data.data(:, 1);
-still_alive = logical(data.data(:, end));
 
 xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
@@ -67,7 +66,7 @@ special_plots('gene priorities opening') = opening_priority_figure;
 special_plots('gene priorities endgame') = endgame_priority_figure;
 
 % Plot evolution of individual genes
-for yi = 2 : length(data.colheaders) - 1
+for yi = 2 : length(data.colheaders)
     this_data = data.data(:, yi);
     name_list = data.colheaders(yi);
     name = name_list{1};
@@ -77,19 +76,8 @@ for yi = 2 : length(data.colheaders) - 1
     plot(id_list, this_data, ...
          '.', ...
          'markersize', 10);
-    plot(id_list(still_alive), this_data(still_alive), ...
-         'ok', ...
-         'markersize', 10, ...
-         'linewidth', 1, ...
-         'displayname', 'Still Alive');
     xlabel(xaxis);
     title(name);
-
-
-    leg = legend('show');
-    set(leg, 'location', 'southoutside');
-    set(leg, 'orientation', 'horizontal');
-    legend left;
 
     conv_window = 100;
     conv_margin = floor(conv_window/2);

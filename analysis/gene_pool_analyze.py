@@ -27,33 +27,21 @@ def main(gene_pool_file_name):
             else:
                 raise Exception('Unknown line format: ' + line)
 
-    # Read file for gene pool associations
-    with open(gene_pool_file_name) as f:
-        for line in f:
-            line = line.strip()
-            if line.startswith('Still Alive'):
-                _, ids = line.split(':', 2)
-                still_alive = ids.split()
-
     # Read gene pool file for data
     output_file_name = gene_pool_file_name + '_parsed.txt'
     with open(gene_pool_file_name) as f, open(output_file_name, 'w') as w:
         data_line = []
         current_gene = ''
-        w.write(','.join(header_line + ['Still Alive']) + '\n')
+        w.write(','.join(header_line) + '\n')
         for line in f:
             line = line.split('#')[0].strip()
             if not line:
                 continue
 
             if line == 'END':
-                ident = data_line[0]
-                data_line.append(str(int(ident in still_alive)))
                 w.write(','.join(data_line) + '\n')
-
                 current_gene = ''
                 data_line = []
-
             elif ':' in line:
                 parameter, value = line.split(':', 1)
                 value = value.strip()
