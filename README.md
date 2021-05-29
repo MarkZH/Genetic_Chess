@@ -14,9 +14,6 @@ correct ordering and relative value of the major pieces. Pawns have other
 genes measuring the influence of their positions, so their absolute value
 tends to be zero instead of the traditional one.
 
-See the `doc/` folder for an in-depth description of the running and working of
-this project.
-
 ### Quick build instructions
 #### Linux
 0. Install `gcc` or `clang`
@@ -28,8 +25,7 @@ this project.
 1. Clone this repository to your computer.
 2. Open Genetic_Chess.sln in Visual Studio and compile.
 
-#### More documentation
-A copy of the user manual PDF is already in the `doc/` folder.
+#### Documentation
 - `make user_manual` for the User Manual pdf (requires `pdflatex`)
     - Or compile `doc/reference.tex` with [TexWriter](https://www.xm1math.net/texmaker/) or similar.
 - `make code_docs` for HTML source code references
