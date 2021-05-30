@@ -65,6 +65,9 @@ special_plots('piece strength') = piece_strength_figure;
 special_plots('gene priorities opening') = opening_priority_figure;
 special_plots('gene priorities endgame') = endgame_priority_figure;
 
+invalid_plot = figure;
+close(invalid_plot);
+
 % Plot evolution of individual genes
 for yi = 2 : length(data.colheaders)
     this_data = data.data(:, yi);
@@ -87,8 +90,6 @@ for yi = 2 : length(data.colheaders)
     print([gene_pool_filename ' gene ' name '.png']);
     close;
 
-    invalid_plot = figure;
-    close(invalid_plot);
     plot_figure = invalid_plot;
     if ~isempty(strfind(name, piece_strength_prefix))
         plot_figure = piece_strength_figure;
