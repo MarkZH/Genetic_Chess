@@ -155,7 +155,7 @@ Evolution is an effective means of optimizing when every mutation makes a differ
 	\item a continuous function of the parameters of its genome and
 	\item without flat sections.
 \end{enumerate}
-The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI\@. This random walk period only represents wasted time. To this end, certain gene parameters are restricted to, for example, non-negative values.
+The first of these qualities is due to the fact that large changes in behavior are rarely beneficial. A small change to the genome should not result in a large change in behavior. The second point means that gene parameters should not be allowed to take on values where mutations no longer have any affect on behavior. This leads to random walk types of gene movements until the gene parameters once again reached a range of values that changed the behavior of the AI\@. This random walk period only represents wasted time.
 
 Most aspects of each gene vary based on the progress through the current game--that is, what percentage of the game has elapsed. For these genetic aspects, two values are defined: one for the start of the game and one for the end. The value used during the game is a linear interpolation of the two values:
 \[
@@ -282,7 +282,7 @@ This gene sums the total strength (as determined by the Piece Strength Gene) of 
 Interestingly, since both kings are always on the board, they always cancel each others effect in the Total Force Gene, leaving this gene alone to drive their strength value. The result of this is discussed in the results section (Section~\ref{piece-strength-with-king}).
 
 \subsubsection{Sphere of Influence Gene}
-This gene counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move. That is, if a piece cannot reach a square in one move (perhaps because such a move is blocked by another piece), then that square is still counted as falling under the influence of the side owning that piece. Further bonus points are awarded based on how close the attacked square is to the king. Because of its subcomponents, this gene's priority is restricted to non-negative values.
+This gene counts the number of squares attacked by all pieces. Bonus points are awarded if the square can be attacked with a legal move. That is, if a piece cannot reach a square in one move (perhaps because such a move is blocked by another piece), then that square is still counted as falling under the influence of the side owning that piece. Further bonus points are awarded based on how close the attacked square is to the king.
 
 The effective formula for the score of this gene can be expressed as
 \[score = \sum_s legal(s)\left(1+\frac{KTF}{1+distance(s,king)}\right)\]
