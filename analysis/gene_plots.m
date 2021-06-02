@@ -50,13 +50,13 @@ piece_end_values = containers.Map;
 
 opening_priority_figure = figure;
 hold all;
-opening_priority_suffix = ' Gene - Priority - Opening';
+opening_priority_suffix = ' - Priority - Opening';
 title('Opening Gene Priority Evolution');
 opening_priority_count = 0;
 
 endgame_priority_figure = figure;
 hold all;
-endgame_priority_suffix = ' Gene - Priority - Endgame';
+endgame_priority_suffix = ' - Priority - Endgame';
 title('Endgame Gene Priority Evolution');
 endgame_priority_count = 0;
 
@@ -64,6 +64,20 @@ special_plots = containers.Map;
 special_plots('piece strength') = piece_strength_figure;
 special_plots('gene priorities opening') = opening_priority_figure;
 special_plots('gene priorities endgame') = endgame_priority_figure;
+
+shorten = containers.Map;
+shorten('Castling Possible Gene') = 'Castling';
+shorten('Checkmate Material Gene') = 'Checkmate';
+shorten('Freedom to Move Gene') = 'Freedom';
+shorten('King Confinement Gene') = 'Confine';
+shorten('King Protection Gene') = 'Protect';
+shorten('Opponent Pieces Targeted Gene') = 'Target';
+shorten('Passed Pawn Gene') = 'Passed';
+shorten('Pawn Advancement Gene') = 'Advance';
+shorten('Pawn Islands Gene') = 'Islands';
+shorten('Sphere of Influence Gene') = 'Sphere';
+shorten('Stacked Pawns Gene') = 'Stacked';
+shorten('Total Force Gene') = 'Force';
 
 invalid_plot = figure;
 close(invalid_plot);
@@ -110,11 +124,11 @@ for yi = 2 : length(data.colheaders)
             piece_end_values(name) = num2str(smooth_data(end), '%.2f');
             display_name = [name ' (' piece_end_values(name) ')'];
         elseif plot_figure == opening_priority_figure
-            display_name = name(1 : end - length(opening_priority_suffix));
+            display_name = shorten(name(1 : end - length(opening_priority_suffix)));
             opening_priority_count = opening_priority_count + 1;
             make_dashed = (opening_priority_count > 7);
         elseif plot_figure == endgame_priority_figure
-            display_name = name(1 : end - length(endgame_priority_suffix));
+            display_name = shorten(name(1 : end - length(endgame_priority_suffix)));
             endgame_priority_count = endgame_priority_count + 1;
             make_dashed = (endgame_priority_count > 7);
         end
@@ -131,6 +145,11 @@ end
 disp('# Piece values');
 for piece = piece_end_values.keys()
     disp([piece{1} ' = ' piece_end_values(piece{1})]);
+end
+
+disp('# Priority Plot Key');
+for gene = shorten.keys()
+    disp([shorten(gene{1}) ' --> ' gene{1}]);
 end
 
 % Create special summary plots
