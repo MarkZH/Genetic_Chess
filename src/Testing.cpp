@@ -97,16 +97,7 @@ namespace
     template<>
     void print_result(const std::vector<std::string>& results)
     {
-        std::cerr << "{";
-        if(results.empty())
-        {
-            std::cerr << "}";
-            return;
-        }
-
-        std::cerr << results.front();
-        std::for_each(std::next(results.begin()), results.end(), [](auto s) { std::cerr << ", " << s; });
-        std::cerr << "}";
+        std::cerr << "{" << String::join(results.begin(), results.end(), ", ") << "}";
     }
 
     // Run the callable f on the arguments. If the result of the argument is not
