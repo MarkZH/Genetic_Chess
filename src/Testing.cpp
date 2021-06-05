@@ -179,7 +179,7 @@ namespace
     void pieces_can_be_constructed_from_piece_data(bool& tests_passed);
     void pieces_can_be_constructed_from_fen_symbols(bool& tests_passed);
     void no_pair_of_adjacent_squares_are_the_same_color(bool& tests_passed);
-    void difference_between_two_squares_added_to_one_squares_gives_other_square(bool& tests_passed);
+    void difference_between_two_squares_added_to_first_square_gives_second_square(bool& tests_passed);
     void all_squares_yields_all_squares(bool& tests_passed);
 
     void repeating_board_position_three_times_results_in_threefold_game_result(bool& tests_passed);
@@ -242,7 +242,7 @@ bool run_tests()
 
     squares_with_unique_coordinates_have_unique_indices(tests_passed);
     constructed_squares_retain_coordinates(tests_passed);
-    difference_between_two_squares_added_to_one_squares_gives_other_square(tests_passed);
+    difference_between_two_squares_added_to_first_square_gives_second_square(tests_passed);
     all_squares_yields_all_squares(tests_passed);
 
     repeating_board_position_three_times_results_in_threefold_game_result(tests_passed);
@@ -902,7 +902,7 @@ namespace
         }
     }
 
-    void difference_between_two_squares_added_to_one_squares_gives_other_square(bool& tests_passed)
+    void difference_between_two_squares_added_to_first_square_gives_second_square(bool& tests_passed)
     {
         for(const auto a : Square::all_squares())
         {
