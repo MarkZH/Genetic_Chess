@@ -30,6 +30,14 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) noexcept :
 Genetic_AI::Genetic_AI(const std::string& file_name, const int id_in) try : Genetic_AI(std::ifstream(file_name), id_in)
 {
 }
+catch(const Missing_Genome_Data& e)
+{
+    throw Missing_Genome_Data(e.what() + file_name);
+}
+catch(const Duplicate_Genome_Data& e)
+{
+    throw Duplicate_Genome_Data(e.what() + file_name);
+}
 catch(const Genetic_AI_Creation_Error& e)
 {
     throw Genetic_AI_Creation_Error(e.what() + file_name);
@@ -78,15 +86,27 @@ void Genetic_AI::read_from(std::istream& is)
 
 void Genetic_AI::read_data(std::istream& is)
 {
+    auto add_details = [this](const auto& e)
+                       {
+                           return "Error in creating Genetic AI #" + std::to_string(id()) + "\n" + e.what() + "\nFile: ";
+                       };
     try
     {
         genome.read_from(is);
         recalibrate_self();
         next_id = std::max(next_id, id() + 1);
     }
+    catch(const Missing_Genome_Data& e)
+    {
+        throw Missing_Genome_Data(add_details(e));
+    }
+    catch(const Duplicate_Genome_Data& e)
+    {
+        throw Duplicate_Genome_Data(add_details(e));
+    }
     catch(const Genetic_AI_Creation_Error& e)
     {
-        throw Genetic_AI_Creation_Error("Error in creating Genetic AI #" + std::to_string(id()) + "\n" + e.what() + "\nFile: ");
+        throw Genetic_AI_Creation_Error(add_details(e));
     }
 }
 

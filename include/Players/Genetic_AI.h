@@ -27,14 +27,14 @@ class Genetic_AI : public Minimax_AI
         //!
         //! \param file_name The name of the file with the Genetic_AI data.
         //! \param id The ID to search for.
-        //! \exception Genetic_AI_Creation_Error If there is an error during reading.
+        //! \exception Genetic_AI_Creation_Error or derivative if there is an error during reading.
         Genetic_AI(const std::string& file_name, int id);
 
         //! \brief Create a Genetic_AI from an already open input stream (as from std::ifstream(file_name)).
         //!
         //! \param is The input stream that is the source of genetic data.
         //! \param id The id of the Genetic_AI to be created.
-        //! \exception Genetic_AI_Creation_Error if the stream cannot be read of if the stream does not contain
+        //! \exception Genetic_AI_Creation_Error or derivative if the stream cannot be read of if the stream does not contain
         //!         the relevant AI data.
         Genetic_AI(std::istream& is, int id);
 
@@ -42,7 +42,7 @@ class Genetic_AI : public Minimax_AI
         //!
         //! \param is The input stream that is the source of genetic data.
         //! \param id The id of the Genetic_AI to be created.
-        //! \exception Genetic_AI_Creation_Error if the stream cannot be read of if the stream does not contain
+        //! \exception Genetic_AI_Creation_Error or derivative if the stream cannot be read of if the stream does not contain
         //!         the relevant AI data.
         Genetic_AI(std::istream&& is, int id);
 

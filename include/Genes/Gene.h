@@ -10,6 +10,7 @@
 
 class Board;
 class Piece_Strength_Gene;
+class Genetic_AI_Creation_Error;
 
 enum class Game_Stage
 {
@@ -28,7 +29,7 @@ class Gene
         //! Every line should be of the form: \<property\> = \<value\> with optional comments at the end preceded by '#'.
         //! A blank line marks the end of the gene data.
         //! \param is An input stream (std::ifstream, std::iostream, or similar).
-        //! \exception Genetic_AI_Creation_Error If there is an invalid line or an unexpected property
+        //! \exception Genetic_AI_Creation_Error or derivative if there is an invalid line or an unexpected property
         void read_from(std::istream& is);
 
         //! \brief Read gene data from a text file.
@@ -110,7 +111,11 @@ class Gene
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept = 0;
 
-        [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const;
+        template<typename Error = Genetic_AI_Creation_Error>
+        [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const
+        {
+            throw Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
+        }
 
         //! \brief A method overridden by derived genes to mutate more specific gene components.
         //!

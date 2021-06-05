@@ -129,47 +129,50 @@ namespace
     }
 
     template<typename ...Argument_Types, typename Function>
-    void function_throw_check(bool& tests_passed, const bool should_throw, const std::string& test_name, Function f, const Argument_Types& ... arguments) noexcept
+    void function_should_not_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments) noexcept
     {
-        auto function_threw_exception = false;
-        std::string error_message;
         try
         {
             f(arguments...);
         }
         catch(const std::exception& e)
         {
-            function_threw_exception = true;
-            error_message = e.what();
-        }
-
-        if(function_threw_exception != should_throw)
-        {
-            std::cerr << (test_name.empty() ? "Test" : test_name) << " failed. Function should"
-                      << (should_throw ? " " : " not ") << "have thrown." << std::endl;
+            std::cerr << (test_name.empty() ? "Test" : test_name) << " failed. Function should not have thrown." << std::endl;
+            std::cerr << e.what() << std::endl;
             print_arguments(arguments...);
-            if( ! error_message.empty())
-            {
-                std::cerr << error_message << std::endl;
-            }
             tests_passed = false;
         }
     }
 
-    // Equivalent to test_function(), but checks that the callable f does not throw
-    // with arguments.
-    template<typename ...Argument_Types, typename Function>
-    void function_should_not_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments) noexcept
-    {
-        function_throw_check(tests_passed, false, test_name, f, arguments...);
-    }
-
     // Equivalent to test_function(), but checks that the callable f does throw
     // with arguments.
-    template<typename ...Argument_Types, typename Function>
+    template<typename Error, typename ...Argument_Types, typename Function>
     void function_should_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments) noexcept
     {
-        function_throw_check(tests_passed, true, test_name, f, arguments...);
+        const auto test_title = (test_name.empty() ? "Test" : test_name);
+
+        try
+        {
+            try
+            {
+                f(arguments...);
+
+                std::cerr << test_title << " failed. Function should have thrown but did not.\n";
+            }
+            catch(const Error&)
+            {
+                return;
+            }
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << test_title << " failed. Wrong exception thrown." << '\n';
+            std::cerr << "Wrong error message: ";
+            std::cerr << e.what() << std::endl;
+        }
+
+        print_arguments(arguments...);
+        tests_passed = false;
     }
 
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2) noexcept;
@@ -290,19 +293,19 @@ bool run_tests()
     game_progress_where_one_side_has_only_king_is_one(tests_passed);
     game_progress_with_one_queen_removed_makes_sense(tests_passed);
 
-    function_should_throw(tests_passed, "Missing gene data", [](){ return Piece_Strength_Gene().read_from("testing/missing_data_genome.txt");});
-    function_should_throw(tests_passed, "Duplicate gene data", [](){ return Sphere_of_Influence_Gene().read_from("testing/duplicate_data_genome.txt");});
+    function_should_throw<Missing_Genome_Data>(tests_passed, "Missing gene data", [](){ return Piece_Strength_Gene().read_from("testing/missing_data_genome.txt");});
+    function_should_throw<Duplicate_Genome_Data>(tests_passed, "Duplicate gene data", [](){ return Sphere_of_Influence_Gene().read_from("testing/duplicate_data_genome.txt");});
 
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
     test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");
 
-    function_should_throw(tests_passed, "Bad block comments", String::strip_block_comment, "   a    }    b    {    c   {   d  }   ", "{", "}");
-    function_should_throw(tests_passed, "Bad block comments", String::strip_block_comment, "   a        b    {    c      d     ", "{", "}");
+    function_should_throw<std::invalid_argument>(tests_passed, "Bad block comments", String::strip_block_comment, "   a    }    b    {    c   {   d  }   ", "{", "}");
+    function_should_throw<std::invalid_argument>(tests_passed, "Bad block comments", String::strip_block_comment, "   a        b    {    c      d     ", "{", "}");
 
     test_function(tests_passed, "Delimited text extraction", "a(b", String::extract_delimited_text, "(a(b))", "(", ")");
 
     test_function(tests_passed, "Nested block deletion", "ae", String::strip_nested_block_comments, "a(b(c)d)e", "(", ")");
-    function_should_throw(tests_passed, "Invalid nested block delimiters", String::strip_nested_block_comments, "", "??", "???");
+    function_should_throw<std::invalid_argument>(tests_passed, "Invalid nested block delimiters", String::strip_nested_block_comments, "", "??", "???");
 
     test_function(tests_passed, "Strip multicharacter comment", "a", String::strip_comments, "a // b", "//");
     test_function(tests_passed, "Multicharacter block comment", "a c", String::strip_block_comment, "a /* b  */ c", "/*", "*/");
@@ -326,7 +329,7 @@ bool run_tests()
 
     function_should_not_throw(tests_passed, "Non-throwing string to size_t", String::to_number<size_t>, "123");
     function_should_not_throw(tests_passed, "Non-throwing string to size_t with whitespace", String::to_number<size_t>, " 456  ");
-    function_should_throw(tests_passed, "Throwing string to size_t", String::to_number<size_t>, "78x9");
+    function_should_throw<std::invalid_argument>(tests_passed, "Throwing string to size_t", String::to_number<size_t>, "78x9");
 
     test_function(tests_passed,
                   "PGN comment removal",
@@ -701,7 +704,7 @@ namespace
 
             if(test_type == "illegal position")
             {
-                function_should_throw(test_passed, "", [](const std::string& s) { return Board{s}; }, board_fen);
+                function_should_throw<std::invalid_argument>(test_passed, "", [](const std::string& s) { return Board{s}; }, board_fen);
                 test_result(all_tests_passed, test_passed, line + " -- FAILED\n");
                 continue;
             }
@@ -819,7 +822,7 @@ namespace
     bool move_is_illegal(const Board& board, const std::string& move) noexcept
     {
         bool result = true;
-        function_should_throw(result, move + " should be illegal", [&](){ board.interpret_move(move); });
+        function_should_throw<Illegal_Move>(result, move + " should be illegal", [&](){ board.interpret_move(move); });
         return result;
     }
 

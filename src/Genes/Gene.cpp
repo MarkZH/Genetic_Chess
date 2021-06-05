@@ -102,7 +102,7 @@ void Gene::read_from(std::istream& is)
             }
             else
             {
-                throw std::runtime_error("Duplicate parameter: " + property_name);
+                throw_on_invalid_line<Duplicate_Genome_Data>(line, "Duplicate parameter: " + property_name);
             }
         }
         catch(const std::out_of_range& e)
@@ -124,6 +124,10 @@ void Gene::read_from(std::istream& is)
         {
             throw_on_invalid_line(line, "Bad parameter value: " + property_data);
         }
+        catch(const Duplicate_Genome_Data&)
+        {
+            throw;
+        }
         catch(const std::exception& e)
         {
             throw_on_invalid_line(line, e.what());
@@ -138,7 +142,7 @@ void Gene::read_from(std::istream& is)
                         });
     if( ! missing_data.empty())
     {
-        throw Genetic_AI_Creation_Error("Missing gene data for " + name() + ":" + missing_data);
+        throw Missing_Genome_Data("Missing gene data for " + name() + ":" + missing_data);
     }
 
     load_properties(properties);
@@ -159,25 +163,32 @@ void Gene::read_from(const std::string& file_name)
             const auto gene_name = String::remove_extra_whitespace(String::split(line, ":", 1)[1]);
             if(gene_name == name())
             {
+                auto add_details = [this, &file_name](const auto& e)
+                                   {
+                                       return "Error in reading data for " + name() + " from " + file_name + "\n" + e.what();
+                                   };
                 try
                 {
                     read_from(ifs);
                     return;
                 }
+                catch(const Missing_Genome_Data& e)
+                {
+                    throw Missing_Genome_Data(add_details(e));
+                }
+                catch(const Duplicate_Genome_Data& e)
+                {
+                    throw Duplicate_Genome_Data(add_details(e));
+                }
                 catch(const std::exception& e)
                 {
-                    throw Genetic_AI_Creation_Error("Error in reading data for " + name() + " from " + file_name + "\n" + e.what());
+                    throw Genetic_AI_Creation_Error(add_details(e));
                 }
             }
         }
     }
 
     throw Genetic_AI_Creation_Error(name() + " not found in " + file_name);
-}
-
-void Gene::throw_on_invalid_line(const std::string& line, const std::string& reason) const
-{
-    throw Genetic_AI_Creation_Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
 }
 
 void Gene::mutate() noexcept

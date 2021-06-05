@@ -17,6 +17,20 @@ class Genetic_AI_Creation_Error : public std::runtime_error
 };
 
 
+//! \brief An exception thrown when there is missing data in a genome
+class Missing_Genome_Data : public Genetic_AI_Creation_Error
+{
+    using Genetic_AI_Creation_Error::Genetic_AI_Creation_Error;
+};
+
+
+//! \brief An exception thrown when there is duplicate data in a genome
+class Duplicate_Genome_Data : public Genetic_AI_Creation_Error
+{
+    using Genetic_AI_Creation_Error::Genetic_AI_Creation_Error;
+};
+
+
 //! \brief An exception indicating an illegal move is being attempted.
 //!
 //! This is thrown while interpretting the textual representation of
