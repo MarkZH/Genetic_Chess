@@ -110,7 +110,7 @@ namespace
     }
 
     // Run the callable f on the arguments. If the result of the argument is not
-    // equal to the expecte result, set tests_passed to false and print
+    // equal to the expected result, set tests_passed to false and print
     // an error message. Otherwise, do nothing.
     template<typename ...Argument_Types, typename Result_Type, typename Function>
     void test_function(bool& tests_passed, const std::string& test_name, const Result_Type& expected_result, Function f, const Argument_Types& ... arguments) noexcept(noexcept(f))
