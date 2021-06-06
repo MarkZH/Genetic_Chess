@@ -160,8 +160,7 @@ namespace
         catch(const std::exception& e)
         {
             std::cerr << test_title << " failed. Wrong exception thrown." << '\n';
-            std::cerr << "Wrong error message: ";
-            std::cerr << e.what() << std::endl;
+            std::cerr << "Wrong error message: " << e.what() << std::endl;
         }
 
         print_arguments(arguments...);
