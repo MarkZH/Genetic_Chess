@@ -59,7 +59,7 @@ class Genome
         //!        (i.e., at the root of the game tree).
         double evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
 
-        //! \brief Apply a random mutations to the entire genome.
+        //! \brief Apply a random mutation to one gene in the genome.
         void mutate() noexcept;
 
         //! \brief Determine how much time should be used to choose a move.
