@@ -186,16 +186,14 @@ double Genome::evaluate(const Board& board, const Piece_Color perspective, size_
 
 void Genome::mutate() noexcept
 {
-    // Create copies of genes based on the number of internal components
-    // that are mutatable
+    // Create copies of genes equal in number to the number of mutatable components.
     std::vector<Gene*> genes;
     for(const auto& gene : genome)
     {
         genes.insert(genes.end(), gene->mutatable_components(), gene.get());
     }
 
-    // Pick randomly from the list of copies to make sure genes with
-    // more components don't lack for mutations.
+    // Pick randomly from the list so every component has an equal chance for mutation.
     Random::random_element(genes)->mutate();
     renormalize_priorities();
 }
