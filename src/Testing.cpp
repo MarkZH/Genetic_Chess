@@ -119,6 +119,8 @@ namespace
         }
     }
 
+    // Run callable f on the arguments. If the function throws, set tests_passed to false and print
+    // an error message. Otherwise, do nothing.
     template<typename ...Argument_Types, typename Function>
     void function_should_not_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments) noexcept
     {
@@ -135,8 +137,8 @@ namespace
         }
     }
 
-    // Equivalent to test_function(), but checks that the callable f does throw
-    // with arguments.
+    // Run callable f on the arguments, if the function does not throw or throws the wrong exception type,
+    // set tests_passed to false and print an error message. Otherwise, do nothing.
     template<typename Error, typename ...Argument_Types, typename Function>
     void function_should_throw(bool& tests_passed, const std::string& test_name, Function f, const Argument_Types& ... arguments) noexcept
     {
