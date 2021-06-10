@@ -202,9 +202,17 @@ namespace String
     //!
     //! \param point_in_time The time point to convert.
     //! \param format The format of the date/time data (see docs for std::put_time).
+    //! \tparam Precision A std::chrono::duration type that indicates how precise the time should be printed.
+    //! \tparam Time_Point The std::chrono::time_point type.
     //! \returns A formatted text string of the date and/or time.
-    std::string date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
-                                     const std::string& format) noexcept;
+    template<typename Precision = std::chrono::seconds, typename Time_Point>
+    std::string date_and_time_format(const Time_Point& point_in_time,
+                                     const std::string& format) noexcept
+    {
+        const auto point_with_tz = std::chrono::zoned_time(std::chrono::current_zone(),
+                                                           std::chrono::time_point_cast<Precision>(point_in_time));
+        return std::format("{:" + format + "}", point_with_tz);
+    }
 
     //! \brief Inserts extra text before the file name extension.
     //!
