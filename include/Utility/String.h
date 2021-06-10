@@ -57,13 +57,6 @@ namespace String
         return container.find(target) != std::string::npos;
     }
 
-    //! \brief Determine whether a strings has another string as a prefix.
-    //!
-    //! \param s The string to check.
-    //! \param beginning The prefix to find.
-    //! \returns True if the string starts with the beginning string.
-    bool starts_with(const std::string& s, const std::string& beginning) noexcept;
-
     //! \brief Remove leading and trailing whitespace from a string.
     //!
     //! \param s The input string.

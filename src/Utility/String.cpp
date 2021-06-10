@@ -47,11 +47,6 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     return result;
 }
 
-bool String::starts_with(const std::string& s, const std::string& beginning) noexcept
-{
-    return std::mismatch(beginning.begin(), beginning.end(), s.begin(), s.end()).first == beginning.end();
-}
-
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
     const auto text_start = s.find_first_not_of(whitespace);

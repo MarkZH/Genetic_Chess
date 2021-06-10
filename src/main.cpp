@@ -183,7 +183,7 @@ namespace
             }
 
             // Start header of new game
-            if(in_game && String::starts_with(line, "["))
+            if(in_game && line.starts_with("["))
             {
                 if(expect_fifty_move_draw != String::contains(result.ending_reason(), "50"))
                 {
@@ -206,7 +206,7 @@ namespace
                 result = {};
             }
 
-            if(String::starts_with(line, "[Result"))
+            if(line.starts_with("[Result"))
             {
                 if(String::contains(line, "1-0"))
                 {
@@ -230,7 +230,7 @@ namespace
                     return false;
                 }
             }
-            else if(String::starts_with(line, "[Termination"))
+            else if(line.starts_with("[Termination"))
             {
                 expect_checkmate = false;
                 if(String::contains(line, "fold"))
@@ -242,11 +242,11 @@ namespace
                     expect_fifty_move_draw = true;
                 }
             }
-            else if(String::starts_with(line, "[FEN"))
+            else if(line.starts_with("[FEN"))
             {
                 board = Board(String::split(line, "\"").at(1));
             }
-            else if(String::starts_with(line, "["))
+            else if(line.starts_with("["))
             {
                 continue;
             }
@@ -473,7 +473,7 @@ namespace
         std::vector<int> id_list;
         for(std::string line; std::getline(input, line);)
         {
-            if(String::starts_with(line, "ID:"))
+            if(line.starts_with("ID:"))
             {
                 id_list.push_back(String::to_number<int>(String::split(line, ":", 1).back()));
             }

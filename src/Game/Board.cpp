@@ -754,7 +754,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         std::ifstream ifs(file_name);
         for(std::string line; std::getline(ifs, line);)
         {
-            if(String::starts_with(line, "[Round"))
+            if(line.starts_with("[Round"))
             {
                 const auto round_number = String::to_number<int>(String::split(line, "\"").at(1));
                 if(round_number >= game_number)

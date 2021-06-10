@@ -301,8 +301,6 @@ bool run_tests()
 
     test_function(tests_passed, "Strip multicharacter comment", "a", String::strip_comments, "a // b", "//");
     test_function(tests_passed, "Multicharacter block comment", "a c", String::strip_block_comment, "a /* b  */ c", "/*", "*/");
-    test_function(tests_passed, "String::starts_with()", true, String::starts_with, "abcdefg", "abc");
-    test_function(tests_passed, "String::starts_with()", false, String::starts_with, "abcdefg", "abd");
     test_function(tests_passed, "String::lowercase()", "abc def", String::lowercase, "AbC dEf");
     test_function(tests_passed, "String::add_to_file_name() with dot", "a-b.c", String::add_to_file_name, "a.c", "-b");
     test_function(tests_passed, "String::add_to_file_name() with no dot", "a-b", String::add_to_file_name, "a", "-b");

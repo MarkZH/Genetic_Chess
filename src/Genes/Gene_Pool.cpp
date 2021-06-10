@@ -381,11 +381,11 @@ namespace
         for(std::string line; std::getline(ifs, line);)
         {
             line = String::trim_outer_whitespace(line);
-            if(String::starts_with(line, "[TimeControl"))
+            if(line.starts_with("[TimeControl"))
             {
                 game_time = String::to_duration<Clock::seconds>(String::split(line, "\"").at(1));
             }
-            else if(String::starts_with(line, "[Result"))
+            else if(line.starts_with("[Result"))
             {
                 auto result = String::split(line, "\"").at(1);
                 if(result == "1-0")
@@ -594,7 +594,7 @@ namespace
         for(std::string line; std::getline(genome_file, line);)
         {
             line = String::trim_outer_whitespace(line);
-            if(String::starts_with(line, "Still Alive"))
+            if(line.starts_with("Still Alive"))
             {
                 ++round_count;
             }
@@ -615,8 +615,8 @@ namespace
         for(std::string line; std::getline(input, line);)
         {
             line = String::remove_extra_whitespace(line);
-            const auto is_white_player = String::starts_with(line, "[White");
-            const auto is_black_player = String::starts_with(line, "[Black");
+            const auto is_white_player = line.starts_with("[White");
+            const auto is_black_player = line.starts_with("[Black");
             if(is_white_player || is_black_player)
             {
                 const auto player_id = String::to_number<int>(String::split(String::split(line, "\"").at(1)).at(2));
@@ -625,7 +625,7 @@ namespace
                     while(std::getline(input, line))
                     {
                         line = String::remove_extra_whitespace(line);
-                        if(String::starts_with(line, "[Result"))
+                        if(line.starts_with("[Result"))
                         {
                             if((is_white_player && String::contains(line, "1-0")) ||
                                (is_black_player && String::contains(line, "0-1")))

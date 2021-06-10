@@ -49,7 +49,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             player.reset();
             setup_result = {};
         }
-        else if(String::starts_with(command, "setoption name UCI_Opponent value "))
+        else if(command.starts_with("setoption name UCI_Opponent value "))
         {
             // command has 8 fields requiring 7 cuts to get name
             const auto opponent_split = String::split(command, " ", 7);
@@ -81,7 +81,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 log("Opponent's name: " + name);
             }
         }
-        else if(String::starts_with(command, "position "))
+        else if(command.starts_with("position "))
         {
             const auto parse = String::split(command);
             if(parse.at(1) == "startpos")
@@ -110,7 +110,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             log("Board ready for play");
             board.set_thinking_mode(Thinking_Output_Type::UCI);
         }
-        else if(String::starts_with(command, "go "))
+        else if(command.starts_with("go "))
         {
             const auto mode = clock.reset_mode();
             auto new_mode = mode;

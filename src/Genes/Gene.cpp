@@ -9,6 +9,7 @@
 #include <numeric>
 #include <iterator>
 #include <limits>
+#include <string>
 
 #include "Game/Board.h"
 #include "Game/Color.h"
@@ -158,7 +159,7 @@ void Gene::read_from(const std::string& file_name)
 
     for(std::string line; std::getline(ifs, line);)
     {
-        if(String::starts_with(line, "Name: "))
+        if(line.starts_with("Name: "))
         {
             const auto gene_name = String::remove_extra_whitespace(String::split(line, ":", 1)[1]);
             if(gene_name == name())

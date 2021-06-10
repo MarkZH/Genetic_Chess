@@ -63,7 +63,7 @@ void Genetic_AI::read_from(std::istream& is)
     for(std::string line; std::getline(is, line);)
     {
         line = String::strip_comments(line, "#");
-        if( ! String::starts_with(line, "ID"))
+        if( ! line.starts_with("ID"))
         {
             continue;
         }
@@ -201,7 +201,7 @@ int find_last_id(const std::string& players_file_name)
     std::string last_player;
     for(std::string line; std::getline(player_input, line);)
     {
-        if(String::starts_with(line, "ID:"))
+        if(line.starts_with("ID:"))
         {
             last_player = line;
         }
