@@ -6,9 +6,9 @@
 #include <algorithm>
 #include <cctype>
 #include <chrono>
-#include <iomanip>
 #include <sstream>
 #include <cmath>
+#include <format>
 
 namespace
 {
@@ -206,9 +206,7 @@ std::string String::lowercase(std::string s) noexcept
 
 std::string String::round_to_decimals(const double x, const size_t decimal_places) noexcept
 {
-    auto result = std::ostringstream();
-    result << std::fixed << std::setprecision(int(decimal_places)) << x;
-    return result.str();
+    return std::format("{:.{}f}", x, decimal_places);
 }
 
 std::string String::date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
