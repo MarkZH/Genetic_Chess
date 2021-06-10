@@ -26,6 +26,8 @@ enc_temp_folder/
 *.sarif
 *.recipe
 *.iobj
+*.exp
+*.lib
 
 # Compiled output
 bin/
