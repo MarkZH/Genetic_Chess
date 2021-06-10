@@ -40,8 +40,3 @@ void Math::normalize(double& x, double& y) noexcept
         y /= norm;
     }
 }
-
-double Math::interpolate(double start_value, double end_value, double fraction) noexcept
-{
-    return (1.0 - fraction)*start_value + fraction*end_value;
-}

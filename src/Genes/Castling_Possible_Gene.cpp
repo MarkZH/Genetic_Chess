@@ -2,6 +2,7 @@
 
 #include <string>
 #include <map>
+#include <cmath>
 
 #include "Genes/Gene.h"
 #include "Game/Board.h"
@@ -45,8 +46,8 @@ std::string Castling_Possible_Gene::name() const noexcept
 
 double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color perspective, const size_t depth, const double game_progress) const noexcept
 {
-    const auto kingside_preference = Math::interpolate(opening_kingside_preference, endgame_kingside_preference, game_progress);
-    const auto queenside_preference = Math::interpolate(opening_queenside_preference, endgame_queenside_preference, game_progress);
+    const auto kingside_preference = std::lerp(opening_kingside_preference, endgame_kingside_preference, game_progress);
+    const auto queenside_preference = std::lerp(opening_queenside_preference, endgame_queenside_preference, game_progress);
 
     // check if a castling move lies between here and the actual state of the board
     if(board.player_castled(perspective))

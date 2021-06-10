@@ -70,9 +70,9 @@ std::string Sphere_of_Influence_Gene::name() const noexcept
 // the attacking move is legal.
 double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double game_progress) const noexcept
 {
-    const auto legal_square_score = Math::interpolate(opening_legal_square_score, endgame_legal_square_score, game_progress);
-    const auto illegal_square_score = Math::interpolate(opening_illegal_square_score, endgame_illegal_square_score, game_progress);
-    const auto king_target_factor = Math::interpolate(opening_king_target_factor, endgame_king_target_factor, game_progress);
+    const auto legal_square_score = std::lerp(opening_legal_square_score, endgame_legal_square_score, game_progress);
+    const auto illegal_square_score = std::lerp(opening_illegal_square_score, endgame_illegal_square_score, game_progress);
+    const auto king_target_factor = std::lerp(opening_king_target_factor, endgame_king_target_factor, game_progress);
     const auto opponent_king_square = board.find_king(opposite(perspective));
     const auto& inv_dist_plus_one = inv_king_dist_plus_one[opponent_king_square.index()];
 

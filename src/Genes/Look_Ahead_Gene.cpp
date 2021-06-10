@@ -85,16 +85,16 @@ double Look_Ahead_Gene::score_board(const Board&, const Piece_Color, const size_
 
 double Look_Ahead_Gene::speculation_time_factor(const double game_progress) const noexcept
 {
-    return Math::interpolate(opening_speculation_constant,
-                             endgame_speculation_constant,
-                             game_progress);
+    return std::lerp(opening_speculation_constant,
+                     endgame_speculation_constant,
+                     game_progress);
 }
 
 double Look_Ahead_Gene::branching_factor(const double game_progress) const noexcept
 {
-    return Math::interpolate(opening_branching_factor_estimate,
-                             endgame_branching_factor_estimate,
-                             game_progress);
+    return std::lerp(opening_branching_factor_estimate,
+                     endgame_branching_factor_estimate,
+                     game_progress);
 }
 
 double Look_Ahead_Gene::expected_moves_left(const Board& board) const noexcept

@@ -210,7 +210,7 @@ void Gene::gene_specific_mutation() noexcept
 
 double Gene::evaluate(const Board& board, const Piece_Color perspective, const size_t depth, const double game_progress) const noexcept
 {
-    const auto scoring_priority = Math::interpolate(opening_priority, endgame_priority, game_progress);
+    const auto scoring_priority = std::lerp(opening_priority, endgame_priority, game_progress);
     return scoring_priority*score_board(board, perspective, depth, game_progress);
 }
 

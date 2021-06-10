@@ -394,7 +394,7 @@ double Minimax_AI::assign_score(const Board& board, const Game_Result& move_resu
     const auto non_progress_moves = board.moves_since_pawn_or_capture();
     if(non_progress_moves >= depth)
     {
-        return Math::interpolate(score, Game_Tree_Node_Result::draw_score, double(non_progress_moves)/100.0);
+        return std::lerp(score, Game_Tree_Node_Result::draw_score, double(non_progress_moves)/100.0);
     }
     else
     {
