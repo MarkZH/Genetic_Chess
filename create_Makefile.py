@@ -107,7 +107,7 @@ depends['.PHONY'] = [t for t in all_targets_so_far(depends, operations) if not t
 options_list = dict()
 linker_options = dict()
 base_options = [
-        "-std=c++17",
+        "-std=c++20",
         "-lstdc++fs",
         "-fno-rtti",
         "-Wshadow",
