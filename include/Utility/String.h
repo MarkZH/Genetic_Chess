@@ -8,6 +8,7 @@
 #include <type_traits>
 #include <algorithm>
 #include <concepts>
+#include <locale>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
@@ -137,22 +138,9 @@ namespace String
     //! \param n The integer.
     //! \param separator The separator between groups of thousands.
     //! \returns A text string with thousands separators.
-    std::string format_integer(std::integral auto n, const std::string& separator) noexcept
+    std::string format_integer(std::integral auto n) noexcept
     {
-        if(n == 0) { return "0"; }
-        if constexpr(std::is_signed_v<decltype(n)>)
-        {
-            if(n < 0) { return '-' + format_integer(-n, separator); }
-        }
-
-        std::vector<std::string> groups;
-        for( ; n > 0; n /= 1000)
-        {
-            groups.push_back(std::to_string(n % 1000));
-        }
-        auto pad_zeros = [](const auto& s){ return std::string(3 - s.size(), '0') + s; };
-        std::transform(std::next(groups.rbegin()), groups.rend(), std::next(groups.rbegin()), pad_zeros);
-        return String::join(groups.rbegin(), groups.rend(), separator);
+        return std::format(std::locale("en_US.UTF-8"), "{:L}", n);
     }
 
     //! \brief Round a number to the specified precision
