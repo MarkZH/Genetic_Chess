@@ -20,7 +20,7 @@ namespace Math
 
     //! \brief Returns the sign of the number.
     //!
-    //! \param x The input nuber.
+    //! \param x The input number.
     //! \returns +1 for positive numbers, -1 for negative, and 0 otherwise.
     template<typename Number>
     constexpr int sign(const Number x) noexcept
