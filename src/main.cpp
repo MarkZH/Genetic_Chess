@@ -185,13 +185,13 @@ namespace
             // Start header of new game
             if(in_game && line.starts_with("["))
             {
-                if(expect_fifty_move_draw != String::contains(result.ending_reason(), "50"))
+                if(expect_fifty_move_draw != result.ending_reason().contains("50"))
                 {
                     std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
                     return false;
                 }
 
-                if(expect_threefold_draw != String::contains(result.ending_reason(), "fold"))
+                if(expect_threefold_draw != result.ending_reason().contains("fold"))
                 {
                     std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
                     return false;
@@ -208,19 +208,19 @@ namespace
 
             if(line.starts_with("[Result"))
             {
-                if(String::contains(line, "1-0"))
+                if(line.contains("1-0"))
                 {
                     expected_winner = Winner_Color::WHITE;
                 }
-                else if(String::contains(line, "0-1"))
+                else if(line.contains("0-1"))
                 {
                     expected_winner = Winner_Color::BLACK;
                 }
-                else if(String::contains(line, "1/2-1/2"))
+                else if(line.contains("1/2-1/2"))
                 {
                     expect_checkmate = false;
                 }
-                else if(String::contains(line, '*'))
+                else if(line.contains('*'))
                 {
                     expect_checkmate = false;
                 }
@@ -233,11 +233,11 @@ namespace
             else if(line.starts_with("[Termination"))
             {
                 expect_checkmate = false;
-                if(String::contains(line, "fold"))
+                if(line.contains("fold"))
                 {
                     expect_threefold_draw = true;
                 }
-                else if(String::contains(line, "50"))
+                else if(line.contains("50"))
                 {
                     expect_fifty_move_draw = true;
                 }
@@ -287,7 +287,7 @@ namespace
                         const auto move_checks = move_checkmates || move.back() == '+';
                         const auto& move_to_play = board.interpret_move(move);
                         last_move_line_number = line_number;
-                        if(String::contains(move, 'x')) // check that move captures
+                        if(move.contains('x')) // check that move captures
                         {
                             if( ! std::as_const(board).piece_on_square(move_to_play.end()) && ! move_to_play.is_en_passant())
                             {

@@ -26,7 +26,7 @@ Configuration::Configuration(const std::string& file_name)
             continue;
         }
 
-        if( ! String::contains(line, '='))
+        if( ! line.contains('='))
         {
             throw std::runtime_error("Configuration file lines must be of form \"Name = Value\"\n" + line);
         }

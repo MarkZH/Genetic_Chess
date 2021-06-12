@@ -595,7 +595,7 @@ namespace
 
             if(line1 != line2)
             {
-                if(String::contains(line1, ':') && String::contains(line2, ':'))
+                if(line1.contains(':') && line2.contains(':'))
                 {
                     const auto split1 = String::split(line1, ":", 1);
                     const auto split2 = String::split(line2, ":", 1);

@@ -48,17 +48,6 @@ namespace String
         return result;
     }
 
-    //! \brief Determine whether a string exists inside another string.
-    //!
-    //! \param container The string to search.
-    //! \param target The character or string to search for.
-    //! \returns True if the target is inside the container.
-    template<class T>
-    bool contains(const std::string& container, const T& target) noexcept
-    {
-        return container.find(target) != std::string::npos;
-    }
-
     //! \brief Remove leading and trailing whitespace from a string.
     //!
     //! \param s The input string.

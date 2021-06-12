@@ -107,7 +107,6 @@ depends['.PHONY'] = [t for t in all_targets_so_far(depends, operations) if not t
 options_list = dict()
 linker_options = dict()
 base_options = [
-        "-std=c++20",
         "-lstdc++fs",
         "-fno-rtti",
         "-Wshadow",
@@ -130,6 +129,7 @@ system = sys.argv[1]
 if system == 'gcc':
     compiler = 'g++'
     base_options.extend([
+        "-std=c++23",
         "-Wzero-as-null-pointer-constant",
         "-Wmain",
         "-Wno-maybe-uninitialized",
@@ -139,6 +139,7 @@ elif system == 'clang':
     linker_options['debug'] = ["-fsanitize=undefined", "-fsanitize=integer"]
     options_list['debug'].extend(["-Og"] + linker_options['debug'])
     base_options.extend([
+        "-std=c++2b",
         "-Wno-unused-command-line-argument",
         "-Wnon-virtual-dtor",
         "-Wredundant-decls",

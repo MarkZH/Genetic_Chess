@@ -472,7 +472,7 @@ namespace
         for(std::string line; std::getline(ifs, line);)
         {
             ++line_number;
-            if(String::contains(line, "Still Alive"))
+            if(line.contains("Still Alive"))
             {
                 try
                 {
@@ -627,8 +627,8 @@ namespace
                         line = String::remove_extra_whitespace(line);
                         if(line.starts_with("[Result"))
                         {
-                            if((is_white_player && String::contains(line, "1-0")) ||
-                               (is_black_player && String::contains(line, "0-1")))
+                            if((is_white_player && line.contains("1-0")) ||
+                               (is_black_player && line.contains("0-1")))
                             {
                                 ++win_count;
                             }

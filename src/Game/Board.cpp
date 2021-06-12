@@ -143,7 +143,7 @@ Board::Board(const std::string& input_fen)
     {
         for(const auto c : castling_parse)
         {
-            fen_parse_assert(String::contains("KQkq", c), input_fen, std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
+            fen_parse_assert(std::string{"KQkq"}.contains(c), input_fen, std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
 
             Piece_Color piece_color = std::isupper(c) ? Piece_Color::WHITE : Piece_Color::BLACK;
             const auto rook_square = Square{std::toupper(c) == 'K' ? 'h' : 'a', std::isupper(c) ? 1 : 8};
@@ -789,7 +789,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
     }
 
-    if( ! actual_result.ending_reason().empty() && ! String::contains(actual_result.ending_reason(), "mates"))
+    if( ! actual_result.ending_reason().empty() && ! actual_result.ending_reason().contains("mates"))
     {
         print_game_header_line(out_stream, "Termination", actual_result.ending_reason());
     }

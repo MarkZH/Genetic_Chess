@@ -10,7 +10,7 @@
 
 namespace
 {
-    const auto whitespace = " \t\n\r";
+    const auto whitespace = std::string{" \t\n\r"};
 }
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
@@ -60,7 +60,7 @@ std::string String::trim_outer_whitespace(const std::string& s) noexcept
 std::string String::remove_extra_whitespace(const std::string& s) noexcept
 {
     std::string s2 = trim_outer_whitespace(s);
-    std::replace_if(s2.begin(), s2.end(), [](auto c) { return String::contains(whitespace, c); }, ' ');
+    std::replace_if(s2.begin(), s2.end(), [](auto c) { return whitespace.contains(c); }, ' ');
     std::string result;
     std::copy_if(s2.begin(), s2.end(), std::back_inserter(result),
                  [&result](auto c)
