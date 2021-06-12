@@ -110,7 +110,7 @@ std::string String::strip_block_comment(const std::string& str, const std::strin
 
 std::string String::strip_nested_block_comments(const std::string& str, const std::string& start, const std::string& end)
 {
-    if(contains(start, end) || contains(end, start))
+    if(start.contains(end) || end.contains(start))
     {
         throw std::invalid_argument("Delimiters cannot share substrings: " + start + "," + end + ".");
     }
