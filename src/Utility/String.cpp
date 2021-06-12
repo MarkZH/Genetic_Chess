@@ -10,11 +10,6 @@
 #include <sstream>
 #include <cmath>
 
-namespace
-{
-    const auto whitespace = std::string{" \t\n\r"};
-}
-
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
     if(delim.empty())
