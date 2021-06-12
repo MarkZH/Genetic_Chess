@@ -133,10 +133,9 @@ namespace String
     //! \returns The same string with all letters replaced by their lowercase versions.
     std::string lowercase(std::string s) noexcept;
 
-    //! \brief Returns a text version of an integer with thousands separators
+    //! \brief Returns a text version of an integer with thousands separators (US-style)
     //!
     //! \param n The integer.
-    //! \param separator The separator between groups of thousands.
     //! \returns A text string with thousands separators.
     std::string format_integer(std::integral auto n) noexcept
     {
