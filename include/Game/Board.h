@@ -311,7 +311,7 @@ class Board
         Piece_Color turn_color = Piece_Color::WHITE;
         size_t game_move_count = 0;
         const Move* previous_move = nullptr;
-        std::array<bool, 64> unmoved_positions{};
+        std::bitset<64> unmoved_positions{};
         Square en_passant_target;
         uint64_t starting_hash{};
         std::array<Square, 2> king_location;

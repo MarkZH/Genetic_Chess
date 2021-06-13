@@ -10,11 +10,6 @@
 #include <sstream>
 #include <cmath>
 
-namespace
-{
-    const auto whitespace = std::string{" \t\n\r"};
-}
-
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
     if(delim.empty())
@@ -54,6 +49,7 @@ bool String::starts_with(const std::string& s, const std::string& beginning) noe
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
+    constexpr auto whitespace = " \t\n\r";
     const auto text_start = s.find_first_not_of(whitespace);
     if(text_start == std::string::npos)
     {
@@ -66,16 +62,14 @@ std::string String::trim_outer_whitespace(const std::string& s) noexcept
 
 std::string String::remove_extra_whitespace(const std::string& s) noexcept
 {
-    std::string s2 = trim_outer_whitespace(s);
-    std::replace_if(s2.begin(), s2.end(), [](auto c) { return String::contains(whitespace, c); }, ' ');
     std::string result;
-    std::copy_if(s2.begin(), s2.end(), std::back_inserter(result),
+    std::copy_if(s.begin(), s.end(), std::back_inserter(result),
                  [&result](auto c)
                  {
-                     return c != ' ' || result.back() != ' ';
+                     return ! isspace(c) || ( ! result.empty() && ! std::isspace(result.back()));
                  });
 
-    return result;
+    return trim_outer_whitespace(result);
 }
 
 std::string String::strip_comments(const std::string& str, const std::string& comment) noexcept
@@ -179,18 +173,21 @@ std::string String::remove_pgn_comments(const std::string& line)
 
 std::string String::extract_delimited_text(const std::string& str, const std::string& start, const std::string& end)
 {
-    const auto start_split = split(str, start, 1);
-    if(start_split.size() != 2)
+    const auto first_delimiter_index = str.find(start);
+    if(first_delimiter_index == std::string::npos)
     {
         throw std::invalid_argument("Starting delimiter not found in \"" + str + "\": " + start + " " + end);
     }
-    const auto start_of_inside = start_split[1];
-    const auto inside_split = split(start_of_inside, end, 1);
-    if(inside_split.size() != 2)
+    const auto text_start_index = first_delimiter_index + start.size();
+
+    const auto second_delimiter_index = str.find(end, text_start_index);
+    if(second_delimiter_index == std::string::npos)
     {
         throw std::invalid_argument("Ending delimiter not found in \"" + str + "\": " + start + " " + end);
     }
-    return inside_split[0];
+    const auto text_length = second_delimiter_index - text_start_index;
+
+    return str.substr(text_start_index, text_length);
 }
 
 char String::tolower(const char letter) noexcept
