@@ -865,7 +865,7 @@ Square Board::find_king(const Piece_Color color) const noexcept
 
 void Board::recreate_move_caches() noexcept
 {
-    checking_square = king_is_in_check() ? find_checking_square() : Square{};
+    checking_square = find_checking_square();
     prior_moves_count = legal_moves_cache.size();
     legal_moves_cache.clear();
     for(const auto square : Square::all_squares())
@@ -895,6 +895,11 @@ void Board::recreate_move_caches() noexcept
 Square Board::find_checking_square() const noexcept
 {
     const auto& checks = checking_moves();
+    if(checks.none())
+    {
+        return {};
+    }
+
     size_t checking_index = 0;
     while( ! checks[checking_index])
     {
