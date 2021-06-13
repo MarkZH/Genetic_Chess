@@ -66,16 +66,14 @@ std::string String::trim_outer_whitespace(const std::string& s) noexcept
 
 std::string String::remove_extra_whitespace(const std::string& s) noexcept
 {
-    std::string s2 = trim_outer_whitespace(s);
-    std::replace_if(s2.begin(), s2.end(), [](auto c) { return String::contains(whitespace, c); }, ' ');
     std::string result;
-    std::copy_if(s2.begin(), s2.end(), std::back_inserter(result),
+    std::copy_if(s.begin(), s.end(), std::back_inserter(result),
                  [&result](auto c)
                  {
-                     return c != ' ' || result.back() != ' ';
+                     return ! isspace(c) || ( ! result.empty() && ! std::isspace(result.back()));
                  });
 
-    return result;
+    return trim_outer_whitespace(result);
 }
 
 std::string String::strip_comments(const std::string& str, const std::string& comment) noexcept
