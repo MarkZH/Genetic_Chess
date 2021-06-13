@@ -10,11 +10,6 @@
 #include <sstream>
 #include <cmath>
 
-namespace
-{
-    const auto whitespace = std::string{" \t\n\r"};
-}
-
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
     if(delim.empty())
@@ -54,6 +49,7 @@ bool String::starts_with(const std::string& s, const std::string& beginning) noe
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
+    constexpr auto whitespace = " \t\n\r";
     const auto text_start = s.find_first_not_of(whitespace);
     if(text_start == std::string::npos)
     {
