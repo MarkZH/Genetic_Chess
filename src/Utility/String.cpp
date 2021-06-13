@@ -173,18 +173,21 @@ std::string String::remove_pgn_comments(const std::string& line)
 
 std::string String::extract_delimited_text(const std::string& str, const std::string& start, const std::string& end)
 {
-    const auto start_split = split(str, start, 1);
-    if(start_split.size() != 2)
+    const auto first_delimiter_index = str.find(start);
+    if(first_delimiter_index == std::string::npos)
     {
         throw std::invalid_argument("Starting delimiter not found in \"" + str + "\": " + start + " " + end);
     }
-    const auto start_of_inside = start_split[1];
-    const auto inside_split = split(start_of_inside, end, 1);
-    if(inside_split.size() != 2)
+    const auto text_start_index = first_delimiter_index + start.size();
+
+    const auto second_delimiter_index = str.find(end, text_start_index);
+    if(second_delimiter_index == std::string::npos)
     {
         throw std::invalid_argument("Ending delimiter not found in \"" + str + "\": " + start + " " + end);
     }
-    return inside_split[0];
+    const auto text_length = second_delimiter_index - text_start_index;
+
+    return str.substr(text_start_index, text_length);
 }
 
 char String::tolower(const char letter) noexcept
