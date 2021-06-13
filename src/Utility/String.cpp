@@ -66,7 +66,7 @@ std::string String::remove_extra_whitespace(const std::string& s) noexcept
     std::copy_if(s.begin(), s.end(), std::back_inserter(result),
                  [&result](auto c)
                  {
-                     return ! isspace(c) || ( ! result.empty() && ! std::isspace(result.back()));
+                     return ! std::isspace(c) || ( ! result.empty() && ! std::isspace(result.back()));
                  });
 
     return trim_outer_whitespace(result);
