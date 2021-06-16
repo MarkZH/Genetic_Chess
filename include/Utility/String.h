@@ -137,7 +137,8 @@ namespace String
     //!
     //! \param n The integer.
     //! \returns A text string with thousands separators.
-    std::string format_integer(std::integral auto n) noexcept
+    template<typename Number> requires std::is_arithmetic_v<Number>
+    std::string format_number(Number n) noexcept
     {
         return std::format(std::locale("en_US.UTF-8"), "{:L}", n);
     }

@@ -313,9 +313,10 @@ bool run_tests()
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", 5);
     split_and_join_are_inverse_operations(tests_passed);
 
-    test_function(tests_passed, "Format integer (zero)",  "0", String::format_integer<int>,  0);
-    test_function(tests_passed, "Format integer (-zero)", "0", String::format_integer<int>, -0);
+    test_function(tests_passed, "Format integer (zero)",  "0", String::format_number<int>,  0);
+    test_function(tests_passed, "Format integer (-zero)", "0", String::format_number<int>, -0);
     commas_as_thousands_separators_correctly_placed(tests_passed);
+    test_function(tests_passed, "Floating point format", "12,345.0987654321", String::format_number<double>, 12345.0987654321);
 
     function_should_not_throw(tests_passed, "Non-throwing string to size_t", String::to_number<size_t>, "123");
     function_should_not_throw(tests_passed, "Non-throwing string to size_t with whitespace", String::to_number<size_t>, " 456  ");
@@ -474,7 +475,7 @@ void run_speed_tests()
     }
     const auto quiescent_time = std::chrono::steady_clock::now() - quiescent_time_start;
     timing_results.emplace_back(quiescent_time - (board_play_move_time*move_count)/number_of_tests, "Board::quiescent()");
-    std::cout << "(non-quiescent moves = " << String::format_integer(move_count) << ")" << std::endl;
+    std::cout << "(non-quiescent moves = " << String::format_number(move_count) << ")" << std::endl;
 
     std::sort(timing_results.begin(), timing_results.end());
     const auto name_width = int(std::max_element(timing_results.begin(), timing_results.end(),
@@ -553,8 +554,8 @@ bool run_perft_tests()
 
     const auto time = std::chrono::duration<double>(std::chrono::steady_clock::now() - time_at_start_of_all);
     std::cout << "Perft time: " << time.count() << " seconds" << std::endl;
-    std::cout << "Legal moves counted: " << String::format_integer(legal_moves_counted) << std::endl;
-    std::cout << "Move generation rate: " << String::format_integer(int(double(legal_moves_counted)/time.count())) << " moves/second." << std::endl;
+    std::cout << "Legal moves counted: " << String::format_number(legal_moves_counted) << std::endl;
+    std::cout << "Move generation rate: " << String::format_number(int(double(legal_moves_counted)/time.count())) << " moves/second." << std::endl;
     if( ! tests_failed.empty())
     {
         std::cout << "Test" << (tests_failed.size() > 1 ? "s" : "") << " failed: ";
@@ -1328,9 +1329,9 @@ namespace
              {1000000000, "1,000,000,000"}};
         for(const auto& [number, text] : tests)
         {
-            test_function(tests_passed, "Format integer (size_t)", text, String::format_integer<size_t>, number);
-            test_function(tests_passed, "Format integer (int)", text, String::format_integer<int>, number);
-            test_function(tests_passed, "Format integer (negative int)", "-" + text, String::format_integer<int>, -number);
+            test_function(tests_passed, "Format integer (size_t)", text, String::format_number<size_t>, number);
+            test_function(tests_passed, "Format integer (int)", text, String::format_number<int>, number);
+            test_function(tests_passed, "Format integer (negative int)", "-" + text, String::format_number<int>, -number);
         }
     }
 
