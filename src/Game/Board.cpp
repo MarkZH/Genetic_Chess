@@ -410,6 +410,17 @@ void Board::update_board(const Move& move) noexcept
     add_board_position_to_repeat_record();
 }
 
+void Board::fix_en_passant_hash() noexcept
+{
+    if(en_passant_target.is_set())
+    {
+        if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), [](auto move) { return move->is_en_passant(); }))
+        {
+            current_board_hash ^= en_passant_hash_values[en_passant_target.index()/8];
+        }
+    }
+}
+
 void Board::switch_turn() noexcept
 {
     turn_color = opposite(turn_color);
@@ -896,6 +907,8 @@ void Board::recreate_move_caches() noexcept
             }
         }
     }
+
+    fix_en_passant_hash();
 }
 
 Square Board::find_checking_square() const noexcept

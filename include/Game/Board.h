@@ -358,6 +358,7 @@ class Board
         bool all_empty_between(Square start, Square end) const noexcept;
         void set_already_moved(Square square, bool piece_has_already_moved) noexcept;
         void update_board(const Move& move) noexcept;
+        void fix_en_passant_hash() noexcept;
         void switch_turn() noexcept;
         Game_Result move_result() const noexcept;
 
