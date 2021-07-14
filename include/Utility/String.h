@@ -7,6 +7,7 @@
 #include <type_traits>
 #include <algorithm>
 #include <charconv>
+#include <stdexcept>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
