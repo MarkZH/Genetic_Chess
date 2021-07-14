@@ -11,8 +11,6 @@
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
 {
-    const auto whitespace = std::string{" \t\n\r"};
-
     //! \brief Splits a string into a list of strings based upon a delimiter.
     //!
     //! \param s The string to be split.
