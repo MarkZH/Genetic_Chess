@@ -518,8 +518,13 @@ void Board::place_piece(const Piece piece, const Square square) noexcept
 
     if(piece && piece.type() == Piece_Type::KING)
     {
-        king_location[static_cast<int>(piece.color())] = square;
+        record_king_location(piece.color(), square);
     }
+}
+
+void Board::record_king_location(const Piece_Color color, const Square square)
+{
+    king_location[static_cast<int>(color)] = square;
 }
 
 void Board::add_attacks_from(const Square square, const Piece piece) noexcept
@@ -1027,7 +1032,7 @@ uint64_t Board::square_hash(Square square) const noexcept
     if(piece &&
        piece.type() == Piece_Type::ROOK &&
        ! piece_has_moved(square) &&
-       ! piece_has_moved(king_location[static_cast<int>(piece.color())]))
+       ! piece_has_moved(find_king(piece.color())))
     {
         const auto on_first_rank = (index%8 == 0);
         const auto on_first_file = (index/8 == 0);
