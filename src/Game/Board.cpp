@@ -1042,7 +1042,7 @@ uint64_t Board::square_hash(Square square) const noexcept
     if( ! piece && is_en_passant_targetable(square))
     {
         const auto file_index = index/8;
-        result = en_passant_hash_values[file_index];
+        result ^= en_passant_hash_values[file_index];
     }
 
     return result;
