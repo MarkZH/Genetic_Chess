@@ -24,7 +24,6 @@ Genetic_AI::Genetic_AI(const Genetic_AI& A, const Genetic_AI& B) noexcept :
     genome(A.genome, B.genome),
     id_number(next_id++)
 {
-    recalibrate_self();
 }
 
 Genetic_AI::Genetic_AI(const std::string& file_name, const int id_in) try : Genetic_AI(std::ifstream(file_name), id_in)
@@ -93,7 +92,6 @@ void Genetic_AI::read_data(std::istream& is)
     try
     {
         genome.read_from(is);
-        recalibrate_self();
         next_id = std::max(next_id, id() + 1);
     }
     catch(const Missing_Genome_Data& e)
@@ -146,8 +144,6 @@ void Genetic_AI::mutate(size_t mutation_count) noexcept
     {
         genome.mutate();
     }
-
-    recalibrate_self();
 }
 
 void Genetic_AI::print(const std::string& file_name) const noexcept

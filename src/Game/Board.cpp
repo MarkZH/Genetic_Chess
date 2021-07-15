@@ -172,6 +172,7 @@ Board::Board(const std::string& input_fen)
 
         const auto last_move_pawn = piece_on_square(en_passant_target + Square_Difference{0, whose_turn() == Piece_Color::WHITE ? -1 : 1});
         fen_parse_assert(last_move_pawn == Piece{opposite(whose_turn()), Piece_Type::PAWN}, input_fen, "There must be a pawn past the en passant target square.");
+        fen_parse_assert(en_passant_target.rank() == (whose_turn() == Piece_Color::WHITE ? 6 : 3), input_fen, "The en passant target must be on the third rank (if black to move) or sixth rank (if white to move).");
     }
 
     // Fill repeat counter to indicate moves since last
@@ -409,6 +410,17 @@ void Board::update_board(const Move& move) noexcept
     add_board_position_to_repeat_record();
 }
 
+void Board::fix_en_passant_hash() noexcept
+{
+    if(en_passant_target.is_set())
+    {
+        if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), [](auto move) { return move->is_en_passant(); }))
+        {
+            current_board_hash ^= en_passant_hash_values[en_passant_target.index()/8];
+        }
+    }
+}
+
 void Board::switch_turn() noexcept
 {
     turn_color = opposite(turn_color);
@@ -517,8 +529,13 @@ void Board::place_piece(const Piece piece, const Square square) noexcept
 
     if(piece && piece.type() == Piece_Type::KING)
     {
-        king_location[static_cast<int>(piece.color())] = square;
+        record_king_location(piece.color(), square);
     }
+}
+
+void Board::record_king_location(const Piece_Color color, const Square square)
+{
+    king_location[static_cast<int>(color)] = square;
 }
 
 void Board::add_attacks_from(const Square square, const Piece piece) noexcept
@@ -890,6 +907,8 @@ void Board::recreate_move_caches() noexcept
             }
         }
     }
+
+    fix_en_passant_hash();
 }
 
 Square Board::find_checking_square() const noexcept
@@ -1026,7 +1045,7 @@ uint64_t Board::square_hash(Square square) const noexcept
     if(piece &&
        piece.type() == Piece_Type::ROOK &&
        ! piece_has_moved(square) &&
-       ! piece_has_moved(king_location[static_cast<int>(piece.color())]))
+       ! piece_has_moved(find_king(piece.color())))
     {
         const auto on_first_rank = (index%8 == 0);
         const auto on_first_file = (index/8 == 0);
@@ -1036,7 +1055,7 @@ uint64_t Board::square_hash(Square square) const noexcept
     if( ! piece && is_en_passant_targetable(square))
     {
         const auto file_index = index/8;
-        result = en_passant_hash_values[file_index];
+        result ^= en_passant_hash_values[file_index];
     }
 
     return result;

@@ -4,8 +4,6 @@
 #include <iosfwd>
 #include <string>
 
-#include "Minimax_AI.h"
-
 #include "Genes/Genome.h"
 #include "Game/Color.h"
 #include "Game/Clock.h"
@@ -17,7 +15,7 @@ class Board;
 //! \brief This classes uses evolutionary algorithms to learn how to play chess.
 //!
 //! This is the player for which this program is named.
-class Genetic_AI : public Minimax_AI
+class Genetic_AI
 {
     public:
         //! \brief Generate a Genetic_AI
@@ -61,12 +59,12 @@ class Genetic_AI : public Minimax_AI
         //! \brief Reports the name of the AI and ID number.
         //!
         //! \returns "Genetic AI" plus the ID.
-        std::string name() const noexcept override;
+        std::string name() const noexcept;
 
         //! \brief Reports the author of this chess engine.
         //!
         //! \returns "Mark Harrison"
-        std::string author() const noexcept override;
+        std::string author() const noexcept;
 
         //! \brief Prints the information defining this AI.
         //!
@@ -90,6 +88,49 @@ class Genetic_AI : public Minimax_AI
         //! \returns If the other AI should go after this AI.
         bool operator<(const Genetic_AI& other) const noexcept;
 
+        //! \brief Assign a numeric score to the current board position.
+        //! 
+        //! \param board The current board position
+        //! \param perspective The side for which a higher score is better
+        //! \param depth The current depth of the game tree search
+        //! 
+        //! \returns A numeric score estimating the advantage that the perspective
+        //!          player has in the game.
+        double internal_evaluate(const Board& board,
+                                 Piece_Color perspective,
+                                 size_t depth) const noexcept;
+
+        //! \brief A listing of the piece values according to the internal Genetic_AI
+        const std::array<double, 6>& piece_values() const noexcept;
+
+        //! \brief The amount of time to spend searching for a move.
+        //! 
+        //! \param board The current board position
+        //! \param clock The game clock
+        //! 
+        //! \returns The time in seconds to spend picking the next move
+        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
+        
+        //! \brief How much to overestimate the time to spend searching.
+        //! 
+        //! \param game_progress An estimate of how much of the game has been played (0.0 to 1.0).
+        //! 
+        //! \returns A factor to multiply the time allocated for a game tree branch to account for
+        //!          alpha-beta cutoffs.
+        double speculation_time_factor(double game_progress) const noexcept;
+
+        //! \brief An estimate of the effective number of branches per game tree node.
+        //! 
+        //! \param game_progress An estimate of how much of the game has been played (0.0 to 1.0).
+        //! 
+        //! \returns An estimate of how many moves will be examined in each board position.
+        double branching_factor(double game_progress) const noexcept;
+
+        //! \brief An estimate of how much of the game has been played(0.0 to 1.0).
+        //! 
+        //! \param board The current board position.
+        double game_progress(const Board& board) const noexcept;
+
     private:
         Genome genome;
 
@@ -99,18 +140,6 @@ class Genetic_AI : public Minimax_AI
 
         void read_from(std::istream& is);
         void read_data(std::istream& is);
-
-        double internal_evaluate(const Board& board,
-                                 Piece_Color perspective,
-                                 size_t depth) const noexcept override;
-
-        virtual const std::array<double, 6>& piece_values() const noexcept override;
-
-        // Time management
-        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept override;
-        double speculation_time_factor(double game_progress) const noexcept override;
-        double branching_factor(double game_progress) const noexcept override;
-        double game_progress(const Board& board) const noexcept override;
 };
 
 //! \brief Find the last ID of a Genetic_AI in a gene pool file.
