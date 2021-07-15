@@ -354,9 +354,11 @@ class Board
         bool is_en_passant_targetable(Square square) const noexcept;
         bool is_in_legal_moves_list(const Move& move) const noexcept;
         void place_piece(Piece piece, Square square) noexcept;
+        void record_king_location(Piece_Color color, Square square);
         bool all_empty_between(Square start, Square end) const noexcept;
         void set_already_moved(Square square, bool piece_has_already_moved) noexcept;
         void update_board(const Move& move) noexcept;
+        void fix_en_passant_hash() noexcept;
         void switch_turn() noexcept;
         Game_Result move_result() const noexcept;
 

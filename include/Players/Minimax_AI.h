@@ -7,6 +7,8 @@
 #include <array>
 #include <map>
 #include <utility>
+#include <string>
+#include <iosfwd>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
@@ -15,6 +17,7 @@
 #include "Players/Alpha_Beta_Value.h"
 #include "Utility/Fixed_Capacity_Vector.h"
 #include "Players/Thinking.h"
+#include "Players/Genetic_AI.h"
 
 class Board;
 class Move;
@@ -29,6 +32,33 @@ class Game_Result;
 class Minimax_AI : public Player
 {
     public:
+        //! Default construct a Minimax_AI
+        Minimax_AI() noexcept = default;
+
+        //! Load an AI from a file.
+        //! 
+        //! \param file_name The name of the file containing the AI.
+        //! \param id The AI ID to search for in the file.
+        Minimax_AI(const std::string& file_name, int id);
+        
+        //! Load an AI from an opened stream.
+        //! 
+        //! \param is The already opened input stream.
+        //! \param id The AI ID to search for in the stream.
+        Minimax_AI(std::istream& is, int id);
+
+        //! Create a new AI by mating two existing ones.
+        //! 
+        //! \param a The first AI.
+        //! \param b The second AI.
+        Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept;
+
+        std::string name() const noexcept override;
+        std::string author() const noexcept override;
+      
+        //! A numeric identifier for this AI.
+        int id() const noexcept;
+
         //! \brief Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
         //!
         //! The depth of the search is determined by how much time is available.
@@ -50,6 +80,26 @@ class Minimax_AI : public Player
 
         void reset() const noexcept override;
 
+        //! \brief Randomly mutate the AI.
+        //! 
+        //! \param mutation_rate The number of discrete mutations to apply to the AI
+        void mutate(size_t mutation_rate) noexcept;
+
+        //! \brief Print the AI parameters to a file.
+        //! 
+        //! \param file_name The name of a file.
+        void print(const std::string& file_name) const noexcept;
+
+        //! \brief Print the AI parameters to an output stream
+        //! 
+        //! \param os The output stream
+        void print(std::ostream& os) const noexcept;
+
+        //! \brief Ordering operator for std::map
+        //! 
+        //! \param other The AI being compared to this one.
+        bool operator<(const Minimax_AI& other) const noexcept;
+
     protected:
         //! \brief Recalculate values that will last the lifetime of the instance.
         //!
@@ -59,6 +109,10 @@ class Minimax_AI : public Player
         void recalibrate_self() const noexcept;
 
     private:
+        //! The brains of the Minimax algorithm that provides board evaluation and
+        //! time management.
+        Genetic_AI genetic_ai;
+
         //! \brief Data for writing commentary for each move choice to PGN files.
         //!
         //! Each entry is a pair of results of the game search tree. The first is the predicted variation
@@ -82,17 +136,17 @@ class Minimax_AI : public Player
                             const Game_Result& move_result,
                             Piece_Color perspective,
                             size_t depth) const noexcept;
-        virtual double internal_evaluate(const Board& board,
-                                         Piece_Color perspective,
-                                         size_t depth) const noexcept = 0;
+        double internal_evaluate(const Board& board,
+                                 Piece_Color perspective,
+                                 size_t depth) const noexcept;
 
-        virtual const std::array<double, 6>& piece_values() const noexcept = 0;
+        const std::array<double, 6>& piece_values() const noexcept;
 
         // Time management
-        virtual Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept = 0;
-        virtual double speculation_time_factor(double game_progress) const noexcept = 0;
-        virtual double branching_factor(double game_progress) const noexcept = 0;
-        virtual double game_progress(const Board& board) const noexcept = 0;
+        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
+        double speculation_time_factor(double game_progress) const noexcept;
+        double branching_factor(double game_progress) const noexcept;
+        double game_progress(const Board& board) const noexcept;
 
         // Scoring output
         double centipawn_value() const noexcept;
