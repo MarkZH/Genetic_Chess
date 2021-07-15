@@ -4,9 +4,10 @@
 #include <string>
 #include <vector>
 #include <chrono>
-#include <sstream>
 #include <type_traits>
 #include <algorithm>
+#include <charconv>
+#include <stdexcept>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
@@ -179,16 +180,17 @@ namespace String
     template<typename Number>
     std::enable_if_t<std::is_arithmetic_v<Number>, Number> to_number(const std::string& s)
     {
-        auto iss = std::istringstream(trim_outer_whitespace(s));
+        const auto trimmed = trim_outer_whitespace(s);
+        const auto string_end = trimmed.data() + trimmed.size();
         Number result;
-        iss >> result;
-        if(iss.fail() || ! iss.eof())
+        const auto [end, error] = std::from_chars(trimmed.data(), string_end, result);
+        if(end == string_end && error == std::errc{})
         {
-            throw std::invalid_argument("Non-numeric data in argument: " + s);
+            return result;
         }
         else
         {
-            return result;
+            throw std::invalid_argument("Non-numeric data in argument: " + s);
         }
     }
 
