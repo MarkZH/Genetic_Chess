@@ -321,6 +321,8 @@ bool run_tests()
     function_should_not_throw(tests_passed, "Non-throwing string to size_t", String::to_number<size_t>, "123");
     function_should_not_throw(tests_passed, "Non-throwing string to size_t with whitespace", String::to_number<size_t>, " 456  ");
     function_should_throw<std::invalid_argument>(tests_passed, "Throwing string to size_t", String::to_number<size_t>, "78x9");
+    function_should_throw<std::invalid_argument>(tests_passed, "Throwing empty string to int", String::to_number<int>, "");
+    function_should_throw<std::invalid_argument>(tests_passed, "Throwing on too large value", String::to_number<short>, "99999");
 
     test_function(tests_passed,
                   "PGN comment removal",

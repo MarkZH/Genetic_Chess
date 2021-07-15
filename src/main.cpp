@@ -13,7 +13,7 @@
 #include "Game/Game_Result.h"
 #include "Moves/Move.h"
 
-#include "Players/Genetic_AI.h"
+#include "Players/Minimax_AI.h"
 #include "Players/Random_AI.h"
 
 #include "Genes/Gene_Pool.h"
@@ -389,12 +389,12 @@ namespace
                 try
                 {
                     const auto id = i + 1 < argc ? argv[i + 1] : std::string{};
-                    latest = std::make_unique<Genetic_AI>(filename, String::to_number<int>(id));
+                    latest = std::make_unique<Minimax_AI>(filename, String::to_number<int>(id));
                     ++i;
                 }
                 catch(const std::invalid_argument&) // Could not convert id to an int.
                 {
-                    latest = std::make_unique<Genetic_AI>(filename, find_last_id(filename));
+                    latest = std::make_unique<Minimax_AI>(filename, find_last_id(filename));
                 }
             }
             else if(opt == "-time" && i + 1 < argc)
