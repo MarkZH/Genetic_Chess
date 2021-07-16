@@ -7,6 +7,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <cmath>
+#include <limits>
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
@@ -37,6 +38,11 @@ Minimax_AI::Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept : gene
 
 std::string Minimax_AI::name() const noexcept
 {
+    return ai_name() + " (Minimax)";
+}
+
+std::string Minimax_AI::ai_name() const
+{
     return genetic_ai.name();
 }
 
@@ -52,24 +58,7 @@ int Minimax_AI::id() const noexcept
 
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
-    // Erase data from previous board when starting new game
-    if(board.played_ply_count() <= 1)
-    {
-        reset();
-    }
-
-    while(commentary.size() < board.played_ply_count()/2)
-    {
-        commentary.emplace_back();
-    }
-
-    nodes_searched = 0;
-    clock_start_time = std::chrono::steady_clock::now();
-    maximum_depth = 0;
-
-    nodes_evaluated = 0;
-    total_evaluation_time = 0.0s;
-    time_at_last_output = std::chrono::steady_clock::now();
+    reset_search_stats(board);
 
     auto principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
     if(principal_variation.size() <= 2 || principal_variation[1] != board.last_move())
@@ -95,27 +84,56 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     auto result = search_game_tree(board,
                                    time_to_use,
                                    minimum_search_depth,
+                                   maximum_variation_depth,
                                    clock,
                                    alpha_start,
                                    beta_start,
                                    principal_variation,
                                    current_variation);
 
+    report_final_search_stats(result, board);
+
+    return *result.variation_line().front();
+}
+
+void Minimax_AI::report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const
+{
     output_thinking(Board::thinking_mode(), result, board.whose_turn());
 
     commentary.push_back(result);
 
     if(nodes_evaluated > 0)
     {
-        node_evaluation_time = total_evaluation_time/nodes_evaluated;
+        node_evaluation_time = total_evaluation_time / nodes_evaluated;
+    }
+}
+
+void Minimax_AI::reset_search_stats(const Board& board) const
+{
+    // Erase data from previous board when starting new game
+    if(board.played_ply_count() <= 1)
+    {
+        reset();
     }
 
-    return *result.variation_line().front();
+    while(commentary.size() < board.played_ply_count() / 2)
+    {
+        commentary.emplace_back();
+    }
+
+    nodes_searched = 0;
+    clock_start_time = std::chrono::steady_clock::now();
+    maximum_depth = 0;
+
+    nodes_evaluated = 0;
+    total_evaluation_time = 0.0s;
+    time_at_last_output = std::chrono::steady_clock::now();
 }
 
 Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const Clock::seconds time_to_examine,
                                                    const size_t minimum_search_depth,
+                                                   const size_t maximum_search_depth,
                                                    const Clock& clock,
                                                    Alpha_Beta_Value alpha,
                                                    const Alpha_Beta_Value& beta,
@@ -197,8 +215,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         const auto time_allotted_for_this_move = std::min(time_left*speculation_time_factor(game_progress(next_board)),
                                                           clock.running_time_left())/moves_left;
 
-        const auto result = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, time_allotted_for_this_move) ?
-            search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, clock, beta, alpha, principal_variation, current_variation) :
+        const auto result = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, maximum_search_depth, time_allotted_for_this_move) ?
+            search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, maximum_search_depth, clock, beta, alpha, principal_variation, current_variation) :
             evaluate(move_result, next_board, current_variation, perspective, evaluate_start_time);
 
         if(result.value(perspective) > best_result.value(perspective))
@@ -267,6 +285,7 @@ bool Minimax_AI::search_further(const Game_Result& move_result,
                                 const Board& next_board,
                                 const std::vector<const Move*>& principal_variation,
                                 const size_t minimum_search_depth,
+                                const size_t maximum_search_depth,
                                 const Clock::seconds time_allotted_for_this_move) const noexcept
 {
     if(move_result.game_has_ended())

@@ -101,12 +101,40 @@ class Minimax_AI : public Player
         bool operator<(const Minimax_AI& other) const noexcept;
 
     protected:
+        mutable Clock::seconds node_evaluation_time;
+
+        // Current sequence of moves as game tree is traversed.
+        const static size_t maximum_variation_depth = 100; // to prevent stack overflow
+        const static size_t maximum_quiescent_captures = 32; // to prevent overflow of current_variation_store
+        const static size_t variation_store_size = maximum_variation_depth + maximum_quiescent_captures;
+        using current_variation_store = Fixed_Capacity_Vector<const Move*, variation_store_size>;
+
+        std::string ai_name() const;
+
         //! \brief Recalculate values that will last the lifetime of the instance.
         //!
         //! In this case, the values are an initial estimate of the speed of
         //! searching the game tree and the value of a centipawn for reporting
         //! scores of board positions.
         void recalibrate_self() const noexcept;
+
+        void reset_search_stats(const Board& board) const;
+        void report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const;
+
+        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
+        double branching_factor(double game_progress) const noexcept;
+        double game_progress(const Board& board) const noexcept;
+
+        // Minimax (actually negamax) with alpha-beta pruning
+        Game_Tree_Node_Result search_game_tree(const Board& board,
+                                               Clock::seconds time_to_examine,
+                                               size_t minimum_search_depth,
+                                               size_t maximum_search_depth,
+                                               const Clock& clock,
+                                               Alpha_Beta_Value alpha,
+                                               const Alpha_Beta_Value& beta,
+                                               std::vector<const Move*>& principal_variation,
+                                               current_variation_store& current_variation) const noexcept;
 
     private:
         //! The brains of the Minimax algorithm that provides board evaluation and
@@ -128,7 +156,6 @@ class Minimax_AI : public Player
         // For thinking output
         mutable int nodes_evaluated;
         mutable Clock::seconds total_evaluation_time;
-        mutable Clock::seconds node_evaluation_time;
         mutable std::chrono::steady_clock::time_point time_at_last_output;
 
         // Evaluation method
@@ -143,29 +170,10 @@ class Minimax_AI : public Player
         const std::array<double, 6>& piece_values() const noexcept;
 
         // Time management
-        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
         double speculation_time_factor(double game_progress) const noexcept;
-        double branching_factor(double game_progress) const noexcept;
-        double game_progress(const Board& board) const noexcept;
 
         // Scoring output
         double centipawn_value() const noexcept;
-
-        // Current sequence of moves as game tree is traversed.
-        const static size_t maximum_search_depth = 100; // to prevent stack overflow
-        const static size_t maximum_quiescent_captures = 32; // to prevent overflow of current_variation_store
-        const static size_t variation_store_size = maximum_search_depth + maximum_quiescent_captures;
-        using current_variation_store = Fixed_Capacity_Vector<const Move*, variation_store_size>;
-
-        // Minimax (actually negamax) with alpha-beta pruning
-        Game_Tree_Node_Result search_game_tree(const Board& board,
-                                               Clock::seconds time_to_examine,
-                                               size_t minimum_search_depth,
-                                               const Clock& clock,
-                                               Alpha_Beta_Value alpha,
-                                               const Alpha_Beta_Value& beta,
-                                               std::vector<const Move*>& principal_variation,
-                                               current_variation_store& current_variation) const noexcept;
 
         Game_Tree_Node_Result evaluate(const Game_Result& move_result,
                                        Board& next_board,
@@ -178,6 +186,7 @@ class Minimax_AI : public Player
                             const Board& next_board,
                             const std::vector<const Move*>& principal_variation,
                             size_t minimum_search_depth,
+                            size_t maximum_search_depth,
                             Clock::seconds time_allotted_for_this_move) const noexcept;
 
         //! \brief Assign a score to the current board state.
