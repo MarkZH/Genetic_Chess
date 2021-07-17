@@ -41,7 +41,7 @@ const Move& Iterative_Deepening_AI::choose_move(const Board& board, const Clock&
         current_variation_store current_variation;
 
         result = search_game_tree(board,
-                                  Clock::seconds{std::numeric_limits<double>::infinity()},
+                                  Clock::seconds{std::numeric_limits<Clock::seconds::rep>::infinity()},
                                   depth,
                                   depth,
                                   clock,
