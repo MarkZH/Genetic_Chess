@@ -21,7 +21,7 @@ const Move& Iterative_Deepening_AI::choose_move(const Board& board, const Clock&
 {
     reset_search_stats(board);
     const auto effective_moves_per_turn = branching_factor(game_progress(board));
-    const auto time_to_use = std::min(time_to_examine(board, clock), clock.running_time_left());
+    const auto time_to_use = time_to_examine(board, clock);
     const auto time_start = std::chrono::steady_clock::now();
 
     auto principal_variation = std::vector<const Move*>{nullptr, nullptr};
