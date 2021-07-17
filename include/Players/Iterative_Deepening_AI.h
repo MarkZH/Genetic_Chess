@@ -9,6 +9,7 @@ class Board;
 class Clock;
 class Move;
 
+//! \brief An AI that chooses moves using the iterative deepening version of Minimax.
 class Iterative_Deepening_AI : public Minimax_AI
 {
     public:
