@@ -96,7 +96,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     return *result.variation_line().front();
 }
 
-void Minimax_AI::report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const
+void Minimax_AI::report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const noexcept
 {
     output_thinking(Board::thinking_mode(), result, board.whose_turn());
 
@@ -108,7 +108,7 @@ void Minimax_AI::report_final_search_stats(Game_Tree_Node_Result& result, const 
     }
 }
 
-void Minimax_AI::reset_search_stats(const Board& board) const
+void Minimax_AI::reset_search_stats(const Board& board) const noexcept
 {
     // Erase data from previous board when starting new game
     if(board.played_ply_count() <= 1)

@@ -118,9 +118,9 @@ class Minimax_AI : public Player
         //! scores of board positions.
         void recalibrate_self() const noexcept;
 
-        void reset_search_stats(const Board& board) const;
-        void report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const;
+        void reset_search_stats(const Board& board) const noexcept;
 
+        void report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const noexcept;
         Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
         double branching_factor(double game_progress) const noexcept;
         double game_progress(const Board& board) const noexcept;
