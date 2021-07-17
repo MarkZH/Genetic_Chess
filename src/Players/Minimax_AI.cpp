@@ -104,7 +104,7 @@ void Minimax_AI::report_final_search_stats(Game_Tree_Node_Result& result, const 
 
     if(nodes_evaluated > 0)
     {
-        node_evaluation_time = total_evaluation_time / nodes_evaluated;
+        node_evaluation_time = total_evaluation_time/nodes_evaluated;
     }
 }
 
@@ -116,7 +116,7 @@ void Minimax_AI::reset_search_stats(const Board& board) const noexcept
         reset();
     }
 
-    while(commentary.size() < board.played_ply_count() / 2)
+    while(commentary.size() < board.played_ply_count()/2)
     {
         commentary.emplace_back();
     }
