@@ -481,7 +481,7 @@ namespace
         }
 
         std::cout << "\nWins to be recorded as best: " << best_stats.wins_to_beat
-                  << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n";
+                  << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n\n";
     }
 
     template<typename Search_Type>
