@@ -36,26 +36,26 @@ class Minimax_AI : public Player
         Minimax_AI() noexcept = default;
 
         //! Load an AI from a file.
-        //! 
+        //!
         //! \param file_name The name of the file containing the AI.
         //! \param id The AI ID to search for in the file.
         Minimax_AI(const std::string& file_name, int id);
-        
+
         //! Load an AI from an opened stream.
-        //! 
+        //!
         //! \param is The already opened input stream.
         //! \param id The AI ID to search for in the stream.
         Minimax_AI(std::istream& is, int id);
 
         //! Create a new AI by mating two existing ones.
-        //! 
+        //!
         //! \param a The first AI.
         //! \param b The second AI.
         Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept;
 
         std::string name() const noexcept override;
         std::string author() const noexcept override;
-      
+
         //! A numeric identifier for this AI.
         int id() const noexcept;
 
@@ -81,22 +81,22 @@ class Minimax_AI : public Player
         void reset() const noexcept override;
 
         //! \brief Randomly mutate the AI.
-        //! 
+        //!
         //! \param mutation_rate The number of discrete mutations to apply to the AI
         void mutate(size_t mutation_rate) noexcept;
 
         //! \brief Print the AI parameters to a file.
-        //! 
+        //!
         //! \param file_name The name of a file.
         void print(const std::string& file_name) const noexcept;
 
         //! \brief Print the AI parameters to an output stream
-        //! 
+        //!
         //! \param os The output stream
         void print(std::ostream& os) const noexcept;
 
         //! \brief Ordering operator for std::map
-        //! 
+        //!
         //! \param other The AI being compared to this one.
         bool operator<(const Minimax_AI& other) const noexcept;
 
