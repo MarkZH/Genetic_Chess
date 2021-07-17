@@ -19,6 +19,12 @@ first mutation interval = 20
 second mutation rate = 1
 second mutation interval = 1000
 
+# Choose the AIs search strategies for picking a move.
+#   Choices:
+#   1. minimax
+#   2. iterative deepening
+strategy = Iterative   dEepening
+
 # Game time
 #
 # If the game time increment is positive, the time for each game
