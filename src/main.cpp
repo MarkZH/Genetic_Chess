@@ -373,6 +373,7 @@ namespace
         std::string game_file_name;
         std::string event_name;
         std::string location;
+        auto thinking_output = Thinking_Output_Type::NO_THINKING;
 
         for(int i = 1; i < argc; ++i)
         {
@@ -425,6 +426,14 @@ namespace
             {
                 location = argv[++i];
             }
+            else if(opt == "-xboard")
+            {
+                thinking_output = Thinking_Output_Type::CECP;
+            }
+            else if(opt == "-uci")
+            {
+                thinking_output = Thinking_Output_Type::UCI;
+            }
             else
             {
                 throw std::invalid_argument("Invalid or incomplete game option: " + opt);
@@ -458,6 +467,7 @@ namespace
         }
         else
         {
+            board.set_thinking_mode(thinking_output);
             play_game(board,
                       Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board.whose_turn()),
                       *white, *black,
