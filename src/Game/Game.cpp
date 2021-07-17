@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <csignal>
 #include <cassert>
+#include <iostream>
 
 #include "Players/Player.h"
 #include "Players/Proxy_Player.h"
@@ -43,6 +44,10 @@ Game_Result play_game(Board board,
         result = game_clock.punch(board);
         if( ! result.game_has_ended())
         {
+            if(board.thinking_mode() != Thinking_Output_Type::NO_THINKING)
+            {
+                std::cout << "Move chosen: " << move_chosen.algebraic(board) << "\n" << std::endl;
+            }
             result = board.play_move(move_chosen);
             game_record.push_back(&move_chosen);
         }
