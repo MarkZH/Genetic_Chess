@@ -117,9 +117,13 @@ class Configuration
         //! \brief Print the unused parameters in the configuration file to stdout.
         void print_unused_parameters() const noexcept;
 
+        //! \brief Return the name of the file that was read.
+        std::string file_name() const noexcept;
+
     private:
         std::map<std::string, std::string> parameters;
         mutable std::map<std::string, bool> used;
+        std::string input_file_name;
 
         static std::string standardize_text(const std::string& input) noexcept;
 };

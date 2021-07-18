@@ -36,26 +36,26 @@ class Minimax_AI : public Player
         Minimax_AI() noexcept = default;
 
         //! Load an AI from a file.
-        //! 
+        //!
         //! \param file_name The name of the file containing the AI.
         //! \param id The AI ID to search for in the file.
         Minimax_AI(const std::string& file_name, int id);
-        
+
         //! Load an AI from an opened stream.
-        //! 
+        //!
         //! \param is The already opened input stream.
         //! \param id The AI ID to search for in the stream.
         Minimax_AI(std::istream& is, int id);
 
         //! Create a new AI by mating two existing ones.
-        //! 
+        //!
         //! \param a The first AI.
         //! \param b The second AI.
         Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept;
 
         std::string name() const noexcept override;
         std::string author() const noexcept override;
-      
+
         //! A numeric identifier for this AI.
         int id() const noexcept;
 
@@ -81,32 +81,100 @@ class Minimax_AI : public Player
         void reset() const noexcept override;
 
         //! \brief Randomly mutate the AI.
-        //! 
+        //!
         //! \param mutation_rate The number of discrete mutations to apply to the AI
         void mutate(size_t mutation_rate) noexcept;
 
         //! \brief Print the AI parameters to a file.
-        //! 
+        //!
         //! \param file_name The name of a file.
         void print(const std::string& file_name) const noexcept;
 
         //! \brief Print the AI parameters to an output stream
-        //! 
+        //!
         //! \param os The output stream
         void print(std::ostream& os) const noexcept;
 
         //! \brief Ordering operator for std::map
-        //! 
+        //!
         //! \param other The AI being compared to this one.
         bool operator<(const Minimax_AI& other) const noexcept;
 
     protected:
+        //! \brief The maximum depth to search to limit the size of the current_variation_store.
+        //!
+        //! Also prevents stack overflow.
+        const static size_t maximum_variation_depth = 100;
+
+        //! \brief The maximum search depth for finding quiescent positions.
+        const static size_t maximum_quiescent_captures = 32;
+
+        //! \brief The total size of the current_variation_store.
+        const static size_t variation_store_size = maximum_variation_depth + maximum_quiescent_captures;
+
+        //! A datatype for storing the moves that are played to reach the current board position during a search.
+        using current_variation_store = Fixed_Capacity_Vector<const Move*, variation_store_size>;
+
+        //! \brief Returns the name of the brains of the AI.
+        std::string ai_name() const;
+
         //! \brief Recalculate values that will last the lifetime of the instance.
         //!
         //! In this case, the values are an initial estimate of the speed of
         //! searching the game tree and the value of a centipawn for reporting
         //! scores of board positions.
         void recalibrate_self() const noexcept;
+
+        //! \brief Resets the values of internal search stats (node counts, time used, etc.) before the next search.
+        //!
+        //! \param board The current board position. If this is a new game, delete previous commentary.
+        void reset_search_stats(const Board& board) const noexcept;
+
+        //! \brief Output final stats for the move chosen and record the commentary for the chosen move.
+        //!
+        //! \param result The data (variation and score) for the chosen move.
+        //! \param board The current board position.
+        void report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const noexcept;
+
+        //! \brief Returns how much time to spend choosing this move.
+        //!
+        //! \param board The curren board position.
+        //! \param clock The game clock.
+        //! \returns A time duration indicating how much time to use.
+        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
+
+        //! \brief An estimate of the average number of moves that will be searched per board position.
+        //!
+        //! \param game_progress An estimate of how much of the game has been played (0.0 at the beginning, 1.0 at the end).
+        double branching_factor(double game_progress) const noexcept;
+
+        //! \brief An estimate of how much of the game has been played (0.0 at the beginning, 1.0 at the end).
+        //!
+        //! \param board The current board position.
+        double game_progress(const Board& board) const noexcept;
+
+        //! \brief Search the game tree using the minimax (actually negamax) algorithm with alpha-beta pruning
+        //!
+        //! \param board The current board position.
+        //! \param time_to_examine How much time to use choosing this move.
+        //! \param minimum_search_depth The minimum depth to search before evaluating a variation.
+        //! \param maximum_search_depth The maximum depth to search.
+        //! \param clock The game clock.
+        //! \param alpha The current value for alpha: the best variation score found that the current player can force.
+        //! \param beta The current value for beta: the variation score that, if the current variation scores better, will result
+        //!        in the opponent choosing different earlier moves to avoid the current variation.
+        //! \param principal_variation The best line found from the previous search--used to order moves in the current search.
+        //! \param current_variation The list of moves to reach the current board position.
+        //! \returns The best variation and its score.
+        Game_Tree_Node_Result search_game_tree(const Board& board,
+                                               Clock::seconds time_to_examine,
+                                               size_t minimum_search_depth,
+                                               size_t maximum_search_depth,
+                                               const Clock& clock,
+                                               Alpha_Beta_Value alpha,
+                                               const Alpha_Beta_Value& beta,
+                                               std::vector<const Move*>& principal_variation,
+                                               current_variation_store& current_variation) const noexcept;
 
     private:
         //! The brains of the Minimax algorithm that provides board evaluation and
@@ -121,6 +189,7 @@ class Minimax_AI : public Player
         mutable std::vector<Game_Tree_Node_Result> commentary;
 
         // Monitor search speed to adapt to different computers/competing workloads
+        mutable Clock::seconds node_evaluation_time;
         mutable size_t nodes_searched;
         mutable std::chrono::steady_clock::time_point clock_start_time;
         mutable size_t maximum_depth;
@@ -128,7 +197,6 @@ class Minimax_AI : public Player
         // For thinking output
         mutable int nodes_evaluated;
         mutable Clock::seconds total_evaluation_time;
-        mutable Clock::seconds node_evaluation_time;
         mutable std::chrono::steady_clock::time_point time_at_last_output;
 
         // Evaluation method
@@ -143,29 +211,10 @@ class Minimax_AI : public Player
         const std::array<double, 6>& piece_values() const noexcept;
 
         // Time management
-        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
         double speculation_time_factor(double game_progress) const noexcept;
-        double branching_factor(double game_progress) const noexcept;
-        double game_progress(const Board& board) const noexcept;
 
         // Scoring output
         double centipawn_value() const noexcept;
-
-        // Current sequence of moves as game tree is traversed.
-        const static size_t maximum_search_depth = 100; // to prevent stack overflow
-        const static size_t maximum_quiescent_captures = 32; // to prevent overflow of current_variation_store
-        const static size_t variation_store_size = maximum_search_depth + maximum_quiescent_captures;
-        using current_variation_store = Fixed_Capacity_Vector<const Move*, variation_store_size>;
-
-        // Minimax (actually negamax) with alpha-beta pruning
-        Game_Tree_Node_Result search_game_tree(const Board& board,
-                                               Clock::seconds time_to_examine,
-                                               size_t minimum_search_depth,
-                                               const Clock& clock,
-                                               Alpha_Beta_Value alpha,
-                                               const Alpha_Beta_Value& beta,
-                                               std::vector<const Move*>& principal_variation,
-                                               current_variation_store& current_variation) const noexcept;
 
         Game_Tree_Node_Result evaluate(const Game_Result& move_result,
                                        Board& next_board,
@@ -178,6 +227,7 @@ class Minimax_AI : public Player
                             const Board& next_board,
                             const std::vector<const Move*>& principal_variation,
                             size_t minimum_search_depth,
+                            size_t maximum_search_depth,
                             Clock::seconds time_allotted_for_this_move) const noexcept;
 
         //! \brief Assign a score to the current board state.
