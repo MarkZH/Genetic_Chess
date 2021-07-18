@@ -10,7 +10,7 @@
 
 #include "Utility/String.h"
 
-Configuration::Configuration(const std::string& file_name)
+Configuration::Configuration(const std::string& file_name) : input_file_name(file_name)
 {
     std::ifstream ifs(file_name);
     if( ! ifs)
@@ -110,6 +110,11 @@ void Configuration::print_unused_parameters() const noexcept
             std::cout << param << " --> " << value << std::endl;
         }
     }
+}
+
+std::string Configuration::file_name() const noexcept
+{
+    return input_file_name;
 }
 
 bool Configuration::any_unused_parameters() const noexcept
