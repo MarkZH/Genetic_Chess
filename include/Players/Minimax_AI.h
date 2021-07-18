@@ -101,13 +101,6 @@ class Minimax_AI : public Player
         bool operator<(const Minimax_AI& other) const noexcept;
 
     protected:
-        //! \brief How much time it takes to evaluate one board position.
-        //!
-        //! Updated after every move.
-        mutable Clock::seconds node_evaluation_time;
-
-        // Current sequence of moves as game tree is traversed.
-
         //! \brief The maximum depth to search to limit the size of the current_variation_store.
         //!
         //! Also prevents stack overflow.
@@ -196,6 +189,7 @@ class Minimax_AI : public Player
         mutable std::vector<Game_Tree_Node_Result> commentary;
 
         // Monitor search speed to adapt to different computers/competing workloads
+        mutable Clock::seconds node_evaluation_time;
         mutable size_t nodes_searched;
         mutable std::chrono::steady_clock::time_point clock_start_time;
         mutable size_t maximum_depth;
