@@ -183,6 +183,8 @@ namespace
     void difference_between_two_squares_added_to_first_square_gives_second_square(bool& tests_passed);
     void all_squares_yields_all_squares(bool& tests_passed);
 
+    void algebraic_notation_resolves_ambiguous_moves(bool& tests_passed);
+
     void repeating_board_position_three_times_results_in_threefold_game_result(bool& tests_passed);
     void one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(bool& tests_passed);
 
@@ -245,6 +247,8 @@ bool run_tests()
     constructed_squares_retain_coordinates(tests_passed);
     difference_between_two_squares_added_to_first_square_gives_second_square(tests_passed);
     all_squares_yields_all_squares(tests_passed);
+
+    algebraic_notation_resolves_ambiguous_moves(tests_passed);
 
     repeating_board_position_three_times_results_in_threefold_game_result(tests_passed);
     one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(tests_passed);
@@ -930,6 +934,35 @@ namespace
         test_result(tests_passed,
                     std::all_of(squares_visited.begin(), squares_visited.end(), [](auto tf) { return tf; }),
                     "Square iterator missed some squares.");
+    }
+
+    void test_ambiguous_move(bool& tests_passed, const std::string& fen, const std::string& move_text, const std::string& start_square, const std::string& end_square)
+    {
+        const auto board = Board(fen);
+        const auto& move_list = board.legal_moves();
+        const auto found_move = std::find_if(move_list.begin(),
+                                             move_list.end(),
+                                             [&board, &move_text](const Move* const move)
+                                             {
+                                                 return move->algebraic(board) == move_text;
+                                             });
+
+        const auto move_found = found_move != move_list.end();
+        test_result(tests_passed, move_found, "Ambiguous move notation not found: " + move_text);
+        if(move_found)
+        {
+            test_result(tests_passed, (*found_move)->start() == Square{start_square}, move_text + " does not start on square " + start_square + ".");
+            test_result(tests_passed, (*found_move)->end() == Square{end_square}, move_text + " does not end on square " + end_square + ".");
+        }
+    }
+
+    void algebraic_notation_resolves_ambiguous_moves(bool& tests_passed)
+    {
+        // Adapted from https://en.wikipedia.org/wiki/Algebraic_notation_(chess)#Disambiguating_moves
+
+        test_ambiguous_move(tests_passed, "1k1r3r/8/8/R7/4Q2Q/8/8/RK5Q b - - 0 1", "Rdf8", "d8", "f8");
+        test_ambiguous_move(tests_passed, "1k1r3r/8/8/R7/4Q2Q/8/8/RK5Q w - - 0 1", "R1a3", "a1", "a3");
+        test_ambiguous_move(tests_passed, "1k1r3r/8/8/R7/4Q2Q/8/8/RK5Q w - - 0 1", "Qh4e1", "h4", "e1");
     }
 
     void repeating_board_position_three_times_results_in_threefold_game_result(bool& tests_passed)
