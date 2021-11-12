@@ -180,7 +180,7 @@ size_t Move::attack_index(const Square_Difference& move) noexcept
     constexpr auto xx = size_t(-1); // indicates invalid moves and should never be returned
     constexpr size_t array_width = 15;
     //                                                      file change
-    //                               -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7
+    //                                   -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7
     static constexpr size_t indices[] = { 0, xx, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx, xx,  2,  //  7
                                          xx,  0, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx,  2, xx,  //  6
                                          xx, xx,  0, xx, xx, xx, xx,  1, xx, xx, xx, xx,  2, xx, xx,  //  5
