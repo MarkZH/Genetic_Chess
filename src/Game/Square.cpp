@@ -40,6 +40,15 @@ Square::Square(const char file, const int rank) noexcept : square_index(8*(file 
     assert(inside_board());
 }
 
+Square::Square(const std::string& text) : Square(text.at(0), std::stoi(text.substr(1)))
+{
+    assert(text.size() == 2);
+    assert(std::isalpha(text[0]));
+    assert(std::isdigit(text[1]));
+    assert(text[1] > '0');
+    assert(text[1] < '9');
+}
+
 char Square::file() const noexcept
 {
     return char('a' + index()/8);
