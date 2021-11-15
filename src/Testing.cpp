@@ -951,8 +951,8 @@ namespace
         test_result(tests_passed, move_found, "Ambiguous move notation not found: " + move_text);
         if(move_found)
         {
-            test_result(tests_passed, (*found_move)->start() == Square{start_square}, move_text + " does not start on square " + start_square + ".");
-            test_result(tests_passed, (*found_move)->end() == Square{end_square}, move_text + " does not end on square " + end_square + ".");
+            test_result(tests_passed, (*found_move)->start().string() == start_square, move_text + " does not start on square " + start_square + ".");
+            test_result(tests_passed, (*found_move)->end().string() == end_square, move_text + " does not end on square " + end_square + ".");
         }
     }
 
