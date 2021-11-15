@@ -6,7 +6,6 @@ filename = 0;
 game_marks_file = 0;
 directory = '';
 if isOctave
-    graphics_toolkit("gnuplot");
     args = argv();
     if length(args) > 0
         filename = args{1};

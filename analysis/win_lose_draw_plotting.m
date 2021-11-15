@@ -8,7 +8,6 @@ marks_file_name = 0;
 file_directory = '';
 marks_directory = '';
 if isOctave
-    graphics_toolkit('gnuplot');
     args = argv();
     for argi = 1 : length(args)
         option = args{argi};

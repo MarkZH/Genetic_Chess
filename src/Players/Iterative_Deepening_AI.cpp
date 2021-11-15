@@ -20,11 +20,13 @@ std::string Iterative_Deepening_AI::name() const noexcept
 const Move& Iterative_Deepening_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
     reset_search_stats(board);
-    const auto effective_moves_per_turn = branching_factor(game_progress(board));
+    const auto progress = game_progress(board);
+    const auto effective_moves_per_turn = branching_factor(progress);
+    const auto speculation_factor = speculation_time_factor(progress);
     const auto time_to_use = time_to_examine(board, clock);
     const auto time_start = std::chrono::steady_clock::now();
 
-    auto principal_variation = std::vector<const Move*>{nullptr, nullptr};
+    auto principal_variation = std::vector<const Move*>{};
     Game_Tree_Node_Result result;
     for(size_t depth = 1; true; ++depth)
     {
@@ -52,9 +54,9 @@ const Move& Iterative_Deepening_AI::choose_move(const Board& board, const Clock&
 
         const auto time_used_so_far = std::chrono::steady_clock::now() - time_start;
         const auto time_left = time_to_use - time_used_so_far;
-        if(time_used_so_far*effective_moves_per_turn < time_left)
+        if(time_used_so_far*effective_moves_per_turn < time_left*speculation_factor)
         {
-            principal_variation.resize(2);
+            principal_variation = {nullptr, nullptr};
             const auto& variation = result.variation_line();
             principal_variation.insert(principal_variation.end(), variation.begin(), variation.end());
         }

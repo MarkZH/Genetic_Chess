@@ -148,6 +148,11 @@ class Minimax_AI : public Player
         //! \param game_progress An estimate of how much of the game has been played (0.0 at the beginning, 1.0 at the end).
         double branching_factor(double game_progress) const noexcept;
 
+        //! \brief An amount by which to overestimate the time to use.
+        //!
+        //! \param game_progress An estimate of how much of the game has been played (0.0 at the beginning, 1.0 at the end).
+        double speculation_time_factor(double game_progress) const noexcept;
+
         //! \brief An estimate of how much of the game has been played (0.0 at the beginning, 1.0 at the end).
         //!
         //! \param board The current board position.
@@ -209,9 +214,6 @@ class Minimax_AI : public Player
                                  size_t depth) const noexcept;
 
         const std::array<double, 6>& piece_values() const noexcept;
-
-        // Time management
-        double speculation_time_factor(double game_progress) const noexcept;
 
         // Scoring output
         double centipawn_value() const noexcept;
