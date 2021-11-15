@@ -83,7 +83,6 @@ std::string Move::algebraic(const Board& board) const noexcept
 std::string Move::algebraic_base(const Board& board) const noexcept
 {
     const auto original_piece = board.piece_on_square(start());
-    std::string move_record = original_piece.pgn_symbol();
 
     auto record_file = original_piece.type() == Piece_Type::PAWN && board.move_captures(*this);
     auto record_rank = false;
@@ -108,21 +107,10 @@ std::string Move::algebraic_base(const Board& board) const noexcept
         }
     }
 
-    if(record_file)
-    {
-        move_record += start().file();
-    }
-
-    if(record_rank)
-    {
-        move_record += std::to_string(start().rank());
-    }
-
-    if(board.move_captures(*this))
-    {
-        move_record += 'x';
-    }
-
+    auto move_record = original_piece.pgn_symbol();
+    if(record_file)                { move_record += start().file(); }
+    if(record_rank)                { move_record += std::to_string(start().rank()); }
+    if(board.move_captures(*this)) { move_record += 'x'; }
     move_record += end().text();
     return move_record;
 }
