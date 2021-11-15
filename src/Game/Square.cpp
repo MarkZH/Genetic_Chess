@@ -55,7 +55,7 @@ Square::square_index_t Square::index() const noexcept
     return square_index;
 }
 
-std::string Square::string() const noexcept
+std::string Square::text() const noexcept
 {
     return file() + std::to_string(rank());
 }

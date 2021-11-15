@@ -843,7 +843,7 @@ namespace
             for(int rank = 1; rank <= 8; ++rank)
             {
                 const auto square = Square{file, rank};
-                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.string());
+                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.text());
                 visited[square.index()] = true;
             }
         }
@@ -859,7 +859,7 @@ namespace
                 const auto square = Square{file, rank};
                 test_result(tests_passed,
                             square.file() == file && square.rank() == rank,
-                            std::string{"Square constructed with "} + file + std::to_string(rank) + " results in " + square.string());
+                            std::string{"Square constructed with "} + file + std::to_string(rank) + " results in " + square.text());
             }
         }
     }
@@ -903,7 +903,7 @@ namespace
                 const auto dr = std::abs(diff.rank_change);
                 if((dr == 0 && df == 1) || (df == 0 && dr == 1)) // square are adjacent in same row or column
                 {
-                    test_result(tests_passed, square1.color() != square2.color(), "Adjacent squares " + square1.string() + " and " + square2.string() + " have same color.");
+                    test_result(tests_passed, square1.color() != square2.color(), "Adjacent squares " + square1.text() + " and " + square2.text() + " have same color.");
                 }
             }
         }
@@ -918,7 +918,7 @@ namespace
                 test_result(tests_passed,
                             a + (b - a) == b,
                             "Square arithetic problem: " +
-                            a.string() + " + (" + b.string() + " - " + a.string() + ") != " + b.string());
+                            a.text() + " + (" + b.text() + " - " + a.text() + ") != " + b.text());
             }
         }
     }
@@ -928,7 +928,7 @@ namespace
         std::array<bool, 64> squares_visited{};
         for(const auto square : Square::all_squares())
         {
-            test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.string() + " already visited.");
+            test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.text() + " already visited.");
             squares_visited[square.index()] = true;
         }
         test_result(tests_passed,
@@ -951,8 +951,8 @@ namespace
         test_result(tests_passed, move_found, "Ambiguous move notation not found: " + move_text);
         if(move_found)
         {
-            test_result(tests_passed, (*found_move)->start().string() == start_square, move_text + " does not start on square " + start_square + ".");
-            test_result(tests_passed, (*found_move)->end().string() == end_square, move_text + " does not end on square " + end_square + ".");
+            test_result(tests_passed, (*found_move)->start().text() == start_square, move_text + " does not start on square " + start_square + ".");
+            test_result(tests_passed, (*found_move)->end().text() == end_square, move_text + " does not end on square " + end_square + ".");
         }
     }
 

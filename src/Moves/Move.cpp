@@ -123,7 +123,7 @@ std::string Move::algebraic_base(const Board& board) const noexcept
         move_record += 'x';
     }
 
-    move_record += end().string();
+    move_record += end().text();
     return move_record;
 }
 
@@ -149,7 +149,7 @@ std::string Move::result_mark(Board board) const noexcept
 
 std::string Move::coordinates() const noexcept
 {
-    const auto result = start().string() + end().string();
+    const auto result = start().text() + end().text();
     if(promotion_piece_symbol())
     {
         return result + String::tolower(promotion_piece_symbol());

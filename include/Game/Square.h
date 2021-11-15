@@ -69,8 +69,8 @@ class Square
         //! \returns An unsigned integer index.
         square_index_t index() const noexcept;
 
-        //! \brief String representation of square.
-        std::string string() const noexcept;
+        //! \brief Text representation of square.
+        std::string text() const noexcept;
 
         //! \brief Returns the color of the square.
         //!

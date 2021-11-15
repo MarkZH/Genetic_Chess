@@ -151,11 +151,11 @@ Board::Board(const std::string& input_fen)
 
             const std::string side = std::toupper(c) == 'K' ? "king" : "queen";
             fen_parse_assert(piece_on_square(rook_square) == Piece{piece_color, Piece_Type::ROOK}, input_fen,
-                             "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.string() + " to castle " + side + "side.");
+                             "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.text() + " to castle " + side + "side.");
             set_already_moved(rook_square, false);
 
             fen_parse_assert(piece_on_square(king_square) == Piece{piece_color, Piece_Type::KING}, input_fen,
-                             "There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.string() + " to castle.");
+                             "There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.text() + " to castle.");
             set_already_moved(king_square, false);
         }
     }
@@ -279,7 +279,7 @@ std::string Board::fen() const noexcept
     }
     fen_parts.push_back(castling_mark.empty() ? "-" : castling_mark);
 
-    fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.string() : "-");
+    fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.text() : "-");
     fen_parts.push_back(std::to_string(moves_since_pawn_or_capture()));
     fen_parts.push_back(std::to_string(1 + all_ply_count()/2));
     return String::join(fen_parts.begin(), fen_parts.end(), " ");
