@@ -16,7 +16,7 @@ Move::Move(const Square start, const Square end) noexcept : origin(start), desti
 {
     assert(start.inside_board());
     assert(end.inside_board());
-    assert(file_change() != 0 || rank_change() != 0);
+    assert(start != end);
 }
 
 void Move::side_effects(Board&) const noexcept
