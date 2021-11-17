@@ -941,13 +941,10 @@ namespace
         const auto board = Board(fen);
         const auto& move_list = board.legal_moves();
         const auto find_move_text = [&board, &move_text](const Move* const move) { return move->algebraic(board) == move_text; };
-        const auto found_move = std::find_if(move_list.begin(),
-                                             move_list.end(),
-                                             find_move_text);
+        const auto found_move = std::find_if(move_list.begin(), move_list.end(), find_move_text);
 
-        const auto move_found = found_move != move_list.end();
-        test_result(tests_passed, move_found, "Ambiguous move notation not found: " + move_text);
-        if(move_found)
+        test_result(tests_passed, found_move != move_list.end(), "Ambiguous move notation not found: " + move_text);
+        if(found_move != move_list.end())
         {
             test_result(tests_passed, (*found_move)->start().text() == start_square, move_text + " does not start on square " + start_square + ".");
             test_result(tests_passed, (*found_move)->end().text() == end_square, move_text + " does not end on square " + end_square + ".");
