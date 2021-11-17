@@ -44,16 +44,14 @@ Game_Result play_game(Board board,
         result = game_clock.punch(board);
         if( ! result.game_has_ended())
         {
-            if(board.thinking_mode() != Thinking_Output_Type::NO_THINKING)
-            {
-                std::cout << "Move chosen: " << move_chosen.algebraic(board) << "\n" << std::endl;
-            }
+            std::cout << color_text(board.whose_turn()) << " plays: " << move_chosen.algebraic(board) << std::endl;
             result = board.play_move(move_chosen);
             game_record.push_back(&move_chosen);
         }
     }
 
     game_clock.stop();
+    std::cout << std::endl;
     board.print_game_record(game_record,
                             white,
                             black,
