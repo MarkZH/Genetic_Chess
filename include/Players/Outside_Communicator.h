@@ -15,6 +15,17 @@ class Player;
 class Proxy_Player;
 class Game_Result;
 
+class Outside_Communicator;
+
+//! \brief Initialize communication with an outside program.
+//!
+//! The function returns an appropriate derived class based on the
+//! communiation protocol by the other program (CECP or UCI).
+//! \param player The local player so that its information may be sent
+//!        to the outside interface.
+//! \returns An appropriate derived class instance with the proper protocol.
+std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
+
 //! \brief A class to facilitate interfacing with outside programs.
 class Outside_Communicator
 {
@@ -91,14 +102,5 @@ class Outside_Communicator
 
         virtual std::string listener(const Board& board, Clock& clock) = 0;
 };
-
-//! \brief Initialize communication with an outside program.
-//!
-//! The function returns an appropriate derived class based on the
-//! communiation protocol by the other program (CECP or UCI).
-//! \param player The local player so that its information may be sent
-//!        to the outside interface.
-//! \returns An appropriate derived class instance with the proper protocol.
-std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
 
 #endif // OUTSIDE_PLAYER_H
