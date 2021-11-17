@@ -309,11 +309,6 @@ bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& 
     }
 }
 
-void CECP_Mediator::listen(const Board& board, Clock& clock)
-{
-    last_listening_command = std::async(std::launch::async, &CECP_Mediator::listener, this, std::cref(board), std::ref(clock));
-}
-
 Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const
 {
     if(in_force_mode)
@@ -338,15 +333,7 @@ std::string CECP_Mediator::receive_cecp_command(const Board& board, Clock& clock
 {
     while(true)
     {
-        std::string command;
-        if(while_listening)
-        {
-            command = receive_command();
-        }
-        else
-        {
-            command = last_listening_command.valid() ? last_listening_command.get() : receive_command();
-        }
+        const auto command = get_last_command(while_listening);
 
         if(command == "force")
         {

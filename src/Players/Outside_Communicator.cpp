@@ -6,6 +6,7 @@
 #include <string>
 #include <chrono>
 #include <stdexcept>
+#include <future>
 
 #include "Game/Color.h"
 #include "Players/Proxy_Player.h"
@@ -75,6 +76,18 @@ std::string Outside_Communicator::receive_command()
     }
 }
 
+std::string Outside_Communicator::get_last_command(const bool while_listening)
+{
+    if(while_listening)
+    {
+        return receive_command();
+    }
+    else
+    {
+        return last_listening_result.valid() ? last_listening_result.get() : receive_command();
+    }
+}
+
 void Outside_Communicator::log(const std::string& data)
 {
     static const auto log_time_stamp = String::date_and_time_format(std::chrono::system_clock::now(), "%Y.%m.%d-%H.%M.%S");
@@ -95,4 +108,9 @@ void Outside_Communicator::send_command(const std::string& cmd) noexcept
 {
     log("SENDING: " + cmd);
     std::cout << cmd << std::endl;
+}
+
+void Outside_Communicator::listen(const Board& board, Clock& clock)
+{
+    last_listening_result = std::async(std::launch::async, &Outside_Communicator::listener, this, std::cref(board), std::ref(clock));
 }

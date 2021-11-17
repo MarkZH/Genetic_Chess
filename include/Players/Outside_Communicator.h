@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <future>
 
 #include "Game/Color.h"
 
@@ -36,7 +37,7 @@ class Outside_Communicator
         //!
         //! \param board The Board used for the game.
         //! \param clock The clock used for the game.
-        virtual void listen(const Board& board, Clock& clock) = 0;
+        void listen(const Board& board, Clock& clock);
 
         //! \brief When appropriate, apply the local AIs Move to Board and send results to GUI.
         //!
@@ -77,10 +78,18 @@ class Outside_Communicator
         //!         end and the program will exit.
         static std::string receive_command();
 
+        //! \brief Returns either the command received while listening or waits for a new command.
+        //! 
+        //! \param while_listening Indicates this method is called from within the listen() method.
+        std::string get_last_command(bool while_listening);
+
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
 
     private:
         std::string remote_opponent_name;
+        std::future<std::string> last_listening_result;
+
+        virtual std::string listener(const Board& board, Clock& clock) = 0;
 };
 
 //! \brief Initialize communication with an outside program.

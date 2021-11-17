@@ -28,20 +28,18 @@ class CECP_Mediator : public Outside_Communicator
                                Clock& clock,
                                std::vector<const Move*>& move_list,
                                const Player& player) override;
-        void listen(const Board& board, Clock& clock) override;
         Game_Result handle_move(Board& board,
                                 const Move& move,
                                 std::vector<const Move*>& move_list) const override;
 
     private:
-        std::future<std::string> last_listening_command;
         bool in_force_mode = true;
         bool usermove_prefix = true;
 
         std::string receive_cecp_command(const Board& board, Clock& clock, bool while_listening);
         bool undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock, const Player& player);
         void send_error(const std::string& command, const std::string& reason) const noexcept;
-        std::string listener(const Board& board, Clock& clock);
+        std::string listener(const Board& board, Clock& clock) override;
         void report_end_of_game(const Game_Result& ending) const noexcept;
 };
 

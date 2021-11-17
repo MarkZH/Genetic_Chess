@@ -234,11 +234,6 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
     }
 }
 
-void UCI_Mediator::listen(const Board& board, Clock&)
-{
-    last_listening_result = std::async(std::launch::async, &UCI_Mediator::listener, this, std::cref(board));
-}
-
 Game_Result UCI_Mediator::handle_move(Board& board,
                                       const Move& move,
                                       std::vector<const Move*>& move_list) const
@@ -248,7 +243,7 @@ Game_Result UCI_Mediator::handle_move(Board& board,
     return board.play_move(move);
 }
 
-std::string UCI_Mediator::listener(const Board& board)
+std::string UCI_Mediator::listener(const Board& board, Clock&)
 {
     try
     {
@@ -265,15 +260,7 @@ std::string UCI_Mediator::receive_uci_command(const Board& board, bool while_lis
 {
     while(true)
     {
-        std::string command;
-        if(while_listening)
-        {
-            command = receive_command();
-        }
-        else
-        {
-            command = last_listening_result.valid() ? last_listening_result.get() : receive_command();
-        }
+        const auto command = get_last_command(while_listening);
 
         if(command == "isready")
         {
