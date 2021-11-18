@@ -9,7 +9,6 @@
 #include "Game/Color.h"
 #include "Game/Square.h"
 #include "Game/Piece.h"
-#include "Players/Thinking.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
 
@@ -122,25 +121,6 @@ class Board
         //!          (positive for kingside, negative for queenside, zero
         //!          for no castling yet).
         int castling_direction(Piece_Color player) const noexcept;
-
-        //! \brief Set the format an engine should output while picking a move.
-        //!
-        //! \param mode Which chess engine protocol is being used: CECP, UCI, or NO_THINKING.
-        static void set_thinking_mode(Thinking_Output_Type) noexcept;
-
-        //! \brief Find out what kind of format an engine should output while picking a move.
-        //!
-        //! \returns Format of thinking output: CECP, UCI, or NO_THINKING.
-        static Thinking_Output_Type thinking_mode() noexcept;
-
-        //! \brief Force the Player that is currently choosing a move to stop thinking and immediately make a move.
-        static void pick_move_now() noexcept;
-
-        //! \brief Check whether a Player should stop thinking and immediately move.
-        static bool must_pick_move_now() noexcept;
-
-        //! \brief Allow the Player to take any amount of time to choose a move.
-        static void choose_move_at_leisure() noexcept;
 
         //! \brief Prints the PGN game record with commentary from Players.
         //!

@@ -36,10 +36,10 @@ class CECP_Mediator : public Outside_Communicator
         bool in_force_mode = true;
         bool usermove_prefix = true;
 
-        std::string receive_cecp_command(const Board& board, Clock& clock, bool while_listening);
+        std::string receive_cecp_command(Clock& clock, bool while_listening);
         bool undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock, const Player& player);
         void send_error(const std::string& command, const std::string& reason) const noexcept;
-        std::string listener(const Board& board, Clock& clock) override;
+        std::string listener(Clock& clock) override;
         void report_end_of_game(const Game_Result& ending) const noexcept;
 };
 

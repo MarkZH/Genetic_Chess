@@ -32,14 +32,14 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
         std::string command;
         try
         {
-            command = receive_uci_command(board, false);
+            command = receive_uci_command(false);
         }
         catch(const Game_Ended& game_ending_error)
         {
             return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
         }
 
-        board.pick_move_now(); // Stop pondering
+        Player::pick_move_now(); // Stop pondering
 
         if(command == "ucinewgame")
         {
@@ -108,7 +108,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             }
 
             log("Board ready for play");
-            board.set_thinking_mode(Thinking_Output_Type::UCI);
+            Player::set_thinking_mode(Thinking_Output_Type::UCI);
         }
         else if(String::starts_with(command, "go "))
         {
@@ -228,7 +228,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             }
 
             log("Telling AI to choose a move at leisure");
-            board.choose_move_at_leisure();
+            Player::choose_move_at_leisure();
             return setup_result;
         }
     }
@@ -243,20 +243,20 @@ Game_Result UCI_Mediator::handle_move(Board& board,
     return board.play_move(move);
 }
 
-std::string UCI_Mediator::listener(const Board& board, Clock&)
+std::string UCI_Mediator::listener(Clock&)
 {
     try
     {
-        return receive_uci_command(board, true);
+        return receive_uci_command(true);
     }
     catch(const Game_Ended&)
     {
-        board.pick_move_now();
+        Player::pick_move_now();
         throw;
     }
 }
 
-std::string UCI_Mediator::receive_uci_command(const Board& board, bool while_listening)
+std::string UCI_Mediator::receive_uci_command(bool while_listening)
 {
     while(true)
     {
@@ -269,7 +269,7 @@ std::string UCI_Mediator::receive_uci_command(const Board& board, bool while_lis
         else if(command == "stop")
         {
             log("Stopping local AI thinking");
-            board.pick_move_now();
+            Player::pick_move_now();
         }
         else
         {

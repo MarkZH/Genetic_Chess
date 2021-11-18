@@ -110,7 +110,7 @@ void Outside_Communicator::send_command(const std::string& cmd) noexcept
     std::cout << cmd << std::endl;
 }
 
-void Outside_Communicator::listen(const Board& board, Clock& clock)
+void Outside_Communicator::listen(Clock& clock)
 {
-    last_listening_result = std::async(std::launch::async, &Outside_Communicator::listener, this, std::cref(board), std::ref(clock));
+    last_listening_result = std::async(std::launch::async, &Outside_Communicator::listener, this, std::ref(clock));
 }

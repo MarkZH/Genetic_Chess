@@ -54,14 +54,14 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         std::string command;
         try
         {
-            command = receive_cecp_command(board, clock, false);
+            command = receive_cecp_command(clock, false);
         }
         catch(const Game_Ended& game_ending_error)
         {
             return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
         }
 
-        board.pick_move_now(); // Stop pondering
+        Player::pick_move_now(); // Stop pondering
 
         if(String::starts_with(command, "ping "))
         {
@@ -281,7 +281,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         clock.punch(board);
     }
 
-    board.choose_move_at_leisure();
+    Player::choose_move_at_leisure();
 
     return setup_result;
 }
@@ -329,7 +329,7 @@ Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vect
     }
 }
 
-std::string CECP_Mediator::receive_cecp_command(const Board& board, Clock& clock, bool while_listening)
+std::string CECP_Mediator::receive_cecp_command(Clock& clock, bool while_listening)
 {
     while(true)
     {
@@ -338,18 +338,18 @@ std::string CECP_Mediator::receive_cecp_command(const Board& board, Clock& clock
         if(command == "force")
         {
             log("Entering force mode");
-            board.pick_move_now();
+            Player::pick_move_now();
             clock.stop();
             in_force_mode = true;
         }
         else if(command == "post")
         {
-            board.set_thinking_mode(Thinking_Output_Type::CECP);
+            Player::set_thinking_mode(Thinking_Output_Type::CECP);
             log("turning on thinking output for CECP");
         }
         else if(command == "nopost")
         {
-            board.set_thinking_mode(Thinking_Output_Type::NO_THINKING);
+            Player::set_thinking_mode(Thinking_Output_Type::NO_THINKING);
             log("turning off thinking output for CECP");
         }
         else if(command == "rejected usermove")
@@ -369,30 +369,30 @@ void CECP_Mediator::send_error(const std::string& command, const std::string& re
     send_command("Error (" + reason + "): " + command);
 }
 
-std::string CECP_Mediator::listener(const Board& board, Clock& clock)
+std::string CECP_Mediator::listener(Clock& clock)
 {
     while(true)
     {
         std::string command;
         try
         {
-            command = receive_cecp_command(board, clock, true);
+            command = receive_cecp_command(clock, true);
         }
         catch(const Game_Ended&)
         {
-            board.pick_move_now();
+            Player::pick_move_now();
             throw;
         }
 
         if(command == "?")
         {
             log("Forcing local AI to pick move and accepting it");
-            board.pick_move_now();
+            Player::pick_move_now();
         }
         else if(String::starts_with(command, "result "))
         {
             log("Stopped thinking about move by: " + command);
-            board.pick_move_now();
+            Player::pick_move_now();
             return command;
         }
         else

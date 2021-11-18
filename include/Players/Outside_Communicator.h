@@ -46,9 +46,8 @@ class Outside_Communicator
 
         //! \brief Start a separate thread to listen for commands while the local AI is thinking.
         //!
-        //! \param board The Board used for the game.
         //! \param clock The clock used for the game.
-        void listen(const Board& board, Clock& clock);
+        void listen(Clock& clock);
 
         //! \brief When appropriate, apply the local AIs Move to Board and send results to GUI.
         //!
@@ -100,7 +99,7 @@ class Outside_Communicator
         std::string remote_opponent_name;
         std::future<std::string> last_listening_result;
 
-        virtual std::string listener(const Board& board, Clock& clock) = 0;
+        virtual std::string listener(Clock& clock) = 0;
 };
 
 #endif // OUTSIDE_PLAYER_H

@@ -31,8 +31,8 @@ class UCI_Mediator : public Outside_Communicator
                                 std::vector<const Move*>& move_list) const override;
 
     private:
-        std::string listener(const Board& board, Clock& clock) override;
-        std::string receive_uci_command(const Board& board, bool while_listening);
+        std::string listener(Clock& clock) override;
+        std::string receive_uci_command(bool while_listening);
 };
 
 #endif // UCI_MEDIATOR_H

@@ -89,7 +89,7 @@ void play_game_with_outsider(const Player& player,
             {
                 break;
             }
-            outsider->listen(board, clock);
+            outsider->listen(clock);
             print_game_record = true;
 
             player_color = board.whose_turn();

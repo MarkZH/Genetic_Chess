@@ -9,7 +9,6 @@
 #include <mutex>
 #include <algorithm>
 #include <bitset>
-#include <atomic>
 #include <string>
 #include <chrono>
 using namespace std::chrono_literals;
@@ -69,8 +68,6 @@ namespace
     const uint64_t switch_turn_board_hash = Random::random_unsigned_int64();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    std::atomic<Thinking_Output_Type> thinking_indicator = Thinking_Output_Type::NO_THINKING;
-    std::atomic_bool move_immediately = false;
     std::map<uint64_t, std::string> starting_fen_from_starting_hash;
 }
 
@@ -998,31 +995,6 @@ bool Board::enough_material_to_checkmate() const noexcept
     const auto bishops_on_black = std::any_of(squares.begin(), squares.end(),
                                               [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
     return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
-}
-
-void Board::set_thinking_mode(const Thinking_Output_Type mode) noexcept
-{
-    thinking_indicator = mode;
-}
-
-Thinking_Output_Type Board::thinking_mode() noexcept
-{
-    return thinking_indicator;
-}
-
-void Board::pick_move_now() noexcept
-{
-    move_immediately = true;
-}
-
-void Board::choose_move_at_leisure() noexcept
-{
-    move_immediately = false;
-}
-
-bool Board::must_pick_move_now() noexcept
-{
-    return move_immediately;
 }
 
 void Board::update_board_hash(const Square square) noexcept
