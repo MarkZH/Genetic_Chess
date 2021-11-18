@@ -307,21 +307,9 @@ size_t Board::all_ply_count() const noexcept
     return plies_at_construction + played_ply_count();
 }
 
-std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
+std::vector<const Move*> Board::derive_moves(const Board& new_board) const noexcept
 {
-    std::string goal_fen;
-    size_t moves_to_derive_count;
-    try
-    {
-        auto new_board = Board(new_fen);
-        goal_fen = new_board.fen();
-        moves_to_derive_count = new_board.all_ply_count() - all_ply_count();
-    }
-    catch(const std::invalid_argument&)
-    {
-        return {};
-    }
-
+    const size_t moves_to_derive_count = new_board.all_ply_count() - all_ply_count();;
     if(moves_to_derive_count > 2 || moves_to_derive_count < 1)
     {
         return {};
@@ -333,21 +321,17 @@ std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const n
         first_move_board.play_move(*first_move);
         if(moves_to_derive_count == 1)
         {
-            if(first_move_board.fen() == goal_fen)
+            if(first_move_board.fen() == new_board.fen())
             {
                 return {first_move};
             }
         }
         else
         {
-            for(auto second_move : first_move_board.legal_moves())
+            const auto next_moves = first_move_board.derive_moves(new_board);
+            if(next_moves.size() == 1)
             {
-                auto second_move_board = first_move_board;
-                second_move_board.play_move(*second_move);
-                if(second_move_board.fen() == goal_fen)
-                {
-                    return {first_move, second_move};
-                }
+                return {first_move, next_moves.front()};
             }
         }
     }

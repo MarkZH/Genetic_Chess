@@ -94,33 +94,34 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
         else if(String::starts_with(command, "setboard "))
         {
-            const auto fen = String::split(command, " ", 1).back();
-
-            // Handle GUIs that send the next board position
-            // instead of a move.
-            const auto new_move_list = board.derive_moves(fen);
-            if(new_move_list.empty())
+            try
             {
-                try
+                const auto fen = String::split(command, " ", 1).back();
+                const auto new_board = Board{fen};
+
+                // Handle GUIs that send the next board position
+                // instead of a move.
+                const auto new_move_list = board.derive_moves(new_board);
+                if(new_move_list.empty())
                 {
                     log("Rearranging board to: " + fen);
-                    board = Board(fen);
+                    board = new_board;
                     move_list.clear();
                     setup_result = {};
                 }
-                catch(const std::invalid_argument&)
+                else
                 {
-                    send_error(command, "Bad FEN");
+                    for(auto move : new_move_list)
+                    {
+                        log("Derived move: " + move->coordinates());
+                        setup_result = board.play_move(*move);
+                        move_list.push_back(board.last_move());
+                    }
                 }
             }
-            else
+            catch(const std::invalid_argument&)
             {
-                for(auto move : new_move_list)
-                {
-                    log("Derived move: " + move->coordinates());
-                    setup_result = board.play_move(*move);
-                    move_list.push_back(board.last_move());
-                }
+                send_error(command, "Bad FEN");
             }
         }
         else if(String::starts_with(command, "usermove "))

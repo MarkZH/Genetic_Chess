@@ -1032,13 +1032,14 @@ namespace
     void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed)
     {
         Board move_derivation_board;
-        const auto derived_fen = std::string{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
-        const auto derived_moves = move_derivation_board.derive_moves(derived_fen);
+        const auto goal_board = Board{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
+        const auto derived_moves = move_derivation_board.derive_moves(goal_board);
+        test_result(tests_passed, derived_moves.size() == 2, "Wrong number of moves derived. Got " + std::to_string(derived_moves.size()));
         for(const auto move : derived_moves)
         {
             move_derivation_board.play_move(*move);
         }
-        test_result(tests_passed, move_derivation_board.fen() == derived_fen, "Wrong moves derived.");
+        test_result(tests_passed, move_derivation_board.fen() == goal_board.fen(), "Wrong moves derived. " + move_derivation_board.fen() + " != " + goal_board.fen());
     }
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed)

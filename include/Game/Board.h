@@ -66,7 +66,7 @@ class Board
         //! \param new_fen The new board state to be reached.
         //! \returns A list of moves that will result in the desired board state. An empty list will be returned
         //!          if no sequence of moves (maximum of 2) can be found.
-        std::vector<const Move*> derive_moves(const std::string& new_fen) const noexcept;
+        std::vector<const Move*> derive_moves(const Board& new_board) const noexcept;
 
         //! \brief Creates a Move instance given a text string representation.
         //!
