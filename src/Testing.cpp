@@ -189,6 +189,7 @@ namespace
     void one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(bool& tests_passed);
 
     void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed);
+    void identical_boards_have_identical_hashes(bool& tests_passed);
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed);
     void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed);
@@ -254,6 +255,7 @@ bool run_tests()
     one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(tests_passed);
 
     derived_moves_applied_to_earlier_board_result_in_later_board(tests_passed);
+    identical_boards_have_identical_hashes(tests_passed);
 
     test_result(tests_passed, run_board_tests("testing/board_tests.txt"), "");
 
@@ -1040,6 +1042,39 @@ namespace
             move_derivation_board.play_move(*move);
         }
         test_result(tests_passed, move_derivation_board.fen() == goal_board.fen(), "Wrong moves derived. " + move_derivation_board.fen() + " != " + goal_board.fen());
+    }
+
+    void identical_boards_have_identical_hashes(bool& tests_passed)
+    {
+        Board board;
+        test_result(tests_passed, board.board_hash() == Board{board.fen()}.board_hash(), "Standard starting board hashes do not match.");
+        std::vector<std::string> moves;
+        for(auto move_count = 1; move_count <= 1'000'000; ++move_count)
+        {
+            const auto& move_list = board.legal_moves();
+            if(move_list.empty())
+            {
+                board = {};
+                moves = {};
+            }
+            else
+            {
+                auto move = Random::random_element(move_list);
+                moves.push_back(move->algebraic(board));
+                board.play_move(*move);
+                auto identical_board = Board(board.fen());
+                if(board.board_hash() != identical_board.board_hash())
+                {
+                    tests_passed = false;
+                    std::cerr << "Boards do not have equal hashes: " << board.fen() << "\n"
+                              << "                                 " << identical_board.fen() << "\n"
+                              << "Move count: " << move_count << std::endl;
+                    std::cerr << "Moves: " << String::join(moves.begin(), moves.end(), " ") << std::endl;
+                    board.compare_hashes(identical_board);
+                    break;
+                }
+            }
+        }
     }
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed)

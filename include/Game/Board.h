@@ -285,6 +285,11 @@ class Board
         //! Returns 0 if no moves have been made on the board.
         size_t previous_moves_count() const noexcept;
 
+        //! \brief Print data on why boards have different Zobrist hashes
+        //! 
+        //! \param other The other board with which to compare.
+        void compare_hashes(const Board& other) const noexcept;
+
     private:
         std::array<Piece, 64> board;
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
@@ -293,6 +298,7 @@ class Board
         const Move* previous_move = nullptr;
         std::bitset<64> unmoved_positions{};
         Square en_passant_target;
+        Square unused_en_passant_target;
         uint64_t starting_hash{};
         std::array<Square, 2> king_location;
         Square checking_square;
@@ -332,13 +338,13 @@ class Board
         void make_en_passant_targetable(Square square) noexcept;
         void clear_en_passant_target() noexcept;
         bool is_en_passant_targetable(Square square) const noexcept;
+        void disable_en_passant_target() noexcept;
         bool is_in_legal_moves_list(const Move& move) const noexcept;
         void place_piece(Piece piece, Square square) noexcept;
         void record_king_location(Piece_Color color, Square square);
         bool all_empty_between(Square start, Square end) const noexcept;
         void set_already_moved(Square square, bool piece_has_already_moved) noexcept;
         void update_board(const Move& move) noexcept;
-        void fix_en_passant_hash() noexcept;
         void switch_turn() noexcept;
         Game_Result move_result() const noexcept;
 

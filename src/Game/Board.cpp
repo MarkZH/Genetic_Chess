@@ -43,17 +43,6 @@ namespace
         return hash_cache;
     }();
 
-    const auto en_passant_hash_values =
-    []()
-    {
-        // One entry for each file
-        std::array<uint64_t, 8> en_passant_hash_cache;
-        std::generate(en_passant_hash_cache.begin(),
-                      en_passant_hash_cache.end(),
-                      Random::random_unsigned_int64);
-        return en_passant_hash_cache;
-    }();
-
     const auto castling_hash_values =
     []()
     {
@@ -66,6 +55,7 @@ namespace
     }();
 
     const uint64_t switch_turn_board_hash = Random::random_unsigned_int64();
+    const auto en_passant_hash = Random::random_unsigned_int64();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     std::map<uint64_t, std::string> starting_fen_from_starting_hash;
@@ -276,7 +266,7 @@ std::string Board::fen() const noexcept
     }
     fen_parts.push_back(castling_mark.empty() ? "-" : castling_mark);
 
-    fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.text() : "-");
+    fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.text() : unused_en_passant_target.text());
     fen_parts.push_back(std::to_string(moves_since_pawn_or_capture()));
     fen_parts.push_back(std::to_string(1 + all_ply_count()/2));
     return String::join(fen_parts.begin(), fen_parts.end(), " ");
@@ -383,23 +373,14 @@ void Board::update_board(const Move& move) noexcept
     ++game_move_count;
     previous_move = &move;
     move_piece(move);
+    clear_en_passant_target();
+    unused_en_passant_target = {};
     move.side_effects(*this);
     switch_turn();
 
     recreate_move_caches();
 
     add_board_position_to_repeat_record();
-}
-
-void Board::fix_en_passant_hash() noexcept
-{
-    if(en_passant_target.is_set())
-    {
-        if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), [](auto move) { return move->is_en_passant(); }))
-        {
-            current_board_hash ^= en_passant_hash_values[en_passant_target.index()/8];
-        }
-    }
 }
 
 void Board::switch_turn() noexcept
@@ -459,8 +440,6 @@ void Board::move_piece(const Move& move) noexcept
     }
     remove_piece(move.start());
     place_piece(moving_piece, move.end());
-
-    clear_en_passant_target();
 }
 
 Piece_Color Board::whose_turn() const noexcept
@@ -828,17 +807,11 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
 void Board::make_en_passant_targetable(const Square square) noexcept
 {
-    if(en_passant_target.is_set())
+    if(square.is_set() != en_passant_target.is_set())
     {
-        update_board_hash(en_passant_target); // XOR out previous en passant target
+        current_board_hash ^= en_passant_hash;
     }
-
     en_passant_target = square;
-
-    if(square.is_set())
-    {
-        update_board_hash(square);
-    }
 }
 
 bool Board::is_en_passant_targetable(const Square square) const noexcept
@@ -889,7 +862,16 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
-    fix_en_passant_hash();
+    if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), [](const auto move) { return move->is_en_passant(); }))
+    {
+        disable_en_passant_target();
+    }
+}
+
+void Board::disable_en_passant_target() noexcept
+{
+    unused_en_passant_target = en_passant_target;
+    clear_en_passant_target();
 }
 
 Square Board::find_checking_square() const noexcept
@@ -1006,12 +988,6 @@ uint64_t Board::square_hash(Square square) const noexcept
         const auto on_first_rank = (index%8 == 0);
         const auto on_first_file = (index/8 == 0);
         result ^= castling_hash_values[2*on_first_file + on_first_rank];
-    }
-
-    if( ! piece && is_en_passant_targetable(square))
-    {
-        const auto file_index = index/8;
-        result ^= en_passant_hash_values[file_index];
     }
 
     return result;
@@ -1215,4 +1191,52 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
 size_t Board::previous_moves_count() const noexcept
 {
     return prior_moves_count;
+}
+
+void Board::compare_hashes(const Board& other) const noexcept
+{
+    std::cerr << "Differing square hashes: ";
+    for(const auto square : Square::all_squares())
+    {
+        if(square_hash(square) != other.square_hash(square))
+        {
+            std::cerr << square.text() << ' ';
+        }
+    }
+    std::cerr << std::endl;
+    const auto hash_diff = (board_hash() ^ other.board_hash());
+    const auto both_white_castles = (castling_hash_values[1] ^ castling_hash_values[3]);
+    const auto both_black_castles = (castling_hash_values[0] ^ castling_hash_values[2]);
+    if(hash_diff == en_passant_hash)
+    {
+        std::cerr << "en passant hash" << std::endl;
+    }
+    else if(hash_diff == both_white_castles)
+    {
+        std::cerr << "both white castling" << std::endl;
+    }
+    else if(hash_diff == both_black_castles)
+    {
+        std::cerr << "both black castling" << std::endl;
+    }
+    else if(hash_diff == castling_hash_values[0])
+    {
+        std::cerr << "black kingside castle" << std::endl;
+    }
+    else if(hash_diff == castling_hash_values[1])
+    {
+        std::cerr << "white kingside castle" << std::endl;
+    }
+    else if(hash_diff == castling_hash_values[2])
+    {
+        std::cerr << "white queenside castle" << std::endl;
+    }
+    else if(hash_diff == castling_hash_values[3])
+    {
+        std::cerr << "white queenside castle" << std::endl;
+    }
+    else
+    {
+        std::cerr << "Something else" << std::endl;
+    }
 }

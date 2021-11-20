@@ -57,7 +57,7 @@ Square::square_index_t Square::index() const noexcept
 
 std::string Square::text() const noexcept
 {
-    return file() + std::to_string(rank());
+    return is_set() ? (file() + std::to_string(rank())) : "-";
 }
 
 Square_Color Square::color() const noexcept
