@@ -11,6 +11,7 @@ using namespace std::chrono_literals;
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
+#include "Players/Thinking.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
@@ -98,7 +99,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
 void Minimax_AI::report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const noexcept
 {
-    output_thinking(Board::thinking_mode(), result, board.whose_turn());
+    output_thinking(result, board.whose_turn());
 
     commentary.push_back(result);
 
@@ -231,8 +232,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 }
                 else if(time_since_last_output() > 1s)
                 {
-                    output_thinking(Board::thinking_mode(),
-                                    best_result,
+                    output_thinking(best_result,
                                     depth % 2 == 1 ? perspective : opposite(perspective));
                 }
             }
@@ -240,7 +240,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
         principal_variation.clear(); // only the first move is part of the principal variation
 
-        if(clock.running_time_left() < 0.0s || Board::must_pick_move_now())
+        if(clock.running_time_left() < 0.0s || must_pick_move_now())
         {
             break;
         }
@@ -311,10 +311,10 @@ bool Minimax_AI::search_further(const Game_Result& move_result,
     }
 }
 
-void Minimax_AI::output_thinking(const Thinking_Output_Type format,
-                                 const Game_Tree_Node_Result& thought,
+void Minimax_AI::output_thinking(const Game_Tree_Node_Result& thought,
                                  const Piece_Color perspective) const noexcept
 {
+    const auto format = thinking_mode();
     if(format == Thinking_Output_Type::CECP)
     {
         output_thinking_cecp(thought, perspective);

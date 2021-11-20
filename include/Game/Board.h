@@ -9,7 +9,7 @@
 #include "Game/Color.h"
 #include "Game/Square.h"
 #include "Game/Piece.h"
-#include "Players/Thinking.h"
+#include "Moves/Direction.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
 
@@ -64,10 +64,10 @@ class Board
 
         //! \brief Figure out a move sequence to get from the current board state to the new state given by the parameter.
         //!
-        //! \param new_fen The new board state to be reached.
+        //! \param new_board The new board state to be reached.
         //! \returns A list of moves that will result in the desired board state. An empty list will be returned
         //!          if no sequence of moves (maximum of 2) can be found.
-        std::vector<const Move*> derive_moves(const std::string& new_fen) const noexcept;
+        std::vector<const Move*> derive_moves(const Board& new_board) const noexcept;
 
         //! \brief Creates a Move instance given a text string representation.
         //!
@@ -123,25 +123,6 @@ class Board
         //!          for no castling yet).
         int castling_direction(Piece_Color player) const noexcept;
 
-        //! \brief Set the format an engine should output while picking a move.
-        //!
-        //! \param mode Which chess engine protocol is being used: CECP, UCI, or NO_THINKING.
-        static void set_thinking_mode(Thinking_Output_Type) noexcept;
-
-        //! \brief Find out what kind of format an engine should output while picking a move.
-        //!
-        //! \returns Format of thinking output: CECP, UCI, or NO_THINKING.
-        static Thinking_Output_Type thinking_mode() noexcept;
-
-        //! \brief Force the Player that is currently choosing a move to stop thinking and immediately make a move.
-        static void pick_move_now() noexcept;
-
-        //! \brief Check whether a Player should stop thinking and immediately move.
-        static bool must_pick_move_now() noexcept;
-
-        //! \brief Allow the Player to take any amount of time to choose a move.
-        static void choose_move_at_leisure() noexcept;
-
         //! \brief Prints the PGN game record with commentary from Players.
         //!
         //! \param game_record_listing A list of Moves. This must be a legal sequence of moves starting from
@@ -188,12 +169,6 @@ class Board
         //! \param attacking_color The color of the attacking pieces.
         //! \returns Whether there is an attack on the square that is blocked by another piece.
         bool blocked_attack(Square square, Piece_Color attacking_color) const noexcept;
-
-        //! \brief Indicates whether the queried square has a piece on it that never moved.
-        //!
-        //! \param square The queried squaer.
-        //! \returns If the piece on the square has never moved during the game.
-        bool piece_has_moved(Square square) const noexcept;
 
         //! \brief Finds the square on which a king resides.
         //!
@@ -242,6 +217,13 @@ class Board
         //! \returns If there are enough pieces on the board to make a checkmate arrangement.
         //!          If the method returns false, this will usually lead to a drawn game.
         bool enough_material_to_checkmate() const noexcept;
+
+        //! \brief Check if castling is legal for the given player color and direction.
+        //! 
+        //! \param color The color of the player.
+        //! \param direction The direction of castling: Direction::LEFT for queenside and Direction::RIGHT for kingside.
+        //! \returns Whether the castling move is legal for the player.
+        bool castle_is_legal(Piece_Color color, Direction direction) const noexcept;
 
         //! \brief Determines whether a move will capture on the current board.
         //!
@@ -305,14 +287,20 @@ class Board
         //! Returns 0 if no moves have been made on the board.
         size_t previous_moves_count() const noexcept;
 
+        //! \brief Print data on why boards have different Zobrist hashes
+        //! 
+        //! \param other The other board with which to compare.
+        void compare_hashes(const Board& other) const noexcept;
+
     private:
         std::array<Piece, 64> board;
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
         Piece_Color turn_color = Piece_Color::WHITE;
         size_t game_move_count = 0;
         const Move* previous_move = nullptr;
-        std::bitset<64> unmoved_positions{};
+        std::array<std::array<bool, 2>, 2> legal_castles{}; // indexed by [Piece_Color][Direction]
         Square en_passant_target;
+        Square unused_en_passant_target;
         uint64_t starting_hash{};
         std::array<Square, 2> king_location;
         Square checking_square;
@@ -352,15 +340,16 @@ class Board
         void make_en_passant_targetable(Square square) noexcept;
         void clear_en_passant_target() noexcept;
         bool is_en_passant_targetable(Square square) const noexcept;
+        void disable_en_passant_target() noexcept;
         bool is_in_legal_moves_list(const Move& move) const noexcept;
         void place_piece(Piece piece, Square square) noexcept;
         void record_king_location(Piece_Color color, Square square);
         bool all_empty_between(Square start, Square end) const noexcept;
-        void set_already_moved(Square square, bool piece_has_already_moved) noexcept;
         void update_board(const Move& move) noexcept;
-        void fix_en_passant_hash() noexcept;
         void switch_turn() noexcept;
         Game_Result move_result() const noexcept;
+        void make_castle_legal(Piece_Color color, Direction direction) noexcept;
+        void make_castle_illegal(Piece_Color color, Direction direction) noexcept;
 
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record() noexcept;

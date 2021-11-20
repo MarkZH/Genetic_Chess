@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <future>
 
 #include "Game/Color.h"
 
@@ -13,6 +14,17 @@ class Move;
 class Player;
 class Proxy_Player;
 class Game_Result;
+
+class Outside_Communicator;
+
+//! \brief Initialize communication with an outside program.
+//!
+//! The function returns an appropriate derived class based on the
+//! communiation protocol by the other program (CECP or UCI).
+//! \param player The local player so that its information may be sent
+//!        to the outside interface.
+//! \returns An appropriate derived class instance with the proper protocol.
+std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
 
 //! \brief A class to facilitate interfacing with outside programs.
 class Outside_Communicator
@@ -34,9 +46,8 @@ class Outside_Communicator
 
         //! \brief Start a separate thread to listen for commands while the local AI is thinking.
         //!
-        //! \param board The Board used for the game.
         //! \param clock The clock used for the game.
-        virtual void listen(const Board& board, Clock& clock) = 0;
+        void listen(Clock& clock);
 
         //! \brief When appropriate, apply the local AIs Move to Board and send results to GUI.
         //!
@@ -77,19 +88,18 @@ class Outside_Communicator
         //!         end and the program will exit.
         static std::string receive_command();
 
+        //! \brief Returns either the command received while listening or waits for a new command.
+        //! 
+        //! \param while_listening Indicates this method is called from within the listen() method.
+        std::string get_last_command(bool while_listening);
+
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
 
     private:
         std::string remote_opponent_name;
-};
+        std::future<std::string> last_listening_result;
 
-//! \brief Initialize communication with an outside program.
-//!
-//! The function returns an appropriate derived class based on the
-//! communiation protocol by the other program (CECP or UCI).
-//! \param player The local player so that its information may be sent
-//!        to the outside interface.
-//! \returns An appropriate derived class instance with the proper protocol.
-std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
+        virtual std::string listener(Clock& clock) = 0;
+};
 
 #endif // OUTSIDE_PLAYER_H
