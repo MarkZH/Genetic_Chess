@@ -18,8 +18,7 @@ Castle::Castle(const int base_rank, const Direction direction) noexcept :
 
 bool Castle::move_specific_legal(const Board& board) const noexcept
 {
-    return     ! board.piece_has_moved(start())
-            && ! board.piece_has_moved(rook_move.start())
+    return     board.castle_is_legal(board.whose_turn(), file_change() > 0 ? Direction::RIGHT : Direction::LEFT)
             && ! board.king_is_in_check()
             && board.safe_for_king(rook_move.end(), board.whose_turn())
             && ! (last_empty_square.inside_board() && board.piece_on_square(last_empty_square));
