@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "Players/Thinking.h"
+
 class Board;
 class Clock;
 class Move;
@@ -45,6 +47,26 @@ class Player
         //!
         //! \param last_move The last move made on the board for use by the internals of the chess engine.
         virtual void undo_move(const Move* last_move) const noexcept;
+
+        //! \brief Set the format an engine should output while picking a move.
+        //!
+        //! \param mode Which chess engine protocol is being used: CECP, UCI, or NO_THINKING.
+        static void set_thinking_mode(Thinking_Output_Type) noexcept;
+
+        //! \brief Force the Player to stop thinking and immediately make a move.
+        static void pick_move_now() noexcept;
+
+        //! \brief Allow the Player to take any amount of time to choose a move.
+        static void choose_move_at_leisure() noexcept;
+
+    protected:
+        //! \brief Find out what kind of format an engine should output while picking a move.
+        //!
+        //! \returns Format of thinking output: CECP, UCI, or NO_THINKING.
+        static Thinking_Output_Type thinking_mode() noexcept;
+
+        //! \brief Check whether a Player should stop thinking and immediately move.
+        static bool must_pick_move_now() noexcept;
 };
 
 #endif // PLAYER_H

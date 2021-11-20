@@ -16,7 +16,6 @@
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
 #include "Utility/Fixed_Capacity_Vector.h"
-#include "Players/Thinking.h"
 #include "Players/Genetic_AI.h"
 
 class Board;
@@ -244,8 +243,7 @@ class Minimax_AI : public Player
                                             const current_variation_store& move_list) const noexcept;
 
         // Output thinking to stdout
-        void output_thinking(Thinking_Output_Type format,
-                             const Game_Tree_Node_Result& thought,
+        void output_thinking(const Game_Tree_Node_Result& thought,
                              Piece_Color perspective) const noexcept;
         void output_thinking_cecp(const Game_Tree_Node_Result& thought,
                                   Piece_Color perspective) const noexcept;

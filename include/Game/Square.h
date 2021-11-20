@@ -54,14 +54,6 @@ class Square
         //! In debug builds, invalid square coordinates (e.g., "i9") trigger an assertion failure.
         Square(char file, int rank) noexcept;
 
-        //! \brief Construct a Square from a std::string, i.e., "a1".
-        //! 
-        //! \param text The name of the square.
-        //! 
-        //! The calls the (char, int) constructor on the first two characters of the std::string
-        //! and has the same error-checking procedure.
-        Square(const std::string& text);
-
         //! \brief The file of the square.
         //!
         //! \returns The letter label of the square file.
@@ -77,8 +69,8 @@ class Square
         //! \returns An unsigned integer index.
         square_index_t index() const noexcept;
 
-        //! \brief String representation of square.
-        std::string string() const noexcept;
+        //! \brief Text representation of square.
+        std::string text() const noexcept;
 
         //! \brief Returns the color of the square.
         //!
