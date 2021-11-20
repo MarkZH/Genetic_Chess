@@ -63,17 +63,16 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
             return 0.0;
         }
     }
-    else if(const auto king_square = board.find_king(perspective);
-            ! board.piece_has_moved(king_square))
+    else
     {
         auto score = 0.0;
-        const auto base_rank = king_square.rank();
-        for(const auto file : {'a', 'h'})
+        const auto king_square = board.find_king(perspective);
+        for(const auto direction : {Direction::LEFT, Direction::RIGHT})
         {
-            const auto rook_square = Square{file, base_rank};
-            if(!board.piece_has_moved(rook_square))
+            if(board.castle_is_legal(perspective, direction))
             {
-                const auto preference = file == 'a' ? queenside_preference : kingside_preference;
+                const auto preference = direction == Direction::LEFT ? queenside_preference : kingside_preference;
+                const auto rook_square = Square{direction == Direction::LEFT ? 'a' : 'h', perspective == Piece_Color::WHITE ? 1 : 8};
                 const auto between_squares = Squares_in_a_Line(king_square, rook_square);
                 const auto moves_to_go = std::count_if(between_squares.begin(),
                                                        between_squares.end(),
@@ -86,10 +85,6 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
         }
 
         return score;
-    }
-    else
-    {
-        return 0.0;
     }
 }
 

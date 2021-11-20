@@ -1049,7 +1049,13 @@ namespace
         Board board;
         test_result(tests_passed, board.board_hash() == Board{board.fen()}.board_hash(), "Standard starting board hashes do not match.");
         std::vector<std::string> moves;
-        for(auto move_count = 1; move_count <= 1'000'000; ++move_count)
+        auto maximum_move_count =
+        #ifdef NDEBUG
+            1'000'000;
+        #else
+            1'000;
+        #endif
+        for(auto move_count = 1; move_count <= maximum_move_count; ++move_count)
         {
             const auto& move_list = board.legal_moves();
             if(move_list.empty())

@@ -9,6 +9,7 @@
 #include "Game/Color.h"
 #include "Game/Square.h"
 #include "Game/Piece.h"
+#include "Moves/Direction.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
 
@@ -169,12 +170,6 @@ class Board
         //! \returns Whether there is an attack on the square that is blocked by another piece.
         bool blocked_attack(Square square, Piece_Color attacking_color) const noexcept;
 
-        //! \brief Indicates whether the queried square has a piece on it that never moved.
-        //!
-        //! \param square The queried squaer.
-        //! \returns If the piece on the square has never moved during the game.
-        bool piece_has_moved(Square square) const noexcept;
-
         //! \brief Finds the square on which a king resides.
         //!
         //! \param color Which king to find.
@@ -222,6 +217,13 @@ class Board
         //! \returns If there are enough pieces on the board to make a checkmate arrangement.
         //!          If the method returns false, this will usually lead to a drawn game.
         bool enough_material_to_checkmate() const noexcept;
+
+        //! \brief Check if castling is legal for the given player color and direction.
+        //! 
+        //! \param color The color of the player.
+        //! \param direction The direction of castling: Direction::LEFT for queenside and Direction::RIGHT for kingside.
+        //! \returns Whether the castling move is legal for the player.
+        bool castle_is_legal(Piece_Color color, Direction direction) const noexcept;
 
         //! \brief Determines whether a move will capture on the current board.
         //!
@@ -296,7 +298,7 @@ class Board
         Piece_Color turn_color = Piece_Color::WHITE;
         size_t game_move_count = 0;
         const Move* previous_move = nullptr;
-        std::bitset<64> unmoved_positions{};
+        std::array<std::array<bool, 2>, 2> legal_castles{}; // indexed by [Piece_Color][Direction]
         Square en_passant_target;
         Square unused_en_passant_target;
         uint64_t starting_hash{};
@@ -343,10 +345,11 @@ class Board
         void place_piece(Piece piece, Square square) noexcept;
         void record_king_location(Piece_Color color, Square square);
         bool all_empty_between(Square start, Square end) const noexcept;
-        void set_already_moved(Square square, bool piece_has_already_moved) noexcept;
         void update_board(const Move& move) noexcept;
         void switch_turn() noexcept;
         Game_Result move_result() const noexcept;
+        void make_castle_legal(Piece_Color color, Direction direction) noexcept;
+        void make_castle_illegal(Piece_Color color, Direction direction) noexcept;
 
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record() noexcept;
