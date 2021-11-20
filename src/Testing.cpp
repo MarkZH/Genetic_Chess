@@ -422,6 +422,7 @@ void run_speed_tests()
             score += gene->evaluate(performance_board, opposite(side), performance_board.played_ply_count(), 20);
         }
         timing_results.emplace_back(std::chrono::steady_clock::now() - gene_start, gene->name());
+        (void)score;
     }
     timing_results.emplace_back(std::chrono::steady_clock::now() - all_genes_start, "Complete gene scoring");
 
