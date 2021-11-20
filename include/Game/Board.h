@@ -63,7 +63,7 @@ class Board
 
         //! \brief Figure out a move sequence to get from the current board state to the new state given by the parameter.
         //!
-        //! \param new_fen The new board state to be reached.
+        //! \param new_board The new board state to be reached.
         //! \returns A list of moves that will result in the desired board state. An empty list will be returned
         //!          if no sequence of moves (maximum of 2) can be found.
         std::vector<const Move*> derive_moves(const Board& new_board) const noexcept;
