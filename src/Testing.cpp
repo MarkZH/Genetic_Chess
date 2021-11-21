@@ -190,6 +190,7 @@ namespace
 
     void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed);
     void identical_boards_have_identical_hashes(bool& tests_passed);
+    void boards_with_different_en_passant_targets_have_different_hashes(bool& tests_passed);
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed);
     void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed);
@@ -256,6 +257,7 @@ bool run_tests()
 
     derived_moves_applied_to_earlier_board_result_in_later_board(tests_passed);
     identical_boards_have_identical_hashes(tests_passed);
+    boards_with_different_en_passant_targets_have_different_hashes(tests_passed);
 
     test_result(tests_passed, run_board_tests("testing/board_tests.txt"), "");
 
@@ -1082,6 +1084,24 @@ namespace
                 }
             }
         }
+    }
+
+    void boards_with_different_en_passant_targets_have_different_hashes(bool& tests_passed)
+    {
+        Board board;
+        for(const auto move : {"e4", "a6", "e5", "f5"})
+        {
+            board.play_move(move);
+        }
+        const auto hash  = board.board_hash();
+        const auto fen = board.fen();
+
+        for(const auto move : {"Nc3", "Nc6", "Nb1", "Nb8"})
+        {
+            board.play_move(move);
+        }
+
+        test_result(tests_passed, hash != board.board_hash(), "Change in en passant target should result in different hash.\n" + fen + "\n" + board.fen());
     }
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed)
