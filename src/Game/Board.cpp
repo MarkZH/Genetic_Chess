@@ -755,7 +755,6 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     print_game_header_line(out_stream, "White", white.name());
     print_game_header_line(out_stream, "Black", black.name());
 
-    // Get actual result
     const auto last_move_result = move_result();
     const auto& actual_result = last_move_result.game_has_ended() ? last_move_result : result;
     print_game_header_line(out_stream, "Result", actual_result.game_ending_annotation());
@@ -986,7 +985,6 @@ bool Board::move_captures(const Move& move) const noexcept
 {
     const auto attacked_piece = piece_on_square(move.end());
 
-    // Assert move is actually legal
     assert(is_in_legal_moves_list(move));
     assert( ! attacked_piece || (move.can_capture() && attacked_piece.color() == opposite(whose_turn())));
 
