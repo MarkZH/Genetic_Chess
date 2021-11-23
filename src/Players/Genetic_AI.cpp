@@ -138,6 +138,16 @@ double Genetic_AI::game_progress(const Board& board) const noexcept
     return genome.game_progress(board);
 }
 
+Search_Method Genetic_AI::search_method() const noexcept
+{
+    return genome.search_method();
+}
+
+std::string Genetic_AI::search_method_name() const noexcept
+{
+    return genome.search_method_name();
+}
+
 void Genetic_AI::mutate(size_t mutation_count) noexcept
 {
     for(size_t i = 0; i < mutation_count; ++i)

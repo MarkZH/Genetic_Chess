@@ -39,7 +39,7 @@ Minimax_AI::Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept : gene
 
 std::string Minimax_AI::name() const noexcept
 {
-    return ai_name() + " (Minimax)";
+    return ai_name() + " (" + search_method_name() + ")";
 }
 
 std::string Minimax_AI::ai_name() const
@@ -58,6 +58,18 @@ int Minimax_AI::id() const noexcept
 }
 
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
+{
+    if(search_method() == Search_Method::MINIMAX)
+    {
+        return choose_move_minimax(board, clock);
+    }
+    else
+    {
+        return choose_move_iterative_deepening(board, clock);
+    }
+}
+
+const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
 {
     reset_search_stats(board);
 
@@ -95,6 +107,57 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
     report_final_search_stats(result, board);
 
     return *result.variation_line().front();
+}
+
+const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, const Clock& clock) const noexcept
+{
+    reset_search_stats(board);
+    const auto progress = game_progress(board);
+    const auto effective_moves_per_turn = branching_factor(progress);
+    const auto speculation_factor = speculation_time_factor(progress);
+    const auto time_to_use = time_to_examine(board, clock);
+    const auto time_start = std::chrono::steady_clock::now();
+
+    auto principal_variation = std::vector<const Move*>{};
+    Game_Tree_Node_Result result;
+    for(size_t depth = 1; true; ++depth)
+    {
+        // alpha = highest score found that opponent will allow
+        auto alpha_start = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,
+                                            board.whose_turn(),
+                                            0};
+
+        // beta = score that will cause opponent to choose a different prior move
+        auto beta_start = Alpha_Beta_Value{Game_Tree_Node_Result::win_score,
+                                           board.whose_turn(),
+                                           0};
+
+        current_variation_store current_variation;
+
+        result = search_game_tree(board,
+                                  Clock::seconds{std::numeric_limits<Clock::seconds::rep>::infinity()},
+                                  depth,
+                                  depth,
+                                  clock,
+                                  alpha_start,
+                                  beta_start,
+                                  principal_variation,
+                                  current_variation);
+
+        const auto time_used_so_far = std::chrono::steady_clock::now() - time_start;
+        const auto time_left = time_to_use - time_used_so_far;
+        if(time_used_so_far*effective_moves_per_turn < time_left*speculation_factor)
+        {
+            principal_variation = {nullptr, nullptr};
+            const auto& variation = result.variation_line();
+            principal_variation.insert(principal_variation.end(), variation.begin(), variation.end());
+        }
+        else
+        {
+            report_final_search_stats(result, board);
+            return *result.variation_line().front();
+        }
+    }
 }
 
 void Minimax_AI::report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const noexcept
@@ -454,6 +517,16 @@ double Minimax_AI::assign_score(const Board& board, const Game_Result& move_resu
 double Minimax_AI::internal_evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
     return genetic_ai.internal_evaluate(board, perspective, depth);
+}
+
+Search_Method Minimax_AI::search_method() const noexcept
+{
+    return genetic_ai.search_method();
+}
+
+std::string Minimax_AI::search_method_name() const noexcept
+{
+    return genetic_ai.search_method_name();
 }
 
 const std::array<double, 6>& Minimax_AI::piece_values() const noexcept

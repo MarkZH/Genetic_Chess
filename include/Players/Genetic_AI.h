@@ -131,6 +131,12 @@ class Genetic_AI
         //! \param board The current board position.
         double game_progress(const Board& board) const noexcept;
 
+        //! \brief Which minimax search method to use.
+        Search_Method search_method() const noexcept;
+
+        //! \brief The name of the minimax search method to use.
+        std::string search_method_name() const noexcept;
+
     private:
         Genome genome;
 

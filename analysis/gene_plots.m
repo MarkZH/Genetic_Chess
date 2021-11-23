@@ -93,12 +93,22 @@ for yi = 2 : length(data.colheaders)
          '.', ...
          'markersize', 10);
     xlabel(xaxis);
-    title(name);
     plot(xlim, [0 0], '--k'); % X-axis
 
     for index = 1:length(id_marks)
         plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
     end
+
+    title_name = name;
+    if strcmp(name, 'Search Method')
+        title_name = [name ' (0 = Minimax, 1 = Iterative Deepening)'];
+        conv_window = 100;
+        conv_margin = floor(conv_window/2);
+        smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
+        x_axis = id_list(conv_margin : end - conv_margin);
+        plot(x_axis, smooth_data, 'LineWidth', 3);
+    endif
+    title(title_name);
 
     print([gene_pool_filename ' gene ' name '.png']);
     close;
