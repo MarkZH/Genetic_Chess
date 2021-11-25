@@ -480,27 +480,53 @@ namespace
     void update_genome_file(const std::string& file_name)
     {
         auto input = std::ifstream(file_name);
-        std::vector<int> id_list;
+        std::vector<std::string> lines_to_write;
+        auto skip_to_END = false;
+        auto skip_next_blank_line = false;
         for(std::string line; std::getline(input, line);)
         {
+            if(skip_to_END)
+            {
+                if(line == "END")
+                {
+                    skip_to_END = false;
+                    skip_next_blank_line = true;
+                }
+                continue;
+            }
+
             if(String::starts_with(line, "ID:"))
             {
-                id_list.push_back(String::to_number<int>(String::split(line, ":", 1).back()));
+                lines_to_write.push_back(String::split(line, ":", 1).back());
+                skip_to_END = true;
+            }
+            else
+            {
+                if( ! (skip_next_blank_line && line.empty()))
+                {
+                    lines_to_write.push_back(line);
+                }
+                skip_next_blank_line = false;
             }
         }
+
         input = std::ifstream(file_name);
         const auto output_file_name = String::add_to_file_name(file_name, "-updated");
         auto output = std::ofstream(output_file_name);
         std::cout << "Writing to: " << output_file_name << std::endl;
-        for(auto id : id_list)
+        for(const auto& line : lines_to_write)
         {
             try
             {
-                Genetic_AI(input, id).print(output);
+                Genetic_AI(input, std::stoi(line)).print(output);
             }
             catch(const Genetic_AI_Creation_Error& e)
             {
                 std::cerr << e.what() << '\n';
+            }
+            catch(const std::invalid_argument&)
+            {
+                output << line << '\n';
             }
         }
     }
