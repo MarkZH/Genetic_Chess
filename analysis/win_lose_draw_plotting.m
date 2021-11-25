@@ -58,12 +58,16 @@ white_time_left = data.data(:, 7);
 black_time_left = data.data(:, 8);
 moves_in_game = data.data(:, 9);
 
+line_width = 2;
+draw_bar_line_width = 3;
+marker_size = 5;
+stat_text_size = 7;
 
 figure;
 hold all;
-semilogx(game_number, 100*white_wins./game_number, 'LineWidth', 3, ...
-         game_number, 100*black_wins./game_number, 'LineWidth', 3, ...
-         game_number, 100*draws./game_number, 'LineWidth', 3);
+semilogx(game_number, 100*white_wins./game_number, 'LineWidth', line_width, ...
+         game_number, 100*black_wins./game_number, 'LineWidth', line_width, ...
+         game_number, 100*draws./game_number, 'LineWidth', line_width);
 xlabel(data.colheaders{1});
 ylabel('Percentage');
 legend([data.colheaders{2} ' (' num2str(white_wins(end)) ')'], ...
@@ -97,15 +101,15 @@ end
 
 figure;
 hold all;
-loglog(game_number, 100*cumsum(white_checkmates)./game_number, 'LineWidth', 3, ...
-       game_number, 100*cumsum(black_checkmates)./game_number, 'LineWidth', 3, ...
-       game_number, 100*cumsum(white_time_win)./game_number, 'LineWidth', 3, ...
-       game_number, 100*cumsum(black_time_win)./game_number, 'LineWidth', 3, ...
-       game_number, 100*cumsum(fifty_moves)./game_number, 'LineWidth', 3, ...
-       game_number, 100*cumsum(threefold)./game_number, 'LineWidth', 3, ...
-       game_number, 100*cumsum(material)./game_number, 'LineWidth', 3, ...
-       game_number, 100*cumsum(no_legal)./game_number, 'LineWidth', 3, ...
-       game_number, 100*cumsum(time_and_material)./game_number, 'LineWidth', 3);
+loglog(game_number, 100*cumsum(white_checkmates)./game_number, 'LineWidth', line_width, ...
+       game_number, 100*cumsum(black_checkmates)./game_number, 'LineWidth', line_width, ...
+       game_number, 100*cumsum(white_time_win)./game_number, 'LineWidth', line_width, ...
+       game_number, 100*cumsum(black_time_win)./game_number, 'LineWidth', line_width, ...
+       game_number, 100*cumsum(fifty_moves)./game_number, 'LineWidth', line_width, ...
+       game_number, 100*cumsum(threefold)./game_number, 'LineWidth', line_width, ...
+       game_number, 100*cumsum(material)./game_number, 'LineWidth', line_width, ...
+       game_number, 100*cumsum(no_legal)./game_number, 'LineWidth', line_width, ...
+       game_number, 100*cumsum(time_and_material)./game_number, 'LineWidth', line_width);
 xlabel('Games played');
 ylabel('Percentage');
 legend(['White checkmate (' num2str(sum(white_checkmates)) ')'], ...
@@ -117,6 +121,7 @@ legend(['White checkmate (' num2str(sum(white_checkmates)) ')'], ...
        ['Insufficient material (' num2str(sum(material)) ')'], ...
        ['Stalemate (' num2str(sum(no_legal)) ')'], ...
        ['Time expires w/o material (' num2str(sum(time_and_material)) ')'], ...
+       'fontsize', 7, ...
        'location', 'southwest');
 title('Type of Endgame');
 
@@ -138,8 +143,8 @@ if max(game_time) > 0
     white_time_left(white_time_left < 0) = below_zero_random(white_time_left < 0);
     black_time_left(black_time_left < 0) = below_zero_random(black_time_left < 0);
 
-    scatter(game_number, white_time_left, 'k');
-    scatter(game_number, black_time_left, 'k');
+    plot(game_number, white_time_left, '.k', 'markersize', marker_size);
+    plot(game_number, black_time_left, '.k', 'markersize', marker_size);
     window = 100;
     x_margin = floor(window/2);
     avg_x_axis = game_number(x_margin : end - x_margin);
@@ -147,7 +152,7 @@ if max(game_time) > 0
          movmean(avg_time_left, window, 'endpoints', 'discard'),
          'r',
          'displayname', 'Moving average',
-         'linewidth', 3);
+         'linewidth', line_width);
     leg = legend('show');
     set(leg, 'location', 'northwest');
     ylim(max_time_left*[-0.10, 1.05]);
@@ -182,7 +187,7 @@ end
 
 figure;
 hold all;
-scatter(game_number, moves_in_game, 'k');
+plot(game_number, moves_in_game, '.k', 'markersize', marker_size);
 xlabel('Game number');
 ylabel('Moves in Game');
 title('Number of moves in game');
@@ -217,13 +222,13 @@ bins_fit = bins(bins > 0);
 mean_log = mean(log(moves_in_game_fit));
 std_log = std(log(moves_in_game_fit));
 fit = number_of_games*exp(-.5*((log(bins_fit) - mean_log)/std_log).^2)./(bins_fit*std_log*sqrt(2*pi));
-plot(bins_fit, fit, 'linewidth', 3, 'displayname', 'Log-Normal fit (all games)');
+plot(bins_fit, fit, 'linewidth', line_width, 'displayname', 'Log-Normal fit (all games)');
 
 last10p = [floor(.9*length(moves_in_game_fit)) : length(moves_in_game_fit)];
 mean_log10p = mean(log(moves_in_game_fit(last10p)));
 std_log10p = std(log(moves_in_game_fit(last10p)));
 fit10p = number_of_games*exp(-.5*((log(bins_fit) - mean_log10p)/std_log10p).^2)./(bins_fit*std_log10p*sqrt(2*pi));
-plot(bins_fit, fit10p, 'k', 'linewidth', 3, 'displayname', 'Log-normal fit (last 10%)');
+plot(bins_fit, fit10p, 'k', 'linewidth', line_width, 'displayname', 'Log-normal fit (last 10%)');
 
 legend show;
 
@@ -242,7 +247,7 @@ stats = {['Mean = ' num2str(mean_moves)], ...
 
 xl = xlim;
 yl = ylim;
-text(0.5*xl(2), 0.5*yl(2), stats);
+text(0.65*xl(2), 0.5*yl(2), stats, 'fontsize', stat_text_size);
 
 print([raw_data '_moves_in_game_histogram.png']);
 close;
@@ -261,7 +266,7 @@ mean_log = mean(log(winning_games_lengths));
 std_log = std(log(winning_games_lengths));
 winning_games_count = length(winning_games_lengths);
 fit = winning_games_count*exp(-.5*((log(bins_fit) - mean_log)/std_log).^2)./(bins_fit*std_log*sqrt(2*pi));
-plot(bins_fit, fit, 'linewidth', 3, 'displayname', 'Log-normal fit');
+plot(bins_fit, fit, 'linewidth', line_width, 'displayname', 'Log-normal fit');
 
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(winning_games_count) ')']);
@@ -278,7 +283,7 @@ stats = {['Mean = ' num2str(mean(winning_games_lengths))], ...
 
 xl = xlim;
 yl = ylim;
-text(0.5*xl(2), 0.5*yl(2), stats);
+text(0.65*xl(2), 0.5*yl(2), stats, 'fontsize', stat_text_size);
 
 legend show;
 
@@ -294,10 +299,10 @@ drawn_games = (fifty_moves | threefold | material | no_legal);
 figure;
 hold all;
 bar(drawn_bins, drawn_counts, 'barwidth', 1, 'facecolor', 'y');
-plot(fifty_bins, fifty_counts, 'displayname', 'Fifty moves', 'linewidth', 6);
-plot(threefold_bins, threefold_counts, 'displayname', '3-fold', 'linewidth', 6);
-plot(material_bins, material_counts, 'k', 'displayname', 'Material', 'linewidth', 6);
-plot(no_legal_bins, no_legal_counts, 'k.', 'displayname', 'Stalemate', 'linewidth', 6);
+plot(fifty_bins, fifty_counts, 'displayname', 'Fifty moves', 'linewidth', draw_bar_line_width);
+plot(threefold_bins, threefold_counts, 'displayname', '3-fold', 'linewidth', draw_bar_line_width);
+plot(material_bins, material_counts, 'k', 'displayname', 'Material', 'linewidth', draw_bar_line_width);
+plot(no_legal_bins, no_legal_counts, 'g', 'displayname', 'Stalemate', 'linewidth', draw_bar_line_width);
 title ('Draw game lengths');
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(sum(drawn_games)) ')']);

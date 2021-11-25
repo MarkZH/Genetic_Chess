@@ -78,6 +78,9 @@ shorten('Sphere of Influence Gene') = 'Sphere';
 shorten('Stacked Pawns Gene') = 'Stacked';
 shorten('Total Force Gene') = 'Force';
 
+marker_size = 5;
+line_width = 2;
+
 invalid_plot = figure;
 close(invalid_plot);
 
@@ -91,7 +94,7 @@ for yi = 2 : length(data.colheaders)
     hold all;
     plot(id_list, this_data, ...
          '.', ...
-         'markersize', 10);
+         'markersize', marker_size);
     xlabel(xaxis);
     plot(xlim, [0 0], '--k'); % X-axis
 
@@ -106,7 +109,7 @@ for yi = 2 : length(data.colheaders)
         conv_margin = floor(conv_window/2);
         smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
         x_axis = id_list(conv_margin : end - conv_margin);
-        plot(x_axis, smooth_data, 'LineWidth', 3);
+        plot(x_axis, smooth_data, 'LineWidth', line_width);
     endif
     title(title_name);
 
@@ -144,7 +147,7 @@ for yi = 2 : length(data.colheaders)
 
         conv_margin = floor(conv_window/2);
         x_axis = id_list(conv_margin : end - conv_margin);
-        p = plot(x_axis, smooth_data, 'LineWidth', 3, 'displayname', display_name);
+        p = plot(x_axis, smooth_data, 'LineWidth', line_width, 'displayname', display_name);
         if make_dashed
             set(p, 'LineStyle', ':');
         end
@@ -173,8 +176,7 @@ for name = special_plots.keys()
     end
 
     leg = legend('show');
-    set(leg, 'orientation', 'horizontal');
-    set(leg, 'location', 'southoutside');
+    set(leg, 'location', 'eastoutside');
     legend left;
 
     xlabel('ID');
