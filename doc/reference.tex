@@ -62,7 +62,7 @@ These first options are standalone operations. If multiple options are used, all
 	\item[\code{genetic\_chess -test}] Run tests of the program for chess rule conformance and for Genetic AIs working properly.
 	\item[\code{genetic\_chess -perft}:] Test game logic and speed by counting legal moves from a list of board positions.
 	\item[\code{genetic\_chess -speed}:] Measure the speed of various components of the chess engine.
-	\item[\code{genetic\_chess -confirm <file name>}] Analyze a game recod in Portable Game Notation (PGN \cite{pgn-file-format}) to check that all moves listed are legal and all move are correctly noted with respect to check (+), capture (x), and checkmate (\#).
+	\item[\code{genetic\_chess -confirm <file name>}] Analyze a game record in Portable Game Notation (PGN \cite{pgn-file-format}) to check that all moves listed are legal and all move are correctly noted with respect to check (+), capture (x), and checkmate (\#).
 	\item[\code{genetic\_chess -genepool <file name>}]
 This will start up a gene pool with Genetic\_AIs playing against each other---mating, killing, mutating, all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
 \end{description}
@@ -171,7 +171,7 @@ This gene specifies the importance or strength of each different type of chess p
 
 Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and~\ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
 
-The piece values in this gene are also consulted when estimating the progress of the game from opening to endgame when calculating other genetic aspects. Progress is evaluated as a fractional number from 0.0 at the opening to 1.0 in the late endgame. It is calcualted by totaling the value of the pieces of the side that has had the most total value of pieces captured and dividing by the total value of pieces minus the king value (since the king is always on the board).
+The piece values in this gene are also consulted when estimating the progress of the game from opening to endgame when calculating other genetic aspects. Progress is evaluated as a fractional number from 0.0 at the opening to 1.0 in the late endgame. It is calculated by totaling the value of the pieces of the side that has had the most total value of pieces captured and dividing by the total value of pieces minus the king value (since the king is always on the board).
 \[
 \textrm{Progress} = \frac{1.0 - \sum |\textrm{value}(piece)|}{1.0 - |\textrm{value}(king)|}
 \]
