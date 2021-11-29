@@ -107,7 +107,7 @@ Why not evolve these numbers? While the priorities of various genes can be varie
 
 The specific values were chosen to make the scoring symmetrical between the two players, in that the score for one side is the negative of the score as seen from the other side (assuming the same player does the scoring). What is good for one player is bad for the other player by the same amount.
 
-\subsection{Mini-maxing}
+\subsection{Mini-maxing}\label{sec-minimax}
 
 The principle behind the minimax algorithm is that the quality of a move is measured by the quality of moves it allows the opponent to make. Of course, the quality of those moves is measured by the quality of the moves that follow. Ideally, the only required board evaluation scores would be \(1\)~for a win, \(0\)~for a draw, and \(-1\)~for a loss, and all possible sequences of moves would be examined to find the guaranteed outcome. Unfortunately, the number of positions to examine in a typical game is far too large to examine in a few minutes, so the search has to be cut off at some point and a heuristic evaluation employed to estimate the probability of winning from that stopping point. In this program, the decision of when to stop and the heuristic evaluation is genetically determined and evolved over many generations.
 
@@ -167,6 +167,9 @@ The fraction of the game played is estimated by the value of pieces that have be
 
 \subsection{Regulatory Genes}
 A regulatory gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
+
+\subsubsection{Search Method}
+This gene determines whether the search method used is the minimax method described in Section~\ref{sec-minimax} or an iterative deepening method. In iterative deepening, a series of fixed depth minimax searches are performed, starting with a depth of one and increasing as long as there is time. The order of moves searched at depth \(n\) is determined by the search at depth \(n-1\).
 
 \subsubsection{Piece Strength Gene}\label{piece-strength}
 This gene specifies the importance or strength of each different type of chess piece. Other genes like the Total Force Gene (Section~\ref{total-force}) reference this one for their own evaluation purposes.
