@@ -70,7 +70,7 @@ The following options can be used together to start a single chess game.
 \begin{description}
 	\item[\code{genetic\_chess <player> [<player>]}] Starts a local game. If two players are specified, the first parameter is the white player, and the second is black. If only one player is specified, the program waits for GUI input on stdin. The \code{<player>} argument is replaced with one of the following:
 	\begin{description}
-		\item[\code{-genetic [<file name> [<number>]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID\@. If no number is specified, then the last genome in the file is loaded (presumably this one is the most evolved)..
+		\item[\code{-genetic [<file name> [<number>]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID\@. If no number is specified, then the last genome in the file is loaded (presumably this one is the most evolved).
 		\item[\code{-random}:] an AI player that chooses a random legal move at each turn.
 	\end{description}
 \end{description}
