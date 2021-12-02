@@ -70,7 +70,7 @@ The following options can be used together to start a single chess game.
 \begin{description}
 	\item[\code{genetic\_chess <player> [<player>]}] Starts a local game. If two players are specified, the first parameter is the white player, and the second is black. If only one player is specified, the program waits for GUI input on stdin. The \code{<player>} argument is replaced with one of the following:
 	\begin{description}
-		\item[\code{-genetic [<file name> [<number>]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID\@. If no number is specified, then the last genome in the file is loaded (presumably this one is the most evolved)..
+		\item[\code{-genetic [<file name> [<number>]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID\@. If no number is specified, then the last genome in the file is loaded (presumably this one is the most evolved).
 		\item[\code{-random}:] an AI player that chooses a random legal move at each turn.
 	\end{description}
 \end{description}
@@ -169,7 +169,7 @@ The fraction of the game played is estimated by the value of pieces that have be
 A regulatory gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
 
 \subsubsection{Search Method}
-This gene determines whether the search method used is the minimax method described in Section~\ref{sec-minimax} or an iterative deepening method. In iterative deepening, a series of fixed depth minimax searches are performed, starting with a depth of one and increasing as long as there is time. The order of moves searched at depth \(n\) is determined by the search at depth \(n-1\).
+This gene determines whether the search method used is the minimax method described in Section~\ref{sec-minimax} or an iterative deepening method. In iterative deepening, a series of fixed depth minimax searches are performed, starting with a depth of one and increasing as long as there is time. The order of moves searched at depth \(n\) is determined by the search at depth \(n-1\)~\cite{iterative-deepening}.
 
 \subsubsection{Piece Strength Gene}\label{piece-strength}
 This gene specifies the importance or strength of each different type of chess piece. Other genes like the Total Force Gene (Section~\ref{total-force}) reference this one for their own evaluation purposes.
@@ -478,6 +478,9 @@ W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a
 
 \bibitem{laplace}
 \url{https://en.wikipedia.org/wiki/Laplace_distribution}
+
+\bibitem{iterative-deepening}
+\url{https://www.chessprogramming.org/Iterative_Deepening}
 
 \bibitem{log-norm-wiki}
 \url{https://en.wikipedia.org/wiki/Log-normal\_distribution}
