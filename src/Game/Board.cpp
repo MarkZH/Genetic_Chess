@@ -234,7 +234,7 @@ std::string Board::fen() const noexcept
     fen_parts.push_back(whose_turn() == Piece_Color::WHITE ? "w" : "b");
 
     std::string castling_mark;
-    for(auto player : {Piece_Color::WHITE, Piece_Color::BLACK})
+    for(const auto player : {Piece_Color::WHITE, Piece_Color::BLACK})
     {
         for(const auto direction : {Direction::RIGHT, Direction::LEFT})
         {
