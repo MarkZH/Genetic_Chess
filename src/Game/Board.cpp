@@ -231,7 +231,7 @@ std::string Board::fen() const noexcept
     }
     auto fen_parts = std::vector<std::string>{String::join(rows.begin(), rows.end(), "/")};
 
-    fen_parts.push_back(whose_turn() == Piece_Color::WHITE ? "w" : "b");
+    fen_parts.push_back(String::lowercase(color_text(whose_turn()).substr(0, 1)));
 
     std::string castling_mark;
     for(const auto player : {Piece_Color::WHITE, Piece_Color::BLACK})
