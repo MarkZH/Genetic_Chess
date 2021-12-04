@@ -180,8 +180,7 @@ class Minimax_AI : public Player
                                                std::vector<const Move*>& principal_variation,
                                                current_variation_store& current_variation) const noexcept;
 
-        //! The brains of the Minimax algorithm that provides board evaluation and
-        //! time management.
+        // The brains of the Minimax algorithm that provides board evaluation and time management.
         Genetic_AI genetic_ai;
 
         // Data for writing commentary for each move choice to PGN files.
