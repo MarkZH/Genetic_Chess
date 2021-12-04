@@ -184,11 +184,7 @@ class Minimax_AI : public Player
         //! time management.
         Genetic_AI genetic_ai;
 
-        //! \brief Data for writing commentary for each move choice to PGN files.
-        //!
-        //! Each entry is a pair of results of the game search tree. The first is the predicted variation
-        //! found while the AI searched for its own move. The second, if it is not default constructed,
-        //! is the variation that follows the AI's opponent's actual next move.
+        // Data for writing commentary for each move choice to PGN files.
         mutable std::vector<Game_Tree_Node_Result> commentary;
 
         // Monitor search speed to adapt to different computers/competing workloads
