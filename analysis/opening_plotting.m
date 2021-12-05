@@ -42,7 +42,7 @@ figure;
 hold all;
 for col = 1 : size(top_data.data, 2)
     plot(cumsum(top_data.data(:, col)), ...
-         'LineWidth', 3, ...
+         'LineWidth', 2, ...
          'displayname', top_data.colheaders{col});
 end
 
@@ -53,8 +53,7 @@ end
 xlabel('Games played');
 ylabel('Total Count');
 leg = legend('show');
-set(leg, 'location', 'southoutside');
-set(leg, 'orientation', 'horizontal');
+set(leg, 'location', 'eastoutside');
 title('Count of opening moves');
 print([raw_data '_opening_moves_plot.png']);
 close;

@@ -14,7 +14,6 @@
 #include "Moves/Move.h"
 
 #include "Players/Minimax_AI.h"
-#include "Players/Iterative_Deepening_AI.h"
 #include "Players/Random_AI.h"
 
 #include "Genes/Gene_Pool.h"
@@ -133,10 +132,8 @@ namespace
                 << "\t-update [filename]\n"
                 << "\t\tIf genetic_chess has changed how genomes are written, use\n\t\tthis option to update the file to the latest format.\n\n"
                 << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP/xboard or UCI command from a GUI\nto start playing.\n\n"
-                << "\t-genetic-minimax [filename [number]]\n"
+                << "\t-genetic [filename [number]]\n"
                 << "\t\tSelect a minimaxing genetic AI player for a game. Optional file name\n\t\tand ID number to load an AI from a file.\n\n"
-                << "\t-genetic-iterative [filename [number]]\n"
-                << "\t\tSelect an iteratively deepening minimax genetic AI player for the game.\n\t\tOptional file name and ID number to\n\t\tload an AI from a file.\n\n"
                 << "\t-random\n"
                 << "\t\tSelect a player that makes random moves for a game.\n\n"
                 << "Other game options:\n\n"
@@ -385,7 +382,7 @@ namespace
             {
                 latest = std::make_unique<Random_AI>();
             }
-            else if(opt == "-genetic-minimax")
+            else if(opt == "-genetic")
             {
                 argument_assert(i + 1 < argc, "Genome file needed for Genetic AI player");
                 std::string filename = argv[++i];
@@ -399,22 +396,6 @@ namespace
                 catch(const std::invalid_argument&) // Could not convert id to an int.
                 {
                     latest = std::make_unique<Minimax_AI>(filename, find_last_id(filename));
-                }
-            }
-            else if(opt == "-genetic-iterative")
-            {
-                argument_assert(i + 1 < argc, "Genome file needed for Genetic AI player");
-                std::string filename = argv[++i];
-
-                try
-                {
-                    const auto id = i + 1 < argc ? argv[i + 1] : std::string{};
-                    latest = std::make_unique<Iterative_Deepening_AI>(filename, String::to_number<int>(id));
-                    ++i;
-                }
-                catch(const std::invalid_argument&) // Could not convert id to an int.
-                {
-                    latest = std::make_unique<Iterative_Deepening_AI>(filename, find_last_id(filename));
                 }
             }
             else if(opt == "-time" && i + 1 < argc)
@@ -499,27 +480,53 @@ namespace
     void update_genome_file(const std::string& file_name)
     {
         auto input = std::ifstream(file_name);
-        std::vector<int> id_list;
+        std::vector<std::string> lines_to_write;
+        auto skip_to_END = false;
+        auto skip_next_blank_line = false;
         for(std::string line; std::getline(input, line);)
         {
+            if(skip_to_END)
+            {
+                if(line == "END")
+                {
+                    skip_to_END = false;
+                    skip_next_blank_line = true;
+                }
+                continue;
+            }
+
             if(line.starts_with("ID:"))
             {
-                id_list.push_back(String::to_number<int>(String::split(line, ":", 1).back()));
+                lines_to_write.push_back(String::split(line, ":", 1).back());
+                skip_to_END = true;
+            }
+            else
+            {
+                if( ! (skip_next_blank_line && line.empty()))
+                {
+                    lines_to_write.push_back(line);
+                }
+                skip_next_blank_line = false;
             }
         }
+
         input = std::ifstream(file_name);
         const auto output_file_name = String::add_to_file_name(file_name, "-updated");
         auto output = std::ofstream(output_file_name);
         std::cout << "Writing to: " << output_file_name << std::endl;
-        for(auto id : id_list)
+        for(const auto& line : lines_to_write)
         {
             try
             {
-                Genetic_AI(input, id).print(output);
+                Genetic_AI(input, std::stoi(line)).print(output);
             }
             catch(const Genetic_AI_Creation_Error& e)
             {
                 std::cerr << e.what() << '\n';
+            }
+            catch(const std::invalid_argument&)
+            {
+                output << line << '\n';
             }
         }
     }

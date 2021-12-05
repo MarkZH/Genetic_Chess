@@ -24,7 +24,6 @@ using namespace std::chrono_literals;
 #endif // _WIN32
 
 #include "Players/Minimax_AI.h"
-#include "Players/Iterative_Deepening_AI.h"
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -50,29 +49,24 @@ namespace
 #endif
     bool keep_going();
 
-    template<typename Search_Type>
-    std::vector<Search_Type> load_gene_pool_file(const std::string& load_file);
+    std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file);
     [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
 
     void pause_gene_pool(int);
 
-    template<typename Search_Type>
-    void write_generation(const std::vector<Search_Type>& pool, const std::string& genome_file_name, bool force_write_still_alive);
+    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive);
 
-    template<typename Stat_Map, typename Search_Type>
-    void purge_dead_from_map(const std::vector<Search_Type>& pool, Stat_Map& stats);
+    template<typename Stat_Map>
+    void purge_dead_from_map(const std::vector<Minimax_AI>& pool, Stat_Map& stats);
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
     int count_wins(const std::string& file_name, int id);
-    template<typename Search_Type>
-    std::vector<Search_Type> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
+    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
     struct best_ai_stats { int id = 0; int wins = 0; double wins_to_beat = 0.0; };
     best_ai_stats recall_previous_best_stats(const std::string& best_file_name, const std::string& game_record_file) noexcept;
-    template<typename Search_Type>
-    void update_best_stats(best_ai_stats& best_stats, const std::vector<Search_Type>& pool, std::map<Search_Type, int>& wins, const std::string& best_file_name) noexcept;
-    template<typename Search_Type>
-    void print_round_header(const std::vector<Search_Type>& pool,
+    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, int>& wins, const std::string& best_file_name) noexcept;
+    void print_round_header(const std::vector<Minimax_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins,
                             size_t round_count,
@@ -80,15 +74,14 @@ namespace
                             size_t second_mutation_interval,
                             size_t mutation_rate,
                             Clock::seconds game_time) noexcept;
-    template<typename Search_Type>
-    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Search_Type>& pool, std::map<Search_Type, int>& wins, std::map<Search_Type, int>& draws);
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, int>& wins, std::map<Minimax_AI, int>& draws);
 }
 
-template<typename Search_Type>
-void gene_pool_run(const Configuration& config)
+void gene_pool(const std::string& config_file)
 {
     signal(PAUSE_SIGNAL, pause_gene_pool);
 
+    const auto config = Configuration(config_file);
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
     const auto roaming_distance = config.as_positive_number<double>("roaming distance");
@@ -122,15 +115,15 @@ void gene_pool_run(const Configuration& config)
     }
 
     auto round_count = count_still_alive_lines(genome_file_name);
-    auto pool = fill_pool<Search_Type>(genome_file_name, gene_pool_population, seed_ai_specification, first_mutation_rate);
+    auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, first_mutation_rate);
 
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
     std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     load_previous_game_stats(game_record_file, game_time, color_wins);
 
-    std::map<Search_Type, int> wins;
-    std::map<Search_Type, int> draws;
+    std::map<Minimax_AI, int> wins;
+    std::map<Minimax_AI, int> draws;
 
     const auto best_file_name = genome_file_name + "_best_genome.txt";
     auto best_stats = recall_previous_best_stats(best_file_name, game_record_file);
@@ -191,7 +184,7 @@ void gene_pool_run(const Configuration& config)
             const auto& winning_player = (mating_winner == Winner_Color::WHITE ? white : black);
             auto& losing_player = (winning_player.id() == white.id() ? black : white);
 
-            auto offspring = Search_Type(white, black);
+            auto offspring = Minimax_AI(white, black);
             offspring.mutate(mutation_rate);
             losing_player = offspring;
 
@@ -212,24 +205,6 @@ void gene_pool_run(const Configuration& config)
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
     }
     std::cout << "Done." << std::endl;
-}
-
-void gene_pool(const std::string& config_file)
-{
-    const auto config = Configuration(config_file);
-    const auto strategy = String::lowercase(String::remove_extra_whitespace(config.as_text("strategy")));
-    if(strategy == "minimax")
-    {
-        gene_pool_run<Minimax_AI>(config);
-    }
-    else if(strategy == "iterative deepening")
-    {
-        gene_pool_run<Iterative_Deepening_AI>(config);
-    }
-    else
-    {
-        throw std::runtime_error("Unknown search strategy: " + strategy);
-    }
 }
 
 namespace
@@ -269,11 +244,10 @@ namespace
     #endif // _WIN32
     }
 
-    template<typename Search_Type>
-    std::vector<Search_Type> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate)
+    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate)
     {
         std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
-        auto pool = load_gene_pool_file<Search_Type>(genome_file_name);
+        auto pool = load_gene_pool_file(genome_file_name);
         const auto write_new_pools = pool.size() != gene_pool_population;
         if(pool.empty() && ! seed_ai_specification.empty())
         {
@@ -284,7 +258,7 @@ namespace
             }
             const auto file_name = seed_split.front();
             const auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
-            const auto seed_ai = Search_Type(file_name, seed_id);
+            const auto seed_ai = Minimax_AI(file_name, seed_id);
             std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
             pool = {seed_ai};
         }
@@ -298,10 +272,9 @@ namespace
         return pool;
     }
 
-    template<typename Search_Type>
-    void write_generation(const std::vector<Search_Type>& pool, const std::string& genome_file_name, bool force_write_still_alive)
+    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive)
     {
-        static std::map<Search_Type, bool> written_before;
+        static std::map<Minimax_AI, bool> written_before;
         static std::string last_file_name;
         static std::ofstream ofs;
         if(last_file_name != genome_file_name)
@@ -342,8 +315,7 @@ namespace
         purge_dead_from_map(pool, written_before);
     }
 
-    template<typename Search_Type>
-    void print_round_header(const std::vector<Search_Type>& pool,
+    void print_round_header(const std::vector<Minimax_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins, \
                             const size_t round_count,
@@ -371,8 +343,7 @@ namespace
     #endif // _WIN32
     }
 
-    template<typename Search_Type>
-    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Search_Type>& pool, std::map<Search_Type, int>& wins, std::map<Search_Type, int>& draws)
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, int>& wins, std::map<Minimax_AI, int>& draws)
     {
         std::cout << result_printer.str();
 
@@ -454,8 +425,7 @@ namespace
         }
     }
 
-    template<typename Search_Type>
-    void update_best_stats(best_ai_stats& best_stats, const std::vector<Search_Type>& pool, std::map<Search_Type, int>& wins, const std::string& best_file_name) noexcept
+    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, int>& wins, const std::string& best_file_name) noexcept
     {
         // Slowly reduce the wins required to be recorded as best to allow
         // later AIs that are playing against a better field to be recorded.
@@ -484,8 +454,7 @@ namespace
                   << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n\n";
     }
 
-    template<typename Search_Type>
-    std::vector<Search_Type> load_gene_pool_file(const std::string& load_file)
+    std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file)
     {
         std::ifstream ifs(load_file);
         if( ! ifs)
@@ -545,7 +514,7 @@ namespace
 
         ifs = std::ifstream(load_file);
         bool search_started_from_beginning_of_file = true;
-        std::vector<Search_Type> result;
+        std::vector<Minimax_AI> result;
         for(auto id : sorted_ids)
         {
             while(true)
@@ -602,8 +571,8 @@ namespace
         throw std::runtime_error("Invalid \"Still Alive\" line (line# " + std::to_string(line_number) + "): " + line);
     }
 
-    template<typename Stat_Map, typename Search_Type>
-    void purge_dead_from_map(const std::vector<Search_Type>& pool, Stat_Map& stats)
+    template<typename Stat_Map>
+    void purge_dead_from_map(const std::vector<Minimax_AI>& pool, Stat_Map& stats)
     {
         Stat_Map new_stats;
         for(const auto& ai : pool)
