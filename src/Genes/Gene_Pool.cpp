@@ -57,7 +57,7 @@ namespace
     void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive);
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const std::vector<Minimax_AI>& pool, Stat_Map& stats);
+    void purge_dead(const std::vector<Minimax_AI>& pool, Stat_Map& stats);
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
     int count_wins(const std::string& file_name, int id);
@@ -200,7 +200,7 @@ void gene_pool(const std::string& config_file)
         }
 
         write_generation(pool, genome_file_name, false);
-        purge_dead_from_map(pool, stats);
+        purge_dead(pool, stats);
         update_best_stats(best_stats, pool, stats, best_file_name);
 
         if(verbose_output)
@@ -318,7 +318,7 @@ namespace
             ofs << "\n\n" << std::flush;
         }
 
-        purge_dead_from_map(pool, written_before);
+        purge_dead(pool, written_before);
     }
 
     void print_round_header(const std::vector<Minimax_AI>& pool,
@@ -578,7 +578,7 @@ namespace
     }
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const std::vector<Minimax_AI>& pool, Stat_Map& stats)
+    void purge_dead(const std::vector<Minimax_AI>& pool, Stat_Map& stats)
     {
         Stat_Map new_stats;
         for(const auto& ai : pool)
