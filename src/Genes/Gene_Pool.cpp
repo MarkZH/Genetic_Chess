@@ -323,7 +323,7 @@ namespace
 
     void print_round_header(const std::vector<Minimax_AI>& pool,
                             const std::string& genome_file_name,
-                            const std::array<size_t, 3>& color_wins, \
+                            const std::array<size_t, 3>& color_wins,
                             const size_t round_count,
                             const size_t first_mutation_interval,
                             const size_t second_mutation_interval,
