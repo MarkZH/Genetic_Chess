@@ -278,7 +278,7 @@ namespace
         return pool;
     }
 
-    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive)
+    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name, const bool force_write_still_alive)
     {
         static std::map<Minimax_AI, bool> written_before;
         static std::string last_file_name;
@@ -297,7 +297,7 @@ namespace
 
         auto sorted_pool = pool;
         std::sort(sorted_pool.begin(), sorted_pool.end());
-        auto needs_still_alive_line = false;
+        auto needs_still_alive_line = force_write_still_alive;
         for(const auto& ai : sorted_pool)
         {
             if( ! written_before[ai])
@@ -308,7 +308,7 @@ namespace
             }
         }
 
-        if(needs_still_alive_line || force_write_still_alive)
+        if(needs_still_alive_line)
         {
             ofs << "\nStill Alive: ";
             for(const auto& ai : pool)
