@@ -9,7 +9,6 @@
 #include <mutex>
 #include <algorithm>
 #include <bitset>
-#include <atomic>
 #include <string>
 #include <chrono>
 using namespace std::chrono_literals;
@@ -20,6 +19,7 @@ using namespace std::chrono_literals;
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
 #include "Moves/Move.h"
+#include "Moves/Direction.h"
 
 #include "Players/Player.h"
 
@@ -44,33 +44,23 @@ namespace
         return hash_cache;
     }();
 
-    const auto en_passant_hash_values =
-    []()
-    {
-        // One entry for each file
-        std::array<uint64_t, 8> en_passant_hash_cache;
-        std::generate(en_passant_hash_cache.begin(),
-                      en_passant_hash_cache.end(),
-                      Random::random_unsigned_int64);
-        return en_passant_hash_cache;
-    }();
-
     const auto castling_hash_values =
     []()
     {
-        // One entry for each rook
-        std::array<uint64_t, 4> castling_hash_cache;
-        std::generate(castling_hash_cache.begin(),
-                      castling_hash_cache.end(),
-                      Random::random_unsigned_int64);
+        std::array<std::array<uint64_t, 2>, 2> castling_hash_cache; // Indexed by [Piece_Color][Direction]
+        for(auto& a : castling_hash_cache)
+        {
+            std::generate(a.begin(),
+                          a.end(),
+                          Random::random_unsigned_int64);
+        }
         return castling_hash_cache;
     }();
 
     const uint64_t switch_turn_board_hash = Random::random_unsigned_int64();
+    const auto en_passant_hash = Random::random_unsigned_int64();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    std::atomic<Thinking_Output_Type> thinking_indicator = Thinking_Output_Type::NO_THINKING;
-    std::atomic_bool move_immediately = false;
     std::map<uint64_t, std::string> starting_fen_from_starting_hash;
 }
 
@@ -114,15 +104,6 @@ Board::Board(const std::string& input_fen)
     fen_parse_assert(find_king(Piece_Color::WHITE).is_set(), input_fen, "White king not in FEN string");
     fen_parse_assert(find_king(Piece_Color::BLACK).is_set(), input_fen, "Black king not in FEN string");
 
-    for(const auto square : Square::all_squares())
-    {
-        const auto piece = piece_on_square(square);
-        if(piece && piece.type() != Piece_Type::ROOK && piece.type() != Piece_Type::KING)
-        {
-            set_already_moved(square, false);
-        }
-    }
-
     if(fen_parse[1] == "b")
     {
         switch_turn();
@@ -151,12 +132,10 @@ Board::Board(const std::string& input_fen)
 
             const std::string side = std::toupper(c) == 'K' ? "king" : "queen";
             fen_parse_assert(piece_on_square(rook_square) == Piece{piece_color, Piece_Type::ROOK}, input_fen,
-                             "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.string() + " to castle " + side + "side.");
-            set_already_moved(rook_square, false);
-
+                             "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.text() + " to castle " + side + "side.");
             fen_parse_assert(piece_on_square(king_square) == Piece{piece_color, Piece_Type::KING}, input_fen,
-                             "There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.string() + " to castle.");
-            set_already_moved(king_square, false);
+                             "There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.text() + " to castle.");
+            make_castle_legal(piece_color, rook_square.file() == 'a' ? Direction::LEFT : Direction::RIGHT);
         }
     }
 
@@ -215,13 +194,6 @@ Piece Board::piece_on_square(const Square square) const noexcept
     return board[square.index()];
 }
 
-void Board::set_already_moved(const Square square, const bool piece_has_already_moved) noexcept
-{
-    update_board_hash(square); // remove reference to moved piece
-    unmoved_positions[square.index()] = ! piece_has_already_moved;
-    update_board_hash(square);
-}
-
 bool Board::is_in_legal_moves_list(const Move& move) const noexcept
 {
     return std::find(legal_moves().begin(), legal_moves().end(), &move) != legal_moves().end();
@@ -259,27 +231,23 @@ std::string Board::fen() const noexcept
     }
     auto fen_parts = std::vector<std::string>{String::join(rows.begin(), rows.end(), "/")};
 
-    fen_parts.push_back(whose_turn() == Piece_Color::WHITE ? "w" : "b");
+    fen_parts.push_back(String::lowercase(color_text(whose_turn()).substr(0, 1)));
 
     std::string castling_mark;
-    for(auto player : {Piece_Color::WHITE, Piece_Color::BLACK})
+    for(const auto player : {Piece_Color::WHITE, Piece_Color::BLACK})
     {
-        const auto king_square = find_king(player);
-        if( ! piece_has_moved(king_square))
+        for(const auto direction : {Direction::RIGHT, Direction::LEFT})
         {
-            for(char rook_file : {'h', 'a'})
+            if(castle_is_legal(player, direction))
             {
-                if( ! piece_has_moved({rook_file, king_square.rank()})) // has rook moved?
-                {
-                    const auto mark = (rook_file == 'h' ? 'K' : 'Q');
-                    castling_mark.push_back(player == Piece_Color::BLACK ? String::tolower(mark) : mark);
-                }
+                const auto mark = (direction == Direction::RIGHT ? 'K' : 'Q');
+                castling_mark.push_back(player == Piece_Color::BLACK ? String::tolower(mark) : mark);
             }
         }
     }
     fen_parts.push_back(castling_mark.empty() ? "-" : castling_mark);
 
-    fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.string() : "-");
+    fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.text() : unused_en_passant_target.text());
     fen_parts.push_back(std::to_string(moves_since_pawn_or_capture()));
     fen_parts.push_back(std::to_string(1 + all_ply_count()/2));
     return String::join(fen_parts.begin(), fen_parts.end(), " ");
@@ -310,21 +278,9 @@ size_t Board::all_ply_count() const noexcept
     return plies_at_construction + played_ply_count();
 }
 
-std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const noexcept
+std::vector<const Move*> Board::derive_moves(const Board& new_board) const noexcept
 {
-    std::string goal_fen;
-    size_t moves_to_derive_count;
-    try
-    {
-        auto new_board = Board(new_fen);
-        goal_fen = new_board.fen();
-        moves_to_derive_count = new_board.all_ply_count() - all_ply_count();
-    }
-    catch(const std::invalid_argument&)
-    {
-        return {};
-    }
-
+    const size_t moves_to_derive_count = new_board.all_ply_count() - all_ply_count();;
     if(moves_to_derive_count > 2 || moves_to_derive_count < 1)
     {
         return {};
@@ -336,21 +292,17 @@ std::vector<const Move*> Board::derive_moves(const std::string& new_fen) const n
         first_move_board.play_move(*first_move);
         if(moves_to_derive_count == 1)
         {
-            if(first_move_board.fen() == goal_fen)
+            if(first_move_board.fen() == new_board.fen())
             {
                 return {first_move};
             }
         }
         else
         {
-            for(auto second_move : first_move_board.legal_moves())
+            const auto next_moves = first_move_board.derive_moves(new_board);
+            if(next_moves.size() == 1)
             {
-                auto second_move_board = first_move_board;
-                second_move_board.play_move(*second_move);
-                if(second_move_board.fen() == goal_fen)
-                {
-                    return {first_move, second_move};
-                }
+                return {first_move, next_moves.front()};
             }
         }
     }
@@ -395,6 +347,21 @@ Game_Result Board::move_result() const noexcept
     return {};
 }
 
+void Board::make_castle_legal(Piece_Color color, Direction direction) noexcept
+{
+    legal_castles[static_cast<int>(color)][static_cast<int>(direction)] = true;
+    current_board_hash ^= castling_hash_values[static_cast<int>(color)][static_cast<int>(direction)];
+}
+
+void Board::make_castle_illegal(Piece_Color color, Direction direction) noexcept
+{
+    if(castle_is_legal(color, direction))
+    {
+        legal_castles[static_cast<int>(color)][static_cast<int>(direction)] = false;
+        current_board_hash ^= castling_hash_values[static_cast<int>(color)][static_cast<int>(direction)];
+    }
+}
+
 void Board::update_board(const Move& move) noexcept
 {
     assert(is_in_legal_moves_list(move));
@@ -402,6 +369,8 @@ void Board::update_board(const Move& move) noexcept
     ++game_move_count;
     previous_move = &move;
     move_piece(move);
+    clear_en_passant_target();
+    unused_en_passant_target = {};
     move.side_effects(*this);
     switch_turn();
 
@@ -410,15 +379,9 @@ void Board::update_board(const Move& move) noexcept
     add_board_position_to_repeat_record();
 }
 
-void Board::fix_en_passant_hash() noexcept
+bool Board::castle_is_legal(Piece_Color color, Direction direction) const noexcept
 {
-    if(en_passant_target.is_set())
-    {
-        if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), [](auto move) { return move->is_en_passant(); }))
-        {
-            current_board_hash ^= en_passant_hash_values[en_passant_target.index()/8];
-        }
-    }
+    return legal_castles[static_cast<int>(color)][static_cast<int>(direction)];
 }
 
 void Board::switch_turn() noexcept
@@ -476,10 +439,13 @@ void Board::move_piece(const Move& move) noexcept
     {
         clear_repeat_count();
     }
+    else if(moving_piece.type() == Piece_Type::KING)
+    {
+        make_castle_illegal(moving_piece.color(), Direction::RIGHT);
+        make_castle_illegal(moving_piece.color(), Direction::LEFT);
+    }
     remove_piece(move.start());
     place_piece(moving_piece, move.end());
-
-    clear_en_passant_target();
 }
 
 Piece_Color Board::whose_turn() const noexcept
@@ -494,6 +460,20 @@ const std::vector<const Move*>& Board::legal_moves() const noexcept
 
 void Board::remove_piece(const Square square) noexcept
 {
+    const auto leaving_piece = piece_on_square(square);
+    if(leaving_piece.type() == Piece_Type::ROOK)
+    {
+        const auto right_castle_square = Square{'h', leaving_piece.color() == Piece_Color::WHITE ? 1 : 8};
+        const auto  left_castle_square = Square{'a', leaving_piece.color() == Piece_Color::WHITE ? 1 : 8};
+        if(castle_is_legal(leaving_piece.color(), Direction::RIGHT) && square == right_castle_square)
+        {
+            make_castle_illegal(leaving_piece.color(), Direction::RIGHT);
+        }
+        else if(castle_is_legal(leaving_piece.color(), Direction::LEFT) && square == left_castle_square)
+        {
+            make_castle_illegal(leaving_piece.color(), Direction::LEFT);
+        }
+    }
     place_piece({}, square);
 }
 
@@ -507,23 +487,6 @@ void Board::place_piece(const Piece piece, const Square square) noexcept
     remove_attacks_from(square, old_piece);
     update_blocks(square, old_piece, piece);
     add_attacks_from(square, piece);
-
-    const auto update_rook_hashes = old_piece && old_piece.type() == Piece_Type::KING && ! piece_has_moved(square);
-    if(update_rook_hashes)
-    {
-        // XOR out castling rights on rook squares
-        update_board_hash({'a', square.rank()});
-        update_board_hash({'h', square.rank()});
-    }
-
-    set_already_moved(square, true);
-
-    if(update_rook_hashes)
-    {
-        // XOR in hashes with no castling rights
-        update_board_hash({'a', square.rank()});
-        update_board_hash({'h', square.rank()});
-    }
 
     update_board_hash(square); // XOR in new piece on square
 
@@ -792,7 +755,6 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     print_game_header_line(out_stream, "White", white.name());
     print_game_header_line(out_stream, "Black", black.name());
 
-    // Get actual result
     const auto last_move_result = move_result();
     const auto& actual_result = last_move_result.game_has_ended() ? last_move_result : result;
     print_game_header_line(out_stream, "Result", actual_result.game_ending_annotation());
@@ -847,17 +809,11 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
 void Board::make_en_passant_targetable(const Square square) noexcept
 {
-    if(en_passant_target.is_set())
+    if(square.is_set() != en_passant_target.is_set())
     {
-        update_board_hash(en_passant_target); // XOR out previous en passant target
+        current_board_hash ^= en_passant_hash;
     }
-
     en_passant_target = square;
-
-    if(square.is_set())
-    {
-        update_board_hash(square);
-    }
 }
 
 bool Board::is_en_passant_targetable(const Square square) const noexcept
@@ -868,11 +824,6 @@ bool Board::is_en_passant_targetable(const Square square) const noexcept
 void Board::clear_en_passant_target() noexcept
 {
     make_en_passant_targetable({});
-}
-
-bool Board::piece_has_moved(const Square square) const noexcept
-{
-    return ! unmoved_positions[square.index()];
 }
 
 Square Board::find_king(const Piece_Color color) const noexcept
@@ -908,7 +859,16 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
-    fix_en_passant_hash();
+    if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), [](const auto move) { return move->is_en_passant(); }))
+    {
+        disable_en_passant_target();
+    }
+}
+
+void Board::disable_en_passant_target() noexcept
+{
+    unused_en_passant_target = en_passant_target;
+    clear_en_passant_target();
 }
 
 Square Board::find_checking_square() const noexcept
@@ -1000,31 +960,6 @@ bool Board::enough_material_to_checkmate() const noexcept
     return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
-void Board::set_thinking_mode(const Thinking_Output_Type mode) noexcept
-{
-    thinking_indicator = mode;
-}
-
-Thinking_Output_Type Board::thinking_mode() noexcept
-{
-    return thinking_indicator;
-}
-
-void Board::pick_move_now() noexcept
-{
-    move_immediately = true;
-}
-
-void Board::choose_move_at_leisure() noexcept
-{
-    move_immediately = false;
-}
-
-bool Board::must_pick_move_now() noexcept
-{
-    return move_immediately;
-}
-
 void Board::update_board_hash(const Square square) noexcept
 {
     current_board_hash ^= square_hash(square);
@@ -1038,27 +973,7 @@ void Board::update_whose_turn_hash() noexcept
 uint64_t Board::square_hash(Square square) const noexcept
 {
     assert(square.inside_board());
-
-    const auto piece = piece_on_square(square);
-    const auto index = square.index();
-    auto result = square_hash_values[index][piece.index()];
-    if(piece &&
-       piece.type() == Piece_Type::ROOK &&
-       ! piece_has_moved(square) &&
-       ! piece_has_moved(find_king(piece.color())))
-    {
-        const auto on_first_rank = (index%8 == 0);
-        const auto on_first_file = (index/8 == 0);
-        result ^= castling_hash_values[2*on_first_file + on_first_rank];
-    }
-
-    if( ! piece && is_en_passant_targetable(square))
-    {
-        const auto file_index = index/8;
-        result ^= en_passant_hash_values[file_index];
-    }
-
-    return result;
+    return square_hash_values[square.index()][piece_on_square(square).index()];
 }
 
 uint64_t Board::board_hash() const noexcept
@@ -1070,7 +985,6 @@ bool Board::move_captures(const Move& move) const noexcept
 {
     const auto attacked_piece = piece_on_square(move.end());
 
-    // Assert move is actually legal
     assert(is_in_legal_moves_list(move));
     assert( ! attacked_piece || (move.can_capture() && attacked_piece.color() == opposite(whose_turn())));
 
@@ -1259,4 +1173,56 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
 size_t Board::previous_moves_count() const noexcept
 {
     return prior_moves_count;
+}
+
+void Board::compare_hashes(const Board& other) const noexcept
+{
+    std::cerr << "Differing square hashes: ";
+    for(const auto square : Square::all_squares())
+    {
+        if(square_hash(square) != other.square_hash(square))
+        {
+            std::cerr << square.text() << ' ';
+        }
+    }
+    std::cerr << std::endl;
+    const auto hash_diff = (board_hash() ^ other.board_hash());
+    const auto white = static_cast<int>(Piece_Color::WHITE);
+    const auto black = static_cast<int>(Piece_Color::BLACK);
+    const auto right = static_cast<int>(Direction::RIGHT);
+    const auto left  = static_cast<int>(Direction::LEFT);
+    const auto both_white_castles = (castling_hash_values[white][right] ^ castling_hash_values[white][left]);
+    const auto both_black_castles = (castling_hash_values[black][right] ^ castling_hash_values[black][left]);
+    if(hash_diff == en_passant_hash)
+    {
+        std::cerr << "en passant hash" << std::endl;
+    }
+    else if(hash_diff == both_white_castles)
+    {
+        std::cerr << "both white castling" << std::endl;
+    }
+    else if(hash_diff == both_black_castles)
+    {
+        std::cerr << "both black castling" << std::endl;
+    }
+    else if(hash_diff == castling_hash_values[black][right])
+    {
+        std::cerr << "black kingside castle" << std::endl;
+    }
+    else if(hash_diff == castling_hash_values[white][right])
+    {
+        std::cerr << "white kingside castle" << std::endl;
+    }
+    else if(hash_diff == castling_hash_values[white][left])
+    {
+        std::cerr << "white queenside castle" << std::endl;
+    }
+    else if(hash_diff == castling_hash_values[black][left])
+    {
+        std::cerr << "black queenside castle" << std::endl;
+    }
+    else
+    {
+        std::cerr << "Something else" << std::endl;
+    }
 }

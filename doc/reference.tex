@@ -62,7 +62,7 @@ These first options are standalone operations. If multiple options are used, all
 	\item[\code{genetic\_chess -test}] Run tests of the program for chess rule conformance and for Genetic AIs working properly.
 	\item[\code{genetic\_chess -perft}:] Test game logic and speed by counting legal moves from a list of board positions.
 	\item[\code{genetic\_chess -speed}:] Measure the speed of various components of the chess engine.
-	\item[\code{genetic\_chess -confirm <file name>}] Analyze a game recod in Portable Game Notation (PGN \cite{pgn-file-format}) to check that all moves listed are legal and all move are correctly noted with respect to check (+), capture (x), and checkmate (\#).
+	\item[\code{genetic\_chess -confirm <file name>}] Analyze a game record in Portable Game Notation (PGN \cite{pgn-file-format}) to check that all moves listed are legal and all move are correctly noted with respect to check (+), capture (x), and checkmate (\#).
 	\item[\code{genetic\_chess -genepool <file name>}]
 This will start up a gene pool with Genetic\_AIs playing against each other---mating, killing, mutating, all that good Darwinian stuff. The required file name parameter will cause the program to load a gene pool and other settings from a configuration file. A record of every genome and game played will be written to text files.
 \end{description}
@@ -70,7 +70,7 @@ The following options can be used together to start a single chess game.
 \begin{description}
 	\item[\code{genetic\_chess <player> [<player>]}] Starts a local game. If two players are specified, the first parameter is the white player, and the second is black. If only one player is specified, the program waits for GUI input on stdin. The \code{<player>} argument is replaced with one of the following:
 	\begin{description}
-		\item[\code{-genetic [<file name> [<number>]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID\@. If no number is specified, then the last genome in the file is loaded (presumably this one is the most evolved)..
+		\item[\code{-genetic [<file name> [<number>]]}:] a Genetic AI player. If a file name follows, load the genes from that file. If there are several genomes in a file, the file name can be followed by a number to load the genome with that ID\@. If no number is specified, then the last genome in the file is loaded (presumably this one is the most evolved).
 		\item[\code{-random}:] an AI player that chooses a random legal move at each turn.
 	\end{description}
 \end{description}
@@ -107,7 +107,7 @@ Why not evolve these numbers? While the priorities of various genes can be varie
 
 The specific values were chosen to make the scoring symmetrical between the two players, in that the score for one side is the negative of the score as seen from the other side (assuming the same player does the scoring). What is good for one player is bad for the other player by the same amount.
 
-\subsection{Mini-maxing}
+\subsection{Mini-maxing}\label{sec-minimax}
 
 The principle behind the minimax algorithm is that the quality of a move is measured by the quality of moves it allows the opponent to make. Of course, the quality of those moves is measured by the quality of the moves that follow. Ideally, the only required board evaluation scores would be \(1\)~for a win, \(0\)~for a draw, and \(-1\)~for a loss, and all possible sequences of moves would be examined to find the guaranteed outcome. Unfortunately, the number of positions to examine in a typical game is far too large to examine in a few minutes, so the search has to be cut off at some point and a heuristic evaluation employed to estimate the probability of winning from that stopping point. In this program, the decision of when to stop and the heuristic evaluation is genetically determined and evolved over many generations.
 
@@ -163,15 +163,20 @@ V = V_1 + (V_2 - V_1)r
 \]
 where \(V\) is the value to use in the current computation, \(V_1\) is the value at the start of the game, \(V_2\) is the value at the end of the game, and \(r\) is the fraction of the game that has been played. In the example genome file (Section~\ref{genome-file-format}), genes that are interpolated have \code{- Opening} and \code{- Endgame} suffixes with the same meaning as \(V_1\) and \(V_2\), respectively.
 
+The fraction of the game played is estimated by the value of pieces that have been removed from the board counting only those pieces from the player that has lost the most pieces. The idea is that the more pieces that have been captured, the closer the game is to the endgame. Furthermore, if one side has lost a lot more pieces than the other, then the game is also probably close to finished.
+
 \subsection{Regulatory Genes}
 A regulatory gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
+
+\subsubsection{Search Method}
+This gene determines whether the search method used is the minimax method described in Section~\ref{sec-minimax} or an iterative deepening method. In iterative deepening, a series of fixed depth minimax searches are performed, starting with a depth of one and increasing as long as there is time. The order of moves searched at depth \(n\) is determined by the search at depth \(n-1\)~\cite{iterative-deepening}.
 
 \subsubsection{Piece Strength Gene}\label{piece-strength}
 This gene specifies the importance or strength of each different type of chess piece. Other genes like the Total Force Gene (Section~\ref{total-force}) reference this one for their own evaluation purposes.
 
 Previously, the king was not assigned a strength because it is always on the board, so it cannot affect the move chosen. This is not quite true. The score returned by the Total Force Gene cannot be affected by the king's strength because there is always one black and one white king on the board, canceling their contribution to a board position's score (see Sections~\ref{board-score-section} and~\ref{total-force}). However, the Opponent Pieces Targeted Gene does have a use for that value, since putting an opponent in check is an important component of the game. Some surprising results of adding a strength value for the king are discussed in Section~\ref{piece-strength-with-king}.
 
-The piece values in this gene are also consulted when estimating the progress of the game from opening to endgame when calculating other genetic aspects. Progress is evaluated as a fractional number from 0.0 at the opening to 1.0 in the late endgame. It is calcualted by totaling the value of the pieces of the side that has had the most total value of pieces captured and dividing by the total value of pieces minus the king value (since the king is always on the board).
+The piece values in this gene are also consulted when estimating the progress of the game from opening to endgame when calculating other genetic aspects. Progress is evaluated as a fractional number from 0.0 at the opening to 1.0 in the late endgame. It is calculated by totaling the value of the pieces of the side that has had the most total value of pieces captured and dividing by the total value of pieces minus the king value (since the king is always on the board).
 \[
 \textrm{Progress} = \frac{1.0 - \sum |\textrm{value}(piece)|}{1.0 - |\textrm{value}(king)|}
 \]
@@ -473,6 +478,9 @@ W.H. Miner, Jr., P.M. Valanju, S.P. Hirshman, A. Brooks, N. Pomphrey, ``Use of a
 
 \bibitem{laplace}
 \url{https://en.wikipedia.org/wiki/Laplace_distribution}
+
+\bibitem{iterative-deepening}
+\url{https://www.chessprogramming.org/Iterative_Deepening}
 
 \bibitem{log-norm-wiki}
 \url{https://en.wikipedia.org/wiki/Log-normal\_distribution}

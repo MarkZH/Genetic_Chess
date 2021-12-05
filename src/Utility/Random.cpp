@@ -3,6 +3,7 @@
 #include <random>
 #include <string>
 #include <limits>
+#include <functional>
 
 namespace
 {
@@ -13,7 +14,7 @@ namespace
         void generate(const Iterator begin, const Iterator end) const
         {
             std::random_device rd;
-            std::generate(begin, end, [&rd]() { return rd(); });
+            std::generate(begin, end, std::ref(rd));
         }
     };
 }

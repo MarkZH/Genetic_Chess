@@ -189,6 +189,8 @@ namespace
     void one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(bool& tests_passed);
 
     void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed);
+    void identical_boards_have_identical_hashes(bool& tests_passed);
+    void boards_with_different_en_passant_targets_have_different_hashes(bool& tests_passed);
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed);
     void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed);
@@ -254,6 +256,8 @@ bool run_tests()
     one_hundred_ply_with_no_pawn_or_capture_move_yields_fifty_move_game_result(tests_passed);
 
     derived_moves_applied_to_earlier_board_result_in_later_board(tests_passed);
+    identical_boards_have_identical_hashes(tests_passed);
+    boards_with_different_en_passant_targets_have_different_hashes(tests_passed);
 
     test_result(tests_passed, run_board_tests("testing/board_tests.txt"), "");
 
@@ -419,6 +423,7 @@ void run_speed_tests()
             score += gene->evaluate(performance_board, opposite(side), performance_board.played_ply_count(), 20);
         }
         timing_results.emplace_back(std::chrono::steady_clock::now() - gene_start, gene->name());
+        (void)score;
     }
     timing_results.emplace_back(std::chrono::steady_clock::now() - all_genes_start, "Complete gene scoring");
 
@@ -842,7 +847,7 @@ namespace
             for(int rank = 1; rank <= 8; ++rank)
             {
                 const auto square = Square{file, rank};
-                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.string());
+                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.text());
                 visited[square.index()] = true;
             }
         }
@@ -858,7 +863,7 @@ namespace
                 const auto square = Square{file, rank};
                 test_result(tests_passed,
                             square.file() == file && square.rank() == rank,
-                            std::string{"Square constructed with "} + file + std::to_string(rank) + " results in " + square.string());
+                            std::string{"Square constructed with "} + file + std::to_string(rank) + " results in " + square.text());
             }
         }
     }
@@ -902,7 +907,7 @@ namespace
                 const auto dr = std::abs(diff.rank_change);
                 if((dr == 0 && df == 1) || (df == 0 && dr == 1)) // square are adjacent in same row or column
                 {
-                    test_result(tests_passed, square1.color() != square2.color(), "Adjacent squares " + square1.string() + " and " + square2.string() + " have same color.");
+                    test_result(tests_passed, square1.color() != square2.color(), "Adjacent squares " + square1.text() + " and " + square2.text() + " have same color.");
                 }
             }
         }
@@ -917,7 +922,7 @@ namespace
                 test_result(tests_passed,
                             a + (b - a) == b,
                             "Square arithetic problem: " +
-                            a.string() + " + (" + b.string() + " - " + a.string() + ") != " + b.string());
+                            a.text() + " + (" + b.text() + " - " + a.text() + ") != " + b.text());
             }
         }
     }
@@ -927,7 +932,7 @@ namespace
         std::array<bool, 64> squares_visited{};
         for(const auto square : Square::all_squares())
         {
-            test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.string() + " already visited.");
+            test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.text() + " already visited.");
             squares_visited[square.index()] = true;
         }
         test_result(tests_passed,
@@ -939,19 +944,15 @@ namespace
     {
         const auto board = Board(fen);
         const auto& move_list = board.legal_moves();
-        const auto found_move = std::find_if(move_list.begin(),
-                                             move_list.end(),
-                                             [&board, &move_text](const Move* const move)
-                                             {
-                                                 return move->algebraic(board) == move_text;
-                                             });
+        const auto find_move_text = [&board, &move_text](const Move* const move) { return move->algebraic(board) == move_text; };
+        const auto found_move = std::find_if(move_list.begin(), move_list.end(), find_move_text);
 
-        const auto move_found = found_move != move_list.end();
-        test_result(tests_passed, move_found, "Ambiguous move notation not found: " + move_text);
-        if(move_found)
+        test_result(tests_passed, found_move != move_list.end(), "Ambiguous move notation not found: " + move_text);
+        if(found_move != move_list.end())
         {
-            test_result(tests_passed, (*found_move)->start() == Square{start_square}, move_text + " does not start on square " + start_square + ".");
-            test_result(tests_passed, (*found_move)->end() == Square{end_square}, move_text + " does not end on square " + end_square + ".");
+            test_result(tests_passed, (*found_move)->start().text() == start_square, move_text + " does not start on square " + start_square + ".");
+            test_result(tests_passed, (*found_move)->end().text() == end_square, move_text + " does not end on square " + end_square + ".");
+            test_result(tests_passed, std::find_if(std::next(found_move), move_list.end(), find_move_text) == move_list.end(), "Multiple moves with algebraic text: " + move_text);
         }
     }
 
@@ -1035,13 +1036,71 @@ namespace
     void derived_moves_applied_to_earlier_board_result_in_later_board(bool& tests_passed)
     {
         Board move_derivation_board;
-        const auto derived_fen = std::string{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
-        const auto derived_moves = move_derivation_board.derive_moves(derived_fen);
+        const auto goal_board = Board{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
+        const auto derived_moves = move_derivation_board.derive_moves(goal_board);
+        test_result(tests_passed, derived_moves.size() == 2, "Wrong number of moves derived. Got " + std::to_string(derived_moves.size()));
         for(const auto move : derived_moves)
         {
             move_derivation_board.play_move(*move);
         }
-        test_result(tests_passed, move_derivation_board.fen() == derived_fen, "Wrong moves derived.");
+        test_result(tests_passed, move_derivation_board.fen() == goal_board.fen(), "Wrong moves derived. " + move_derivation_board.fen() + " != " + goal_board.fen());
+    }
+
+    void identical_boards_have_identical_hashes(bool& tests_passed)
+    {
+        Board board;
+        test_result(tests_passed, board.board_hash() == Board{board.fen()}.board_hash(), "Standard starting board hashes do not match.");
+        std::vector<std::string> moves;
+        auto maximum_move_count =
+        #ifdef NDEBUG
+            1'000'000;
+        #else
+            1'000;
+        #endif
+        for(auto move_count = 1; move_count <= maximum_move_count; ++move_count)
+        {
+            const auto& move_list = board.legal_moves();
+            if(move_list.empty())
+            {
+                board = {};
+                moves = {};
+            }
+            else
+            {
+                auto move = Random::random_element(move_list);
+                moves.push_back(move->algebraic(board));
+                board.play_move(*move);
+                auto identical_board = Board(board.fen());
+                if(board.board_hash() != identical_board.board_hash())
+                {
+                    tests_passed = false;
+                    std::cerr << "Boards do not have equal hashes: " << board.fen() << "\n"
+                              << "                                 " << identical_board.fen() << "\n"
+                              << "Move count: " << move_count << std::endl;
+                    std::cerr << "Moves: " << String::join(moves.begin(), moves.end(), " ") << std::endl;
+                    board.compare_hashes(identical_board);
+                    break;
+                }
+            }
+        }
+    }
+
+    void boards_with_different_en_passant_targets_have_different_hashes(bool& tests_passed)
+    {
+        Board board;
+        for(const auto move : {"e4", "a6", "e5", "f5"})
+        {
+            board.play_move(move);
+        }
+        const auto hash  = board.board_hash();
+        const auto fen = board.fen();
+
+        for(const auto move : {"Nc3", "Nc6", "Nb1", "Nb8"})
+        {
+            board.play_move(move);
+        }
+
+        test_result(tests_passed, hash != board.board_hash(), "Change in en passant target should result in different hash.\n" + fen + "\n" + board.fen());
     }
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed)

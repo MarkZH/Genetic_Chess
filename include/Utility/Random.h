@@ -76,7 +76,7 @@ namespace Random
 
             // Items whose new position is off the end of the list
             // reappear on the other side.
-            auto right_border = double(positions.size());
+            const auto right_border = double(positions.size());
             while(position < 0.0)
             {
                 position += right_border;

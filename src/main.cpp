@@ -14,7 +14,6 @@
 #include "Moves/Move.h"
 
 #include "Players/Minimax_AI.h"
-#include "Players/Iterative_Deepening_AI.h"
 #include "Players/Random_AI.h"
 
 #include "Genes/Gene_Pool.h"
@@ -133,10 +132,8 @@ namespace
                 << "\t-update [filename]\n"
                 << "\t\tIf genetic_chess has changed how genomes are written, use\n\t\tthis option to update the file to the latest format.\n\n"
                 << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP/xboard or UCI command from a GUI\nto start playing.\n\n"
-                << "\t-genetic-minimax [filename [number]]\n"
+                << "\t-genetic [filename [number]]\n"
                 << "\t\tSelect a minimaxing genetic AI player for a game. Optional file name\n\t\tand ID number to load an AI from a file.\n\n"
-                << "\t-genetic-iterative [filename [number]]\n"
-                << "\t\tSelect an iteratively deepening minimax genetic AI player for the game.\n\t\tOptional file name and ID number to\n\t\tload an AI from a file.\n\n"
                 << "\t-random\n"
                 << "\t\tSelect a player that makes random moves for a game.\n\n"
                 << "Other game options:\n\n"
@@ -155,6 +152,25 @@ namespace
                 << "\t-game-file [file name]\n"
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n"
                 << "All game options in this section can be overriden by GUI commands except\n-short-post, -event, -location, and -game-file.\n\n";
+    }
+
+    bool check_rule_result(const std::string& rule_source,
+                           const std::string& rule_name,
+                           const bool expected_ruling,
+                           const bool actual_ruling,
+                           const int last_move_line_number)
+    {
+        const auto pass = expected_ruling == actual_ruling;
+        if( ! pass)
+        {
+            std::cerr << rule_source << " indicates "
+                      << (expected_ruling ? "" : "no ")
+                      << rule_name << ", but last move did "
+                      << (actual_ruling ? "" : "not ")
+                      << "trigger rule (line: " << last_move_line_number << ")." << std::endl;
+        }
+
+        return pass;
     }
 
     bool confirm_game_record(const std::string& file_name)
@@ -188,15 +204,30 @@ namespace
             // Start header of new game
             if(in_game && line.starts_with("["))
             {
-                if(expect_fifty_move_draw != result.ending_reason().contains("50"))
+                if( ! check_rule_result("Header",
+                                        "50-move draw",
+                                        expect_fifty_move_draw,
+                                        result.ending_reason().contains("50"),
+                                        last_move_line_number))
                 {
-                    std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
                     return false;
                 }
 
-                if(expect_threefold_draw != result.ending_reason().contains("fold"))
+                if( ! check_rule_result("Header",
+                                        "threefold draw",
+                                        expect_threefold_draw,
+                                        result.ending_reason().contains("fold"),
+                                        last_move_line_number))
                 {
-                    std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
+                    return false;
+                }
+
+                if( ! check_rule_result("Header",
+                                        "checkmate",
+                                        expect_checkmate,
+                                        result.ending_reason().contains("mates"),
+                                        last_move_line_number))
+                {
                     return false;
                 }
 
@@ -286,73 +317,55 @@ namespace
 
                     try
                     {
-                        const auto move_checkmates = move.back() == '#';
-                        const auto move_checks = move_checkmates || move.back() == '+';
                         const auto& move_to_play = board.interpret_move(move);
                         last_move_line_number = line_number;
-                        if(move.contains('x')) // check that move captures
+                        if( ! check_rule_result("Move: " + move_number + move + ")",
+                                                "capture",
+                                                String::contains(move, 'x'),
+                                                board.move_captures(move_to_play),
+                                                last_move_line_number))
                         {
-                            if( ! std::as_const(board).piece_on_square(move_to_play.end()) && ! move_to_play.is_en_passant())
-                            {
-                                std::cerr << "Move: " << move_number << move << " indicates capture but does not capture. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
+                            return false;
                         }
 
                         result = board.play_move(move_to_play);
 
-                        if(move_checks)
+                        const auto move_checkmates = move.back() == '#';
+                        const auto move_checks = move_checkmates || move.back() == '+';
+                        if( ! check_rule_result("Move (" + move_number + move + ")",
+                                                "check",
+                                                move_checks,
+                                                board.king_is_in_check(),
+                                                last_move_line_number))
                         {
-                            if( ! board.king_is_in_check())
-                            {
-                                std::cerr << "Move (" << move_number << move << ") indicates check but does not check. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            if(board.king_is_in_check())
-                            {
-                                std::cerr << "Move (" << move_number << move << ") indicates no check but does check. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
+                            return false;
                         }
 
-                        if(move_checkmates)
+                        if(move_checkmates && ! expect_checkmate)
                         {
-                            if(result.winner() != static_cast<Winner_Color>(opposite(board.whose_turn())))
-                            {
-                                std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
-
-                            if( ! expect_checkmate)
-                            {
-                                std::cerr << "Game ends in checkmate, but this is not indicated in headers. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
+                            std::cerr << "Move indicates checkmate, but the header does not. (line: " << line_number << ")" << std::endl;
+                            return false;
                         }
-                        else
+
+                        if( ! check_rule_result("Move (" + move_number + move + ")",
+                                                "checkmate",
+                                                move_checkmates,
+                                                result.game_has_ended() && result.winner() != Winner_Color::NONE,
+                                                last_move_line_number))
                         {
-                            if(result.winner() != Winner_Color::NONE)
-                            {
-                                std::cerr << "Move (" << move_number << move << ") does not indicate checkmate, but move does checkmate. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
+                            return false;
                         }
                     }
-                    catch(const Illegal_Move& error)
+                    catch(const Illegal_Move&)
                     {
-                        std::cerr << "Move (" << move_number << move << ") is illegal: "
-                                  << error.what()
-                                  << ". (line: " << line_number << ")" << std::endl;
+                        std::cerr << "Move (" << move_number << move << ") is illegal."
+                                  << " (line: " << line_number << ")\n";
                         std::cerr << "Legal moves: ";
                         for(const auto legal_move : board.legal_moves())
                         {
                             std::cerr << legal_move->algebraic(board) << " ";
                         }
-                        std::cerr << std::endl;
-                        std::cerr << board.fen() << std::endl;
+                        std::cerr << '\n' << board.fen() << std::endl;
                         return false;
                     }
                 }
@@ -385,7 +398,7 @@ namespace
             {
                 latest = std::make_unique<Random_AI>();
             }
-            else if(opt == "-genetic-minimax")
+            else if(opt == "-genetic")
             {
                 argument_assert(i + 1 < argc, "Genome file needed for Genetic AI player");
                 std::string filename = argv[++i];
@@ -399,22 +412,6 @@ namespace
                 catch(const std::invalid_argument&) // Could not convert id to an int.
                 {
                     latest = std::make_unique<Minimax_AI>(filename, find_last_id(filename));
-                }
-            }
-            else if(opt == "-genetic-iterative")
-            {
-                argument_assert(i + 1 < argc, "Genome file needed for Genetic AI player");
-                std::string filename = argv[++i];
-
-                try
-                {
-                    const auto id = i + 1 < argc ? argv[i + 1] : std::string{};
-                    latest = std::make_unique<Iterative_Deepening_AI>(filename, String::to_number<int>(id));
-                    ++i;
-                }
-                catch(const std::invalid_argument&) // Could not convert id to an int.
-                {
-                    latest = std::make_unique<Iterative_Deepening_AI>(filename, find_last_id(filename));
                 }
             }
             else if(opt == "-time" && i + 1 < argc)
@@ -486,7 +483,7 @@ namespace
         }
         else
         {
-            board.set_thinking_mode(thinking_output);
+            Player::set_thinking_mode(thinking_output);
             play_game(board,
                       Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board.whose_turn()),
                       *white, *black,
@@ -499,27 +496,53 @@ namespace
     void update_genome_file(const std::string& file_name)
     {
         auto input = std::ifstream(file_name);
-        std::vector<int> id_list;
+        std::vector<std::string> lines_to_write;
+        auto skip_to_END = false;
+        auto skip_next_blank_line = false;
         for(std::string line; std::getline(input, line);)
         {
+            if(skip_to_END)
+            {
+                if(line == "END")
+                {
+                    skip_to_END = false;
+                    skip_next_blank_line = true;
+                }
+                continue;
+            }
+
             if(line.starts_with("ID:"))
             {
-                id_list.push_back(String::to_number<int>(String::split(line, ":", 1).back()));
+                lines_to_write.push_back(String::split(line, ":", 1).back());
+                skip_to_END = true;
+            }
+            else
+            {
+                if( ! (skip_next_blank_line && line.empty()))
+                {
+                    lines_to_write.push_back(line);
+                }
+                skip_next_blank_line = false;
             }
         }
+
         input = std::ifstream(file_name);
         const auto output_file_name = String::add_to_file_name(file_name, "-updated");
         auto output = std::ofstream(output_file_name);
         std::cout << "Writing to: " << output_file_name << std::endl;
-        for(auto id : id_list)
+        for(const auto& line : lines_to_write)
         {
             try
             {
-                Genetic_AI(input, id).print(output);
+                Genetic_AI(input, std::stoi(line)).print(output);
             }
             catch(const Genetic_AI_Creation_Error& e)
             {
                 std::cerr << e.what() << '\n';
+            }
+            catch(const std::invalid_argument&)
+            {
+                output << line << '\n';
             }
         }
     }

@@ -54,14 +54,14 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         std::string command;
         try
         {
-            command = receive_cecp_command(board, clock, false);
+            command = receive_cecp_command(clock, false);
         }
         catch(const Game_Ended& game_ending_error)
         {
             return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
         }
 
-        board.pick_move_now(); // Stop pondering
+        Player::pick_move_now(); // Stop pondering
 
         if(command.starts_with("ping "))
         {
@@ -94,33 +94,34 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         }
         else if(command.starts_with("setboard "))
         {
-            const auto fen = String::split(command, " ", 1).back();
-
-            // Handle GUIs that send the next board position
-            // instead of a move.
-            const auto new_move_list = board.derive_moves(fen);
-            if(new_move_list.empty())
+            try
             {
-                try
+                const auto fen = String::split(command, " ", 1).back();
+                const auto new_board = Board{fen};
+
+                // Handle GUIs that send the next board position
+                // instead of a move.
+                const auto new_move_list = board.derive_moves(new_board);
+                if(new_move_list.empty())
                 {
                     log("Rearranging board to: " + fen);
-                    board = Board(fen);
+                    board = new_board;
                     move_list.clear();
                     setup_result = {};
                 }
-                catch(const std::invalid_argument&)
+                else
                 {
-                    send_error(command, "Bad FEN");
+                    for(auto move : new_move_list)
+                    {
+                        log("Derived move: " + move->coordinates());
+                        setup_result = board.play_move(*move);
+                        move_list.push_back(board.last_move());
+                    }
                 }
             }
-            else
+            catch(const std::invalid_argument&)
             {
-                for(auto move : new_move_list)
-                {
-                    log("Derived move: " + move->coordinates());
-                    setup_result = board.play_move(*move);
-                    move_list.push_back(board.last_move());
-                }
+                send_error(command, "Bad FEN");
             }
         }
         else if(command.starts_with("usermove "))
@@ -142,9 +143,9 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                     break;
                 }
             }
-            catch(const Illegal_Move& e)
+            catch(const Illegal_Move&)
             {
-                send_command("Illegal move (" + std::string(e.what()) + ") " + move);
+                send_command("Illegal move: " + move);
             }
         }
         else if(command.starts_with("level "))
@@ -281,7 +282,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         clock.punch(board);
     }
 
-    board.choose_move_at_leisure();
+    Player::choose_move_at_leisure();
 
     return setup_result;
 }
@@ -309,11 +310,6 @@ bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& 
     }
 }
 
-void CECP_Mediator::listen(const Board& board, Clock& clock)
-{
-    last_listening_command = std::async(std::launch::async, &CECP_Mediator::listener, this, std::cref(board), std::ref(clock));
-}
-
 Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const
 {
     if(in_force_mode)
@@ -334,35 +330,27 @@ Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vect
     }
 }
 
-std::string CECP_Mediator::receive_cecp_command(const Board& board, Clock& clock, bool while_listening)
+std::string CECP_Mediator::receive_cecp_command(Clock& clock, bool while_listening)
 {
     while(true)
     {
-        std::string command;
-        if(while_listening)
-        {
-            command = receive_command();
-        }
-        else
-        {
-            command = last_listening_command.valid() ? last_listening_command.get() : receive_command();
-        }
+        const auto command = get_last_command(while_listening);
 
         if(command == "force")
         {
             log("Entering force mode");
-            board.pick_move_now();
+            Player::pick_move_now();
             clock.stop();
             in_force_mode = true;
         }
         else if(command == "post")
         {
-            board.set_thinking_mode(Thinking_Output_Type::CECP);
+            Player::set_thinking_mode(Thinking_Output_Type::CECP);
             log("turning on thinking output for CECP");
         }
         else if(command == "nopost")
         {
-            board.set_thinking_mode(Thinking_Output_Type::NO_THINKING);
+            Player::set_thinking_mode(Thinking_Output_Type::NO_THINKING);
             log("turning off thinking output for CECP");
         }
         else if(command == "rejected usermove")
@@ -382,30 +370,30 @@ void CECP_Mediator::send_error(const std::string& command, const std::string& re
     send_command("Error (" + reason + "): " + command);
 }
 
-std::string CECP_Mediator::listener(const Board& board, Clock& clock)
+std::string CECP_Mediator::listener(Clock& clock)
 {
     while(true)
     {
         std::string command;
         try
         {
-            command = receive_cecp_command(board, clock, true);
+            command = receive_cecp_command(clock, true);
         }
         catch(const Game_Ended&)
         {
-            board.pick_move_now();
+            Player::pick_move_now();
             throw;
         }
 
         if(command == "?")
         {
             log("Forcing local AI to pick move and accepting it");
-            board.pick_move_now();
+            Player::pick_move_now();
         }
         else if(command.starts_with("result "))
         {
             log("Stopped thinking about move by: " + command);
-            board.pick_move_now();
+            Player::pick_move_now();
             return command;
         }
         else

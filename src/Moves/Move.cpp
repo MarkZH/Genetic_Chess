@@ -16,7 +16,7 @@ Move::Move(const Square start, const Square end) noexcept : origin(start), desti
 {
     assert(start.inside_board());
     assert(end.inside_board());
-    assert(file_change() != 0 || rank_change() != 0);
+    assert(start != end);
 }
 
 void Move::side_effects(Board&) const noexcept
@@ -83,7 +83,6 @@ std::string Move::algebraic(const Board& board) const noexcept
 std::string Move::algebraic_base(const Board& board) const noexcept
 {
     const auto original_piece = board.piece_on_square(start());
-    std::string move_record = original_piece.pgn_symbol();
 
     auto record_file = original_piece.type() == Piece_Type::PAWN && board.move_captures(*this);
     auto record_rank = false;
@@ -108,22 +107,11 @@ std::string Move::algebraic_base(const Board& board) const noexcept
         }
     }
 
-    if(record_file)
-    {
-        move_record += start().file();
-    }
-
-    if(record_rank)
-    {
-        move_record += std::to_string(start().rank());
-    }
-
-    if(board.move_captures(*this))
-    {
-        move_record += 'x';
-    }
-
-    move_record += end().string();
+    auto move_record = original_piece.pgn_symbol();
+    if(record_file)                { move_record += start().file(); }
+    if(record_rank)                { move_record += std::to_string(start().rank()); }
+    if(board.move_captures(*this)) { move_record += 'x'; }
+    move_record += end().text();
     return move_record;
 }
 
@@ -149,7 +137,7 @@ std::string Move::result_mark(Board board) const noexcept
 
 std::string Move::coordinates() const noexcept
 {
-    const auto result = start().string() + end().string();
+    const auto result = start().text() + end().text();
     if(promotion_piece_symbol())
     {
         return result + String::tolower(promotion_piece_symbol());

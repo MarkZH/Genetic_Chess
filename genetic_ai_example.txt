@@ -1,4 +1,6 @@
 ID: 282702
+Search Method: Minimax
+
 Name: Piece Strength Gene
 B: 3.73326
 K: 1.11957

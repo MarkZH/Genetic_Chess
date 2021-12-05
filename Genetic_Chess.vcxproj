@@ -264,7 +264,6 @@
     <ClCompile Include="src\players\CECP_Mediator.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
     <ClCompile Include="src\players\Genetic_AI.cpp" />
-    <ClCompile Include="src\Players\Iterative_Deepening_AI.cpp" />
     <ClCompile Include="src\Players\Minimax_AI.cpp" />
     <ClCompile Include="src\players\Outside_Communicator.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
@@ -313,7 +312,6 @@
     <ClInclude Include="include\players\CECP_Mediator.h" />
     <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
     <ClInclude Include="include\players\Genetic_AI.h" />
-    <ClInclude Include="include\Players\Iterative_Deepening_AI.h" />
     <ClInclude Include="include\Players\Minimax_AI.h" />
     <ClInclude Include="include\players\Outside_Communicator.h" />
     <ClInclude Include="include\players\Player.h" />
