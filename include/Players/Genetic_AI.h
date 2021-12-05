@@ -89,11 +89,11 @@ class Genetic_AI
         bool operator<(const Genetic_AI& other) const noexcept;
 
         //! \brief Assign a numeric score to the current board position.
-        //! 
+        //!
         //! \param board The current board position
         //! \param perspective The side for which a higher score is better
         //! \param depth The current depth of the game tree search
-        //! 
+        //!
         //! \returns A numeric score estimating the advantage that the perspective
         //!          player has in the game.
         double internal_evaluate(const Board& board,
@@ -104,32 +104,38 @@ class Genetic_AI
         const std::array<double, 6>& piece_values() const noexcept;
 
         //! \brief The amount of time to spend searching for a move.
-        //! 
+        //!
         //! \param board The current board position
         //! \param clock The game clock
-        //! 
+        //!
         //! \returns The time in seconds to spend picking the next move
         Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
-        
+
         //! \brief How much to overestimate the time to spend searching.
-        //! 
+        //!
         //! \param game_progress An estimate of how much of the game has been played (0.0 to 1.0).
-        //! 
+        //!
         //! \returns A factor to multiply the time allocated for a game tree branch to account for
         //!          alpha-beta cutoffs.
         double speculation_time_factor(double game_progress) const noexcept;
 
         //! \brief An estimate of the effective number of branches per game tree node.
-        //! 
+        //!
         //! \param game_progress An estimate of how much of the game has been played (0.0 to 1.0).
-        //! 
+        //!
         //! \returns An estimate of how many moves will be examined in each board position.
         double branching_factor(double game_progress) const noexcept;
 
         //! \brief An estimate of how much of the game has been played(0.0 to 1.0).
-        //! 
+        //!
         //! \param board The current board position.
         double game_progress(const Board& board) const noexcept;
+
+        //! \brief Which minimax search method to use.
+        Search_Method search_method() const noexcept;
+
+        //! \brief The name of the minimax search method to use.
+        std::string search_method_name() const noexcept;
 
     private:
         Genome genome;

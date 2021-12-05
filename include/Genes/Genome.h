@@ -11,6 +11,15 @@
 
 #include "Gene.h"
 
+//! \file
+
+//! \brief Distinguishes between two types of minimax searching: standard and iterative deepening.
+enum class Search_Method
+{
+    MINIMAX,
+    ITERATIVE_DEEPENING
+};
+
 class Board;
 
 //! \brief A software analog to a biological chromosome containing a collection of Gene instances that control the Genetic_AI behavior.
@@ -89,6 +98,12 @@ class Genome
         //! \param board The current state of the game.
         double game_progress(const Board& board) const noexcept;
 
+        //! \brief Return the specific minimax search method.
+        Search_Method search_method() const noexcept;
+
+        //! \brief Return the name of the specific minimax search method.
+        std::string search_method_name() const noexcept;
+
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
         const std::array<double, 6>& piece_values() const noexcept;
 
@@ -99,11 +114,13 @@ class Genome
 
     private:
         std::array<std::unique_ptr<Gene>, 14> genome;
+        Search_Method searching_method = Search_Method::MINIMAX;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
         void renormalize_priorities() noexcept;
         double expected_number_of_moves_left(const Board& board) const noexcept;
+        static std::string search_method_name(Search_Method method) noexcept;
 
         template<typename Gene_Type>
         constexpr const Gene_Type& gene_reference() const noexcept

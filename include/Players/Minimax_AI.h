@@ -99,7 +99,7 @@ class Minimax_AI : public Player
         //! \param other The AI being compared to this one.
         bool operator<(const Minimax_AI& other) const noexcept;
 
-    protected:
+    private:
         //! \brief The maximum depth to search to limit the size of the current_variation_store.
         //!
         //! Also prevents stack overflow.
@@ -180,16 +180,10 @@ class Minimax_AI : public Player
                                                std::vector<const Move*>& principal_variation,
                                                current_variation_store& current_variation) const noexcept;
 
-    private:
-        //! The brains of the Minimax algorithm that provides board evaluation and
-        //! time management.
+        // The brains of the Minimax algorithm that provides board evaluation and time management.
         Genetic_AI genetic_ai;
 
-        //! \brief Data for writing commentary for each move choice to PGN files.
-        //!
-        //! Each entry is a pair of results of the game search tree. The first is the predicted variation
-        //! found while the AI searched for its own move. The second, if it is not default constructed,
-        //! is the variation that follows the AI's opponent's actual next move.
+        // Data for writing commentary for each move choice to PGN files.
         mutable std::vector<Game_Tree_Node_Result> commentary;
 
         // Monitor search speed to adapt to different computers/competing workloads
@@ -267,6 +261,11 @@ class Minimax_AI : public Player
         //! starting value for the first move search. So, this practice move will
         //! update the evaluation speed to a more reasonable starting value.
         void calibrate_thinking_speed() const noexcept;
+
+        Search_Method search_method() const noexcept;
+        std::string search_method_name() const noexcept;
+        const Move& choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
+        const Move& choose_move_iterative_deepening(const Board& board, const Clock& clock) const noexcept;
 };
 
 //! \brief Create a PGN variation string.
