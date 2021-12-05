@@ -143,9 +143,9 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                     break;
                 }
             }
-            catch(const Illegal_Move& e)
+            catch(const Illegal_Move&)
             {
-                send_command("Illegal move (" + std::string(e.what()) + ") " + move);
+                send_command("Illegal move: " + move);
             }
         }
         else if(command.starts_with("level "))

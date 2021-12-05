@@ -154,6 +154,25 @@ namespace
                 << "All game options in this section can be overriden by GUI commands except\n-short-post, -event, -location, and -game-file.\n\n";
     }
 
+    bool check_rule_result(const std::string& rule_source,
+                           const std::string& rule_name,
+                           const bool expected_ruling,
+                           const bool actual_ruling,
+                           const int last_move_line_number)
+    {
+        const auto pass = expected_ruling == actual_ruling;
+        if( ! pass)
+        {
+            std::cerr << rule_source << " indicates "
+                      << (expected_ruling ? "" : "no ")
+                      << rule_name << ", but last move did "
+                      << (actual_ruling ? "" : "not ")
+                      << "trigger rule (line: " << last_move_line_number << ")." << std::endl;
+        }
+
+        return pass;
+    }
+
     bool confirm_game_record(const std::string& file_name)
     {
         auto input = std::ifstream(file_name);
@@ -185,15 +204,30 @@ namespace
             // Start header of new game
             if(in_game && line.starts_with("["))
             {
-                if(expect_fifty_move_draw != String::contains(result.ending_reason(), "50"))
+                if( ! check_rule_result("Header",
+                                        "50-move draw",
+                                        expect_fifty_move_draw,
+                                        String::contains(result.ending_reason(), "50"),
+                                        last_move_line_number))
                 {
-                    std::cerr << "Header indicates 50-move draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
                     return false;
                 }
 
-                if(expect_threefold_draw != String::contains(result.ending_reason(), "fold"))
+                if( ! check_rule_result("Header",
+                                        "threefold draw",
+                                        expect_threefold_draw,
+                                        String::contains(result.ending_reason(), "fold"),
+                                        last_move_line_number))
                 {
-                    std::cerr << "Header indicates threefold draw, but last move did not trigger rule (line: " << last_move_line_number << ")." << std::endl;
+                    return false;
+                }
+
+                if( ! check_rule_result("Header",
+                                        "checkmate",
+                                        expect_checkmate,
+                                        String::contains(result.ending_reason(), "mates"),
+                                        last_move_line_number))
+                {
                     return false;
                 }
 
@@ -283,73 +317,55 @@ namespace
 
                     try
                     {
-                        const auto move_checkmates = move.back() == '#';
-                        const auto move_checks = move_checkmates || move.back() == '+';
                         const auto& move_to_play = board.interpret_move(move);
                         last_move_line_number = line_number;
-                        if(String::contains(move, 'x')) // check that move captures
+                        if( ! check_rule_result("Move: " + move_number + move + ")",
+                                                "capture",
+                                                String::contains(move, 'x'),
+                                                board.move_captures(move_to_play),
+                                                last_move_line_number))
                         {
-                            if( ! std::as_const(board).piece_on_square(move_to_play.end()) && ! move_to_play.is_en_passant())
-                            {
-                                std::cerr << "Move: " << move_number << move << " indicates capture but does not capture. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
+                            return false;
                         }
 
                         result = board.play_move(move_to_play);
 
-                        if(move_checks)
+                        const auto move_checkmates = move.back() == '#';
+                        const auto move_checks = move_checkmates || move.back() == '+';
+                        if( ! check_rule_result("Move (" + move_number + move + ")",
+                                                "check",
+                                                move_checks,
+                                                board.king_is_in_check(),
+                                                last_move_line_number))
                         {
-                            if( ! board.king_is_in_check())
-                            {
-                                std::cerr << "Move (" << move_number << move << ") indicates check but does not check. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
-                        }
-                        else
-                        {
-                            if(board.king_is_in_check())
-                            {
-                                std::cerr << "Move (" << move_number << move << ") indicates no check but does check. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
+                            return false;
                         }
 
-                        if(move_checkmates)
+                        if(move_checkmates && ! expect_checkmate)
                         {
-                            if(result.winner() != static_cast<Winner_Color>(opposite(board.whose_turn())))
-                            {
-                                std::cerr << "Move (" << move_number << move << ") indicates checkmate, but move does not checkmate. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
-
-                            if( ! expect_checkmate)
-                            {
-                                std::cerr << "Game ends in checkmate, but this is not indicated in headers. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
+                            std::cerr << "Move indicates checkmate, but the header does not. (line: " << line_number << ")" << std::endl;
+                            return false;
                         }
-                        else
+
+                        if( ! check_rule_result("Move (" + move_number + move + ")",
+                                                "checkmate",
+                                                move_checkmates,
+                                                result.game_has_ended() && result.winner() != Winner_Color::NONE,
+                                                last_move_line_number))
                         {
-                            if(result.winner() != Winner_Color::NONE)
-                            {
-                                std::cerr << "Move (" << move_number << move << ") does not indicate checkmate, but move does checkmate. (line: " << line_number << ")" << std::endl;
-                                return false;
-                            }
+                            return false;
                         }
                     }
-                    catch(const Illegal_Move& error)
+                    catch(const Illegal_Move&)
                     {
-                        std::cerr << "Move (" << move_number << move << ") is illegal: "
-                                  << error.what()
-                                  << ". (line: " << line_number << ")" << std::endl;
+                        std::cerr << "Move (" << move_number << move << ") is illegal."
+                                  << " (line: " << line_number << ")\n";
                         std::cerr << "Legal moves: ";
                         for(const auto legal_move : board.legal_moves())
                         {
                             std::cerr << legal_move->algebraic(board) << " ";
                         }
-                        std::cerr << std::endl;
-                        std::cerr << board.fen() << std::endl;
+                        std::cerr << '\n' << board.fen() << std::endl;
                         return false;
                     }
                 }
