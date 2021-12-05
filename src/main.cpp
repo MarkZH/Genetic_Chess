@@ -330,11 +330,9 @@ namespace
 
                         result = board.play_move(move_to_play);
 
-                        const auto move_checkmates = move.back() == '#';
-                        const auto move_checks = move_checkmates || move.back() == '+';
                         if( ! check_rule_result("Move (" + move_number + move + ")",
                                                 "check",
-                                                move_checks,
+                                                String::contains("+#", move.back()),
                                                 board.king_is_in_check(),
                                                 last_move_line_number))
                         {
@@ -343,7 +341,7 @@ namespace
 
                         if( ! check_rule_result("Move (" + move_number + move + ")",
                                                 "checkmate",
-                                                move_checkmates,
+                                                move.back() == '#',
                                                 result.game_has_ended() && result.winner() != Winner_Color::NONE,
                                                 last_move_line_number))
                         {
