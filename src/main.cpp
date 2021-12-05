@@ -341,12 +341,6 @@ namespace
                             return false;
                         }
 
-                        if(move_checkmates && ! expect_checkmate)
-                        {
-                            std::cerr << "Move indicates checkmate, but the header does not. (line: " << line_number << ")" << std::endl;
-                            return false;
-                        }
-
                         if( ! check_rule_result("Move (" + move_number + move + ")",
                                                 "checkmate",
                                                 move_checkmates,
