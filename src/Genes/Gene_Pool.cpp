@@ -54,7 +54,7 @@ namespace
 
     void pause_gene_pool(int);
 
-    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive);
+    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name);
 
     template<typename Stat_Map>
     void purge_dead(const std::vector<Minimax_AI>& pool, Stat_Map& stats);
@@ -199,7 +199,7 @@ void gene_pool(const std::string& config_file)
             }
         }
 
-        write_generation(pool, genome_file_name, false);
+        write_generation(pool, genome_file_name);
         purge_dead(pool, stats);
         update_best_stats(best_stats, pool, stats, best_file_name);
 
@@ -274,11 +274,11 @@ namespace
         {
             pool[ai_index].mutate(mutation_rate);
         }
-        write_generation(pool, genome_file_name, write_new_pools);
+        write_generation(pool, genome_file_name);
         return pool;
     }
 
-    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name, const bool force_write_still_alive)
+    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name)
     {
         static std::map<Minimax_AI, bool> written_before;
         static std::string last_file_name;
@@ -297,7 +297,7 @@ namespace
 
         auto sorted_pool = pool;
         std::sort(sorted_pool.begin(), sorted_pool.end());
-        auto needs_still_alive_line = force_write_still_alive;
+        auto needs_still_alive_line = false;
         for(const auto& ai : sorted_pool)
         {
             if( ! written_before[ai])
@@ -568,7 +568,7 @@ namespace
             throw_on_bad_still_alive_line(pool_line_number, pool_line);
         }
 
-        write_generation(result, "", false); // mark AIs from file as already written
+        write_generation(result, ""); // mark AIs from file as already written
         return result;
     }
 
