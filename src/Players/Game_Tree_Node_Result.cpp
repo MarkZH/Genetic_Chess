@@ -42,6 +42,11 @@ const std::vector<const Move*>& Game_Tree_Node_Result::variation_line() const no
     return variation;
 }
 
+Game_Tree_Node_Result::operator bool() const noexcept
+{
+    return ! variation_line().empty();
+}
+
 Alpha_Beta_Value Game_Tree_Node_Result::alpha_beta_value() const noexcept
 {
     return {score, perspective, depth()};

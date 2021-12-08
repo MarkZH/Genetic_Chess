@@ -69,6 +69,9 @@ class Game_Tree_Node_Result
         //! \brief The sequence of moves that lead to the board position being evaluated.
         const std::vector<const Move*>& variation_line() const noexcept;
 
+        //! \brief Whether or not this result has been default constructed
+        operator bool() const noexcept;
+
         //! \brief Returns the equivalent Alpha-Beta cutoff value.
         Alpha_Beta_Value alpha_beta_value() const noexcept;
 
