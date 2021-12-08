@@ -119,7 +119,6 @@ const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, cons
     const auto time_start = std::chrono::steady_clock::now();
 
     auto principal_variation = std::vector<const Move*>{};
-    Game_Tree_Node_Result result;
     for(size_t depth = 1; true; ++depth)
     {
         // alpha = highest score found that opponent will allow
@@ -134,15 +133,15 @@ const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, cons
 
         current_variation_store current_variation;
 
-        result = search_game_tree(board,
-                                  Clock::seconds{std::numeric_limits<Clock::seconds::rep>::infinity()},
-                                  depth,
-                                  depth,
-                                  clock,
-                                  alpha_start,
-                                  beta_start,
-                                  principal_variation,
-                                  current_variation);
+        const auto result = search_game_tree(board,
+                                             Clock::seconds{std::numeric_limits<Clock::seconds::rep>::infinity()},
+                                             depth,
+                                             depth,
+                                             clock,
+                                             alpha_start,
+                                             beta_start,
+                                             principal_variation,
+                                             current_variation);
 
         const auto time_used_so_far = std::chrono::steady_clock::now() - time_start;
         const auto time_left = time_to_use - time_used_so_far;
@@ -160,7 +159,7 @@ const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, cons
     }
 }
 
-void Minimax_AI::report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const noexcept
+void Minimax_AI::report_final_search_stats(const Game_Tree_Node_Result& result, const Board& board) const noexcept
 {
     output_thinking(result, board.whose_turn());
 
