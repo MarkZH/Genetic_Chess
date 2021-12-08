@@ -320,7 +320,7 @@ Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
     struct [[nodiscard]] evaluate_time_guard
     {
         Clock::seconds& evaluation_time_total;
-        std::chrono::steady_clock::time_point evaluation_start_time;
+        const std::chrono::steady_clock::time_point evaluation_start_time;
 
         evaluate_time_guard(Clock::seconds& evaluation_time, std::chrono::steady_clock::time_point evaluation_time_start) noexcept :
             evaluation_time_total(evaluation_time),
@@ -329,7 +329,7 @@ Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
         }
         ~evaluate_time_guard() noexcept { evaluation_time_total += std::chrono::steady_clock::now() - evaluation_start_time; }
     };
-    auto guard = evaluate_time_guard{total_evaluation_time, evaluate_start_time};
+    const auto guard = evaluate_time_guard{total_evaluation_time, evaluate_start_time};
 
     const auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values());
     for(auto quiescent_move : quiescent_moves)
