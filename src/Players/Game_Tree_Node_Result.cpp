@@ -37,7 +37,7 @@ std::pair<double, int> Game_Tree_Node_Result::value(const Piece_Color query) con
     }
 }
 
-const std::vector<const Move*> Game_Tree_Node_Result::variation_line() const noexcept
+const std::vector<const Move*>& Game_Tree_Node_Result::variation_line() const noexcept
 {
     return variation;
 }
