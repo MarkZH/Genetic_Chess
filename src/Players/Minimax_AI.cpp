@@ -119,7 +119,6 @@ const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, cons
     const auto time_start = std::chrono::steady_clock::now();
 
     auto principal_variation = std::vector<const Move*>{};
-    Game_Tree_Node_Result result;
     for(size_t depth = 1; true; ++depth)
     {
         // alpha = highest score found that opponent will allow
@@ -134,15 +133,15 @@ const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, cons
 
         current_variation_store current_variation;
 
-        result = search_game_tree(board,
-                                  Clock::seconds{std::numeric_limits<Clock::seconds::rep>::infinity()},
-                                  depth,
-                                  depth,
-                                  clock,
-                                  alpha_start,
-                                  beta_start,
-                                  principal_variation,
-                                  current_variation);
+        const auto result = search_game_tree(board,
+                                             Clock::seconds{std::numeric_limits<Clock::seconds::rep>::infinity()},
+                                             depth,
+                                             depth,
+                                             clock,
+                                             alpha_start,
+                                             beta_start,
+                                             principal_variation,
+                                             current_variation);
 
         const auto time_used_so_far = std::chrono::steady_clock::now() - time_start;
         const auto time_left = time_to_use - time_used_so_far;
@@ -160,7 +159,7 @@ const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, cons
     }
 }
 
-void Minimax_AI::report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const noexcept
+void Minimax_AI::report_final_search_stats(const Game_Tree_Node_Result& result, const Board& board) const noexcept
 {
     output_thinking(result, board.whose_turn());
 
@@ -321,7 +320,7 @@ Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
     struct [[nodiscard]] evaluate_time_guard
     {
         Clock::seconds& evaluation_time_total;
-        std::chrono::steady_clock::time_point evaluation_start_time;
+        const std::chrono::steady_clock::time_point evaluation_start_time;
 
         evaluate_time_guard(Clock::seconds& evaluation_time, std::chrono::steady_clock::time_point evaluation_time_start) noexcept :
             evaluation_time_total(evaluation_time),
@@ -330,7 +329,7 @@ Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
         }
         ~evaluate_time_guard() noexcept { evaluation_time_total += std::chrono::steady_clock::now() - evaluation_start_time; }
     };
-    auto guard = evaluate_time_guard{total_evaluation_time, evaluate_start_time};
+    const auto guard = evaluate_time_guard{total_evaluation_time, evaluate_start_time};
 
     const auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values());
     for(auto quiescent_move : quiescent_moves)
@@ -598,7 +597,7 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
 std::string Minimax_AI::commentary_for_next_move(const Board& board, const size_t move_number) const noexcept
 {
     const auto comment_index = board.played_ply_count()/2;
-    if(comment_index >= commentary.size() || commentary.at(comment_index).variation_line().empty())
+    if(comment_index >= commentary.size() || ! commentary.at(comment_index))
     {
         return {};
     }
@@ -641,7 +640,7 @@ std::string variation_line(Board board,
 
 void Minimax_AI::undo_move(const Move* const last_move) const noexcept
 {
-    if(commentary.empty())
+    if(commentary.empty() || ! commentary.back())
     {
         return;
     }
