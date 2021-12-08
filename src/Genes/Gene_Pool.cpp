@@ -54,18 +54,19 @@ namespace
 
     void pause_gene_pool(int);
 
-    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive);
+    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name);
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const std::vector<Minimax_AI>& pool, Stat_Map& stats);
+    void purge_dead(const std::vector<Minimax_AI>& pool, Stat_Map& stats);
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
     int count_wins(const std::string& file_name, int id);
     std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
+    struct Stats { int wins = 0; int draws = 0; }; 
     struct best_ai_stats { int id = 0; int wins = 0; double wins_to_beat = 0.0; };
     best_ai_stats recall_previous_best_stats(const std::string& best_file_name, const std::string& game_record_file) noexcept;
-    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, int>& wins, const std::string& best_file_name) noexcept;
+    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats, const std::string& best_file_name) noexcept;
     void print_round_header(const std::vector<Minimax_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins,
@@ -74,7 +75,7 @@ namespace
                             size_t second_mutation_interval,
                             size_t mutation_rate,
                             Clock::seconds game_time) noexcept;
-    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, int>& wins, std::map<Minimax_AI, int>& draws);
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats);
 }
 
 void gene_pool(const std::string& config_file)
@@ -122,8 +123,7 @@ void gene_pool(const std::string& config_file)
     std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     load_previous_game_stats(game_record_file, game_time, color_wins);
 
-    std::map<Minimax_AI, int> wins;
-    std::map<Minimax_AI, int> draws;
+    std::map<Minimax_AI,  Stats> stats;
 
     const auto best_file_name = genome_file_name + "_best_genome.txt";
     auto best_stats = recall_previous_best_stats(best_file_name, game_record_file);
@@ -189,17 +189,23 @@ void gene_pool(const std::string& config_file)
             losing_player = offspring;
 
             ++color_wins[static_cast<int>(winner)];
-            ++(winner == Winner_Color::NONE ? draws : wins)[winning_player];
+            if(winner == Winner_Color::NONE)
+            {
+                ++stats[winning_player].draws;
+            }
+            else
+            {
+                ++stats[winning_player].wins;
+            }
         }
 
-        write_generation(pool, genome_file_name, false);
-        purge_dead_from_map(pool, wins);
-        purge_dead_from_map(pool, draws);
-        update_best_stats(best_stats, pool, wins, best_file_name);
+        write_generation(pool, genome_file_name);
+        purge_dead(pool, stats);
+        update_best_stats(best_stats, pool, stats, best_file_name);
 
         if(verbose_output)
         {
-            print_verbose_output(result_printer, pool, wins, draws);
+            print_verbose_output(result_printer, pool, stats);
         }
 
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
@@ -268,11 +274,11 @@ namespace
         {
             pool[ai_index].mutate(mutation_rate);
         }
-        write_generation(pool, genome_file_name, write_new_pools);
+        write_generation(pool, genome_file_name);
         return pool;
     }
 
-    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name, bool force_write_still_alive)
+    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name)
     {
         static std::map<Minimax_AI, bool> written_before;
         static std::string last_file_name;
@@ -302,7 +308,7 @@ namespace
             }
         }
 
-        if(needs_still_alive_line || force_write_still_alive)
+        if(needs_still_alive_line)
         {
             ofs << "\nStill Alive: ";
             for(const auto& ai : pool)
@@ -312,12 +318,12 @@ namespace
             ofs << "\n\n" << std::flush;
         }
 
-        purge_dead_from_map(pool, written_before);
+        purge_dead(pool, written_before);
     }
 
     void print_round_header(const std::vector<Minimax_AI>& pool,
                             const std::string& genome_file_name,
-                            const std::array<size_t, 3>& color_wins, \
+                            const std::array<size_t, 3>& color_wins,
                             const size_t round_count,
                             const size_t first_mutation_interval,
                             const size_t second_mutation_interval,
@@ -343,7 +349,7 @@ namespace
     #endif // _WIN32
     }
 
-    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, int>& wins, std::map<Minimax_AI, int>& draws)
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats)
     {
         std::cout << result_printer.str();
 
@@ -363,8 +369,8 @@ namespace
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_column_width) << ai.id()
-                      << std::setw(win_column_width) << wins[ai]
-                      << std::setw(draw_column_width) << draws[ai] << "\n";
+                      << std::setw(win_column_width) << stats[ai].wins
+                      << std::setw(draw_column_width) << stats[ai].draws << "\n";
         }
     }
 
@@ -425,7 +431,7 @@ namespace
         }
     }
 
-    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, int>& wins, const std::string& best_file_name) noexcept
+    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats, const std::string& best_file_name) noexcept
     {
         // Slowly reduce the wins required to be recorded as best to allow
         // later AIs that are playing against a better field to be recorded.
@@ -434,11 +440,11 @@ namespace
 
         const auto& winningest_live_ai =
             *std::max_element(pool.begin(), pool.end(),
-                              [&wins](const auto& a, const auto& b)
+                              [&stats](const auto& a, const auto& b)
                               {
-                                  return wins[a] < wins[b];
+                                  return stats[a].wins < stats[b].wins;
                               });
-        const auto win_count = wins[winningest_live_ai];
+        const auto win_count = stats[winningest_live_ai].wins;
 
         if(win_count > best_stats.wins_to_beat)
         {
@@ -562,7 +568,7 @@ namespace
             throw_on_bad_still_alive_line(pool_line_number, pool_line);
         }
 
-        write_generation(result, "", false); // mark AIs from file as already written
+        write_generation(result, ""); // mark AIs from file as already written
         return result;
     }
 
@@ -572,7 +578,7 @@ namespace
     }
 
     template<typename Stat_Map>
-    void purge_dead_from_map(const std::vector<Minimax_AI>& pool, Stat_Map& stats)
+    void purge_dead(const std::vector<Minimax_AI>& pool, Stat_Map& stats)
     {
         Stat_Map new_stats;
         for(const auto& ai : pool)

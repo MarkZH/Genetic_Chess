@@ -167,13 +167,12 @@ Board::Board(const std::string& input_fen)
     const auto first_full_move_label = String::to_number<size_t>(fen_parse.at(5));
     plies_at_construction = 2*(first_full_move_label - 1) + (whose_turn() == Piece_Color::WHITE ? 0 : 1);
 
-    const auto starting_fen = String::remove_extra_whitespace(input_fen);
-    fen_parse_assert(fen() == starting_fen, input_fen, "Result: " + fen());
-
     recreate_move_caches();
 
     starting_hash = board_hash();
-    starting_fen_from_starting_hash[starting_hash] = starting_fen;
+    starting_fen_from_starting_hash[starting_hash] = String::remove_extra_whitespace(input_fen);
+
+    fen_parse_assert(fen() == original_fen(), input_fen, "Result: " + fen());
 }
 
 void Board::fen_parse_assert(const bool condition, const std::string& input_fen, const std::string& failure_message)
