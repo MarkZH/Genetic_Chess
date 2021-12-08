@@ -73,8 +73,8 @@ class Game_Tree_Node_Result
         Alpha_Beta_Value alpha_beta_value() const noexcept;
 
     private:
-        double score;
-        Piece_Color perspective;
+        double score = 0.0;
+        Piece_Color perspective = Piece_Color::WHITE;
         std::vector<const Move*> variation;
 };
 
