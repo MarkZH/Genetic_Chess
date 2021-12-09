@@ -39,11 +39,12 @@ namespace String
         }
 
         auto result = *begin;
-        for(auto i = std::next(begin); i != end; ++i)
-        {
-            result += joiner;
-            result += *i;
-        }
+        std::for_each(std::next(begin), end, 
+                      [&joiner, &result](const auto& token)
+                      {
+                          result += joiner;
+                          result += token;
+                      });
         return result;
     }
 
