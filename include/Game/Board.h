@@ -219,7 +219,7 @@ class Board
         bool enough_material_to_checkmate() const noexcept;
 
         //! \brief Check if castling is legal for the given player color and direction.
-        //! 
+        //!
         //! \param color The color of the player.
         //! \param direction The direction of castling: Direction::LEFT for queenside and Direction::RIGHT for kingside.
         //! \returns Whether the castling move is legal for the player.
@@ -288,7 +288,7 @@ class Board
         size_t previous_moves_count() const noexcept;
 
         //! \brief Print data on why boards have different Zobrist hashes
-        //! 
+        //!
         //! \param other The other board with which to compare.
         void compare_hashes(const Board& other) const noexcept;
 

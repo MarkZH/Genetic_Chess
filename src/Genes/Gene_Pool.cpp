@@ -63,7 +63,7 @@ namespace
     int count_wins(const std::string& file_name, int id);
     std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
-    struct Stats { int wins = 0; int draws = 0; }; 
+    struct Stats { int wins = 0; int draws = 0; };
     struct best_ai_stats { int id = 0; int wins = 0; double wins_to_beat = 0.0; };
     best_ai_stats recall_previous_best_stats(const std::string& best_file_name, const std::string& game_record_file) noexcept;
     void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats, const std::string& best_file_name) noexcept;
