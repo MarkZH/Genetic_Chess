@@ -254,7 +254,6 @@ namespace
     {
         std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
         auto pool = load_gene_pool_file(genome_file_name);
-        const auto write_new_pools = pool.size() != gene_pool_population;
         if(pool.empty() && ! seed_ai_specification.empty())
         {
             const auto seed_split = String::split(seed_ai_specification, "/");
