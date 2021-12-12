@@ -444,10 +444,11 @@ namespace
 
         if(win_count > best_stats.wins_to_beat)
         {
-            static const auto temp_best_file_name = best_file_name + ".tmp";
             best_stats.wins_to_beat = win_count;
             best_stats.id = winningest_live_ai.id();
             best_stats.wins = win_count;
+
+            const auto temp_best_file_name = best_file_name + ".tmp";
             winningest_live_ai.print(temp_best_file_name);
             std::filesystem::rename(temp_best_file_name, best_file_name);
         }
