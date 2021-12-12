@@ -284,14 +284,7 @@ namespace
     void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name)
     {
         static std::map<Minimax_AI, bool> written_before;
-        static std::string last_file_name;
-        static std::ofstream ofs;
-        if(last_file_name != genome_file_name)
-        {
-            ofs.close();
-            ofs.open(genome_file_name, std::ios::app);
-            last_file_name = genome_file_name;
-        }
+        std::ofstream ofs(genome_file_name, std::ios::app);
 
         if( ! genome_file_name.empty() && ! ofs)
         {
