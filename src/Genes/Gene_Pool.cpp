@@ -87,6 +87,10 @@ void gene_pool(const std::string& config_file)
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
     const auto roaming_distance = config.as_positive_number<double>("roaming distance");
     const auto genome_file_name = config.as_text("gene pool file");
+    if(genome_file_name.empty())
+    {
+        throw std::invalid_argument("Gene pool file name cannot be blank.");
+    }
 
     const auto first_mutation_rate = config.as_positive_number<size_t>("first mutation rate");
     const auto first_mutation_interval = config.as_positive_number<size_t>("first mutation interval");
