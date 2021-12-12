@@ -283,7 +283,6 @@ namespace
 
     void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name)
     {
-        static std::map<Minimax_AI, bool> written_before;
         std::ofstream ofs(genome_file_name, std::ios::app);
 
         if( ! genome_file_name.empty() && ! ofs)
@@ -294,6 +293,7 @@ namespace
         auto sorted_pool = pool;
         std::sort(sorted_pool.begin(), sorted_pool.end());
         auto needs_still_alive_line = false;
+        static std::map<Minimax_AI, bool> written_before;
         for(const auto& ai : sorted_pool)
         {
             if( ! written_before[ai])
@@ -303,6 +303,7 @@ namespace
                 needs_still_alive_line = true;
             }
         }
+        purge_dead(pool, written_before);
 
         if(needs_still_alive_line)
         {
@@ -313,8 +314,6 @@ namespace
             }
             ofs << "\n\n" << std::flush;
         }
-
-        purge_dead(pool, written_before);
     }
 
     void print_round_header(const std::vector<Minimax_AI>& pool,
