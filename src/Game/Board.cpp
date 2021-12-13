@@ -462,13 +462,14 @@ void Board::remove_piece(const Square square) noexcept
     const auto leaving_piece = piece_on_square(square);
     if(leaving_piece.type() == Piece_Type::ROOK)
     {
-        const auto right_castle_square = Square{'h', leaving_piece.color() == Piece_Color::WHITE ? 1 : 8};
-        const auto  left_castle_square = Square{'a', leaving_piece.color() == Piece_Color::WHITE ? 1 : 8};
-        if(castle_is_legal(leaving_piece.color(), Direction::RIGHT) && square == right_castle_square)
+        const auto base_rank = leaving_piece.color() == Piece_Color::WHITE ? 1 : 8;
+        const auto right_castle_square = Square{'h', base_rank};
+        const auto  left_castle_square = Square{'a', base_rank};
+        if(square == right_castle_square)
         {
             make_castle_illegal(leaving_piece.color(), Direction::RIGHT);
         }
-        else if(castle_is_legal(leaving_piece.color(), Direction::LEFT) && square == left_castle_square)
+        else if(square == left_castle_square)
         {
             make_castle_illegal(leaving_piece.color(), Direction::LEFT);
         }
