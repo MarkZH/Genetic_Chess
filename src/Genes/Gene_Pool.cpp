@@ -604,7 +604,9 @@ namespace
             const auto is_black_player = String::starts_with(line, "[Black");
             if(is_white_player || is_black_player)
             {
-                const auto player_id = String::to_number<int>(String::split(String::split(line, "\"").at(1)).at(2));
+                const auto number_begin = std::find_if(line.begin(), line.end(), [](const auto c) { return std::isdigit(c); });
+                const auto number_end = std::find(std::next(number_begin), line.end(), '"');
+                const auto player_id = String::to_number<int>({number_begin, number_end});
                 if(player_id == id)
                 {
                     while(std::getline(input, line))
