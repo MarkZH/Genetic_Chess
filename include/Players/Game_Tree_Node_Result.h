@@ -67,14 +67,17 @@ class Game_Tree_Node_Result
         std::pair<double, int> value(Piece_Color query) const noexcept;
 
         //! \brief The sequence of moves that lead to the board position being evaluated.
-        const std::vector<const Move*> variation_line() const noexcept;
+        const std::vector<const Move*>& variation_line() const noexcept;
+
+        //! \brief Whether or not this result has been default constructed
+        operator bool() const noexcept;
 
         //! \brief Returns the equivalent Alpha-Beta cutoff value.
         Alpha_Beta_Value alpha_beta_value() const noexcept;
 
     private:
-        double score;
-        Piece_Color perspective;
+        double score = 0.0;
+        Piece_Color perspective = Piece_Color::WHITE;
         std::vector<const Move*> variation;
 };
 

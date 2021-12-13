@@ -101,21 +101,6 @@ Square& Square::operator++() noexcept
     return *this;
 }
 
-bool Square::inside_board(const char file) noexcept
-{
-    return 'a' <= file && file <= 'h';
-}
-
-bool Square::inside_board(const int rank) noexcept
-{
-    return 1 <= rank && rank <= 8;
-}
-
-bool Square::inside_board(const char file, const int rank) noexcept
-{
-    return inside_board(file) && inside_board(rank);
-}
-
 All_Squares Square::all_squares() noexcept
 {
     return {};

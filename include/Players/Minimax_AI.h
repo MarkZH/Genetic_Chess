@@ -133,7 +133,7 @@ class Minimax_AI : public Player
         //!
         //! \param result The data (variation and score) for the chosen move.
         //! \param board The current board position.
-        void report_final_search_stats(Game_Tree_Node_Result& result, const Board& board) const noexcept;
+        void report_final_search_stats(const Game_Tree_Node_Result& result, const Board& board) const noexcept;
 
         //! \brief Returns how much time to spend choosing this move.
         //!

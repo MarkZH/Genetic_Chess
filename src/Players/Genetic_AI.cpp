@@ -14,7 +14,10 @@
 class Board;
 class Clock;
 
-int Genetic_AI::next_id = 0;
+namespace
+{
+    int next_id = 0;
+}
 
 Genetic_AI::Genetic_AI() noexcept : id_number(next_id++)
 {
