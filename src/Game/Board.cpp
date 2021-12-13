@@ -657,13 +657,8 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
         return ! moves_are_parallel(move.movement(), king_square - move.start());
     }
 
-    if(move.is_en_passant())
+    if(move.is_en_passant() && king_square.rank() == move.start().rank())
     {
-        if(king_square.rank() != move.start().rank())
-        {
-            return false;
-        }
-
         const auto squares = Square::square_line_from(king_square, (move.start() - king_square).step());
         const auto revealed_attacker = std::find_if(squares.begin(), squares.end(),
                                                     [this](auto square)
@@ -674,7 +669,6 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
                                                     });
 
         return revealed_attacker != squares.end() &&
-               in_line_in_order(king_square, move.start(), *revealed_attacker) &&
                std::count_if(squares.begin(), revealed_attacker, [this](auto square) { return piece_on_square(square); }) == 2;
     }
 
