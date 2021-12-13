@@ -93,25 +93,6 @@ class Square
         //! \returns A reference to the now-modified square.
         Square& operator-=(const Square_Difference& diff) noexcept;
 
-        //! \brief Check that a square file is a valid value.
-        //!
-        //! \param file Square file to check ('a' <= file <= 'h')
-        //! \returns Whether the file meets the condition according to the parameter specification above.
-        static bool inside_board(char file) noexcept;
-
-        //! \brief Check that a square rank is a valid value.
-        //!
-        //! \param rank Square rank to check (1 <= file <= 8)
-        //! \returns Whether the rank meets the condition according to the parameter specification above.
-        static bool inside_board(int rank) noexcept;
-
-        //! \brief Check that a square file and rank is a valid value.
-        //!
-        //! \param file Square file to check ('a' <= file <= 'h')
-        //! \param rank Square rank to check (1 <= file <= 8)
-        //! \returns Whether the rank meets the condition according to the parameter specification above.
-        static bool inside_board(char file, int rank) noexcept;
-
         //! \brief Check if the square is a valid Board position.
         //!
         //! \returns Whether the square is on the Board ("i10" returns false).

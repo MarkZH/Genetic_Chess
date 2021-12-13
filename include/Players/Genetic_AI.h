@@ -139,9 +139,6 @@ class Genetic_AI
 
     private:
         Genome genome;
-
-        static int next_id;
-
         int id_number;
 
         void read_from(std::istream& is);

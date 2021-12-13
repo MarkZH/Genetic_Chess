@@ -167,13 +167,12 @@ Board::Board(const std::string& input_fen)
     const auto first_full_move_label = String::to_number<size_t>(fen_parse.at(5));
     plies_at_construction = 2*(first_full_move_label - 1) + (whose_turn() == Piece_Color::WHITE ? 0 : 1);
 
-    const auto starting_fen = String::remove_extra_whitespace(input_fen);
-    fen_parse_assert(fen() == starting_fen, input_fen, "Result: " + fen());
-
     recreate_move_caches();
 
     starting_hash = board_hash();
-    starting_fen_from_starting_hash[starting_hash] = starting_fen;
+    starting_fen_from_starting_hash[starting_hash] = String::remove_extra_whitespace(input_fen);
+
+    fen_parse_assert(fen() == original_fen(), input_fen, "Result: " + fen());
 }
 
 void Board::fen_parse_assert(const bool condition, const std::string& input_fen, const std::string& failure_message)
@@ -463,13 +462,14 @@ void Board::remove_piece(const Square square) noexcept
     const auto leaving_piece = piece_on_square(square);
     if(leaving_piece.type() == Piece_Type::ROOK)
     {
-        const auto right_castle_square = Square{'h', leaving_piece.color() == Piece_Color::WHITE ? 1 : 8};
-        const auto  left_castle_square = Square{'a', leaving_piece.color() == Piece_Color::WHITE ? 1 : 8};
-        if(castle_is_legal(leaving_piece.color(), Direction::RIGHT) && square == right_castle_square)
+        const auto base_rank = leaving_piece.color() == Piece_Color::WHITE ? 1 : 8;
+        const auto right_castle_square = Square{'h', base_rank};
+        const auto  left_castle_square = Square{'a', base_rank};
+        if(square == right_castle_square)
         {
             make_castle_illegal(leaving_piece.color(), Direction::RIGHT);
         }
-        else if(castle_is_legal(leaving_piece.color(), Direction::LEFT) && square == left_castle_square)
+        else if(square == left_castle_square)
         {
             make_castle_illegal(leaving_piece.color(), Direction::LEFT);
         }
@@ -657,13 +657,8 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
         return ! moves_are_parallel(move.movement(), king_square - move.start());
     }
 
-    if(move.is_en_passant())
+    if(move.is_en_passant() && king_square.rank() == move.start().rank())
     {
-        if(king_square.rank() != move.start().rank())
-        {
-            return false;
-        }
-
         const auto squares = Square::square_line_from(king_square, (move.start() - king_square).step());
         const auto revealed_attacker = std::find_if(squares.begin(), squares.end(),
                                                     [this](auto square)
@@ -674,7 +669,6 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
                                                     });
 
         return revealed_attacker != squares.end() &&
-               in_line_in_order(king_square, move.start(), *revealed_attacker) &&
                std::count_if(squares.begin(), revealed_attacker, [this](auto square) { return piece_on_square(square); }) == 2;
     }
 
