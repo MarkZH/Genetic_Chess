@@ -52,15 +52,14 @@ bool String::starts_with(const std::string& s, const std::string& beginning) noe
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
-    constexpr auto whitespace = " \t\n\r";
-    const auto text_start = s.find_first_not_of(whitespace);
-    if(text_start == std::string::npos)
+    const auto text_start = std::find_if_not(s.begin(), s.end(), std::isspace);
+    if(text_start == s.end())
     {
         return {};
     }
 
-    const auto text_end = s.find_last_not_of(whitespace);
-    return s.substr(text_start, text_end - text_start + 1);
+    const auto text_end = std::find_if_not(s.rbegin(), s.rend(), std::isspace).base();
+    return std::string(text_start, text_end);
 }
 
 std::string String::remove_extra_whitespace(const std::string& s) noexcept
