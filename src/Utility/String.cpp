@@ -14,7 +14,10 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 {
     if(delim.empty())
     {
-        return split(remove_extra_whitespace(s), " ", count);
+        auto ss = std::istringstream(s);
+        std::vector<std::string> result;
+        std::copy(std::istream_iterator<std::string>(ss), std::istream_iterator<std::string>(), std::back_inserter(result));
+        return result;
     }
 
     if(s.empty())
@@ -62,14 +65,8 @@ std::string String::trim_outer_whitespace(const std::string& s) noexcept
 
 std::string String::remove_extra_whitespace(const std::string& s) noexcept
 {
-    std::string result;
-    std::copy_if(s.begin(), s.end(), std::back_inserter(result),
-                 [&result](auto c)
-                 {
-                     return ! std::isspace(c) || ( ! result.empty() && ! std::isspace(result.back()));
-                 });
-
-    return trim_outer_whitespace(result);
+    const auto words = split(s);
+    return join(words.begin(), words.end(), " ");
 }
 
 std::string String::strip_comments(const std::string& str, const std::string& comment) noexcept
