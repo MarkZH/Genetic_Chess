@@ -31,9 +31,9 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     size_t split_count = 0;
     while(end_index < s.size() && split_count < count)
     {
-        end_index = s.find(delim, start_index);
+        end_index = std::min(s.find(delim, start_index), s.size());
         result.push_back(s.substr(start_index, end_index - start_index));
-        start_index = std::min(end_index, s.size()) + delim.size();
+        start_index = end_index + delim.size();
         ++split_count;
     }
 
