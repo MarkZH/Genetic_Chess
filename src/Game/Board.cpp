@@ -57,7 +57,7 @@ namespace
         return castling_hash_cache;
     }();
 
-    const uint64_t switch_turn_board_hash = Random::random_unsigned_int64();
+    const auto switch_turn_board_hash = Random::random_unsigned_int64();
     const auto en_passant_hash = Random::random_unsigned_int64();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
