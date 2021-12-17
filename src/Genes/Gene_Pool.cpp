@@ -513,7 +513,6 @@ namespace
         auto sorted_ids = ids;
         std::sort(sorted_ids.begin(), sorted_ids.end());
 
-
         ifs = std::ifstream(load_file);
         bool search_started_from_beginning_of_file = true;
         std::map<int, Minimax_AI> loaded_ais;
