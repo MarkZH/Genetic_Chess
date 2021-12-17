@@ -503,7 +503,7 @@ namespace
             std::transform(id_strings.begin(),
                            id_strings.end(),
                            std::back_inserter(ids),
-                           [](const auto& s) { return std::stoi(s); });
+                           String::to_number<int>);
         }
         catch(...)
         {
