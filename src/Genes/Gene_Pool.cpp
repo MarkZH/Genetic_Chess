@@ -271,11 +271,12 @@ namespace
         {
             const auto new_ai_index = pool.size();
             pool.resize(gene_pool_population);
-            for(auto ai_index = new_ai_index; ai_index < pool.size(); ++ai_index)
-            {
-                pool[ai_index].mutate(mutation_rate);
-                pool[ai_index].print(genome_file_name);
-            }
+            std::for_each(pool.begin() + new_ai_index, pool.end(),
+                          [mutation_rate, &genome_file_name](auto& ai)
+                          {
+                              ai.mutate(mutation_rate);
+                              ai.print(genome_file_name);
+                          });
             record_the_living(pool, genome_file_name);
         }
 
