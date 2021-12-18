@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <sstream>
 #include <cmath>
+#include <cctype>
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
@@ -52,13 +53,13 @@ bool String::starts_with(const std::string& s, const std::string& beginning) noe
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
-    const auto text_start = std::find_if_not(s.begin(), s.end(), std::isspace);
+    const auto text_start = std::find_if_not(s.begin(), s.end(), [](auto c) { return std::isspace(c); });
     if(text_start == s.end())
     {
         return {};
     }
 
-    const auto text_end = std::find_if_not(s.rbegin(), s.rend(), std::isspace).base();
+    const auto text_end = std::find_if_not(s.rbegin(), s.rend(), [](auto c) { return std::isspace(c); }).base();
     return std::string(text_start, text_end);
 }
 
