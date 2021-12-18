@@ -522,7 +522,7 @@ namespace
             {
                 try
                 {
-                    loaded_ais[id] = {ifs, id};
+                    loaded_ais.insert_or_assign(id, Minimax_AI{ifs, id});
                     search_started_from_beginning_of_file = false;
                     break;
                 }
