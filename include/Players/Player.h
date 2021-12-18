@@ -59,6 +59,18 @@ class Player
         //! \brief Allow the Player to take any amount of time to choose a move.
         static void choose_move_at_leisure() noexcept;
 
+        //! \brief Record a win for this AI.
+        void add_win() noexcept;
+
+        //! \brief Get win count for this AI.
+        int wins() const noexcept;
+
+        //! \brief Record a draw for this AI.
+        void add_draw() noexcept;
+
+        //! \brief Get draw count for this AI.
+        int draws() const noexcept;
+
     protected:
         //! \brief Find out what kind of format an engine should output while picking a move.
         //!
@@ -67,6 +79,10 @@ class Player
 
         //! \brief Check whether a Player should stop thinking and immediately move.
         static bool must_pick_move_now() noexcept;
+
+    private:
+        int win_count = 0;
+        int draw_count = 0;
 };
 
 #endif // PLAYER_H
