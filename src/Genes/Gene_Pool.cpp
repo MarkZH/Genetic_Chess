@@ -74,7 +74,8 @@ namespace
                             size_t first_mutation_interval,
                             size_t second_mutation_interval,
                             size_t mutation_rate,
-                            Clock::seconds game_time) noexcept;
+                            Clock::seconds game_time,
+                            best_ai_stats best_stats) noexcept;
     void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats);
 }
 
@@ -137,7 +138,7 @@ void gene_pool(const std::string& config_file)
         const auto mutation_phase = round_count++ % (first_mutation_interval + second_mutation_interval);
         const auto mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
 
-        print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time);
+        print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time, best_stats);
 
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
@@ -323,7 +324,8 @@ namespace
                             const size_t first_mutation_interval,
                             const size_t second_mutation_interval,
                             const size_t mutation_rate,
-                            const Clock::seconds game_time) noexcept
+                            const Clock::seconds game_time,
+                            const best_ai_stats best_stats) noexcept
     {
         std::cout << "\n=======================\n\n"
                   << "Gene pool size: " << pool.size()
@@ -336,6 +338,9 @@ namespace
                   << "  Mutation rate phase: " << round_count % (first_mutation_interval + second_mutation_interval)
                   << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
                   << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec\n\n";
+
+        std::cout << "Wins to be recorded as best: " << best_stats.wins_to_beat
+                  << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n\n";
 
     #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
@@ -451,9 +456,6 @@ namespace
             winningest_live_ai.print(temp_best_file_name);
             std::filesystem::rename(temp_best_file_name, best_file_name);
         }
-
-        std::cout << "\nWins to be recorded as best: " << best_stats.wins_to_beat
-                  << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n\n";
     }
 
     std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file)
