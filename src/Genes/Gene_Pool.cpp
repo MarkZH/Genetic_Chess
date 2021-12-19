@@ -260,7 +260,7 @@ namespace
             {
                 throw std::runtime_error("Too many parameters in the seed configuration\nseed = " + seed_ai_specification);
             }
-            const auto file_name = seed_split.front();
+            const auto file_name = String::trim_outer_whitespace(seed_split.front());
             const auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
             const auto seed_ai = Minimax_AI(file_name, seed_id);
             std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
