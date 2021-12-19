@@ -230,8 +230,8 @@ namespace
 
     void pause_gene_pool(int)
     {
-        std::cout << "\nGetting to a good stopping point ..." << std::endl;
     #ifdef _WIN32
+        std::cout << "\nGetting to a good stopping point ..." << std::endl;
         quit_gene_pool = true;
     #else
         static auto pause_lock = std::unique_lock(pause_mutex, std::defer_lock);
@@ -244,6 +244,7 @@ namespace
         else
         {
             pause_lock.lock();
+            std::cout << "\nGetting to a good stopping point ..." << std::endl;
         }
     #endif // _WIN32
     }
