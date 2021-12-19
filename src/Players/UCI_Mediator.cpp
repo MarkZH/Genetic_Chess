@@ -98,12 +98,12 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             const auto moves_iter = std::find(parse.begin(), parse.end(), "moves");
             if(moves_iter != parse.end())
             {
-                std::for_each(std::next(moves_iter), parse.end(),
-                              [&board, &move_list, &setup_result](const auto& move)
-                              {
-                                  setup_result = board.play_move(move);
-                                  move_list.push_back(board.last_move());
-                              });
+                std::transform(std::next(moves_iter), parse.end(), std::back_inserter(move_list),
+                               [&board, &setup_result](const auto& move)
+                               {
+                                   setup_result = board.play_move(move);
+                                   return board.last_move();
+                               });
                 log("All moves applied");
             }
 
