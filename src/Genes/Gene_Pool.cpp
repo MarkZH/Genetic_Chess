@@ -158,7 +158,7 @@ void gene_pool(const std::string& config_file)
 
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
-            auto clock = Clock(game_time, 0, Clock::seconds(0.0), Time_Reset_Method::ADDITION, board.whose_turn());
+            const auto clock = Clock(game_time, 0, Clock::seconds(0.0), Time_Reset_Method::ADDITION, board.whose_turn());
             results.emplace_back(std::async(std::launch::async, play_game,
                                             board,
                                             clock,
