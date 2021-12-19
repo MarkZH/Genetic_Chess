@@ -7,12 +7,17 @@
 #include <cctype>
 #include <cmath>
 #include <format>
+#include <cctype>
+#include <iterator>
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
     if(delim.empty())
     {
-        return split(remove_extra_whitespace(s), " ", count);
+        auto ss = std::istringstream(s);
+        std::vector<std::string> result;
+        std::copy(std::istream_iterator<std::string>(ss), std::istream_iterator<std::string>(), std::back_inserter(result));
+        return result;
     }
 
     if(s.empty())
@@ -26,9 +31,9 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     size_t split_count = 0;
     while(end_index < s.size() && split_count < count)
     {
-        end_index = s.find(delim, start_index);
+        end_index = std::min(s.find(delim, start_index), s.size());
         result.push_back(s.substr(start_index, end_index - start_index));
-        start_index = std::min(end_index, s.size()) + delim.size();
+        start_index = end_index + delim.size();
         ++split_count;
     }
 
@@ -42,27 +47,20 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
-    constexpr auto whitespace = " \t\n\r";
-    const auto text_start = s.find_first_not_of(whitespace);
-    if(text_start == std::string::npos)
+    const auto text_start = std::find_if_not(s.begin(), s.end(), [](auto c) { return std::isspace(c); });
+    if(text_start == s.end())
     {
         return {};
     }
 
-    const auto text_end = s.find_last_not_of(whitespace);
-    return s.substr(text_start, text_end - text_start + 1);
+    const auto text_end = std::find_if_not(s.rbegin(), s.rend(), [](auto c) { return std::isspace(c); }).base();
+    return std::string(text_start, text_end);
 }
 
 std::string String::remove_extra_whitespace(const std::string& s) noexcept
 {
-    std::string result;
-    std::copy_if(s.begin(), s.end(), std::back_inserter(result),
-                 [&result](auto c)
-                 {
-                     return ! std::isspace(c) || ( ! result.empty() && ! std::isspace(result.back()));
-                 });
-
-    return trim_outer_whitespace(result);
+    const auto words = split(s);
+    return join(words.begin(), words.end(), " ");
 }
 
 std::string String::strip_comments(const std::string& str, const std::string& comment) noexcept

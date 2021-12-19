@@ -57,7 +57,7 @@ namespace
         return castling_hash_cache;
     }();
 
-    const uint64_t switch_turn_board_hash = Random::random_unsigned_int64();
+    const auto switch_turn_board_hash = Random::random_unsigned_int64();
     const auto en_passant_hash = Random::random_unsigned_int64();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
@@ -730,7 +730,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         {
             if(line.starts_with("[Round"))
             {
-                const auto round_number = String::to_number<int>(String::split(line, "\"").at(1));
+                const auto round_number = String::to_number<int>(String::extract_delimited_text(line, "\"", "\""));
                 if(round_number >= game_number)
                 {
                     game_number = round_number + 1;

@@ -54,19 +54,15 @@ namespace
 
     void pause_gene_pool(int);
 
-    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name);
-
-    template<typename Stat_Map>
-    void purge_dead(const std::vector<Minimax_AI>& pool, Stat_Map& stats);
+    void record_the_living(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name);
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
     int count_wins(const std::string& file_name, int id);
     std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
-    struct Stats { int wins = 0; int draws = 0; };
     struct best_ai_stats { int id = 0; int wins = 0; double wins_to_beat = 0.0; };
     best_ai_stats recall_previous_best_stats(const std::string& best_file_name, const std::string& game_record_file) noexcept;
-    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats, const std::string& best_file_name) noexcept;
+    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, const std::string& best_file_name) noexcept;
     void print_round_header(const std::vector<Minimax_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins,
@@ -74,8 +70,9 @@ namespace
                             size_t first_mutation_interval,
                             size_t second_mutation_interval,
                             size_t mutation_rate,
-                            Clock::seconds game_time) noexcept;
-    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats);
+                            Clock::seconds game_time,
+                            best_ai_stats best_stats) noexcept;
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool);
 }
 
 void gene_pool(const std::string& config_file)
@@ -127,8 +124,6 @@ void gene_pool(const std::string& config_file)
     std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     load_previous_game_stats(game_record_file, game_time, color_wins);
 
-    std::map<Minimax_AI,  Stats> stats;
-
     const auto best_file_name = genome_file_name + "_best_genome.txt";
     auto best_stats = recall_previous_best_stats(best_file_name, game_record_file);
 
@@ -137,7 +132,7 @@ void gene_pool(const std::string& config_file)
         const auto mutation_phase = round_count++ % (first_mutation_interval + second_mutation_interval);
         const auto mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
 
-        print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time);
+        print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time, best_stats);
 
         // The shuffled pool list determines the match-ups. After shuffling the list,
         // adjacent AIs are matched as opponents.
@@ -185,31 +180,31 @@ void gene_pool(const std::string& config_file)
             result_printer << white.id() << " vs " << black.id() << ": " << color_text(winner) << " (" << result.ending_reason() << ")\n";
 
             const auto mating_winner = (winner == Winner_Color::NONE ? (Random::coin_flip() ? Winner_Color::WHITE : Winner_Color::BLACK) : winner);
-            const auto& winning_player = (mating_winner == Winner_Color::WHITE ? white : black);
+            auto& winning_player = (mating_winner == Winner_Color::WHITE ? white : black);
             auto& losing_player = (winning_player.id() == white.id() ? black : white);
 
             auto offspring = Minimax_AI(white, black);
             offspring.mutate(mutation_rate);
+            offspring.print(genome_file_name);
             losing_player = offspring;
 
             ++color_wins[static_cast<int>(winner)];
             if(winner == Winner_Color::NONE)
             {
-                ++stats[winning_player].draws;
+                winning_player.add_draw();
             }
             else
             {
-                ++stats[winning_player].wins;
+                winning_player.add_win();
             }
         }
 
-        write_generation(pool, genome_file_name);
-        purge_dead(pool, stats);
-        update_best_stats(best_stats, pool, stats, best_file_name);
+        record_the_living(pool, genome_file_name);
+        update_best_stats(best_stats, pool, best_file_name);
 
         if(verbose_output)
         {
-            print_verbose_output(result_printer, pool, stats);
+            print_verbose_output(result_printer, pool);
         }
 
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
@@ -265,55 +260,43 @@ namespace
             {
                 throw std::runtime_error("Too many parameters in the seed configuration\nseed = " + seed_ai_specification);
             }
-            const auto file_name = seed_split.front();
+            const auto file_name = String::trim_outer_whitespace(seed_split.front());
             const auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
             const auto seed_ai = Minimax_AI(file_name, seed_id);
             std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
             pool = {seed_ai};
         }
-        const auto new_ai_index = pool.size();
-        pool.resize(gene_pool_population);
-        for(auto ai_index = new_ai_index; ai_index < pool.size(); ++ai_index)
+
+        if(pool.size() != gene_pool_population)
         {
-            pool[ai_index].mutate(mutation_rate);
+            const auto new_ai_index = pool.size();
+            pool.resize(gene_pool_population);
+            std::for_each(pool.begin() + new_ai_index, pool.end(),
+                          [mutation_rate, &genome_file_name](auto& ai)
+                          {
+                              ai.mutate(mutation_rate);
+                              ai.print(genome_file_name);
+                          });
+            record_the_living(pool, genome_file_name);
         }
-        write_generation(pool, genome_file_name);
+
         return pool;
     }
 
-    void write_generation(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name)
+    void record_the_living(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name)
     {
-        std::ofstream ofs(genome_file_name, std::ios::app);
-
-        if( ! genome_file_name.empty() && ! ofs)
+        auto ofs = std::ofstream(genome_file_name, std::ios::app);
+        if( ! ofs)
         {
-            throw std::runtime_error("Could not write to file:" + genome_file_name);
+            throw std::runtime_error("Could not open gene pool file for writing: " + genome_file_name);
         }
 
-        auto sorted_pool = pool;
-        std::sort(sorted_pool.begin(), sorted_pool.end());
-        auto needs_still_alive_line = false;
-        static std::map<Minimax_AI, bool> written_before;
-        for(const auto& ai : sorted_pool)
+        ofs << "\nStill Alive: ";
+        for(const auto& ai : pool)
         {
-            if( ! written_before[ai])
-            {
-                ai.print(ofs);
-                written_before[ai] = true;
-                needs_still_alive_line = true;
-            }
+            ofs << ai.id() << " ";
         }
-        purge_dead(pool, written_before);
-
-        if(needs_still_alive_line)
-        {
-            ofs << "\nStill Alive: ";
-            for(const auto& ai : pool)
-            {
-                ofs << ai.id() << " ";
-            }
-            ofs << "\n\n" << std::flush;
-        }
+        ofs << "\n\n" << std::flush;
     }
 
     void print_round_header(const std::vector<Minimax_AI>& pool,
@@ -323,7 +306,8 @@ namespace
                             const size_t first_mutation_interval,
                             const size_t second_mutation_interval,
                             const size_t mutation_rate,
-                            const Clock::seconds game_time) noexcept
+                            const Clock::seconds game_time,
+                            const best_ai_stats best_stats) noexcept
     {
         std::cout << "\n=======================\n\n"
                   << "Gene pool size: " << pool.size()
@@ -337,6 +321,9 @@ namespace
                   << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
                   << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec\n\n";
 
+        std::cout << "Wins to be recorded as best: " << best_stats.wins_to_beat
+                  << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n\n";
+
     #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
     #else
@@ -344,7 +331,7 @@ namespace
     #endif // _WIN32
     }
 
-    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats)
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool)
     {
         std::cout << result_printer.str();
 
@@ -364,8 +351,8 @@ namespace
         for(const auto& ai : pool)
         {
             std::cout << std::setw(id_column_width) << ai.id()
-                      << std::setw(win_column_width) << stats[ai].wins
-                      << std::setw(draw_column_width) << stats[ai].draws << "\n";
+                      << std::setw(win_column_width) << ai.wins()
+                      << std::setw(draw_column_width) << ai.draws() << "\n";
         }
     }
 
@@ -384,11 +371,11 @@ namespace
             line = String::trim_outer_whitespace(line);
             if(line.starts_with("[TimeControl"))
             {
-                game_time = String::to_duration<Clock::seconds>(String::split(line, "\"").at(1));
+                game_time = String::to_duration<Clock::seconds>(String::extract_delimited_text(line, "\"", "\""));
             }
             else if(line.starts_with("[Result"))
             {
-                auto result = String::split(line, "\"").at(1);
+                auto result = String::extract_delimited_text(line, "\"", "\"");
                 if(result == "1-0")
                 {
                     color_wins[static_cast<int>(Winner_Color::WHITE)]++;
@@ -426,7 +413,7 @@ namespace
         }
     }
 
-    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, std::map<Minimax_AI, Stats>& stats, const std::string& best_file_name) noexcept
+    void update_best_stats(best_ai_stats& best_stats, const std::vector<Minimax_AI>& pool, const std::string& best_file_name) noexcept
     {
         // Slowly reduce the wins required to be recorded as best to allow
         // later AIs that are playing against a better field to be recorded.
@@ -435,11 +422,11 @@ namespace
 
         const auto& winningest_live_ai =
             *std::max_element(pool.begin(), pool.end(),
-                              [&stats](const auto& a, const auto& b)
+                              [](const auto& a, const auto& b)
                               {
-                                  return stats[a].wins < stats[b].wins;
+                                  return a.wins() < b.wins();
                               });
-        const auto win_count = stats[winningest_live_ai].wins;
+        const auto win_count = winningest_live_ai.wins();
 
         if(win_count > best_stats.wins_to_beat)
         {
@@ -451,9 +438,6 @@ namespace
             winningest_live_ai.print(temp_best_file_name);
             std::filesystem::rename(temp_best_file_name, best_file_name);
         }
-
-        std::cout << "\nWins to be recorded as best: " << best_stats.wins_to_beat
-                  << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n\n";
     }
 
     std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file)
@@ -503,7 +487,7 @@ namespace
             std::transform(id_strings.begin(),
                            id_strings.end(),
                            std::back_inserter(ids),
-                           [](const auto& s) { return std::stoi(s); });
+                           String::to_number<int>);
         }
         catch(...)
         {
@@ -512,7 +496,6 @@ namespace
 
         auto sorted_ids = ids;
         std::sort(sorted_ids.begin(), sorted_ids.end());
-
 
         ifs = std::ifstream(load_file);
         bool search_started_from_beginning_of_file = true;
@@ -523,7 +506,7 @@ namespace
             {
                 try
                 {
-                    loaded_ais[id] = {ifs, id};
+                    loaded_ais.insert_or_assign(id, Minimax_AI{ifs, id});
                     search_started_from_beginning_of_file = false;
                     break;
                 }
@@ -547,24 +530,12 @@ namespace
         std::vector<Minimax_AI> result;
         std::transform(ids.begin(), ids.end(), std::back_inserter(result), [&loaded_ais](const auto id) { return loaded_ais.at(id); });
 
-        write_generation(result, ""); // mark AIs from file as already written
         return result;
     }
 
     void throw_on_bad_still_alive_line(size_t line_number, const std::string& line)
     {
         throw std::runtime_error("Invalid \"Still Alive\" line (line# " + std::to_string(line_number) + "): " + line);
-    }
-
-    template<typename Stat_Map>
-    void purge_dead(const std::vector<Minimax_AI>& pool, Stat_Map& stats)
-    {
-        Stat_Map new_stats;
-        for(const auto& ai : pool)
-        {
-            new_stats[ai] = stats[ai];
-        }
-        stats = new_stats;
     }
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept
@@ -605,7 +576,7 @@ namespace
             if(is_white_player || is_black_player)
             {
                 const auto number_begin = std::find_if(line.begin(), line.end(), [](const auto c) { return std::isdigit(c); });
-                const auto number_end = std::find(std::next(number_begin), line.end(), '"');
+                const auto number_end = std::find_if_not(std::next(number_begin), line.end(), [](const auto c) { return std::isdigit(c); });
                 const auto player_id = String::to_number<int>({number_begin, number_end});
                 if(player_id == id)
                 {
