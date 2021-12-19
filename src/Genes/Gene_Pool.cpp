@@ -322,7 +322,9 @@ namespace
                   << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec\n\n";
 
         std::cout << "Wins to be recorded as best: " << best_stats.wins_to_beat
-                  << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n\n";
+                  << "\nBest ID       : " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n";
+        const auto best_living = std::max_element(pool.begin(), pool.end(), [](const auto& a, const auto& b) { return a.wins() < b.wins(); });
+        std::cout << "Best living ID: " << best_living->id() << " with " << best_living->wins() << " wins\n\n";
 
     #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
