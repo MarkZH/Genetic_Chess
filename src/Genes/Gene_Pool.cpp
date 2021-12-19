@@ -494,17 +494,15 @@ namespace
         auto sorted_ids = ids;
         std::sort(sorted_ids.begin(), sorted_ids.end());
 
-        ifs = std::ifstream(load_file);
-        bool search_started_from_beginning_of_file = true;
         std::map<int, Minimax_AI> loaded_ais;
         for(auto id : sorted_ids)
         {
             while(true)
             {
+                const auto search_started_from_beginning_of_file = ifs.tellg() == 0;
                 try
                 {
                     loaded_ais.insert_or_assign(id, Minimax_AI{ifs, id});
-                    search_started_from_beginning_of_file = false;
                     break;
                 }
                 catch(const Genetic_AI_Creation_Error& e)
@@ -517,8 +515,6 @@ namespace
                     else
                     {
                         ifs = std::ifstream(load_file);
-                        search_started_from_beginning_of_file = true;
-                        continue;
                     }
                 }
             }
