@@ -371,11 +371,11 @@ namespace
             line = String::trim_outer_whitespace(line);
             if(String::starts_with(line, "[TimeControl"))
             {
-                game_time = String::to_duration<Clock::seconds>(String::split(line, "\"").at(1));
+                game_time = String::to_duration<Clock::seconds>(String::extract_delimited_text(line, "\"", "\""));
             }
             else if(String::starts_with(line, "[Result"))
             {
-                auto result = String::split(line, "\"").at(1);
+                auto result = String::extract_delimited_text(line, "\"", "\"");
                 if(result == "1-0")
                 {
                     color_wins[static_cast<int>(Winner_Color::WHITE)]++;

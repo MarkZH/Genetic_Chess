@@ -278,7 +278,7 @@ namespace
             }
             else if(String::starts_with(line, "[FEN"))
             {
-                board = Board(String::split(line, "\"").at(1));
+                board = Board(String::extract_delimited_text(line, "\"", "\""));
             }
             else if(String::starts_with(line, "["))
             {
