@@ -267,17 +267,12 @@ namespace
             pool = {seed_ai};
         }
 
-        if(pool.size() != gene_pool_population)
+        const auto old_pool_size = pool.size();
+        pool.resize(gene_pool_population);
+        for(auto i = old_pool_size; i < pool.size(); ++i)
         {
-            const auto new_ai_index = pool.size();
-            pool.resize(gene_pool_population);
-            std::for_each(pool.begin() + new_ai_index, pool.end(),
-                          [mutation_rate, &genome_file_name](auto& ai)
-                          {
-                              ai.mutate(mutation_rate);
-                              ai.print(genome_file_name);
-                          });
-            record_the_living(pool, genome_file_name);
+            pool[i].mutate(mutation_rate);
+            pool[i].print(genome_file_name);
         }
 
         return pool;
