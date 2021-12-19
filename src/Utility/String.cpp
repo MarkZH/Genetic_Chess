@@ -10,6 +10,7 @@
 #include <sstream>
 #include <cmath>
 #include <cctype>
+#include <iterator>
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
