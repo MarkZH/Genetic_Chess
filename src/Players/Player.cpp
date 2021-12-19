@@ -46,7 +46,27 @@ void Player::choose_move_at_leisure() noexcept
     move_immediately = false;
 }
 
+void Player::add_win() noexcept
+{
+    ++win_count;
+}
+
+int Player::wins() const noexcept
+{
+    return win_count;
+}
+
 bool Player::must_pick_move_now() noexcept
 {
     return move_immediately;
+}
+
+void Player::add_draw() noexcept
+{
+    ++draw_count;
+}
+
+int Player::draws() const noexcept
+{
+    return draw_count;
 }

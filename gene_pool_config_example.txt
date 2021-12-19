@@ -46,8 +46,8 @@ gene pool file = example_pool.txt
 
 # (Optional) When starting a new gene pool run, add the AI from the
 # listed file. The ID # number is separated from the file name with
-# a slash.
-#seed = genetic_ai_example.txt / 197965
+# a slash. The file name cannot end in a space.
+#seed = genetic_ai_example.txt / 282702
 
 # (Optional) Alternatively, If no ID number for the seed is listed,
 # then the last one in the file is selected.
