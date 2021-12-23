@@ -597,7 +597,7 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
 std::string Minimax_AI::commentary_for_next_move(const Board& board, const size_t move_number) const noexcept
 {
     const auto comment_index = board.played_ply_count()/2;
-    if(comment_index >= commentary.size() || ! commentary.at(comment_index))
+    if(comment_index >= commentary.size() || commentary.at(comment_index).variation_line().empty())
     {
         return {};
     }
@@ -640,7 +640,7 @@ std::string variation_line(Board board,
 
 void Minimax_AI::undo_move(const Move* const last_move) const noexcept
 {
-    if(commentary.empty() || ! commentary.back())
+    if(commentary.empty() || commentary.back().variation_line().empty())
     {
         return;
     }
