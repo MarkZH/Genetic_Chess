@@ -398,7 +398,7 @@ namespace
     {
         try
         {
-            const auto best = Genetic_AI(best_file_name, find_last_id(best_file_name));
+            const auto best = Minimax_AI(best_file_name, find_last_id(best_file_name));
             std::cout << "Searching for previous best AI win counts ..." << std::endl;
             auto wins = count_wins(game_record_file, best.id());
             return {best.id(), wins, double(wins)};

@@ -21,7 +21,7 @@ using namespace std::chrono_literals;
 #include "Game/Square.h"
 #include "Moves/Move.h"
 
-#include "Players/Genetic_AI.h"
+#include "Players/Minimax_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
 
@@ -273,7 +273,7 @@ bool run_tests()
                               []()
                               {
                                   const auto file_name = "genetic_ai_example.txt";
-                                  return Genetic_AI{file_name, find_last_id(file_name)};
+                                  return Minimax_AI{file_name, find_last_id(file_name)};
                               });
 
     castling_possible_gene_tests(tests_passed);
@@ -1148,7 +1148,7 @@ namespace
         remove(write_file_name);
         remove(rewrite_file_name);
 
-        std::vector<Genetic_AI> test_pool(10);
+        std::vector<Minimax_AI> test_pool(10);
         for(auto& ai : test_pool)
         {
             ai.mutate(100);
@@ -1157,7 +1157,7 @@ namespace
 
         const auto& test_ai = Random::random_element(test_pool);
         test_ai.print(write_file_name);
-        auto read_ai = Genetic_AI(pool_file_name, test_ai.id());
+        auto read_ai = Minimax_AI(pool_file_name, test_ai.id());
         read_ai.print(rewrite_file_name);
 
         if(test_result(tests_passed, files_are_identical(write_file_name, rewrite_file_name), "Genome loaded from gene pool file not preserved."))
@@ -1170,7 +1170,7 @@ namespace
 
     void self_swapped_genetic_ai_is_unchanged(bool& tests_passed)
     {
-        auto self_swap_ai = Genetic_AI();
+        auto self_swap_ai = Minimax_AI();
         self_swap_ai.mutate(100);
         const auto self_write_file_name = "self_original.txt";
         remove(self_write_file_name);
@@ -1190,7 +1190,7 @@ namespace
 
     void self_assigned_genetic_ai_is_unchanged(bool& tests_passed)
     {
-        auto self_assign_ai = Genetic_AI();
+        auto self_assign_ai = Minimax_AI();
         self_assign_ai.mutate(100);
         auto self_write_file_name = "self_assign_original.txt";
         remove(self_write_file_name);
