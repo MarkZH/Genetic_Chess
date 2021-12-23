@@ -287,7 +287,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
     return setup_result;
 }
 
-bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock, const Player& player)
+bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, const std::string& command, Board& board, Clock& clock, const Player& player)
 {
     if(move_list.empty())
     {
