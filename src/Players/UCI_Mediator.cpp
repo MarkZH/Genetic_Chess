@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <chrono>
 using namespace std::chrono_literals;
+#include <variant>
 
 #include "Players/Player.h"
 #include "Game/Board.h"
@@ -29,15 +30,24 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
 
     while(true)
     {
-        std::string command;
-        try
+        const auto uci_command = [this]() -> std::variant<std::string, Game_Result>
         {
-            command = receive_uci_command(false);
-        }
-        catch(const Game_Ended& game_ending_error)
+            try
+            {
+                return receive_uci_command(false);
+            }
+            catch(const Game_Ended& game_ending_error)
+            {
+                return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
+            }
+        }();
+
+        if(const auto end_result = std::get_if<Game_Result>(&uci_command))
         {
-            return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
+            return *end_result;
         }
+
+        const auto command = std::get<std::string>(uci_command);
 
         Player::pick_move_now(); // Stop pondering
 

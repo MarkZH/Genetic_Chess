@@ -5,6 +5,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <optional>
+#include <variant>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -51,22 +52,30 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
 
     while(true)
     {
-        std::string command;
-        try
+        const auto cecp_command = [this, &clock]() -> std::variant<std::string, Game_Result>
         {
-            command = receive_cecp_command(clock, false);
-        }
-        catch(const Game_Ended& game_ending_error)
+            try
+            {
+                return receive_cecp_command(clock, false);
+            }
+            catch(const Game_Ended& game_ending_error)
+            {
+                return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
+            }
+        }();
+
+        if(const auto end_result = std::get_if<Game_Result>(&cecp_command))
         {
-            return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
+            return *end_result;
         }
+
+        const auto command = std::get<std::string>(cecp_command);
 
         Player::pick_move_now(); // Stop pondering
 
         if(String::starts_with(command, "ping "))
         {
-            command[1] = 'o'; // change "ping" to "pong"
-            send_command(command);
+            send_command("pong " + String::split(command).back());
         }
         else if(command == "go")
         {
