@@ -374,16 +374,18 @@ std::string CECP_Mediator::listener(Clock& clock)
 {
     while(true)
     {
-        std::string command;
-        try
+        const auto command = [this, &clock]()
         {
-            command = receive_cecp_command(clock, true);
-        }
-        catch(const Game_Ended&)
-        {
-            Player::pick_move_now();
-            throw;
-        }
+            try
+            {
+                return receive_cecp_command(clock, true);
+            }
+            catch(const Game_Ended&)
+            {
+                Player::pick_move_now();
+                throw;
+            }
+        }();
 
         if(command == "?")
         {
