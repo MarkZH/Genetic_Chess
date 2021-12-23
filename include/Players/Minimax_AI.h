@@ -93,17 +93,12 @@ class Minimax_AI : public Player
         //! \brief Print the AI parameters to a file.
         //!
         //! \param file_name The name of a file.
-        void print(const std::string& file_name) const noexcept;
+        void print(const std::string& file_name) const;
 
         //! \brief Print the AI parameters to an output stream
         //!
         //! \param os The output stream
         void print(std::ostream& os) const noexcept;
-
-        //! \brief Print the AI parameters to an output stream
-        //!
-        //! \param os The output stream
-        void print(std::ostream&& os) const noexcept;
 
         //! \brief Ordering operator for std::map
         //!

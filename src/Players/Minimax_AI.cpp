@@ -685,19 +685,19 @@ void Minimax_AI::mutate(size_t mutation_rate) noexcept
     recalibrate_self();
 }
 
-void Minimax_AI::print(const std::string& file_name) const noexcept
+void Minimax_AI::print(const std::string& file_name) const
 {
-    print(std::ofstream(file_name, std::ofstream::app));
+    auto ofs = std::ofstream(file_name, std::ofstream::app);
+    if( ! ofs)
+    {
+        throw std::invalid_argument("Could not open file for printing AI data: " + file_name);
+    }
+    print(ofs);
 }
 
 void Minimax_AI::print(std::ostream& os) const noexcept
 {
     genetic_ai.print(os);
-}
-
-void Minimax_AI::print(std::ostream&& os) const noexcept
-{
-    print(os);
 }
 
 bool Minimax_AI::operator<(const Minimax_AI& other) const noexcept
