@@ -46,6 +46,12 @@ class Minimax_AI : public Player
         //! \param id The AI ID to search for in the stream.
         Minimax_AI(std::istream& is, int id);
 
+        //! Load an AI from an opened stream.
+        //!
+        //! \param is The already opened input stream.
+        //! \param id The AI ID to search for in the stream.
+        Minimax_AI(std::istream&& is, int id);
+
         //! Create a new AI by mating two existing ones.
         //!
         //! \param a The first AI.
@@ -87,7 +93,7 @@ class Minimax_AI : public Player
         //! \brief Print the AI parameters to a file.
         //!
         //! \param file_name The name of a file.
-        void print(const std::string& file_name) const noexcept;
+        void print(const std::string& file_name) const;
 
         //! \brief Print the AI parameters to an output stream
         //!
@@ -279,5 +285,12 @@ std::string variation_line(Board board,
                            size_t move_number,
                            const std::vector<const Move*>& variation,
                            double score) noexcept;
+
+//! \brief Find the last ID of a Genetic_AI in a gene pool file.
+//!
+//! \param file_name The name of the file with Genetic_AI data.
+//! \returns The numerical ID of the last AI in the file.
+//! \exception std::runtime_error if no valid ID line can be found.
+int find_last_id(const std::string& file_name);
 
 #endif // MINIMAX_AI_H

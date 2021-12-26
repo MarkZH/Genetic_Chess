@@ -34,7 +34,7 @@ class Genome
         //! \param other The originating genome.
         Genome(const Genome& other) noexcept;
 
-        //! \brief Move-contructor.
+        //! \brief Move-constructor
         Genome(Genome&& other) = default;
 
         //! \brief Create a new genome from two existing genomes via mating
