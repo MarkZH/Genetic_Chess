@@ -716,7 +716,7 @@ int find_last_id(const std::string& players_file_name)
     std::string last_player;
     for(std::string line; std::getline(player_input, line);)
     {
-        if(String::starts_with(line, "ID:"))
+        if(line.starts_with("ID:"))
         {
             last_player = line;
         }
