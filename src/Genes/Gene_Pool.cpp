@@ -104,7 +104,7 @@ void gene_pool(const std::string& config_file)
     }
     const auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
 
-    const auto board_fen = config.as_text_or_default("FEN", Board().fen());
+    const auto board = Board{config.as_text_or_default("FEN", Board().fen())};
     const auto seed_ai_specification = config.as_text_or_default("seed", "");
     const auto verbose_output = config.as_boolean("output volume", "verbose", "quiet");
 
@@ -158,11 +158,9 @@ void gene_pool(const std::string& config_file)
 
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
-            auto board = Board(board_fen);
-            auto clock = Clock(game_time, 0, Clock::seconds(0.0), Time_Reset_Method::ADDITION, board.whose_turn());
             results.emplace_back(std::async(std::launch::async, play_game,
                                             board,
-                                            clock,
+                                            Clock{game_time},
                                             std::cref(white), std::cref(black),
                                             "Gene pool",
                                             "Local computer",
@@ -231,8 +229,8 @@ namespace
 
     void pause_gene_pool(int)
     {
-        std::cout << "\nGetting to a good stopping point ..." << std::endl;
     #ifdef _WIN32
+        std::cout << "\nGetting to a good stopping point ..." << std::endl;
         quit_gene_pool = true;
     #else
         static auto pause_lock = std::unique_lock(pause_mutex, std::defer_lock);
@@ -245,6 +243,7 @@ namespace
         else
         {
             pause_lock.lock();
+            std::cout << "\nGetting to a good stopping point ..." << std::endl;
         }
     #endif // _WIN32
     }
@@ -267,17 +266,12 @@ namespace
             pool = {seed_ai};
         }
 
-        if(pool.size() != gene_pool_population)
+        const auto old_pool_size = pool.size();
+        pool.resize(gene_pool_population);
+        for(auto i = old_pool_size; i < pool.size(); ++i)
         {
-            const auto new_ai_index = pool.size();
-            pool.resize(gene_pool_population);
-            std::for_each(pool.begin() + new_ai_index, pool.end(),
-                          [mutation_rate, &genome_file_name](auto& ai)
-                          {
-                              ai.mutate(mutation_rate);
-                              ai.print(genome_file_name);
-                          });
-            record_the_living(pool, genome_file_name);
+            pool[i].mutate(mutation_rate);
+            pool[i].print(genome_file_name);
         }
 
         return pool;
@@ -322,7 +316,9 @@ namespace
                   << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec\n\n";
 
         std::cout << "Wins to be recorded as best: " << best_stats.wins_to_beat
-                  << "\nBest ID: " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n\n";
+                  << "\nBest ID       : " << best_stats.id << " with " << best_stats.wins << " win" << (best_stats.wins != 1 ? "s" : "") << "\n";
+        const auto best_living = std::max_element(pool.begin(), pool.end(), [](const auto& a, const auto& b) { return a.wins() < b.wins(); });
+        std::cout << "Best living ID: " << best_living->id() << " with " << best_living->wins() << " wins\n\n";
 
     #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
@@ -402,10 +398,10 @@ namespace
     {
         try
         {
-            const auto best = Genetic_AI(best_file_name, find_last_id(best_file_name));
+            const auto best_id = find_last_id(best_file_name);
             std::cout << "Searching for previous best AI win counts ..." << std::endl;
-            auto wins = count_wins(game_record_file, best.id());
-            return {best.id(), wins, double(wins)};
+            auto wins = count_wins(game_record_file, best_id);
+            return {best_id, wins, double(wins)};
         }
         catch(...)
         {
@@ -497,17 +493,15 @@ namespace
         auto sorted_ids = ids;
         std::sort(sorted_ids.begin(), sorted_ids.end());
 
-        ifs = std::ifstream(load_file);
-        bool search_started_from_beginning_of_file = true;
         std::map<int, Minimax_AI> loaded_ais;
         for(auto id : sorted_ids)
         {
             while(true)
             {
+                const auto search_started_from_beginning_of_file = ifs.tellg() == 0;
                 try
                 {
                     loaded_ais.insert_or_assign(id, Minimax_AI{ifs, id});
-                    search_started_from_beginning_of_file = false;
                     break;
                 }
                 catch(const Genetic_AI_Creation_Error& e)
@@ -520,8 +514,6 @@ namespace
                     else
                     {
                         ifs = std::ifstream(load_file);
-                        search_started_from_beginning_of_file = true;
-                        continue;
                     }
                 }
             }

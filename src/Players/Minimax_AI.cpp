@@ -8,6 +8,7 @@
 using namespace std::chrono_literals;
 #include <cmath>
 #include <limits>
+#include <fstream>
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
@@ -21,15 +22,31 @@ using namespace std::chrono_literals;
 #include "Utility/Random.h"
 #include "Utility/Fixed_Capacity_Vector.h"
 #include "Utility/Math.h"
+#include "Utility/Exceptions.h"
 
-Minimax_AI::Minimax_AI(const std::string& file_name, int id) : genetic_ai(file_name, id)
+Minimax_AI::Minimax_AI(const std::string& file_name, int id) try : Minimax_AI(std::ifstream{file_name}, id)
 {
-    recalibrate_self();
+}
+catch(const Missing_Genome_Data& e)
+{
+    throw Missing_Genome_Data(e.what() + file_name);
+}
+catch(const Duplicate_Genome_Data& e)
+{
+    throw Duplicate_Genome_Data(e.what() + file_name);
+}
+catch(const Genetic_AI_Creation_Error& e)
+{
+    throw Genetic_AI_Creation_Error(e.what() + file_name);
 }
 
 Minimax_AI::Minimax_AI(std::istream& is, int id) : genetic_ai(is, id)
 {
     recalibrate_self();
+}
+
+Minimax_AI::Minimax_AI(std::istream&& is, int id) : Minimax_AI(is, id)
+{
 }
 
 Minimax_AI::Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept : genetic_ai(a.genetic_ai, b.genetic_ai)
@@ -597,7 +614,7 @@ void Minimax_AI::calculate_centipawn_value() const noexcept
 std::string Minimax_AI::commentary_for_next_move(const Board& board, const size_t move_number) const noexcept
 {
     const auto comment_index = board.played_ply_count()/2;
-    if(comment_index >= commentary.size() || ! commentary.at(comment_index))
+    if(comment_index >= commentary.size() || commentary.at(comment_index).variation_line().empty())
     {
         return {};
     }
@@ -640,7 +657,7 @@ std::string variation_line(Board board,
 
 void Minimax_AI::undo_move(const Move* const last_move) const noexcept
 {
-    if(commentary.empty() || ! commentary.back())
+    if(commentary.empty() || commentary.back().variation_line().empty())
     {
         return;
     }
@@ -668,9 +685,14 @@ void Minimax_AI::mutate(size_t mutation_rate) noexcept
     recalibrate_self();
 }
 
-void Minimax_AI::print(const std::string& file_name) const noexcept
+void Minimax_AI::print(const std::string& file_name) const
 {
-    genetic_ai.print(file_name);
+    auto ofs = std::ofstream(file_name, std::ofstream::app);
+    if( ! ofs)
+    {
+        throw std::invalid_argument("Could not open file for printing AI data: " + file_name);
+    }
+    print(ofs);
 }
 
 void Minimax_AI::print(std::ostream& os) const noexcept
@@ -681,4 +703,42 @@ void Minimax_AI::print(std::ostream& os) const noexcept
 bool Minimax_AI::operator<(const Minimax_AI& other) const noexcept
 {
     return genetic_ai < other.genetic_ai;
+}
+
+int find_last_id(const std::string& players_file_name)
+{
+    std::ifstream player_input(players_file_name);
+    if( ! player_input)
+    {
+        throw std::invalid_argument("File not found: " + players_file_name);
+    }
+
+    std::string last_player;
+    for(std::string line; std::getline(player_input, line);)
+    {
+        if(String::starts_with(line, "ID:"))
+        {
+            last_player = line;
+        }
+    }
+
+    if(last_player.empty())
+    {
+        throw std::runtime_error("No valid ID found in file: " + players_file_name);
+    }
+
+    const auto split = String::split(last_player, ":", 1);
+    if(split.size() != 2)
+    {
+        throw std::runtime_error("Invalid ID line: " + last_player);
+    }
+
+    try
+    {
+        return String::to_number<int>(split.back());
+    }
+    catch(const std::exception&)
+    {
+        throw std::runtime_error("Could not convert to ID number: " + last_player);
+    }
 }

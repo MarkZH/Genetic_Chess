@@ -21,13 +21,6 @@ class Genetic_AI
         //! \brief Generate a Genetic_AI
         explicit Genetic_AI() noexcept;
 
-        //! \brief Create a Genetic_AI from a text file by searching for a specfic ID.
-        //!
-        //! \param file_name The name of the file with the Genetic_AI data.
-        //! \param id The ID to search for.
-        //! \exception Genetic_AI_Creation_Error or derivative if there is an error during reading.
-        Genetic_AI(const std::string& file_name, int id);
-
         //! \brief Create a Genetic_AI from an already open input stream (as from std::ifstream(file_name)).
         //!
         //! \param is The input stream that is the source of genetic data.
@@ -35,14 +28,6 @@ class Genetic_AI
         //! \exception Genetic_AI_Creation_Error or derivative if the stream cannot be read of if the stream does not contain
         //!         the relevant AI data.
         Genetic_AI(std::istream& is, int id);
-
-        //! \brief Create a Genetic_AI from a (possibly temporary) input stream (as from std::ifstream(file_name)).
-        //!
-        //! \param is The input stream that is the source of genetic data.
-        //! \param id The id of the Genetic_AI to be created.
-        //! \exception Genetic_AI_Creation_Error or derivative if the stream cannot be read of if the stream does not contain
-        //!         the relevant AI data.
-        Genetic_AI(std::istream&& is, int id);
 
         //! \brief Create a new Genetic_AI via mating.
         //!
@@ -65,12 +50,6 @@ class Genetic_AI
         //!
         //! \returns "Mark Harrison"
         std::string author() const noexcept;
-
-        //! \brief Prints the information defining this AI.
-        //!
-        //! The printed information includes the ID number and genetic data.
-        //! \param file_name The name of the text file to print to. If empty, print to stdout.
-        void print(const std::string& file_name = {}) const noexcept;
 
         //! \brief Print AI information to the given std::ostream.
         //!
@@ -144,12 +123,5 @@ class Genetic_AI
         void read_from(std::istream& is);
         void read_data(std::istream& is);
 };
-
-//! \brief Find the last ID of a Genetic_AI in a gene pool file.
-//!
-//! \param file_name The name of the file with Genetic_AI data.
-//! \returns The numerical ID of the last AI in the file.
-//! \exception std::runtime_error if no valid ID line can be found.
-int find_last_id(const std::string& file_name);
 
 #endif // GENETIC_AI_H
