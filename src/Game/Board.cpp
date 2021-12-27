@@ -831,7 +831,6 @@ Square Board::find_king(const Piece_Color color) const noexcept
 void Board::recreate_move_caches() noexcept
 {
     checking_square = find_checking_square();
-    prior_moves_count = legal_moves_cache.size();
     legal_moves_cache.clear();
     for(const auto square : Square::all_squares())
     {
@@ -1165,11 +1164,6 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
     }
 
     return {capture_moves.begin(), capture_moves.begin() + minimax_index};
-}
-
-size_t Board::previous_moves_count() const noexcept
-{
-    return prior_moves_count;
 }
 
 void Board::compare_hashes(const Board& other) const noexcept
