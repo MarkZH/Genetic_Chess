@@ -314,8 +314,8 @@ class Board
         void remove_attacks_from(Square square, Piece old_piece) noexcept;
         void modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept;
         void update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept;
-        const std::bitset<16>& moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
-        const std::bitset<16>& checking_moves() const noexcept;
+        std::bitset<16> moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
+        std::bitset<16> checking_moves() const noexcept;
         Square find_checking_square() const noexcept;
 
         // Information cache for gene reference
