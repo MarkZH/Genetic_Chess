@@ -1239,7 +1239,7 @@ namespace
         freedom_to_move_board.play_move("Qd5");
         const auto freedom_to_move_black_score = 3.0/128.0;
         freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::BLACK, freedom_to_move_black_score);
-        freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, freedom_to_move_white_score);
+        freedom_to_move_gene.test(tests_passed, freedom_to_move_board, Piece_Color::WHITE, 0.0);
     }
 
     void king_confinement_gene_tests(bool& tests_passed)

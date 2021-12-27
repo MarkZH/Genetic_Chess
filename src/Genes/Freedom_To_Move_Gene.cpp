@@ -8,15 +8,7 @@
 
 double Freedom_To_Move_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
 {
-    constexpr auto maximum_moves_per_turn = 128.0;
-    if(perspective == board.whose_turn())
-    {
-        return double(board.legal_moves().size())/maximum_moves_per_turn;
-    }
-    else
-    {
-        return double(board.previous_moves_count())/maximum_moves_per_turn;
-    }
+    return perspective == board.whose_turn() ? double(board.legal_moves().size())/128.0 : 0.0;
 }
 
 std::string Freedom_To_Move_Gene::name() const noexcept

@@ -282,11 +282,6 @@ class Board
         //!        the value of the piece.
         std::vector<const Move*> quiescent(const std::array<double, 6>& piece_values) const noexcept;
 
-        //! \brief Returns the number of moves available to the opponent prior to the opponent's last move.
-        //!
-        //! Returns 0 if no moves have been made on the board.
-        size_t previous_moves_count() const noexcept;
-
         //! \brief Print data on why boards have different Zobrist hashes
         //!
         //! \param other The other board with which to compare.
@@ -329,8 +324,6 @@ class Board
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
-        size_t prior_moves_count = 0;
-
         void recreate_move_caches() noexcept;
 
         Piece& piece_on_square(Square square) noexcept;
