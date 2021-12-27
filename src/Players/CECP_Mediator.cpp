@@ -49,215 +49,213 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
     std::optional<Clock::seconds> opponent_time_left;
     Game_Result setup_result;
 
-    while(true)
+    try
     {
-        std::string command;
-        try
+        while(true)
         {
-            command = receive_cecp_command(clock, false);
-        }
-        catch(const Game_Ended& game_ending_error)
-        {
-            return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
-        }
+            const auto command = receive_cecp_command(clock, false);
 
-        Player::pick_move_now(); // Stop pondering
+            Player::pick_move_now(); // Stop pondering
 
-        if(command.starts_with("ping "))
-        {
-            command[1] = 'o'; // change "ping" to "pong"
-            send_command(command);
-        }
-        else if(command == "go")
-        {
-            log("telling local AI to move at leisure and accepting move");
-            in_force_mode = false;
-            break;
-        }
-        else if(command == "new")
-        {
-            log("Setting board to standard start position and resetting clock");
-            board = Board{};
-            clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(Piece_Color::WHITE), clock.reset_mode(), Piece_Color::WHITE);
-            own_time_left.reset();
-            opponent_time_left.reset();
-            move_list.clear();
-            setup_result = {};
-            player.reset();
-            in_force_mode = false;
-        }
-        else if(command.starts_with("name "))
-        {
-            const auto name = String::split(command, " ", 1).back();
-            log("Getting other player's name: " + name);
-            record_opponent_name(name);
-        }
-        else if(command.starts_with("setboard "))
-        {
-            try
+            if(command.starts_with("ping "))
             {
-                const auto fen = String::split(command, " ", 1).back();
-                const auto new_board = Board{fen};
-
-                // Handle GUIs that send the next board position
-                // instead of a move.
-                const auto new_move_list = board.derive_moves(new_board);
-                if(new_move_list.empty())
+                send_command("pong " + String::split(command).back());
+            }
+            else if(command == "go")
+            {
+                log("telling local AI to move at leisure and accepting move");
+                in_force_mode = false;
+                break;
+            }
+            else if(command == "new")
+            {
+                log("Setting board to standard start position and resetting clock");
+                board = Board{};
+                clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(Piece_Color::WHITE), clock.reset_mode(), Piece_Color::WHITE);
+                own_time_left.reset();
+                opponent_time_left.reset();
+                move_list.clear();
+                setup_result = {};
+                player.reset();
+                in_force_mode = false;
+            }
+            else if(command.starts_with("name "))
+            {
+                const auto name = String::split(command, " ", 1).back();
+                log("Getting other player's name: " + name);
+                record_opponent_name(name);
+            }
+            else if(command.starts_with("setboard "))
+            {
+                try
                 {
-                    log("Rearranging board to: " + fen);
-                    board = new_board;
-                    move_list.clear();
-                    setup_result = {};
+                    const auto fen = String::split(command, " ", 1).back();
+                    const auto new_board = Board{fen};
+
+                    // Handle GUIs that send the next board position
+                    // instead of a move.
+                    const auto new_move_list = board.derive_moves(new_board);
+                    if(new_move_list.empty())
+                    {
+                        log("Rearranging board to: " + fen);
+                        board = new_board;
+                        move_list.clear();
+                        setup_result = {};
+                    }
+                    else
+                    {
+                        for(auto move : new_move_list)
+                        {
+                            log("Derived move: " + move->coordinates());
+                            setup_result = board.play_move(*move);
+                            move_list.push_back(board.last_move());
+                        }
+                    }
+                }
+                catch(const std::invalid_argument&)
+                {
+                    send_error(command, "Bad FEN");
+                }
+            }
+            else if(command.starts_with("usermove "))
+            {
+                const auto move = String::split(command).back();
+                try
+                {
+                    log("Applying move: " + move);
+                    setup_result = board.play_move(move);
+                    move_list.push_back(board.last_move());
+                    if(setup_result.game_has_ended())
+                    {
+                        report_end_of_game(setup_result);
+                    }
+
+                    if( ! in_force_mode)
+                    {
+                        log("Local AI now chooses a move");
+                        break;
+                    }
+                }
+                catch(const Illegal_Move&)
+                {
+                    send_command("Illegal move: " + move);
+                }
+            }
+            else if(command.starts_with("level "))
+            {
+                log("got time specs: " + command);
+                const auto split = String::split(command);
+
+                log("moves to reset clock = " + split[1]);
+                const auto reset_moves = String::to_number<size_t>(split[1]);
+                const auto time_split = String::split(split[2], ":");
+                auto game_time = 0s;
+                if(time_split.size() == 1)
+                {
+                    log("game time = " + time_split[0] + " minutes");
+                    game_time = String::to_duration<std::chrono::minutes>(time_split[0]);
                 }
                 else
                 {
-                    for(auto move : new_move_list)
-                    {
-                        log("Derived move: " + move->coordinates());
-                        setup_result = board.play_move(*move);
-                        move_list.push_back(board.last_move());
-                    }
-                }
-            }
-            catch(const std::invalid_argument&)
-            {
-                send_error(command, "Bad FEN");
-            }
-        }
-        else if(command.starts_with("usermove "))
-        {
-            const auto move = String::split(command).back();
-            try
-            {
-                log("Applying move: " + move);
-                setup_result = board.play_move(move);
-                move_list.push_back(board.last_move());
-                if(setup_result.game_has_ended())
-                {
-                    report_end_of_game(setup_result);
+                    log("game time = " + time_split[0] + " minutes and " + time_split[1] + " seconds");
+                    game_time = String::to_duration<std::chrono::minutes>(time_split[0]) + String::to_duration<std::chrono::seconds>(time_split[1]);
                 }
 
-                if( ! in_force_mode)
-                {
-                    log("Local AI now chooses a move");
-                    break;
-                }
+                log("increment = " + split[3]);
+                const auto increment = String::to_duration<Clock::seconds>(split[3]);
+                clock = Clock(game_time,
+                              reset_moves,
+                              increment,
+                              Time_Reset_Method::ADDITION,
+                              board.whose_turn(),
+                              clock.game_start_date_and_time());
+                own_time_left.reset();
+                opponent_time_left.reset();
             }
-            catch(const Illegal_Move&)
+            else if(command.starts_with("st "))
             {
-                send_command("Illegal move: " + move);
+                log("got time specs: " + command + " seconds");
+                const auto split = String::split(command);
+                const auto time_per_move = String::to_duration<Clock::seconds>(split[1]);
+                log("game time per move = " + std::to_string(time_per_move.count()) + " seconds");
+                clock = Clock(time_per_move,
+                              1,
+                              0.0s,
+                              Time_Reset_Method::SET_TO_ORIGINAL,
+                              board.whose_turn(),
+                              clock.game_start_date_and_time());
+                own_time_left.reset();
+                opponent_time_left.reset();
             }
-        }
-        else if(command.starts_with("level "))
-        {
-            log("got time specs: " + command);
-            const auto split = String::split(command);
-
-            log("moves to reset clock = " + split[1]);
-            const auto reset_moves = String::to_number<size_t>(split[1]);
-            const auto time_split = String::split(split[2], ":");
-            auto game_time = 0s;
-            if(time_split.size() == 1)
+            else if(command.starts_with("time "))
             {
-                log("game time = " + time_split[0] + " minutes");
-                game_time = String::to_duration<std::chrono::minutes>(time_split[0]);
+                own_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
+                log("Will set own time to " + std::to_string(own_time_left->count()) + " seconds.");
             }
-            else
+            else if(command.starts_with("otim "))
             {
-                log("game time = " + time_split[0] + " minutes and " + time_split[1] + " seconds");
-                game_time = String::to_duration<std::chrono::minutes>(time_split[0]) + String::to_duration<std::chrono::seconds>(time_split[1]);
+                opponent_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
+                log("Will set opponent's time to " + std::to_string(opponent_time_left->count()) + " seconds.");
             }
-
-            log("increment = " + split[3]);
-            const auto increment = String::to_duration<Clock::seconds>(split[3]);
-            clock = Clock(game_time,
-                          reset_moves,
-                          increment,
-                          Time_Reset_Method::ADDITION,
-                          board.whose_turn(),
-                          clock.game_start_date_and_time());
-            own_time_left.reset();
-            opponent_time_left.reset();
-        }
-        else if(command.starts_with("st "))
-        {
-            log("got time specs: " + command + " seconds");
-            const auto split = String::split(command);
-            const auto time_per_move = String::to_duration<Clock::seconds>(split[1]);
-            log("game time per move = " + std::to_string(time_per_move.count()) + " seconds");
-            clock = Clock(time_per_move,
-                          1,
-                          0.0s,
-                          Time_Reset_Method::SET_TO_ORIGINAL,
-                          board.whose_turn(),
-                          clock.game_start_date_and_time());
-            own_time_left.reset();
-            opponent_time_left.reset();
-        }
-        else if(command.starts_with("time "))
-        {
-            own_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
-            log("Will set own time to " + std::to_string(own_time_left->count()) + " seconds.");
-        }
-        else if(command.starts_with("otim "))
-        {
-            opponent_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
-            log("Will set opponent's time to " + std::to_string(opponent_time_left->count()) + " seconds.");
-        }
-        else if(command == "undo")
-        {
-            undo_move(move_list, command, board, clock, player);
-            setup_result = {};
-        }
-        else if(command == "remove")
-        {
-            if(undo_move(move_list, command, board, clock, player))
+            else if(command == "undo")
             {
                 undo_move(move_list, command, board, clock, player);
+                setup_result = {};
             }
-            setup_result = {};
-        }
-        else if(command.starts_with("result "))
-        {
-            const auto result = String::split(command).at(1);
-            const auto reason = String::extract_delimited_text(command, "{", "}");
-            if(result == "1-0")
+            else if(command == "remove")
             {
-                return Game_Result(Winner_Color::WHITE, reason, false);
-            }
-            else if(result == "0-1")
-            {
-                return Game_Result(Winner_Color::BLACK, reason, false);
-            }
-            else
-            {
-                return Game_Result(Winner_Color::NONE, reason, false);
-            }
-        }
-        else if( ! usermove_prefix)
-        {
-            try
-            {
-                log("Attempting to interpret as move: " + command);
-                setup_result = board.play_move(command);
-                log("Applied move: " + command);
-                move_list.push_back(board.last_move());
-                if(setup_result.game_has_ended())
+                if(undo_move(move_list, command, board, clock, player))
                 {
-                    report_end_of_game(setup_result);
+                    undo_move(move_list, command, board, clock, player);
                 }
+                setup_result = {};
+            }
+            else if(command.starts_with("result "))
+            {
+                const auto result = String::split(command).at(1);
+                const auto reason = String::extract_delimited_text(command, "{", "}");
+                if(result == "1-0")
+                {
+                    return Game_Result(Winner_Color::WHITE, reason, false);
+                }
+                else if(result == "0-1")
+                {
+                    return Game_Result(Winner_Color::BLACK, reason, false);
+                }
+                else
+                {
+                    return Game_Result(Winner_Color::NONE, reason, false);
+                }
+            }
+            else if( ! usermove_prefix)
+            {
+                try
+                {
+                    log("Attempting to interpret as move: " + command);
+                    setup_result = board.play_move(command);
+                    log("Applied move: " + command);
+                    move_list.push_back(board.last_move());
+                    if(setup_result.game_has_ended())
+                    {
+                        report_end_of_game(setup_result);
+                    }
 
-                if( ! in_force_mode)
+                    if( ! in_force_mode)
+                    {
+                        log("Local AI now chooses a move");
+                        break;
+                    }
+                }
+                catch(const Illegal_Move&)
                 {
-                    log("Local AI now chooses a move");
-                    break;
+                    log("Not a move, ignoring.");
                 }
             }
-            catch(const Illegal_Move&)
-            {
-                log("Not a move, ignoring.");
-            }
         }
+    }
+    catch(const Game_Ended& game_ending_error)
+    {
+        return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
     }
 
     if(own_time_left.has_value())
@@ -287,7 +285,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
     return setup_result;
 }
 
-bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, std::string& command, Board& board, Clock& clock, const Player& player)
+bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, const std::string& command, Board& board, Clock& clock, const Player& player)
 {
     if(move_list.empty())
     {
@@ -374,16 +372,18 @@ std::string CECP_Mediator::listener(Clock& clock)
 {
     while(true)
     {
-        std::string command;
-        try
+        const auto command = [this, &clock]()
         {
-            command = receive_cecp_command(clock, true);
-        }
-        catch(const Game_Ended&)
-        {
-            Player::pick_move_now();
-            throw;
-        }
+            try
+            {
+                return receive_cecp_command(clock, true);
+            }
+            catch(const Game_Ended&)
+            {
+                Player::pick_move_now();
+                throw;
+            }
+        }();
 
         if(command == "?")
         {

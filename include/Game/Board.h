@@ -282,11 +282,6 @@ class Board
         //!        the value of the piece.
         std::vector<const Move*> quiescent(const std::array<double, 6>& piece_values) const noexcept;
 
-        //! \brief Returns the number of moves available to the opponent prior to the opponent's last move.
-        //!
-        //! Returns 0 if no moves have been made on the board.
-        size_t previous_moves_count() const noexcept;
-
         //! \brief Print data on why boards have different Zobrist hashes
         //!
         //! \param other The other board with which to compare.
@@ -319,8 +314,8 @@ class Board
         void remove_attacks_from(Square square, Piece old_piece) noexcept;
         void modify_attacks(Square square, Piece piece, bool adding_attacks) noexcept;
         void update_blocks(Square square, Piece old_piece, Piece new_piece) noexcept;
-        const std::bitset<16>& moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
-        const std::bitset<16>& checking_moves() const noexcept;
+        std::bitset<16> moves_attacking_square(Square square, Piece_Color attacking_color) const noexcept;
+        std::bitset<16> checking_moves() const noexcept;
         Square find_checking_square() const noexcept;
 
         // Information cache for gene reference
@@ -329,8 +324,6 @@ class Board
 
         // Caches
         std::vector<const Move*> legal_moves_cache;
-        size_t prior_moves_count = 0;
-
         void recreate_move_caches() noexcept;
 
         Piece& piece_on_square(Square square) noexcept;

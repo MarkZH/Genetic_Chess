@@ -61,6 +61,7 @@ namespace
     const auto en_passant_hash = Random::random_unsigned_int64();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+    std::recursive_mutex starting_fen_map_lock;
     std::map<uint64_t, std::string> starting_fen_from_starting_hash;
 }
 
@@ -170,6 +171,7 @@ Board::Board(const std::string& input_fen)
     recreate_move_caches();
 
     starting_hash = board_hash();
+    const auto map_lock = std::lock_guard(starting_fen_map_lock);
     starting_fen_from_starting_hash[starting_hash] = String::remove_extra_whitespace(input_fen);
 
     fen_parse_assert(fen() == original_fen(), input_fen, "Result: " + fen());
@@ -254,6 +256,7 @@ std::string Board::fen() const noexcept
 
 std::string Board::original_fen() const noexcept
 {
+    const auto map_lock = std::lock_guard(starting_fen_map_lock);
     return starting_fen_from_starting_hash[starting_hash];
 }
 
@@ -596,12 +599,12 @@ void Board::update_blocks(const Square square, const Piece old_piece, const Piec
     }
 }
 
-const std::bitset<16>& Board::moves_attacking_square(const Square square, const Piece_Color attacking_color) const noexcept
+std::bitset<16> Board::moves_attacking_square(const Square square, const Piece_Color attacking_color) const noexcept
 {
     return potential_attacks[static_cast<int>(attacking_color)][square.index()];
 }
 
-const std::bitset<16>& Board::checking_moves() const noexcept
+std::bitset<16> Board::checking_moves() const noexcept
 {
     return moves_attacking_square(find_king(whose_turn()), opposite(whose_turn()));
 }
@@ -828,7 +831,6 @@ Square Board::find_king(const Piece_Color color) const noexcept
 void Board::recreate_move_caches() noexcept
 {
     checking_square = find_checking_square();
-    prior_moves_count = legal_moves_cache.size();
     legal_moves_cache.clear();
     for(const auto square : Square::all_squares())
     {
@@ -867,7 +869,7 @@ void Board::disable_en_passant_target() noexcept
 
 Square Board::find_checking_square() const noexcept
 {
-    const auto& checks = checking_moves();
+    const auto checks = checking_moves();
     if(checks.none())
     {
         return {};
@@ -1162,11 +1164,6 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
     }
 
     return {capture_moves.begin(), capture_moves.begin() + minimax_index};
-}
-
-size_t Board::previous_moves_count() const noexcept
-{
-    return prior_moves_count;
 }
 
 void Board::compare_hashes(const Board& other) const noexcept
