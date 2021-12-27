@@ -39,7 +39,7 @@ namespace String
         }
 
         auto result = *begin;
-        std::for_each(std::next(begin), end, 
+        std::for_each(std::next(begin), end,
                       [&joiner, &result](const auto& token)
                       {
                           result += joiner;
