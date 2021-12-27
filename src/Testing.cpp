@@ -146,16 +146,13 @@ namespace
 
         try
         {
-            try
-            {
-                f(arguments...);
+            f(arguments...);
 
-                std::cerr << test_title << " failed. Function should have thrown but did not.\n";
-            }
-            catch(const Error&)
-            {
-                return;
-            }
+            std::cerr << test_title << " failed. Function should have thrown but did not.\n";
+        }
+        catch(const Error&)
+        {
+            return;
         }
         catch(const std::exception& e)
         {
