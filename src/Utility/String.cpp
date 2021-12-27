@@ -231,3 +231,8 @@ std::string String::add_to_file_name(const std::string& original_file_name, cons
     const auto dot_index = std::min(original_file_name.find_last_of('.'), original_file_name.size());
     return original_file_name.substr(0, dot_index) + addition + original_file_name.substr(dot_index);
 }
+
+std::string String::pluralize(int count, const std::string& noun) noexcept
+{
+    return std::to_string(count) + " " + noun + (count == 1 ? "" : "s");
+}

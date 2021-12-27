@@ -330,6 +330,9 @@ bool run_tests()
     function_should_throw<std::invalid_argument>(tests_passed, "Throwing empty string to int", String::to_number<int>, "");
     function_should_throw<std::invalid_argument>(tests_passed, "Throwing on too large value", String::to_number<short>, "99999");
 
+    test_function(tests_passed, "Singular pluralizing", "1 cat", String::pluralize, 1, "cat");
+    test_function(tests_passed, "Multiple pluralizing", "4 cats", String::pluralize, 4, "cat");
+
     test_function(tests_passed,
                   "PGN comment removal",
                   "49. f8=N Bxf8",
@@ -567,7 +570,7 @@ bool run_perft_tests()
     std::cout << "Move generation rate: " << String::format_integer(int(double(legal_moves_counted)/time.count()), ",") << " moves/second." << std::endl;
     if( ! tests_failed.empty())
     {
-        std::cout << "Test" << (tests_failed.size() > 1 ? "s" : "") << " failed: ";
+        std::cout << String::pluralize(int(tests_failed.size()), "Test") << " failed: ";
         for(auto t : tests_failed)
         {
             std::cout << t << " ";
