@@ -196,7 +196,7 @@ size_t Move::attack_index(const Square_Difference& move) noexcept
 
 Square_Difference Move::attack_direction_from_index(const size_t index) noexcept
 {
-    //                 index: 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
+    //                     index: 0   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15
     static constexpr int dx[] = {-1,  0,  1, -1,  1, -1,  0,  1,  1,  2,  2,  1, -1, -2, -2, -1};
     static constexpr int dy[] = { 1,  1,  1,  0,  0, -1, -1, -1,  2,  1, -1, -2, -2, -1,  1,  2};
     return {dx[index], dy[index]};
