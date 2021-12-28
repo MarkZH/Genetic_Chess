@@ -13,6 +13,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <map>
+#include <bit>
 
 #include "Game/Clock.h"
 #include "Game/Square.h"
@@ -869,17 +870,12 @@ void Board::disable_en_passant_target() noexcept
 
 Square Board::find_checking_square() const noexcept
 {
-    const auto checks = checking_moves();
-    if(checks.none())
+    if( ! king_is_in_check())
     {
         return {};
     }
 
-    size_t checking_index = 0;
-    while( ! checks[checking_index])
-    {
-        ++checking_index;
-    }
+    const auto checking_index = std::countr_zero(checking_moves().to_ulong());
     const auto step = Move::attack_direction_from_index(checking_index);
     const auto king_square = find_king(whose_turn());
     const auto squares = Square::square_line_from(king_square, -step);
