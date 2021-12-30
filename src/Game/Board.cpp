@@ -664,12 +664,13 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
     if(move.is_en_passant() && king_square.rank() == move.start().rank())
     {
         const auto squares = Square::square_line_from(king_square, (move.start() - king_square).step());
+        const auto rook = Piece{opposite(whose_turn()), Piece_Type::ROOK};
+        const auto queen = Piece{opposite(whose_turn()), Piece_Type::QUEEN};
         const auto revealed_attacker = std::find_if(squares.begin(), squares.end(),
-                                                    [this](auto square)
+                                                    [this, rook, queen](auto square)
                                                     {
                                                         const auto piece = piece_on_square(square);
-                                                        return piece && piece.color() == opposite(whose_turn()) &&
-                                                            (piece.type() == Piece_Type::QUEEN || piece.type() == Piece_Type::ROOK);
+                                                        return piece == rook || piece == queen;
                                                     });
 
         return revealed_attacker != squares.end() &&
@@ -997,7 +998,7 @@ bool Board::all_empty_between(const Square start, const Square end) const noexce
 {
     assert(straight_line_move(start, end));
     const auto squares = Square::squares_between(start, end);
-    return std::all_of(squares.begin(), squares.end(), [this](auto square) { return ! piece_on_square(square); });
+    return std::none_of(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
 }
 
 bool Board::piece_is_pinned(const Square square) const noexcept
