@@ -1001,7 +1001,7 @@ bool Board::all_empty_between(const Square start, const Square end) const noexce
 {
     assert(straight_line_move(start, end));
     const auto squares = Square::squares_between(start, end);
-    return std::all_of(squares.begin(), squares.end(), [this](auto square) { return ! piece_on_square(square); });
+    return std::none_of(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
 }
 
 bool Board::piece_is_pinned(const Square square) const noexcept
