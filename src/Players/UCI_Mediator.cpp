@@ -174,7 +174,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                     previous_option.clear();
                 }
 
-                if(new_mode != mode || !clock.is_in_use())
+                if(new_mode != mode || ! clock.is_in_use())
                 {
                     if(new_mode == Time_Reset_Method::ADDITION)
                     {
