@@ -663,12 +663,13 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
     if(move.is_en_passant() && king_square.rank() == move.start().rank())
     {
         const auto squares = Square::square_line_from(king_square, (move.start() - king_square).step());
+        const auto rook = Piece{opposite(whose_turn()), Piece_Type::ROOK};
+        const auto queen = Piece{opposite(whose_turn()), Piece_Type::QUEEN};
         const auto revealed_attacker = std::find_if(squares.begin(), squares.end(),
-                                                    [this](auto square)
+                                                    [this, rook, queen](auto square)
                                                     {
                                                         const auto piece = piece_on_square(square);
-                                                        return piece && piece.color() == opposite(whose_turn()) &&
-                                                            (piece.type() == Piece_Type::QUEEN || piece.type() == Piece_Type::ROOK);
+                                                        return piece == rook || piece == queen;
                                                     });
 
         return revealed_attacker != squares.end() &&
