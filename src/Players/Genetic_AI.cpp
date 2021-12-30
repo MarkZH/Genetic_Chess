@@ -158,8 +158,3 @@ int Genetic_AI::id() const noexcept
 {
     return id_number;
 }
-
-bool Genetic_AI::operator<(const Genetic_AI& other) const noexcept
-{
-    return id() < other.id();
-}
