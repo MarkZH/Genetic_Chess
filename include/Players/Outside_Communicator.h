@@ -89,7 +89,7 @@ class Outside_Communicator
         static std::string receive_command();
 
         //! \brief Returns either the command received while listening or waits for a new command.
-        //! 
+        //!
         //! \param while_listening Indicates this method is called from within the listen() method.
         std::string get_last_command(bool while_listening);
 

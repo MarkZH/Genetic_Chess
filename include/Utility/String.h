@@ -42,7 +42,7 @@ namespace String
         }
 
         auto result = *begin;
-        std::for_each(std::next(begin), end, 
+        std::for_each(std::next(begin), end,
                       [&joiner, &result](const auto& token)
                       {
                           result += joiner;
@@ -202,6 +202,13 @@ namespace String
     //! \returns (original file name without extention) + (addition) + (extension)
     std::string add_to_file_name(const std::string& original_file_name,
                                  const std::string& addition) noexcept;
+
+    //! \brief Returns a string with a number and a correctly pluralized noun.
+    //!
+    //! \param count The number of items.
+    //! \param noun The noun to pluralize.
+    //! \returns A string of the form "N nouns" or "1 noun"
+    std::string pluralize(int count, const std::string& noun) noexcept;
 }
 
 #endif // STRING_H

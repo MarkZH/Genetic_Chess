@@ -61,12 +61,6 @@ class Genetic_AI
         //! \returns The ID number.
         int id() const noexcept;
 
-        //! \brief A comparison function to sort Genetic_AI collections by ID number.
-        //!
-        //! \param other Another Genetic_AI.
-        //! \returns If the other AI should go after this AI.
-        bool operator<(const Genetic_AI& other) const noexcept;
-
         //! \brief Assign a numeric score to the current board position.
         //!
         //! \param board The current board position

@@ -702,7 +702,7 @@ void Minimax_AI::print(std::ostream& os) const noexcept
 
 bool Minimax_AI::operator<(const Minimax_AI& other) const noexcept
 {
-    return genetic_ai < other.genetic_ai;
+    return id() < other.id();
 }
 
 int find_last_id(const std::string& players_file_name)

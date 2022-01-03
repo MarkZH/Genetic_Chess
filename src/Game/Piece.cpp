@@ -356,13 +356,3 @@ const Piece::list_of_move_lists& Piece::attacking_move_lists(const Square square
     assert(*this);
     return attack_moves[index()][square.index()];
 }
-
-bool operator==(const Piece a, const Piece b) noexcept
-{
-    return a.index() == b.index();
-}
-
-bool operator!=(const Piece a, const Piece b) noexcept
-{
-    return ! (a == b);
-}

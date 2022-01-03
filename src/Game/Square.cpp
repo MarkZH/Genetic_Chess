@@ -121,11 +121,6 @@ bool operator==(const Square a, const Square b) noexcept
     return (a.index() == b.index()) || ( ! a.inside_board() && ! b.inside_board());
 }
 
-bool operator!=(const Square a, const Square b) noexcept
-{
-    return !(a == b);
-}
-
 Square operator+(Square square, const Square_Difference& diff) noexcept
 {
     return square += diff;
@@ -186,11 +181,6 @@ bool Square_Line_Iterator::operator==(const Square_Line_Iterator& other) const n
     return current_square == other.current_square;
 }
 
-bool Square_Line_Iterator::operator!=(const Square_Line_Iterator& other) const noexcept
-{
-    return ! (*this == other);
-}
-
 Square Square_Line_Iterator::operator*() const noexcept
 {
     return current_square;
@@ -228,16 +218,6 @@ All_Squares_Iterator& All_Squares_Iterator::operator++() noexcept
 {
     ++current_square;
     return *this;
-}
-
-bool All_Squares_Iterator::operator==(const All_Squares_Iterator& other) const noexcept
-{
-    return current_square == other.current_square;
-}
-
-bool All_Squares_Iterator::operator!=(const All_Squares_Iterator& other) const noexcept
-{
-    return ! (*this == other);
 }
 
 Square All_Squares_Iterator::operator*() const noexcept

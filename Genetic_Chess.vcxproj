@@ -320,6 +320,7 @@
     <ClInclude Include="include\players\Thinking.h" />
     <ClInclude Include="include\Players\UCI_Mediator.h" />
     <ClInclude Include="include\Testing.h" />
+    <ClInclude Include="include\Utility\Algorithm.h" />
     <ClInclude Include="include\Utility\Configuration.h" />
     <ClInclude Include="include\Utility\Exceptions.h" />
     <ClInclude Include="include\Utility\Fixed_Capacity_Vector.h" />
