@@ -372,33 +372,30 @@ std::string CECP_Mediator::listener(Clock& clock)
 {
     while(true)
     {
-        const auto command = [this, &clock]()
+        try
         {
-            try
-            {
-                return receive_cecp_command(clock, true);
-            }
-            catch(const Game_Ended&)
-            {
-                Player::pick_move_now();
-                throw;
-            }
-        }();
+            const auto command = receive_cecp_command(clock, true);
 
-        if(command == "?")
-        {
-            log("Forcing local AI to pick move and accepting it");
-            Player::pick_move_now();
+            if(command == "?")
+            {
+                log("Forcing local AI to pick move and accepting it");
+                Player::pick_move_now();
+            }
+            else if(String::starts_with(command, "result "))
+            {
+                log("Stopped thinking about move by: " + command);
+                Player::pick_move_now();
+                return command;
+            }
+            else
+            {
+                return command;
+            }
         }
-        else if(String::starts_with(command, "result "))
+        catch(const Game_Ended&)
         {
-            log("Stopped thinking about move by: " + command);
             Player::pick_move_now();
-            return command;
-        }
-        else
-        {
-            return command;
+            throw;
         }
     }
 }
