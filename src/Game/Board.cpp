@@ -28,6 +28,7 @@ using namespace std::chrono_literals;
 #include "Utility/Random.h"
 #include "Utility/String.h"
 #include "Utility/Fixed_Capacity_Vector.h"
+#include "Utility/Algorithm.h"
 
 namespace
 {
@@ -674,7 +675,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
                                                     });
 
         return revealed_attacker != squares.end() &&
-               std::count_if(squares.begin(), revealed_attacker, [this](auto square) { return piece_on_square(square); }) == 2;
+               Algorithm::has_exactly_n(squares.begin(), revealed_attacker, [this](auto square) { return piece_on_square(square); }, 2);
     }
 
     return false;

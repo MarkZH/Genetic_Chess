@@ -77,9 +77,9 @@ void play_game_with_outsider(const Player& player,
     auto player_color = Piece_Color::BLACK;
     auto print_game_record = true;
 
-    while( ! game_result.exit_program())
+    do
     {
-        while( ! game_result.game_has_ended())
+        do
         {
             game_result = outsider->setup_turn(board, clock, game_record, player);
             if(game_result.game_has_ended())
@@ -94,7 +94,7 @@ void play_game_with_outsider(const Player& player,
             clock.punch(board);
 
             game_result = outsider->handle_move(board, chosen_move, game_record);
-        }
+        } while( ! game_result.game_has_ended());
 
         outsider->log("Game ended with: " + game_result.ending_reason());
         if(print_game_record && ! game_file_name.empty())
@@ -112,5 +112,5 @@ void play_game_with_outsider(const Player& player,
                                     location);
             print_game_record = false;
         }
-    }
+    } while( ! game_result.exit_program());
 }
