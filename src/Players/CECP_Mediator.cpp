@@ -258,17 +258,13 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
         return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
     }
 
-    if(own_time_left.has_value())
-    {
-        log("Setting own time (" + color_text(board.whose_turn()) + ") to " + std::to_string(own_time_left->count()) + " seconds.");
-        clock.set_time(board.whose_turn(), own_time_left.value());
-    }
+    const auto own_time = own_time_left.value_or(clock.time_left(board.whose_turn()));
+    log("Setting own time (" + color_text(board.whose_turn()) + ") to " + std::to_string(own_time.count()) + " seconds.");
+    clock.set_time(board.whose_turn(), own_time);
 
-    if(opponent_time_left.has_value())
-    {
-        log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time_left->count()) + " seconds.");
-        clock.set_time(opposite(board.whose_turn()), opponent_time_left.value());
-    }
+    const auto opponent_time = opponent_time_left.value_or(clock.time_left(opposite(board.whose_turn())));
+    log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time.count()) + " seconds.");
+    clock.set_time(opposite(board.whose_turn()), opponent_time);
 
     if( ! clock.is_running())
     {
