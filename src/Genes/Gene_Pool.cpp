@@ -123,6 +123,7 @@ void gene_pool(const std::string& config_file)
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
     std::array<size_t, 3> color_wins{}; // indexed with [Winner_Color]
     load_previous_game_stats(game_record_file, game_time, color_wins);
+    game_time = std::clamp(game_time, minimum_game_time, maximum_game_time);
 
     const auto best_file_name = genome_file_name + "_best_genome.txt";
     auto best_stats = recall_previous_best_stats(best_file_name, game_record_file);
