@@ -392,8 +392,6 @@ namespace
                 }
             }
         }
-
-        std::cout << "Done." << std::endl;
     }
 
     best_ai_stats recall_previous_best_stats(const std::string& best_file_name, const std::string& game_record_file) noexcept
@@ -534,6 +532,7 @@ namespace
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept
     {
+        std::cout << "Counting number of previous rounds..." << std::endl;
         auto genome_file = std::ifstream(genome_file_name);
         if( ! genome_file)
         {
