@@ -27,7 +27,7 @@ Game_Result play_game(Board board,
                       const Player& black,
                       const std::string& event_name,
                       const std::string& location,
-                      const std::string& pgn_file_name);
+                      const std::string& pgn_file_name) noexcept;
 
 //! \brief Play a game with an outside GUI interface.
 //!
