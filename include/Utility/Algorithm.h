@@ -3,10 +3,13 @@
 
 #include <algorithm>
 
+//! \brief A collection of algorithms that operate on ranges.
 namespace Algorithm
 {
     //! Check if range has exactly n elements that satisfy a predicate
-    //! 
+    //!
+    //! \tparam Iter An iterator type from the container range
+    //! \tparam Pred A callable type that returns a bool or equivalent
     //! \param begin Beginning of the range
     //! \param end End of the range
     //! \param predicate The predicate to satisfy

@@ -411,15 +411,15 @@ int Board::castling_direction(Piece_Color player) const noexcept
 
 const Move& Board::interpret_move(const std::string& move_text) const
 {
-    const static auto end_marks = "+#?!";
-    auto raw = [](const auto& text) { return text.substr(0, text.find_first_of(end_marks)); };
+    constexpr static auto end_marks = "+#?!";
+    const auto raw = [](const auto& text) { return text.substr(0, text.find_first_of(end_marks)); };
     const auto raw_move_text = raw(move_text);
-    auto move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
-                                  [this, &raw_move_text, raw](auto move)
-                                  {
-                                      return raw(move->algebraic(*this)) == raw_move_text ||
-                                          move->coordinates() == raw_move_text;
-                                  });
+    const auto move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
+                                        [this, &raw_move_text, raw](auto move)
+                                        {
+                                            return raw(move->algebraic(*this)) == raw_move_text ||
+                                                move->coordinates() == raw_move_text;
+                                        });
     if(move_iter != legal_moves().end())
     {
         return **move_iter;

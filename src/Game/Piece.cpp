@@ -22,11 +22,10 @@
 #include "Utility/Fixed_Capacity_Vector.h"
 #include "Utility/String.h"
 
-const Piece::piece_code_t Piece::invalid_code = Piece{Piece_Color::BLACK, Piece_Type::KING}.index() + 1;
-
 namespace
 {
     const std::string pgn_symbols = "PRNBQK";
+    const auto invalid_code = Piece{Piece_Color::BLACK, Piece_Type::KING}.index() + 1;
 
     using indexed_move_array = std::array<std::array<Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>, 64>, 12>;
 
