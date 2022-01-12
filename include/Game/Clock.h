@@ -35,7 +35,6 @@ class Clock
         //! \param moves_to_reset The number of moves before the clocks are reset to the initial time.
         //! \param increment_seconds Amount of time to add to a player's clock after every move.
         //! \param reset_method Whether time is added or the clock is reset after the specified number of moves.
-        //! \param starting_turn Which player's clock to start upon calling start().
         //! \param previous_start_time If the clock for a game is being replaced by another clock (for example, a GUI
         //!        changes time control midgame), then this parameter can be used to preserve the actual start of the
         //!        current game.
@@ -43,7 +42,6 @@ class Clock
               size_t moves_to_reset = 0,
               seconds increment_seconds = 0.0s,
               Time_Reset_Method reset_method = Time_Reset_Method::ADDITION,
-              Piece_Color starting_turn = Piece_Color::WHITE,
               std::chrono::system_clock::time_point previous_start_time = {}) noexcept;
 
         //! \brief Stop the current player's clock and restart the opponent's clock.
@@ -55,10 +53,12 @@ class Clock
         //! \brief Stop both clocks.
         void stop() noexcept;
 
-        //! \brief Start the moving player's clock at the start of a game.
+        //! \brief Start the clock for the player in the argument.
         //!
         //! This method also records the start time of the game for use in Board::print_game_record().
-        void start() noexcept;
+        //! 
+        //! \param starting_turn The player on move when the clock starts.
+        void start(Piece_Color starting_turn) noexcept;
 
         //! \brief Returns the amount of time left for the given player.
         //!
@@ -109,7 +109,7 @@ class Clock
         size_t move_count_reset;
         Time_Reset_Method method_of_reset;
 
-        Piece_Color whose_turn;
+        Piece_Color whose_turn = Piece_Color::WHITE;
         bool clocks_running = false;
 
         std::chrono::system_clock::time_point game_start_date_time;

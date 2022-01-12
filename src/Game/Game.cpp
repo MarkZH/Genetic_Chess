@@ -28,11 +28,7 @@ Game_Result play_game(Board board,
     std::vector<const Move*> game_record;
     Game_Result result;
 
-    game_clock.start();
-    if(game_clock.running_for() != board.whose_turn())
-    {
-        game_clock.punch(board);
-    }
+    game_clock.start(board.whose_turn());
 
     while( ! result.game_has_ended())
     {
@@ -81,6 +77,7 @@ void play_game_with_outsider(const Player& player,
         do
         {
             game_result = outsider->setup_turn(board, clock, game_record, player);
+            clock.start(board.whose_turn());
             if(game_result.game_has_ended())
             {
                 break;

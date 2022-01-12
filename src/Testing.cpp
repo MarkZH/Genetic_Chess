@@ -1436,7 +1436,7 @@ namespace
         Clock::seconds expected_time_after_reset = 2 * time;
         size_t moves_to_reset = 40;
         auto clock = Clock(time, moves_to_reset);
-        clock.start();
+        clock.start(Piece_Color::WHITE);
         for(size_t i = 0; i < 2 * moves_to_reset; ++i)
         {
             const auto pause_start = std::chrono::steady_clock::now();
@@ -1459,7 +1459,7 @@ namespace
     {
         const auto increment = 5s;
         auto clock2 = Clock(Clock::seconds{30}, 0, increment);
-        clock2.start();
+        clock2.start(Piece_Color::WHITE);
         auto expected_time = clock2.initial_time();
         for(size_t i = 0; i < 100; ++i)
         {

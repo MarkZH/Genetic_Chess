@@ -182,7 +182,6 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                                       movestogo,
                                       board.whose_turn() == Piece_Color::WHITE ? winc : binc,
                                       new_mode,
-                                      board.whose_turn(),
                                       clock.game_start_date_and_time());
                     }
                     else
@@ -191,7 +190,6 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                                       1,
                                       0.0s,
                                       new_mode,
-                                      board.whose_turn(),
                                       clock.game_start_date_and_time());
                     }
                 }
@@ -209,16 +207,6 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                     {
                         clock.set_time(board.whose_turn(), movetime);
                     }
-                }
-
-                if( ! clock.is_running())
-                {
-                    clock.start();
-                }
-
-                if(clock.running_for() != board.whose_turn())
-                {
-                    clock.punch(board);
                 }
 
                 log("Telling AI to choose a move at leisure");

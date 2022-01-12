@@ -477,7 +477,7 @@ namespace
         {
             Player::set_thinking_mode(thinking_output);
             play_game(board,
-                      Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION, board.whose_turn()),
+                      Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION),
                       *white, *black,
                       event_name,
                       location,

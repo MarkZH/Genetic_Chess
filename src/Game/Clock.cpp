@@ -14,14 +14,12 @@ Clock::Clock(const seconds duration_seconds,
              const size_t moves_to_reset,
              const seconds increment_seconds,
              const Time_Reset_Method reset_method,
-             const Piece_Color starting_turn,
              const std::chrono::system_clock::time_point previous_start_time) noexcept :
     timers({duration_seconds, duration_seconds}),
     initial_start_time(duration_seconds),
     increment_time({increment_seconds, increment_seconds}),
     move_count_reset(moves_to_reset),
     method_of_reset(reset_method),
-    whose_turn(starting_turn),
     game_start_date_time(previous_start_time)
 {
 }
@@ -85,9 +83,10 @@ void Clock::stop() noexcept
     clocks_running = false;
 }
 
-void Clock::start() noexcept
+void Clock::start(const Piece_Color starting_turn) noexcept
 {
     static constexpr auto default_game_start_date_time = std::chrono::system_clock::time_point{};
+    whose_turn = starting_turn;
     time_previous_punch = std::chrono::steady_clock::now();
     if(game_start_date_time == default_game_start_date_time)
     {
