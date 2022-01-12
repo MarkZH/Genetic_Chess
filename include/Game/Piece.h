@@ -95,7 +95,6 @@ class Piece
 
     private:
         piece_code_t piece_code;
-        static const piece_code_t invalid_code;
 };
 
 //! \brief Check two pieces for equality

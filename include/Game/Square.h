@@ -150,7 +150,6 @@ class Square
 
     private:
         square_index_t square_index;
-        static const square_index_t invalid_index;
 
         //! \brief Go to the next Square when iterating over Square::all_squares().
         Square& operator++() noexcept;

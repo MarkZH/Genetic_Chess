@@ -29,7 +29,10 @@ All_Squares_Iterator All_Squares::end() const noexcept
     return All_Squares_Iterator({});
 }
 
-const Square::square_index_t Square::invalid_index = 64;
+namespace
+{
+    const decltype(Square{}.index()) invalid_index = 64;
+}
 
 Square::Square() noexcept : square_index(invalid_index)
 {
