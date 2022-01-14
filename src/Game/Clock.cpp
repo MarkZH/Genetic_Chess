@@ -78,9 +78,12 @@ void Clock::unpunch() noexcept
 
 void Clock::stop() noexcept
 {
-    const auto time_stop = std::chrono::steady_clock::now();
-    timers[static_cast<int>(whose_turn)] -= (time_stop - time_previous_punch);
-    clocks_running = false;
+    if(clocks_running)
+    {
+        const auto time_stop = std::chrono::steady_clock::now();
+        timers[static_cast<int>(whose_turn)] -= (time_stop - time_previous_punch);
+        clocks_running = false;
+    }
 }
 
 void Clock::start(const Piece_Color starting_turn) noexcept
