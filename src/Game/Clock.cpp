@@ -14,21 +14,19 @@ Clock::Clock(const seconds duration_seconds,
              const size_t moves_to_reset,
              const seconds increment_seconds,
              const Time_Reset_Method reset_method,
-             const Piece_Color starting_turn,
              const std::chrono::system_clock::time_point previous_start_time) noexcept :
     timers({duration_seconds, duration_seconds}),
     initial_start_time(duration_seconds),
     increment_time({increment_seconds, increment_seconds}),
     move_count_reset(moves_to_reset),
     method_of_reset(reset_method),
-    whose_turn(starting_turn),
     game_start_date_time(previous_start_time)
 {
 }
 
 Game_Result Clock::punch(const Board& board) noexcept
 {
-    if( ! is_in_use() || ! is_running())
+    if( ! is_running())
     {
         return {};
     }
@@ -80,14 +78,18 @@ void Clock::unpunch() noexcept
 
 void Clock::stop() noexcept
 {
-    const auto time_stop = std::chrono::steady_clock::now();
-    timers[static_cast<int>(whose_turn)] -= (time_stop - time_previous_punch);
-    clocks_running = false;
+    if(clocks_running)
+    {
+        const auto time_stop = std::chrono::steady_clock::now();
+        timers[static_cast<int>(whose_turn)] -= (time_stop - time_previous_punch);
+        clocks_running = false;
+    }
 }
 
-void Clock::start() noexcept
+void Clock::start(const Piece_Color starting_turn) noexcept
 {
     static constexpr auto default_game_start_date_time = std::chrono::system_clock::time_point{};
+    whose_turn = starting_turn;
     time_previous_punch = std::chrono::steady_clock::now();
     if(game_start_date_time == default_game_start_date_time)
     {
@@ -98,11 +100,6 @@ void Clock::start() noexcept
 
 Clock::seconds Clock::time_left(const Piece_Color color) const noexcept
 {
-    if( ! is_in_use())
-    {
-        return 0.0s;
-    }
-
     if(whose_turn != color || ! clocks_running)
     {
         return timers[static_cast<int>(color)];
@@ -187,11 +184,6 @@ Clock::seconds Clock::initial_time() const noexcept
 Clock::seconds Clock::increment(const Piece_Color color) const noexcept
 {
     return increment_time[static_cast<int>(color)];
-}
-
-bool Clock::is_in_use() const noexcept
-{
-    return initial_time() > 0.0s || increment(Piece_Color::WHITE) > 0.0s || increment(Piece_Color::BLACK) > 0.0s;
 }
 
 std::string Clock::time_control_string() const noexcept

@@ -761,12 +761,9 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
     print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
-    if(game_clock.is_in_use())
-    {
-        print_game_header_line(out_stream, "TimeControl", game_clock.time_control_string());
-        print_game_header_line(out_stream, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
-        print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
-    }
+    print_game_header_line(out_stream, "TimeControl", game_clock.time_control_string());
+    print_game_header_line(out_stream, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
+    print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
 
     if( ! actual_result.ending_reason().empty() && ! actual_result.ending_reason().contains("mates"))
     {

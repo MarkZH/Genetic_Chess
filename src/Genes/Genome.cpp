@@ -40,9 +40,12 @@ namespace
             names[static_cast<int>(Search_Method::ITERATIVE_DEEPENING)] = "Iterative Deepening";
             return names;
         }();
+
+        int next_id = 0;
 }
 
 Genome::Genome() noexcept :
+    id_number(next_id++),
     genome{
         std::make_unique<Piece_Strength_Gene>(),
         std::make_unique<Look_Ahead_Gene>(),
@@ -67,7 +70,7 @@ Genome::Genome() noexcept :
     assert(gene_reference<Look_Ahead_Gene>().name() == "Look Ahead Gene");
 }
 
-Genome::Genome(const Genome& other) noexcept
+Genome::Genome(const Genome& other) noexcept : id_number(other.id()), searching_method(other.search_method())
 {
     std::transform(other.genome.begin(), other.genome.end(),
                    genome.begin(),
@@ -76,7 +79,62 @@ Genome::Genome(const Genome& other) noexcept
                        return gene->duplicate();
                    });
     reset_piece_strength_gene();
-    searching_method = other.search_method();
+}
+
+Genome::Genome(std::istream& is, int id_in) : Genome()
+{
+    id_number = id_in;
+    --next_id;
+
+    if( ! is)
+    {
+        throw Genome_Creation_Error("Could not read: ");
+    }
+
+    for(std::string line; std::getline(is, line);)
+    {
+        line = String::strip_comments(line, "#");
+        if( ! line.starts_with("ID"))
+        {
+            continue;
+        }
+
+        const auto param_value = String::split(line, ":", 1);
+        if(param_value.size() != 2 || String::trim_outer_whitespace(param_value[0]) != "ID")
+        {
+            continue;
+        }
+
+        if(id_number == String::to_number<int>(param_value[1]))
+        {
+            auto add_details = [this](const auto& e)
+            {
+                return "Error in creating Genome #" + std::to_string(id()) + "\n" + e.what() + "\nFile: ";
+            };
+
+            try
+            {
+                read_from(is);
+            }
+            catch(const Missing_Genome_Data& e)
+            {
+                throw Missing_Genome_Data(add_details(e));
+            }
+            catch(const Duplicate_Genome_Data& e)
+            {
+                throw Duplicate_Genome_Data(add_details(e));
+            }
+            catch(const Genome_Creation_Error& e)
+            {
+                throw Genome_Creation_Error(add_details(e));
+            }
+
+            next_id = std::max(next_id, id() + 1);
+            return;
+        }
+    }
+
+    throw Genome_Creation_Error("Could not locate ID " + std::to_string(id_number) + " inside file ");
 }
 
 void Genome::reset_piece_strength_gene() noexcept
@@ -121,7 +179,7 @@ Genome& Genome::operator=(const Genome& other) noexcept
     return *this;
 }
 
-Genome::Genome(const Genome& A, const Genome& B) noexcept
+Genome::Genome(const Genome& A, const Genome& B) noexcept : id_number(next_id++)
 {
     std::transform(A.genome.begin(), A.genome.end(), B.genome.begin(),
                    genome.begin(),
@@ -156,7 +214,7 @@ void Genome::read_from(std::istream& is)
         const auto line_split = String::split(line, ":", 1);
         if(line_split.size() != 2)
         {
-            throw Genetic_AI_Creation_Error("No colon in parameter line: " + line);
+            throw Genome_Creation_Error("No colon in parameter line: " + line);
         }
 
         if(String::trim_outer_whitespace(line_split[0]) == "Name")
@@ -173,7 +231,7 @@ void Genome::read_from(std::istream& is)
             }
             else
             {
-                throw Genetic_AI_Creation_Error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
+                throw Genome_Creation_Error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
             }
         }
         else if(String::trim_outer_whitespace(line_split[0]) == "Search Method")
@@ -189,16 +247,16 @@ void Genome::read_from(std::istream& is)
             }
             else
             {
-                throw Genetic_AI_Creation_Error("Unrecognized search method: " + line);
+                throw Genome_Creation_Error("Unrecognized search method: " + line);
             }
         }
         else
         {
-            throw Genetic_AI_Creation_Error("Bad line in genome file (expected Name): " + line);
+            throw Genome_Creation_Error("Bad line in genome file (expected Name): " + line);
         }
     }
 
-    throw Genetic_AI_Creation_Error("Reached end of file before END of genome.");
+    throw Genome_Creation_Error("Reached end of file before END of genome.");
 }
 
 double Genome::score_board(const Board& board, const Piece_Color perspective, size_t depth) const noexcept
@@ -214,6 +272,14 @@ double Genome::score_board(const Board& board, const Piece_Color perspective, si
 double Genome::evaluate(const Board& board, const Piece_Color perspective, size_t depth) const noexcept
 {
     return score_board(board, perspective, depth) - score_board(board, opposite(perspective), depth);
+}
+
+void Genome::mutate(const size_t mutation_count) noexcept
+{
+    for(size_t i = 0; i < mutation_count; ++i)
+    {
+        mutate();
+    }
 }
 
 void Genome::mutate() noexcept
@@ -237,13 +303,30 @@ void Genome::mutate() noexcept
     }
 }
 
+int Genome::id() const noexcept
+{
+    return id_number;
+}
+
+std::string Genome::name() const noexcept
+{
+    return "Genetic Chess #" + std::to_string(id());
+}
+
+std::string Genome::author() const noexcept
+{
+    return "Mark Harrison";
+}
+
 void Genome::print(std::ostream& os) const noexcept
 {
+    os << "ID: " << id() << '\n';
     os << "Search Method: " << search_method_name() << "\n\n";
     for(const auto& gene : genome)
     {
         gene->print(os);
     }
+    os << "END\n" << std::endl;
 }
 
 Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept
