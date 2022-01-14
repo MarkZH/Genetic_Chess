@@ -61,7 +61,7 @@ depends["user_manual"] = [user_manual_var]
 depends[user_manual_var] = [
     user_manual_tex,
     'gene_pool_config_example.txt',
-    'genetic_ai_example.txt',
+    'genome_example.txt',
     'doc/game-endings-log-plot.png',
     'doc/divergence-example.png',
     'doc/game_length_log_norm_distribution.png',
