@@ -26,7 +26,7 @@ Clock::Clock(const seconds duration_seconds,
 
 Game_Result Clock::punch(const Board& board) noexcept
 {
-    if( ! is_in_use() || ! is_running())
+    if( ! is_running())
     {
         return {};
     }
@@ -97,11 +97,6 @@ void Clock::start(const Piece_Color starting_turn) noexcept
 
 Clock::seconds Clock::time_left(const Piece_Color color) const noexcept
 {
-    if( ! is_in_use())
-    {
-        return 0.0s;
-    }
-
     if(whose_turn != color || ! clocks_running)
     {
         return timers[static_cast<int>(color)];
@@ -186,11 +181,6 @@ Clock::seconds Clock::initial_time() const noexcept
 Clock::seconds Clock::increment(const Piece_Color color) const noexcept
 {
     return increment_time[static_cast<int>(color)];
-}
-
-bool Clock::is_in_use() const noexcept
-{
-    return initial_time() > 0.0s || increment(Piece_Color::WHITE) > 0.0s || increment(Piece_Color::BLACK) > 0.0s;
 }
 
 std::string Clock::time_control_string() const noexcept

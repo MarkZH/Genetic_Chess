@@ -31,7 +31,6 @@ class Clock
         //! \brief Constructs a game clock for timing games.
         //!
         //! \param duration_seconds The initial amount of time on the clock.
-        //!        If this is zero, then the clock is inactive and will not stop the game.
         //! \param moves_to_reset The number of moves before the clocks are reset to the initial time.
         //! \param increment_seconds Amount of time to add to a player's clock after every move.
         //! \param reset_method Whether time is added or the clock is reset after the specified number of moves.
@@ -93,9 +92,6 @@ class Clock
 
         //! \brief How time is added once a timing period (moves to reset): adding or reseting to the original time.
         Time_Reset_Method reset_mode() const noexcept;
-
-        //! \brief Was the clock used for a game?
-        bool is_in_use() const noexcept;
 
         //! \brief Returns a string representing the time control of the game
         std::string time_control_string() const noexcept;
