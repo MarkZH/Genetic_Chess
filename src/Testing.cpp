@@ -192,9 +192,9 @@ namespace
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed);
     void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed);
 
-    void genetic_ai_loaded_from_file_writes_identical_file(bool& tests_passed);
-    void self_swapped_genetic_ai_is_unchanged(bool& tests_passed);
-    void self_assigned_genetic_ai_is_unchanged(bool& tests_passed);
+    void genome_loaded_from_file_writes_identical_file(bool& tests_passed);
+    void self_swapped_minimax_ai_is_unchanged(bool& tests_passed);
+    void self_assigned_minimax_ai_is_unchanged(bool& tests_passed);
 
     void castling_possible_gene_tests(bool& tests_passed);
     void freedom_to_move_gene_tests(bool& tests_passed);
@@ -262,14 +262,14 @@ bool run_tests()
     same_board_position_with_different_castling_rights_has_different_hash(tests_passed);
 
 
-    genetic_ai_loaded_from_file_writes_identical_file(tests_passed);
-    self_swapped_genetic_ai_is_unchanged(tests_passed);
-    self_assigned_genetic_ai_is_unchanged(tests_passed);
+    genome_loaded_from_file_writes_identical_file(tests_passed);
+    self_swapped_minimax_ai_is_unchanged(tests_passed);
+    self_assigned_minimax_ai_is_unchanged(tests_passed);
 
-    function_should_not_throw(tests_passed, "Genetic_AI ctor",
+    function_should_not_throw(tests_passed, "Minimax_AI ctor",
                               []()
                               {
-                                  const auto file_name = "genetic_ai_example.txt";
+                                  const auto file_name = "genome_example.txt";
                                   return Minimax_AI{file_name, find_last_id(file_name)};
                               });
 
@@ -1138,7 +1138,7 @@ namespace
         test_result(tests_passed, just_kings_move_board.board_hash() != castling_hash_board.board_hash(), "Boards should have different hashes with different castling rights");
     }
 
-    void genetic_ai_loaded_from_file_writes_identical_file(bool& tests_passed)
+    void genome_loaded_from_file_writes_identical_file(bool& tests_passed)
     {
         const auto pool_file_name = "test_gene_pool.txt";
         const auto write_file_name = "test_genome_write.txt";
@@ -1167,7 +1167,7 @@ namespace
         }
     }
 
-    void self_swapped_genetic_ai_is_unchanged(bool& tests_passed)
+    void self_swapped_minimax_ai_is_unchanged(bool& tests_passed)
     {
         auto self_swap_ai = Minimax_AI();
         self_swap_ai.mutate(100);
@@ -1187,7 +1187,7 @@ namespace
         }
     }
 
-    void self_assigned_genetic_ai_is_unchanged(bool& tests_passed)
+    void self_assigned_minimax_ai_is_unchanged(bool& tests_passed)
     {
         auto self_assign_ai = Minimax_AI();
         self_assign_ai.mutate(100);
@@ -1435,7 +1435,7 @@ namespace
         Clock::seconds expected_time_after_reset = 2 * time;
         size_t moves_to_reset = 40;
         auto clock = Clock(time, moves_to_reset);
-        clock.start();
+        clock.start(Piece_Color::WHITE);
         for(size_t i = 0; i < 2 * moves_to_reset; ++i)
         {
             const auto pause_start = std::chrono::steady_clock::now();
@@ -1458,7 +1458,7 @@ namespace
     {
         const auto increment = 5s;
         auto clock2 = Clock(Clock::seconds{30}, 0, increment);
-        clock2.start();
+        clock2.start(Piece_Color::WHITE);
         auto expected_time = clock2.initial_time();
         for(size_t i = 0; i < 100; ++i)
         {

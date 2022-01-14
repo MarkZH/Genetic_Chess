@@ -10,24 +10,24 @@ class Game_Ended : public std::runtime_error
 };
 
 
-//! \brief An exception thrown when a Genetic_AI cannot be successfully constructed.
-class Genetic_AI_Creation_Error : public std::runtime_error
+//! \brief An exception thrown when a Genome cannot be successfully constructed.
+class Genome_Creation_Error : public std::runtime_error
 {
     using std::runtime_error::runtime_error;
 };
 
 
 //! \brief An exception thrown when there is missing data in a genome
-class Missing_Genome_Data : public Genetic_AI_Creation_Error
+class Missing_Genome_Data : public Genome_Creation_Error
 {
-    using Genetic_AI_Creation_Error::Genetic_AI_Creation_Error;
+    using Genome_Creation_Error::Genome_Creation_Error;
 };
 
 
 //! \brief An exception thrown when there is duplicate data in a genome
-class Duplicate_Genome_Data : public Genetic_AI_Creation_Error
+class Duplicate_Genome_Data : public Genome_Creation_Error
 {
-    using Genetic_AI_Creation_Error::Genetic_AI_Creation_Error;
+    using Genome_Creation_Error::Genome_Creation_Error;
 };
 
 

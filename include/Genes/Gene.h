@@ -10,7 +10,7 @@
 
 class Board;
 class Piece_Strength_Gene;
-class Genetic_AI_Creation_Error;
+class Genome_Creation_Error;
 
 enum class Game_Stage
 {
@@ -18,7 +18,7 @@ enum class Game_Stage
     ENDGAME
 };
 
-//! \brief The base class of all genes that control the behavior of Genetic AIs.
+//! \brief The base class of all genes that control the behavior of Genetic Chess players.
 class Gene
 {
     public:
@@ -29,7 +29,7 @@ class Gene
         //! Every line should be of the form: \<property\> = \<value\> with optional comments at the end preceded by '#'.
         //! A blank line marks the end of the gene data.
         //! \param is An input stream (std::ifstream, std::iostream, or similar).
-        //! \exception Genetic_AI_Creation_Error or derivative if there is an invalid line or an unexpected property
+        //! \exception Genome_Creation_Error or derivative if there is an invalid line or an unexpected property
         void read_from(std::istream& is);
 
         //! \brief Read gene data from a text file.
@@ -111,7 +111,7 @@ class Gene
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept = 0;
 
-        template<typename Error = Genetic_AI_Creation_Error>
+        template<typename Error = Genome_Creation_Error>
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const
         {
             throw Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);

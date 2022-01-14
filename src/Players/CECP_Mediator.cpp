@@ -71,7 +71,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
             {
                 log("Setting board to standard start position and resetting clock");
                 board = Board{};
-                clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(Piece_Color::WHITE), clock.reset_mode(), Piece_Color::WHITE);
+                clock = Clock(clock.initial_time(), clock.moves_per_time_period(), clock.increment(Piece_Color::WHITE), clock.reset_mode());
                 own_time_left.reset();
                 opponent_time_left.reset();
                 move_list.clear();
@@ -167,7 +167,6 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                               reset_moves,
                               increment,
                               Time_Reset_Method::ADDITION,
-                              board.whose_turn(),
                               clock.game_start_date_and_time());
                 own_time_left.reset();
                 opponent_time_left.reset();
@@ -182,7 +181,6 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
                               1,
                               0.0s,
                               Time_Reset_Method::SET_TO_ORIGINAL,
-                              board.whose_turn(),
                               clock.game_start_date_and_time());
                 own_time_left.reset();
                 opponent_time_left.reset();
@@ -266,18 +264,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
     log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time.count()) + " seconds.");
     clock.set_time(opposite(board.whose_turn()), opponent_time);
 
-    if( ! clock.is_running())
-    {
-        clock.start();
-    }
-
-    if(clock.running_for() != board.whose_turn())
-    {
-        clock.punch(board);
-    }
-
     Player::choose_move_at_leisure();
-
     return setup_result;
 }
 
