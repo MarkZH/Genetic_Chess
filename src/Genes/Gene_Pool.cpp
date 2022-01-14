@@ -503,7 +503,7 @@ namespace
                     loaded_ais.insert_or_assign(id, Minimax_AI{ifs, id});
                     break;
                 }
-                catch(const Genetic_AI_Creation_Error& e)
+                catch(const Genome_Creation_Error& e)
                 {
                     if(search_started_from_beginning_of_file)
                     {

@@ -44,7 +44,7 @@ namespace
     //! \brief Reads a genome file and rewrites it in the latest style.
     //!
     //! \param file_name The name of the file to update.
-    //! \exception Genetic_AI_Creation_Error or derivative if the genome file is invalid.
+    //! \exception Genome_Creation_Error or derivative if the genome file is invalid.
     void update_genome_file(const std::string& file_name);
 
     //! \brief Throws std::invalid_argument if assertion fails
@@ -95,7 +95,7 @@ int main(int argc, char *argv[])
         }
         else if(option == "-update")
         {
-            argument_assert(argc > 2, "Provide a file containing Genetic AI data.");
+            argument_assert(argc > 2, "Provide a file containing Genome data.");
             update_genome_file(argv[2]);
         }
         else
@@ -133,7 +133,7 @@ namespace
                 << "\t\tIf genetic_chess has changed how genomes are written, use\n\t\tthis option to update the file to the latest format.\n\n"
                 << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP/xboard or UCI command from a GUI\nto start playing.\n\n"
                 << "\t-genetic [filename [number]]\n"
-                << "\t\tSelect a minimaxing genetic AI player for a game. Optional file name\n\t\tand ID number to load an AI from a file.\n\n"
+                << "\t\tSelect a minimaxing evolved player for a game. Optional file name\n\t\tand ID number to load an AI from a file.\n\n"
                 << "\t-random\n"
                 << "\t\tSelect a player that makes random moves for a game.\n\n"
                 << "Other game options:\n\n"
@@ -392,7 +392,7 @@ namespace
             }
             else if(opt == "-genetic")
             {
-                argument_assert(i + 1 < argc, "Genome file needed for Genetic AI player");
+                argument_assert(i + 1 < argc, "Genome file needed for player");
                 std::string filename = argv[++i];
 
                 try
@@ -526,9 +526,9 @@ namespace
         {
             try
             {
-                Genetic_AI(input, std::stoi(line)).print(output);
+                Minimax_AI(input, std::stoi(line)).print(output);
             }
-            catch(const Genetic_AI_Creation_Error& e)
+            catch(const Genome_Creation_Error& e)
             {
                 std::cerr << e.what() << '\n';
             }

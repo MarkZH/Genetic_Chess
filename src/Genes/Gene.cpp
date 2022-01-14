@@ -153,7 +153,7 @@ void Gene::read_from(const std::string& file_name)
     auto ifs = std::ifstream(file_name);
     if( ! ifs)
     {
-        throw Genetic_AI_Creation_Error("Could not open " + file_name + " to read.");
+        throw Genome_Creation_Error("Could not open " + file_name + " to read.");
     }
 
     for(std::string line; std::getline(ifs, line);)
@@ -182,13 +182,13 @@ void Gene::read_from(const std::string& file_name)
                 }
                 catch(const std::exception& e)
                 {
-                    throw Genetic_AI_Creation_Error(add_details(e));
+                    throw Genome_Creation_Error(add_details(e));
                 }
             }
         }
     }
 
-    throw Genetic_AI_Creation_Error(name() + " not found in " + file_name);
+    throw Genome_Creation_Error(name() + " not found in " + file_name);
 }
 
 void Gene::mutate() noexcept
