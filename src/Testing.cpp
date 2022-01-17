@@ -1373,14 +1373,26 @@ namespace
     {
         auto pawn_structure_gene = Pawn_Structure_Gene();
         pawn_structure_gene.read_from("testing/test_genome.txt");
-        
-        const auto board1 = Board("k7/4p3/8/8/8/4P3/3P4/K7 w - - 0 1"); 
+
+        // Pawn protected by pawn
+        const auto board1 = Board("k7/4p3/8/8/8/4P3/3P4/K7 w - - 0 1");
         pawn_structure_gene.test(tests_passed, board1, Piece_Color::WHITE, 0.5/8);
         pawn_structure_gene.test(tests_passed, board1, Piece_Color::BLACK, 0.0/8);
 
+        // Black pawn protected by piece, white pawn protected by pawn in one normal move
         const auto board2 = Board("k7/r1p5/8/8/1P6/8/P7/7K w - - 0 1");
         pawn_structure_gene.test(tests_passed, board2, Piece_Color::WHITE, 0.3/8);
         pawn_structure_gene.test(tests_passed, board2, Piece_Color::BLACK, 0.2/8);
+
+        // Black pawn protected by piece, white pawn protected by pawn in one double move
+        const auto board3 = Board("k7/r1p5/8/1P6/8/8/P7/7K w - - 0 1");
+        pawn_structure_gene.test(tests_passed, board3, Piece_Color::WHITE, 0.3/8);
+        pawn_structure_gene.test(tests_passed, board3, Piece_Color::BLACK, 0.2/8);
+
+        // Black pawn protected by piece, white pawn not protected
+        const auto board4 = Board("k7/r1p5/1P6/8/8/P7/8/7K w - - 0 1");
+        pawn_structure_gene.test(tests_passed, board4, Piece_Color::WHITE, 0.0);
+        pawn_structure_gene.test(tests_passed, board4, Piece_Color::BLACK, 0.2/8);
     }
 
     void game_progress_on_new_board_is_zero(bool& tests_passed)

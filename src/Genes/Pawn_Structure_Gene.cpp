@@ -50,11 +50,13 @@ double Pawn_Structure_Gene::score_board(const Board& board, Piece_Color perspect
             {
                 score += guarded_by_pawn_in_one_move;
             }
-            else if(const auto guard4 = square + Square_Difference{1, 3*guard_direction}; guard4.inside_board() && board.piece_on_square(guard4) == pawn)
+            else if(const auto guard4 = square + Square_Difference{1, 3*guard_direction};
+                    guard4.inside_board() && square.rank() == double_move_guarded_rank && board.piece_on_square(guard4) == pawn)
             {
                 score += guarded_by_pawn_in_one_move;
             }
-            else if(const auto guard5 = square + Square_Difference{-1, 3*guard_direction}; guard5.inside_board() && board.piece_on_square(guard5) == pawn)
+            else if(const auto guard5 = square + Square_Difference{-1, 3*guard_direction};
+                    guard5.inside_board() && square.rank() == double_move_guarded_rank && board.piece_on_square(guard5) == pawn)
             {
                 score += guarded_by_pawn_in_one_move;
             }
