@@ -77,6 +77,7 @@ shorten('Pawn Islands Gene') = 'Islands';
 shorten('Sphere of Influence Gene') = 'Sphere';
 shorten('Stacked Pawns Gene') = 'Stacked';
 shorten('Total Force Gene') = 'Force';
+shorten('Pawn Structure Gene') = 'Structure';
 
 marker_size = 5;
 line_width = 2;
