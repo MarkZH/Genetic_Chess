@@ -2,6 +2,7 @@
 #define MATH_H
 
 #include <cstddef>
+#include <cmath>
 
 //! \brief Provides a collection of useful math functions.
 namespace Math
