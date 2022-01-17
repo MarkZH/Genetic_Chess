@@ -19,11 +19,9 @@ class Pawn_Structure_Gene : public Clonable_Gene<Pawn_Structure_Gene>
 
     private:
         double opening_guarded_by_pawn = 1.0;
-        double opening_guarded_by_pawn_in_one_move = 1.0;
         double opening_guarded_by_piece = 1.0;
 
         double endgame_guarded_by_pawn = 1.0;
-        double endgame_guarded_by_pawn_in_one_move = 1.0;
         double endgame_guarded_by_piece = 1.0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
