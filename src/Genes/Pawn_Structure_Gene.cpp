@@ -79,8 +79,8 @@ void Pawn_Structure_Gene::adjust_properties(std::map<std::string, double>& prope
     properties["Guarded By Pawn - Opening"] = opening_guarded_by_pawn;
     properties["Guarded By Piece - Opening"] = opening_guarded_by_piece;
 
-    properties["Guarded By Pawn - Endgame"] = opening_guarded_by_pawn;
-    properties["Guarded By Piece - Endgame"] = opening_guarded_by_piece;
+    properties["Guarded By Pawn - Endgame"] = endgame_guarded_by_pawn;
+    properties["Guarded By Piece - Endgame"] = endgame_guarded_by_piece;
 }
 
 void Pawn_Structure_Gene::load_gene_properties(const std::map<std::string, double>& properties)
@@ -88,8 +88,8 @@ void Pawn_Structure_Gene::load_gene_properties(const std::map<std::string, doubl
     opening_guarded_by_pawn = properties.at("Guarded By Pawn - Opening");
     opening_guarded_by_piece = properties.at("Guarded By Piece - Opening");
 
-    opening_guarded_by_pawn = properties.at("Guarded By Pawn - Endgame");
-    opening_guarded_by_piece = properties.at("Guarded By Piece - Endgame");
+    endgame_guarded_by_pawn = properties.at("Guarded By Pawn - Endgame");
+    endgame_guarded_by_piece = properties.at("Guarded By Piece - Endgame");
 
     normalize_guard_scores();
 }
