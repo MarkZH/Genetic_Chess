@@ -38,13 +38,22 @@ namespace Math
         return 0;
     }
 
-    //! Scale values of both numbers so their absolute values sum to one.
+    //! Scale values of two numbers so their absolute values sum to one.
     //!
     //! \param[out] x First value.
     //! \param[out] y Second value.
     //!
     //! The values will be divided by std::abs(x) + std::abs(y).
     void normalize(double& x, double& y) noexcept;
+
+    //! Scale values of three numbers so their absolute values sum to one.
+    //!
+    //! \param[out] x First value.
+    //! \param[out] y Second value.
+    //! \param[out] z Second value.
+    //!
+    //! The values will be divided by std::abs(x) + std::abs(y).
+    void normalize(double& x, double& y, double& z) noexcept;
 
     //! Linearly interpolates a value.
     //!

@@ -30,4 +30,14 @@ Queenside Preference - Endgame: 0.2
 Priority - Opening: 1
 Priority - Endgame: 1
 
+Name: Pawn Structure Gene
+Guarded By Pawn - Opening: 0.5
+Guarded By Pawn - Endgame: 0.5
+Guarded By Pawn In One Move - Opening: 0.3
+Guarded By Pawn In One Move - Endgame: 0.3
+Guarded By Piece - Opening: 0.2
+Guarded By Piece - Endgame: 0.2
+Priority - Opening: 1
+Priority - Endgame: 1
+
 END

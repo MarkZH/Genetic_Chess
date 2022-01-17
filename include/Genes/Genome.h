@@ -135,7 +135,7 @@ class Genome
 
     private:
         int id_number;
-        std::array<std::unique_ptr<Gene>, 14> genome;
+        std::array<std::unique_ptr<Gene>, 15> genome;
         Search_Method searching_method = Search_Method::MINIMAX;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
