@@ -33,11 +33,13 @@ double Pawn_Structure_Gene::score_board(const Board& board, Piece_Color perspect
     {
         if(board.piece_on_square(square) == pawn)
         {
-            if(const auto guard0 = square + Square_Difference{1, guard_direction}; guard0.inside_board() && board.piece_on_square(guard0) == pawn)
+            if(const auto guard0 = square + Square_Difference{1, guard_direction};
+               guard0.inside_board() && board.piece_on_square(guard0) == pawn)
             {
                 score += guarded_by_pawn;
             }
-            else if(const auto guard1 = square + Square_Difference{-1, guard_direction}; guard1.inside_board() && board.piece_on_square(guard1) == pawn)
+            else if(const auto guard1 = square + Square_Difference{-1, guard_direction};
+                    guard1.inside_board() && board.piece_on_square(guard1) == pawn)
             {
                 score += guarded_by_pawn;
             }
