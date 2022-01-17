@@ -38,22 +38,22 @@ namespace Math
         return 0;
     }
 
-    //! Scale values of two numbers so their absolute values sum to one.
+    //! Scale values so their absolute values sum to one.
     //!
-    //! \param[out] x First value.
-    //! \param[out] y Second value.
-    //!
-    //! The values will be divided by std::abs(x) + std::abs(y).
-    void normalize(double& x, double& y) noexcept;
-
-    //! Scale values of three numbers so their absolute values sum to one.
-    //!
-    //! \param[out] x First value.
-    //! \param[out] y Second value.
-    //! \param[out] z Second value.
+    //! \tparam Ts Types of values.
+    //! \param[out] xs All the values.
     //!
     //! The values will be divided by std::abs(x) + std::abs(y).
-    void normalize(double& x, double& y, double& z) noexcept;
+    template<typename ...Ts>
+    void normalize(Ts&... xs) noexcept
+    {
+        // Both of the statements below are parameter pack folds.
+        // The first with the plus operator (along with std::abs() on each element).
+        // The second with the comma operator (along with /= sum on each element).
+        // On the second statement, all of the parentheses are necessary.
+        const double sum = (std::abs(xs) + ...);
+        ((xs /= sum), ...);
+    }
 
     //! Linearly interpolates a value.
     //!
