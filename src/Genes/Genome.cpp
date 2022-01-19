@@ -42,7 +42,7 @@ namespace
             return names;
         }();
 
-        int next_id = 0;
+    int next_id = 0;
 }
 
 Genome::Genome() noexcept :
