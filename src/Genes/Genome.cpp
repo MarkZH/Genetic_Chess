@@ -170,6 +170,7 @@ void Genome::renormalize_priorities() noexcept
 
 Genome& Genome::operator=(const Genome& other) noexcept
 {
+    id_number = other.id();
     std::transform(other.genome.begin(), other.genome.end(),
                    genome.begin(),
                    [](const auto& gene)
