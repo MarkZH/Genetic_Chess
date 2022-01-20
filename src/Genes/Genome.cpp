@@ -86,6 +86,9 @@ Genome::Genome(const Genome& other) noexcept : id_number(other.id()), searching_
 Genome::Genome(std::istream& is, int id_in) : Genome()
 {
     id_number = id_in;
+
+    // Genome() increments next_id, but this Genome doesn't use it.
+    // Save it for the next new Genome.
     --next_id;
 
     if( ! is)
