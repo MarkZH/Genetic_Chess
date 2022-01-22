@@ -23,12 +23,9 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, const Piec
     for(const auto square : Square::all_squares())
     {
         const auto piece = board.piece_on_square(square);
-        if(piece && piece.color() != perspective)
+        if(piece && piece.color() != perspective && board.attacked_by(square, perspective))
         {
-            if( ! board.safe_for_king(square, opposite(perspective)))
-            {
-                score += values[static_cast<size_t>(piece.type())];
-            }
+            score += values[static_cast<size_t>(piece.type())];
         }
     }
 

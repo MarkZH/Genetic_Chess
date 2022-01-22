@@ -38,6 +38,7 @@ using namespace std::chrono_literals;
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
+#include "Genes/Pawn_Structure_Gene.h"
 
 #include "Utility/String.h"
 #include "Utility/Random.h"
@@ -208,6 +209,7 @@ namespace
     void pawn_islands_gene_tests(bool& tests_passed);
     void checkmate_material_gene_tests(bool& tests_passed);
     void sphere_of_influence_gene_tests(bool& tests_passed);
+    void pawn_structure_gene_tests(bool& tests_passed);
 
     void game_progress_on_new_board_is_zero(bool& tests_passed);
     void game_progress_where_one_side_has_only_king_is_one(bool& tests_passed);
@@ -228,6 +230,8 @@ namespace
     void average_moves_left_matches_precalculated_value(bool& tests_passed);
     void average_moves_left_returns_finite_result_after_zero_moves(bool& tests_passed);
     void average_moves_left_returns_finite_result_after_one_move(bool& tests_passed);
+
+    void math_normalize_test(bool& tests_passed);
 }
 
 bool run_tests()
@@ -285,6 +289,7 @@ bool run_tests()
     stacked_pawns_gene_tests(tests_passed);
     pawn_islands_gene_tests(tests_passed);
     checkmate_material_gene_tests(tests_passed);
+    pawn_structure_gene_tests(tests_passed);
 
     game_progress_on_new_board_is_zero(tests_passed);
     game_progress_where_one_side_has_only_king_is_one(tests_passed);
@@ -343,6 +348,8 @@ bool run_tests()
     average_moves_left_returns_finite_result_after_zero_moves(tests_passed);
     average_moves_left_returns_finite_result_after_one_move(tests_passed);
 
+    math_normalize_test(tests_passed);
+
     specified_time_added_to_clock_after_specified_number_of_punches(tests_passed);
     clock_with_increment_gets_time_added_on_every_punch(tests_passed);
 
@@ -379,6 +386,8 @@ void run_speed_tests()
     const auto stacked_pawns_gene = Stacked_Pawns_Gene();
     const auto pawn_islands_gene = Pawn_Islands_Gene();
     const auto checkmate_material_gene = Checkmate_Material_Gene();
+    auto pawn_structure_gene = Pawn_Structure_Gene();
+    pawn_structure_gene.read_from(test_genes_file_name);
 
     auto performance_board = Board();
     for(const auto& move : String::split("e4 e6 d4 h5 d5 b5 Qf3 g6 Be2 Bg7 Bd2 h4 Nh3 Na6 Nc3 b4 Nf4 Nc5 Nd3 Na4 Ne5 Nb6 Qd3 Qe7 Qe3 Ba6 Qf3 Nf6 Qe3 h3 Qf4 Qc5 Qf3 Qe7 O-O-O"))
@@ -402,7 +411,8 @@ void run_speed_tests()
                                                          &pawn_islands_gene,
                                                          &sphere_of_influence_gene,
                                                          &stacked_pawns_gene,
-                                                         &total_force_gene};
+                                                         &total_force_gene,
+                                                         &pawn_structure_gene};
 
 #ifdef NDEBUG
     const auto number_of_tests = 1'000'000;
@@ -476,7 +486,7 @@ void run_speed_tests()
             {
                 quiescent_board = Board{};
             }
-            else if( ! quiescent_board.safe_for_king(move->end(), opposite(quiescent_board.whose_turn())))
+            else if(quiescent_board.attacked_by(move->end(), quiescent_board.whose_turn()))
             {
                 break;
             }
@@ -1361,6 +1371,32 @@ namespace
         sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, Piece_Color::WHITE, sphere_of_influence_score);
     }
 
+    void pawn_structure_gene_tests(bool& tests_passed)
+    {
+        auto pawn_structure_gene = Pawn_Structure_Gene();
+        pawn_structure_gene.read_from("testing/test_genome.txt");
+
+        // Pawn protected by pawn
+        const auto board1 = Board("k7/4p3/8/8/8/4P3/3P4/K7 w - - 0 1");
+        pawn_structure_gene.test(tests_passed, board1, Piece_Color::WHITE, 0.6/8);
+        pawn_structure_gene.test(tests_passed, board1, Piece_Color::BLACK, 0.0/8);
+
+        // Black pawn protected by piece, white pawn protected by pawn in one normal move
+        const auto board2 = Board("k7/r1p5/8/8/1P6/8/P7/7K w - - 0 1");
+        pawn_structure_gene.test(tests_passed, board2, Piece_Color::WHITE, 0.0/8);
+        pawn_structure_gene.test(tests_passed, board2, Piece_Color::BLACK, 0.4/8);
+
+        // Black pawn protected by piece, white pawn protected by pawn in one double move
+        const auto board3 = Board("k7/r1p5/8/1P6/8/8/P7/7K w - - 0 1");
+        pawn_structure_gene.test(tests_passed, board3, Piece_Color::WHITE, 0.0/8);
+        pawn_structure_gene.test(tests_passed, board3, Piece_Color::BLACK, 0.4/8);
+
+        // Black pawn protected by piece, white pawn not protected
+        const auto board4 = Board("k7/r1p5/1P6/8/8/P7/8/7K w - - 0 1");
+        pawn_structure_gene.test(tests_passed, board4, Piece_Color::WHITE, 0.0/8);
+        pawn_structure_gene.test(tests_passed, board4, Piece_Color::BLACK, 0.4/8);
+    }
+
     void game_progress_on_new_board_is_zero(bool& tests_passed)
     {
         auto piece_strength_gene = Piece_Strength_Gene();
@@ -1587,5 +1623,37 @@ namespace
         const auto moves_left_after_one_move = Math::average_moves_left(mean_moves, width, moves_played_after_one_move);
         test_result(tests_passed, std::isfinite(moves_left_after_one_move),
                     std::string("Log-Norm failed after one move: Expected finite answer, Got: ") + std::to_string(moves_left_after_one_move));
+    }
+
+    void math_normalize_test(bool& tests_passed)
+    {
+        const auto too_far = [](const auto value, const auto goal)
+        {
+            return std::abs(value - goal) > 1e-5;
+        };
+
+        auto x = 2.0;
+        auto y = 8.0;
+        const auto expected_x = 0.2;
+        const auto expected_y = 0.8;
+        Math::normalize(x, y);
+        if(too_far(x, expected_x) || too_far(y, expected_y))
+        {
+            std::cerr << "Normalizing (2.0, 8.0) should have given (" << expected_x << ", " << expected_y << ") .Got(" << x << ", " << y << ").\n";
+            tests_passed = false;
+        }
+
+        auto a = 2.0;
+        auto b = 8.0;
+        auto c = -10.0;
+        const auto expected_a = 0.1;
+        const auto expected_b = 0.4;
+        const auto expected_c = -0.5;
+        Math::normalize(a, b, c);
+        if(too_far(a, expected_a) || too_far(b, expected_b) || too_far(c, expected_c))
+        {
+            std::cerr << "Normalizing (2.0, 8.0, -10.0) should have given (" << expected_a << ", " << expected_b << ", " << expected_c << "). Got (" << a << ", " << b << ", " << c << ").\n";
+            tests_passed = false;
+        }
     }
 }

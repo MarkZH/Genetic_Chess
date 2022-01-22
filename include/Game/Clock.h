@@ -55,7 +55,7 @@ class Clock
         //! \brief Start the clock for the player in the argument.
         //!
         //! This method also records the start time of the game for use in Board::print_game_record().
-        //! 
+        //!
         //! \param starting_turn The player on move when the clock starts.
         void start(Piece_Color starting_turn) noexcept;
 

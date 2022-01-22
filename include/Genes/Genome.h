@@ -38,7 +38,7 @@ class Genome
         Genome(Genome&& other) = default;
 
         //! \brief Construct a genome from a file
-        //! 
+        //!
         //! \param is The input stream from the opened file.
         //! \param id_in The id number of the Genome to search for.
         Genome(std::istream& is, int id_in);
@@ -75,7 +75,7 @@ class Genome
         double evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
 
         //! \brief Apply a number of random mutation to one gene in the genome.
-        //! 
+        //!
         //! \param mutation_count The number of times to mutate the genome.
         void mutate(size_t mutation_count) noexcept;
 
@@ -135,7 +135,7 @@ class Genome
 
     private:
         int id_number;
-        std::array<std::unique_ptr<Gene>, 14> genome;
+        std::array<std::unique_ptr<Gene>, 15> genome;
         Search_Method searching_method = Search_Method::MINIMAX;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
