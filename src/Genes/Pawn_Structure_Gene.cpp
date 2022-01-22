@@ -1,6 +1,7 @@
 #include "Genes/Pawn_Structure_Gene.h"
 
 #include <string>
+#include <cmath>
 
 #include "Game/Board.h"
 #include "Game/Square.h"
@@ -22,8 +23,8 @@ std::string Pawn_Structure_Gene::name() const noexcept
 
 double Pawn_Structure_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double game_progress) const noexcept
 {
-    const auto guarded_by_pawn = Math::interpolate(opening_guarded_by_pawn, endgame_guarded_by_pawn, game_progress);
-    const auto guarded_by_piece = Math::interpolate(opening_guarded_by_piece, endgame_guarded_by_piece, game_progress);
+    const auto guarded_by_pawn = std::lerp(opening_guarded_by_pawn, endgame_guarded_by_pawn, game_progress);
+    const auto guarded_by_piece = std::lerp(opening_guarded_by_piece, endgame_guarded_by_piece, game_progress);
 
     const auto pawn = Piece{perspective, Piece_Type::PAWN};
     const auto guard_direction = perspective == Piece_Color::WHITE ? -1 : 1;
