@@ -256,12 +256,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                          perspective,
                                          {current_variation.empty() ? all_legal_moves.front() : current_variation.front()}};
 
-    for(auto moves_left = all_legal_moves.size(); moves_left > 0; --moves_left)
+    auto moves_left = all_legal_moves.size();
+    for(const auto move : all_legal_moves)
     {
         const auto evaluate_start_time = std::chrono::steady_clock::now();
         ++nodes_searched;
 
-        const auto move = all_legal_moves[all_legal_moves.size() - moves_left];
         const auto variation_guard = current_variation.scoped_push_back(move);
         auto next_board = board;
         auto move_result = next_board.play_move(*move);
@@ -293,7 +293,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
         const auto time_left = Clock::seconds(time_end - std::chrono::steady_clock::now());
         const auto time_allotted_for_this_move = std::min(time_left*speculation_time_factor(game_progress(next_board)),
-                                                          clock.running_time_left())/moves_left;
+                                                          clock.running_time_left())/(moves_left--);
 
         const auto result = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, maximum_search_depth, time_allotted_for_this_move) ?
             search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, maximum_search_depth, clock, beta, alpha, principal_variation, current_variation) :

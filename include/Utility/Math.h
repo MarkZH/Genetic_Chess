@@ -2,6 +2,7 @@
 #define MATH_H
 
 #include <cstddef>
+#include <cmath>
 
 //! \brief Provides a collection of useful math functions.
 namespace Math
@@ -38,13 +39,22 @@ namespace Math
         return 0;
     }
 
-    //! Scale values of both numbers so their absolute values sum to one.
+    //! Scale values so their absolute values sum to one.
     //!
-    //! \param[out] x First value.
-    //! \param[out] y Second value.
+    //! \tparam Ts Types of values.
+    //! \param[out] xs All the values.
     //!
     //! The values will be divided by std::abs(x) + std::abs(y).
-    void normalize(double& x, double& y) noexcept;
+    template<typename ...Ts>
+    void normalize(Ts&... xs) noexcept
+    {
+        // Both of the statements below are parameter pack folds.
+        // The first with the plus operator (along with std::abs() on each element).
+        // The second with the comma operator (along with /= sum on each element).
+        // On the second statement, all of the parentheses are necessary.
+        const double sum = (std::abs(xs) + ...);
+        ((xs /= sum), ...);
+    }
 }
 
 #endif // MATH_H

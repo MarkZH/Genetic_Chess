@@ -29,6 +29,7 @@
 #include "Genes/Stacked_Pawns_Gene.h"
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
+#include "Genes/Pawn_Structure_Gene.h"
 
 namespace
 {
@@ -41,7 +42,7 @@ namespace
             return names;
         }();
 
-        int next_id = 0;
+    int next_id = 0;
 }
 
 Genome::Genome() noexcept :
@@ -60,7 +61,8 @@ Genome::Genome() noexcept :
         std::make_unique<Castling_Possible_Gene>(),
         std::make_unique<Stacked_Pawns_Gene>(),
         std::make_unique<Pawn_Islands_Gene>(),
-        std::make_unique<Checkmate_Material_Gene>()
+        std::make_unique<Checkmate_Material_Gene>(),
+        std::make_unique<Pawn_Structure_Gene>()
     }
 {
     renormalize_priorities();
@@ -84,6 +86,9 @@ Genome::Genome(const Genome& other) noexcept : id_number(other.id()), searching_
 Genome::Genome(std::istream& is, int id_in) : Genome()
 {
     id_number = id_in;
+
+    // Genome() increments next_id, but this Genome doesn't use it.
+    // Save it for the next new Genome.
     --next_id;
 
     if( ! is)
@@ -168,6 +173,7 @@ void Genome::renormalize_priorities() noexcept
 
 Genome& Genome::operator=(const Genome& other) noexcept
 {
+    id_number = other.id();
     std::transform(other.genome.begin(), other.genome.end(),
                    genome.begin(),
                    [](const auto& gene)
