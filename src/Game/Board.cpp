@@ -461,6 +461,11 @@ const std::vector<const Move*>& Board::legal_moves() const noexcept
     return legal_moves_cache;
 }
 
+bool Board::attacked_by(Square target, Piece_Color attacker) const noexcept
+{
+    return moves_attacking_square(target, attacker).any();
+}
+
 void Board::remove_piece(const Square square) noexcept
 {
     const auto leaving_piece = piece_on_square(square);
@@ -612,12 +617,12 @@ std::bitset<16> Board::checking_moves() const noexcept
 
 bool Board::king_is_in_check() const noexcept
 {
-    return checking_moves().any();
+    return attacked_by(find_king(whose_turn()), opposite(whose_turn()));
 }
 
 bool Board::safe_for_king(const Square square, const Piece_Color king_color) const noexcept
 {
-    return moves_attacking_square(square, opposite(king_color)).none();
+    return ! attacked_by(square, opposite(king_color));
 }
 
 bool Board::blocked_attack(const Square square, const Piece_Color attacking_color) const noexcept
@@ -1099,7 +1104,7 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
     const auto player_color = whose_turn();
     auto current_board = *this;
     const auto square = previous_move->end();
-    while( ! current_board.safe_for_king(square, opposite(current_board.whose_turn())))
+    while(current_board.attacked_by(square, current_board.whose_turn()))
     {
         std::vector<const Move*> capturing_moves;
         std::copy_if(current_board.legal_moves().begin(), current_board.legal_moves().end(), std::back_inserter(capturing_moves),

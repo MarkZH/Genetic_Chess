@@ -43,7 +43,7 @@ double Pawn_Structure_Gene::score_board(const Board& board, Piece_Color perspect
             {
                 score += guarded_by_pawn;
             }
-            else if( ! board.safe_for_king(square, opposite(perspective)))
+            else if(board.attacked_by(square, perspective))
             {
                 score += guarded_by_piece;
             }

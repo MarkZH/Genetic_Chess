@@ -487,7 +487,7 @@ void run_speed_tests()
             {
                 quiescent_board = Board{};
             }
-            else if( ! quiescent_board.safe_for_king(move->end(), opposite(quiescent_board.whose_turn())))
+            else if(quiescent_board.attacked_by(move->end(), quiescent_board.whose_turn()))
             {
                 break;
             }

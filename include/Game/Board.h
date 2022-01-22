@@ -155,6 +155,12 @@ class Board
         //!          its argument from this list.
         const std::vector<const Move*>& legal_moves() const noexcept;
 
+        //! \brief Whether a square is attacked by a piece of a given color.
+        //! 
+        //! \param target The square under consideration.
+        //! \param attacker The color of the piece doing the attacking.
+        bool attacked_by(Square target, Piece_Color attacker) const noexcept;
+
         //! \brief Find out whether the input square is safe for the given king to occupy.
         //!
         //! A square is not safe for the king if the opposing pieces can attack the square.
