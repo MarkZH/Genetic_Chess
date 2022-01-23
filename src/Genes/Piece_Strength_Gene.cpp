@@ -20,8 +20,7 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 
 void Piece_Strength_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties.erase("Priority - Opening");
-    properties.erase("Priority - Endgame");
+    delete_priorities(properties);
 
     static constexpr auto standard_all_pieces_score = 2*5.0 + // rooks
                                                       2*3.0 + // knights

@@ -21,8 +21,7 @@ Look_Ahead_Gene::Look_Ahead_Gene() noexcept
 
 void Look_Ahead_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties.erase("Priority - Opening");
-    properties.erase("Priority - Endgame");
+    delete_priorities(properties);
     properties["Mean Game Length"] = std::to_string(mean_game_length);
     properties["Game Length Uncertainty"] = std::to_string(game_length_uncertainty);
     properties["Speculation - Opening"] = std::to_string(opening_speculation_constant);

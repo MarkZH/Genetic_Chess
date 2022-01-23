@@ -105,6 +105,10 @@ class Gene
         //! \param expected_score The expected score returned by Gene::score_board().
         void test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept;
 
+    protected:
+        //! \brief When preparing to write gene data to a file, regulatory genes can use this to delete unused Priority data.
+        static void delete_priorities(std::map<std::string, std::string>& properties) noexcept;
+
     private:
         double opening_priority = 1.0;
         double endgame_priority = 1.0;

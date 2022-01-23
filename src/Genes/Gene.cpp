@@ -246,3 +246,9 @@ void Gene::test(bool& test_variable, const Board& board, const Piece_Color persp
         test_variable = false;
     }
 }
+
+void Gene::delete_priorities(std::map<std::string, std::string>& properties) noexcept
+{
+    properties.erase("Priority - Opening");
+    properties.erase("Priority - Endgame");
+}
