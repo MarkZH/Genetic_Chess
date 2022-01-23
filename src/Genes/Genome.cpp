@@ -129,7 +129,7 @@ Genome::Genome(std::istream& is, int id_in) : Genome()
             {
                 throw Duplicate_Genome_Data(add_details(e));
             }
-            catch(const Genome_Creation_Error& e)
+            catch(const std::exception& e)
             {
                 throw Genome_Creation_Error(add_details(e));
             }
