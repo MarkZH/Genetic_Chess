@@ -18,34 +18,34 @@
 #include "Utility/Exceptions.h"
 #include "Utility/Math.h"
 
-std::map<std::string, double> Gene::list_properties() const noexcept
+std::map<std::string, std::string> Gene::list_properties() const noexcept
 {
-    auto properties = std::map<std::string, double>{{"Priority - Opening", opening_priority},
-                                                    {"Priority - Endgame", endgame_priority}};
+    auto properties = std::map<std::string, std::string>{{"Priority - Opening", std::to_string(opening_priority)},
+                                                         {"Priority - Endgame", std::to_string(endgame_priority)}};
     adjust_properties(properties);
     return properties;
 }
 
-void Gene::adjust_properties(std::map<std::string, double>&) const noexcept
+void Gene::adjust_properties(std::map<std::string, std::string>&) const noexcept
 {
 }
 
-void Gene::load_properties(const std::map<std::string, double>& properties)
+void Gene::load_properties(const std::map<std::string, std::string>& properties)
 {
     if(properties.count("Priority - Opening") > 0)
     {
-        opening_priority = properties.at("Priority - Opening");
+        opening_priority = String::to_number<double>(properties.at("Priority - Opening"));
     }
 
     if(properties.count("Priority - Endgame") > 0)
     {
-        endgame_priority = properties.at("Priority - Endgame");
+        endgame_priority = String::to_number<double>(properties.at("Priority - Endgame"));
     }
 
     load_gene_properties(properties);
 }
 
-void Gene::load_gene_properties(const std::map<std::string, double>&)
+void Gene::load_gene_properties(const std::map<std::string, std::string>&)
 {
 }
 
@@ -59,7 +59,7 @@ void Gene::read_from(std::istream& is)
     auto properties = list_properties();
     for(auto& [key, value] : properties)
     {
-        value = std::numeric_limits<double>::quiet_NaN();
+        value = {};
     }
 
     for(std::string line; std::getline(is, line);)
@@ -93,44 +93,18 @@ void Gene::read_from(std::istream& is)
             }
         }
 
-        try
+        const auto entry = properties.find(property_name);
+        if(entry == properties.end())
         {
-            auto& current_value = properties.at(property_name);
-            if(std::isnan(current_value))
-            {
-                current_value = String::to_number<double>(property_data);
-            }
-            else
-            {
-                throw_on_invalid_line<Duplicate_Genome_Data>(line, "Duplicate parameter: " + property_name);
-            }
+            throw_on_invalid_line(line, "Unrecognized parameter name: " + property_name);
         }
-        catch(const std::out_of_range& e)
+        else if( ! entry->second.empty())
         {
-            if(String::contains(e.what(), "at") || String::contains(e.what(), "invalid map<K, T> key"))
-            {
-                throw_on_invalid_line(line, "Unrecognized parameter name: " + property_name);
-            }
-            else if(String::contains(e.what(), "stod"))
-            {
-                throw_on_invalid_line(line, "Bad parameter value: " + property_data);
-            }
-            else
-            {
-                throw_on_invalid_line(line, e.what());
-            }
+            throw_on_invalid_line<Duplicate_Genome_Data>(line, "Duplicate parameter: " + property_name);
         }
-        catch(const std::invalid_argument&)
+        else
         {
-            throw_on_invalid_line(line, "Bad parameter value: " + property_data);
-        }
-        catch(const Duplicate_Genome_Data&)
-        {
-            throw;
-        }
-        catch(const std::exception& e)
-        {
-            throw_on_invalid_line(line, e.what());
+            entry->second = property_data;
         }
     }
 
@@ -138,14 +112,21 @@ void Gene::read_from(std::istream& is)
         std::accumulate(properties.begin(), properties.end(), std::string{},
                         [](const auto& so_far, const auto& key_value)
                         {
-                            return so_far + (std::isnan(key_value.second) ? "\n" + key_value.first : "");
+                            return so_far + (key_value.second.empty() ? "\n" + key_value.first : "");
                         });
     if( ! missing_data.empty())
     {
         throw Missing_Genome_Data("Missing gene data for " + name() + ":" + missing_data);
     }
 
-    load_properties(properties);
+    try
+    {
+        load_properties(properties);
+    }
+    catch(const std::exception& e)
+    {
+        throw std::runtime_error("Bad parameter value in " + name() + ": " + e.what());
+    }
 }
 
 void Gene::read_from(const std::string& file_name)

@@ -10,6 +10,7 @@
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
+#include "Utility/String.h"
 
 namespace
 {
@@ -37,26 +38,26 @@ Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() noexcept
     normalize_square_scores();
 }
 
-void Sphere_of_Influence_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
+void Sphere_of_Influence_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties["Legal Square Score - Opening"] = opening_legal_square_score;
-    properties["Illegal Square Score - Opening"] = opening_illegal_square_score;
-    properties["King Target Factor - Opening"] = opening_king_target_factor;
+    properties["Legal Square Score - Opening"] = std::to_string(opening_legal_square_score);
+    properties["Illegal Square Score - Opening"] = std::to_string(opening_illegal_square_score);
+    properties["King Target Factor - Opening"] = std::to_string(opening_king_target_factor);
 
-    properties["Legal Square Score - Endgame"] = endgame_legal_square_score;
-    properties["Illegal Square Score - Endgame"] = endgame_illegal_square_score;
-    properties["King Target Factor - Endgame"] = endgame_king_target_factor;
+    properties["Legal Square Score - Endgame"] = std::to_string(endgame_legal_square_score);
+    properties["Illegal Square Score - Endgame"] = std::to_string(endgame_illegal_square_score);
+    properties["King Target Factor - Endgame"] = std::to_string(endgame_king_target_factor);
 }
 
-void Sphere_of_Influence_Gene::load_gene_properties(const std::map<std::string, double>& properties)
+void Sphere_of_Influence_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
-    opening_legal_square_score = properties.at("Legal Square Score - Opening");
-    opening_illegal_square_score = properties.at("Illegal Square Score - Opening");
-    opening_king_target_factor = properties.at("King Target Factor - Opening");
+    opening_legal_square_score = String::to_number<double>(properties.at("Legal Square Score - Opening"));
+    opening_illegal_square_score = String::to_number<double>(properties.at("Illegal Square Score - Opening"));
+    opening_king_target_factor = String::to_number<double>(properties.at("King Target Factor - Opening"));
 
-    endgame_legal_square_score = properties.at("Legal Square Score - Endgame");
-    endgame_illegal_square_score = properties.at("Illegal Square Score - Endgame");
-    endgame_king_target_factor = properties.at("King Target Factor - Endgame");
+    endgame_legal_square_score = String::to_number<double>(properties.at("Legal Square Score - Endgame"));
+    endgame_illegal_square_score = String::to_number<double>(properties.at("Illegal Square Score - Endgame"));
+    endgame_king_target_factor = String::to_number<double>(properties.at("King Target Factor - Endgame"));
 
     normalize_square_scores();
 }

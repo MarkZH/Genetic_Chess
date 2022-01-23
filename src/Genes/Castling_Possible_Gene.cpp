@@ -9,6 +9,7 @@
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
+#include "Utility/String.h"
 
 Castling_Possible_Gene::Castling_Possible_Gene() noexcept
 {
@@ -21,20 +22,20 @@ void Castling_Possible_Gene::normalize_sides() noexcept
     Math::normalize(endgame_kingside_preference, endgame_queenside_preference);
 }
 
-void Castling_Possible_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
+void Castling_Possible_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties["Kingside Preference - Opening"] = opening_kingside_preference;
-    properties["Queenside Preference - Opening"] = opening_queenside_preference;
-    properties["Kingside Preference - Endgame"] = endgame_kingside_preference;
-    properties["Queenside Preference - Endgame"] = endgame_queenside_preference;
+    properties["Kingside Preference - Opening"] = std::to_string(opening_kingside_preference);
+    properties["Queenside Preference - Opening"] = std::to_string(opening_queenside_preference);
+    properties["Kingside Preference - Endgame"] = std::to_string(endgame_kingside_preference);
+    properties["Queenside Preference - Endgame"] = std::to_string(endgame_queenside_preference);
 }
 
-void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, double>& properties)
+void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
-    opening_kingside_preference = properties.at("Kingside Preference - Opening");
-    opening_queenside_preference = properties.at("Queenside Preference - Opening");
-    endgame_kingside_preference = properties.at("Kingside Preference - Endgame");
-    endgame_queenside_preference = properties.at("Queenside Preference - Endgame");
+    opening_kingside_preference = String::to_number<double>(properties.at("Kingside Preference - Opening"));
+    opening_queenside_preference = String::to_number<double>(properties.at("Queenside Preference - Opening"));
+    endgame_kingside_preference = String::to_number<double>(properties.at("Kingside Preference - Endgame"));
+    endgame_queenside_preference = String::to_number<double>(properties.at("Queenside Preference - Endgame"));
     normalize_sides();
 }
 

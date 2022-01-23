@@ -63,8 +63,8 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;
 
-        void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
-        void load_gene_properties(const std::map<std::string, double>& properties) override;
+        void adjust_properties(std::map<std::string, std::string>& properties) const noexcept override;
+        void load_gene_properties(const std::map<std::string, std::string>& properties) override;
 
         // Precalculation of game lengths (out to absurdly long games)
         std::array<double, 1000> moves_left_lookup{};

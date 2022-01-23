@@ -26,8 +26,8 @@ class Castling_Possible_Gene : public Clonable_Gene<Castling_Possible_Gene>
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;
-        void adjust_properties(std::map<std::string, double>& properties) const noexcept override;
-        void load_gene_properties(const std::map<std::string, double>& properties) override;
+        void adjust_properties(std::map<std::string, std::string>& properties) const noexcept override;
+        void load_gene_properties(const std::map<std::string, std::string>& properties) override;
         void normalize_sides() noexcept;
 };
 

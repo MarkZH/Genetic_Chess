@@ -12,32 +12,33 @@
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
+#include "Utility/String.h"
 
 Look_Ahead_Gene::Look_Ahead_Gene() noexcept
 {
     recalculate_game_lengths();
 }
 
-void Look_Ahead_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
+void Look_Ahead_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
     properties.erase("Priority - Opening");
     properties.erase("Priority - Endgame");
-    properties["Mean Game Length"] = mean_game_length;
-    properties["Game Length Uncertainty"] = game_length_uncertainty;
-    properties["Speculation - Opening"] = opening_speculation_constant;
-    properties["Speculation - Endgame"] = endgame_speculation_constant;
-    properties["Branching Factor - Opening"] = opening_branching_factor_estimate;
-    properties["Branching Factor - Endgame"] = endgame_branching_factor_estimate;
+    properties["Mean Game Length"] = std::to_string(mean_game_length);
+    properties["Game Length Uncertainty"] = std::to_string(game_length_uncertainty);
+    properties["Speculation - Opening"] = std::to_string(opening_speculation_constant);
+    properties["Speculation - Endgame"] = std::to_string(endgame_speculation_constant);
+    properties["Branching Factor - Opening"] = std::to_string(opening_branching_factor_estimate);
+    properties["Branching Factor - Endgame"] = std::to_string(endgame_branching_factor_estimate);
 }
 
-void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& properties)
+void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
-    mean_game_length = properties.at("Mean Game Length");
-    game_length_uncertainty = properties.at("Game Length Uncertainty");
-    opening_speculation_constant = properties.at("Speculation - Opening");
-    endgame_speculation_constant = properties.at("Speculation - Endgame");
-    opening_branching_factor_estimate = properties.at("Branching Factor - Opening");
-    endgame_branching_factor_estimate = properties.at("Branching Factor - Endgame");
+    mean_game_length = String::to_number<double>(properties.at("Mean Game Length"));
+    game_length_uncertainty = String::to_number<double>(properties.at("Game Length Uncertainty"));
+    opening_speculation_constant = String::to_number<double>(properties.at("Speculation - Opening"));
+    endgame_speculation_constant = String::to_number<double>(properties.at("Speculation - Endgame"));
+    opening_branching_factor_estimate = String::to_number<double>(properties.at("Branching Factor - Opening"));
+    endgame_branching_factor_estimate = String::to_number<double>(properties.at("Branching Factor - Endgame"));
     recalculate_game_lengths();
 }
 

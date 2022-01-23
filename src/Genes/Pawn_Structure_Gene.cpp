@@ -9,6 +9,7 @@
 
 #include "Utility/Math.h"
 #include "Utility/Random.h"
+#include "Utility/String.h"
 
 Pawn_Structure_Gene::Pawn_Structure_Gene() noexcept
 {
@@ -74,22 +75,22 @@ void Pawn_Structure_Gene::gene_specific_mutation() noexcept
     normalize_guard_scores();
 }
 
-void Pawn_Structure_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
+void Pawn_Structure_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties["Guarded By Pawn - Opening"] = opening_guarded_by_pawn;
-    properties["Guarded By Piece - Opening"] = opening_guarded_by_piece;
+    properties["Guarded By Pawn - Opening"] = std::to_string(opening_guarded_by_pawn);
+    properties["Guarded By Piece - Opening"] = std::to_string(opening_guarded_by_piece);
 
-    properties["Guarded By Pawn - Endgame"] = endgame_guarded_by_pawn;
-    properties["Guarded By Piece - Endgame"] = endgame_guarded_by_piece;
+    properties["Guarded By Pawn - Endgame"] = std::to_string(endgame_guarded_by_pawn);
+    properties["Guarded By Piece - Endgame"] = std::to_string(endgame_guarded_by_piece);
 }
 
-void Pawn_Structure_Gene::load_gene_properties(const std::map<std::string, double>& properties)
+void Pawn_Structure_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
-    opening_guarded_by_pawn = properties.at("Guarded By Pawn - Opening");
-    opening_guarded_by_piece = properties.at("Guarded By Piece - Opening");
+    opening_guarded_by_pawn = String::to_number<double>(properties.at("Guarded By Pawn - Opening"));
+    opening_guarded_by_piece = String::to_number<double>(properties.at("Guarded By Piece - Opening"));
 
-    endgame_guarded_by_pawn = properties.at("Guarded By Pawn - Endgame");
-    endgame_guarded_by_piece = properties.at("Guarded By Piece - Endgame");
+    endgame_guarded_by_pawn = String::to_number<double>(properties.at("Guarded By Pawn - Endgame"));
+    endgame_guarded_by_piece = String::to_number<double>(properties.at("Guarded By Piece - Endgame"));
 
     normalize_guard_scores();
 }

@@ -129,10 +129,10 @@ class Gene
         //! board position. This method is overridden by derived Gene classes to either augment
         //! or replace this data with more specialized properties.
         //! \returns A collection of gene properties with their numerical values.
-        std::map<std::string, double> list_properties() const noexcept;
+        std::map<std::string, std::string> list_properties() const noexcept;
 
         //! \brief Allow Gene subtypes to make changes to the gene properties to be recorded.
-        virtual void adjust_properties(std::map<std::string, double>& properties) const noexcept;
+        virtual void adjust_properties(std::map<std::string, std::string>& properties) const noexcept;
 
         //! \brief Reads a properties data structure and loads the data into itself.
         //!
@@ -142,10 +142,10 @@ class Gene
         //! different properties.
         //! \param properties A data structure with all the data needed for this gene.
         //! \exception std::out_of_range When an expected property is not present in the input.
-        void load_properties(const std::map<std::string, double>& properties);
+        void load_properties(const std::map<std::string, std::string>& properties);
 
         //! \brief Load the properties specific to the Gene subtype.
-        virtual void load_gene_properties(const std::map<std::string, double>& properties);
+        virtual void load_gene_properties(const std::map<std::string, std::string>& properties);
 };
 
 //! \brief A template class to create the duplicate method for all Gene subtypes.
