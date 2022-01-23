@@ -311,6 +311,9 @@ This gene counts the pawns that have a pawn of the same color ahead of them in t
 \subsubsection{Checkmate Material Gene}
 This gene returns a score of one if the scoring side has enough pieces to checkmate a lone king. Otherwise, it returns zero. This should help avoid piece trade-offs resulting in one side having a material advantage but unable to checkmate---king and knight vs\@. king and pawn, for example.
 
+\subsubsection{Pawn Structure Gene}
+This gene scores how pawns are defended. For each pawn on the side being scored, it gives one score to pawns that are guarded by other pawns, another score to pawns that are guarded by other pieces, and zero otherwise. I would estimate that pawns guarded by pawns would be scored higher, so diagonal chains of pawns would be favored to other structures.
+
 
 \subsection{Genome File Format}\label{genome-file-format}
 An example genome file is shown below. Each genome starts with the \verb|ID:| line and ends with \verb|END|. Each gene starts with \verb|Name:| and ends with a blank line. Each component of a gene is a single line and specified by a name followed by a colon and the numerical value. Spacing within the line does not matter.
