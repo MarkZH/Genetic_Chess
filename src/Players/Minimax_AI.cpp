@@ -76,6 +76,11 @@ int Minimax_AI::id() const noexcept
 
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
+    if(const auto move = genome.first_move_choice(board); move)
+    {
+        return *move;
+    }
+
     if(search_method() == Search_Method::MINIMAX)
     {
         return choose_move_minimax(board, clock);

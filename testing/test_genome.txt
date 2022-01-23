@@ -38,4 +38,27 @@ Guarded By Piece - Endgame: 0.4
 Priority - Opening: 1
 Priority - Endgame: 1
 
+Name: Opening Move Gene
+Start: e4
+a3: -
+a4: -
+b3: -
+b4: -
+c3: -
+c4: -
+d3: -
+d4: -
+e3: -
+e4: Nc6
+f3: -
+f4: -
+g3: -
+g4: -
+h3: -
+h4: -
+Na3: -
+Nc3: -
+Nf3: -
+Nh3: -
+
 END

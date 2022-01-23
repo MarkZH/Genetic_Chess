@@ -30,6 +30,7 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
+#include "Genes/Opening_Move_Gene.h"
 
 namespace
 {
@@ -50,6 +51,7 @@ Genome::Genome() noexcept :
     genome{
         std::make_unique<Piece_Strength_Gene>(),
         std::make_unique<Look_Ahead_Gene>(),
+        std::make_unique<Opening_Move_Gene>(),
         std::make_unique<Total_Force_Gene>(nullptr),
         std::make_unique<Freedom_To_Move_Gene>(),
         std::make_unique<Pawn_Advancement_Gene>(),
@@ -70,6 +72,7 @@ Genome::Genome() noexcept :
 
     assert(gene_reference<Piece_Strength_Gene>().name() == "Piece Strength Gene");
     assert(gene_reference<Look_Ahead_Gene>().name() == "Look Ahead Gene");
+    assert(gene_reference<Opening_Move_Gene>().name() == "Opening Move Gene");
 }
 
 Genome::Genome(const Genome& other) noexcept : id_number(other.id()), searching_method(other.search_method())
@@ -333,6 +336,11 @@ void Genome::print(std::ostream& os) const noexcept
         gene->print(os);
     }
     os << "END\n" << std::endl;
+}
+
+const Move* Genome::first_move_choice(const Board& board) const noexcept
+{
+    return gene_reference<Opening_Move_Gene>().first_move_choice(board);
 }
 
 Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept

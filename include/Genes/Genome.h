@@ -21,6 +21,7 @@ enum class Search_Method
 };
 
 class Board;
+class Move;
 
 //! \brief A software analog to a biological chromosome containing a collection of Gene instances that control the chess player's behavior.
 class Genome
@@ -133,9 +134,15 @@ class Genome
         //! \param os The output stream.
         void print(std::ostream& os) const noexcept;
 
+        //! \brief Returns a pre-chosen first move for the current board position.
+        //! 
+        //! \param board The current board position.
+        //! \returns A pointer to a Move if board is the first move for either side and a choice has been made; nullptr otherwise.
+        const Move* first_move_choice(const Board& board) const noexcept;
+
     private:
         int id_number;
-        std::array<std::unique_ptr<Gene>, 15> genome;
+        std::array<std::unique_ptr<Gene>, 16> genome;
         Search_Method searching_method = Search_Method::MINIMAX;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
