@@ -194,7 +194,7 @@ void Minimax_AI::report_final_search_stats(const Game_Tree_Node_Result& result, 
 void Minimax_AI::reset_search_stats(const Board& board) const noexcept
 {
     // Erase data from previous board when starting new game
-    if(board.played_ply_count() <= 1)
+    if(commentary.size() != board.played_ply_count()/2)
     {
         reset();
     }
