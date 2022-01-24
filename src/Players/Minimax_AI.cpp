@@ -76,6 +76,7 @@ int Minimax_AI::id() const noexcept
 
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
+    reset_search_stats(board);
     if(const auto move = genome.first_move_choice(board); move)
     {
         return *move;
@@ -93,8 +94,6 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
 const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
 {
-    reset_search_stats(board);
-
     auto principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
     if(principal_variation.size() <= 2 || principal_variation[1] != board.last_move())
     {
@@ -133,7 +132,6 @@ const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clo
 
 const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, const Clock& clock) const noexcept
 {
-    reset_search_stats(board);
     const auto progress = game_progress(board);
     const auto effective_moves_per_turn = branching_factor(progress);
     const auto speculation_factor = speculation_time_factor(progress);
