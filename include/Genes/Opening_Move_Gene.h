@@ -18,14 +18,13 @@ class Opening_Move_Gene : public Clonable_Gene<Opening_Move_Gene>
         //! \brief Index for locating the gene in the genome
         static constexpr size_t genome_index = 2;
 
-        Opening_Move_Gene() noexcept;
         std::string name() const noexcept override;
 
         //! \brief Returns a pre-chosen first move for the board position, should one exist, nullptr if not.
         const Move* first_move_choice(const Board& board) const noexcept;
 
     private:
-        std::map<const Move*, const Move*> opening_move_choice;
+        const Move* opening_move_choice = nullptr;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;

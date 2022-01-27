@@ -1405,7 +1405,7 @@ namespace
     {
         auto opening_move_gene = Opening_Move_Gene();
         opening_move_gene.read_from("testing/test_genome.txt");
-        
+
         const auto first_board = Board();
         const auto expected_first_move = "e4";
         const auto first_move = opening_move_gene.first_move_choice(first_board);
@@ -1420,25 +1420,6 @@ namespace
             if(first_move_result != expected_first_move)
             {
                 std::cerr << "Wrong first move chosen by " << opening_move_gene.name() << ". Expected " << expected_first_move << ", got " << first_move_result << '\n';
-                tests_passed = false;
-            }
-        }
-
-        auto second_board = Board();
-        second_board.play_move(expected_first_move);
-        const auto expected_second_move = "Nc6";
-        const auto second_move = opening_move_gene.first_move_choice(second_board);
-        if( ! second_move)
-        {
-            std::cerr << "No entry found for second move after " << expected_first_move << " in " << opening_move_gene.name() << ". Expected " << expected_second_move << '\n';
-            tests_passed = false;
-        }
-        else
-        {
-            const auto second_move_result = second_move->algebraic(second_board);
-            if(second_move_result != expected_second_move)
-            {
-                std::cerr << "Wrong second move chosen by " << opening_move_gene.name() << ". Expected " << expected_second_move << ", got " << second_move_result << '\n';
                 tests_passed = false;
             }
         }
