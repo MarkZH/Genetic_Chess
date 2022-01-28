@@ -156,7 +156,7 @@ class Board
         const std::vector<const Move*>& legal_moves() const noexcept;
 
         //! \brief Whether a square is attacked by a piece of a given color.
-        //! 
+        //!
         //! \param target The square under consideration.
         //! \param attacker The color of the piece doing the attacking.
         bool attacked_by(Square target, Piece_Color attacker) const noexcept;
@@ -293,9 +293,6 @@ class Board
         //! \param other The other board with which to compare.
         void compare_hashes(const Board& other) const noexcept;
 
-        //! \brief Whether this board was constructed with the standard starting position
-        bool started_in_standard_position() const noexcept;
-
     private:
         std::array<Piece, 64> board;
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
@@ -309,7 +306,6 @@ class Board
         std::array<Square, 2> king_location;
         Square checking_square;
         size_t plies_at_construction;
-        bool uses_standard_starting_position = false;
 
         // Stores the moves that attack a square. The innermost array
         // is filled with bools indicating the direction the piece attacking

@@ -39,7 +39,6 @@ using namespace std::chrono_literals;
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
-#include "Genes/Opening_Move_Gene.h"
 
 #include "Utility/String.h"
 #include "Utility/Random.h"
@@ -211,7 +210,6 @@ namespace
     void checkmate_material_gene_tests(bool& tests_passed);
     void sphere_of_influence_gene_tests(bool& tests_passed);
     void pawn_structure_gene_tests(bool& tests_passed);
-    void opening_move_gene_tests(bool& tests_passed);
 
     void game_progress_on_new_board_is_zero(bool& tests_passed);
     void game_progress_where_one_side_has_only_king_is_one(bool& tests_passed);
@@ -292,7 +290,6 @@ bool run_tests()
     pawn_islands_gene_tests(tests_passed);
     checkmate_material_gene_tests(tests_passed);
     pawn_structure_gene_tests(tests_passed);
-    opening_move_gene_tests(tests_passed);
 
     game_progress_on_new_board_is_zero(tests_passed);
     game_progress_where_one_side_has_only_king_is_one(tests_passed);
@@ -1399,30 +1396,6 @@ namespace
         const auto board4 = Board("k7/r1p5/1P6/8/8/P7/8/7K w - - 0 1");
         pawn_structure_gene.test(tests_passed, board4, Piece_Color::WHITE, 0.0/8);
         pawn_structure_gene.test(tests_passed, board4, Piece_Color::BLACK, 0.4/8);
-    }
-
-    void opening_move_gene_tests(bool& tests_passed)
-    {
-        auto opening_move_gene = Opening_Move_Gene();
-        opening_move_gene.read_from("testing/test_genome.txt");
-
-        const auto first_board = Board();
-        const auto expected_first_move = "e4";
-        const auto first_move = opening_move_gene.first_move_choice(first_board);
-        if( ! first_move)
-        {
-            std::cerr << "No entry found for first move in " << opening_move_gene.name() << ". Expected " << expected_first_move << '\n';
-            tests_passed = false;
-        }
-        else
-        {
-            const auto first_move_result = first_move->algebraic(first_board);
-            if(first_move_result != expected_first_move)
-            {
-                std::cerr << "Wrong first move chosen by " << opening_move_gene.name() << ". Expected " << expected_first_move << ", got " << first_move_result << '\n';
-                tests_passed = false;
-            }
-        }
     }
 
     void game_progress_on_new_board_is_zero(bool& tests_passed)

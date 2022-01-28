@@ -23,8 +23,7 @@ def main(gene_pool_file_name):
                 elif parameter == 'Name':
                     current_gene = value.strip()
                 else:
-                    if current_gene != 'Opening Move Gene':
-                        header_line.append(current_gene + ' - ' + parameter)
+                    header_line.append(current_gene + ' - ' + parameter)
             elif line == 'END':
                 break
             else:
@@ -54,8 +53,6 @@ def main(gene_pool_file_name):
                     continue
                 else:
                     if current_gene:
-                        if current_gene == 'Opening Move Gene':
-                            continue
                         title = current_gene + ' - ' + parameter
                     else:
                         title = parameter #ID

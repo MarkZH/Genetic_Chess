@@ -176,7 +176,6 @@ Board::Board(const std::string& input_fen)
     starting_fen_from_starting_hash[starting_hash] = String::remove_extra_whitespace(input_fen);
 
     fen_parse_assert(fen() == original_fen(), input_fen, "Result: " + fen());
-    uses_standard_starting_position = original_fen() == standard_starting_fen;
 }
 
 void Board::fen_parse_assert(const bool condition, const std::string& input_fen, const std::string& failure_message)
@@ -1221,9 +1220,4 @@ void Board::compare_hashes(const Board& other) const noexcept
     {
         std::cerr << "Something else" << std::endl;
     }
-}
-
-bool Board::started_in_standard_position() const noexcept
-{
-    return uses_standard_starting_position;
 }

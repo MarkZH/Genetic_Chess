@@ -254,9 +254,6 @@ vT = B^D \implies D = \frac{\log{vT}}{\log{B}}.
 \]
 If, during a search, the AI has the option to search deeper into the game and the current depth is less than \(D\), then it will choose to go deeper.
 
-\subsubsection{Opening Move Gene}
-This gene picks the first move to play when playing white. The move is recorded in the gene record in standard algebraic notation. If the genome instead has "-" for the first move, it will do a full minimax or iterative deepening search to choose the first move. Mutation consists of replacing the move with another random choice (including none).
-
 \subsection{Board-Scoring Genes}\label{board-score-section}
 
 These genes are used to give a score to a board state. The higher the score, the more desirable the moves that lead to this board. The score is calculated by
