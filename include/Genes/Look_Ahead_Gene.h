@@ -10,6 +10,9 @@
 #include "Game/Color.h"
 #include "Game/Clock.h"
 
+#include "Interpolated_Gene_Value.h"
+#include "Gene_Value.h"
+
 class Board;
 
 //! This gene controls all aspects of time control.
@@ -51,14 +54,12 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
 
     private:
         // controls over/under-allocation of time
-        double opening_speculation_constant = 1.0;
-        double endgame_speculation_constant = 1.0;
+        Interpolated_Gene_Value speculation_constants = {"Speculation", 1.0, 1.0};
         // estimates the average number of moves in a board position (the branching factor of the game tree)
-        double opening_branching_factor_estimate = 10.0;
-        double endgame_branching_factor_estimate = 10.0;
+        Interpolated_Gene_Value branching_factor_estimates = {"Branching Factor", 10.0, 10.0};
 
-        double mean_game_length = 50.0; // in moves by one player
-        double game_length_uncertainty = 0.5; // approximately as a fraction of the mean
+        Gene_Value mean_game_length = {"Mean Game Length", 50.0}; // in moves by one player
+        Gene_Value game_length_uncertainty = {"Game Length Uncertainty", 0.5}; // approximately as a fraction of the mean
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;

@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include "Genes/Gene.h"
+#include "Genes/Interpolated_Gene_Value.h"
 #include "Game/Board.h"
 #include "Game/Square.h"
 #include "Game/Piece.h"
@@ -23,8 +25,8 @@ std::string Pawn_Structure_Gene::name() const noexcept
 
 double Pawn_Structure_Gene::score_board(const Board& board, Piece_Color perspective, size_t, double game_progress) const noexcept
 {
-    const auto guarded_by_pawn = Math::interpolate(opening_guarded_by_pawn, endgame_guarded_by_pawn, game_progress);
-    const auto guarded_by_piece = Math::interpolate(opening_guarded_by_piece, endgame_guarded_by_piece, game_progress);
+    const auto guarded_by_pawn = guarded_by_pawns.interpolate(game_progress);
+    const auto guarded_by_piece = guarded_by_pieces.interpolate(game_progress);
 
     const auto pawn = Piece{perspective, Piece_Type::PAWN};
     const auto guard_direction = perspective == Piece_Color::WHITE ? -1 : 1;
@@ -56,20 +58,13 @@ double Pawn_Structure_Gene::score_board(const Board& board, Piece_Color perspect
 
 void Pawn_Structure_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 4))
+    if(Random::coin_flip())
     {
-        case 1:
-            opening_guarded_by_pawn += Random::random_laplace(0.03);
-            break;
-        case 2:
-            opening_guarded_by_piece += Random::random_laplace(0.03);
-            break;
-        case 3:
-            endgame_guarded_by_pawn += Random::random_laplace(0.03);
-            break;
-        case 4:
-            endgame_guarded_by_piece += Random::random_laplace(0.03);
-            break;
+        guarded_by_pawns.mutate(0.03);
+    }
+    else
+    {
+        guarded_by_pieces.mutate(0.03);
     }
 
     normalize_guard_scores();
@@ -77,26 +72,19 @@ void Pawn_Structure_Gene::gene_specific_mutation() noexcept
 
 void Pawn_Structure_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties["Guarded By Pawn - Opening"] = std::to_string(opening_guarded_by_pawn);
-    properties["Guarded By Piece - Opening"] = std::to_string(opening_guarded_by_piece);
-
-    properties["Guarded By Pawn - Endgame"] = std::to_string(endgame_guarded_by_pawn);
-    properties["Guarded By Piece - Endgame"] = std::to_string(endgame_guarded_by_piece);
+    guarded_by_pawns.write_to_map(properties);
+    guarded_by_pieces.write_to_map(properties);
 }
 
 void Pawn_Structure_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
-    opening_guarded_by_pawn = String::to_number<double>(properties.at("Guarded By Pawn - Opening"));
-    opening_guarded_by_piece = String::to_number<double>(properties.at("Guarded By Piece - Opening"));
-
-    endgame_guarded_by_pawn = String::to_number<double>(properties.at("Guarded By Pawn - Endgame"));
-    endgame_guarded_by_piece = String::to_number<double>(properties.at("Guarded By Piece - Endgame"));
-
+    guarded_by_pawns.load_from_map(properties);
+    guarded_by_pieces.load_from_map(properties);
     normalize_guard_scores();
 }
 
 void Pawn_Structure_Gene::normalize_guard_scores() noexcept
 {
-    Math::normalize(opening_guarded_by_pawn, opening_guarded_by_piece);
-    Math::normalize(endgame_guarded_by_pawn, endgame_guarded_by_piece);
+    Math::normalize(guarded_by_pawns.opening_value(), guarded_by_pieces.opening_value());
+    Math::normalize(guarded_by_pawns.endgame_value(), guarded_by_pieces.endgame_value());
 }

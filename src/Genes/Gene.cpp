@@ -12,6 +12,7 @@
 
 #include "Game/Board.h"
 #include "Game/Color.h"
+#include "Genes/Interpolated_Gene_Value.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
@@ -20,8 +21,8 @@
 
 std::map<std::string, std::string> Gene::list_properties() const noexcept
 {
-    auto properties = std::map<std::string, std::string>{{"Priority - Opening", std::to_string(opening_priority)},
-                                                         {"Priority - Endgame", std::to_string(endgame_priority)}};
+    auto properties = std::map<std::string, std::string>{};
+    priorities.write_to_map(properties);
     adjust_properties(properties);
     return properties;
 }
@@ -32,14 +33,9 @@ void Gene::adjust_properties(std::map<std::string, std::string>&) const noexcept
 
 void Gene::load_properties(const std::map<std::string, std::string>& properties)
 {
-    if(properties.count("Priority - Opening") > 0)
+    if(properties.count(priorities.name(Game_Stage::OPENING)) > 0 && properties.count(priorities.name(Game_Stage::ENDGAME)) > 0)
     {
-        opening_priority = String::to_number<double>(properties.at("Priority - Opening"));
-    }
-
-    if(properties.count("Priority - Endgame") > 0)
-    {
-        endgame_priority = String::to_number<double>(properties.at("Priority - Endgame"));
+        priorities.load_from_map(properties);
     }
 
     load_gene_properties(properties);
@@ -177,7 +173,7 @@ void Gene::mutate() noexcept
     const auto properties = list_properties();
     if(has_priority() && Random::success_probability(2, properties.size()))
     {
-        (Random::coin_flip() ? opening_priority : endgame_priority) += Random::random_laplace(0.005);
+        priorities.mutate(0.005);
     }
     else
     {
@@ -191,8 +187,7 @@ void Gene::gene_specific_mutation() noexcept
 
 double Gene::evaluate(const Board& board, const Piece_Color perspective, const size_t depth, const double game_progress) const noexcept
 {
-    const auto scoring_priority = Math::interpolate(opening_priority, endgame_priority, game_progress);
-    return scoring_priority*score_board(board, perspective, depth, game_progress);
+    return priorities.interpolate(game_progress)*score_board(board, perspective, depth, game_progress);
 }
 
 void Gene::print(std::ostream& os) const noexcept
@@ -211,17 +206,17 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
 
 double Gene::priority(const Game_Stage stage) const noexcept
 {
-    return stage == Game_Stage::OPENING ? opening_priority : endgame_priority;
+    return priorities.value_at(stage);
 }
 
 bool Gene::has_priority() const noexcept
 {
-    return list_properties().count("Priority - Opening") != 0;
+    return list_properties().count(priorities.name(Game_Stage::OPENING)) != 0;
 }
 
 void Gene::scale_priority(const Game_Stage stage, const double k) noexcept
 {
-    (stage == Game_Stage::OPENING ? opening_priority : endgame_priority) *= k;
+    priorities.value_at(stage) *= k;
 }
 
 void Gene::test(bool& test_variable, const Board& board, const Piece_Color perspective, const double expected_score) const noexcept
@@ -247,8 +242,8 @@ void Gene::test(bool& test_variable, const Board& board, const Piece_Color persp
     }
 }
 
-void Gene::delete_priorities(std::map<std::string, std::string>& properties) noexcept
+void Gene::delete_priorities(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties.erase("Priority - Opening");
-    properties.erase("Priority - Endgame");
+    properties.erase(priorities.name(Game_Stage::OPENING));
+    properties.erase(priorities.name(Game_Stage::ENDGAME));
 }

@@ -8,15 +8,11 @@
 
 #include "Game/Color.h"
 
+#include "Genes/Interpolated_Gene_Value.h"
+
 class Board;
 class Piece_Strength_Gene;
 class Genome_Creation_Error;
-
-enum class Game_Stage
-{
-    OPENING,
-    ENDGAME
-};
 
 //! \brief The base class of all genes that control the behavior of Genetic Chess players.
 class Gene
@@ -107,11 +103,10 @@ class Gene
 
     protected:
         //! \brief When preparing to write gene data to a file, regulatory genes can use this to delete unused Priority data.
-        static void delete_priorities(std::map<std::string, std::string>& properties) noexcept;
+        void delete_priorities(std::map<std::string, std::string>& properties) const noexcept;
 
     private:
-        double opening_priority = 1.0;
-        double endgame_priority = 1.0;
+        Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0};
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept = 0;
 
