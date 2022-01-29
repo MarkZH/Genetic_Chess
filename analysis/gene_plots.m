@@ -39,6 +39,8 @@ id_list = data.data(:, 1);
 
 xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
+xaxis_linewidth = 0.5;
+xaxis_linecolor = [0.4, 0.4, 0.4];
 
 piece_strength_figure = figure;
 hold all;
@@ -103,7 +105,7 @@ for yi = 2 : length(data.colheaders)
          '.', ...
          'markersize', marker_size);
     xlabel(xaxis);
-    plot(xlim, [0 0], '--k'); % X-axis
+    plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
 
     for index = 1:length(id_marks)
         plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
@@ -180,7 +182,7 @@ for name = special_plots.keys()
     name = name{1};
     special_plot = special_plots(name);
     figure(special_plot);
-    plot(xlim, [0 0], '--k'); % X-axis
+    plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
 
     for id_index = 1:length(id_marks)
         plot(id_marks(id_index)*[1 1], ylim, 'displayname', id_notes{id_index});
