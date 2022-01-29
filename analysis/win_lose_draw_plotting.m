@@ -148,12 +148,11 @@ if max(game_time) > 0
     window = 100;
     x_margin = floor(window/2);
     avg_x_axis = game_number(x_margin : end - x_margin);
-    plot(avg_x_axis,
-         movmean(avg_time_left, window, 'endpoints', 'discard'),
-         'r',
-         'displayname', 'Moving average',
-         'linewidth', line_width);
-    leg = legend('show');
+    p = plot(avg_x_axis,
+             movmean(avg_time_left, window, 'endpoints', 'discard'),
+             'r',
+             'linewidth', line_width);
+    leg = legend(p, 'Moving average');
     set(leg, 'location', 'northwest');
     ylim(max_time_left*[-0.10, 1.05]);
     xlabel('Game number');
