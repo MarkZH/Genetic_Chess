@@ -50,7 +50,7 @@ Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock&
 
 void Look_Ahead_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 4))
+    switch(Random::random_integer(1, 6))
     {
         case 1:
             mean_game_length.mutate(1.0);
@@ -59,9 +59,11 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
             game_length_uncertainty.mutate(0.01);
             break;
         case 3:
+        case 4:
             speculation_constants.mutate(0.05);
             break;
-        case 4:
+        case 5:
+        case 6:
             branching_factor_estimates.mutate(0.2);
             break;
         default:
