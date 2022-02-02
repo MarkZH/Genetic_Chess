@@ -53,9 +53,9 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         double expected_moves_left(const Board& board) const noexcept;
 
     private:
-        // controls over/under-allocation of time
+        // Controls over/under-allocation of time
         Interpolated_Gene_Value speculation_constants = {"Speculation", 1.0, 1.0};
-        // estimates the average number of moves in a board position (the branching factor of the game tree)
+        // Estimates the average number of moves in a board position (the branching factor of the game tree)
         Interpolated_Gene_Value branching_factor_estimates = {"Branching Factor", 10.0, 10.0};
 
         Gene_Value mean_game_length = {"Mean Game Length", 50.0}; // in moves by one player
