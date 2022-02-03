@@ -35,12 +35,12 @@ catch(const Duplicate_Genome_Data& e)
 {
     throw Duplicate_Genome_Data(e.what() + file_name);
 }
-catch(const Genetic_AI_Creation_Error& e)
+catch(const Genome_Creation_Error& e)
 {
-    throw Genetic_AI_Creation_Error(e.what() + file_name);
+    throw Genome_Creation_Error(e.what() + file_name);
 }
 
-Minimax_AI::Minimax_AI(std::istream& is, int id) : genetic_ai(is, id)
+Minimax_AI::Minimax_AI(std::istream& is, int id) : genome(is, id)
 {
     recalibrate_self();
 }
@@ -49,7 +49,7 @@ Minimax_AI::Minimax_AI(std::istream&& is, int id) : Minimax_AI(is, id)
 {
 }
 
-Minimax_AI::Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept : genetic_ai(a.genetic_ai, b.genetic_ai)
+Minimax_AI::Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept : genome(a.genome, b.genome)
 {
     recalibrate_self();
 }
@@ -61,21 +61,22 @@ std::string Minimax_AI::name() const noexcept
 
 std::string Minimax_AI::ai_name() const
 {
-    return genetic_ai.name();
+    return genome.name();
 }
 
 std::string Minimax_AI::author() const noexcept
 {
-    return genetic_ai.author();
+    return genome.author();
 }
 
 int Minimax_AI::id() const noexcept
 {
-    return genetic_ai.id();
+    return genome.id();
 }
 
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
+    reset_search_stats(board);
     if(search_method() == Search_Method::MINIMAX)
     {
         return choose_move_minimax(board, clock);
@@ -88,8 +89,6 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
 const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
 {
-    reset_search_stats(board);
-
     auto principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
     if(principal_variation.size() <= 2 || principal_variation[1] != board.last_move())
     {
@@ -128,7 +127,6 @@ const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clo
 
 const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, const Clock& clock) const noexcept
 {
-    reset_search_stats(board);
     const auto progress = game_progress(board);
     const auto effective_moves_per_turn = branching_factor(progress);
     const auto speculation_factor = speculation_time_factor(progress);
@@ -191,7 +189,7 @@ void Minimax_AI::report_final_search_stats(const Game_Tree_Node_Result& result, 
 void Minimax_AI::reset_search_stats(const Board& board) const noexcept
 {
     // Erase data from previous board when starting new game
-    if(board.played_ply_count() <= 1)
+    if(commentary.size() != board.played_ply_count()/2)
     {
         reset();
     }
@@ -256,12 +254,12 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                          perspective,
                                          {current_variation.empty() ? all_legal_moves.front() : current_variation.front()}};
 
-    for(auto moves_left = all_legal_moves.size(); moves_left > 0; --moves_left)
+    auto moves_left = all_legal_moves.size();
+    for(const auto move : all_legal_moves)
     {
         const auto evaluate_start_time = std::chrono::steady_clock::now();
         ++nodes_searched;
 
-        const auto move = all_legal_moves[all_legal_moves.size() - moves_left];
         const auto variation_guard = current_variation.scoped_push_back(move);
         auto next_board = board;
         auto move_result = next_board.play_move(*move);
@@ -293,7 +291,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
         const auto time_left = Clock::seconds(time_end - std::chrono::steady_clock::now());
         const auto time_allotted_for_this_move = std::min(time_left*speculation_time_factor(game_progress(next_board)),
-                                                          clock.running_time_left())/moves_left;
+                                                          clock.running_time_left())/(moves_left--);
 
         const auto result = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, maximum_search_depth, time_allotted_for_this_move) ?
             search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, maximum_search_depth, clock, beta, alpha, principal_variation, current_variation) :
@@ -495,7 +493,7 @@ void Minimax_AI::calibrate_thinking_speed() const noexcept
     node_evaluation_time = 1ms; // very conservative initial guess
     Board board;
     Clock clock(0.1s);
-    clock.start();
+    clock.start(board.whose_turn());
     choose_move(board, clock);
     reset();
 }
@@ -532,42 +530,42 @@ double Minimax_AI::assign_score(const Board& board, const Game_Result& move_resu
 
 double Minimax_AI::internal_evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
-    return genetic_ai.internal_evaluate(board, perspective, depth);
+    return genome.evaluate(board, perspective, depth);
 }
 
 Search_Method Minimax_AI::search_method() const noexcept
 {
-    return genetic_ai.search_method();
+    return genome.search_method();
 }
 
 std::string Minimax_AI::search_method_name() const noexcept
 {
-    return genetic_ai.search_method_name();
+    return genome.search_method_name();
 }
 
 const std::array<double, 6>& Minimax_AI::piece_values() const noexcept
 {
-    return genetic_ai.piece_values();
+    return genome.piece_values();
 }
 
 Clock::seconds Minimax_AI::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
-    return genetic_ai.time_to_examine(board, clock);
+    return genome.time_to_examine(board, clock);
 }
 
 double Minimax_AI::speculation_time_factor(double game_progress) const noexcept
 {
-    return genetic_ai.speculation_time_factor(game_progress);
+    return genome.speculation_time_factor(game_progress);
 }
 
 double Minimax_AI::branching_factor(double game_progress) const noexcept
 {
-    return genetic_ai.branching_factor(game_progress);
+    return genome.branching_factor(game_progress);
 }
 
 double Minimax_AI::game_progress(const Board& board) const noexcept
 {
-    return genetic_ai.game_progress(board);
+    return genome.game_progress(board);
 }
 
 double Minimax_AI::centipawn_value() const noexcept
@@ -681,7 +679,7 @@ void Minimax_AI::reset() const noexcept
 
 void Minimax_AI::mutate(size_t mutation_rate) noexcept
 {
-    genetic_ai.mutate(mutation_rate);
+    genome.mutate(mutation_rate);
     recalibrate_self();
 }
 
@@ -697,7 +695,7 @@ void Minimax_AI::print(const std::string& file_name) const
 
 void Minimax_AI::print(std::ostream& os) const noexcept
 {
-    genetic_ai.print(os);
+    genome.print(os);
 }
 
 bool Minimax_AI::operator<(const Minimax_AI& other) const noexcept

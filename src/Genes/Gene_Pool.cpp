@@ -159,10 +159,9 @@ void gene_pool(const std::string& config_file)
 
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
-            const auto clock = Clock(game_time, 0, Clock::seconds(0.0), Time_Reset_Method::ADDITION, board.whose_turn());
             results.emplace_back(std::async(std::launch::async, play_game,
                                             board,
-                                            clock,
+                                            Clock{game_time},
                                             std::cref(white), std::cref(black),
                                             "Gene pool",
                                             "Local computer",
@@ -252,7 +251,6 @@ namespace
 
     std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate)
     {
-        std::cout << "Loading gene pool file: " << genome_file_name << " ..." << std::endl;
         auto pool = load_gene_pool_file(genome_file_name);
         if(pool.empty() && ! seed_ai_specification.empty())
         {
@@ -441,11 +439,11 @@ namespace
         std::ifstream ifs(load_file);
         if( ! ifs)
         {
-            std::cout << "Could not open file: " << load_file << std::endl;
-            std::cout << "Starting with empty gene pool." << std::endl;
+            std::cout << "Starting new gene pool and writing to: " << load_file << std::endl;
             return {};
         }
 
+        std::cout << "Loading gene pool file: " << load_file << " ..." << std::endl;
         std::string still_alive;
         size_t pool_line_number = 0;
         std::string pool_line;
@@ -504,7 +502,7 @@ namespace
                     loaded_ais.insert_or_assign(id, Minimax_AI{ifs, id});
                     break;
                 }
-                catch(const Genetic_AI_Creation_Error& e)
+                catch(const Genome_Creation_Error& e)
                 {
                     if(search_started_from_beginning_of_file)
                     {
@@ -532,13 +530,13 @@ namespace
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept
     {
-        std::cout << "Counting number of previous rounds..." << std::endl;
         auto genome_file = std::ifstream(genome_file_name);
         if( ! genome_file)
         {
             return 0;
         }
 
+        std::cout << "Counting number of previous rounds..." << std::endl;
         size_t round_count = 0;
         for(std::string line; std::getline(genome_file, line);)
         {

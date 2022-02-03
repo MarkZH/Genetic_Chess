@@ -21,8 +21,9 @@ enum class Search_Method
 };
 
 class Board;
+class Move;
 
-//! \brief A software analog to a biological chromosome containing a collection of Gene instances that control the Genetic_AI behavior.
+//! \brief A software analog to a biological chromosome containing a collection of Gene instances that control the chess player's behavior.
 class Genome
 {
     public:
@@ -36,6 +37,12 @@ class Genome
 
         //! \brief Move-constructor
         Genome(Genome&& other) = default;
+
+        //! \brief Construct a genome from a file
+        //!
+        //! \param is The input stream from the opened file.
+        //! \param id_in The id number of the Genome to search for.
+        Genome(std::istream& is, int id_in);
 
         //! \brief Create a new genome from two existing genomes via mating
         //!
@@ -68,8 +75,23 @@ class Genome
         //!        (i.e., at the root of the game tree).
         double evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
 
-        //! \brief Apply a random mutation to one gene in the genome.
-        void mutate() noexcept;
+        //! \brief Apply a number of random mutation to one gene in the genome.
+        //!
+        //! \param mutation_count The number of times to mutate the genome.
+        void mutate(size_t mutation_count) noexcept;
+
+        //! \brief The numeric ID of the owner of this genome
+        int id() const noexcept;
+
+        //! \brief Reports the name of the AI and ID number.
+        //!
+        //! \returns "Genetic Chess" plus the ID.
+        std::string name() const noexcept;
+
+        //! \brief Reports the author of this chess engine.
+        //!
+        //! \returns "Mark Harrison"
+        std::string author() const noexcept;
 
         //! \brief Determine how much time should be used to choose a move.
         //!
@@ -113,7 +135,8 @@ class Genome
         void print(std::ostream& os) const noexcept;
 
     private:
-        std::array<std::unique_ptr<Gene>, 14> genome;
+        int id_number;
+        std::array<std::unique_ptr<Gene>, 15> genome;
         Search_Method searching_method = Search_Method::MINIMAX;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
@@ -121,6 +144,7 @@ class Genome
         void renormalize_priorities() noexcept;
         double expected_number_of_moves_left(const Board& board) const noexcept;
         static std::string search_method_name(Search_Method method) noexcept;
+        void mutate() noexcept;
 
         template<typename Gene_Type>
         constexpr const Gene_Type& gene_reference() const noexcept

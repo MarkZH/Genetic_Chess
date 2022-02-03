@@ -6,38 +6,37 @@
 #include <array>
 
 #include "Genes/Gene.h"
+#include "Genes/Interpolated_Gene_Value.h"
+#include "Genes/Gene_Value.h"
+
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Color.h"
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
+#include "Utility/String.h"
 
 Look_Ahead_Gene::Look_Ahead_Gene() noexcept
 {
     recalculate_game_lengths();
 }
 
-void Look_Ahead_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
+void Look_Ahead_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties.erase("Priority - Opening");
-    properties.erase("Priority - Endgame");
-    properties["Mean Game Length"] = mean_game_length;
-    properties["Game Length Uncertainty"] = game_length_uncertainty;
-    properties["Speculation - Opening"] = opening_speculation_constant;
-    properties["Speculation - Endgame"] = endgame_speculation_constant;
-    properties["Branching Factor - Opening"] = opening_branching_factor_estimate;
-    properties["Branching Factor - Endgame"] = endgame_branching_factor_estimate;
+    delete_priorities(properties);
+    mean_game_length.write_to_map(properties);
+    game_length_uncertainty.write_to_map(properties);
+    speculation_constants.write_to_map(properties);
+    branching_factor_estimates.write_to_map(properties);
 }
 
-void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, double>& properties)
+void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
-    mean_game_length = properties.at("Mean Game Length");
-    game_length_uncertainty = properties.at("Game Length Uncertainty");
-    opening_speculation_constant = properties.at("Speculation - Opening");
-    endgame_speculation_constant = properties.at("Speculation - Endgame");
-    opening_branching_factor_estimate = properties.at("Branching Factor - Opening");
-    endgame_branching_factor_estimate = properties.at("Branching Factor - Endgame");
+    mean_game_length.load_from_map(properties);
+    game_length_uncertainty.load_from_map(properties);
+    speculation_constants.load_from_map(properties);
+    branching_factor_estimates.load_from_map(properties);
     recalculate_game_lengths();
 }
 
@@ -54,22 +53,18 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
     switch(Random::random_integer(1, 6))
     {
         case 1:
-            mean_game_length += Random::random_laplace(1.0);
+            mean_game_length.mutate(1.0);
             break;
         case 2:
-            game_length_uncertainty += Random::random_laplace(0.01);
+            game_length_uncertainty.mutate(0.01);
             break;
         case 3:
-            opening_speculation_constant += Random::random_laplace(0.05);
-            break;
         case 4:
-            endgame_speculation_constant += Random::random_laplace(0.05);
+            speculation_constants.mutate(0.05);
             break;
         case 5:
-            opening_branching_factor_estimate += Random::random_laplace(0.2);
-            break;
         case 6:
-            endgame_branching_factor_estimate += Random::random_laplace(0.2);
+            branching_factor_estimates.mutate(0.2);
             break;
         default:
             assert(false);
@@ -90,16 +85,12 @@ double Look_Ahead_Gene::score_board(const Board&, const Piece_Color, const size_
 
 double Look_Ahead_Gene::speculation_time_factor(const double game_progress) const noexcept
 {
-    return std::lerp(opening_speculation_constant,
-                     endgame_speculation_constant,
-                     game_progress);
+    return speculation_constants.interpolate(game_progress);
 }
 
 double Look_Ahead_Gene::branching_factor(const double game_progress) const noexcept
 {
-    return std::lerp(opening_branching_factor_estimate,
-                     endgame_branching_factor_estimate,
-                     game_progress);
+    return branching_factor_estimates.interpolate(game_progress);
 }
 
 double Look_Ahead_Gene::expected_moves_left(const Board& board) const noexcept
@@ -111,7 +102,7 @@ double Look_Ahead_Gene::expected_moves_left(const Board& board) const noexcept
     }
     else
     {
-        return Math::average_moves_left(mean_game_length, game_length_uncertainty, moves_so_far);
+        return Math::average_moves_left(mean_game_length.value(), game_length_uncertainty.value(), moves_so_far);
     }
 }
 
@@ -119,6 +110,6 @@ void Look_Ahead_Gene::recalculate_game_lengths() noexcept
 {
     for(size_t i = 0; i < moves_left_lookup.size(); ++i)
     {
-        moves_left_lookup[i] = Math::average_moves_left(mean_game_length, game_length_uncertainty, i);
+        moves_left_lookup[i] = Math::average_moves_left(mean_game_length.value(), game_length_uncertainty.value(), i);
     }
 }

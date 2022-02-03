@@ -16,7 +16,7 @@
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
 #include "Utility/Fixed_Capacity_Vector.h"
-#include "Players/Genetic_AI.h"
+#include "Genes/Genome.h"
 
 class Board;
 class Move;
@@ -187,7 +187,7 @@ class Minimax_AI : public Player
                                                current_variation_store& current_variation) const noexcept;
 
         // The brains of the Minimax algorithm that provides board evaluation and time management.
-        Genetic_AI genetic_ai;
+        Genome genome;
 
         // Data for writing commentary for each move choice to PGN files.
         mutable std::vector<Game_Tree_Node_Result> commentary;
@@ -286,9 +286,9 @@ std::string variation_line(Board board,
                            const std::vector<const Move*>& variation,
                            double score) noexcept;
 
-//! \brief Find the last ID of a Genetic_AI in a gene pool file.
+//! \brief Find the last ID of a Genome in a gene pool file.
 //!
-//! \param file_name The name of the file with Genetic_AI data.
+//! \param file_name The name of the file with Genome data.
 //! \returns The numerical ID of the last AI in the file.
 //! \exception std::runtime_error if no valid ID line can be found.
 int find_last_id(const std::string& file_name);

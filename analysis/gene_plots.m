@@ -39,6 +39,8 @@ id_list = data.data(:, 1);
 
 xaxis_list = data.colheaders(1);
 xaxis = xaxis_list{1};
+xaxis_linewidth = 0.5;
+xaxis_linecolor = [0.4, 0.4, 0.4];
 
 piece_strength_figure = figure;
 hold all;
@@ -61,8 +63,14 @@ endgame_priority_count = 0;
 
 special_plots = containers.Map;
 special_plots('piece strength') = piece_strength_figure;
+piece_strength_plots = [];
+piece_strength_labels = {};
 special_plots('gene priorities opening') = opening_priority_figure;
+opening_priority_plots = [];
+opening_priority_labels = {};
 special_plots('gene priorities endgame') = endgame_priority_figure;
+endgame_priority_plots = [];
+endgame_priority_labels = {};
 
 shorten = containers.Map;
 shorten('Castling Possible Gene') = 'Castling';
@@ -77,6 +85,7 @@ shorten('Pawn Islands Gene') = 'Islands';
 shorten('Sphere of Influence Gene') = 'Sphere';
 shorten('Stacked Pawns Gene') = 'Stacked';
 shorten('Total Force Gene') = 'Force';
+shorten('Pawn Structure Gene') = 'Structure';
 
 marker_size = 5;
 line_width = 2;
@@ -96,7 +105,7 @@ for yi = 2 : length(data.colheaders)
          '.', ...
          'markersize', marker_size);
     xlabel(xaxis);
-    plot(xlim, [0 0], '--k'); % X-axis
+    plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
 
     for index = 1:length(id_marks)
         plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
@@ -129,25 +138,29 @@ for yi = 2 : length(data.colheaders)
         conv_window = 100;
         smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
         figure(plot_figure);
+        conv_margin = floor(conv_window/2);
+        x_axis = id_list(conv_margin : end - conv_margin);
+        p = plot(x_axis, smooth_data, 'LineWidth', line_width);
+
         if plot_figure == piece_strength_figure
             name = name(end);
             piece_count = piece_count + 1;
             make_dashed = (piece_count > 7);
             piece_end_values(name) = num2str(smooth_data(end), '%.2f');
-            display_name = [name ' (' piece_end_values(name) ')'];
+            piece_strength_plots(end + 1) = p;
+            piece_strength_labels{end + 1} = [name ' (' piece_end_values(name) ')'];
         elseif plot_figure == opening_priority_figure
-            display_name = shorten(name(1 : end - length(opening_priority_suffix)));
+            opening_priority_plots(end + 1) = p;
+            opening_priority_labels{end + 1} = shorten(name(1 : end - length(opening_priority_suffix)));
             opening_priority_count = opening_priority_count + 1;
             make_dashed = (opening_priority_count > 7);
         elseif plot_figure == endgame_priority_figure
-            display_name = shorten(name(1 : end - length(endgame_priority_suffix)));
+            endgame_priority_plots(end + 1) = p;
+            endgame_priority_labels{end + 1} = shorten(name(1 : end - length(endgame_priority_suffix)));
             endgame_priority_count = endgame_priority_count + 1;
             make_dashed = (endgame_priority_count > 7);
         end
 
-        conv_margin = floor(conv_window/2);
-        x_axis = id_list(conv_margin : end - conv_margin);
-        p = plot(x_axis, smooth_data, 'LineWidth', line_width, 'displayname', display_name);
         if make_dashed
             set(p, 'LineStyle', ':');
         end
@@ -169,13 +182,19 @@ for name = special_plots.keys()
     name = name{1};
     special_plot = special_plots(name);
     figure(special_plot);
-    plot(xlim, [0 0], '--k'); % X-axis
+    plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
 
     for id_index = 1:length(id_marks)
         plot(id_marks(id_index)*[1 1], ylim, 'displayname', id_notes{id_index});
     end
 
-    leg = legend('show');
+    if special_plot == piece_strength_figure
+        leg = legend(piece_strength_plots, piece_strength_labels);
+    elseif special_plot == opening_priority_figure
+        leg = legend(opening_priority_plots, opening_priority_labels);
+    elseif special_plot == endgame_priority_figure
+        leg = legend(endgame_priority_plots, endgame_priority_labels);
+    endif
     set(leg, 'location', 'eastoutside');
     legend left;
 

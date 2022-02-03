@@ -241,7 +241,9 @@
     <ClCompile Include="src\genes\Freedom_To_Move_Gene.cpp" />
     <ClCompile Include="src\genes\Gene.cpp" />
     <ClCompile Include="src\Genes\Gene_Pool.cpp" />
+    <ClCompile Include="src\Genes\Gene_Value.cpp" />
     <ClCompile Include="src\genes\Genome.cpp" />
+    <ClCompile Include="src\Genes\Interpolated_Gene_Value.cpp" />
     <ClCompile Include="src\Genes\King_Confinement_Gene.cpp" />
     <ClCompile Include="src\genes\King_Protection_Gene.cpp" />
     <ClCompile Include="src\genes\Look_Ahead_Gene.cpp" />
@@ -249,6 +251,7 @@
     <ClCompile Include="src\Genes\Passed_Pawn_Gene.cpp" />
     <ClCompile Include="src\genes\Pawn_Advancement_Gene.cpp" />
     <ClCompile Include="src\Genes\Pawn_Islands_Gene.cpp" />
+    <ClCompile Include="src\Genes\Pawn_Structure_Gene.cpp" />
     <ClCompile Include="src\genes\Piece_Strength_Gene.cpp" />
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
     <ClCompile Include="src\Genes\Stacked_Pawns_Gene.cpp" />
@@ -263,7 +266,6 @@
     <ClCompile Include="src\Players\Alpha_Beta_Value.cpp" />
     <ClCompile Include="src\players\CECP_Mediator.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
-    <ClCompile Include="src\players\Genetic_AI.cpp" />
     <ClCompile Include="src\Players\Minimax_AI.cpp" />
     <ClCompile Include="src\players\Outside_Communicator.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
@@ -289,7 +291,9 @@
     <ClInclude Include="include\genes\Freedom_To_Move_Gene.h" />
     <ClInclude Include="include\genes\Gene.h" />
     <ClInclude Include="include\Genes\Gene_Pool.h" />
+    <ClInclude Include="include\Genes\Gene_Value.h" />
     <ClInclude Include="include\genes\Genome.h" />
+    <ClInclude Include="include\Genes\Interpolated_Gene_Value.h" />
     <ClInclude Include="include\Genes\King_Confinement_Gene.h" />
     <ClInclude Include="include\genes\King_Protection_Gene.h" />
     <ClInclude Include="include\genes\Look_Ahead_Gene.h" />
@@ -297,6 +301,7 @@
     <ClInclude Include="include\Genes\Passed_Pawn_Gene.h" />
     <ClInclude Include="include\genes\Pawn_Advancement_Gene.h" />
     <ClInclude Include="include\Genes\Pawn_Islands_Gene.h" />
+    <ClInclude Include="include\Genes\Pawn_Structure_Gene.h" />
     <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
     <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
     <ClInclude Include="include\Genes\Stacked_Pawns_Gene.h" />
@@ -311,7 +316,6 @@
     <ClInclude Include="include\Players\Alpha_Beta_Value.h" />
     <ClInclude Include="include\players\CECP_Mediator.h" />
     <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
-    <ClInclude Include="include\players\Genetic_AI.h" />
     <ClInclude Include="include\Players\Minimax_AI.h" />
     <ClInclude Include="include\players\Outside_Communicator.h" />
     <ClInclude Include="include\players\Player.h" />

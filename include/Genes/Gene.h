@@ -8,17 +8,13 @@
 
 #include "Game/Color.h"
 
+#include "Genes/Interpolated_Gene_Value.h"
+
 class Board;
 class Piece_Strength_Gene;
-class Genetic_AI_Creation_Error;
+class Genome_Creation_Error;
 
-enum class Game_Stage
-{
-    OPENING,
-    ENDGAME
-};
-
-//! \brief The base class of all genes that control the behavior of Genetic AIs.
+//! \brief The base class of all genes that control the behavior of Genetic Chess players.
 class Gene
 {
     public:
@@ -29,7 +25,7 @@ class Gene
         //! Every line should be of the form: \<property\> = \<value\> with optional comments at the end preceded by '#'.
         //! A blank line marks the end of the gene data.
         //! \param is An input stream (std::ifstream, std::iostream, or similar).
-        //! \exception Genetic_AI_Creation_Error or derivative if there is an invalid line or an unexpected property
+        //! \exception Genome_Creation_Error or derivative if there is an invalid line or an unexpected property
         void read_from(std::istream& is);
 
         //! \brief Read gene data from a text file.
@@ -105,13 +101,16 @@ class Gene
         //! \param expected_score The expected score returned by Gene::score_board().
         void test(bool& test_variable, const Board& board, Piece_Color perspective, double expected_score) const noexcept;
 
+    protected:
+        //! \brief When preparing to write gene data to a file, regulatory genes can use this to delete unused Priority data.
+        void delete_priorities(std::map<std::string, std::string>& properties) const noexcept;
+
     private:
-        double opening_priority = 1.0;
-        double endgame_priority = 1.0;
+        Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0};
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept = 0;
 
-        template<typename Error = Genetic_AI_Creation_Error>
+        template<typename Error = Genome_Creation_Error>
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const
         {
             throw Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
@@ -129,10 +128,10 @@ class Gene
         //! board position. This method is overridden by derived Gene classes to either augment
         //! or replace this data with more specialized properties.
         //! \returns A collection of gene properties with their numerical values.
-        std::map<std::string, double> list_properties() const noexcept;
+        std::map<std::string, std::string> list_properties() const noexcept;
 
         //! \brief Allow Gene subtypes to make changes to the gene properties to be recorded.
-        virtual void adjust_properties(std::map<std::string, double>& properties) const noexcept;
+        virtual void adjust_properties(std::map<std::string, std::string>& properties) const noexcept;
 
         //! \brief Reads a properties data structure and loads the data into itself.
         //!
@@ -142,10 +141,10 @@ class Gene
         //! different properties.
         //! \param properties A data structure with all the data needed for this gene.
         //! \exception std::out_of_range When an expected property is not present in the input.
-        void load_properties(const std::map<std::string, double>& properties);
+        void load_properties(const std::map<std::string, std::string>& properties);
 
         //! \brief Load the properties specific to the Gene subtype.
-        virtual void load_gene_properties(const std::map<std::string, double>& properties);
+        virtual void load_gene_properties(const std::map<std::string, std::string>& properties);
 };
 
 //! \brief A template class to create the duplicate method for all Gene subtypes.
