@@ -13,40 +13,36 @@
 
 #include "Game/Board.h"
 #include "Game/Color.h"
+#include "Genes/Interpolated_Gene_Value.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"
 #include "Utility/Exceptions.h"
 #include "Utility/Math.h"
 
-std::map<std::string, double> Gene::list_properties() const noexcept
+std::map<std::string, std::string> Gene::list_properties() const noexcept
 {
-    auto properties = std::map<std::string, double>{{"Priority - Opening", opening_priority},
-                                                    {"Priority - Endgame", endgame_priority}};
+    auto properties = std::map<std::string, std::string>{};
+    priorities.write_to_map(properties);
     adjust_properties(properties);
     return properties;
 }
 
-void Gene::adjust_properties(std::map<std::string, double>&) const noexcept
+void Gene::adjust_properties(std::map<std::string, std::string>&) const noexcept
 {
 }
 
-void Gene::load_properties(const std::map<std::string, double>& properties)
+void Gene::load_properties(const std::map<std::string, std::string>& properties)
 {
-    if(properties.count("Priority - Opening") > 0)
+    if(properties.count(priorities.name(Game_Stage::OPENING)) > 0 && properties.count(priorities.name(Game_Stage::ENDGAME)) > 0)
     {
-        opening_priority = properties.at("Priority - Opening");
-    }
-
-    if(properties.count("Priority - Endgame") > 0)
-    {
-        endgame_priority = properties.at("Priority - Endgame");
+        priorities.load_from_map(properties);
     }
 
     load_gene_properties(properties);
 }
 
-void Gene::load_gene_properties(const std::map<std::string, double>&)
+void Gene::load_gene_properties(const std::map<std::string, std::string>&)
 {
 }
 
@@ -60,7 +56,7 @@ void Gene::read_from(std::istream& is)
     auto properties = list_properties();
     for(auto& [key, value] : properties)
     {
-        value = std::numeric_limits<double>::quiet_NaN();
+        value = {};
     }
 
     for(std::string line; std::getline(is, line);)
@@ -94,44 +90,18 @@ void Gene::read_from(std::istream& is)
             }
         }
 
-        try
+        const auto entry = properties.find(property_name);
+        if(entry == properties.end())
         {
-            auto& current_value = properties.at(property_name);
-            if(std::isnan(current_value))
-            {
-                current_value = String::to_number<double>(property_data);
-            }
-            else
-            {
-                throw_on_invalid_line<Duplicate_Genome_Data>(line, "Duplicate parameter: " + property_name);
-            }
+            throw_on_invalid_line(line, "Unrecognized parameter name: " + property_name);
         }
-        catch(const std::out_of_range& e)
+        else if( ! entry->second.empty())
         {
-            if(String::contains(e.what(), "at") || String::contains(e.what(), "invalid map<K, T> key"))
-            {
-                throw_on_invalid_line(line, "Unrecognized parameter name: " + property_name);
-            }
-            else if(String::contains(e.what(), "stod"))
-            {
-                throw_on_invalid_line(line, "Bad parameter value: " + property_data);
-            }
-            else
-            {
-                throw_on_invalid_line(line, e.what());
-            }
+            throw_on_invalid_line<Duplicate_Genome_Data>(line, "Duplicate parameter: " + property_name);
         }
-        catch(const std::invalid_argument&)
+        else
         {
-            throw_on_invalid_line(line, "Bad parameter value: " + property_data);
-        }
-        catch(const Duplicate_Genome_Data&)
-        {
-            throw;
-        }
-        catch(const std::exception& e)
-        {
-            throw_on_invalid_line(line, e.what());
+            entry->second = property_data;
         }
     }
 
@@ -139,14 +109,21 @@ void Gene::read_from(std::istream& is)
         std::accumulate(properties.begin(), properties.end(), std::string{},
                         [](const auto& so_far, const auto& key_value)
                         {
-                            return so_far + (std::isnan(key_value.second) ? "\n" + key_value.first : "");
+                            return so_far + (key_value.second.empty() ? "\n" + key_value.first : "");
                         });
     if( ! missing_data.empty())
     {
         throw Missing_Genome_Data("Missing gene data for " + name() + ":" + missing_data);
     }
 
-    load_properties(properties);
+    try
+    {
+        load_properties(properties);
+    }
+    catch(const std::exception& e)
+    {
+        throw std::runtime_error("Bad parameter value in " + name() + ": " + e.what());
+    }
 }
 
 void Gene::read_from(const std::string& file_name)
@@ -197,7 +174,7 @@ void Gene::mutate() noexcept
     const auto properties = list_properties();
     if(has_priority() && Random::success_probability(2, properties.size()))
     {
-        (Random::coin_flip() ? opening_priority : endgame_priority) += Random::random_laplace(0.005);
+        priorities.mutate(0.005);
     }
     else
     {
@@ -211,8 +188,7 @@ void Gene::gene_specific_mutation() noexcept
 
 double Gene::evaluate(const Board& board, const Piece_Color perspective, const size_t depth, const double game_progress) const noexcept
 {
-    const auto scoring_priority = std::lerp(opening_priority, endgame_priority, game_progress);
-    return scoring_priority*score_board(board, perspective, depth, game_progress);
+    return priorities.interpolate(game_progress)*score_board(board, perspective, depth, game_progress);
 }
 
 void Gene::print(std::ostream& os) const noexcept
@@ -231,17 +207,17 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
 
 double Gene::priority(const Game_Stage stage) const noexcept
 {
-    return stage == Game_Stage::OPENING ? opening_priority : endgame_priority;
+    return priorities.value_at(stage);
 }
 
 bool Gene::has_priority() const noexcept
 {
-    return list_properties().count("Priority - Opening") != 0;
+    return list_properties().count(priorities.name(Game_Stage::OPENING)) != 0;
 }
 
 void Gene::scale_priority(const Game_Stage stage, const double k) noexcept
 {
-    (stage == Game_Stage::OPENING ? opening_priority : endgame_priority) *= k;
+    priorities.value_at(stage) *= k;
 }
 
 void Gene::test(bool& test_variable, const Board& board, const Piece_Color perspective, const double expected_score) const noexcept
@@ -265,4 +241,10 @@ void Gene::test(bool& test_variable, const Board& board, const Piece_Color persp
         std::cerr << "Error in " << name() << " Test #" << test_number << ": Expected " << expected_score << ", Got: " << result << '\n';
         test_variable = false;
     }
+}
+
+void Gene::delete_priorities(std::map<std::string, std::string>& properties) const noexcept
+{
+    properties.erase(priorities.name(Game_Stage::OPENING));
+    properties.erase(priorities.name(Game_Stage::ENDGAME));
 }

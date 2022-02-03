@@ -5,11 +5,13 @@
 #include <cmath>
 
 #include "Genes/Gene.h"
+#include "Genes/Interpolated_Gene_Value.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
+#include "Utility/String.h"
 
 Castling_Possible_Gene::Castling_Possible_Gene() noexcept
 {
@@ -18,24 +20,20 @@ Castling_Possible_Gene::Castling_Possible_Gene() noexcept
 
 void Castling_Possible_Gene::normalize_sides() noexcept
 {
-    Math::normalize(opening_kingside_preference, opening_queenside_preference);
-    Math::normalize(endgame_kingside_preference, endgame_queenside_preference);
+    Math::normalize(kingside_preferences.opening_value(), queenside_preferences.opening_value());
+    Math::normalize(kingside_preferences.endgame_value(), queenside_preferences.endgame_value());
 }
 
-void Castling_Possible_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
+void Castling_Possible_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties["Kingside Preference - Opening"] = opening_kingside_preference;
-    properties["Queenside Preference - Opening"] = opening_queenside_preference;
-    properties["Kingside Preference - Endgame"] = endgame_kingside_preference;
-    properties["Queenside Preference - Endgame"] = endgame_queenside_preference;
+    kingside_preferences.write_to_map(properties);
+    queenside_preferences.write_to_map(properties);
 }
 
-void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, double>& properties)
+void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
-    opening_kingside_preference = properties.at("Kingside Preference - Opening");
-    opening_queenside_preference = properties.at("Queenside Preference - Opening");
-    endgame_kingside_preference = properties.at("Kingside Preference - Endgame");
-    endgame_queenside_preference = properties.at("Queenside Preference - Endgame");
+    kingside_preferences.load_from_map(properties);
+    queenside_preferences.load_from_map(properties);
     normalize_sides();
 }
 
@@ -46,8 +44,8 @@ std::string Castling_Possible_Gene::name() const noexcept
 
 double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color perspective, const size_t depth, const double game_progress) const noexcept
 {
-    const auto kingside_preference = std::lerp(opening_kingside_preference, endgame_kingside_preference, game_progress);
-    const auto queenside_preference = std::lerp(opening_queenside_preference, endgame_queenside_preference, game_progress);
+    const auto kingside_preference = kingside_preferences.interpolate(game_progress);
+    const auto queenside_preference = queenside_preferences.interpolate(game_progress);
 
     // check if a castling move lies between here and the actual state of the board
     if(board.player_castled(perspective))
@@ -91,22 +89,13 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
 
 void Castling_Possible_Gene::gene_specific_mutation() noexcept
 {
-    switch(Random::random_integer(1, 4))
+    if(Random::coin_flip())
     {
-        case 1:
-            opening_kingside_preference += Random::random_laplace(0.03);
-            break;
-        case 2:
-            endgame_kingside_preference += Random::random_laplace(0.03);
-            break;
-        case 3:
-            opening_queenside_preference += Random::random_laplace(0.03);
-            break;
-        case 4:
-            endgame_queenside_preference += Random::random_laplace(0.03);
-            break;
-        default:
-            assert(false);
+        kingside_preferences.mutate(0.03);
+    }
+    else
+    {
+        queenside_preferences.mutate(0.03);
     }
 
     normalize_sides();

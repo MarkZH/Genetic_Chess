@@ -156,7 +156,7 @@ class Board
         const std::vector<const Move*>& legal_moves() const noexcept;
 
         //! \brief Whether a square is attacked by a piece of a given color.
-        //! 
+        //!
         //! \param target The square under consideration.
         //! \param attacker The color of the piece doing the attacking.
         bool attacked_by(Square target, Piece_Color attacker) const noexcept;

@@ -10,6 +10,7 @@
 #include "Game/Board.h"
 
 #include "Utility/Random.h"
+#include "Utility/String.h"
 
 Piece_Strength_Gene::Piece_Strength_Gene() noexcept
 {
@@ -17,10 +18,9 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept
     renormalize_values();
 }
 
-void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& properties) const noexcept
+void Piece_Strength_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
-    properties.erase("Priority - Opening");
-    properties.erase("Priority - Endgame");
+    delete_priorities(properties);
 
     static constexpr auto standard_all_pieces_score = 2*5.0 + // rooks
                                                       2*3.0 + // knights
@@ -31,16 +31,16 @@ void Piece_Strength_Gene::adjust_properties(std::map<std::string, double>& prope
     for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
         const auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
-        properties[std::string(1, piece.fen_symbol())] = piece_value(piece.type())/standardize;
+        properties[std::string(1, piece.fen_symbol())] = std::to_string(piece_value(piece.type())/standardize);
     }
 }
 
-void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, double>& properties)
+void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
     for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
         const auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
-        piece_value(piece.type()) = properties.at(std::string(1, piece.fen_symbol()));
+        piece_value(piece.type()) = String::to_number<double>(properties.at(std::string(1, piece.fen_symbol())));
     }
 
     renormalize_values();

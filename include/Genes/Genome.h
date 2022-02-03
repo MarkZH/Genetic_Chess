@@ -21,6 +21,7 @@ enum class Search_Method
 };
 
 class Board;
+class Move;
 
 //! \brief A software analog to a biological chromosome containing a collection of Gene instances that control the chess player's behavior.
 class Genome

@@ -145,7 +145,8 @@ elif system == 'clang':
         "-Wmissing-declarations",
         "-Wmissing-include-dirs",
         "-Wunused-exception-parameter",
-        "-Wswitch"])
+        "-Wswitch",
+        "-Wfloat-conversion"])
 
 all_sources = []
 for target in final_targets:
