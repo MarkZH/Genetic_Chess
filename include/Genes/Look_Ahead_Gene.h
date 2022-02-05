@@ -58,8 +58,8 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         // Estimates the average number of moves in a board position (the branching factor of the game tree)
         Interpolated_Gene_Value branching_factor_estimates = {"Branching Factor", 10.0, 10.0};
 
-        Gene_Value mean_game_length = {"Mean Game Length", 50.0}; // in moves by one player
-        Gene_Value game_length_uncertainty = {"Game Length Uncertainty", 0.5}; // approximately as a fraction of the mean
+        Gene_Value<double> mean_game_length = {"Mean Game Length", 50.0}; // in moves by one player
+        Gene_Value<double> game_length_uncertainty = {"Game Length Uncertainty", 0.5}; // approximately as a fraction of the mean
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;

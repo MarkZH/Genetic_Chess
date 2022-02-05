@@ -6,8 +6,10 @@
 #include <string>
 #include <map>
 
-#include "Game/Color.h"
 #include "Search_Method.h"
+#include "Gene_Value.h"
+
+#include "Game/Color.h"
 
 class Board;
 
@@ -24,7 +26,7 @@ class Search_Strategy_Gene : public Clonable_Gene<Search_Strategy_Gene>
         Search_Method searching_method() const noexcept;
 
     private:
-        Search_Method search_method = Search_Method::MINIMAX;
+        Gene_Value<Search_Method> search_method = {"Search Method", Search_Method::MINIMAX};
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;
