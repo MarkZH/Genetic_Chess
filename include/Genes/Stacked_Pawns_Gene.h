@@ -1,7 +1,7 @@
 #ifndef STACKED_PAWNS_GENE_H
 #define STACKED_PAWNS_GENE_H
 
-#include "Genes/Gene.h"
+#include "Gene.h"
 
 #include <string>
 

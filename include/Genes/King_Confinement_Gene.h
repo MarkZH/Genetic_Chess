@@ -1,7 +1,7 @@
 #ifndef KING_CONFINEMENT_GENE_H
 #define KING_CONFINEMENT_GENE_H
 
-#include "Genes/Gene.h"
+#include "Gene.h"
 
 #include <string>
 
