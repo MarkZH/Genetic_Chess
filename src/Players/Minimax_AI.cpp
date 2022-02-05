@@ -160,7 +160,8 @@ const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, cons
 
         const auto time_used_so_far = std::chrono::steady_clock::now() - time_start;
         const auto time_left = time_to_use - time_used_so_far;
-        if(time_used_so_far*effective_moves_per_turn < time_left*speculation_factor)
+        const auto game_over = result.is_winning_for(board.whose_turn()) || result.is_losing_for(board.whose_turn());
+        if( ! game_over && time_used_so_far*effective_moves_per_turn < time_left*speculation_factor)
         {
             principal_variation = {nullptr, nullptr};
             const auto& variation = result.variation_line();
