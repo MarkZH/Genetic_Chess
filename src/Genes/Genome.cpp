@@ -30,18 +30,12 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
+#include "Genes/Search_Strategy_Gene.h"
+
+#include "Genes/Search_Method.h"
 
 namespace
 {
-    const auto search_method_names =
-        []()
-        {
-            std::array<std::string, 2> names;
-            names[static_cast<int>(Search_Method::MINIMAX)] = "Minimax";
-            names[static_cast<int>(Search_Method::ITERATIVE_DEEPENING)] = "Iterative Deepening";
-            return names;
-        }();
-
     int next_id = 0;
 }
 
@@ -50,6 +44,7 @@ Genome::Genome() noexcept :
     genome{
         std::make_unique<Piece_Strength_Gene>(),
         std::make_unique<Look_Ahead_Gene>(),
+        std::make_unique<Search_Strategy_Gene>(),
         std::make_unique<Total_Force_Gene>(nullptr),
         std::make_unique<Freedom_To_Move_Gene>(),
         std::make_unique<Pawn_Advancement_Gene>(),
@@ -70,9 +65,10 @@ Genome::Genome() noexcept :
 
     assert(gene_reference<Piece_Strength_Gene>().name() == "Piece Strength Gene");
     assert(gene_reference<Look_Ahead_Gene>().name() == "Look Ahead Gene");
+    assert(gene_reference<Search_Strategy_Gene>().name() == "Search Strategy Gene");
 }
 
-Genome::Genome(const Genome& other) noexcept : id_number(other.id()), searching_method(other.search_method())
+Genome::Genome(const Genome& other) noexcept : id_number(other.id())
 {
     std::transform(other.genome.begin(), other.genome.end(),
                    genome.begin(),
@@ -181,7 +177,6 @@ Genome& Genome::operator=(const Genome& other) noexcept
                        return gene->duplicate();
                    });
     reset_piece_strength_gene();
-    searching_method = other.search_method();
     return *this;
 }
 
@@ -196,8 +191,6 @@ Genome::Genome(const Genome& A, const Genome& B) noexcept : id_number(next_id++)
 
     reset_piece_strength_gene();
     renormalize_priorities();
-
-    searching_method = Random::coin_flip() ? A.search_method() : B.search_method();
 }
 
 void Genome::read_from(std::istream& is)
@@ -238,22 +231,6 @@ void Genome::read_from(std::istream& is)
             else
             {
                 throw Genome_Creation_Error("Unrecognized gene name: " + gene_name + "\nin line: " + line);
-            }
-        }
-        else if(String::trim_outer_whitespace(line_split[0]) == "Search Method")
-        {
-            const auto search_method_name_input = String::trim_outer_whitespace(line_split[1]);
-            if(search_method_name_input == search_method_name(Search_Method::MINIMAX))
-            {
-                searching_method = Search_Method::MINIMAX;
-            }
-            else if(search_method_name_input == search_method_name(Search_Method::ITERATIVE_DEEPENING))
-            {
-                searching_method = Search_Method::ITERATIVE_DEEPENING;
-            }
-            else
-            {
-                throw Genome_Creation_Error("Unrecognized search method: " + line);
             }
         }
         else
@@ -300,13 +277,6 @@ void Genome::mutate() noexcept
     // Pick randomly from the list so every component has an equal chance for mutation.
     Random::random_element(genes)->mutate();
     renormalize_priorities();
-
-    if(Random::success_probability(1, 1000))
-    {
-        searching_method = searching_method == Search_Method::MINIMAX ?
-                           Search_Method::ITERATIVE_DEEPENING :
-                           Search_Method::MINIMAX;
-    }
 }
 
 int Genome::id() const noexcept
@@ -327,7 +297,6 @@ std::string Genome::author() const noexcept
 void Genome::print(std::ostream& os) const noexcept
 {
     os << "ID: " << id() << '\n';
-    os << "Search Method: " << search_method_name() << "\n\n";
     for(const auto& gene : genome)
     {
         gene->print(os);
@@ -362,17 +331,7 @@ double Genome::game_progress(const Board& board) const noexcept
 
 Search_Method Genome::search_method() const noexcept
 {
-    return searching_method;
-}
-
-std::string Genome::search_method_name() const noexcept
-{
-    return search_method_name(search_method());
-}
-
-std::string Genome::search_method_name(const Search_Method search_method) noexcept
-{
-    return search_method_names[static_cast<int>(search_method)];
+    return gene_reference<Search_Strategy_Gene>().searching_method();
 }
 
 const std::array<double, 6>& Genome::piece_values() const noexcept

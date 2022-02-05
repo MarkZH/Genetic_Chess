@@ -56,11 +56,6 @@ Minimax_AI::Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept : geno
 
 std::string Minimax_AI::name() const noexcept
 {
-    return ai_name() + " (" + search_method_name() + ")";
-}
-
-std::string Minimax_AI::ai_name() const
-{
     return genome.name();
 }
 
@@ -537,11 +532,6 @@ double Minimax_AI::internal_evaluate(const Board& board, Piece_Color perspective
 Search_Method Minimax_AI::search_method() const noexcept
 {
     return genome.search_method();
-}
-
-std::string Minimax_AI::search_method_name() const noexcept
-{
-    return genome.search_method_name();
 }
 
 const std::array<double, 6>& Minimax_AI::piece_values() const noexcept

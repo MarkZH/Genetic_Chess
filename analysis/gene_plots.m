@@ -112,7 +112,7 @@ for yi = 2 : length(data.colheaders)
     end
 
     title_name = name;
-    if strcmp(name, 'Search Method')
+    if strcmp(name, 'Search Strategy Gene - Search Method')
         title_name = [name ' (0 = Minimax, 1 = Iterative Deepening)'];
         conv_window = 100;
         conv_margin = floor(conv_window/2);

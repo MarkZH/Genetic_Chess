@@ -1,6 +1,4 @@
 ID: 294885
-Search Method: Iterative Deepening
-
 Name: Piece Strength Gene
 B: 3.166601
 K: 1.340077
@@ -16,6 +14,9 @@ Game Length Uncertainty: 0.469185
 Mean Game Length: 26.125642
 Speculation - Endgame: 0.940490
 Speculation - Opening: 2.863767
+
+Name: Search Strategy Gene
+Search Method: Iterative Deepening
 
 Name: Total Force Gene
 Priority - Endgame: 0.460780
@@ -84,4 +85,3 @@ Priority - Endgame: -0.013603
 Priority - Opening: 0.057073
 
 END
-
