@@ -63,7 +63,7 @@ class Interpolated_Gene_Value
         void mutate(double mutation_amount) noexcept;
 
     private:
-        std::array<Gene_Value, 2> values;
+        std::array<Gene_Value<double>, 2> values;
 };
 
 #endif // INTERPOLATED_GENE_VALUE_H

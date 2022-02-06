@@ -168,7 +168,7 @@ The fraction of the game played is estimated by the value of pieces that have be
 \subsection{Regulatory Genes}
 A regulatory gene refers to a gene that does not participate in evaluating the state of a game board. These genes either control other aspects of the Genetic AIs or are queried by other genes for information.
 
-\subsubsection{Search Method}
+\subsubsection{Search Method Gene}
 This gene determines whether the search method used is the minimax method described in Section~\ref{sec-minimax} or an iterative deepening method. In iterative deepening, a series of fixed depth minimax searches are performed, starting with a depth of one and increasing as long as there is time. The order of moves searched at depth \(n\) is determined by the search at depth \(n-1\)~\cite{iterative-deepening}.
 
 \subsubsection{Piece Strength Gene}\label{piece-strength}

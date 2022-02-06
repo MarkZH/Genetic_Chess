@@ -56,11 +56,6 @@ Minimax_AI::Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept : geno
 
 std::string Minimax_AI::name() const noexcept
 {
-    return ai_name() + " (" + search_method_name() + ")";
-}
-
-std::string Minimax_AI::ai_name() const
-{
     return genome.name();
 }
 
@@ -160,7 +155,8 @@ const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, cons
 
         const auto time_used_so_far = std::chrono::steady_clock::now() - time_start;
         const auto time_left = time_to_use - time_used_so_far;
-        if(time_used_so_far*effective_moves_per_turn < time_left*speculation_factor)
+        const auto game_over = result.is_winning_for(board.whose_turn()) || result.is_losing_for(board.whose_turn());
+        if( ! game_over && time_used_so_far*effective_moves_per_turn < time_left*speculation_factor)
         {
             principal_variation = {nullptr, nullptr};
             const auto& variation = result.variation_line();
@@ -536,11 +532,6 @@ double Minimax_AI::internal_evaluate(const Board& board, Piece_Color perspective
 Search_Method Minimax_AI::search_method() const noexcept
 {
     return genome.search_method();
-}
-
-std::string Minimax_AI::search_method_name() const noexcept
-{
-    return genome.search_method_name();
 }
 
 const std::array<double, 6>& Minimax_AI::piece_values() const noexcept

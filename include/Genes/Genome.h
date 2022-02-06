@@ -8,17 +8,9 @@
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
+#include "Genes/Search_Method.h"
 
 #include "Gene.h"
-
-//! \file
-
-//! \brief Distinguishes between two types of minimax searching: standard and iterative deepening.
-enum class Search_Method
-{
-    MINIMAX,
-    ITERATIVE_DEEPENING
-};
 
 class Board;
 class Move;
@@ -123,9 +115,6 @@ class Genome
         //! \brief Return the specific minimax search method.
         Search_Method search_method() const noexcept;
 
-        //! \brief Return the name of the specific minimax search method.
-        std::string search_method_name() const noexcept;
-
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
         const std::array<double, 6>& piece_values() const noexcept;
 
@@ -136,8 +125,7 @@ class Genome
 
     private:
         int id_number;
-        std::array<std::unique_ptr<Gene>, 15> genome;
-        Search_Method searching_method = Search_Method::MINIMAX;
+        std::array<std::unique_ptr<Gene>, 16> genome;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
