@@ -31,7 +31,7 @@ double Math::average_moves_left(const double mean_moves, const double width, con
     return expected_mean - double(moves_so_far);
 }
 
-double Math::interpolate(double start_value, double end_value, double fraction) noexcept
+double Math::interpolate(const double start_value, const double end_value, const double fraction) noexcept
 {
     return (1.0 - fraction)*start_value + fraction*end_value;
 }
