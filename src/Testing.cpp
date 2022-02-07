@@ -323,6 +323,7 @@ bool run_tests()
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", -1);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, String::split, "..a..b..c..d..", "..", 4);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", 5);
+    test_function(tests_passed, "Empty string split", vs{}, String::split, "", " ", 1000);
     split_and_join_are_inverse_operations(tests_passed);
 
     test_function(tests_passed, "Format integer (zero)",  "0", String::format_integer<int>,  0, ",");
