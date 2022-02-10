@@ -35,8 +35,8 @@ tends to be zero instead of the traditional one.
 ### Start a game
 1. Install a chess GUI (e.g., [cutechess](https://cutechess.com/))
 2. Create a new engine with the compiled executable and with the command-line
-   parameters `-genetic genetic_ai_example.txt`
-    - After running a gene pool, you can replace the `genetic_ai_example.txt`
+   parameters `-genetic genome_example.txt`
+    - After running a gene pool, you can replace the `genome_example.txt`
       argument with the file name and ID number of the best specimen from the
       gene pool.
 
@@ -48,6 +48,6 @@ tends to be zero instead of the traditional one.
     * If compiling with Visual Studio, look in x86/Release or x64/Release
       for the compiled program.
 3. Every few hours or days, pause the gene pool with `Ctrl-Z` (Linux) or `Ctrl-C`
-   (on Windows) and run `analysis/run_all_plots.sh gene_pool_config_example.txt 1`
+   (on Windows) and run `analysis/run_all_plots.sh gene_pool_config_example.txt`
    to generate plots and other data showing the evolution and behavior of the specimens.
    * This script requires the program `octave` to run.
