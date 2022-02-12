@@ -72,12 +72,19 @@ int main(int argc, char *argv[])
     std::vector<std::string> options;
     for(int i = 1; i < argc; ++i)
     {
-        auto parts = String::split(argv[i], "=", 1);
-        if(String::starts_with(parts.front(), "--"))
+        if(String::starts_with(argv[i], "-"))
         {
-            parts.front() = parts.front().substr(1);
+            auto parts = String::split(argv[i], "=", 1);
+            if(String::starts_with(parts.front(), "--"))
+            {
+                parts.front() = parts.front().substr(1);
+            }
+            options.insert(options.end(), parts.begin(), parts.end());
         }
-        options.insert(options.end(), parts.begin(), parts.end());
+        else
+        {
+            options.push_back(argv[i]);
+        }
     }
 
     try
