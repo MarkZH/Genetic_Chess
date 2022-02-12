@@ -11,13 +11,13 @@ def parse_opening_list(filename):
         open_count.setdefault(opening, 0)
         open_count[opening] += 1
 
-    top10 = list(reversed(sorted(open_count.keys(),
-                            key=lambda x: open_count[x])[-10:]))
+    top20 = list(reversed(sorted(open_count.keys(),
+                            key=lambda x: open_count[x])[-20:]))
 
     with open(filename + '_top_opening_data.txt', 'w') as out:
-        out.write(','.join(top10) + '\n')
+        out.write(','.join(top20) + '\n')
         for opening in openings:
-            marker = ['1' if x == opening else '0' for x in top10]
+            marker = ['1' if x == opening else '0' for x in top20]
             out.write(','.join(marker) + '\n')
 
 

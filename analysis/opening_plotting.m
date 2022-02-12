@@ -9,8 +9,9 @@ if isOctave
     args = argv();
     if length(args) > 0
         filename = args{1};
-        if length(args) > 1
-            game_marks_file = args{2};
+        plot_title = args{2};
+        if length(args) > 2
+            game_marks_file = args{3};
         end
     end
 end
@@ -54,6 +55,6 @@ xlabel('Games played');
 ylabel('Total Count');
 leg = legend('show');
 set(leg, 'location', 'eastoutside');
-title('Count of opening moves');
+title(plot_title);
 print([raw_data '_opening_moves_plot.png']);
 close;

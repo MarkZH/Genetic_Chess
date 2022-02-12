@@ -11,8 +11,7 @@ is_numeric()
 }
 
 config_file="$1"
-opening_moves="$2"
-notes_file="$3"
+notes_file="$2"
 
 if [[ -z "$config_file" ]]
 then
@@ -24,12 +23,6 @@ fi
 if ! [[ -f "$config_file" ]]
 then
     echo "Invalid gene pool configuration file: $config_file"
-    exit 1
-fi
-
-if ! is_numeric "$opening_moves"
-then
-    echo "Invalid argument for openings analysis: $opening_moves"
     exit 1
 fi
 
@@ -56,10 +49,12 @@ fi
 octave analysis/gene_plots.m "$pool_file" "$notes_file" &
 octave analysis/win_lose_draw_plotting.m "$game_file" "$notes_file" &
 
-if ./analysis/openings.sh "$game_file" "$opening_moves"
+if ./analysis/openings.sh "$game_file"
 then
     opening_file="${game_file}_opening_list.txt"
-    octave analysis/opening_plotting.m "$opening_file" "$notes_file" &
+    octave analysis/opening_plotting.m "${opening_file}" "First move counts" "$notes_file" &
+    octave analysis/opening_plotting.m "${opening_file}_white.txt" "White's first move counts" "$notes_file" &
+    octave analysis/opening_plotting.m "${opening_file}_black.txt" "Black's first move counts" "$notes_file" &
 fi
 
 ./analysis/promotions.sh "$game_file"

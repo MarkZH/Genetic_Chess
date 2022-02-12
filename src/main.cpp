@@ -6,6 +6,8 @@
 #include <string>
 #include <stdexcept>
 #include <utility>
+#include <vector>
+#include <string_view>
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -39,7 +41,7 @@ namespace
     //!
     //! \param argc The number of command line options (same as for main(int argc, char *argv[])).
     //! \param argv The command line options (same as for main(int argc, char *argv[])).
-    void start_game(int argc, char* argv[]);
+    void start_game(const std::vector<std::string>& options);
 
     //! \brief Reads a genome file and rewrites it in the latest style.
     //!
@@ -68,18 +70,36 @@ int main(int argc, char *argv[])
         return EXIT_SUCCESS;
     }
 
+    std::vector<std::string> options;
+    for(int i = 1; i < argc; ++i)
+    {
+        if(std::string_view{argv[i]}.starts_with('-'))
+        {
+            auto parts = String::split(argv[i], "=", 1);
+            if(parts.front().starts_with("--"))
+            {
+                parts.front() = parts.front().substr(1);
+            }
+            options.insert(options.end(), parts.begin(), parts.end());
+        }
+        else
+        {
+            options.push_back(argv[i]);
+        }
+    }
+
     try
     {
-        const std::string option = argv[1];
+        const auto option = options.front();
         if(option == "-gene-pool")
         {
-            argument_assert(argc > 2, "Specify a configuration file to run a gene pool.");
-            gene_pool(argv[2]);
+            argument_assert(options.size() >= 2, "Specify a configuration file to run a gene pool.");
+            gene_pool(options[1]);
         }
         else if(option == "-confirm")
         {
-            argument_assert(argc > 2, "Provide a file containing a game to confirm has all legal moves.");
-            return confirm_game_record(argv[2]) ? EXIT_SUCCESS : EXIT_FAILURE;
+            argument_assert(options.size() >= 2, "Provide a file containing a game to confirm has all legal moves.");
+            return confirm_game_record(options[1]) ? EXIT_SUCCESS : EXIT_FAILURE;
         }
         else if(option == "-test")
         {
@@ -95,12 +115,12 @@ int main(int argc, char *argv[])
         }
         else if(option == "-update")
         {
-            argument_assert(argc > 2, "Provide a file containing Genome data.");
-            update_genome_file(argv[2]);
+            argument_assert(options.size() >= 2, "Provide a file containing Genome data.");
+            update_genome_file(options[1]);
         }
         else
         {
-            start_game(argc, argv);
+            start_game(options);
         }
     }
     catch(const std::exception& e)
@@ -118,6 +138,11 @@ namespace
     {
         std::cout << "\n\nGenetic Chess\n"
                 << "=============\n\n"
+                << "For all arguments, all of the following forms are equivalent:\n"
+                << "\t-arg param\n"
+                << "\t--arg param\n"
+                << "\t-arg=param\n"
+                << "\t--arg=param\n\n"
                 << "Standalone functions (only first is run if multiple are specified):\n\n"
                 << "\t-gene-pool [file name]\n"
                 << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
@@ -367,7 +392,7 @@ namespace
         return true;
     }
 
-    void start_game(int argc, char* argv[])
+    void start_game(const std::vector<std::string>& options)
     {
         // Use pointers since each player could be Genetic, Random, etc.
         std::unique_ptr<Player> white;
@@ -383,21 +408,21 @@ namespace
         std::string location;
         auto thinking_output = Thinking_Output_Type::NO_THINKING;
 
-        for(int i = 1; i < argc; ++i)
+        for(size_t i = 0; i < options.size(); ++i)
         {
-            const std::string opt = argv[i];
+            const std::string opt = options[i];
             if(opt == "-random")
             {
                 latest = std::make_unique<Random_AI>();
             }
             else if(opt == "-genetic")
             {
-                argument_assert(i + 1 < argc, "Genome file needed for player");
-                std::string filename = argv[++i];
+                argument_assert(i + 1 < options.size(), "Genome file needed for player");
+                std::string filename = options[++i];
 
                 try
                 {
-                    const auto id = i + 1 < argc ? argv[i + 1] : std::string{};
+                    const auto id = i + 1 < options.size() ? options[i + 1] : std::string{};
                     latest = std::make_unique<Minimax_AI>(filename, String::to_number<int>(id));
                     ++i;
                 }
@@ -406,33 +431,33 @@ namespace
                     latest = std::make_unique<Minimax_AI>(filename, find_last_id(filename));
                 }
             }
-            else if(opt == "-time" && i + 1 < argc)
+            else if(opt == "-time" && i + 1 < options.size())
             {
-                game_time = String::to_duration<Clock::seconds>(argv[++i]);
+                game_time = String::to_duration<Clock::seconds>(options[++i]);
             }
-            else if(opt == "-reset-moves" && i + 1 < argc)
+            else if(opt == "-reset-moves" && i + 1 < options.size())
             {
-                moves_per_reset = String::to_number<size_t>(argv[++i]);
+                moves_per_reset = String::to_number<size_t>(options[++i]);
             }
-            else if(opt == "-increment-time" && i + 1 < argc)
+            else if(opt == "-increment-time" && i + 1 < options.size())
             {
-                increment_time = String::to_duration<Clock::seconds>(argv[++i]);
+                increment_time = String::to_duration<Clock::seconds>(options[++i]);
             }
-            else if(opt == "-board" && i + 1 < argc)
+            else if(opt == "-board" && i + 1 < options.size())
             {
-                board = Board(argv[++i]);
+                board = Board(options[++i]);
             }
-            else if(opt == "-game-file" && i + 1 < argc)
+            else if(opt == "-game-file" && i + 1 < options.size())
             {
-                game_file_name = argv[++i];
+                game_file_name = options[++i];
             }
-            else if(opt == "-event" && i + 1 < argc)
+            else if(opt == "-event" && i + 1 < options.size())
             {
-                event_name = argv[++i];
+                event_name = options[++i];
             }
-            else if(opt == "-location" && i + 1 < argc)
+            else if(opt == "-location" && i + 1 < options.size())
             {
-                location = argv[++i];
+                location = options[++i];
             }
             else if(opt == "-xboard")
             {
