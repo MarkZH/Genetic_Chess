@@ -91,31 +91,36 @@ namespace
     // Add a move to the list that is only legal when starting from a certain square
     // (e.g., castling, pawn double move, promotion, etc.)
     template<typename Move_Type, typename ...Parameters>
-    void add_legal_move(indexed_move_array& out, const Piece piece, const bool blockable, const Parameters ... parameters) noexcept
+    void add_legal_move(indexed_move_array& out, const Piece piece, const Parameters ... parameters) noexcept
     {
         const auto move = new Move_Type(parameters...);
         auto& lists = out[piece.index()][move->start().index()];
-        if(lists.empty() || ! blockable)
+        if(lists.empty())
         {
             lists.push_back({});
         }
 
-        if( ! lists.back().empty() && ! same_direction(move->movement(), lists.back().back()->movement()))
+        if( ! lists.back().empty())
         {
-            lists.push_back({});
+            const auto& last_move = lists.back().back();
+            if( ! same_direction(move->movement(), last_move->movement()) ||
+                move->promotion_piece_symbol() != last_move->promotion_piece_symbol())
+            {
+                lists.push_back({});
+            }
         }
 
         lists.back().push_back(move);
     }
 
-    void add_standard_legal_move(indexed_move_array& out, const Piece piece, const int file_step, const int rank_step, const bool blockable) noexcept
+    void add_standard_legal_move(indexed_move_array& out, const Piece piece, const int file_step, const int rank_step) noexcept
     {
         for(auto start : Square::all_squares())
         {
             const auto end = start + Square_Difference{file_step, rank_step};
             if(end.inside_board())
             {
-                add_legal_move<Move>(out, piece, blockable, start, end);
+                add_legal_move<Move>(out, piece, start, end);
             }
         }
     }
@@ -130,13 +135,13 @@ namespace
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
             {
-                add_legal_move<Pawn_Move>(out, pawn, true, color, Square{file, rank});
+                add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank});
             }
         }
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            add_legal_move<Pawn_Double_Move>(out, pawn, true, color, file);
+            add_legal_move<Pawn_Double_Move>(out, pawn, color, file);
         }
 
         std::vector<Piece_Type> possible_promotions;
@@ -158,20 +163,20 @@ namespace
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
                 {
-                    add_legal_move<Pawn_Move>(out, pawn, true, color, Square{file, rank}, dir);
+                    add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, dir);
                 }
             }
 
             for(char file = first_file; file <= last_file; ++file)
             {
-                add_legal_move<En_Passant>(out, pawn, true, color, dir, file);
+                add_legal_move<En_Passant>(out, pawn, color, dir, file);
             }
 
             for(auto promote : possible_promotions)
             {
                 for(auto file = first_file; file <= last_file; ++file)
                 {
-                    add_legal_move<Pawn_Promotion>(out, pawn, false, promote, color, file, dir);
+                    add_legal_move<Pawn_Promotion>(out, pawn, promote, color, file, dir);
                 }
             }
         }
@@ -180,7 +185,7 @@ namespace
         {
             for(auto file = 'a'; file <= 'h'; ++file)
             {
-                add_legal_move<Pawn_Promotion>(out, pawn, false, promote, color, file);
+                add_legal_move<Pawn_Promotion>(out, pawn, promote, color, file);
             }
         }
     }
@@ -196,7 +201,7 @@ namespace
 
                 for(int move_size = 1; move_size <= 7; ++move_size)
                 {
-                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank, true);
+                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank);
                 }
             }
         }
@@ -211,7 +216,7 @@ namespace
             {
                 for(auto rank_direction : {-1, 1})
                 {
-                    add_standard_legal_move(out, {color, Piece_Type::KNIGHT}, d_file*file_direction, d_rank*rank_direction, false);
+                    add_standard_legal_move(out, {color, Piece_Type::KNIGHT}, d_file*file_direction, d_rank*rank_direction);
                 }
             }
         }
@@ -225,7 +230,7 @@ namespace
             {
                 for(int move_size = 1; move_size <= 7; ++move_size)
                 {
-                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank, true);
+                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank);
                 }
             }
         }
@@ -247,16 +252,16 @@ namespace
             {
                 if(d_rank == 0 && d_file == 0) { continue; }
 
-                add_standard_legal_move(out, king, d_file, d_rank, true);
+                add_standard_legal_move(out, king, d_file, d_rank);
                 if(d_rank == 0)
                 {
                     if(d_file > 0)
                     {
-                        add_legal_move<Castle>(out, king, true, base_rank, Direction::RIGHT);
+                        add_legal_move<Castle>(out, king, base_rank, Direction::RIGHT);
                     }
                     else
                     {
-                        add_legal_move<Castle>(out, king, true, base_rank, Direction::LEFT);
+                        add_legal_move<Castle>(out, king, base_rank, Direction::LEFT);
                     }
                 }
             }
