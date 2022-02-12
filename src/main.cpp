@@ -137,6 +137,11 @@ namespace
     {
         std::cout << "\n\nGenetic Chess\n"
                 << "=============\n\n"
+                << "For all arguments, all of the following forms are equivalent:\n"
+                << "\t-arg param\n"
+                << "\t--arg param\n"
+                << "\t-arg=param\n"
+                << "\t--arg=param\n\n"
                 << "Standalone functions (only first is run if multiple are specified):\n\n"
                 << "\t-gene-pool [file name]\n"
                 << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
