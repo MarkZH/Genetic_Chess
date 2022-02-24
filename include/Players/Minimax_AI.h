@@ -120,9 +120,6 @@ class Minimax_AI : public Player
         //! A datatype for storing the moves that are played to reach the current board position during a search.
         using current_variation_store = Fixed_Capacity_Vector<const Move*, variation_store_size>;
 
-        //! \brief Returns the name of the brains of the AI.
-        std::string ai_name() const;
-
         //! \brief Recalculate values that will last the lifetime of the instance.
         //!
         //! In this case, the values are an initial estimate of the speed of
