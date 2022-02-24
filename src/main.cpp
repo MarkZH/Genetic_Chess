@@ -48,6 +48,12 @@ namespace
     //! \exception Genome_Creation_Error or derivative if the genome file is invalid.
     void update_genome_file(const std::string& file_name);
 
+    //! \brief List all move combinations to a given depth
+    //! \param depth The maximum depth to search for moves.
+    //!
+    //! Prints results to stdout.
+    void list_moves(size_t depth) noexcept;
+
     //! \brief Throws std::invalid_argument if assertion fails
     //!
     //! \param condition A condition that must be true to continue.
@@ -116,6 +122,11 @@ int main(int argc, char *argv[])
         {
             argument_assert(options.size() >= 2, "Provide a file containing Genome data.");
             update_genome_file(options[1]);
+        }
+        else if(option == "-list")
+        {
+            argument_assert(options.size() >= 2, option + " requires a numeric argument.");
+            list_moves(String::to_number<size_t>(options[1]));
         }
         else
         {
@@ -561,6 +572,35 @@ namespace
                 output << line << '\n';
             }
         }
+    }
+
+    void list_moves_on_board(const Board& board, std::vector<const Move*>& moves_played, size_t depth) noexcept
+    {
+        if(depth == 0 || board.legal_moves().empty())
+        {
+            for(const auto move : moves_played)
+            {
+                std::cout << move->coordinates() << ' ';
+            }
+            std::cout << '\n';
+            return;
+        }
+
+        for(const auto move : board.legal_moves())
+        {
+            moves_played.push_back(move);
+            auto new_board = board;
+            new_board.play_move(*move);
+            list_moves_on_board(new_board, moves_played, depth - 1);
+            moves_played.pop_back();
+        }
+    }
+
+    void list_moves(const size_t depth) noexcept
+    {
+        std::vector<const Move*> moves_played;
+        Board board;
+        list_moves_on_board(board, moves_played, depth);
     }
 
     void argument_assert(const bool condition, const std::string& failure_message)
