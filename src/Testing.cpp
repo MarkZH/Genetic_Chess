@@ -1079,10 +1079,10 @@ namespace
             }
             else
             {
-                auto move = Random::random_element(move_list);
+                const auto move = Random::random_element(move_list);
                 moves.push_back(move->algebraic(board));
                 board.play_move(*move);
-                auto identical_board = Board(board.fen());
+                const auto identical_board = Board(board.fen());
                 if(board.board_hash() != identical_board.board_hash())
                 {
                     tests_passed = false;
