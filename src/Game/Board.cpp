@@ -106,13 +106,11 @@ Board::Board(const std::string& input_fen)
     fen_parse_assert(find_king(Piece_Color::WHITE).is_set(), input_fen, "White king not in FEN string");
     fen_parse_assert(find_king(Piece_Color::BLACK).is_set(), input_fen, "Black king not in FEN string");
 
-    if(fen_parse[1] == "b")
+    const auto first_turn = fen_parse.at(1);
+    fen_parse_assert(first_turn == "w" || first_turn == "b", input_fen, "Invalid character for whose turn: " + first_turn);
+    if(first_turn == "b")
     {
         switch_turn();
-    }
-    else if(fen_parse[1] != "w")
-    {
-        fen_parse_assert(false, input_fen, "Invalid character for whose turn: " + fen_parse[1]);
     }
 
     const auto non_turn_color = opposite(whose_turn());
