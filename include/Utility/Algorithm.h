@@ -2,6 +2,7 @@
 #define ALGORITHM_H
 
 #include <algorithm>
+#include <cstddef>
 
 //! \brief A collection of algorithms that operate on ranges.
 namespace Algorithm
@@ -27,6 +28,53 @@ namespace Algorithm
             return i != end && has_exactly_n(std::next(i), end, predicate, n - 1);
         }
     }
+
+    //! \brief A class for modifying container temporarily within a scope by pushing elements to the back.
+    //!
+    //! \tparam Container A container-like object that has push_back methods or can be used with std::insert and std::erase.
+    //!
+    //! The constucted object is a guard whose destructor
+    //! returns the conatiner to its original state. It is
+    //! advised not to modify the container during the guard's
+    //! lifetime (except by other scoped_push_back calls).
+    template<typename Container>
+    class [[nodiscard]] scoped_push_back
+    {
+        public:
+            //! \brief Temporarily add a single item.
+            //!
+            //! \param container The container to be modified.
+            //! \param item The item to add to the back of the container.
+            scoped_push_back(Container& container, typename Container::const_reference item) :
+                the_container(container),
+                original_size(container.size())
+            {
+                the_container.push_back(item);
+            }
+
+            //! \brief Temporarily add a range of items.
+            //!
+            //! \tparam Iterator An iterator type.
+            //! \param container The container to be modified.
+            //! \param begin An iterator to the first item to be added.
+            //! \param end An iterator just passed the last item to be added.
+            template<typename Iterator>
+            scoped_push_back(Container& container, Iterator begin, Iterator end) :
+                the_container(container),
+                original_size(container.size())
+            {
+                the_container.insert(the_container.end(), begin, end);
+            }
+
+            ~scoped_push_back()
+            {
+                the_container.erase(the_container.begin() + original_size, the_container.end());
+            }
+
+        private:
+            Container& the_container;
+            size_t original_size;
+    };
 }
 
 #endif // ALGORITHM_H
