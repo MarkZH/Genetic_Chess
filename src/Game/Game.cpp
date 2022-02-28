@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <csignal>
 #include <cassert>
+#include <iostream>
 
 #include "Players/Player.h"
 #include "Players/Proxy_Player.h"
@@ -34,6 +35,11 @@ Game_Result play_game(Board board,
     {
         const auto& player = board.whose_turn() == Piece_Color::WHITE ? white : black;
         const auto& move_chosen = player.choose_move(board, game_clock);
+
+        if(Player::thinking_mode() != Thinking_Output_Type::NO_THINKING)
+        {
+            std::cout << player.name() << " chose " << move_chosen.algebraic(board) << '\n';
+        }
 
         result = game_clock.punch(board);
         if( ! result.game_has_ended())
