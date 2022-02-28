@@ -109,7 +109,7 @@ class Fixed_Capacity_Vector
         //! \brief Return if the Fixed_Capacity_Vector is full and can take no more push_back()s.
         constexpr bool full() const noexcept
         {
-            return size() == data.size();
+            return size() == max_size();
         }
 
         //! \brief Returns the first item in the Fixed_Capacity_Vector.
