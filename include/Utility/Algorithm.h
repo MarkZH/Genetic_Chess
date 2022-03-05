@@ -29,14 +29,25 @@ namespace Algorithm
         }
     }
 
-    //! \brief A class for modifying container temporarily within a scope by pushing elements to the back.
+    //! \brief A class for temporarily modifying a container within a scope by pushing elements to the back.
     //!
     //! \tparam Container A container-like object that has push_back methods or can be used with std::insert and std::erase.
     //!
     //! The constucted object is a guard whose destructor
-    //! returns the conatiner to its original state. It is
+    //! returns the container to its original state. It is
     //! advised not to modify the container during the guard's
-    //! lifetime (except by other scoped_push_back calls).
+    //! lifetime except by other scoped_push_back calls.
+    //!
+    //! Example of usage:
+    //! \code{cpp}
+    //! auto data = std::vector<int>{1, 2, 3}; // data == {1, 2, 3}
+    //!
+    //! {
+    //!     const auto push_guard = Algorithm::scoped_push_back(4); // data == {1, 2, 3, 4}
+    //! }
+    //!
+    //! // data == {1, 2, 3}
+    //! \endcode
     template<typename Container>
     class [[nodiscard]] scoped_push_back
     {
