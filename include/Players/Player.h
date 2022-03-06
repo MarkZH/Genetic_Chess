@@ -53,6 +53,11 @@ class Player
         //! \param mode Which chess engine protocol is being used: CECP, UCI, or NO_THINKING.
         static void set_thinking_mode(Thinking_Output_Type) noexcept;
 
+        //! \brief Find out what kind of format an engine should output while picking a move.
+        //!
+        //! \returns Format of thinking output: CECP, UCI, or NO_THINKING.
+        static Thinking_Output_Type thinking_mode() noexcept;
+
         //! \brief Force the Player to stop thinking and immediately make a move.
         static void pick_move_now() noexcept;
 
@@ -72,11 +77,6 @@ class Player
         int draws() const noexcept;
 
     protected:
-        //! \brief Find out what kind of format an engine should output while picking a move.
-        //!
-        //! \returns Format of thinking output: CECP, UCI, or NO_THINKING.
-        static Thinking_Output_Type thinking_mode() noexcept;
-
         //! \brief Check whether a Player should stop thinking and immediately move.
         static bool must_pick_move_now() noexcept;
 

@@ -23,6 +23,7 @@ using namespace std::chrono_literals;
 #include "Utility/Fixed_Capacity_Vector.h"
 #include "Utility/Math.h"
 #include "Utility/Exceptions.h"
+#include "Utility/Algorithm.h"
 
 Minimax_AI::Minimax_AI(const std::string& file_name, int id) try : Minimax_AI(std::ifstream{file_name}, id)
 {
@@ -256,7 +257,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         const auto evaluate_start_time = std::chrono::steady_clock::now();
         ++nodes_searched;
 
-        const auto variation_guard = current_variation.scoped_push_back(move);
+        const auto variation_guard = Algorithm::scoped_push_back(current_variation, move);
         auto next_board = board;
         auto move_result = next_board.play_move(*move);
 
@@ -347,7 +348,7 @@ Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
     {
         next_board.play_move(*quiescent_move);
     }
-    const auto quiescent_guard = current_variation.scoped_push_back(quiescent_moves.begin(), quiescent_moves.end());
+    const auto quiescent_guard = Algorithm::scoped_push_back(current_variation, quiescent_moves.begin(), quiescent_moves.end());
     nodes_searched += quiescent_moves.size();
     ++nodes_evaluated;
     return create_result(next_board, perspective, move_result, current_variation);

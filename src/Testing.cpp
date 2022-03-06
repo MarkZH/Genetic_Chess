@@ -441,13 +441,14 @@ void run_speed_tests()
     std::cout << "Board::play_move() speed ..." << std::endl;
     const auto game_time_start = std::chrono::steady_clock::now();
     Board speed_board;
+    const auto speed_board_spare = speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
         const auto move = Random::random_element(speed_board.legal_moves());
         const auto move_result = speed_board.play_move(*move);
         if(move_result.game_has_ended())
         {
-            speed_board = Board{};
+            speed_board = speed_board_spare;
         }
     }
     timing_results.emplace_back(std::chrono::steady_clock::now() - game_time_start, "Board::play_move()");
@@ -1078,10 +1079,10 @@ namespace
             }
             else
             {
-                auto move = Random::random_element(move_list);
+                const auto move = Random::random_element(move_list);
                 moves.push_back(move->algebraic(board));
                 board.play_move(*move);
-                auto identical_board = Board(board.fen());
+                const auto identical_board = Board(board.fen());
                 if(board.board_hash() != identical_board.board_hash())
                 {
                     tests_passed = false;
