@@ -164,7 +164,7 @@ Board::Board(const std::string& input_fen)
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
     const auto fifty_move_count_input = String::to_number<size_t>(fen_parse.at(4));
-    fen_parse_assert(fifty_move_count_input < repeat_count.max_size(), input_fen, "Halfmove clock value too large.");
+    fen_parse_assert(fifty_move_count_input < repeat_count.maximum_size(), input_fen, "Halfmove clock value too large.");
     add_board_position_to_repeat_record();
     while(moves_since_pawn_or_capture() < fifty_move_count_input)
     {
