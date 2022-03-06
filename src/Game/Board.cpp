@@ -107,13 +107,11 @@ Board::Board(const std::string& input_fen)
     fen_parse_assert(find_king(Piece_Color::WHITE).is_set(), input_fen, "White king not in FEN string");
     fen_parse_assert(find_king(Piece_Color::BLACK).is_set(), input_fen, "Black king not in FEN string");
 
-    if(fen_parse[1] == "b")
+    const auto first_turn = fen_parse.at(1);
+    fen_parse_assert(first_turn == "w" || first_turn == "b", input_fen, "Invalid character for whose turn: " + first_turn);
+    if(first_turn == "b")
     {
         switch_turn();
-    }
-    else if(fen_parse[1] != "w")
-    {
-        fen_parse_assert(false, input_fen, "Invalid character for whose turn: " + fen_parse[1]);
     }
 
     const auto non_turn_color = opposite(whose_turn());
@@ -129,16 +127,23 @@ Board::Board(const std::string& input_fen)
         {
             fen_parse_assert(String::contains("KQkq", c), input_fen, std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
 
-            Piece_Color piece_color = std::isupper(c) ? Piece_Color::WHITE : Piece_Color::BLACK;
+            const auto piece_color = std::isupper(c) ? Piece_Color::WHITE : Piece_Color::BLACK;
             const auto rook_square = Square{std::toupper(c) == 'K' ? 'h' : 'a', std::isupper(c) ? 1 : 8};
             const auto king_square = Square{'e', rook_square.rank()};
+            const auto castling_side = rook_square.file() == 'a' ? Direction::LEFT : Direction::RIGHT;
 
-            const std::string side = std::toupper(c) == 'K' ? "king" : "queen";
-            fen_parse_assert(piece_on_square(rook_square) == Piece{piece_color, Piece_Type::ROOK}, input_fen,
+            const auto side = std::string{castling_side == Direction::RIGHT ? "king" : "queen"};
+            const auto rook = Piece{piece_color, Piece_Type::ROOK};
+            const auto king = Piece{piece_color, Piece_Type::KING};
+
+            fen_parse_assert(piece_on_square(rook_square) == rook, input_fen,
                              "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.text() + " to castle " + side + "side.");
-            fen_parse_assert(piece_on_square(king_square) == Piece{piece_color, Piece_Type::KING}, input_fen,
+            fen_parse_assert(piece_on_square(king_square) == king, input_fen,
                              "There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.text() + " to castle.");
-            make_castle_legal(piece_color, rook_square.file() == 'a' ? Direction::LEFT : Direction::RIGHT);
+            fen_parse_assert( ! castle_is_legal(piece_color, castling_side), input_fen,
+                             "There are repeated characters in the castling text: " + castling_parse);
+
+            make_castle_legal(piece_color, castling_side);
         }
     }
 
