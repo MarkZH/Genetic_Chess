@@ -25,7 +25,17 @@
 namespace
 {
     const std::string pgn_symbols = "PRNBQK";
-    const auto invalid_code = Piece{Piece_Color::BLACK, Piece_Type::KING}.index() + 1;
+    const auto invalid_code =
+        []()
+        {
+            auto max_code = Piece(pgn_symbols.front()).index();
+            for(const auto symbol : pgn_symbols)
+            {
+                const auto max_piece_code = std::max(Piece(symbol).index(), Piece(String::tolower(symbol)).index());
+                max_code = std::max(max_code, max_piece_code);
+            }
+            return max_code + 1;
+        }();
 
     using indexed_move_array = std::array<std::array<Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>, 64>, 12>;
 
