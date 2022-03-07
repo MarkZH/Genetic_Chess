@@ -44,6 +44,7 @@ using namespace std::chrono_literals;
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 #include "Utility/Exceptions.h"
+#include "Utility/Algorithm.h"
 
 namespace
 {
@@ -232,6 +233,7 @@ namespace
     void average_moves_left_returns_finite_result_after_one_move(bool& tests_passed);
 
     void math_normalize_test(bool& tests_passed);
+    void scoped_push_back_works_as_advertised(bool& tests_passed);
 }
 
 bool run_tests()
@@ -360,6 +362,8 @@ bool run_tests()
     alpha_beta_result_values_compare_in_line_with_algorithm(tests_passed);
     alpha_and_beta_value_comparisons_fit_algorithm_definitions(tests_passed);
     endgame_node_result_tests(tests_passed);
+
+    scoped_push_back_works_as_advertised(tests_passed);
 
 
     std::cout << (tests_passed ? "All tests passed." : "Tests failed.") << std::endl;
@@ -1658,5 +1662,48 @@ namespace
             std::cerr << "Normalizing (2.0, 8.0, -10.0) should have given (" << expected_a << ", " << expected_b << ", " << expected_c << "). Got (" << a << ", " << b << ", " << c << ").\n";
             tests_passed = false;
         }
+    }
+
+    void scoped_push_back_works_as_advertised(bool& tests_passed)
+    {
+        using data = std::vector<int>;
+        const auto error = [](const data& result, const data& expected)
+            {
+                const std::string intro = "Got wrong result. Expected: ";
+                const std::string but = ", but got: ";
+
+                const auto to_string_array = [](const data& data_list)
+                    {
+                        std::string result_text = "{";
+                        if(data_list.empty())
+                        {
+                            return result_text + "}";
+                        }
+                        result_text += std::to_string(data_list.front());
+                        std::for_each(std::next(data_list.begin()), data_list.end(),
+                                      [&result_text](const auto& n) { result_text += ", " + std::to_string(n); });
+                        return result_text + "}";
+                    };
+
+                return intro + to_string_array(expected) + but + to_string_array(result);
+            };
+
+        data numbers{};
+
+        {
+            const auto guard1 = Algorithm::scoped_push_back(numbers, 1);
+            const auto expected1 = data{1};
+            test_result(tests_passed, numbers == expected1, error(numbers, expected1));
+
+            {
+                const data number_range{2, 3, 4, 5};
+                const data expected2 = {1, 2, 3, 4, 5};
+                const auto guard2 = Algorithm::scoped_push_back(numbers, number_range.begin(), number_range.end());
+                test_result(tests_passed, numbers == expected2, error(numbers, expected2));
+            }
+
+            test_result(tests_passed, numbers == expected1, error(numbers, expected1) + " (after removal)");
+        }
+        test_result(tests_passed, numbers.empty(), error(numbers, {}) + " (after removal)");
     }
 }
