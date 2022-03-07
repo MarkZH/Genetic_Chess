@@ -55,7 +55,7 @@ void Gene::read_from(std::istream& is)
     auto properties = list_properties();
     for(auto& [key, value] : properties)
     {
-        value = {};
+        value.clear();
     }
 
     for(std::string line; std::getline(is, line);)
