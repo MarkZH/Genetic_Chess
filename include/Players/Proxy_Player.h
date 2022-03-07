@@ -16,7 +16,7 @@ class Proxy_Player : public Player
         //! Create the proxy player with a name
         //!
         //! \param player_name The name to use for the player
-        Proxy_Player(const std::string& player_name) noexcept;
+        explicit Proxy_Player(const std::string& player_name) noexcept;
 
         std::string name() const noexcept override;
         std::string author() const noexcept override;

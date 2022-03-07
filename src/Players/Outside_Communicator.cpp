@@ -47,7 +47,7 @@ void Outside_Communicator::record_opponent_name(const std::string& opponent_name
 
 Proxy_Player Outside_Communicator::create_proxy_player() const noexcept
 {
-    return {remote_opponent_name};
+    return Proxy_Player{remote_opponent_name};
 }
 
 std::string Outside_Communicator::receive_command()
