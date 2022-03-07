@@ -41,7 +41,7 @@ class Genome
         //! Create each Gene by copying from either parent with a 50-50 probability.
         //! \param A The first parent.
         //! \param B The second parent.
-        Genome(const Genome& B, const Genome& A) noexcept;
+        Genome(const Genome& A, const Genome& B) noexcept;
 
         //! \brief Inject another genome's data into this one (i.e., assignment operator)
         //!
