@@ -234,6 +234,7 @@ namespace
 
     void math_normalize_test(bool& tests_passed);
     void scoped_push_back_works_as_advertised(bool& tests_passed);
+    void has_exactly_n_works_as_advertised(bool& tests_passed);
 }
 
 bool run_tests()
@@ -364,6 +365,7 @@ bool run_tests()
     endgame_node_result_tests(tests_passed);
 
     scoped_push_back_works_as_advertised(tests_passed);
+    has_exactly_n_works_as_advertised(tests_passed);
 
 
     std::cout << (tests_passed ? "All tests passed." : "Tests failed.") << std::endl;
@@ -1706,5 +1708,34 @@ namespace
         }
 
         test_result(tests_passed, numbers.empty(), error(numbers, {}) + " (after removal)");
+    }
+
+    void has_exactly_n_works_as_advertised(bool& tests_passed)
+    {
+        std::vector<int> data{};
+        const auto max_value = 5;
+        for(auto value = 1; value <= max_value; ++value)
+        {
+            for(auto reps = 1; reps <= value; ++reps)
+            {
+                data.push_back(value);
+            }
+        }
+
+        // data == {1, 2, 2, 3, 3, 3, 4, 4, 4, 4, ...}
+
+        for(auto value = 1; value <= max_value; ++value)
+        {
+            for(auto reps = 1; reps <= max_value; ++reps)
+            {
+                const auto result = Algorithm::has_exactly_n(data.begin(),
+                                                             data.end(),
+                                                             [value](const auto item) { return item == value; },
+                                                             reps);
+                test_result(tests_passed,
+                            result == (value == reps),
+                            std::string{"has_exactly_n failed for "} + std::to_string(reps) + " copies of " + std::to_string(value));
+            }
+        }
     }
 }
