@@ -14,34 +14,34 @@
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
-    if(delim.empty())
-    {
-        auto ss = std::istringstream(s);
-        std::vector<std::string> result;
-        std::copy(std::istream_iterator<std::string>(ss), std::istream_iterator<std::string>(), std::back_inserter(result));
-        return result;
-    }
-
     if(s.empty())
     {
         return {};
     }
 
     std::vector<std::string> result;
-    size_t start_index = 0;
-    size_t end_index = 0;
-    size_t split_count = 0;
-    while(end_index < s.size() && split_count < count)
+    if(delim.empty())
     {
-        end_index = std::min(s.find(delim, start_index), s.size());
-        result.push_back(s.substr(start_index, end_index - start_index));
-        start_index = end_index + delim.size();
-        ++split_count;
+        auto ss = std::istringstream(s);
+        std::copy(std::istream_iterator<std::string>(ss), std::istream_iterator<std::string>(), std::back_inserter(result));
     }
-
-    if(start_index <= s.size())
+    else
     {
-        result.push_back(s.substr(start_index));
+        size_t start_index = 0;
+        size_t end_index = 0;
+        size_t split_count = 0;
+        while(end_index < s.size() && split_count < count)
+        {
+            end_index = std::min(s.find(delim, start_index), s.size());
+            result.push_back(s.substr(start_index, end_index - start_index));
+            start_index = end_index + delim.size();
+            ++split_count;
+        }
+
+        if(start_index <= s.size())
+        {
+            result.push_back(s.substr(start_index));
+        }
     }
 
     return result;
