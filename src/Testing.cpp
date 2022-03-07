@@ -1704,6 +1704,7 @@ namespace
 
             test_result(tests_passed, numbers == expected1, error(numbers, expected1) + " (after removal)");
         }
+
         test_result(tests_passed, numbers.empty(), error(numbers, {}) + " (after removal)");
     }
 }
