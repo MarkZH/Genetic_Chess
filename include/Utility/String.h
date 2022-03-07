@@ -18,7 +18,7 @@ namespace String
     //! \param delim The delimiter that marks where the string should be split. If empty,
     //!        any number of consecutive whitespaces will be the delimiter.
     //! \param count The maximum number of splits. The final number of strings will be
-    //!        count + 1 at most.
+    //!        count + 1 at most. This parameter is ignored if delim is empty.
     //! \returns A list of strings that were separated by the delimiter.
     std::vector<std::string> split(const std::string& s,
                                    const std::string& delim = "",
