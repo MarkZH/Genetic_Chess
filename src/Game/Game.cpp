@@ -69,7 +69,6 @@ void play_game_with_outsider(const Player& player,
     const auto outsider = connect_to_outside(player);
 
     signal(SIGINT, SIG_IGN);
-    signal(SIGTERM, SIG_IGN);
 
     Board board;
     Clock clock;
