@@ -1070,7 +1070,7 @@ namespace
         Board board;
         test_result(tests_passed, board.board_hash() == Board{board.fen()}.board_hash(), "Standard starting board hashes do not match.");
         std::vector<std::string> moves;
-        auto maximum_move_count =
+        constexpr auto maximum_move_count =
         #ifdef NDEBUG
             1'000'000;
         #else
