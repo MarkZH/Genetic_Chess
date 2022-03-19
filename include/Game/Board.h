@@ -155,6 +155,11 @@ class Board
         //!          its argument from this list.
         const std::vector<const Move*>& legal_moves() const noexcept;
 
+        //! \brief Whether there are no legal moves for the current player.
+        //!
+        //! This will be true when the current player is checkmated or stalemated.
+        bool no_legal_moves() const noexcept;
+
         //! \brief Whether a square is attacked by a piece of a given color.
         //!
         //! \param target The square under consideration.
@@ -335,7 +340,6 @@ class Board
         Piece& piece_on_square(Square square) noexcept;
         void remove_piece(Square square) noexcept;
         void move_piece(const Move& move) noexcept;
-        bool no_legal_moves() const noexcept;
         void make_en_passant_targetable(Square square) noexcept;
         void clear_en_passant_target() noexcept;
         bool is_en_passant_targetable(Square square) const noexcept;

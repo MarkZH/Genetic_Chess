@@ -1078,28 +1078,25 @@ namespace
         #endif
         for(auto move_count = 1; move_count <= maximum_move_count; ++move_count)
         {
-            const auto& move_list = board.legal_moves();
-            if(move_list.empty())
+            if(board.no_legal_moves())
             {
                 board = {};
                 moves = {};
             }
-            else
+
+            const auto move = Random::random_element(board.legal_moves());
+            moves.push_back(move->algebraic(board));
+            board.play_move(*move);
+            const auto identical_board = Board(board.fen());
+            if(board.board_hash() != identical_board.board_hash())
             {
-                const auto move = Random::random_element(move_list);
-                moves.push_back(move->algebraic(board));
-                board.play_move(*move);
-                const auto identical_board = Board(board.fen());
-                if(board.board_hash() != identical_board.board_hash())
-                {
-                    tests_passed = false;
-                    std::cerr << "Boards do not have equal hashes: " << board.fen() << "\n"
-                              << "                                 " << identical_board.fen() << "\n"
-                              << "Move count: " << move_count << std::endl;
-                    std::cerr << "Moves: " << String::join(moves.begin(), moves.end(), " ") << std::endl;
-                    board.compare_hashes(identical_board);
-                    break;
-                }
+                tests_passed = false;
+                std::cerr << "Boards do not have equal hashes: " << board.fen() << "\n"
+                          << "                                 " << identical_board.fen() << "\n"
+                          << "Move count: " << move_count << std::endl;
+                std::cerr << "Moves: " << String::join(moves.begin(), moves.end(), " ") << std::endl;
+                board.compare_hashes(identical_board);
+                break;
             }
         }
     }
