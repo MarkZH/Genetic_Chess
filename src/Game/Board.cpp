@@ -13,6 +13,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <map>
+#include <type_traits>
 
 #include "Game/Clock.h"
 #include "Game/Square.h"
@@ -698,27 +699,18 @@ bool Board::no_legal_moves() const noexcept
 namespace
 {
     template<typename OutputStream, typename DataType>
-    void output_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
-    {
-        output << "[" << heading << " \"" << data << "\"]\n";
-    }
-
-    template<typename OutputStream, typename DataType>
     void print_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
     {
-        output_game_header_line(output, heading, data);
-    }
-
-    template<typename OutputStream>
-    void print_game_header_line(OutputStream& output, const std::string& heading, const std::string& data)
-    {
-        output_game_header_line(output, heading, data.empty() ? "?" : data);
-    }
-
-    template<typename OutputStream>
-    void print_game_header_line(OutputStream& output, const std::string& heading, const char* const data)
-    {
-        print_game_header_line(output, heading, std::string{data});
+        output << "[" << heading << " \"";
+        if constexpr (std::is_same_v<DataType, std::string>)
+        {
+            output << (data.empty() ? "?" : data);
+        }
+        else
+        {
+            output << data;
+        }
+        output << "\"]\n";
     }
 }
 
