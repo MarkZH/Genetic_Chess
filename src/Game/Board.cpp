@@ -698,11 +698,11 @@ bool Board::no_legal_moves() const noexcept
 
 namespace
 {
-    template<typename OutputStream, typename DataType>
-    void print_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
+    template<typename Output_Stream, typename Data_Type>
+    void print_game_header_line(Output_Stream& output, const std::string& heading, const Data_Type& data)
     {
         output << "[" << heading << " \"";
-        if constexpr (std::is_same_v<DataType, std::string>)
+        if constexpr (std::is_same_v<Data_Type, std::string>)
         {
             output << (data.empty() ? "?" : data);
         }
