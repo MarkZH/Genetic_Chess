@@ -34,6 +34,7 @@ using namespace std::chrono_literals;
 #include "Utility/Configuration.h"
 #include "Utility/Random.h"
 #include "Utility/Exceptions.h"
+#include "Utility/Thread_Limiter.h"
 
 namespace
 {
@@ -139,33 +140,26 @@ void gene_pool(const std::string& config_file)
         // adjacent AIs are matched as opponents.
         Random::stir_order(pool, roaming_distance);
         std::vector<std::future<Game_Result>> results;
+        auto limiter = Thread_Limiter(maximum_simultaneous_games);
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
-            while(int(results.size()) >= maximum_simultaneous_games)
-            {
-                const auto in_progress_games =
-                    std::count_if(results.begin(),
-                                  results.end(),
-                                  [](const auto& r)
-                                  {
-                                      return r.wait_for(100ms) != std::future_status::ready;
-                                  });
-
-                if(in_progress_games < maximum_simultaneous_games)
-                {
-                    break;
-                }
-            }
-
+            limiter.ask();
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
-            results.emplace_back(std::async(std::launch::async, play_game,
-                                            board,
-                                            Clock{game_time},
-                                            std::cref(white), std::cref(black),
-                                            "Gene pool",
-                                            "Local computer",
-                                            game_record_file));
+            results.emplace_back(std::async(std::launch::async,
+                                            [&]()
+                                            {
+                                                const auto result =
+                                                    play_game(board,
+                                                              Clock{game_time},
+                                                              std::cref(white),
+                                                              std::cref(black),
+                                                              "Gene pool",
+                                                              "Local computer",
+                                                              game_record_file);
+                                                limiter.done();
+                                                return result;
+                                            }));
         }
 
         std::stringstream result_printer;
