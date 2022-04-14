@@ -49,7 +49,7 @@ class Fixed_Capacity_Vector
                               Iterator range_end) noexcept
         {
             const auto move_distance = std::distance(range_begin, range_end);
-            assert(size() + move_distance < max_size());
+            assert(size() + move_distance < maximum_size());
             std::move(position, end(), position + move_distance);
             std::copy(range_begin, range_end, position);
             insertion_point += move_distance;
@@ -97,7 +97,7 @@ class Fixed_Capacity_Vector
         }
 
         //! \brief Return the maximum size of the Fixed_Capacity_Vector.
-        constexpr size_t max_size() const noexcept
+        constexpr size_t maximum_size() const noexcept
         {
             return data.size();
         }
@@ -105,7 +105,7 @@ class Fixed_Capacity_Vector
         //! \brief Return if the Fixed_Capacity_Vector is full and can take no more push_back()s.
         constexpr bool full() const noexcept
         {
-            return size() == max_size();
+            return size() == maximum_size();
         }
 
         //! \brief Returns the first item in the Fixed_Capacity_Vector.

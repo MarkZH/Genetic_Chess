@@ -3,6 +3,7 @@
 #include <string>
 #include <array>
 #include <map>
+#include <algorithm>
 
 #include "Genes/Gene.h"
 #include "Game/Piece.h"
@@ -123,5 +124,6 @@ double Piece_Strength_Gene::game_progress(const Board& board) const noexcept
         }
     }
 
-    return (1.0 - *std::min_element(piece_value_left.begin(), piece_value_left.end()))/(1.0 - king_value);
+    const auto piece_score_left = std::min(piece_value_left[0], piece_value_left[1]);
+    return (1.0 - piece_score_left)/(1.0 - king_value);
 }

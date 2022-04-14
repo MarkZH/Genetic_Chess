@@ -18,6 +18,7 @@ using namespace std::chrono_literals;
 #include <string>
 #include <numeric>
 #include <sstream>
+#include <semaphore>
 
 #ifndef _WIN32
 #include <mutex>
@@ -110,7 +111,7 @@ void gene_pool(const std::string& config_file)
 
     if(config.any_unused_parameters())
     {
-        std::cout << "There were unused parameters in the file: " << config.file_name() << std::endl;
+        std::cout << "There were unused parameters in the file: " << config_file << std::endl;
         config.print_unused_parameters();
         std::cout << "\nPress enter to continue or " << stop_key << " to quit ..." << std::endl;
         std::cin.get();
@@ -139,33 +140,26 @@ void gene_pool(const std::string& config_file)
         // adjacent AIs are matched as opponents.
         Random::stir_order(pool, roaming_distance);
         std::vector<std::future<Game_Result>> results;
+        auto limiter = std::counting_semaphore(maximum_simultaneous_games);
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
-            while(int(results.size()) >= maximum_simultaneous_games)
-            {
-                const auto in_progress_games =
-                    std::count_if(results.begin(),
-                                  results.end(),
-                                  [](const auto& r)
-                                  {
-                                      return r.wait_for(100ms) != std::future_status::ready;
-                                  });
-
-                if(in_progress_games < maximum_simultaneous_games)
-                {
-                    break;
-                }
-            }
-
+            limiter.acquire();
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
-            results.emplace_back(std::async(std::launch::async, play_game,
-                                            board,
-                                            Clock{game_time},
-                                            std::cref(white), std::cref(black),
-                                            "Gene pool",
-                                            "Local computer",
-                                            game_record_file));
+            results.emplace_back(std::async(std::launch::async,
+                                            [&]()
+                                            {
+                                                const auto result =
+                                                    play_game(board,
+                                                              Clock{game_time},
+                                                              std::cref(white),
+                                                              std::cref(black),
+                                                              "Gene pool",
+                                                              "Local computer",
+                                                              game_record_file);
+                                                limiter.release();
+                                                return result;
+                                            }));
         }
 
         std::stringstream result_printer;
