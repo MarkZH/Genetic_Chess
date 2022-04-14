@@ -18,6 +18,7 @@ using namespace std::chrono_literals;
 #include <string>
 #include <numeric>
 #include <sstream>
+#include <semaphore>
 
 #ifndef _WIN32
 #include <mutex>
@@ -34,7 +35,6 @@ using namespace std::chrono_literals;
 #include "Utility/Configuration.h"
 #include "Utility/Random.h"
 #include "Utility/Exceptions.h"
-#include "Utility/Thread_Limiter.h"
 
 namespace
 {
@@ -140,10 +140,10 @@ void gene_pool(const std::string& config_file)
         // adjacent AIs are matched as opponents.
         Random::stir_order(pool, roaming_distance);
         std::vector<std::future<Game_Result>> results;
-        auto limiter = Thread_Limiter(maximum_simultaneous_games);
+        auto limiter = std::counting_semaphore(maximum_simultaneous_games);
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
-            limiter.ask();
+            limiter.acquire();
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
             results.emplace_back(std::async(std::launch::async,
@@ -157,7 +157,7 @@ void gene_pool(const std::string& config_file)
                                                               "Gene pool",
                                                               "Local computer",
                                                               game_record_file);
-                                                limiter.done();
+                                                limiter.release();
                                                 return result;
                                             }));
         }
