@@ -44,6 +44,7 @@ using namespace std::chrono_literals;
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 #include "Utility/Exceptions.h"
+#include "Utility/Algorithm.h"
 
 namespace
 {
@@ -232,6 +233,8 @@ namespace
     void average_moves_left_returns_finite_result_after_one_move(bool& tests_passed);
 
     void math_normalize_test(bool& tests_passed);
+    void scoped_push_back_works_as_advertised(bool& tests_passed);
+    void has_exactly_n_works_as_advertised(bool& tests_passed);
 }
 
 bool run_tests()
@@ -359,6 +362,9 @@ bool run_tests()
     alpha_beta_result_values_compare_in_line_with_algorithm(tests_passed);
     alpha_and_beta_value_comparisons_fit_algorithm_definitions(tests_passed);
     endgame_node_result_tests(tests_passed);
+
+    scoped_push_back_works_as_advertised(tests_passed);
+    has_exactly_n_works_as_advertised(tests_passed);
 
 
     std::cout << (tests_passed ? "All tests passed." : "Tests failed.") << std::endl;
@@ -1063,7 +1069,7 @@ namespace
         Board board;
         test_result(tests_passed, board.board_hash() == Board{board.fen()}.board_hash(), "Standard starting board hashes do not match.");
         std::vector<std::string> moves;
-        auto maximum_move_count =
+        constexpr auto maximum_move_count =
         #ifdef NDEBUG
             1'000'000;
         #else
@@ -1071,28 +1077,25 @@ namespace
         #endif
         for(auto move_count = 1; move_count <= maximum_move_count; ++move_count)
         {
-            const auto& move_list = board.legal_moves();
-            if(move_list.empty())
+            if(board.no_legal_moves())
             {
                 board = {};
                 moves = {};
             }
-            else
+
+            const auto move = Random::random_element(board.legal_moves());
+            moves.push_back(move->algebraic(board));
+            board.play_move(*move);
+            const auto identical_board = Board(board.fen());
+            if(board.board_hash() != identical_board.board_hash())
             {
-                const auto move = Random::random_element(move_list);
-                moves.push_back(move->algebraic(board));
-                board.play_move(*move);
-                const auto identical_board = Board(board.fen());
-                if(board.board_hash() != identical_board.board_hash())
-                {
-                    tests_passed = false;
-                    std::cerr << "Boards do not have equal hashes: " << board.fen() << "\n"
-                              << "                                 " << identical_board.fen() << "\n"
-                              << "Move count: " << move_count << std::endl;
-                    std::cerr << "Moves: " << String::join(moves.begin(), moves.end(), " ") << std::endl;
-                    board.compare_hashes(identical_board);
-                    break;
-                }
+                tests_passed = false;
+                std::cerr << "Boards do not have equal hashes: " << board.fen() << "\n"
+                          << "                                 " << identical_board.fen() << "\n"
+                          << "Move count: " << move_count << std::endl;
+                std::cerr << "Moves: " << String::join(moves.begin(), moves.end(), " ") << std::endl;
+                board.compare_hashes(identical_board);
+                break;
             }
         }
     }
@@ -1656,6 +1659,79 @@ namespace
         {
             std::cerr << "Normalizing (2.0, 8.0, -10.0) should have given (" << expected_a << ", " << expected_b << ", " << expected_c << "). Got (" << a << ", " << b << ", " << c << ").\n";
             tests_passed = false;
+        }
+    }
+
+    void scoped_push_back_works_as_advertised(bool& tests_passed)
+    {
+        using data = std::vector<int>;
+        const auto error = [](const data& result, const data& expected)
+            {
+                const std::string intro = "Got wrong result. Expected: ";
+                const std::string but = ", but got: ";
+
+                const auto to_string_array = [](const data& data_list)
+                    {
+                        std::string result_text = "{";
+                        if(data_list.empty())
+                        {
+                            return result_text + "}";
+                        }
+                        result_text += std::to_string(data_list.front());
+                        std::for_each(std::next(data_list.begin()), data_list.end(),
+                                      [&result_text](const auto& n) { result_text += ", " + std::to_string(n); });
+                        return result_text + "}";
+                    };
+
+                return intro + to_string_array(expected) + but + to_string_array(result);
+            };
+
+        data numbers{};
+
+        {
+            const auto guard1 = Algorithm::scoped_push_back(numbers, 1);
+            const auto expected1 = data{1};
+            test_result(tests_passed, numbers == expected1, error(numbers, expected1));
+
+            {
+                const data number_range{2, 3, 4, 5};
+                const data expected2 = {1, 2, 3, 4, 5};
+                const auto guard2 = Algorithm::scoped_push_back(numbers, number_range.begin(), number_range.end());
+                test_result(tests_passed, numbers == expected2, error(numbers, expected2));
+            }
+
+            test_result(tests_passed, numbers == expected1, error(numbers, expected1) + " (after removal)");
+        }
+
+        test_result(tests_passed, numbers.empty(), error(numbers, {}) + " (after removal)");
+    }
+
+    void has_exactly_n_works_as_advertised(bool& tests_passed)
+    {
+        std::vector<int> data{};
+        const auto max_value = 5;
+        for(auto value = 1; value <= max_value; ++value)
+        {
+            for(auto reps = 1; reps <= value; ++reps)
+            {
+                data.push_back(value);
+            }
+        }
+
+        // data == {1, 2, 2, 3, 3, 3, 4, 4, 4, 4, ...}
+
+        for(auto value = 1; value <= max_value; ++value)
+        {
+            for(auto reps = 1; reps <= max_value; ++reps)
+            {
+                const auto result = Algorithm::has_exactly_n(data.begin(),
+                                                             data.end(),
+                                                             [value](const auto item) { return item == value; },
+                                                             reps);
+                test_result(tests_passed,
+                            result == (value == reps),
+                            std::string{"has_exactly_n failed for "} + std::to_string(reps) + " copies of " + std::to_string(value));
+            }
         }
     }
 }

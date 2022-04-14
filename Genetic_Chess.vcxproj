@@ -277,6 +277,7 @@
     <ClCompile Include="src\Utility\Math.cpp" />
     <ClCompile Include="src\Utility\Random.cpp" />
     <ClCompile Include="src\Utility\String.cpp" />
+    <ClCompile Include="src\Utility\Thread_Limiter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game\Board.h" />
@@ -332,6 +333,7 @@
     <ClInclude Include="include\Utility\Math.h" />
     <ClInclude Include="include\Utility\Random.h" />
     <ClInclude Include="include\Utility\String.h" />
+    <ClInclude Include="include\Utility\Thread_Limiter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -88,10 +88,9 @@ void Clock::stop() noexcept
 
 void Clock::start(const Piece_Color starting_turn) noexcept
 {
-    static constexpr auto default_game_start_date_time = std::chrono::system_clock::time_point{};
     whose_turn = starting_turn;
     time_previous_punch = std::chrono::steady_clock::now();
-    if(game_start_date_time == default_game_start_date_time)
+    if(game_start_date_time == std::chrono::system_clock::time_point{})
     {
         game_start_date_time = std::chrono::system_clock::now();
     }

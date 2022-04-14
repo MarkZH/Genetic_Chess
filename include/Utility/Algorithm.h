@@ -56,9 +56,7 @@ namespace Algorithm
             //!
             //! \param container The container to be modified.
             //! \param item The item to add to the back of the container.
-            scoped_push_back(Container& container, typename Container::const_reference item) :
-                the_container(container),
-                original_size(container.size())
+            scoped_push_back(Container& container, typename Container::const_reference item) : scoped_push_back(container)
             {
                 the_container.push_back(item);
             }
@@ -70,9 +68,7 @@ namespace Algorithm
             //! \param begin An iterator to the first item to be added.
             //! \param end An iterator just passed the last item to be added.
             template<typename Iterator>
-            scoped_push_back(Container& container, Iterator begin, Iterator end) :
-                the_container(container),
-                original_size(container.size())
+            scoped_push_back(Container& container, Iterator begin, Iterator end) : scoped_push_back(container)
             {
                 the_container.insert(the_container.end(), begin, end);
             }
@@ -85,6 +81,10 @@ namespace Algorithm
         private:
             Container& the_container;
             size_t original_size;
+
+            scoped_push_back(Container& container) : the_container(container), original_size(container.size())
+            {
+            }
     };
 }
 

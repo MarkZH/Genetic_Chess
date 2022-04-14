@@ -14,6 +14,7 @@
 using namespace std::chrono_literals;
 #include <map>
 #include <bit>
+#include <type_traits>
 
 #include "Game/Clock.h"
 #include "Game/Square.h"
@@ -165,7 +166,7 @@ Board::Board(const std::string& input_fen)
     // Fill repeat counter to indicate moves since last
     // pawn move or capture.
     const auto fifty_move_count_input = String::to_number<size_t>(fen_parse.at(4));
-    fen_parse_assert(fifty_move_count_input < repeat_count.max_size(), input_fen, "Halfmove clock value too large.");
+    fen_parse_assert(fifty_move_count_input < repeat_count.maximum_size(), input_fen, "Halfmove clock value too large.");
     add_board_position_to_repeat_record();
     while(moves_since_pawn_or_capture() < fifty_move_count_input)
     {
@@ -698,28 +699,19 @@ bool Board::no_legal_moves() const noexcept
 
 namespace
 {
-    template<typename OutputStream, typename DataType>
-    void output_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
+    template<typename Output_Stream, typename Data_Type>
+    void print_game_header_line(Output_Stream& output, const std::string& heading, const Data_Type& data)
     {
-        output << "[" << heading << " \"" << data << "\"]\n";
-    }
-
-    template<typename OutputStream, typename DataType>
-    void print_game_header_line(OutputStream& output, const std::string& heading, const DataType& data)
-    {
-        output_game_header_line(output, heading, data);
-    }
-
-    template<typename OutputStream>
-    void print_game_header_line(OutputStream& output, const std::string& heading, const std::string& data)
-    {
-        output_game_header_line(output, heading, data.empty() ? "?" : data);
-    }
-
-    template<typename OutputStream>
-    void print_game_header_line(OutputStream& output, const std::string& heading, const char* const data)
-    {
-        print_game_header_line(output, heading, std::string{data});
+        output << "[" << heading << " \"";
+        if constexpr (std::is_same_v<Data_Type, std::string>)
+        {
+            output << (data.empty() ? "?" : data);
+        }
+        else
+        {
+            output << data;
+        }
+        output << "\"]\n";
     }
 }
 
