@@ -73,14 +73,7 @@ int Minimax_AI::id() const noexcept
 const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
     reset_search_stats(board);
-    if(search_method() == Search_Method::MINIMAX)
-    {
-        return choose_move_minimax(board, clock);
-    }
-    else
-    {
-        return choose_move_iterative_deepening(board, clock);
-    }
+    return choose_move_minimax(board, clock);
 }
 
 const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
@@ -528,11 +521,6 @@ double Minimax_AI::assign_score(const Board& board, const Game_Result& move_resu
 double Minimax_AI::internal_evaluate(const Board& board, Piece_Color perspective, size_t depth) const noexcept
 {
     return genome.evaluate(board, perspective, depth);
-}
-
-Search_Method Minimax_AI::search_method() const noexcept
-{
-    return genome.search_method();
 }
 
 const std::array<double, 6>& Minimax_AI::piece_values() const noexcept
