@@ -15,9 +15,6 @@ Mean Game Length: 26.125642
 Speculation - Endgame: 0.940490
 Speculation - Opening: 2.863767
 
-Name: Search Strategy Gene
-Search Method: Iterative Deepening
-
 Name: Total Force Gene
 Priority - Endgame: 0.460780
 Priority - Opening: 0.418456

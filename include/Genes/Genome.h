@@ -8,7 +8,6 @@
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
-#include "Genes/Search_Method.h"
 
 #include "Gene.h"
 
@@ -112,9 +111,6 @@ class Genome
         //! \param board The current state of the game.
         double game_progress(const Board& board) const noexcept;
 
-        //! \brief Return the specific minimax search method.
-        Search_Method search_method() const noexcept;
-
         //! \brief The value of pieces as determined by the Piece_Strength_Gene
         const std::array<double, 6>& piece_values() const noexcept;
 
@@ -125,13 +121,12 @@ class Genome
 
     private:
         int id_number;
-        std::array<std::unique_ptr<Gene>, 16> genome;
+        std::array<std::unique_ptr<Gene>, 15> genome;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
         void renormalize_priorities() noexcept;
         double expected_number_of_moves_left(const Board& board) const noexcept;
-        static std::string search_method_name(Search_Method method) noexcept;
         void mutate() noexcept;
 
         template<typename Gene_Type>
