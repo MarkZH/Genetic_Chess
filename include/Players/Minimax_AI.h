@@ -265,8 +265,6 @@ class Minimax_AI : public Player
         //! update the evaluation speed to a more reasonable starting value.
         void calibrate_thinking_speed() const noexcept;
 
-        Search_Method search_method() const noexcept;
-        std::string search_method_name() const noexcept;
         const Move& choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
         const Move& choose_move_iterative_deepening(const Board& board, const Clock& clock) const noexcept;
 };

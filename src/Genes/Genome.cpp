@@ -30,9 +30,6 @@
 #include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
-#include "Genes/Search_Strategy_Gene.h"
-
-#include "Genes/Search_Method.h"
 
 namespace
 {
@@ -44,7 +41,6 @@ Genome::Genome() noexcept :
     genome{
         std::make_unique<Piece_Strength_Gene>(),
         std::make_unique<Look_Ahead_Gene>(),
-        std::make_unique<Search_Strategy_Gene>(),
         std::make_unique<Total_Force_Gene>(nullptr),
         std::make_unique<Freedom_To_Move_Gene>(),
         std::make_unique<Pawn_Advancement_Gene>(),
@@ -65,7 +61,6 @@ Genome::Genome() noexcept :
 
     assert(gene_reference<Piece_Strength_Gene>().name() == "Piece Strength Gene");
     assert(gene_reference<Look_Ahead_Gene>().name() == "Look Ahead Gene");
-    assert(gene_reference<Search_Strategy_Gene>().name() == "Search Strategy Gene");
 }
 
 Genome::Genome(const Genome& other) noexcept : id_number(other.id())
@@ -327,11 +322,6 @@ double Genome::expected_number_of_moves_left(const Board& board) const noexcept
 double Genome::game_progress(const Board& board) const noexcept
 {
     return gene_reference<Piece_Strength_Gene>().game_progress(board);
-}
-
-Search_Method Genome::search_method() const noexcept
-{
-    return gene_reference<Search_Strategy_Gene>().searching_method();
 }
 
 const std::array<double, 6>& Genome::piece_values() const noexcept
