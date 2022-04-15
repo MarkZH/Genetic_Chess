@@ -87,25 +87,14 @@ const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clo
     const auto time_to_use = time_to_examine(board, clock);
     const auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor(game_progress(board))));
 
-    // alpha = highest score found that opponent will allow
-    auto alpha_start = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,
-                                        board.whose_turn(),
-                                        0};
-
-    // beta = score that will cause opponent to choose a different prior move
-    auto beta_start = Alpha_Beta_Value{Game_Tree_Node_Result::win_score,
-                                       board.whose_turn(),
-                                       0};
-
     current_variation_store current_variation;
-
     auto result = search_game_tree(board,
                                    time_to_use,
                                    minimum_search_depth,
                                    maximum_variation_depth,
                                    clock,
-                                   alpha_start,
-                                   beta_start,
+                                   Alpha_Beta_Value::alpha_start(board.whose_turn()),
+                                   Alpha_Beta_Value::beta_start(board.whose_turn()),
                                    principal_variation,
                                    current_variation);
 
@@ -125,25 +114,14 @@ const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, cons
     auto principal_variation = std::vector<const Move*>{};
     for(size_t depth = 1; true; ++depth)
     {
-        // alpha = highest score found that opponent will allow
-        auto alpha_start = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,
-                                            board.whose_turn(),
-                                            0};
-
-        // beta = score that will cause opponent to choose a different prior move
-        auto beta_start = Alpha_Beta_Value{Game_Tree_Node_Result::win_score,
-                                           board.whose_turn(),
-                                           0};
-
         current_variation_store current_variation;
-
         const auto result = search_game_tree(board,
                                              Clock::seconds{std::numeric_limits<Clock::seconds::rep>::infinity()},
                                              depth,
                                              depth,
                                              clock,
-                                             alpha_start,
-                                             beta_start,
+                                             Alpha_Beta_Value::alpha_start(board.whose_turn()),
+                                             Alpha_Beta_Value::beta_start(board.whose_turn()),
                                              principal_variation,
                                              current_variation);
 

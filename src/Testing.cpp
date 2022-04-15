@@ -1562,13 +1562,8 @@ namespace
 
     void alpha_and_beta_value_comparisons_fit_algorithm_definitions(bool& tests_passed)
     {
-        const auto alpha_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::lose_score,
-                                                   Piece_Color::WHITE,
-                                                   0};
-
-        const auto beta_start2 = Alpha_Beta_Value{Game_Tree_Node_Result::win_score,
-                                                  Piece_Color::WHITE,
-                                                  0};
+        const auto alpha_start2 = Alpha_Beta_Value::alpha_start(Piece_Color::WHITE);
+        const auto beta_start2 = Alpha_Beta_Value::beta_start(Piece_Color::WHITE);
         test_result(tests_passed, alpha_start2.value(Piece_Color::WHITE) < beta_start2.value(Piece_Color::WHITE), "1. Error in comparing Alpha-Beta Values.");
         test_result(tests_passed, alpha_start2.value(Piece_Color::BLACK) > beta_start2.value(Piece_Color::BLACK), "2. Error in comparing Alpha-Beta Values.");
     }

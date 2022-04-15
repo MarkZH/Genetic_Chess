@@ -34,6 +34,16 @@ class Alpha_Beta_Value
         //! See Game_Tree_Node_Result::value() for details
         std::pair<double, int> value(Piece_Color player_color) const noexcept;
 
+        //! \brief Create a value for alpha at the beginning of a minimax search with alpha-beta pruning.
+        //! 
+        //! \param perspective The color of the player about to start the search.
+        static Alpha_Beta_Value alpha_start(Piece_Color perspective) noexcept;
+
+        //! \brief Create a value for beta at the beginning of a minimax search with alpha-beta pruning.
+        //! 
+        //! \param perspective The color of the player about to start the search.
+        static Alpha_Beta_Value beta_start(Piece_Color perspective) noexcept;
+
     private:
         double score;
         Piece_Color perspective;

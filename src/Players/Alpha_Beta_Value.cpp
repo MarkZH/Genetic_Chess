@@ -36,3 +36,13 @@ std::pair<double, int> Alpha_Beta_Value::value(const Piece_Color player_color) c
         return {this_score, 0};
     }
 }
+
+Alpha_Beta_Value Alpha_Beta_Value::alpha_start(Piece_Color perspective) noexcept
+{
+    return {Game_Tree_Node_Result::lose_score, perspective, 0};
+}
+
+Alpha_Beta_Value Alpha_Beta_Value::beta_start(Piece_Color perspective) noexcept
+{
+    return {Game_Tree_Node_Result::win_score, perspective, 0};
+}
