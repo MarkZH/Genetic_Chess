@@ -252,7 +252,6 @@
     <ClCompile Include="src\Genes\Pawn_Islands_Gene.cpp" />
     <ClCompile Include="src\Genes\Pawn_Structure_Gene.cpp" />
     <ClCompile Include="src\genes\Piece_Strength_Gene.cpp" />
-    <ClCompile Include="src\Genes\Search_Strategy_Gene.cpp" />
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
     <ClCompile Include="src\Genes\Stacked_Pawns_Gene.cpp" />
     <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
@@ -277,6 +276,7 @@
     <ClCompile Include="src\Utility\Math.cpp" />
     <ClCompile Include="src\Utility\Random.cpp" />
     <ClCompile Include="src\Utility\String.cpp" />
+    <ClCompile Include="src\Utility\Thread_Limiter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game\Board.h" />
@@ -303,7 +303,6 @@
     <ClInclude Include="include\Genes\Pawn_Islands_Gene.h" />
     <ClInclude Include="include\Genes\Pawn_Structure_Gene.h" />
     <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
-    <ClInclude Include="include\Genes\Search_Strategy_Gene.h" />
     <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
     <ClInclude Include="include\Genes\Stacked_Pawns_Gene.h" />
     <ClInclude Include="include\genes\Total_Force_Gene.h" />
@@ -332,6 +331,7 @@
     <ClInclude Include="include\Utility\Math.h" />
     <ClInclude Include="include\Utility\Random.h" />
     <ClInclude Include="include\Utility\String.h" />
+    <ClInclude Include="include\Utility\Thread_Limiter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
