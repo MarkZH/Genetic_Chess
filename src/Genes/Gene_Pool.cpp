@@ -42,7 +42,7 @@ namespace
 #else
     const auto PAUSE_SIGNAL = SIGTSTP;
     const std::string pause_key = "Ctrl-z";
-#endif
+#endif // _WIN32
     std::mutex pause_mutex;
     bool keep_going();
 
@@ -213,7 +213,7 @@ namespace
             std::cout << "\nGene pool paused. Press " << pause_key << " to continue ";
             std::cout << "or " << stop_key << " to quit." << std::endl;
             pause_lock.lock();
-        #endif _WIN32
+        #endif // _WIN32
         }
         return true;
     }
