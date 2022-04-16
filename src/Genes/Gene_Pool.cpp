@@ -18,10 +18,7 @@ using namespace std::chrono_literals;
 #include <string>
 #include <numeric>
 #include <sstream>
-
-#ifndef _WIN32
 #include <mutex>
-#endif // _WIN32
 
 #include "Players/Minimax_AI.h"
 
@@ -42,12 +39,11 @@ namespace
 
 #ifdef _WIN32
     const auto PAUSE_SIGNAL = SIGINT;
-    auto quit_gene_pool = false;
 #else
     const auto PAUSE_SIGNAL = SIGTSTP;
     const std::string pause_key = "Ctrl-z";
-    std::mutex pause_mutex;
 #endif
+    std::mutex pause_mutex;
     bool keep_going();
 
     std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file);
@@ -209,25 +205,21 @@ namespace
 {
     bool keep_going()
     {
-    #ifdef _WIN32
-        return ! quit_gene_pool;
-    #else
         if(auto pause_lock = std::unique_lock(pause_mutex, std::try_to_lock); ! pause_lock.owns_lock())
         {
+        #ifdef _WIN32
+            return false;
+        #else
             std::cout << "\nGene pool paused. Press " << pause_key << " to continue ";
             std::cout << "or " << stop_key << " to quit." << std::endl;
             pause_lock.lock();
+        #endif _WIN32
         }
         return true;
-    #endif // _WIN32
     }
 
     void pause_gene_pool(int)
     {
-    #ifdef _WIN32
-        std::cout << "\nGetting to a good stopping point ..." << std::endl;
-        quit_gene_pool = true;
-    #else
         static auto pause_lock = std::unique_lock(pause_mutex, std::defer_lock);
 
         if(pause_lock.owns_lock())
@@ -240,7 +232,6 @@ namespace
             pause_lock.lock();
             std::cout << "\nGetting to a good stopping point ..." << std::endl;
         }
-    #endif // _WIN32
     }
 
     std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate)
