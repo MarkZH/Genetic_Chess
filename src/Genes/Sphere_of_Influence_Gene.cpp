@@ -69,7 +69,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color per
     const auto& inv_dist_plus_one = inv_king_dist_plus_one[opponent_king_square.index()];
 
     double score = 0.0;
-    for(auto square : Square::all_squares())
+    for(const auto square : Square::all_squares())
     {
         double square_score;
         if(board.attacked_by(square, perspective)) // any piece attacks square
@@ -85,7 +85,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color per
             continue;
         }
 
-        auto inv_dist_to_king_plus_one = inv_dist_plus_one[square.index()];
+        const auto inv_dist_to_king_plus_one = inv_dist_plus_one[square.index()];
         score += square_score*(1 + king_target_factor*inv_dist_to_king_plus_one);
     }
 
