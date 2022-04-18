@@ -10,7 +10,6 @@
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
-#include "Utility/String.h"
 
 Castling_Possible_Gene::Castling_Possible_Gene() noexcept
 {

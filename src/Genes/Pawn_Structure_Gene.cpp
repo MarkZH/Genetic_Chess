@@ -11,7 +11,6 @@
 
 #include "Utility/Math.h"
 #include "Utility/Random.h"
-#include "Utility/String.h"
 
 Pawn_Structure_Gene::Pawn_Structure_Gene() noexcept
 {
