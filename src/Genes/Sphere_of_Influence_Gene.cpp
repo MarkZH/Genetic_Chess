@@ -98,13 +98,13 @@ void Sphere_of_Influence_Gene::gene_specific_mutation() noexcept
     switch(Random::random_integer(1, 3))
     {
         case 1:
-            legal_square_scores.mutate(0.03);
+            legal_square_scores.mutate();
             break;
         case 2:
-            king_target_factors.mutate(0.1);
+            king_target_factors.mutate();
             break;
         case 3:
-            illegal_square_scores.mutate(0.03);
+            illegal_square_scores.mutate();
             break;
         default:
             assert(false);

@@ -20,8 +20,8 @@ class Pawn_Structure_Gene : public Clonable_Gene<Pawn_Structure_Gene>
         std::string name() const noexcept override;
 
     private:
-        Interpolated_Gene_Value guarded_by_pawns = {"Guarded By Pawn", 1.0, 1.0};
-        Interpolated_Gene_Value guarded_by_pieces = {"Guarded By Piece", 1.0, 1.0};
+        Interpolated_Gene_Value guarded_by_pawns = {"Guarded By Pawn", 1.0, 1.0, 0.03};
+        Interpolated_Gene_Value guarded_by_pieces = {"Guarded By Piece", 1.0, 1.0, 0.03};
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;

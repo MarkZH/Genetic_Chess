@@ -59,11 +59,11 @@ void Pawn_Structure_Gene::gene_specific_mutation() noexcept
 {
     if(Random::coin_flip())
     {
-        guarded_by_pawns.mutate(0.03);
+        guarded_by_pawns.mutate();
     }
     else
     {
-        guarded_by_pieces.mutate(0.03);
+        guarded_by_pieces.mutate();
     }
 
     normalize_guard_scores();

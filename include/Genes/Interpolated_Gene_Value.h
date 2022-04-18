@@ -22,7 +22,11 @@ class Interpolated_Gene_Value
         //! \param name The name of this value for reading and writing to files.
         //! \param game_start_value The value to return when the game starts.
         //! \param game_end_value The value to return when the is near over.
-        Interpolated_Gene_Value(const std::string& name, double game_start_value, double game_end_value) noexcept;
+        //! \param mutation_size The width of the mutation probability distribution.
+        Interpolated_Gene_Value(const std::string& name,
+                                double game_start_value,
+                                double game_end_value,
+                                double mutation_size) noexcept;
 
         //! \brief Interpolate between the two terminal values.
         //!
@@ -59,11 +63,11 @@ class Interpolated_Gene_Value
         //! \brief Write values to a std::map that will write a genome file.
         void write_to_map(std::map<std::string, std::string>& properties) const noexcept;
 
-        //! \brief Randomly mutate one of the values by the given amount.
-        void mutate(double mutation_amount) noexcept;
+        //! \brief Randomly mutate one of the values.
+        void mutate() noexcept;
 
     private:
-        std::array<Gene_Value<double>, 2> values;
+        std::array<Gene_Value, 2> values;
 };
 
 #endif // INTERPOLATED_GENE_VALUE_H

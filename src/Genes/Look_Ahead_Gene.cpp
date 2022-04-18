@@ -52,18 +52,18 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
     switch(Random::random_integer(1, 6))
     {
         case 1:
-            mean_game_length.mutate(1.0);
+            mean_game_length.mutate();
             break;
         case 2:
-            game_length_uncertainty.mutate(0.01);
+            game_length_uncertainty.mutate();
             break;
         case 3:
         case 4:
-            speculation_constants.mutate(0.05);
+            speculation_constants.mutate();
             break;
         case 5:
         case 6:
-            branching_factor_estimates.mutate(0.2);
+            branching_factor_estimates.mutate();
             break;
         default:
             assert(false);

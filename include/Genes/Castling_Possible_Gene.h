@@ -20,8 +20,8 @@ class Castling_Possible_Gene : public Clonable_Gene<Castling_Possible_Gene>
         std::string name() const noexcept override;
 
     private:
-        Interpolated_Gene_Value kingside_preferences = {"Kingside Preference", 1.0, 1.0};
-        Interpolated_Gene_Value queenside_preferences = {"Queenside Preference", 1.0, 1.0};
+        Interpolated_Gene_Value kingside_preferences = {"Kingside Preference", 1.0, 1.0, 0.03};
+        Interpolated_Gene_Value queenside_preferences = {"Queenside Preference", 1.0, 1.0, 0.03};
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;
