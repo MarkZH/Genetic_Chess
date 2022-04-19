@@ -44,7 +44,7 @@ namespace Math
     //! \tparam Ts Types of values.
     //! \param[out] xs All the values.
     //!
-    //! The values will be divided by std::abs(x) + std::abs(y).
+    //! Each value will be divided by std::abs(x1) + std::abs(x2) + ....
     template<typename ...Ts>
     void normalize(Ts&... xs) noexcept
     {

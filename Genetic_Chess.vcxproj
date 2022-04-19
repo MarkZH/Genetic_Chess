@@ -241,6 +241,7 @@
     <ClCompile Include="src\genes\Freedom_To_Move_Gene.cpp" />
     <ClCompile Include="src\genes\Gene.cpp" />
     <ClCompile Include="src\Genes\Gene_Pool.cpp" />
+    <ClCompile Include="src\Genes\Gene_Value.cpp" />
     <ClCompile Include="src\genes\Genome.cpp" />
     <ClCompile Include="src\Genes\Interpolated_Gene_Value.cpp" />
     <ClCompile Include="src\Genes\King_Confinement_Gene.cpp" />

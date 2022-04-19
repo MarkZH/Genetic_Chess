@@ -11,7 +11,6 @@
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
-#include "Utility/String.h"
 
 namespace
 {
@@ -70,7 +69,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color per
     const auto& inv_dist_plus_one = inv_king_dist_plus_one[opponent_king_square.index()];
 
     double score = 0.0;
-    for(auto square : Square::all_squares())
+    for(const auto square : Square::all_squares())
     {
         double square_score;
         if(board.attacked_by(square, perspective)) // any piece attacks square
@@ -86,7 +85,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color per
             continue;
         }
 
-        auto inv_dist_to_king_plus_one = inv_dist_plus_one[square.index()];
+        const auto inv_dist_to_king_plus_one = inv_dist_plus_one[square.index()];
         score += square_score*(1 + king_target_factor*inv_dist_to_king_plus_one);
     }
 
@@ -99,13 +98,13 @@ void Sphere_of_Influence_Gene::gene_specific_mutation() noexcept
     switch(Random::random_integer(1, 3))
     {
         case 1:
-            legal_square_scores.mutate(0.03);
+            legal_square_scores.mutate();
             break;
         case 2:
-            king_target_factors.mutate(0.1);
+            king_target_factors.mutate();
             break;
         case 3:
-            illegal_square_scores.mutate(0.03);
+            illegal_square_scores.mutate();
             break;
         default:
             assert(false);

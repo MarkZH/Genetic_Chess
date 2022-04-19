@@ -11,7 +11,6 @@
 
 #include "Utility/Random.h"
 #include "Utility/Math.h"
-#include "Utility/String.h"
 
 Castling_Possible_Gene::Castling_Possible_Gene() noexcept
 {
@@ -91,11 +90,11 @@ void Castling_Possible_Gene::gene_specific_mutation() noexcept
 {
     if(Random::coin_flip())
     {
-        kingside_preferences.mutate(0.03);
+        kingside_preferences.mutate();
     }
     else
     {
-        queenside_preferences.mutate(0.03);
+        queenside_preferences.mutate();
     }
 
     normalize_sides();
