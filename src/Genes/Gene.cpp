@@ -174,7 +174,7 @@ void Gene::mutate() noexcept
     const auto properties = list_properties();
     if(has_priority() && Random::success_probability(2, properties.size()))
     {
-        priorities.mutate(0.005);
+        priorities.mutate();
     }
     else
     {

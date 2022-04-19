@@ -10,8 +10,12 @@
 
 #include "Utility/Random.h"
 
-Interpolated_Gene_Value::Interpolated_Gene_Value(const std::string& name, const double game_start_value, const double game_end_value) noexcept :
-    values{{{name + " - Opening", game_start_value}, {name + " - Endgame", game_end_value}}}
+Interpolated_Gene_Value::Interpolated_Gene_Value(const std::string& name,
+                                                 const double game_start_value,
+                                                 const double game_end_value,
+                                                 const double mutation_size) noexcept :
+    values{{{name + " - Opening", game_start_value, mutation_size},
+            {name + " - Endgame", game_end_value, mutation_size}}}
 {
 }
 
@@ -65,7 +69,7 @@ void Interpolated_Gene_Value::write_to_map(std::map<std::string, std::string>& p
     std::for_each(values.begin(), values.end(), [&](const auto& val) { val.write_to_map(properties); });
 }
 
-void Interpolated_Gene_Value::mutate(double mutation_amount) noexcept
+void Interpolated_Gene_Value::mutate() noexcept
 {
-    values[Random::coin_flip()].mutate(mutation_amount);
+    values[Random::coin_flip()].mutate();
 }

@@ -20,9 +20,9 @@ class Sphere_of_Influence_Gene : public Clonable_Gene<Sphere_of_Influence_Gene>
         std::string name() const noexcept override;
 
     private:
-        Interpolated_Gene_Value legal_square_scores = {"Legal Square Score", 1.0, 1.0};
-        Interpolated_Gene_Value illegal_square_scores = {"Illegal Square Score", 1.0, 1.0};
-        Interpolated_Gene_Value king_target_factors = {"King Target Factor", 0.0, 0.0};
+        Interpolated_Gene_Value legal_square_scores = {"Legal Square Score", 1.0, 1.0, 0.03};
+        Interpolated_Gene_Value illegal_square_scores = {"Illegal Square Score", 1.0, 1.0, 0.03};
+        Interpolated_Gene_Value king_target_factors = {"King Target Factor", 0.0, 0.0, 0.1};
 
         double score_board(const Board& board, Piece_Color perspective, const size_t depth, double game_progress) const noexcept override;
         void gene_specific_mutation() noexcept override;

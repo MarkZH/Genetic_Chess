@@ -106,7 +106,7 @@ class Gene
         void delete_priorities(std::map<std::string, std::string>& properties) const noexcept;
 
     private:
-        Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0};
+        Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0, 0.005};
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept = 0;
 
