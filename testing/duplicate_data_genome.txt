@@ -1,14 +1,12 @@
 ID: 1
 
 Name: Sphere of Influence Gene
-King Target Factor - Endgame: 2
-King Target Factor - Opening: 2
 Legal Square Score - Endgame: 4
 Legal Square Score - Opening: 4
 Illegal Square Score - Opening: 1
 Illegal Square Score - Endgame: 1
 Priority - Endgame: 1
 Priority - Opening: 1
-King Target Factor - Endgame: 2
+Legal Square Score - Endgame: 4
 
 END

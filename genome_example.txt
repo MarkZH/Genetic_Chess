@@ -38,8 +38,6 @@ Priority - Opening: 0.053382
 Name: Sphere of Influence Gene
 Illegal Square Score - Endgame: 0.160538
 Illegal Square Score - Opening: 0.486090
-King Target Factor - Endgame: 0.171745
-King Target Factor - Opening: -0.772138
 Legal Square Score - Endgame: 0.839462
 Legal Square Score - Opening: 0.513910
 Priority - Endgame: 0.046934
