@@ -61,7 +61,7 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         Gene_Value mean_game_length = {"Mean Game Length", 50.0, 1.0}; // in moves by one player
         Gene_Value game_length_uncertainty = {"Game Length Uncertainty", 0.5, 0.01}; // approximately as a fraction of the mean
 
-        double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;
 
         void adjust_properties(std::map<std::string, std::string>& properties) const noexcept override;

@@ -108,7 +108,7 @@ class Gene
     private:
         Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0, 0.005};
 
-        virtual double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept = 0;
+        virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
 
         template<typename Error = Genome_Creation_Error>
         [[noreturn]] void throw_on_invalid_line(const std::string& line, const std::string& reason) const

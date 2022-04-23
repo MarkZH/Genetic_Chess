@@ -16,7 +16,7 @@ class Freedom_To_Move_Gene : public Clonable_Gene<Freedom_To_Move_Gene>
         std::string name() const noexcept override;
 
     private:
-        double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
 };
 
 #endif // FREEDOM_TO_MOVE_GENE_H

@@ -187,7 +187,7 @@ void Gene::gene_specific_mutation() noexcept
 
 double Gene::evaluate(const Board& board, const Piece_Color perspective, const size_t depth, const double game_progress) const noexcept
 {
-    return priorities.interpolate(game_progress)*score_board(board, perspective, depth, game_progress);
+    return priorities.interpolate(game_progress)*score_board(board, perspective, depth);
 }
 
 void Gene::print(std::ostream& os) const noexcept
@@ -234,7 +234,7 @@ void Gene::test(bool& test_variable, const Board& board, const Piece_Color persp
         ++test_number;
     }
 
-    const auto result = score_board(board, perspective, board.played_ply_count(), 0.0);
+    const auto result = score_board(board, perspective, board.played_ply_count());
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::cerr << "Error in " << name() << " Test #" << test_number << ": Expected " << expected_score << ", Got: " << result << '\n';

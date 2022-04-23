@@ -8,7 +8,7 @@
 
 #include "Genes/Gene.h"
 
-double Stacked_Pawns_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
+double Stacked_Pawns_Gene::score_board(const Board& board, const Piece_Color perspective, size_t) const noexcept
 {
     double score = 0.0;
 

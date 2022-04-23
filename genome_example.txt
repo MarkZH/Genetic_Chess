@@ -36,10 +36,8 @@ Priority - Endgame: 0.095374
 Priority - Opening: 0.053382
 
 Name: Sphere of Influence Gene
-Illegal Square Score - Endgame: 0.160538
-Illegal Square Score - Opening: 0.486090
-Legal Square Score - Endgame: 0.839462
-Legal Square Score - Opening: 0.513910
+Illegal Square Score: 0.486090
+Legal Square Score: 0.513910
 Priority - Endgame: 0.046934
 Priority - Opening: 0.196998
 
@@ -52,12 +50,10 @@ Priority - Endgame: -0.014531
 Priority - Opening: 0.053112
 
 Name: Castling Possible Gene
-Kingside Preference - Endgame: 0.664575
-Kingside Preference - Opening: 0.466431
+Kingside Preference: 0.466431
 Priority - Endgame: -0.003105
 Priority - Opening: 0.051963
-Queenside Preference - Endgame: 0.335425
-Queenside Preference - Opening: 0.533569
+Queenside Preference: 0.533569
 
 Name: Stacked Pawns Gene
 Priority - Endgame: -0.044457
@@ -72,10 +68,8 @@ Priority - Endgame: -0.021335
 Priority - Opening: 0.048266
 
 Name: Pawn Structure Gene
-Guarded By Pawn - Endgame: 0.542571
-Guarded By Pawn - Opening: 0.787577
-Guarded By Piece - Endgame: 0.457429
-Guarded By Piece - Opening: 0.212423
+Guarded By Pawn: 0.787577
+Guarded By Piece: 0.212423
 Priority - Endgame: -0.013603
 Priority - Opening: 0.057073
 
