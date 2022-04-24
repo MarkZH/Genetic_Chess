@@ -125,8 +125,7 @@ class Gene
         //!
         //! By default, the only property a gene has is "Priority," a multiplicative factor
         //! that controls how influential a gene's score is to the overall evaulation of a
-        //! board position. This method is overridden by derived Gene classes to either augment
-        //! or replace this data with more specialized properties.
+        //! board position.
         //! \returns A collection of gene properties with their numerical values.
         std::map<std::string, std::string> list_properties() const noexcept;
 
@@ -137,8 +136,6 @@ class Gene
         //!
         //! This method is the counterpart to Gene::list_properties() in that it
         //! reads the same data structure as the one produced by Gene::list_properties().
-        //! This means that this method is also overridden by derived Genes that have
-        //! different properties.
         //! \param properties A data structure with all the data needed for this gene.
         //! \exception std::out_of_range When an expected property is not present in the input.
         void load_properties(const std::map<std::string, std::string>& properties);
