@@ -9,7 +9,7 @@
 class Proxy_Player : public Random_AI
 {
     public:
-        //! Create the proxy player with a name
+        //! \brief Create the proxy player with a name
         //!
         //! \param player_name The name to use for the player
         explicit Proxy_Player(const std::string& player_name) noexcept;
