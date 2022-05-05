@@ -26,8 +26,6 @@
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
-#include "Genes/Stacked_Pawns_Gene.h"
-#include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
 
@@ -50,8 +48,6 @@ Genome::Genome() noexcept :
         std::make_unique<King_Confinement_Gene>(),
         std::make_unique<King_Protection_Gene>(),
         std::make_unique<Castling_Possible_Gene>(),
-        std::make_unique<Stacked_Pawns_Gene>(),
-        std::make_unique<Pawn_Islands_Gene>(),
         std::make_unique<Checkmate_Material_Gene>(),
         std::make_unique<Pawn_Structure_Gene>()
     }

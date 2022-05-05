@@ -35,8 +35,6 @@ using namespace std::chrono_literals;
 #include "Genes/Piece_Strength_Gene.h"
 #include "Genes/Sphere_of_Influence_Gene.h"
 #include "Genes/Total_Force_Gene.h"
-#include "Genes/Stacked_Pawns_Gene.h"
-#include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
 
@@ -206,8 +204,6 @@ namespace
     void pawn_advancement_gene_tests(bool& tests_passed);
     void passed_pawn_gene_tests(bool& tests_passed);
     void total_force_gene_tests(bool& tests_passed);
-    void stacked_pawns_gene_tests(bool& tests_passed);
-    void pawn_islands_gene_tests(bool& tests_passed);
     void checkmate_material_gene_tests(bool& tests_passed);
     void sphere_of_influence_gene_tests(bool& tests_passed);
     void pawn_structure_gene_tests(bool& tests_passed);
@@ -289,8 +285,6 @@ bool run_tests()
     passed_pawn_gene_tests(tests_passed);
     sphere_of_influence_gene_tests(tests_passed);
     total_force_gene_tests(tests_passed);
-    stacked_pawns_gene_tests(tests_passed);
-    pawn_islands_gene_tests(tests_passed);
     checkmate_material_gene_tests(tests_passed);
     pawn_structure_gene_tests(tests_passed);
 
@@ -391,8 +385,6 @@ void run_speed_tests()
     auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
     sphere_of_influence_gene.read_from(test_genes_file_name);
     const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    const auto stacked_pawns_gene = Stacked_Pawns_Gene();
-    const auto pawn_islands_gene = Pawn_Islands_Gene();
     const auto checkmate_material_gene = Checkmate_Material_Gene();
     auto pawn_structure_gene = Pawn_Structure_Gene();
     pawn_structure_gene.read_from(test_genes_file_name);
@@ -416,9 +408,7 @@ void run_speed_tests()
                                                          &opponent_pieces_targeted_gene,
                                                          &passed_pawn_gene,
                                                          &pawn_advancement_gene,
-                                                         &pawn_islands_gene,
                                                          &sphere_of_influence_gene,
-                                                         &stacked_pawns_gene,
                                                          &total_force_gene,
                                                          &pawn_structure_gene};
 
@@ -1299,20 +1289,6 @@ namespace
         passed_pawn_board.play_move("Kd8");
         passed_pawn_score = (2.0 / 3.0) / 8;
         passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::BLACK, passed_pawn_score);
-    }
-
-    void stacked_pawns_gene_tests(bool& tests_passed)
-    {
-        const auto stacked_pawns_gene = Stacked_Pawns_Gene();
-        const auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
-        stacked_pawns_gene.test(tests_passed, stacked_pawns_board, Piece_Color::WHITE, -3.0 / 6);
-    }
-
-    void pawn_islands_gene_tests(bool& tests_passed)
-    {
-        const auto pawn_islands_gene = Pawn_Islands_Gene();
-        const auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-        pawn_islands_gene.test(tests_passed, pawn_islands_board, Piece_Color::WHITE, -3.0 / 4.0);
     }
 
     void checkmate_material_gene_tests(bool& tests_passed)

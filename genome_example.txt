@@ -55,14 +55,6 @@ Priority - Endgame: 0.043095
 Priority - Opening: 0.039400
 Queenside Preference: 0.470404
 
-Name: Stacked Pawns Gene
-Priority - Endgame: 0.006615
-Priority - Opening: 0.008980
-
-Name: Pawn Islands Gene
-Priority - Endgame: -0.008632
-Priority - Opening: 0.013783
-
 Name: Checkmate Material Gene
 Priority - Endgame: 0.023298
 Priority - Opening: 0.081427
@@ -74,4 +66,3 @@ Priority - Endgame: 0.012929
 Priority - Opening: 0.045805
 
 END
-

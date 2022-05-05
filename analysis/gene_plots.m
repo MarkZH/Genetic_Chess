@@ -72,9 +72,7 @@ shorten('King Protection Gene') = 'Protect';
 shorten('Opponent Pieces Targeted Gene') = 'Target';
 shorten('Passed Pawn Gene') = 'Passed';
 shorten('Pawn Advancement Gene') = 'Advance';
-shorten('Pawn Islands Gene') = 'Islands';
 shorten('Sphere of Influence Gene') = 'Sphere';
-shorten('Stacked Pawns Gene') = 'Stacked';
 shorten('Total Force Gene') = 'Force';
 shorten('Pawn Structure Gene') = 'Structure';
 
