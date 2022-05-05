@@ -57,7 +57,7 @@ double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color per
         score += square_score*invasion_distance;
     }
 
-    return score/(64*8);
+    return score/288;
 }
 
 

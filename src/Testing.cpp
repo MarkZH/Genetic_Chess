@@ -1364,7 +1364,7 @@ namespace
              + (4.0 * 4)  // f4
              + (1.0 * 4)  // g4
              + (1.0 * 4)) // h4
-            /(64*8*(4.0 + 1.0));
+            /(288*(4.0 + 1.0));
         // Setup       Square score     Invasion distance
         // k.......    k4......         k8......
         // ........    .4......         .7......
@@ -1375,6 +1375,9 @@ namespace
         // ........    44......         22......
         // K.......    K4......         K1......
         sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, Piece_Color::WHITE, sphere_of_influence_score);
+
+        const auto all_squares_attacked = Board("k6K/8/8/8/8/8/8/RRRRRRRR b - - 0 1");
+        sphere_of_influence_gene.test(tests_passed, all_squares_attacked, Piece_Color::WHITE, 1.0*4.0/5.0);
     }
 
     void pawn_structure_gene_tests(bool& tests_passed)
