@@ -6,15 +6,6 @@ if isOctave
     args = argv();
     if length(args) > 0
         filename = args{1};
-        id_marks = [];
-        if length(args) > 1
-            marks_file_name = args{2};
-            if ~isempty(marks_file_name)
-                data = importdata(marks_file_name, ';', 1);
-                id_marks = data.data(:,1)';
-                id_notes = data.textdata(2:end);
-            end
-        end
     end
 end
 
@@ -81,9 +72,7 @@ shorten('King Protection Gene') = 'Protect';
 shorten('Opponent Pieces Targeted Gene') = 'Target';
 shorten('Passed Pawn Gene') = 'Passed';
 shorten('Pawn Advancement Gene') = 'Advance';
-shorten('Pawn Islands Gene') = 'Islands';
 shorten('Sphere of Influence Gene') = 'Sphere';
-shorten('Stacked Pawns Gene') = 'Stacked';
 shorten('Total Force Gene') = 'Force';
 shorten('Pawn Structure Gene') = 'Structure';
 
@@ -106,10 +95,6 @@ for yi = 2 : length(data.colheaders)
          'markersize', marker_size);
     xlabel(xaxis);
     plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
-
-    for index = 1:length(id_marks)
-        plot(id_marks(index)*[1 1], ylim, 'displayname', id_notes{index});
-    end
 
     title_name = name;
     if strcmp(name, 'Search Strategy Gene - Search Method')
@@ -183,10 +168,6 @@ for name = special_plots.keys()
     special_plot = special_plots(name);
     figure(special_plot);
     plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
-
-    for id_index = 1:length(id_marks)
-        plot(id_marks(id_index)*[1 1], ylim, 'displayname', id_notes{id_index});
-    end
 
     if special_plot == piece_strength_figure
         leg = legend(piece_strength_plots, piece_strength_labels);

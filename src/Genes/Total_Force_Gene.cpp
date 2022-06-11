@@ -16,7 +16,7 @@ Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* const piece_streng
 {
 }
 
-double Total_Force_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
+double Total_Force_Gene::score_board(const Board& board, const Piece_Color perspective, size_t) const noexcept
 {
     assert(piece_strength_source);
     const auto& values = piece_strength_source->piece_values();

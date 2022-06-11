@@ -35,8 +35,6 @@ using namespace std::chrono_literals;
 #include "Genes/Piece_Strength_Gene.h"
 #include "Genes/Sphere_of_Influence_Gene.h"
 #include "Genes/Total_Force_Gene.h"
-#include "Genes/Stacked_Pawns_Gene.h"
-#include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
 
@@ -206,8 +204,6 @@ namespace
     void pawn_advancement_gene_tests(bool& tests_passed);
     void passed_pawn_gene_tests(bool& tests_passed);
     void total_force_gene_tests(bool& tests_passed);
-    void stacked_pawns_gene_tests(bool& tests_passed);
-    void pawn_islands_gene_tests(bool& tests_passed);
     void checkmate_material_gene_tests(bool& tests_passed);
     void sphere_of_influence_gene_tests(bool& tests_passed);
     void pawn_structure_gene_tests(bool& tests_passed);
@@ -289,8 +285,6 @@ bool run_tests()
     passed_pawn_gene_tests(tests_passed);
     sphere_of_influence_gene_tests(tests_passed);
     total_force_gene_tests(tests_passed);
-    stacked_pawns_gene_tests(tests_passed);
-    pawn_islands_gene_tests(tests_passed);
     checkmate_material_gene_tests(tests_passed);
     pawn_structure_gene_tests(tests_passed);
 
@@ -390,8 +384,6 @@ void run_speed_tests()
     auto sphere_of_influence_gene = Sphere_of_Influence_Gene();
     sphere_of_influence_gene.read_from(test_genes_file_name);
     const auto total_force_gene = Total_Force_Gene(&piece_strength_gene);
-    const auto stacked_pawns_gene = Stacked_Pawns_Gene();
-    const auto pawn_islands_gene = Pawn_Islands_Gene();
     const auto checkmate_material_gene = Checkmate_Material_Gene();
     auto pawn_structure_gene = Pawn_Structure_Gene();
     pawn_structure_gene.read_from(test_genes_file_name);
@@ -415,9 +407,7 @@ void run_speed_tests()
                                                          &opponent_pieces_targeted_gene,
                                                          &passed_pawn_gene,
                                                          &pawn_advancement_gene,
-                                                         &pawn_islands_gene,
                                                          &sphere_of_influence_gene,
-                                                         &stacked_pawns_gene,
                                                          &total_force_gene,
                                                          &pawn_structure_gene};
 
@@ -1300,20 +1290,6 @@ namespace
         passed_pawn_gene.test(tests_passed, passed_pawn_board, Piece_Color::BLACK, passed_pawn_score);
     }
 
-    void stacked_pawns_gene_tests(bool& tests_passed)
-    {
-        const auto stacked_pawns_gene = Stacked_Pawns_Gene();
-        const auto stacked_pawns_board = Board("k7/8/8/8/P7/PP6/PPP5/K7 w - - 0 1");
-        stacked_pawns_gene.test(tests_passed, stacked_pawns_board, Piece_Color::WHITE, -3.0 / 6);
-    }
-
-    void pawn_islands_gene_tests(bool& tests_passed)
-    {
-        const auto pawn_islands_gene = Pawn_Islands_Gene();
-        const auto pawn_islands_board = Board("k7/8/8/8/8/8/P1PPP1PP/K7 w - - 0 1");
-        pawn_islands_gene.test(tests_passed, pawn_islands_board, Piece_Color::WHITE, -3.0 / 4.0);
-    }
-
     void checkmate_material_gene_tests(bool& tests_passed)
     {
         const auto checkmate_material_gene = Checkmate_Material_Gene();
@@ -1348,32 +1324,35 @@ namespace
         sphere_of_influence_gene.read_from("testing/test_genome.txt");
         const auto sphere_of_influence_board = Board("k7/8/8/8/1R3p2/8/8/K7 w - - 0 1");
         const auto sphere_of_influence_score =
-              ((4.0 * (1 + (2.0/(1 + 1.0))))  // b8
-             + (4.0 * (1 + (2.0/(1 + 1.0))))  // b7
-             + (4.0 * (1 + (2.0/(1 + 2.0))))  // b6
-             + (4.0 * (1 + (2.0/(1 + 3.0))))  // b5
-             + (4.0 * (1 + (2.0/(1 + 5.0))))  // b3
-             + (4.0 * (1 + (2.0/(1 + 6.0))))  // b2
-             + (4.0 * (1 + (2.0/(1 + 7.0))))  // b1
-             + (4.0 * (1 + (2.0/(1 + 4.0))))  // a4
-             + (4.0 * (1 + (2.0/(1 + 6.0))))  // a2
-             + (4.0 * (1 + (2.0/(1 + 4.0))))  // c4
-             + (4.0 * (1 + (2.0/(1 + 4.0))))  // d4
-             + (4.0 * (1 + (2.0/(1 + 4.0))))  // e4
-             + (4.0 * (1 + (2.0/(1 + 5.0))))  // f4
-             + (1.0 * (1 + (2.0/(1 + 6.0))))  // g4
-             + (1.0 * (1 + (2.0/(1 + 7.0)))))  // h4
-            /(64*(4.0 + 1.0));
-        // Setup       Square score     King distance (from black king)
-        // k.......    k4......         k1......
-        // ........    .4......         .1......
-        // ........    .4......         .2......
-        // ........    .4......         .3......
-        // .R...p..    4R444411         4R444567
+              ((4.0 * 8)  // b8
+             + (4.0 * 7)  // b7
+             + (4.0 * 6)  // b6
+             + (4.0 * 5)  // b5
+             + (4.0 * 3)  // b3
+             + (4.0 * 2)  // b2
+             + (4.0 * 1)  // b1
+             + (4.0 * 4)  // a4
+             + (4.0 * 2)  // a2
+             + (4.0 * 4)  // c4
+             + (4.0 * 4)  // d4
+             + (4.0 * 4)  // e4
+             + (4.0 * 4)  // f4
+             + (1.0 * 4)  // g4
+             + (1.0 * 4)) // h4
+            /(288*(4.0 + 1.0));
+        // Setup       Square score     Invasion distance
+        // k.......    k4......         k8......
+        // ........    .4......         .7......
+        // ........    .4......         .6......
         // ........    .4......         .5......
-        // ........    44......         66......
-        // K.......    K4......         K7......
+        // .R...p..    4R444411         4R444444
+        // ........    .4......         .3......
+        // ........    44......         22......
+        // K.......    K4......         K1......
         sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, Piece_Color::WHITE, sphere_of_influence_score);
+
+        const auto all_squares_attacked = Board("k6K/8/8/8/8/8/8/RRRRRRRR b - - 0 1");
+        sphere_of_influence_gene.test(tests_passed, all_squares_attacked, Piece_Color::WHITE, 1.0*4.0/5.0);
     }
 
     void pawn_structure_gene_tests(bool& tests_passed)

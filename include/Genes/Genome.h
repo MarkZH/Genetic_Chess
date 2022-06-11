@@ -121,13 +121,12 @@ class Genome
 
     private:
         int id_number;
-        std::array<std::unique_ptr<Gene>, 15> genome;
+        std::array<std::unique_ptr<Gene>, 13> genome;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
         void renormalize_priorities() noexcept;
         double expected_number_of_moves_left(const Board& board) const noexcept;
-        void mutate() noexcept;
 
         template<typename Gene_Type>
         constexpr const Gene_Type& gene_reference() const noexcept

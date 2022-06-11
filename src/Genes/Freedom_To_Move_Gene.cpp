@@ -6,7 +6,7 @@
 #include "Game/Board.h"
 #include "Game/Color.h"
 
-double Freedom_To_Move_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
+double Freedom_To_Move_Gene::score_board(const Board& board, const Piece_Color perspective, size_t) const noexcept
 {
     return perspective == board.whose_turn() ? double(board.legal_moves().size())/128.0 : 0.0;
 }
