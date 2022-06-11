@@ -146,8 +146,6 @@ namespace String
     //! This is useful with std:: algorithms since std::isspace takes an int as a parameter.
     bool isspace(char c) noexcept;
 
-    //! \brief Returns a text version of an integer with thousands separators
-
     //! \brief Returns a text version of an integer with thousands separators (US-style)
     //!
     //! \param n The integer.

@@ -48,7 +48,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
-    const auto text_start = std::find_if_not(s.begin(), s.end(), String::isspace);
+    const auto text_start = std::ranges::find_if_not(s, String::isspace);
     if(text_start == s.end())
     {
         return {};
