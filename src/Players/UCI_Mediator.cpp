@@ -89,7 +89,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 }
 
                 move_list.clear();
-                const auto moves_iter = std::find(parse.begin(), parse.end(), "moves");
+                const auto moves_iter = std::ranges::find(parse, "moves");
                 if(moves_iter != parse.end())
                 {
                     std::transform(std::next(moves_iter), parse.end(), std::back_inserter(move_list),

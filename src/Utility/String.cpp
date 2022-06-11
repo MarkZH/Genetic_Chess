@@ -9,6 +9,7 @@
 #include <format>
 #include <cctype>
 #include <iterator>
+#include <ranges>
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
@@ -47,13 +48,13 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
-    const auto text_start = std::find_if_not(s.begin(), s.end(), [](auto c) { return std::isspace(c); });
+    const auto text_start = std::ranges::find_if_not(s, [](auto c) { return std::isspace(c); });
     if(text_start == s.end())
     {
         return {};
     }
 
-    const auto text_end = std::find_if_not(s.rbegin(), s.rend(), [](auto c) { return std::isspace(c); }).base();
+    const auto text_end = std::ranges::find_if_not(std::ranges::reverse_view(s), [](auto c) { return std::isspace(c); }).base();
     return std::string(text_start, text_end);
 }
 
@@ -193,7 +194,7 @@ char String::toupper(const char letter) noexcept
 
 std::string String::lowercase(std::string s) noexcept
 {
-    std::transform(s.begin(), s.end(), s.begin(), String::tolower);
+    std::ranges::transform(s, s.begin(), String::tolower);
     return s;
 }
 

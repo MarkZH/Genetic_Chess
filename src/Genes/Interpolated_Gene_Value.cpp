@@ -61,12 +61,12 @@ std::string Interpolated_Gene_Value::name(Game_Stage stage) const noexcept
 
 void Interpolated_Gene_Value::load_from_map(const std::map<std::string, std::string>& properties)
 {
-    std::for_each(values.begin(), values.end(), [&](auto& val) { val.load_from_map(properties); });
+    std::ranges::for_each(values, [&](auto& val) { val.load_from_map(properties); });
 }
 
 void Interpolated_Gene_Value::write_to_map(std::map<std::string, std::string>& properties) const noexcept
 {
-    std::for_each(values.begin(), values.end(), [&](const auto& val) { val.write_to_map(properties); });
+    std::ranges::for_each(values, [&](const auto& val) { val.write_to_map(properties); });
 }
 
 void Interpolated_Gene_Value::mutate() noexcept

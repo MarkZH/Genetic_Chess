@@ -334,7 +334,7 @@ bool Piece::can_move(const Move* const move) const noexcept
     assert(*this);
     for(const auto& moves : move_lists(move->start()))
     {
-        if(std::find(moves.begin(), moves.end(), move) != moves.end())
+        if(std::ranges::find(moves, move) != moves.end())
         {
             return true;
         }

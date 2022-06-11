@@ -302,7 +302,7 @@ namespace
 
         std::cout << "Wins to be recorded as best: " << best_stats.wins_to_beat
                   << "\nBest ID        : " << best_stats.id << " with " << String::pluralize(best_stats.wins, "win") << "\n";
-        const auto best_living = std::max_element(pool.begin(), pool.end(), [](const auto& a, const auto& b) { return a.wins() < b.wins(); });
+        const auto best_living = std::ranges::max_element(pool, [](const auto& a, const auto& b) { return a.wins() < b.wins(); });
         std::cout << "Best living ID : " << best_living->id() << " with " << String::pluralize(best_living->wins(), "win") + "\n\n";
 
     #ifdef _WIN32
@@ -317,7 +317,7 @@ namespace
         std::cout << result_printer.str();
 
         // widths of columns for stats printout
-        const auto largest_id = std::max_element(pool.begin(), pool.end())->id();
+        const auto largest_id = std::ranges::max_element(pool)->id();
         const auto id_column_width = int(std::to_string(largest_id).size() + 1);
         const auto win_column_width = 7;
         const auto draw_column_width = 7;
@@ -399,12 +399,7 @@ namespace
         const double decay_constant = 0.99;
         best_stats.wins_to_beat *= decay_constant;
 
-        const auto& winningest_live_ai =
-            *std::max_element(pool.begin(), pool.end(),
-                              [](const auto& a, const auto& b)
-                              {
-                                  return a.wins() < b.wins();
-                              });
+        const auto& winningest_live_ai = *std::ranges::max_element(pool, [](const auto& a, const auto& b) { return a.wins() < b.wins(); });
         const auto win_count = winningest_live_ai.wins();
 
         if(win_count > best_stats.wins_to_beat)
@@ -463,10 +458,7 @@ namespace
         std::vector<int> ids;
         try
         {
-            std::transform(id_strings.begin(),
-                           id_strings.end(),
-                           std::back_inserter(ids),
-                           String::to_number<int>);
+            std::ranges::transform(id_strings, std::back_inserter(ids), String::to_number<int>);
         }
         catch(...)
         {
@@ -474,7 +466,7 @@ namespace
         }
 
         auto sorted_ids = ids;
-        std::sort(sorted_ids.begin(), sorted_ids.end());
+        std::ranges::sort(sorted_ids);
 
         std::map<int, Minimax_AI> loaded_ais;
         for(auto id : sorted_ids)
@@ -503,7 +495,7 @@ namespace
         }
 
         std::vector<Minimax_AI> result;
-        std::transform(ids.begin(), ids.end(), std::back_inserter(result), [&loaded_ais](const auto id) { return loaded_ais.at(id); });
+        std::ranges::transform(ids, std::back_inserter(result), [&loaded_ais](const auto id) { return loaded_ais.at(id); });
 
         return result;
     }
@@ -551,7 +543,7 @@ namespace
             const auto is_black_player = line.starts_with("[Black");
             if(is_white_player || is_black_player)
             {
-                const auto number_begin = std::find_if(line.begin(), line.end(), [](const auto c) { return std::isdigit(c); });
+                const auto number_begin = std::ranges::find_if(line, [](const auto c) { return std::isdigit(c); });
                 const auto number_end = std::find_if_not(std::next(number_begin), line.end(), [](const auto c) { return std::isdigit(c); });
                 const auto player_id = String::to_number<int>({number_begin, number_end});
                 if(player_id == id)

@@ -53,6 +53,6 @@ bool Random::success_probability(const size_t successes, const size_t attempts) 
 std::string Random::random_string(const size_t size) noexcept
 {
     std::string s(size, ' ');
-    std::generate(s.begin(), s.end(), []() -> char { return 'a' + char(random_integer(0, 25)); });
+    std::ranges::generate(s, []() -> char { return 'a' + char(random_integer(0, 25)); });
     return s;
 }
