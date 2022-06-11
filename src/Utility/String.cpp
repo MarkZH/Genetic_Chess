@@ -54,13 +54,13 @@ bool String::starts_with(const std::string& s, const std::string& beginning) noe
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
-    const auto text_start = std::find_if_not(s.begin(), s.end(), [](auto c) { return std::isspace(c); });
+    const auto text_start = std::find_if_not(s.begin(), s.end(), String::isspace);
     if(text_start == s.end())
     {
         return {};
     }
 
-    const auto text_end = std::find_if_not(s.rbegin(), s.rend(), [](auto c) { return std::isspace(c); }).base();
+    const auto text_end = std::find_if_not(s.rbegin(), s.rend(), String::isspace).base();
     return std::string(text_start, text_end);
 }
 
@@ -202,6 +202,16 @@ std::string String::lowercase(std::string s) noexcept
 {
     std::transform(s.begin(), s.end(), s.begin(), String::tolower);
     return s;
+}
+
+bool String::isdigit(const char c) noexcept
+{
+    return std::isdigit(c);
+}
+
+bool String::isspace(char c) noexcept
+{
+    return std::isspace(c);
 }
 
 std::string String::round_to_decimals(const double x, const size_t decimal_places) noexcept

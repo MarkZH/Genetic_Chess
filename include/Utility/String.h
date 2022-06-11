@@ -140,6 +140,16 @@ namespace String
     //! \returns The same string with all letters replaced by their lowercase versions.
     std::string lowercase(std::string s) noexcept;
 
+    //! \brief Check if a character is a digit.
+    //! 
+    //! This is useful with std:: algorithms since std::isdigit takes an int as a parameter.
+    bool isdigit(char c) noexcept;
+
+    //! \brief Check if a character is whitespace.
+    //! 
+    //! This is useful with std:: algorithms since std::isspace takes an int as a parameter.
+    bool isspace(char c) noexcept;
+
     //! \brief Returns a text version of an integer with thousands separators
     //!
     //! \param n The integer.
