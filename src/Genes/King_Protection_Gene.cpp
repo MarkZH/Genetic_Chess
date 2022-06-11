@@ -8,7 +8,7 @@
 #include "Game/Square.h"
 #include "Moves/Move.h"
 
-double King_Protection_Gene::score_board(const Board& board, const Piece_Color perspective, size_t, double) const noexcept
+double King_Protection_Gene::score_board(const Board& board, const Piece_Color perspective, size_t) const noexcept
 {
     auto square_count = 0;
     const auto king_square = board.find_king(perspective);

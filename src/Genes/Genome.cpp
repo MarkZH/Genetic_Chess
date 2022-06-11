@@ -26,8 +26,6 @@
 #include "Genes/King_Protection_Gene.h"
 #include "Genes/Castling_Possible_Gene.h"
 #include "Genes/Piece_Strength_Gene.h"
-#include "Genes/Stacked_Pawns_Gene.h"
-#include "Genes/Pawn_Islands_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
 
@@ -50,8 +48,6 @@ Genome::Genome() noexcept :
         std::make_unique<King_Confinement_Gene>(),
         std::make_unique<King_Protection_Gene>(),
         std::make_unique<Castling_Possible_Gene>(),
-        std::make_unique<Stacked_Pawns_Gene>(),
-        std::make_unique<Pawn_Islands_Gene>(),
         std::make_unique<Checkmate_Material_Gene>(),
         std::make_unique<Pawn_Structure_Gene>()
     }
@@ -65,12 +61,12 @@ Genome::Genome() noexcept :
 
 Genome::Genome(const Genome& other) noexcept : id_number(other.id())
 {
-    std::transform(other.genome.begin(), other.genome.end(),
-                   genome.begin(),
-                   [](const auto& gene)
-                   {
-                       return gene->duplicate();
-                   });
+    std::ranges::transform(other.genome,
+                           genome.begin(),
+                           [](const auto& gene)
+                           {
+                               return gene->duplicate();
+                           });
     reset_piece_strength_gene();
 }
 
@@ -165,24 +161,24 @@ void Genome::renormalize_priorities() noexcept
 Genome& Genome::operator=(const Genome& other) noexcept
 {
     id_number = other.id();
-    std::transform(other.genome.begin(), other.genome.end(),
-                   genome.begin(),
-                   [](const auto& gene)
-                   {
-                       return gene->duplicate();
-                   });
+    std::ranges::transform(other.genome,
+                           genome.begin(),
+                           [](const auto& gene)
+                           {
+                               return gene->duplicate();
+                           });
     reset_piece_strength_gene();
     return *this;
 }
 
 Genome::Genome(const Genome& A, const Genome& B) noexcept : id_number(next_id++)
 {
-    std::transform(A.genome.begin(), A.genome.end(), B.genome.begin(),
-                   genome.begin(),
-                   [](const auto& gene_a, const auto& gene_b)
-                   {
-                       return (Random::coin_flip() ? gene_a : gene_b)->duplicate();
-                   });
+    std::ranges::transform(A.genome, B.genome,
+                           genome.begin(),
+                           [](const auto& gene_a, const auto& gene_b)
+                           {
+                               return (Random::coin_flip() ? gene_a : gene_b)->duplicate();
+                           });
 
     reset_piece_strength_gene();
     renormalize_priorities();
@@ -214,11 +210,8 @@ void Genome::read_from(std::istream& is)
         if(String::trim_outer_whitespace(line_split[0]) == "Name")
         {
             const auto gene_name = String::remove_extra_whitespace(line_split[1]);
-            const auto found_gene = std::find_if(genome.begin(), genome.end(),
-                                                 [&gene_name](const auto& gene)
-                                                 {
-                                                     return gene->name() == gene_name;
-                                                 });
+            const auto found_gene =
+                std::ranges::find_if(genome, [&gene_name](const auto& gene) { return gene->name() == gene_name; });
             if(found_gene != genome.end())
             {
                 (*found_gene)->read_from(is);
@@ -254,14 +247,6 @@ double Genome::evaluate(const Board& board, const Piece_Color perspective, size_
 
 void Genome::mutate(const size_t mutation_count) noexcept
 {
-    for(size_t i = 0; i < mutation_count; ++i)
-    {
-        mutate();
-    }
-}
-
-void Genome::mutate() noexcept
-{
     // Create copies of genes equal in number to the number of mutatable components.
     std::vector<Gene*> genes;
     for(const auto& gene : genome)
@@ -270,7 +255,10 @@ void Genome::mutate() noexcept
     }
 
     // Pick randomly from the list so every component has an equal chance for mutation.
-    Random::random_element(genes)->mutate();
+    for(size_t i = 0; i < mutation_count; ++i)
+    {
+        Random::random_element(genes)->mutate();
+    }
     renormalize_priorities();
 }
 

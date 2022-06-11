@@ -197,9 +197,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     if(principal_variation.size() > depth + 1)
     {
         const auto next_principal_variation_move = principal_variation[depth + 1];
-        const auto move_iter = std::find(all_legal_moves.begin(),
-                                         all_legal_moves.end(),
-                                         next_principal_variation_move);
+        const auto move_iter = std::ranges::find(all_legal_moves, next_principal_variation_move);
 
         assert(move_iter != all_legal_moves.end());
 
@@ -656,9 +654,14 @@ void Minimax_AI::print(std::ostream& os) const noexcept
     genome.print(os);
 }
 
-bool Minimax_AI::operator<(const Minimax_AI& other) const noexcept
+std::strong_ordering Minimax_AI::operator<=>(const Minimax_AI& other) const noexcept
 {
-    return id() < other.id();
+    return id() <=> other.id();
+}
+
+bool Minimax_AI::operator==(const Minimax_AI& other) const noexcept
+{
+    return (*this <=> other) == 0;
 }
 
 int find_last_id(const std::string& players_file_name)

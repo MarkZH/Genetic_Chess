@@ -250,11 +250,9 @@
     <ClCompile Include="src\genes\Opponent_Pieces_Targeted_Gene.cpp" />
     <ClCompile Include="src\Genes\Passed_Pawn_Gene.cpp" />
     <ClCompile Include="src\genes\Pawn_Advancement_Gene.cpp" />
-    <ClCompile Include="src\Genes\Pawn_Islands_Gene.cpp" />
     <ClCompile Include="src\Genes\Pawn_Structure_Gene.cpp" />
     <ClCompile Include="src\genes\Piece_Strength_Gene.cpp" />
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
-    <ClCompile Include="src\Genes\Stacked_Pawns_Gene.cpp" />
     <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Moves\Castle.cpp" />
@@ -300,11 +298,9 @@
     <ClInclude Include="include\genes\Opponent_Pieces_Targeted_Gene.h" />
     <ClInclude Include="include\Genes\Passed_Pawn_Gene.h" />
     <ClInclude Include="include\genes\Pawn_Advancement_Gene.h" />
-    <ClInclude Include="include\Genes\Pawn_Islands_Gene.h" />
     <ClInclude Include="include\Genes\Pawn_Structure_Gene.h" />
     <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
     <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
-    <ClInclude Include="include\Genes\Stacked_Pawns_Gene.h" />
     <ClInclude Include="include\genes\Total_Force_Gene.h" />
     <ClInclude Include="include\Moves\Castle.h" />
     <ClInclude Include="include\Moves\Direction.h" />

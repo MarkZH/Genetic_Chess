@@ -44,7 +44,7 @@ class Piece_Strength_Gene : public Clonable_Gene<Piece_Strength_Gene>
     private:
         std::array<double, 6> piece_strength;
 
-        double score_board(const Board& board, Piece_Color perspective, size_t depth, double game_progress) const noexcept override;
+        double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void adjust_properties(std::map<std::string, std::string>& properties) const noexcept override;
         void load_gene_properties(const std::map<std::string, std::string>& properties) override;
         double piece_value(Piece_Type type) const noexcept;

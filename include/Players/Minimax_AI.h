@@ -9,6 +9,7 @@
 #include <utility>
 #include <string>
 #include <iosfwd>
+#include <compare>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
@@ -100,10 +101,15 @@ class Minimax_AI : public Player
         //! \param os The output stream
         void print(std::ostream& os) const noexcept;
 
-        //! \brief Ordering operator for std::map
+        //! \brief Ordering operator
         //!
         //! \param other The AI being compared to this one.
-        bool operator<(const Minimax_AI& other) const noexcept;
+        std::strong_ordering operator<=>(const Minimax_AI& other) const noexcept;
+
+        //! \brief Equality operator
+        //!
+        //! \param other The AI being compared to this one.
+        bool operator==(const Minimax_AI& other) const noexcept;
 
     private:
         //! \brief The maximum depth to search to limit the size of the current_variation_store.

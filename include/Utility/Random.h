@@ -87,10 +87,8 @@ namespace Random
             }
         }
 
-        std::sort(positions.begin(), positions.end());
-        std::transform(positions.begin(), positions.end(),
-                       list.begin(),
-                       [](const auto& position_item) { return position_item.second; });
+        std::ranges::sort(positions);
+        std::ranges::transform(positions, list.begin(), [](const auto& position_item) { return position_item.second; });
     }
 
     //! \brief Select random element from random-access container.

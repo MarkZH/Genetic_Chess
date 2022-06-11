@@ -408,7 +408,6 @@ namespace
         // Use pointers since each player could be Genetic, Random, etc.
         std::unique_ptr<Player> white;
         std::unique_ptr<Player> black;
-        std::unique_ptr<Player> latest;
 
         Clock::seconds game_time{};
         size_t moves_per_reset = 0;
@@ -422,6 +421,7 @@ namespace
         for(size_t i = 0; i < options.size(); ++i)
         {
             const std::string opt = options[i];
+            std::unique_ptr<Player> latest;
             if(opt == "-random")
             {
                 latest = std::make_unique<Random_AI>();
