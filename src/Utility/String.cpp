@@ -48,13 +48,13 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
-    const auto text_start = std::ranges::find_if_not(s, [](auto c) { return std::isspace(c); });
+    const auto text_start = std::ranges::find_if_not(s, String::isspace);
     if(text_start == s.end())
     {
         return {};
     }
 
-    const auto text_end = std::ranges::find_if_not(std::ranges::reverse_view(s), [](auto c) { return std::isspace(c); }).base();
+    const auto text_end = std::ranges::find_if_not(std::ranges::reverse_view(s), String::isspace).base();
     return std::string(text_start, text_end);
 }
 
@@ -196,6 +196,16 @@ std::string String::lowercase(std::string s) noexcept
 {
     std::ranges::transform(s, s.begin(), String::tolower);
     return s;
+}
+
+bool String::isdigit(const char c) noexcept
+{
+    return std::isdigit(c);
+}
+
+bool String::isspace(char c) noexcept
+{
+    return std::isspace(c);
 }
 
 std::string String::round_to_decimals(const double x, const size_t decimal_places) noexcept

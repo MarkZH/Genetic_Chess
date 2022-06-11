@@ -543,8 +543,8 @@ namespace
             const auto is_black_player = line.starts_with("[Black");
             if(is_white_player || is_black_player)
             {
-                const auto number_begin = std::ranges::find_if(line, [](const auto c) { return std::isdigit(c); });
-                const auto number_end = std::find_if_not(std::next(number_begin), line.end(), [](const auto c) { return std::isdigit(c); });
+                const auto number_begin = std::ranges::find_if(line, String::isdigit);
+                const auto number_end = std::find_if_not(std::next(number_begin), line.end(), String::isdigit);
                 const auto player_id = String::to_number<int>({number_begin, number_end});
                 if(player_id == id)
                 {
