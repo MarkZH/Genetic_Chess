@@ -65,7 +65,7 @@ namespace
 //!
 //! \param argc The number of command-line arguments.
 //! \param argv The command-line arguments. See print_help() (or run the program
-//!        with no arguments) for a listing of all the options.
+//!        with no arguments or with -help) for a listing of all the options.
 //! \returns EXIT_SUCCESS or EXIT_FAILURE.
 int main(int argc, char *argv[])
 {
@@ -128,6 +128,10 @@ int main(int argc, char *argv[])
             argument_assert(options.size() >= 2, option + " requires a numeric argument.");
             list_moves(String::to_number<size_t>(options[1]));
         }
+        else if(option == "-help")
+        {
+            print_help();
+        }
         else
         {
             start_game(options);
@@ -154,6 +158,8 @@ namespace
                 << "\t-arg=param\n"
                 << "\t--arg=param\n\n"
                 << "Standalone functions (only first is run if multiple are specified):\n\n"
+                << "\t-help\n"
+                << "\t\tPrint this help text and exit.\n\n"
                 << "\t-gene-pool [file name]\n"
                 << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
                 << "\t-confirm [filename]\n"
