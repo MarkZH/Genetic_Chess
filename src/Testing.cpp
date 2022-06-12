@@ -1654,7 +1654,7 @@ namespace
                 const auto to_string_array = [](const data& data_list)
                     {
                         std::vector<std::string> entries;
-                        std::transform(data_list.begin(), data_list.end(), std::back_inserter(entries), [](auto d) { return std::to_string(d); });
+                        std::ranges::transform(data_list, std::back_inserter(entries), [](auto d) { return std::to_string(d); });
                         return "{" + String::join(entries.begin(), entries.end(), ", ") + "}";
                     };
 
