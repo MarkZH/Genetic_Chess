@@ -186,6 +186,8 @@ namespace
                 << "\t\tAn optional location for the game to be played. This will be\n\t\twritten to the PGN game record.\n\n"
                 << "\t-game-file [file name]\n"
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n"
+                << "\t-uci/-xboard\n"
+                << "\t\tShow an engine's thinking output in either UCI or Xboard format.\n\n"
                 << "All game options in this section can be overriden by GUI commands except\n-short-post, -event, -location, and -game-file.\n\n";
     }
 
