@@ -20,6 +20,7 @@ class Game_Result;
 //! \param location The name of the location of the game. May be empty.
 //! \param pgn_file_name The name of the file where the game record will be written. If empty,
 //!        the game will be written to stdout.
+//! \param print_board Whether to print the board position to the command line after each move.
 //! \returns The result of the game.
 Game_Result play_game(Board board,
                       Clock game_clock,
@@ -27,7 +28,8 @@ Game_Result play_game(Board board,
                       const Player& black,
                       const std::string& event_name,
                       const std::string& location,
-                      const std::string& pgn_file_name) noexcept;
+                      const std::string& pgn_file_name,
+                      bool print_board) noexcept;
 
 //! \brief Play a game with an outside GUI interface.
 //!

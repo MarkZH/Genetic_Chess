@@ -24,7 +24,8 @@ Game_Result play_game(Board board,
                       const Player& black,
                       const std::string& event_name,
                       const std::string& location,
-                      const std::string& pgn_file_name) noexcept
+                      const std::string& pgn_file_name,
+                      const bool print_board) noexcept
 {
     std::vector<const Move*> game_record;
     Game_Result result;
@@ -46,6 +47,10 @@ Game_Result play_game(Board board,
         {
             result = board.play_move(move_chosen);
             game_record.push_back(&move_chosen);
+            if(print_board)
+            {
+                board.cli_print();
+            }
         }
     }
 
