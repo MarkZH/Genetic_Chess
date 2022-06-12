@@ -1653,15 +1653,9 @@ namespace
 
                 const auto to_string_array = [](const data& data_list)
                     {
-                        std::string result_text = "{";
-                        if(data_list.empty())
-                        {
-                            return result_text + "}";
-                        }
-                        result_text += std::to_string(data_list.front());
-                        std::for_each(std::next(data_list.begin()), data_list.end(),
-                                      [&result_text](const auto& n) { result_text += ", " + std::to_string(n); });
-                        return result_text + "}";
+                        std::vector<std::string> entries;
+                        std::ranges::transform(data_list, std::back_inserter(entries), [](auto d) { return std::to_string(d); });
+                        return "{" + String::join(entries.begin(), entries.end(), ", ") + "}";
                     };
 
                 return intro + to_string_array(expected) + but + to_string_array(result);
