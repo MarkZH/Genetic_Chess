@@ -50,6 +50,8 @@ double King_Confinement_Gene::score_board(const Board& board, const Piece_Color 
 
     double free_space_total = board.safe_for_king(king_square, perspective) ? 1.0 : 0.0;
 
+    // This raw for-loop is needed because add_surrounding_squares() modifies
+    // square_queue.
     for(auto iter = square_queue.begin(); iter != square_queue.end(); ++iter)
     {
         const auto square = *iter;
