@@ -261,6 +261,21 @@ std::string Board::fen() const noexcept
     return String::join(fen_parts.begin(), fen_parts.end(), " ");
 }
 
+void Board::cli_print() const noexcept
+{
+    std::cout << '\n';
+    for(auto rank = 8; rank >= 1; --rank)
+    {
+        for(auto file = 'a'; file <= 'h'; ++file)
+        {
+            const auto piece = piece_on_square({file, rank});
+            std::cout << ' ' << (piece ? piece.fen_symbol() : '.');
+        }
+        std::cout << '\n';
+    }
+    std::cout << '\n';
+}
+
 std::string Board::original_fen() const noexcept
 {
     const auto map_lock = std::lock_guard(starting_fen_map_lock);

@@ -188,6 +188,8 @@ namespace
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n"
                 << "\t-uci/-xboard\n"
                 << "\t\tShow an engine's thinking output in either UCI or Xboard format.\n\n"
+                << "\t-show-board\n"
+                << "\t\tShow the board on the command line when playing a local game.\n\n"
                 << "All game options in this section can be overriden by GUI commands except\n-short-post, -event, -location, and -game-file.\n\n";
     }
 
@@ -418,6 +420,7 @@ namespace
         std::string event_name;
         std::string location;
         auto thinking_output = Thinking_Output_Type::NO_THINKING;
+        auto print_board = false;
 
         for(size_t i = 0; i < options.size(); ++i)
         {
@@ -479,6 +482,10 @@ namespace
             {
                 thinking_output = Thinking_Output_Type::UCI;
             }
+            else if(opt == "-show-board")
+            {
+                print_board = true;
+            }
             else
             {
                 throw std::invalid_argument("Invalid or incomplete game option: " + opt);
@@ -518,7 +525,8 @@ namespace
                       *white, *black,
                       event_name,
                       location,
-                      game_file_name);
+                      game_file_name,
+                      print_board);
         }
     }
 

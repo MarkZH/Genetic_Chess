@@ -152,7 +152,8 @@ void gene_pool(const std::string& config_file)
                                                               std::cref(black),
                                                               "Gene pool",
                                                               "Local computer",
-                                                              game_record_file);
+                                                              game_record_file,
+                                                              false);
                                                 limiter.done();
                                                 return result;
                                             }));
