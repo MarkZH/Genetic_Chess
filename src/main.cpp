@@ -66,7 +66,7 @@ namespace
 //!
 //! \param argc The number of command-line arguments.
 //! \param argv The command-line arguments. See print_help() (or run the program
-//!        with no arguments) for a listing of all the options.
+//!        with no arguments or with -help) for a listing of all the options.
 //! \returns EXIT_SUCCESS or EXIT_FAILURE.
 int main(int argc, char *argv[])
 {
@@ -129,6 +129,10 @@ int main(int argc, char *argv[])
             argument_assert(options.size() >= 2, option + " requires a numeric argument.");
             list_moves(String::to_number<size_t>(options[1]));
         }
+        else if(option == "-help")
+        {
+            print_help();
+        }
         else
         {
             start_game(options);
@@ -155,6 +159,8 @@ namespace
                 << "\t-arg=param\n"
                 << "\t--arg=param\n\n"
                 << "Standalone functions (only first is run if multiple are specified):\n\n"
+                << "\t-help\n"
+                << "\t\tPrint this help text and exit.\n\n"
                 << "\t-gene-pool [file name]\n"
                 << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
                 << "\t-confirm [filename]\n"
@@ -187,6 +193,10 @@ namespace
                 << "\t\tAn optional location for the game to be played. This will be\n\t\twritten to the PGN game record.\n\n"
                 << "\t-game-file [file name]\n"
                 << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n"
+                << "\t-uci/-xboard\n"
+                << "\t\tShow an engine's thinking output in either UCI or Xboard format.\n\n"
+                << "\t-show-board\n"
+                << "\t\tShow the board on the command line when playing a local game.\n\n"
                 << "All game options in this section can be overriden by GUI commands except\n-short-post, -event, -location, and -game-file.\n\n";
     }
 
@@ -417,6 +427,7 @@ namespace
         std::string event_name;
         std::string location;
         auto thinking_output = Thinking_Output_Type::NO_THINKING;
+        auto print_board = false;
 
         for(size_t i = 0; i < options.size(); ++i)
         {
@@ -478,6 +489,10 @@ namespace
             {
                 thinking_output = Thinking_Output_Type::UCI;
             }
+            else if(opt == "-show-board")
+            {
+                print_board = true;
+            }
             else
             {
                 throw std::invalid_argument("Invalid or incomplete game option: " + opt);
@@ -517,7 +532,8 @@ namespace
                       *white, *black,
                       event_name,
                       location,
-                      game_file_name);
+                      game_file_name,
+                      print_board);
         }
     }
 

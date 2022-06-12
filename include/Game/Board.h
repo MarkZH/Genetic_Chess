@@ -91,6 +91,9 @@ class Board
         //! legal en passant move to be made.
         std::string fen() const noexcept;
 
+        //! Print a representation of the board to the command line.
+        void cli_print() const noexcept;
+
         //! \brief Returns the FEN string that was used to create the Board.
         std::string original_fen() const noexcept;
 
