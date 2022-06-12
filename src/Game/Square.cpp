@@ -26,7 +26,7 @@ All_Squares_Iterator All_Squares::begin() const noexcept
 
 All_Squares_Iterator All_Squares::end() const noexcept
 {
-    return All_Squares_Iterator({});
+    return All_Squares_Iterator(Square{});
 }
 
 namespace
@@ -179,6 +179,11 @@ Square_Line_Iterator& Square_Line_Iterator::operator++() noexcept
     return *this;
 }
 
+void Square_Line_Iterator::operator++(int) noexcept
+{
+    current_square += step;
+}
+
 bool Square_Line_Iterator::operator==(const Square_Line_Iterator& other) const noexcept
 {
     return current_square == other.current_square;
@@ -221,6 +226,11 @@ All_Squares_Iterator& All_Squares_Iterator::operator++() noexcept
 {
     ++current_square;
     return *this;
+}
+
+void All_Squares_Iterator::operator++(int) noexcept
+{
+    ++current_square;
 }
 
 Square All_Squares_Iterator::operator*() const noexcept

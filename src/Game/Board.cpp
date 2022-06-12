@@ -675,12 +675,13 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
         const auto squares = Square::square_line_from(king_square, (move.start() - king_square).step());
         const auto rook = Piece{opposite(whose_turn()), Piece_Type::ROOK};
         const auto queen = Piece{opposite(whose_turn()), Piece_Type::QUEEN};
-        const auto revealed_attacker = std::find_if(squares.begin(), squares.end(),
-                                                    [this, rook, queen](auto square)
-                                                    {
-                                                        const auto piece = piece_on_square(square);
-                                                        return piece == rook || piece == queen;
-                                                    });
+        const auto revealed_attacker =
+            std::ranges::find_if(squares,
+                                 [this, rook, queen](auto square)
+                                 {
+                                     const auto piece = piece_on_square(square);
+                                     return piece == rook || piece == queen;
+                                 });
 
         return revealed_attacker != squares.end() &&
                Algorithm::has_exactly_n(squares.begin(), revealed_attacker, [this](auto square) { return piece_on_square(square); }, 2);
@@ -877,7 +878,7 @@ Square Board::find_checking_square() const noexcept
     const auto step = Move::attack_direction_from_index(checking_index);
     const auto king_square = find_king(whose_turn());
     const auto squares = Square::square_line_from(king_square, -step);
-    return *std::find_if(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
+    return *std::ranges::find_if(squares, [this](auto square) { return piece_on_square(square); });
 }
 
 bool Board::enough_material_to_checkmate(const Piece_Color piece_color) const noexcept
@@ -908,10 +909,10 @@ bool Board::enough_material_to_checkmate(const Piece_Color piece_color) const no
         };
 
     const auto squares = Square::all_squares();
-    const auto bishops_on_white = std::any_of(squares.begin(), squares.end(),
-                                              [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
-    const auto bishops_on_black = std::any_of(squares.begin(), squares.end(),
-                                              [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
+    const auto bishops_on_white =
+        std::ranges::any_of(squares, [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
+    const auto bishops_on_black =
+        std::ranges::any_of(squares, [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
     return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
@@ -943,10 +944,10 @@ bool Board::enough_material_to_checkmate() const noexcept
         };
 
     const auto squares = Square::all_squares();
-    const auto bishops_on_white = std::any_of(squares.begin(), squares.end(),
-                                              [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
-    const auto bishops_on_black = std::any_of(squares.begin(), squares.end(),
-                                              [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
+    const auto bishops_on_white =
+        std::ranges::any_of(squares, [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::WHITE, square); });
+    const auto bishops_on_black =
+        std::ranges::any_of(squares, [bishop_on_square_color](const auto square) { return bishop_on_square_color(Square_Color::BLACK, square); });
     return (bishops_on_white && bishops_on_black) || (knight_count > 0 && (bishops_on_white || bishops_on_black));
 }
 
@@ -995,7 +996,7 @@ bool Board::all_empty_between(const Square start, const Square end) const noexce
 {
     assert(straight_line_move(start, end));
     const auto squares = Square::squares_between(start, end);
-    return std::none_of(squares.begin(), squares.end(), [this](auto square) { return piece_on_square(square); });
+    return std::ranges::none_of(squares, [this](auto square) { return piece_on_square(square); });
 }
 
 bool Board::piece_is_pinned(const Square square) const noexcept

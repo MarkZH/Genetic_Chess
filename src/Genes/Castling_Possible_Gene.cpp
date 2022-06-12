@@ -70,12 +70,7 @@ double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color
                 const auto preference = direction == Direction::LEFT ? queenside_preference.value() : kingside_preference.value();
                 const auto rook_square = Square{direction == Direction::LEFT ? 'a' : 'h', perspective == Piece_Color::WHITE ? 1 : 8};
                 const auto between_squares = Squares_in_a_Line(king_square, rook_square);
-                const auto moves_to_go = std::count_if(between_squares.begin(),
-                                                       between_squares.end(),
-                                                       [&board](const auto square)
-                                                       {
-                                                           return board.piece_on_square(square);
-                                                       });
+                const auto moves_to_go = std::ranges::count_if(between_squares, [&board](const auto square) { return board.piece_on_square(square); });
                 score += preference/double(depth + 2*moves_to_go + 1);
             }
         }
