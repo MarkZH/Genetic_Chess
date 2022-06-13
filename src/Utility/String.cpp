@@ -247,7 +247,7 @@ std::string String::pluralize(int count, const std::string& noun) noexcept
     return std::to_string(count) + " " + noun + (count == 1 ? "" : "s");
 }
 
-std::string String::word_wrap(size_t line_length, size_t indent, const std::string& text) noexcept
+std::string String::word_wrap(const size_t line_length, const size_t indent, const std::string& text) noexcept
 {
     const auto text_length = line_length - indent;
     
