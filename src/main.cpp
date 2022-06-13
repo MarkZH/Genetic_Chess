@@ -159,7 +159,7 @@ namespace
         help.add_option("-arg=param");
         help.add_option("--arg param");
         help.add_option("--arg=param", {}, {}, "where arg is the name of the argument and param is a single required parameter.");
-        help.add_paragraph("Parameters in [square brackets] are required, while parameters in <angle brackets> are optional.");
+        help.add_paragraph("Parameters in [square brackets] are required, while parameters in <angle~brackets> are optional.");
         help.add_section_title("Standalone functions (only first is run if multiple are specified)");
         help.add_option("-help", {}, {}, "Print this help text and exit.");
         help.add_option("-gene-pool", {"file name"}, {}, "Start a run of a gene pool with parameters set in the given file name.");

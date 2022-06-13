@@ -247,7 +247,8 @@ namespace String
     //! \param indent The number of spaces to indent each line of text.
     //! \param text The raw text.
     //! 
-    //! All whitespace will be condensed to single spaces before wrapping.
+    //! All whitespace will be condensed to single spaces before wrapping. The character ~ will be
+    //! converted to a non-breaking space.
     std::string word_wrap(size_t line_length, size_t indent, const std::string& text) noexcept;
 }
 

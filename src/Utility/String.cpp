@@ -264,5 +264,7 @@ std::string String::word_wrap(size_t line_length, size_t indent, const std::stri
     }
 
     const auto indent_space = std::string(indent, ' ');
-    return indent_space + join(lines.begin(), lines.end(), "\n" + indent_space);
+    auto wrapped = indent_space + join(lines.begin(), lines.end(), "\n" + indent_space);
+    std::transform(wrapped.begin(), wrapped.end(), wrapped.begin(), [](auto& c) { return c == '~' ? ' ' : c;  });
+    return wrapped;
 }
