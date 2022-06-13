@@ -21,6 +21,7 @@
 
 #include "Utility/Exceptions.h"
 #include "Utility/String.h"
+#include "Utility/Help_Writer.h"
 
 #include "Testing.h"
 
@@ -150,53 +151,40 @@ namespace
 {
     void print_help()
     {
-        std::cout << "\n\nGenetic Chess\n"
-                << "=============\n\n"
-                << "For all arguments, all of the following forms are equivalent:\n"
-                << "\t-arg param\n"
-                << "\t--arg param\n"
-                << "\t-arg=param\n"
-                << "\t--arg=param\n\n"
-                << "Standalone functions (only first is run if multiple are specified):\n\n"
-                << "\t-help\n"
-                << "\t\tPrint this help text and exit.\n\n"
-                << "\t-gene-pool [file name]\n"
-                << "\t\tStart a run of a gene pool with parameters set in the given\n\t\tfile name.\n\n"
-                << "\t-confirm [filename]\n"
-                << "\t\tCheck a file containing PGN game records for any illegal moves\n\t\tor mismarked checks or checkmates.\n\n"
-                << "\t-test\n"
-                << "\t\tRun tests to ensure various parts of the program function\n\t\tcorrectly.\n\n"
-                << "\t-speed\n"
-                << "\t\tRun a speed test for gene scoring and boad move submission.\n\n"
-                << "\t-perft\n"
-                << "\t\tRun a legal move generation test.\n\n"
-                << "\t-update [filename]\n"
-                << "\t\tIf genetic_chess has changed how genomes are written, use\n\t\tthis option to update the file to the latest format.\n\n"
-                << "The following options start a game with various players. If two players are\nspecified, the first plays white and the second black. If only one player is\nspecified, the program will wait for a CECP/xboard or UCI command from a GUI\nto start playing.\n\n"
-                << "\t-genetic [filename [number]]\n"
-                << "\t\tSelect a minimaxing evolved player for a game. Optional file name\n\t\tand ID number to load an AI from a file.\n\n"
-                << "\t-random\n"
-                << "\t\tSelect a player that makes random moves for a game.\n\n"
-                << "Other game options:\n\n"
-                << "\t-time [number]\n"
-                << "\t\tSpecify the time (in seconds) each player has to play the game\n\t\tor to make a set number of moves (see -reset_moves option).\n\n"
-                << "\t-reset-moves [number]\n"
-                << "\t\tSpecify the number of moves a player must make within the time\n\t\tlimit. The clock adds the initial time every time this\n\t\tnumber of moves is made.\n\n"
-                << "\t-increment-time [number]\n"
-                << "\t\tSpecify seconds to add to time after each move.\n\n"
-                << "\t-board [FEN string]\n"
-                << "\t\tSpecify the starting board state using FEN notation. The entire\n\t\tstring should be quoted.\n\n"
-                << "\t-event [name]\n"
-                << "\t\tAn optional name for the game to be played. This name will be\n\t\twritten to the PGN game record.\n\n"
-                << "\t-location [name]\n"
-                << "\t\tAn optional location for the game to be played. This will be\n\t\twritten to the PGN game record.\n\n"
-                << "\t-game-file [file name]\n"
-                << "\t\tSpecify the name of the file where the game record should be\n\t\twritten. If none, record is printed to stdout.\n\n"
-                << "\t-uci/-xboard\n"
-                << "\t\tShow an engine's thinking output in either UCI or Xboard format.\n\n"
-                << "\t-show-board\n"
-                << "\t\tShow the board on the command line when playing a local game.\n\n"
-                << "All game options in this section can be overriden by GUI commands except\n-short-post, -event, -location, and -game-file.\n\n";
+        Help_Writer help;
+        help.add_title("Genetic Chess");
+        help.add_paragraph("Genetic Chess is a program that runs a chess engine to play games or run a gene pool for genetically optimizing the chess engine.");
+        help.add_section_title("For all arguments, all of the following forms are equivalent");
+        help.add_option("-arg param");
+        help.add_option("-arg=param");
+        help.add_option("--arg param");
+        help.add_option("--arg=param", {}, {}, "where arg is the name of the argument and param is a single required parameter.");
+        help.add_paragraph("Parameters in [square brackets] are required, while parameters in <angle brackets> are optional.");
+        help.add_section_title("Standalone functions (only first is run if multiple are specified)");
+        help.add_option("-help", {}, {}, "Print this help text and exit.");
+        help.add_option("-gene-pool", {"file name"}, {}, "Start a run of a gene pool with parameters set in the given file name.");
+        help.add_option("-confirm", {"file name"}, {}, "Check a file containing PGN game records for any illegal moves or mismarked checks or checkmates.");
+        help.add_option("-test", {}, {}, "Run tests to ensure various parts of the program function correctly.");
+        help.add_option("-speed", {}, {}, "Run a speed test for gene scoringand boad move submission.");
+        help.add_option("-perft", {}, {}, "Run a legal move generation test.");
+        help.add_option("-update", {"filename"}, {}, "If genetic_chess has changed how genomes are written, use this option to update the file to the latest format.");
+        help.add_paragraph("The following options start a game with various players. If two players are specified, the first plays white and the second black. If only one player is specified, the program will wait for a CECP/xboard or UCI command from a GUI to start playing.");
+        help.add_option("-genetic", {"filename"}, {"ID number"}, "Select a minimaxing evolved player for a game and load data from the file. If there are multiple genomes in the file, specify an ID number to load, otherwise the last genome in the file will be used.");
+        help.add_option("-random", {}, {}, "Select a player that makes random moves for a game.");
+        help.add_section_title("Other game options");
+        help.add_option("-time", {"number"}, {}, "Specify the time(in seconds) each player has to play the game or to make a set number of moves (see -reset_moves option).");
+        help.add_option("-reset-moves", {"number"}, {}, "Specify the number of moves a player must make within the time limit. The clock adds the initial time every time this number of moves is made.");
+        help.add_option("-increment-time", {"number"}, {}, "Specify seconds to add to time after each move.");
+        help.add_option("-board", {"FEN string"}, {}, "Specify the starting board state using FEN notation. The entire string should be quoted.");
+        help.add_option("-event", {"name"}, {}, "An optional name for the game to be played. This name will be written to the PGN game record.");
+        help.add_option("-location", {"name"}, {}, "An optional location for the game to be played.This will be written to the PGN game record.");
+        help.add_option("-game-file", {"file name"}, {}, "Specify the name of the file where the game record should be written. If none, record is printed to stdout.");
+        help.add_option("-uci");
+        help.add_option("-xboard", {}, {}, "Show an engine's thinking output in either UCI or Xboard format.");
+        help.add_option("-show-board", {}, {}, "Show the board on the command line when playing a local game.");
+        help.add_paragraph("All game options in this section can be overriden by GUI commands except -short-post, -event, -location, and -game-file.");
+
+        std::cout << help.full_text();
     }
 
     bool check_rule_result(const std::string& rule_source,
