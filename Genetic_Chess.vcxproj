@@ -272,6 +272,7 @@
     <ClCompile Include="src\Players\UCI_Mediator.cpp" />
     <ClCompile Include="src\Testing.cpp" />
     <ClCompile Include="src\Utility\Configuration.cpp" />
+    <ClCompile Include="src\Utility\Help_Writer.cpp" />
     <ClCompile Include="src\Utility\Math.cpp" />
     <ClCompile Include="src\Utility\Random.cpp" />
     <ClCompile Include="src\Utility\String.cpp" />
@@ -324,6 +325,7 @@
     <ClInclude Include="include\Utility\Configuration.h" />
     <ClInclude Include="include\Utility\Exceptions.h" />
     <ClInclude Include="include\Utility\Fixed_Capacity_Vector.h" />
+    <ClInclude Include="include\Utility\Help_Writer.h" />
     <ClInclude Include="include\Utility\Math.h" />
     <ClInclude Include="include\Utility\Random.h" />
     <ClInclude Include="include\Utility\String.h" />

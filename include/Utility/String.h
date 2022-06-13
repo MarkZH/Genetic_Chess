@@ -231,6 +231,16 @@ namespace String
     //! \param noun The noun to pluralize.
     //! \returns A string of the form "N nouns" or "1 noun"
     std::string pluralize(int count, const std::string& noun) noexcept;
+
+    //! \brief Create a strings with added line breaks so no line is longer than a limit.
+    //! 
+    //! \param line_length The maximum length of a line in the wrapped text (included the indent).
+    //! \param indent The number of spaces to indent each line of text.
+    //! \param text The raw text.
+    //! 
+    //! All whitespace will be condensed to single spaces before wrapping. The character ~ will be
+    //! converted to a non-breaking space.
+    std::string word_wrap(size_t line_length, size_t indent, const std::string& text) noexcept;
 }
 
 #endif // STRING_H
