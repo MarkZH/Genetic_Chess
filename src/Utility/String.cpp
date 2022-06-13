@@ -223,3 +223,25 @@ std::string String::pluralize(int count, const std::string& noun) noexcept
 {
     return std::to_string(count) + " " + noun + (count == 1 ? "" : "s");
 }
+
+std::string String::word_wrap(size_t line_length, size_t indent, const std::string& text) noexcept
+{
+    const auto text_length = line_length - indent;
+    
+    std::vector<std::string> lines{""};
+    for(const auto& word : split(text))
+    {
+        std::string space = lines.back().empty() ? "" : " ";
+        if(lines.back().size() + space.size() + word.size() > text_length)
+        {
+            lines.push_back("");
+            space = "";
+        }
+        lines.back() += space + word;
+    }
+
+    const auto indent_space = std::string(indent, ' ');
+    auto wrapped = indent_space + join(lines.begin(), lines.end(), "\n" + indent_space);
+    std::ranges::transform(wrapped, wrapped.begin(), [](auto& c) { return c == '~' ? ' ' : c;  });
+    return wrapped;
+}
