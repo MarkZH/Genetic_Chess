@@ -182,7 +182,7 @@ namespace
         help.add_option("-uci");
         help.add_option("-xboard", {}, {}, "Show an engine's thinking output in either UCI or Xboard format.");
         help.add_option("-show-board", {}, {}, "Show the board on the command line when playing a local game.");
-        help.add_paragraph("All game options in this section can be overriden by GUI commands except -short-post, -event, -location, and -game-file.");
+        help.add_paragraph("All game options in this section can be overriden by GUI commands except -event, -location, and -game-file.");
 
         std::cout << help.full_text();
     }
