@@ -167,9 +167,9 @@ namespace
         help.add_option("-test", {}, {}, "Run tests to ensure various parts of the program function correctly.");
         help.add_option("-speed", {}, {}, "Run a speed test for gene scoringand boad move submission.");
         help.add_option("-perft", {}, {}, "Run a legal move generation test.");
-        help.add_option("-update", {"filename"}, {}, "If genetic_chess has changed how genomes are written, use this option to update the file to the latest format.");
+        help.add_option("-update", {"file name"}, {}, "If genetic_chess has changed how genomes are written, use this option to update the file to the latest format.");
         help.add_paragraph("The following options start a game with various players. If two players are specified, the first plays white and the second black. If only one player is specified, the program will wait for a CECP/xboard or UCI command from a GUI to start playing.");
-        help.add_option("-genetic", {"filename"}, {"ID number"}, "Select a minimaxing evolved player for a game and load data from the file. If there are multiple genomes in the file, specify an ID number to load, otherwise the last genome in the file will be used.");
+        help.add_option("-genetic", {"file name"}, {"ID number"}, "Select a minimaxing evolved player for a game and load data from the file. If there are multiple genomes in the file, specify an ID number to load, otherwise the last genome in the file will be used.");
         help.add_option("-random", {}, {}, "Select a player that makes random moves for a game.");
         help.add_section_title("Other game options");
         help.add_option("-time", {"number"}, {}, "Specify the time(in seconds) each player has to play the game or to make a set number of moves (see -reset_moves option).");
@@ -177,7 +177,7 @@ namespace
         help.add_option("-increment-time", {"number"}, {}, "Specify seconds to add to time after each move.");
         help.add_option("-board", {"FEN string"}, {}, "Specify the starting board state using FEN notation. The entire string should be quoted.");
         help.add_option("-event", {"name"}, {}, "An optional name for the game to be played. This name will be written to the PGN game record.");
-        help.add_option("-location", {"name"}, {}, "An optional location for the game to be played.This will be written to the PGN game record.");
+        help.add_option("-location", {"name"}, {}, "An optional location for the game to be played. This will be written to the PGN game record.");
         help.add_option("-game-file", {"file name"}, {}, "Specify the name of the file where the game record should be written. If none, record is printed to stdout.");
         help.add_option("-uci");
         help.add_option("-xboard", {}, {}, "Show an engine's thinking output in either UCI or Xboard format.");
@@ -427,17 +427,17 @@ namespace
             else if(opt == "-genetic")
             {
                 argument_assert(i + 1 < options.size(), "Genome file needed for player");
-                std::string filename = options[++i];
+                std::string file_name = options[++i];
 
                 try
                 {
                     const auto id = i + 1 < options.size() ? options[i + 1] : std::string{};
-                    latest = std::make_unique<Minimax_AI>(filename, String::to_number<int>(id));
+                    latest = std::make_unique<Minimax_AI>(file_name, String::to_number<int>(id));
                     ++i;
                 }
                 catch(const std::invalid_argument&) // Could not convert id to an int.
                 {
-                    latest = std::make_unique<Minimax_AI>(filename, find_last_id(filename));
+                    latest = std::make_unique<Minimax_AI>(file_name, find_last_id(file_name));
                 }
             }
             else if(opt == "-time" && i + 1 < options.size())
