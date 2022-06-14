@@ -18,7 +18,8 @@ void Help_Writer::add_title(const std::string& title) noexcept
 
 void Help_Writer::add_section_title(const std::string& title) noexcept
 {
-    text += title + ":\n\n";
+    const auto small_indent = std::string(indent_size/2, ' ');
+    text += small_indent + title + "\n" + small_indent + std::string(title.size(), '-') + "\n";
 }
 
 void Help_Writer::add_paragraph(const std::string& paragraph) noexcept
