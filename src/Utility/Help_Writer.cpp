@@ -5,6 +5,12 @@
 
 #include "Utility/String.h"
 
+namespace
+{
+    const auto line_length = 72;
+    const auto indent_size = 4;
+}
+
 void Help_Writer::add_title(const std::string& title) noexcept
 {
     text += title + '\n' + std::string(title.size(), '=') + "\n\n";
