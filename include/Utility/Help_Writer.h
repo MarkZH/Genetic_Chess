@@ -32,6 +32,9 @@ class Help_Writer
 
     private:
         std::string text;
+        bool need_extra_space = false;
+
+        void add_extra_space_after_option() noexcept;
 };
 
 #endif // HELP_WRITER_H

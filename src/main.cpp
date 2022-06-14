@@ -160,7 +160,6 @@ namespace
         help.add_option("-arg=param");
         help.add_option("--arg param");
         help.add_option("--arg=param");
-        help.add_option("");
         help.add_paragraph("where arg is the name of the argument and param is a single required parameter.");
         help.add_paragraph("Parameters in [square brackets] are required, while parameters in <angle~brackets> are optional.");
         help.add_section_title("Standalone functions");

@@ -13,17 +13,20 @@ namespace
 
 void Help_Writer::add_title(const std::string& title) noexcept
 {
+    add_extra_space_after_option();
     text += title + '\n' + std::string(title.size(), '=') + "\n\n";
 }
 
 void Help_Writer::add_section_title(const std::string& title) noexcept
 {
+    add_extra_space_after_option();
     const auto small_indent = std::string(indent_size/2, ' ');
     text += small_indent + title + "\n" + small_indent + std::string(title.size(), '-') + "\n";
 }
 
 void Help_Writer::add_paragraph(const std::string& paragraph) noexcept
 {
+    add_extra_space_after_option();
     text += String::word_wrap(line_length, 0, paragraph) + "\n\n";
 }
 
@@ -50,9 +53,19 @@ void Help_Writer::add_option(const std::string& name,
     {
         text += String::word_wrap(line_length, 2*indent_size, description) + "\n\n";
     }
+    need_extra_space = description.empty();
 }
 
 std::string Help_Writer::full_text() const noexcept
 {
     return text;
+}
+
+void Help_Writer::add_extra_space_after_option() noexcept
+{
+    if(need_extra_space)
+    {
+        text += '\n';
+        need_extra_space = false;
+    }
 }
