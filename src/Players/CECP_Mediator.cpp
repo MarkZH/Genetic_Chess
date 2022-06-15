@@ -17,7 +17,7 @@ using namespace std::chrono_literals;
 #include "Utility/Exceptions.h"
 #include "Utility/String.h"
 
-CECP_Mediator::CECP_Mediator(const Player& local_player)
+Xboard_Mediator::Xboard_Mediator(const Player& local_player)
 {
     const std::string expected = "protover 2";
     if(receive_command() == expected)
@@ -36,11 +36,11 @@ CECP_Mediator::CECP_Mediator(const Player& local_player)
     else
     {
         log("ERROR: Expected \"" + expected + "\"");
-        throw std::runtime_error("Error in communicating with CECP program.");
+        throw std::runtime_error("Error in communicating with Xboard program.");
     }
 }
 
-Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
+Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
 {
     using centiseconds = std::chrono::duration<int, std::centi>;
 
@@ -52,7 +52,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
     {
         while(true)
         {
-            const auto command = receive_cecp_command(clock, false);
+            const auto command = receive_xboard_command(clock, false);
 
             Player::pick_move_now(); // Stop pondering
 
@@ -267,7 +267,7 @@ Game_Result CECP_Mediator::setup_turn(Board& board, Clock& clock, std::vector<co
     return setup_result;
 }
 
-bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, const std::string& command, Board& board, Clock& clock, const Player& player)
+bool Xboard_Mediator::undo_move(std::vector<const Move*>& move_list, const std::string& command, Board& board, Clock& clock, const Player& player)
 {
     if(move_list.empty())
     {
@@ -290,7 +290,7 @@ bool CECP_Mediator::undo_move(std::vector<const Move*>& move_list, const std::st
     }
 }
 
-Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const
+Game_Result Xboard_Mediator::handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const
 {
     if(in_force_mode)
     {
@@ -310,7 +310,7 @@ Game_Result CECP_Mediator::handle_move(Board& board, const Move& move, std::vect
     }
 }
 
-std::string CECP_Mediator::receive_cecp_command(Clock& clock, bool while_listening)
+std::string Xboard_Mediator::receive_xboard_command(Clock& clock, bool while_listening)
 {
     while(true)
     {
@@ -325,13 +325,13 @@ std::string CECP_Mediator::receive_cecp_command(Clock& clock, bool while_listeni
         }
         else if(command == "post")
         {
-            Player::set_thinking_mode(Thinking_Output_Type::CECP);
-            log("turning on thinking output for CECP");
+            Player::set_thinking_mode(Thinking_Output_Type::XBOARD);
+            log("turning on thinking output for Xboard");
         }
         else if(command == "nopost")
         {
             Player::set_thinking_mode(Thinking_Output_Type::NO_THINKING);
-            log("turning off thinking output for CECP");
+            log("turning off thinking output for Xboard");
         }
         else if(command == "rejected usermove")
         {
@@ -345,18 +345,18 @@ std::string CECP_Mediator::receive_cecp_command(Clock& clock, bool while_listeni
     }
 }
 
-void CECP_Mediator::send_error(const std::string& command, const std::string& reason) const noexcept
+void Xboard_Mediator::send_error(const std::string& command, const std::string& reason) const noexcept
 {
     send_command("Error (" + reason + "): " + command);
 }
 
-std::string CECP_Mediator::listener(Clock& clock)
+std::string Xboard_Mediator::listener(Clock& clock)
 {
     while(true)
     {
         try
         {
-            const auto command = receive_cecp_command(clock, true);
+            const auto command = receive_xboard_command(clock, true);
 
             if(command == "?")
             {
@@ -382,7 +382,7 @@ std::string CECP_Mediator::listener(Clock& clock)
     }
 }
 
-void CECP_Mediator::report_end_of_game(const Game_Result& result) const noexcept
+void Xboard_Mediator::report_end_of_game(const Game_Result& result) const noexcept
 {
     send_command(result.game_ending_annotation() + " {" + result.ending_reason() + "}");
 }

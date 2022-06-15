@@ -172,7 +172,7 @@ namespace
         help.add_option("-perft", {}, {}, "Run a legal move generation test.");
         help.add_option("-update", {"file name"}, {}, "If genetic_chess has changed how genomes are written, use this option to update the file to the latest format.");
         help.add_section_title("Player options");
-        help.add_paragraph("The following options start a game with various players. If two players are specified, the first plays white and the second black. If only one player is specified, the program will wait for a CECP/xboard or UCI command from a GUI to start playing.");
+        help.add_paragraph("The following options start a game with various players. If two players are specified, the first plays white and the second black. If only one player is specified, the program will wait for an Xboard or UCI command from a GUI to start playing.");
         help.add_option("-genetic", {"file name"}, {"ID number"}, "Select a minimaxing evolved player for a game and load data from the file. If there are multiple genomes in the file, specify an ID number to load, otherwise the last genome in the file will be used.");
         help.add_option("-random", {}, {}, "Select a player that makes random moves for a game.");
         help.add_section_title("Other game options");
@@ -474,7 +474,7 @@ namespace
             }
             else if(opt == "-xboard")
             {
-                thinking_output = Thinking_Output_Type::CECP;
+                thinking_output = Thinking_Output_Type::XBOARD;
             }
             else if(opt == "-uci")
             {
