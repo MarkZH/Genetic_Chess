@@ -1,4 +1,4 @@
-#include "Players/CECP_Mediator.h"
+#include "Players/Xboard_Mediator.h"
 
 #include <string>
 #include <future>

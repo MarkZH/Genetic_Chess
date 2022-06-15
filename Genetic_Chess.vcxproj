@@ -262,7 +262,7 @@
     <ClCompile Include="src\moves\Pawn_Move.cpp" />
     <ClCompile Include="src\moves\Pawn_Promotion.cpp" />
     <ClCompile Include="src\Players\Alpha_Beta_Value.cpp" />
-    <ClCompile Include="src\players\CECP_Mediator.cpp" />
+    <ClCompile Include="src\players\Xboard_Mediator.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
     <ClCompile Include="src\Players\Minimax_AI.cpp" />
     <ClCompile Include="src\players\Outside_Communicator.cpp" />
@@ -312,7 +312,7 @@
     <ClInclude Include="include\moves\Pawn_Move.h" />
     <ClInclude Include="include\moves\Pawn_Promotion.h" />
     <ClInclude Include="include\Players\Alpha_Beta_Value.h" />
-    <ClInclude Include="include\players\CECP_Mediator.h" />
+    <ClInclude Include="include\players\Xboard_Mediator.h" />
     <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
     <ClInclude Include="include\Players\Minimax_AI.h" />
     <ClInclude Include="include\players\Outside_Communicator.h" />
