@@ -11,7 +11,7 @@
 #include "Game/Color.h"
 #include "Players/Proxy_Player.h"
 
-#include "Players/CECP_Mediator.h"
+#include "Players/Xboard_Mediator.h"
 #include "Players/UCI_Mediator.h"
 
 #include "Utility/Exceptions.h"
@@ -23,7 +23,7 @@ std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player)
     const auto protocol_type = Outside_Communicator::receive_command();
     if(protocol_type == "xboard")
     {
-        return std::make_unique<CECP_Mediator>(player);
+        return std::make_unique<Xboard_Mediator>(player);
     }
     else if(protocol_type == "uci")
     {

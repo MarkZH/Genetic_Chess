@@ -358,9 +358,9 @@ void Minimax_AI::output_thinking(const Game_Tree_Node_Result& thought,
                                  const Piece_Color perspective) const noexcept
 {
     const auto format = thinking_mode();
-    if(format == Thinking_Output_Type::CECP)
+    if(format == Thinking_Output_Type::XBOARD)
     {
-        output_thinking_cecp(thought, perspective);
+        output_thinking_xboard(thought, perspective);
     }
     else if(format == Thinking_Output_Type::UCI)
     {
@@ -369,7 +369,7 @@ void Minimax_AI::output_thinking(const Game_Tree_Node_Result& thought,
     time_at_last_output = std::chrono::steady_clock::now();
 }
 
-void Minimax_AI::output_thinking_cecp(const Game_Tree_Node_Result& thought,
+void Minimax_AI::output_thinking_xboard(const Game_Tree_Node_Result& thought,
                                       const Piece_Color perspective) const noexcept
 {
     auto score = thought.corrected_score(perspective)/centipawn_value();

@@ -32,8 +32,9 @@ class Help_Writer
 
     private:
         std::string text;
-        static const auto line_length = 72;
-        static const auto indent_size = 4;
+        bool need_extra_space = false;
+
+        void add_extra_space_after_option() noexcept;
 };
 
 #endif // HELP_WRITER_H
