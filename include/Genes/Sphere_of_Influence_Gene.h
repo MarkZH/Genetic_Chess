@@ -17,8 +17,6 @@ class Sphere_of_Influence_Gene : public Clonable_Gene<Sphere_of_Influence_Gene>
     public:
         Sphere_of_Influence_Gene() noexcept;
 
-        std::string name() const noexcept override;
-
     private:
         Gene_Value legal_square_score = {"Legal Square Score", 1.0, 0.03};
         Gene_Value illegal_square_score = {"Illegal Square Score", 1.0, 0.03};

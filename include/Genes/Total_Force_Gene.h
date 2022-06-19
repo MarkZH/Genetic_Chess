@@ -3,8 +3,6 @@
 
 #include "Gene.h"
 
-#include <string>
-
 #include "Game/Color.h"
 
 class Board;
@@ -22,8 +20,6 @@ class Total_Force_Gene : public Clonable_Gene<Total_Force_Gene>
         explicit Total_Force_Gene(const Piece_Strength_Gene* piece_strength_source) noexcept;
 
         void reset_piece_strength_gene(const Piece_Strength_Gene* psg) noexcept override;
-
-        std::string name() const noexcept override;
 
     private:
         const Piece_Strength_Gene* piece_strength_source;

@@ -13,7 +13,7 @@
 #include "Utility/Random.h"
 #include "Utility/String.h"
 
-Piece_Strength_Gene::Piece_Strength_Gene() noexcept
+Piece_Strength_Gene::Piece_Strength_Gene() noexcept : Clonable_Gene("Piece Strength Gene")
 {
     piece_strength.fill(100.0);
     renormalize_values();
@@ -100,11 +100,6 @@ double Piece_Strength_Gene::piece_value(const Piece piece) const noexcept
 const std::array<double, 6>& Piece_Strength_Gene::piece_values() const noexcept
 {
     return piece_strength;
-}
-
-std::string Piece_Strength_Gene::name() const noexcept
-{
-    return "Piece Strength Gene";
 }
 
 double Piece_Strength_Gene::score_board(const Board&, Piece_Color, size_t) const noexcept

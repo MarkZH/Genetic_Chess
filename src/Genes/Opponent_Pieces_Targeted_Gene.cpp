@@ -1,7 +1,5 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 
-#include <string>
-
 #include "Game/Board.h"
 #include "Game/Piece.h"
 #include "Game/Color.h"
@@ -10,6 +8,7 @@
 #include "Genes/Piece_Strength_Gene.h"
 
 Opponent_Pieces_Targeted_Gene::Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* const piece_strength_gene) noexcept :
+    Clonable_Gene("Opponent Pieces Targeted Gene"),
     piece_strength_source(piece_strength_gene)
 {
 }
@@ -30,11 +29,6 @@ double Opponent_Pieces_Targeted_Gene::score_board(const Board& board, const Piec
     }
 
     return score;
-}
-
-std::string Opponent_Pieces_Targeted_Gene::name() const noexcept
-{
-    return "Opponent Pieces Targeted Gene";
 }
 
 void Opponent_Pieces_Targeted_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* const psg) noexcept

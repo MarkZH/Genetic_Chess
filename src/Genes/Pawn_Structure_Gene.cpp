@@ -13,14 +13,9 @@
 #include "Utility/Math.h"
 #include "Utility/Random.h"
 
-Pawn_Structure_Gene::Pawn_Structure_Gene() noexcept
+Pawn_Structure_Gene::Pawn_Structure_Gene() noexcept : Clonable_Gene("Pawn Structure Gene")
 {
     normalize_guard_scores();
-}
-
-std::string Pawn_Structure_Gene::name() const noexcept
-{
-    return "Pawn Structure Gene";
 }
 
 double Pawn_Structure_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept

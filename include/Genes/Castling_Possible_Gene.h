@@ -17,8 +17,6 @@ class Castling_Possible_Gene : public Clonable_Gene<Castling_Possible_Gene>
     public:
         Castling_Possible_Gene() noexcept;
 
-        std::string name() const noexcept override;
-
     private:
         Gene_Value kingside_preference = {"Kingside Preference", 1.0, 0.03};
         Gene_Value queenside_preference = {"Queenside Preference", 1.0, 0.03};
