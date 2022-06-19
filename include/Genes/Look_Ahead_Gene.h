@@ -24,8 +24,6 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
 
         Look_Ahead_Gene() noexcept;
 
-        std::string name() const noexcept override;
-
         //! \brief How much time to search for the next move.
         //!
         //! \param board The current board position.

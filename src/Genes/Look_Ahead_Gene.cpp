@@ -16,7 +16,7 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
-Look_Ahead_Gene::Look_Ahead_Gene() noexcept
+Look_Ahead_Gene::Look_Ahead_Gene() noexcept : Clonable_Gene("Look Ahead Gene")
 {
     recalculate_game_lengths();
 }
@@ -70,11 +70,6 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
     }
 
     recalculate_game_lengths();
-}
-
-std::string Look_Ahead_Gene::name() const noexcept
-{
-    return "Look Ahead Gene";
 }
 
 double Look_Ahead_Gene::score_board(const Board&, const Piece_Color, const size_t) const noexcept

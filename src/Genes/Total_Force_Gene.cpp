@@ -1,6 +1,5 @@
 #include "Genes/Total_Force_Gene.h"
 
-#include <string>
 #include <numeric>
 #include <cmath>
 #include <algorithm>
@@ -12,6 +11,7 @@
 #include "Genes/Piece_Strength_Gene.h"
 
 Total_Force_Gene::Total_Force_Gene(const Piece_Strength_Gene* const piece_strength_source_in) noexcept :
+    Clonable_Gene("Total Force Gene"),
     piece_strength_source(piece_strength_source_in)
 {
 }
@@ -33,11 +33,6 @@ double Total_Force_Gene::score_board(const Board& board, const Piece_Color persp
                                    return sum;
                                }
                            });
-}
-
-std::string Total_Force_Gene::name() const noexcept
-{
-    return "Total Force Gene";
 }
 
 void Total_Force_Gene::reset_piece_strength_gene(const Piece_Strength_Gene* const psg) noexcept

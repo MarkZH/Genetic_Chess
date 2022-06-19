@@ -3,8 +3,6 @@
 
 #include "Gene.h"
 
-#include <string>
-
 #include "Game/Color.h"
 
 class Board;
@@ -13,7 +11,7 @@ class Board;
 class Pawn_Advancement_Gene : public Clonable_Gene<Pawn_Advancement_Gene>
 {
     public:
-        std::string name() const noexcept override;
+        Pawn_Advancement_Gene() noexcept;
 
     private:
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;

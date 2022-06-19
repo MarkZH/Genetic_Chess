@@ -50,6 +50,15 @@ size_t Gene::mutatable_components() const noexcept
     return list_properties().size();
 }
 
+Gene::Gene(const std::string& name_of_gene) noexcept : gene_name(name_of_gene)
+{
+}
+
+std::string Gene::name() const noexcept
+{
+    return gene_name;
+}
+
 void Gene::read_from(std::istream& is)
 {
     auto properties = list_properties();
@@ -137,8 +146,8 @@ void Gene::read_from(const std::string& file_name)
     {
         if(String::starts_with(line, "Name: "))
         {
-            const auto gene_name = String::remove_extra_whitespace(String::split(line, ":", 1)[1]);
-            if(gene_name == name())
+            const auto read_gene_name = String::remove_extra_whitespace(String::split(line, ":", 1)[1]);
+            if(read_gene_name == name())
             {
                 auto add_details = [this, &file_name](const auto& e)
                                    {

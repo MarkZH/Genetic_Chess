@@ -11,7 +11,7 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
-Castling_Possible_Gene::Castling_Possible_Gene() noexcept
+Castling_Possible_Gene::Castling_Possible_Gene() noexcept : Clonable_Gene("Castling Possible Gene")
 {
     normalize_sides();
 }
@@ -32,11 +32,6 @@ void Castling_Possible_Gene::load_gene_properties(const std::map<std::string, st
     kingside_preference.load_from_map(properties);
     queenside_preference.load_from_map(properties);
     normalize_sides();
-}
-
-std::string Castling_Possible_Gene::name() const noexcept
-{
-    return "Castling Possible Gene";
 }
 
 double Castling_Possible_Gene::score_board(const Board& board, const Piece_Color perspective, const size_t depth) const noexcept

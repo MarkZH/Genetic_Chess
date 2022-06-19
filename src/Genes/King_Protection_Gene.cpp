@@ -1,12 +1,14 @@
 #include "Genes/King_Protection_Gene.h"
 
-#include <string>
-
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Color.h"
 #include "Game/Square.h"
 #include "Moves/Move.h"
+
+King_Protection_Gene::King_Protection_Gene() noexcept : Clonable_Gene("King Protection Gene")
+{
+}
 
 double King_Protection_Gene::score_board(const Board& board, const Piece_Color perspective, size_t) const noexcept
 {
@@ -38,9 +40,4 @@ double King_Protection_Gene::score_board(const Board& board, const Piece_Color p
                                     + 7 + 7  // rooks/queen row/column attack
                                     + 7 + 6; // bishop/queen/pawn attack
     return double(max_square_count - square_count)/max_square_count; // return score [0, 1]
-}
-
-std::string King_Protection_Gene::name() const noexcept
-{
-    return "King Protection Gene";
 }

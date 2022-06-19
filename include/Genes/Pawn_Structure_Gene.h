@@ -17,7 +17,6 @@ class Pawn_Structure_Gene : public Clonable_Gene<Pawn_Structure_Gene>
 {
     public:
         Pawn_Structure_Gene() noexcept;
-        std::string name() const noexcept override;
 
     private:
         Gene_Value guarded_by_pawn = {"Guarded By Pawn", 1.0, 0.03};

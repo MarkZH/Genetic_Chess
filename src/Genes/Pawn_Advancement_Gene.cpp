@@ -1,11 +1,13 @@
 #include "Genes/Pawn_Advancement_Gene.h"
 
-#include <string>
-
 #include "Genes/Gene.h"
 #include "Game/Board.h"
 #include "Game/Piece.h"
 #include "Game/Color.h"
+
+Pawn_Advancement_Gene::Pawn_Advancement_Gene() noexcept : Clonable_Gene("Pawn Advancement Gene")
+{
+}
 
 double Pawn_Advancement_Gene::score_board(const Board& board, const Piece_Color perspective, size_t) const noexcept
 {
@@ -30,9 +32,4 @@ double Pawn_Advancement_Gene::score_board(const Board& board, const Piece_Color 
 
     constexpr double max_score = 8*5;
     return score/max_score;
-}
-
-std::string Pawn_Advancement_Gene::name() const noexcept
-{
-    return "Pawn Advancement Gene";
 }
