@@ -1,8 +1,6 @@
 #include "Genes/Total_Force_Gene.h"
 
 #include <numeric>
-#include <cmath>
-#include <algorithm>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"
