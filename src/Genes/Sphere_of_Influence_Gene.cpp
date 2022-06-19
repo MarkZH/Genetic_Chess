@@ -11,7 +11,7 @@
 #include "Utility/Random.h"
 #include "Utility/Math.h"
 
-Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() noexcept
+Sphere_of_Influence_Gene::Sphere_of_Influence_Gene() noexcept : Clonable_Gene("Sphere of Influence Gene")
 {
     normalize_square_scores();
 }
@@ -27,11 +27,6 @@ void Sphere_of_Influence_Gene::load_gene_properties(const std::map<std::string, 
     legal_square_score.load_from_map(properties);
     illegal_square_score.load_from_map(properties);
     normalize_square_scores();
-}
-
-std::string Sphere_of_Influence_Gene::name() const noexcept
-{
-    return "Sphere of Influence Gene";
 }
 
 double Sphere_of_Influence_Gene::score_board(const Board& board, Piece_Color perspective, size_t) const noexcept

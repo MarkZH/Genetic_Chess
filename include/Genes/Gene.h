@@ -18,6 +18,9 @@ class Genome_Creation_Error;
 class Gene
 {
     public:
+        //! \brief Construct Gene with given name
+        Gene(const std::string& name_of_gene) noexcept;
+
         virtual ~Gene() = default;
 
         //! \brief Reads an input stream for gene data.
@@ -61,7 +64,7 @@ class Gene
         //! \brief Returns the name of the gene.
         //!
         //! \returns A text string with the name of the gene.
-        virtual std::string name() const noexcept = 0;
+        std::string name() const noexcept;
 
         //! \brief Outputs gene data to a std::ostream in text form.
         //!
@@ -106,6 +109,7 @@ class Gene
         void delete_priorities(std::map<std::string, std::string>& properties) const noexcept;
 
     private:
+        std::string gene_name;
         Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0, 0.005};
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
@@ -154,6 +158,11 @@ template<typename Gene_Type>
 class Clonable_Gene : public Gene
 {
     public:
+        //! Construct the clonable gene by passing the name to the base Gene class.
+        Clonable_Gene(const std::string& name_of_gene) : Gene(name_of_gene)
+        {
+        }
+
         //! \brief The concrete (though templated) implementation of the duplicate() method.
         std::unique_ptr<Gene> duplicate() const noexcept override
         {

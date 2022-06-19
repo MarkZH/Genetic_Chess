@@ -3,8 +3,6 @@
 
 #include "Gene.h"
 
-#include <string>
-
 #include "Game/Color.h"
 
 class Piece_Strength_Gene;
@@ -22,8 +20,6 @@ class Opponent_Pieces_Targeted_Gene : public Clonable_Gene<Opponent_Pieces_Targe
         explicit Opponent_Pieces_Targeted_Gene(const Piece_Strength_Gene* piece_strength_gene) noexcept;
 
         void reset_piece_strength_gene(const Piece_Strength_Gene* psg) noexcept override;
-
-        std::string name() const noexcept override;
 
     private:
         const Piece_Strength_Gene* piece_strength_source;

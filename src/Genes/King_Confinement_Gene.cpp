@@ -31,9 +31,8 @@ namespace
     }
 }
 
-std::string King_Confinement_Gene::name() const noexcept
+King_Confinement_Gene::King_Confinement_Gene() noexcept : Clonable_Gene("King Confinement Gene")
 {
-    return "King Confinement Gene";
 }
 
 double King_Confinement_Gene::score_board(const Board& board, const Piece_Color perspective, size_t) const noexcept
