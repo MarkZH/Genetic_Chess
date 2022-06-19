@@ -248,7 +248,7 @@ class Minimax_AI : public Player
         // Output thinking to stdout
         void output_thinking(const Game_Tree_Node_Result& thought,
                              Piece_Color perspective) const noexcept;
-        void output_thinking_cecp(const Game_Tree_Node_Result& thought,
+        void output_thinking_xboard(const Game_Tree_Node_Result& thought,
                                   Piece_Color perspective) const noexcept;
         void output_thinking_uci(const Game_Tree_Node_Result& thought,
                                  Piece_Color perspective) const noexcept;

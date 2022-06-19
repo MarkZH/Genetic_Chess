@@ -9,7 +9,7 @@ using namespace std::chrono_literals;
 
 class Board;
 class Game_Result;
-class CECP_Mediator;
+class Xboard_Mediator;
 class UCI_Mediator;
 
 //! \file
@@ -111,7 +111,7 @@ class Clock
         std::chrono::system_clock::time_point game_start_date_time;
         std::chrono::steady_clock::time_point time_previous_punch;
 
-        friend class CECP_Mediator;
+        friend class Xboard_Mediator;
         friend class UCI_Mediator;
 
         //! \brief Adjust the time and other aspects on the clocks.
