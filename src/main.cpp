@@ -70,12 +70,6 @@ namespace
 //! \returns EXIT_SUCCESS or EXIT_FAILURE.
 int main(int argc, char *argv[])
 {
-    if(argc <= 1)
-    {
-        print_help();
-        return EXIT_SUCCESS;
-    }
-
     std::vector<std::string> options;
     for(int i = 1; i < argc; ++i)
     {
@@ -92,6 +86,11 @@ int main(int argc, char *argv[])
         {
             options.push_back(argv[i]);
         }
+    }
+
+    if(options.empty())
+    {
+        options.push_back("-help");
     }
 
     try
