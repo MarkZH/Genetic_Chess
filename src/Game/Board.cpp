@@ -273,7 +273,7 @@ void Board::cli_print() const noexcept
         }
         std::cout << '\n';
     }
-    std::cout << '\n';
+    std::cout << color_text(whose_turn()) << " to move\n";
 }
 
 std::string Board::original_fen() const noexcept
