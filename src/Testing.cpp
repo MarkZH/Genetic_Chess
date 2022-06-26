@@ -1303,7 +1303,7 @@ namespace
     {
         auto target_piece_strength_gene = Piece_Strength_Gene();
         target_piece_strength_gene.read_from("testing/test_genome.txt");
-        const auto piece_strength_normalizer = double(32 + 16 + 2 * 8 + 2 * 4 + 2 * 2 + 8 * 1);
+        const auto piece_strength_normalizer = double(16 + 2*8 + 2*4 + 2*2 + 8*1);
 
         const auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&target_piece_strength_gene);
         const auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");

@@ -32,31 +32,36 @@ void Piece_Strength_Gene::adjust_properties(std::map<std::string, std::string>& 
     for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
     {
         const auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
-        properties[std::string(1, piece.fen_symbol())] = std::to_string(piece_value(piece.type())/standardize);
+        if(piece.type() != Piece_Type::KING)
+        {
+            properties[std::string(1, piece.fen_symbol())] = std::to_string(piece_value(piece.type())/standardize);
+        }
     }
 }
 
 void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
-    for(size_t piece_index = 0; piece_index < piece_strength.size(); ++piece_index)
+    for(const auto& [name, value] : properties)
     {
-        const auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
-        piece_value(piece.type()) = String::to_number<double>(properties.at(std::string(1, piece.fen_symbol())));
+        piece_value(Piece{name[0]}.type()) = String::to_number<double>(value);
     }
-
     renormalize_values();
 }
 
 void Piece_Strength_Gene::gene_specific_mutation() noexcept
 {
-    Random::random_element(piece_strength) += Random::random_laplace(0.005);
+    auto index = Random::random_integer<size_t>(0, piece_strength.size() - 2);
+    if(index >= static_cast<size_t>(Piece_Type::KING))
+    {
+        ++index;
+    }
+    piece_strength[index] += Random::random_laplace(0.005);
     renormalize_values();
 }
 
 void Piece_Strength_Gene::renormalize_values() noexcept
 {
     const auto normalizing_value = normalization();
-
     if(normalizing_value > 0.0)
     {
         for(auto& v : piece_strength)
@@ -64,6 +69,7 @@ void Piece_Strength_Gene::renormalize_values() noexcept
             v /= normalizing_value;
         }
     }
+    piece_value(Piece_Type::KING) = 0.0;
 }
 
 double Piece_Strength_Gene::normalization() const noexcept
@@ -72,14 +78,12 @@ double Piece_Strength_Gene::normalization() const noexcept
            2*std::abs(piece_value(Piece_Type::ROOK)) +
            2*std::abs(piece_value(Piece_Type::KNIGHT)) +
            2*std::abs(piece_value(Piece_Type::BISHOP)) +
-           1*std::abs(piece_value(Piece_Type::QUEEN)) +
-           1*std::abs(piece_value(Piece_Type::KING));
+           1*std::abs(piece_value(Piece_Type::QUEEN));
 }
 
 double Piece_Strength_Gene::file_normalization() const noexcept
 {
-    return normalization() - std::abs(piece_value(Piece_Type::KING))
-                           - 8*std::abs(piece_value(Piece_Type::PAWN));
+    return normalization() - 8*std::abs(piece_value(Piece_Type::PAWN));
 }
 
 double Piece_Strength_Gene::piece_value(const Piece_Type type) const noexcept
@@ -109,7 +113,6 @@ double Piece_Strength_Gene::score_board(const Board&, Piece_Color, size_t) const
 
 double Piece_Strength_Gene::game_progress(const Board& board) const noexcept
 {
-    const auto king_value = std::abs(piece_value(Piece_Type::KING));
     std::array<double, 2> piece_value_left{};
     for(auto square : Square::all_squares())
     {
@@ -120,5 +123,5 @@ double Piece_Strength_Gene::game_progress(const Board& board) const noexcept
     }
 
     const auto piece_score_left = std::min(piece_value_left[0], piece_value_left[1]);
-    return (1.0 - piece_score_left)/(1.0 - king_value);
+    return 1.0 - piece_score_left;
 }

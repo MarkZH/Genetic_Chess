@@ -349,6 +349,10 @@ bool Minimax_AI::search_further(const Game_Result& move_result,
     {
         return true;
     }
+    else if(next_board.king_is_in_check())
+    {
+        return true;
+    }
     else
     {
         const auto minimum_time_to_recurse = next_board.legal_moves().size()*node_evaluation_time;
