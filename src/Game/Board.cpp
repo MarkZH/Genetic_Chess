@@ -60,7 +60,15 @@ namespace
     }();
 
     const auto switch_turn_board_hash = Random::random_unsigned_int64();
-    const auto en_passant_hash = Random::random_unsigned_int64();
+    const auto en_passant_hash_values =
+    []()
+    {
+        std::array<uint64_t, 8> en_passant_hash_cache;
+        std::generate(en_passant_hash_cache.begin(),
+                      en_passant_hash_cache.end(),
+                      Random::random_unsigned_int64);
+        return en_passant_hash_cache;
+    }();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
     std::recursive_mutex starting_fen_map_lock;
@@ -822,10 +830,16 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
 void Board::make_en_passant_targetable(const Square square) noexcept
 {
-    if(square.is_set() != en_passant_target.is_set())
+    if(en_passant_target.is_set())
     {
-        current_board_hash ^= en_passant_hash;
+        current_board_hash ^= en_passant_hash_values[en_passant_target.file() - 'a'];
     }
+
+    if(square.is_set())
+    {
+        current_board_hash ^= en_passant_hash_values[square.file() - 'a'];
+    }
+
     en_passant_target = square;
 }
 
@@ -1200,7 +1214,7 @@ void Board::compare_hashes(const Board& other) const noexcept
     const auto left  = static_cast<int>(Direction::LEFT);
     const auto both_white_castles = (castling_hash_values[white][right] ^ castling_hash_values[white][left]);
     const auto both_black_castles = (castling_hash_values[black][right] ^ castling_hash_values[black][left]);
-    if(hash_diff == en_passant_hash)
+    if(en_passant_target.is_set() && hash_diff == en_passant_hash_values[en_passant_target.file() - 'a'])
     {
         std::cerr << "en passant hash" << std::endl;
     }

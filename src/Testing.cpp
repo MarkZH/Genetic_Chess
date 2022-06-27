@@ -191,6 +191,7 @@ namespace
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed);
     void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed);
+    void same_board_position_with_different_en_passant_captures_has_different_hash(bool& tests_passed);
 
     void genome_loaded_from_file_writes_identical_file(bool& tests_passed);
     void self_swapped_minimax_ai_is_unchanged(bool& tests_passed);
@@ -263,6 +264,7 @@ bool run_tests()
 
     same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(tests_passed);
     same_board_position_with_different_castling_rights_has_different_hash(tests_passed);
+    same_board_position_with_different_en_passant_captures_has_different_hash(tests_passed);
 
 
     genome_loaded_from_file_writes_identical_file(tests_passed);
@@ -1142,6 +1144,23 @@ namespace
         }
 
         test_result(tests_passed, just_kings_move_board.board_hash() != castling_hash_board.board_hash(), "Boards should have different hashes with different castling rights");
+    }
+
+    void same_board_position_with_different_en_passant_captures_has_different_hash(bool& tests_passed)
+    {
+        Board board1;
+        for(const auto& move : String::split("e4 a6 e5 d5 a3 f5"))
+        {
+            board1.play_move(move);
+        }
+
+        Board board2;
+        for(const auto& move : String::split("e4 a6 e5 f5 a3 d5"))
+        {
+            board2.play_move(move);
+        }
+
+        test_result(tests_passed, board1.board_hash() != board2.board_hash(), "Different en passant legality should have different hashes.");
     }
 
     void genome_loaded_from_file_writes_identical_file(bool& tests_passed)
