@@ -192,6 +192,7 @@ namespace
 
     void same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(bool& tests_passed);
     void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed);
+    void same_board_position_with_different_en_passant_captures_has_different_hash(bool& tests_passed);
 
     void genome_loaded_from_file_writes_identical_file(bool& tests_passed);
     void self_swapped_minimax_ai_is_unchanged(bool& tests_passed);
@@ -264,6 +265,7 @@ bool run_tests()
 
     same_board_position_with_castling_rights_lost_by_different_methods_results_in_same_board_hash(tests_passed);
     same_board_position_with_different_castling_rights_has_different_hash(tests_passed);
+    same_board_position_with_different_en_passant_captures_has_different_hash(tests_passed);
 
 
     genome_loaded_from_file_writes_identical_file(tests_passed);
@@ -1150,6 +1152,23 @@ namespace
         test_result(tests_passed, just_kings_move_board.board_hash() != castling_hash_board.board_hash(), "Boards should have different hashes with different castling rights");
     }
 
+    void same_board_position_with_different_en_passant_captures_has_different_hash(bool& tests_passed)
+    {
+        Board board1;
+        for(const auto& move : String::split("e4 a6 e5 d5 a3 f5"))
+        {
+            board1.play_move(move);
+        }
+
+        Board board2;
+        for(const auto& move : String::split("e4 a6 e5 f5 a3 d5"))
+        {
+            board2.play_move(move);
+        }
+
+        test_result(tests_passed, board1.board_hash() != board2.board_hash(), "Different en passant legality should have different hashes.");
+    }
+
     void genome_loaded_from_file_writes_identical_file(bool& tests_passed)
     {
         const auto pool_file_name = "test_gene_pool.txt";
@@ -1309,7 +1328,7 @@ namespace
     {
         auto target_piece_strength_gene = Piece_Strength_Gene();
         target_piece_strength_gene.read_from("testing/test_genome.txt");
-        const auto piece_strength_normalizer = double(32 + 16 + 2 * 8 + 2 * 4 + 2 * 2 + 8 * 1);
+        const auto piece_strength_normalizer = double(16 + 2*8 + 2*4 + 2*2 + 8*1);
 
         const auto opponent_pieces_targeted_gene = Opponent_Pieces_Targeted_Gene(&target_piece_strength_gene);
         const auto opponent_pieces_targeted_board = Board("k1K5/8/8/8/8/1rp5/nQb5/1q6 w - - 0 1");
