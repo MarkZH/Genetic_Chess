@@ -61,9 +61,7 @@ namespace
     []()
     {
         std::array<uint64_t, 8> en_passant_hash_cache;
-        std::generate(en_passant_hash_cache.begin(),
-                      en_passant_hash_cache.end(),
-                      Random::random_unsigned_int64);
+        std::ranges::generate(en_passant_hash_cache, Random::random_unsigned_int64);
         return en_passant_hash_cache;
     }();
 

@@ -71,7 +71,7 @@ double Piece_Strength_Gene::normalization() const noexcept
 {
     constexpr auto piece_counts = std::array<int, 6>{8, 2, 2, 2, 1, 0};
     auto norm_strength = piece_strength;
-    std::transform(norm_strength.begin(), norm_strength.end(), norm_strength.begin(), [](const auto x) { return std::abs(x); });
+    std::ranges::transform(norm_strength, norm_strength.begin(), [](const auto x) { return std::abs(x); });
     return std::inner_product(piece_counts.begin(), piece_counts.end(), norm_strength.begin(), 0.0);
 }
 
