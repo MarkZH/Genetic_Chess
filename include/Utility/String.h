@@ -51,6 +51,13 @@ namespace String
         return result;
     }
 
+    //! \brief Join a sequence of strings in a container into a single string with joiner strings in between.
+    template<typename Container>
+    std::string join(const Container& container, const std::string& joiner) noexcept
+    {
+        return join(container.begin(), container.end(), joiner);
+    }
+
     //! \brief Remove leading and trailing whitespace from a string.
     //!
     //! \param s The input string.
@@ -200,10 +207,9 @@ namespace String
     std::string date_and_time_format(const Time_Point& point_in_time,
                                      const std::string& format) noexcept
     {
-        const auto format_spec = "{:" + format + "}";
         const auto point_with_tz = std::chrono::zoned_time(std::chrono::current_zone(),
                                                            std::chrono::time_point_cast<Precision>(point_in_time));
-        return std::vformat(format_spec, std::make_format_args(point_with_tz));
+        return std::vformat("{:" + format + "}", std::make_format_args(point_with_tz));
     }
 
     //! \brief Inserts extra text before the file name extension.

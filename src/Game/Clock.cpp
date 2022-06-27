@@ -3,7 +3,6 @@
 #include <array>
 #include <chrono>
 using namespace std::chrono_literals;
-#include <cassert>
 #include <limits>
 #include <sstream>
 

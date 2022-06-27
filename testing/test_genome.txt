@@ -6,7 +6,6 @@ B: 2
 N: 4
 R: 8
 Q: 16
-K: 32
 
 Name: Sphere of Influence Gene
 Legal Square Score: 4
