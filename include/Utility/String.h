@@ -51,6 +51,13 @@ namespace String
         return result;
     }
 
+    //! \brief Join a sequence of strings in a container into a single string with joiner strings in between.
+    template<typename Container>
+    std::string join(const Container& container, const std::string& joiner) noexcept
+    {
+        return join(container.begin(), container.end(), joiner);
+    }
+
     //! \brief Determine whether a string exists inside another string.
     //!
     //! \param container The string to search.

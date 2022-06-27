@@ -60,8 +60,7 @@ std::string String::trim_outer_whitespace(const std::string& s) noexcept
 
 std::string String::remove_extra_whitespace(const std::string& s) noexcept
 {
-    const auto words = split(s);
-    return join(words.begin(), words.end(), " ");
+    return join(split(s), " ");
 }
 
 std::string String::strip_comments(const std::string& str, const std::string& comment) noexcept
@@ -241,7 +240,7 @@ std::string String::word_wrap(const size_t line_length, const size_t indent, con
     }
 
     const auto indent_space = std::string(indent, ' ');
-    auto wrapped = indent_space + join(lines.begin(), lines.end(), "\n" + indent_space);
+    auto wrapped = indent_space + join(lines, "\n" + indent_space);
     std::ranges::replace(wrapped, '~', ' ');
     return wrapped;
 }
