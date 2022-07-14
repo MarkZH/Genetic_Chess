@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "Utility/String.h"
 
@@ -56,9 +57,14 @@ void Help_Writer::add_option(const std::string& name,
     need_extra_space = description.empty();
 }
 
-std::string Help_Writer::full_text() const noexcept
+void Help_Writer::add_option(const std::string& name, const std::vector<std::string>& required_parameters, const std::string& description) noexcept
 {
-    return text;
+    add_option(name, required_parameters, {}, description);
+}
+
+void Help_Writer::add_option(const std::string& name, const std::string& description) noexcept
+{
+    add_option(name, {}, {}, description);
 }
 
 void Help_Writer::add_extra_space_after_option() noexcept
@@ -68,4 +74,9 @@ void Help_Writer::add_extra_space_after_option() noexcept
         text += '\n';
         need_extra_space = false;
     }
+}
+
+std::ostream& operator<<(std::ostream& os, const Help_Writer& help) noexcept
+{
+    return (os << help.text);
 }

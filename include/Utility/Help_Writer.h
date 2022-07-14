@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <iosfwd>
 
 //! \brief A tool for printing command line documentation.
 class Help_Writer
@@ -27,8 +28,23 @@ class Help_Writer
                         const std::vector<std::string>& optional_parameters = {},
                         const std::string& description = {}) noexcept;
 
-        //! \brief Get the full text after all of the documentation is added with the above methods.
-        std::string full_text() const noexcept;
+        //! \brief Add documentation for a command line option with only required parameters.
+        //! 
+        //! \param name The name of the option as written on the command line (e.g., "-help")
+        //! \param required_parameters A list of parameters that are required for the option (will be printed with [square brackets]).
+        //! \param description A description of the option. The text will be indented and word wrapped.
+        void add_option(const std::string& name,
+                        const std::vector<std::string>& required_parameters,
+                        const std::string& description) noexcept;
+
+        //! \brief Add documentation for a command line option with no parameters.
+        //! 
+        //! \param name The name of the option as written on the command line (e.g., "-help")
+        //! \param description A description of the option. The text will be indented and word wrapped.
+        void add_option(const std::string& name,
+                        const std::string& description) noexcept;
+
+        friend std::ostream& operator<<(std::ostream& os, const Help_Writer& help) noexcept;
 
     private:
         std::string text;
@@ -36,6 +52,8 @@ class Help_Writer
 
         void add_extra_space_after_option() noexcept;
 };
+
+std::ostream& operator<<(std::ostream& os, const Help_Writer& help) noexcept;
 
 #endif // HELP_WRITER_H
 
