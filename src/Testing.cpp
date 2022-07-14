@@ -97,7 +97,7 @@ namespace
     template<>
     void print_result(const std::vector<std::string>& results)
     {
-        std::cerr << "{" << String::join(results.begin(), results.end(), ", ") << "}";
+        std::cerr << "{" << String::join(results, ", ") << "}";
     }
 
     // Run the callable f on the arguments. If the result of the argument is not
@@ -1086,7 +1086,7 @@ namespace
                 std::cerr << "Boards do not have equal hashes: " << board.fen() << "\n"
                           << "                                 " << identical_board.fen() << "\n"
                           << "Move count: " << move_count << std::endl;
-                std::cerr << "Moves: " << String::join(moves.begin(), moves.end(), " ") << std::endl;
+                std::cerr << "Moves: " << String::join(moves, " ") << std::endl;
                 board.compare_hashes(identical_board);
                 break;
             }
@@ -1443,8 +1443,7 @@ namespace
     {
         const auto split_join_input = "a/b/c/d";
         const auto splitter = "/";
-        const auto split = String::split(split_join_input, splitter);
-        const auto rejoin = String::join(split.begin(), split.end(), splitter);
+        const auto rejoin = String::join(String::split(split_join_input, splitter), splitter);
         test_result(tests_passed, split_join_input == rejoin, std::string{"Split-join failed: "} + split_join_input + " --> " + rejoin);
     }
 
@@ -1668,7 +1667,7 @@ namespace
                     {
                         std::vector<std::string> entries;
                         std::transform(data_list.begin(), data_list.end(), std::back_inserter(entries), [](auto d) { return std::to_string(d); });
-                        return "{" + String::join(entries.begin(), entries.end(), ", ") + "}";
+                        return "{" + String::join(entries, ", ") + "}";
                     };
 
                 return intro + to_string_array(expected) + but + to_string_array(result);

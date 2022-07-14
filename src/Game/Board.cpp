@@ -245,7 +245,7 @@ std::string Board::fen() const noexcept
             rows.back() += std::to_string(empty_count);
         }
     }
-    auto fen_parts = std::vector<std::string>{String::join(rows.begin(), rows.end(), "/")};
+    auto fen_parts = std::vector<std::string>{String::join(rows, "/")};
 
     fen_parts.push_back(String::lowercase(color_text(whose_turn()).substr(0, 1)));
 
@@ -266,7 +266,7 @@ std::string Board::fen() const noexcept
     fen_parts.push_back(en_passant_target.is_set() ? en_passant_target.text() : unused_en_passant_target.text());
     fen_parts.push_back(std::to_string(moves_since_pawn_or_capture()));
     fen_parts.push_back(std::to_string(1 + all_ply_count()/2));
-    return String::join(fen_parts.begin(), fen_parts.end(), " ");
+    return String::join(fen_parts, " ");
 }
 
 void Board::cli_print() const noexcept

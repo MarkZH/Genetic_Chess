@@ -48,6 +48,17 @@ namespace String
         return result;
     }
 
+    //! \brief Join a sequece of strings into a single string with joiner strings in between.
+    //!
+    //! \tparam Container A container with ordered contents.
+    //! \param container A container of items convertible to std::string.
+    //! \param joiner A string that will be placed between every string in the sequence.
+    template<typename Container>
+    std::string join(const Container& container, const std::string& joiner) noexcept
+    {
+        return join(std::begin(container), std::end(container), joiner);
+    }
+
     //! \brief Determine whether a string exists inside another string.
     //!
     //! \param container The string to search.
