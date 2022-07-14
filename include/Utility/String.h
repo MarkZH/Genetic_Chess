@@ -51,11 +51,15 @@ namespace String
         return result;
     }
 
-    //! \brief Join a sequence of strings in a container into a single string with joiner strings in between.
+    //! \brief Join a sequece of strings into a single string with joiner strings in between.
+    //!
+    //! \tparam Container A container with ordered contents.
+    //! \param container A container of items convertible to std::string.
+    //! \param joiner A string that will be placed between every string in the sequence.
     template<typename Container>
     std::string join(const Container& container, const std::string& joiner) noexcept
     {
-        return join(container.begin(), container.end(), joiner);
+        return join(std::begin(container), std::end(container), joiner);
     }
 
     //! \brief Remove leading and trailing whitespace from a string.

@@ -84,8 +84,9 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 }
                 else if(parse.at(1) == "fen")
                 {
-                    const auto fen = String::join(std::next(parse.begin(), 2), std::next(parse.begin(), 8), " ");
-                    board = Board(fen);
+                    const auto fen_begin = std::next(parse.begin(), 2);
+                    const auto fen_end = std::next(fen_begin, 6);
+                    board = Board(String::join(fen_begin, fen_end, " "));
                 }
 
                 move_list.clear();
