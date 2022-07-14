@@ -24,7 +24,7 @@ namespace String
                                    const std::string& delim = "",
                                    size_t count = std::string::npos) noexcept;
 
-    //! \brief Join a sequece of strings into a single string with joiner strings in between.
+    //! \brief Join a sequence of strings into a single string with joiner strings in between.
     //!
     //! \tparam Iter An iterator type.
     //! \param begin An iterator to the first string in the sequence.
@@ -48,7 +48,7 @@ namespace String
         return result;
     }
 
-    //! \brief Join a sequece of strings into a single string with joiner strings in between.
+    //! \brief Join a sequence of strings into a single string with joiner strings in between.
     //!
     //! \tparam Container A container with ordered contents.
     //! \param container A container of items convertible to std::string.
