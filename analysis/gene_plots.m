@@ -104,7 +104,7 @@ for yi = 2 : length(data.colheaders)
         smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
         x_axis = id_list(conv_margin : end - conv_margin);
         plot(x_axis, smooth_data, 'LineWidth', line_width);
-    endif
+    end
     title(title_name);
 
     print([gene_pool_filename ' gene ' name '.png']);
@@ -175,7 +175,7 @@ for name = special_plots.keys()
         leg = legend(opening_priority_plots, opening_priority_labels);
     elseif special_plot == endgame_priority_figure
         leg = legend(endgame_priority_plots, endgame_priority_labels);
-    endif
+    end
     set(leg, 'location', 'eastoutside');
     legend left;
 
