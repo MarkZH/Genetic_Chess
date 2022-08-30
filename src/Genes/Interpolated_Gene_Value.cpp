@@ -3,7 +3,6 @@
 #include <string>
 #include <array>
 #include <map>
-#include <algorithm>
 
 #include "Genes/Gene_Value.h"
 
