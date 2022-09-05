@@ -287,7 +287,7 @@ void Genome::print(std::ostream& os) const noexcept
     {
         gene->print(os);
     }
-    os << "END\n" << std::endl;
+    os << "END\n\n";
 }
 
 Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept

@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
     }
     catch(const std::exception& e)
     {
-        std::cerr << "\nERROR: " << e.what() << std::endl;
+        std::cerr << "\nERROR: " << e.what() << '\n';
         return EXIT_FAILURE;
     }
 
@@ -203,7 +203,7 @@ namespace
                       << (expected_ruling ? "" : "no ")
                       << rule_name << ", but last move did "
                       << (actual_ruling ? "" : "not ")
-                      << "trigger rule (line: " << last_move_line_number << ")." << std::endl;
+                      << "trigger rule (line: " << last_move_line_number << ").\n";
         }
 
         return pass;
@@ -296,7 +296,7 @@ namespace
                 }
                 else
                 {
-                    std::cerr << "Malformed Result: " << line << " (line: " << line_number << ")" << std::endl;
+                    std::cerr << "Malformed Result: " << line << " (line: " << line_number << ")\n";
                     return false;
                 }
             }
@@ -342,7 +342,7 @@ namespace
                        (move == "0-1" && expected_winner != Winner_Color::BLACK) ||
                        (move == "*" && expected_winner != Winner_Color::NONE))
                     {
-                        std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")" << std::endl;
+                        std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")\n";
                         return false;
                     }
 
@@ -393,7 +393,7 @@ namespace
                         {
                             std::cerr << legal_move->algebraic(board) << " ";
                         }
-                        std::cerr << '\n' << board.fen() << std::endl;
+                        std::cerr << '\n' << board.fen() << '\n';
                         return false;
                     }
                 }
@@ -563,7 +563,7 @@ namespace
         input = std::ifstream(file_name);
         const auto output_file_name = String::add_to_file_name(file_name, "-updated");
         auto output = std::ofstream(output_file_name);
-        std::cout << "Writing to: " << output_file_name << std::endl;
+        std::cout << "Writing to: " << output_file_name << '\n';
         for(const auto& line : lines_to_write)
         {
             try
