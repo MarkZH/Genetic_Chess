@@ -37,7 +37,7 @@ void Help_Writer::add_option(const std::string& name,
                              const std::string& description) noexcept
 {
     text += std::string(indent_size, ' ') + name;
-    
+
     for(const auto& parameter : required_parameters)
     {
         text += " [" + parameter + "]";

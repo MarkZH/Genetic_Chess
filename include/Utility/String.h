@@ -152,12 +152,12 @@ namespace String
     std::string lowercase(std::string s) noexcept;
 
     //! \brief Check if a character is a digit.
-    //! 
+    //!
     //! This is useful with std:: algorithms since std::isdigit takes an int as a parameter.
     bool isdigit(char c) noexcept;
 
     //! \brief Check if a character is whitespace.
-    //! 
+    //!
     //! This is useful with std:: algorithms since std::isspace takes an int as a parameter.
     bool isspace(char c) noexcept;
 
@@ -253,11 +253,11 @@ namespace String
     std::string pluralize(int count, const std::string& noun) noexcept;
 
     //! \brief Create a strings with added line breaks so no line is longer than a limit.
-    //! 
+    //!
     //! \param line_length The maximum length of a line in the wrapped text (included the indent).
     //! \param indent The number of spaces to indent each line of text.
     //! \param text The raw text.
-    //! 
+    //!
     //! All whitespace will be condensed to single spaces before wrapping. The character ~ will be
     //! converted to a non-breaking space.
     std::string word_wrap(size_t line_length, size_t indent, const std::string& text) noexcept;
