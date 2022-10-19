@@ -26,20 +26,17 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     }
     else
     {
-        size_t start_index = 0;
-        size_t end_index = 0;
-        size_t split_count = 0;
-        while(end_index < s.size() && split_count < count)
+        for(const auto& token : std::ranges::views::split(s, delim))
         {
-            end_index = std::min(s.find(delim, start_index), s.size());
-            result.push_back(s.substr(start_index, end_index - start_index));
-            start_index = end_index + delim.size();
-            ++split_count;
-        }
-
-        if(start_index <= s.size())
-        {
-            result.push_back(s.substr(start_index));
+            if(result.size() <= count)
+            {
+                result.emplace_back(token.begin(), token.end());
+            }
+            else
+            {
+                result.back().append(delim);
+                result.back().append(token.begin(), token.end());
+            }
         }
     }
 
