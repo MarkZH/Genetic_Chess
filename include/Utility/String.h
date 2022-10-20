@@ -36,19 +36,7 @@ namespace String
     template<typename Iter>
     std::string join(const Iter begin, const Iter end, const std::string& joiner) noexcept
     {
-        if(begin == end)
-        {
-            return {};
-        }
-
-        auto result = *begin;
-        std::for_each(std::next(begin), end,
-                      [&joiner, &result](const auto& token)
-                      {
-                          result += joiner;
-                          result += token;
-                      });
-        return result;
+        return std::views::iota(begin, end) | std::views::join_with(joiner) | std::ranges::to<std::string>();
     }
 
     //! \brief Join a sequece of strings into a single string with joiner strings in between.
