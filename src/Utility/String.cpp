@@ -26,7 +26,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     }
     else
     {
-        for(const auto& token : std::ranges::views::split(s, delim))
+        for(const auto& token : std::views::split(s, delim))
         {
             if(result.size() <= count)
             {
