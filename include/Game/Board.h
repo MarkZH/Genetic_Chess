@@ -77,6 +77,12 @@ class Board
         //! \exception Illegal_Move if the text does not represent a legal move or if the wanted move is ambiguous.
         const Move& interpret_move(const std::string& move) const;
 
+        //! \brief Determine if a text string represents a legal move in the current position.
+        //! 
+        //! \param text The text to examine.
+        //! \returns Whether the text is a valid move text.
+        bool is_legal_move(const std::string& text) const noexcept;
+
         //! \brief Tells which player is due to move.
         //!
         //! \returns Color of player who is next to move.

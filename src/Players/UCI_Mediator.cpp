@@ -130,6 +130,19 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                         continue;
                     }
 
+                    if(previous_option == "searchmoves")
+                    {
+                        if(board.is_legal_move(option))
+                        {
+                            log("Ignoring searchmove: " + option);
+                        }
+                        else
+                        {
+                            previous_option = option;
+                        }
+                        continue;
+                    }
+
                     const auto number = String::to_number<int>(option);
                     if(previous_option == "wtime")
                     {

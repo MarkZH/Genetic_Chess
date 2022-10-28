@@ -458,6 +458,19 @@ const Move& Board::interpret_move(const std::string& move_text) const
     }
 }
 
+bool Board::is_legal_move(const std::string& text) const noexcept
+{
+    try
+    {
+        interpret_move(text);
+        return true;
+    }
+    catch(const Illegal_Move&)
+    {
+        return false;
+    }
+}
+
 void Board::move_piece(const Move& move) noexcept
 {
     if(piece_on_square(move.end()))
