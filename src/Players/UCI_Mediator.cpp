@@ -53,25 +53,12 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 }
                 else
                 {
-                    auto title = opponent_split[4];
+                    const auto& title = opponent_split[4];
                     log("Opponent title: " + title);
-                    if(title == "none")
-                    {
-                        title.clear();
-                    }
-                    else
-                    {
-                        title = title + " ";
-                    }
-
-                    const auto rating = opponent_split[5];
-                    log("Opponent rating: " + rating);
-
-                    const auto type = opponent_split[6];
-                    log("Opponent type: " + type);
-
-                    const auto name = opponent_split[7];
-                    record_opponent_name(title + name);
+                    log("Opponent rating: " + opponent_split[5]);
+                    log("Opponent type: " + opponent_split[6]);
+                    const auto& name = opponent_split[7];
+                    record_opponent_name(name, title);
                     log("Opponent's name: " + name);
                 }
             }

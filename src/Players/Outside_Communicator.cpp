@@ -40,9 +40,16 @@ Outside_Communicator::~Outside_Communicator()
     log("Shutting down.");
 }
 
-void Outside_Communicator::record_opponent_name(const std::string& opponent_name) noexcept
+void Outside_Communicator::record_opponent_name(const std::string& name, const std::string& title) noexcept
 {
-    remote_opponent_name = opponent_name;
+    if(title == "none" || title.empty())
+    {
+        remote_opponent_name = name;
+    }
+    else
+    {
+        remote_opponent_name = title + " " + name;
+    }
 }
 
 Proxy_Player Outside_Communicator::create_proxy_player() const noexcept
