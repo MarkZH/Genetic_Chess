@@ -115,6 +115,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 auto binc = clock.increment(Piece_Color::BLACK);
                 auto movestogo = size_t{0};
                 auto movetime = clock.initial_time();
+                auto search_moves = std::vector<const Move*>();
 
                 std::string previous_option;
                 for(const auto& option : String::split(command))
@@ -134,7 +135,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                     {
                         if(board.is_legal_move(option))
                         {
-                            log("Ignoring searchmove: " + option);
+                            search_moves.push_back(&board.interpret_move(option));
                         }
                         else
                         {
@@ -221,6 +222,11 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                     {
                         clock.set_time(board.whose_turn(), movetime);
                     }
+                }
+
+                if( ! search_moves.empty())
+                {
+                    board.legal_moves_cache = search_moves;
                 }
 
                 log("Telling AI to choose a move at leisure");

@@ -24,6 +24,8 @@ class Pawn_Promotion;
 class Pawn_Double_Move;
 class Pawn_Move;
 
+class UCI_Mediator;
+
 //! \brief This class represents the physical chess board.
 //!
 //! Each instance contains data to track the position of pieces, move history,
@@ -386,6 +388,9 @@ class Board
         friend class Pawn_Promotion; // replace piece
         friend class Pawn_Double_Move; // mark square as En Passant target
         friend class Pawn_Move; // reset three-fold and 50-move counts
+
+        // Allow UCI_Mediator to change the legal moves with searchmoves command
+        friend class UCI_Mediator;
 };
 
 #endif // BOARD_H
