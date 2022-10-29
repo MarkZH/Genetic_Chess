@@ -117,65 +117,65 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 auto movetime = clock.initial_time();
                 auto search_moves = std::vector<const Move*>();
 
-                std::string previous_option;
-                for(const auto& option : String::split(command))
+                std::string parameter;
+                for(const auto& token : String::split(command))
                 {
-                    if(option == "go")
+                    if(token == "go")
                     {
                         continue;
                     }
 
-                    if(previous_option.empty())
+                    if(parameter.empty())
                     {
-                        previous_option = option;
+                        parameter = token;
                         continue;
                     }
 
-                    if(previous_option == "searchmoves")
+                    if(parameter == "searchmoves")
                     {
-                        if(board.is_legal_move(option))
+                        if(board.is_legal_move(token))
                         {
-                            search_moves.push_back(&board.interpret_move(option));
+                            search_moves.push_back(&board.interpret_move(token));
                         }
                         else
                         {
-                            previous_option = option;
+                            parameter = token;
                         }
                         continue;
                     }
 
-                    const auto number = String::to_number<int>(option);
-                    if(previous_option == "wtime")
+                    const auto number = String::to_number<int>(token);
+                    if(parameter == "wtime")
                     {
                         log("Setting White's time to " + std::to_string(number) + " ms");
                         wtime = std::chrono::milliseconds{number};
                         new_mode = Time_Reset_Method::ADDITION;
                     }
-                    else if(previous_option == "btime")
+                    else if(parameter == "btime")
                     {
                         log("Setting Black's time to " + std::to_string(number) + " ms");
                         btime = std::chrono::milliseconds{number};
                         new_mode = Time_Reset_Method::ADDITION;
                     }
-                    else if(previous_option == "winc")
+                    else if(parameter == "winc")
                     {
                         log("Setting White's increment time to " + std::to_string(number) + " ms");
                         winc = std::chrono::milliseconds{number};
                         new_mode = Time_Reset_Method::ADDITION;
                     }
-                    else if(previous_option == "binc")
+                    else if(parameter == "binc")
                     {
                         log("Setting Black's increment time to " + std::to_string(number) + " ms");
                         binc = std::chrono::milliseconds{number};
                         new_mode = Time_Reset_Method::ADDITION;
                     }
-                    else if(previous_option == "movestogo")
+                    else if(parameter == "movestogo")
                     {
                         log("Next time control in " + std::to_string(number) + " moves");
                         movestogo = number;
                         new_mode = Time_Reset_Method::ADDITION;
                     }
-                    else if(previous_option == "movetime")
+                    else if(parameter == "movetime")
                     {
                         log("Setting clock to " + std::to_string(number) + " ms per move");
                         movetime = std::chrono::milliseconds{number};
@@ -183,10 +183,10 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                     }
                     else
                     {
-                        log("Ignoring go command: " + previous_option);
+                        log("Ignoring go command: " + parameter);
                     }
 
-                    previous_option.clear();
+                    parameter.clear();
                 }
 
                 if(new_mode != mode || ! clock.is_running())
