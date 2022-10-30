@@ -212,10 +212,16 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         principal_variation.clear();
     }
 
-    // Consider capturing and promoting moves first after principal variation move
+    // Consider principal variation move first, if any.
     const auto partition_start = std::next(all_legal_moves.begin(), principal_variation.empty() ? 0 : 1);
-    std::partition(partition_start, all_legal_moves.end(),
-                   [&board](auto move){ return board.move_changes_material(*move); });
+    
+    // Consider checking moves next.
+    const auto checking_end = std::partition(partition_start, all_legal_moves.end(),
+                                             [&board](auto move) { return board.king_is_in_check_after_move(*move); });
+    // Consider capturing and promoting moves next.
+    std::partition(checking_end, all_legal_moves.end(),
+                   [&board](auto move) { return board.move_changes_material(*move); });
+    
 
     const auto perspective = board.whose_turn();
     Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
