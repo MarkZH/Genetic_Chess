@@ -219,9 +219,14 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     const auto checking_end = std::partition(partition_start, all_legal_moves.end(),
                                              [&board](auto move) { return board.king_is_in_check_after_move(*move); });
     // Consider capturing and promoting moves next.
-    std::partition(checking_end, all_legal_moves.end(),
-                   [&board](auto move) { return board.move_changes_material(*move); });
-    
+    const auto material_change_end = std::partition(checking_end, all_legal_moves.end(),
+                                                    [&board](auto move) { return board.move_changes_material(*move); });
+    // Consider moves that dodge attacks next.
+    const auto dodge_end = std::partition(material_change_end, all_legal_moves.end(),
+                                          [&board](auto move) { return board.attacked_by(move->end(), opposite(board.whose_turn())); });
+    // Consider pawn moves next.
+    const auto pawn_end = std::partition(dodge_end, all_legal_moves.end(),
+                                         [&board](auto move) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; });
 
     const auto perspective = board.whose_turn();
     Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
