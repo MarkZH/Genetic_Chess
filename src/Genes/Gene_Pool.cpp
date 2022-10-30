@@ -107,9 +107,9 @@ void gene_pool(const std::string& config_file)
 
     if(config.any_unused_parameters())
     {
-        std::cout << "There were unused parameters in the file: " << config_file << std::endl;
+        std::cout << "There were unused parameters in the file: " << config_file << '\n';
         config.print_unused_parameters();
-        std::cout << "\nPress enter to continue or " << stop_key << " to quit ..." << std::endl;
+        std::cout << "\nPress enter to continue or " << stop_key << " to quit ...\n";
         std::cin.get();
     }
 
@@ -199,7 +199,7 @@ void gene_pool(const std::string& config_file)
 
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
     }
-    std::cout << "Done." << std::endl;
+    std::cout << "Done.\n";
 }
 
 namespace
@@ -212,7 +212,7 @@ namespace
             return false;
         #else
             std::cout << "\nGene pool paused. Press " << pause_key << " to continue ";
-            std::cout << "or " << stop_key << " to quit." << std::endl;
+            std::cout << "or " << stop_key << " to quit.\n";
             pause_lock.lock();
         #endif // _WIN32
         }
@@ -226,12 +226,12 @@ namespace
         if(pause_lock.owns_lock())
         {
             pause_lock.unlock();
-            std::cout << "\nResuming ..." << std::endl;
+            std::cout << "\nResuming ...\n";
         }
         else
         {
             pause_lock.lock();
-            std::cout << "\nGetting to a good stopping point ..." << std::endl;
+            std::cout << "\nGetting to a good stopping point ...\n";
         }
     }
 
@@ -248,7 +248,7 @@ namespace
             const auto file_name = String::trim_outer_whitespace(seed_split.front());
             const auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
             const auto seed_ai = Minimax_AI(file_name, seed_id);
-            std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << std::endl;
+            std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << '\n';
             pool = {seed_ai};
         }
 
@@ -307,9 +307,9 @@ namespace
         std::cout << "Best living ID : " << best_living->id() << " with " << String::pluralize(best_living->wins(), "win") + "\n\n";
 
     #ifdef _WIN32
-        std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n" << std::endl;
+        std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n\n";
     #else
-        std::cout << "Pause: " << pause_key << "    Abort: " << stop_key << "\n" << std::endl;
+        std::cout << "Pause: " << pause_key << "    Abort: " << stop_key << "\n\n";
     #endif // _WIN32
     }
 
@@ -347,7 +347,7 @@ namespace
         }
 
         // Use game time from last run of this gene pool
-        std::cout << "Searching " << game_record_file << " for last game time and stats ..." << std::endl;
+        std::cout << "Searching " << game_record_file << " for last game time and stats ...\n";
         for(std::string line; std::getline(ifs, line);)
         {
             line = String::trim_outer_whitespace(line);
@@ -383,7 +383,7 @@ namespace
         try
         {
             const auto best_id = find_last_id(best_file_name);
-            std::cout << "Searching for previous best AI win counts ..." << std::endl;
+            std::cout << "Searching for previous best AI win counts ...\n";
             auto wins = count_wins(game_record_file, best_id);
             return {best_id, wins, double(wins)};
         }
@@ -420,11 +420,11 @@ namespace
         std::ifstream ifs(load_file);
         if( ! ifs)
         {
-            std::cout << "Starting new gene pool and writing to: " << load_file << std::endl;
+            std::cout << "Starting new gene pool and writing to: " << load_file << '\n';
             return {};
         }
 
-        std::cout << "Loading gene pool file: " << load_file << " ..." << std::endl;
+        std::cout << "Loading gene pool file: " << load_file << " ...\n";
         std::string still_alive;
         size_t pool_line_number = 0;
         std::string pool_line;
@@ -514,7 +514,7 @@ namespace
             return 0;
         }
 
-        std::cout << "Counting number of previous rounds..." << std::endl;
+        std::cout << "Counting number of previous rounds...\n";
         size_t round_count = 0;
         for(std::string line; std::getline(genome_file, line);)
         {

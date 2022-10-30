@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
     }
     catch(const std::exception& e)
     {
-        std::cerr << "\nERROR: " << e.what() << std::endl;
+        std::cerr << "\nERROR: " << e.what() << '\n';
         return EXIT_FAILURE;
     }
 
@@ -164,31 +164,31 @@ namespace
         help.add_paragraph("Parameters in [square brackets] are required, while parameters in <angle~brackets> are optional.");
         help.add_section_title("Standalone functions");
         help.add_paragraph("These functions are for single program actions. If multiple of these options are specified, only first is run before exiting.");
-        help.add_option("-help", {}, {}, "Print this help text and exit.");
-        help.add_option("-gene-pool", {"file name"}, {}, "Start a run of a gene pool with parameters from the given file.");
-        help.add_option("-confirm", {"file name"}, {}, "Check a file containing PGN game records for any illegal moves or mismarked checks or checkmates.");
-        help.add_option("-test", {}, {}, "Run tests to ensure various parts of the program function correctly.");
-        help.add_option("-speed", {}, {}, "Run a speed test for gene scoring and board move submission.");
-        help.add_option("-perft", {}, {}, "Run a legal move generation test.");
-        help.add_option("-update", {"file name"}, {}, "If genetic_chess has changed how genomes are written, use this option to update the file to the latest format.");
+        help.add_option("-help", "Print this help text and exit.");
+        help.add_option("-gene-pool", {"file name"}, "Start a run of a gene pool with parameters from the given file.");
+        help.add_option("-confirm", {"file name"}, "Check a file containing PGN game records for any illegal moves or mismarked checks or checkmates.");
+        help.add_option("-test", "Run tests to ensure various parts of the program function correctly.");
+        help.add_option("-speed", "Run a speed test for gene scoring and board move submission.");
+        help.add_option("-perft", "Run a legal move generation test.");
+        help.add_option("-update", {"file name"}, "If genetic_chess has changed how genomes are written, use this option to update the file to the latest format.");
         help.add_section_title("Player options");
         help.add_paragraph("The following options start a game with various players. If two players are specified, the first plays white and the second black. If only one player is specified, the program will wait for an Xboard or UCI command from a GUI to start playing.");
         help.add_option("-genetic", {"file name"}, {"ID number"}, "Select a minimaxing evolved player for a game and load data from the file. If there are multiple genomes in the file, specify an ID number to load, otherwise the last genome in the file will be used.");
-        help.add_option("-random", {}, {}, "Select a player that makes random moves for a game.");
+        help.add_option("-random", "Select a player that makes random moves for a game.");
         help.add_section_title("Other game options");
-        help.add_option("-time", {"number"}, {}, "Specify the time (in seconds) each player has to play the game or to make a set number of moves (see -reset_moves option).");
-        help.add_option("-reset-moves", {"number"}, {}, "Specify the number of moves a player must make within the time limit. The clock adds the initial time every time this number of moves is made.");
-        help.add_option("-increment-time", {"number"}, {}, "Specify seconds to add to time after each move.");
-        help.add_option("-board", {"FEN string"}, {}, "Specify the starting board state using FEN notation. The entire string should be quoted.");
-        help.add_option("-event", {"name"}, {}, "An optional name for the game to be played. This name will be written to the PGN game record in the Event tag.");
-        help.add_option("-location", {"name"}, {}, "An optional location for the game to be played. This will be written to the PGN game record in the Location tag.");
-        help.add_option("-game-file", {"file name"}, {}, "Specify the name of the file where the game record should be written. If none, record is printed to stdout.");
+        help.add_option("-time", {"number"}, "Specify the time (in seconds) each player has to play the game or to make a set number of moves (see -reset_moves option).");
+        help.add_option("-reset-moves", {"number"}, "Specify the number of moves a player must make within the time limit. The clock adds the initial time every time this number of moves is made.");
+        help.add_option("-increment-time", {"number"}, "Specify seconds to add to time after each move.");
+        help.add_option("-board", {"FEN string"}, "Specify the starting board state using FEN notation. The entire string should be quoted.");
+        help.add_option("-event", {"name"}, "An optional name for the game to be played. This name will be written to the PGN game record in the Event tag.");
+        help.add_option("-location", {"name"}, "An optional location for the game to be played. This will be written to the PGN game record in the Location tag.");
+        help.add_option("-game-file", {"file name"}, "Specify the name of the file where the game record should be written. If none, record is printed to stdout.");
         help.add_option("-uci");
-        help.add_option("-xboard", {}, {}, "Show an engine's thinking output in either UCI or Xboard format.");
-        help.add_option("-show-board", {}, {}, "Show the board on the command line when playing a local game.");
+        help.add_option("-xboard", "Show an engine's thinking output in either UCI or Xboard format.");
+        help.add_option("-show-board", "Show the board on the command line when playing a local game.");
         help.add_paragraph("All game options in this section can be overriden by GUI commands except -event, -location, and -game-file.");
 
-        std::cout << help.full_text();
+        std::cout << help;
     }
 
     bool check_rule_result(const std::string& rule_source,
@@ -204,7 +204,7 @@ namespace
                       << (expected_ruling ? "" : "no ")
                       << rule_name << ", but last move did "
                       << (actual_ruling ? "" : "not ")
-                      << "trigger rule (line: " << last_move_line_number << ")." << std::endl;
+                      << "trigger rule (line: " << last_move_line_number << ").\n";
         }
 
         return pass;
@@ -297,7 +297,7 @@ namespace
                 }
                 else
                 {
-                    std::cerr << "Malformed Result: " << line << " (line: " << line_number << ")" << std::endl;
+                    std::cerr << "Malformed Result: " << line << " (line: " << line_number << ")\n";
                     return false;
                 }
             }
@@ -343,7 +343,7 @@ namespace
                        (move == "0-1" && expected_winner != Winner_Color::BLACK) ||
                        (move == "*" && expected_winner != Winner_Color::NONE))
                     {
-                        std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")" << std::endl;
+                        std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")\n";
                         return false;
                     }
 
@@ -394,7 +394,7 @@ namespace
                         {
                             std::cerr << legal_move->algebraic(board) << " ";
                         }
-                        std::cerr << '\n' << board.fen() << std::endl;
+                        std::cerr << '\n' << board.fen() << '\n';
                         return false;
                     }
                 }
@@ -564,7 +564,7 @@ namespace
         input = std::ifstream(file_name);
         const auto output_file_name = String::add_to_file_name(file_name, "-updated");
         auto output = std::ofstream(output_file_name);
-        std::cout << "Writing to: " << output_file_name << std::endl;
+        std::cout << "Writing to: " << output_file_name << '\n';
         for(const auto& line : lines_to_write)
         {
             try
