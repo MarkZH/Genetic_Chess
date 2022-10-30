@@ -223,7 +223,7 @@ std::string String::pluralize(int count, const std::string& noun) noexcept
 std::string String::word_wrap(const size_t line_length, const size_t indent, const std::string& text) noexcept
 {
     const auto text_length = line_length - indent;
-    
+
     std::vector<std::string> lines{""};
     for(const auto& word : split(text))
     {

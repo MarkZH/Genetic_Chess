@@ -454,6 +454,19 @@ const Move& Board::interpret_move(const std::string& move_text) const
     }
 }
 
+bool Board::is_legal_move(const std::string& text) const noexcept
+{
+    try
+    {
+        interpret_move(text);
+        return true;
+    }
+    catch(const Illegal_Move&)
+    {
+        return false;
+    }
+}
+
 void Board::move_piece(const Move& move) noexcept
 {
     if(piece_on_square(move.end()))
@@ -1198,7 +1211,7 @@ void Board::compare_hashes(const Board& other) const noexcept
             std::cerr << square.text() << ' ';
         }
     }
-    std::cerr << std::endl;
+    std::cerr << '\n';
     const auto hash_diff = (board_hash() ^ other.board_hash());
     const auto white = static_cast<int>(Piece_Color::WHITE);
     const auto black = static_cast<int>(Piece_Color::BLACK);
@@ -1208,34 +1221,35 @@ void Board::compare_hashes(const Board& other) const noexcept
     const auto both_black_castles = (castling_hash_values[black][right] ^ castling_hash_values[black][left]);
     if(en_passant_target.is_set() && hash_diff == en_passant_hash_values[en_passant_target.file() - 'a'])
     {
-        std::cerr << "en passant hash" << std::endl;
+        std::cerr << "en passant hash";
     }
     else if(hash_diff == both_white_castles)
     {
-        std::cerr << "both white castling" << std::endl;
+        std::cerr << "both white castling";
     }
     else if(hash_diff == both_black_castles)
     {
-        std::cerr << "both black castling" << std::endl;
+        std::cerr << "both black castling";
     }
     else if(hash_diff == castling_hash_values[black][right])
     {
-        std::cerr << "black kingside castle" << std::endl;
+        std::cerr << "black kingside castle";
     }
     else if(hash_diff == castling_hash_values[white][right])
     {
-        std::cerr << "white kingside castle" << std::endl;
+        std::cerr << "white kingside castle";
     }
     else if(hash_diff == castling_hash_values[white][left])
     {
-        std::cerr << "white queenside castle" << std::endl;
+        std::cerr << "white queenside castle";
     }
     else if(hash_diff == castling_hash_values[black][left])
     {
-        std::cerr << "black queenside castle" << std::endl;
+        std::cerr << "black queenside castle";
     }
     else
     {
-        std::cerr << "Something else" << std::endl;
+        std::cerr << "Something else";
     }
+    std::cerr << '\n';
 }

@@ -73,7 +73,7 @@ class Outside_Communicator
         //! \brief Record the opponent's name when told by GUI or internet mediator.
         //!
         //! \param opponent_name The received name
-        void record_opponent_name(const std::string& opponent_name) noexcept;
+        void record_opponent_name(const std::string& name, const std::string& title = {}) noexcept;
 
         //! \brief Output the given string to the outside interface.
         //!
