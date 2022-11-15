@@ -214,7 +214,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
     // Consider principal variation move first, if any.
     const auto partition_start = std::next(all_legal_moves.begin(), principal_variation.empty() ? 0 : 1);
-    
+
     // Consider checking moves next.
     const auto checking_end = std::partition(partition_start, all_legal_moves.end(),
                                              [&board](auto move) { return board.king_is_in_check_after_move(*move); });
