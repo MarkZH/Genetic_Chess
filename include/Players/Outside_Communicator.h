@@ -72,7 +72,8 @@ class Outside_Communicator
 
         //! \brief Record the opponent's name when told by GUI or internet mediator.
         //!
-        //! \param opponent_name The received name
+        //! \param name The received name
+        //! \param title The chess title (if any) of the opponent.
         void record_opponent_name(const std::string& name, const std::string& title = {}) noexcept;
 
         //! \brief Output the given string to the outside interface.
