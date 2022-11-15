@@ -225,8 +225,8 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
     const auto dodge_end = std::partition(material_change_end, all_legal_moves.end(),
                                           [&board](auto move) { return board.attacked_by(move->end(), opposite(board.whose_turn())); });
     // Consider pawn moves next.
-    const auto pawn_end = std::partition(dodge_end, all_legal_moves.end(),
-                                         [&board](auto move) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; });
+    std::partition(dodge_end, all_legal_moves.end(),
+                   [&board](auto move) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; });
 
     const auto perspective = board.whose_turn();
     Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
