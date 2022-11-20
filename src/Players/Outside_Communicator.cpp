@@ -18,8 +18,14 @@
 #include "Utility/String.h"
 #include "Utility/Random.h"
 
-std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player)
+namespace
 {
+    auto log_communication = true;
+}
+
+std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player, const bool enable_logging)
+{
+    log_communication = enable_logging;
     const auto protocol_type = Outside_Communicator::receive_command();
     if(protocol_type == "xboard")
     {
@@ -97,6 +103,11 @@ std::string Outside_Communicator::get_last_command(const bool while_listening)
 
 void Outside_Communicator::log(const std::string& data)
 {
+    if( ! log_communication)
+    {
+        return;
+    }
+
     static const auto log_time_stamp = String::date_and_time_format(std::chrono::system_clock::now(), "%Y.%m.%d-%H.%M.%S");
     static const auto log_file_name = "chess-comm-log-" + log_time_stamp + "-" + Random::random_string(8) + ".txt";
     static auto ofs = std::ofstream(log_file_name);

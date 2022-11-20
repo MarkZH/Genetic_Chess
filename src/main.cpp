@@ -185,6 +185,7 @@ namespace
         help.add_option("-uci");
         help.add_option("-xboard", "Show an engine's thinking output in either UCI or Xboard format.");
         help.add_option("-show-board", "Show the board on the command line when playing a local game.");
+        help.add_option("-log-comms", "Log UCI/Xboard communications (except engine thinking) to a file.");
         help.add_paragraph("All game options in this section can be overriden by GUI commands except -event, -location, and -game-file.");
 
         std::cout << help;
@@ -418,6 +419,7 @@ namespace
         std::string location;
         auto thinking_output = Thinking_Output_Type::NO_THINKING;
         auto print_board = false;
+        auto enable_logging = false;
 
         for(size_t i = 0; i < options.size(); ++i)
         {
@@ -483,6 +485,10 @@ namespace
             {
                 print_board = true;
             }
+            else if(opt == "-log-comms")
+            {
+                enable_logging = true;
+            }
             else
             {
                 throw std::invalid_argument("Invalid or incomplete game option: " + opt);
@@ -512,7 +518,7 @@ namespace
 
         if( ! black)
         {
-            play_game_with_outsider(*white, event_name, location, game_file_name);
+            play_game_with_outsider(*white, event_name, location, game_file_name, enable_logging);
         }
         else
         {

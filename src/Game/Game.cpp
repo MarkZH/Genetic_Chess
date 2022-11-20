@@ -69,9 +69,10 @@ Game_Result play_game(Board board,
 void play_game_with_outsider(const Player& player,
                              const std::string& event_name,
                              const std::string& location,
-                             const std::string& game_file_name)
+                             const std::string& game_file_name,
+                             const bool enable_logging)
 {
-    const auto outsider = connect_to_outside(player);
+    const auto outsider = connect_to_outside(player, enable_logging);
 
     signal(SIGINT, SIG_IGN);
 

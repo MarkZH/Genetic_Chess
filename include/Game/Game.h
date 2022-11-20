@@ -37,9 +37,11 @@ Game_Result play_game(Board board,
 //! \param event_name The name of the event where the game will take place. May be empty.
 //! \param location The name of the location of the game. May be empty.
 //! \param game_file_name The name of a file for writing the game record. If empty, no record is written.
+//! \param enable_logging Log communications (excepting engine thinking) to a file.
 void play_game_with_outsider(const Player& local_player,
                              const std::string& event_name,
                              const std::string& location,
-                             const std::string& game_file_name);
+                             const std::string& game_file_name,
+                             bool enable_logging);
 
 #endif // GAME_H
