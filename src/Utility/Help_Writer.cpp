@@ -15,7 +15,7 @@ namespace
 void Help_Writer::add_title(const std::string& title) noexcept
 {
     add_extra_space_after_option();
-    text += title + '\n' + std::string(title.size(), '=') + "\n\n";
+    text += '\n' + title + '\n' + std::string(title.size(), '=') + "\n\n";
 }
 
 void Help_Writer::add_section_title(const std::string& title) noexcept
