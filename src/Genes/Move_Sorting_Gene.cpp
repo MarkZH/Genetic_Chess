@@ -32,7 +32,6 @@ Move_Sorting_Gene::Move_Sorting_Gene() noexcept :
     Clonable_Gene("Move Sorting Gene"),
     move_sorters{initial_move_sorter_list}
 {
-    sorter_count = move_sorters.size();
 }
 
 double Move_Sorting_Gene::score_board(const Board&, Piece_Color, size_t) const noexcept
