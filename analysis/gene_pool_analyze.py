@@ -11,6 +11,7 @@ def main(gene_pool_file_name):
             line = line.strip()
             if not line:
                 continue
+
             if ':' in line:
                 parameter, value = line.split(':', 1)
                 parameter = parameter.strip()

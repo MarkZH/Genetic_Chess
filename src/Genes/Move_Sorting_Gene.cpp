@@ -21,7 +21,7 @@ namespace
         Move_Sorter{"Dodgers", [](const Move* move, const Board& board) { return board.attacked_by(move->start(), opposite(board.whose_turn())); }},
         Move_Sorter{"Pawn Movers", [](const Move* move, const Board& board) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; }}
     };
-    
+
     const std::string input_list_delimiter = ",";
     const auto output_list_delimiter = input_list_delimiter + " ";
     const auto count_property = "Sorter Count";

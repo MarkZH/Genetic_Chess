@@ -11,7 +11,7 @@ class Board;
 class Move;
 
 //! \brief A named function for sorting moves based on the sorter predicate.
-//! 
+//!
 //! The sorter function is fed into std::partition to put moves in a better search order.
 struct Move_Sorter
 {
@@ -24,7 +24,7 @@ struct Move_Sorter
 };
 
 //! \brief A gene for sorting moves before searching deeper in the game tree.
-//! 
+//!
 //! Since moves that make larger changes to the game state are likely to induce
 //! alpha-beta pruning earlier, sorting moves can lead to a large saving in
 //! search time.
