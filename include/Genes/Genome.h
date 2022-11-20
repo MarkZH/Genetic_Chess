@@ -10,6 +10,7 @@
 #include "Game/Clock.h"
 
 #include "Gene.h"
+#include "Genes/Move_Sorting_Gene.h"
 
 class Board;
 class Move;
@@ -121,7 +122,7 @@ class Genome
 
     private:
         int id_number;
-        std::array<std::unique_ptr<Gene>, 13> genome;
+        std::array<std::unique_ptr<Gene>, 14> genome;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
@@ -133,6 +134,18 @@ class Genome
         {
             assert(Gene_Type::genome_index < genome.size());
             return static_cast<const Gene_Type&>(*genome[Gene_Type::genome_index]);
+        }
+
+    public:
+        //! \brief Sort moves before searching further in the game tree.
+        //! \tparam Iter An iterator type that points to a const Move*.
+        //! \param begin An iterator to the beginning of the move list to be sorted.
+        //! \param end An iterator to the end of the move list to be sorted.
+        //! \param board The board from which the move list is derived.
+        template<typename Iter>
+        void sort_moves(Iter begin, Iter end, const Board& board) const noexcept
+        {
+            gene_reference<Move_Sorting_Gene>().sort_moves(begin, end, board);
         }
 };
 
