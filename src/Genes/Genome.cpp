@@ -89,7 +89,7 @@ Genome::Genome(std::istream& is, int id_in) : Genome()
     for(std::string line; std::getline(is, line);)
     {
         line = String::strip_comments(line, "#");
-        if(!String::starts_with(line, "ID"))
+        if( ! String::starts_with(line, "ID"))
         {
             continue;
         }
