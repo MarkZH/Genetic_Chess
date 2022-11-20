@@ -45,11 +45,11 @@ void Move_Sorting_Gene::gene_specific_mutation() noexcept
     {
         if(sorter_count == 0)
         {
-            ++sorter_count;
+            sorter_count += (Random::coin_flip() ? 1 : 0);
         }
         else if(sorter_count == move_sorters.size())
         {
-            --sorter_count;
+            sorter_count += (Random::coin_flip() ? -1 : 0);
         }
         else
         {
