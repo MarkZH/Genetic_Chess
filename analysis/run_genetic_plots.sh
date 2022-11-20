@@ -14,7 +14,7 @@ config_file="$1"
 
 if [[ -z "$config_file" ]]
 then
-    echo "Arguments: <gene pool config file> <moves in opening> <notes file>"
+    echo "Arguments: <gene pool config file> <moves in opening>"
     echo "Only the first is required."
     exit 1
 fi
