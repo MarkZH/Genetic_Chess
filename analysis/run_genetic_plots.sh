@@ -5,17 +5,11 @@ get_config_value()
     sed 's/#.*//' "$1" | grep "$2" | cut -f2 -d= | sed -e 's/^\s*//' -e 's/\s*$//'
 }
 
-is_numeric()
-{
-    [ "$1" -eq "$1" ] > /dev/null 2>&1
-}
-
 config_file="$1"
 
 if [[ -z "$config_file" ]]
 then
-    echo "Arguments: <gene pool config file> <moves in opening>"
-    echo "Only the first is required."
+    echo "Argument: <gene pool config file>"
     exit 1
 fi
 
