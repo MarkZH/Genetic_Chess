@@ -229,7 +229,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\Genes\Move_Sorting_Gene.cpp" />
     <ClCompile Include="src\game\Board.cpp" />
     <ClCompile Include="src\game\Clock.cpp" />
     <ClCompile Include="src\game\Color.cpp" />
@@ -248,6 +247,7 @@
     <ClCompile Include="src\Genes\King_Confinement_Gene.cpp" />
     <ClCompile Include="src\genes\King_Protection_Gene.cpp" />
     <ClCompile Include="src\genes\Look_Ahead_Gene.cpp" />
+    <ClCompile Include="src\Genes\Move_Sorting_Gene.cpp" />
     <ClCompile Include="src\genes\Opponent_Pieces_Targeted_Gene.cpp" />
     <ClCompile Include="src\Genes\Passed_Pawn_Gene.cpp" />
     <ClCompile Include="src\genes\Pawn_Advancement_Gene.cpp" />
