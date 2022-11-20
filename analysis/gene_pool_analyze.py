@@ -21,6 +21,8 @@ def main(gene_pool_file_name):
                     header_line.append(parameter)
                 elif parameter == 'Name':
                     current_gene = value.strip()
+                elif parameter == 'Sorter Order':
+                    continue
                 else:
                     header_line.append(current_gene + ' - ' + parameter)
             elif line == 'END':
@@ -49,6 +51,8 @@ def main(gene_pool_file_name):
                 if parameter == 'Name':
                     current_gene = value
                 elif parameter == 'Still Alive':
+                    continue
+                elif parameter == 'Sorter Order':
                     continue
                 else:
                     if current_gene:

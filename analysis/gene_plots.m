@@ -87,6 +87,9 @@ for yi = 2 : length(data.colheaders)
     this_data = data.data(:, yi);
     name_list = data.colheaders(yi);
     name = name_list{1};
+    if strcmp(name, 'Move Sorting Gene - Sorter Count')
+        this_data = this_data + 0.7*(rand(size(this_data)) - 0.5);
+    end
 
     figure;
     hold all;
