@@ -99,16 +99,7 @@ for yi = 2 : length(data.colheaders)
     xlabel(xaxis);
     plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
 
-    title_name = name;
-    if strcmp(name, 'Search Strategy Gene - Search Method')
-        title_name = [name ' (0 = Minimax, 1 = Iterative Deepening)'];
-        conv_window = 100;
-        conv_margin = floor(conv_window/2);
-        smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
-        x_axis = id_list(conv_margin : end - conv_margin);
-        plot(x_axis, smooth_data, 'LineWidth', line_width);
-    end
-    title(title_name);
+    title(name);
 
     print([gene_pool_filename ' gene ' name '.png']);
     close;

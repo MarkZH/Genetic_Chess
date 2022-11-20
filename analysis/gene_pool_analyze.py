@@ -59,8 +59,6 @@ def main(gene_pool_file_name):
                         title = current_gene + ' - ' + parameter
                     else:
                         title = parameter #ID
-                    if parameter == 'Search Method':
-                        value = '0' if value == 'Minimax' else '1'
                     index = header_line.index(title)
                     while index >= len(data_line):
                         data_line.append('')

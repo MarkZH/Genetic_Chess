@@ -277,7 +277,6 @@ class Minimax_AI : public Player
         void calibrate_thinking_speed() const noexcept;
 
         const Move& choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
-        const Move& choose_move_iterative_deepening(const Board& board, const Clock& clock) const noexcept;
 };
 
 //! \brief Create a PGN variation string.

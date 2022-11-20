@@ -103,45 +103,6 @@ const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clo
     return *result.variation_line().front();
 }
 
-const Move& Minimax_AI::choose_move_iterative_deepening(const Board& board, const Clock& clock) const noexcept
-{
-    const auto progress = game_progress(board);
-    const auto effective_moves_per_turn = branching_factor(progress);
-    const auto speculation_factor = speculation_time_factor(progress);
-    const auto time_to_use = time_to_examine(board, clock);
-    const auto time_start = std::chrono::steady_clock::now();
-
-    auto principal_variation = std::vector<const Move*>{};
-    for(size_t depth = 1; true; ++depth)
-    {
-        current_variation_store current_variation;
-        const auto result = search_game_tree(board,
-                                             Clock::seconds{std::numeric_limits<Clock::seconds::rep>::infinity()},
-                                             depth,
-                                             depth,
-                                             clock,
-                                             Alpha_Beta_Value::alpha_start(board.whose_turn()),
-                                             Alpha_Beta_Value::beta_start(board.whose_turn()),
-                                             principal_variation,
-                                             current_variation);
-
-        const auto time_used_so_far = std::chrono::steady_clock::now() - time_start;
-        const auto time_left = time_to_use - time_used_so_far;
-        const auto game_over = result.is_winning_for(board.whose_turn()) || result.is_losing_for(board.whose_turn());
-        if( ! game_over && time_used_so_far*effective_moves_per_turn < time_left*speculation_factor)
-        {
-            principal_variation = {nullptr, nullptr};
-            const auto& variation = result.variation_line();
-            principal_variation.insert(principal_variation.end(), variation.begin(), variation.end());
-        }
-        else
-        {
-            report_final_search_stats(result, board);
-            return *result.variation_line().front();
-        }
-    }
-}
-
 void Minimax_AI::report_final_search_stats(const Game_Tree_Node_Result& result, const Board& board) const noexcept
 {
     output_thinking(result, board.whose_turn());
