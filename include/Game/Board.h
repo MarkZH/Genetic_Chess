@@ -209,6 +209,12 @@ class Board
         //! \returns Whether the move under consideration will leave the friendly king in check.
         bool king_is_in_check_after_move(const Move& move) const noexcept;
 
+        //! \brief Determines if the moving piece will put the king in check after the given move.
+        //!
+        //! \param move The move that may put the opponent king in check.
+        //! \returns Whether the moving piece attacks the king after the move.
+        bool move_checks_king(const Move& move) const noexcept;
+
         //! \brief Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.
         //!
         //! \param square The queried square.

@@ -194,6 +194,8 @@ namespace
     void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed);
     void same_board_position_with_different_en_passant_captures_has_different_hash(bool& tests_passed);
 
+    void correctly_detects_checking_moves(bool& tests_passed, const std::string& fen, const std::string& move_text);
+
     void genome_loaded_from_file_writes_identical_file(bool& tests_passed);
     void self_swapped_minimax_ai_is_unchanged(bool& tests_passed);
     void self_assigned_minimax_ai_is_unchanged(bool& tests_passed);
@@ -267,6 +269,8 @@ bool run_tests()
     same_board_position_with_different_castling_rights_has_different_hash(tests_passed);
     same_board_position_with_different_en_passant_captures_has_different_hash(tests_passed);
 
+    correctly_detects_checking_moves(tests_passed, "k7/8/8/8/8/8/8/K4B2 w - - 0 1", "Bg2");
+    correctly_detects_checking_moves(tests_passed, "k7/8/8/8/8/8/8/K4B2 w - - 0 1", "Bh3");
 
     genome_loaded_from_file_writes_identical_file(tests_passed);
     self_swapped_minimax_ai_is_unchanged(tests_passed);
@@ -1164,6 +1168,15 @@ namespace
         }
 
         test_result(tests_passed, board1.board_hash() != board2.board_hash(), "Different en passant legality should have different hashes.");
+    }
+
+    void correctly_detects_checking_moves(bool& tests_passed, const std::string& fen, const std::string& move_text)
+    {
+        auto board = Board(fen);
+        const auto& move = board.interpret_move(move_text);
+        const auto check_prediction = board.move_checks_king(move);
+        board.play_move(move);
+        test_result(tests_passed, board.king_is_in_check() == check_prediction, "Checking prediction failed: " + fen + " after " + move_text);
     }
 
     void genome_loaded_from_file_writes_identical_file(bool& tests_passed)

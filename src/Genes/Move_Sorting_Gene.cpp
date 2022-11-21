@@ -20,7 +20,8 @@ namespace
     {
         Move_Sorter{"Force Changers", [](const Move* move, const Board& board) { return board.move_changes_material(*move); }},
         Move_Sorter{"Dodgers", [](const Move* move, const Board& board) { return board.attacked_by(move->start(), opposite(board.whose_turn())); }},
-        Move_Sorter{"Pawn Movers", [](const Move* move, const Board& board) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; }}
+        Move_Sorter{"Pawn Movers", [](const Move* move, const Board& board) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; }},
+        Move_Sorter{"Checkers", [](const Move* move, const Board& board) { return board.move_checks_king(*move); }}
     };
 
     const std::string input_list_delimiter = ",";

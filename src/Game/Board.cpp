@@ -727,6 +727,27 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
     return false;
 }
 
+bool Board::move_checks_king(const Move& move) const noexcept
+{
+    const auto opponent_king_square = find_king(opposite(whose_turn()));
+    const auto& after_moves = piece_on_square(move.start()).attacking_move_lists(move.end());
+    for(const auto& move_list : after_moves)
+    {
+        const auto checking_move = std::find_if(move_list.begin(),
+                                                move_list.end(),
+                                                [opponent_king_square](auto attack)
+                                                {
+                                                    return attack->end() == opponent_king_square;
+                                                });
+        if(checking_move != move_list.end())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 bool Board::no_legal_moves() const noexcept
 {
     return legal_moves().empty();
