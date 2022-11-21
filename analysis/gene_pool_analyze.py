@@ -35,7 +35,8 @@ def main(gene_pool_file_name):
     # Read gene pool file for data
     output_file_name = gene_pool_file_name + '_parsed.txt'
     with open(gene_pool_file_name) as f, open(output_file_name, 'w') as w:
-        data_line = []
+        new_data_line = ['']*len(header_line)
+        data_line = new_data_line.copy()
         current_gene = ''
         w.write(','.join(header_line) + '\n')
         for line in f:
@@ -47,7 +48,7 @@ def main(gene_pool_file_name):
                 data_line = [x or '0' for x in data_line]
                 w.write(','.join(data_line) + '\n')
                 current_gene = ''
-                data_line = []
+                data_line = new_data_line.copy()
             elif ':' in line:
                 parameter, value = line.split(':', 1)
                 value = value.strip()
@@ -66,8 +67,6 @@ def main(gene_pool_file_name):
                     else:
                         title = parameter #ID
                     index = header_line.index(title)
-                    while index >= len(data_line):
-                        data_line.append('')
                     if data_line[index]:
                         raise Exception('Value already found: ' + title + ' for ID ' + str(data_line[0]))
                     data_line[index] = value
