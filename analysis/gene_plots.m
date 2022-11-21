@@ -52,6 +52,11 @@ endgame_priority_suffix = ' - Priority - Endgame';
 title('Endgame Gene Priority Evolution');
 endgame_priority_count = 0;
 
+first_order_move_figure = figure;
+hold all;
+first_order_prefix = 'Move Sorting Gene - Sorter Order - ';
+title('First Move Sorter Preference');
+
 special_plots = containers.Map;
 special_plots('piece strength') = piece_strength_figure;
 piece_strength_plots = [];
@@ -62,6 +67,9 @@ opening_priority_labels = {};
 special_plots('gene priorities endgame') = endgame_priority_figure;
 endgame_priority_plots = [];
 endgame_priority_labels = {};
+special_plots('first order preference') = first_order_move_figure;
+first_order_plots = [];
+first_order_labels = {};
 
 shorten = containers.Map;
 shorten('Castling Possible Gene') = 'Castling';
@@ -77,7 +85,7 @@ shorten('Total Force Gene') = 'Force';
 shorten('Pawn Structure Gene') = 'Structure';
 
 marker_size = 5;
-line_width = 2;
+line_width = 1;
 
 invalid_plot = figure;
 close(invalid_plot);
@@ -111,6 +119,8 @@ for yi = 2 : length(data.colheaders)
         plot_figure = opening_priority_figure;
     elseif ~isempty(strfind(name, endgame_priority_suffix))
         plot_figure = endgame_priority_figure;
+    elseif ~isempty(strfind(name, first_order_prefix))
+        plot_figure = first_order_move_figure;
     end
 
     if plot_figure != invalid_plot
@@ -138,6 +148,9 @@ for yi = 2 : length(data.colheaders)
             endgame_priority_labels{end + 1} = shorten(name(1 : end - length(endgame_priority_suffix)));
             endgame_priority_count = endgame_priority_count + 1;
             make_dashed = (endgame_priority_count > 7);
+        elseif plot_figure == first_order_move_figure
+            first_order_plots(end + 1) = p;
+            first_order_labels{end + 1} = name(length(first_order_prefix):end);
         end
 
         if make_dashed
@@ -169,6 +182,8 @@ for name = special_plots.keys()
         leg = legend(opening_priority_plots, opening_priority_labels);
     elseif special_plot == endgame_priority_figure
         leg = legend(endgame_priority_plots, endgame_priority_labels);
+    elseif special_plot == first_order_move_figure
+        leg = legend(first_order_plots, first_order_labels);
     end
     set(leg, 'location', 'eastoutside');
     legend left;

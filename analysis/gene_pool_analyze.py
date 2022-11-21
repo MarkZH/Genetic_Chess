@@ -22,7 +22,9 @@ def main(gene_pool_file_name):
                 elif parameter == 'Name':
                     current_gene = value.strip()
                 elif parameter == 'Sorter Order':
-                    continue
+                    sorter_orders = [name.strip() for name in value.split(',')]
+                    for order in sorter_orders:
+                        header_line.append(current_gene + " - " + parameter + " - " + order)
                 else:
                     header_line.append(current_gene + ' - ' + parameter)
             elif line == 'END':
@@ -42,6 +44,7 @@ def main(gene_pool_file_name):
                 continue
 
             if line == 'END':
+                data_line = [x or '0' for x in data_line]
                 w.write(','.join(data_line) + '\n')
                 current_gene = ''
                 data_line = []
@@ -52,11 +55,14 @@ def main(gene_pool_file_name):
                     current_gene = value
                 elif parameter == 'Still Alive':
                     continue
-                elif parameter == 'Sorter Order':
-                    continue
                 else:
                     if current_gene:
-                        title = current_gene + ' - ' + parameter
+                        if parameter == "Sorter Order":
+                            first_order = value.split(',')[0].strip()
+                            title = current_gene + ' - ' + parameter + ' - ' + first_order
+                            value = '1'
+                        else:
+                            title = current_gene + ' - ' + parameter
                     else:
                         title = parameter #ID
                     index = header_line.index(title)
