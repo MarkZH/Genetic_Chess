@@ -75,7 +75,6 @@ void Move_Sorting_Gene::adjust_properties(std::map<std::string, std::string>& pr
 
 void Move_Sorting_Gene::load_gene_properties(const std::map<std::string, std::string>& properties)
 {
-    sorter_count = String::to_number<size_t>(properties.at(count_property));
     auto sorter_names = String::split(properties.at(order_property), input_list_delimiter);
     std::transform(sorter_names.begin(), sorter_names.end(), sorter_names.begin(), String::remove_extra_whitespace);
 
@@ -96,4 +95,7 @@ void Move_Sorting_Gene::load_gene_properties(const std::map<std::string, std::st
         std::iter_swap(current_sorter, sorter);
         ++current_sorter;
     }
+
+    sorter_count = String::to_number<size_t>(properties.at(count_property));
+    sorter_count = std::min(sorter_count, move_sorters.size());
 }
