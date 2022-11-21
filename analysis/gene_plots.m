@@ -33,40 +33,40 @@ xaxis = xaxis_list{1};
 xaxis_linewidth = 0.5;
 xaxis_linecolor = [0.4, 0.4, 0.4];
 
+special_plots = containers.Map;
+
 piece_strength_figure = figure;
 hold all;
 piece_strength_prefix = 'Piece Strength Gene';
 title('Piece Strength Evolution');
 piece_count = 0;
 piece_end_values = containers.Map;
+special_plots('piece strength') = piece_strength_figure;
+piece_strength_plots = [];
+piece_strength_labels = {};
 
 opening_priority_figure = figure;
 hold all;
 opening_priority_suffix = ' - Priority - Opening';
 title('Opening Gene Priority Evolution');
 opening_priority_count = 0;
+special_plots('gene priorities opening') = opening_priority_figure;
+opening_priority_plots = [];
+opening_priority_labels = {};
 
 endgame_priority_figure = figure;
 hold all;
 endgame_priority_suffix = ' - Priority - Endgame';
 title('Endgame Gene Priority Evolution');
 endgame_priority_count = 0;
+special_plots('gene priorities endgame') = endgame_priority_figure;
+endgame_priority_plots = [];
+endgame_priority_labels = {};
 
 first_order_move_figure = figure;
 hold all;
 first_order_prefix = 'Move Sorting Gene - Sorter Order - ';
 title('First Move Sorter Preference');
-
-special_plots = containers.Map;
-special_plots('piece strength') = piece_strength_figure;
-piece_strength_plots = [];
-piece_strength_labels = {};
-special_plots('gene priorities opening') = opening_priority_figure;
-opening_priority_plots = [];
-opening_priority_labels = {};
-special_plots('gene priorities endgame') = endgame_priority_figure;
-endgame_priority_plots = [];
-endgame_priority_labels = {};
 special_plots('first order preference') = first_order_move_figure;
 first_order_plots = [];
 first_order_labels = {};
