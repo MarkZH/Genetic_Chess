@@ -99,18 +99,20 @@ for yi = 2 : length(data.colheaders)
         this_data = this_data + 0.7*(rand(size(this_data)) - 0.5);
     end
 
-    figure;
-    hold all;
-    plot(id_list, this_data, ...
-         '.', ...
-         'markersize', marker_size);
-    xlabel(xaxis);
-    plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
+    if isempty(strfind(name, first_order_prefix))
+        figure;
+        hold all;
+        plot(id_list, this_data, ...
+            '.', ...
+            'markersize', marker_size);
+        xlabel(xaxis);
+        plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
 
-    title(name);
+        title(name);
 
-    print([gene_pool_filename ' gene ' name '.png']);
-    close;
+        print([gene_pool_filename ' gene ' name '.png']);
+        close;
+    end
 
     plot_figure = invalid_plot;
     if ~isempty(strfind(name, piece_strength_prefix))
