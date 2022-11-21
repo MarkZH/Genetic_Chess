@@ -37,6 +37,7 @@ using namespace std::chrono_literals;
 #include "Genes/Total_Force_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
+#include "Genes/Move_Sorting_Gene.h"
 
 #include "Utility/String.h"
 #include "Utility/Random.h"
@@ -296,6 +297,8 @@ bool run_tests()
 
     function_should_throw<Missing_Genome_Data>(tests_passed, "Missing gene data", [](){ return Piece_Strength_Gene().read_from("testing/missing_data_genome.txt");});
     function_should_throw<Duplicate_Genome_Data>(tests_passed, "Duplicate gene data", [](){ return Sphere_of_Influence_Gene().read_from("testing/duplicate_data_genome.txt");});
+    function_should_throw<Genome_Creation_Error>(tests_passed, "Invalid sorter name", []() { return Move_Sorting_Gene().read_from("testing/bad_sorter_name.txt"); });
+    function_should_throw<Genome_Creation_Error>(tests_passed, "Duplicate sorter name", []() { return Move_Sorting_Gene().read_from("testing/duplicate_sorter_name.txt"); });
 
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
     test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");

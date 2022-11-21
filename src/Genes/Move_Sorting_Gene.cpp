@@ -4,6 +4,7 @@
 #include <functional>
 #include <string>
 #include <algorithm>
+#include <set>
 
 #include "Game/Board.h"
 #include "Moves/Move.h"
@@ -77,6 +78,13 @@ void Move_Sorting_Gene::load_gene_properties(const std::map<std::string, std::st
     sorter_count = String::to_number<size_t>(properties.at(count_property));
     auto sorter_names = String::split(properties.at(order_property), input_list_delimiter);
     std::transform(sorter_names.begin(), sorter_names.end(), sorter_names.begin(), String::remove_extra_whitespace);
+
+    const auto name_set = std::set(sorter_names.begin(), sorter_names.end());
+    if(name_set.size() != sorter_names.size())
+    {
+        throw Genome_Creation_Error("Sorter name list contains duplicates: " + properties.at(order_property));
+    }
+
     auto current_sorter = move_sorters.begin();
     for(const auto& name : sorter_names)
     {
