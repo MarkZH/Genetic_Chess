@@ -49,7 +49,7 @@ Game_Result play_game(Board board,
             game_record.push_back(&move_chosen);
             if(print_board)
             {
-                board.cli_print();
+                board.cli_print_game(white, black, game_clock);
             }
         }
     }

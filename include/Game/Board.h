@@ -102,6 +102,13 @@ class Board
         //! Print a representation of the board to the command line.
         void cli_print() const noexcept;
 
+        //! Print a representation of a game to the command line.
+        //!
+        //! \param white The white player
+        //! \param black The black player
+        //! \param clock The game clock
+        void cli_print_game(const Player& white, const Player& black, const Clock& clock) const noexcept;
+
         //! \brief Returns the FEN string that was used to create the Board.
         std::string original_fen() const noexcept;
 

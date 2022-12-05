@@ -271,17 +271,28 @@ std::string Board::fen() const noexcept
 
 void Board::cli_print() const noexcept
 {
-    std::cout << '\n';
     for(auto rank = 8; rank >= 1; --rank)
     {
+        std::cout << '\n';
         for(auto file = 'a'; file <= 'h'; ++file)
         {
             const auto piece = piece_on_square({file, rank});
             std::cout << ' ' << (piece ? piece.fen_symbol() : '.');
         }
-        std::cout << '\n';
     }
-    std::cout << color_text(whose_turn()) << " to move\n";
+    std::cout << "    " << color_text(whose_turn()) << " to move\n";
+}
+
+void Board::cli_print_game(const Player& white, const Player& black, const Clock& clock) const noexcept
+{
+    const auto print_name = [&clock](const auto& player, const auto color)
+                            {
+                                std::cout << '\n' << player.name() << " | " << clock.time_left(color).count() << " seconds\n";
+                            };
+    print_name(black, Piece_Color::BLACK);
+    cli_print();
+    print_name(white, Piece_Color::WHITE);
+    std::cout <<  "\n     = = = =\n";
 }
 
 std::string Board::original_fen() const noexcept
