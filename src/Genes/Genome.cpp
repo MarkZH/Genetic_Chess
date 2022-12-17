@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <numeric>
+#include <functional>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
@@ -64,12 +65,7 @@ Genome::Genome() noexcept :
 
 Genome::Genome(const Genome& other) noexcept : id_number(other.id())
 {
-    std::transform(other.genome.begin(), other.genome.end(),
-                   genome.begin(),
-                   [](const auto& gene)
-                   {
-                       return gene->duplicate();
-                   });
+    std::transform(other.genome.begin(), other.genome.end(), genome.begin(), std::mem_fn(&Gene::duplicate));
     reset_piece_strength_gene();
 }
 
@@ -164,12 +160,7 @@ void Genome::renormalize_priorities() noexcept
 Genome& Genome::operator=(const Genome& other) noexcept
 {
     id_number = other.id();
-    std::transform(other.genome.begin(), other.genome.end(),
-                   genome.begin(),
-                   [](const auto& gene)
-                   {
-                       return gene->duplicate();
-                   });
+    std::transform(other.genome.begin(), other.genome.end(), genome.begin(), std::mem_fn(&Gene::duplicate));
     reset_piece_strength_gene();
     return *this;
 }

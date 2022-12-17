@@ -14,6 +14,7 @@
 using namespace std::chrono_literals;
 #include <map>
 #include <type_traits>
+#include <functional>
 
 #include "Game/Clock.h"
 #include "Game/Square.h"
@@ -930,7 +931,7 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
-    if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), [](const auto move) { return move->is_en_passant(); }))
+    if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), std::mem_fn(&Move::is_en_passant)))
     {
         disable_en_passant_target();
     }
