@@ -109,8 +109,7 @@ void gene_pool(const std::string& config_file)
     {
         std::cout << "There were unused parameters in the file: " << config_file << '\n';
         config.print_unused_parameters();
-        std::cout << "\nPress enter to continue or " << stop_key << " to quit ...\n";
-        std::cin.get();
+        return;
     }
 
     auto round_count = count_still_alive_lines(genome_file_name);
