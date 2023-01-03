@@ -20,7 +20,8 @@ using namespace std::chrono_literals;
 Xboard_Mediator::Xboard_Mediator(const Player& local_player)
 {
     const std::string expected = "protover 2";
-    if(receive_command() == expected)
+    const auto command = receive_command();
+    if(command == expected)
     {
         send_command("feature "
                      "usermove=1 "
@@ -36,7 +37,7 @@ Xboard_Mediator::Xboard_Mediator(const Player& local_player)
     else
     {
         log("ERROR: Expected \"" + expected + "\"");
-        throw std::runtime_error("Error in communicating with Xboard program.");
+        throw std::runtime_error("Error in communicating with Xboard program. Expected \"" + expected + "\", got \"" + command + "\".");
     }
 }
 
