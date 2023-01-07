@@ -255,7 +255,7 @@ namespace
             throw std::runtime_error("Could not open gene pool file for writing: " + genome_file_name);
         }
 
-        ofs << "\nStill Alive: ";
+        ofs << "Still Alive: ";
         for(const auto& ai : pool)
         {
             ofs << ai.id() << " ";
