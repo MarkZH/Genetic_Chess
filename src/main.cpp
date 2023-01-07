@@ -43,12 +43,6 @@ namespace
     //! \param argv The command line options (same as for main(int argc, char *argv[])).
     void start_game(const std::vector<std::string>& options);
 
-    //! \brief Reads a genome file and rewrites it in the latest style.
-    //!
-    //! \param file_name The name of the file to update.
-    //! \exception Genome_Creation_Error or derivative if the genome file is invalid.
-    void update_genome_file(const std::string& file_name);
-
     //! \brief List all move combinations to a given depth
     //! \param depth The maximum depth to search for moves.
     //!
@@ -118,11 +112,6 @@ int main(int argc, char *argv[])
         {
             return run_perft_tests() ? EXIT_SUCCESS : EXIT_FAILURE;
         }
-        else if(option == "-update")
-        {
-            argument_assert(options.size() >= 2, "Provide a file containing Genome data.");
-            update_genome_file(options[1]);
-        }
         else if(option == "-list")
         {
             argument_assert(options.size() >= 2, option + " requires a numeric argument.");
@@ -169,7 +158,6 @@ namespace
         help.add_option("-test", "Run tests to ensure various parts of the program function correctly.");
         help.add_option("-speed", "Run a speed test for gene scoring and board move submission.");
         help.add_option("-perft", "Run a legal move generation test.");
-        help.add_option("-update", {"file name"}, "If genetic_chess has changed how genomes are written, use this option to update the file to the latest format.");
         help.add_section_title("Player options");
         help.add_paragraph("The following options start a game with various players. If two players are specified, the first plays white and the second black. If only one player is specified, the program will wait for an Xboard or UCI command from a GUI to start playing.");
         help.add_option("-genetic", {"file name"}, {"ID number"}, "Select a minimaxing evolved player for a game and load data from the file. If there are multiple genomes in the file, specify an ID number to load, otherwise the last genome in the file will be used.");
@@ -530,60 +518,6 @@ namespace
                       location,
                       game_file_name,
                       print_board);
-        }
-    }
-
-    void update_genome_file(const std::string& file_name)
-    {
-        auto input = std::ifstream(file_name);
-        std::vector<std::string> lines_to_write;
-        auto skip_to_END = false;
-        auto skip_next_blank_line = false;
-        for(std::string line; std::getline(input, line);)
-        {
-            if(skip_to_END)
-            {
-                if(line == "END")
-                {
-                    skip_to_END = false;
-                    skip_next_blank_line = true;
-                }
-                continue;
-            }
-
-            if(String::starts_with(line, "ID:"))
-            {
-                lines_to_write.push_back(String::split(line, ":", 1).back());
-                skip_to_END = true;
-            }
-            else
-            {
-                if( ! (skip_next_blank_line && line.empty()))
-                {
-                    lines_to_write.push_back(line);
-                }
-                skip_next_blank_line = false;
-            }
-        }
-
-        input = std::ifstream(file_name);
-        const auto output_file_name = String::add_to_file_name(file_name, "-updated");
-        auto output = std::ofstream(output_file_name);
-        std::cout << "Writing to: " << output_file_name << '\n';
-        for(const auto& line : lines_to_write)
-        {
-            try
-            {
-                Minimax_AI(input, std::stoi(line)).print(output);
-            }
-            catch(const Genome_Creation_Error& e)
-            {
-                std::cerr << e.what() << '\n';
-            }
-            catch(const std::invalid_argument&)
-            {
-                output << line << '\n';
-            }
         }
     }
 
