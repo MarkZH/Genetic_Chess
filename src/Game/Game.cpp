@@ -2,9 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <stdexcept>
 #include <csignal>
-#include <cassert>
 #include <iostream>
 
 #include "Players/Player.h"
