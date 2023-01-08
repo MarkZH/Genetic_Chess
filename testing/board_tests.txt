@@ -116,3 +116,4 @@ quiescent | 4k3/4r2q/2b5/5p2/4p1R1/3QKP2/5N2/8 w - - 0 1 | fxe4 | fxe4 Nxe4 Bxe4
 # Non-trivial sorting function tests
 last move checks | start | e3 f6 Qh5 | true
 last move checks | start | e3 e6 Qe2 | false
+last move checks | 7k/P7/8/8/8/8/8/7K w - - 0 1 | a8=R | true

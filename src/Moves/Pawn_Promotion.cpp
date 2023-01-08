@@ -22,7 +22,12 @@ Pawn_Promotion::Pawn_Promotion(const Piece_Type promotion_piece, const Piece_Col
 
 void Pawn_Promotion::side_effects(Board& board) const noexcept
 {
-    board.place_piece(promote_to, end());
+    board.place_piece(promotion(), end());
+}
+
+Piece Pawn_Promotion::promotion() const noexcept
+{
+    return promote_to;
 }
 
 std::string Pawn_Promotion::algebraic_base(const Board& board) const noexcept
@@ -32,5 +37,5 @@ std::string Pawn_Promotion::algebraic_base(const Board& board) const noexcept
 
 char Pawn_Promotion::promotion_piece_symbol() const noexcept
 {
-    return promote_to.pgn_symbol().front();
+    return promotion().pgn_symbol().front();
 }

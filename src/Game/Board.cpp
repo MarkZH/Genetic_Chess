@@ -742,7 +742,8 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
 bool Board::move_checks_king(const Move& move) const noexcept
 {
     const auto opponent_king_square = find_king(opposite(whose_turn()));
-    const auto piece = piece_on_square(move.start());
+    const auto moving_piece = piece_on_square(move.start());
+    const auto piece = move.promotion() ? move.promotion() : moving_piece;
     const auto& after_moves = piece.attacking_move_lists(move.end());
     for(const auto& move_list : after_moves)
     {

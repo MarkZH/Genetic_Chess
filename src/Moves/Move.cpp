@@ -153,6 +153,11 @@ bool Move::is_en_passant() const noexcept
     return is_en_passant_move;
 }
 
+Piece Move::promotion() const noexcept
+{
+    return {};
+}
+
 char Move::promotion_piece_symbol() const noexcept
 {
     return '\0';

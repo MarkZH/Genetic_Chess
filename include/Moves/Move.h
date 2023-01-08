@@ -6,6 +6,7 @@
 #include "Game/Square.h"
 
 class Board;
+class Piece;
 
 //! \brief A class to represent the movement of pieces.
 class Move
@@ -89,6 +90,9 @@ class Move
         //!
         //! \returns Whether this is an instance of the En_Passant class.
         bool is_en_passant() const noexcept;
+
+        //! \brief Returns the piece that a pawn will be promoted to, if applicable.
+        virtual Piece promotion() const noexcept;
 
         //! \brief Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.
         //!
