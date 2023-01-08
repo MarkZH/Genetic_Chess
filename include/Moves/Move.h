@@ -94,7 +94,7 @@ class Move
         //! \brief Returns the piece that a pawn will be promoted to, if applicable.
         virtual Piece promotion() const noexcept;
 
-        //! \brief Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\0'.
+        //! \brief Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\\0'.
         //!
         //! \returns the PGN symbol of the promotion piece, if any.
         virtual char promotion_piece_symbol() const noexcept;
