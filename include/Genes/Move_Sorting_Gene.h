@@ -44,10 +44,7 @@ class Move_Sorting_Gene : public Clonable_Gene<Move_Sorting_Gene>
         template<typename Iter>
         void sort_moves(Iter begin, Iter end, const Board& board) const noexcept
         {
-            for(size_t i = 0; i < sorter_count; ++i)
-            {
-                begin = std::partition(begin, end, [this, &board, i](const auto move) { return move_sorters[i].sorter(move, board); });
-            }
+            sort_moves(begin, end, board, 0);
         }
 
     private:
@@ -60,6 +57,23 @@ class Move_Sorting_Gene : public Clonable_Gene<Move_Sorting_Gene>
 
         void adjust_properties(std::map<std::string, std::string>& properties) const noexcept override;
         void load_gene_properties(const std::map<std::string, std::string>& properties) override;
+
+        template<typename Iter>
+        void sort_moves(Iter begin, Iter end, const Board& board, const size_t sorter_index) const noexcept
+        {
+            if(sorter_index < sorter_count)
+            {
+                const auto border = std::partition(begin, end,
+                                                   [this, &board, sorter_index](const auto move)
+                                                   {
+                                                       return move_sorters[sorter_index].sorter(move, board);
+                                                   });
+
+                const auto next_index = sorter_index + 1;
+                sort_moves(begin, border, board, next_index);
+                sort_moves(border, end, board, next_index);
+            }
+        }
 };
 
 #endif // MOVE_SORTING_GENE_H
