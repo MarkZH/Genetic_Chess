@@ -807,6 +807,19 @@ namespace
                             board.fen() == actual_result_board.fen(),
                             "Expected: " + board.fen() + "\nGot:      " + actual_result_board.fen());
             }
+            else if(test_type == "last move checks")
+            {
+                if( ! test_assert(specification.size() == 4)) { continue; }
+                auto moves = String::split(specification.at(2));
+                if( ! test_assert( ! moves.empty())) { continue; }
+                const auto expected_answer = String::lowercase(specification.back());
+                if( ! test_assert(expected_answer == "true" || expected_answer == "false")) { continue; }
+                const auto expected_result = expected_answer == "true";
+                const auto last_move = moves.back();
+                moves.pop_back();
+                test_result(test_passed, all_moves_legal(board, moves)
+                            && board.move_checks_king(board.interpret_move(last_move)) == expected_result, "");
+            }
             else
             {
                 test_result(test_passed, false, "Bad test: " + test_type);

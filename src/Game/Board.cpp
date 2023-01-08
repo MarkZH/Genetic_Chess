@@ -742,7 +742,8 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
 bool Board::move_checks_king(const Move& move) const noexcept
 {
     const auto opponent_king_square = find_king(opposite(whose_turn()));
-    const auto& after_moves = piece_on_square(move.start()).attacking_move_lists(move.end());
+    const auto piece = piece_on_square(move.start());
+    const auto& after_moves = piece.attacking_move_lists(move.end());
     for(const auto& move_list : after_moves)
     {
         const auto checking_move = std::find_if(move_list.begin(),
@@ -753,7 +754,9 @@ bool Board::move_checks_king(const Move& move) const noexcept
                                                 });
         if(checking_move != move_list.end())
         {
-            return true;
+            const auto found_move = *checking_move;
+            return piece.type() == Piece_Type::KNIGHT || all_empty_between(found_move->start(),
+                                                                           found_move->end());
         }
     }
 
