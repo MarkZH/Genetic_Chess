@@ -63,16 +63,6 @@ class Move
         //!          Equivalent to Square_Difference(file_change(), rank_change()).
         Square_Difference movement() const noexcept;
 
-        //! \brief How far move travels horizontally.
-        //!
-        //! \returns The distance in squares between the start and end files.
-        int file_change() const noexcept;
-
-        //! \brief How far move travels vertically.
-        //!
-        //! \returns The distance in squares between the start and end ranks.
-        int rank_change() const noexcept;
-
         //! \brief Creates a textual representation of a move suitable for a PGN game record.
         //!
         //! \param board A Board instance just prior to the move being made.
@@ -131,6 +121,16 @@ class Move
         //! \param board The board on which the move is about to be made.
         //! \returns The movement portion of a PGN move entry.
         virtual std::string algebraic_base(const Board& board) const noexcept;
+
+        //! \brief How far move travels horizontally.
+        //!
+        //! \returns The distance in squares between the start and end files.
+        int file_change() const noexcept;
+
+        //! \brief How far move travels vertically.
+        //!
+        //! \returns The distance in squares between the start and end ranks.
+        int rank_change() const noexcept;
 
     private:
         Square origin;
