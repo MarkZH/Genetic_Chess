@@ -95,16 +95,28 @@ for yi = 2 : length(data.colheaders)
     this_data = data.data(:, yi);
     name_list = data.colheaders(yi);
     name = name_list{1};
-    if strcmp(name, 'Move Sorting Gene - Sorter Count')
-        this_data = this_data + 0.7*(rand(size(this_data)) - 0.5);
+    is_sorter_count = strcmp(name, 'Move Sorting Gene - Sorter Count');
+    if is_sorter_count
+        max_count = max(this_data);
+        split_data = zeros(length(this_data), max_count + 1);
+        for count = 0 : max_count
+            split_data(:, count + 1) = cumsum(this_data == count);
+        end
+        this_data = split_data;
     end
 
     if isempty(strfind(name, first_order_prefix))
         figure;
         hold all;
-        plot(id_list, this_data, ...
-            '.', ...
-            'markersize', marker_size);
+        for column = 1 : size(this_data, 2)
+            plot(id_list, this_data(:, column), ...
+                '.', ...
+                'markersize', marker_size);
+            if is_sorter_count
+                text(ceil(id_list(end)*1.02), this_data(end, column), num2str(column - 1));
+            end
+        end
+
         xlabel(xaxis);
         plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
 
