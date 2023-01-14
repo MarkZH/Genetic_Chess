@@ -124,6 +124,8 @@ for yi = 2 : length(data.colheaders)
 
         print([gene_pool_filename ' gene ' name '.png']);
         close;
+    else
+        this_data = cumsum(this_data);
     end
 
     plot_figure = invalid_plot;
