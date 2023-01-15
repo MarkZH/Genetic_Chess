@@ -15,23 +15,26 @@
 
 namespace
 {
-    const auto initial_move_sorter_list =
-    {
-        Move_Sorter{"Force Changers", [](const Move* move, const Board& board) { return board.move_changes_material(*move); }},
-        Move_Sorter{"Attack Dodgers", [](const Move* move, const Board& board) { return board.attacked_by(move->start(), opposite(board.whose_turn())); }},
-        Move_Sorter{"Pawn Pushers", [](const Move* move, const Board& board) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; }},
-        Move_Sorter{"King Checkers", [](const Move* move, const Board& board) { return board.move_checks_king(*move); }}
-    };
-
     const std::string input_list_delimiter = ",";
     const auto output_list_delimiter = input_list_delimiter + " ";
     const auto count_property = "Sorter Count";
     const auto order_property = "Sorter Order";
 }
 
+Move_Sorter::Move_Sorter(const std::string& name_in, sorter_t&& sorter_in) noexcept :
+    name(name_in),
+    sorter(sorter_in)
+{
+}
+
 Move_Sorting_Gene::Move_Sorting_Gene() noexcept :
     Clonable_Gene("Move Sorting Gene"),
-    move_sorters{initial_move_sorter_list}
+    move_sorters{{
+        {"Force Changers", [](const Move* move, const Board& board) { return board.move_changes_material(*move); }},
+        {"Attack Dodgers", [](const Move* move, const Board& board) { return board.attacked_by(move->start(), opposite(board.whose_turn())); }},
+        {"Pawn Pushers",   [](const Move* move, const Board& board) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; }},
+        {"King Checkers",  [](const Move* move, const Board& board) { return board.move_checks_king(*move); }}
+    }}
 {
     Random::shuffle(move_sorters);
 }

@@ -3,7 +3,7 @@
 
 #include "Genes/Gene.h"
 
-#include <vector>
+#include <array>
 #include <functional>
 #include <string>
 
@@ -15,12 +15,20 @@ class Move;
 //! The sorter function is fed into std::partition to put moves in a better search order.
 struct Move_Sorter
 {
+    //! The type of function that sorts moves.
+    using sorter_t = std::function<bool(const Move*, const Board&)>;
+
+    //! \brief Constructor to disallow default construction.
+    //! \param name Sorter name
+    //! \param sorter The sorting function
+    Move_Sorter(const std::string& name, sorter_t&& sorter) noexcept;
+
     //! The name of the sorting function for reading/writing to a genome file.
     std::string name;
 
     //! The sorting predicate. Moves for which this function returns true will
     //! be moved earlier than moves which return false.
-    std::function<bool(const Move*, const Board&)> sorter;
+    sorter_t sorter;
 };
 
 //! \brief A gene for sorting moves before searching deeper in the game tree.
@@ -48,7 +56,7 @@ class Move_Sorting_Gene : public Clonable_Gene<Move_Sorting_Gene>
         }
 
     private:
-        std::vector<Move_Sorter> move_sorters;
+        std::array<Move_Sorter, 4> move_sorters;
         size_t sorter_count = 0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
