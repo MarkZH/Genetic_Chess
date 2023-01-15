@@ -47,7 +47,7 @@ bool Random::coin_flip() noexcept
 bool Random::success_probability(const size_t successes, const size_t attempts) noexcept
 {
     assert(attempts > 0);
-    return random_integer(size_t{1}, attempts) <= successes;
+    return random_integer<size_t>(1, attempts) <= successes;
 }
 
 std::string Random::random_string(const size_t size) noexcept

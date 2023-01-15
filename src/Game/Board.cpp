@@ -1156,7 +1156,7 @@ Board Board::without_random_pawn() const noexcept
     auto result = *this;
     while(true)
     {
-        const auto square = Square('a' + char(Random::random_integer(0, 7)), Random::random_integer(1, 8));
+        const auto square = Square('a' + Random::random_integer<char>(0, 7), Random::random_integer(1, 8));
         const auto piece = result.piece_on_square(square);
         if(piece && piece.type() == Piece_Type::PAWN)
         {
