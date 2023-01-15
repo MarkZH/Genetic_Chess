@@ -336,7 +336,7 @@ void Minimax_AI::output_thinking(const Game_Tree_Node_Result& thought,
 }
 
 void Minimax_AI::output_thinking_xboard(const Game_Tree_Node_Result& thought,
-                                      const Piece_Color perspective) const noexcept
+                                        const Piece_Color perspective) const noexcept
 {
     auto score = thought.corrected_score(perspective)/centipawn_value();
 
