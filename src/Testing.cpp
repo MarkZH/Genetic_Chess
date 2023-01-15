@@ -587,7 +587,7 @@ bool run_perft_tests()
     std::cout << "Move generation rate: " << String::format_integer(int(double(legal_moves_counted)/time.count()), ",") << " moves/second." << '\n';
     if( ! tests_failed.empty())
     {
-        std::cout << String::pluralize(int(tests_failed.size()), "Test") << " failed: ";
+        std::cout << String::pluralize(tests_failed.size(), "Test") << " failed: ";
         for(auto t : tests_failed)
         {
             std::cout << t << " ";
