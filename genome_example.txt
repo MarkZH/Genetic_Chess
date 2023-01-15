@@ -16,7 +16,7 @@ Speculation - Opening: 1.958368
 
 Name: Move Sorting Gene
 Sorter Count: 1
-Sorter Order: Force Changers, Dodgers, Checkers, Pawn Movers
+Sorter Order: Force Changers, Attack Dodgers, King Checkers, Pawn Pushers
 
 Name: Total Force Gene
 Priority - Endgame: 0.612916
