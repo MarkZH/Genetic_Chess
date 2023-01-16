@@ -2,6 +2,13 @@
 
 import sys
 
+def add_value_to_data_line(data_line, header_line, title, value):
+    index = header_line.index(title)
+    if data_line[index]:
+        raise Exception('Value already found: ' + title + ' for ID ' + str(data_line[0]))
+    data_line[index] = value
+
+
 def main(gene_pool_file_name):
     # Read gene file for gene names
     header_line = []
@@ -59,17 +66,18 @@ def main(gene_pool_file_name):
                 else:
                     if current_gene:
                         if parameter == "Sorter Order":
-                            first_order = value.split(',')[0].strip()
-                            title = current_gene + ' - ' + parameter + ' - ' + first_order
-                            value = '1'
+                            sorters = [name.strip() for name in value.split(',')]
+                            for sorter in sorters:
+                                title = current_gene + ' - ' + parameter + ' - ' + sorter
+                                value = str(sorters.index(sorter) + 1)
+                                add_value_to_data_line(data_line, header_line, title, value)
+                            continue
                         else:
                             title = current_gene + ' - ' + parameter
                     else:
                         title = parameter #ID
-                    index = header_line.index(title)
-                    if data_line[index]:
-                        raise Exception('Value already found: ' + title + ' for ID ' + str(data_line[0]))
-                    data_line[index] = value
+
+                    add_value_to_data_line(data_line, header_line, title, value)
 
 
 if __name__ == '__main__':

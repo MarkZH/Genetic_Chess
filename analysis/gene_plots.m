@@ -65,9 +65,9 @@ endgame_priority_labels = {};
 
 first_order_move_figure = figure;
 hold all;
-first_order_prefix = 'Move Sorting Gene - Sorter Order - ';
-title('First Move Sorter Preference');
-special_plots('first order preference') = first_order_move_figure;
+sort_order_prefix = 'Move Sorting Gene - Sorter Order - ';
+title('Move Sorter Order Preference (1 = Highest Priority)');
+special_plots('sorting order preferences') = first_order_move_figure;
 first_order_plots = [];
 first_order_labels = {};
 
@@ -105,7 +105,8 @@ for yi = 2 : length(data.colheaders)
         this_data = split_data;
     end
 
-    if isempty(strfind(name, first_order_prefix))
+    is_sorter_order = ~isempty(strfind(name, sort_order_prefix));
+    if ~is_sorter_order
         figure;
         hold all;
         for column = 1 : size(this_data, 2)
@@ -124,8 +125,6 @@ for yi = 2 : length(data.colheaders)
 
         print([gene_pool_filename ' gene ' name '.png']);
         close;
-    else
-        this_data = cumsum(this_data);
     end
 
     plot_figure = invalid_plot;
@@ -135,16 +134,27 @@ for yi = 2 : length(data.colheaders)
         plot_figure = opening_priority_figure;
     elseif ~isempty(strfind(name, endgame_priority_suffix))
         plot_figure = endgame_priority_figure;
-    elseif ~isempty(strfind(name, first_order_prefix))
+    elseif is_sorter_order
         plot_figure = first_order_move_figure;
     end
 
     if plot_figure != invalid_plot
-        conv_window = 100;
-        smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
-        figure(plot_figure);
+        if is_sorter_order
+            conv_window = 10000;
+            result_length = length(this_data) - conv_window + 1;
+            smooth_data = zeros(result_length, 1);
+            for index = 1 : result_length
+                smooth_data(index) = mean(this_data(index : index + conv_window - 1));
+            end
+        else
+            conv_window = 100;
+            smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
+        end
+
         conv_margin = floor(conv_window/2);
         x_axis = id_list(conv_margin : end - conv_margin);
+
+        figure(plot_figure);
         p = plot(x_axis, smooth_data, 'LineWidth', line_width);
 
         if plot_figure == piece_strength_figure
@@ -166,7 +176,7 @@ for yi = 2 : length(data.colheaders)
             make_dashed = (endgame_priority_count > 7);
         elseif plot_figure == first_order_move_figure
             first_order_plots(end + 1) = p;
-            first_order_labels{end + 1} = name(length(first_order_prefix):end);
+            first_order_labels{end + 1} = name(length(sort_order_prefix):end);
         end
 
         if make_dashed
