@@ -22,9 +22,9 @@ def main(gene_pool_file_name):
                 elif parameter == 'Name':
                     current_gene = value.strip()
                 elif parameter == 'Sorter Order':
-                    sorter_orders = [name.strip() for name in value.split(',')]
-                    for order in sorter_orders:
-                        header_line.append(current_gene + " - " + parameter + " - " + order)
+                    sorters = [name.strip() for name in value.split(',')]
+                    for sorter in sorters:
+                        header_line.append(current_gene + " - " + parameter + " - " + sorter)
                 else:
                     header_line.append(current_gene + ' - ' + parameter)
             elif line == 'END':
