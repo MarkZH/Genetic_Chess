@@ -141,11 +141,7 @@ for yi = 2 : length(data.colheaders)
     if plot_figure != invalid_plot
         if is_sorter_order
             conv_window = 10000;
-            result_length = length(this_data) - conv_window + 1;
-            smooth_data = zeros(result_length, 1);
-            for index = 1 : result_length
-                smooth_data(index) = mean(this_data(index : index + conv_window - 1));
-            end
+            smooth_data = conv(this_data, ones(conv_window, 1), "valid")/conv_window;
         else
             conv_window = 100;
             smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
