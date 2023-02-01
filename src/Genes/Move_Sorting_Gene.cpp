@@ -101,5 +101,5 @@ void Move_Sorting_Gene::load_gene_properties(const std::map<std::string, std::st
     }
 
     sorter_count = String::to_number<size_t>(properties.at(count_property));
-    sorter_count = std::min(sorter_count, move_sorters.size());
+    sorter_count = std::min(sorter_count, sorter_names.size());
 }
