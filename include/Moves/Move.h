@@ -81,6 +81,9 @@ class Move
         //! \returns Whether this is an instance of the En_Passant class.
         bool is_en_passant() const noexcept;
 
+        //! \brief Indicates whether the move is a castling move.
+        bool is_castle() const noexcept;
+
         //! \brief Returns the piece that a pawn will be promoted to, if applicable.
         virtual Piece promotion() const noexcept;
 
@@ -116,6 +119,9 @@ class Move
         //! \brief Indicate that the Move being created is an en passant capture.
         void mark_as_en_passant() noexcept;
 
+        //! \brief Indicate that the move being created is a castling move.
+        void mark_as_castling() noexcept;
+
         //! \brief A textual representation of a move in PGN format without consequences ('+' for check, etc.).
         //!
         //! \param board The board on which the move is about to be made.
@@ -138,6 +144,7 @@ class Move
 
         bool able_to_capture = true;
         bool is_en_passant_move = false;
+        bool is_castling_move = false;
 
         virtual bool move_specific_legal(const Board& board) const noexcept;
         std::string result_mark(Board board) const noexcept;

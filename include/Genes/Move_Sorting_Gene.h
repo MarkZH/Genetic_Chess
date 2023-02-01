@@ -56,7 +56,7 @@ class Move_Sorting_Gene : public Clonable_Gene<Move_Sorting_Gene>
         }
 
     private:
-        std::array<Move_Sorter, 4> move_sorters;
+        std::array<Move_Sorter, 5> move_sorters;
         size_t sorter_count = 0;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
