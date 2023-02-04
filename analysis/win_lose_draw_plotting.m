@@ -174,7 +174,7 @@ bins_fit = bins(bins > 0);
 mean_log = mean(log(moves_in_game_fit));
 std_log = std(log(moves_in_game_fit));
 fit = number_of_games*exp(-.5*((log(bins_fit) - mean_log)/std_log).^2)./(bins_fit*std_log*sqrt(2*pi));
-plot(bins_fit, fit, 'linewidth', line_width, 'displayname', 'Log-Normal fit (all games)');
+plot(bins_fit, fit, 'linewidth', line_width, 'displayname', 'Log-Normal fit');
 
 legend show;
 
@@ -185,8 +185,8 @@ stats = {['Mean = ' num2str(mean_moves)], ...
          ['Min = ' num2str(min(moves_in_game))], ...
          ['Max = ' num2str(max(moves_in_game))], ...
          [''], ...
-         ['Log-Norm Peak (all) = ' num2str(exp(mean_log - std_log^2))], ...
-         ['Log-Norm Width (all) = ' num2str(std_log)]};
+         ['Log-Norm Peak = ' num2str(exp(mean_log - std_log^2))], ...
+         ['Log-Norm Width = ' num2str(std_log)]};
 
 xl = xlim;
 yl = ylim;
