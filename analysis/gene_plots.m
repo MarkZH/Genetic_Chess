@@ -99,8 +99,13 @@ for yi = 2 : length(data.colheaders)
     if is_sorter_count
         max_count = max(this_data);
         split_data = zeros(length(this_data), max_count + 1);
+        game_count = (1 : length(this_data))';
+        sorter_count_ymax = 0;
         for count = 0 : max_count
-            split_data(:, count + 1) = cumsum(this_data == count);
+            percents = 100*cumsum(this_data == count)./game_count;
+            split_data(:, count + 1) = percents;
+            ymax = max(percents(ceil(0.01*length(percents)) : end));
+            sorter_count_ymax = max([ymax sorter_count_ymax]);
         end
         this_data = split_data;
     end
@@ -119,6 +124,10 @@ for yi = 2 : length(data.colheaders)
         end
 
         xlabel(xaxis);
+        if is_sorter_count
+            ylabel("Percent of games");
+            ylim([0 sorter_count_ymax]);
+        end
         plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
 
         title(name);
