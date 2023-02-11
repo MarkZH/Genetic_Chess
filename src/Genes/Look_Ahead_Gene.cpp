@@ -60,6 +60,8 @@ void Look_Ahead_Gene::gene_specific_mutation() noexcept
         case 3:
         case 4:
             speculation_constants.mutate();
+            speculation_constants.endgame_value() = std::max(speculation_constants.endgame_value(), 1.0);
+            speculation_constants.opening_value() = std::max(speculation_constants.opening_value(), 1.0);
             break;
         case 5:
         case 6:
