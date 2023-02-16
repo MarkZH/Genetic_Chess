@@ -44,7 +44,9 @@ Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock&
     const auto time_left = clock.running_time_left();
     const auto moves_to_reset = clock.moves_until_reset(board.whose_turn());
     const auto moves_left = expected_moves_left(board);
-    return time_left/std::min(moves_left, double(moves_to_reset));
+    const auto time_to_use = time_left/std::min(moves_left, double(moves_to_reset));
+    const auto increment = clock.increment(board.whose_turn());
+    return time_to_use < increment ? std::min(increment, time_left) : time_to_use;
 }
 
 void Look_Ahead_Gene::gene_specific_mutation() noexcept
