@@ -541,14 +541,27 @@ bool run_perft_tests()
     size_t legal_moves_counted = 0;
     const auto time_at_start_of_all = std::chrono::steady_clock::now();
     const auto test_count_space = int(std::to_string(lines.size()).size());
+    size_t fen_space = 0;
+    size_t test_space = 0;
+    for(const auto& line : lines)
+    {
+        const auto test_parts = String::split(line, ";");
+        const auto& fen = test_parts.front();
+        fen_space = std::max(fen_space, fen.size());
+        test_space = std::max(test_space, test_parts.size() - 1);
+    }
+
     for(const auto& line : lines)
     {
         const auto time_at_start = std::chrono::steady_clock::now();
         const auto line_parts = String::split(line, ";");
         const auto fen = line_parts.front();
-        std::cout << '[' << std::setw(test_count_space) << ++test_number << '/' << lines.size() << "] " << fen << std::flush;
+        std::cout << '[' << std::setw(test_count_space) << std::right << ++test_number << '/' << lines.size() << "] " << std::setw(fen_space) << std::left << fen << std::flush;
         const auto perft_board = Board(fen);
         const auto tests = std::vector<std::string>(line_parts.begin() + 1, line_parts.end());
+        std::string test_results;
+        const auto PASS = '.';
+        const auto FAIL = 'x';
         for(const auto& test : tests)
         {
             const auto depth_leaves = String::split(test);
@@ -560,25 +573,29 @@ bool run_perft_tests()
             legal_moves_counted += leaf_count;
             if(leaf_count != expected_leaves)
             {
-                std::cout << 'x';
+                test_results.push_back(FAIL);
                 tests_failed.push_back(test_number);
                 break;
             }
             else
             {
-                std::cout << '.' << std::flush;
+                test_results.push_back(PASS);
             }
         }
 
-        std::cout << " ";
-        if(tests_failed.empty() || tests_failed.back() != test_number)
+        std::cout << std::setw(test_space + 1) << std::left << test_results;
+        if(test_results.back() == PASS)
         {
             std::cout << "OK! ";
+            const auto time_at_end = std::chrono::steady_clock::now();
+            const auto time_for_test = time_at_end - time_at_start;
+            const auto time_so_far = time_at_end - time_at_start_of_all;
+            std::cout << std::chrono::duration<double>(time_for_test).count() << " / " << std::chrono::duration<double>(time_so_far).count() << '\n';
         }
-        const auto time_at_end = std::chrono::steady_clock::now();
-        const auto time_for_test = time_at_end - time_at_start;
-        const auto time_so_far = time_at_end - time_at_start_of_all;
-        std::cout << std::chrono::duration<double>(time_for_test).count() << " / " << std::chrono::duration<double>(time_so_far).count() << '\n';
+        else
+        {
+            std::cout << "FAIL!\n";
+        }
     }
 
     const auto time = std::chrono::duration<double>(std::chrono::steady_clock::now() - time_at_start_of_all);
