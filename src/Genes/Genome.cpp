@@ -5,6 +5,7 @@
 #include <iostream>
 #include <algorithm>
 #include <numeric>
+#include <functional>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
@@ -28,6 +29,7 @@
 #include "Genes/Piece_Strength_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
+#include "Genes/Move_Sorting_Gene.h"
 
 namespace
 {
@@ -39,6 +41,7 @@ Genome::Genome() noexcept :
     genome{
         std::make_unique<Piece_Strength_Gene>(),
         std::make_unique<Look_Ahead_Gene>(),
+        std::make_unique<Move_Sorting_Gene>(),
         std::make_unique<Total_Force_Gene>(nullptr),
         std::make_unique<Freedom_To_Move_Gene>(),
         std::make_unique<Pawn_Advancement_Gene>(),
@@ -57,16 +60,12 @@ Genome::Genome() noexcept :
 
     assert(gene_reference<Piece_Strength_Gene>().name() == "Piece Strength Gene");
     assert(gene_reference<Look_Ahead_Gene>().name() == "Look Ahead Gene");
+    assert(gene_reference<Move_Sorting_Gene>().name() == "Move Sorting Gene");
 }
 
 Genome::Genome(const Genome& other) noexcept : id_number(other.id())
 {
-    std::ranges::transform(other.genome,
-                           genome.begin(),
-                           [](const auto& gene)
-                           {
-                               return gene->duplicate();
-                           });
+    std::ranges::transform(other.genome, genome.begin(), std::mem_fn(&Gene::duplicate));
     reset_piece_strength_gene();
 }
 
@@ -161,12 +160,7 @@ void Genome::renormalize_priorities() noexcept
 Genome& Genome::operator=(const Genome& other) noexcept
 {
     id_number = other.id();
-    std::ranges::transform(other.genome,
-                           genome.begin(),
-                           [](const auto& gene)
-                           {
-                               return gene->duplicate();
-                           });
+    std::ranges::transform(other.genome, genome.begin(), std::mem_fn(&Gene::duplicate));
     reset_piece_strength_gene();
     return *this;
 }

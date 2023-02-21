@@ -33,35 +33,43 @@ xaxis = xaxis_list{1};
 xaxis_linewidth = 0.5;
 xaxis_linecolor = [0.4, 0.4, 0.4];
 
+special_plots = containers.Map;
+
 piece_strength_figure = figure;
 hold all;
 piece_strength_prefix = 'Piece Strength Gene';
 title('Piece Strength Evolution');
 piece_count = 0;
 piece_end_values = containers.Map;
+special_plots('piece strength') = piece_strength_figure;
+piece_strength_plots = [];
+piece_strength_labels = {};
 
 opening_priority_figure = figure;
 hold all;
 opening_priority_suffix = ' - Priority - Opening';
 title('Opening Gene Priority Evolution');
 opening_priority_count = 0;
+special_plots('gene priorities opening') = opening_priority_figure;
+opening_priority_plots = [];
+opening_priority_labels = {};
 
 endgame_priority_figure = figure;
 hold all;
 endgame_priority_suffix = ' - Priority - Endgame';
 title('Endgame Gene Priority Evolution');
 endgame_priority_count = 0;
-
-special_plots = containers.Map;
-special_plots('piece strength') = piece_strength_figure;
-piece_strength_plots = [];
-piece_strength_labels = {};
-special_plots('gene priorities opening') = opening_priority_figure;
-opening_priority_plots = [];
-opening_priority_labels = {};
 special_plots('gene priorities endgame') = endgame_priority_figure;
 endgame_priority_plots = [];
 endgame_priority_labels = {};
+
+first_order_move_figure = figure;
+hold all;
+sort_order_prefix = 'Move Sorting Gene - Sorter Order - ';
+title('Move Sorter Order Preference (1 = Highest Priority)');
+special_plots('sorting order preferences') = first_order_move_figure;
+first_order_plots = [];
+first_order_labels = {};
 
 shorten = containers.Map;
 shorten('Castling Possible Gene') = 'Castling';
@@ -77,7 +85,7 @@ shorten('Total Force Gene') = 'Force';
 shorten('Pawn Structure Gene') = 'Structure';
 
 marker_size = 5;
-line_width = 2;
+line_width = 1;
 
 invalid_plot = figure;
 close(invalid_plot);
@@ -87,28 +95,49 @@ for yi = 2 : length(data.colheaders)
     this_data = data.data(:, yi);
     name_list = data.colheaders(yi);
     name = name_list{1};
-
-    figure;
-    hold all;
-    plot(id_list, this_data, ...
-         '.', ...
-         'markersize', marker_size);
-    xlabel(xaxis);
-    plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
-
-    title_name = name;
-    if strcmp(name, 'Search Strategy Gene - Search Method')
-        title_name = [name ' (0 = Minimax, 1 = Iterative Deepening)'];
-        conv_window = 100;
-        conv_margin = floor(conv_window/2);
-        smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
-        x_axis = id_list(conv_margin : end - conv_margin);
-        plot(x_axis, smooth_data, 'LineWidth', line_width);
+    is_sorter_count = strcmp(name, 'Move Sorting Gene - Sorter Count');
+    if is_sorter_count
+        max_count = max(this_data);
+        split_data = zeros(length(this_data), max_count + 1);
+        game_count = (1 : length(this_data))';
+        sorter_count_ymax = 0;
+        for count = 0 : max_count
+            percents = 100*cumsum(this_data == count)./game_count;
+            split_data(:, count + 1) = percents;
+            ymax = max(percents(ceil(0.01*length(percents)) : end));
+            sorter_count_ymax = max([ymax sorter_count_ymax]);
+        end
+        this_data = split_data;
     end
-    title(title_name);
 
-    print([gene_pool_filename ' gene ' name '.png']);
-    close;
+    is_sorter_order = ~isempty(strfind(name, sort_order_prefix));
+    if ~is_sorter_order
+        figure;
+        hold all;
+        for column = 1 : size(this_data, 2)
+            p = plot(id_list, this_data(:, column), ...
+                     '.', ...
+                     'markersize', marker_size);
+            if is_sorter_count
+                text(id_list(end)*1.02, ...
+                     this_data(end, column), ...
+                     num2str(column - 1),
+                     "color", get(p, "color"));
+            end
+        end
+
+        xlabel(xaxis);
+        if is_sorter_count
+            ylabel("Percent of games");
+            ylim([0 sorter_count_ymax]);
+        end
+        plot(xlim, [0 0], 'color', xaxis_linecolor, 'linewidth', xaxis_linewidth); % X-axis
+
+        title(name);
+
+        print([gene_pool_filename ' gene ' name '.png']);
+        close;
+    end
 
     plot_figure = invalid_plot;
     if ~isempty(strfind(name, piece_strength_prefix))
@@ -117,14 +146,23 @@ for yi = 2 : length(data.colheaders)
         plot_figure = opening_priority_figure;
     elseif ~isempty(strfind(name, endgame_priority_suffix))
         plot_figure = endgame_priority_figure;
+    elseif is_sorter_order
+        plot_figure = first_order_move_figure;
     end
 
     if plot_figure != invalid_plot
-        conv_window = 100;
-        smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
-        figure(plot_figure);
+        if is_sorter_order
+            conv_window = 10000;
+            smooth_data = conv(this_data, ones(conv_window, 1), "valid")/conv_window;
+        else
+            conv_window = 100;
+            smooth_data = movmean(this_data, conv_window, 'endpoints', 'discard');
+        end
+
         conv_margin = floor(conv_window/2);
         x_axis = id_list(conv_margin : end - conv_margin);
+
+        figure(plot_figure);
         p = plot(x_axis, smooth_data, 'LineWidth', line_width);
 
         if plot_figure == piece_strength_figure
@@ -144,6 +182,9 @@ for yi = 2 : length(data.colheaders)
             endgame_priority_labels{end + 1} = shorten(name(1 : end - length(endgame_priority_suffix)));
             endgame_priority_count = endgame_priority_count + 1;
             make_dashed = (endgame_priority_count > 7);
+        elseif plot_figure == first_order_move_figure
+            first_order_plots(end + 1) = p;
+            first_order_labels{end + 1} = name(length(sort_order_prefix):end);
         end
 
         if make_dashed
@@ -175,6 +216,8 @@ for name = special_plots.keys()
         leg = legend(opening_priority_plots, opening_priority_labels);
     elseif special_plot == endgame_priority_figure
         leg = legend(endgame_priority_plots, endgame_priority_labels);
+    elseif special_plot == first_order_move_figure
+        leg = legend(first_order_plots, first_order_labels);
     end
     set(leg, 'location', 'eastoutside');
     legend left;

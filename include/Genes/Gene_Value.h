@@ -4,11 +4,11 @@
 #include <string>
 #include <map>
 
-//! \brief A class for holding a value that is the interpolation of two terminal values as a game progresses.
+//! \brief A class for holding a gene parameter value.
 class Gene_Value
 {
     public:
-        //! \brief Create a pair of values to interpolate between.
+        //! \brief Create a value for the gene parameter.
         //!
         //! \param name The name of this value for reading and writing to files.
         //! \param initial_value The starting value for the gene parameter.

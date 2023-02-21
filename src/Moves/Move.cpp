@@ -153,6 +153,16 @@ bool Move::is_en_passant() const noexcept
     return is_en_passant_move;
 }
 
+bool Move::is_castle() const noexcept
+{
+    return is_castling_move;
+}
+
+Piece Move::promotion() const noexcept
+{
+    return {};
+}
+
 char Move::promotion_piece_symbol() const noexcept
 {
     return '\0';
@@ -210,4 +220,9 @@ void Move::set_capturing_ability(const bool capturing_ability) noexcept
 void Move::mark_as_en_passant() noexcept
 {
     is_en_passant_move = true;
+}
+
+void Move::mark_as_castling() noexcept
+{
+    is_castling_move = true;
 }

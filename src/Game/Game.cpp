@@ -2,9 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <stdexcept>
 #include <csignal>
-#include <cassert>
 #include <iostream>
 
 #include "Players/Player.h"
@@ -49,7 +47,7 @@ Game_Result play_game(Board board,
             game_record.push_back(&move_chosen);
             if(print_board)
             {
-                board.cli_print();
+                board.cli_print_game(white, black, game_clock);
             }
         }
     }
@@ -69,9 +67,10 @@ Game_Result play_game(Board board,
 void play_game_with_outsider(const Player& player,
                              const std::string& event_name,
                              const std::string& location,
-                             const std::string& game_file_name)
+                             const std::string& game_file_name,
+                             const bool enable_logging)
 {
-    const auto outsider = connect_to_outside(player);
+    const auto outsider = connect_to_outside(player, enable_logging);
 
     signal(SIGINT, SIG_IGN);
 

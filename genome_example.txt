@@ -14,6 +14,10 @@ Mean Game Length: 62.984591
 Speculation - Endgame: 2.121129
 Speculation - Opening: 1.958368
 
+Name: Move Sorting Gene
+Sorter Count: 1
+Sorter Order: Force Changers, Attack Dodgers, King Checkers, Pawn Pushers
+
 Name: Total Force Gene
 Priority - Endgame: 0.612916
 Priority - Opening: 0.681017

@@ -158,7 +158,7 @@ close;
 
 figure;
 hold all;
-bar(bins, counts, 'barwidth', 1, 'facecolor', 'y', 'displayname', 'All game lengths');
+bar(bins, counts, 'barwidth', 1, 'facecolor', 'w', 'displayname', 'All game lengths');
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(number_of_games) ')']);
 title('Number of moves in game');
@@ -174,13 +174,7 @@ bins_fit = bins(bins > 0);
 mean_log = mean(log(moves_in_game_fit));
 std_log = std(log(moves_in_game_fit));
 fit = number_of_games*exp(-.5*((log(bins_fit) - mean_log)/std_log).^2)./(bins_fit*std_log*sqrt(2*pi));
-plot(bins_fit, fit, 'linewidth', line_width, 'displayname', 'Log-Normal fit (all games)');
-
-last10p = [floor(.9*length(moves_in_game_fit)) : length(moves_in_game_fit)];
-mean_log10p = mean(log(moves_in_game_fit(last10p)));
-std_log10p = std(log(moves_in_game_fit(last10p)));
-fit10p = number_of_games*exp(-.5*((log(bins_fit) - mean_log10p)/std_log10p).^2)./(bins_fit*std_log10p*sqrt(2*pi));
-plot(bins_fit, fit10p, 'k', 'linewidth', line_width, 'displayname', 'Log-normal fit (last 10%)');
+plot(bins_fit, fit, 'linewidth', line_width, 'displayname', 'Log-Normal fit');
 
 legend show;
 
@@ -191,11 +185,8 @@ stats = {['Mean = ' num2str(mean_moves)], ...
          ['Min = ' num2str(min(moves_in_game))], ...
          ['Max = ' num2str(max(moves_in_game))], ...
          [''], ...
-         ['Log-Norm Peak (all) = ' num2str(exp(mean_log - std_log^2))], ...
-         ['Log-Norm Width (all) = ' num2str(std_log)], ...
-         [''], ...
-         ['Log-Norm Peak (last 10%) = ' num2str(exp(mean_log10p - std_log10p^2))], ...
-         ['Log-Norm Width (last 10%) = ' num2str(std_log10p)]};
+         ['Log-Norm Peak = ' num2str(exp(mean_log - std_log^2))], ...
+         ['Log-Norm Width = ' num2str(std_log)]};
 
 xl = xlim;
 yl = ylim;
@@ -208,7 +199,7 @@ winning_games_lengths = moves_in_game(white_checkmates | black_checkmates);
 [counts, bins] = hist(winning_games_lengths, (1 : max(moves_in_game)));
 figure;
 hold all;
-bar(bins, counts, 'barwidth', 1, 'facecolor', 'y', 'displayname', 'All checkmates');
+bar(bins, counts, 'barwidth', 1, 'facecolor', 'w', 'displayname', 'All checkmates');
 title('Checkmate game lengths');
 xlim([0, max_game_length_display]);
 set(gca, 'xtick', 0 : 10 : max_game_length_display);
@@ -250,9 +241,9 @@ drawn_games = (fifty_moves | threefold | material | no_legal);
 [no_legal_counts, no_legal_bins] = hist(moves_in_game(no_legal), (1 : max(moves_in_game)));
 figure;
 hold all;
-bar(drawn_bins, drawn_counts, 'barwidth', 1, 'facecolor', 'y', 'displayname', 'All draws');
+bar(drawn_bins, drawn_counts, 'barwidth', 1, 'facecolor', 'w', 'displayname', 'All draws');
 plot(fifty_bins, fifty_counts, 'displayname', 'Fifty moves', 'linewidth', draw_bar_line_width);
-plot(threefold_bins, threefold_counts, 'displayname', '3-fold', 'linewidth', draw_bar_line_width);
+plot(threefold_bins, threefold_counts, 'displayname', '3-fold', 'linewidth', draw_bar_line_width, 'color', 'blue');
 plot(material_bins, material_counts, 'k', 'displayname', 'Material', 'linewidth', draw_bar_line_width);
 plot(no_legal_bins, no_legal_counts, 'g', 'displayname', 'Stalemate', 'linewidth', draw_bar_line_width);
 title ('Draw game lengths');
@@ -266,7 +257,7 @@ print([raw_data '_moves_in_game_histogram_draw.png']);
 timeout_games = (white_time_win | black_time_win | time_and_material);
 [counts, bins] = hist(moves_in_game(timeout_games), (1 : max(moves_in_game)));
 figure;
-bar(bins, counts, 'barwidth', 1, 'facecolor', 'y');
+bar(bins, counts, 'barwidth', 1, 'facecolor', 'w');
 title ('Timeout game lengths');
 xlabel('Moves in Game');
 ylabel(['Counts (total = ' num2str(sum(timeout_games)) ')']);

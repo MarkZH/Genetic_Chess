@@ -15,6 +15,7 @@ using namespace std::chrono_literals;
 #include <map>
 #include <bit>
 #include <type_traits>
+#include <functional>
 
 #include "Game/Clock.h"
 #include "Game/Square.h"
@@ -266,17 +267,28 @@ std::string Board::fen() const noexcept
 
 void Board::cli_print() const noexcept
 {
-    std::cout << '\n';
     for(auto rank = 8; rank >= 1; --rank)
     {
+        std::cout << '\n';
         for(auto file = 'a'; file <= 'h'; ++file)
         {
             const auto piece = piece_on_square({file, rank});
             std::cout << ' ' << (piece ? piece.fen_symbol() : '.');
         }
-        std::cout << '\n';
     }
-    std::cout << color_text(whose_turn()) << " to move\n";
+    std::cout << "    " << color_text(whose_turn()) << " to move\n";
+}
+
+void Board::cli_print_game(const Player& white, const Player& black, const Clock& clock) const noexcept
+{
+    const auto print_name = [&clock](const auto& player, const auto color)
+                            {
+                                std::cout << '\n' << player.name() << " | " << clock.time_left(color).count() << " seconds\n";
+                            };
+    print_name(black, Piece_Color::BLACK);
+    cli_print();
+    print_name(white, Piece_Color::WHITE);
+    std::cout <<  "\n     = = = =\n";
 }
 
 std::string Board::original_fen() const noexcept
@@ -724,6 +736,31 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
     return false;
 }
 
+bool Board::move_checks_king(const Move& move) const noexcept
+{
+    const auto opponent_king_square = find_king(opposite(whose_turn()));
+    const auto moving_piece = piece_on_square(move.start());
+    const auto piece = move.promotion() ? move.promotion() : moving_piece;
+    const auto& after_moves = piece.attacking_move_lists(move.end());
+    for(const auto& move_list : after_moves)
+    {
+        const auto checking_move = std::find_if(move_list.begin(),
+                                                move_list.end(),
+                                                [opponent_king_square](auto attack)
+                                                {
+                                                    return attack->end() == opponent_king_square;
+                                                });
+        if(checking_move != move_list.end())
+        {
+            const auto found_move = *checking_move;
+            return piece.type() == Piece_Type::KNIGHT || all_empty_between(found_move->start(),
+                                                                           found_move->end());
+        }
+    }
+
+    return false;
+}
+
 bool Board::no_legal_moves() const noexcept
 {
     return legal_moves().empty();
@@ -895,7 +932,7 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
-    if(std::ranges::none_of(legal_moves_cache, [](const auto move) { return move->is_en_passant(); }))
+    if(std::ranges::none_of(legal_moves_cache, std::mem_fn(&Move::is_en_passant)))
     {
         disable_en_passant_target();
     }

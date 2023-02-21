@@ -115,6 +115,16 @@ namespace Random
     //!
     //! \param size The desired size of the random string.
     std::string random_string(size_t size) noexcept;
+
+    //! \brief Completely randomly shuffle a list so that any order is equally likely.
+    //! \tparam Container Any ordered container type.
+    //! \param container The container to be shuffled.
+    template<typename Container>
+    void shuffle(Container& container) noexcept
+    {
+        thread_local static auto generator = get_new_seeded_random_bit_source();
+        std::shuffle(container.begin(), container.end(), generator);
+    }
 }
 
 #endif // RANDOM_H

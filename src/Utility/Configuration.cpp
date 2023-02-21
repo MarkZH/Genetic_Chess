@@ -7,8 +7,17 @@
 #include <vector>
 #include <stdexcept>
 #include <algorithm>
+#include <iomanip>
 
 #include "Utility/String.h"
+
+namespace
+{
+    void print_key_value_pair(std::ostream& os, const std::string& key, const std::string& value) noexcept
+    {
+        os << std::quoted(key) << " --> " << std::quoted(value) << "\n";
+    }
+}
 
 Configuration::Configuration(const std::string& file_name)
 {
@@ -62,7 +71,7 @@ std::string Configuration::as_text(const std::string& parameter) const
     {
         for(const auto& [key, value] : parameters)
         {
-            std::cerr << "\"" << key << "\" --> \"" << value << "\"\n";
+            print_key_value_pair(std::cerr, key, value);
         }
         throw std::runtime_error("Configuration parameter not found: " + parameter);
     }
@@ -107,7 +116,7 @@ void Configuration::print_unused_parameters() const noexcept
     {
         if( ! used[param])
         {
-            std::cout << param << " --> " << value << '\n';
+            print_key_value_pair(std::cout, param, value);
         }
     }
 }
