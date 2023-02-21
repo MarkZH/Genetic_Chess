@@ -28,15 +28,15 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     {
         for(const auto& token : std::views::split(s, delim))
         {
-            if(result.size() <= count)
-            {
-                result.emplace_back(token.begin(), token.end());
-            }
-            else
-            {
-                result.back().append(delim);
-                result.back().append(token.begin(), token.end());
-            }
+            result.emplace_back(token.begin(), token.end());
+        }
+
+        const auto max_result_size = std::min(count, result.size()) + 1;
+        if(result.size() > max_result_size)
+        {
+            const auto rejoin = join(std::next(result.begin(), max_result_size - 1), result.end(), delim);
+            result.resize(max_result_size - 1);
+            result.push_back(rejoin);
         }
     }
 
