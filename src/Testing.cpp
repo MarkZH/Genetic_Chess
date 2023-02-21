@@ -38,6 +38,7 @@ using namespace std::chrono_literals;
 #include "Genes/Total_Force_Gene.h"
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
+#include "Genes/Move_Sorting_Gene.h"
 
 #include "Utility/String.h"
 #include "Utility/Random.h"
@@ -194,6 +195,8 @@ namespace
     void same_board_position_with_different_castling_rights_has_different_hash(bool& tests_passed);
     void same_board_position_with_different_en_passant_captures_has_different_hash(bool& tests_passed);
 
+    void correctly_detects_checking_moves(bool& tests_passed, const std::string& fen, const std::string& move_text);
+
     void genome_loaded_from_file_writes_identical_file(bool& tests_passed);
     void self_swapped_minimax_ai_is_unchanged(bool& tests_passed);
     void self_assigned_minimax_ai_is_unchanged(bool& tests_passed);
@@ -267,6 +270,8 @@ bool run_tests()
     same_board_position_with_different_castling_rights_has_different_hash(tests_passed);
     same_board_position_with_different_en_passant_captures_has_different_hash(tests_passed);
 
+    correctly_detects_checking_moves(tests_passed, "k7/8/8/8/8/8/8/K4B2 w - - 0 1", "Bg2");
+    correctly_detects_checking_moves(tests_passed, "k7/8/8/8/8/8/8/K4B2 w - - 0 1", "Bh3");
 
     genome_loaded_from_file_writes_identical_file(tests_passed);
     self_swapped_minimax_ai_is_unchanged(tests_passed);
@@ -297,6 +302,8 @@ bool run_tests()
 
     function_should_throw<Missing_Genome_Data>(tests_passed, "Missing gene data", [](){ return Piece_Strength_Gene().read_from("testing/missing_data_genome.txt");});
     function_should_throw<Duplicate_Genome_Data>(tests_passed, "Duplicate gene data", [](){ return Sphere_of_Influence_Gene().read_from("testing/duplicate_data_genome.txt");});
+    function_should_throw<Genome_Creation_Error>(tests_passed, "Invalid sorter name", []() { return Move_Sorting_Gene().read_from("testing/bad_sorter_name.txt"); });
+    function_should_throw<Genome_Creation_Error>(tests_passed, "Duplicate sorter name", []() { return Move_Sorting_Gene().read_from("testing/duplicate_sorter_name.txt"); });
 
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
     test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");
@@ -535,14 +542,27 @@ bool run_perft_tests()
     size_t legal_moves_counted = 0;
     const auto time_at_start_of_all = std::chrono::steady_clock::now();
     const auto test_count_space = int(std::to_string(lines.size()).size());
+    size_t fen_space = 0;
+    size_t test_space = 0;
+    for(const auto& line : lines)
+    {
+        const auto test_parts = String::split(line, ";");
+        const auto& fen = test_parts.front();
+        fen_space = std::max(fen_space, fen.size());
+        test_space = std::max(test_space, test_parts.size() - 1);
+    }
+
     for(const auto& line : lines)
     {
         const auto time_at_start = std::chrono::steady_clock::now();
         const auto line_parts = String::split(line, ";");
         const auto fen = line_parts.front();
-        std::cout << '[' << std::setw(test_count_space) << ++test_number << '/' << lines.size() << "] " << fen << std::flush;
+        std::cout << '[' << std::setw(test_count_space) << std::right << ++test_number << '/' << lines.size() << "] " << std::setw(fen_space) << std::left << fen << std::flush;
         const auto perft_board = Board(fen);
         const auto tests = std::vector<std::string>(line_parts.begin() + 1, line_parts.end());
+        std::string test_results;
+        const auto PASS = '.';
+        const auto FAIL = 'x';
         for(const auto& test : tests)
         {
             const auto depth_leaves = String::split(test);
@@ -554,25 +574,29 @@ bool run_perft_tests()
             legal_moves_counted += leaf_count;
             if(leaf_count != expected_leaves)
             {
-                std::cout << 'x';
+                test_results.push_back(FAIL);
                 tests_failed.push_back(test_number);
                 break;
             }
             else
             {
-                std::cout << '.' << std::flush;
+                test_results.push_back(PASS);
             }
         }
 
-        std::cout << " ";
-        if(tests_failed.empty() || tests_failed.back() != test_number)
+        std::cout << std::setw(test_space + 1) << std::left << test_results;
+        if(test_results.back() == PASS)
         {
             std::cout << "OK! ";
+            const auto time_at_end = std::chrono::steady_clock::now();
+            const auto time_for_test = time_at_end - time_at_start;
+            const auto time_so_far = time_at_end - time_at_start_of_all;
+            std::cout << std::chrono::duration<double>(time_for_test).count() << " / " << std::chrono::duration<double>(time_so_far).count() << '\n';
         }
-        const auto time_at_end = std::chrono::steady_clock::now();
-        const auto time_for_test = time_at_end - time_at_start;
-        const auto time_so_far = time_at_end - time_at_start_of_all;
-        std::cout << std::chrono::duration<double>(time_for_test).count() << " / " << std::chrono::duration<double>(time_so_far).count() << '\n';
+        else
+        {
+            std::cout << "FAIL!\n";
+        }
     }
 
     const auto time = std::chrono::duration<double>(std::chrono::steady_clock::now() - time_at_start_of_all);
@@ -581,7 +605,7 @@ bool run_perft_tests()
     std::cout << "Move generation rate: " << String::format_number(int(double(legal_moves_counted)/time.count())) << " moves/second.\n";
     if( ! tests_failed.empty())
     {
-        std::cout << String::pluralize(int(tests_failed.size()), "Test") << " failed: ";
+        std::cout << String::pluralize(tests_failed.size(), "Test") << " failed: ";
         for(auto t : tests_failed)
         {
             std::cout << t << " ";
@@ -805,6 +829,19 @@ namespace
                 test_result(test_passed,
                             board.fen() == actual_result_board.fen(),
                             "Expected: " + board.fen() + "\nGot:      " + actual_result_board.fen());
+            }
+            else if(test_type == "last move checks")
+            {
+                if( ! test_assert(specification.size() == 4)) { continue; }
+                auto moves = String::split(specification.at(2));
+                if( ! test_assert( ! moves.empty())) { continue; }
+                const auto expected_answer = String::lowercase(specification.back());
+                if( ! test_assert(expected_answer == "true" || expected_answer == "false")) { continue; }
+                const auto expected_result = expected_answer == "true";
+                const auto last_move = moves.back();
+                moves.pop_back();
+                test_result(test_passed, all_moves_legal(board, moves)
+                            && board.move_checks_king(board.interpret_move(last_move)) == expected_result, "");
             }
             else
             {
@@ -1167,6 +1204,15 @@ namespace
         }
 
         test_result(tests_passed, board1.board_hash() != board2.board_hash(), "Different en passant legality should have different hashes.");
+    }
+
+    void correctly_detects_checking_moves(bool& tests_passed, const std::string& fen, const std::string& move_text)
+    {
+        auto board = Board(fen);
+        const auto& move = board.interpret_move(move_text);
+        const auto check_prediction = board.move_checks_king(move);
+        board.play_move(move);
+        test_result(tests_passed, board.king_is_in_check() == check_prediction, "Checking prediction failed: " + fen + " after " + move_text);
     }
 
     void genome_loaded_from_file_writes_identical_file(bool& tests_passed)

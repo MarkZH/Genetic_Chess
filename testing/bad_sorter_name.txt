@@ -1,0 +1,7 @@
+ID: 98758
+
+Name: Move Sorting Gene
+Sorter Count: 2
+Sorter Order: Farce Changers, Pawn Movers, Dodgers
+
+END

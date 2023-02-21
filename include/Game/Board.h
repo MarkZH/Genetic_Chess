@@ -80,7 +80,7 @@ class Board
         const Move& interpret_move(const std::string& move) const;
 
         //! \brief Determine if a text string represents a legal move in the current position.
-        //! 
+        //!
         //! \param text The text to examine.
         //! \returns Whether the text is a valid move text.
         bool is_legal_move(const std::string& text) const noexcept;
@@ -101,6 +101,13 @@ class Board
 
         //! Print a representation of the board to the command line.
         void cli_print() const noexcept;
+
+        //! Print a representation of a game to the command line.
+        //!
+        //! \param white The white player
+        //! \param black The black player
+        //! \param clock The game clock
+        void cli_print_game(const Player& white, const Player& black, const Clock& clock) const noexcept;
 
         //! \brief Returns the FEN string that was used to create the Board.
         std::string original_fen() const noexcept;
@@ -208,6 +215,12 @@ class Board
         //! \param move A possibly legal move to check.
         //! \returns Whether the move under consideration will leave the friendly king in check.
         bool king_is_in_check_after_move(const Move& move) const noexcept;
+
+        //! \brief Determines if the moving piece will put the king in check after the given move.
+        //!
+        //! \param move The move that may put the opponent king in check.
+        //! \returns Whether the moving piece attacks the king after the move.
+        bool move_checks_king(const Move& move) const noexcept;
 
         //! \brief Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.
         //!

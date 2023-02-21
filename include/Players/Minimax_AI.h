@@ -206,6 +206,17 @@ class Minimax_AI : public Player
         mutable Clock::seconds total_evaluation_time;
         mutable std::chrono::steady_clock::time_point time_at_last_output;
 
+        //! \brief Sort moves before searching further in the game tree.
+        //! \tparam Iter An iterator type that points to a const Move*.
+        //! \param begin An iterator to the beginning of the move list to be sorted.
+        //! \param end An iterator to the end of the move list to be sorted.
+        //! \param board The board from which the move list is derived.
+        template<typename Iter>
+        void sort_moves(Iter begin, Iter end, const Board& board) const noexcept
+        {
+            genome.sort_moves(begin, end, board);
+        }
+
         // Evaluation method
         double assign_score(const Board& board,
                             const Game_Result& move_result,
@@ -272,7 +283,6 @@ class Minimax_AI : public Player
         void calibrate_thinking_speed() const noexcept;
 
         const Move& choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
-        const Move& choose_move_iterative_deepening(const Board& board, const Clock& clock) const noexcept;
 };
 
 //! \brief Create a PGN variation string.

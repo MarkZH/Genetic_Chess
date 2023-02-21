@@ -24,8 +24,8 @@ double Passed_Pawn_Gene::score_board(const Board& board, const Piece_Color persp
 
     for(char file = 'a'; file <= 'h'; ++file)
     {
-        const auto left_file  = std::max('a', char(file - 1));
-        const auto right_file = std::min('h', char(file + 1));
+        const auto left_file  = std::max<char>('a', file - 1);
+        const auto right_file = std::min<char>('h', file + 1);
         const auto score_diff = 1.0/(right_file - left_file + 1);
 
         for(int rank = far_rank; rank != near_rank; rank -= rank_step)

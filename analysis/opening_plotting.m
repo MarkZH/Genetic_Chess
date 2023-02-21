@@ -29,14 +29,19 @@ top_data = importdata([raw_data, '_top_opening_data.txt'], ',');
 
 figure;
 hold all;
+game_counts = (1:size(top_data.data, 1))';
+ymax = 0;
 for col = 1 : size(top_data.data, 2)
-    plot(cumsum(top_data.data(:, col)), ...
-         'LineWidth', 2, ...
-         'displayname', top_data.colheaders{col});
+    opening_counts = cumsum(top_data.data(:, col));
+    percents = 100*opening_counts./game_counts;
+    plot(percents, 'LineWidth', 2, 'displayname', top_data.colheaders{col});
+    max_percent = max(percents(ceil(0.01*length(percents) : end)));
+    ymax = max([ymax max_percent]);
 end
 
 xlabel('Games played');
-ylabel('Total Count');
+ylabel('Percent of games');
+ylim([0 ymax]);
 leg = legend('show');
 set(leg, 'location', 'eastoutside');
 title(plot_title);

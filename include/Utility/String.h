@@ -240,7 +240,7 @@ namespace String
     //! \param count The number of items.
     //! \param noun The noun to pluralize.
     //! \returns A string of the form "N nouns" or "1 noun"
-    std::string pluralize(int count, const std::string& noun) noexcept;
+    std::string pluralize(size_t count, const std::string& noun) noexcept;
 
     //! \brief Create a strings with added line breaks so no line is longer than a limit.
     //!

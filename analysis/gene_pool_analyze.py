@@ -2,6 +2,13 @@
 
 import sys
 
+def add_value_to_data_line(data_line, header_line, title, value):
+    index = header_line.index(title)
+    if data_line[index]:
+        raise Exception('Value already found: ' + title + ' for ID ' + str(data_line[0]))
+    data_line[index] = value
+
+
 def main(gene_pool_file_name):
     # Read gene file for gene names
     header_line = []
@@ -11,6 +18,7 @@ def main(gene_pool_file_name):
             line = line.strip()
             if not line:
                 continue
+
             if ':' in line:
                 parameter, value = line.split(':', 1)
                 parameter = parameter.strip()
@@ -20,6 +28,10 @@ def main(gene_pool_file_name):
                     header_line.append(parameter)
                 elif parameter == 'Name':
                     current_gene = value.strip()
+                elif parameter == 'Sorter Order':
+                    sorters = [name.strip() for name in value.split(',')]
+                    for sorter in sorters:
+                        header_line.append(current_gene + " - " + parameter + " - " + sorter)
                 else:
                     header_line.append(current_gene + ' - ' + parameter)
             elif line == 'END':
@@ -30,7 +42,8 @@ def main(gene_pool_file_name):
     # Read gene pool file for data
     output_file_name = gene_pool_file_name + '_parsed.txt'
     with open(gene_pool_file_name) as f, open(output_file_name, 'w') as w:
-        data_line = []
+        new_data_line = ['']*len(header_line)
+        data_line = new_data_line.copy()
         current_gene = ''
         w.write(','.join(header_line) + '\n')
         for line in f:
@@ -39,9 +52,10 @@ def main(gene_pool_file_name):
                 continue
 
             if line == 'END':
+                data_line = [x or '0' for x in data_line]
                 w.write(','.join(data_line) + '\n')
                 current_gene = ''
-                data_line = []
+                data_line = new_data_line.copy()
             elif ':' in line:
                 parameter, value = line.split(':', 1)
                 value = value.strip()
@@ -51,17 +65,19 @@ def main(gene_pool_file_name):
                     continue
                 else:
                     if current_gene:
-                        title = current_gene + ' - ' + parameter
+                        if parameter == "Sorter Order":
+                            sorters = [name.strip() for name in value.split(',')]
+                            for sorter in sorters:
+                                title = current_gene + ' - ' + parameter + ' - ' + sorter
+                                value = str(sorters.index(sorter) + 1)
+                                add_value_to_data_line(data_line, header_line, title, value)
+                            continue
+                        else:
+                            title = current_gene + ' - ' + parameter
                     else:
                         title = parameter #ID
-                    if parameter == 'Search Method':
-                        value = '0' if value == 'Minimax' else '1'
-                    index = header_line.index(title)
-                    while index >= len(data_line):
-                        data_line.append('')
-                    if data_line[index]:
-                        raise Exception('Value already found: ' + title + ' for ID ' + str(data_line[0]))
-                    data_line[index] = value
+
+                    add_value_to_data_line(data_line, header_line, title, value)
 
 
 if __name__ == '__main__':

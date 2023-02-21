@@ -23,8 +23,9 @@ class Outside_Communicator;
 //! communiation protocol by the other program (Xboard or UCI).
 //! \param player The local player so that its information may be sent
 //!        to the outside interface.
+//! \param enable_logging Write all communication (excluding thinking) to a file.
 //! \returns An appropriate derived class instance with the proper protocol.
-std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
+std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player, bool enable_logging);
 
 //! \brief A class to facilitate interfacing with outside programs.
 class Outside_Communicator
@@ -72,7 +73,8 @@ class Outside_Communicator
 
         //! \brief Record the opponent's name when told by GUI or internet mediator.
         //!
-        //! \param opponent_name The received name
+        //! \param name The received name
+        //! \param title The chess title (if any) of the opponent.
         void record_opponent_name(const std::string& name, const std::string& title = {}) noexcept;
 
         //! \brief Output the given string to the outside interface.
@@ -93,7 +95,7 @@ class Outside_Communicator
         //! \param while_listening Indicates this method is called from within the listen() method.
         std::string get_last_command(bool while_listening);
 
-        friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player);
+        friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player, bool enable_logging);
 
     private:
         std::string remote_opponent_name;

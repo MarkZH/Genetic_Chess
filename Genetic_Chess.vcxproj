@@ -247,6 +247,7 @@
     <ClCompile Include="src\Genes\King_Confinement_Gene.cpp" />
     <ClCompile Include="src\genes\King_Protection_Gene.cpp" />
     <ClCompile Include="src\genes\Look_Ahead_Gene.cpp" />
+    <ClCompile Include="src\Genes\Move_Sorting_Gene.cpp" />
     <ClCompile Include="src\genes\Opponent_Pieces_Targeted_Gene.cpp" />
     <ClCompile Include="src\Genes\Passed_Pawn_Gene.cpp" />
     <ClCompile Include="src\genes\Pawn_Advancement_Gene.cpp" />
@@ -296,6 +297,7 @@
     <ClInclude Include="include\Genes\King_Confinement_Gene.h" />
     <ClInclude Include="include\genes\King_Protection_Gene.h" />
     <ClInclude Include="include\genes\Look_Ahead_Gene.h" />
+    <ClInclude Include="include\Genes\Move_Sorting_Gene.h" />
     <ClInclude Include="include\genes\Opponent_Pieces_Targeted_Gene.h" />
     <ClInclude Include="include\Genes\Passed_Pawn_Gene.h" />
     <ClInclude Include="include\genes\Pawn_Advancement_Gene.h" />

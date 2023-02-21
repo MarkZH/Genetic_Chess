@@ -55,7 +55,7 @@ namespace
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
     int count_wins(const std::string& file_name, int id);
-    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate);
+    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
     struct best_ai_stats { int id = 0; int wins = 0; double wins_to_beat = 0.0; };
     best_ai_stats recall_previous_best_stats(const std::string& best_file_name, const std::string& game_record_file) noexcept;
@@ -102,19 +102,17 @@ void gene_pool(const std::string& config_file)
     const auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
 
     const auto board = Board{config.as_text_or_default("FEN", Board().fen())};
-    const auto seed_ai_specification = config.as_text_or_default("seed", "");
     const auto verbose_output = config.as_boolean("output volume", "verbose", "quiet");
 
     if(config.any_unused_parameters())
     {
         std::cout << "There were unused parameters in the file: " << config_file << '\n';
         config.print_unused_parameters();
-        std::cout << "\nPress enter to continue or " << stop_key << " to quit ...\n";
-        std::cin.get();
+        return;
     }
 
     auto round_count = count_still_alive_lines(genome_file_name);
-    auto pool = fill_pool(genome_file_name, gene_pool_population, seed_ai_specification, first_mutation_rate);
+    auto pool = fill_pool(genome_file_name, gene_pool_population, first_mutation_rate);
 
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
@@ -235,23 +233,9 @@ namespace
         }
     }
 
-    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, const std::string& seed_ai_specification, size_t mutation_rate)
+    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate)
     {
         auto pool = load_gene_pool_file(genome_file_name);
-        if(pool.empty() && ! seed_ai_specification.empty())
-        {
-            const auto seed_split = String::split(seed_ai_specification, "/");
-            if(seed_split.size() > 2)
-            {
-                throw std::runtime_error("Too many parameters in the seed configuration\nseed = " + seed_ai_specification);
-            }
-            const auto file_name = String::trim_outer_whitespace(seed_split.front());
-            const auto seed_id = seed_split.size() == 2 ? String::to_number<int>(seed_split.back()) : find_last_id(file_name);
-            const auto seed_ai = Minimax_AI(file_name, seed_id);
-            std::cout << "Seeding with #" << seed_ai.id() << " from file " << file_name << '\n';
-            pool = {seed_ai};
-        }
-
         const auto old_pool_size = pool.size();
         pool.resize(gene_pool_population);
         for(auto i = old_pool_size; i < pool.size(); ++i)
@@ -271,7 +255,7 @@ namespace
             throw std::runtime_error("Could not open gene pool file for writing: " + genome_file_name);
         }
 
-        ofs << "\nStill Alive: ";
+        ofs << "Still Alive: ";
         for(const auto& ai : pool)
         {
             ofs << ai.id() << " ";
