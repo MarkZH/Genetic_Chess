@@ -1077,20 +1077,16 @@ bool Board::piece_is_pinned(const Square square) const noexcept
         return false;
     }
 
-    const auto diff = king_square - square;
-    if(potential_attacks[static_cast<int>(opposite(whose_turn()))][square.index()][Move::attack_index(diff)])
-    {
-        // The potential_attacks check guarantees that there is an opposing piece attacking
-        // the queried square in the same direction towards the friendly king. This next check
-        // is to make sure the attacking piece is not a limited range piece--i.e., a pawn or king.
-        const auto attacker = piece_on_square(square - diff.step());
-        return ( ! attacker || (attacker.type() != Piece_Type::PAWN && attacker.type() != Piece_Type::KING)) &&
-               all_empty_between(king_square, square);
-    }
-    else
-    {
-        return false;
-    }
+    const auto direction = (king_square - square).step();
+    const auto attack_square = square - direction;
+    const auto attacking_color = opposite(whose_turn());
+    const auto color_index = static_cast<int>(attacking_color);
+    const auto opponent_pawn = Piece(attacking_color, Piece_Type::PAWN);
+    const auto opponent_king = Piece(attacking_color, Piece_Type::KING);
+    return potential_attacks[color_index][square.index()][Move::attack_index(direction)]
+        && piece_on_square(attack_square) != opponent_pawn
+        && piece_on_square(attack_square) != opponent_king
+        && all_empty_between(king_square, square);
 }
 
 void Board::add_board_position_to_repeat_record() noexcept
