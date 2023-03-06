@@ -8,8 +8,6 @@ R: 8
 Q: 16
 
 Name: Sphere of Influence Gene
-Legal Square Score: 4
-Illegal Square Score: 1
 Priority - Opening: 1
 Priority - Endgame: 1
 

@@ -301,7 +301,7 @@ bool run_tests()
     game_progress_with_one_queen_removed_makes_sense(tests_passed);
 
     function_should_throw<Missing_Genome_Data>(tests_passed, "Missing gene data", [](){ return Piece_Strength_Gene().read_from("testing/missing_data_genome.txt");});
-    function_should_throw<Duplicate_Genome_Data>(tests_passed, "Duplicate gene data", [](){ return Sphere_of_Influence_Gene().read_from("testing/duplicate_data_genome.txt");});
+    function_should_throw<Duplicate_Genome_Data>(tests_passed, "Duplicate gene data", [](){ return Pawn_Structure_Gene().read_from("testing/duplicate_data_genome.txt");});
     function_should_throw<Genome_Creation_Error>(tests_passed, "Invalid sorter name", []() { return Move_Sorting_Gene().read_from("testing/bad_sorter_name.txt"); });
     function_should_throw<Genome_Creation_Error>(tests_passed, "Duplicate sorter name", []() { return Move_Sorting_Gene().read_from("testing/duplicate_sorter_name.txt"); });
 
@@ -1396,35 +1396,33 @@ namespace
         sphere_of_influence_gene.read_from("testing/test_genome.txt");
         const auto sphere_of_influence_board = Board("k7/8/8/8/1R3p2/8/8/K7 w - - 0 1");
         const auto sphere_of_influence_score =
-              ((4.0 * 8)  // b8
-             + (4.0 * 7)  // b7
-             + (4.0 * 6)  // b6
-             + (4.0 * 5)  // b5
-             + (4.0 * 3)  // b3
-             + (4.0 * 2)  // b2
-             + (4.0 * 1)  // b1
-             + (4.0 * 4)  // a4
-             + (4.0 * 2)  // a2
-             + (4.0 * 4)  // c4
-             + (4.0 * 4)  // d4
-             + (4.0 * 4)  // e4
-             + (4.0 * 4)  // f4
-             + (1.0 * 4)  // g4
-             + (1.0 * 4)) // h4
-            /(288*(4.0 + 1.0));
-        // Setup       Square score     Invasion distance
-        // k.......    k4......         k8......
-        // ........    .4......         .7......
-        // ........    .4......         .6......
-        // ........    .4......         .5......
-        // .R...p..    4R444411         4R444444
-        // ........    .4......         .3......
-        // ........    44......         22......
-        // K.......    K4......         K1......
+              (8  // b8
+             + 7  // b7
+             + 6  // b6
+             + 5  // b5
+             + 3  // b3
+             + 2  // b2
+             + 1  // b1
+             + 4  // a4
+             + 2  // a2
+             + 4  // c4
+             + 4  // d4
+             + 4  // e4
+             + 4) // f4
+            /288.0;
+        // Setup       Invasion distance
+        // k.......    k8......
+        // ........    .7......
+        // ........    .6......
+        // ........    .5......
+        // .R...p..    4R4444..
+        // ........    .3......
+        // ........    22......
+        // K.......    K1......
         sphere_of_influence_gene.test(tests_passed, sphere_of_influence_board, Piece_Color::WHITE, sphere_of_influence_score);
 
         const auto all_squares_attacked = Board("k6K/8/8/8/8/8/8/RRRRRRRR b - - 0 1");
-        sphere_of_influence_gene.test(tests_passed, all_squares_attacked, Piece_Color::WHITE, 1.0*4.0/5.0);
+        sphere_of_influence_gene.test(tests_passed, all_squares_attacked, Piece_Color::WHITE, 1.0);
     }
 
     void pawn_structure_gene_tests(bool& tests_passed)

@@ -192,13 +192,6 @@ class Board
         //! \returns Whether the king would be in check if it was placed on the square in question.
         bool safe_for_king(Square square, Piece_Color king_color) const noexcept;
 
-        //! \brief Determine if there are any attacks on a square that are blocked by other pieces.
-        //!
-        //! \param square The queried square.
-        //! \param attacking_color The color of the attacking pieces.
-        //! \returns Whether there is an attack on the square that is blocked by another piece.
-        bool blocked_attack(Square square, Piece_Color attacking_color) const noexcept;
-
         //! \brief Finds the square on which a king resides.
         //!
         //! \param color Which king to find.
@@ -343,7 +336,6 @@ class Board
         // 2x1 up-left, 1x2 up-left, 2x1 up-right, 1x2 up-right,
         // 2x1 down-left, 1x2 down-left, 2x1 down-right, 1x2 down-right
         std::array<std::array<std::bitset<16>, 64>, 2> potential_attacks{}; // indexed by [attacker color][square index];
-        std::array<std::array<std::bitset<16>, 64>, 2> blocked_attacks{};
 
         void add_attacks_from(Square square, Piece piece) noexcept;
         void remove_attacks_from(Square square, Piece old_piece) noexcept;

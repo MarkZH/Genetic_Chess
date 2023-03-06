@@ -39,8 +39,6 @@ Priority - Endgame: 0.074722
 Priority - Opening: 0.053479
 
 Name: Sphere of Influence Gene
-Illegal Square Score: 0.039078
-Legal Square Score: 0.960922
 Priority - Endgame: 0.062989
 Priority - Opening: 0.008805
 
