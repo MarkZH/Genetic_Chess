@@ -7,6 +7,7 @@
 #include <cctype>
 #include <vector>
 #include <stdexcept>
+#include <utility>
 
 #include "Game/Square.h"
 #include "Game/Color.h"
@@ -70,7 +71,7 @@ namespace
             indexed_move_array result;
             for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
             {
-                for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+                for(auto type_index = 0; type_index <= std::to_underlying(Piece_Type::KING); ++type_index)
                 {
                     const auto piece = Piece{color, static_cast<Piece_Type>(type_index)};
                     for(size_t index = 0; index < 64; ++index)
@@ -155,7 +156,7 @@ namespace
         }
 
         std::vector<Piece_Type> possible_promotions;
-        for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+        for(auto type_index = 0; type_index <= std::to_underlying(Piece_Type::KING); ++type_index)
         {
             const auto type = static_cast<Piece_Type>(type_index);
             if(type == Piece_Type::PAWN || type == Piece_Type::KING)
@@ -294,7 +295,7 @@ Piece::Piece() noexcept : piece_code(invalid_code)
 }
 
 Piece::Piece(const Piece_Color color, const Piece_Type type) noexcept :
-    piece_code((static_cast<int>(type) << 1) | static_cast<int>(color))
+    piece_code((std::to_underlying(type) << 1) | std::to_underlying(color))
 {
     // piece_code layout: 4 bits
     // 3 most significant bits = Piece_Type (values 0-5)
@@ -325,7 +326,7 @@ std::string Piece::pgn_symbol() const noexcept
 char Piece::fen_symbol() const noexcept
 {
     assert(*this);
-    const auto symbol = pgn_symbols[static_cast<int>(type())];
+    const auto symbol = pgn_symbols[std::to_underlying(type())];
     return (color() == Piece_Color::WHITE ? symbol : String::tolower(symbol));
 }
 

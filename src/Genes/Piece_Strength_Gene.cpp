@@ -4,6 +4,7 @@
 #include <array>
 #include <map>
 #include <numeric>
+#include <utility>
 
 #include "Genes/Gene.h"
 #include "Game/Piece.h"
@@ -82,12 +83,12 @@ double Piece_Strength_Gene::file_normalization() const noexcept
 
 double Piece_Strength_Gene::piece_value(const Piece_Type type) const noexcept
 {
-    return piece_strength[static_cast<int>(type)];
+    return piece_strength[std::to_underlying(type)];
 }
 
 double& Piece_Strength_Gene::piece_value(const Piece_Type type) noexcept
 {
-    return piece_strength[static_cast<int>(type)];
+    return piece_strength[std::to_underlying(type)];
 }
 
 double Piece_Strength_Gene::piece_value(const Piece piece) const noexcept
@@ -112,7 +113,7 @@ double Piece_Strength_Gene::game_progress(const Board& board) const noexcept
     {
         if(const auto piece = board.piece_on_square(square))
         {
-            piece_value_left[static_cast<size_t>(piece.color())] += std::abs(piece_value(piece));
+            piece_value_left[std::to_underlying(piece.color())] += std::abs(piece_value(piece));
         }
     }
 

@@ -2,6 +2,7 @@
 #define PIECE_H
 
 #include <string>
+#include <utility>
 
 #include "Utility/Fixed_Capacity_Vector.h"
 
@@ -23,7 +24,7 @@ enum class Piece_Type
     KING
 };
 
-static_assert(static_cast<int>(Piece_Type::KING) == 5);
+static_assert(std::to_underlying(Piece_Type::KING) == 5);
 
 //! \brief A class to represent chess pieces.
 //!

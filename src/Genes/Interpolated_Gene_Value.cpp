@@ -4,6 +4,7 @@
 #include <array>
 #include <map>
 #include <cmath>
+#include <utility>
 
 #include "Genes/Gene_Value.h"
 
@@ -45,17 +46,17 @@ double& Interpolated_Gene_Value::endgame_value() noexcept
 
 double Interpolated_Gene_Value::value_at(const Game_Stage stage) const noexcept
 {
-    return values[static_cast<int>(stage)].value();
+    return values[std::to_underlying(stage)].value();
 }
 
 double& Interpolated_Gene_Value::value_at(const Game_Stage stage) noexcept
 {
-    return values[static_cast<int>(stage)].value();
+    return values[std::to_underlying(stage)].value();
 }
 
 std::string Interpolated_Gene_Value::name(Game_Stage stage) const noexcept
 {
-    return values[static_cast<int>(stage)].name();
+    return values[std::to_underlying(stage)].name();
 }
 
 void Interpolated_Gene_Value::load_from_map(const std::map<std::string, std::string>& properties)

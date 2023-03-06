@@ -924,7 +924,7 @@ namespace
 
     void pieces_can_be_constructed_from_piece_data(bool& tests_passed)
     {
-        for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+        for(auto type_index = 0; type_index <= std::to_underlying(Piece_Type::KING); ++type_index)
         {
             const auto type = static_cast<Piece_Type>(type_index);
             for(auto color : {Piece_Color::BLACK, Piece_Color::WHITE})
@@ -938,7 +938,7 @@ namespace
 
     void pieces_can_be_constructed_from_fen_symbols(bool& tests_passed)
     {
-        for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+        for(auto type_index = 0; type_index <= std::to_underlying(Piece_Type::KING); ++type_index)
         {
             const auto type = static_cast<Piece_Type>(type_index);
             for(auto color : {Piece_Color::BLACK, Piece_Color::WHITE})

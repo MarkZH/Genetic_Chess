@@ -20,6 +20,7 @@ using namespace std::chrono_literals;
 #include <sstream>
 #include <semaphore>
 #include <mutex>
+#include <utility>
 
 #include "Players/Minimax_AI.h"
 
@@ -176,7 +177,7 @@ void gene_pool(const std::string& config_file)
             offspring.print(genome_file_name);
             losing_player = offspring;
 
-            ++color_wins[static_cast<int>(winner)];
+            ++color_wins[std::to_underlying(winner)];
             if(winner == Winner_Color::NONE)
             {
                 winning_player.add_draw();
@@ -277,9 +278,9 @@ namespace
                   << "Gene pool size: " << pool.size()
                   << "  Gene pool file name: " << genome_file_name
                   << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), size_t{0})
-                  << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
-                  << "  Black wins: " << color_wins[static_cast<int>(Winner_Color::BLACK)]
-                  << "  Draws: " << color_wins[static_cast<int>(Winner_Color::NONE)]
+                  << "  White wins: " << color_wins[std::to_underlying(Winner_Color::WHITE)]
+                  << "  Black wins: " << color_wins[std::to_underlying(Winner_Color::BLACK)]
+                  << "  Draws: " << color_wins[std::to_underlying(Winner_Color::NONE)]
                   << "\nRounds: " << round_count
                   << "  Mutation rate phase: " << round_count % (first_mutation_interval + second_mutation_interval)
                   << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
@@ -344,15 +345,15 @@ namespace
                 auto result = String::extract_delimited_text(line, "\"", "\"");
                 if(result == "1-0")
                 {
-                    color_wins[static_cast<int>(Winner_Color::WHITE)]++;
+                    color_wins[std::to_underlying(Winner_Color::WHITE)]++;
                 }
                 else if(result == "0-1")
                 {
-                    color_wins[static_cast<int>(Winner_Color::BLACK)]++;
+                    color_wins[std::to_underlying(Winner_Color::BLACK)]++;
                 }
                 else if(result == "1/2-1/2")
                 {
-                    color_wins[static_cast<int>(Winner_Color::NONE)]++;
+                    color_wins[std::to_underlying(Winner_Color::NONE)]++;
                 }
                 else
                 {
