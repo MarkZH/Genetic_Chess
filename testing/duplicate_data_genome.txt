@@ -1,10 +1,10 @@
 ID: 1
 
-Name: Sphere of Influence Gene
-Legal Square Score: 4
-Illegal Square Score: 1
-Priority - Endgame: 1
+Name: Pawn Structure Gene
+Guarded By Pawn: 0.6
+Guarded By Piece: 0.4
+Guarded By Pawn: 0.2
 Priority - Opening: 1
-Legal Square Score: 4
+Priority - Endgame: 1
 
 END

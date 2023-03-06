@@ -576,25 +576,17 @@ void Board::modify_attacks(const Square square, const Piece piece, const bool ad
     const auto vulnerable_king = Piece{opposite(attacking_color), Piece_Type::KING};
     for(const auto& attack_move_list : piece.attacking_move_lists(square))
     {
-        bool move_blocked = false;
         for(const auto attack : attack_move_list)
         {
             const auto attacked_square = attack->end();
             const auto attacked_index = attacked_square.index();
 
-            if(move_blocked)
-            {
-                blocked_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
-            }
-            else
-            {
-                potential_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
+            potential_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
 
-                const auto blocking_piece = piece_on_square(attacked_square);
-                if(blocking_piece && blocking_piece != vulnerable_king)
-                {
-                    move_blocked = true;
-                }
+            const auto blocking_piece = piece_on_square(attacked_square);
+            if(blocking_piece && blocking_piece != vulnerable_king)
+            {
+                break;
             }
         }
     }
@@ -640,9 +632,7 @@ void Board::update_blocks(const Square square, const Piece old_piece, const Piec
 
                 for(const auto target_square : Square::square_line_from(square, step))
                 {
-                    const auto target_index = target_square.index();
-                    potential_attacks[static_cast<int>(attacking_color)][target_index][index] = add_new_attacks;
-                    blocked_attacks[static_cast<int>(attacking_color)][target_index][index] = ! add_new_attacks;
+                    potential_attacks[static_cast<int>(attacking_color)][target_square.index()][index] = add_new_attacks;
 
                     const auto piece = piece_on_square(target_square);
                     if(piece && piece != vulnerable_king)
@@ -673,11 +663,6 @@ bool Board::king_is_in_check() const noexcept
 bool Board::safe_for_king(const Square square, const Piece_Color king_color) const noexcept
 {
     return ! attacked_by(square, opposite(king_color));
-}
-
-bool Board::blocked_attack(const Square square, const Piece_Color attacking_color) const noexcept
-{
-    return blocked_attacks[static_cast<int>(attacking_color)][square.index()].any();
 }
 
 bool Board::king_is_in_check_after_move(const Move& move) const noexcept
@@ -1084,20 +1069,16 @@ bool Board::piece_is_pinned(const Square square) const noexcept
         return false;
     }
 
-    const auto diff = king_square - square;
-    if(potential_attacks[static_cast<int>(opposite(whose_turn()))][square.index()][Move::attack_index(diff)])
-    {
-        // The potential_attacks check guarantees that there is an opposing piece attacking
-        // the queried square in the same direction towards the friendly king. This next check
-        // is to make sure the attacking piece is not a limited range piece--i.e., a pawn or king.
-        const auto attacker = piece_on_square(square - diff.step());
-        return ( ! attacker || (attacker.type() != Piece_Type::PAWN && attacker.type() != Piece_Type::KING)) &&
-               all_empty_between(king_square, square);
-    }
-    else
-    {
-        return false;
-    }
+    const auto direction = (king_square - square).step();
+    const auto attack_square = square - direction;
+    const auto attacking_color = opposite(whose_turn());
+    const auto color_index = static_cast<int>(attacking_color);
+    const auto opponent_pawn = Piece(attacking_color, Piece_Type::PAWN);
+    const auto opponent_king = Piece(attacking_color, Piece_Type::KING);
+    return potential_attacks[color_index][square.index()][Move::attack_index(direction)]
+        && piece_on_square(attack_square) != opponent_pawn
+        && piece_on_square(attack_square) != opponent_king
+        && all_empty_between(king_square, square);
 }
 
 void Board::add_board_position_to_repeat_record() noexcept
