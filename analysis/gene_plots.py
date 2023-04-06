@@ -1,20 +1,13 @@
 #!/usr/bin/python
 
-
-"""
-TODO
-
-1. legends don't appear in special plots.
-2. summary special plots don't work at all.
-
-"""
-
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
 
 gene_pool_filename = sys.argv[1]
 filename = gene_pool_filename + '_parsed.txt'
+picture_file_args = {'dpi': 600, 'format': 'png'}
+pic_ext = picture_file_args['format']
 
 data = np.genfromtxt(filename, delimiter=',', names=True)
 id_list = [int(row[0]) for row in data]
@@ -27,7 +20,6 @@ special_plots = {}
 piece_strength_figure, piece_strength_axes = plt.subplots()
 piece_strength_prefix = 'Piece Strength Gene'
 piece_strength_axes.set_title('Piece Strength Evolution')
-piece_count = 0
 piece_end_values = {}
 special_plots['piece strength'] = (piece_strength_figure, piece_strength_axes)
 piece_strength_plots = []
@@ -36,7 +28,6 @@ piece_strength_labels = []
 opening_priority_figure, opening_priority_axes = plt.subplots()
 opening_priority_suffix = ' - Priority - Opening'
 opening_priority_axes.set_title('Opening Gene Priority Evolution')
-opening_priority_count = 0
 special_plots['gene priorities opening'] = (opening_priority_figure, opening_priority_axes)
 opening_priority_plots = []
 opening_priority_labels = []
@@ -44,7 +35,6 @@ opening_priority_labels = []
 endgame_priority_figure, endgame_priority_axes = plt.subplots()
 endgame_priority_suffix = ' - Priority - Endgame'
 endgame_priority_axes.set_title('Endgame Gene Priority Evolution')
-endgame_priority_count = 0
 special_plots['gene priorities endgame'] = (endgame_priority_figure, endgame_priority_axes)
 endgame_priority_plots = []
 endgame_priority_labels = []
@@ -66,7 +56,7 @@ shorten = {'Castling Possible Gene': 'Castling',
            'Pawn Advancement Gene': 'Advance',
            'Sphere of Influence Gene': 'Sphere',
            'Total Force Gene': 'Force',
-           'Pawn Structure Gene': sort_order_prefix}
+           'Pawn Structure Gene': 'Structure'}
 
 marker_size = 5
 line_width = 1
@@ -92,14 +82,14 @@ for yi in range(1, len(column_headers)):
             sorter_count_ymax = max(ymax, sorter_count_ymax)
         this_data = split_data
 
-    is_sorter_order = name in sort_order_prefix
+    is_sorter_order = name.startswith(sort_order_prefix)
     if not is_sorter_order:
         this_figure, these_axes = plt.subplots()
 
-        for column in range(1):
+        for column in range(1 if this_data.ndim == 1 else np.size(this_data, 1)):
             p = these_axes.plot(id_list, this_data, '.', markersize=marker_size)
             if is_sorter_count:
-                these_axes.text(id_list[-1]*1.02, this_data[-1, column], str(column - 1), color=p[0].get_color())
+                these_axes.text(id_list[-1]*1.02, this_data[-1, column], str(column), color=p[0].get_color())
 
         these_axes.set_xlabel(column_headers[0])
         if is_sorter_count:
@@ -109,79 +99,71 @@ for yi in range(1, len(column_headers)):
 
         these_axes.set_title(name)
 
-        this_figure.savefig(gene_pool_filename + ' gene ' + name + '.png')
+        this_figure.savefig(f'{gene_pool_filename} gene {name}.{pic_ext}', **picture_file_args)
         plt.close(this_figure)
 
     plot_figure = invalid_plot
-    if name in piece_strength_prefix:
+    if name.startswith(piece_strength_prefix):
         plot_figure, plot_axes = piece_strength_figure, piece_strength_axes
-    elif name in opening_priority_suffix:
+    elif name.endswith(opening_priority_suffix):
         plot_figure, plot_axes = opening_priority_figure, opening_priority_axes
-    elif name in endgame_priority_suffix:
+    elif name.endswith(endgame_priority_suffix):
         plot_figure, plot_axes = endgame_priority_figure, endgame_priority_axes
     elif is_sorter_order:
         plot_figure, plot_axes = first_order_move_figure, first_order_move_axes
 
     if plot_figure != invalid_plot:
-        if is_sorter_order:
-            conv_window = 10000
-            smooth_data = np.conv(this_data, np.ones(conv_window, 1), 'valid')/conv_window
-        else:
-            conv_window = 100
-            smooth_data = np.movmean(this_data, conv_window, 'endpoints', 'discard')
-
-        conv_margin = np.floor(conv_window/2)
+        conv_window = 1000 if is_sorter_order else 100
+        smooth_data = np.convolve(this_data, np.ones(conv_window), mode="valid")/conv_window
+        conv_margin = int(np.floor(conv_window/2))
         x_axis = id_list[conv_margin - 1 : -conv_margin]
 
-        p = plot_axes.plot(x_axis, smooth_data, linewidth=line_width)
+        p = plot_axes.plot(x_axis, smooth_data, linewidth=line_width)[0]
 
         if plot_figure == piece_strength_figure:
             name = name[-1]
-            piece_count = piece_count + 1
-            make_dashed = (piece_count > 7)
-            piece_end_values[name] = str(smooth_data[-1], '%.2f')
+            make_dashed = (len(piece_strength_plots) > 7)
+            piece_end_values[name] = f'{smooth_data[-1]:.2f}'
             piece_strength_plots.append(p)
             piece_strength_labels.append(name + ' (' + piece_end_values[name] + ')')
         elif plot_figure == opening_priority_figure:
             opening_priority_plots.append(p)
-            opening_priority_labels.append(shorten[name[-len(opening_priority_suffix)]])
-            opening_priority_count = opening_priority_count + 1
-            make_dashed = (opening_priority_count > 7)
+            opening_priority_labels.append(shorten[name[:-len(opening_priority_suffix)]])
+            make_dashed = (len(opening_priority_plots) > 7)
         elif plot_figure == endgame_priority_figure:
             endgame_priority_plots.append(p)
-            endgame_priority_labels.append(shorten[name[-len(endgame_priority_suffix)]])
-            endgame_priority_count = endgame_priority_count + 1
-            make_dashed = (endgame_priority_count > 7)
+            endgame_priority_labels.append(shorten[name[:-len(endgame_priority_suffix)]])
+            make_dashed = (len(endgame_priority_plots) > 7)
         elif plot_figure == first_order_move_figure:
             first_order_plots.append(p)
             first_order_labels.append(name[len(sort_order_prefix) - 1:])
 
         if make_dashed:
-            set(p, 'LineStyle', ':')
+            p.set_linestyle(':')
 
 print('# Piece values')
 for piece in piece_end_values.keys():
-    print(piece + ' = ' + piece_end_values[piece])
+    print(f'{piece} = {piece_end_values[piece]}')
 
 print('# Priority Plot Key')
-for gene in shorten.keys():
-    print(shorten[gene] + ' --> ' + gene)
+for gene, short_name in shorten.items():
+    print(f'{short_name} --> {gene}')
 
 # Create special summary plots
 for name in special_plots.keys():
-    special_plot, special_axes = special_plots[name]
+    special_figure, special_axes = special_plots[name]
     special_axes.axhline(color='k', linewidth=0.2)
 
-    if special_plot == piece_strength_figure:
-        leg = special_plot.legend(piece_strength_plots, piece_strength_labels, loc='outside right', alignment='left')
-    elif special_plot == opening_priority_figure:
-        leg = special_plot.legend(opening_priority_plots, opening_priority_labels)
-    elif special_plot == endgame_priority_figure:
-        leg = special_plot.legend(endgame_priority_plots, endgame_priority_labels)
-    elif special_plot == first_order_move_figure:
-        leg = special_plot.legend(first_order_plots, first_order_labels)
+    if special_figure == piece_strength_figure:
+        special_axes.legend(piece_strength_plots, piece_strength_labels)
+    elif special_figure == opening_priority_figure:
+        special_axes.legend(opening_priority_plots, opening_priority_labels)
+    elif special_figure == endgame_priority_figure:
+        special_axes.legend(endgame_priority_plots, endgame_priority_labels)
+    elif special_figure == first_order_move_figure:
+        special_axes.legend(first_order_plots, first_order_labels)
     
     special_axes.set_xlabel('ID')
 
-    special_plot.savefig(gene_pool_filename + ' special ' + name + '.png')
-    plt.close(special_plot)
+    special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **picture_file_args)
+    plt.close(special_figure)
