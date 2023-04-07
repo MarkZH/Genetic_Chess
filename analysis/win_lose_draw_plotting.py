@@ -1,266 +1,254 @@
-warning('off'); % Disable warnings about non-positive data
-% in loglog plots (turn back on for debugging)
+#!/usr/bin/python
 
-isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
+import sys
+import numpy as np
+import matplotlib.pyplot as plt
+from win_lose_draw_plots import parse_game_file
 
-filename = 0;
-file_directory = '';
-if isOctave
-    args = argv();
-    if length(args) > 0
-        filename = args{1};
-    end
-end
+picture_file_args = {'dpi': 600, 'format': 'png'}
+pic_ext = picture_file_args['format']
 
-if filename == 0
-    [filename, file_directory, ~] = uigetfile();
-    if filename == 0
-        return
-    end
-end
+file_name = sys.argv[1]
+parsed_data_file_name = parse_game_file(file_name)
+data = np.genfromtxt(parsed_data_file_name, delimiter='\t', names=True)
+column_headers = [name.replace('_', ' ') for name in data.dtype.names]
 
-raw_data = fullfile(file_directory, filename);
-if isOctave
-    python('analysis/win_lose_draw_plots.py', ['"' raw_data '"']);
-end
-data = importdata([raw_data, '_plots.txt'], '\t');
+game_number =     np.array([int(row[0]) for row in data])
+white_wins =      np.array([int(row[1]) for row in data])
+black_wins =      np.array([int(row[2]) for row in data])
+draws =           np.array([int(row[3]) for row in data])
+game_time =       np.array([row[4] for row in data])
+result_type =     np.array([int(row[5]) for row in data])
+white_time_left = np.array([row[6] for row in data])
+black_time_left = np.array([row[7] for row in data])
+moves_in_game =   np.array([int(row[8]) for row in data])
 
-game_number = data.data(:, 1);
-white_wins = data.data(:, 2);
-black_wins = data.data(:, 3);
-draws = data.data(:, 4);
-game_time = data.data(:, 5);
-result_type = data.data(:, 6);
-white_time_left = data.data(:, 7);
-black_time_left = data.data(:, 8);
-moves_in_game = data.data(:, 9);
+line_width = 2
+bar_line_width = 0.5
+draw_bar_line_width = 2
+marker_size = 5
+stat_text_size = 7
 
-line_width = 2;
-draw_bar_line_width = 3;
-marker_size = 5;
-stat_text_size = 7;
+winner_figure, winner_axes = plt.subplots()
+winner_plots = winner_axes.semilogx(game_number, 100*white_wins/game_number,
+                                    game_number, 100*black_wins/game_number,
+                                    game_number, 100*draws/game_number)
+for p in winner_plots:
+    p.set_linewidth(line_width)
 
-figure;
-hold all;
-semilogx(game_number, 100*white_wins./game_number, 'LineWidth', line_width, ...
-         game_number, 100*black_wins./game_number, 'LineWidth', line_width, ...
-         game_number, 100*draws./game_number, 'LineWidth', line_width);
-xlabel(data.colheaders{1});
-ylabel('Percentage');
-legend([data.colheaders{2} ' (' num2str(white_wins(end)) ')'], ...
-       [data.colheaders{3} ' (' num2str(black_wins(end)) ')'], ...
-       [data.colheaders{4} ' (' num2str(draws(end)) ')'], ...
-       'location', 'northeast');
-title('Winning Sides');
+winner_legend_labels = [f"{column_headers[1]} ({white_wins[-1]})",
+                        f"{column_headers[2]} ({black_wins[-1]})",
+                        f"{column_headers[3]} ({draws[-1]})"]
+winner_axes.set_xlabel(column_headers[0])
+winner_axes.set_ylabel('Percentage')
+winner_axes.legend(winner_plots, winner_legend_labels)
+winner_axes.set_title('Winning Sides')
 
-print([raw_data '_game_outcomes.png']);
-close;
+winner_figure.savefig(f"{file_name}_game_outcomes.{pic_ext}", **picture_file_args)
+plt.close(winner_figure)
 
 
 
-white_checkmates = result_type == 0;
-black_checkmates = result_type == 1;
-fifty_moves = result_type == 2;
-threefold = result_type == 3;
-white_time_win = result_type == 4;
-black_time_win = result_type == 5;
-material = result_type == 6;
-no_legal = result_type == 7;
-time_and_material = result_type == 8;
-number_of_games = length(game_number);
-if any(result_type > 8 | result_type < 0)
-    disp('Unknown result types found.');
-end
-
-figure;
-hold all;
-loglog(game_number, 100*cumsum(white_checkmates)./game_number, 'LineWidth', line_width, ...
-       game_number, 100*cumsum(black_checkmates)./game_number, 'LineWidth', line_width, ...
-       game_number, 100*cumsum(white_time_win)./game_number, 'LineWidth', line_width, ...
-       game_number, 100*cumsum(black_time_win)./game_number, 'LineWidth', line_width, ...
-       game_number, 100*cumsum(fifty_moves)./game_number, 'LineWidth', line_width, ...
-       game_number, 100*cumsum(threefold)./game_number, 'LineWidth', line_width, ...
-       game_number, 100*cumsum(material)./game_number, 'LineWidth', line_width, ...
-       game_number, 100*cumsum(no_legal)./game_number, 'LineWidth', line_width, ...
-       game_number, 100*cumsum(time_and_material)./game_number, 'LineWidth', line_width);
-xlabel('Games played');
-ylabel('Percentage');
-legend(['White checkmate (' num2str(sum(white_checkmates)) ')'], ...
-       ['Black checkmate (' num2str(sum(black_checkmates)) ')'], ...
-       ['White wins on time (' num2str(sum(white_time_win)) ')'], ...
-       ['Black wins on time (' num2str(sum(black_time_win)) ')'], ...
-       ['50-move (' num2str(sum(fifty_moves)) ')'], ...
-       ['3-fold (' num2str(sum(threefold)) ')'], ...
-       ['Insufficient material (' num2str(sum(material)) ')'], ...
-       ['Stalemate (' num2str(sum(no_legal)) ')'], ...
-       ['Time expires w/o material (' num2str(sum(time_and_material)) ')'], ...
-       'fontsize', 7, ...
-       'location', 'southwest');
-title('Type of Endgame');
-
-print([raw_data '_game_result_type_frequencies.png']);
-close;
-
-if max(game_time) > 0
-    figure;
-    hold all;
-
-    avg_time_left = (white_time_left + black_time_left)/2;
-    max_time_left = max(max(white_time_left), max(black_time_left));
-    below_zero = -0.05*max_time_left;
-    below_zero_random = below_zero*(1.5 - rand(size(white_time_left)));
-    white_time_left(white_time_left < 0) = below_zero_random(white_time_left < 0);
-    black_time_left(black_time_left < 0) = below_zero_random(black_time_left < 0);
-
-    plot(game_number, white_time_left, '.k', 'markersize', marker_size);
-    plot(game_number, black_time_left, '.k', 'markersize', marker_size);
-    window = 100;
-    x_margin = floor(window/2);
-    avg_x_axis = game_number(x_margin : end - x_margin);
-    p = plot(avg_x_axis,
-             movmean(avg_time_left, window, 'endpoints', 'discard'),
-             'r',
-             'linewidth', line_width);
-    leg = legend(p, 'Moving average');
-    set(leg, 'location', 'northwest');
-    ylim(max_time_left*[-0.10, 1.05]);
-    xlabel('Game number');
-    ylabel('Time (sec)');
-    title('Time left on clock at end of game');
-
-    print([raw_data '_game_time_left.png']);
-    close;
-end
+white_checkmates = result_type == 0
+black_checkmates = result_type == 1
+fifty_moves = result_type == 2
+threefold = result_type == 3
+white_time_win = result_type == 4
+black_time_win = result_type == 5
+material = result_type == 6
+no_legal = result_type == 7
+time_and_material = result_type == 8
+number_of_games = len(game_number)
+if np.logical_or(result_type > 8, result_type < 0).any():
+    print('Unknown result types found.')
 
 
-% Don't plot top 0.1% of longest games to make trends easier to see
-max_game_count = floor(0.999*length(moves_in_game));
-[counts, bins] = hist(moves_in_game, (1 : max(moves_in_game)));
-total_counts = 0;
-for index = 1 : length(counts)
-    total_counts = total_counts + counts(index);
-    if total_counts > max_game_count
-        max_game_length_display = bins(index);
-        break;
-    end
-end
+outcome_figure, outcome_axes = plt.subplots()
+outcome_plots = outcome_axes.loglog(game_number, 100*np.cumsum(white_checkmates)/game_number,
+                                    game_number, 100*np.cumsum(black_checkmates)/game_number,
+                                    game_number, 100*np.cumsum(white_time_win)/game_number,
+                                    game_number, 100*np.cumsum(black_time_win)/game_number,
+                                    game_number, 100*np.cumsum(fifty_moves)/game_number,
+                                    game_number, 100*np.cumsum(threefold)/game_number,
+                                    game_number, 100*np.cumsum(material)/game_number,
+                                    game_number, 100*np.cumsum(no_legal)/game_number,
+                                    game_number, 100*np.cumsum(time_and_material)/game_number,
+                                    nonpositive='mask')
+for p in outcome_plots:
+    p.set_linewidth(line_width)
 
-figure;
-hold all;
-plot(game_number, moves_in_game, '.k', 'markersize', marker_size);
-xlabel('Game number');
-ylabel('Moves in Game');
-title('Number of moves in game');
-ylim([0, max_game_length_display]);
+outcome_axes.set_xlabel('Games played')
+outcome_axes.set_ylabel('Percentage')
+outcome_legend_labels = [f'White checkmate ({sum(white_checkmates)})',
+                         f'Black checkmate ({sum(black_checkmates)})',
+                         f'White wins on time ({sum(white_time_win)})',
+                         f'Black wins on time ({sum(black_time_win)})',
+                         f'50-move ({sum(fifty_moves)})',
+                         f'3-fold ({sum(threefold)})',
+                         f'Insufficient material ({sum(material)})',
+                         f'Stalemate ({sum(no_legal)})',
+                         f'Time expires w/o material ({sum(time_and_material)})']
+outcome_axes.legend(outcome_plots, outcome_legend_labels)
+outcome_axes.set_title('Type of Endgame')
 
-print([raw_data '_moves_in_game.png']);
-close;
-
-figure;
-hold all;
-bar(bins, counts, 'barwidth', 1, 'facecolor', 'w', 'displayname', 'All game lengths');
-xlabel('Moves in Game');
-ylabel(['Counts (total = ' num2str(number_of_games) ')']);
-title('Number of moves in game');
-xlim([0, max_game_length_display]);
-set(gca, 'xtick', 0 : 10 : max_game_length_display);
-mean_moves = mean(moves_in_game);
-mode_moves = mode(moves_in_game);
-std_dev = std(moves_in_game);
-
-% Log-normal fit
-moves_in_game_fit = moves_in_game(moves_in_game > 0);
-bins_fit = bins(bins > 0);
-mean_log = mean(log(moves_in_game_fit));
-std_log = std(log(moves_in_game_fit));
-fit = number_of_games*exp(-.5*((log(bins_fit) - mean_log)/std_log).^2)./(bins_fit*std_log*sqrt(2*pi));
-plot(bins_fit, fit, 'linewidth', line_width, 'displayname', 'Log-Normal fit');
-
-legend show;
-
-stats = {['Mean = ' num2str(mean_moves)], ...
-         ['Median = ' num2str(median(moves_in_game))], ...
-         ['Mode = ' num2str(mode_moves)], ...
-         ['Std. Dev. = ' num2str(std_dev)], ...
-         ['Min = ' num2str(min(moves_in_game))], ...
-         ['Max = ' num2str(max(moves_in_game))], ...
-         [''], ...
-         ['Log-Norm Peak = ' num2str(exp(mean_log - std_log^2))], ...
-         ['Log-Norm Width = ' num2str(std_log)]};
-
-xl = xlim;
-yl = ylim;
-text(0.65*xl(2), 0.5*yl(2), stats, 'fontsize', stat_text_size);
-
-print([raw_data '_moves_in_game_histogram.png']);
-close;
-
-winning_games_lengths = moves_in_game(white_checkmates | black_checkmates);
-[counts, bins] = hist(winning_games_lengths, (1 : max(moves_in_game)));
-figure;
-hold all;
-bar(bins, counts, 'barwidth', 1, 'facecolor', 'w', 'displayname', 'All checkmates');
-title('Checkmate game lengths');
-xlim([0, max_game_length_display]);
-set(gca, 'xtick', 0 : 10 : max_game_length_display);
-% Log-normal fit
-bins_fit = bins(bins > 0);
-mean_log = mean(log(winning_games_lengths));
-std_log = std(log(winning_games_lengths));
-winning_games_count = length(winning_games_lengths);
-fit = winning_games_count*exp(-.5*((log(bins_fit) - mean_log)/std_log).^2)./(bins_fit*std_log*sqrt(2*pi));
-plot(bins_fit, fit, 'linewidth', line_width, 'displayname', 'Log-normal fit');
-
-xlabel('Moves in Game');
-ylabel(['Counts (total = ' num2str(winning_games_count) ')']);
-
-stats = {['Mean = ' num2str(mean(winning_games_lengths))], ...
-         ['Median = ' num2str(median(winning_games_lengths))], ...
-         ['Mode = ' num2str(mode(winning_games_lengths))], ...
-         ['Std. Dev. = ' num2str(std(winning_games_lengths))], ...
-         ['Min = ' num2str(min(winning_games_lengths))], ...
-         ['Max = ' num2str(max(winning_games_lengths))], ...
-         [''], ...
-         ['Log-Norm Peak = ' num2str(exp(mean_log - std_log^2))], ...
-         ['Log-Norm Width = ' num2str(std_log)]};
-
-xl = xlim;
-yl = ylim;
-text(0.65*xl(2), 0.5*yl(2), stats, 'fontsize', stat_text_size);
-
-legend show;
-
-print([raw_data '_moves_in_game_histogram_checkmate.png']);
+outcome_figure.savefig(f"{file_name}_game_result_type_frequencies.{pic_ext}", **picture_file_args)
+plt.close(outcome_figure)
 
 
-drawn_games = (fifty_moves | threefold | material | no_legal);
-[drawn_counts, drawn_bins] = hist(moves_in_game(drawn_games), (1 : max(moves_in_game)));
-[fifty_counts, fifty_bins] = hist(moves_in_game(fifty_moves), (1 : max(moves_in_game)));
-[threefold_counts, threefold_bins] = hist(moves_in_game(threefold), (1 : max(moves_in_game)));
-[material_counts, material_bins] = hist(moves_in_game(material), (1 : max(moves_in_game)));
-[no_legal_counts, no_legal_bins] = hist(moves_in_game(no_legal), (1 : max(moves_in_game)));
-figure;
-hold all;
-bar(drawn_bins, drawn_counts, 'barwidth', 1, 'facecolor', 'w', 'displayname', 'All draws');
-plot(fifty_bins, fifty_counts, 'displayname', 'Fifty moves', 'linewidth', draw_bar_line_width);
-plot(threefold_bins, threefold_counts, 'displayname', '3-fold', 'linewidth', draw_bar_line_width, 'color', 'blue');
-plot(material_bins, material_counts, 'k', 'displayname', 'Material', 'linewidth', draw_bar_line_width);
-plot(no_legal_bins, no_legal_counts, 'g', 'displayname', 'Stalemate', 'linewidth', draw_bar_line_width);
-title ('Draw game lengths');
-xlabel('Moves in Game');
-ylabel(['Counts (total = ' num2str(sum(drawn_games)) ')']);
-legend show;
-xlim([0, max_game_length_display]);
-set(gca, 'xtick', 0 : 10 : max_game_length_display);
-print([raw_data '_moves_in_game_histogram_draw.png']);
+if max(game_time) > 0:
+    game_time_figure, game_time_axes = plt.subplots()
+    avg_time_left = (white_time_left + black_time_left)/2
+    max_time_left = max(max(white_time_left), max(black_time_left))
+    below_zero = -0.05*max_time_left
+    below_zero_random = below_zero*(1.5 - np.random.rand(*white_time_left.shape))
+    white_time_left[white_time_left < 0] = below_zero_random[white_time_left < 0]
+    black_time_left[black_time_left < 0] = below_zero_random[black_time_left < 0]
 
-timeout_games = (white_time_win | black_time_win | time_and_material);
-[counts, bins] = hist(moves_in_game(timeout_games), (1 : max(moves_in_game)));
-figure;
-bar(bins, counts, 'barwidth', 1, 'facecolor', 'w');
-title ('Timeout game lengths');
-xlabel('Moves in Game');
-ylabel(['Counts (total = ' num2str(sum(timeout_games)) ')']);
-xlim([0, max_game_length_display]);
-set(gca, 'xtick', 0 : 10 : max_game_length_display);
-print([raw_data '_moves_in_game_histogram_timeout.png']);
+    game_time_axes.plot(game_number, white_time_left, '.k', markersize=marker_size)
+    game_time_axes.plot(game_number, black_time_left, '.k', markersize=marker_size)
+    window = 100
+    convolve_window = np.ones(window)/window
+    x_margin = int(np.floor(window/2))
+    avg_x_axis = game_number[x_margin - 1 : -x_margin]
+    p = game_time_axes.plot(avg_x_axis,
+                            np.convolve(avg_time_left, convolve_window, mode="valid"),
+                            'r',
+                            linewidth=line_width)
+    game_time_axes.legend(p, ['Moving average'])
+    game_time_axes.set_ylim(max_time_left*(-0.10), max_time_left*1.05)
+    game_time_axes.set_xlabel('Game number')
+    game_time_axes.set_ylabel('Time (sec)')
+    game_time_axes.set_title('Time left on clock at end of game')
+
+    game_time_figure.savefig(f'{file_name}_game_time_left.{pic_ext}', **picture_file_args)
+    plt.close(game_time_figure)
+
+
+# Don't plot top 0.1% of longest games to make trends easier to see
+max_game_count = np.floor(0.999*len(moves_in_game))
+move_counts, move_bins = np.histogram(moves_in_game, range(1, max(moves_in_game) + 1))
+total_counts = 0
+max_game_length_display = move_bins[-1]
+for index, count in enumerate(move_counts):
+    total_counts += count
+    if total_counts > max_game_count:
+        max_game_length_display = move_bins[index]
+        break
+
+move_count_figure, move_count_axes = plt.subplots()
+move_count_axes.plot(game_number, moves_in_game, '.k', markersize=marker_size)
+move_count_axes.set_xlabel('Game number')
+move_count_axes.set_ylabel('Moves in Game')
+move_count_axes.set_title('Number of moves in game')
+move_count_axes.set_ylim(0, max_game_length_display)
+
+move_count_figure.savefig(f'{file_name}_moves_in_game.{pic_ext}', **picture_file_args)
+plt.close(move_count_figure)
+
+move_count_histogram_figure, move_count_histogram_axes = plt.subplots()
+move_count_bar_plot = move_count_histogram_axes.bar(move_bins[0:-1], move_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
+move_count_histogram_axes.set_xlabel('Moves in Game')
+move_count_histogram_axes.set_ylabel(f'Counts (total = {number_of_games})')
+move_count_histogram_axes.set_title('Number of moves in game')
+move_count_histogram_axes.set_xlim([0, max_game_length_display])
+mean_moves = np.mean(moves_in_game)
+std_dev = np.std(moves_in_game)
+
+# Log-normal fit
+moves_in_game_fit = moves_in_game[moves_in_game > 0]
+bins_fit = move_bins[move_bins > 0]
+mean_log = np.mean(np.log(moves_in_game_fit))
+std_log = np.std(np.log(moves_in_game_fit))
+fit = number_of_games*np.exp(-.5*np.power((np.log(bins_fit) - mean_log)/std_log, 2))/(bins_fit*std_log*np.sqrt(2*np.pi))
+bar_fit_plot = move_count_histogram_axes.plot(bins_fit, fit, linewidth=line_width)
+
+stats = [f'Mean = {mean_moves:.2f}',
+         f'Median = {np.median(moves_in_game):.2f}',
+         f'Std. Dev. = {std_dev:.2f}',
+         f'Min = {min(moves_in_game)}',
+         f'Max = {max(moves_in_game)}',
+         '',
+         f'Log-Norm Peak = {np.exp(mean_log - np.power(std_log, 2)):.2f}',
+         f'Log-Norm Width = {std_log:.2f}']
+
+xl = move_count_histogram_axes.get_xlim()
+yl = move_count_histogram_axes.get_ylim()
+move_count_histogram_axes.text(0.65*xl[1], 0.5*yl[1], '\n'.join(stats), fontsize=stat_text_size)
+
+move_count_histogram_axes.legend([move_count_bar_plot[0], bar_fit_plot[0]], ['All game lengths', 'Log-Normal fit'])
+move_count_histogram_figure.savefig(f'{file_name}_moves_in_game_histogram.{pic_ext}', **picture_file_args)
+plt.close(move_count_histogram_figure)
+
+
+winning_games_lengths = moves_in_game[white_checkmates | black_checkmates]
+winning_move_counts, winning_move_bins = np.histogram(winning_games_lengths, range(1, max(moves_in_game) + 1))
+checkmate_figure, checkmate_axes = plt.subplots()
+checkmate_histogram = checkmate_axes.bar(winning_move_bins[0:-1], winning_move_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
+checkmate_axes.set_title('Checkmate game lengths')
+checkmate_axes.set_xlim(0, max_game_length_display)
+
+# Log-normal fit
+bins_fit = winning_move_bins[winning_move_bins > 0]
+mean_log = np.mean(np.log(winning_games_lengths))
+std_log = np.std(np.log(winning_games_lengths))
+winning_games_count = len(winning_games_lengths)
+fit = winning_games_count*np.exp(-.5*np.power((np.log(bins_fit) - mean_log)/std_log, 2))/(bins_fit*std_log*np.sqrt(2*np.pi))
+checkmate_fit = checkmate_axes.plot(bins_fit, fit, linewidth=line_width)
+
+checkmate_axes.set_xlabel('Moves in Game')
+checkmate_axes.set_ylabel(f'Counts (total = {winning_games_count})')
+
+stats = [f'Mean = {np.mean(winning_games_lengths):.2f}',
+         f'Median = {np.median(winning_games_lengths):.2f}',
+         f'Std. Dev. = {np.std(winning_games_lengths):.2f}',
+         f'Min = {min(winning_games_lengths)}',
+         f'Max = {max(winning_games_lengths)}',
+         '',
+         f'Log-Norm Peak = {np.exp(mean_log - np.power(std_log, 2)):.2f}',
+         f'Log-Norm Width = {std_log:.2f}']
+
+xl = checkmate_axes.get_xlim()
+yl = checkmate_axes.get_ylim()
+checkmate_axes.text(0.65*xl[1], 0.5*yl[1], '\n'.join(stats), fontsize=stat_text_size)
+
+checkmate_axes.legend([checkmate_histogram[0], checkmate_fit[0]], ['All checkmates', 'Log-normal fit'])
+checkmate_figure.savefig(f'{file_name}_moves_in_game_histogram_checkmate.{pic_ext}', **picture_file_args)
+plt.close(checkmate_figure)
+
+
+drawn_games = (fifty_moves | threefold | material | no_legal)
+drawn_counts, drawn_bins = np.histogram(moves_in_game[drawn_games], range(1, max(moves_in_game) + 1))
+fifty_counts, fifty_bins = np.histogram(moves_in_game[fifty_moves], range(1, max(moves_in_game) + 1))
+threefold_counts, threefold_bins = np.histogram(moves_in_game[threefold], range(1, max(moves_in_game) + 1))
+material_counts, material_bins = np.histogram(moves_in_game[material], range(1, max(moves_in_game) + 1))
+no_legal_counts, no_legal_bins = np.histogram(moves_in_game[no_legal], range(1, max(moves_in_game) + 1))
+
+other_endgame_figure, other_endgame_axes = plt.subplots()
+other_endgame_bar_plot = other_endgame_axes.bar(drawn_bins[0:-1], drawn_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
+fifty_move_plot = other_endgame_axes.plot(fifty_bins[0:-1], fifty_counts, linewidth=draw_bar_line_width)
+threefold_plot = other_endgame_axes.plot(threefold_bins[0:-1], threefold_counts, linewidth=draw_bar_line_width)
+material_plot = other_endgame_axes.plot(material_bins[0:-1], material_counts, linewidth=draw_bar_line_width)
+stalemate_plot = other_endgame_axes.plot(no_legal_bins[0:-1], no_legal_counts, linewidth=draw_bar_line_width)
+other_endgame_axes.set_title ('Draw game lengths')
+other_endgame_axes.set_xlabel('Moves in Game')
+other_endgame_axes.set_ylabel(f'Counts (total = {sum(drawn_games)})')
+
+other_endgame_axes.legend([other_endgame_bar_plot[0], fifty_move_plot[0], threefold_plot[0], material_plot[0], stalemate_plot[0]],
+                          ['All draws',              'Fifty moves',      '3-fold',          'Material',        'Stalemate'])
+
+other_endgame_axes.set_xlim([0, max_game_length_display])
+other_endgame_figure.savefig(f'{file_name}_moves_in_game_histogram_draw.{pic_ext}', **picture_file_args)
+plt.close(other_endgame_figure)
+
+
+timeout_games = (white_time_win | black_time_win | time_and_material)
+timeout_counts, timeout_bins = np.histogram(moves_in_game[timeout_games], range(1, max(moves_in_game) + 1))
+timeout_figure, timeout_axes = plt.subplots()
+timeout_axes.bar(timeout_bins[0:-1], timeout_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
+timeout_axes.set_title ('Timeout game lengths')
+timeout_axes.set_xlabel('Moves in Game')
+timeout_axes.set_ylabel(f'Counts (total = {sum(timeout_games)})')
+timeout_axes.set_xlim(0, max_game_length_display)
+
+timeout_figure.savefig(f'{file_name}_moves_in_game_histogram_timeout.{pic_ext}', **picture_file_args)
+plt.close(timeout_figure)
