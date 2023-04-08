@@ -8,7 +8,6 @@
 #include <cmath>
 #include <format>
 #include <cctype>
-#include <iterator>
 #include <ranges>
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
@@ -21,17 +20,14 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     }
     else
     {
-        for(const auto& token : std::views::split(s, delim))
+        const auto initial_take = std::min(count, s.size());
+        const auto to_vector = std::ranges::to<std::vector<std::string>>();
+        auto split_view = std::ranges::views::split(s, delim);
+        result = split_view | std::ranges::views::take(initial_take) | to_vector;
+        const auto remainder = split_view | std::ranges::views::drop(initial_take) | to_vector;
+        if( ! remainder.empty())
         {
-            result.emplace_back(token.begin(), token.end());
-        }
-
-        const auto max_result_size = std::min(count, result.size()) + 1;
-        if(result.size() > max_result_size)
-        {
-            const auto rejoin = join(std::next(result.begin(), max_result_size - 1), result.end(), delim);
-            result.resize(max_result_size - 1);
-            result.push_back(rejoin);
+            result.push_back(join(remainder, delim));
         }
     }
 
