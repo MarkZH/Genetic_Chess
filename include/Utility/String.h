@@ -11,6 +11,7 @@
 #include <charconv>
 #include <stdexcept>
 #include <format>
+#include <ranges>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
@@ -29,6 +30,22 @@ namespace String
 
     //! \brief Join a sequence of strings into a single string with joiner strings in between.
     //!
+    //! \tparam Container A container with ordered contents.
+    //! \param container A container of items convertible to std::string.
+    //! \param joiner A string that will be placed between every string in the sequence.
+    template<typename Container>
+    std::string join(const Container& container, const std::string& joiner) noexcept
+    {
+        std::string result;
+        for(const auto& piece : container | std::views::join_with(joiner))
+        {
+            result += piece;
+        }
+        return result;
+    }
+
+    //! \brief Join a sequence of strings into a single string with joiner strings in between.
+    //!
     //! \tparam Iter An iterator type.
     //! \param begin An iterator to the first string in the sequence.
     //! \param end An iterator past the end of the sequence.
@@ -36,30 +53,7 @@ namespace String
     template<typename Iter>
     std::string join(const Iter begin, const Iter end, const std::string& joiner) noexcept
     {
-        if(begin == end)
-        {
-            return {};
-        }
-
-        auto result = *begin;
-        std::for_each(std::next(begin), end,
-                      [&joiner, &result](const auto& token)
-                      {
-                          result += joiner;
-                          result += token;
-                      });
-        return result;
-    }
-
-    //! \brief Join a sequence of strings into a single string with joiner strings in between.
-    //!
-    //! \tparam Container A container with ordered contents.
-    //! \param container A container of items convertible to std::string.
-    //! \param joiner A string that will be placed between every string in the sequence.
-    template<typename Container>
-    std::string join(const Container& container, const std::string& joiner) noexcept
-    {
-        return join(std::begin(container), std::end(container), joiner);
+        return join(std::ranges::subrange(begin, end), joiner);
     }
 
     //! \brief Determine whether a string exists inside another string.
