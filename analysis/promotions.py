@@ -8,7 +8,7 @@ from delete_comments import delete_comments
 
 def count_promotions(game_file_name: str):
 	print("\n# Promotions")
-	promotions = []
+	promotion_counts = Counter()
 	with open(game_file_name) as game_file:
 		for line in game_file:
 			if "=" not in line:
@@ -17,12 +17,9 @@ def count_promotions(game_file_name: str):
 			for scrap in line.split():
 				if "=" not in scrap:
 					continue
-				promotion = scrap.split("=")[1]
-				if promotion.endswith("+") or promotion.endswith("#"):
-					promotion = promotion[:-1]
-				promotions.append(promotion)
+				promotion = scrap.split("=")[1].replace("+", "").replace("#",  "")
+				promotion_counts[promotion] += 1
 
-	promotion_counts = Counter(promotions)
 	count_column_width = len(str(max(promotion_counts.values())))
 	for piece, count in promotion_counts.most_common():
 		spaces = ' '*(count_column_width - len(str(count)))
