@@ -4,7 +4,7 @@ import sys
 
 def parse_opening_list(filename):
     with open(filename) as f:
-        openings = [line.strip() for line in f.readlines()]
+        openings = [line.strip() for line in f]
 
     open_count = dict()
     for opening in openings:
