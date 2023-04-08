@@ -32,7 +32,7 @@ def count_castles(game_file_name: str, color: str) -> None:
 	castle_count["Total"] = sum(castle_count.values())
 	print("\n" + f"# {color}".strip() + " Castling")
 	count_column_width = len(str(max(castle_count.values())))
-	for castle, count in castle_count.items():
+	for castle, count in sorted(castle_count.items(), key=lambda x: x[0]):
 		spaces = " "*(count_column_width - len(str(count)))
 		print(spaces, count, castle)
 
