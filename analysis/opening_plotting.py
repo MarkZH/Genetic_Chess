@@ -1,49 +1,48 @@
-warning('off');
+#!/usr/bin/python
 
-isOctave = exist('OCTAVE_VERSION', 'builtin') ~= 0;
+import sys
+import numpy as np
+import matplotlib.pyplot as plt
+from opening_parse import parse_opening_list
+from openings import get_opening_files
 
-filename = 0;
-directory = '';
-if isOctave
-    args = argv();
-    if length(args) > 0
-        filename = args{1};
-        plot_title = args{2};
-    end
-end
+picture_file_args = {'dpi': 600, 'format': 'png'}
+pic_ext = picture_file_args['format']
 
-if filename == 0
-    [filename, directory, ~] = uigetfile();
-end
+def plot_opening(file_name: str, plot_title: str):
+    parsed_file_name = parse_opening_list(file_name)
+    top_data = np.genfromtxt(parsed_file_name, delimiter=',', names=True)
 
-if filename == 0
-    return
-end
-raw_data = fullfile(directory, filename);
+    figure, axes = plt.subplots()
+    game_counts = np.array(range(1, top_data.size + 1))
+    ymax = 0
+    plots = []
+    legend_labels = []
+    for col in range(len(top_data[0])):
+        opening_counts = np.cumsum(np.array([row[col] for row in top_data]))
+        percents = 100*(opening_counts/game_counts)
+        plots.extend(axes.plot(percents, linewidth=2, label=top_data.dtype.names[col]))
+        max_percent = max(percents[int(np.ceil(0.01*len(percents))) : -1])
+        ymax = max(ymax, max_percent)
 
-if isOctave
-    python('analysis/opening_plot.py', ['"' raw_data '"']);
-end
+    axes.set_xlabel('Games played')
+    axes.set_ylabel('Percent of games')
+    axes.set_ylim(0, ymax)
+    axes.legend(plots, [p.get_label().replace("_", " ") for p in plots])
+    axes.set_title(plot_title)
+    figure.savefig(f'{file_name}_opening_moves_plot.{pic_ext}', **picture_file_args)
+    plt.close(figure)
 
-top_data = importdata([raw_data, '_top_opening_data.txt'], ',');
+def plot_all_openings(game_file):
+    for parsed_file in get_opening_files(game_file):
+        if parsed_file.endswith("_white.txt"):
+            plot_title = "White's first move counts"
+        elif parsed_file.endswith("_black.txt"):
+            plot_title = "Black's first move counts"
+        else:
+            plot_title = "First move counts"
+        plot_opening(parsed_file, plot_title)
 
-figure;
-hold all;
-game_counts = (1:size(top_data.data, 1))';
-ymax = 0;
-for col = 1 : size(top_data.data, 2)
-    opening_counts = cumsum(top_data.data(:, col));
-    percents = 100*opening_counts./game_counts;
-    plot(percents, 'LineWidth', 2, 'displayname', top_data.colheaders{col});
-    max_percent = max(percents(ceil(0.01*length(percents) : end)));
-    ymax = max([ymax max_percent]);
-end
 
-xlabel('Games played');
-ylabel('Percent of games');
-ylim([0 ymax]);
-leg = legend('show');
-set(leg, 'location', 'eastoutside');
-title(plot_title);
-print([raw_data '_opening_moves_plot.png']);
-close;
+if __name__ == "__main__":
+    plot_all_openings(sys.argv[1])
