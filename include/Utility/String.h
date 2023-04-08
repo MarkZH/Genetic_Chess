@@ -31,6 +31,17 @@ namespace String
 
     //! \brief Join a sequence of strings into a single string with joiner strings in between.
     //!
+    //! \tparam Container A container with ordered contents.
+    //! \param container A container of items convertible to std::string.
+    //! \param joiner A string that will be placed between every string in the sequence.
+    template<typename Container>
+    std::string join(const Container& container, const std::string& joiner) noexcept
+    {
+        return container | std::ranges::views::join_with(joiner) | std::ranges::to<std::string>();
+    }
+
+    //! \brief Join a sequence of strings into a single string with joiner strings in between.
+    //!
     //! \tparam Iter An iterator type.
     //! \param begin An iterator to the first string in the sequence.
     //! \param end An iterator past the end of the sequence.
@@ -38,19 +49,7 @@ namespace String
     template<typename Iter>
     std::string join(const Iter begin, const Iter end, const std::string& joiner) noexcept
     {
-        const auto view = std::ranges::subrange(begin, end) | std::ranges::views::join_with(joiner);
-        return std::accumulate(std::ranges::begin(view), std::ranges::end(view), std::string{});
-    }
-
-    //! \brief Join a sequence of strings into a single string with joiner strings in between.
-    //!
-    //! \tparam Container A container with ordered contents.
-    //! \param container A container of items convertible to std::string.
-    //! \param joiner A string that will be placed between every string in the sequence.
-    template<typename Container>
-    std::string join(const Container& container, const std::string& joiner) noexcept
-    {
-        return join(std::begin(container), std::end(container), joiner);
+        return join(std::ranges::subrange(begin, end), joiner);
     }
 
     //! \brief Remove leading and trailing whitespace from a string.
