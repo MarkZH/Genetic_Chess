@@ -19,7 +19,9 @@ def count_castles(game_file_name: str, color: str) -> None:
 			if "O" not in line:
 				continue
 			line = delete_comments(line)
-			_, white_move, black_move = line.split()
+			parts = line.split()
+			white_move = parts[1] if len(parts) > 1 else ""
+			black_move = parts[2] if len(parts) > 2 else ""
 			
 			white_move = delete_checkmarks(white_move)
 			black_move = delete_checkmarks(black_move)
