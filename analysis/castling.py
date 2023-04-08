@@ -29,6 +29,7 @@ def count_castles(game_file_name: str, color: str) -> None:
 			if color != "Black" and "O" in white_move:
 				castle_count[white_move] += 1
 
+	castle_count["Total"] = sum(castle_count.values())
 	print("\n" + f"# {color}".strip() + " Castling")
 	count_column_width = len(str(max(castle_count.values())))
 	for castle, count in castle_count.items():
