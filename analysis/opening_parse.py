@@ -14,11 +14,14 @@ def parse_opening_list(filename):
     top20 = list(reversed(sorted(open_count.keys(),
                             key=lambda x: open_count[x])[-20:]))
 
-    with open(filename + '_top_opening_data.txt', 'w') as out:
+    parsed_file_name = filename + '_top_opening_data.txt'
+    with open(parsed_file_name, 'w') as out:
         out.write(','.join(top20) + '\n')
         for opening in openings:
             marker = ['1' if x == opening else '0' for x in top20]
             out.write(','.join(marker) + '\n')
+
+    return parsed_file_name
 
 
 if __name__ == '__main__':
