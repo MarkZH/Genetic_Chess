@@ -12,7 +12,6 @@
 #include <stdexcept>
 #include <format>
 #include <ranges>
-#include <numeric>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
