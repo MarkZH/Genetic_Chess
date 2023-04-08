@@ -11,6 +11,8 @@
 #include <charconv>
 #include <stdexcept>
 #include <format>
+#include <ranges>
+#include <numeric>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
@@ -36,7 +38,8 @@ namespace String
     template<typename Iter>
     std::string join(const Iter begin, const Iter end, const std::string& joiner) noexcept
     {
-        return std::views::iota(begin, end) | std::views::join_with(joiner) | std::ranges::to<std::string>();
+        const auto view = std::ranges::subrange(begin, end) | std::ranges::views::join_with(joiner);
+        return std::accumulate(std::ranges::begin(view), std::ranges::end(view), std::string{});
     }
 
     //! \brief Join a sequence of strings into a single string with joiner strings in between.
