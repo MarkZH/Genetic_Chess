@@ -17,7 +17,6 @@ def plot_opening(file_name: str, plot_title: str):
     game_counts = np.array(range(1, top_data.size + 1))
     ymax = 0
     plots = []
-    legend_labels = []
     for col in range(len(top_data[0])):
         opening_counts = np.cumsum(np.array([row[col] for row in top_data]))
         percents = 100*(opening_counts/game_counts)

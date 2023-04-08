@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-from email.policy import default
 import sys
 from collections import defaultdict
 from delete_comments import delete_comments

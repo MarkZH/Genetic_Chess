@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-from itertools import count
 import sys
 from gene_plots import plot_genome
 from win_lose_draw_plotting import plot_endgames

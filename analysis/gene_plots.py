@@ -13,8 +13,6 @@ def plot_genome(gene_pool_filename: str) -> str:
     data = np.genfromtxt(filename, delimiter=',', names=True)
     id_list = [int(row[0]) for row in data]
     column_headers = [name.replace('__', ' - ').replace('_', ' ') for name in data.dtype.names]
-    xaxis_linewidth = 0.5
-    xaxis_linecolor = [0.4, 0.4, 0.4]
 
     special_plots = {}
 
