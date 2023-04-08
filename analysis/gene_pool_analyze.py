@@ -9,7 +9,7 @@ def add_value_to_data_line(data_line, header_line, title, value):
     data_line[index] = value
 
 
-def main(gene_pool_file_name):
+def parse_gene_pool(gene_pool_file_name):
     # Read gene file for gene names
     header_line = []
     current_gene = ''
@@ -79,6 +79,8 @@ def main(gene_pool_file_name):
 
                     add_value_to_data_line(data_line, header_line, title, value)
 
+    return output_file_name
+
 
 if __name__ == '__main__':
-    main(sys.argv[1])
+    parse_gene_pool(sys.argv[1])
