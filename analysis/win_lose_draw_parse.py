@@ -2,6 +2,9 @@
 
 import sys
 
+def write_line(file, *args):
+    file.write('\t'.join(str(x) for x in args) + '\n')
+
 def parse_game_file(file_name):
     game = 0
     white_wins = 0
@@ -13,15 +16,7 @@ def parse_game_file(file_name):
     black_time_left = 0
     plot_data_file_name = file_name + '_plots.txt'
     with open(file_name) as f, open(plot_data_file_name, 'w') as w:
-        w.write('\t'.join(['Game',
-                            'White Wins',
-                            'Black Wins',
-                            'Draws',
-                            'Time',
-                            'Result Type',
-                            'White Time Left',
-                            'Black Time Left',
-                            'Number of Moves']) + '\n')
+        write_line(w, 'Game', 'White Wins', 'Black Wins', 'Draws', 'Time', 'Result Type', 'White Time Left', 'Black Time Left', 'Number of Moves')
         # result_type key:
         #   0 = Checkmate (white win)
         #   1 = Checkmate (black win)
@@ -69,28 +64,11 @@ def parse_game_file(file_name):
             elif line.startswith('[TimeLeftBlack'):
                 black_time_left = line.split('"')[1]
             elif line.startswith('[Event') and game > 0:
-                w.write('\t'.join(str(x) for x in [game,
-                                                    white_wins,
-                                                    black_wins,
-                                                    draws,
-                                                    time,
-                                                    result_type,
-                                                    white_time_left,
-                                                    black_time_left,
-                                                    number_of_moves]) + '\n')
+                write_line(w, game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left, number_of_moves)
                 number_of_moves = 0
 
         if game > 0:
-            w.write('\t'.join(str(x) for x in [game,
-                                               white_wins,
-                                               black_wins,
-                                               draws,
-                                               time,
-                                               result_type,
-                                               white_time_left,
-                                               black_time_left,
-                                               number_of_moves]) + '\n')
-
+            write_line(w, game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left, number_of_moves)
     return plot_data_file_name
 
 if __name__ == '__main__':
