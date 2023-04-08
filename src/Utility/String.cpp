@@ -12,26 +12,26 @@
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
-    std::vector<std::string> result;
+    const auto to_vector = std::ranges::to<std::vector<std::string>>();
+
     if(delim.empty())
     {
         auto ss = std::istringstream(s);
-        std::copy(std::istream_iterator<std::string>(ss), std::istream_iterator<std::string>(), std::back_inserter(result));
+        using ss_iter = std::istream_iterator<std::string>;
+        return std::ranges::subrange(ss_iter(ss), ss_iter()) | to_vector;
     }
     else
     {
-        const auto initial_take = std::min(count, s.size());
-        const auto to_vector = std::ranges::to<std::vector<std::string>>();
-        auto split_view = std::ranges::views::split(s, delim);
-        result = split_view | std::ranges::views::take(initial_take) | to_vector;
-        const auto remainder = split_view | std::ranges::views::drop(initial_take) | to_vector;
+        const auto initial_take = std::min(count, s.size());    
+        auto split_view = std::views::split(s, delim);
+        auto result = split_view | std::views::take(initial_take) | to_vector;
+        const auto remainder = split_view | std::views::drop(initial_take) | to_vector;
         if( ! remainder.empty())
         {
             result.push_back(join(remainder, delim));
         }
+        return result;
     }
-
-    return result;
 }
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
