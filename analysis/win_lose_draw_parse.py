@@ -60,7 +60,7 @@ def parse_game_file(file_name):
                     result_type = 8
                 else:
                     raise Exception('Unrecognized result type: ' + result_text)
-            elif line and line[0] in '123456789':
+            elif line and line[0].isdigit():
                 number_of_moves = line.split('. ')[0]
             elif line.startswith('[TimeControl'):
                 time = line.split('"')[1]
