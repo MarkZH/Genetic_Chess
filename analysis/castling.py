@@ -8,9 +8,7 @@ from delete_comments import delete_comments
 # Count how many times a castling move was picked (O-O = kingside, O-O-O = queenside)
 
 def delete_checkmarks(move: str) -> str:
-	if move.endswith("+") or move.endswith("#"):
-		move = move[:-1]
-	return move
+	return move.replace("+", "").replace("#", "")
 
 def count_castles(game_file_name: str, color: str) -> None:
 	castle_count = defaultdict(lambda: 0)
