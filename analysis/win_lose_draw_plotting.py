@@ -290,17 +290,15 @@ def plot_endgames(file_name):
     no_legal_counts, no_legal_bins = np.histogram(moves_in_game[no_legal], range(1, max(moves_in_game) + 1))
 
     other_endgame_figure, other_endgame_axes = plt.subplots()
-    other_endgame_bar_plot = other_endgame_axes.bar(drawn_bins[0:-1], drawn_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
-    fifty_move_plot = other_endgame_axes.plot(fifty_bins[0:-1], fifty_counts, linewidth=draw_bar_line_width)
-    threefold_plot = other_endgame_axes.plot(threefold_bins[0:-1], threefold_counts, linewidth=draw_bar_line_width)
-    material_plot = other_endgame_axes.plot(material_bins[0:-1], material_counts, linewidth=draw_bar_line_width)
-    stalemate_plot = other_endgame_axes.plot(no_legal_bins[0:-1], no_legal_counts, linewidth=draw_bar_line_width)
-    other_endgame_axes.set_title ('Draw game lengths')
+    other_endgame_axes.bar(drawn_bins[0:-1], drawn_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width, label='All draws')
+    other_endgame_axes.plot(fifty_bins[0:-1], fifty_counts, linewidth=draw_bar_line_width, label='Fifty moves')
+    other_endgame_axes.plot(threefold_bins[0:-1], threefold_counts, linewidth=draw_bar_line_width, label='3-fold')
+    other_endgame_axes.plot(material_bins[0:-1], material_counts, linewidth=draw_bar_line_width, label='Material')
+    other_endgame_axes.plot(no_legal_bins[0:-1], no_legal_counts, linewidth=draw_bar_line_width, label='Stalemate')
+    other_endgame_axes.set_title('Draw game lengths')
     other_endgame_axes.set_xlabel('Moves in Game')
     other_endgame_axes.set_ylabel(f'Counts (total = {sum(drawn_games)})')
-
-    other_endgame_axes.legend([other_endgame_bar_plot[0], fifty_move_plot[0], threefold_plot[0], material_plot[0], stalemate_plot[0]],
-                              ['All draws',              'Fifty moves',      '3-fold',          'Material',        'Stalemate'])
+    other_endgame_axes.legend()
 
     other_endgame_axes.set_xlim([0, max_game_length_display])
     other_endgame_figure.savefig(f'{file_name}_moves_in_game_histogram_draw.{pic_ext}', **picture_file_args)
