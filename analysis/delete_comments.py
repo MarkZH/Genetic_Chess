@@ -3,17 +3,17 @@
 def remove_nested_parentheses(line: str) -> str:
     depth = 0
     for index, character in enumerate(line):
-        if character == ')':
+        if character == '(':
+            if depth == 0:
+                opening_index = index
+            depth += 1
+        elif character == ')':
             if depth == 0:
                 raise RuntimeError(f"Parentheses do not match: {line}")
 
             depth -= 1
             if depth == 0:
                 return remove_nested_parentheses(line[:opening_index] + line[index + 1:])
-        elif character == '(':
-            if depth == 0:
-                opening_index = index
-            depth += 1
 
     return ' '.join(line.split())
 

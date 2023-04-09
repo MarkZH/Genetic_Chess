@@ -69,6 +69,8 @@ def parse_opening_list(filename):
 def plot_opening(file_name: str, plot_title: str):
     parsed_file_name = parse_opening_list(file_name)
     top_data = np.genfromtxt(parsed_file_name, delimiter=',', names=True)
+    if not top_data.dtype.names:
+        raise ValueError(f"No column names found in {parsed_file_name} from {file_name}.")
     os.remove(parsed_file_name)
 
     figure, axes = plt.subplots()

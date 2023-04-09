@@ -86,12 +86,14 @@ def parse_gene_pool(gene_pool_file_name):
     return output_file_name
 
 
-def plot_genome(gene_pool_filename: str) -> str:
+def plot_genome(gene_pool_filename: str) -> None:
     parsed_data_file_name = parse_gene_pool(gene_pool_filename)
     picture_file_args = {'dpi': 600, 'format': 'png'}
     pic_ext = picture_file_args['format']
 
     data = np.genfromtxt(parsed_data_file_name, delimiter=',', names=True)
+    if not data.dtype.names:
+        raise ValueError(f"No column names found in {parsed_data_file_name} from {gene_pool_filename}")
     os.remove(parsed_data_file_name)
     id_list = [int(row[0]) for row in data]
     column_headers = [name.replace('__', ' - ').replace('_', ' ') for name in data.dtype.names]

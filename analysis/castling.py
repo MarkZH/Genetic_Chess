@@ -2,6 +2,7 @@
 
 import sys
 from collections import defaultdict
+from typing import Dict
 from delete_comments import delete_comments
 
 # Count how many times a castling move was picked (O-O = kingside, O-O-O = queenside)
@@ -12,7 +13,7 @@ def delete_checkmarks(move: str) -> str:
 
 
 def count_castles(game_file_name: str, color: str) -> None:
-    castle_count = defaultdict(lambda: 0)
+    castle_count: Dict[str, int] = defaultdict(lambda: 0)
     with open(game_file_name) as game_file:
         for line in game_file:
             if "O" not in line:

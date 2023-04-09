@@ -6,9 +6,9 @@ from delete_comments import delete_comments
 
 
 # Count how many times each type of piece is picked for a pawn promotion
-def count_promotions(game_file_name: str):
+def count_promotions(game_file_name: str) -> None:
     print("\n# Promotions")
-    promotion_counts = Counter()
+    promotion_counts: Counter = Counter()
     with open(game_file_name) as game_file:
         for line in game_file:
             if "=" not in line:
