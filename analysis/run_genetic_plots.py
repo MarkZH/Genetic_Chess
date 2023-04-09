@@ -9,6 +9,7 @@ from castling import count_all_castles
 
 
 def get_config_value(config_file: str, parameter: str):
+    parameter = ' '.join(parameter.split())
     with open(config_file) as config:
         for line in config:
             line = line.split('#', 1)[0].strip()
