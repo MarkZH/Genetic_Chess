@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from win_lose_draw_parse import parse_game_file
@@ -11,6 +12,7 @@ pic_ext = picture_file_args['format']
 def plot_endgames(file_name):
     parsed_data_file_name = parse_game_file(file_name)
     data = np.genfromtxt(parsed_data_file_name, delimiter='\t', names=True)
+    os.remove(parsed_data_file_name)
     column_headers = [name.replace('_', ' ') for name in data.dtype.names]
 
     game_number =     np.array([int(row[0]) for row in data])

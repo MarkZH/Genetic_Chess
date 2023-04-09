@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from opening_parse import parse_opening_list
@@ -12,6 +13,7 @@ pic_ext = picture_file_args['format']
 def plot_opening(file_name: str, plot_title: str):
     parsed_file_name = parse_opening_list(file_name)
     top_data = np.genfromtxt(parsed_file_name, delimiter=',', names=True)
+    os.remove(parsed_file_name)
 
     figure, axes = plt.subplots()
     game_counts = np.array(range(1, top_data.size + 1))
@@ -41,6 +43,7 @@ def plot_all_openings(game_file):
         else:
             plot_title = "First move counts"
         plot_opening(parsed_file, plot_title)
+        os.remove(parsed_file)
 
 
 if __name__ == "__main__":

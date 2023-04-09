@@ -1,16 +1,18 @@
 #!/usr/bin/python
 
 import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from gene_pool_analyze import parse_gene_pool
 
 def plot_genome(gene_pool_filename: str) -> str:
-    filename = parse_gene_pool(gene_pool_filename)
+    parsed_data_file_name = parse_gene_pool(gene_pool_filename)
     picture_file_args = {'dpi': 600, 'format': 'png'}
     pic_ext = picture_file_args['format']
 
-    data = np.genfromtxt(filename, delimiter=',', names=True)
+    data = np.genfromtxt(parsed_data_file_name, delimiter=',', names=True)
+    os.remove(parsed_data_file_name)
     id_list = [int(row[0]) for row in data]
     column_headers = [name.replace('__', ' - ').replace('_', ' ') for name in data.dtype.names]
 
