@@ -1,27 +1,100 @@
 #!/usr/bin/python
 
 import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
-from win_lose_draw_parse import parse_game_file
 
 picture_file_args = {'dpi': 600, 'format': 'png'}
 pic_ext = picture_file_args['format']
 
+
+def write_line(file, *args):
+    file.write('\t'.join(str(x) for x in args) + '\n')
+
+
+def parse_game_file(file_name):
+    game = 0
+    white_wins = 0
+    black_wins = 0
+    draws = 0
+    number_of_moves = 0
+    time = 0
+    white_time_left = 0
+    black_time_left = 0
+    plot_data_file_name = file_name + '_plots.txt'
+    with open(file_name) as f, open(plot_data_file_name, 'w') as w:
+        write_line(w, 'Game', 'White Wins', 'Black Wins', 'Draws', 'Time', 'Result Type', 'White Time Left', 'Black Time Left', 'Number of Moves')
+        # result_type key:
+        #   0 = Checkmate (white win)
+        #   1 = Checkmate (black win)
+        #   2 = 50-move
+        #   3 = 3-fold repitition
+        #   4 = Time forfeit (white win)
+        #   5 = Time forfeit (black win)
+        #   6 = Insufficient material
+        #   7 = No legal moves
+        #   8 = Time expired with insufficient material
+        for line in f:
+            if line.startswith('[Result'):
+                game += 1
+                result = line.split('"')[1]
+                if result == '1/2-1/2':
+                    draws += 1
+                elif result == '1-0':
+                    white_wins += 1
+                    result_type = 0
+                else:
+                    black_wins += 1
+                    result_type = 1
+            elif line.startswith('[Termination'):
+                result_text = line.split('"')[1]
+                if result_text.lower() == 'threefold repetition':
+                    result_type = 3
+                elif result_text.lower() == '50-move limit':
+                    result_type = 2
+                elif result_text.lower() == 'time forfeiture':
+                    result_type += 4
+                elif result_text.lower() == 'insufficient material':
+                    result_type = 6
+                elif result_text.lower() == 'stalemate':
+                    result_type = 7
+                elif result_text.lower() == 'time expired with insufficient material':
+                    result_type = 8
+                else:
+                    raise Exception('Unrecognized result type: ' + result_text)
+            elif line and line[0].isdigit():
+                number_of_moves = line.split('. ')[0]
+            elif line.startswith('[TimeControl'):
+                time = line.split('"')[1]
+            elif line.startswith('[TimeLeftWhite'):
+                white_time_left = line.split('"')[1]
+            elif line.startswith('[TimeLeftBlack'):
+                black_time_left = line.split('"')[1]
+            elif line.startswith('[Event') and game > 0:
+                write_line(w, game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left, number_of_moves)
+                number_of_moves = 0
+
+        if game > 0:
+            write_line(w, game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left, number_of_moves)
+    return plot_data_file_name
+
+
 def plot_endgames(file_name):
     parsed_data_file_name = parse_game_file(file_name)
     data = np.genfromtxt(parsed_data_file_name, delimiter='\t', names=True)
+    os.remove(parsed_data_file_name)
     column_headers = [name.replace('_', ' ') for name in data.dtype.names]
 
-    game_number =     np.array([int(row[0]) for row in data])
-    white_wins =      np.array([int(row[1]) for row in data])
-    black_wins =      np.array([int(row[2]) for row in data])
-    draws =           np.array([int(row[3]) for row in data])
-    game_time =       np.array([row[4] for row in data])
-    result_type =     np.array([int(row[5]) for row in data])
+    game_number     = np.array([int(row[0]) for row in data])
+    white_wins      = np.array([int(row[1]) for row in data])
+    black_wins      = np.array([int(row[2]) for row in data])
+    draws           = np.array([int(row[3]) for row in data])
+    game_time       = np.array([row[4] for row in data])
+    result_type     = np.array([int(row[5]) for row in data])
     white_time_left = np.array([row[6] for row in data])
     black_time_left = np.array([row[7] for row in data])
-    moves_in_game =   np.array([int(row[8]) for row in data])
+    moves_in_game   = np.array([int(row[8]) for row in data])
 
     line_width = 2
     bar_line_width = 0.5
@@ -30,24 +103,16 @@ def plot_endgames(file_name):
     stat_text_size = 7
 
     winner_figure, winner_axes = plt.subplots()
-    winner_plots = winner_axes.semilogx(game_number, 100*white_wins/game_number,
-                                        game_number, 100*black_wins/game_number,
-                                        game_number, 100*draws/game_number)
-    for p in winner_plots:
-        p.set_linewidth(line_width)
-
-    winner_legend_labels = [f"{column_headers[1]} ({white_wins[-1]})",
-                            f"{column_headers[2]} ({black_wins[-1]})",
-                            f"{column_headers[3]} ({draws[-1]})"]
+    winner_axes.semilogx(game_number, 100*white_wins/game_number, linewidth=line_width, label=f"{column_headers[1]} ({white_wins[-1]})")
+    winner_axes.semilogx(game_number, 100*black_wins/game_number, linewidth=line_width, label=f"{column_headers[2]} ({black_wins[-1]})")
+    winner_axes.semilogx(game_number, 100*draws/game_number, linewidth=line_width, label=f"{column_headers[3]} ({draws[-1]})")
     winner_axes.set_xlabel(column_headers[0])
     winner_axes.set_ylabel('Percentage')
-    winner_axes.legend(winner_plots, winner_legend_labels)
+    winner_axes.legend()
     winner_axes.set_title('Winning Sides')
 
     winner_figure.savefig(f"{file_name}_game_outcomes.{pic_ext}", **picture_file_args)
     plt.close(winner_figure)
-
-
 
     white_checkmates = result_type == 0
     black_checkmates = result_type == 1
@@ -62,38 +127,23 @@ def plot_endgames(file_name):
     if np.logical_or(result_type > 8, result_type < 0).any():
         print('Unknown result types found.')
 
-
     outcome_figure, outcome_axes = plt.subplots()
-    outcome_plots = outcome_axes.loglog(game_number, 100*np.cumsum(white_checkmates)/game_number,
-                                        game_number, 100*np.cumsum(black_checkmates)/game_number,
-                                        game_number, 100*np.cumsum(white_time_win)/game_number,
-                                        game_number, 100*np.cumsum(black_time_win)/game_number,
-                                        game_number, 100*np.cumsum(fifty_moves)/game_number,
-                                        game_number, 100*np.cumsum(threefold)/game_number,
-                                        game_number, 100*np.cumsum(material)/game_number,
-                                        game_number, 100*np.cumsum(no_legal)/game_number,
-                                        game_number, 100*np.cumsum(time_and_material)/game_number,
-                                        nonpositive='mask')
-    for p in outcome_plots:
-        p.set_linewidth(line_width)
-
+    outcome_axes.loglog(game_number, 100*np.cumsum(white_checkmates)/game_number, nonpositive='mask', linewidth=line_width, label=f'White checkmate ({sum(white_checkmates)})')
+    outcome_axes.loglog(game_number, 100*np.cumsum(black_checkmates)/game_number, nonpositive='mask', linewidth=line_width, label=f'Black checkmate ({sum(black_checkmates)})')
+    outcome_axes.loglog(game_number, 100*np.cumsum(white_time_win)/game_number, nonpositive='mask', linewidth=line_width, label=f'White wins on time ({sum(white_time_win)})')
+    outcome_axes.loglog(game_number, 100*np.cumsum(black_time_win)/game_number, nonpositive='mask', linewidth=line_width, label=f'Black wins on time ({sum(black_time_win)})')
+    outcome_axes.loglog(game_number, 100*np.cumsum(fifty_moves)/game_number, nonpositive='mask', linewidth=line_width, label=f'50-move ({sum(fifty_moves)})')
+    outcome_axes.loglog(game_number, 100*np.cumsum(threefold)/game_number, nonpositive='mask', linewidth=line_width, label=f'3-fold ({sum(threefold)})')
+    outcome_axes.loglog(game_number, 100*np.cumsum(material)/game_number, nonpositive='mask', linewidth=line_width, label=f'Insufficient material ({sum(material)})')
+    outcome_axes.loglog(game_number, 100*np.cumsum(no_legal)/game_number, nonpositive='mask', linewidth=line_width, label=f'Stalemate ({sum(no_legal)})')
+    outcome_axes.loglog(game_number, 100*np.cumsum(time_and_material)/game_number, nonpositive='mask', linewidth=line_width, label=f'Time expires w/o material ({sum(time_and_material)})')
     outcome_axes.set_xlabel('Games played')
     outcome_axes.set_ylabel('Percentage')
-    outcome_legend_labels = [f'White checkmate ({sum(white_checkmates)})',
-                             f'Black checkmate ({sum(black_checkmates)})',
-                             f'White wins on time ({sum(white_time_win)})',
-                             f'Black wins on time ({sum(black_time_win)})',
-                             f'50-move ({sum(fifty_moves)})',
-                             f'3-fold ({sum(threefold)})',
-                             f'Insufficient material ({sum(material)})',
-                             f'Stalemate ({sum(no_legal)})',
-                             f'Time expires w/o material ({sum(time_and_material)})']
-    outcome_axes.legend(outcome_plots, outcome_legend_labels)
+    outcome_axes.legend()
     outcome_axes.set_title('Type of Endgame')
 
     outcome_figure.savefig(f"{file_name}_game_result_type_frequencies.{pic_ext}", **picture_file_args)
     plt.close(outcome_figure)
-
 
     if max(game_time) > 0:
         game_time_figure, game_time_axes = plt.subplots()
@@ -110,11 +160,12 @@ def plot_endgames(file_name):
         convolve_window = np.ones(window)/window
         x_margin = int(np.floor(window/2))
         avg_x_axis = game_number[x_margin - 1 : -x_margin]
-        p = game_time_axes.plot(avg_x_axis,
-                                np.convolve(avg_time_left, convolve_window, mode="valid"),
-                                'r',
-                                linewidth=line_width)
-        game_time_axes.legend(p, ['Moving average'])
+        game_time_axes.plot(avg_x_axis,
+                            np.convolve(avg_time_left, convolve_window, mode="valid"),
+                            'r',
+                            linewidth=line_width,
+                            label='Moving average')
+        game_time_axes.legend()
         game_time_axes.set_ylim(max_time_left*(-0.10), max_time_left*1.05)
         game_time_axes.set_xlabel('Game number')
         game_time_axes.set_ylabel('Time (sec)')
@@ -122,7 +173,6 @@ def plot_endgames(file_name):
 
         game_time_figure.savefig(f'{file_name}_game_time_left.{pic_ext}', **picture_file_args)
         plt.close(game_time_figure)
-
 
     # Don't plot top 0.1% of longest games to make trends easier to see
     max_game_count = np.floor(0.999*len(moves_in_game))
@@ -146,7 +196,7 @@ def plot_endgames(file_name):
     plt.close(move_count_figure)
 
     move_count_histogram_figure, move_count_histogram_axes = plt.subplots()
-    move_count_bar_plot = move_count_histogram_axes.bar(move_bins[0:-1], move_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
+    move_count_histogram_axes.bar(move_bins[0:-1], move_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width, label='All game lengths')
     move_count_histogram_axes.set_xlabel('Moves in Game')
     move_count_histogram_axes.set_ylabel(f'Counts (total = {number_of_games})')
     move_count_histogram_axes.set_title('Number of moves in game')
@@ -160,7 +210,7 @@ def plot_endgames(file_name):
     mean_log = np.mean(np.log(moves_in_game_fit))
     std_log = np.std(np.log(moves_in_game_fit))
     fit = number_of_games*np.exp(-.5*np.power((np.log(bins_fit) - mean_log)/std_log, 2))/(bins_fit*std_log*np.sqrt(2*np.pi))
-    bar_fit_plot = move_count_histogram_axes.plot(bins_fit, fit, linewidth=line_width)
+    move_count_histogram_axes.plot(bins_fit, fit, linewidth=line_width, label='Log-Normal fit')
 
     stats = [f'Mean = {mean_moves:.2f}',
              f'Median = {np.median(moves_in_game):.2f}',
@@ -175,15 +225,14 @@ def plot_endgames(file_name):
     yl = move_count_histogram_axes.get_ylim()
     move_count_histogram_axes.text(0.65*xl[1], 0.5*yl[1], '\n'.join(stats), fontsize=stat_text_size)
 
-    move_count_histogram_axes.legend([move_count_bar_plot[0], bar_fit_plot[0]], ['All game lengths', 'Log-Normal fit'])
+    move_count_histogram_axes.legend()
     move_count_histogram_figure.savefig(f'{file_name}_moves_in_game_histogram.{pic_ext}', **picture_file_args)
     plt.close(move_count_histogram_figure)
-
 
     winning_games_lengths = moves_in_game[white_checkmates | black_checkmates]
     winning_move_counts, winning_move_bins = np.histogram(winning_games_lengths, range(1, max(moves_in_game) + 1))
     checkmate_figure, checkmate_axes = plt.subplots()
-    checkmate_histogram = checkmate_axes.bar(winning_move_bins[0:-1], winning_move_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
+    checkmate_axes.bar(winning_move_bins[0:-1], winning_move_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width, label='All checkmates')
     checkmate_axes.set_title('Checkmate game lengths')
     checkmate_axes.set_xlim(0, max_game_length_display)
 
@@ -193,7 +242,7 @@ def plot_endgames(file_name):
     std_log = np.std(np.log(winning_games_lengths))
     winning_games_count = len(winning_games_lengths)
     fit = winning_games_count*np.exp(-.5*np.power((np.log(bins_fit) - mean_log)/std_log, 2))/(bins_fit*std_log*np.sqrt(2*np.pi))
-    checkmate_fit = checkmate_axes.plot(bins_fit, fit, linewidth=line_width)
+    checkmate_axes.plot(bins_fit, fit, linewidth=line_width, label='Log-normal fit')
 
     checkmate_axes.set_xlabel('Moves in Game')
     checkmate_axes.set_ylabel(f'Counts (total = {winning_games_count})')
@@ -211,10 +260,9 @@ def plot_endgames(file_name):
     yl = checkmate_axes.get_ylim()
     checkmate_axes.text(0.65*xl[1], 0.5*yl[1], '\n'.join(stats), fontsize=stat_text_size)
 
-    checkmate_axes.legend([checkmate_histogram[0], checkmate_fit[0]], ['All checkmates', 'Log-normal fit'])
+    checkmate_axes.legend()
     checkmate_figure.savefig(f'{file_name}_moves_in_game_histogram_checkmate.{pic_ext}', **picture_file_args)
     plt.close(checkmate_figure)
-
 
     drawn_games = (fifty_moves | threefold | material | no_legal)
     drawn_counts, drawn_bins = np.histogram(moves_in_game[drawn_games], range(1, max(moves_in_game) + 1))
@@ -224,28 +272,25 @@ def plot_endgames(file_name):
     no_legal_counts, no_legal_bins = np.histogram(moves_in_game[no_legal], range(1, max(moves_in_game) + 1))
 
     other_endgame_figure, other_endgame_axes = plt.subplots()
-    other_endgame_bar_plot = other_endgame_axes.bar(drawn_bins[0:-1], drawn_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
-    fifty_move_plot = other_endgame_axes.plot(fifty_bins[0:-1], fifty_counts, linewidth=draw_bar_line_width)
-    threefold_plot = other_endgame_axes.plot(threefold_bins[0:-1], threefold_counts, linewidth=draw_bar_line_width)
-    material_plot = other_endgame_axes.plot(material_bins[0:-1], material_counts, linewidth=draw_bar_line_width)
-    stalemate_plot = other_endgame_axes.plot(no_legal_bins[0:-1], no_legal_counts, linewidth=draw_bar_line_width)
-    other_endgame_axes.set_title ('Draw game lengths')
+    other_endgame_axes.bar(drawn_bins[0:-1], drawn_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width, label='All draws')
+    other_endgame_axes.plot(fifty_bins[0:-1], fifty_counts, linewidth=draw_bar_line_width, label='Fifty moves')
+    other_endgame_axes.plot(threefold_bins[0:-1], threefold_counts, linewidth=draw_bar_line_width, label='3-fold')
+    other_endgame_axes.plot(material_bins[0:-1], material_counts, linewidth=draw_bar_line_width, label='Material')
+    other_endgame_axes.plot(no_legal_bins[0:-1], no_legal_counts, linewidth=draw_bar_line_width, label='Stalemate')
+    other_endgame_axes.set_title('Draw game lengths')
     other_endgame_axes.set_xlabel('Moves in Game')
     other_endgame_axes.set_ylabel(f'Counts (total = {sum(drawn_games)})')
-
-    other_endgame_axes.legend([other_endgame_bar_plot[0], fifty_move_plot[0], threefold_plot[0], material_plot[0], stalemate_plot[0]],
-                              ['All draws',              'Fifty moves',      '3-fold',          'Material',        'Stalemate'])
+    other_endgame_axes.legend()
 
     other_endgame_axes.set_xlim([0, max_game_length_display])
     other_endgame_figure.savefig(f'{file_name}_moves_in_game_histogram_draw.{pic_ext}', **picture_file_args)
     plt.close(other_endgame_figure)
 
-
     timeout_games = (white_time_win | black_time_win | time_and_material)
     timeout_counts, timeout_bins = np.histogram(moves_in_game[timeout_games], range(1, max(moves_in_game) + 1))
     timeout_figure, timeout_axes = plt.subplots()
     timeout_axes.bar(timeout_bins[0:-1], timeout_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
-    timeout_axes.set_title ('Timeout game lengths')
+    timeout_axes.set_title('Timeout game lengths')
     timeout_axes.set_xlabel('Moves in Game')
     timeout_axes.set_ylabel(f'Counts (total = {sum(timeout_games)})')
     timeout_axes.set_xlim(0, max_game_length_display)

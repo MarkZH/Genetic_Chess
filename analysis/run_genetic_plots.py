@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-from itertools import count
 import sys
 from gene_plots import plot_genome
 from win_lose_draw_plotting import plot_endgames
@@ -8,7 +7,9 @@ from opening_plotting import plot_all_openings
 from promotions import count_promotions
 from castling import count_all_castles
 
+
 def get_config_value(config_file: str, parameter: str):
+    parameter = ' '.join(parameter.split())
     with open(config_file) as config:
         for line in config:
             line = line.split('#', 1)[0].strip()
