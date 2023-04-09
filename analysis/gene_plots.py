@@ -1,20 +1,102 @@
 #!/usr/bin/python
 
 import sys
+import os
 import numpy as np
 import matplotlib.pyplot as plt
-from gene_pool_analyze import parse_gene_pool
 
-def plot_genome(gene_pool_filename: str) -> str:
-    filename = parse_gene_pool(gene_pool_filename)
+
+def add_value_to_data_line(data_line, header_line, title, value):
+    index = header_line.index(title)
+    if data_line[index]:
+        raise Exception('Value already found: ' + title + ' for ID ' + str(data_line[0]))
+    data_line[index] = value
+
+
+def parse_gene_pool(gene_pool_file_name):
+    # Read gene file for gene names
+    header_line = []
+    current_gene = ''
+    with open(gene_pool_file_name) as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+
+            if ':' in line:
+                parameter, value = line.split(':', 1)
+                parameter = parameter.strip()
+                if parameter == 'Still Alive':
+                    continue
+                elif parameter == 'ID':
+                    header_line.append(parameter)
+                elif parameter == 'Name':
+                    current_gene = value.strip()
+                elif parameter == 'Sorter Order':
+                    sorters = [name.strip() for name in value.split(',')]
+                    for sorter in sorters:
+                        header_line.append(current_gene + " - " + parameter + " - " + sorter)
+                else:
+                    header_line.append(current_gene + ' - ' + parameter)
+            elif line == 'END':
+                break
+            else:
+                raise Exception('Unknown line format: ' + line)
+
+    # Read gene pool file for data
+    output_file_name = gene_pool_file_name + '_parsed.txt'
+    with open(gene_pool_file_name) as f, open(output_file_name, 'w') as w:
+        new_data_line = ['']*len(header_line)
+        data_line = new_data_line.copy()
+        current_gene = ''
+        w.write(','.join(header_line) + '\n')
+        for line in f:
+            line = line.split('#')[0].strip()
+            if not line:
+                continue
+
+            if line == 'END':
+                data_line = [x or '0' for x in data_line]
+                w.write(','.join(data_line) + '\n')
+                current_gene = ''
+                data_line = new_data_line.copy()
+            elif ':' in line:
+                parameter, value = line.split(':', 1)
+                value = value.strip()
+                if parameter == 'Name':
+                    current_gene = value
+                elif parameter == 'Still Alive':
+                    continue
+                else:
+                    if current_gene:
+                        if parameter == "Sorter Order":
+                            sorters = [name.strip() for name in value.split(',')]
+                            for sorter in sorters:
+                                title = current_gene + ' - ' + parameter + ' - ' + sorter
+                                value = str(sorters.index(sorter) + 1)
+                                add_value_to_data_line(data_line, header_line, title, value)
+                            continue
+                        else:
+                            title = current_gene + ' - ' + parameter
+                    else:
+                        title = parameter  # ID
+
+                    add_value_to_data_line(data_line, header_line, title, value)
+
+    return output_file_name
+
+
+def plot_genome(gene_pool_filename: str) -> None:
+    parsed_data_file_name = parse_gene_pool(gene_pool_filename)
     picture_file_args = {'dpi': 600, 'format': 'png'}
     pic_ext = picture_file_args['format']
 
-    data = np.genfromtxt(filename, delimiter=',', names=True)
+    data = np.genfromtxt(parsed_data_file_name, delimiter=',', names=True)
+    if not data.dtype.names:
+        raise ValueError(f"No column names found in {parsed_data_file_name} from {gene_pool_filename}")
+    os.remove(parsed_data_file_name)
     id_list = [int(row[0]) for row in data]
     column_headers = [name.replace('__', ' - ').replace('_', ' ') for name in data.dtype.names]
-    xaxis_linewidth = 0.5
-    xaxis_linecolor = [0.4, 0.4, 0.4]
 
     special_plots = {}
 
@@ -23,29 +105,21 @@ def plot_genome(gene_pool_filename: str) -> str:
     piece_strength_axes.set_title('Piece Strength Evolution')
     piece_end_values = {}
     special_plots['piece strength'] = (piece_strength_figure, piece_strength_axes)
-    piece_strength_plots = []
-    piece_strength_labels = []
 
     opening_priority_figure, opening_priority_axes = plt.subplots()
     opening_priority_suffix = ' - Priority - Opening'
     opening_priority_axes.set_title('Opening Gene Priority Evolution')
     special_plots['gene priorities opening'] = (opening_priority_figure, opening_priority_axes)
-    opening_priority_plots = []
-    opening_priority_labels = []
 
     endgame_priority_figure, endgame_priority_axes = plt.subplots()
     endgame_priority_suffix = ' - Priority - Endgame'
     endgame_priority_axes.set_title('Endgame Gene Priority Evolution')
     special_plots['gene priorities endgame'] = (endgame_priority_figure, endgame_priority_axes)
-    endgame_priority_plots = []
-    endgame_priority_labels = []
 
     first_order_move_figure, first_order_move_axes = plt.subplots()
     sort_order_prefix = 'Move Sorting Gene - Sorter Order - '
     first_order_move_axes.set_title('Move Sorter Order Preference (1 = Highest Priority)')
     special_plots['sorting order preferences'] = (first_order_move_figure, first_order_move_axes)
-    first_order_plots = []
-    first_order_labels = []
 
     shorten = {'Castling Possible Gene': 'Castling',
                'Checkmate Material Gene': 'Checkmate',
@@ -59,17 +133,12 @@ def plot_genome(gene_pool_filename: str) -> str:
                'Total Force Gene': 'Force',
                'Pawn Structure Gene': 'Structure'}
 
-    marker_size = 5
+    marker_size = 1
     line_width = 1
 
-    invalid_plot = plt.figure()
-    plt.close(invalid_plot)
-
-
     # Plot evolution of individual genes
-    for yi in range(1, len(column_headers)):
+    for yi, name in enumerate(column_headers[1:], 1):
         this_data = np.array([datum[yi] for datum in data])
-        name = column_headers[yi]
         is_sorter_count = name == 'Move Sorting Gene - Sorter Count'
         if is_sorter_count:
             max_count = int(max(this_data))
@@ -96,78 +165,62 @@ def plot_genome(gene_pool_filename: str) -> str:
             if is_sorter_count:
                 these_axes.set_ylabel('Percent of games')
                 these_axes.set_ylim(0, sorter_count_ymax)
-            these_axes.axhline(color='k', linewidth=0.5)
+
+            if 'Speculation' not in name:
+                these_axes.axhline(color='k', linewidth=0.5)
 
             these_axes.set_title(name)
 
             this_figure.savefig(f'{gene_pool_filename} gene {name}.{pic_ext}', **picture_file_args)
             plt.close(this_figure)
 
-        plot_figure = invalid_plot
         if name.startswith(piece_strength_prefix):
-            plot_figure, plot_axes = piece_strength_figure, piece_strength_axes
+            plot_axes = piece_strength_axes
         elif name.endswith(opening_priority_suffix):
-            plot_figure, plot_axes = opening_priority_figure, opening_priority_axes
+            plot_axes = opening_priority_axes
         elif name.endswith(endgame_priority_suffix):
-            plot_figure, plot_axes = endgame_priority_figure, endgame_priority_axes
+            plot_axes = endgame_priority_axes
         elif is_sorter_order:
-            plot_figure, plot_axes = first_order_move_figure, first_order_move_axes
+            plot_axes = first_order_move_axes
+        else:
+            continue
 
-        if plot_figure != invalid_plot:
-            conv_window = 1000 if is_sorter_order else 100
-            smooth_data = np.convolve(this_data, np.ones(conv_window), mode="valid")/conv_window
-            conv_margin = int(np.floor(conv_window/2))
-            x_axis = id_list[conv_margin - 1 : -conv_margin]
+        conv_window = 1000 if is_sorter_order else 100
+        smooth_data = np.convolve(this_data, np.ones(conv_window), mode="valid")/conv_window
+        conv_margin = int(np.floor(conv_window/2))
+        x_axis = id_list[conv_margin - 1 : -conv_margin]
 
-            p = plot_axes.plot(x_axis, smooth_data, linewidth=line_width)[0]
+        if plot_axes == piece_strength_axes:
+            piece_symbol = name[-1]
+            end_value = f'{smooth_data[-1]:.2f}'
+            piece_end_values[piece_symbol] = end_value
+            label = f'{piece_symbol} ({end_value})'
+        elif plot_axes == opening_priority_axes:
+            label = shorten[name[:-len(opening_priority_suffix)]]
+        elif plot_axes == endgame_priority_axes:
+            label = shorten[name[:-len(endgame_priority_suffix)]]
+        elif plot_axes == first_order_move_axes:
+            label = name[len(sort_order_prefix) - 1:]
 
-            if plot_figure == piece_strength_figure:
-                name = name[-1]
-                make_dashed = (len(piece_strength_plots) > 7)
-                piece_end_values[name] = f'{smooth_data[-1]:.2f}'
-                piece_strength_plots.append(p)
-                piece_strength_labels.append(name + ' (' + piece_end_values[name] + ')')
-            elif plot_figure == opening_priority_figure:
-                opening_priority_plots.append(p)
-                opening_priority_labels.append(shorten[name[:-len(opening_priority_suffix)]])
-                make_dashed = (len(opening_priority_plots) > 7)
-            elif plot_figure == endgame_priority_figure:
-                endgame_priority_plots.append(p)
-                endgame_priority_labels.append(shorten[name[:-len(endgame_priority_suffix)]])
-                make_dashed = (len(endgame_priority_plots) > 7)
-            elif plot_figure == first_order_move_figure:
-                first_order_plots.append(p)
-                first_order_labels.append(name[len(sort_order_prefix) - 1:])
-
-            if make_dashed:
-                p.set_linestyle(':')
+        plot_axes.plot(x_axis, smooth_data, linewidth=line_width, label=label)
 
     print('# Piece values')
-    for piece in piece_end_values.keys():
-        print(f'{piece} = {piece_end_values[piece]}')
+    for piece, value in piece_end_values.items():
+        print(f'{piece} = {value}')
 
     print('\n# Priority Plot Key')
     for gene, short_name in shorten.items():
         print(f'{short_name} --> {gene}')
 
     # Create special summary plots
-    for name in special_plots.keys():
-        special_figure, special_axes = special_plots[name]
+    for name, (special_figure, special_axes) in special_plots.items():
         special_axes.axhline(color='k', linewidth=0.2)
-
-        if special_figure == piece_strength_figure:
-            special_axes.legend(piece_strength_plots, piece_strength_labels)
-        elif special_figure == opening_priority_figure:
-            special_axes.legend(opening_priority_plots, opening_priority_labels)
-        elif special_figure == endgame_priority_figure:
-            special_axes.legend(endgame_priority_plots, endgame_priority_labels)
-        elif special_figure == first_order_move_figure:
-            special_axes.legend(first_order_plots, first_order_labels)
-    
+        special_axes.legend()
         special_axes.set_xlabel('ID')
 
         special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **picture_file_args)
         plt.close(special_figure)
+
 
 if __name__ == "__main__":
     plot_genome(sys.argv[1])
