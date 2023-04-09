@@ -7,6 +7,7 @@ from opening_plotting import plot_all_openings
 from promotions import count_promotions
 from castling import count_all_castles
 
+
 def get_config_value(config_file: str, parameter: str):
     with open(config_file) as config:
         for line in config:

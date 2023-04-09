@@ -6,8 +6,10 @@ from delete_comments import delete_comments
 
 # Count how many times a castling move was picked (O-O = kingside, O-O-O = queenside)
 
+
 def delete_checkmarks(move: str) -> str:
     return move.replace("+", "").replace("#", "")
+
 
 def count_castles(game_file_name: str, color: str) -> None:
     castle_count = defaultdict(lambda: 0)
@@ -19,10 +21,10 @@ def count_castles(game_file_name: str, color: str) -> None:
             parts = line.split()
             white_move = parts[1] if len(parts) > 1 else ""
             black_move = parts[2] if len(parts) > 2 else ""
-            
+
             white_move = delete_checkmarks(white_move)
             black_move = delete_checkmarks(black_move)
-            
+
             if color != "White" and "O" in black_move:
                 castle_count[black_move] += 1
             if color != "Black" and "O" in white_move:
@@ -34,6 +36,7 @@ def count_castles(game_file_name: str, color: str) -> None:
     for castle, count in sorted(castle_count.items(), key=lambda x: x[0]):
         spaces = " "*(count_column_width - len(str(count)))
         print(spaces, count, castle)
+
 
 def count_all_castles(game_file):
     for color in ["", "White", "Black"]:

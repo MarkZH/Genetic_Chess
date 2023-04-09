@@ -14,7 +14,7 @@ def remove_nested_parentheses(line: str) -> str:
             if depth == 0:
                 opening_index = index
             depth += 1
-            
+
     return ' '.join(line.split())
 
 

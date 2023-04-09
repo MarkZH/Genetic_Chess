@@ -4,8 +4,8 @@ import sys
 from collections import Counter
 from delete_comments import delete_comments
 
-# Count how many times each type of piece is picked for a pawn promotion
 
+# Count how many times each type of piece is picked for a pawn promotion
 def count_promotions(game_file_name: str):
     print("\n# Promotions")
     promotion_counts = Counter()
@@ -17,7 +17,7 @@ def count_promotions(game_file_name: str):
             for scrap in line.split():
                 if "=" not in scrap:
                     continue
-                promotion = scrap.split("=")[1].replace("+", "").replace("#",  "")
+                promotion = scrap.split("=")[1].replace("+", "").replace("#", "")
                 promotion_counts[promotion] += 1
 
     count_column_width = len(str(max(promotion_counts.values())))

@@ -27,7 +27,7 @@ def get_opening_files(game_file: str) -> List[str]:
 
             def get_part(index):
                 return parts[index] if len(parts) > index and not parts[index][0].isdigit() else ""
-            
+
             white_move = get_part(1)
             black_move = get_part(2)
             opening = f"{white_move} {black_move}".strip()
@@ -48,6 +48,7 @@ def get_opening_files(game_file: str) -> List[str]:
 
     return [outfile, white_file, black_file]
 
+
 def parse_opening_list(filename):
     with open(filename) as f:
         openings = [line.strip() for line in f]
@@ -63,6 +64,7 @@ def parse_opening_list(filename):
             out.write(','.join(marker) + '\n')
 
     return parsed_file_name
+
 
 def plot_opening(file_name: str, plot_title: str):
     parsed_file_name = parse_opening_list(file_name)
@@ -86,6 +88,7 @@ def plot_opening(file_name: str, plot_title: str):
     axes.set_title(plot_title)
     figure.savefig(f'{file_name}_opening_moves_plot.{pic_ext}', **picture_file_args)
     plt.close(figure)
+
 
 def plot_all_openings(game_file):
     for parsed_file in get_opening_files(game_file):

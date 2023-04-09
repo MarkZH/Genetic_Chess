@@ -5,6 +5,7 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
+
 def add_value_to_data_line(data_line, header_line, title, value):
     index = header_line.index(title)
     if data_line[index]:
@@ -78,7 +79,7 @@ def parse_gene_pool(gene_pool_file_name):
                         else:
                             title = current_gene + ' - ' + parameter
                     else:
-                        title = parameter #ID
+                        title = parameter  # ID
 
                     add_value_to_data_line(data_line, header_line, title, value)
 
@@ -217,6 +218,7 @@ def plot_genome(gene_pool_filename: str) -> str:
 
         special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **picture_file_args)
         plt.close(special_figure)
+
 
 if __name__ == "__main__":
     plot_genome(sys.argv[1])

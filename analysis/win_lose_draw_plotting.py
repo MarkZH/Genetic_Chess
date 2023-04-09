@@ -8,8 +8,10 @@ import matplotlib.pyplot as plt
 picture_file_args = {'dpi': 600, 'format': 'png'}
 pic_ext = picture_file_args['format']
 
+
 def write_line(file, *args):
     file.write('\t'.join(str(x) for x in args) + '\n')
+
 
 def parse_game_file(file_name):
     game = 0
@@ -77,21 +79,22 @@ def parse_game_file(file_name):
             write_line(w, game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left, number_of_moves)
     return plot_data_file_name
 
+
 def plot_endgames(file_name):
     parsed_data_file_name = parse_game_file(file_name)
     data = np.genfromtxt(parsed_data_file_name, delimiter='\t', names=True)
     os.remove(parsed_data_file_name)
     column_headers = [name.replace('_', ' ') for name in data.dtype.names]
 
-    game_number =     np.array([int(row[0]) for row in data])
-    white_wins =      np.array([int(row[1]) for row in data])
-    black_wins =      np.array([int(row[2]) for row in data])
-    draws =           np.array([int(row[3]) for row in data])
-    game_time =       np.array([row[4] for row in data])
-    result_type =     np.array([int(row[5]) for row in data])
+    game_number     = np.array([int(row[0]) for row in data])
+    white_wins      = np.array([int(row[1]) for row in data])
+    black_wins      = np.array([int(row[2]) for row in data])
+    draws           = np.array([int(row[3]) for row in data])
+    game_time       = np.array([row[4] for row in data])
+    result_type     = np.array([int(row[5]) for row in data])
     white_time_left = np.array([row[6] for row in data])
     black_time_left = np.array([row[7] for row in data])
-    moves_in_game =   np.array([int(row[8]) for row in data])
+    moves_in_game   = np.array([int(row[8]) for row in data])
 
     line_width = 2
     bar_line_width = 0.5
@@ -117,8 +120,6 @@ def plot_endgames(file_name):
     winner_figure.savefig(f"{file_name}_game_outcomes.{pic_ext}", **picture_file_args)
     plt.close(winner_figure)
 
-
-
     white_checkmates = result_type == 0
     black_checkmates = result_type == 1
     fifty_moves = result_type == 2
@@ -131,7 +132,6 @@ def plot_endgames(file_name):
     number_of_games = len(game_number)
     if np.logical_or(result_type > 8, result_type < 0).any():
         print('Unknown result types found.')
-
 
     outcome_figure, outcome_axes = plt.subplots()
     outcome_plots = outcome_axes.loglog(game_number, 100*np.cumsum(white_checkmates)/game_number,
@@ -164,7 +164,6 @@ def plot_endgames(file_name):
     outcome_figure.savefig(f"{file_name}_game_result_type_frequencies.{pic_ext}", **picture_file_args)
     plt.close(outcome_figure)
 
-
     if max(game_time) > 0:
         game_time_figure, game_time_axes = plt.subplots()
         avg_time_left = (white_time_left + black_time_left)/2
@@ -192,7 +191,6 @@ def plot_endgames(file_name):
 
         game_time_figure.savefig(f'{file_name}_game_time_left.{pic_ext}', **picture_file_args)
         plt.close(game_time_figure)
-
 
     # Don't plot top 0.1% of longest games to make trends easier to see
     max_game_count = np.floor(0.999*len(moves_in_game))
@@ -249,7 +247,6 @@ def plot_endgames(file_name):
     move_count_histogram_figure.savefig(f'{file_name}_moves_in_game_histogram.{pic_ext}', **picture_file_args)
     plt.close(move_count_histogram_figure)
 
-
     winning_games_lengths = moves_in_game[white_checkmates | black_checkmates]
     winning_move_counts, winning_move_bins = np.histogram(winning_games_lengths, range(1, max(moves_in_game) + 1))
     checkmate_figure, checkmate_axes = plt.subplots()
@@ -285,7 +282,6 @@ def plot_endgames(file_name):
     checkmate_figure.savefig(f'{file_name}_moves_in_game_histogram_checkmate.{pic_ext}', **picture_file_args)
     plt.close(checkmate_figure)
 
-
     drawn_games = (fifty_moves | threefold | material | no_legal)
     drawn_counts, drawn_bins = np.histogram(moves_in_game[drawn_games], range(1, max(moves_in_game) + 1))
     fifty_counts, fifty_bins = np.histogram(moves_in_game[fifty_moves], range(1, max(moves_in_game) + 1))
@@ -310,12 +306,11 @@ def plot_endgames(file_name):
     other_endgame_figure.savefig(f'{file_name}_moves_in_game_histogram_draw.{pic_ext}', **picture_file_args)
     plt.close(other_endgame_figure)
 
-
     timeout_games = (white_time_win | black_time_win | time_and_material)
     timeout_counts, timeout_bins = np.histogram(moves_in_game[timeout_games], range(1, max(moves_in_game) + 1))
     timeout_figure, timeout_axes = plt.subplots()
     timeout_axes.bar(timeout_bins[0:-1], timeout_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
-    timeout_axes.set_title ('Timeout game lengths')
+    timeout_axes.set_title('Timeout game lengths')
     timeout_axes.set_xlabel('Moves in Game')
     timeout_axes.set_ylabel(f'Counts (total = {sum(timeout_games)})')
     timeout_axes.set_xlim(0, max_game_length_display)
