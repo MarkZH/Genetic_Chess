@@ -132,8 +132,6 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
                'Total Force Gene': 'Force',
                'Pawn Structure Gene': 'Structure'}
 
-    line_width = 1
-
     # Plot evolution of individual genes
     for yi, name in enumerate(column_headers[1:], 1):
         this_data = np.array([datum[yi] for datum in data])
@@ -201,7 +199,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
         elif plot_axes == first_order_move_axes:
             label = name[len(sort_order_prefix) - 1:]
 
-        plot_axes.plot(x_axis, smooth_data, linewidth=line_width, label=label)
+        plot_axes.plot(x_axis, smooth_data, linewidth=common_plot_params['plot line weight'], label=label)
 
     print('# Piece values')
     for piece, value in piece_end_values.items():

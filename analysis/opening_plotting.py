@@ -79,7 +79,9 @@ def plot_opening(file_name: str, plot_title: str, common_plot_params: Dict[str, 
     for col in range(len(top_data[0])):
         opening_counts = np.cumsum(np.array([row[col] for row in top_data]))
         percents = 100*(opening_counts/game_counts)
-        axes.plot(game_counts, percents, linewidth=2, label=top_data.dtype.names[col].replace("_", " "))
+        axes.plot(game_counts, percents,
+                  linewidth=common_plot_params['plot line weight'],
+                  label=top_data.dtype.names[col].replace("_", " "))
         max_percent = max(percents[int(np.ceil(0.01*len(percents))) : -1])
         ymax = max(ymax, max_percent)
 

@@ -35,7 +35,8 @@ game_file = f"{pool_file}_games.pgn"
 picture_file_args = {'dpi': 600,
                      'format': 'png'}
 common_plot_params = {'legend text size': 'x-small',
-                      'scatter dot size': 1}
+                      'scatter dot size': 1,
+                      'plot line weight': 1}
 
 plot_genome(pool_file, common_plot_params, picture_file_args)
 plot_endgames(game_file, common_plot_params, picture_file_args)

@@ -93,7 +93,7 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
     black_time_left = np.array([row[7] for row in data])
     moves_in_game   = np.array([int(row[8]) for row in data])
 
-    line_width = 2
+    line_width = common_plot_params["plot line weight"]
     bar_line_width = 0.5
     draw_bar_line_width = 2
     marker_size = common_plot_params["scatter dot size"]
