@@ -95,7 +95,7 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
 
     line_width = common_plot_params["plot line weight"]
     bar_line_width = 0.5
-    bar_color = 'k'
+    bar_color = common_plot_params["bar color"]
     marker_size = common_plot_params["scatter dot size"]
     stat_text_size = 7
 
