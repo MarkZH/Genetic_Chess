@@ -163,7 +163,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
                 these_axes.set_ylim(0, sorter_count_ymax)
 
             if 'Speculation' not in name:
-                these_axes.axhline(color='k', linewidth=0.5)
+                these_axes.axhline(color=common_plot_params["x-axis color"], linewidth=common_plot_params["x-axis weight"])
 
             these_axes.set_title(name)
 
@@ -211,7 +211,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
 
     # Create special summary plots
     for name, (special_figure, special_axes) in special_plots.items():
-        special_axes.axhline(color='k', linewidth=0.2)
+        special_axes.axhline(color=common_plot_params["x-axis color"], linewidth=common_plot_params["x-axis weight"])
         special_axes.legend(fontsize=common_plot_params["legend text size"])
         special_axes.set_xlabel('ID')
 

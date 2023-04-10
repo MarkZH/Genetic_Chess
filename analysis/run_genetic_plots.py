@@ -36,7 +36,9 @@ picture_file_args = {'dpi': 600,
                      'format': 'png'}
 common_plot_params = {'legend text size': 'x-small',
                       'scatter dot size': 1,
-                      'plot line weight': 1}
+                      'plot line weight': 1,
+                      'x-axis weight': 0.5,
+                      'x-axis color': 'k'}
 
 plot_genome(pool_file, common_plot_params, picture_file_args)
 plot_endgames(game_file, common_plot_params, picture_file_args)
