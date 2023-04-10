@@ -138,7 +138,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
         is_sorter_count = name == 'Move Sorting Gene - Sorter Count'
         if is_sorter_count:
             max_count = int(max(this_data))
-            split_data = np.zeros((len(this_data), max_count + 1), int)
+            split_data = np.zeros((len(this_data), max_count + 1))
             game_count = np.array(range(1, len(this_data) + 1)).T
             sorter_count_ymax = 0
             for count in range(max_count + 1):
@@ -152,15 +152,19 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
         if not is_sorter_order:
             this_figure, these_axes = plt.subplots()
 
-            for column in range(1 if this_data.ndim == 1 else np.size(this_data, 1)):
-                p = these_axes.plot(id_list, this_data, '.', markersize=common_plot_params['scatter dot size'])
-                if is_sorter_count:
-                    these_axes.text(id_list[-1]*1.02, this_data[-1, column], str(column), color=p[0].get_color())
+            for column in range(np.size(this_data, 1) if is_sorter_count else 1):
+                label = str(column) if is_sorter_count else None
+                style = '-' if is_sorter_count else '.'
+                linewidth = common_plot_params['plot line weight'] if is_sorter_count else None
+                markersize = None if is_sorter_count else common_plot_params["scatter dot size"]
+                d = this_data[:, column] if is_sorter_count else this_data
+                these_axes.plot(id_list, d, style, markersize=markersize, linewidth=linewidth, label=label)
 
             these_axes.set_xlabel(column_headers[0])
             if is_sorter_count:
                 these_axes.set_ylabel('Percent of games')
-                these_axes.set_ylim(0, sorter_count_ymax)
+                these_axes.set_ylim(0, sorter_count_ymax*1.05)
+                these_axes.legend(fontsize=common_plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
 
             if 'Speculation' not in name:
                 these_axes.axhline(color=common_plot_params["x-axis color"], linewidth=common_plot_params["x-axis weight"])
@@ -168,7 +172,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
             these_axes.set_title(name)
 
             pic_ext = picture_file_args["format"]
-            this_figure.savefig(f'{gene_pool_filename} gene {name}.{pic_ext}', **picture_file_args)
+            this_figure.savefig(f'{gene_pool_filename} gene {name}.{pic_ext}', **picture_file_args, bbox_inches="tight" if is_sorter_count else None)
             plt.close(this_figure)
 
         if name.startswith(piece_strength_prefix):
