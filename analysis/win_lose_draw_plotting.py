@@ -95,7 +95,7 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
 
     line_width = common_plot_params["plot line weight"]
     bar_line_width = 0.5
-    draw_bar_line_width = 2
+    bar_color = 'k'
     marker_size = common_plot_params["scatter dot size"]
     stat_text_size = 7
 
@@ -194,7 +194,7 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
     plt.close(move_count_figure)
 
     move_count_histogram_figure, move_count_histogram_axes = plt.subplots()
-    move_count_histogram_axes.bar(move_bins[0:-1], move_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width, label='All game lengths')
+    move_count_histogram_axes.bar(move_bins[0:-1], move_counts, width=1, facecolor=bar_color, edgecolor=bar_color, linewidth=bar_line_width, label='All game lengths')
     move_count_histogram_axes.set_xlabel('Moves in Game')
     move_count_histogram_axes.set_ylabel(f'Counts (total = {number_of_games})')
     move_count_histogram_axes.set_title('Number of moves in game')
@@ -230,7 +230,7 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
     winning_games_lengths = moves_in_game[white_checkmates | black_checkmates]
     winning_move_counts, winning_move_bins = np.histogram(winning_games_lengths, range(1, max(moves_in_game) + 1))
     checkmate_figure, checkmate_axes = plt.subplots()
-    checkmate_axes.bar(winning_move_bins[0:-1], winning_move_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width, label='All checkmates')
+    checkmate_axes.bar(winning_move_bins[0:-1], winning_move_counts, width=1, facecolor=bar_color, edgecolor=bar_color, linewidth=bar_line_width, label='All checkmates')
     checkmate_axes.set_title('Checkmate game lengths')
     checkmate_axes.set_xlim(0, max_game_length_display)
 
@@ -270,11 +270,11 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
     no_legal_counts, no_legal_bins = np.histogram(moves_in_game[no_legal], range(1, max(moves_in_game) + 1))
 
     other_endgame_figure, other_endgame_axes = plt.subplots()
-    other_endgame_axes.bar(drawn_bins[0:-1], drawn_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width, label='All draws')
-    other_endgame_axes.plot(fifty_bins[0:-1], fifty_counts, linewidth=draw_bar_line_width, label='Fifty moves')
-    other_endgame_axes.plot(threefold_bins[0:-1], threefold_counts, linewidth=draw_bar_line_width, label='3-fold')
-    other_endgame_axes.plot(material_bins[0:-1], material_counts, linewidth=draw_bar_line_width, label='Material')
-    other_endgame_axes.plot(no_legal_bins[0:-1], no_legal_counts, linewidth=draw_bar_line_width, label='Stalemate')
+    other_endgame_axes.bar(drawn_bins[0:-1], drawn_counts, width=1, facecolor=bar_color, edgecolor=bar_color, linewidth=bar_line_width, label='All draws')
+    other_endgame_axes.plot(fifty_bins[0:-1], fifty_counts, linewidth=line_width, label='Fifty moves')
+    other_endgame_axes.plot(threefold_bins[0:-1], threefold_counts, linewidth=line_width, label='3-fold')
+    other_endgame_axes.plot(material_bins[0:-1], material_counts, linewidth=line_width, label='Material')
+    other_endgame_axes.plot(no_legal_bins[0:-1], no_legal_counts, linewidth=line_width, label='Stalemate')
     other_endgame_axes.set_title('Draw game lengths')
     other_endgame_axes.set_xlabel('Moves in Game')
     other_endgame_axes.set_ylabel(f'Counts (total = {sum(drawn_games)})')
@@ -287,7 +287,7 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
     timeout_games = (white_time_win | black_time_win | time_and_material)
     timeout_counts, timeout_bins = np.histogram(moves_in_game[timeout_games], range(1, max(moves_in_game) + 1))
     timeout_figure, timeout_axes = plt.subplots()
-    timeout_axes.bar(timeout_bins[0:-1], timeout_counts, width=1, facecolor='w', edgecolor='k', linewidth=bar_line_width)
+    timeout_axes.bar(timeout_bins[0:-1], timeout_counts, width=1, facecolor=bar_color, edgecolor=bar_color, linewidth=bar_line_width)
     timeout_axes.set_title('Timeout game lengths')
     timeout_axes.set_xlabel('Moves in Game')
     timeout_axes.set_ylabel(f'Counts (total = {sum(timeout_games)})')
