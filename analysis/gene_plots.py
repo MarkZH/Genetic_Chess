@@ -215,7 +215,7 @@ def plot_genome(gene_pool_filename: str) -> None:
     # Create special summary plots
     for name, (special_figure, special_axes) in special_plots.items():
         special_axes.axhline(color='k', linewidth=0.2)
-        special_axes.legend()
+        special_axes.legend(fontsize='x-small')
         special_axes.set_xlabel('ID')
 
         special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **picture_file_args)

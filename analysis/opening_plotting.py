@@ -86,7 +86,7 @@ def plot_opening(file_name: str, plot_title: str):
     axes.set_xlabel('Games played')
     axes.set_ylabel('Percent of games')
     axes.set_ylim(0, ymax)
-    axes.legend()
+    axes.legend(fontsize='x-small')
     axes.set_title(plot_title)
     figure.savefig(f'{file_name}_opening_moves_plot.{pic_ext}', **picture_file_args)
     plt.close(figure)
