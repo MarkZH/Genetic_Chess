@@ -2,6 +2,7 @@
 
 import sys
 import os
+from typing import Dict, Any
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -86,11 +87,9 @@ def parse_gene_pool(gene_pool_file_name):
     return output_file_name
 
 
-def plot_genome(gene_pool_filename: str) -> None:
+def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], picture_file_args: Dict[str, Any]) -> None:
     parsed_data_file_name = parse_gene_pool(gene_pool_filename)
-    picture_file_args = {'dpi': 600, 'format': 'png'}
-    pic_ext = picture_file_args['format']
-
+    
     data = np.genfromtxt(parsed_data_file_name, delimiter=',', names=True)
     if not data.dtype.names:
         raise ValueError(f"No column names found in {parsed_data_file_name} from {gene_pool_filename}")
@@ -133,7 +132,6 @@ def plot_genome(gene_pool_filename: str) -> None:
                'Total Force Gene': 'Force',
                'Pawn Structure Gene': 'Structure'}
 
-    marker_size = 1
     line_width = 1
 
     # Plot evolution of individual genes
@@ -157,7 +155,7 @@ def plot_genome(gene_pool_filename: str) -> None:
             this_figure, these_axes = plt.subplots()
 
             for column in range(1 if this_data.ndim == 1 else np.size(this_data, 1)):
-                p = these_axes.plot(id_list, this_data, '.', markersize=marker_size)
+                p = these_axes.plot(id_list, this_data, '.', markersize=common_plot_params['scatter dot size'])
                 if is_sorter_count:
                     these_axes.text(id_list[-1]*1.02, this_data[-1, column], str(column), color=p[0].get_color())
 
@@ -171,6 +169,7 @@ def plot_genome(gene_pool_filename: str) -> None:
 
             these_axes.set_title(name)
 
+            pic_ext = picture_file_args["format"]
             this_figure.savefig(f'{gene_pool_filename} gene {name}.{pic_ext}', **picture_file_args)
             plt.close(this_figure)
 
@@ -215,7 +214,7 @@ def plot_genome(gene_pool_filename: str) -> None:
     # Create special summary plots
     for name, (special_figure, special_axes) in special_plots.items():
         special_axes.axhline(color='k', linewidth=0.2)
-        special_axes.legend(fontsize='x-small')
+        special_axes.legend(fontsize=common_plot_params["legend text size"])
         special_axes.set_xlabel('ID')
 
         special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **picture_file_args)

@@ -32,8 +32,13 @@ except IndexError:
 pool_file = get_config_value(config_file, "gene pool file")
 game_file = f"{pool_file}_games.pgn"
 
-plot_genome(pool_file)
-plot_endgames(game_file)
-plot_all_openings(game_file)
+picture_file_args = {'dpi': 600,
+                     'format': 'png'}
+common_plot_params = {'legend text size': 'x-small',
+                      'scatter dot size': 1}
+
+plot_genome(pool_file, common_plot_params, picture_file_args)
+plot_endgames(game_file, common_plot_params, picture_file_args)
+plot_all_openings(game_file, common_plot_params, picture_file_args)
 count_promotions(game_file)
 count_all_castles(game_file)

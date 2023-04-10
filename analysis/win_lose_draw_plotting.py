@@ -5,9 +5,6 @@ import os
 import numpy as np
 import matplotlib.pyplot as plt
 
-picture_file_args = {'dpi': 600, 'format': 'png'}
-pic_ext = picture_file_args['format']
-
 
 def write_line(file, *args):
     file.write('\t'.join(str(x) for x in args) + '\n')
@@ -80,7 +77,7 @@ def parse_game_file(file_name):
     return plot_data_file_name
 
 
-def plot_endgames(file_name):
+def plot_endgames(file_name, common_plot_params, picture_file_args):
     parsed_data_file_name = parse_game_file(file_name)
     data = np.genfromtxt(parsed_data_file_name, delimiter='\t', names=True)
     os.remove(parsed_data_file_name)
@@ -99,7 +96,7 @@ def plot_endgames(file_name):
     line_width = 2
     bar_line_width = 0.5
     draw_bar_line_width = 2
-    marker_size = 5
+    marker_size = common_plot_params["scatter dot size"]
     stat_text_size = 7
 
     winner_figure, winner_axes = plt.subplots()
@@ -108,9 +105,10 @@ def plot_endgames(file_name):
     winner_axes.semilogx(game_number, 100*draws/game_number, linewidth=line_width, label=f"{column_headers[3]} ({draws[-1]})")
     winner_axes.set_xlabel(column_headers[0])
     winner_axes.set_ylabel('Percentage')
-    winner_axes.legend(fontsize='x-small')
+    winner_axes.legend(fontsize=common_plot_params["legend text size"])
     winner_axes.set_title('Winning Sides')
 
+    pic_ext = picture_file_args["format"]
     winner_figure.savefig(f"{file_name}_game_outcomes.{pic_ext}", **picture_file_args)
     plt.close(winner_figure)
 
@@ -139,7 +137,7 @@ def plot_endgames(file_name):
     outcome_axes.loglog(game_number, 100*np.cumsum(time_and_material)/game_number, nonpositive='mask', linewidth=line_width, label=f'Time expires w/o material ({sum(time_and_material)})')
     outcome_axes.set_xlabel('Games played')
     outcome_axes.set_ylabel('Percentage')
-    outcome_axes.legend(fontsize='x-small')
+    outcome_axes.legend(fontsize=common_plot_params["legend text size"])
     outcome_axes.set_title('Type of Endgame')
 
     outcome_figure.savefig(f"{file_name}_game_result_type_frequencies.{pic_ext}", **picture_file_args)
@@ -165,7 +163,7 @@ def plot_endgames(file_name):
                             'r',
                             linewidth=line_width,
                             label='Moving average')
-        game_time_axes.legend(fontsize='x-small')
+        game_time_axes.legend(fontsize=common_plot_params["legend text size"])
         game_time_axes.set_ylim(max_time_left*(-0.10), max_time_left*1.05)
         game_time_axes.set_xlabel('Game number')
         game_time_axes.set_ylabel('Time (sec)')
@@ -225,7 +223,7 @@ def plot_endgames(file_name):
     yl = move_count_histogram_axes.get_ylim()
     move_count_histogram_axes.text(0.65*xl[1], 0.5*yl[1], '\n'.join(stats), fontsize=stat_text_size)
 
-    move_count_histogram_axes.legend(fontsize='x-small')
+    move_count_histogram_axes.legend(fontsize=common_plot_params["legend text size"])
     move_count_histogram_figure.savefig(f'{file_name}_moves_in_game_histogram.{pic_ext}', **picture_file_args)
     plt.close(move_count_histogram_figure)
 
@@ -260,7 +258,7 @@ def plot_endgames(file_name):
     yl = checkmate_axes.get_ylim()
     checkmate_axes.text(0.65*xl[1], 0.5*yl[1], '\n'.join(stats), fontsize=stat_text_size)
 
-    checkmate_axes.legend(fontsize='x-small')
+    checkmate_axes.legend(fontsize=common_plot_params["legend text size"])
     checkmate_figure.savefig(f'{file_name}_moves_in_game_histogram_checkmate.{pic_ext}', **picture_file_args)
     plt.close(checkmate_figure)
 
@@ -280,7 +278,7 @@ def plot_endgames(file_name):
     other_endgame_axes.set_title('Draw game lengths')
     other_endgame_axes.set_xlabel('Moves in Game')
     other_endgame_axes.set_ylabel(f'Counts (total = {sum(drawn_games)})')
-    other_endgame_axes.legend(fontsize='x-small')
+    other_endgame_axes.legend(fontsize=common_plot_params["legend text size"])
 
     other_endgame_axes.set_xlim([0, max_game_length_display])
     other_endgame_figure.savefig(f'{file_name}_moves_in_game_histogram_draw.{pic_ext}', **picture_file_args)

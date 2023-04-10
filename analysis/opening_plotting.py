@@ -3,7 +3,7 @@
 import sys
 import os
 from collections import Counter, defaultdict
-from typing import Dict, List
+from typing import Dict, List, Any
 import numpy as np
 import matplotlib.pyplot as plt
 from delete_comments import delete_comments
@@ -66,7 +66,7 @@ def parse_opening_list(filename):
     return parsed_file_name
 
 
-def plot_opening(file_name: str, plot_title: str):
+def plot_opening(file_name: str, plot_title: str, common_plot_params: Dict[str, Any], picture_file_args: Dict[str, Any]):
     parsed_file_name = parse_opening_list(file_name)
     top_data = np.genfromtxt(parsed_file_name, delimiter=',', names=True)
     if not top_data.dtype.names:
@@ -86,13 +86,13 @@ def plot_opening(file_name: str, plot_title: str):
     axes.set_xlabel('Games played')
     axes.set_ylabel('Percent of games')
     axes.set_ylim(0, ymax)
-    axes.legend(fontsize='x-small')
+    axes.legend(fontsize=common_plot_params["legend text size"])
     axes.set_title(plot_title)
     figure.savefig(f'{file_name}_opening_moves_plot.{pic_ext}', **picture_file_args)
     plt.close(figure)
 
 
-def plot_all_openings(game_file):
+def plot_all_openings(game_file, common_plot_params, picture_file_args):
     for parsed_file in get_opening_files(game_file):
         if parsed_file.endswith("_white.txt"):
             plot_title = "White's first move counts"
@@ -100,7 +100,7 @@ def plot_all_openings(game_file):
             plot_title = "Black's first move counts"
         else:
             plot_title = "First move counts"
-        plot_opening(parsed_file, plot_title)
+        plot_opening(parsed_file, plot_title, common_plot_params, picture_file_args)
         os.remove(parsed_file)
 
 
