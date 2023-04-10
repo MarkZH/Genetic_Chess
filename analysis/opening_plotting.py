@@ -88,9 +88,9 @@ def plot_opening(file_name: str, plot_title: str, common_plot_params: Dict[str, 
     axes.set_xlabel('Games played')
     axes.set_ylabel('Percent of games')
     axes.set_ylim(0, ymax)
-    axes.legend(fontsize=common_plot_params["legend text size"])
+    axes.legend(fontsize=common_plot_params["legend text size"], bbox_to_anchor=(1.01, 0.5), loc="center left")
     axes.set_title(plot_title)
-    figure.savefig(f'{file_name}_opening_moves_plot.{pic_ext}', **picture_file_args)
+    figure.savefig(f'{file_name}_opening_moves_plot.{pic_ext}', **picture_file_args, bbox_inches="tight")
     plt.close(figure)
 
 
