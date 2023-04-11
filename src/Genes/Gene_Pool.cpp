@@ -510,7 +510,6 @@ namespace
         size_t round_count = 0;
         for(std::string line; std::getline(genome_file, line);)
         {
-            line = String::trim_outer_whitespace(line);
             if(String::starts_with(line, "Still Alive"))
             {
                 ++round_count;
