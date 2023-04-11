@@ -260,7 +260,7 @@ namespace
         {
             ofs << ai.id() << " ";
         }
-        ofs << "\n\n" << std::flush;
+        ofs << "\n\n";
     }
 
     void print_round_header(const std::vector<Minimax_AI>& pool,
