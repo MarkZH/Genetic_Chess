@@ -56,42 +56,6 @@ namespace Random
     //! \returns true with given probability (successes/attempts).
     bool success_probability(size_t successes, size_t attempts) noexcept;
 
-    //! \brief Stirs the list so that the order is shuffled but most items are near where the started.
-    //!
-    //! \param[out] list A sequential collection of items whose order will be shuffled after the call.
-    //! \param stir_width The average distance each item should move.
-    template<class List>
-    void stir_order(List& list, const double stir_width) noexcept
-    {
-        std::vector<std::pair<double, typename List::value_type>> positions;
-        for(const auto& item : list)
-        {
-            positions.emplace_back(double(positions.size()), item);
-        }
-
-        for(auto& [position, item] : positions)
-        {
-            position += random_laplace(stir_width);
-
-            // Items whose new position is off the end of the list
-            // reappear on the other side.
-            const auto right_border = double(positions.size());
-            while(position < 0.0)
-            {
-                position += right_border;
-            }
-            while(position > right_border)
-            {
-                position -= right_border;
-            }
-        }
-
-        std::sort(positions.begin(), positions.end());
-        std::transform(positions.begin(), positions.end(),
-                       list.begin(),
-                       [](const auto& position_item) { return position_item.second; });
-    }
-
     //! \brief Select random element from random-access container.
     //!
     //! \param container A collection of items that allows for access by an index.

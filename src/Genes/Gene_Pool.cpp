@@ -19,6 +19,7 @@ using namespace std::chrono_literals;
 #include <numeric>
 #include <sstream>
 #include <mutex>
+#include <algorithm>
 
 #include "Players/Minimax_AI.h"
 
@@ -76,7 +77,6 @@ void gene_pool(const std::string& config_file)
     const auto config = Configuration(config_file);
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
-    const auto roaming_distance = config.as_positive_number<double>("roaming distance");
     const auto genome_file_name = config.as_text("gene pool file");
     if(genome_file_name.empty())
     {
@@ -126,9 +126,6 @@ void gene_pool(const std::string& config_file)
 
         print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time);
 
-        // The shuffled pool list determines the match-ups. After shuffling the list,
-        // adjacent AIs are matched as opponents.
-        Random::stir_order(pool, roaming_distance);
         std::vector<std::future<Game_Result>> results;
         auto limiter = Thread_Limiter(maximum_simultaneous_games);
         for(size_t index = 0; index < gene_pool_population; index += 2)
@@ -183,6 +180,9 @@ void gene_pool(const std::string& config_file)
             }
         }
 
+        // Next generation is moved to the end of the pool to play against each other.
+        std::stable_partition(pool.begin(), pool.end(), [](const auto& ai) { return ai.wins() > 0; });
+        
         record_the_living(pool, genome_file_name);
         record_best_ai(pool, best_file_name);
 
