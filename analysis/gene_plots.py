@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import sys
 import os
 from typing import Dict, Any
 import numpy as np
@@ -221,7 +220,3 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
 
         special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **picture_file_args)
         plt.close(special_figure)
-
-
-if __name__ == "__main__":
-    plot_genome(sys.argv[1])

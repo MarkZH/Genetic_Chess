@@ -1,15 +1,11 @@
 #!/usr/bin/python
 
-import sys
 import os
 from collections import Counter, defaultdict
 from typing import Dict, List, Any
 import numpy as np
 import matplotlib.pyplot as plt
 from delete_comments import delete_comments
-
-picture_file_args = {'dpi': 600, 'format': 'png'}
-pic_ext = picture_file_args['format']
 
 
 def get_opening_files(game_file: str) -> List[str]:
@@ -90,7 +86,7 @@ def plot_opening(file_name: str, plot_title: str, common_plot_params: Dict[str, 
     axes.set_ylim(0, ymax)
     axes.legend(fontsize=common_plot_params["legend text size"], bbox_to_anchor=(1.01, 0.5), loc="center left")
     axes.set_title(plot_title)
-    figure.savefig(f'{file_name}_opening_moves_plot.{pic_ext}', **picture_file_args, bbox_inches="tight")
+    figure.savefig(f'{file_name}_opening_moves_plot.{picture_file_args["format"]}', **picture_file_args, bbox_inches="tight")
     plt.close(figure)
 
 
@@ -104,7 +100,3 @@ def plot_all_openings(game_file, common_plot_params, picture_file_args):
             plot_title = "First move counts"
         plot_opening(parsed_file, plot_title, common_plot_params, picture_file_args)
         os.remove(parsed_file)
-
-
-if __name__ == "__main__":
-    plot_all_openings(sys.argv[1])

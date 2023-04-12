@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import sys
 import os
 import numpy as np
 import matplotlib.pyplot as plt
@@ -295,7 +294,3 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
 
     timeout_figure.savefig(f'{file_name}_moves_in_game_histogram_timeout.{pic_ext}', **picture_file_args)
     plt.close(timeout_figure)
-
-
-if __name__ == "__main__":
-    plot_endgames(sys.argv[1])
