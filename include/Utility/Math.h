@@ -51,7 +51,7 @@ namespace Math
         // Both of the statements below are parameter pack folds.
         // The first with the plus operator (along with std::abs() on each element).
         // The second with the comma operator (along with /= sum on each element).
-        // On the second statement, all of the parentheses are necessary.
+        // In both statements, all of the parentheses are necessary.
         const double sum = (std::abs(xs) + ...);
         ((xs /= sum), ...);
     }
