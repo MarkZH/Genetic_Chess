@@ -87,6 +87,10 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                                        return board.last_move();
                                    });
                     log("All moves applied");
+                    if(setup_result.game_has_ended())
+                    {
+                        return setup_result;
+                    }
                 }
 
                 log("Board ready for play");
