@@ -78,12 +78,8 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
 const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
 {
-    auto principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
-    if(principal_variation.size() <= 2 || principal_variation[1] != board.last_move())
-    {
-        principal_variation.clear();
-    }
-
+    using pv_type = decltype(commentary.back().variation_line());
+    const auto& principal_variation = commentary.empty() ? pv_type{} : commentary.back().variation_line();
     const auto time_to_use = time_to_examine(board, clock);
     const auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor(game_progress(board))));
 
@@ -96,6 +92,7 @@ const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clo
                                    Alpha_Beta_Value::alpha_start(board.whose_turn()),
                                    Alpha_Beta_Value::beta_start(board.whose_turn()),
                                    principal_variation,
+                                   0,
                                    current_variation);
 
     report_final_search_stats(result, board);
@@ -144,37 +141,37 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const Clock& clock,
                                                    Alpha_Beta_Value alpha,
                                                    const Alpha_Beta_Value& beta,
-                                                   std::vector<const Move*>& principal_variation,
+                                                   const std::vector<const Move*>& principal_variation,
+                                                   const size_t principal_variation_index,
                                                    current_variation_store& current_variation) const noexcept
 {
     const auto time_end = std::chrono::steady_clock::now() + time_to_examine;
     const auto depth = current_variation.size() + 1;
     maximum_depth = std::max(maximum_depth, depth);
+    auto next_pv_index = principal_variation_index;
     auto all_legal_moves = board.legal_moves();
+    auto partition_start = all_legal_moves.begin();
 
     // The first two items in the principal variation are the last two moves of
     // the non-hypothetical board. So, the first item in the principal variation to
     // consider is at index depth + 1 (since depth starts at 1).
-    if(principal_variation.size() > depth + 1)
+    if(principal_variation.size() > principal_variation_index)
     {
-        const auto next_principal_variation_move = principal_variation[depth + 1];
-        const auto move_iter = std::find(all_legal_moves.begin(),
-                                         all_legal_moves.end(),
-                                         next_principal_variation_move);
-
-        assert(move_iter != all_legal_moves.end());
+        const auto next_pv_move = principal_variation[principal_variation_index];
+        const auto pv_move_iter = std::find(all_legal_moves.begin(),
+                                            all_legal_moves.end(),
+                                            next_pv_move);
 
         // Put principal variation move at start of list to allow
         // the most pruning later.
-        std::iter_swap(all_legal_moves.begin(), move_iter);
-    }
-    else
-    {
-        principal_variation.clear();
+        if(pv_move_iter != all_legal_moves.end())
+        {
+            std::iter_swap(all_legal_moves.begin(), pv_move_iter);
+            std::advance(partition_start, 1);
+            ++next_pv_index;
+        }
     }
 
-    // Consider principal variation move first, if any.
-    const auto partition_start = std::next(all_legal_moves.begin(), principal_variation.empty() ? 0 : 1);
     sort_moves(partition_start, all_legal_moves.end(), board);
 
     const auto perspective = board.whose_turn();
@@ -221,9 +218,11 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
         const auto time_allotted_for_this_move = std::min(time_left*speculation_time_factor(game_progress(next_board)),
                                                           clock.running_time_left())/(moves_left--);
 
-        const auto result = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, maximum_search_depth, time_allotted_for_this_move) ?
-            search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, maximum_search_depth, clock, beta, alpha, principal_variation, current_variation) :
+        const auto result = search_further(move_result, depth, next_board, minimum_search_depth, maximum_search_depth, time_allotted_for_this_move) ?
+            search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, maximum_search_depth, clock, beta, alpha, principal_variation, next_pv_index, current_variation) :
             evaluate(move_result, next_board, current_variation, perspective, evaluate_start_time);
+
+        next_pv_index = principal_variation_index;
 
         if(result.value(perspective) > best_result.value(perspective))
         {
@@ -242,8 +241,6 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                 }
             }
         }
-
-        principal_variation.clear(); // only the first move is part of the principal variation
 
         if(clock.running_time_left() < 0.0s || must_pick_move_now())
         {
@@ -288,7 +285,6 @@ Game_Tree_Node_Result Minimax_AI::evaluate(const Game_Result& move_result,
 bool Minimax_AI::search_further(const Game_Result& move_result,
                                 const size_t depth,
                                 const Board& next_board,
-                                const std::vector<const Move*>& principal_variation,
                                 const size_t minimum_search_depth,
                                 const size_t maximum_search_depth,
                                 const Clock::seconds time_allotted_for_this_move) const noexcept
@@ -300,10 +296,6 @@ bool Minimax_AI::search_further(const Game_Result& move_result,
     else if(depth >= maximum_search_depth)
     {
         return false;
-    }
-    else if( ! principal_variation.empty())
-    {
-        return true;
     }
     else if(depth < minimum_search_depth)
     {

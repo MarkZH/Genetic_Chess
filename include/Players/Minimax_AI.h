@@ -180,7 +180,8 @@ class Minimax_AI : public Player
                                                const Clock& clock,
                                                Alpha_Beta_Value alpha,
                                                const Alpha_Beta_Value& beta,
-                                               std::vector<const Move*>& principal_variation,
+                                               const std::vector<const Move*>& principal_variation,
+                                               size_t principal_variation_index,
                                                current_variation_store& current_variation) const noexcept;
 
         // The brains of the Minimax algorithm that provides board evaluation and time management.
@@ -234,7 +235,6 @@ class Minimax_AI : public Player
         bool search_further(const Game_Result& move_result,
                             size_t depth,
                             const Board& next_board,
-                            const std::vector<const Move*>& principal_variation,
                             size_t minimum_search_depth,
                             size_t maximum_search_depth,
                             Clock::seconds time_allotted_for_this_move) const noexcept;
