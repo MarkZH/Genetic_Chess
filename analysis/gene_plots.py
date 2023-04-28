@@ -94,7 +94,6 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
         raise ValueError(f"No column names found in {parsed_data_file_name} from {gene_pool_filename}")
     os.remove(parsed_data_file_name)
     id_list = [int(row[0]) for row in data]
-    column_headers = [name.replace('__', ' - ').replace('_', ' ') for name in data.dtype.names]
 
     special_plots = {}
 
@@ -132,8 +131,9 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
                'Pawn Structure Gene': 'Structure'}
 
     # Plot evolution of individual genes
-    for yi, name in enumerate(column_headers[1:], 1):
-        this_data = np.array([datum[yi] for datum in data])
+    for column_name in data.dtype.names[1:]:
+        this_data = data[column_name]
+        name = column_name.replace('__', ' - ').replace('_', ' ')
         is_sorter_count = name == 'Move Sorting Gene - Sorter Count'
         if is_sorter_count:
             max_count = int(max(this_data))
@@ -159,7 +159,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
                 d = this_data[:, column] if is_sorter_count else this_data
                 these_axes.plot(id_list, d, style, markersize=markersize, linewidth=linewidth, label=label)
 
-            these_axes.set_xlabel(column_headers[0])
+            these_axes.set_xlabel(data.dtype.names[0])
             if is_sorter_count:
                 these_axes.set_ylabel('Percent of games')
                 these_axes.set_ylim(0, sorter_count_ymax*1.05)
