@@ -116,7 +116,7 @@ std::vector<const Move*> Minimax_AI::get_legal_principal_variation(const Board& 
     // move in the principal variation is still legal. The variation will be cut off at
     // the first illegal move.
     auto variation_board = board;
-    for(auto index = 2; index < principal_variation.size(); ++index)
+    for(size_t index = 2; index < principal_variation.size(); ++index)
     {
         if(variation_board.is_in_legal_moves_list(*principal_variation[index]))
         {
