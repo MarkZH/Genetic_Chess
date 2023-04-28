@@ -80,17 +80,20 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
     parsed_data_file_name = parse_game_file(file_name)
     data = np.genfromtxt(parsed_data_file_name, delimiter='\t', names=True)
     os.remove(parsed_data_file_name)
-    column_headers = [name.replace('_', ' ') for name in data.dtype.names]
 
-    game_number     = np.array([int(row[0]) for row in data])
-    white_wins      = np.array([int(row[1]) for row in data])
-    black_wins      = np.array([int(row[2]) for row in data])
-    draws           = np.array([int(row[3]) for row in data])
-    game_time       = np.array([row[4] for row in data])
-    result_type     = np.array([int(row[5]) for row in data])
-    white_time_left = np.array([row[6] for row in data])
-    black_time_left = np.array([row[7] for row in data])
-    moves_in_game   = np.array([int(row[8]) for row in data])
+    def get_data(column: int, number_type: type) -> tuple[np.ndarray, str]:
+        name = data.dtype.names[column]
+        return data[name].astype(number_type), name.replace('_', ' ')
+
+    game_number, game_number_label = get_data(0, int)
+    white_wins, white_wins_label = get_data(1, int)
+    black_wins, black_wins_label = get_data(2, int)
+    draws, draws_label = get_data(3, int)
+    game_time, _ = get_data(4, np.float64)
+    result_type, _ = get_data(5, int)
+    white_time_left, _ = get_data(6, np.float64)
+    black_time_left, _ = get_data(7, np.float64)
+    moves_in_game, _ = get_data(8, int)
 
     line_width = common_plot_params["plot line weight"]
     bar_line_width = 0.5
@@ -99,10 +102,10 @@ def plot_endgames(file_name, common_plot_params, picture_file_args):
     stat_text_size = 7
 
     winner_figure, winner_axes = plt.subplots()
-    winner_axes.semilogx(game_number, 100*white_wins/game_number, linewidth=line_width, label=f"{column_headers[1]} ({white_wins[-1]})")
-    winner_axes.semilogx(game_number, 100*black_wins/game_number, linewidth=line_width, label=f"{column_headers[2]} ({black_wins[-1]})")
-    winner_axes.semilogx(game_number, 100*draws/game_number, linewidth=line_width, label=f"{column_headers[3]} ({draws[-1]})")
-    winner_axes.set_xlabel(column_headers[0])
+    winner_axes.semilogx(game_number, 100*white_wins/game_number, linewidth=line_width, label=f"{white_wins_label} ({white_wins[-1]})")
+    winner_axes.semilogx(game_number, 100*black_wins/game_number, linewidth=line_width, label=f"{black_wins_label} ({black_wins[-1]})")
+    winner_axes.semilogx(game_number, 100*draws/game_number, linewidth=line_width, label=f"{draws_label} ({draws[-1]})")
+    winner_axes.set_xlabel(game_number_label)
     winner_axes.set_ylabel('Percentage')
     winner_axes.legend(fontsize=common_plot_params["legend text size"])
     winner_axes.set_title('Winning Sides')
