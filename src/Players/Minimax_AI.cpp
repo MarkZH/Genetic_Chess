@@ -100,7 +100,7 @@ const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clo
 
 std::vector<const Move*> Minimax_AI::get_legal_principal_variation(const Board& board) const noexcept
 {
-    auto principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
+    const auto& principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
 
     // If the principal_variation is long enough, then
     //   - principal_variation[0] contains this player's last chosen move, and
@@ -124,8 +124,7 @@ std::vector<const Move*> Minimax_AI::get_legal_principal_variation(const Board& 
         }
         else
         {
-            principal_variation.resize(index);
-            break;
+            return {principal_variation.begin(), principal_variation.begin() + index};
         }
     }
     
