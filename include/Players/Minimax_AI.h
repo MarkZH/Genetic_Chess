@@ -277,6 +277,8 @@ class Minimax_AI : public Player
         void calibrate_thinking_speed() const noexcept;
 
         const Move& choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
+
+        std::vector<const Move*> get_legal_principal_variation(const Board& board) const noexcept;
 };
 
 //! \brief Create a PGN variation string.
