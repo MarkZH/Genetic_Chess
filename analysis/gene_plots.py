@@ -163,7 +163,9 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
             if is_sorter_count:
                 these_axes.set_ylabel('Percent of genomes')
                 these_axes.set_ylim(0, sorter_count_ymax*1.05)
-                these_axes.legend(fontsize=common_plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
+                leg = these_axes.legend(fontsize=common_plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
+                for line in leg.get_lines():
+                    line.set_linewidth(2*line.get_linewidth())
 
             if 'Speculation' not in name:
                 these_axes.axhline(color=common_plot_params["x-axis color"], linewidth=common_plot_params["x-axis weight"])
@@ -215,7 +217,10 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
     # Create special summary plots
     for name, (special_figure, special_axes) in special_plots.items():
         special_axes.axhline(color=common_plot_params["x-axis color"], linewidth=common_plot_params["x-axis weight"])
-        special_axes.legend(fontsize=common_plot_params["legend text size"])
+        leg = special_axes.legend(fontsize=common_plot_params["legend text size"])
+        if special_axes == first_order_move_axes:
+            for line in leg.get_lines():
+                line.set_linewidth(2*line.get_linewidth())
         special_axes.set_xlabel('ID')
 
         special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **picture_file_args)
