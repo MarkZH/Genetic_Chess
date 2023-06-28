@@ -161,7 +161,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
 
             these_axes.set_xlabel(data.dtype.names[0])
             if is_sorter_count:
-                these_axes.set_ylabel('Percent of games')
+                these_axes.set_ylabel('Percent of genomes')
                 these_axes.set_ylim(0, sorter_count_ymax*1.05)
                 these_axes.legend(fontsize=common_plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
 
