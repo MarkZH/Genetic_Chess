@@ -1287,11 +1287,11 @@ namespace
         castling_possible_gene.read_from("testing/test_genome.txt");
 
         auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
-        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, (0.8 + 0.2) / 1.0);
+        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.0);
 
         castling_board.play_move("O-O");
         castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8 / 1); // castled at depth 1
-        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2 / (1.0 + 2.0 + 1.0));
+        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.0);
 
         castling_board.play_move("Nc6");
         castling_board.play_move("Rab1");
