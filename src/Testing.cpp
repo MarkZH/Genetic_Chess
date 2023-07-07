@@ -557,7 +557,7 @@ bool run_perft_tests()
         const auto time_at_start = std::chrono::steady_clock::now();
         const auto line_parts = String::split(line, ";");
         const auto fen = line_parts.front();
-        std::cout << '[' << std::setw(test_count_space) << std::right << ++test_number << '/' << lines.size() << "] " << std::setw(fen_space) << std::left << fen << std::flush;
+        std::cout << '[' << std::setw(test_count_space) << std::right << ++test_number << '/' << lines.size() << "] " << std::setw(int(fen_space)) << std::left << fen << std::flush;
         const auto perft_board = Board(fen);
         const auto tests = std::vector<std::string>(line_parts.begin() + 1, line_parts.end());
         std::string test_results;
@@ -584,7 +584,7 @@ bool run_perft_tests()
             }
         }
 
-        std::cout << std::setw(test_space + 1) << std::left << test_results;
+        std::cout << std::setw(int(test_space) + 1) << std::left << test_results;
         if(test_results.back() == PASS)
         {
             std::cout << "OK! ";
