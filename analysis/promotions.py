@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import sys
 from collections import Counter
 from delete_comments import delete_comments
 
@@ -24,7 +23,3 @@ def count_promotions(game_file_name: str) -> None:
     for piece, count in promotion_counts.most_common():
         spaces = ' '*(count_column_width - len(str(count)))
         print(spaces, count, piece)
-
-
-if __name__ == "__main__":
-    count_promotions(sys.argv[1])

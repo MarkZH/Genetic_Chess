@@ -78,12 +78,7 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 
 const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
 {
-    auto principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
-    if(principal_variation.size() <= 2 || principal_variation[1] != board.last_move())
-    {
-        principal_variation.clear();
-    }
-
+    auto principal_variation = get_legal_principal_variation(board);
     const auto time_to_use = time_to_examine(board, clock);
     const auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor(game_progress(board))));
 
@@ -101,6 +96,39 @@ const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clo
     report_final_search_stats(result, board);
 
     return *result.variation_line().front();
+}
+
+std::vector<const Move*> Minimax_AI::get_legal_principal_variation(const Board& board) const noexcept
+{
+    const auto& principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
+
+    // If the principal_variation is long enough, then
+    //   - principal_variation[0] contains this player's last chosen move, and
+    //   - principal_variation[1] contains the prediction for the opponent's move.
+    if(principal_variation.size() >= 2 && board.last_move() == principal_variation[1])
+    {
+        // The predicted move was correct, which means every other move in the variation
+        // is legal.
+        return principal_variation;
+    }
+
+    // Since the predicted move was wrong, we have to check to make sure each remaining
+    // move in the principal variation is still legal. The variation will be cut off at
+    // the first illegal move.
+    auto variation_board = board;
+    for(size_t index = 2; index < principal_variation.size(); ++index)
+    {
+        if(variation_board.is_in_legal_moves_list(*principal_variation[index]))
+        {
+            variation_board.play_move(*principal_variation[index]);
+        }
+        else
+        {
+            return {principal_variation.begin(), principal_variation.begin() + index};
+        }
+    }
+    
+    return principal_variation;
 }
 
 void Minimax_AI::report_final_search_stats(const Game_Tree_Node_Result& result, const Board& board) const noexcept

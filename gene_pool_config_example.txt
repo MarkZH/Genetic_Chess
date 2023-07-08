@@ -7,9 +7,6 @@ maximum simultaneous games = 8
 # How many players in each pool
 gene pool population = 100
 
-# How far AIs move on average between rounds
-roaming distance = 3
-
 # How many mutations a newly created Genetic AI should undergo.
 # The gene pool starts with first mutations and then switches back
 # and forth. How many rounds each mutation rate lasts is controlled

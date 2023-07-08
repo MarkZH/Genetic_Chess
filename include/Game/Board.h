@@ -85,6 +85,12 @@ class Board
         //! \returns Whether the text is a valid move text.
         bool is_legal_move(const std::string& text) const noexcept;
 
+        //! \brief Check if a move has been determined to be legal in the current board position.
+        //! 
+        //! \param move The move to check.
+        //! \returns Whether the move in the argument is among the list of legal moves generated after the last move.
+        bool is_in_legal_moves_list(const Move& move) const noexcept;
+
         //! \brief Tells which player is due to move.
         //!
         //! \returns Color of player who is next to move.
@@ -360,7 +366,6 @@ class Board
         void clear_en_passant_target() noexcept;
         bool is_en_passant_targetable(Square square) const noexcept;
         void disable_en_passant_target() noexcept;
-        bool is_in_legal_moves_list(const Move& move) const noexcept;
         void place_piece(Piece piece, Square square) noexcept;
         void record_king_location(Piece_Color color, Square square);
         bool all_empty_between(Square start, Square end) const noexcept;

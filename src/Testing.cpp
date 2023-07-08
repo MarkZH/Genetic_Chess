@@ -558,7 +558,7 @@ bool run_perft_tests()
         const auto time_at_start = std::chrono::steady_clock::now();
         const auto line_parts = String::split(line, ";");
         const auto fen = line_parts.front();
-        std::cout << '[' << std::setw(test_count_space) << std::right << ++test_number << '/' << lines.size() << "] " << std::setw(fen_space) << std::left << fen << std::flush;
+        std::cout << '[' << std::setw(test_count_space) << std::right << ++test_number << '/' << lines.size() << "] " << std::setw(int(fen_space)) << std::left << fen << std::flush;
         const auto perft_board = Board(fen);
         const auto tests = std::vector<std::string>(line_parts.begin() + 1, line_parts.end());
         std::string test_results;
@@ -585,7 +585,7 @@ bool run_perft_tests()
             }
         }
 
-        std::cout << std::setw(test_space + 1) << std::left << test_results;
+        std::cout << std::setw(int(test_space) + 1) << std::left << test_results;
         if(test_results.back() == PASS)
         {
             std::cout << "OK! ";
@@ -1293,11 +1293,11 @@ namespace
         castling_possible_gene.read_from("testing/test_genome.txt");
 
         auto castling_board = Board("rn2k3/8/8/8/8/8/8/R3K2R w KQq - 0 1");
-        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, (0.8 + 0.2) / 1.0);
+        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.0);
 
         castling_board.play_move("O-O");
         castling_possible_gene.test(tests_passed, castling_board, Piece_Color::WHITE, 0.8 / 1); // castled at depth 1
-        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.2 / (1.0 + 2.0 + 1.0));
+        castling_possible_gene.test(tests_passed, castling_board, Piece_Color::BLACK, 0.0);
 
         castling_board.play_move("Nc6");
         castling_board.play_move("Rab1");
