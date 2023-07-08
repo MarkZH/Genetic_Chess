@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-import sys
 from collections import defaultdict
 from typing import Dict
 from delete_comments import delete_comments
@@ -46,7 +45,3 @@ def count_all_castles(game_file):
     with open(game_file) as games:
         game_count = sum(1 for line in games if "Round" in line)
     print(f"out of {game_count} games")
-
-
-if __name__ == "__main__":
-    count_all_castles(sys.argv[1])

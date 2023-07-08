@@ -1,15 +1,11 @@
 #!/usr/bin/python
 
-import sys
 import os
 from collections import Counter, defaultdict
-from typing import Dict, List
+from typing import Dict, List, Any
 import numpy as np
 import matplotlib.pyplot as plt
 from delete_comments import delete_comments
-
-picture_file_args = {'dpi': 600, 'format': 'png'}
-pic_ext = picture_file_args['format']
 
 
 def get_opening_files(game_file: str) -> List[str]:
@@ -66,7 +62,7 @@ def parse_opening_list(filename):
     return parsed_file_name
 
 
-def plot_opening(file_name: str, plot_title: str):
+def plot_opening(file_name: str, plot_title: str, common_plot_params: Dict[str, Any], picture_file_args: Dict[str, Any]):
     parsed_file_name = parse_opening_list(file_name)
     top_data = np.genfromtxt(parsed_file_name, delimiter=',', names=True)
     if not top_data.dtype.names:
@@ -76,23 +72,25 @@ def plot_opening(file_name: str, plot_title: str):
     figure, axes = plt.subplots()
     game_counts = np.array(range(1, top_data.size + 1))
     ymax = 0
-    for col in range(len(top_data[0])):
-        opening_counts = np.cumsum(np.array([row[col] for row in top_data]))
+    for opening_name in top_data.dtype.names:
+        opening_counts = np.cumsum(top_data[opening_name])
         percents = 100*(opening_counts/game_counts)
-        axes.plot(game_counts, percents, linewidth=2, label=top_data.dtype.names[col].replace("_", " "))
+        axes.plot(game_counts, percents,
+                  linewidth=common_plot_params['plot line weight'],
+                  label=opening_name.replace("_", " "))
         max_percent = max(percents[int(np.ceil(0.01*len(percents))) : -1])
         ymax = max(ymax, max_percent)
 
     axes.set_xlabel('Games played')
     axes.set_ylabel('Percent of games')
     axes.set_ylim(0, ymax)
-    axes.legend()
+    axes.legend(fontsize=common_plot_params["legend text size"], bbox_to_anchor=(1.01, 0.5), loc="center left")
     axes.set_title(plot_title)
-    figure.savefig(f'{file_name}_opening_moves_plot.{pic_ext}', **picture_file_args)
+    figure.savefig(f'{file_name}_opening_moves_plot.{picture_file_args["format"]}', **picture_file_args, bbox_inches="tight")
     plt.close(figure)
 
 
-def plot_all_openings(game_file):
+def plot_all_openings(game_file, common_plot_params, picture_file_args):
     for parsed_file in get_opening_files(game_file):
         if parsed_file.endswith("_white.txt"):
             plot_title = "White's first move counts"
@@ -100,9 +98,5 @@ def plot_all_openings(game_file):
             plot_title = "Black's first move counts"
         else:
             plot_title = "First move counts"
-        plot_opening(parsed_file, plot_title)
+        plot_opening(parsed_file, plot_title, common_plot_params, picture_file_args)
         os.remove(parsed_file)
-
-
-if __name__ == "__main__":
-    plot_all_openings(sys.argv[1])

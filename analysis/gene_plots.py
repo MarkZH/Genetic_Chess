@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-import sys
 import os
+from typing import Dict, Any
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -86,17 +86,14 @@ def parse_gene_pool(gene_pool_file_name):
     return output_file_name
 
 
-def plot_genome(gene_pool_filename: str) -> None:
+def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], picture_file_args: Dict[str, Any]) -> None:
     parsed_data_file_name = parse_gene_pool(gene_pool_filename)
-    picture_file_args = {'dpi': 600, 'format': 'png'}
-    pic_ext = picture_file_args['format']
-
+    
     data = np.genfromtxt(parsed_data_file_name, delimiter=',', names=True)
     if not data.dtype.names:
         raise ValueError(f"No column names found in {parsed_data_file_name} from {gene_pool_filename}")
     os.remove(parsed_data_file_name)
     id_list = [int(row[0]) for row in data]
-    column_headers = [name.replace('__', ' - ').replace('_', ' ') for name in data.dtype.names]
 
     special_plots = {}
 
@@ -133,16 +130,14 @@ def plot_genome(gene_pool_filename: str) -> None:
                'Total Force Gene': 'Force',
                'Pawn Structure Gene': 'Structure'}
 
-    marker_size = 1
-    line_width = 1
-
     # Plot evolution of individual genes
-    for yi, name in enumerate(column_headers[1:], 1):
-        this_data = np.array([datum[yi] for datum in data])
+    for column_name in data.dtype.names[1:]:
+        this_data = data[column_name]
+        name = column_name.replace('__', ' - ').replace('_', ' ')
         is_sorter_count = name == 'Move Sorting Gene - Sorter Count'
         if is_sorter_count:
             max_count = int(max(this_data))
-            split_data = np.zeros((len(this_data), max_count + 1), int)
+            split_data = np.zeros((len(this_data), max_count + 1))
             game_count = np.array(range(1, len(this_data) + 1)).T
             sorter_count_ymax = 0
             for count in range(max_count + 1):
@@ -156,22 +151,29 @@ def plot_genome(gene_pool_filename: str) -> None:
         if not is_sorter_order:
             this_figure, these_axes = plt.subplots()
 
-            for column in range(1 if this_data.ndim == 1 else np.size(this_data, 1)):
-                p = these_axes.plot(id_list, this_data, '.', markersize=marker_size)
-                if is_sorter_count:
-                    these_axes.text(id_list[-1]*1.02, this_data[-1, column], str(column), color=p[0].get_color())
+            for column in range(np.size(this_data, 1) if is_sorter_count else 1):
+                label = str(column) if is_sorter_count else None
+                style = '-' if is_sorter_count else '.'
+                linewidth = common_plot_params['plot line weight'] if is_sorter_count else None
+                markersize = None if is_sorter_count else common_plot_params["scatter dot size"]
+                d = this_data[:, column] if is_sorter_count else this_data
+                these_axes.plot(id_list, d, style, markersize=markersize, linewidth=linewidth, label=label)
 
-            these_axes.set_xlabel(column_headers[0])
+            these_axes.set_xlabel(data.dtype.names[0])
             if is_sorter_count:
-                these_axes.set_ylabel('Percent of games')
-                these_axes.set_ylim(0, sorter_count_ymax)
+                these_axes.set_ylabel('Percent of genomes')
+                these_axes.set_ylim(0, sorter_count_ymax*1.05)
+                leg = these_axes.legend(fontsize=common_plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
+                for line in leg.get_lines():
+                    line.set_linewidth(2*line.get_linewidth())
 
             if 'Speculation' not in name:
-                these_axes.axhline(color='k', linewidth=0.5)
+                these_axes.axhline(color=common_plot_params["x-axis color"], linewidth=common_plot_params["x-axis weight"])
 
             these_axes.set_title(name)
 
-            this_figure.savefig(f'{gene_pool_filename} gene {name}.{pic_ext}', **picture_file_args)
+            pic_ext = picture_file_args["format"]
+            this_figure.savefig(f'{gene_pool_filename} gene {name}.{pic_ext}', **picture_file_args, bbox_inches="tight" if is_sorter_count else None)
             plt.close(this_figure)
 
         if name.startswith(piece_strength_prefix):
@@ -202,7 +204,7 @@ def plot_genome(gene_pool_filename: str) -> None:
         elif plot_axes == first_order_move_axes:
             label = name[len(sort_order_prefix) - 1:]
 
-        plot_axes.plot(x_axis, smooth_data, linewidth=line_width, label=label)
+        plot_axes.plot(x_axis, smooth_data, linewidth=common_plot_params['plot line weight'], label=label)
 
     print('# Piece values')
     for piece, value in piece_end_values.items():
@@ -214,13 +216,12 @@ def plot_genome(gene_pool_filename: str) -> None:
 
     # Create special summary plots
     for name, (special_figure, special_axes) in special_plots.items():
-        special_axes.axhline(color='k', linewidth=0.2)
-        special_axes.legend()
+        special_axes.axhline(color=common_plot_params["x-axis color"], linewidth=common_plot_params["x-axis weight"])
+        leg = special_axes.legend(fontsize=common_plot_params["legend text size"])
+        if special_axes == first_order_move_axes:
+            for line in leg.get_lines():
+                line.set_linewidth(2*line.get_linewidth())
         special_axes.set_xlabel('ID')
 
         special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **picture_file_args)
         plt.close(special_figure)
-
-
-if __name__ == "__main__":
-    plot_genome(sys.argv[1])
