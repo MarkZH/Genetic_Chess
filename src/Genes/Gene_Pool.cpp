@@ -185,9 +185,8 @@ void gene_pool(const std::string& config_file)
             }
         }
 
-        // Next generation is moved to the end of the pool to play against each other.
-        std::stable_partition(pool.begin(), pool.end(), [](const auto& ai) { return ai.wins() > 0; });
-        
+        Random::shuffle(pool);
+
         record_the_living(pool, genome_file_name);
         record_best_ai(pool, best_file_name);
 
