@@ -96,6 +96,16 @@ class Clock
         //! \brief Returns a string representing the time control of the game
         std::string time_control_string() const noexcept;
 
+        //! \brief Returns whether the clock's time has expired for the given player.
+        //! 
+        //! \param color The player whose clock is being queried.
+        bool time_expired(Piece_Color color) const noexcept;
+
+        //! \brief Returns whether the clock's time has expired for the player on move.
+        //! 
+        //! \param color The player whose clock is being queried.
+        bool running_time_expired() const noexcept;
+
     private:
         std::array<seconds, 2> timers;
         std::array<size_t, 2> moves_since_clock_reset{0, 0};
