@@ -37,7 +37,6 @@ Move_Sorting_Gene::Move_Sorting_Gene() noexcept :
         {"King Castlers",  [](const Move* move, const Board&)       { return move->is_castle(); }}
     }}
 {
-    Random::shuffle(move_sorters);
 }
 
 double Move_Sorting_Gene::score_board(const Board&, Piece_Color, size_t) const noexcept
