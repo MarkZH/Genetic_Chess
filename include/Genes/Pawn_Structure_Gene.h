@@ -19,8 +19,8 @@ class Pawn_Structure_Gene : public Clonable_Gene<Pawn_Structure_Gene>
         Pawn_Structure_Gene() noexcept;
 
     private:
-        Gene_Value guarded_by_pawn = {"Guarded By Pawn", 1.0, 0.03};
-        Gene_Value guarded_by_piece = {"Guarded By Piece", 1.0, 0.03};
+        Gene_Value guarded_by_pawn = {"Guarded By Pawn", 1.0, 0.02};
+        Gene_Value guarded_by_piece = {"Guarded By Piece", 1.0, 0.02};
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;
