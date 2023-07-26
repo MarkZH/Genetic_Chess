@@ -87,12 +87,6 @@ class Gene
         //! \brief Returns whether the gene has a Priority component
         bool has_priority() const noexcept;
 
-        //! \brief Scales the priority by multiplying by the parameter.
-        //!
-        //! \param stage Which stage of the game to query for the priority.
-        //! \param k Number to multiply priority by.
-        void scale_priority(Game_Stage stage, double k) noexcept;
-
         //! Tests the board-scoring method of the Gene.
         //
         //! \brief Tests the board-scoring method of the Gene.
@@ -110,7 +104,7 @@ class Gene
 
     private:
         std::string gene_name;
-        Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0, 0.005};
+        Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0, 0.05};
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
 

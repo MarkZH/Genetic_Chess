@@ -55,7 +55,6 @@ Genome::Genome() noexcept :
         std::make_unique<Pawn_Structure_Gene>()
     }
 {
-    renormalize_priorities();
     reset_piece_strength_gene();
 
     assert(gene_reference<Piece_Strength_Gene>().name() == "Piece Strength Gene");
@@ -137,26 +136,6 @@ void Genome::reset_piece_strength_gene() noexcept
     }
 }
 
-void Genome::renormalize_priorities() noexcept
-{
-    for(auto stage : {Game_Stage::OPENING, Game_Stage::ENDGAME})
-    {
-        const auto norm =
-            std::accumulate(genome.begin(), genome.end(), 0.0,
-                            [stage](auto sum, const auto& gene)
-                            {
-                                return sum + (gene->has_priority() ? std::abs(gene->priority(stage)) : 0.0);
-                            });
-        if(norm > 0.0)
-        {
-            for(auto& gene : genome)
-            {
-                gene->scale_priority(stage, 1.0/norm);
-            }
-        }
-    }
-}
-
 Genome& Genome::operator=(const Genome& other) noexcept
 {
     id_number = other.id();
@@ -175,7 +154,6 @@ Genome::Genome(const Genome& A, const Genome& B) noexcept : id_number(next_id++)
                    });
 
     reset_piece_strength_gene();
-    renormalize_priorities();
 }
 
 void Genome::read_from(std::istream& is)
@@ -191,7 +169,6 @@ void Genome::read_from(std::istream& is)
 
         if(line == "END")
         {
-            renormalize_priorities();
             return;
         }
 
@@ -256,7 +233,6 @@ void Genome::mutate(const size_t mutation_count) noexcept
     {
         Random::random_element(genes)->mutate();
     }
-    renormalize_priorities();
 }
 
 int Genome::id() const noexcept

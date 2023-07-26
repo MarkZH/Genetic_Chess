@@ -223,11 +223,6 @@ bool Gene::has_priority() const noexcept
     return list_properties().count(priorities.name(Game_Stage::OPENING)) != 0;
 }
 
-void Gene::scale_priority(const Game_Stage stage, const double k) noexcept
-{
-    priorities.value_at(stage) *= k;
-}
-
 void Gene::test(bool& test_variable, const Board& board, const Piece_Color perspective, const double expected_score) const noexcept
 {
     static auto test_number = 0;
