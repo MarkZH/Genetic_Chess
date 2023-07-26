@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstddef>
+#include <numbers>
 
 double Math::average_moves_left(const double mean_moves, const double width, const size_t moves_so_far) noexcept
 {
@@ -21,7 +22,7 @@ double Math::average_moves_left(const double mean_moves, const double width, con
     const auto M = std::log(mean_moves);
     const auto S = width;
     const auto S2 = std::pow(S, 2);
-    const auto Sr2 = S*std::sqrt(2);
+    const auto Sr2 = S*std::numbers::sqrt2;
     const auto ln_x = std::log(moves_so_far + 1);
 
     const auto A = std::exp(M + S2/2)*(1 + std::erf((M + S2 - ln_x)/Sr2));
