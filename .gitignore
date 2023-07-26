@@ -28,6 +28,7 @@ enc_temp_folder/
 *.iobj
 *.exp
 *.lib
+*.ifc
 
 # Compiled output
 bin/
