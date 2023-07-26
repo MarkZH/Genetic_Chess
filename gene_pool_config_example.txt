@@ -47,3 +47,10 @@ gene pool file = example_pool.txt
 #
 #   "quiet" -   Only print information about the round
 output volume = verbose
+
+# Stops the gene pool after running for the given time.
+# Time unit can be
+#   - hours, hrs, hr
+#   - minutes, min
+#   - seconds, sec
+time limit = 1 hour
