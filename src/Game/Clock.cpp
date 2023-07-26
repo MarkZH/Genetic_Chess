@@ -199,3 +199,13 @@ std::string Clock::time_control_string() const noexcept
     }
     return time_control_spec.str();
 }
+
+bool Clock::time_expired(Piece_Color color) const noexcept
+{
+    return time_left(color) <= Clock::seconds{0};
+}
+
+bool Clock::running_time_expired() const noexcept
+{
+    return time_expired(running_for());
+}

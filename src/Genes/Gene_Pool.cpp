@@ -45,8 +45,9 @@ namespace
     const std::string pause_key = "Ctrl-z";
 #endif // _WIN32
     std::mutex pause_mutex;
-    bool keep_going();
+    bool keep_going(const Clock& stop_time);
 
+    Clock get_pool_clock(const Configuration& config);
     std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file);
     [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
 
@@ -66,7 +67,8 @@ namespace
                             size_t first_mutation_interval,
                             size_t second_mutation_interval,
                             size_t mutation_rate,
-                            Clock::seconds game_time) noexcept;
+                            Clock::seconds game_time,
+                            const Clock& pool_time) noexcept;
     void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool);
 }
 
@@ -101,6 +103,9 @@ void gene_pool(const std::string& config_file)
     const auto board = Board{config.as_text_or_default("FEN", Board().fen())};
     const auto verbose_output = config.as_boolean("output volume", "verbose", "quiet");
 
+    auto pool_clock = get_pool_clock(config);
+    pool_clock.start(Piece_Color::WHITE);
+
     if(config.any_unused_parameters())
     {
         std::cout << "There were unused parameters in the file: " << config_file << '\n';
@@ -119,12 +124,12 @@ void gene_pool(const std::string& config_file)
 
     const auto best_file_name = genome_file_name + "_best_genome.txt";
 
-    while(keep_going())
+    while(keep_going(pool_clock))
     {
         const auto mutation_phase = round_count++ % (first_mutation_interval + second_mutation_interval);
         const auto mutation_rate = mutation_phase < first_mutation_interval ? first_mutation_rate : second_mutation_rate;
 
-        print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time);
+        print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time, pool_clock);
 
         std::vector<std::future<Game_Result>> results;
         auto limiter = std::counting_semaphore(maximum_simultaneous_games);
@@ -180,9 +185,8 @@ void gene_pool(const std::string& config_file)
             }
         }
 
-        // Next generation is moved to the end of the pool to play against each other.
-        std::stable_partition(pool.begin(), pool.end(), [](const auto& ai) { return ai.wins() > 0; });
-        
+        Random::shuffle(pool);
+
         record_the_living(pool, genome_file_name);
         record_best_ai(pool, best_file_name);
 
@@ -198,7 +202,7 @@ void gene_pool(const std::string& config_file)
 
 namespace
 {
-    bool keep_going()
+    bool keep_going(const Clock& pool_clock)
     {
         if(auto pause_lock = std::unique_lock(pause_mutex, std::try_to_lock); ! pause_lock.owns_lock())
         {
@@ -210,7 +214,7 @@ namespace
             pause_lock.lock();
         #endif // _WIN32
         }
-        return true;
+        return ! pool_clock.running_time_expired();
     }
 
     void pause_gene_pool(int)
@@ -266,7 +270,8 @@ namespace
                             const size_t first_mutation_interval,
                             const size_t second_mutation_interval,
                             const size_t mutation_rate,
-                            const Clock::seconds game_time) noexcept
+                            const Clock::seconds game_time,
+                            const Clock& pool_time) noexcept
     {
         std::cout << "\n=======================\n\n"
                   << "Gene pool size: " << pool.size()
@@ -278,7 +283,8 @@ namespace
                   << "\nRounds: " << round_count
                   << "  Mutation rate phase: " << round_count % (first_mutation_interval + second_mutation_interval)
                   << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
-                  << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec\n\n";
+                  << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec"
+                  << "\nTime until stop: " << std::round((pool_time.running_time_left()).count()) << " seconds\n\n";
 
         const auto best_living = best_living_ai(pool);
         std::cout << "Best living ID : " << best_living.id() << " with " << String::pluralize(best_living.wins(), "win") + "\n\n";
@@ -369,6 +375,39 @@ namespace
                                  {
                                      return a.wins() < b.wins();
                                  });
+    }
+
+    Clock get_pool_clock(const Configuration& config)
+    {
+        if(config.has_parameter("time limit"))
+        {
+            const auto time_text = config.as_text("time limit");
+            const auto time_spec = String::split(time_text);
+            if(time_spec.size() != 2)
+            {
+                throw std::invalid_argument("Invalid time limit. Must be of form <number> <unit>. Got: " + time_text);
+            }
+            const auto number = std::stod(time_spec[0]);
+            const auto unit = time_spec[1];
+            if(unit == "hours" || unit == "hrs" || unit == "hr" || unit == "h")
+            {
+                return Clock(Clock::seconds{number * 3600});
+            }
+            else if(unit == "minutes" || unit == "min" || unit == "m")
+            {
+                return Clock(Clock::seconds{number * 60});
+            }
+            else if(unit == "seconds" || unit == "sec" || unit == "s")
+            {
+                return Clock(Clock::seconds{number});
+            }
+            else
+            {
+                throw std::invalid_argument("Invalid time unit: " + unit);
+            }
+        }
+
+        return Clock(Clock::seconds(std::numeric_limits<double>::infinity()));
     }
 
     std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file)
