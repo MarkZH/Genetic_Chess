@@ -21,6 +21,7 @@ using namespace std::chrono_literals;
 #include <semaphore>
 #include <mutex>
 #include <utility>
+#include <ranges>
 
 #include "Players/Minimax_AI.h"
 
@@ -79,6 +80,10 @@ void gene_pool(const std::string& config_file)
     const auto config = Configuration(config_file);
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
+    if(gene_pool_population % 2 != 0)
+    {
+        throw std::invalid_argument("Gene pool population must be even so every AI plays every round.");
+    }
     const auto genome_file_name = config.as_text("gene pool file");
     if(genome_file_name.empty())
     {
@@ -133,11 +138,11 @@ void gene_pool(const std::string& config_file)
 
         std::vector<std::future<Game_Result>> results;
         auto limiter = std::counting_semaphore(maximum_simultaneous_games);
-        for(size_t index = 0; index < gene_pool_population; index += 2)
+        for(const auto& players : pool | std::views::chunk(2))
         {
             limiter.acquire();
-            const auto& white = pool[index];
-            const auto& black = pool[index + 1];
+            const auto& white = players[0];
+            const auto& black = players[1];
             results.emplace_back(std::async(std::launch::async,
                                             [&]()
                                             {
@@ -156,12 +161,12 @@ void gene_pool(const std::string& config_file)
         }
 
         std::stringstream result_printer;
-        for(size_t index = 0; index < gene_pool_population; index += 2)
+        for(const auto& [future_result, players] : std::ranges::zip_view(results, pool | std::views::chunk(2)))
         {
-            auto& white = pool[index];
-            auto& black = pool[index + 1];
+            auto& white = players[0];
+            auto& black = players[1];
 
-            const auto result = results[index/2].get();
+            const auto result = future_result.get();
             const auto winner = result.winner();
             result_printer << white.id() << " vs " << black.id() << ": " << color_text(winner) << " (" << result.ending_reason() << ")\n";
 
