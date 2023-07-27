@@ -86,6 +86,17 @@ def parse_gene_pool(gene_pool_file_name):
     return output_file_name
 
 
+def moving_mean(x: np.array, window: int) -> np.array:
+    x_avg = np.convolve(x, np.ones(window)/window, mode="valid")
+    return x_avg
+
+
+def centered_x_axis(x: np.array, y: np.array) -> np.array:
+    left_margin = (len(x) - len(y)) // 2
+    right_margin = len(x) - len(y) - left_margin
+    return x[left_margin : -right_margin or len(x)]
+
+
 def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], picture_file_args: Dict[str, Any]) -> None:
     parsed_data_file_name = parse_gene_pool(gene_pool_filename)
     
@@ -137,14 +148,11 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
         is_sorter_count = name == 'Move Sorting Gene - Sorter Count'
         if is_sorter_count:
             max_count = int(max(this_data))
-            split_data = np.zeros((len(this_data), max_count + 1))
-            game_count = np.array(range(1, len(this_data) + 1)).T
-            sorter_count_ymax = 0
+            window = 10000
+            split_data = np.zeros((len(this_data) - window + 1, max_count + 1))
             for count in range(max_count + 1):
-                percents = 100*np.cumsum(this_data == count)/game_count
-                split_data[:, count] = percents
-                ymax = max(percents[int(np.ceil(0.01*len(percents))):])
-                sorter_count_ymax = max(ymax, sorter_count_ymax)
+                ais_with_count = (this_data == count).astype(int)
+                split_data[:, count] = 100*moving_mean(ais_with_count, window)
             this_data = split_data
 
         is_sorter_order = name.startswith(sort_order_prefix)
@@ -157,12 +165,11 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
                 linewidth = common_plot_params['plot line weight'] if is_sorter_count else None
                 markersize = None if is_sorter_count else common_plot_params["scatter dot size"]
                 d = this_data[:, column] if is_sorter_count else this_data
-                these_axes.plot(id_list, d, style, markersize=markersize, linewidth=linewidth, label=label)
+                these_axes.plot(centered_x_axis(id_list, d), d, style, markersize=markersize, linewidth=linewidth, label=label)
 
             these_axes.set_xlabel(data.dtype.names[0])
             if is_sorter_count:
                 these_axes.set_ylabel('Percent of genomes')
-                these_axes.set_ylim(0, sorter_count_ymax*1.05)
                 leg = these_axes.legend(fontsize=common_plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
                 for line in leg.get_lines():
                     line.set_linewidth(2*line.get_linewidth())
@@ -187,10 +194,9 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
         else:
             continue
 
-        conv_window = 1000 if is_sorter_order else 100
-        smooth_data = np.convolve(this_data, np.ones(conv_window), mode="valid")/conv_window
-        conv_margin = int(np.floor(conv_window/2))
-        x_axis = id_list[conv_margin - 1 : -conv_margin]
+        conv_window = 10000 if is_sorter_order else 100
+        smooth_data = moving_mean(this_data, conv_window)
+        x_axis = centered_x_axis(id_list, smooth_data)
 
         if plot_axes == piece_strength_axes:
             piece_symbol = name[-1]
