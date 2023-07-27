@@ -187,7 +187,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
         else:
             continue
 
-        conv_window = 1000 if is_sorter_order else 100
+        conv_window = 10000 if is_sorter_order else 100
         smooth_data = np.convolve(this_data, np.ones(conv_window), mode="valid")/conv_window
         conv_margin = int(np.floor(conv_window/2))
         x_axis = id_list[conv_margin - 1 : -conv_margin]
