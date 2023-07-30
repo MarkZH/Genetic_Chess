@@ -84,9 +84,6 @@ class Gene
         //! \param stage Which stage of the game to query for the priority.
         double priority(Game_Stage stage) const noexcept;
 
-        //! \brief Returns whether the gene has a Priority component
-        bool has_priority() const noexcept;
-
         //! Tests the board-scoring method of the Gene.
         //
         //! \brief Tests the board-scoring method of the Gene.
@@ -140,6 +137,9 @@ class Gene
 
         //! \brief Load the properties specific to the Gene subtype.
         virtual void load_gene_properties(const std::map<std::string, std::string>& properties);
+
+        //! \brief Returns whether the gene has a Priority component
+        bool has_priority() const noexcept;
 };
 
 //! \brief A template class to create the duplicate method for all Gene subtypes.
