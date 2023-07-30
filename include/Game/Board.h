@@ -221,7 +221,7 @@ class Board
         //! \returns Whether the moving piece attacks the king after the move.
         bool move_checks_king(const Move& move) const noexcept;
 
-        //! \brief Determine whether a piece would be pinned to the king by an opposing piece if it was on the given square.
+        //! \brief Determine whether a piece would be pinned to the moving player's king by an opposing piece if it was on the given square.
         //!
         //! \param square The queried square.
         //! \returns Whether there is an opposing piece (of color opposite(Board::whose_turn()))
