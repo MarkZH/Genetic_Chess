@@ -230,6 +230,12 @@ class Board
         //!          existant) white piece on the given square to the white king?
         bool piece_is_pinned(Square square) const noexcept;
 
+        //! \brief Determine if the given move would result in a discovered check on the opponent's king.
+        //! 
+        //! \param move The queried move.
+        //! \returns Whether the move would reveal an attacking piece on the other king.
+        bool is_discovered_check(const Move& move) const noexcept;
+
         //! \brief Checks whether there are enough pieces on the board for any possible checkmate.
         //!
         //! The following piece sets on the board make checkmate possible:
@@ -374,6 +380,7 @@ class Board
         Game_Result move_result() const noexcept;
         void make_castle_legal(Piece_Color color, Direction direction) noexcept;
         void make_castle_illegal(Piece_Color color, Direction direction) noexcept;
+        bool piece_is_pinned_to_king(Piece_Color king_color, Square square) const noexcept;
 
         // Track threefold repetition and fifty-move rule
         void add_board_position_to_repeat_record() noexcept;

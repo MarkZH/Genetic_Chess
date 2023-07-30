@@ -777,6 +777,26 @@ namespace
                 test_result(test_passed, board.piece_is_pinned(Square(square.front(), square.back() - '0')) == expected_bool,
                             "Expected result of " + square + " being pinned: " + expected_result);
             }
+            else if(test_type == "discovered check")
+            {
+                const auto move_result = String::split(specification.at(2));
+                if( ! test_assert(move_result.size() == 2)) { continue; }
+
+                try
+                {
+                    const auto& move = board.interpret_move(move_result[0]);
+                    const auto expected_result = String::lowercase(move_result[1]);
+
+                    if( ! test_assert(expected_result == "true" || expected_result == "false")) { continue; }
+                    const auto expected_bool = (expected_result == "true");
+                    test_result(test_passed, board.is_discovered_check(move) == expected_bool,
+                                "Expected result of " + move.coordinates() + " being a discovered check: " + expected_result);
+                }
+                catch(const Illegal_Move&)
+                {
+                    test_result(test_passed, false, "Move is not legal: " + move_result[0]);
+                }
+            }
             else if(test_type == "move count")
             {
                 if( ! test_assert(specification.size() == 4)) { continue; }
