@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 import os
-from typing import Dict, Any
 import numpy as np
 import matplotlib.pyplot as plt
+import common
 
 
 def add_value_to_data_line(data_line, header_line, title, value):
@@ -86,20 +86,9 @@ def parse_gene_pool(gene_pool_file_name):
     return output_file_name
 
 
-def moving_mean(x: np.array, window: int) -> np.array:
-    x_avg = np.convolve(x, np.ones(window)/window, mode="valid")
-    return x_avg
-
-
-def centered_x_axis(x: np.array, y: np.array) -> np.array:
-    left_margin = (len(x) - len(y)) // 2
-    right_margin = len(x) - len(y) - left_margin
-    return x[left_margin : -right_margin or len(x)]
-
-
-def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], picture_file_args: Dict[str, Any]) -> None:
+def plot_genome(gene_pool_filename: str) -> None:
     parsed_data_file_name = parse_gene_pool(gene_pool_filename)
-    
+
     data = np.genfromtxt(parsed_data_file_name, delimiter=',', names=True)
     if not data.dtype.names:
         raise ValueError(f"No column names found in {parsed_data_file_name} from {gene_pool_filename}")
@@ -152,7 +141,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
             split_data = np.zeros((len(this_data) - window + 1, max_count + 1))
             for count in range(max_count + 1):
                 ais_with_count = (this_data == count).astype(int)
-                split_data[:, count] = 100*moving_mean(ais_with_count, window)
+                split_data[:, count] = 100*common.moving_mean(ais_with_count, window)
             this_data = split_data
 
         is_sorter_order = name.startswith(sort_order_prefix)
@@ -162,25 +151,25 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
             for column in range(np.size(this_data, 1) if is_sorter_count else 1):
                 label = str(column) if is_sorter_count else None
                 style = '-' if is_sorter_count else '.'
-                linewidth = common_plot_params['plot line weight'] if is_sorter_count else None
-                markersize = None if is_sorter_count else common_plot_params["scatter dot size"]
+                linewidth = common.plot_params['plot line weight'] if is_sorter_count else None
+                markersize = None if is_sorter_count else common.plot_params["scatter dot size"]
                 d = this_data[:, column] if is_sorter_count else this_data
-                these_axes.plot(centered_x_axis(id_list, d), d, style, markersize=markersize, linewidth=linewidth, label=label)
+                these_axes.plot(common.centered_x_axis(id_list, d), d, style, markersize=markersize, linewidth=linewidth, label=label)
 
             these_axes.set_xlabel(data.dtype.names[0])
             if is_sorter_count:
                 these_axes.set_ylabel('Percent of genomes')
-                leg = these_axes.legend(fontsize=common_plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
+                leg = these_axes.legend(fontsize=common.plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
                 for line in leg.get_lines():
                     line.set_linewidth(2*line.get_linewidth())
 
             if 'Speculation' not in name:
-                these_axes.axhline(color=common_plot_params["x-axis color"], linewidth=common_plot_params["x-axis weight"])
+                these_axes.axhline(color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
 
             these_axes.set_title(name)
 
-            pic_ext = picture_file_args["format"]
-            this_figure.savefig(f'{gene_pool_filename} gene {name}.{pic_ext}', **picture_file_args, bbox_inches="tight" if is_sorter_count else None)
+            pic_ext = common.picture_file_args["format"]
+            this_figure.savefig(f'{gene_pool_filename} gene {name}.{pic_ext}', **common.picture_file_args, bbox_inches="tight" if is_sorter_count else None)
             plt.close(this_figure)
 
         if name.startswith(piece_strength_prefix):
@@ -195,8 +184,8 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
             continue
 
         conv_window = 10000 if is_sorter_order else 100
-        smooth_data = moving_mean(this_data, conv_window)
-        x_axis = centered_x_axis(id_list, smooth_data)
+        smooth_data = common.moving_mean(this_data, conv_window)
+        x_axis = common.centered_x_axis(id_list, smooth_data)
 
         if plot_axes == piece_strength_axes:
             piece_symbol = name[-1]
@@ -210,7 +199,7 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
         elif plot_axes == first_order_move_axes:
             label = name[len(sort_order_prefix) - 1:]
 
-        plot_axes.plot(x_axis, smooth_data, linewidth=common_plot_params['plot line weight'], label=label)
+        plot_axes.plot(x_axis, smooth_data, linewidth=common.plot_params['plot line weight'], label=label)
 
     print('# Piece values')
     for piece, value in piece_end_values.items():
@@ -222,12 +211,12 @@ def plot_genome(gene_pool_filename: str, common_plot_params: Dict[str, Any], pic
 
     # Create special summary plots
     for name, (special_figure, special_axes) in special_plots.items():
-        special_axes.axhline(color=common_plot_params["x-axis color"], linewidth=common_plot_params["x-axis weight"])
-        leg = special_axes.legend(fontsize=common_plot_params["legend text size"])
+        special_axes.axhline(color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
+        leg = special_axes.legend(fontsize=common.plot_params["legend text size"])
         if special_axes == first_order_move_axes:
             for line in leg.get_lines():
                 line.set_linewidth(2*line.get_linewidth())
         special_axes.set_xlabel('ID')
 
-        special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **picture_file_args)
+        special_figure.savefig(f'{gene_pool_filename} special {name}.{pic_ext}', **common.picture_file_args)
         plt.close(special_figure)
