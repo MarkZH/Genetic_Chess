@@ -1076,17 +1076,11 @@ bool Board::piece_is_pinned(const Square square) const noexcept
 
 bool Board::is_discovered_check(const Move& move) const noexcept
 {
+    assert(is_in_legal_moves_list(move));
     const auto king_color = opposite(whose_turn());
-    if(piece_is_pinned_to_king(king_color, move.start()))
-    {
-        const auto king_square = find_king(king_color);
-        const auto direction = king_square - move.start();
-        return ! moves_are_parallel(direction, move.movement());
-    }
-    else
-    {
-        return false;
-    }
+    const auto king_square = find_king(king_color);
+    const auto direction = king_square - move.start();
+    return ! moves_are_parallel(direction, move.movement()) && piece_is_pinned_to_king(king_color, move.start());
 }
 
 bool Board::piece_is_pinned_to_king(const Piece_Color king_color, const Square square) const noexcept
