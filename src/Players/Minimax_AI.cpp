@@ -366,23 +366,29 @@ void Minimax_AI::output_thinking(const Game_Tree_Node_Result& thought,
 void Minimax_AI::output_thinking_xboard(const Game_Tree_Node_Result& thought,
                                         const Piece_Color perspective) const noexcept
 {
-    auto score = thought.corrected_score(perspective)/centipawn_value();
-
-    // Indicate "mate in N moves" where N == thought.depth
-    if(thought.is_winning_for(perspective))
+    const auto score = [this, &thought, perspective]()
     {
-        score = 10000.0 - double(thought.depth());
-    }
-    else if(thought.is_losing_for(perspective))
-    {
-        score = -(10000.0 - double(thought.depth()));
-    }
+        // Indicate "mate in N moves" where N == thought.depth
+        const auto mate_score = 100000 + int(thought.depth());
+        if(thought.is_winning_for(perspective))
+        {
+            return mate_score;
+        }
+        else if(thought.is_losing_for(perspective))
+        {
+            return -mate_score;
+        }
+        else
+        {
+            return int(thought.corrected_score(perspective)/centipawn_value());
+        }
+    }();
 
     const auto time_so_far = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - clock_start_time);
     using centiseconds = std::chrono::duration<int, std::centi>;
     std::cout << thought.depth() // ply
         << " "
-        << int(score) // score in what should be centipawns
+        << score
         << " "
         << std::chrono::duration_cast<centiseconds>(time_so_far).count()
         << " "
