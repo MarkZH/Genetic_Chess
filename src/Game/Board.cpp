@@ -1063,7 +1063,21 @@ bool Board::all_empty_between(const Square start, const Square end) const noexce
 
 bool Board::piece_is_pinned(const Square square) const noexcept
 {
-    const auto king_square = find_king(whose_turn());
+    return piece_is_pinned_to_king(whose_turn(), square);
+}
+
+bool Board::is_discovered_check(const Move& move) const noexcept
+{
+    assert(is_in_legal_moves_list(move));
+    const auto king_color = opposite(whose_turn());
+    const auto king_square = find_king(king_color);
+    const auto direction = king_square - move.start();
+    return ! moves_are_parallel(direction, move.movement()) && piece_is_pinned_to_king(king_color, move.start());
+}
+
+bool Board::piece_is_pinned_to_king(const Piece_Color king_color, const Square square) const noexcept
+{
+    const auto king_square = find_king(king_color);
     if(king_square == square || ! straight_line_move(square, king_square))
     {
         return false;
@@ -1071,7 +1085,7 @@ bool Board::piece_is_pinned(const Square square) const noexcept
 
     const auto direction = (king_square - square).step();
     const auto attack_square = square - direction;
-    const auto attacking_color = opposite(whose_turn());
+    const auto attacking_color = opposite(king_color);
     const auto color_index = static_cast<int>(attacking_color);
     const auto opponent_pawn = Piece(attacking_color, Piece_Type::PAWN);
     const auto opponent_king = Piece(attacking_color, Piece_Type::KING);
