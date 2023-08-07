@@ -384,9 +384,9 @@ void Minimax_AI::output_thinking_xboard(const Game_Tree_Node_Result& thought,
         }
     }();
 
-    const auto time_so_far = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - clock_start_time);
+    const auto time_so_far = std::chrono::steady_clock::now() - clock_start_time;
     using centiseconds = std::chrono::duration<int, std::centi>;
-    std::cout << thought.depth() // ply
+    std::cout << thought.depth()
         << " "
         << score
         << " "
@@ -396,7 +396,7 @@ void Minimax_AI::output_thinking_xboard(const Game_Tree_Node_Result& thought,
         << " "
         << maximum_depth
         << " "
-        << int(double(nodes_searched)/time_so_far.count())
+        << int(nodes_searched/Clock::seconds(time_so_far).count())
         << '\t';
 
     // Principal variation
@@ -411,12 +411,12 @@ void Minimax_AI::output_thinking_xboard(const Game_Tree_Node_Result& thought,
 void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
                                      const Piece_Color perspective) const noexcept
 {
-    const auto time_so_far = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - clock_start_time);
+    const auto time_so_far = std::chrono::steady_clock::now() - clock_start_time;
     std::cout << "info"
               << " depth " << thought.depth()
               << " time " << std::chrono::duration_cast<std::chrono::milliseconds>(time_so_far).count()
               << " nodes " << nodes_searched
-              << " nps " << int(double(nodes_searched)/time_so_far.count())
+              << " nps " << int(nodes_searched/Clock::seconds(time_so_far).count())
               << " pv ";
     for(const auto& move : thought.variation_line())
     {
