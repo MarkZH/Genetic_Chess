@@ -102,8 +102,6 @@ class Clock
         bool time_expired(Piece_Color color) const noexcept;
 
         //! \brief Returns whether the clock's time has expired for the player on move.
-        //! 
-        //! \param color The player whose clock is being queried.
         bool running_time_expired() const noexcept;
 
     private:
