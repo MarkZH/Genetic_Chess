@@ -43,11 +43,11 @@ class Clock
         //! \param previous_start_time If the clock for a game is being replaced by another clock (for example, a GUI
         //!        changes time control midgame), then this parameter can be used to preserve the actual start of the
         //!        current game.
-        Clock(seconds duration_seconds = 0.0s,
-              size_t moves_to_reset = 0,
-              seconds increment_seconds = 0.0s,
-              Time_Reset_Method reset_method = Time_Reset_Method::ADDITION,
-              std::chrono::system_clock::time_point previous_start_time = {}) noexcept;
+        explicit Clock(seconds duration_seconds = 0.0s,
+                       size_t moves_to_reset = 0,
+                       seconds increment_seconds = 0.0s,
+                       Time_Reset_Method reset_method = Time_Reset_Method::ADDITION,
+                       std::chrono::system_clock::time_point previous_start_time = {}) noexcept;
 
         //! \brief Stop the current player's clock and restart the opponent's clock.
         Game_Result punch(const Board& board) noexcept;
