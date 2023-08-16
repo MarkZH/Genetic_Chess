@@ -16,15 +16,11 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 
     if(delim.empty())
     {
-        std::vector<std::string> result;
-        for(const auto& part : s
+        return s
             | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
             | std::views::split(' ')
-            | std::views::filter([](const auto& ss) { return !ss.empty(); }))
-        {
-            result.emplace_back(part.begin(), part.end());
-        }
-        return result;
+            | std::views::filter([](const auto& ss) { return !ss.empty(); })
+            | to_vector;
     }
     else
     {
