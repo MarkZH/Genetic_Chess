@@ -391,15 +391,15 @@ namespace
             const auto unit = time_spec[1];
             if(unit == "hours" || unit == "hrs" || unit == "hr" || unit == "h")
             {
-                return Clock(Clock::seconds{number * 3600});
+                return Clock::hours(number);
             }
             else if(unit == "minutes" || unit == "min" || unit == "m")
             {
-                return Clock(Clock::seconds{number * 60});
+                return Clock::minutes(number);
             }
             else if(unit == "seconds" || unit == "sec" || unit == "s")
             {
-                return Clock(Clock::seconds{number});
+                return Clock::seconds(number);
             }
             else
             {
