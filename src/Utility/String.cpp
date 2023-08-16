@@ -24,7 +24,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     }
     else
     {
-        const auto initial_take = std::min(count, s.size());    
+        const auto initial_take = std::min(count, s.size());
         auto split_view = std::views::split(s, delim);
         auto result = split_view | std::views::take(initial_take) | to_vector;
         const auto remainder = split_view | std::views::drop(initial_take) | to_vector;
