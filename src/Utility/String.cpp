@@ -17,12 +17,12 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     if(delim.empty())
     {
         std::vector<std::string> result;
-        auto word_start = std::ranges::find_if_not(s, isspace);
-        while(word_start != s.end())
+        for(const auto& part : s
+            | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
+            | std::views::split(' ')
+            | std::views::filter([](const auto& ss) { return !ss.empty(); }))
         {
-            const auto word_end = std::find_if(word_start, s.end(), isspace);
-            result.emplace_back(word_start, word_end);
-            word_start = std::find_if_not(word_end, s.end(), isspace);
+            result.emplace_back(part.begin(), part.end());
         }
         return result;
     }
