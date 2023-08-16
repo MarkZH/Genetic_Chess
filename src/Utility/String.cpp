@@ -16,9 +16,13 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 
     if(delim.empty())
     {
-        auto ss = std::istringstream(s);
-        using ss_iter = std::istream_iterator<std::string>;
-        return std::ranges::subrange(ss_iter(ss), ss_iter()) | to_vector;
+        auto word_start = std::find_if_not(s.begin(), s.end(), isspace);
+        while(word_start != s.end())
+        {
+            const auto word_end = std::find_if(word_start, s.end(), isspace);
+            result.emplace_back(word_start, word_end);
+            word_start = std::find_if_not(word_end, s.end(), isspace);
+        }
     }
     else
     {

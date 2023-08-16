@@ -25,8 +25,14 @@ enum class Time_Reset_Method
 class Clock
 {
     public:
-        //! \brief The unit of time used by this clock system is seconds represented by a double floating-point type.
+        //! \brief Convenience type for creating seconds-long durations for the Clock.
         using seconds = std::chrono::duration<double>;
+
+        //! \brief Convenience type for creating minutes-long durations for the Clock.
+        using minutes = std::chrono::duration<double, std::chrono::minutes::period>;
+
+        //! \brief Convenience type for creating hours-long durations for the Clock.
+        using hours = std::chrono::duration<double, std::chrono::hours::period>;
 
         //! \brief Constructs a game clock for timing games.
         //!
@@ -102,8 +108,6 @@ class Clock
         bool time_expired(Piece_Color color) const noexcept;
 
         //! \brief Returns whether the clock's time has expired for the player on move.
-        //! 
-        //! \param color The player whose clock is being queried.
         bool running_time_expired() const noexcept;
 
     private:
