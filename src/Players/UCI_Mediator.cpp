@@ -38,7 +38,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
             if(command == "ucinewgame")
             {
                 log("stopping thinking and clocks");
-                clock = {};
+                clock = Clock{};
                 move_list.clear();
                 player.reset();
                 setup_result = {};
