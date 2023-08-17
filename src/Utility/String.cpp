@@ -15,20 +15,21 @@
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
     std::vector<std::string> result;
-    size_t start_index = 0;
-    size_t end_index = s.find(delim);
-    size_t split_count = 0;
-    while(end_index < s.size() && split_count < count)
+    auto word_start = s.begin();
+    for(size_t split_count = 0; word_start != s.end() && split_count < count; ++split_count)
     {
-        result.push_back(s.substr(start_index, end_index - start_index));
-        start_index = end_index + delim.size();
-        end_index = s.find(delim, start_index);
-        ++split_count;
+        const auto word_end = std::find_first_of(word_start, s.end(), delim.begin(), delim.end());
+        result.emplace_back(word_start, word_end);
+        word_start = word_end == s.end() ? s.end() : std::next(word_end, delim.size());
     }
 
-    if(start_index <= s.size() && ! s.empty())
+    if(word_start != s.end())
     {
-        result.push_back(s.substr(start_index));
+        result.emplace_back(word_start, s.end());
+    }
+    else if(String::ends_with(s, delim))
+    {
+        result.emplace_back();
     }
 
     return result;
@@ -50,6 +51,11 @@ std::vector<std::string> String::split(const std::string& s) noexcept
 bool String::starts_with(const std::string& s, const std::string& beginning) noexcept
 {
     return std::mismatch(beginning.begin(), beginning.end(), s.begin(), s.end()).first == beginning.end();
+}
+
+bool String::ends_with(const std::string& s, const std::string& beginning) noexcept
+{
+    return std::mismatch(beginning.rbegin(), beginning.rend(), s.rbegin(), s.rend()).first == beginning.rend();
 }
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
