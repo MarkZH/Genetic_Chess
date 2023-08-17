@@ -98,7 +98,14 @@ namespace
     template<>
     void print_result(const std::vector<std::string>& results)
     {
-        std::cerr << "{" << String::join(results, ", ") << "}";
+        if(results.empty())
+        {
+            std::cerr << "empty list";
+        }
+        else
+        {
+            std::cerr << "{" << String::join(results, ", ") << "}";
+        }
     }
 
     // Run the callable f on the arguments. If the result of the argument is not
@@ -163,6 +170,20 @@ namespace
 
         print_arguments(arguments...);
         tests_passed = false;
+    }
+
+    // Helper function to test whitespace splitting
+    std::vector<std::string> ws_split(const std::string& s) noexcept
+    {
+        return String::split(s);
+    }
+    
+    // Helper function to test delimiter splitting
+    std::vector<std::string> del_split(const std::string& s,
+                                       const std::string& delim,
+                                       const size_t count) noexcept
+    {
+        return String::split(s, delim, count);
     }
 
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2) noexcept;
@@ -324,13 +345,13 @@ bool run_tests()
     test_function(tests_passed, "String::add_to_file_name() with no dot", "a-b", String::add_to_file_name, "a", "-b");
 
     using vs = std::vector<std::string>;
-    test_function(tests_passed, "String::split()", vs{"a", "b", "c", "d", "e"}, String::split, "\t a b c d e ", "", -1);
-    test_function(tests_passed, "Split on comma", vs{"", ""}, String::split, ",", ",", 1);
-    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", -1);
-    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, String::split, "..a..b..c..d..", "..", 4);
-    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, String::split, "..a..b..c..d..", "..", 5);
-    test_function(tests_passed, "Empty string split", vs{}, String::split, "", " ", 1000);
-    test_function(tests_passed, "Missing delimiter split", vs{"abcdefg"}, String::split, "abcdefg", ",", 1000);
+    test_function(tests_passed, "String::split()", vs{"a", "b", "c", "d", "e"}, ws_split, "\t a b c d e ");
+    test_function(tests_passed, "Split on comma", vs{"", ""}, del_split, ",", ",", 1);
+    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, del_split, "..a..b..c..d..", "..", -1);
+    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, del_split, "..a..b..c..d..", "..", 4);
+    test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, del_split, "..a..b..c..d..", "..", 5);
+    test_function(tests_passed, "Empty string split", vs{}, del_split, "", " ", 1000);
+    test_function(tests_passed, "Missing delimiter split", vs{"abcdefg"}, del_split, "abcdefg", ",", 1000);
     split_and_join_are_inverse_operations(tests_passed);
 
     test_function(tests_passed, "Format integer (zero)",  "0", String::format_integer<int>,  0, ",");

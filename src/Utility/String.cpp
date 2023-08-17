@@ -14,41 +14,36 @@
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
-    if(s.empty())
-    {
-        return {};
-    }
-
     std::vector<std::string> result;
-    if(delim.empty())
+    size_t start_index = 0;
+    size_t end_index = s.find(delim);
+    size_t split_count = 0;
+    while(end_index < s.size() && split_count < count)
     {
-        auto word_start = std::find_if_not(s.begin(), s.end(), isspace);
-        while(word_start != s.end())
-        {
-            const auto word_end = std::find_if(word_start, s.end(), isspace);
-            result.emplace_back(word_start, word_end);
-            word_start = std::find_if_not(word_end, s.end(), isspace);
-        }
-    }
-    else
-    {
-        size_t start_index = 0;
-        size_t end_index = 0;
-        size_t split_count = 0;
-        while(end_index < s.size() && split_count < count)
-        {
-            end_index = std::min(s.find(delim, start_index), s.size());
-            result.push_back(s.substr(start_index, end_index - start_index));
-            start_index = end_index + delim.size();
-            ++split_count;
-        }
-
-        if(start_index <= s.size())
-        {
-            result.push_back(s.substr(start_index));
-        }
+        result.push_back(s.substr(start_index, end_index - start_index));
+        start_index = end_index + delim.size();
+        end_index = s.find(delim, start_index);
+        ++split_count;
     }
 
+    if(start_index <= s.size() && ! s.empty())
+    {
+        result.push_back(s.substr(start_index));
+    }
+
+    return result;
+}
+
+std::vector<std::string> String::split(const std::string& s) noexcept
+{
+    std::vector<std::string> result;
+    auto word_start = std::find_if_not(s.begin(), s.end(), isspace);
+    while(word_start != s.end())
+    {
+        const auto word_end = std::find_if(word_start, s.end(), isspace);
+        result.emplace_back(word_start, word_end);
+        word_start = std::find_if_not(word_end, s.end(), isspace);
+    }
     return result;
 }
 
