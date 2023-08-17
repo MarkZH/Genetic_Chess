@@ -19,14 +19,20 @@ namespace String
     //! \brief Splits a string into a list of strings based upon a delimiter.
     //!
     //! \param s The string to be split.
-    //! \param delim The delimiter that marks where the string should be split. If empty,
-    //!        any number of consecutive whitespaces will be the delimiter.
+    //! \param delim The delimiter that marks where the string should be split.
     //! \param count The maximum number of splits. The final number of strings will be
-    //!        count + 1 at most. This parameter is ignored if delim is empty.
+    //!        count + 1 at most. If unspecified, as many splits as possible will be done.
     //! \returns A list of strings that were separated by the delimiter.
     std::vector<std::string> split(const std::string& s,
-                                   const std::string& delim = "",
+                                   const std::string& delim,
                                    size_t count = std::string::npos) noexcept;
+
+    //! \brief Splits a string into a list of strings by cutting at whitespace.
+    //!
+    //! \param s The string to be split.
+    //! \returns A list of strings that were separated by whitespace. None of the strings
+    //!          in the resulting list will have any whitespace.
+    std::vector<std::string> split(const std::string& s) noexcept;
 
     //! \brief Join a sequence of strings into a single string with joiner strings in between.
     //!

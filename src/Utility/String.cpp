@@ -14,26 +14,24 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 {
     const auto to_vector = std::ranges::to<std::vector<std::string>>();
 
-    if(delim.empty())
+    const auto initial_take = std::min(count, s.size());
+    auto split_view = std::views::split(s, delim);
+    auto result = split_view | std::views::take(initial_take) | to_vector;
+    const auto remainder = split_view | std::views::drop(initial_take) | to_vector;
+    if( ! remainder.empty())
     {
-        return s
-            | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
-            | std::views::split(' ')
-            | std::views::filter([](const auto& ss) { return !ss.empty(); })
-            | to_vector;
+        result.push_back(join(remainder, delim));
     }
-    else
-    {
-        const auto initial_take = std::min(count, s.size());
-        auto split_view = std::views::split(s, delim);
-        auto result = split_view | std::views::take(initial_take) | to_vector;
-        const auto remainder = split_view | std::views::drop(initial_take) | to_vector;
-        if( ! remainder.empty())
-        {
-            result.push_back(join(remainder, delim));
-        }
-        return result;
-    }
+    return result;
+}
+
+std::vector<std::string> String::split(const std::string& s) noexcept
+{
+    return s
+        | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
+        | std::views::split(' ')
+        | std::views::filter([](const auto& ss) { return !ss.empty(); })
+        | std::ranges::to<std::vector<std::string>>();;
 }
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
