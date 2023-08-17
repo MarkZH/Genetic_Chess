@@ -27,11 +27,10 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 
 std::vector<std::string> String::split(const std::string& s) noexcept
 {
-    return s
-        | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
-        | std::views::split(' ')
-        | std::views::filter([](const auto& ss) { return !ss.empty(); })
-        | std::ranges::to<std::vector<std::string>>();;
+    return s | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
+             | std::views::split(' ')
+             | std::views::filter([](const auto& ss) { return ! ss.empty(); })
+             | std::ranges::to<std::vector<std::string>>();
 }
 
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
