@@ -37,10 +37,9 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 std::vector<std::string> String::split(const std::string& s) noexcept
 {
     std::vector<std::string> result;
-    for(const auto& part : s
-        | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
-        | std::views::split(' ')
-        | std::views::filter([](const auto& ss) { return !ss.empty(); }))
+    for(const auto& part : s | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
+                             | std::views::split(' ')
+                             | std::views::filter([](const auto& ss) { return ! ss.empty(); }))
     {
         result.emplace_back(part.begin(), part.end());
     }
