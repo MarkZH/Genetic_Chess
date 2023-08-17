@@ -13,37 +13,36 @@
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
     std::vector<std::string> result;
-    if(delim.empty())
+    const auto initial_take = std::min(count, s.size());
+    for(const auto& token : std::views::split(s, delim) | std::views::take(initial_take))
     {
-        for(const auto& part : s
-            | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
-            | std::views::split(' ')
-            | std::views::filter([](const auto& ss) { return !ss.empty(); }))
-        {
-            result.emplace_back(part.begin(), part.end());
-        }
-        return result;
-    }
-    else
-    {
-        const auto initial_take = std::min(count, s.size());
-        for(const auto& token : std::views::split(s, delim) | std::views::take(initial_take))
-        {
-            result.emplace_back(token.begin(), token.end());
-        }
-
-        std::vector<std::string> remainder;
-        for(const auto& token : std::views::split(s, delim) | std::views::drop(initial_take))
-        {
-            remainder.emplace_back(token.begin(), token.end());
-        }
-
-        if( ! remainder.empty())
-        {
-            result.push_back(join(remainder, delim));
-        }
+        result.emplace_back(token.begin(), token.end());
     }
 
+    std::vector<std::string> remainder;
+    for(const auto& token : std::views::split(s, delim) | std::views::drop(initial_take))
+    {
+        remainder.emplace_back(token.begin(), token.end());
+    }
+
+    if( ! remainder.empty())
+    {
+        result.push_back(join(remainder, delim));
+    }
+
+    return result;
+}
+
+std::vector<std::string> String::split(const std::string& s) noexcept
+{
+    std::vector<std::string> result;
+    for(const auto& part : s
+        | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
+        | std::views::split(' ')
+        | std::views::filter([](const auto& ss) { return !ss.empty(); }))
+    {
+        result.emplace_back(part.begin(), part.end());
+    }
     return result;
 }
 
