@@ -14,13 +14,14 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 {
     std::vector<std::string> result;
     const auto initial_take = std::min(count, s.size());
-    for(const auto& token : std::views::split(s, delim) | std::views::take(initial_take))
+    auto splitted = std::views::split(s, delim);
+    for(const auto& token : splitted | std::views::take(initial_take))
     {
         result.emplace_back(token.begin(), token.end());
     }
 
     std::vector<std::string> remainder;
-    for(const auto& token : std::views::split(s, delim) | std::views::drop(initial_take))
+    for(const auto& token : splitted | std::views::drop(initial_take))
     {
         remainder.emplace_back(token.begin(), token.end());
     }
