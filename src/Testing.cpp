@@ -350,6 +350,7 @@ bool run_tests()
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, del_split, "..a..b..c..d..", "..", -1);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, del_split, "..a..b..c..d..", "..", 4);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, del_split, "..a..b..c..d..", "..", 5);
+    test_function(tests_passed, "Ellipses split", vs{ "", "a", ".b", "c", "d", "" }, del_split, "..a...b..c..d..", "..", -1);
     test_function(tests_passed, "Empty string split", vs{}, del_split, "", " ", 1000);
     test_function(tests_passed, "Missing delimiter split", vs{"abcdefg"}, del_split, "abcdefg", ",", 1000);
     split_and_join_are_inverse_operations(tests_passed);

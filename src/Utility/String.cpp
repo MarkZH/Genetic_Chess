@@ -18,7 +18,7 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
     auto word_start = s.begin();
     for(size_t split_count = 0; word_start != s.end() && split_count < count; ++split_count)
     {
-        const auto word_end = std::find_first_of(word_start, s.end(), delim.begin(), delim.end());
+        const auto word_end = std::search(word_start, s.end(), delim.begin(), delim.end());
         result.emplace_back(word_start, word_end);
         word_start = word_end == s.end() ? s.end() : std::next(word_end, delim.size());
     }
