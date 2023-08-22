@@ -102,13 +102,6 @@ class Piece
         //! \returns Whether the two pieces are the same type and color
         friend bool operator==(Piece a, Piece b) noexcept = default;
 
-        //! \brief Check two pieces for inequality
-        //!
-        //! \param a A piece.
-        //! \param b Another piece.
-        //! \returns Whether the two pieces have different types or colors.
-        friend bool operator!=(Piece a, Piece b) noexcept = default;
-
     private:
         piece_code_t piece_code;
 };
