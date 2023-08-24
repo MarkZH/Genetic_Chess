@@ -28,7 +28,7 @@ void Help_Writer::add_section_title(const std::string& title) noexcept
 void Help_Writer::add_paragraph(const std::string& paragraph) noexcept
 {
     add_extra_space_after_option();
-    text += String::word_wrap(line_length, 0, paragraph) + "\n\n";
+    text += String::word_wrap(paragraph, line_length) + "\n\n";
 }
 
 void Help_Writer::add_option(const std::string& name,
@@ -52,7 +52,7 @@ void Help_Writer::add_option(const std::string& name,
 
     if( ! description.empty())
     {
-        text += String::word_wrap(line_length, 2*indent_size, description) + "\n\n";
+        text += String::word_wrap(description, line_length, 2*indent_size) + "\n\n";
     }
     need_extra_space = description.empty();
 }

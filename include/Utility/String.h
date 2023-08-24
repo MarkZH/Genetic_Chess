@@ -273,7 +273,7 @@ namespace String
     //!
     //! All whitespace will be condensed to single spaces before wrapping. The character ~ will be
     //! converted to a non-breaking space.
-    std::string word_wrap(size_t line_length, size_t indent, const std::string& text) noexcept;
+    std::string word_wrap(const std::string& text, size_t line_length, size_t indent = 0) noexcept;
 }
 
 #endif // STRING_H
