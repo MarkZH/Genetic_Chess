@@ -586,7 +586,7 @@ std::string variation_line(Board board,
 {
     Game_Result move_result;
     const auto move_label_offset = (board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
-    std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + ". ... " : std::string{});
+    std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + "... " : std::string{});
     for(size_t i = 0; i < variation.size(); ++i)
     {
         const auto move_label = move_number + i/2 + move_label_offset;

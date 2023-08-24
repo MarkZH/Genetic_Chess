@@ -838,15 +838,16 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
     auto game_text = std::ostringstream();
     auto commentary_board = Board(starting_fen);
+    auto previous_move_had_comment = false;
     for(const auto next_move : game_record_listing)
     {
         const auto step = commentary_board.all_ply_count()/2 + 1;
-        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0)
+        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0 || previous_move_had_comment)
         {
-            game_text << '\n' << step << ".";
-            if(commentary_board.played_ply_count() == 0 && commentary_board.whose_turn() == Piece_Color::BLACK)
+            game_text << " " << step << ".";
+            if(commentary_board.whose_turn() == Piece_Color::BLACK)
             {
-                game_text << " ...";
+                game_text << "..";
             }
         }
 
@@ -858,6 +859,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
             game_text << " " << commentary;
         }
         commentary_board.play_move(*next_move);
+        previous_move_had_comment = ! commentary.empty();
     }
     game_text << " " << actual_result.game_ending_annotation() << "\n\n\n";
 
