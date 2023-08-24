@@ -183,7 +183,7 @@ namespace
                            const std::string& rule_name,
                            const bool expected_ruling,
                            const bool actual_ruling,
-                           const int last_move_line_number)
+                           const int last_move_line_number) noexcept
     {
         const auto pass = expected_ruling == actual_ruling;
         if( ! pass)
