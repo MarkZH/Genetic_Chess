@@ -454,7 +454,7 @@ namespace
                     return false;
                 }
             }
-            else if(String::starts_with(word, "[Termination"))
+            else if(word == "[Termination")
             {
                 const auto terminator = get_pgn_header_value(input, line_number);
                 expect_checkmate = false;
@@ -467,13 +467,13 @@ namespace
                     expect_fifty_move_draw = true;
                 }
             }
-            else if(String::starts_with(word, "[FEN"))
+            else if(word == "[FEN")
             {
                 board = Board(get_pgn_header_value(input, line_number));
             }
-            else if(String::starts_with(word, "["))
+            else if(word[0] == '[')
             {
-                get_pgn_header_value(input, line_number);
+                skip_rest_of_line(input, line_number);
             }
             else // Line contains game moves
             {
