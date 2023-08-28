@@ -33,16 +33,16 @@ namespace
     void print_help();
 
     //! \brief Skip ahead until the first non-whitespace character.
-    void skip_whitespace(std::ifstream& input, int& line_number) noexcept;
+    void skip_whitespace(std::istream& input, int& line_number) noexcept;
 
     //! \brief Skip to the end of the current line.
-    void skip_rest_of_line(std::ifstream& input, int& line_number) noexcept;
+    void skip_rest_of_line(std::istream& input, int& line_number) noexcept;
 
     //! \brief Skip to the end of the current curly-braced comment. Returns true if successful, and false if the end of the input stream is reached.
-    bool skip_braced_comment(std::ifstream& input, int& line_number) noexcept;
+    bool skip_braced_comment(std::istream& input, int& line_number) noexcept;
 
     //! \brief Skip to the end of the current RAV section. Returns true if successful, and false if the end of the input stream is reached.
-    bool skip_passed_rav(std::ifstream& input, int& line_number) noexcept;
+    bool skip_passed_rav(std::istream& input, int& line_number) noexcept;
 
     //! \brief Confirm that all moves in a PGN game record are legal moves.
     //!
@@ -218,7 +218,7 @@ namespace
         return String::extract_delimited_text(rest, "\"", "\"");
     }
 
-    void skip_whitespace(std::ifstream& input, int& line_number) noexcept
+    void skip_whitespace(std::istream& input, int& line_number) noexcept
     {
         while(std::isspace(input.peek()))
         {
@@ -229,14 +229,14 @@ namespace
         }
     }
 
-    void skip_rest_of_line(std::ifstream& input, int& line_number) noexcept
+    void skip_rest_of_line(std::istream& input, int& line_number) noexcept
     {
         std::string rest_of_line;
         std::getline(input, rest_of_line);
         ++line_number;
     }
 
-    bool skip_braced_comment(std::ifstream& input, int& line_number) noexcept
+    bool skip_braced_comment(std::istream& input, int& line_number) noexcept
     {
         const auto brace_comment_start_line_number = line_number;
         while(true)
@@ -262,7 +262,7 @@ namespace
         return true;
     }
 
-    bool skip_passed_rav(std::ifstream& input, int& line_number) noexcept
+    bool skip_passed_rav(std::istream& input, int& line_number) noexcept
     {
         const auto rav_start_line_number = line_number;
         input.get();
