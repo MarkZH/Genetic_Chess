@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 #include <string_view>
+#include <limits>
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -244,8 +245,7 @@ namespace
 
     void skip_rest_of_line(std::istream& input, int& line_number) noexcept
     {
-        std::string rest_of_line;
-        std::getline(input, rest_of_line);
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         ++line_number;
     }
 
@@ -455,7 +455,7 @@ namespace
                     return false;
                 }
             }
-            else if(word.starts_with("[Termination"))
+            else if(word == "[Termination")
             {
                 const auto terminator = get_pgn_header_value(input, line_number);
                 expect_checkmate = false;
@@ -468,13 +468,13 @@ namespace
                     expect_fifty_move_draw = true;
                 }
             }
-            else if(word.starts_with("[FEN"))
+            else if(word == "[FEN")
             {
                 board = Board(get_pgn_header_value(input, line_number));
             }
-            else if(word.starts_with("["))
+            else if(word[0] == '[')
             {
-                get_pgn_header_value(input, line_number);
+                skip_rest_of_line(input, line_number);
             }
             else // Line contains game moves
             {
