@@ -33,15 +33,27 @@ namespace
     void print_help();
 
     //! \brief Skip ahead until the first non-whitespace character.
+    //! 
+    //! \param input A text input stream.
+    //! \param line_number A line counter that is incremented if a newline is encountered.
     void skip_whitespace(std::istream& input, int& line_number) noexcept;
 
     //! \brief Skip to the end of the current line.
+    //! 
+    //! \param input A text input stream.
+    //! \param line_number A line number counter that is incremented when the stream reaches the next line.
     void skip_rest_of_line(std::istream& input, int& line_number) noexcept;
 
     //! \brief Skip to the end of the current curly-braced comment. Returns true if successful, and false if the end of the input stream is reached.
+    //! 
+    //! \param input A text input stream.
+    //! \param line_number A line counter that is incremented if a newline is encountered.
     bool skip_braced_comment(std::istream& input, int& line_number) noexcept;
 
     //! \brief Skip to the end of the current RAV section. Returns true if successful, and false if the end of the input stream is reached.
+    //! 
+    //! \param input A text input stream.
+    //! \param line_number A line counter that is incremented if a newline is encountered.
     bool skip_passed_rav(std::istream& input, int& line_number) noexcept;
 
     //! \brief Confirm that all moves in a PGN game record are legal moves.
