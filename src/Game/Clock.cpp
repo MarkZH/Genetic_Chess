@@ -94,7 +94,7 @@ void Clock::start(const Piece_Color starting_turn) noexcept
     {
         game_start_date_time = std::chrono::system_clock::now();
     }
-    clocks_running = true;
+    clocks_running = initial_start_time > 0s;
 }
 
 Clock::seconds Clock::time_left(const Piece_Color color) const noexcept
@@ -188,16 +188,24 @@ Clock::seconds Clock::increment(const Piece_Color color) const noexcept
 std::string Clock::time_control_string() const noexcept
 {
     std::ostringstream time_control_spec;
+
     if(moves_per_time_period() > 0)
     {
         time_control_spec << moves_per_time_period() << '/';
     }
-    time_control_spec << initial_time().count();
+
+    if(initial_time() > 0s)
+    {
+        time_control_spec << initial_time().count();
+    }
+    
     if(increment(Piece_Color::WHITE) > 0.0s)
     {
         time_control_spec << '+' << increment(Piece_Color::WHITE).count();
     }
-    return time_control_spec.str();
+    
+    const auto time_spec = time_control_spec.str();
+    return time_spec.empty() ? "-" : time_spec;
 }
 
 bool Clock::time_expired(Piece_Color color) const noexcept

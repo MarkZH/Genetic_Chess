@@ -77,30 +77,6 @@ namespace String
     //! \returns The same string with everything after the comment marker removed.
     std::string strip_comments(const std::string& str, const std::string& comment) noexcept;
 
-    //! \brief Remove all text between comment indicators.
-    //!
-    //! \param str The input string.
-    //! \param start The marker indicating the start of a comment to be removed.
-    //! \param end The marker indicating the end of a comment to be removed.
-    //! \returns The same string with the markers and everything between them removed.
-    //!
-    //! Note: This function does not consider the nesting of delimited blocks of text.
-    std::string strip_block_comment(const std::string& str, const std::string& start, const std::string& end);
-
-    //! \brief Remove all text between comment indicators.
-    //!
-    //! \param str The input string.
-    //! \param start The marker indicating the start of a comment to be removed.
-    //! \param end The marker indicating the end of a comment to be removed.
-    //! \returns The same string with the markers and everything between them removed.
-    std::string strip_nested_block_comments(const std::string& str, const std::string& start, const std::string& end);
-
-    //! \brief Remove all comments from a PGN game line.
-    //!
-    //! \param line A line of text potentially containing moves in a PGN game record file.
-    //! \returns The line without any commentary (commetns, alternate lines, etc.)
-    std::string remove_pgn_comments(const std::string& line);
-
     //! \brief Extract text between delimiters
     //!
     //! \param str The input string
@@ -234,7 +210,7 @@ namespace String
     //!
     //! All whitespace will be condensed to single spaces before wrapping. The character ~ will be
     //! converted to a non-breaking space.
-    std::string word_wrap(size_t line_length, size_t indent, const std::string& text) noexcept;
+    std::string word_wrap(const std::string& text, size_t line_length, size_t indent = 0) noexcept;
 }
 
 #endif // STRING_H

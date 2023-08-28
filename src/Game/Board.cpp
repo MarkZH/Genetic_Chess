@@ -17,6 +17,7 @@ using namespace std::chrono_literals;
 #include <type_traits>
 #include <functional>
 #include <utility>
+#include <sstream>
 
 #include "Game/Clock.h"
 #include "Game/Square.h"
@@ -802,61 +803,75 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         }
     }
 
-    std::ofstream ofs(file_name, std::ios::app);
-    std::ostream& out_stream = (ofs ? ofs : std::cout);
+    auto header_text = std::ostringstream();
 
-    print_game_header_line(out_stream, "Event", event_name);
-    print_game_header_line(out_stream, "Site", location);
-    print_game_header_line(out_stream, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
-    print_game_header_line(out_stream, "Round", game_number++);
-    print_game_header_line(out_stream, "White", white.name());
-    print_game_header_line(out_stream, "Black", black.name());
+    print_game_header_line(header_text, "Event", event_name);
+    print_game_header_line(header_text, "Site", location);
+    print_game_header_line(header_text, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
+    print_game_header_line(header_text, "Round", game_number++);
+    print_game_header_line(header_text, "White", white.name());
+    print_game_header_line(header_text, "Black", black.name());
 
     const auto last_move_result = move_result();
     const auto& actual_result = last_move_result.game_has_ended() ? last_move_result : result;
-    print_game_header_line(out_stream, "Result", actual_result.game_ending_annotation());
+    print_game_header_line(header_text, "Result", actual_result.game_ending_annotation());
 
-    print_game_header_line(out_stream, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
+    print_game_header_line(header_text, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
-    print_game_header_line(out_stream, "TimeControl", game_clock.time_control_string());
-    print_game_header_line(out_stream, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
-    print_game_header_line(out_stream, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
+    print_game_header_line(header_text, "TimeControl", game_clock.time_control_string());
+    print_game_header_line(header_text, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
+    print_game_header_line(header_text, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
 
     if( ! actual_result.ending_reason().empty() && ! actual_result.ending_reason().contains("mates"))
     {
-        print_game_header_line(out_stream, "Termination", actual_result.ending_reason());
+        print_game_header_line(header_text, "Termination", actual_result.ending_reason());
     }
 
     const auto starting_fen = original_fen();
     if(starting_fen != standard_starting_fen)
     {
-        print_game_header_line(out_stream, "SetUp", 1);
-        print_game_header_line(out_stream, "FEN", starting_fen);
+        print_game_header_line(header_text, "SetUp", 1);
+        print_game_header_line(header_text, "FEN", starting_fen);
     }
 
+    auto game_text = std::ostringstream();
     auto commentary_board = Board(starting_fen);
+    auto previous_move_had_comment = false;
     for(const auto next_move : game_record_listing)
     {
         const auto step = commentary_board.all_ply_count()/2 + 1;
-        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0)
+        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0 || previous_move_had_comment)
         {
-            out_stream << '\n' << step << ".";
-            if(commentary_board.played_ply_count() == 0 && commentary_board.whose_turn() == Piece_Color::BLACK)
+            game_text << " " << step << ".";
+            if(commentary_board.whose_turn() == Piece_Color::BLACK)
             {
-                out_stream << " ...";
+                game_text << "..";
             }
         }
 
-        out_stream << " " << next_move->algebraic(commentary_board);
+        game_text << " " << next_move->algebraic(commentary_board);
         const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
         const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));
         if( ! commentary.empty())
         {
-            out_stream << " " << commentary;
+            game_text << " " << commentary;
         }
         commentary_board.play_move(*next_move);
+        previous_move_had_comment = ! commentary.empty();
     }
-    out_stream << " " << actual_result.game_ending_annotation() << "\n\n\n";
+    game_text << " " << actual_result.game_ending_annotation() << "\n\n\n";
+
+    const auto pgn_text = header_text.str() + String::word_wrap(game_text.str(), 80);
+    
+    if(file_name.empty())
+    {
+        std::cout << pgn_text;
+    }
+    else
+    {
+        std::ofstream ofs(file_name, std::ios::app);
+        ofs << pgn_text;
+    }
 
     assert(commentary_board.fen() == fen());
 }

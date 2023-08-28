@@ -8,6 +8,7 @@
 #include <utility>
 #include <vector>
 #include <string_view>
+#include <limits>
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -32,6 +33,30 @@ namespace
 {
     //! \brief Print the command-line options for this program.
     void print_help();
+
+    //! \brief Skip ahead until the first non-whitespace character.
+    //! 
+    //! \param input A text input stream.
+    //! \param line_number A line counter that is incremented if a newline is encountered.
+    void skip_whitespace(std::istream& input, int& line_number) noexcept;
+
+    //! \brief Skip to the end of the current line.
+    //! 
+    //! \param input A text input stream.
+    //! \param line_number A line number counter that is incremented when the stream reaches the next line.
+    void skip_rest_of_line(std::istream& input, int& line_number) noexcept;
+
+    //! \brief Skip to the end of the current curly-braced comment. Returns true if successful, and false if the end of the input stream is reached.
+    //! 
+    //! \param input A text input stream.
+    //! \param line_number A line counter that is incremented if a newline is encountered.
+    bool skip_braced_comment(std::istream& input, int& line_number) noexcept;
+
+    //! \brief Skip to the end of the current RAV section. Returns true if successful, and false if the end of the input stream is reached.
+    //! 
+    //! \param input A text input stream.
+    //! \param line_number A line counter that is incremented if a newline is encountered.
+    bool skip_passed_rav(std::istream& input, int& line_number) noexcept;
 
     //! \brief Confirm that all moves in a PGN game record are legal moves.
     //!
@@ -184,7 +209,7 @@ namespace
                            const std::string& rule_name,
                            const bool expected_ruling,
                            const bool actual_ruling,
-                           const int last_move_line_number)
+                           const int last_move_line_number) noexcept
     {
         const auto pass = expected_ruling == actual_ruling;
         if( ! pass)
@@ -199,6 +224,100 @@ namespace
         return pass;
     }
 
+    std::string get_pgn_header_value(std::istream& is, int& line_number) noexcept
+    {
+        std::string rest;
+        std::getline(is, rest);
+        ++line_number;
+        return String::extract_delimited_text(rest, "\"", "\"");
+    }
+
+    void skip_whitespace(std::istream& input, int& line_number) noexcept
+    {
+        while(std::isspace(input.peek()))
+        {
+            if(input.get() == '\n')
+            {
+                ++line_number;
+            }
+        }
+    }
+
+    void skip_rest_of_line(std::istream& input, int& line_number) noexcept
+    {
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        ++line_number;
+    }
+
+    bool skip_braced_comment(std::istream& input, int& line_number) noexcept
+    {
+        const auto brace_comment_start_line_number = line_number;
+        while(true)
+        {
+            const auto c = input.get();
+            if( ! input)
+            {
+                std::cerr << "Unclosed commentary curly brace: line " << brace_comment_start_line_number << ".\n";
+                return false;
+            }
+
+            if(c == '}')
+            {
+                break;
+            }
+
+            if(c == '\n')
+            {
+                ++line_number;
+            }
+        }
+
+        return true;
+    }
+
+    bool skip_passed_rav(std::istream& input, int& line_number) noexcept
+    {
+        const auto rav_start_line_number = line_number;
+        input.get();
+        auto rav_depth = 1;
+
+        while(rav_depth > 0)
+        {
+            const auto c = input.get();
+            if(!input)
+            {
+                std::cerr << "Reached end of input before end of RAV: line " << rav_start_line_number << ".\n";
+                return false;
+            }
+
+            if(c == '(')
+            {
+                ++rav_depth;
+            }
+            else if(c == ')')
+            {
+                --rav_depth;
+            }
+            else if(c == '\n')
+            {
+                ++line_number;
+            }
+            else if(c == ';')
+            {
+                skip_rest_of_line(input, line_number);
+            }
+            else if(c == '{')
+            {
+                if( ! skip_braced_comment(input, line_number))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     bool confirm_game_record(const std::string& file_name)
     {
         auto input = std::ifstream(file_name);
@@ -207,8 +326,9 @@ namespace
             throw std::runtime_error("Could not open file " + file_name + " for reading.");
         }
 
-        auto line_number = 0;
+        auto line_number = 1;
         auto last_move_line_number = 0;
+        std::string move_number;
 
         auto expected_winner = Winner_Color::NONE;
         auto expect_checkmate = true;
@@ -217,18 +337,54 @@ namespace
         auto in_game = false;
         Board board;
         Game_Result result;
-
-        for(std::string line; std::getline(input, line);)
+        while(true)
         {
-            ++line_number;
-            line = String::remove_pgn_comments(line);
-            if(line.empty())
+            skip_whitespace(input, line_number);
+
+            if(input.peek() == ';')
             {
+                skip_rest_of_line(input, line_number);
                 continue;
             }
 
+            if(input.peek() == '{')
+            {
+                if(skip_braced_comment(input, line_number))
+                {
+                    continue;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if(input.peek() == '}')
+            {
+                std::cerr << "Malformed commentary curly brace (line: " << line_number << ")\n";
+                return false;
+            }
+
+            if(input.peek() == '(')
+            {
+                if(skip_passed_rav(input, line_number))
+                {
+                    continue;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            if(input.peek() == ')')
+            {
+                std::cerr << "Malformed RAV parentheses (line: " << line_number << ")\n";
+                return false;
+            }
+
             // Start header of new game
-            if(in_game && line.starts_with("["))
+            if(in_game && input.peek() == '[')
             {
                 if( ! check_rule_result("Header",
                                         "50-move draw",
@@ -257,6 +413,8 @@ namespace
                     return false;
                 }
 
+                move_number = {};
+
                 expected_winner = Winner_Color::NONE;
                 expect_checkmate = true;
                 expect_fifty_move_draw = false;
@@ -266,126 +424,130 @@ namespace
                 result = {};
             }
 
-            if(line.starts_with("[Result"))
+            std::string word;
+            if( ! (input >> word))
             {
-                if(line.contains("1-0"))
+                break;
+            }
+
+            if(word == "[Result")
+            {
+                const auto result_tag = get_pgn_header_value(input, line_number);
+                if(result_tag == "1-0")
                 {
                     expected_winner = Winner_Color::WHITE;
                 }
-                else if(line.contains("0-1"))
+                else if(result_tag == "0-1")
                 {
                     expected_winner = Winner_Color::BLACK;
                 }
-                else if(line.contains("1/2-1/2"))
+                else if(result_tag == "1/2-1/2")
                 {
                     expect_checkmate = false;
                 }
-                else if(line.contains('*'))
+                else if(result_tag == "*")
                 {
                     expect_checkmate = false;
                 }
                 else
                 {
-                    std::cerr << "Malformed Result: " << line << " (line: " << line_number << ")\n";
+                    std::cerr << "Malformed Result: " << word << " " << result_tag << " (line: " << line_number << ")\n";
                     return false;
                 }
             }
-            else if(line.starts_with("[Termination"))
+            else if(word == "[Termination")
             {
+                const auto terminator = get_pgn_header_value(input, line_number);
                 expect_checkmate = false;
-                if(line.contains("fold"))
+                if(terminator.contains("fold"))
                 {
                     expect_threefold_draw = true;
                 }
-                else if(line.contains("50"))
+                else if(terminator.contains("50"))
                 {
                     expect_fifty_move_draw = true;
                 }
             }
-            else if(line.starts_with("[FEN"))
+            else if(word == "[FEN")
             {
-                board = Board(String::extract_delimited_text(line, "\"", "\""));
+                board = Board(get_pgn_header_value(input, line_number));
             }
-            else if(line.starts_with("["))
+            else if(word[0] == '[')
             {
-                continue;
+                skip_rest_of_line(input, line_number);
             }
             else // Line contains game moves
             {
                 in_game = true;
-                std::string move_number;
-                for(const auto& move : String::split(line))
+                if(word.back() == '.')
                 {
-                    if(move.back() == '.')
-                    {
-                        move_number = move + ' ';
-                        continue;
-                    }
+                    move_number = String::split(word, ".")[0] + ". ";
+                    continue;
+                }
 
-                    if(board.whose_turn() == Piece_Color::BLACK)
-                    {
-                        move_number += "... ";
-                    }
+                if(board.whose_turn() == Piece_Color::BLACK)
+                {
+                    move_number += "... ";
+                }
 
-                    if((move == "1/2-1/2" && expected_winner != Winner_Color::NONE) ||
-                       (move == "1-0" && expected_winner != Winner_Color::WHITE) ||
-                       (move == "0-1" && expected_winner != Winner_Color::BLACK) ||
-                       (move == "*" && expected_winner != Winner_Color::NONE))
+                if((word == "1/2-1/2" && expected_winner != Winner_Color::NONE) ||
+                   (word == "1-0" && expected_winner != Winner_Color::WHITE) ||
+                   (word == "0-1" && expected_winner != Winner_Color::BLACK) ||
+                   (word == "*" && expected_winner != Winner_Color::NONE))
+                {
+                    std::cerr << "Final result mark (" << word << ") does not match game result. (line: " << line_number << ")\n";
+                    return false;
+                }
+
+                if(word == "1/2-1/2" || word == "1-0" || word == "0-1" || word == "*")
+                {
+                    continue;
+                }
+
+                try
+                {
+                    const auto& move_to_play = board.interpret_move(word);
+                    last_move_line_number = line_number;
+                    if( ! check_rule_result("Move: " + move_number + word + ")",
+                                            "capture",
+                                            word.contains('x'),
+                                            board.move_captures(move_to_play),
+                                            last_move_line_number))
                     {
-                        std::cerr << "Final result mark (" << move << ") does not match game result. (line: " << line_number << ")\n";
                         return false;
                     }
 
-                    if(move == "1/2-1/2" || move == "1-0" || move == "0-1" || move == "*")
+                    result = board.play_move(move_to_play);
+
+                    if( ! check_rule_result("Move (" + move_number + word + ")",
+                                            "check",
+                                            std::string("+#").contains(word.back()),
+                                            board.king_is_in_check(),
+                                            last_move_line_number))
                     {
-                        continue;
-                    }
-
-                    try
-                    {
-                        const auto& move_to_play = board.interpret_move(move);
-                        last_move_line_number = line_number;
-                        if( ! check_rule_result("Move: " + move_number + move + ")",
-                                                "capture",
-                                                move.contains('x'),
-                                                board.move_captures(move_to_play),
-                                                last_move_line_number))
-                        {
-                            return false;
-                        }
-
-                        result = board.play_move(move_to_play);
-
-                        if( ! check_rule_result("Move (" + move_number + move + ")",
-                                                "check",
-                                                std::string{"+#"}.contains(move.back()),
-                                                board.king_is_in_check(),
-                                                last_move_line_number))
-                        {
-                            return false;
-                        }
-
-                        if( ! check_rule_result("Move (" + move_number + move + ")",
-                                                "checkmate",
-                                                move.back() == '#',
-                                                result.game_has_ended() && result.winner() != Winner_Color::NONE,
-                                                last_move_line_number))
-                        {
-                            return false;
-                        }
-                    }
-                    catch(const Illegal_Move&)
-                    {
-                        std::cerr << "Move (" << move_number << move << ") is illegal."
-                                  << " (line: " << line_number << ")\n";
-                        std::cerr << "Legal moves: ";
-                        for(const auto legal_move : board.legal_moves())
-                        {
-                            std::cerr << legal_move->algebraic(board) << " ";
-                        }
-                        std::cerr << '\n' << board.fen() << '\n';
                         return false;
                     }
+
+                    if( ! check_rule_result("Move (" + move_number + word + ")",
+                                            "checkmate",
+                                            word.back() == '#',
+                                            result.game_has_ended() && result.winner() != Winner_Color::NONE,
+                                            last_move_line_number))
+                    {
+                        return false;
+                    }
+                }
+                catch(const Illegal_Move&)
+                {
+                    std::cerr << "Move (" << move_number << word << ") is illegal."
+                                << " (line: " << line_number << ")\n";
+                    std::cerr << "Legal moves: ";
+                    for(const auto legal_move : board.legal_moves())
+                    {
+                        std::cerr << legal_move->algebraic(board) << " ";
+                    }
+                    std::cerr << '\n' << board.fen() << '\n';
+                    return false;
                 }
             }
         }

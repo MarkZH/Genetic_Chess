@@ -55,100 +55,6 @@ std::string String::strip_comments(const std::string& str, const std::string& co
     return trim_outer_whitespace(str.substr(0, str.find(comment)));
 }
 
-std::string String::strip_block_comment(const std::string& str, const std::string& start, const std::string& end)
-{
-    const auto start_comment_index = str.find(start);
-    const auto end_comment_index = str.find(end);
-
-    if(start_comment_index == std::string::npos && end_comment_index == std::string::npos)
-    {
-        return trim_outer_whitespace(str);
-    }
-
-    if(start_comment_index == std::string::npos || end_comment_index == std::string::npos)
-    {
-        throw std::invalid_argument("\"" + str + "\" is missing a comment delimiter: " + start + end);
-    }
-
-    if(start_comment_index >= end_comment_index)
-    {
-        throw std::invalid_argument("\"" + str + "\" contains bad comment delimiters: " + start + end);
-    }
-
-    try
-    {
-        const auto first_part = str.substr(0, start_comment_index);
-        const auto last_part = str.substr(end_comment_index + end.size());
-        return strip_block_comment(trim_outer_whitespace(first_part) + " " + trim_outer_whitespace(last_part), start, end);
-    }
-    catch(const std::invalid_argument& e)
-    {
-        throw std::invalid_argument(e.what() + std::string("\nOriginal line: ") + str);
-    }
-}
-
-std::string String::strip_nested_block_comments(const std::string& str, const std::string& start, const std::string& end)
-{
-    if(start.contains(end) || end.contains(start))
-    {
-        throw std::invalid_argument("Delimiters cannot share substrings: " + start + "," + end + ".");
-    }
-
-    const auto error_message = "Invalid nesting of delimiters " + start + "," + end + ": " + str;
-    std::string result;
-    auto depth = 0;
-    size_t index = 0;
-    while(index < str.size())
-    {
-        auto start_index = str.find(start, index);
-        auto end_index = str.find(end, index);
-        if(start_index < end_index)
-        {
-            if(depth == 0)
-            {
-                result += str.substr(index, start_index - index);
-            }
-            ++depth;
-            index = start_index + start.size();
-        }
-        else if(end_index < start_index)
-        {
-            if(depth == 0)
-            {
-                throw std::invalid_argument(error_message);
-            }
-            --depth;
-            index = end_index + end.size();
-        }
-        else // start_index == end_index == std::string::npos
-        {
-            result += str.substr(index);
-            break;
-        }
-    }
-
-    if(depth != 0)
-    {
-        throw std::invalid_argument(error_message);
-    }
-
-    return result;
-}
-
-std::string String::remove_pgn_comments(const std::string& line)
-{
-    const auto index = line.find_first_of(";({");
-    const auto delimiter = index < std::string::npos ? line[index] : '\0';
-
-    switch(delimiter)
-    {
-        case ';' : return remove_pgn_comments(strip_comments(line, ";"));
-        case '(' : return remove_pgn_comments(strip_nested_block_comments(line, "(", ")"));
-        case '{' : return remove_pgn_comments(strip_block_comment(line, "{", "}"));
-        default  : return remove_extra_whitespace(line);
-    }
-}
-
 std::string String::extract_delimited_text(const std::string& str, const std::string& start, const std::string& end)
 {
     const auto first_delimiter_index = str.find(start);
@@ -210,7 +116,7 @@ std::string String::pluralize(const size_t count, const std::string& noun) noexc
     return std::to_string(count) + " " + noun + (count == 1 ? "" : "s");
 }
 
-std::string String::word_wrap(const size_t line_length, const size_t indent, const std::string& text) noexcept
+std::string String::word_wrap(const std::string& text, const size_t line_length, const size_t indent) noexcept
 {
     const auto text_length = line_length - indent;
 
