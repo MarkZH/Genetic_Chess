@@ -327,18 +327,10 @@ bool run_tests()
     function_should_throw<Genome_Creation_Error>(tests_passed, "Duplicate sorter name", []() { return Move_Sorting_Gene().read_from("testing/duplicate_sorter_name.txt"); });
 
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
-    test_function(tests_passed, "Strip block comments", "a c", String::strip_block_comment, "   a    {    b    }    c   {   d  }   ", "{", "}");
-
-    function_should_throw<std::invalid_argument>(tests_passed, "Bad block comments", String::strip_block_comment, "   a    }    b    {    c   {   d  }   ", "{", "}");
-    function_should_throw<std::invalid_argument>(tests_passed, "Bad block comments", String::strip_block_comment, "   a        b    {    c      d     ", "{", "}");
-
+    
     test_function(tests_passed, "Delimited text extraction", "a(b", String::extract_delimited_text, "(a(b))", "(", ")");
 
-    test_function(tests_passed, "Nested block deletion", "ae", String::strip_nested_block_comments, "a(b(c)d)e", "(", ")");
-    function_should_throw<std::invalid_argument>(tests_passed, "Invalid nested block delimiters", String::strip_nested_block_comments, "", "??", "???");
-
     test_function(tests_passed, "Strip multicharacter comment", "a", String::strip_comments, "a // b", "//");
-    test_function(tests_passed, "Multicharacter block comment", "a c", String::strip_block_comment, "a /* b  */ c", "/*", "*/");
     test_function(tests_passed, "String::lowercase()", "abc def", String::lowercase, "AbC dEf");
     test_function(tests_passed, "String::add_to_file_name() with dot", "a-b.c", String::add_to_file_name, "a.c", "-b");
     test_function(tests_passed, "String::add_to_file_name() with no dot", "a-b", String::add_to_file_name, "a", "-b");
@@ -367,13 +359,6 @@ bool run_tests()
 
     test_function(tests_passed, "Singular pluralizing", "1 cat", String::pluralize, 1, "cat");
     test_function(tests_passed, "Multiple pluralizing", "4 cats", String::pluralize, 4, "cat");
-
-    test_function(tests_passed,
-                  "PGN comment removal",
-                  "49. f8=N Bxf8",
-                  String::remove_pgn_comments,
-                  "49. f8=N (49. f8=N Bxf8 50. Kf3 {-12.60}) Bxf8 (49. ... Bxf8 50. Kf1 (50. Kf3 Rd7 {16.43}) {16.43}) { Test block } ; Test line");
-
 
     average_moves_left_matches_precalculated_value(tests_passed);
     average_moves_left_returns_finite_result_after_zero_moves(tests_passed);
