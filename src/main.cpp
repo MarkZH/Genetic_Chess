@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <utility>
 #include <vector>
+#include <limits>
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -243,8 +244,7 @@ namespace
 
     void skip_rest_of_line(std::istream& input, int& line_number) noexcept
     {
-        std::string rest_of_line;
-        std::getline(input, rest_of_line);
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
         ++line_number;
     }
 
