@@ -162,16 +162,18 @@ std::string String::word_wrap(const std::string& text, const size_t line_length,
 {
     const auto text_length = line_length - indent;
 
-    std::vector<std::string> lines{""};
+    std::vector<std::string> lines;
     for(const auto& word : split(text))
     {
-        std::string space = lines.back().empty() ? "" : " ";
-        if(lines.back().size() + space.size() + word.size() > text_length)
+        const std::string space = " ";
+        if(lines.empty() || lines.back().size() + space.size() + word.size() > text_length)
         {
-            lines.push_back("");
-            space = "";
+            lines.push_back(word);
         }
-        lines.back() += space + word;
+        else
+        {
+            lines.back() += space + word;
+        }
     }
 
     const auto indent_space = std::string(indent, ' ');
