@@ -131,15 +131,14 @@ std::string String::pluralize(const size_t count, const std::string& noun) noexc
 
 std::string String::word_wrap(const std::string& text, const size_t line_length, const size_t indent) noexcept
 {
-    const auto text_length = line_length - indent;
-
     std::vector<std::string> lines;
     for(const auto& word : split(text))
     {
+        const auto indent_space = std::string(indent, ' ');
         const std::string space = " ";
-        if(lines.empty() || lines.back().size() + space.size() + word.size() > text_length)
+        if(lines.empty() || lines.back().size() + space.size() + word.size() > line_length)
         {
-            lines.push_back(word);
+            lines.push_back(indent_space + word);
         }
         else
         {
@@ -147,8 +146,7 @@ std::string String::word_wrap(const std::string& text, const size_t line_length,
         }
     }
 
-    const auto indent_space = std::string(indent, ' ');
-    auto wrapped = indent_space + join(lines, "\n" + indent_space);
+    auto wrapped = join(lines, "\n");
     std::ranges::replace(wrapped, '~', ' ');
     return wrapped;
 }
