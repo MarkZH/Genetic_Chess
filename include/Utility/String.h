@@ -42,9 +42,15 @@ namespace String
     template<typename Container>
     std::string join(const Container& container, const std::string& joiner) noexcept
     {
-        std::string result;
-        for(const auto& piece : container | std::views::join_with(joiner))
+        if(container.empty())
         {
+            return {};
+        }
+
+        std::string result = container.front();
+        for(const auto& piece : container | std::views::drop(1))
+        {
+            result += joiner;
             result += piece;
         }
         return result;
