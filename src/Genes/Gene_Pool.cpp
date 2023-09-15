@@ -58,6 +58,7 @@ namespace
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
     std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
+    Game_Result pool_game(const Board& board, const Clock::seconds game_time, Minimax_AI white, Minimax_AI black, const std::string& game_record_file, Thread_Limiter& limiter) noexcept;
     Minimax_AI best_living_ai(const std::vector<Minimax_AI>& pool) noexcept;
     void record_best_ai(const std::vector<Minimax_AI>& pool, const std::string& best_file_name) noexcept;
     void print_round_header(const std::vector<Minimax_AI>& pool,
@@ -138,21 +139,7 @@ void gene_pool(const std::string& config_file)
             limiter.ask();
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
-            results.emplace_back(std::async(std::launch::async,
-                                            [&]()
-                                            {
-                                                const auto result =
-                                                    play_game(board,
-                                                              Clock{game_time},
-                                                              std::cref(white),
-                                                              std::cref(black),
-                                                              "Gene pool",
-                                                              "Local computer",
-                                                              game_record_file,
-                                                              false);
-                                                limiter.done();
-                                                return result;
-                                            }));
+            results.emplace_back(std::async(std::launch::async, pool_game, std::cref(board), game_time, white, black, std::cref(game_record_file), std::ref(limiter)));
         }
 
         std::stringstream result_printer;
@@ -359,6 +346,18 @@ namespace
                 }
             }
         }
+    }
+
+    Game_Result pool_game(const Board& board,
+                          const Clock::seconds game_time,
+                          Minimax_AI white,
+                          Minimax_AI black,
+                          const std::string& game_record_file,
+                          Thread_Limiter& limiter) noexcept
+    {
+        const auto result = play_game(board, Clock{ game_time }, white, black, "Gene pool", "Local computer", game_record_file, false);
+        limiter.done();
+        return result;
     }
 
     void record_best_ai(const std::vector<Minimax_AI>& pool, const std::string& best_file_name) noexcept
