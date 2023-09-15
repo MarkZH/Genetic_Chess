@@ -281,18 +281,6 @@ class Minimax_AI : public Player
         std::vector<const Move*> get_legal_principal_variation(const Board& board) const noexcept;
 };
 
-//! \brief Create a PGN variation string.
-//!
-//! \param board The board state just before any of the variation moves are played.
-//! \param move_number The index of the game move (0 for the first player's first move,
-//!        1 for first move by that player's opponent, etc.).
-//! \param variation A sequence of moves from the current board position.
-//! \param score The score assigned to the resulting board after the sequence of moves.
-std::string variation_line(Board board,
-                           size_t move_number,
-                           const std::vector<const Move*>& variation,
-                           double score) noexcept;
-
 //! \brief Find the last ID of a Genome in a gene pool file.
 //!
 //! \param file_name The name of the file with Genome data.

@@ -25,6 +25,21 @@ using namespace std::chrono_literals;
 #include "Utility/Exceptions.h"
 #include "Utility/Algorithm.h"
 
+namespace
+{
+    //! \brief Create a PGN variation string.
+    //!
+    //! \param board The board state just before any of the variation moves are played.
+    //! \param move_number The index of the game move (0 for the first player's first move,
+    //!        1 for first move by that player's opponent, etc.).
+    //! \param variation A sequence of moves from the current board position.
+    //! \param score The score assigned to the resulting board after the sequence of moves.
+        std::string variation_line(Board board,
+                                   size_t move_number,
+                                   const std::vector<const Move*>& variation,
+                                   double score) noexcept;
+}
+
 Minimax_AI::Minimax_AI(const std::string& file_name, int id) try : Minimax_AI(std::ifstream{file_name}, id)
 {
 }
@@ -579,33 +594,36 @@ std::string Minimax_AI::commentary_for_next_move(const Board& board, const size_
     return variation_line(board, move_number, variation, score);
 }
 
-std::string variation_line(Board board,
-                           const size_t move_number,
-                           const std::vector<const Move*>& variation,
-                           const double score) noexcept
+namespace
 {
-    Game_Result move_result;
-    const auto move_label_offset = (board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
-    std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + "... " : std::string{});
-    for(size_t i = 0; i < variation.size(); ++i)
+    std::string variation_line(Board board,
+                               const size_t move_number,
+                               const std::vector<const Move*>& variation,
+                               const double score) noexcept
     {
-        const auto move_label = move_number + i/2 + move_label_offset;
-        result += (board.whose_turn() == Piece_Color::WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(board) + " ";
-        move_result = board.play_move(*variation[i]);
-    }
+        Game_Result move_result;
+        const auto move_label_offset = (board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
+        std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + "... " : std::string{});
+        for(size_t i = 0; i < variation.size(); ++i)
+        {
+            const auto move_label = move_number + i/2 + move_label_offset;
+            result += (board.whose_turn() == Piece_Color::WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(board) + " ";
+            move_result = board.play_move(*variation[i]);
+        }
 
-    if( ! move_result.game_has_ended())
-    {
-        return result + "{" + String::round_to_decimals(score, 2) + "})";
-    }
-    else if(variation.size() == 1)
-    {
-        // No need for commentary on the last move of the game since the result is obvious.
-        return {};
-    }
-    else
-    {
-        return String::trim_outer_whitespace(result) + ")";
+        if( ! move_result.game_has_ended())
+        {
+            return result + "{" + String::round_to_decimals(score, 2) + "})";
+        }
+        else if(variation.size() == 1)
+        {
+            // No need for commentary on the last move of the game since the result is obvious.
+            return {};
+        }
+        else
+        {
+            return String::trim_outer_whitespace(result) + ")";
+        }
     }
 }
 
