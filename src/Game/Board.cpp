@@ -861,9 +861,9 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         commentary_board.play_move(*next_move);
         previous_move_had_comment = ! commentary.empty();
     }
-    game_text << " " << actual_result.game_ending_annotation() << "\n\n\n";
+    game_text << " " << actual_result.game_ending_annotation();
 
-    const auto pgn_text = header_text.str() + String::word_wrap(game_text.str(), 80);
+    const auto pgn_text = header_text.str() + String::word_wrap(game_text.str(), 80) + "\n\n\n";
     
     if(file_name.empty())
     {
