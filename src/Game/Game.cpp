@@ -81,8 +81,13 @@ void play_game_with_outsider(const Player& player,
     auto player_color = Piece_Color::BLACK;
     auto print_game_record = false;
 
-    do
+    while( ! game_result.exit_program())
     {
+        // A do-while loop is used here instead of while( !  game_result.game_has_ended())
+        // because the "quit" command is only received after another entry into the loop
+        // after a game has finished. A normal while loop would keep spinning because the
+        // Game_Result that exited the inner loop would never be updated by a call to
+        // setup_turn(), so the "quit" command would never be received.
         do
         {
             game_result = outsider->setup_turn(board, clock, game_record, player);
@@ -117,5 +122,5 @@ void play_game_with_outsider(const Player& player,
                                     location);
             print_game_record = false;
         }
-    } while( ! game_result.exit_program());
+    }
 }
