@@ -79,7 +79,7 @@ void play_game_with_outsider(const Player& player,
     Game_Result game_result;
     std::vector<const Move*> game_record;
     auto player_color = Piece_Color::BLACK;
-    auto print_game_record = true;
+    auto print_game_record = false;
 
     do
     {
