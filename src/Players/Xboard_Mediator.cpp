@@ -214,15 +214,15 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                 const auto reason = String::extract_delimited_text(command, "{", "}");
                 if(result == "1-0")
                 {
-                    return Game_Result(Winner_Color::WHITE, reason, false);
+                    return Game_Result(Winner_Color::WHITE, reason);
                 }
                 else if(result == "0-1")
                 {
-                    return Game_Result(Winner_Color::BLACK, reason, false);
+                    return Game_Result(Winner_Color::BLACK, reason);
                 }
                 else
                 {
-                    return Game_Result(Winner_Color::NONE, reason, false);
+                    return Game_Result(Winner_Color::NONE, reason);
                 }
             }
             else if( ! usermove_prefix)
@@ -253,7 +253,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
     }
     catch(const Game_Ended& game_ending_error)
     {
-        return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
+        return Game_Result::shutdown(game_ending_error.what());
     }
 
     const auto own_time = own_time_left.value_or(clock.time_left(board.whose_turn()));

@@ -21,12 +21,19 @@ Game_Result::Game_Result(const Piece_Color winner, const Game_Result_Type reason
 {
 }
 
-Game_Result::Game_Result(const Winner_Color winner, const std::string& reason, const bool shutdown) noexcept :
+Game_Result::Game_Result(const Winner_Color winner, const std::string& reason) noexcept :
     victor(winner),
     cause(Game_Result_Type::OTHER),
     alternate_reason(reason),
-    shutdown_program(shutdown)
+    shutdown_program(false)
 {
+}
+
+Game_Result Game_Result::shutdown(const std::string& reason) noexcept
+{
+    auto result = Game_Result(Winner_Color::NONE, reason);
+    result.shutdown_program = true;
+    return result;
 }
 
 bool Game_Result::game_has_ended() const noexcept
