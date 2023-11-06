@@ -55,7 +55,7 @@ namespace
     //! 
     //! \param input A text input stream.
     //! \param line_number A line counter that is incremented if a newline is encountered.
-    bool skip_passed_rav(std::istream& input, int& line_number) noexcept;
+    bool skip_rav(std::istream& input, int& line_number) noexcept;
 
     //! \brief Confirm that all moves in a PGN game record are legal moves.
     //!
@@ -274,7 +274,7 @@ namespace
         return true;
     }
 
-    bool skip_passed_rav(std::istream& input, int& line_number) noexcept
+    bool skip_rav(std::istream& input, int& line_number) noexcept
     {
         const auto rav_start_line_number = line_number;
         input.get();
@@ -367,7 +367,7 @@ namespace
 
             if(input.peek() == '(')
             {
-                if(skip_passed_rav(input, line_number))
+                if(skip_rav(input, line_number))
                 {
                     continue;
                 }
