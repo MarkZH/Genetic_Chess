@@ -211,7 +211,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
             else if(String::starts_with(command, "result "))
             {
                 const auto result = String::split(command).at(1);
-                const auto reason = String::extract_delimited_text(command, "{", "}");
+                const auto reason = String::extract_delimited_text(command, '{', '}');
                 if(result == "1-0")
                 {
                     return Game_Result(Winner_Color::WHITE, reason);

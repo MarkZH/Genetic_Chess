@@ -228,7 +228,7 @@ namespace
         std::string rest;
         std::getline(is, rest);
         ++line_number;
-        return String::extract_delimited_text(rest, "\"", "\"");
+        return String::extract_delimited_text(rest, '"', '"');
     }
 
     void skip_whitespace(std::istream& input, int& line_number) noexcept

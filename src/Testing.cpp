@@ -327,7 +327,7 @@ bool run_tests()
 
     test_function(tests_passed, "Strip single-character comments", "a", String::strip_comments, "   a    #     b", "#");
     
-    test_function(tests_passed, "Delimited text extraction", "a(b", String::extract_delimited_text, "(a(b))", "(", ")");
+    test_function(tests_passed, "Delimited text extraction", "a(b", String::extract_delimited_text, "(a(b))", '(', ')');
 
     test_function(tests_passed, "Strip multicharacter comment", "a", String::strip_comments, "a // b", "//");
     test_function(tests_passed, "String::starts_with()", true, String::starts_with, "abcdefg", "abc");

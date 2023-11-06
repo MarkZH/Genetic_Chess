@@ -122,7 +122,7 @@ namespace String
     //! \code{cpp}
     //! extract_delimited_text("(a(b))", "(", ")") == "a(b"
     //! \endcode
-    std::string extract_delimited_text(const std::string& str, const std::string& start, const std::string& end);
+    std::string extract_delimited_text(const std::string& str, char start, char end);
 
     //! \brief Typesafe single-character lowercase function.
     //!
