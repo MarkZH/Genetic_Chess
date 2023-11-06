@@ -257,25 +257,24 @@ namespace
                 return false;
             }
 
-            if(c == '(')
+            switch(c)
             {
-                skip_rav(input, line_number);
-            }
-            else if(c == ')')
-            {
-                return true;
-            }
-            else if(c == '\n')
-            {
-                ++line_number;
-            }
-            else if(c == ';')
-            {
-                skip_rest_of_line(input, line_number);
-            }
-            else if(c == '{')
-            {
-                skip_braced_comment(input, line_number);
+                case '(':
+                    skip_rav(input, line_number);
+                    break;
+                case ')':
+                    return true;
+                case '\n':
+                    ++line_number;
+                    break;
+                case ';':
+                    skip_rest_of_line(input, line_number);
+                    break;
+                case '{':
+                    skip_braced_comment(input, line_number);
+                    break;
+                default:
+                    continue;
             }
         }
     }
