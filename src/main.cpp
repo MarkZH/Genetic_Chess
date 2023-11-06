@@ -47,7 +47,7 @@ namespace
 
     //! \brief Skip to the end of the current RAV section. Returns true if successful, and false if the end of the input stream is reached.
     //! 
-    //! \param input A text input stream.
+    //! \param input A text input stream. The opening parenthesis must be removed from the stream before calling.
     //! \param line_number A line counter that is incremented if a newline is encountered.
     bool skip_rav(std::istream& input, int& line_number) noexcept;
 
@@ -248,13 +248,10 @@ namespace
     bool skip_rav(std::istream& input, int& line_number) noexcept
     {
         const auto rav_start_line_number = line_number;
-        input.get();
-        auto rav_depth = 1;
-
-        while(rav_depth > 0)
+        while(true)
         {
             const auto c = input.get();
-            if(!input)
+            if( ! input)
             {
                 std::cerr << "Reached end of input before end of RAV: line " << rav_start_line_number << ".\n";
                 return false;
@@ -262,11 +259,11 @@ namespace
 
             if(c == '(')
             {
-                ++rav_depth;
+                skip_rav(input, line_number);
             }
             else if(c == ')')
             {
-                --rav_depth;
+                return true;
             }
             else if(c == '\n')
             {
@@ -278,14 +275,9 @@ namespace
             }
             else if(c == '{')
             {
-                if( ! skip_braced_comment(input, line_number))
-                {
-                    return false;
-                }
+                skip_braced_comment(input, line_number);
             }
         }
-
-        return true;
     }
 
     bool confirm_game_record(const std::string& file_name)
@@ -311,6 +303,7 @@ namespace
         Game_Result result;
         while(true)
         {
+            const auto next_character = input.get();
             if(next_character == '\n')
             {
                 ++consecutive_newlines;
@@ -326,13 +319,13 @@ namespace
                 continue;
             }
 
-            if(input.peek() == ';')
+            if(next_character == ';')
             {
                 skip_rest_of_line(input, line_number);
                 continue;
             }
 
-            if(input.peek() == '{')
+            if(next_character == '{')
             {
                 if(skip_braced_comment(input, line_number))
                 {
@@ -344,13 +337,13 @@ namespace
                 }
             }
 
-            if(input.peek() == '}')
+            if(next_character == '}')
             {
-                std::cerr << "Malformed commentary curly brace (line: " << line_number << ")\n";
+                std::cerr << "Found closing curly brace before opener (line: " << line_number << ")\n";
                 return false;
             }
 
-            if(input.peek() == '(')
+            if(next_character == '(')
             {
                 if(skip_rav(input, line_number))
                 {
@@ -362,9 +355,9 @@ namespace
                 }
             }
 
-            if(input.peek() == ')')
+            if(next_character == ')')
             {
-                std::cerr << "Malformed RAV parentheses (line: " << line_number << ")\n";
+                std::cerr << "Found closing RAV parentheses before opener (line: " << line_number << ")\n";
                 return false;
             }
 
@@ -411,6 +404,7 @@ namespace
             }
 
             std::string word;
+            input.unget();
             if( ! (input >> word))
             {
                 break;
