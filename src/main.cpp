@@ -233,27 +233,15 @@ namespace
 
     bool skip_braced_comment(std::istream& input, int& line_number) noexcept
     {
-        const auto brace_comment_start_line_number = line_number;
-        while(true)
+        std::string comment;
+        std::getline(input, comment, '}');
+        if( ! input)
         {
-            const auto c = input.get();
-            if( ! input)
-            {
-                std::cerr << "Unclosed commentary curly brace: line " << brace_comment_start_line_number << ".\n";
-                return false;
-            }
-
-            if(c == '}')
-            {
-                break;
-            }
-
-            if(c == '\n')
-            {
-                ++line_number;
-            }
+            std::cerr << "Reached end of input before closing curly brace: line " << line_number << ".\n";
+            return false;
         }
 
+        line_number += int(std::count(comment.begin(), comment.end(), '\n'));
         return true;
     }
 
