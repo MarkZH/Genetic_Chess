@@ -33,12 +33,6 @@ namespace
     //! \brief Print the command-line options for this program.
     void print_help();
 
-    //! \brief Skip ahead until the first non-whitespace character.
-    //! 
-    //! \param input A text input stream.
-    //! \param line_number A line counter that is incremented if a newline is encountered.
-    void skip_whitespace(std::istream& input, int& line_number) noexcept;
-
     //! \brief Skip to the end of the current line.
     //! 
     //! \param input A text input stream.
@@ -231,17 +225,6 @@ namespace
         return String::extract_delimited_text(rest, '"', '"');
     }
 
-    void skip_whitespace(std::istream& input, int& line_number) noexcept
-    {
-        while(std::isspace(input.peek()))
-        {
-            if(input.get() == '\n')
-            {
-                ++line_number;
-            }
-        }
-    }
-
     void skip_rest_of_line(std::istream& input, int& line_number) noexcept
     {
         input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
@@ -328,6 +311,7 @@ namespace
         auto line_number = 1;
         auto last_move_line_number = 0;
         auto game_count = 0;
+        auto consecutive_newlines = 0;
         std::string move_number;
 
         auto expected_winner = Winner_Color::NONE;
@@ -339,7 +323,20 @@ namespace
         Game_Result result;
         while(true)
         {
-            skip_whitespace(input, line_number);
+            if(next_character == '\n')
+            {
+                ++consecutive_newlines;
+                ++line_number;
+            }
+            else
+            {
+                consecutive_newlines = 0;
+            }
+
+            if(std::isspace(next_character) && consecutive_newlines <= 1)
+            {
+                continue;
+            }
 
             if(input.peek() == ';')
             {
@@ -383,8 +380,8 @@ namespace
                 return false;
             }
 
-            // Start header of new game
-            if(in_game && input.peek() == '[')
+            // Blank lines or end-of-file indicate end of game
+            if(in_game && (consecutive_newlines > 1 || ! input))
             {
                 if( ! check_rule_result("Header",
                                         "50-move draw",
