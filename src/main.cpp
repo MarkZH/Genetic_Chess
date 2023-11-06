@@ -327,6 +327,7 @@ namespace
 
         auto line_number = 1;
         auto last_move_line_number = 0;
+        auto game_count = 0;
         std::string move_number;
 
         auto expected_winner = Winner_Color::NONE;
@@ -421,6 +422,7 @@ namespace
                 in_game = false;
                 board = Board();
                 result = {};
+                ++game_count;
             }
 
             std::string word;
@@ -551,6 +553,7 @@ namespace
             }
         }
 
+        std::cout << "Found " << game_count << " games." << '\n';
         return true;
     }
 
