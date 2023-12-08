@@ -243,8 +243,7 @@ namespace
 
     bool skip_braced_comment(std::istream& input) noexcept
     {
-        std::string comment;
-        std::getline(input, comment, '}');
+        input.ignore(std::numeric_limits<std::streamsize>::max(), '}');
         if( ! input)
         {
             const auto line_count = line_number(input);
