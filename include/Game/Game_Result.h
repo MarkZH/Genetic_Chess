@@ -46,8 +46,12 @@ class Game_Result
         //!
         //! \param winner The declared winner of the game.
         //! \param reason The declared reason for the end of the game.
-        //! \param shutdown Whether this result should shutdown the program.
-        Game_Result(Winner_Color winner, const std::string& reason, bool shutdown) noexcept;
+        Game_Result(Winner_Color winner, const std::string& reason) noexcept;
+
+        //! Create a Game Result that shuts down the chess engine.
+        //! 
+        //! /param reason The declared reason for ending the game and program.
+        static Game_Result shutdown(const std::string& reason) noexcept;
 
         //! \brief Indicate whether the game ended with the last action.
         bool game_has_ended() const noexcept;
