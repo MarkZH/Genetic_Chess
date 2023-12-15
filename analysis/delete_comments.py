@@ -19,17 +19,12 @@ def remove_nested_parentheses(line: str) -> str:
 
 
 def delete_comments(line: str) -> str:
-    comment_index = len(line)
-    for comment_opener in ";{":
-        index = line.find(comment_opener)
-        if index >= 0:
-            comment_index = min(comment_index, index)
-
-    if comment_index == len(line):
+    comment_index = line.find("{")
+    if comment_index == -1:
         return remove_nested_parentheses(line)
 
-    if line[comment_index] == ';':
+    comment_closer_index = line.find('}', comment_index + 1)
+    if comment_closer_index == -1:
         return delete_comments(line[:comment_index])
     else:
-        comment_closer_index = line.find('}', comment_index + 1)
-        return delete_comments(line[:comment_index] + line[comment_closer_index + 1:])
+        return delete_comments(line[:comment_index] + " " + line[comment_closer_index + 1:])

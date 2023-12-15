@@ -1,8 +1,8 @@
 #!/usr/bin/python
 
+import itertools
 from collections import defaultdict
-from typing import Dict
-from delete_comments import delete_comments
+from common import game_moves
 
 # Count how many times a castling move was picked (O-O = kingside, O-O-O = queenside)
 
@@ -12,23 +12,20 @@ def delete_checkmarks(move: str) -> str:
 
 
 def count_castles(game_file_name: str, color: str) -> None:
-    castle_count: Dict[str, int] = defaultdict(lambda: 0)
+    castle_count: dict[str, int] = defaultdict(int)
     with open(game_file_name) as game_file:
-        for line in game_file:
-            if "O" not in line:
-                continue
-            line = delete_comments(line)
-            parts = line.split()
-            white_move = parts[1] if len(parts) > 1 else ""
-            black_move = parts[2] if len(parts) > 2 else ""
+        while True:
+            moves = game_moves(game_file)
+            if not moves:
+                break
+            for ply in itertools.batched(moves, 2):
+                white_move = delete_checkmarks(ply[0])
+                black_move = delete_checkmarks(ply[1]) if len(ply) == 2 else ""
 
-            white_move = delete_checkmarks(white_move)
-            black_move = delete_checkmarks(black_move)
-
-            if color != "White" and "O" in black_move:
-                castle_count[black_move] += 1
-            if color != "Black" and "O" in white_move:
-                castle_count[white_move] += 1
+                if color != "White" and "O" in black_move:
+                    castle_count[black_move] += 1
+                if color != "Black" and "O" in white_move:
+                    castle_count[white_move] += 1
 
     castle_count["Total"] = sum(castle_count.values())
     print("\n" + f"# {color}".strip() + " Castling")
