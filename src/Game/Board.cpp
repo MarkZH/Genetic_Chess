@@ -793,7 +793,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         {
             if(line.starts_with("[Round"))
             {
-                const auto round_number = String::to_number<int>(String::extract_delimited_text(line, "\"", "\""));
+                const auto round_number = String::to_number<int>(String::extract_delimited_text(line, '"', '"'));
                 if(round_number >= game_number)
                 {
                     game_number = round_number + 1;
@@ -858,9 +858,9 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         commentary_board.play_move(*next_move);
         previous_move_had_comment = ! commentary.empty();
     }
-    game_text << " " << actual_result.game_ending_annotation() << "\n\n\n";
+    game_text << " " << actual_result.game_ending_annotation();
 
-    const auto pgn_text = header_text.str() + String::word_wrap(game_text.str(), 80);
+    const auto pgn_text = header_text.str() + String::word_wrap(game_text.str(), 80) + "\n\n\n";
     
     if(file_name.empty())
     {
@@ -1219,20 +1219,21 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
 
     // Make sure to stop before either player ends up in an
     // avoidable loss of material.
-    auto minimax_index = state_values.size() - 1;
-    auto minimax_value = state_values[minimax_index];
-    for(auto index = state_values.size() - 2; index < state_values.size(); --index)
+    auto minimax_iter = state_values.rbegin();
+    auto minimax_value = *minimax_iter;
+    for(auto iter = std::next(minimax_iter); iter != state_values.rend(); std::advance(iter, 1))
     {
-        auto value = state_values[index];
+        auto value = *iter;
 
         // Even indices indicate a player's choice (maximize score).
         // Odd indices indicate an opponent's choice (minimize score).
+        const auto index = std::distance(iter, state_values.rend()) - 1;
         if(index % 2 == 0)
         {
             if(value > minimax_value)
             {
                 minimax_value = value;
-                minimax_index = index;
+                minimax_iter = iter;
             }
         }
         else
@@ -1240,11 +1241,12 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
             if(value < minimax_value)
             {
                 minimax_value = value;
-                minimax_index = index;
+                minimax_iter = iter;
             }
         }
     }
 
+    const auto minimax_index = std::distance(minimax_iter, state_values.rend()) - 1;
     return {capture_moves.begin(), capture_moves.begin() + minimax_index};
 }
 

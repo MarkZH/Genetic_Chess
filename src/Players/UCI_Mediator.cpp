@@ -228,7 +228,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
     }
     catch(const Game_Ended& game_ending_error)
     {
-        return Game_Result(Winner_Color::NONE, game_ending_error.what(), true);
+        return Game_Result::shutdown(game_ending_error.what());
     }
 }
 

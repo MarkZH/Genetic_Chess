@@ -68,14 +68,14 @@ std::string String::strip_comments(const std::string& str, const std::string& co
     return trim_outer_whitespace(str.substr(0, str.find(comment)));
 }
 
-std::string String::extract_delimited_text(const std::string& str, const std::string& start, const std::string& end)
+std::string String::extract_delimited_text(const std::string& str, const char start, const char end)
 {
     const auto first_delimiter_index = str.find(start);
     if(first_delimiter_index == std::string::npos)
     {
         throw std::invalid_argument("Starting delimiter not found in \"" + str + "\": " + start + " " + end);
     }
-    const auto text_start_index = first_delimiter_index + start.size();
+    const auto text_start_index = first_delimiter_index + 1;
 
     const auto second_delimiter_index = str.find(end, text_start_index);
     if(second_delimiter_index == std::string::npos)
