@@ -28,6 +28,7 @@ def centered_x_axis(x: np.array, y: np.array) -> np.array:
 def game_moves(input: TextIO, previous_line: str | None = None) -> list[str]:
     game_lines: list[str] = []
     for line in itertools.chain([previous_line], map(str.strip, input)):
+        line = line.split(";", maxsplit=1)[0] if line else ""
         if not line:
             if not game_lines:
                 continue
