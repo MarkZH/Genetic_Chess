@@ -2,31 +2,23 @@
 
 import os
 from collections import Counter, defaultdict
-from typing import Dict, List
 import numpy as np
 import matplotlib.pyplot as plt
-from delete_comments import delete_comments
 import common
 
 
-def get_opening_files(game_file: str) -> List[str]:
+def get_opening_files(game_file: str) -> list[str]:
     outfile = f"{game_file}_opening_list.txt"
     white_file = outfile + "_white.txt"
     black_file = outfile + "_black.txt"
-    unique_opening_counter: Dict[str, int] = defaultdict(lambda: 0)
+    unique_opening_counter: dict[str, int] = defaultdict(lambda: 0)
     with open(game_file) as input, open(outfile, 'w') as output, open(white_file, 'w') as white_output, open(black_file, 'w') as black_output:
-        for line in input:
-            if not line.startswith('1. '):
-                continue
-
-            line = delete_comments(line)
-            parts = line.split()
-
-            def get_part(index):
-                return parts[index] if len(parts) > index and not parts[index][0].isdigit() else ""
-
-            white_move = get_part(1)
-            black_move = get_part(2)
+        while True:
+            moves = common.game_moves(input)
+            if not moves:
+                break
+            white_move = moves[0].strip() if moves else ""
+            black_move = moves[1].strip() if len(moves) > 1 else ""
             opening = f"{white_move} {black_move}".strip()
             if opening:
                 output.write(f"{opening}\n")

@@ -12,7 +12,6 @@ def write_line(file, *args):
 
 def parse_game_file(file_name):
     game = 0
-    number_of_moves = 0
     time = 0
     white_time_left = 0
     black_time_left = 0
@@ -29,7 +28,7 @@ def parse_game_file(file_name):
         #   6 = Insufficient material
         #   7 = No legal moves
         #   8 = Time expired with insufficient material
-        for line in f:
+        for line in filter(None, map(str.strip, f)):
             if line.startswith('[Result'):
                 game += 1
                 white_wins = 0
@@ -60,20 +59,16 @@ def parse_game_file(file_name):
                     result_type = 8
                 else:
                     raise Exception('Unrecognized result type: ' + result_text)
-            elif line and line[0].isdigit():
-                number_of_moves = line.split('. ')[0]
             elif line.startswith('[TimeControl'):
                 time = line.split('"')[1]
             elif line.startswith('[TimeLeftWhite'):
                 white_time_left = line.split('"')[1]
             elif line.startswith('[TimeLeftBlack'):
                 black_time_left = line.split('"')[1]
-            elif line.startswith('[Event') and game > 0:
+            elif not line.startswith("["):
+                number_of_moves = (len(common.game_moves(f, line)) + 1)//2
                 write_line(w, game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left, number_of_moves)
-                number_of_moves = 0
 
-        if game > 0:
-            write_line(w, game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left, number_of_moves)
     return plot_data_file_name
 
 
