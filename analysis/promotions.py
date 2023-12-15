@@ -1,23 +1,21 @@
 #!/usr/bin/python
 
 from collections import Counter
-from delete_comments import delete_comments
-
+from common import game_moves
 
 # Count how many times each type of piece is picked for a pawn promotion
 def count_promotions(game_file_name: str) -> None:
     print("\n# Promotions")
     promotion_counts: Counter = Counter()
     with open(game_file_name) as game_file:
-        for line in game_file:
-            if "=" not in line:
-                continue
-            line = delete_comments(line)
-            for scrap in line.split():
-                if "=" not in scrap:
-                    continue
-                promotion = scrap.split("=")[1].replace("+", "").replace("#", "")
-                promotion_counts[promotion] += 1
+        while True:
+            moves = game_moves(game_file)
+            if not moves:
+                break
+            for move in moves:
+                if "=" in move:
+                    promotion = move.split("=")[1][0]
+                    promotion_counts[promotion] += 1
 
     count_column_width = len(str(max(promotion_counts.values())))
     for piece, count in promotion_counts.most_common():
