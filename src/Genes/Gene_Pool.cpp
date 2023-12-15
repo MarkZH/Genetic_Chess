@@ -388,15 +388,24 @@ namespace
             }
             const auto number = std::stod(time_spec[0]);
             const auto unit = time_spec[1];
-            if(unit == "hours" || unit == "hrs" || unit == "hr" || unit == "h")
+            const auto hour_names = {"hours", "hour", "hrs", "hr", "h"};
+            const auto minute_names = {"minutes", "minute", "mins", "min", "m"};
+            const auto second_names = {"seconds", "second", "secs", "sec", "s"};
+            
+            const auto contains = [](const auto& list, const auto& value)
+                {
+                    return std::find(list.begin(), list.end(), value) != list.end();
+                };
+
+            if(contains(hour_names, unit))
             {
                 return Clock{Clock::hours(number)};
             }
-            else if(unit == "minutes" || unit == "min" || unit == "m")
+            else if(contains(minute_names, unit))
             {
                 return Clock{Clock::minutes(number)};
             }
-            else if(unit == "seconds" || unit == "sec" || unit == "s")
+            else if(contains(second_names, unit))
             {
                 return Clock{Clock::seconds(number)};
             }
