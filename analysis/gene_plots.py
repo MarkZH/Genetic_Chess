@@ -6,16 +6,16 @@ import matplotlib.pyplot as plt
 import common
 
 
-def add_value_to_data_line(data_line, header_line, title, value):
+def add_value_to_data_line(data_line, header_line, title, value, data_type):
     index = header_line.index(title)
     if data_line[index]:
         raise Exception('Value already found: ' + title + ' for ID ' + str(data_line[0]))
-    data_line[index] = value
+    data_line[index] = data_type(value)
 
 
 def parse_gene_pool(gene_pool_file_name):
     # Read gene file for gene names
-    header_line = []
+    header_line: list[str] = []
     current_gene = ''
     with open(gene_pool_file_name) as f:
         for line in f:
@@ -44,20 +44,19 @@ def parse_gene_pool(gene_pool_file_name):
                 raise Exception('Unknown line format: ' + line)
 
     # Read gene pool file for data
-    output_file_name = gene_pool_file_name + '_parsed.txt'
-    with open(gene_pool_file_name) as f, open(output_file_name, 'w') as w:
-        new_data_line = ['']*len(header_line)
+    parsed_data = []
+    with open(gene_pool_file_name) as f:
+        new_data_line = [None]*len(header_line)
         data_line = new_data_line.copy()
         current_gene = ''
-        w.write(','.join(header_line) + '\n')
         for line in f:
             line = line.split('#')[0].strip()
             if not line:
                 continue
 
             if line == 'END':
-                data_line = [x or '0' for x in data_line]
-                w.write(','.join(data_line) + '\n')
+                data_line = [x or 0 for x in data_line]
+                parsed_data.append(data_line)
                 current_gene = ''
                 data_line = new_data_line.copy()
             elif ':' in line:
@@ -73,27 +72,24 @@ def parse_gene_pool(gene_pool_file_name):
                             sorters = [name.strip() for name in value.split(',')]
                             for sorter in sorters:
                                 title = current_gene + ' - ' + parameter + ' - ' + sorter
-                                value = str(sorters.index(sorter) + 1)
-                                add_value_to_data_line(data_line, header_line, title, value)
+                                value = sorters.index(sorter) + 1
+                                add_value_to_data_line(data_line, header_line, title, value, int)
                             continue
                         else:
                             title = current_gene + ' - ' + parameter
+                            data_type = float
                     else:
                         title = parameter  # ID
+                        data_type = int
 
-                    add_value_to_data_line(data_line, header_line, title, value)
+                    add_value_to_data_line(data_line, header_line, title, value, data_type)
 
-    return output_file_name
+    return header_line, np.array(parsed_data)
 
 
 def plot_genome(gene_pool_filename: str) -> None:
-    parsed_data_file_name = parse_gene_pool(gene_pool_filename)
-
-    data = np.genfromtxt(parsed_data_file_name, delimiter=',', names=True)
-    if not data.dtype.names:
-        raise ValueError(f"No column names found in {parsed_data_file_name} from {gene_pool_filename}")
-    os.remove(parsed_data_file_name)
-    id_list = [int(row[0]) for row in data]
+    column_names, data = parse_gene_pool(gene_pool_filename)
+    id_list = data[:, 0]
 
     special_plots = {}
 
@@ -131,8 +127,8 @@ def plot_genome(gene_pool_filename: str) -> None:
                'Pawn Structure Gene': 'Structure'}
 
     # Plot evolution of individual genes
-    for column_name in data.dtype.names[1:]:
-        this_data = data[column_name]
+    for column_index, column_name in enumerate(column_names[1:], 1):
+        this_data = data[:, column_index]
         name = column_name.replace('__', ' - ').replace('_', ' ')
         is_sorter_count = name == 'Move Sorting Gene - Sorter Count'
         if is_sorter_count:
@@ -156,7 +152,7 @@ def plot_genome(gene_pool_filename: str) -> None:
                 d = this_data[:, column] if is_sorter_count else this_data
                 these_axes.plot(common.centered_x_axis(id_list, d), d, style, markersize=markersize, linewidth=linewidth, label=label)
 
-            these_axes.set_xlabel(data.dtype.names[0])
+            these_axes.set_xlabel(column_names[0])
             if is_sorter_count:
                 these_axes.set_ylabel('Percent of genomes')
                 leg = these_axes.legend(fontsize=common.plot_params['legend text size'], bbox_to_anchor=(1.01, 0.5), loc="center left")
