@@ -25,6 +25,33 @@ def centered_x_axis(x: np.array, y: np.array) -> np.array:
     return x[left_margin : -right_margin or len(x)]
 
 
+class No_More_Games(Exception):
+    pass
+
+
+class Game_Record:
+    def __init__(self, input_stream: TextIO) -> None:
+        self.headers: dict[str, str] = {}
+        self.moves: list[str] = []
+
+        for line in map(str.strip, input_stream):
+            if not line:
+                continue
+
+            if not line.startswith("["):
+                self.moves = game_moves(input_stream, line)
+                break
+
+            name, value = line.split(maxsplit=1)
+            self.headers[name[1:]] = value.split('"')[1]
+
+        if not self.has_game():
+            raise No_More_Games()
+
+    def has_game(self) -> bool:
+        return self.headers or self.moves
+
+
 def game_moves(input: TextIO, previous_line: str = "") -> list[str]:
     game_lines: list[str] = []
     for line in itertools.chain([previous_line], map(str.strip, input)):
@@ -34,8 +61,16 @@ def game_moves(input: TextIO, previous_line: str = "") -> list[str]:
                 continue
             game_text = delete_comments(" ".join(game_lines))
             return list(filter(lambda s: "." not in s, game_text.split()))[:-1]
-        elif line.startswith("["):
-            continue
         else:
             game_lines.append(line)
     return []
+
+
+def read_all_games(game_file_name: str) -> list[Game_Record]:
+    game_list = []
+    with open(game_file_name) as input:
+        try:
+            while True:
+                game_list.append(Game_Record(input))
+        except No_More_Games:
+            return game_list

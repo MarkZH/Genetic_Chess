@@ -6,26 +6,22 @@ import matplotlib.pyplot as plt
 import common
 
 
-def get_openings(game_file: str) -> list[list[str]]:
+def get_openings(all_games: list[common.Game_Record]) -> list[list[str]]:
     opening_moves = []
     white_opening_moves = []
     black_opening_moves = []
     unique_opening_counter: dict[str, int] = defaultdict(int)
-    with open(game_file) as input:
-        while True:
-            moves = common.game_moves(input)
-            if not moves:
-                break
-            white_move = moves[0].strip() if moves else ""
-            black_move = moves[1].strip() if len(moves) > 1 else ""
-            opening = f"{white_move} {black_move}".strip()
-            if opening:
-                opening_moves.append(opening)
-                unique_opening_counter[opening] += 1
-            if white_move:
-                white_opening_moves.append(white_move)
-            if black_move:
-                black_opening_moves.append(black_move)
+    for game in all_games:
+        white_move = game.moves[0].strip() if game.moves else ""
+        black_move = game.moves[1].strip() if len(game.moves) > 1 else ""
+        opening = f"{white_move} {black_move}".strip()
+        if opening:
+            opening_moves.append(opening)
+            unique_opening_counter[opening] += 1
+        if white_move:
+            white_opening_moves.append(white_move)
+        if black_move:
+            black_opening_moves.append(black_move)
 
     count_column_width = len(str(max(unique_opening_counter.values())))
     totals = [(count, opening) for opening, count in unique_opening_counter.items()]
@@ -67,11 +63,13 @@ def plot_opening(openings: list[str], plot_title: str, game_file_name: str):
         line.set_linewidth(2*line.get_linewidth())
 
     axes.set_title(plot_title)
-    figure.savefig(f'{game_file_name}_{plot_title.split()[0].split('\'')[0].lower()}_opening_moves_plot.{common.picture_file_args["format"]}', **common.picture_file_args, bbox_inches="tight")
+    figure.savefig(f'''{game_file_name}_{plot_title.split()[0].split("'")[0].lower()}_opening_moves_plot.{common.picture_file_args["format"]}''',
+                   **common.picture_file_args,
+                   bbox_inches="tight")
     plt.close(figure)
 
 
-def plot_all_openings(game_file):
+def plot_all_openings(all_games: list[common.Game_Record], game_file: str):
     plot_titles = ["First move counts", "White's first move counts", "Black's first move counts"]
-    for openings, plot_title in zip(get_openings(game_file), plot_titles):
+    for openings, plot_title in zip(get_openings(all_games), plot_titles):
         plot_opening(openings, plot_title, game_file)
