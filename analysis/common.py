@@ -49,7 +49,7 @@ class Game_Record:
             raise No_More_Games()
 
     def has_game(self) -> bool:
-        return self.headers or self.moves
+        return bool(self.headers or self.moves)
 
 
 def game_moves(input: TextIO, previous_line: str = "") -> list[str]:

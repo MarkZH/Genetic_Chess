@@ -1,19 +1,19 @@
 #!/usr/bin/python
 
-import os
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import Any, Type
 import common
 
 
-def add_value_to_data_line(data_line, header_line, title, value, data_type):
+def add_value_to_data_line(data_line: list, header_line: list[str], title: str, value: Any, data_type: Type) -> None:
     index = header_line.index(title)
     if data_line[index]:
         raise Exception('Value already found: ' + title + ' for ID ' + str(data_line[0]))
     data_line[index] = data_type(value)
 
 
-def parse_gene_pool(gene_pool_file_name):
+def parse_gene_pool(gene_pool_file_name: str) -> tuple[list[str], np.array]:
     # Read gene file for gene names
     header_line: list[str] = []
     current_gene = ''
@@ -46,7 +46,7 @@ def parse_gene_pool(gene_pool_file_name):
     # Read gene pool file for data
     parsed_data = []
     with open(gene_pool_file_name) as f:
-        new_data_line = [None]*len(header_line)
+        new_data_line: list[int | None] = [None]*len(header_line)
         data_line = new_data_line.copy()
         current_gene = ''
         for line in f:
@@ -67,12 +67,13 @@ def parse_gene_pool(gene_pool_file_name):
                 elif parameter == 'Still Alive':
                     continue
                 else:
+                    data_type: Type
                     if current_gene:
                         if parameter == "Sorter Order":
                             sorters = [name.strip() for name in value.split(',')]
                             for sorter in sorters:
                                 title = current_gene + ' - ' + parameter + ' - ' + sorter
-                                value = sorters.index(sorter) + 1
+                                value = str(sorters.index(sorter) + 1)
                                 add_value_to_data_line(data_line, header_line, title, value, int)
                             continue
                         else:
