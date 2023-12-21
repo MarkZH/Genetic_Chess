@@ -2,7 +2,7 @@
 
 import itertools
 from collections import defaultdict
-from common import Game_Record
+from common import Game_Record, print_sorted_count_table
 
 # Count how many times a castling move was picked (O-O = kingside, O-O-O = queenside)
 
@@ -25,10 +25,7 @@ def count_castles(all_games: list[Game_Record], color: str) -> None:
 
     castle_count["Total"] = sum(castle_count.values())
     print("\n" + f"# {color}".strip() + " Castling")
-    count_column_width = len(str(max(castle_count.values())))
-    for castle, count in sorted(castle_count.items(), key=lambda x: x[0]):
-        spaces = " "*(count_column_width - len(str(count)))
-        print(spaces, count, castle)
+    print_sorted_count_table(castle_count.items())
 
 
 def count_all_castles(all_games: list[Game_Record]):

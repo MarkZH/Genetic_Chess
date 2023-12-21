@@ -1,6 +1,6 @@
 import itertools
 import numpy as np
-from typing import TextIO
+from typing import TextIO, Iterable, Any
 from delete_comments import delete_comments
 
 picture_file_args = {'dpi': 600,
@@ -74,3 +74,10 @@ def read_all_games(game_file_name: str) -> list[Game_Record]:
                 game_list.append(Game_Record(input))
         except No_More_Games:
             return game_list
+
+
+def print_sorted_count_table(count_list: Iterable[tuple[Any, int]]):
+    value_column_width = max(len(str(item[0])) for item in count_list)
+    count_column_width = len(str(max(item[1] for item in count_list)))
+    for value, count in sorted(count_list, key=lambda item: item[1]):
+        print(f"{value:{value_column_width}} {count:{count_column_width}}")

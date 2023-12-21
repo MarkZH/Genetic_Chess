@@ -23,12 +23,8 @@ def get_openings(all_games: list[common.Game_Record]) -> list[list[str]]:
         if black_move:
             black_opening_moves.append(black_move)
 
-    count_column_width = len(str(max(unique_opening_counter.values())))
-    totals = [(count, opening) for opening, count in unique_opening_counter.items()]
     print("\n# Most popular openings:")
-    for count, opening in sorted(totals):
-        spaces = ' '*(count_column_width - len(str(count)))
-        print(spaces, count, opening)
+    common.print_sorted_count_table(unique_opening_counter.items())
 
     return [opening_moves, white_opening_moves, black_opening_moves]
 
