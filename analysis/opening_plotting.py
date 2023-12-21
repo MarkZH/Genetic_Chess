@@ -35,7 +35,7 @@ def get_openings(all_games: list[common.Game_Record]) -> list[list[str]]:
 
 def parse_opening_list(openings):
     open_count = Counter(openings)
-    top20 = list(reversed(sorted(open_count.keys(), key=lambda x: open_count[x])[-20:]))
+    top20 = list(reversed(sorted(open_count.keys(), key=open_count.get)[-20:]))
 
     markers = []
     for opening in openings:
