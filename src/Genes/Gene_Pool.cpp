@@ -51,6 +51,7 @@ namespace
     std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file);
     [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
 
+    std::atomic_int space_counter = 0;
     void pause_gene_pool(int);
 
     void record_the_living(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name);
@@ -139,13 +140,18 @@ void gene_pool(const std::string& config_file)
             const auto& white = pool[index];
             const auto& black = pool[index + 1];
             results.emplace_back(std::async(std::launch::async, pool_game, std::cref(board), game_time, white, black, std::cref(game_record_file), std::ref(limiter)));
+            std::cout << '=' << std::flush;
         }
+        std::cout << std::endl;
+        space_counter = 0;
 
         std::stringstream result_printer;
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
             auto& white = pool[index];
             auto& black = pool[index + 1];
+            std::cout << '^' << std::flush;
+            ++space_counter;
 
             const auto result = results[index/2].get();
             const auto winner = result.winner();
@@ -170,6 +176,7 @@ void gene_pool(const std::string& config_file)
                 winning_player.add_win();
             }
         }
+        std::cout << std::endl;
 
         Random::shuffle(pool);
 
@@ -217,6 +224,7 @@ namespace
             pause_lock.lock();
             std::cout << "\nGetting to a good stopping point ...\n";
         }
+        std::cout << std::string(space_counter, ' ');
     }
 
     std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate)
@@ -259,8 +267,7 @@ namespace
                             const Clock::seconds game_time,
                             const Clock& pool_time) noexcept
     {
-        std::cout << "\n=======================\n\n"
-                  << "Gene pool size: " << pool.size()
+        std::cout << "\n\nGene pool size: " << pool.size()
                   << "  Gene pool file name: " << genome_file_name
                   << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), size_t{0})
                   << "  White wins: " << color_wins[static_cast<int>(Winner_Color::WHITE)]
