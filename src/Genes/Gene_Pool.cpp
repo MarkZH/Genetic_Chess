@@ -146,7 +146,6 @@ void gene_pool(const std::string& config_file)
         auto limiter = std::counting_semaphore(maximum_simultaneous_games);
         for(const auto& players : pool | std::views::chunk(2))
         {
-            limiter.acquire();
             const auto& white = players[0];
             const auto& black = players[1];
             results.emplace_back(std::async(std::launch::async, pool_game, std::cref(board), game_time, white, black, std::cref(game_record_file), std::ref(limiter)));
@@ -365,6 +364,7 @@ namespace
                           const std::string& game_record_file,
                           std::counting_semaphore<>& limiter) noexcept
     {
+        limiter.acquire();
         const auto result = play_game(board, Clock{ game_time }, white, black, "Gene pool", "Local computer", game_record_file, false);
         limiter.release();
         return result;

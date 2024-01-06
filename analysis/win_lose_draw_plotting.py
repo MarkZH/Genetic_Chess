@@ -1,102 +1,92 @@
 #!/usr/bin/python
 
-import os
+from enum import Enum, auto
 import numpy as np
 import matplotlib.pyplot as plt
 import common
 
 
-def write_line(file, *args):
-    file.write('\t'.join(str(x) for x in args) + '\n')
+class Game_Ending(Enum):
+    WHITE_MATE = auto()
+    BLACK_MATE = auto()
+    FIFTY_MOVE = auto()
+    THREEFOLD = auto()
+    WHITE_TIME_WIN = auto()
+    BLACK_TIME_WIN = auto()
+    MATERIAL_DRAW = auto()
+    STALEMATE = auto()
+    TIME_WITHOUT_MATERIAL = auto()
 
 
-def parse_game_file(file_name):
-    game = 0
-    time = 0
-    white_time_left = 0
-    black_time_left = 0
-    plot_data_file_name = file_name + '_plots.txt'
-    with open(file_name) as f, open(plot_data_file_name, 'w') as w:
-        write_line(w, 'Game', 'White Wins', 'Black Wins', 'Draws', 'Time', 'Result Type', 'White Time Left', 'Black Time Left', 'Number of Moves')
-        # result_type key:
-        #   0 = Checkmate (white win)
-        #   1 = Checkmate (black win)
-        #   2 = 50-move
-        #   3 = 3-fold repitition
-        #   4 = Time forfeit (white win)
-        #   5 = Time forfeit (black win)
-        #   6 = Insufficient material
-        #   7 = No legal moves
-        #   8 = Time expired with insufficient material
-        for line in filter(None, map(str.strip, f)):
-            if line.startswith('[Result'):
-                game += 1
-                white_wins = 0
-                black_wins = 0
-                draws = 0
-                result = line.split('"')[1]
-                if result == '1/2-1/2':
-                    draws = 1
-                elif result == '1-0':
-                    white_wins = 1
-                    result_type = 0
-                else:
-                    black_wins = 1
-                    result_type = 1
-            elif line.startswith('[Termination'):
-                result_text = line.split('"')[1]
-                if result_text.lower() == 'threefold repetition':
-                    result_type = 3
-                elif result_text.lower() == '50-move limit':
-                    result_type = 2
-                elif result_text.lower() == 'time forfeiture':
-                    result_type += 4
-                elif result_text.lower() == 'insufficient material':
-                    result_type = 6
-                elif result_text.lower() == 'stalemate':
-                    result_type = 7
-                elif result_text.lower() == 'time expired with insufficient material':
-                    result_type = 8
-                else:
-                    raise Exception('Unrecognized result type: ' + result_text)
-            elif line.startswith('[TimeControl'):
-                time = line.split('"')[1]
-            elif line.startswith('[TimeLeftWhite'):
-                white_time_left = line.split('"')[1]
-            elif line.startswith('[TimeLeftBlack'):
-                black_time_left = line.split('"')[1]
-            elif not line.startswith("["):
-                number_of_moves = (len(common.game_moves(f, line)) + 1)//2
-                write_line(w, game, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left, number_of_moves)
+def extract_game_endings(all_games: list[common.Game_Record]):
+    game_count = 0
+    data = []
+    column_names = ['Game', 'White Wins', 'Black Wins', 'Draws', 'Time', 'Result Type', 'White Time Left', 'Black Time Left', 'Number of Moves']
+    for game in all_games:
+        result = game.headers["Result"]
+        game_count += 1
+        white_wins = 0
+        black_wins = 0
+        draws = 0
+        if result == '1/2-1/2':
+            draws = 1
+        elif result == '1-0':
+            white_wins = 1
+            result_type = Game_Ending.WHITE_MATE
+        else:
+            black_wins = 1
+            result_type = Game_Ending.BLACK_MATE
 
-    return plot_data_file_name
+        try:
+            result_text = game.headers["Termination"]
+            if result_text.lower() == 'threefold repetition':
+                result_type = Game_Ending.THREEFOLD
+            elif result_text.lower() == '50-move limit':
+                result_type = Game_Ending.FIFTY_MOVE
+            elif result_text.lower() == 'time forfeiture':
+                result_type = Game_Ending.WHITE_TIME_WIN if result_type == Game_Ending.WHITE_MATE else Game_Ending.BLACK_TIME_WIN
+            elif result_text.lower() == 'insufficient material':
+                result_type = Game_Ending.MATERIAL_DRAW
+            elif result_text.lower() == 'stalemate':
+                result_type = Game_Ending.STALEMATE
+            elif result_text.lower() == 'time expired with insufficient material':
+                result_type = Game_Ending.TIME_WITHOUT_MATERIAL
+            else:
+                raise Exception('Unrecognized result type: ' + result_text)
+        except KeyError:
+            pass
+
+        time = float(game.headers["TimeControl"])
+        white_time_left = float(game.headers["TimeLeftWhite"])
+        black_time_left = float(game.headers["TimeLeftBlack"])
+        number_of_moves = (len(game.moves) + 1)//2
+        data.append([game_count, white_wins, black_wins, draws, time, result_type, white_time_left, black_time_left, number_of_moves])
+
+    return column_names, data
 
 
-def plot_endgames(file_name):
-    parsed_data_file_name = parse_game_file(file_name)
-    data = np.genfromtxt(parsed_data_file_name, delimiter='\t', names=True)
-    os.remove(parsed_data_file_name)
+def plot_endgames(all_games: list[common.Game_Record], file_name: str):
+    names, data = extract_game_endings(all_games)
 
-    def get_data(column: int, number_type: type) -> tuple[np.ndarray, str]:
-        name = data.dtype.names[column]
-        return data[name].astype(number_type), name.replace('_', ' ')
+    def get_data(name: str, number_type: type) -> tuple[np.ndarray, str]:
+        index = names.index(name)
+        return np.array([number_type(row[index]) for row in data]), name
 
-    game_number, game_number_label = get_data(0, int)
-    white_wins, white_wins_label = get_data(1, int)
-    black_wins, black_wins_label = get_data(2, int)
-    draws, draws_label = get_data(3, int)
-    game_time, _ = get_data(4, np.float64)
-    result_type, _ = get_data(5, int)
-    white_time_left, _ = get_data(6, np.float64)
-    black_time_left, _ = get_data(7, np.float64)
-    moves_in_game, _ = get_data(8, int)
+    game_number, game_number_label = get_data("Game", int)
+    white_wins, white_wins_label = get_data("White Wins", int)
+    black_wins, black_wins_label = get_data("Black Wins", int)
+    draws, draws_label = get_data("Draws", int)
+    game_time, _ = get_data("Time", np.float64)
+    result_type, _ = get_data("Result Type", Game_Ending)
+    white_time_left, _ = get_data("White Time Left", np.float64)
+    black_time_left, _ = get_data("Black Time Left", np.float64)
+    moves_in_game, _ = get_data("Number of Moves", int)
 
     line_width = common.plot_params["plot line weight"]
     bar_line_width = 0.5
     bar_color = common.plot_params["bar color"]
     marker_size = common.plot_params["scatter dot size"]
     stat_text_size = 7
-
 
     winner_figure, winner_axes = plt.subplots()
 
@@ -120,19 +110,16 @@ def plot_endgames(file_name):
     winner_figure.savefig(f"{file_name}_game_outcomes.{pic_ext}", **common.picture_file_args)
     plt.close(winner_figure)
 
-    white_checkmates = result_type == 0
-    black_checkmates = result_type == 1
-    fifty_moves = result_type == 2
-    threefold = result_type == 3
-    white_time_win = result_type == 4
-    black_time_win = result_type == 5
-    material = result_type == 6
-    no_legal = result_type == 7
-    time_and_material = result_type == 8
+    white_checkmates = result_type == Game_Ending.WHITE_MATE
+    black_checkmates = result_type == Game_Ending.BLACK_MATE
+    fifty_moves = result_type == Game_Ending.FIFTY_MOVE
+    threefold = result_type == Game_Ending.THREEFOLD
+    white_time_win = result_type == Game_Ending.WHITE_TIME_WIN
+    black_time_win = result_type == Game_Ending.BLACK_TIME_WIN
+    material = result_type == Game_Ending.MATERIAL_DRAW
+    no_legal = result_type == Game_Ending.STALEMATE
+    time_and_material = result_type == Game_Ending.TIME_WITHOUT_MATERIAL
     number_of_games = len(game_number)
-    if np.logical_or(result_type > 8, result_type < 0).any():
-        print('Unknown result types found.')
-
 
     outcome_figure, outcome_axes = plt.subplots()
 

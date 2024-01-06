@@ -1,6 +1,6 @@
 import itertools
 import numpy as np
-from typing import TextIO
+from typing import TextIO, Iterable, Any
 from delete_comments import delete_comments
 
 picture_file_args = {'dpi': 600,
@@ -25,17 +25,59 @@ def centered_x_axis(x: np.array, y: np.array) -> np.array:
     return x[left_margin : -right_margin or len(x)]
 
 
-def game_moves(input: TextIO, previous_line: str | None = None) -> list[str]:
+class No_More_Games(Exception):
+    pass
+
+
+class Game_Record:
+    def __init__(self, input_stream: TextIO) -> None:
+        self.headers: dict[str, str] = {}
+        self.moves: list[str] = []
+
+        for line in map(str.strip, input_stream):
+            if not line:
+                continue
+
+            if not line.startswith("["):
+                self.moves = game_moves(input_stream, line)
+                break
+
+            name, value = line.split(maxsplit=1)
+            self.headers[name[1:]] = value.split('"')[1]
+
+        if not self.has_game():
+            raise No_More_Games()
+
+    def has_game(self) -> bool:
+        return bool(self.headers or self.moves)
+
+
+def game_moves(input: TextIO, previous_line: str = "") -> list[str]:
     game_lines: list[str] = []
     for line in itertools.chain([previous_line], map(str.strip, input)):
-        line = line.split(";", maxsplit=1)[0] if line else ""
+        line = line.split(";", maxsplit=1)[0].strip()
         if not line:
             if not game_lines:
                 continue
             game_text = delete_comments(" ".join(game_lines))
             return list(filter(lambda s: "." not in s, game_text.split()))[:-1]
-        elif line.startswith("["):
-            continue
         else:
             game_lines.append(line)
     return []
+
+
+def read_all_games(game_file_name: str) -> list[Game_Record]:
+    game_list = []
+    with open(game_file_name) as input:
+        try:
+            while True:
+                game_list.append(Game_Record(input))
+        except No_More_Games:
+            return game_list
+
+
+def print_sorted_count_table(count_list: Iterable[tuple[Any, int]]):
+    value_column_width = max(len(str(item[0])) for item in count_list)
+    count_column_width = len(str(max(item[1] for item in count_list)))
+    for value, count in sorted(count_list, key=lambda item: item[1]):
+        print(f"{value:{value_column_width}} {count:{count_column_width}}")
