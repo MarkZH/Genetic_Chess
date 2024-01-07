@@ -280,7 +280,7 @@ namespace
                   << "\nTime until stop: " << std::round((pool_time.running_time_left()).count()) << " seconds\n\n";
 
         const auto best_living = best_living_ai(pool);
-        std::cout << "Best living ID : " << best_living.id() << " with " << String::pluralize(best_living.wins(), "win") + "\n\n";
+        std::cout << "Best living ID : " << best_living.id() << "    Wins: " << best_living.wins() << ")\n\n";
 
     #ifdef _WIN32
         std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n\n";

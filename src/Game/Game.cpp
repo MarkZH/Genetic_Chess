@@ -115,7 +115,7 @@ void play_game_with_outsider(const Player& player,
             const Player& black = (player_color == Piece_Color::BLACK ? player : opponent_proxy);
             board.print_game_record(game_record,
                                     white, black,
-                                    String::add_to_file_name(game_file_name, "-" + color_text(player_color)),
+                                    game_file_name,
                                     game_result,
                                     clock,
                                     event_name,
