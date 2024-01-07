@@ -129,11 +129,6 @@ namespace String
     //! \returns The same string with all letters replaced by their lowercase versions.
     std::string lowercase(std::string s) noexcept;
 
-    //! \brief Check if a character is a digit.
-    //!
-    //! This is useful with std:: algorithms since std::isdigit takes an int as a parameter.
-    bool isdigit(char c) noexcept;
-
     //! \brief Check if a character is whitespace.
     //!
     //! This is useful with std:: algorithms since std::isspace takes an int as a parameter.
@@ -208,21 +203,6 @@ namespace String
                                                            std::chrono::time_point_cast<Precision>(point_in_time));
         return std::vformat("{:" + format + "}", std::make_format_args(point_with_tz));
     }
-
-    //! \brief Inserts extra text before the file name extension.
-    //!
-    //! \param original_file_name The file name to be editted.
-    //! \param addition A string to insert just before the dot before the file name extension.
-    //! \returns (original file name without extention) + (addition) + (extension)
-    std::string add_to_file_name(const std::string& original_file_name,
-                                 const std::string& addition) noexcept;
-
-    //! \brief Returns a string with a number and a correctly pluralized noun.
-    //!
-    //! \param count The number of items.
-    //! \param noun The noun to pluralize.
-    //! \returns A string of the form "N nouns" or "1 noun"
-    std::string pluralize(size_t count, const std::string& noun) noexcept;
 
     //! \brief Create a strings with added line breaks so no line is longer than a limit.
     //!

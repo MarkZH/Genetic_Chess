@@ -1,7 +1,6 @@
 import itertools
 import numpy as np
 from typing import TextIO, Iterable, Any
-from delete_comments import delete_comments
 
 picture_file_args = {'dpi': 600,
                      'format': 'png'}
@@ -38,12 +37,12 @@ class Game_Record:
             if not line:
                 continue
 
-            if not line.startswith("["):
+            if line.startswith("["):
+                name, value = line.split(maxsplit=1)
+                self.headers[name[1:]] = value.split('"')[1]
+            else:
                 self.moves = game_moves(input_stream, line)
                 break
-
-            name, value = line.split(maxsplit=1)
-            self.headers[name[1:]] = value.split('"')[1]
 
         if not self.has_game():
             raise No_More_Games()
@@ -55,15 +54,48 @@ class Game_Record:
 def game_moves(input: TextIO, previous_line: str = "") -> list[str]:
     game_lines: list[str] = []
     for line in itertools.chain([previous_line], map(str.strip, input)):
-        line = line.split(";", maxsplit=1)[0].strip()
-        if not line:
+        if line:
+            game_lines.append(line.split(";", maxsplit=1)[0].strip())
+        else:
             if not game_lines:
                 continue
             game_text = delete_comments(" ".join(game_lines))
             return list(filter(lambda s: "." not in s, game_text.split()))[:-1]
-        else:
-            game_lines.append(line)
     return []
+
+
+def delete_comments(line: str) -> str:
+    parentheses_depth = 0
+    inside_brace = False
+    game_text: list[str] = []
+    start_index = 0
+    for index, character in enumerate(line):
+        if inside_brace:
+            if character == "}":
+                inside_brace = False
+                if parentheses_depth == 0:
+                    start_index = index + 1
+        elif character == "}":
+            raise RuntimeError(f"Mismatched comment braces: {line}")
+        elif character == "{":
+            inside_brace = True
+            if parentheses_depth == 0:
+                game_text.append(line[start_index:index])
+        elif character == "(":
+            if parentheses_depth == 0:
+                game_text.append(line[start_index:index])
+            parentheses_depth += 1
+        elif character == ")":
+            if parentheses_depth == 0:
+                raise RuntimeError(f"Mismatched RAV parentheses: {line}")
+            parentheses_depth -= 1
+            if parentheses_depth == 0:
+                start_index = index + 1
+
+    if not inside_brace and parentheses_depth == 0:
+        game_text.append(line[start_index:])
+
+    return " ".join(filter(None, map(str.strip, game_text)))
 
 
 def read_all_games(game_file_name: str) -> list[Game_Record]:

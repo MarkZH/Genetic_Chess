@@ -332,8 +332,6 @@ bool run_tests()
 
     test_function(tests_passed, "Strip multicharacter comment", "a", String::strip_comments, "a // b", "//");
     test_function(tests_passed, "String::lowercase()", "abc def", String::lowercase, "AbC dEf");
-    test_function(tests_passed, "String::add_to_file_name() with dot", "a-b.c", String::add_to_file_name, "a.c", "-b");
-    test_function(tests_passed, "String::add_to_file_name() with no dot", "a-b", String::add_to_file_name, "a", "-b");
 
     using vs = std::vector<std::string>;
     test_function(tests_passed, "String::split()", vs{"a", "b", "c", "d", "e"}, ws_split, "\t a b c d e ");
@@ -356,9 +354,6 @@ bool run_tests()
     function_should_throw<std::invalid_argument>(tests_passed, "Throwing string to size_t", String::to_number<size_t>, "78x9");
     function_should_throw<std::invalid_argument>(tests_passed, "Throwing empty string to int", String::to_number<int>, "");
     function_should_throw<std::invalid_argument>(tests_passed, "Throwing on too large value", String::to_number<short>, "99999");
-
-    test_function(tests_passed, "Singular pluralizing", "1 cat", String::pluralize, 1, "cat");
-    test_function(tests_passed, "Multiple pluralizing", "4 cats", String::pluralize, 4, "cat");
 
     average_moves_left_matches_precalculated_value(tests_passed);
     average_moves_left_returns_finite_result_after_zero_moves(tests_passed);
@@ -613,7 +608,7 @@ bool run_perft_tests()
     std::cout << "Move generation rate: " << String::format_number(int(double(legal_moves_counted)/time.count())) << " moves/second.\n";
     if( ! tests_failed.empty())
     {
-        std::cout << String::pluralize(tests_failed.size(), "Test") << " failed: ";
+        std::cout << "Tests failed (" << tests_failed.size() << "): ";
         for(auto t : tests_failed)
         {
             std::cout << t << " ";
