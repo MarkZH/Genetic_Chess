@@ -44,7 +44,7 @@ def plot_opening(openings: list[str], plot_title: str, game_file_name: str):
     top_data, names = parse_opening_list(openings)
 
     figure, axes = plt.subplots()
-    game_counts = np.array(range(1, top_data.size + 1))
+    game_counts = np.arange(top_data.shape[0]) + 1
     for index, opening_name in enumerate(names):
         opening_frequency = common.moving_mean(top_data[:, index].astype(float), 10000)
         game_axis = common.centered_x_axis(game_counts, opening_frequency)
