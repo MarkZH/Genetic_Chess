@@ -90,11 +90,6 @@ std::string String::lowercase(std::string s) noexcept
     return s;
 }
 
-bool String::isdigit(const char c) noexcept
-{
-    return std::isdigit(c);
-}
-
 bool String::isspace(char c) noexcept
 {
     return std::isspace(c);
@@ -103,17 +98,6 @@ bool String::isspace(char c) noexcept
 std::string String::round_to_decimals(const double x, const size_t decimal_places) noexcept
 {
     return std::format("{:.{}f}", x, decimal_places);
-}
-
-std::string String::add_to_file_name(const std::string& original_file_name, const std::string& addition) noexcept
-{
-    const auto dot_index = std::min(original_file_name.find_last_of('.'), original_file_name.size());
-    return original_file_name.substr(0, dot_index) + addition + original_file_name.substr(dot_index);
-}
-
-std::string String::pluralize(const size_t count, const std::string& noun) noexcept
-{
-    return std::to_string(count) + " " + noun + (count == 1 ? "" : "s");
 }
 
 std::string String::word_wrap(const std::string& text, const size_t line_length, const size_t indent) noexcept

@@ -44,7 +44,7 @@ def plot_opening(openings: list[str], plot_title: str, game_file_name: str):
     top_data, names = parse_opening_list(openings)
 
     figure, axes = plt.subplots()
-    game_counts = np.array(range(1, top_data.size + 1))
+    game_counts = np.arange(top_data.shape[0]) + 1
     for index, opening_name in enumerate(names):
         opening_frequency = common.moving_mean(top_data[:, index].astype(float), 10000)
         game_axis = common.centered_x_axis(game_counts, opening_frequency)
@@ -59,7 +59,7 @@ def plot_opening(openings: list[str], plot_title: str, game_file_name: str):
         line.set_linewidth(2*line.get_linewidth())
 
     axes.set_title(plot_title)
-    figure.savefig(f'''{game_file_name}_{plot_title.split()[0].split("'")[0].lower()}_opening_moves_plot.{common.picture_file_args["format"]}''',
+    figure.savefig(f'''{game_file_name}_opening_moves_plot_{plot_title.split()[0].split("'")[0].lower()}.{common.picture_file_args["format"]}''',
                    **common.picture_file_args,
                    bbox_inches="tight")
     plt.close(figure)
