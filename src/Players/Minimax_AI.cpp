@@ -409,7 +409,7 @@ void Minimax_AI::output_thinking_xboard(const Game_Tree_Node_Result& thought,
         << " "
         << maximum_depth
         << " "
-        << int(nodes_searched/Clock::seconds(time_so_far).count())
+        << int(double(nodes_searched)/Clock::seconds(time_so_far).count())
         << '\t';
 
     // Principal variation
@@ -429,7 +429,7 @@ void Minimax_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
               << " depth " << thought.depth()
               << " time " << std::chrono::duration_cast<std::chrono::milliseconds>(time_so_far).count()
               << " nodes " << nodes_searched
-              << " nps " << int(nodes_searched/Clock::seconds(time_so_far).count())
+              << " nps " << int(double(nodes_searched)/Clock::seconds(time_so_far).count())
               << " pv ";
     for(const auto& move : thought.variation_line())
     {
