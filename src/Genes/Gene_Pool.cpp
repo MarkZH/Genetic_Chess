@@ -18,7 +18,6 @@ using namespace std::chrono_literals;
 #include <string>
 #include <numeric>
 #include <sstream>
-#include <mutex>
 #include <algorithm>
 
 #include "Players/Minimax_AI.h"
@@ -36,23 +35,16 @@ using namespace std::chrono_literals;
 
 namespace
 {
-    const std::string stop_key = "Ctrl-c";
-
-#ifdef _WIN32
-    const auto PAUSE_SIGNAL = SIGINT;
-#else
-    const auto PAUSE_SIGNAL = SIGTSTP;
-    const std::string pause_key = "Ctrl-z";
-#endif // _WIN32
-    std::mutex pause_mutex;
+    const std::string quit_key = "Ctrl-c";
+    const auto QUIT_SIGNAL = SIGINT;
+    std::atomic_bool quit_after_round = false;
     bool keep_going(const Clock& stop_time);
+    std::atomic_int space_counter = 0;
+    void quit_gene_pool(int);
 
     Clock get_pool_clock(const Configuration& config);
     std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file);
     [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
-
-    std::atomic_int space_counter = 0;
-    void pause_gene_pool(int);
 
     void record_the_living(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name);
 
@@ -76,7 +68,7 @@ namespace
 
 void gene_pool(const std::string& config_file)
 {
-    signal(PAUSE_SIGNAL, pause_gene_pool);
+    signal(QUIT_SIGNAL, quit_gene_pool);
 
     const auto config = Configuration(config_file);
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
@@ -197,34 +189,13 @@ namespace
 {
     bool keep_going(const Clock& pool_clock)
     {
-        if(auto pause_lock = std::unique_lock(pause_mutex, std::try_to_lock); ! pause_lock.owns_lock())
-        {
-        #ifdef _WIN32
-            return false;
-        #else
-            std::cout << "\nGene pool paused. Press " << pause_key << " to continue ";
-            std::cout << "or " << stop_key << " to quit.\n";
-            pause_lock.lock();
-        #endif // _WIN32
-        }
-        return ! pool_clock.running_time_expired();
+        return ! (quit_after_round || pool_clock.running_time_expired());
     }
 
-    void pause_gene_pool(int)
+    void quit_gene_pool(int)
     {
-        static auto pause_lock = std::unique_lock(pause_mutex, std::defer_lock);
-
-        if(pause_lock.owns_lock())
-        {
-            pause_lock.unlock();
-            std::cout << "\nResuming ...\n";
-        }
-        else
-        {
-            pause_lock.lock();
-            std::cout << "\nGetting to a good stopping point ...\n";
-        }
-        std::cout << std::string(space_counter, ' ');
+        std::cout << "\nGetting to a good stopping point ...\n" << std::string(space_counter, ' ');
+        quit_after_round = true;
     }
 
     std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate)
@@ -280,13 +251,9 @@ namespace
                   << "\nTime until stop: " << std::round((pool_time.running_time_left()).count()) << " seconds\n\n";
 
         const auto best_living = best_living_ai(pool);
-        std::cout << "Best living ID : " << best_living.id() << "    Wins: " << best_living.wins() << "\n\n";
 
-    #ifdef _WIN32
-        std::cout << "Quit after this round: " << stop_key << "    Abort: " << stop_key << " " << stop_key << "\n\n";
-    #else
-        std::cout << "Pause: " << pause_key << "    Abort: " << stop_key << "\n\n";
-    #endif // _WIN32
+        std::cout << "Best living ID : " << best_living.id() << "    Wins: " << best_living.wins() << "\n\n";
+        std::cout << "Quit after this round: " << quit_key << "\n\n";
     }
 
     void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool)
