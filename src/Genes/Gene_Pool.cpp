@@ -409,7 +409,7 @@ namespace
             
         const auto contains = [](const auto& list, const auto& value)
             {
-                return std::find(list.begin(), list.end(), value) != list.end();
+                return std::ranges::find(list, value) != list.end();
             };
 
         if(contains(hour_names, unit))
