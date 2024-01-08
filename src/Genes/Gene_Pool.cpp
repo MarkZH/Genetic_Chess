@@ -412,20 +412,15 @@ namespace
         const auto minute_names = {"minutes", "minute", "mins", "min", "m"};
         const auto second_names = {"seconds", "second", "secs", "sec", "s"};
             
-        const auto contains = [](const auto& list, const auto& value)
-            {
-                return std::ranges::find(list, value) != list.end();
-            };
-
-        if(contains(hour_names, unit))
+        if(std::ranges::contains(hour_names, unit))
         {
             return Clock{Clock::hours(number)};
         }
-        else if(contains(minute_names, unit))
+        else if(std::ranges::contains(minute_names, unit))
         {
             return Clock{Clock::minutes(number)};
         }
-        else if(contains(second_names, unit))
+        else if(std::ranges::contains(second_names, unit))
         {
             return Clock{Clock::seconds(number)};
         }
