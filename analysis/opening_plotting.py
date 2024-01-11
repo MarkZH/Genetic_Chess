@@ -29,26 +29,29 @@ def get_openings(all_games: list[common.Game_Record]) -> list[list[str]]:
     return [opening_moves, white_opening_moves, black_opening_moves]
 
 
-def parse_opening_list(openings):
+def opening_cumulative_percent_usage(openings):
     open_count = Counter(openings)
-    top20 = reversed(sorted(open_count.keys(), key=open_count.get)[-20:])
-    return {opening: np.array([x == opening for x in openings], dtype=float) for opening in top20}
+    top = sorted(open_count.keys(), key=open_count.get)
+    game_counts = np.arange(len(openings)) + 1
+    return {opening: 100*np.cumsum([x == opening for x in openings])/game_counts for opening in top}
 
 
 def plot_opening(openings: list[str], plot_title: str, game_file_name: str):
-    top_openings = parse_opening_list(openings)
-    figure, axes = plt.subplots()
-    for opening_name, opening_usage in top_openings.items():
-        opening_frequency = common.moving_mean(opening_usage, 10000)
-        game_counts = np.arange(len(opening_usage)) + 1
-        game_axis = common.centered_x_axis(game_counts, opening_frequency)
-        axes.plot(game_axis, 100*opening_frequency,
-                  linewidth=common.plot_params['plot line weight'],
-                  label=opening_name.replace("_", " "))
+    top_openings = opening_cumulative_percent_usage(openings)
+    game_counts = np.arange(len(openings)) + 1
+    labels = list(top_openings.keys())
+    plot_label_count = 20
+    labels[:-plot_label_count] = ["_"]*(len(labels) - plot_label_count)
 
+    figure, axes = plt.subplots()
+    axes.stackplot(game_counts, *top_openings.values(), labels=labels)
     axes.set_xlabel('Games played')
-    axes.set_ylabel('Percent of games')
-    leg = axes.legend(fontsize=common.plot_params["legend text size"], bbox_to_anchor=(1.01, 0.5), loc="center left")
+    axes.set_ylabel('Cumulative percent of games')
+    legend_handles, legend_labels = axes.get_legend_handles_labels()
+    leg = axes.legend(reversed(legend_handles), reversed(legend_labels),
+                      fontsize=common.plot_params["legend text size"],
+                      bbox_to_anchor=(1.01, 0.5), loc="center left",
+                      title=f"Top {plot_label_count}" if len(top_openings) > plot_label_count else None)
     for line in leg.get_lines():
         line.set_linewidth(2*line.get_linewidth())
 
