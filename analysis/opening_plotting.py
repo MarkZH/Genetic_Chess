@@ -31,22 +31,16 @@ def get_openings(all_games: list[common.Game_Record]) -> list[list[str]]:
 
 def parse_opening_list(openings):
     open_count = Counter(openings)
-    top20 = list(reversed(sorted(open_count.keys(), key=open_count.get)[-20:]))
-
-    markers = []
-    for opening in openings:
-        markers.append([x == opening for x in top20])
-
-    return np.array(markers), top20
+    top20 = reversed(sorted(open_count.keys(), key=open_count.get)[-20:])
+    return {opening: np.array([x == opening for x in openings], dtype=float) for opening in top20}
 
 
 def plot_opening(openings: list[str], plot_title: str, game_file_name: str):
-    top_data, names = parse_opening_list(openings)
-
+    top_openings = parse_opening_list(openings)
     figure, axes = plt.subplots()
-    game_counts = np.arange(top_data.shape[0]) + 1
-    for index, opening_name in enumerate(names):
-        opening_frequency = common.moving_mean(top_data[:, index].astype(float), 10000)
+    for opening_name, opening_usage in top_openings.items():
+        opening_frequency = common.moving_mean(opening_usage, 10000)
+        game_counts = np.arange(len(opening_usage)) + 1
         game_axis = common.centered_x_axis(game_counts, opening_frequency)
         axes.plot(game_axis, 100*opening_frequency,
                   linewidth=common.plot_params['plot line weight'],
