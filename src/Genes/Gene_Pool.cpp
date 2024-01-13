@@ -142,12 +142,11 @@ void gene_pool(const std::string& config_file)
         {
             auto& white = pool[index];
             auto& black = pool[index + 1];
-            std::cout << '^' << std::flush;
-            ++space_counter;
-
             const auto result = results[index/2].get();
             const auto winner = result.winner();
             result_printer << white.id() << " vs " << black.id() << ": " << color_text(winner) << " (" << result.ending_reason() << ")\n";
+            std::cout << '^' << std::flush;
+            ++space_counter;
 
             const auto mating_winner = (winner == Winner_Color::NONE ? (Random::coin_flip() ? Winner_Color::WHITE : Winner_Color::BLACK) : winner);
             auto& winning_player = (mating_winner == Winner_Color::WHITE ? white : black);
