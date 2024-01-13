@@ -43,6 +43,10 @@ namespace
     void quit_gene_pool(int);
 
     Clock get_pool_clock(const Configuration& config);
+    std::chrono::duration<double> get_start_delay(const Configuration& config);
+    std::chrono::duration<double> get_duration(const std::string& parameter);
+    std::string future_timestamp(const std::chrono::duration<double>& duration) noexcept;
+
     std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file);
     [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
 
@@ -98,8 +102,13 @@ void gene_pool(const std::string& config_file)
     const auto verbose_output = config.as_boolean("output volume", "verbose", "quiet");
 
     auto pool_clock = get_pool_clock(config);
-    pool_clock.start(Piece_Color::WHITE);
-
+    const auto start_delay = get_start_delay(config);
+    if(start_delay > 0s)
+    {
+        std::cout << "Gene pool will start at " << future_timestamp(start_delay) << std::endl;
+    }
+    std::this_thread::sleep_for(start_delay);
+    
     if(config.any_unused_parameters())
     {
         std::cout << "There were unused parameters in the file: " << config_file << '\n';
@@ -118,6 +127,7 @@ void gene_pool(const std::string& config_file)
 
     const auto best_file_name = genome_file_name + "_best_genome.txt";
 
+    pool_clock.start(Piece_Color::WHITE);
     while(keep_going(pool_clock))
     {
         const auto mutation_phase = round_count++ % (first_mutation_interval + second_mutation_interval);
@@ -247,7 +257,7 @@ namespace
                   << "  Mutation rate phase: " << round_count % (first_mutation_interval + second_mutation_interval)
                   << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
                   << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec"
-                  << "\nTime until stop: " << std::round((pool_time.running_time_left()).count()) << " seconds\n\n";
+                  << "\nFinish time: " << future_timestamp(pool_time.running_time_left())  << "\n\n";
 
         const auto best_living = best_living_ai(pool);
 
@@ -351,23 +361,40 @@ namespace
 
     Clock get_pool_clock(const Configuration& config)
     {
-        if( ! config.has_parameter("time limit"))
+        const auto time_limit = "time limit";
+        if( ! config.has_parameter(time_limit))
         {
             return Clock(Clock::seconds(std::numeric_limits<double>::infinity()));
         }
         
-        const auto time_text = config.as_text("time limit");
+        return Clock(get_duration(config.as_text(time_limit)));
+    }
+
+    std::chrono::duration<double> get_start_delay(const Configuration& config)
+    {
+        const auto start_delay = "start delay";
+        if(!config.has_parameter(start_delay))
+        {
+            return {};
+        }
+
+        return get_duration(config.as_text(start_delay));
+    }
+
+    std::chrono::duration<double> get_duration(const std::string& time_text)
+    {
         const auto time_spec = String::split(time_text);
         if(time_spec.size() != 2)
         {
             throw std::invalid_argument("Invalid time limit. Must be of form <number> <unit>. Got: " + time_text);
         }
+
         const auto number = std::stod(time_spec[0]);
         const auto unit = time_spec[1];
-        const auto hour_names = {"hours", "hour", "hrs", "hr", "h"};
-        const auto minute_names = {"minutes", "minute", "mins", "min", "m"};
-        const auto second_names = {"seconds", "second", "secs", "sec", "s"};
-            
+        const auto hour_names = { "hours", "hour", "hrs", "hr", "h" };
+        const auto minute_names = { "minutes", "minute", "mins", "min", "m" };
+        const auto second_names = { "seconds", "second", "secs", "sec", "s" };
+
         const auto contains = [](const auto& list, const auto& value)
             {
                 return std::find(list.begin(), list.end(), value) != list.end();
@@ -375,19 +402,32 @@ namespace
 
         if(contains(hour_names, unit))
         {
-            return Clock{Clock::hours(number)};
+            return Clock::hours(number);
         }
         else if(contains(minute_names, unit))
         {
-            return Clock{Clock::minutes(number)};
+            return Clock::minutes(number);
         }
         else if(contains(second_names, unit))
         {
-            return Clock{Clock::seconds(number)};
+            return Clock::seconds(number);
         }
         else
         {
             throw std::invalid_argument("Invalid time unit: " + unit);
+        }
+    }
+
+    std::string future_timestamp(const std::chrono::duration<double>& duration) noexcept
+    {
+        if(std::isfinite(duration.count()))
+        {
+            const auto future = std::chrono::system_clock::now() + std::chrono::duration_cast<std::chrono::system_clock::duration>(duration);
+            return String::date_and_time_format(future, "%Y-%m-%d %H:%M:%S");
+        }
+        else
+        {
+            return "Never";
         }
     }
 
