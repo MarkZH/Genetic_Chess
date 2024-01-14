@@ -1,12 +1,9 @@
 #!/usr/bin/python
 
-import itertools
 from collections import defaultdict
 import numpy as np
 import matplotlib.pyplot as plt
 from common import Game_Record, print_sorted_count_table, picture_file_args
-
-# Count how many times a castling move was picked (O-O = kingside, O-O-O = queenside)
 
 
 def delete_checkmarks(move: str) -> str:
@@ -17,21 +14,14 @@ def count_castles(all_games: list[Game_Record], color: str, ax: plt.Axes) -> Non
     castle_count: dict[str, int] = defaultdict(int)
     games_where_castled = np.zeros_like(all_games, dtype=int)
     for index, game in enumerate(all_games):
-        for ply in itertools.batched(game.moves, 2):
-            white_move = delete_checkmarks(ply[0])
-            black_move = delete_checkmarks(ply[1]) if len(ply) == 2 else ""
+        moves = game.moves[::2] if color == "White" else game.moves[1::2] if color == "Black" else game.moves
+        castle = ["O" in move for move in moves]
+        castle_index = castle.index(True) if True in castle else -1
+        castled = castle_index != -1
 
-            white_castled = "O" in white_move
-            black_castled = "O" in black_move
-
-            if color != "White" and black_castled:
-                castle_count[black_move] += 1
-            if color != "Black" and white_castled:
-                castle_count[white_move] += 1
-
-            if color == "White" and white_castled:
-                games_where_castled[index] = 1
-            elif color == "Black" and black_castled:
+        if castled:
+            castle_count[delete_checkmarks(moves[castle_index])] += 1
+            if color:
                 games_where_castled[index] = 1
 
     castle_count["Total"] = sum(castle_count.values())
