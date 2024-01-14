@@ -23,8 +23,21 @@ def get_openings(all_games: list[common.Game_Record]) -> list[list[str]]:
         if black_move:
             black_opening_moves.append(black_move)
 
+    def all_first_moves(color):
+        pawn_ranks = (3, 4) if color == "white" else (6, 5)
+        return ([f"{file}{rank}" for file in "abcdefgh" for rank in pawn_ranks]
+                + [f"N{file}{pawn_ranks[0]}" for file in "acfh"])
+
+    all_white_first_moves = all_first_moves("white")
+    all_black_first_moves = all_first_moves("black")
+    all_first_plies = [f"{white_move} {black_move}"
+                       for white_move in all_white_first_moves
+                       for black_move in all_black_first_moves]
+
     print("\n# Most popular openings:")
     common.print_sorted_count_table(unique_opening_counter.items())
+    print(f"\n{len(unique_opening_counter)} unique openings played.")
+    print(f"Not played: {', '.join(sorted(set(all_first_plies) - set(unique_opening_counter)))}")
 
     return [opening_moves, white_opening_moves, black_opening_moves]
 
