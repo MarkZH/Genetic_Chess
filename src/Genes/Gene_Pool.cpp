@@ -72,8 +72,6 @@ namespace
 
 void gene_pool(const std::string& config_file)
 {
-    signal(QUIT_SIGNAL, quit_gene_pool);
-
     const auto config = Configuration(config_file);
     const auto maximum_simultaneous_games = config.as_positive_number<int>("maximum simultaneous games");
     const auto gene_pool_population = config.as_positive_number<size_t>("gene pool population");
@@ -128,6 +126,7 @@ void gene_pool(const std::string& config_file)
     const auto best_file_name = genome_file_name + "_best_genome.txt";
 
     pool_clock.start(Piece_Color::WHITE);
+    signal(QUIT_SIGNAL, quit_gene_pool);
     while(keep_going(pool_clock))
     {
         const auto mutation_phase = round_count++ % (first_mutation_interval + second_mutation_interval);
