@@ -53,4 +53,6 @@ def count_all_castles(all_games: list[Game_Record], game_file_name: str):
     ax.set_ylabel("Cumulative castle count")
     ax.set_xlabel("Game count")
     ax.legend()
+
+    fig.tight_layout()
     fig.savefig(f"{game_file_name}_castle_counts.{picture_file_args['format']}", **picture_file_args)
