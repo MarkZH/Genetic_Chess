@@ -8,7 +8,7 @@ from common import Game_Record, print_sorted_count_table, picture_file_args
 
 
 def delete_checkmarks(move: str) -> str:
-    return move.replace("+", "").replace("#", "")
+    return move.rstrip("+").rstrip("#")
 
 
 class Color(StrEnum):
