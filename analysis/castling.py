@@ -30,7 +30,7 @@ def count_castles(all_games: list[Game_Record], color: Color) -> None:
             games_where_castled[index] = True
 
     castle_count["Total"] = sum(castle_count.values())
-    print("\n" + f"# {color}".strip() + " Castling")
+    print("\n" + f"# {color.title()}".strip() + " castling")
     print_sorted_count_table(castle_count.items())
     return games_where_castled
 
