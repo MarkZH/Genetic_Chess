@@ -79,11 +79,6 @@ class Gene
         //! \param psg A pointer to the correct Piece Strength Gene.
         virtual void reset_piece_strength_gene(const Piece_Strength_Gene* psg) noexcept;
 
-        //! \brief Returns the priority of the gene.
-        //!
-        //! \param stage Which stage of the game to query for the priority.
-        double priority(Game_Stage stage) const noexcept;
-
         //! Tests the board-scoring method of the Gene.
         //
         //! \brief Tests the board-scoring method of the Gene.
