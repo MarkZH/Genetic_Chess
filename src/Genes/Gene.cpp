@@ -213,11 +213,6 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
 {
 }
 
-double Gene::priority(const Game_Stage stage) const noexcept
-{
-    return priorities.value_at(stage);
-}
-
 bool Gene::has_priority() const noexcept
 {
     return list_properties().count(priorities.name(Game_Stage::OPENING)) != 0;
