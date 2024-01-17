@@ -2,12 +2,12 @@
 
 import sys
 import concurrent.futures
+import traceback
 from gene_plots import plot_genome
 from win_lose_draw_plotting import plot_endgames
 from opening_plotting import plot_all_openings
 from promotions import count_promotions
 from castling import count_all_castles
-from common import read_all_games
 
 
 def get_config_value(config_file: str, parameter: str):
@@ -25,14 +25,6 @@ def get_config_value(config_file: str, parameter: str):
     raise RuntimeError(f"Parameter {parameter} not found in {config_file}")
 
 
-def game_data_and_plots(game_file):
-    all_games = read_all_games(game_file)
-    plot_endgames(all_games, game_file)
-    plot_all_openings(all_games, game_file)
-    count_promotions(all_games)
-    count_all_castles(all_games, game_file)
-
-
 if __name__ == "__main__":
     try:
         config_file = sys.argv[1]
@@ -44,6 +36,14 @@ if __name__ == "__main__":
     game_file = f"{pool_file}_games.pgn"
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
-        genome_process = executor.submit(plot_genome, pool_file)
-        game_process = executor.submit(game_data_and_plots, game_file)
-        concurrent.futures.wait((genome_process, game_process))
+        processes = [executor.submit(plot_genome, pool_file),
+                     executor.submit(plot_endgames, game_file),
+                     executor.submit(plot_all_openings, game_file),
+                     executor.submit(count_promotions, game_file),
+                     executor.submit(count_all_castles, game_file)
+                     ]
+
+        for process in processes:
+            error = process.exception()
+            if error:
+                traceback.print_exception(error)

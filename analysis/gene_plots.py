@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import numpy as np
+import numpy.typing as npt
 import matplotlib.pyplot as plt
 from typing import Any, Type
 import common
@@ -13,7 +14,7 @@ def add_value_to_data_line(data_line: list, header_line: list[str], title: str, 
     data_line[index] = data_type(value)
 
 
-def parse_gene_pool(gene_pool_file_name: str) -> tuple[list[str], np.array]:
+def parse_gene_pool(gene_pool_file_name: str) -> tuple[list[str], npt.NDArray]:
     # Read gene file for gene names
     header_line: list[str] = []
     current_gene = ''
