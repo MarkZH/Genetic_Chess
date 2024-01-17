@@ -18,11 +18,11 @@ class Game_Ending(Enum):
     TIME_WITHOUT_MATERIAL = auto()
 
 
-def extract_game_endings(all_games: list[common.Game_Record]):
+def extract_game_endings(game_file_name: str):
     game_count = 0
     data = []
     column_names = ['Game', 'White Wins', 'Black Wins', 'Draws', 'Time', 'Result Type', 'White Time Left', 'Black Time Left', 'Number of Moves']
-    for game in all_games:
+    for game in common.read_all_games(game_file_name):
         result = game.headers["Result"]
         game_count += 1
         white_wins = 0
@@ -65,8 +65,8 @@ def extract_game_endings(all_games: list[common.Game_Record]):
     return column_names, data
 
 
-def plot_endgames(all_games: list[common.Game_Record], file_name: str):
-    names, data = extract_game_endings(all_games)
+def plot_endgames(file_name: str):
+    names, data = extract_game_endings(file_name)
 
     def get_data(name: str, number_type: type) -> tuple[np.ndarray, str]:
         index = names.index(name)

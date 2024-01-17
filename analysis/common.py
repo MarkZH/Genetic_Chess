@@ -1,6 +1,7 @@
 import itertools
 import numpy as np
-from typing import TextIO, Iterable, Any
+import numpy.typing as npt
+from typing import TextIO, Iterable, Iterator, Any
 
 picture_file_args = {'dpi': 600,
                      'format': 'png'}
@@ -13,12 +14,12 @@ plot_params = {'legend text size': 'x-small',
                'bar color': 'k'}
 
 
-def moving_mean(x: np.array, window: int) -> np.array:
+def moving_mean(x: npt.NDArray, window: int) -> npt.NDArray:
     x_avg = np.convolve(x, np.ones(window)/window, mode="valid")
     return x_avg
 
 
-def centered_x_axis(x: np.array, y: np.array) -> np.array:
+def centered_x_axis(x: npt.NDArray, y: npt.NDArray) -> npt.NDArray:
     left_margin = (len(x) - len(y)) // 2
     right_margin = len(x) - len(y) - left_margin
     return x[left_margin : -right_margin or len(x)]
@@ -98,14 +99,13 @@ def delete_comments(line: str) -> str:
     return " ".join(filter(None, map(str.strip, game_text)))
 
 
-def read_all_games(game_file_name: str) -> list[Game_Record]:
-    game_list = []
+def read_all_games(game_file_name: str) -> Iterator[Game_Record]:
     with open(game_file_name) as input:
         try:
             while True:
-                game_list.append(Game_Record(input))
+                yield Game_Record(input)
         except No_More_Games:
-            return game_list
+            return
 
 
 def print_sorted_count_table(count_list: Iterable[tuple[Any, int]]):
