@@ -414,6 +414,10 @@ void Board::update_board(const Move& move) noexcept
     ++game_move_count;
     previous_move = &move;
     move_piece(move);
+    if(move.is_en_passant(*this))
+    {
+        remove_piece({move.end().file(), move.start().rank()});
+    }
     clear_en_passant_target();
     unused_en_passant_target = {};
     move.side_effects(*this);
@@ -691,7 +695,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
             return piece_is_pinned(move.start());
         }
 
-        if(move.is_en_passant())
+        if(move.is_en_passant(*this)) 
         {
             const auto captured_pawn_square = Square{move.end().file(), move.start().rank()};
             return checking_square != captured_pawn_square || piece_is_pinned(move.start());
@@ -706,7 +710,7 @@ bool Board::king_is_in_check_after_move(const Move& move) const noexcept
         return ! moves_are_parallel(move.movement(), king_square - move.start());
     }
 
-    if(move.is_en_passant() && king_square.rank() == move.start().rank())
+    if(move.is_en_passant(*this) && king_square.rank() == move.start().rank())
     {
         const auto squares = Square::square_line_from(king_square, (move.start() - king_square).step());
         const auto rook = Piece{opposite(whose_turn()), Piece_Type::ROOK};
@@ -935,10 +939,22 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
-    if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), std::mem_fn(&Move::is_en_passant)))
+    if(en_passant_target.is_set())
     {
-        disable_en_passant_target();
+        const auto pawn = Piece(whose_turn(), Piece_Type::PAWN);
+        const auto rank_change = whose_turn() == Piece_Color::WHITE ? 1 : -1;
+        const auto left_square = en_passant_target + Square_Difference{ -1, -rank_change };
+        const auto right_square = en_passant_target + Square_Difference{ 1, -rank_change };
+        for(const auto square : { left_square, right_square })
+        {
+            if(square.inside_board() && piece_on_square(square) == pawn)
+            {
+                return;
+            }
+        }
     }
+
+    disable_en_passant_target();
 }
 
 void Board::disable_en_passant_target() noexcept
@@ -1064,7 +1080,7 @@ bool Board::move_captures(const Move& move) const noexcept
     assert(is_in_legal_moves_list(move));
     assert( ! attacked_piece || (move.can_capture() && attacked_piece.color() == opposite(whose_turn())));
 
-    return attacked_piece || move.is_en_passant();
+    return attacked_piece || move.is_en_passant(*this);
 }
 
 bool Board::move_changes_material(const Move& move) const noexcept

@@ -79,7 +79,7 @@ class Move
         //! \brief Indicates whether this move is en passant, which needs special handling elsewhere.
         //!
         //! \returns Whether this is an instance of the En_Passant class.
-        bool is_en_passant() const noexcept;
+        virtual bool is_en_passant(const Board& board) const noexcept;
 
         //! \brief Indicates whether the move is a castling move.
         bool is_castle() const noexcept;
@@ -116,9 +116,6 @@ class Move
         //! \param capturing_ability Whether this move should be able to capture.
         void set_capturing_ability(bool capturing_ability) noexcept;
 
-        //! \brief Indicate that the Move being created is an en passant capture.
-        void mark_as_en_passant() noexcept;
-
         //! \brief Indicate that the move being created is a castling move.
         void mark_as_castling() noexcept;
 
@@ -143,7 +140,6 @@ class Move
         Square destination;
 
         bool able_to_capture = true;
-        bool is_en_passant_move = false;
         bool is_castling_move = false;
 
         virtual bool move_specific_legal(const Board& board) const noexcept;
