@@ -148,9 +148,9 @@ std::string Move::coordinates() const noexcept
     }
 }
 
-bool Move::is_en_passant() const noexcept
+bool Move::is_en_passant(const Board&) const noexcept
 {
-    return is_en_passant_move;
+    return false;
 }
 
 bool Move::is_castle() const noexcept
@@ -215,11 +215,6 @@ Square_Difference Move::attack_direction_from_index(const size_t index) noexcept
 void Move::set_capturing_ability(const bool capturing_ability) noexcept
 {
     able_to_capture = capturing_ability;
-}
-
-void Move::mark_as_en_passant() noexcept
-{
-    is_en_passant_move = true;
 }
 
 void Move::mark_as_castling() noexcept

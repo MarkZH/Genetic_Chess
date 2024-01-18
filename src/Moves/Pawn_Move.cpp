@@ -18,6 +18,11 @@ Pawn_Move::Pawn_Move(const Piece_Color color_in, const Square start_in, const Di
 {
 }
 
+bool Pawn_Move::is_en_passant(const Board& board) const noexcept
+{
+    return board.en_passant_target == end();
+}
+
 Pawn_Move::Pawn_Move(const Square start, const Square end) noexcept : Move(start, end)
 {
     set_capturing_ability(start.file() != end.file());
@@ -25,5 +30,5 @@ Pawn_Move::Pawn_Move(const Square start, const Square end) noexcept : Move(start
 
 bool Pawn_Move::move_specific_legal(const Board& board) const noexcept
 {
-    return bool(board.piece_on_square(end())) == can_capture();
+    return (bool(board.piece_on_square(end())) == can_capture()) || is_en_passant(board);
 }
