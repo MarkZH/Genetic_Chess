@@ -101,11 +101,6 @@ void gene_pool(const std::string& config_file)
 
     auto pool_clock = get_pool_clock(config);
     const auto start_delay = get_start_delay(config);
-    if(start_delay > 0s)
-    {
-        std::cout << "Gene pool will start at " << future_timestamp(start_delay) << std::endl;
-    }
-    std::this_thread::sleep_for(start_delay);
     
     if(config.any_unused_parameters())
     {
@@ -113,6 +108,12 @@ void gene_pool(const std::string& config_file)
         config.print_unused_parameters();
         return;
     }
+
+    if(start_delay > 0s)
+    {
+        std::cout << "Gene pool will start at " << future_timestamp(start_delay) << std::endl;
+    }
+    std::this_thread::sleep_for(start_delay);
 
     auto round_count = count_still_alive_lines(genome_file_name);
     auto pool = fill_pool(genome_file_name, gene_pool_population, first_mutation_rate);
@@ -145,7 +146,6 @@ void gene_pool(const std::string& config_file)
             std::cout << '=' << std::flush;
         }
         std::cout << std::endl;
-        space_counter = 0;
 
         std::stringstream result_printer;
         for(size_t index = 0; index < gene_pool_population; index += 2)
@@ -178,6 +178,7 @@ void gene_pool(const std::string& config_file)
             }
         }
         std::cout << std::endl;
+        space_counter = 0;
 
         std::sort(pool.begin(), pool.end());
         record_the_living(pool, genome_file_name);
