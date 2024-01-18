@@ -935,7 +935,7 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
-    if(std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), std::mem_fn(&Move::is_en_passant)))
+    if(en_passant_target.is_set() && std::none_of(legal_moves_cache.begin(), legal_moves_cache.end(), std::mem_fn(&Move::is_en_passant)))
     {
         disable_en_passant_target();
     }
