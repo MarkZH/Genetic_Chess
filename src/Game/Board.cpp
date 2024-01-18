@@ -939,22 +939,12 @@ void Board::recreate_move_caches() noexcept
         }
     }
 
-    if(en_passant_target.is_set())
+    if(en_passant_target.is_set() && std::none_of(legal_moves_cache.begin(),
+                                                  legal_moves_cache.end(),
+                                                  [this](const auto move) { return move->is_en_passant(*this); }))
     {
-        const auto pawn = Piece(whose_turn(), Piece_Type::PAWN);
-        const auto rank_change = whose_turn() == Piece_Color::WHITE ? 1 : -1;
-        const auto left_square = en_passant_target + Square_Difference{ -1, -rank_change };
-        const auto right_square = en_passant_target + Square_Difference{ 1, -rank_change };
-        for(const auto square : { left_square, right_square })
-        {
-            if(square.inside_board() && piece_on_square(square) == pawn)
-            {
-                return;
-            }
-        }
+        disable_en_passant_target();
     }
-
-    disable_en_passant_target();
 }
 
 void Board::disable_en_passant_target() noexcept
