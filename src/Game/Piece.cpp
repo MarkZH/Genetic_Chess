@@ -17,7 +17,6 @@
 #include "Moves/Pawn_Move.h"
 #include "Moves/Pawn_Double_Move.h"
 #include "Moves/Pawn_Promotion.h"
-#include "Moves/En_Passant.h"
 #include "Moves/Castle.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
@@ -84,7 +83,6 @@ namespace
                             {
                                 // Make list of all capturing moves, excluding all but one type of pawn capture per square.
                                 if(move->can_capture()
-                                    && ! move->is_en_passant()
                                     && (move->promotion_piece_symbol() == 'Q' || move->promotion_piece_symbol() == '\0'))
                                 {
                                     result[piece.index()][index].back().push_back(move);
@@ -176,11 +174,6 @@ namespace
                 {
                     add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, dir);
                 }
-            }
-
-            for(char file = first_file; file <= last_file; ++file)
-            {
-                add_legal_move<En_Passant>(out, pawn, color, dir, file);
             }
 
             for(auto promote : possible_promotions)

@@ -110,11 +110,6 @@ void gene_pool(const std::string& config_file)
 
     auto pool_clock = get_pool_clock(config);
     const auto start_delay = get_start_delay(config);
-    if(start_delay > 0s)
-    {
-        std::cout << "Gene pool will start at " << future_timestamp(start_delay) << std::endl;
-    }
-    std::this_thread::sleep_for(start_delay);
     
     if(config.any_unused_parameters())
     {
@@ -122,6 +117,12 @@ void gene_pool(const std::string& config_file)
         config.print_unused_parameters();
         return;
     }
+
+    if(start_delay > 0s)
+    {
+        std::cout << "Gene pool will start at " << future_timestamp(start_delay) << std::endl;
+    }
+    std::this_thread::sleep_for(start_delay);
 
     auto round_count = count_still_alive_lines(genome_file_name);
     auto pool = fill_pool(genome_file_name, gene_pool_population, first_mutation_rate);
@@ -143,6 +144,7 @@ void gene_pool(const std::string& config_file)
 
         print_round_header(pool, genome_file_name, color_wins, round_count, first_mutation_interval, second_mutation_interval, mutation_rate, game_time, pool_clock);
 
+        Random::shuffle(pool);
         std::vector<std::future<Game_Result>> results;
         auto limiter = std::counting_semaphore(maximum_simultaneous_games);
         for(const auto& players : pool | std::views::chunk(2))
@@ -153,7 +155,6 @@ void gene_pool(const std::string& config_file)
             std::cout << '=' << std::flush;
         }
         std::cout << std::endl;
-        space_counter = 0;
 
         std::stringstream result_printer;
         for(const auto& [future_result, players] : std::ranges::zip_view(results, pool | std::views::chunk(2)))
@@ -187,9 +188,9 @@ void gene_pool(const std::string& config_file)
             }
         }
         std::cout << std::endl;
+        space_counter = 0;
 
-        Random::shuffle(pool);
-
+        std::sort(pool.begin(), pool.end());
         record_the_living(pool, genome_file_name);
         record_best_ai(pool, best_file_name);
 
@@ -219,12 +220,17 @@ namespace
     std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate)
     {
         auto pool = load_gene_pool_file(genome_file_name);
-        const auto old_pool_size = pool.size();
-        pool.resize(gene_pool_population);
-        for(auto i = old_pool_size; i < pool.size(); ++i)
+        if(pool.size() != gene_pool_population)
         {
-            pool[i].mutate(mutation_rate);
-            pool[i].print(genome_file_name);
+            pool.reserve(gene_pool_population);
+            while(pool.size() < gene_pool_population)
+            {
+                pool.emplace_back();
+                pool.back().mutate(mutation_rate);
+                pool.back().print(genome_file_name);
+            }
+            pool.resize(gene_pool_population);
+            record_the_living(pool, genome_file_name);
         }
 
         return pool;
