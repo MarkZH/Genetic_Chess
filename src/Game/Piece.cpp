@@ -14,7 +14,6 @@
 #include "Moves/Move.h"
 #include "Moves/Direction.h"
 #include "Moves/Pawn_Move.h"
-#include "Moves/Pawn_Promotion.h"
 #include "Moves/Castle.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
@@ -142,14 +141,14 @@ namespace
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
             {
-                add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, 1);
+                add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, 1, Piece{});
             }
         }
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
             const auto rank = color == Piece_Color::WHITE ? 2 : 7;
-            add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, 2);
+            add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, 2, Piece{});
         }
 
         std::vector<Piece_Type> possible_promotions;
@@ -171,7 +170,7 @@ namespace
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
                 {
-                    add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, dir);
+                    add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, dir, Piece{});
                 }
             }
 
@@ -179,7 +178,7 @@ namespace
             {
                 for(auto file = first_file; file <= last_file; ++file)
                 {
-                    add_legal_move<Pawn_Promotion>(out, pawn, promote, color, file, dir);
+                    add_legal_move<Pawn_Move>(out, pawn, color, Square{file, no_normal_move_rank}, dir, Piece{color, promote});
                 }
             }
         }
@@ -188,7 +187,7 @@ namespace
         {
             for(auto file = 'a'; file <= 'h'; ++file)
             {
-                add_legal_move<Pawn_Promotion>(out, pawn, promote, color, file);
+                add_legal_move<Pawn_Move>(out, pawn, color, Square{file, no_normal_move_rank}, 1, Piece{color, promote});
             }
         }
     }
