@@ -153,9 +153,9 @@ bool Move::is_en_passant(const Board&) const noexcept
     return false;
 }
 
-bool Move::is_castle() const noexcept
+bool Move::is_castle(const Board& board) const noexcept
 {
-    return is_castling_move;
+    return board.piece_on_square(start()).type() == Piece_Type::KING && std::abs(file_change()) == 2;
 }
 
 Piece Move::promotion() const noexcept
@@ -215,9 +215,4 @@ Square_Difference Move::attack_direction_from_index(const size_t index) noexcept
 void Move::set_capturing_ability(const bool capturing_ability) noexcept
 {
     able_to_capture = capturing_ability;
-}
-
-void Move::mark_as_castling() noexcept
-{
-    is_castling_move = true;
 }

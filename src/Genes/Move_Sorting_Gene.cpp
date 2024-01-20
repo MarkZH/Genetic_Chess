@@ -34,7 +34,7 @@ Move_Sorting_Gene::Move_Sorting_Gene() noexcept :
         {"Attack Dodgers", [](const Move* move, const Board& board) { return board.attacked_by(move->start(), opposite(board.whose_turn())); }},
         {"Pawn Pushers",   [](const Move* move, const Board& board) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; }},
         {"King Checkers",  [](const Move* move, const Board& board) { return board.move_checks_king(*move) || board.is_discovered_check(*move); }},
-        {"King Castlers",  [](const Move* move, const Board&)       { return move->is_castle(); }}
+        {"King Castlers",  [](const Move* move, const Board& board) { return move->is_castle(board); }}
     }}
 {
 }

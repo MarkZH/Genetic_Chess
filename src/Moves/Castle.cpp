@@ -14,7 +14,6 @@ Castle::Castle(const int base_rank, const Direction direction) noexcept :
     last_empty_square(direction == Direction::LEFT ? end() + Square_Difference{-1, 0} : Square{})
 {
     set_capturing_ability(false);
-    mark_as_castling();
 }
 
 bool Castle::move_specific_legal(const Board& board) const noexcept
