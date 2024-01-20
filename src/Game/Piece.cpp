@@ -14,7 +14,6 @@
 #include "Moves/Move.h"
 #include "Moves/Direction.h"
 #include "Moves/Pawn_Move.h"
-#include "Moves/Pawn_Double_Move.h"
 #include "Moves/Pawn_Promotion.h"
 #include "Moves/Castle.h"
 
@@ -143,13 +142,14 @@ namespace
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
             {
-                add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank});
+                add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, 1);
             }
         }
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            add_legal_move<Pawn_Double_Move>(out, pawn, color, file);
+            const auto rank = color == Piece_Color::WHITE ? 2 : 7;
+            add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, 2);
         }
 
         std::vector<Piece_Type> possible_promotions;

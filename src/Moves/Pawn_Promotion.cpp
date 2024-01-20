@@ -9,7 +9,7 @@
 #include "Game/Square.h"
 
 Pawn_Promotion::Pawn_Promotion(const Piece_Type promotion_piece, const Piece_Color color, const char file_start) noexcept :
-    Pawn_Move(color, Square{file_start, color == Piece_Color::WHITE ? 7 : 2}),
+    Pawn_Move(color, Square{file_start, color == Piece_Color::WHITE ? 7 : 2}, 1),
     promote_to{color, promotion_piece}
 {
 }

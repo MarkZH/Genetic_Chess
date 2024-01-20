@@ -267,7 +267,6 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Moves\Castle.cpp" />
     <ClCompile Include="src\moves\Move.cpp" />
-    <ClCompile Include="src\moves\Pawn_Double_Move.cpp" />
     <ClCompile Include="src\moves\Pawn_Move.cpp" />
     <ClCompile Include="src\moves\Pawn_Promotion.cpp" />
     <ClCompile Include="src\Players\Alpha_Beta_Value.cpp" />
@@ -317,7 +316,6 @@
     <ClInclude Include="include\Moves\Castle.h" />
     <ClInclude Include="include\Moves\Direction.h" />
     <ClInclude Include="include\moves\Move.h" />
-    <ClInclude Include="include\moves\Pawn_Double_Move.h" />
     <ClInclude Include="include\moves\Pawn_Move.h" />
     <ClInclude Include="include\moves\Pawn_Promotion.h" />
     <ClInclude Include="include\Players\Alpha_Beta_Value.h" />

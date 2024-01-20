@@ -16,9 +16,10 @@ class Pawn_Move : public Move
         //!
         //! \param color_in The color of the pawn.
         //! \param start The square where the pawn starts.
+        //! \param move_size How many squares the pawn moves (1 for normal move, 2 for double move from starting rank).
         //!
         //! The destination square of a pawn move is determined by the starting square and the color of the pawn.
-        Pawn_Move(Piece_Color color_in, Square start) noexcept;
+        Pawn_Move(Piece_Color color_in, Square start, size_t move_size) noexcept;
 
         //! \brief Create a capturing pawn move.
         //!
@@ -28,6 +29,7 @@ class Pawn_Move : public Move
         Pawn_Move(Piece_Color color_in, Square start, Direction file_change) noexcept;
 
         bool is_en_passant(const Board& board) const noexcept override;
+        void side_effects(Board& board) const noexcept override;
 
     protected:
         //! Generic pawn move constructor to be called by other constuctors.
