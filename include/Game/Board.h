@@ -19,9 +19,6 @@ class Player;
 
 class Move;
 class Castle;
-class En_Passant;
-class Pawn_Promotion;
-class Pawn_Double_Move;
 class Pawn_Move;
 
 class UCI_Mediator;
@@ -401,10 +398,8 @@ class Board
 
         // Moves with side effects are friends of Board
         friend class Castle; // moves second piece
-        friend class En_Passant; // capture piece on another square
-        friend class Pawn_Promotion; // replace piece
-        friend class Pawn_Double_Move; // mark square as En Passant target
         friend class Pawn_Move; // reset three-fold and 50-move counts
+        friend class Move; // for all side effects
 
         // Allow UCI_Mediator to change the legal moves with searchmoves command
         friend class UCI_Mediator;
