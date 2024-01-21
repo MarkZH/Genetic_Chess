@@ -6,7 +6,7 @@
 
 #include "Game/Square.h"
 #include "Game/Piece.h"
-#include "Moves/Direction.h"
+#include "Game/Direction.h"
 
 class Board;
 class Piece;
