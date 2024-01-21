@@ -111,6 +111,7 @@ king in check | start | e4 g5 h3 f6 e5 a6 Rh2 g4 Ne2 g3 f3 d5 | false
 last move illegal | 8/2r5/4Kn2/1kqRn3/2bNP3/P6P/8/5B2 b - - 13 65 | Qxd4
 last move illegal | 2R5/7r/4P1k1/2B5/3KB2N/8/5n2/8 b - - 7 138 | Nxe4
 last move illegal | 2R5/7r/4P1k1/2B5/3KB2N/8/5n2/8 b - - 7 138 | Rxh4
+last move illegal | rq2kb1r/2p3pp/p2pb2n/nP3p2/Q3pPPP/N4N2/PP1PP3/R1BK1B1R b kq - 1 12 | O-O-O
 
 # Quiescent tests: test proper resolution of quiescent search
 # quiescent | (starting FEN) | (move list) | (expected subsequent moves)
