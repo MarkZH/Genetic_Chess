@@ -26,6 +26,7 @@ Move Move::pawn_move(Square start, Piece_Color pawn_color, Piece promote) noexce
     auto move = Move(start, end);
     move.set_capturing_ability(false);
     move.setup_pawn_promotion(pawn_color, promote);
+    move.setup_pawn_rules();
     return move;
 }
 
@@ -35,6 +36,7 @@ Move Move::pawn_capture(Square start, Direction direction, Piece_Color pawn_colo
     auto move = Move(start, end);
     move.set_capturing_ability(true);
     move.setup_pawn_promotion(pawn_color, promote);
+    move.setup_pawn_rules();
     return move;
 }
 
@@ -44,6 +46,7 @@ Move Move::pawn_double_move(Piece_Color pawn_color, char file) noexcept
     const auto end = start + Square_Difference{0, pawn_color == Piece_Color::WHITE ? 2 : -2};
     auto move = Move(start, end);
     move.set_capturing_ability(false);
+    move.setup_pawn_rules();
     return move;
 }
 
@@ -52,33 +55,13 @@ Move Move::castle(Piece_Color king_color, Direction direction) noexcept
     const auto start = Square{'e', king_color == Piece_Color::WHITE ? 1 : 8};
     const auto end = start + Square_Difference{direction == Direction::LEFT ? -2 : 2, 0};
     auto move = Move(start, end);
-    move.set_capturing_ability(false);
-    move.rook_move_start = Square{direction == Direction::LEFT ? 'a' : 'h', start.rank()};
-    move.rook_move_end = Square{ direction == Direction::LEFT ? 'd' : 'f', start.rank()};
-    move.last_empty_square = direction == Direction::LEFT ? end + Square_Difference{-1, 0} : Square{};
-    move.is_castling = true;
+    move.setup_castling_rules(direction);
     return move;
 }
 
 void Move::side_effects(Board& board) const noexcept
 {
-    if(board.piece_on_square(end()).type() == Piece_Type::PAWN)
-    {
-        if(std::abs(rank_change()) == 2)
-        {
-            board.make_en_passant_targetable(start() + Square_Difference{0, rank_change()/2});
-        }
-        else if(end().rank() == 1 || end().rank() == 8)
-        {
-            board.place_piece(promotion(), end());
-        }
-    }
-    else if(is_castle())
-    {
-        board.move_piece({rook_move_start, rook_move_end});
-        board.castling_index[static_cast<int>(board.whose_turn())] = board.played_ply_count() - 1;
-        board.castling_movement[static_cast<int>(board.whose_turn())] = file_change();
-    }
+    side_effect(board);
 }
 
 bool Move::is_legal(const Board& board) const noexcept
@@ -100,21 +83,7 @@ bool Move::is_legal(const Board& board) const noexcept
 
 bool Move::move_specific_legal(const Board& board) const noexcept
 {
-    if(board.piece_on_square(start()).type() == Piece_Type::PAWN)
-    {
-        return (bool(board.piece_on_square(end())) == can_capture()) || is_en_passant(board);
-    }
-    else if(is_castle())
-    {
-        return board.castle_is_legal(board.whose_turn(), file_change() > 0 ? Direction::RIGHT : Direction::LEFT)
-            && ! board.king_is_in_check()
-            && board.safe_for_king(start() + Square_Difference{file_change() > 0 ? 1 : -1, 0}, board.whose_turn())
-            && ! (last_empty_square.inside_board() && board.piece_on_square(last_empty_square));
-    }
-    else
-    {
-        return true;
-    }
+    return extra_rule(board);
 }
 
 bool Move::can_capture() const noexcept
@@ -218,6 +187,54 @@ void Move::setup_pawn_promotion([[maybe_unused]] Piece_Color pawn_color, Piece p
     assert( ! promote || start().rank() == (pawn_color == Piece_Color::WHITE ? 7 : 2));
     assert( ! promote || pawn_color == promote.color());
     pawn_promotion = promote;
+}
+
+void Move::setup_pawn_rules() noexcept
+{
+    const auto to_square = end();
+    const auto capturing = can_capture();
+    extra_rule = [=](const Board& board)
+        {
+            return (bool(board.piece_on_square(to_square)) == capturing) || board.en_passant_target == to_square;
+        };
+
+    if(std::abs(rank_change()) == 2)
+    {
+        const auto pawn_skipped_square = start() + Square_Difference{ 0, rank_change()/2 };
+        side_effect = [=](Board& board) { board.make_en_passant_targetable(pawn_skipped_square); };
+    }
+    else if(promotion())
+    {
+        const auto promotion_piece = promotion();
+        const auto promotion_place = end();
+        side_effect = [=](Board& board) { board.place_piece(promotion_piece, promotion_place); };
+    }
+}
+
+void Move::setup_castling_rules(const Direction direction) noexcept
+{
+    set_capturing_ability(false);
+    is_castling = true;
+
+    const auto king_crossing_square = start() + Square_Difference{direction == Direction::LEFT ? -1 : 1, 0};
+    const auto last_empty_square = direction == Direction::LEFT ? end() + Square_Difference{-1, 0} : Square{};
+    extra_rule = [=](const Board& board)
+                 {
+                     return board.castle_is_legal(board.whose_turn(), direction)
+                         && ! board.king_is_in_check()
+                         && board.safe_for_king(king_crossing_square, board.whose_turn())
+                         && ! (last_empty_square.inside_board() && board.piece_on_square(last_empty_square));
+                 };
+
+    const auto rook_move_start = Square{ direction == Direction::LEFT ? 'a' : 'h', start().rank() };
+    const auto rook_move_end = Square{ direction == Direction::LEFT ? 'd' : 'f', start().rank() };
+    const auto file_move = file_change();
+    side_effect = [=](Board& board)
+                  {
+                      board.move_piece({rook_move_start, rook_move_end});
+                      board.castling_index[static_cast<int>(board.whose_turn())] = board.played_ply_count() - 1;
+                      board.castling_movement[static_cast<int>(board.whose_turn())] = file_move;
+                  };
 }
 
 std::string Move::coordinates() const noexcept

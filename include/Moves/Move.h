@@ -2,6 +2,7 @@
 #define MOVE_H
 
 #include <string>
+#include <functional>
 
 #include "Game/Square.h"
 #include "Game/Piece.h"
@@ -140,15 +141,16 @@ class Move
         bool able_to_capture = true;
         bool is_castling = false;
 
-        Piece pawn_promotion;
+        std::function<bool(const Board&)> extra_rule = [](const Board&) { return true; };
+        std::function<void(Board&)> side_effect = [](const Board&) {};
 
-        Square last_empty_square;
-        Square rook_move_start;
-        Square rook_move_end;
+        Piece pawn_promotion;
 
         bool move_specific_legal(const Board& board) const noexcept;
         std::string result_mark(Board board) const noexcept;
         void setup_pawn_promotion(Piece_Color pawn_color, Piece promote) noexcept;
+        void setup_pawn_rules() noexcept;
+        void setup_castling_rules(Direction direction) noexcept;
 };
 
 #endif // MOVE_H
