@@ -13,7 +13,6 @@
 
 #include "Moves/Move.h"
 #include "Moves/Direction.h"
-#include "Moves/Pawn_Move.h"
 #include "Moves/Castle.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
@@ -141,14 +140,13 @@ namespace
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
             {
-                add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, 1, Piece{});
+                add_legal_move<Move>(out, pawn, Move::pawn_move(Square{ file, rank }, color, Piece{}));
             }
         }
 
         for(char file = 'a'; file <= 'h'; ++file)
         {
-            const auto rank = color == Piece_Color::WHITE ? 2 : 7;
-            add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, 2, Piece{});
+            add_legal_move<Move>(out, pawn, Move::pawn_double_move(color, file));
         }
 
         std::vector<Piece_Type> possible_promotions;
@@ -170,7 +168,7 @@ namespace
             {
                 for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
                 {
-                    add_legal_move<Pawn_Move>(out, pawn, color, Square{file, rank}, dir, Piece{});
+                    add_legal_move<Move>(out, pawn, Move::pawn_capture(Square{file, rank}, dir, color, Piece{}));
                 }
             }
 
@@ -178,7 +176,7 @@ namespace
             {
                 for(auto file = first_file; file <= last_file; ++file)
                 {
-                    add_legal_move<Pawn_Move>(out, pawn, color, Square{file, no_normal_move_rank}, dir, Piece{color, promote});
+                    add_legal_move<Move>(out, pawn, Move::pawn_capture(Square{file, no_normal_move_rank}, dir, color, Piece{color, promote}));
                 }
             }
         }
@@ -187,7 +185,7 @@ namespace
         {
             for(auto file = 'a'; file <= 'h'; ++file)
             {
-                add_legal_move<Pawn_Move>(out, pawn, color, Square{file, no_normal_move_rank}, 1, Piece{color, promote});
+                add_legal_move<Move>(out, pawn, Move::pawn_move(Square{file, no_normal_move_rank}, color, Piece{color, promote}));
             }
         }
     }

@@ -8,6 +8,7 @@
 #include "Game/Square.h"
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
+#include "Moves/Direction.h"
 
 #include "Utility/String.h"
 
@@ -19,8 +20,46 @@ Move::Move(const Square start, const Square end) noexcept : origin(start), desti
     assert(start != end);
 }
 
-void Move::side_effects(Board&) const noexcept
+Move Move::pawn_move(Square start, Piece_Color pawn_color, Piece promote) noexcept
 {
+    const auto end = start + Square_Difference{0, pawn_color == Piece_Color::WHITE ? 1 : -1};
+    auto move = Move(start, end);
+    move.set_capturing_ability(false);
+    move.setup_pawn_promotion(pawn_color, promote);
+    return move;
+}
+
+Move Move::pawn_capture(Square start, Direction direction, Piece_Color pawn_color, Piece promote) noexcept
+{
+    const auto end = start + Square_Difference{direction == Direction::LEFT ? -1 : 1, pawn_color == Piece_Color::WHITE ? 1 : -1 };
+    auto move = Move(start, end);
+    move.set_capturing_ability(true);
+    move.setup_pawn_promotion(pawn_color, promote);
+    return move;
+}
+
+Move Move::pawn_double_move(Piece_Color pawn_color, char file) noexcept
+{
+    const auto start = Square{file, pawn_color == Piece_Color::WHITE ? 2 : 7};
+    const auto end = start + Square_Difference{0, pawn_color == Piece_Color::WHITE ? 2 : -2};
+    auto move = Move(start, end);
+    move.set_capturing_ability(false);
+    return move;
+}
+
+void Move::side_effects(Board& board) const noexcept
+{
+    if(board.piece_on_square(end()).type() == Piece_Type::PAWN)
+    {
+        if(std::abs(rank_change()) == 2)
+        {
+            board.make_en_passant_targetable(start() + Square_Difference{0, rank_change()/2});
+        }
+        else if(end().rank() == 1 || end().rank() == 8)
+        {
+            board.place_piece(promotion(), end());
+        }
+    }
 }
 
 bool Move::is_legal(const Board& board) const noexcept
@@ -40,9 +79,16 @@ bool Move::is_legal(const Board& board) const noexcept
     return move_specific_legal(board) && ! board.king_is_in_check_after_move(*this);
 }
 
-bool Move::move_specific_legal(const Board&) const noexcept
+bool Move::move_specific_legal(const Board& board) const noexcept
 {
-    return true;
+    if(board.piece_on_square(start()).type() == Piece_Type::PAWN)
+    {
+        return (bool(board.piece_on_square(end())) == can_capture()) || is_en_passant(board);
+    }
+    else
+    {
+        return true;
+    }
 }
 
 bool Move::can_capture() const noexcept
@@ -112,6 +158,7 @@ std::string Move::algebraic_base(const Board& board) const noexcept
     if(record_rank)                { move_record += std::to_string(start().rank()); }
     if(board.move_captures(*this)) { move_record += 'x'; }
     move_record += end().text();
+    if(promotion())                { move_record += std::string("=") + promotion_piece_symbol(); }
     return move_record;
 }
 
@@ -135,6 +182,13 @@ std::string Move::result_mark(Board board) const noexcept
     }
 }
 
+void Move::setup_pawn_promotion([[maybe_unused]] Piece_Color pawn_color, Piece promote) noexcept
+{
+    assert( ! promote || start().rank() == (pawn_color == Piece_Color::WHITE ? 7 : 2));
+    assert( ! promote || pawn_color == promote.color());
+    pawn_promotion = promote;
+}
+
 std::string Move::coordinates() const noexcept
 {
     const auto result = start().text() + end().text();
@@ -148,9 +202,9 @@ std::string Move::coordinates() const noexcept
     }
 }
 
-bool Move::is_en_passant(const Board&) const noexcept
+bool Move::is_en_passant(const Board& board) const noexcept
 {
-    return false;
+    return board.piece_on_square(start()).type() == Piece_Type::PAWN && board.en_passant_target == end();
 }
 
 bool Move::is_castle(const Board& board) const noexcept
@@ -160,12 +214,12 @@ bool Move::is_castle(const Board& board) const noexcept
 
 Piece Move::promotion() const noexcept
 {
-    return {};
+    return pawn_promotion;
 }
 
 char Move::promotion_piece_symbol() const noexcept
 {
-    return '\0';
+    return promotion() ? promotion().pgn_symbol().front() : '\0';
 }
 
 size_t Move::attack_index() const noexcept

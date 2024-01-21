@@ -19,7 +19,6 @@ class Player;
 
 class Move;
 class Castle;
-class Pawn_Move;
 
 class UCI_Mediator;
 
@@ -398,7 +397,6 @@ class Board
 
         // Moves with side effects are friends of Board
         friend class Castle; // moves second piece
-        friend class Pawn_Move; // reset three-fold and 50-move counts
         friend class Move; // for all side effects
 
         // Allow UCI_Mediator to change the legal moves with searchmoves command

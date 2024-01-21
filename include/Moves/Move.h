@@ -4,6 +4,8 @@
 #include <string>
 
 #include "Game/Square.h"
+#include "Game/Piece.h"
+#include "Moves/Direction.h"
 
 class Board;
 class Piece;
@@ -18,10 +20,11 @@ class Move
         //! \param end   The Square where move ends.
         Move(Square start, Square end) noexcept;
 
-        virtual ~Move() = default;
+        static Move pawn_move(Square start, Piece_Color pawn_color, Piece promote) noexcept;
+        static Move pawn_capture(Square start, Direction direction, Piece_Color pawn_color, Piece promote) noexcept;
+        static Move pawn_double_move(Piece_Color pawn_color, char file) noexcept;
 
-        //! \brief This saves work by preventing all unnecessary copying (which is all copying).
-        Move(const Move&) = delete;
+        virtual ~Move() = default;
 
         //! \brief Since there's only one instance of every Move, assignment can only lose information.
         Move& operator=(const Move&) = delete;
@@ -79,18 +82,18 @@ class Move
         //! \brief Indicates whether this move is en passant, which needs special handling elsewhere.
         //!
         //! \returns Whether this is an instance of the En_Passant class.
-        virtual bool is_en_passant(const Board& board) const noexcept;
+        bool is_en_passant(const Board& board) const noexcept;
 
         //! \brief Indicates whether the move is a castling move.
         bool is_castle(const Board& board) const noexcept;
 
         //! \brief Returns the piece that a pawn will be promoted to, if applicable.
-        virtual Piece promotion() const noexcept;
+        Piece promotion() const noexcept;
 
         //! \brief Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\\0'.
         //!
         //! \returns the PGN symbol of the promotion piece, if any.
-        virtual char promotion_piece_symbol() const noexcept;
+        char promotion_piece_symbol() const noexcept;
 
         //! \brief Assigns a unique index to the direction of movement of a possibly capturing move.
         //!
@@ -138,8 +141,11 @@ class Move
 
         bool able_to_capture = true;
 
+        Piece pawn_promotion;
+
         virtual bool move_specific_legal(const Board& board) const noexcept;
         std::string result_mark(Board board) const noexcept;
+        void setup_pawn_promotion(Piece_Color pawn_color, Piece promote) noexcept;
 };
 
 #endif // MOVE_H
