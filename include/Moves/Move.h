@@ -2,8 +2,11 @@
 #define MOVE_H
 
 #include <string>
+#include <functional>
 
 #include "Game/Square.h"
+#include "Game/Piece.h"
+#include "Moves/Direction.h"
 
 class Board;
 class Piece;
@@ -18,10 +21,10 @@ class Move
         //! \param end   The Square where move ends.
         Move(Square start, Square end) noexcept;
 
-        virtual ~Move() = default;
-
-        //! \brief This saves work by preventing all unnecessary copying (which is all copying).
-        Move(const Move&) = delete;
+        static Move pawn_move(Square start, Piece_Color pawn_color, Piece promote) noexcept;
+        static Move pawn_capture(Square start, Direction direction, Piece_Color pawn_color, Piece promote) noexcept;
+        static Move pawn_double_move(Piece_Color pawn_color, char file) noexcept;
+        static Move castle(Piece_Color king_color, Direction direction) noexcept;
 
         //! \brief Since there's only one instance of every Move, assignment can only lose information.
         Move& operator=(const Move&) = delete;
@@ -35,7 +38,7 @@ class Move
         //!
         //! The default move has no side effects.
         //! \param board The board upon which the side effects are applied.
-        virtual void side_effects(Board& board) const noexcept;
+        void side_effects(Board& board) const noexcept;
 
         //! \brief Checks if a move is legal on a given Board.
         //!
@@ -79,18 +82,18 @@ class Move
         //! \brief Indicates whether this move is en passant, which needs special handling elsewhere.
         //!
         //! \returns Whether this is an instance of the En_Passant class.
-        virtual bool is_en_passant(const Board& board) const noexcept;
+        bool is_en_passant(const Board& board) const noexcept;
 
         //! \brief Indicates whether the move is a castling move.
         bool is_castle() const noexcept;
 
         //! \brief Returns the piece that a pawn will be promoted to, if applicable.
-        virtual Piece promotion() const noexcept;
+        Piece promotion() const noexcept;
 
         //! \brief Returns the symbol representing the promoted piece if this move is a pawn promotion type. All other moves return '\\0'.
         //!
         //! \returns the PGN symbol of the promotion piece, if any.
-        virtual char promotion_piece_symbol() const noexcept;
+        char promotion_piece_symbol() const noexcept;
 
         //! \brief Assigns a unique index to the direction of movement of a possibly capturing move.
         //!
@@ -110,20 +113,17 @@ class Move
         //! \returns A pair of integers giving the direction of an attacking move.
         static Square_Difference attack_direction_from_index(size_t index) noexcept;
 
-    protected:
+    private:
         //! \brief Change the ability of this Move to capture.
         //!
         //! \param capturing_ability Whether this move should be able to capture.
         void set_capturing_ability(bool capturing_ability) noexcept;
 
-        //! \brief Indicate that the move being created is a castling move.
-        void mark_as_castling() noexcept;
-
         //! \brief A textual representation of a move in PGN format without consequences ('+' for check, etc.).
         //!
         //! \param board The board on which the move is about to be made.
         //! \returns The movement portion of a PGN move entry.
-        virtual std::string algebraic_base(const Board& board) const noexcept;
+        std::string algebraic_base(const Board& board) const noexcept;
 
         //! \brief How far move travels horizontally.
         //!
@@ -135,15 +135,22 @@ class Move
         //! \returns The distance in squares between the start and end ranks.
         int rank_change() const noexcept;
 
-    private:
         Square origin;
         Square destination;
 
         bool able_to_capture = true;
-        bool is_castling_move = false;
+        bool is_castling = false;
 
-        virtual bool move_specific_legal(const Board& board) const noexcept;
+        std::function<bool(const Board&)> extra_rule = [](const Board&) { return true; };
+        std::function<void(Board&)> side_effect = [](const Board&) {};
+
+        Piece pawn_promotion;
+
+        bool move_specific_legal(const Board& board) const noexcept;
         std::string result_mark(Board board) const noexcept;
+        void setup_pawn_promotion(Piece_Color pawn_color, Piece promote) noexcept;
+        void setup_pawn_rules() noexcept;
+        void setup_castling_rules(Direction direction) noexcept;
 };
 
 #endif // MOVE_H

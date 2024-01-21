@@ -408,11 +408,11 @@ void Board::update_board(const Move& move) noexcept
 
     ++game_move_count;
     previous_move = &move;
-    move_piece(move);
     if(move.is_en_passant(*this))
     {
         remove_piece({move.end().file(), move.start().rank()});
     }
+    move_piece(move);
     clear_en_passant_target();
     unused_en_passant_target = {};
     move.side_effects(*this);
