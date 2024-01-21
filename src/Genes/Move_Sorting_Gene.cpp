@@ -7,7 +7,7 @@
 #include <set>
 
 #include "Game/Board.h"
-#include "Moves/Move.h"
+#include "Game/Move.h"
 
 #include "Utility/Random.h"
 #include "Utility/String.h"

@@ -10,7 +10,7 @@ using namespace std::chrono_literals;
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
 
-#include "Moves/Move.h"
+#include "Game/Move.h"
 
 #include "Players/Player.h"
 

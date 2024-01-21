@@ -243,6 +243,7 @@
     <ClCompile Include="src\game\Color.cpp" />
     <ClCompile Include="src\game\Game.cpp" />
     <ClCompile Include="src\game\Game_Result.cpp" />
+    <ClCompile Include="src\Game\Move.cpp" />
     <ClCompile Include="src\Game\Piece.cpp" />
     <ClCompile Include="src\game\Square.cpp" />
     <ClCompile Include="src\genes\Castling_Possible_Gene.cpp" />
@@ -265,7 +266,6 @@
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
     <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\moves\Move.cpp" />
     <ClCompile Include="src\Players\Alpha_Beta_Value.cpp" />
     <ClCompile Include="src\players\Xboard_Mediator.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
@@ -286,8 +286,10 @@
     <ClInclude Include="include\game\Board.h" />
     <ClInclude Include="include\game\Clock.h" />
     <ClInclude Include="include\game\Color.h" />
+    <ClInclude Include="include\Game\Direction.h" />
     <ClInclude Include="include\game\Game.h" />
     <ClInclude Include="include\game\Game_Result.h" />
+    <ClInclude Include="include\Game\Move.h" />
     <ClInclude Include="include\Game\Piece.h" />
     <ClInclude Include="include\game\Square.h" />
     <ClInclude Include="include\genes\Castling_Possible_Gene.h" />
@@ -309,8 +311,6 @@
     <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
     <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
     <ClInclude Include="include\genes\Total_Force_Gene.h" />
-    <ClInclude Include="include\Moves\Direction.h" />
-    <ClInclude Include="include\moves\Move.h" />
     <ClInclude Include="include\Players\Alpha_Beta_Value.h" />
     <ClInclude Include="include\players\Xboard_Mediator.h" />
     <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
