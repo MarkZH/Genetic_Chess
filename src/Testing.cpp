@@ -19,7 +19,7 @@ using namespace std::chrono_literals;
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
 #include "Game/Square.h"
-#include "Moves/Move.h"
+#include "Game/Move.h"
 
 #include "Players/Minimax_AI.h"
 #include "Players/Game_Tree_Node_Result.h"

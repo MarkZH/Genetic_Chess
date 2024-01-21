@@ -21,8 +21,8 @@ using namespace std::chrono_literals;
 #include "Game/Square.h"
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
-#include "Moves/Move.h"
-#include "Moves/Direction.h"
+#include "Game/Move.h"
+#include "Game/Direction.h"
 
 #include "Players/Player.h"
 

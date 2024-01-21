@@ -1,4 +1,4 @@
-#include "Moves/Move.h"
+#include "Game/Move.h"
 
 #include <cassert>
 #include <cctype>
@@ -8,7 +8,7 @@
 #include "Game/Square.h"
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
-#include "Moves/Direction.h"
+#include "Game/Direction.h"
 
 #include "Utility/String.h"
 

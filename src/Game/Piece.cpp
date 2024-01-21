@@ -11,8 +11,8 @@
 #include "Game/Square.h"
 #include "Game/Color.h"
 
-#include "Moves/Move.h"
-#include "Moves/Direction.h"
+#include "Game/Move.h"
+#include "Game/Direction.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
 #include "Utility/String.h"

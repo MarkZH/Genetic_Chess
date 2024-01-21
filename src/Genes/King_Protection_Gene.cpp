@@ -4,7 +4,7 @@
 #include "Game/Board.h"
 #include "Game/Color.h"
 #include "Game/Square.h"
-#include "Moves/Move.h"
+#include "Game/Move.h"
 
 King_Protection_Gene::King_Protection_Gene() noexcept : Clonable_Gene("King Protection Gene")
 {

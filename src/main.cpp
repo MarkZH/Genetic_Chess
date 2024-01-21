@@ -13,7 +13,7 @@
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
-#include "Moves/Move.h"
+#include "Game/Move.h"
 
 #include "Players/Minimax_AI.h"
 #include "Players/Random_AI.h"
