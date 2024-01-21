@@ -21,9 +21,39 @@ class Move
         //! \param end   The Square where move ends.
         Move(Square start, Square end) noexcept;
 
+        //! \brief Construct a non-capturing pawn move.
+        //! 
+        //! \param start The square the pawn is initially on.
+        //! \param pawn_color The color of the pawn to determine which direction it goes.
+        //! \param promote What piece to promote the pawn to if it reaches the back ranks. This may be an invalid piece if no promotion is intended.
+        //! 
+        //! \returns A move instance with proper pawn rules in place.
         static Move pawn_move(Square start, Piece_Color pawn_color, Piece promote) noexcept;
+
+        //! \brief Construct a capturing pawn move.
+        //! 
+        //! \param start The square the pawn is initially on.
+        //! \param direction Whether the pawn capture to the left or right (from white's perspective).
+        //! \param pawn_color The color of the pawn to determine which direction it goes.
+        //! \param promote What piece to promote the pawn to if it reaches the back ranks. This may be an invalid piece if no promotion is intended.
+        //! 
+        //! \returns A move instance with proper pawn rules in place.
         static Move pawn_capture(Square start, Direction direction, Piece_Color pawn_color, Piece promote) noexcept;
+
+        //! \brief Construct a pawn double move.
+        //! 
+        //! \param pawn_color The color of the pawn to determine which direction it goes and which rank it starts on.
+        //! \param file Which file the pawn starts on.
+        //! 
+        //! \returns A move instance with proper pawn rules in place.
         static Move pawn_double_move(Piece_Color pawn_color, char file) noexcept;
+
+        //! \brief Construct castling move.
+        //! 
+        //! \param king_color The color of the castling king.
+        //! \param direction To which side the castling goes: Direction::LEFT for queenside and Direction::RIGHT for kingside.
+        //! 
+        //! \returns A move instance with proper pawn rules in place.
         static Move castle(Piece_Color king_color, Direction direction) noexcept;
 
         //! \brief Since there's only one instance of every Move, assignment can only lose information.
