@@ -265,7 +265,6 @@
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
     <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Moves\Castle.cpp" />
     <ClCompile Include="src\moves\Move.cpp" />
     <ClCompile Include="src\Players\Alpha_Beta_Value.cpp" />
     <ClCompile Include="src\players\Xboard_Mediator.cpp" />
@@ -311,7 +310,6 @@
     <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
     <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
     <ClInclude Include="include\genes\Total_Force_Gene.h" />
-    <ClInclude Include="include\Moves\Castle.h" />
     <ClInclude Include="include\Moves\Direction.h" />
     <ClInclude Include="include\moves\Move.h" />
     <ClInclude Include="include\Players\Alpha_Beta_Value.h" />

@@ -47,6 +47,19 @@ Move Move::pawn_double_move(Piece_Color pawn_color, char file) noexcept
     return move;
 }
 
+Move Move::castle(Piece_Color king_color, Direction direction) noexcept
+{
+    const auto start = Square{'e', king_color == Piece_Color::WHITE ? 1 : 8};
+    const auto end = start + Square_Difference{direction == Direction::LEFT ? -2 : 2, 0};
+    auto move = Move(start, end);
+    move.set_capturing_ability(false);
+    move.rook_move_start = Square{direction == Direction::LEFT ? 'a' : 'h', start.rank()};
+    move.rook_move_end = Square{ direction == Direction::LEFT ? 'd' : 'f', start.rank()};
+    move.last_empty_square = direction == Direction::LEFT ? end + Square_Difference{-1, 0} : Square{};
+    move.is_castling = true;
+    return move;
+}
+
 void Move::side_effects(Board& board) const noexcept
 {
     if(board.piece_on_square(end()).type() == Piece_Type::PAWN)
@@ -59,6 +72,12 @@ void Move::side_effects(Board& board) const noexcept
         {
             board.place_piece(promotion(), end());
         }
+    }
+    else if(is_castle())
+    {
+        board.move_piece({rook_move_start, rook_move_end});
+        board.castling_index[static_cast<int>(board.whose_turn())] = board.played_ply_count() - 1;
+        board.castling_movement[static_cast<int>(board.whose_turn())] = file_change();
     }
 }
 
@@ -84,6 +103,13 @@ bool Move::move_specific_legal(const Board& board) const noexcept
     if(board.piece_on_square(start()).type() == Piece_Type::PAWN)
     {
         return (bool(board.piece_on_square(end())) == can_capture()) || is_en_passant(board);
+    }
+    else if(is_castle())
+    {
+        return board.castle_is_legal(board.whose_turn(), file_change() > 0 ? Direction::RIGHT : Direction::LEFT)
+            && ! board.king_is_in_check()
+            && board.safe_for_king(start() + Square_Difference{file_change() > 0 ? 1 : -1, 0}, board.whose_turn())
+            && ! (last_empty_square.inside_board() && board.piece_on_square(last_empty_square));
     }
     else
     {
@@ -128,6 +154,11 @@ std::string Move::algebraic(const Board& board) const noexcept
 
 std::string Move::algebraic_base(const Board& board) const noexcept
 {
+    if(is_castle())
+    {
+        return file_change() > 0 ? "O-O" : "O-O-O";
+    }
+
     const auto original_piece = board.piece_on_square(start());
 
     auto record_file = original_piece.type() == Piece_Type::PAWN && board.move_captures(*this);
@@ -207,9 +238,9 @@ bool Move::is_en_passant(const Board& board) const noexcept
     return board.piece_on_square(start()).type() == Piece_Type::PAWN && board.en_passant_target == end();
 }
 
-bool Move::is_castle(const Board& board) const noexcept
+bool Move::is_castle() const noexcept
 {
-    return board.piece_on_square(start()).type() == Piece_Type::KING && std::abs(file_change()) == 2;
+    return is_castling;
 }
 
 Piece Move::promotion() const noexcept

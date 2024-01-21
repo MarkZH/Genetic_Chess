@@ -16,9 +16,7 @@
 class Clock;
 class Game_Result;
 class Player;
-
 class Move;
-class Castle;
 
 class UCI_Mediator;
 
@@ -395,9 +393,8 @@ class Board
 
         static void fen_parse_assert(bool assertion, const std::string& input_fen, const std::string& failure_message);
 
-        // Moves with side effects are friends of Board
-        friend class Castle; // moves second piece
-        friend class Move; // for all side effects
+        // To implement side effects beyond moving and capturing pieces
+        friend class Move;
 
         // Allow UCI_Mediator to change the legal moves with searchmoves command
         friend class UCI_Mediator;

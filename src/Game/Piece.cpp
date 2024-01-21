@@ -13,7 +13,6 @@
 
 #include "Moves/Move.h"
 #include "Moves/Direction.h"
-#include "Moves/Castle.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
 #include "Utility/String.h"
@@ -245,7 +244,6 @@ namespace
     void add_king_moves(indexed_move_array& out, const Piece_Color color) noexcept
     {
         const auto king = Piece{color, Piece_Type::KING};
-        const int base_rank = (color == Piece_Color::WHITE ? 1 : 8);
         for(int d_rank = -1; d_rank <= 1; ++d_rank)
         {
             for(int d_file = -1; d_file <= 1; ++d_file)
@@ -257,11 +255,11 @@ namespace
                 {
                     if(d_file > 0)
                     {
-                        add_legal_move<Castle>(out, king, base_rank, Direction::RIGHT);
+                        add_legal_move<Move>(out, king, Move::castle(color, Direction::RIGHT));
                     }
                     else
                     {
-                        add_legal_move<Castle>(out, king, base_rank, Direction::LEFT);
+                        add_legal_move<Move>(out, king, Move::castle(color, Direction::LEFT));
                     }
                 }
             }
