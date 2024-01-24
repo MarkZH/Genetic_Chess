@@ -22,7 +22,6 @@ using namespace std::chrono_literals;
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
 #include "Game/Move.h"
-#include "Game/Direction.h"
 
 #include "Players/Player.h"
 

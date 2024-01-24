@@ -9,7 +9,6 @@
 #include "Game/Color.h"
 #include "Game/Square.h"
 #include "Game/Piece.h"
-#include "Game/Direction.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
 
@@ -17,6 +16,7 @@ class Clock;
 class Game_Result;
 class Player;
 class Move;
+enum class Direction;
 
 class UCI_Mediator;
 

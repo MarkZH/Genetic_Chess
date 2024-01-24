@@ -6,7 +6,11 @@
 
 #include "Game/Square.h"
 #include "Game/Piece.h"
-#include "Game/Direction.h"
+
+//! \file
+
+//! \brief Indicates a horizontal direction on the chess board.
+enum class Direction { LEFT, RIGHT };
 
 class Board;
 class Piece;
