@@ -126,7 +126,6 @@ class Genome
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
-        double expected_number_of_moves_left(const Board& board) const noexcept;
 
         template<typename Gene_Type>
         constexpr const Gene_Type& gene_reference() const noexcept

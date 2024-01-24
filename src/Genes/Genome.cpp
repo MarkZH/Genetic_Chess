@@ -275,11 +275,6 @@ double Genome::branching_factor(const double game_progress) const noexcept
     return gene_reference<Look_Ahead_Gene>().branching_factor(game_progress);
 }
 
-double Genome::expected_number_of_moves_left(const Board& board) const noexcept
-{
-    return gene_reference<Look_Ahead_Gene>().expected_moves_left(board);
-}
-
 double Genome::game_progress(const Board& board) const noexcept
 {
     return gene_reference<Piece_Strength_Gene>().game_progress(board);
