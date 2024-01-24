@@ -94,9 +94,12 @@ class Gene
         //! \brief When preparing to write gene data to a file, regulatory genes can use this to delete unused Priority data.
         void delete_priorities(std::map<std::string, std::string>& properties) const noexcept;
 
+        bool active() const noexcept;
+
     private:
         std::string gene_name;
         Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0, 0.05};
+        bool enabled = true;
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
 

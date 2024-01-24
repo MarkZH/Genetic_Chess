@@ -52,6 +52,11 @@ class Move_Sorting_Gene : public Clonable_Gene<Move_Sorting_Gene>
         template<typename Iter>
         void sort_moves(Iter begin, Iter end, const Board& board) const noexcept
         {
+            if( ! active())
+            {
+                return;
+            }
+
             sort_moves(begin, end, board, 0);
         }
 

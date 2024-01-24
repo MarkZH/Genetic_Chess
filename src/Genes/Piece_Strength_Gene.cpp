@@ -34,7 +34,7 @@ void Piece_Strength_Gene::adjust_properties(std::map<std::string, std::string>& 
     {
         const auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
         const auto name = std::string(1, piece.fen_symbol());
-        const auto value = piece_value(piece.type())/standardize;
+        const auto value = piece_strength[piece_index]/standardize;
         properties[name] = std::to_string(value);
     }
 }
@@ -43,6 +43,11 @@ void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, std::
 {
     for(const auto& [name, value] : properties)
     {
+        if(name == "Enabled")
+        {
+            continue;
+        }
+
         piece_value(Piece{name[0]}.type()) = String::to_number<double>(value);
     }
     renormalize_values();
@@ -92,7 +97,7 @@ double& Piece_Strength_Gene::piece_value(const Piece_Type type) noexcept
 
 double Piece_Strength_Gene::piece_value(const Piece piece) const noexcept
 {
-    return piece ? piece_value(piece.type()) : 0.0;
+    return (piece && active()) ? piece_value(piece.type()) : 0.0;
 }
 
 const std::array<double, 6>& Piece_Strength_Gene::piece_values() const noexcept
@@ -107,6 +112,11 @@ double Piece_Strength_Gene::score_board(const Board&, Piece_Color, size_t) const
 
 double Piece_Strength_Gene::game_progress(const Board& board) const noexcept
 {
+    if( ! active())
+    {
+        return 0.5;
+    }
+
     std::array<double, 2> piece_value_left{};
     for(auto square : Square::all_squares())
     {

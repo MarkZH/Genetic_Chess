@@ -41,6 +41,11 @@ void Look_Ahead_Gene::load_gene_properties(const std::map<std::string, std::stri
 
 Clock::seconds Look_Ahead_Gene::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
+    if( ! active())
+    {
+        return {};
+    }
+
     const auto time_left = clock.running_time_left();
     const auto moves_to_reset = clock.moves_until_reset(board.whose_turn());
     const auto moves_left = expected_moves_left(board);
@@ -83,12 +88,12 @@ double Look_Ahead_Gene::score_board(const Board&, const Piece_Color, const size_
 
 double Look_Ahead_Gene::speculation_time_factor(const double game_progress) const noexcept
 {
-    return speculation_constants.interpolate(game_progress);
+    return active() ? speculation_constants.interpolate(game_progress) : 0.0;
 }
 
 double Look_Ahead_Gene::branching_factor(const double game_progress) const noexcept
 {
-    return branching_factor_estimates.interpolate(game_progress);
+    return active() ? branching_factor_estimates.interpolate(game_progress) : 0.0;
 }
 
 double Look_Ahead_Gene::expected_moves_left(const Board& board) const noexcept

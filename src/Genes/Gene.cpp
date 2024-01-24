@@ -19,10 +19,17 @@
 #include "Utility/Exceptions.h"
 #include "Utility/Math.h"
 
+namespace
+{
+    const auto enabled_key = "Enabled";
+    const auto enabling_odds = 10'000; // 1/10,000 chance of disabling this gene
+}
+
 std::map<std::string, std::string> Gene::list_properties() const noexcept
 {
     auto properties = std::map<std::string, std::string>{};
     priorities.write_to_map(properties);
+    properties[enabled_key] = std::to_string(active());
     adjust_properties(properties);
     return properties;
 }
@@ -37,6 +44,8 @@ void Gene::load_properties(const std::map<std::string, std::string>& properties)
     {
         priorities.load_from_map(properties);
     }
+    
+    enabled = std::stod(properties.at(enabled_key));
 
     load_gene_properties(properties);
 }
@@ -188,6 +197,11 @@ void Gene::mutate() noexcept
     {
         gene_specific_mutation();
     }
+
+    if(Random::success_probability(1, enabling_odds))
+    {
+        enabled = ! enabled;
+    }
 }
 
 void Gene::gene_specific_mutation() noexcept
@@ -196,7 +210,7 @@ void Gene::gene_specific_mutation() noexcept
 
 double Gene::evaluate(const Board& board, const Piece_Color perspective, const size_t depth, const double game_progress) const noexcept
 {
-    return priorities.interpolate(game_progress)*score_board(board, perspective, depth);
+    return active() ? priorities.interpolate(game_progress) * score_board(board, perspective, depth) : 0.0;
 }
 
 void Gene::print(std::ostream& os) const noexcept
@@ -246,4 +260,9 @@ void Gene::delete_priorities(std::map<std::string, std::string>& properties) con
 {
     properties.erase(priorities.name(Game_Stage::OPENING));
     properties.erase(priorities.name(Game_Stage::ENDGAME));
+}
+
+bool Gene::active() const noexcept
+{
+    return enabled;
 }

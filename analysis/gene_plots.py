@@ -152,7 +152,8 @@ def plot_genome(gene_pool_filename: str) -> None:
                 linewidth = common.plot_params['plot line weight'] if is_sorter_count else None
                 markersize = None if is_sorter_count else common.plot_params["scatter dot size"]
                 d = this_data[:, column] if is_sorter_count else this_data
-                these_axes.plot(common.centered_x_axis(id_list, d), d, style, markersize=markersize, linewidth=linewidth, label=label)
+                noise = np.random.uniform(-0.2, 0.2, d.shape) if "Enabled" in name else np.zeros_like(d)
+                these_axes.plot(common.centered_x_axis(id_list, d), d + noise, style, markersize=markersize, linewidth=linewidth, label=label)
 
             these_axes.set_xlabel(column_names[0])
             if is_sorter_count:

@@ -1,6 +1,7 @@
 ID: 1
 
 Name: Pawn Structure Gene
+Enabled: 1
 Guarded By Pawn: 0.6
 Guarded By Piece: 0.4
 Guarded By Pawn: 0.2
