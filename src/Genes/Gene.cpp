@@ -23,13 +23,15 @@ namespace
 {
     const auto enabled_key = "Enabled";
     const auto enabling_odds = 10'000; // 1/10,000 chance of disabling this gene
+    const auto is_enabled = "True";
+    const auto is_disabled = "False";
 }
 
 std::map<std::string, std::string> Gene::list_properties() const noexcept
 {
     auto properties = std::map<std::string, std::string>{};
     priorities.write_to_map(properties);
-    properties[enabled_key] = std::to_string(active());
+    properties[enabled_key] = active() ? is_enabled : is_disabled;
     adjust_properties(properties);
     return properties;
 }
@@ -45,7 +47,19 @@ void Gene::load_properties(const std::map<std::string, std::string>& properties)
         priorities.load_from_map(properties);
     }
     
-    enabled = std::stod(properties.at(enabled_key));
+    const auto enabled_value = properties.at(enabled_key);
+    if(enabled_value == is_enabled)
+    {
+        enabled = true;
+    }
+    else if(enabled_value == is_disabled)
+    {
+        enabled = false;
+    }
+    else
+    {
+        throw Genome_Creation_Error("Invalid value for Enabled property: " + enabled_value + ". Valid values are " + is_enabled + " and " + is_disabled + ".");
+    }
 
     load_gene_properties(properties);
 }

@@ -77,6 +77,10 @@ def parse_gene_pool(gene_pool_file_name: str) -> tuple[list[str], npt.NDArray]:
                                 value = str(sorters.index(sorter) + 1)
                                 add_value_to_data_line(data_line, header_line, title, value, int)
                             continue
+                        elif parameter == "Enabled":
+                            title = current_gene + ' - ' + parameter
+                            value = value == "True"
+                            data_type = float
                         else:
                             title = current_gene + ' - ' + parameter
                             data_type = float
@@ -154,6 +158,9 @@ def plot_genome(gene_pool_filename: str) -> None:
                 d = this_data[:, column] if is_sorter_count else this_data
                 noise = np.random.uniform(-0.2, 0.2, d.shape) if "Enabled" in name else np.zeros_like(d)
                 these_axes.plot(common.centered_x_axis(id_list, d), d + noise, style, markersize=markersize, linewidth=linewidth, label=label)
+                if name.endswith("Enabled"):
+                    these_axes.set_yticks([0, 1])
+                    these_axes.set_yticklabels(["Disabled", "Enabled"])
 
             these_axes.set_xlabel(column_names[0])
             if is_sorter_count:
