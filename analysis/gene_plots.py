@@ -47,7 +47,7 @@ def parse_gene_pool(gene_pool_file_name: str) -> tuple[list[str], npt.NDArray]:
     # Read gene pool file for data
     parsed_data = []
     with open(gene_pool_file_name) as f:
-        new_data_line: list[int | None] = [None]*len(header_line)
+        new_data_line: list[int | float | None] = [None]*len(header_line)
         data_line = new_data_line.copy()
         current_gene = ''
         for line in f:
