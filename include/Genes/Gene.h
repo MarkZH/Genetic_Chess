@@ -38,7 +38,7 @@ class Gene
         void read_from(const std::string& file_name);
 
         //! \brief Applies a random mutation to the priority or other aspect of a gene.
-        void mutate() noexcept;
+        void mutate(double enable_probability) noexcept;
 
         //! \brief Gives a numerical score to the board in the arguments.
         //!

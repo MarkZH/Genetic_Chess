@@ -70,7 +70,8 @@ class Genome
         //! \brief Apply a number of random mutation to one gene in the genome.
         //!
         //! \param mutation_count The number of times to mutate the genome.
-        void mutate(size_t mutation_count) noexcept;
+        //! \param enable_probability The probability that each mutation toggles the gene's activity.
+        void mutate(size_t mutation_count, double enable_probability) noexcept;
 
         //! \brief The numeric ID of the owner of this genome
         int id() const noexcept;

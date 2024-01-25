@@ -88,7 +88,8 @@ class Minimax_AI : public Player
         //! \brief Randomly mutate the AI.
         //!
         //! \param mutation_rate The number of discrete mutations to apply to the AI
-        void mutate(size_t mutation_rate) noexcept;
+        //! \param enable_probability The probability that each mutation toggles the gene's activity.
+        void mutate(size_t mutation_rate, double enable_probability) noexcept;
 
         //! \brief Print the AI parameters to a file.
         //!

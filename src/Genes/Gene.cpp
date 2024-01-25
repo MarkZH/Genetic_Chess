@@ -22,7 +22,6 @@
 namespace
 {
     const auto enabled_key = "Enabled";
-    const auto enabling_odds = 10'000; // 1/10,000 chance of disabling this gene
     const auto is_enabled = "True";
     const auto is_disabled = "False";
 }
@@ -200,7 +199,7 @@ void Gene::read_from(const std::string& file_name)
     throw Genome_Creation_Error(name() + " not found in " + file_name);
 }
 
-void Gene::mutate() noexcept
+void Gene::mutate(const double enable_probability) noexcept
 {
     const auto properties = list_properties();
     if(has_priority() && Random::success_probability(2, properties.size()))
@@ -212,7 +211,7 @@ void Gene::mutate() noexcept
         gene_specific_mutation();
     }
 
-    if(Random::success_probability(1, enabling_odds))
+    if(Random::success_probability(enable_probability))
     {
         enabled = ! enabled;
     }

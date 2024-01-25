@@ -651,9 +651,9 @@ void Minimax_AI::reset() const noexcept
     commentary.clear();
 }
 
-void Minimax_AI::mutate(size_t mutation_rate) noexcept
+void Minimax_AI::mutate(const size_t mutation_rate, const double enable_probability) noexcept
 {
-    genome.mutate(mutation_rate);
+    genome.mutate(mutation_rate, enable_probability);
     recalibrate_self();
 }
 

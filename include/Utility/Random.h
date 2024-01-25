@@ -56,6 +56,14 @@ namespace Random
     //! \returns true with given probability (successes/attempts).
     bool success_probability(size_t successes, size_t attempts) noexcept;
 
+    //! \brief Simulate a fair trial with a given probability of success.
+    //!
+    //! To be specific, \code{cpp}success_probability(0.125)\endcode returns true with probability 12.5%.
+    //!
+    //! \param probability The probability of returning true. Must be between 0.0 and 1.0 inclusive.
+    //! \returns true with given probability.
+    bool success_probability(double probability) noexcept;
+
     //! \brief Select random element from random-access container.
     //!
     //! \param container A collection of items that allows for access by an index.

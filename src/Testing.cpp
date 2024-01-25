@@ -256,6 +256,8 @@ namespace
     void math_normalize_test(bool& tests_passed);
     void scoped_push_back_works_as_advertised(bool& tests_passed);
     void has_exactly_n_works_as_advertised(bool& tests_passed);
+
+    void probability_check(bool& tests_passed);
 }
 
 bool run_tests()
@@ -372,6 +374,7 @@ bool run_tests()
 
     scoped_push_back_works_as_advertised(tests_passed);
     has_exactly_n_works_as_advertised(tests_passed);
+    probability_check(tests_passed);
 
 
     std::cout << (tests_passed ? "All tests passed." : "Tests failed.") << '\n';
@@ -1244,7 +1247,7 @@ namespace
         std::vector<Minimax_AI> test_pool(10);
         for(auto& ai : test_pool)
         {
-            ai.mutate(100);
+            ai.mutate(100, 0.5);
             ai.print(pool_file_name);
         }
 
@@ -1264,7 +1267,7 @@ namespace
     void self_swapped_minimax_ai_is_unchanged(bool& tests_passed)
     {
         auto self_swap_ai = Minimax_AI();
-        self_swap_ai.mutate(100);
+        self_swap_ai.mutate(100, 0.5);
         const auto self_write_file_name = "self_original.txt";
         remove(self_write_file_name);
         self_swap_ai.print(self_write_file_name);
@@ -1284,7 +1287,7 @@ namespace
     void self_assigned_minimax_ai_is_unchanged(bool& tests_passed)
     {
         auto self_assign_ai = Minimax_AI();
-        self_assign_ai.mutate(100);
+        self_assign_ai.mutate(100, 0.5);
         auto self_write_file_name = "self_assign_original.txt";
         remove(self_write_file_name);
         self_assign_ai.print(self_write_file_name);
@@ -1786,6 +1789,43 @@ namespace
                             result == (value == reps),
                             std::string{"has_exactly_n failed for "} + std::to_string(reps) + " copies of " + std::to_string(value));
             }
+        }
+    }
+    void probability_check(bool& tests_passed)
+    {
+        const auto number_of_trials = 1'000'000;
+        const auto probability_numerator = 1;
+        const auto probability_denominator = 3;
+        auto rational_success_count = 0;
+        for(auto trial = 0; trial < number_of_trials; ++trial)
+        {
+            rational_success_count += Random::success_probability(probability_numerator, probability_denominator) ? 1 : 0;
+        }
+        const auto p1 = double(probability_numerator)/probability_denominator;
+        const auto expected_rational_successes = number_of_trials*p1;
+        const auto standard_deviation = std::sqrt(number_of_trials*p1*(1.0 - p1));
+        if( ! test_result(tests_passed,
+                          std::abs(rational_success_count - expected_rational_successes) < 4*standard_deviation,
+                          "Wrong number of successes with rational probability"))
+        {
+            std::cout << "Rational success probability (" << probability_numerator << "/" << probability_denominator << ") --> "
+                << String::format_integer(rational_success_count, ",") << " / " << String::format_integer(number_of_trials, ",") << std::endl;
+        }
+
+        const auto probability = 0.0133;
+        auto real_success_count = 0;
+        for(auto trial = 0; trial < number_of_trials; ++trial)
+        {
+            real_success_count += Random::success_probability(probability) ? 1 : 0;
+        }
+        const auto expected_real_success = number_of_trials * probability;
+        const auto real_standard_deviation = std::sqrt(number_of_trials*probability*(1 - probability));
+        if( ! test_result(tests_passed,
+                          std::abs(real_success_count - expected_real_success) < 4*real_standard_deviation,
+                          "Wrong number of sucesses with real probability"))
+        {
+            std::cout << "Real success probability (" << probability << ") --> "
+                << String::format_integer(real_success_count, ",") << " / " << String::format_integer(number_of_trials, ",") << std::endl;
         }
     }
 }
