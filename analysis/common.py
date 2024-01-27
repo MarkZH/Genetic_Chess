@@ -31,22 +31,21 @@ class No_More_Games(Exception):
 
 class Game_Record:
     def __init__(self, input_stream: TextIO) -> None:
-        self.headers: dict[str, str] = {}
-        self.moves: list[str] = []
-
-        for line in input_stream:
-            if line.strip().startswith("["):
-                name, value = line.strip().strip("[]").split(maxsplit=1)
-                self.headers[name] = value.strip('"')
-            elif self.headers:
-                self.moves = game_moves(input_stream, line)
-                break
-
-        if not self.has_game():
+        self.headers, first_game_line = game_headers(input_stream)
+        self.moves = game_moves(input_stream, first_game_line)
+        if not self.headers and not self.moves:
             raise No_More_Games()
 
-    def has_game(self) -> bool:
-        return bool(self.headers or self.moves)
+
+def game_headers(input_stream: TextIO) -> tuple[dict[str, str], str]:
+    headers: dict[str, str] = {}
+    for line in input_stream:
+        if line.strip().startswith("["):
+            name, value = line.strip().strip("[]").split(maxsplit=1)
+            headers[name] = value.strip('"')
+        elif headers:
+            break
+    return headers, line
 
 
 def game_moves(input: TextIO, previous_line: str = "") -> list[str]:
