@@ -287,7 +287,6 @@
     <ClInclude Include="include\game\Board.h" />
     <ClInclude Include="include\game\Clock.h" />
     <ClInclude Include="include\game\Color.h" />
-    <ClInclude Include="include\Game\Direction.h" />
     <ClInclude Include="include\game\Game.h" />
     <ClInclude Include="include\game\Game_Result.h" />
     <ClInclude Include="include\Game\Move.h" />
