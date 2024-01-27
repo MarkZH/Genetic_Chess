@@ -866,7 +866,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     }
     game_text << " " << actual_result.game_ending_annotation();
 
-    const auto pgn_text = header_text.str() + String::word_wrap(game_text.str(), 80) + "\n\n\n";
+    const auto pgn_text = header_text.str() + "\n" + String::word_wrap(game_text.str(), 80) + "\n\n\n";
     
     if(file_name.empty())
     {
