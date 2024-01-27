@@ -156,11 +156,12 @@ def plot_genome(gene_pool_filename: str) -> None:
                 linewidth = common.plot_params['plot line weight'] if is_sorter_count else None
                 markersize = None if is_sorter_count else common.plot_params["scatter dot size"]
                 d = this_data[:, column] if is_sorter_count else this_data
-                noise = np.random.uniform(-0.2, 0.2, d.shape) if "Enabled" in name else np.zeros_like(d)
+                noise = np.random.uniform(-0.45, 0.45, d.shape) if name.endswith("Enabled") else np.zeros_like(d)
                 these_axes.plot(common.centered_x_axis(id_list, d), d + noise, style, markersize=markersize, linewidth=linewidth, label=label)
                 if name.endswith("Enabled"):
                     these_axes.set_yticks([0, 1])
                     these_axes.set_yticklabels(["Disabled", "Enabled"])
+                    these_axes.axhline(0.5, color="k")
 
             these_axes.set_xlabel(column_names[0])
             if is_sorter_count:
@@ -169,7 +170,7 @@ def plot_genome(gene_pool_filename: str) -> None:
                 for line in leg.get_lines():
                     line.set_linewidth(2*line.get_linewidth())
 
-            if 'Speculation' not in name:
+            if all(word not in name for word in ['Speculation', 'Enabled']):
                 these_axes.axhline(color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
 
             these_axes.set_title(name)
