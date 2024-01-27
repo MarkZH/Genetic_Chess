@@ -106,7 +106,7 @@ def delete_comments(all_game_text: str) -> str:
     return " ".join(filter(None, map(str.strip, game_text)))
 
 
-def append_game_moves(game_text, line, parentheses_depth, start_index, index):
+def append_game_moves(game_text: list[str], line: str, parentheses_depth: int, start_index: int, index: int) -> None:
     if parentheses_depth == 0:
         game_text.append(line[start_index:index])
 
