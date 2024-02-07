@@ -19,18 +19,12 @@
 #include "Utility/Exceptions.h"
 #include "Utility/Math.h"
 
-namespace
-{
-    const auto enabled_key = "Enabled";
-    const auto is_enabled = "True";
-    const auto is_disabled = "False";
-}
-
 std::map<std::string, std::string> Gene::list_properties() const noexcept
 {
     auto properties = std::map<std::string, std::string>{};
     priorities.write_to_map(properties);
-    properties[enabled_key] = active() ? is_enabled : is_disabled;
+    gene_turn_on_progress.write_to_map(properties);
+    gene_turn_off_progress.write_to_map(properties);
     adjust_properties(properties);
     return properties;
 }
@@ -45,19 +39,15 @@ void Gene::load_properties(const std::map<std::string, std::string>& properties)
     {
         priorities.load_from_map(properties);
     }
-    
-    const auto enabled_value = properties.at(enabled_key);
-    if(enabled_value == is_enabled)
+
+    if(properties.count(gene_turn_on_progress.name()) > 0)
     {
-        enabled = true;
+        gene_turn_on_progress.load_from_map(properties);
     }
-    else if(enabled_value == is_disabled)
+
+    if(properties.count(gene_turn_off_progress.name()) > 0)
     {
-        enabled = false;
-    }
-    else
-    {
-        throw Genome_Creation_Error("Invalid value for Enabled property: " + enabled_value + ". Valid values are " + is_enabled + " and " + is_disabled + ".");
+        gene_turn_off_progress.load_from_map(properties);
     }
 
     load_gene_properties(properties);
@@ -199,21 +189,37 @@ void Gene::read_from(const std::string& file_name)
     throw Genome_Creation_Error(name() + " not found in " + file_name);
 }
 
-void Gene::mutate(const double enable_probability) noexcept
+void Gene::mutate() noexcept
 {
     const auto properties = list_properties();
-    if(has_priority() && Random::success_probability(2, properties.size()))
+    const auto priority_count = has_priority() ? 2 : 0;
+    const auto activation_count = 2;
+    if(Random::success_probability(priority_count, properties.size()))
     {
         priorities.mutate();
+    }
+    else if(Random::success_probability(activation_count, properties.size() - priority_count))
+    {
+        const auto mutate_turn_on = Random::coin_flip();
+        auto& mutating_value = mutate_turn_on ? gene_turn_on_progress : gene_turn_off_progress;
+        auto& clamping_value = mutate_turn_on ? gene_turn_off_progress : gene_turn_on_progress;
+        mutating_value.mutate();
+        
+        // The end margin makes it easier for this gene value to end up activating the gene for the
+        // first and/or last moves. Otherwise, if the lower limit was zero and the upper limit one,
+        // then half of all mutations would result in genes being turned off and the first/last moves.
+        const auto end_margin = 0.05;
+        const auto lower_limit = 0.0 - end_margin;
+        const auto upper_limit = 1.0 + end_margin;
+        mutating_value.value() = std::clamp(mutating_value.value(), lower_limit, upper_limit);
+        
+        const auto clamping_lower_limit = mutate_turn_on ? mutating_value.value() : lower_limit;
+        const auto clampling_uper_limit = mutate_turn_on ? upper_limit : mutating_value.value();
+        clamping_value.value() = std::clamp(clamping_value.value(), clamping_lower_limit, clampling_uper_limit);
     }
     else
     {
         gene_specific_mutation();
-    }
-
-    if(Random::success_probability(enable_probability))
-    {
-        enabled = ! enabled;
     }
 }
 
@@ -223,7 +229,7 @@ void Gene::gene_specific_mutation() noexcept
 
 double Gene::evaluate(const Board& board, const Piece_Color perspective, const size_t depth, const double game_progress) const noexcept
 {
-    return active() ? priorities.interpolate(game_progress) * score_board(board, perspective, depth) : 0.0;
+    return active(game_progress) ? priorities.interpolate(game_progress) * score_board(board, perspective, depth) : 0.0;
 }
 
 void Gene::print(std::ostream& os) const noexcept
@@ -275,7 +281,13 @@ void Gene::delete_priorities(std::map<std::string, std::string>& properties) con
     properties.erase(priorities.name(Game_Stage::ENDGAME));
 }
 
-bool Gene::active() const noexcept
+void Gene::delete_activations(std::map<std::string, std::string>& properties) const noexcept
 {
-    return enabled;
+    properties.erase(gene_turn_on_progress.name());
+    properties.erase(gene_turn_off_progress.name());
+}
+
+bool Gene::active(const double game_progress) const noexcept
+{
+    return gene_turn_on_progress.value() <= game_progress && game_progress <= gene_turn_off_progress.value();
 }

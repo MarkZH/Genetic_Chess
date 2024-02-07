@@ -70,8 +70,7 @@ class Genome
         //! \brief Apply a number of random mutation to one gene in the genome.
         //!
         //! \param mutation_count The number of times to mutate the genome.
-        //! \param enable_probability The probability that each mutation toggles the gene's activity.
-        void mutate(size_t mutation_count, double enable_probability) noexcept;
+        void mutate(size_t mutation_count) noexcept;
 
         //! \brief The numeric ID of the owner of this genome
         int id() const noexcept;
@@ -90,7 +89,7 @@ class Genome
         //!
         //! \param board The current board position.
         //! \param clock The game clock.
-        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept; // how much time to use for this move
+        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
 
         //! \brief Returns a factor that is multiplied by the time allocated to examine a branch of the game tree.
         //!
@@ -141,10 +140,11 @@ class Genome
         //! \param begin An iterator to the beginning of the move list to be sorted.
         //! \param end An iterator to the end of the move list to be sorted.
         //! \param board The board from which the move list is derived.
+        //! \param game_progress How far along the game has progressed.
         template<typename Iter>
-        void sort_moves(Iter begin, Iter end, const Board& board) const noexcept
+        void sort_moves(Iter begin, Iter end, const Board& board, const double game_progress) const noexcept
         {
-            gene_reference<Move_Sorting_Gene>().sort_moves(begin, end, board);
+            gene_reference<Move_Sorting_Gene>().sort_moves(begin, end, board, game_progress);
         }
 };
 

@@ -88,8 +88,7 @@ class Minimax_AI : public Player
         //! \brief Randomly mutate the AI.
         //!
         //! \param mutation_rate The number of discrete mutations to apply to the AI
-        //! \param enable_probability The probability that each mutation toggles the gene's activity.
-        void mutate(size_t mutation_rate, double enable_probability) noexcept;
+        void mutate(size_t mutation_rate) noexcept;
 
         //! \brief Print the AI parameters to a file.
         //!
@@ -179,6 +178,7 @@ class Minimax_AI : public Player
                                                size_t minimum_search_depth,
                                                size_t maximum_search_depth,
                                                const Clock& clock,
+                                               double progress_of_game,
                                                Alpha_Beta_Value alpha,
                                                const Alpha_Beta_Value& beta,
                                                std::vector<const Move*>& principal_variation,
@@ -207,9 +207,9 @@ class Minimax_AI : public Player
         //! \param end An iterator to the end of the move list to be sorted.
         //! \param board The board from which the move list is derived.
         template<typename Iter>
-        void sort_moves(Iter begin, Iter end, const Board& board) const noexcept
+        void sort_moves(Iter begin, Iter end, const Board& board, const double game_progress) const noexcept
         {
-            genome.sort_moves(begin, end, board);
+            genome.sort_moves(begin, end, board, game_progress);
         }
 
         // Evaluation method

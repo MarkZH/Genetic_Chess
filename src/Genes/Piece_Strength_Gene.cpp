@@ -23,6 +23,7 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept : Clonable_Gene("Piece Stren
 void Piece_Strength_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
     delete_priorities(properties);
+    delete_activations(properties);
 
     constexpr auto standard_all_pieces_score = 2*5.0 + // rooks
                                                2*3.0 + // knights
@@ -97,7 +98,7 @@ double& Piece_Strength_Gene::piece_value(const Piece_Type type) noexcept
 
 double Piece_Strength_Gene::piece_value(const Piece piece) const noexcept
 {
-    return (piece && active()) ? piece_value(piece.type()) : 0.0;
+    return piece ? piece_value(piece.type()) : 0.0;
 }
 
 const std::array<double, 6>& Piece_Strength_Gene::piece_values() const noexcept
@@ -112,11 +113,6 @@ double Piece_Strength_Gene::score_board(const Board&, Piece_Color, size_t) const
 
 double Piece_Strength_Gene::game_progress(const Board& board) const noexcept
 {
-    if( ! active())
-    {
-        return 0.5;
-    }
-
     std::array<double, 2> piece_value_left{};
     for(auto square : Square::all_squares())
     {

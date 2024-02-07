@@ -1,7 +1,6 @@
 ID: 1
 
 Name: Piece Strength Gene
-Enabled: True
 P: 1
 B: 2
 N: 4
@@ -9,24 +8,28 @@ R: 8
 Q: 16
 
 Name: Sphere of Influence Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Opening: 1
 Priority - Endgame: 1
 
 Name: King   Confinement Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Opening: 1
 Priority - Endgame: 1
 
 Name: Castling Possible Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Kingside Preference: 0.8
 Queenside Preference: 0.2
 Priority - Opening: 1
 Priority - Endgame: 1
 
 Name: Pawn Structure Gene
-Enabled: False
+Activation Begin: 0.0
+Activation End: 0.0
 Guarded By Pawn: 0.6
 Guarded By Piece: 0.4
 Priority - Opening: 1

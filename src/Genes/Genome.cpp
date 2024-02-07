@@ -219,7 +219,7 @@ double Genome::evaluate(const Board& board, const Piece_Color perspective, size_
     return score_board(board, perspective, depth) - score_board(board, opposite(perspective), depth);
 }
 
-void Genome::mutate(const size_t mutation_count, const double enable_probability) noexcept
+void Genome::mutate(const size_t mutation_count) noexcept
 {
     // Create copies of genes equal in number to the number of mutatable components.
     std::vector<Gene*> genes;
@@ -231,7 +231,7 @@ void Genome::mutate(const size_t mutation_count, const double enable_probability
     // Pick randomly from the list so every component has an equal chance for mutation.
     for(size_t i = 0; i < mutation_count; ++i)
     {
-        Random::random_element(genes)->mutate(enable_probability);
+        Random::random_element(genes)->mutate();
     }
 }
 

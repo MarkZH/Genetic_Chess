@@ -53,7 +53,7 @@ namespace
     void record_the_living(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name);
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
-    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate, double enable_mutation_probability);
+    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
     Game_Result pool_game(const Board& board, const Clock::seconds game_time, Minimax_AI white, Minimax_AI black, const std::string& game_record_file, Thread_Limiter& limiter) noexcept;
     Minimax_AI best_living_ai(const std::vector<Minimax_AI>& pool) noexcept;
@@ -85,12 +85,6 @@ void gene_pool(const std::string& config_file)
     const auto first_mutation_interval = config.as_positive_number<size_t>("first mutation interval");
     const auto second_mutation_rate = config.as_positive_number<size_t>("second mutation rate");
     const auto second_mutation_interval = config.as_positive_number<size_t>("second mutation interval");
-    const auto enable_mutation_probability = config.as_number<double>("enable mutation probability");
-    if(enable_mutation_probability < 0.0 || enable_mutation_probability > 1.0)
-    {
-        throw std::invalid_argument("Enable mutation probability must be between 0.0 and 1.0 inclusive.");
-    }
-
 
     const auto minimum_game_time = config.as_positive_time_duration<Clock::seconds>("minimum game time");
     const auto maximum_game_time = config.as_positive_time_duration<Clock::seconds>("maximum game time");
@@ -122,7 +116,7 @@ void gene_pool(const std::string& config_file)
     std::this_thread::sleep_for(start_delay);
 
     auto round_count = count_still_alive_lines(genome_file_name);
-    auto pool = fill_pool(genome_file_name, gene_pool_population, first_mutation_rate, enable_mutation_probability);
+    auto pool = fill_pool(genome_file_name, gene_pool_population, first_mutation_rate);
 
     const auto game_record_file = genome_file_name + "_games.pgn";
     auto game_time = game_time_increment > 0.0s ? minimum_game_time : maximum_game_time;
@@ -169,7 +163,7 @@ void gene_pool(const std::string& config_file)
             auto& losing_player = (winning_player.id() == white.id() ? black : white);
 
             auto offspring = Minimax_AI(white, black);
-            offspring.mutate(mutation_rate, enable_mutation_probability);
+            offspring.mutate(mutation_rate);
             offspring.print(genome_file_name);
             losing_player = offspring;
 
@@ -213,7 +207,7 @@ namespace
         quit_after_round = true;
     }
 
-    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate, double enable_mutation_probability)
+    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate)
     {
         auto pool = load_gene_pool_file(genome_file_name);
         if(pool.size() != gene_pool_population)
@@ -222,7 +216,7 @@ namespace
             while(pool.size() < gene_pool_population)
             {
                 pool.emplace_back();
-                pool.back().mutate(mutation_rate, enable_mutation_probability);
+                pool.back().mutate(mutation_rate);
                 pool.back().print(genome_file_name);
             }
             pool.resize(gene_pool_population);

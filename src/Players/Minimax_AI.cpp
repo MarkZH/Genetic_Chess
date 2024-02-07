@@ -94,8 +94,9 @@ const Move& Minimax_AI::choose_move(const Board& board, const Clock& clock) cons
 const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
 {
     auto principal_variation = get_legal_principal_variation(board);
+    const auto progress_of_game = game_progress(board);
     const auto time_to_use = time_to_examine(board, clock);
-    const auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor(game_progress(board))));
+    const auto minimum_search_depth = size_t(std::log(time_to_use/node_evaluation_time)/std::log(branching_factor(progress_of_game)));
 
     current_variation_store current_variation;
     auto result = search_game_tree(board,
@@ -103,6 +104,7 @@ const Move& Minimax_AI::choose_move_minimax(const Board& board, const Clock& clo
                                    minimum_search_depth,
                                    maximum_variation_depth,
                                    clock,
+                                   progress_of_game,
                                    Alpha_Beta_Value::alpha_start(board.whose_turn()),
                                    Alpha_Beta_Value::beta_start(board.whose_turn()),
                                    principal_variation,
@@ -185,6 +187,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                    const size_t minimum_search_depth,
                                                    const size_t maximum_search_depth,
                                                    const Clock& clock,
+                                                   const double progress_of_game,
                                                    Alpha_Beta_Value alpha,
                                                    const Alpha_Beta_Value& beta,
                                                    std::vector<const Move*>& principal_variation,
@@ -218,7 +221,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
 
     // Consider principal variation move first, if any.
     const auto partition_start = std::next(all_legal_moves.begin(), principal_variation.empty() ? 0 : 1);
-    sort_moves(partition_start, all_legal_moves.end(), board);
+    sort_moves(partition_start, all_legal_moves.end(), board, progress_of_game);
 
     const auto perspective = board.whose_turn();
     Game_Tree_Node_Result best_result = {Game_Tree_Node_Result::lose_score,
@@ -265,7 +268,7 @@ Game_Tree_Node_Result Minimax_AI::search_game_tree(const Board& board,
                                                           clock.running_time_left())/(moves_left--);
 
         const auto result = search_further(move_result, depth, next_board, principal_variation, minimum_search_depth, maximum_search_depth, time_allotted_for_this_move) ?
-            search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, maximum_search_depth, clock, beta, alpha, principal_variation, current_variation) :
+            search_game_tree(next_board, time_allotted_for_this_move, minimum_search_depth, maximum_search_depth, clock, progress_of_game, beta, alpha, principal_variation, current_variation) :
             evaluate(move_result, next_board, current_variation, perspective, evaluate_start_time);
 
         if(result.value(perspective) > best_result.value(perspective))
@@ -651,9 +654,9 @@ void Minimax_AI::reset() const noexcept
     commentary.clear();
 }
 
-void Minimax_AI::mutate(const size_t mutation_rate, const double enable_probability) noexcept
+void Minimax_AI::mutate(const size_t mutation_rate) noexcept
 {
-    genome.mutate(mutation_rate, enable_probability);
+    genome.mutate(mutation_rate);
     recalibrate_self();
 }
 

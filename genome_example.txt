@@ -1,6 +1,5 @@
 ID: 704622
 Name: Piece Strength Gene
-Enabled: True
 B: 3.589479
 N: 2.623422
 P: 0.932504
@@ -8,7 +7,6 @@ Q: 9.389757
 R: 4.592221
 
 Name: Look Ahead Gene
-Enabled: True
 Branching Factor - Endgame: 5.602890
 Branching Factor - Opening: 10.485995
 Game Length Uncertainty: 0.524399
@@ -17,64 +15,76 @@ Speculation - Endgame: 2.121129
 Speculation - Opening: 1.958368
 
 Name: Move Sorting Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Sorter Count: 1
 Sorter Order: Force Changers, Attack Dodgers, King Checkers, Pawn Pushers
 
 Name: Total Force Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.612916
 Priority - Opening: 0.681017
 
 Name: Freedom to Move Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.066539
 Priority - Opening: -0.001354
 
 Name: Pawn Advancement Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.020239
 Priority - Opening: 0.005891
 
 Name: Passed Pawn Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.033088
 Priority - Opening: -0.003243
 
 Name: Opponent Pieces Targeted Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.074722
 Priority - Opening: 0.053479
 
 Name: Sphere of Influence Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.062989
 Priority - Opening: 0.008805
 
 Name: King Confinement Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.002079
 Priority - Opening: -0.008006
 
 Name: King Protection Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: -0.032858
 Priority - Opening: 0.048810
 
 Name: Castling Possible Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Kingside Preference: 0.529596
 Priority - Endgame: 0.043095
 Priority - Opening: 0.039400
 Queenside Preference: 0.470404
 
 Name: Checkmate Material Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.023298
 Priority - Opening: 0.081427
 
 Name: Pawn Structure Gene
-Enabled: True
+Activation Begin: 0.0
+Activation End: 1.0
 Guarded By Pawn: 0.622797
 Guarded By Piece: 0.377203
 Priority - Endgame: 0.012929

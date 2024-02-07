@@ -1247,7 +1247,7 @@ namespace
         std::vector<Minimax_AI> test_pool(10);
         for(auto& ai : test_pool)
         {
-            ai.mutate(100, 0.5);
+            ai.mutate(100);
             ai.print(pool_file_name);
         }
 
@@ -1267,7 +1267,7 @@ namespace
     void self_swapped_minimax_ai_is_unchanged(bool& tests_passed)
     {
         auto self_swap_ai = Minimax_AI();
-        self_swap_ai.mutate(100, 0.5);
+        self_swap_ai.mutate(100);
         const auto self_write_file_name = "self_original.txt";
         remove(self_write_file_name);
         self_swap_ai.print(self_write_file_name);
@@ -1287,7 +1287,7 @@ namespace
     void self_assigned_minimax_ai_is_unchanged(bool& tests_passed)
     {
         auto self_assign_ai = Minimax_AI();
-        self_assign_ai.mutate(100, 0.5);
+        self_assign_ai.mutate(100);
         auto self_write_file_name = "self_assign_original.txt";
         remove(self_write_file_name);
         self_assign_ai.print(self_write_file_name);

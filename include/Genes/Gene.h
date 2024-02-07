@@ -9,6 +9,7 @@
 #include "Game/Color.h"
 
 #include "Genes/Interpolated_Gene_Value.h"
+#include "Genes/Gene_Value.h"
 
 class Board;
 class Piece_Strength_Gene;
@@ -38,7 +39,7 @@ class Gene
         void read_from(const std::string& file_name);
 
         //! \brief Applies a random mutation to the priority or other aspect of a gene.
-        void mutate(double enable_probability) noexcept;
+        void mutate() noexcept;
 
         //! \brief Gives a numerical score to the board in the arguments.
         //!
@@ -94,12 +95,19 @@ class Gene
         //! \brief When preparing to write gene data to a file, regulatory genes can use this to delete unused Priority data.
         void delete_priorities(std::map<std::string, std::string>& properties) const noexcept;
 
-        bool active() const noexcept;
+        //! \brief When preparing to write gene data to a file, regulatory genes can use this to delete unused Activation data.
+        void delete_activations(std::map<std::string, std::string>& properties) const noexcept;
+
+        //! \brief Determine if the gene is active at a phase in the game.
+        //! 
+        //! \param game_progress How far along the game has progressed.
+        bool active(double game_progress) const noexcept;
 
     private:
         std::string gene_name;
         Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0, 0.05};
-        bool enabled = true;
+        Gene_Value gene_turn_on_progress{"Activation Begin", 0.0, 0.01};
+        Gene_Value gene_turn_off_progress{"Activation End", 1.0, 0.01};
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
 

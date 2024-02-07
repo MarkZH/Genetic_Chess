@@ -77,10 +77,6 @@ def parse_gene_pool(gene_pool_file_name: str) -> tuple[list[str], npt.NDArray]:
                                 value = str(sorters.index(sorter) + 1)
                                 add_value_to_data_line(data_line, header_line, title, value, int)
                             continue
-                        elif parameter == "Enabled":
-                            title = current_gene + ' - ' + parameter
-                            value = value == "True"
-                            data_type = float
                         else:
                             title = current_gene + ' - ' + parameter
                             data_type = float
@@ -135,6 +131,9 @@ def plot_genome(gene_pool_filename: str) -> None:
     # Plot evolution of individual genes
     for column_index, column_name in enumerate(column_names[1:], 1):
         this_data = data[:, column_index]
+        if column_name.endswith("Activation Begin"):
+            activation_begin_data = this_data.copy()
+            continue
         name = column_name.replace('__', ' - ').replace('_', ' ')
         is_sorter_count = name == 'Move Sorting Gene - Sorter Count'
         if is_sorter_count:
@@ -152,16 +151,22 @@ def plot_genome(gene_pool_filename: str) -> None:
 
             for column in range(np.size(this_data, 1) if is_sorter_count else 1):
                 label = str(column) if is_sorter_count else None
+                is_activation_end = column_name.endswith("Activation End")
+                if not label and is_activation_end:
+                    label = "End"
                 style = '-' if is_sorter_count else '.'
                 linewidth = common.plot_params['plot line weight'] if is_sorter_count else None
                 markersize = None if is_sorter_count else common.plot_params["scatter dot size"]
                 d = this_data[:, column] if is_sorter_count else this_data
-                noise = np.random.uniform(-0.45, 0.45, d.shape) if name.endswith("Enabled") else np.zeros_like(d)
-                these_axes.plot(common.centered_x_axis(id_list, d), d + noise, style, markersize=markersize, linewidth=linewidth, label=label)
-                if name.endswith("Enabled"):
-                    these_axes.set_yticks([0, 1])
-                    these_axes.set_yticklabels(["Disabled", "Enabled"])
-                    these_axes.axhline(0.5, color="k")
+                if is_activation_end:
+                    these_axes.plot(common.centered_x_axis(id_list, activation_begin_data), activation_begin_data, style, markersize=markersize, linewidth=linewidth, label="Begin")
+                these_axes.plot(common.centered_x_axis(id_list, d), d, style, markersize=markersize, linewidth=linewidth, label=label)
+                if is_activation_end:
+                    these_axes.axhline(y=1.0, color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
+                    legend = these_axes.legend()
+                    for line in legend.get_lines():
+                        line.set_markersize(line.get_markersize()*5)
+                    name = " ".join(name.split()[:-1])
 
             these_axes.set_xlabel(column_names[0])
             if is_sorter_count:
@@ -170,9 +175,8 @@ def plot_genome(gene_pool_filename: str) -> None:
                 for line in leg.get_lines():
                     line.set_linewidth(2*line.get_linewidth())
 
-            if all(word not in name for word in ['Speculation', 'Enabled']):
+            if "Speculation" not in name:
                 these_axes.axhline(color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
-
             these_axes.set_title(name)
 
             pic_ext = common.picture_file_args["format"]
