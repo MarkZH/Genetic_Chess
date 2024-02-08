@@ -1791,6 +1791,7 @@ namespace
             }
         }
     }
+
     void probability_check(bool& tests_passed)
     {
         const auto number_of_trials = 1'000'000;
@@ -1801,31 +1802,18 @@ namespace
         {
             rational_success_count += Random::success_probability(probability_numerator, probability_denominator) ? 1 : 0;
         }
-        const auto p1 = double(probability_numerator)/probability_denominator;
-        const auto expected_rational_successes = number_of_trials*p1;
-        const auto standard_deviation = std::sqrt(number_of_trials*p1*(1.0 - p1));
+        const auto probability = double(probability_numerator)/probability_denominator;
+        const auto expected_successes = int(number_of_trials*probability);
+        const auto standard_deviation = int(std::sqrt(number_of_trials*probability*(1.0 - probability)));
+        const auto maximum_deviation = 4*standard_deviation;
         if( ! test_result(tests_passed,
-                          std::abs(rational_success_count - expected_rational_successes) < 4*standard_deviation,
+                          std::abs(rational_success_count - expected_successes) < maximum_deviation,
                           "Wrong number of successes with rational probability"))
         {
             std::cout << "Rational success probability (" << probability_numerator << "/" << probability_denominator << ") --> "
-                << String::format_integer(rational_success_count, ",") << " / " << String::format_integer(number_of_trials, ",") << std::endl;
-        }
-
-        const auto probability = 0.0133;
-        auto real_success_count = 0;
-        for(auto trial = 0; trial < number_of_trials; ++trial)
-        {
-            real_success_count += Random::success_probability(probability) ? 1 : 0;
-        }
-        const auto expected_real_success = number_of_trials * probability;
-        const auto real_standard_deviation = std::sqrt(number_of_trials*probability*(1 - probability));
-        if( ! test_result(tests_passed,
-                          std::abs(real_success_count - expected_real_success) < 4*real_standard_deviation,
-                          "Wrong number of sucesses with real probability"))
-        {
-            std::cout << "Real success probability (" << probability << ") --> "
-                << String::format_integer(real_success_count, ",") << " / " << String::format_integer(number_of_trials, ",") << std::endl;
+                << String::format_integer(rational_success_count, ",") << " / " << String::format_integer(number_of_trials, ",")
+                << "\nExpected sucesses: " << String::format_integer(expected_successes, ",") << " +/- " << String::format_integer(maximum_deviation, ",")
+                << std::endl;
         }
     }
 }

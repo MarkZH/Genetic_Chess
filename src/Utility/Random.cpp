@@ -50,15 +50,6 @@ bool Random::success_probability(const size_t successes, const size_t attempts) 
     return random_integer<size_t>(1, attempts) <= successes;
 }
 
-bool Random::success_probability(const double probability) noexcept
-{
-    assert(0.0 <= probability && probability <= 1.0);
-    thread_local static auto generator = get_new_seeded_random_bit_source();
-    using bd = std::bernoulli_distribution;
-    thread_local static auto dist = bd{};
-    return dist(generator, bd::param_type{probability});
-}
-
 std::string Random::random_string(const size_t size) noexcept
 {
     std::string s(size, ' ');
