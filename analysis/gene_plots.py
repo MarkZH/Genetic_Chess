@@ -155,17 +155,17 @@ def plot_genome(gene_pool_filename: str) -> None:
                 if not label and is_activation_end:
                     label = "End"
                 style = '-' if is_sorter_count else '.'
-                linewidth = common.plot_params['plot line weight'] if is_sorter_count else None
-                markersize = None if is_sorter_count else common.plot_params["scatter dot size"]
+                plot_options = dict(linewidth=common.plot_params['plot line weight'] if is_sorter_count else None,
+                                    markersize=None if is_sorter_count else common.plot_params["scatter dot size"])
                 d = this_data[:, column] if is_sorter_count else this_data
                 if is_activation_end:
-                    these_axes.plot(common.centered_x_axis(id_list, activation_begin_data), activation_begin_data, style, markersize=markersize, linewidth=linewidth, label="Begin")
-                these_axes.plot(common.centered_x_axis(id_list, d), d, style, markersize=markersize, linewidth=linewidth, label=label)
+                    these_axes.plot(id_list, activation_begin_data, style, **plot_options, label="Begin")
+                these_axes.plot(common.centered_x_axis(id_list, d), d, style, **plot_options, label=label)
                 if is_activation_end:
                     gene_is_active = this_data <= activation_begin_data
                     if np.any(gene_is_active):
                         mean_activation_point = (this_data + activation_begin_data)/2
-                        these_axes.plot(id_list[gene_is_active], mean_activation_point[gene_is_active], style, markersize=markersize, linewidth=linewidth, label="Inactive")
+                        these_axes.plot(id_list[gene_is_active], mean_activation_point[gene_is_active], style, **plot_options, label="Inactive")
                     these_axes.axhline(y=1.0, color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
                     legend = these_axes.legend()
                     for line in legend.get_lines():
