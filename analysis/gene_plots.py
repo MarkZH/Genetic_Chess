@@ -175,8 +175,9 @@ def plot_genome(gene_pool_filename: str) -> None:
                 for line in leg.get_lines():
                     line.set_linewidth(2*line.get_linewidth())
 
-            if "Speculation" not in name:
+            if 'Speculation' not in name:
                 these_axes.axhline(color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
+
             these_axes.set_title(name)
 
             pic_ext = common.picture_file_args["format"]
