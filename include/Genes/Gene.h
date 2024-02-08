@@ -117,6 +117,9 @@ class Gene
             throw Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
         }
 
+        //! \brief Mutate the Activation components
+        void mutate_activations() noexcept;
+
         //! \brief A method overridden by derived genes to mutate more specific gene components.
         //!
         //! By default, this method does nothing.

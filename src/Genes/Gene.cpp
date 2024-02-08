@@ -196,29 +196,34 @@ void Gene::mutate() noexcept
     }
     else if(Random::success_probability(activation_count, properties.size() - priority_count))
     {
-        const auto mutate_turn_on = Random::coin_flip();
-        auto& mutating_value = mutate_turn_on ? gene_turn_on_progress : gene_turn_off_progress;
-        auto& clamping_value = mutate_turn_on ? gene_turn_off_progress : gene_turn_on_progress;
-        mutating_value.mutate();
-        
-        // The end margin makes it easier for this gene value to end up activating the gene for the
-        // first and/or last moves. Otherwise, if the lower limit was zero and the upper limit one,
-        // then half of all mutations would result in genes being turned off and the first/last moves.
-        const auto end_margin = 0.05;
-        const auto lower_limit = 0.0 - end_margin;
-        const auto upper_limit = 1.0 + end_margin;
-        mutating_value.value() = std::clamp(mutating_value.value(), lower_limit, upper_limit);
-        
-        // Allow the begin and end of activation to be in reverse order by the same margin to
-        // more firmly shut off the gene.
-        const auto clamping_lower_limit = mutate_turn_on ? mutating_value.value() - end_margin : lower_limit;
-        const auto clampling_uper_limit = mutate_turn_on ? upper_limit : mutating_value.value() + end_margin;
-        clamping_value.value() = std::clamp(clamping_value.value(), clamping_lower_limit, clampling_uper_limit);
+        mutate_activations();
     }
     else
     {
         gene_specific_mutation();
     }
+}
+
+void Gene::mutate_activations() noexcept
+{
+    const auto mutate_turn_on = Random::coin_flip();
+    auto& mutating_value = mutate_turn_on ? gene_turn_on_progress : gene_turn_off_progress;
+    auto& clamping_value = mutate_turn_on ? gene_turn_off_progress : gene_turn_on_progress;
+    mutating_value.mutate();
+
+    // The end margin makes it easier for this gene value to end up activating the gene for the
+    // first and/or last moves. Otherwise, if the lower limit was zero and the upper limit one,
+    // then half of all mutations would result in genes being turned off and the first/last moves.
+    const auto end_margin = 0.05;
+    const auto lower_limit = 0.0 - end_margin;
+    const auto upper_limit = 1.0 + end_margin;
+    mutating_value.value() = std::clamp(mutating_value.value(), lower_limit, upper_limit);
+
+    // Allow the begin and end of activation to be in reverse order by the same margin to
+    // more firmly shut off the gene.
+    const auto clamping_lower_limit = mutate_turn_on ? mutating_value.value() - end_margin : lower_limit;
+    const auto clampling_uper_limit = mutate_turn_on ? upper_limit : mutating_value.value() + end_margin;
+    clamping_value.value() = std::clamp(clamping_value.value(), clamping_lower_limit, clampling_uper_limit);
 }
 
 void Gene::gene_specific_mutation() noexcept
