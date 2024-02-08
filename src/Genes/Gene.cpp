@@ -35,18 +35,14 @@ void Gene::adjust_properties(std::map<std::string, std::string>&) const noexcept
 
 void Gene::load_properties(const std::map<std::string, std::string>& properties)
 {
-    if(properties.count(priorities.name(Game_Stage::OPENING)) > 0 && properties.count(priorities.name(Game_Stage::ENDGAME)) > 0)
+    if(has_priority())
     {
         priorities.load_from_map(properties);
     }
 
-    if(properties.count(gene_turn_on_progress.name()) > 0)
+    if(has_activation())
     {
         gene_turn_on_progress.load_from_map(properties);
-    }
-
-    if(properties.count(gene_turn_off_progress.name()) > 0)
-    {
         gene_turn_off_progress.load_from_map(properties);
     }
 
@@ -193,7 +189,7 @@ void Gene::mutate() noexcept
 {
     const auto properties = list_properties();
     const auto priority_count = has_priority() ? 2 : 0;
-    const auto activation_count = 2;
+    const auto activation_count = has_activation() ? 2 : 0;
     if(Random::success_probability(priority_count, properties.size()))
     {
         priorities.mutate();
@@ -249,6 +245,11 @@ void Gene::reset_piece_strength_gene(const Piece_Strength_Gene*) noexcept
 bool Gene::has_priority() const noexcept
 {
     return list_properties().count(priorities.name(Game_Stage::OPENING)) != 0;
+}
+
+bool Gene::has_activation() const noexcept
+{
+    return list_properties().count(gene_turn_on_progress.name()) != 0;
 }
 
 void Gene::test(bool& test_variable, const Board& board, const Piece_Color perspective, const double expected_score) const noexcept

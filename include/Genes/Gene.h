@@ -144,8 +144,11 @@ class Gene
         //! \brief Load the properties specific to the Gene subtype.
         virtual void load_gene_properties(const std::map<std::string, std::string>& properties);
 
-        //! \brief Returns whether the gene has a Priority component
+        //! \brief Returns whether the gene has Priority components
         bool has_priority() const noexcept;
+
+        //! \brief Returns whether the gene has Activation components
+        bool has_activation() const noexcept;
 };
 
 //! \brief A template class to create the duplicate method for all Gene subtypes.
