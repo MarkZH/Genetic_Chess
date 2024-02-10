@@ -151,18 +151,15 @@ def plot_genome(gene_pool_filename: str) -> None:
 
             for column in range(np.size(this_data, 1) if is_sorter_count else 1):
                 label = str(column) if is_sorter_count else None
-                is_activation_end = column_name.endswith("Activation End")
-                if not label and is_activation_end:
-                    label = "End"
                 style = '-' if is_sorter_count else '.'
                 plot_options = dict(linewidth=common.plot_params['plot line weight'] if is_sorter_count else None,
                                     markersize=None if is_sorter_count else common.plot_params["scatter dot size"])
                 d = this_data[:, column] if is_sorter_count else this_data
-                if is_activation_end:
-                    these_axes.plot(id_list, activation_begin_data, style, **plot_options, label="Begin")
-                these_axes.plot(common.centered_x_axis(id_list, d), d, style, **plot_options, label=label)
-                if is_activation_end:
-                    gene_is_inactive = this_data <= activation_begin_data
+                if column_name.endswith("Activation End"):
+                    gene_is_active = this_data > activation_begin_data
+                    gene_is_inactive = np.logical_not(gene_is_active)
+                    these_axes.plot(id_list[gene_is_active], activation_begin_data[gene_is_active], style, **plot_options, label="Begin")
+                    these_axes.plot(id_list[gene_is_active], d[gene_is_active], style, **plot_options, label="End")
                     if np.any(gene_is_inactive):
                         mean_activation_point = (this_data + activation_begin_data)/2
                         these_axes.plot(id_list[gene_is_inactive], mean_activation_point[gene_is_inactive], style, **plot_options, label="Inactive")
@@ -170,7 +167,9 @@ def plot_genome(gene_pool_filename: str) -> None:
                     legend = these_axes.legend()
                     for line in legend.get_lines():
                         line.set_markersize(line.get_markersize()*5)
-                    name = " ".join(name.split()[:-1])
+                    name = name.removesuffix(" End")
+                else:
+                    these_axes.plot(common.centered_x_axis(id_list, d), d, style, **plot_options, label=label)
 
             these_axes.set_xlabel(column_names[0])
             if is_sorter_count:
