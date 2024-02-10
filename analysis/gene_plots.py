@@ -162,10 +162,10 @@ def plot_genome(gene_pool_filename: str) -> None:
                     these_axes.plot(id_list, activation_begin_data, style, **plot_options, label="Begin")
                 these_axes.plot(common.centered_x_axis(id_list, d), d, style, **plot_options, label=label)
                 if is_activation_end:
-                    gene_is_active = this_data <= activation_begin_data
-                    if np.any(gene_is_active):
+                    gene_is_inactive = this_data <= activation_begin_data
+                    if np.any(gene_is_inactive):
                         mean_activation_point = (this_data + activation_begin_data)/2
-                        these_axes.plot(id_list[gene_is_active], mean_activation_point[gene_is_active], style, **plot_options, label="Inactive")
+                        these_axes.plot(id_list[gene_is_inactive], mean_activation_point[gene_is_inactive], style, **plot_options, label="Inactive")
                     these_axes.axhline(y=1.0, color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
                     legend = these_axes.legend()
                     for line in legend.get_lines():
