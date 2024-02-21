@@ -1,6 +1,8 @@
 ID: 1
 
 Name: Pawn Structure Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Guarded By Pawn: 0.6
 Guarded By Piece: 0.4
 Guarded By Pawn: 0.2

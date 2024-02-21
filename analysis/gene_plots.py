@@ -47,7 +47,7 @@ def parse_gene_pool(gene_pool_file_name: str) -> tuple[list[str], npt.NDArray]:
     # Read gene pool file for data
     parsed_data = []
     with open(gene_pool_file_name) as f:
-        new_data_line: list[int | None] = [None]*len(header_line)
+        new_data_line: list[int | float | None] = [None]*len(header_line)
         data_line = new_data_line.copy()
         current_gene = ''
         for line in f:
@@ -131,6 +131,9 @@ def plot_genome(gene_pool_filename: str) -> None:
     # Plot evolution of individual genes
     for column_index, column_name in enumerate(column_names[1:], 1):
         this_data = data[:, column_index]
+        if column_name.endswith("Activation Begin"):
+            activation_begin_data = this_data.copy()
+            continue
         name = column_name.replace('__', ' - ').replace('_', ' ')
         is_sorter_count = name == 'Move Sorting Gene - Sorter Count'
         if is_sorter_count:
@@ -149,10 +152,24 @@ def plot_genome(gene_pool_filename: str) -> None:
             for column in range(np.size(this_data, 1) if is_sorter_count else 1):
                 label = str(column) if is_sorter_count else None
                 style = '-' if is_sorter_count else '.'
-                linewidth = common.plot_params['plot line weight'] if is_sorter_count else None
-                markersize = None if is_sorter_count else common.plot_params["scatter dot size"]
+                plot_options = dict(linewidth=common.plot_params['plot line weight'] if is_sorter_count else None,
+                                    markersize=None if is_sorter_count else common.plot_params["scatter dot size"])
                 d = this_data[:, column] if is_sorter_count else this_data
-                these_axes.plot(common.centered_x_axis(id_list, d), d, style, markersize=markersize, linewidth=linewidth, label=label)
+                if column_name.endswith("Activation End"):
+                    gene_is_active = this_data > activation_begin_data
+                    gene_is_inactive = np.logical_not(gene_is_active)
+                    these_axes.plot(id_list[gene_is_active], activation_begin_data[gene_is_active], style, **plot_options, label="Begin")
+                    these_axes.plot(id_list[gene_is_active], d[gene_is_active], style, **plot_options, label="End")
+                    if np.any(gene_is_inactive):
+                        mean_activation_point = (this_data + activation_begin_data)/2
+                        these_axes.plot(id_list[gene_is_inactive], mean_activation_point[gene_is_inactive], style, **plot_options, label="Inactive")
+                    these_axes.axhline(y=1.0, color=common.plot_params["x-axis color"], linewidth=common.plot_params["x-axis weight"])
+                    legend = these_axes.legend()
+                    for line in legend.get_lines():
+                        line.set_markersize(line.get_markersize()*5)
+                    name = name.removesuffix(" End")
+                else:
+                    these_axes.plot(common.centered_x_axis(id_list, d), d, style, **plot_options, label=label)
 
             these_axes.set_xlabel(column_names[0])
             if is_sorter_count:

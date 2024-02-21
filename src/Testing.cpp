@@ -257,6 +257,8 @@ namespace
     void math_normalize_test(bool& tests_passed);
     void scoped_push_back_works_as_advertised(bool& tests_passed);
     void has_exactly_n_works_as_advertised(bool& tests_passed);
+
+    void probability_check(bool& tests_passed);
 }
 
 bool run_tests()
@@ -372,6 +374,7 @@ bool run_tests()
 
     scoped_push_back_works_as_advertised(tests_passed);
     has_exactly_n_works_as_advertised(tests_passed);
+    probability_check(tests_passed);
 
 
     std::cout << (tests_passed ? "All tests passed." : "Tests failed.") << '\n';
@@ -1795,6 +1798,31 @@ namespace
                             result == (value == reps),
                             std::string{"has_exactly_n failed for "} + std::to_string(reps) + " copies of " + std::to_string(value));
             }
+        }
+    }
+
+    void probability_check(bool& tests_passed)
+    {
+        const auto number_of_trials = 1'000'000;
+        const auto probability_numerator = 1;
+        const auto probability_denominator = 3;
+        auto rational_success_count = 0;
+        for(auto trial = 0; trial < number_of_trials; ++trial)
+        {
+            rational_success_count += Random::success_probability(probability_numerator, probability_denominator) ? 1 : 0;
+        }
+        const auto probability = double(probability_numerator)/probability_denominator;
+        const auto expected_successes = int(number_of_trials*probability);
+        const auto standard_deviation = int(std::sqrt(number_of_trials*probability*(1.0 - probability)));
+        const auto maximum_deviation = 4*standard_deviation;
+        if( ! test_result(tests_passed,
+                          std::abs(rational_success_count - expected_successes) < maximum_deviation,
+                          "Wrong number of successes with rational probability"))
+        {
+            std::cout << "Rational success probability (" << probability_numerator << "/" << probability_denominator << ") --> "
+                << String::format_integer(rational_success_count, ",") << " / " << String::format_integer(number_of_trials, ",")
+                << "\nExpected sucesses: " << String::format_integer(expected_successes, ",") << " +/- " << String::format_integer(maximum_deviation, ",")
+                << std::endl;
         }
     }
 }
