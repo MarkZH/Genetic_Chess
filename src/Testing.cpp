@@ -1820,8 +1820,8 @@ namespace
                           "Wrong number of successes with rational probability"))
         {
             std::cout << "Rational success probability (" << probability_numerator << "/" << probability_denominator << ") --> "
-                << String::format_integer(rational_success_count, ",") << " / " << String::format_integer(number_of_trials, ",")
-                << "\nExpected sucesses: " << String::format_integer(expected_successes, ",") << " +/- " << String::format_integer(maximum_deviation, ",")
+                << String::format_number(rational_success_count) << " / " << String::format_number(number_of_trials)
+                << "\nExpected sucesses: " << String::format_number(expected_successes) << " +/- " << String::format_number(maximum_deviation)
                 << std::endl;
         }
     }
