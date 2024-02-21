@@ -24,6 +24,7 @@ Look_Ahead_Gene::Look_Ahead_Gene() noexcept : Clonable_Gene("Look Ahead Gene")
 void Look_Ahead_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
     delete_priorities(properties);
+    delete_activations(properties);
     mean_game_length.write_to_map(properties);
     game_length_uncertainty.write_to_map(properties);
     speculation_constants.write_to_map(properties);

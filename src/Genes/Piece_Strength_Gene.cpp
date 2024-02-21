@@ -23,6 +23,7 @@ Piece_Strength_Gene::Piece_Strength_Gene() noexcept : Clonable_Gene("Piece Stren
 void Piece_Strength_Gene::adjust_properties(std::map<std::string, std::string>& properties) const noexcept
 {
     delete_priorities(properties);
+    delete_activations(properties);
 
     constexpr auto standard_all_pieces_score = 2*5.0 + // rooks
                                                2*3.0 + // knights
@@ -34,7 +35,7 @@ void Piece_Strength_Gene::adjust_properties(std::map<std::string, std::string>& 
     {
         const auto piece = Piece{Piece_Color::WHITE, static_cast<Piece_Type>(piece_index)};
         const auto name = std::string(1, piece.fen_symbol());
-        const auto value = piece_value(piece.type())/standardize;
+        const auto value = piece_strength[piece_index]/standardize;
         properties[name] = std::to_string(value);
     }
 }
@@ -43,6 +44,11 @@ void Piece_Strength_Gene::load_gene_properties(const std::map<std::string, std::
 {
     for(const auto& [name, value] : properties)
     {
+        if(name == "Enabled")
+        {
+            continue;
+        }
+
         piece_value(Piece{name[0]}.type()) = String::to_number<double>(value);
     }
     renormalize_values();
