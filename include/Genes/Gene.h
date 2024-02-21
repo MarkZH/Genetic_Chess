@@ -9,6 +9,7 @@
 #include "Game/Color.h"
 
 #include "Genes/Interpolated_Gene_Value.h"
+#include "Genes/Gene_Value.h"
 
 class Board;
 class Piece_Strength_Gene;
@@ -94,9 +95,19 @@ class Gene
         //! \brief When preparing to write gene data to a file, regulatory genes can use this to delete unused Priority data.
         void delete_priorities(std::map<std::string, std::string>& properties) const noexcept;
 
+        //! \brief When preparing to write gene data to a file, regulatory genes can use this to delete unused Activation data.
+        void delete_activations(std::map<std::string, std::string>& properties) const noexcept;
+
+        //! \brief Determine if the gene is active at a phase in the game.
+        //! 
+        //! \param game_progress How far along the game has progressed.
+        bool active(double game_progress) const noexcept;
+
     private:
         std::string gene_name;
         Interpolated_Gene_Value priorities = {"Priority", 1.0, 1.0, 0.05};
+        Gene_Value gene_turn_on_progress{"Activation Begin", 0.0, 0.01};
+        Gene_Value gene_turn_off_progress{"Activation End", 1.0, 0.01};
 
         virtual double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept = 0;
 
@@ -105,6 +116,9 @@ class Gene
         {
             throw Error("Invalid line in while reading for " + name() + ": " + line + "\n" + reason);
         }
+
+        //! \brief Mutate the Activation components
+        void mutate_activations() noexcept;
 
         //! \brief A method overridden by derived genes to mutate more specific gene components.
         //!
@@ -133,8 +147,11 @@ class Gene
         //! \brief Load the properties specific to the Gene subtype.
         virtual void load_gene_properties(const std::map<std::string, std::string>& properties);
 
-        //! \brief Returns whether the gene has a Priority component
+        //! \brief Returns whether the gene has Priority components
         bool has_priority() const noexcept;
+
+        //! \brief Returns whether the gene has Activation components
+        bool has_activation() const noexcept;
 };
 
 //! \brief A template class to create the duplicate method for all Gene subtypes.

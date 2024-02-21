@@ -15,52 +15,76 @@ Speculation - Endgame: 2.121129
 Speculation - Opening: 1.958368
 
 Name: Move Sorting Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Sorter Count: 1
 Sorter Order: Force Changers, Attack Dodgers, King Checkers, Pawn Pushers
 
 Name: Total Force Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.612916
 Priority - Opening: 0.681017
 
 Name: Freedom to Move Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.066539
 Priority - Opening: -0.001354
 
 Name: Pawn Advancement Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.020239
 Priority - Opening: 0.005891
 
 Name: Passed Pawn Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.033088
 Priority - Opening: -0.003243
 
 Name: Opponent Pieces Targeted Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.074722
 Priority - Opening: 0.053479
 
 Name: Sphere of Influence Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.062989
 Priority - Opening: 0.008805
 
 Name: King Confinement Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.002079
 Priority - Opening: -0.008006
 
 Name: King Protection Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: -0.032858
 Priority - Opening: 0.048810
 
 Name: Castling Possible Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Kingside Preference: 0.529596
 Priority - Endgame: 0.043095
 Priority - Opening: 0.039400
 Queenside Preference: 0.470404
 
 Name: Checkmate Material Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Priority - Endgame: 0.023298
 Priority - Opening: 0.081427
 
 Name: Pawn Structure Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Guarded By Pawn: 0.622797
 Guarded By Piece: 0.377203
 Priority - Endgame: 0.012929

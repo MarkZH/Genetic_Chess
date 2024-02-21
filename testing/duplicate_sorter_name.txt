@@ -1,6 +1,8 @@
 ID: 98758
 
 Name: Move Sorting Gene
+Activation Begin: 0.0
+Activation End: 1.0
 Sorter Count: 2
 Sorter Order: Force Changers, Pawn Movers, Dodgers, Force Changers
 

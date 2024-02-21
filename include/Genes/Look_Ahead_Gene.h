@@ -45,11 +45,6 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
         //! \param game_progress An estimate of how much of the game has been played (0.0 to 1.0).
         double branching_factor(double game_progress) const noexcept;
 
-        //! \brief Estimates the number of remaining moves (by one player) in a board position.
-        //!
-        //! \param board The board position in the game.
-        double expected_moves_left(const Board& board) const noexcept;
-
     private:
         // Controls over/under-allocation of time
         Interpolated_Gene_Value speculation_constants = {"Speculation", 1.0, 1.0, 0.05};
@@ -61,6 +56,7 @@ class Look_Ahead_Gene : public Clonable_Gene<Look_Ahead_Gene>
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
         void gene_specific_mutation() noexcept override;
+        double expected_moves_left(const Board& board) const noexcept;
 
         void adjust_properties(std::map<std::string, std::string>& properties) const noexcept override;
         void load_gene_properties(const std::map<std::string, std::string>& properties) override;

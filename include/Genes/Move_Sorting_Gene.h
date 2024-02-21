@@ -50,10 +50,16 @@ class Move_Sorting_Gene : public Clonable_Gene<Move_Sorting_Gene>
         //! \param begin An iterator to the beginning of the move list to be sorted.
         //! \param end An iterator to the end of the move list to be sorted.
         //! \param board The board from which the move list is derived.
+        //! \param game_progress How far along the game has progressed.
         template<typename Iter>
-        void sort_moves(Iter begin, Iter end, const Board& board) const noexcept
+        void sort_moves(Iter begin, Iter end, const Board& board, const double game_progress) const noexcept
         {
-            sort_moves(begin, end, board, 0);
+            if( ! active(game_progress))
+            {
+                return;
+            }
+
+            sort_moves_recursive(begin, end, board, 0);
         }
 
     private:
@@ -68,7 +74,7 @@ class Move_Sorting_Gene : public Clonable_Gene<Move_Sorting_Gene>
         void load_gene_properties(const std::map<std::string, std::string>& properties) override;
 
         template<typename Iter>
-        void sort_moves(Iter begin, Iter end, const Board& board, const size_t sorter_index) const noexcept
+        void sort_moves_recursive(Iter begin, Iter end, const Board& board, const size_t sorter_index) const noexcept
         {
             if(sorter_index < sorter_count)
             {
@@ -79,8 +85,8 @@ class Move_Sorting_Gene : public Clonable_Gene<Move_Sorting_Gene>
                                                    });
 
                 const auto next_index = sorter_index + 1;
-                sort_moves(begin, border, board, next_index);
-                sort_moves(border, end, board, next_index);
+                sort_moves_recursive(begin, border, board, next_index);
+                sort_moves_recursive(border, end, board, next_index);
             }
         }
 };

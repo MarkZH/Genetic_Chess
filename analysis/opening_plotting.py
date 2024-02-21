@@ -68,8 +68,7 @@ def plot_opening(openings: list[str], plot_title: str, game_file_name: str):
     legend_handles, legend_labels = axes.get_legend_handles_labels()
     for label, stack in zip(legend_labels, stacks):
         if label == "Other":
-            stack.set_facecolor("gray")
-            stack.set_hatch("//")
+            stack.set_facecolor("lightgray")
     plot_label_count = 20
     leg = axes.legend(reversed(legend_handles), reversed(legend_labels),
                       fontsize=common.plot_params["legend text size"],

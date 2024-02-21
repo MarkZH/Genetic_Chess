@@ -89,7 +89,7 @@ class Genome
         //!
         //! \param board The current board position.
         //! \param clock The game clock.
-        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept; // how much time to use for this move
+        Clock::seconds time_to_examine(const Board& board, const Clock& clock) const noexcept;
 
         //! \brief Returns a factor that is multiplied by the time allocated to examine a branch of the game tree.
         //!
@@ -126,7 +126,6 @@ class Genome
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;
-        double expected_number_of_moves_left(const Board& board) const noexcept;
 
         template<typename Gene_Type>
         constexpr const Gene_Type& gene_reference() const noexcept
@@ -141,10 +140,11 @@ class Genome
         //! \param begin An iterator to the beginning of the move list to be sorted.
         //! \param end An iterator to the end of the move list to be sorted.
         //! \param board The board from which the move list is derived.
+        //! \param game_progress How far along the game has progressed.
         template<typename Iter>
-        void sort_moves(Iter begin, Iter end, const Board& board) const noexcept
+        void sort_moves(Iter begin, Iter end, const Board& board, const double game_progress) const noexcept
         {
-            gene_reference<Move_Sorting_Gene>().sort_moves(begin, end, board);
+            gene_reference<Move_Sorting_Gene>().sort_moves(begin, end, board, game_progress);
         }
 };
 
