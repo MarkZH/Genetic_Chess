@@ -37,7 +37,7 @@ namespace
     []()
     {
         // One entry for each piece on each square (including no piece)
-        std::array<std::array<uint64_t, 13>, 64> hash_cache;
+        std::array<std::array<uint64_t, 13>, Square::board_representation_size()> hash_cache;
         for(auto& square_indexed_row : hash_cache)
         {
             std::generate(square_indexed_row.begin(),

@@ -322,7 +322,7 @@ class Board
         void compare_hashes(const Board& other) const noexcept;
 
     private:
-        std::array<Piece, 64> board;
+        std::array<Piece, Square::board_representation_size()> board;
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
         Piece_Color turn_color = Piece_Color::WHITE;
         size_t game_move_count = 0;
@@ -341,7 +341,7 @@ class Board
         // up, down, left, right, up-left, up-right, down-left, down-right,
         // 2x1 up-left, 1x2 up-left, 2x1 up-right, 1x2 up-right,
         // 2x1 down-left, 1x2 down-left, 2x1 down-right, 1x2 down-right
-        std::array<std::array<std::bitset<16>, 64>, 2> potential_attacks{}; // indexed by [attacker color][square index];
+        std::array<std::array<std::bitset<16>, Square::board_representation_size()>, 2> potential_attacks{}; // indexed by [attacker color][square index];
 
         void add_attacks_from(Square square, Piece piece) noexcept;
         void remove_attacks_from(Square square, Piece old_piece) noexcept;

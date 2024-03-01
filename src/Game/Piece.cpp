@@ -96,7 +96,7 @@ namespace
     void add_legal_move(indexed_move_array& out, const Piece piece, const Parameters ... parameters) noexcept
     {
         const auto move = new Move_Type(parameters...);
-        auto& lists = out[piece.index()][move->start().index()];
+        auto& lists = out[piece.index()][move->start().index64()];
         if(lists.empty())
         {
             lists.push_back({});
@@ -332,7 +332,7 @@ bool Piece::can_move(const Move* const move) const noexcept
 const Piece::list_of_move_lists& Piece::move_lists(const Square square) const noexcept
 {
     assert(*this);
-    return legal_moves[index()][square.index()];
+    return legal_moves[index()][square.index64()];
 }
 
 Piece_Type Piece::type() const noexcept
@@ -354,7 +354,7 @@ Piece::piece_code_t Piece::index() const noexcept
 const Piece::list_of_move_lists& Piece::attacking_move_lists(const Square square) const noexcept
 {
     assert(*this);
-    return attack_moves[index()][square.index()];
+    return attack_moves[index()][square.index64()];
 }
 
 bool operator==(const Piece a, const Piece b) noexcept

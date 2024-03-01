@@ -9,14 +9,42 @@
 
 #include "Utility/Math.h"
 
+Square_Difference::Square_Difference(const int file_change, const int rank_change) noexcept : index_delta(rank_change + Square::board_representation_height()*file_change)
+{
+}
+
+Square_Difference::Square_Difference(const int index_change) noexcept : index_delta(index_change)
+{
+}
+
 Square_Difference Square_Difference::operator-() const noexcept
 {
-    return {-file_change, -rank_change};
+    return Square_Difference{-index_change()};
 }
 
 Square_Difference Square_Difference::step() const noexcept
 {
-    return {Math::sign(file_change), Math::sign(rank_change)};
+    const auto abs_change = std::abs(index_change());
+    if(abs_change <= 7)
+    {
+        return {Math::sign(index_change())}; // vertical move
+    }
+    else if(abs_change % Square::board_representation_height() == 0)
+    {
+        return {Math::sign(index_change())*int(Square::board_representation_height())}; // horizontal move
+    }
+    else if(abs_change % (Square::board_representation_height() + 1) == 0)
+    {
+        return {Math::sign(index_change())*int(Square::board_representation_height() + 1)}; // diagonal up-left/down-right
+    }
+    else if(abs_change % (Square::board_representation_height() - 1) == 0)
+    {
+        return {Math::sign(index_change())*int(Square::board_representation_height() - 1)}; // diagonal up-right/down-left
+    }
+    else
+    {
+        return *this; // knight move
+    }
 }
 
 All_Squares_Iterator All_Squares::begin() const noexcept
@@ -29,35 +57,6 @@ All_Squares_Iterator All_Squares::end() const noexcept
     return All_Squares_Iterator({});
 }
 
-namespace
-{
-    const decltype(Square{}.index()) invalid_index = 64;
-}
-
-Square::Square() noexcept : square_index(invalid_index)
-{
-}
-
-Square::Square(const char file, const int rank) noexcept : square_index(8*(file - 'a') + (rank - 1))
-{
-    assert(inside_board());
-}
-
-char Square::file() const noexcept
-{
-    return char('a' + index()/8);
-}
-
-int Square::rank() const noexcept
-{
-    return 1 + index()%8;
-}
-
-Square::square_index_t Square::index() const noexcept
-{
-    return square_index;
-}
-
 std::string Square::text() const noexcept
 {
     return is_set() ? (file() + std::to_string(rank())) : "-";
@@ -65,31 +64,12 @@ std::string Square::text() const noexcept
 
 Square_Color Square::color() const noexcept
 {
-    //return (file() - 'a')%2 == (rank() - 1)%2 ? Square_Color::BLACK : Square_Color::WHITE;
-    return (index()/8)%2 == (index()%8)%2 ? Square_Color::BLACK : Square_Color::WHITE;
-}
-
-bool Square::inside_board() const noexcept
-{
-    return index() < invalid_index;
-}
-
-bool Square::is_set() const noexcept
-{
-    return inside_board();
+    return (index()/BOARD_HEIGHT)%2 == (index()%BOARD_WIDTH)%2 ? Square_Color::WHITE : Square_Color::BLACK;
 }
 
 Square& Square::operator+=(const Square_Difference& diff) noexcept
 {
-    assert(std::abs(diff.file_change) < 8 && std::abs(diff.rank_change) < 8);
-    const square_index_t new_rank_index = square_index + diff.rank_change;
-    if(new_rank_index/8 != square_index/8) // make sure file did not change (happens if new square is off the board vertically)
-    {
-        square_index = invalid_index;
-        return *this;
-    }
-
-    square_index = new_rank_index + 8*(diff.file_change);
+    square_index += diff.index_change();
     return *this;
 }
 
@@ -100,7 +80,12 @@ Square& Square::operator-=(const Square_Difference& diff) noexcept
 
 Square& Square::operator++() noexcept
 {
-    ++square_index;
+    constexpr auto max_index = Square('h', 8).index();
+    do
+    {
+        ++square_index;
+    } while( ! inside_board() && square_index <= max_index);
+
     return *this;
 }
 
@@ -142,29 +127,27 @@ Square operator-(Square square, const Square_Difference& diff) noexcept
 Square_Difference operator-(const Square a, const Square b) noexcept
 {
     assert(a.inside_board() && b.inside_board());
-    return {a.file() - b.file(), a.rank() - b.rank()};
+    return {int(a.index()) - int(b.index())};
 }
 
 bool straight_line_move(const Square start, const Square end) noexcept
 {
-    const auto move = end - start;
-    return move.file_change == 0 ||
-           move.rank_change == 0 ||
-           std::abs(move.file_change) == std::abs(move.rank_change);
+    const auto move = std::abs((end - start).index_change());
+    return move % Square::board_representation_height() == 0 ||
+           move < int(Square::board_representation_height()) ||
+           move % (Square::board_representation_height() + 1) == 0 ||
+           move % (Square::board_representation_height() - 1) == 0;
 }
 
 bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2) noexcept
 {
-    // Think of the determinant of a 2x2 matrix with the two moves as column vectors.
-    // Parallel (including anti-parallel) vectors are not linearly independent, so
-    // the determinant of the matrix is zero.
-    return move_1.file_change*move_2.rank_change == move_2.file_change*move_1.rank_change;
+    return std::abs(move_1.step().index_change()) == std::abs(move_2.step().index_change());
 }
 
 bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2) noexcept
 {
-    return moves_are_parallel(move_1, move_2) &&
-           move_1.file_change*move_2.file_change + move_1.rank_change*move_2.rank_change >= 0; // dot product
+    return moves_are_parallel(move_1, move_2)
+        && move_1.index_change()*move_2.index_change() > 0; // same sign
 }
 
 bool in_line_in_order(const Square a, const Square b, const Square c) noexcept

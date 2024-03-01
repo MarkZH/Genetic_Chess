@@ -4,27 +4,39 @@
 #include <cstddef>
 #include <string>
 #include <iterator>
+#include <cassert>
 
 #include "Game/Color.h"
 
 //! \file
 
+class Square;
+
 //! \brief A container for offsets between squares.
-struct Square_Difference
+class Square_Difference
 {
-    //! \brief The horizontal distance between two squares.
-    int file_change;
+    public:
+        Square_Difference(int file_change, int rank_change) noexcept;
 
-    //! \brief The vertical distance between two squares.
-    int rank_change;
+        int index_change() const noexcept
+        {
+            return index_delta;
+        }
 
-    //! \brief Reverse the direction of a square offset.
-    Square_Difference operator-() const noexcept;
+        //! \brief Reverse the direction of a square offset.
+        Square_Difference operator-() const noexcept;
 
-    //! \brief Returns a single-step version of the offset--i.e., (-3, 3) --> (-1, 1)
-    //!
-    //! Note: Only valid for straight (rook- or bishop-type) moves
-    Square_Difference step() const noexcept;
+        //! \brief Returns a single-step version of the offset--i.e., (-3, 3) --> (-1, 1)
+        //!
+        //! Note: Only valid for straight (rook- or bishop-type) moves
+        Square_Difference step() const noexcept;
+
+    private:
+        int index_delta;
+
+        Square_Difference(int index_delta) noexcept;
+
+        friend Square_Difference operator-(Square a, Square b) noexcept;
 };
 
 struct All_Squares;
@@ -41,9 +53,17 @@ class Square
     private:
         using square_index_t = unsigned int;
 
+        static const square_index_t GAME_BOARD_SIZE = 8;
+        static const square_index_t BOARD_WIDTH_MARGIN = 1;
+        static const square_index_t BOARD_WIDTH = GAME_BOARD_SIZE + 2*BOARD_WIDTH_MARGIN;
+        static const square_index_t BOARD_HEIGHT_MARGIN = 2;
+        static const square_index_t BOARD_HEIGHT = GAME_BOARD_SIZE + 2*BOARD_HEIGHT_MARGIN;
+
     public:
         //! \brief The default constructor creates an invalid square location.
-        Square() noexcept;
+        constexpr Square() noexcept : square_index(board_representation_size())
+        {
+        }
 
         //! \brief This constructor creates a user-defined square.
         //!
@@ -52,22 +72,38 @@ class Square
         //!
         //! The validity of the square coordinates is not checked in release builds.
         //! In debug builds, invalid square coordinates (e.g., "i9") trigger an assertion failure.
-        Square(char file, int rank) noexcept;
+        constexpr Square(char file, int rank) noexcept : square_index(BOARD_HEIGHT*(file - 'a' + BOARD_WIDTH_MARGIN) + (rank - 1 + BOARD_HEIGHT_MARGIN))
+        {
+        }
 
         //! \brief The file of the square.
         //!
         //! \returns The letter label of the square file.
-        char file() const noexcept;
+        constexpr char file() const noexcept
+        {
+            return char('a' + index()/BOARD_HEIGHT - BOARD_WIDTH_MARGIN);
+        }
 
         //! \brief The rank of the square.
         //!
         //! \returns The numerical label of the rank.
-        int rank() const noexcept;
+        constexpr int rank() const noexcept
+        {
+            return 1 + index()%BOARD_HEIGHT - BOARD_HEIGHT_MARGIN;
+        }
 
         //! \brief The index of the square.
         //!
         //! \returns An unsigned integer index.
-        square_index_t index() const noexcept;
+        constexpr square_index_t index() const noexcept
+        {
+            return square_index;
+        }
+
+        constexpr square_index_t index64() const noexcept
+        {
+            return (rank() - 1) + (file() - 'a')*GAME_BOARD_SIZE;
+        }
 
         //! \brief Text representation of square.
         std::string text() const noexcept;
@@ -96,12 +132,32 @@ class Square
         //! \brief Check if the square is a valid Board position.
         //!
         //! \returns Whether the square is on the Board ("i10" returns false).
-        bool inside_board() const noexcept;
+        constexpr bool inside_board() const noexcept
+        {
+            const auto ind = index();
+            const auto row = ind % BOARD_HEIGHT;
+            const auto col = ind / BOARD_HEIGHT;
+            return row >= BOARD_HEIGHT_MARGIN && row < BOARD_HEIGHT_MARGIN + GAME_BOARD_SIZE
+                && col >= BOARD_WIDTH_MARGIN && col < BOARD_WIDTH_MARGIN + GAME_BOARD_SIZE;
+        }
 
         //! \brief Check whether a square has been set with a valid coordinate.
         //!
         //! This is a synonym for Square::inside_board().
-        bool is_set() const noexcept;
+        constexpr bool is_set() const noexcept
+        {
+            return inside_board();
+        }
+
+        static constexpr square_index_t board_representation_size() noexcept
+        {
+            return BOARD_WIDTH*BOARD_HEIGHT;
+        }
+
+        static constexpr square_index_t board_representation_height() noexcept
+        {
+            return BOARD_HEIGHT;
+        }
 
         // Iterating methods
 

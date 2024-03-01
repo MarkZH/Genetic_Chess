@@ -10,7 +10,7 @@
 #include "Game/Piece.h"
 
 #include "Utility/String.h"
-
+#include "Utility/Math.h"
 
 Move::Move(const Square start, const Square end) noexcept : origin(start), destination(end)
 {
@@ -276,33 +276,48 @@ size_t Move::attack_index() const noexcept
 
 size_t Move::attack_index(const Square_Difference& move) noexcept
 {
-    constexpr auto xx = size_t(-1); // indicates invalid moves and should never be returned
-    constexpr size_t array_width = 15;
-    //                                                      file change
-    //                                   -7, -6, -5, -4, -3, -2, -1,  0,  1,  2,  3,  4,  5,  6,  7
-    static constexpr size_t indices[] = { 0, xx, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx, xx,  2,  //  7
-                                         xx,  0, xx, xx, xx, xx, xx,  1, xx, xx, xx, xx, xx,  2, xx,  //  6
-                                         xx, xx,  0, xx, xx, xx, xx,  1, xx, xx, xx, xx,  2, xx, xx,  //  5
-                                         xx, xx, xx,  0, xx, xx, xx,  1, xx, xx, xx,  2, xx, xx, xx,  //  4
-                                         xx, xx, xx, xx,  0, xx, xx,  1, xx, xx,  2, xx, xx, xx, xx,  //  3
-                                         xx, xx, xx, xx, xx,  0, 15,  1,  8,  2, xx, xx, xx, xx, xx,  //  2
-                                         xx, xx, xx, xx, xx, 14,  0,  1,  2,  9, xx, xx, xx, xx, xx,  //  1
-                                          3,  3,  3,  3,  3,  3,  3, xx,  4,  4,  4,  4,  4,  4,  4,  //  0  rank change
-                                         xx, xx, xx, xx, xx, 13,  5,  6,  7, 10, xx, xx, xx, xx, xx,  // -1
-                                         xx, xx, xx, xx, xx,  5, 12,  6, 11,  7, xx, xx, xx, xx, xx,  // -2
-                                         xx, xx, xx, xx,  5, xx, xx,  6, xx, xx,  7, xx, xx, xx, xx,  // -3
-                                         xx, xx, xx,  5, xx, xx, xx,  6, xx, xx, xx,  7, xx, xx, xx,  // -4
-                                         xx, xx,  5, xx, xx, xx, xx,  6, xx, xx, xx, xx,  7, xx, xx,  // -5
-                                         xx,  5, xx, xx, xx, xx, xx,  6, xx, xx, xx, xx, xx,  7, xx,  // -6
-                                          5, xx, xx, xx, xx, xx, xx,  6, xx, xx, xx, xx, xx, xx,  7}; // -7
+    constexpr int up = 1;
+    constexpr int down = -1;
+    constexpr int left = -int(Square::board_representation_height());
+    constexpr int right = Square::board_representation_height();
 
-    assert(-7 <= move.rank_change && move.rank_change <= 7);
-    assert(-7 <= move.file_change && move.file_change <= 7);
-
-    const auto i = array_width*(7 - move.rank_change) + (move.file_change + 7);
-
-    assert(indices[i] < 16);
-    return indices[i];
+    switch(move.step().index_change())
+    {
+        case up:
+            return 1;
+        case down:
+            return 6;
+        case left:
+            return 3;
+        case right:
+            return 4;
+        case up + right:
+            return 2;
+        case up + left:
+            return 0;
+        case down + right:
+            return 7;
+        case down + left:
+            return 5;
+        case up + up + right:
+            return 8;
+        case up + right + right:
+            return 9;
+        case up + up + left:
+            return 15;
+        case up + left + left:
+            return 14;
+        case down + down + right:
+            return 11;
+        case down + right + right:
+            return 10;
+        case down + down + left:
+            return 12;
+        case down + left + left:
+            return 13;
+        default:
+            return size_t(-1);
+    }
 }
 
 Square_Difference Move::attack_direction_from_index(const size_t index) noexcept
