@@ -917,47 +917,18 @@ namespace
 
     void squares_with_unique_coordinates_have_unique_indices(bool& tests_passed)
     {
-        std::array<bool, Square::board_representation_size()> visited{};
-        for(auto row = 0; row < 12; ++row)
-        {
-            for(auto col = 0; col < 10; ++col)
-            {
-                if(row < 2 || row >= 10 || col == 0 || col == 9)
-                {
-                    visited[row + col*Square::board_representation_height()] = true;
-                }
-            }
-        }
-
-        std::array<bool, 64> visited64{};
+        std::array<bool, 64> visited{};
         for(char file = 'a'; file <= 'h'; ++file)
         {
             for(int rank = 1; rank <= 8; ++rank)
             {
                 const auto square = Square{file, rank};
-                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.text());
-                test_result(tests_passed, ! visited64[square.index64()], "Multiple squares result in same index64." + square.text());
+                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index64." + square.text());
                 visited[square.index()] = true;
-                visited64[square.index64()] = true;
-            }
-        }
-        test_result(tests_passed, std::all_of(visited.begin(), visited.end(), [](auto x) { return x; }), "Not all indices visited by iterating through all squares.");
-        for(auto i = 0; i < visited.size(); ++i)
-        {
-            if( ! visited[i])
-            {
-                std::cerr << "Index " << i << " not visited.\n";
             }
         }
 
-        test_result(tests_passed, std::all_of(visited64.begin(), visited64.end(), [](auto x) { return x; }), "Not all indices64 visited by iterating through all squares.");
-        for(auto i = 0; i < visited64.size(); ++i)
-        {
-            if( ! visited64[i])
-            {
-                std::cerr << "Index64 " << i << " not visited.\n";
-            }
-        }
+        test_result(tests_passed, std::all_of(visited.begin(), visited.end(), [](auto x) { return x; }), "Not all indices64 visited by iterating through all squares.");
     }
 
     void constructed_squares_retain_coordinates(bool& tests_passed)
@@ -1008,8 +979,8 @@ namespace
         {
             for(const auto square2 : Square::all_squares())
             {
-                const size_t diff = std::abs(int(square1.index()) - int(square2.index()));
-                if(diff == 1 || diff == Square::board_representation_height()) // square are adjacent in same row or column
+                const auto diff = square1 - square2;
+                if(std::abs(diff.index_change()) == 1 || std::abs(diff.index_change()) == 8) // square are adjacent in same row or column
                 {
                     test_result(tests_passed, square1.color() != square2.color(), "Adjacent squares " + square1.text() + " and " + square2.text() + " have same color.");
                 }
@@ -1023,10 +994,11 @@ namespace
         {
             for(const auto b : Square::all_squares())
             {
+                const auto expect_b = a + (b - a);
                 test_result(tests_passed,
-                            a + (b - a) == b,
+                            expect_b == b,
                             "Square arithetic problem: " +
-                            a.text() + " + (" + b.text() + " - " + a.text() + ") != " + b.text());
+                            a.text() + " + (" + b.text() + " - " + a.text() + ") == " + expect_b.text() + " != " + b.text());
             }
         }
     }
@@ -1036,8 +1008,8 @@ namespace
         std::array<bool, 64> squares_visited{};
         for(const auto square : Square::all_squares())
         {
-            test_result(tests_passed, ! squares_visited[square.index64()], "Sqaure " + square.text() + " already visited.");
-            squares_visited[square.index64()] = true;
+            test_result(tests_passed, ! squares_visited[square.index()], "Sqaure " + square.text() + " already visited.");
+            squares_visited[square.index()] = true;
         }
         test_result(tests_passed,
                     std::all_of(squares_visited.begin(), squares_visited.end(), [](auto tf) { return tf; }),

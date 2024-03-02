@@ -278,8 +278,8 @@ size_t Move::attack_index(const Square_Difference& move) noexcept
 {
     constexpr int up = 1;
     constexpr int down = -1;
-    constexpr int left = -int(Square::board_representation_height());
-    constexpr int right = Square::board_representation_height();
+    constexpr int left = -12;
+    constexpr int right = 12;
 
     switch(move.step().index_change())
     {

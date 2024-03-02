@@ -18,10 +18,7 @@ class Square_Difference
     public:
         Square_Difference(int file_change, int rank_change) noexcept;
 
-        int index_change() const noexcept
-        {
-            return index_delta;
-        }
+        int index_change() const noexcept;
 
         //! \brief Reverse the direction of a square offset.
         Square_Difference operator-() const noexcept;
@@ -50,20 +47,11 @@ class Square_Line_Iterator;
 //! It is more like a coordinate specifying a location.
 class Square
 {
-    private:
+    public:
         using square_index_t = unsigned int;
 
-        static const square_index_t GAME_BOARD_SIZE = 8;
-        static const square_index_t BOARD_WIDTH_MARGIN = 1;
-        static const square_index_t BOARD_WIDTH = GAME_BOARD_SIZE + 2*BOARD_WIDTH_MARGIN;
-        static const square_index_t BOARD_HEIGHT_MARGIN = 2;
-        static const square_index_t BOARD_HEIGHT = GAME_BOARD_SIZE + 2*BOARD_HEIGHT_MARGIN;
-
-    public:
         //! \brief The default constructor creates an invalid square location.
-        constexpr Square() noexcept : square_index(board_representation_size())
-        {
-        }
+        Square() noexcept;
 
         //! \brief This constructor creates a user-defined square.
         //!
@@ -72,38 +60,22 @@ class Square
         //!
         //! The validity of the square coordinates is not checked in release builds.
         //! In debug builds, invalid square coordinates (e.g., "i9") trigger an assertion failure.
-        constexpr Square(char file, int rank) noexcept : square_index(BOARD_HEIGHT*(file - 'a' + BOARD_WIDTH_MARGIN) + (rank - 1 + BOARD_HEIGHT_MARGIN))
-        {
-        }
+        Square(char file, int rank) noexcept;
 
         //! \brief The file of the square.
         //!
         //! \returns The letter label of the square file.
-        constexpr char file() const noexcept
-        {
-            return char('a' + index()/BOARD_HEIGHT - BOARD_WIDTH_MARGIN);
-        }
+        char file() const noexcept;
 
         //! \brief The rank of the square.
         //!
         //! \returns The numerical label of the rank.
-        constexpr int rank() const noexcept
-        {
-            return 1 + index()%BOARD_HEIGHT - BOARD_HEIGHT_MARGIN;
-        }
+        int rank() const noexcept;
 
         //! \brief The index of the square.
         //!
         //! \returns An unsigned integer index.
-        constexpr square_index_t index() const noexcept
-        {
-            return square_index;
-        }
-
-        constexpr square_index_t index64() const noexcept
-        {
-            return (rank() - 1) + (file() - 'a')*GAME_BOARD_SIZE;
-        }
+        square_index_t index() const noexcept;
 
         //! \brief Text representation of square.
         std::string text() const noexcept;
@@ -132,32 +104,12 @@ class Square
         //! \brief Check if the square is a valid Board position.
         //!
         //! \returns Whether the square is on the Board ("i10" returns false).
-        constexpr bool inside_board() const noexcept
-        {
-            const auto ind = index();
-            const auto row = ind % BOARD_HEIGHT;
-            const auto col = ind / BOARD_HEIGHT;
-            return row >= BOARD_HEIGHT_MARGIN && row < BOARD_HEIGHT_MARGIN + GAME_BOARD_SIZE
-                && col >= BOARD_WIDTH_MARGIN && col < BOARD_WIDTH_MARGIN + GAME_BOARD_SIZE;
-        }
+        bool inside_board() const noexcept;
 
         //! \brief Check whether a square has been set with a valid coordinate.
         //!
         //! This is a synonym for Square::inside_board().
-        constexpr bool is_set() const noexcept
-        {
-            return inside_board();
-        }
-
-        static constexpr square_index_t board_representation_size() noexcept
-        {
-            return BOARD_WIDTH*BOARD_HEIGHT;
-        }
-
-        static constexpr square_index_t board_representation_height() noexcept
-        {
-            return BOARD_HEIGHT;
-        }
+        bool is_set() const noexcept;
 
         // Iterating methods
 
@@ -212,6 +164,8 @@ class Square
 
         friend class All_Squares_Iterator;
         friend class Square_Line_Iterator;
+        friend Square_Difference operator-(const Square a, const Square b) noexcept;
+        friend bool operator==(const Square a, const Square b) noexcept;
 };
 
 //! \brief Check if two squares are the same.

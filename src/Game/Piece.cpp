@@ -39,55 +39,9 @@ namespace
     void add_queen_moves(indexed_move_array& out, Piece_Color color) noexcept;
     void add_king_moves(indexed_move_array& out, Piece_Color color) noexcept;
 
-    const auto legal_moves =
-        []()
-        {
-            indexed_move_array result;
-            for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
-            {
-                add_pawn_moves(result, color);
-                add_rook_moves(result, color);
-                add_knight_moves(result, color);
-                add_bishop_moves(result, color);
-                add_queen_moves(result, color);
-                add_king_moves(result, color);
-            }
-
-            return result;
-        }();
-
-
-    const auto attack_moves =
-        []()
-        {
-            indexed_move_array result;
-            for(auto color : {Piece_Color::WHITE, Piece_Color::BLACK})
-            {
-                for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
-                {
-                    const auto piece = Piece{color, static_cast<Piece_Type>(type_index)};
-                    for(size_t index = 0; index < 64; ++index)
-                    {
-                        for(const auto& move_list : legal_moves[piece.index()][index])
-                        {
-                            result[piece.index()][index].push_back({});
-
-                            for(auto move : move_list)
-                            {
-                                // Make list of all capturing moves, excluding all but one type of pawn capture per square.
-                                if(move->can_capture()
-                                    && (move->promotion_piece_symbol() == 'Q' || move->promotion_piece_symbol() == '\0'))
-                                {
-                                    result[piece.index()][index].back().push_back(move);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            return result;
-        }();
+    indexed_move_array legal_moves;
+    indexed_move_array attack_moves;
+    bool moves_are_initialized = false;
 
 
     // Add a move to the list that is only legal when starting from a certain square
@@ -96,7 +50,7 @@ namespace
     void add_legal_move(indexed_move_array& out, const Piece piece, const Parameters ... parameters) noexcept
     {
         const auto move = new Move_Type(parameters...);
-        auto& lists = out[piece.index()][move->start().index64()];
+        auto& lists = out[piece.index()][move->start().index()];
         if(lists.empty())
         {
             lists.push_back({});
@@ -275,6 +229,59 @@ namespace
     }
 }
 
+void initialize_legal_moves(indexed_move_array& result) noexcept
+{
+    for(auto color : { Piece_Color::WHITE, Piece_Color::BLACK })
+    {
+        add_pawn_moves(result, color);
+        add_rook_moves(result, color);
+        add_knight_moves(result, color);
+        add_bishop_moves(result, color);
+        add_queen_moves(result, color);
+        add_king_moves(result, color);
+    }
+}
+
+void initialize_attacks(indexed_move_array& result) noexcept
+{
+    for(auto color : { Piece_Color::WHITE, Piece_Color::BLACK })
+    {
+        for(auto type_index = 0; type_index <= static_cast<int>(Piece_Type::KING); ++type_index)
+        {
+            const auto piece = Piece{ color, static_cast<Piece_Type>(type_index) };
+            for(size_t index = 0; index < 64; ++index)
+            {
+                for(const auto& move_list : legal_moves[piece.index()][index])
+                {
+                    result[piece.index()][index].push_back({});
+
+                    for(auto move : move_list)
+                    {
+                        // Make list of all capturing moves, excluding all but one type of pawn capture per square.
+                        if(move->can_capture()
+                           && (move->promotion_piece_symbol() == 'Q' || move->promotion_piece_symbol() == '\0'))
+                        {
+                            result[piece.index()][index].back().push_back(move);
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+bool moves_initialized() noexcept
+{
+    return moves_are_initialized;
+}
+
+void initialize_moves() noexcept
+{
+    initialize_legal_moves(legal_moves);
+    initialize_attacks(attack_moves);
+    moves_are_initialized = true;
+}
+
 Piece::Piece() noexcept : piece_code(invalid_code)
 {
 }
@@ -332,7 +339,7 @@ bool Piece::can_move(const Move* const move) const noexcept
 const Piece::list_of_move_lists& Piece::move_lists(const Square square) const noexcept
 {
     assert(*this);
-    return legal_moves[index()][square.index64()];
+    return legal_moves[index()][square.index()];
 }
 
 Piece_Type Piece::type() const noexcept
@@ -354,7 +361,7 @@ Piece::piece_code_t Piece::index() const noexcept
 const Piece::list_of_move_lists& Piece::attacking_move_lists(const Square square) const noexcept
 {
     assert(*this);
-    return attack_moves[index()][square.index64()];
+    return attack_moves[index()][square.index()];
 }
 
 bool operator==(const Piece a, const Piece b) noexcept

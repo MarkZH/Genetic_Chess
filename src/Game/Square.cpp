@@ -4,13 +4,121 @@
 #include <string>
 #include <cassert>
 #include <cmath>
+#include <array>
+#include <cassert>
 
 #include "Game/Color.h"
 
 #include "Utility/Math.h"
 
-Square_Difference::Square_Difference(const int file_change, const int rank_change) noexcept : index_delta(rank_change + Square::board_representation_height()*file_change)
+namespace
 {
+    using square_index_t = Square::square_index_t;
+
+    const square_index_t GAME_BOARD_LENGTH = 8;
+    const square_index_t BOARD_WIDTH_MARGIN = 1;
+    const square_index_t BOARD_WIDTH = GAME_BOARD_LENGTH + 2 * BOARD_WIDTH_MARGIN;
+    const square_index_t BOARD_HEIGHT_MARGIN = 2;
+    const square_index_t BOARD_HEIGHT = GAME_BOARD_LENGTH + 2 * BOARD_HEIGHT_MARGIN;
+    const square_index_t BOARD_SIZE = BOARD_HEIGHT * BOARD_WIDTH;
+
+    square_index_t index_to_row(square_index_t index) noexcept
+    {
+        return index % BOARD_HEIGHT;
+    }
+
+    square_index_t index_to_col(square_index_t index) noexcept
+    {
+        return index / BOARD_HEIGHT;
+    }
+
+    bool is_valid_row(square_index_t row) noexcept
+    {
+        return row >= BOARD_HEIGHT_MARGIN && row < BOARD_HEIGHT_MARGIN + GAME_BOARD_LENGTH;
+    }
+
+    bool is_valid_col(square_index_t col) noexcept
+    {
+        return col >= BOARD_WIDTH_MARGIN && col < BOARD_WIDTH_MARGIN + GAME_BOARD_LENGTH;
+    }
+
+    bool index_on_game_board(square_index_t index) noexcept
+    {
+        return is_valid_col(index_to_col(index)) && is_valid_row(index_to_row(index));
+    }
+
+    square_index_t board_index_to_game_index(square_index_t board_index) noexcept
+    {
+        const auto row = index_to_row(board_index);
+        const auto col = index_to_col(board_index);
+        return (row - BOARD_HEIGHT_MARGIN) + GAME_BOARD_LENGTH * (col - BOARD_WIDTH_MARGIN);
+    }
+
+    const std::array<square_index_t, BOARD_SIZE> indices = []()
+        {
+            auto index_array = std::array<square_index_t, BOARD_SIZE>{};
+            const auto invalid_index = square_index_t(-1);
+            for(square_index_t i = 0; i < BOARD_SIZE; ++i)
+            {
+                if(index_on_game_board(i))
+                {
+                    index_array[i] = board_index_to_game_index(i);
+                }
+                else
+                {
+                    index_array[i] = invalid_index;
+                }
+            }
+
+            return index_array;
+        }();
+
+    const std::array<char, BOARD_SIZE> files = []()
+        {
+            auto file_array = std::array<char, BOARD_SIZE>{};
+            const auto invalid_file = '\0';
+            for(square_index_t i = 0; i < BOARD_SIZE; ++i)
+            {
+                if(index_on_game_board(i))
+                {
+                    file_array[i] = char(index_to_col(i) - BOARD_WIDTH_MARGIN) + 'a';
+                }
+                else
+                {
+                    file_array[i] = invalid_file;
+                }
+            }
+
+            return file_array;
+        }();
+
+    const std::array<int, BOARD_SIZE> ranks = []()
+        {
+            auto rank_array = std::array<int, BOARD_SIZE>{};
+            const auto invalid_rank = -1;
+            for(square_index_t i = 0; i < BOARD_SIZE; ++i)
+            {
+                if(index_on_game_board(i))
+                {
+                    rank_array[i] = int(index_to_row(i) - BOARD_HEIGHT_MARGIN) + 1;
+                }
+                else
+                {
+                    rank_array[i] = invalid_rank;
+                }
+            }
+
+            return rank_array;
+        }();
+}
+
+Square_Difference::Square_Difference(const int file_change, const int rank_change) noexcept : index_delta(rank_change + BOARD_HEIGHT*file_change)
+{
+}
+
+int Square_Difference::index_change() const noexcept
+{
+    return index_delta;
 }
 
 Square_Difference::Square_Difference(const int index_change) noexcept : index_delta(index_change)
@@ -29,17 +137,17 @@ Square_Difference Square_Difference::step() const noexcept
     {
         return {Math::sign(index_change())}; // vertical move
     }
-    else if(abs_change % Square::board_representation_height() == 0)
+    else if(abs_change % BOARD_HEIGHT == 0)
     {
-        return {Math::sign(index_change())*int(Square::board_representation_height())}; // horizontal move
+        return {Math::sign(index_change())*int(BOARD_HEIGHT)}; // horizontal move
     }
-    else if(abs_change % (Square::board_representation_height() + 1) == 0)
+    else if(abs_change % (BOARD_HEIGHT + 1) == 0)
     {
-        return {Math::sign(index_change())*int(Square::board_representation_height() + 1)}; // diagonal up-left/down-right
+        return {Math::sign(index_change())*int(BOARD_HEIGHT + 1)}; // diagonal up-left/down-right
     }
-    else if(abs_change % (Square::board_representation_height() - 1) == 0)
+    else if(abs_change % (BOARD_HEIGHT - 1) == 0)
     {
-        return {Math::sign(index_change())*int(Square::board_representation_height() - 1)}; // diagonal up-right/down-left
+        return {Math::sign(index_change())*int(BOARD_HEIGHT - 1)}; // diagonal up-right/down-left
     }
     else
     {
@@ -57,6 +165,31 @@ All_Squares_Iterator All_Squares::end() const noexcept
     return All_Squares_Iterator({});
 }
 
+Square::Square() noexcept : square_index(BOARD_SIZE)
+{
+}
+
+Square::Square(char file, int rank) noexcept : square_index(BOARD_HEIGHT*(file - 'a' + BOARD_WIDTH_MARGIN) + (rank - 1 + BOARD_HEIGHT_MARGIN))
+{
+}
+
+char Square::file() const noexcept
+{
+    assert(inside_board());
+    return files[square_index];
+}
+
+int Square::rank() const noexcept
+{
+    assert(inside_board());
+    return ranks[square_index];
+}
+
+square_index_t Square::index() const noexcept
+{
+    return indices[square_index];
+}
+
 std::string Square::text() const noexcept
 {
     return is_set() ? (file() + std::to_string(rank())) : "-";
@@ -64,7 +197,7 @@ std::string Square::text() const noexcept
 
 Square_Color Square::color() const noexcept
 {
-    return (index()/BOARD_HEIGHT)%2 == (index()%BOARD_WIDTH)%2 ? Square_Color::WHITE : Square_Color::BLACK;
+    return (square_index/BOARD_HEIGHT)%2 == (square_index%BOARD_WIDTH)%2 ? Square_Color::WHITE : Square_Color::BLACK;
 }
 
 Square& Square::operator+=(const Square_Difference& diff) noexcept
@@ -78,13 +211,22 @@ Square& Square::operator-=(const Square_Difference& diff) noexcept
     return *this += -diff;
 }
 
+bool Square::inside_board() const noexcept
+{
+    return square_index < BOARD_SIZE && indices[square_index] < 64;
+}
+
+bool Square::is_set() const noexcept
+{
+    return inside_board();
+}
+
 Square& Square::operator++() noexcept
 {
-    constexpr auto max_index = Square('h', 8).index();
     do
     {
         ++square_index;
-    } while( ! inside_board() && square_index <= max_index);
+    } while( ! inside_board() && square_index < BOARD_SIZE);
 
     return *this;
 }
@@ -106,7 +248,7 @@ Squares_in_a_Line Square::square_line_from(const Square origin, const Square_Dif
 
 bool operator==(const Square a, const Square b) noexcept
 {
-    return (a.index() == b.index()) || ( ! a.inside_board() && ! b.inside_board());
+    return (a.square_index == b.square_index) || ( ! a.inside_board() && ! b.inside_board());
 }
 
 bool operator!=(const Square a, const Square b) noexcept
@@ -127,16 +269,16 @@ Square operator-(Square square, const Square_Difference& diff) noexcept
 Square_Difference operator-(const Square a, const Square b) noexcept
 {
     assert(a.inside_board() && b.inside_board());
-    return {int(a.index()) - int(b.index())};
+    return {int(a.square_index) - int(b.square_index)};
 }
 
 bool straight_line_move(const Square start, const Square end) noexcept
 {
     const auto move = std::abs((end - start).index_change());
-    return move % Square::board_representation_height() == 0 ||
-           move < int(Square::board_representation_height()) ||
-           move % (Square::board_representation_height() + 1) == 0 ||
-           move % (Square::board_representation_height() - 1) == 0;
+    return move % BOARD_HEIGHT == 0 ||
+           move < int(BOARD_HEIGHT) ||
+           move % (BOARD_HEIGHT + 1) == 0 ||
+           move % (BOARD_HEIGHT - 1) == 0;
 }
 
 bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2) noexcept

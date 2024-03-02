@@ -113,4 +113,8 @@ bool operator==(Piece a, Piece b) noexcept;
 //! \returns Whether the two pieces have different types or colors.
 bool operator!=(Piece a, Piece b) noexcept;
 
+bool moves_initialized() noexcept;
+
+void initialize_moves() noexcept;
+
 #endif // PIECE_H
