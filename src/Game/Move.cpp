@@ -316,6 +316,7 @@ size_t Move::attack_index(const Square_Difference& move) noexcept
         case down + left + left:
             return 13;
         default:
+            assert(false);
             return size_t(-1);
     }
 }
