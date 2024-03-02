@@ -76,7 +76,12 @@ namespace
             const auto end = start + Square_Difference{file_step, rank_step};
             if(end.inside_board())
             {
-                add_legal_move<Move>(out, piece, start, end);
+                const auto rank_stepped = end.rank() - start.rank();
+                const auto file_stepped = end.file() - start.file();
+                if(rank_stepped == rank_step && file_stepped == file_step)
+                {
+                    add_legal_move<Move>(out, piece, start, end);
+                }
             }
         }
     }
