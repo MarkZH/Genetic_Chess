@@ -86,6 +86,23 @@ namespace
         }
     }
 
+    void add_standard_sliding_legal_move(indexed_move_array& out, const Piece piece, const int file_single_step, const int rank_single_step) noexcept
+    {
+        for(auto start : Square::all_squares())
+        {
+            for(auto steps = 1; steps <= 7; ++steps)
+            {
+                const auto end = start + Square_Difference(steps*file_single_step, steps*rank_single_step);
+                if( ! end.inside_board())
+                {
+                    break;
+                }
+
+                add_legal_move<Move>(out, piece, start, end);
+            }
+        }
+    }
+
     void add_pawn_moves(indexed_move_array& out, const Piece_Color color) noexcept
     {
         const auto pawn = Piece{color, Piece_Type::PAWN};
@@ -154,11 +171,7 @@ namespace
             {
                 if(d_file == 0 && d_rank == 0) { continue; }
                 if(d_file != 0 && d_rank != 0) { continue; }
-
-                for(int move_size = 1; move_size <= 7; ++move_size)
-                {
-                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank);
-                }
+                add_standard_sliding_legal_move(out, {color, type}, d_file, d_rank);
             }
         }
     }
@@ -184,10 +197,7 @@ namespace
         {
             for(int d_file : {-1, 1})
             {
-                for(int move_size = 1; move_size <= 7; ++move_size)
-                {
-                    add_standard_legal_move(out, {color, type}, move_size*d_file, move_size*d_rank);
-                }
+                add_standard_sliding_legal_move(out, { color, type }, d_file, d_rank);
             }
         }
     }
