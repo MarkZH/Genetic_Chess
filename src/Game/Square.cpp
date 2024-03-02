@@ -276,7 +276,7 @@ bool straight_line_move(const Square start, const Square end) noexcept
 {
     const auto move = std::abs((end - start).index_change());
     return move % BOARD_HEIGHT == 0 ||
-           move < int(BOARD_HEIGHT) ||
+           move < int(GAME_BOARD_LENGTH) ||
            move % (BOARD_HEIGHT + 1) == 0 ||
            move % (BOARD_HEIGHT - 1) == 0;
 }
