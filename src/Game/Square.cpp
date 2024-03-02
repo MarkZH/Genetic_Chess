@@ -283,13 +283,20 @@ bool straight_line_move(const Square start, const Square end) noexcept
 
 bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2) noexcept
 {
-    return std::abs(move_1.step().index_change()) == std::abs(move_2.step().index_change());
+    const auto d1 = std::abs(move_1.step().index_change());
+    if(d1 == 0)
+    {
+        return true;
+    }
+
+    const auto d2 = std::abs(move_2.step().index_change());
+    return d2 == 0 || d1 == d2;
 }
 
 bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2) noexcept
 {
     return moves_are_parallel(move_1, move_2)
-        && move_1.index_change()*move_2.index_change() > 0; // same sign
+        && move_1.index_change()*move_2.index_change() >= 0; // same sign
 }
 
 bool in_line_in_order(const Square a, const Square b, const Square c) noexcept
