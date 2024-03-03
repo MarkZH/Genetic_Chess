@@ -112,6 +112,7 @@ last move illegal | 8/2r5/4Kn2/1kqRn3/2bNP3/P6P/8/5B2 b - - 13 65 | Qxd4
 last move illegal | 2R5/7r/4P1k1/2B5/3KB2N/8/5n2/8 b - - 7 138 | Nxe4
 last move illegal | 2R5/7r/4P1k1/2B5/3KB2N/8/5n2/8 b - - 7 138 | Rxh4
 last move illegal | rq2kb1r/2p3pp/p2pb2n/nP3p2/Q3pPPP/N4N2/PP1PP3/R1BK1B1R b kq - 1 12 | O-O-O
+last move illegal | 8/1k6/8/5N2/8/4n3/8/2K5 b - - 0 1 | Kc8 Nd6+ Nd1
 
 # Quiescent tests: test proper resolution of quiescent search
 # quiescent | (starting FEN) | (move list) | (expected subsequent moves)
