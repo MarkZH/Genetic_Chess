@@ -188,7 +188,7 @@ namespace
 
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2) noexcept;
     size_t move_count(const Board& board, size_t maximum_depth) noexcept;
-    bool run_board_tests(const std::string& file_name);
+    bool run_board_tests(const std::string& file_name, int line_number = -1);
     bool all_moves_legal(Board& board, const std::vector<std::string>& moves) noexcept;
     bool move_is_illegal(const Board& board, const std::string& move) noexcept;
 
@@ -707,7 +707,7 @@ namespace
         return count;
     }
 
-    bool run_board_tests(const std::string& file_name)
+    bool run_board_tests(const std::string& file_name, const int line_number)
     {
         auto input = std::ifstream(file_name);
         if( ! input)
@@ -717,9 +717,19 @@ namespace
         }
 
         auto all_tests_passed = true;
+        int lines_read = 0;
+        if(line_number > 0)
+        {
+            std::cout << "Only performing test on line " << line_number << " in file " << file_name << ".\n";
+        }
 
         for(std::string line; std::getline(input, line);)
         {
+            ++lines_read;
+            if(line_number > 0 && line_number != lines_read)
+            {
+                continue;
+            }
             line = String::strip_comments(line, "#");
             if(line.empty())
             {
