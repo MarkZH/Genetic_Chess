@@ -10,30 +10,24 @@
 
 //! \file
 
-class Square;
-
 //! \brief A container for offsets between squares.
-class Square_Difference
+struct Square_Difference
 {
-    public:
-        Square_Difference(int file_change, int rank_change) noexcept;
+    //! \brief The horizontal distance between two squares.
+    int file_change;
 
-        int index_change() const noexcept;
+    //! \brief The vertical distance between two squares.
+    int rank_change;
 
-        //! \brief Reverse the direction of a square offset.
-        Square_Difference operator-() const noexcept;
+    int index_change() const noexcept;
 
-        //! \brief Returns a single-step version of the offset--i.e., (-3, 3) --> (-1, 1)
-        //!
-        //! Note: Only valid for straight (rook- or bishop-type) moves
-        Square_Difference step() const noexcept;
+    //! \brief Reverse the direction of a square offset.
+    Square_Difference operator-() const noexcept;
 
-    private:
-        int index_delta;
-
-        Square_Difference(int index_delta) noexcept;
-
-        friend Square_Difference operator-(Square a, Square b) noexcept;
+    //! \brief Returns a single-step version of the offset--i.e., (-3, 3) --> (-1, 1)
+    //!
+    //! Note: Only valid for straight (rook- or bishop-type) moves
+    Square_Difference step() const noexcept;
 };
 
 struct All_Squares;
@@ -164,7 +158,6 @@ class Square
 
         friend class All_Squares_Iterator;
         friend class Square_Line_Iterator;
-        friend Square_Difference operator-(const Square a, const Square b) noexcept;
         friend bool operator==(const Square a, const Square b) noexcept;
 };
 
@@ -206,6 +199,8 @@ Square_Difference operator-(Square a, Square b) noexcept;
 //! \param a A square on the board.
 //! \param b Another square on the board.
 bool straight_line_move(Square a, Square b) noexcept;
+
+bool straight_line_move(const Square_Difference& diff) noexcept;
 
 //! \brief Returns whether two Square_Differences are in the exact same or exact opposite directions.
 //!

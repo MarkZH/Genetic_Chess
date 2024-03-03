@@ -933,12 +933,11 @@ namespace
             for(int rank = 1; rank <= 8; ++rank)
             {
                 const auto square = Square{file, rank};
-                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index64." + square.text());
+                test_result(tests_passed, ! visited[square.index()], "Multiple squares result in same index." + square.text());
                 visited[square.index()] = true;
             }
         }
-
-        test_result(tests_passed, std::all_of(visited.begin(), visited.end(), [](auto x) { return x; }), "Not all indices64 visited by iterating through all squares.");
+        test_result(tests_passed, std::all_of(visited.begin(), visited.end(), [](auto x) { return x; }), "Not all indices visited by iterating through all squares.");
     }
 
     void constructed_squares_retain_coordinates(bool& tests_passed)
@@ -990,7 +989,9 @@ namespace
             for(const auto square2 : Square::all_squares())
             {
                 const auto diff = square1 - square2;
-                if(std::abs(diff.index_change()) == 1 || std::abs(diff.index_change()) == 8) // square are adjacent in same row or column
+                const auto df = std::abs(diff.file_change);
+                const auto dr = std::abs(diff.rank_change);
+                if((dr == 0 && df == 1) || (df == 0 && dr == 1)) // square are adjacent in same row or column
                 {
                     test_result(tests_passed, square1.color() != square2.color(), "Adjacent squares " + square1.text() + " and " + square2.text() + " have same color.");
                 }

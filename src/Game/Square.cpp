@@ -112,46 +112,25 @@ namespace
         }();
 }
 
-Square_Difference::Square_Difference(const int file_change, const int rank_change) noexcept : index_delta(rank_change + BOARD_HEIGHT*file_change)
-{
-}
-
 int Square_Difference::index_change() const noexcept
 {
-    return index_delta;
-}
-
-Square_Difference::Square_Difference(const int index_change) noexcept : index_delta(index_change)
-{
+    return BOARD_HEIGHT*file_change + rank_change;
 }
 
 Square_Difference Square_Difference::operator-() const noexcept
 {
-    return Square_Difference{-index_change()};
+    return {-file_change, -rank_change};
 }
 
 Square_Difference Square_Difference::step() const noexcept
 {
-    const auto abs_change = std::abs(index_change());
-    if(abs_change <= 7)
+    if(straight_line_move(*this))
     {
-        return {Math::sign(index_change())}; // vertical move
-    }
-    else if(abs_change % BOARD_HEIGHT == 0)
-    {
-        return {Math::sign(index_change())*int(BOARD_HEIGHT)}; // horizontal move
-    }
-    else if(abs_change % (BOARD_HEIGHT + 1) == 0)
-    {
-        return {Math::sign(index_change())*int(BOARD_HEIGHT + 1)}; // diagonal up-left/down-right
-    }
-    else if(abs_change % (BOARD_HEIGHT - 1) == 0)
-    {
-        return {Math::sign(index_change())*int(BOARD_HEIGHT - 1)}; // diagonal up-right/down-left
+        return {Math::sign(file_change), Math::sign(rank_change)};
     }
     else
     {
-        return *this; // knight move
+        return *this;
     }
 }
 
@@ -169,7 +148,7 @@ Square::Square() noexcept : square_index(BOARD_SIZE)
 {
 }
 
-Square::Square(char file, int rank) noexcept : square_index(BOARD_HEIGHT*(file - 'a' + BOARD_WIDTH_MARGIN) + (rank - 1 + BOARD_HEIGHT_MARGIN))
+Square::Square(const char file, const int rank) noexcept : square_index(BOARD_HEIGHT*(file - 'a' + BOARD_WIDTH_MARGIN) + (rank - 1 + BOARD_HEIGHT_MARGIN))
 {
 }
 
@@ -185,7 +164,7 @@ int Square::rank() const noexcept
     return ranks[square_index];
 }
 
-square_index_t Square::index() const noexcept
+Square::square_index_t Square::index() const noexcept
 {
     return indices[square_index];
 }
@@ -200,6 +179,16 @@ Square_Color Square::color() const noexcept
     return (square_index/BOARD_HEIGHT)%2 == (square_index%BOARD_WIDTH)%2 ? Square_Color::WHITE : Square_Color::BLACK;
 }
 
+bool Square::inside_board() const noexcept
+{
+    return square_index < BOARD_SIZE && indices[square_index] < 64;
+}
+
+bool Square::is_set() const noexcept
+{
+    return inside_board();
+}
+
 Square& Square::operator+=(const Square_Difference& diff) noexcept
 {
     square_index += diff.index_change();
@@ -209,16 +198,6 @@ Square& Square::operator+=(const Square_Difference& diff) noexcept
 Square& Square::operator-=(const Square_Difference& diff) noexcept
 {
     return *this += -diff;
-}
-
-bool Square::inside_board() const noexcept
-{
-    return square_index < BOARD_SIZE && indices[square_index] < 64;
-}
-
-bool Square::is_set() const noexcept
-{
-    return inside_board();
 }
 
 Square& Square::operator++() noexcept
@@ -269,34 +248,31 @@ Square operator-(Square square, const Square_Difference& diff) noexcept
 Square_Difference operator-(const Square a, const Square b) noexcept
 {
     assert(a.inside_board() && b.inside_board());
-    return {int(a.square_index) - int(b.square_index)};
+    return {a.file() - b.file(), a.rank() - b.rank()};
 }
 
 bool straight_line_move(const Square start, const Square end) noexcept
 {
-    const auto move = std::abs((end - start).index_change());
-    return move % BOARD_HEIGHT == 0 ||
-           move < int(GAME_BOARD_LENGTH) ||
-           move % (BOARD_HEIGHT + 1) == 0 ||
-           move % (BOARD_HEIGHT - 1) == 0;
+    return straight_line_move(end - start);
+}
+
+bool straight_line_move(const Square_Difference& diff) noexcept
+{
+    return diff.file_change == 0 || diff.rank_change == 0 || std::abs(diff.file_change) == std::abs(diff.rank_change);
 }
 
 bool moves_are_parallel(const Square_Difference& move_1, const Square_Difference& move_2) noexcept
 {
-    const auto d1 = std::abs(move_1.step().index_change());
-    if(d1 == 0)
-    {
-        return true;
-    }
-
-    const auto d2 = std::abs(move_2.step().index_change());
-    return d2 == 0 || d1 == d2;
+    // Think of the determinant of a 2x2 matrix with the two moves as column vectors.
+    // Parallel (including anti-parallel) vectors are not linearly independent, so
+    // the determinant of the matrix is zero.
+    return move_1.file_change*move_2.rank_change == move_2.file_change*move_1.rank_change;
 }
 
 bool same_direction(const Square_Difference& move_1, const Square_Difference& move_2) noexcept
 {
-    return moves_are_parallel(move_1, move_2)
-        && move_1.index_change()*move_2.index_change() >= 0; // same sign
+    return moves_are_parallel(move_1, move_2) &&
+           move_1.file_change*move_2.file_change + move_1.rank_change*move_2.rank_change >= 0; // dot product
 }
 
 bool in_line_in_order(const Square a, const Square b, const Square c) noexcept

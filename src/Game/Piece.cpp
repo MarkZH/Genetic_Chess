@@ -87,7 +87,7 @@ namespace
         {
             for(auto steps = 1; steps <= 7; ++steps)
             {
-                const auto end = start + Square_Difference(steps*file_single_step, steps*rank_single_step);
+                const auto end = start + Square_Difference{steps*file_single_step, steps*rank_single_step};
                 if( ! end.inside_board())
                 {
                     break;

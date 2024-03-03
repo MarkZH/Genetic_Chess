@@ -10,7 +10,7 @@
 #include "Game/Piece.h"
 
 #include "Utility/String.h"
-#include "Utility/Math.h"
+
 
 Move::Move(const Square start, const Square end) noexcept : origin(start), destination(end)
 {
