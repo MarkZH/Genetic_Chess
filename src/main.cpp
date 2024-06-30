@@ -581,12 +581,12 @@ namespace
                 try
                 {
                     const auto id = i + 1 < options.size() ? options[i + 1] : std::string{};
-                    latest = std::make_unique<Minimax_AI>(file_name, String::to_number<int>(id));
+                    latest = std::make_unique<Genetic_AI>(file_name, String::to_number<int>(id));
                     ++i;
                 }
                 catch(const std::invalid_argument&) // Could not convert id to an int.
                 {
-                    latest = std::make_unique<Minimax_AI>(file_name, find_last_id(file_name));
+                    latest = std::make_unique<Genetic_AI>(file_name, find_last_id(file_name));
                 }
             }
             else if(opt == "-time" && i + 1 < options.size())

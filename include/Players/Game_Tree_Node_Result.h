@@ -14,9 +14,9 @@ class Move;
 class Game_Tree_Node_Result
 {
     public:
-        //! \brief The score assigned to a checkmate board position for the winning Minimax_AI.
+        //! \brief The score assigned to a checkmate board position for the winning Genetic_AI.
         static constexpr auto win_score = std::numeric_limits<double>::infinity();
-        //! \brief The score assigned to a checkmate board position for the losing Minimax_AI.
+        //! \brief The score assigned to a checkmate board position for the losing Genetic_AI.
         static constexpr auto lose_score = -win_score;
         //! \brief The score assigned to a drawn position.
         static constexpr auto draw_score = 0.0;

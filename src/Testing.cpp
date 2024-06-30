@@ -299,11 +299,11 @@ bool run_tests()
     self_swapped_minimax_ai_is_unchanged(tests_passed);
     self_assigned_minimax_ai_is_unchanged(tests_passed);
 
-    function_should_not_throw(tests_passed, "Minimax_AI ctor",
+    function_should_not_throw(tests_passed, "Genetic_AI ctor",
                               []()
                               {
                                   const auto file_name = "genome_example.txt";
-                                  return Minimax_AI{file_name, find_last_id(file_name)};
+                                  return Genetic_AI{file_name, find_last_id(file_name)};
                               });
 
     castling_possible_gene_tests(tests_passed);
@@ -1254,7 +1254,7 @@ namespace
         remove(write_file_name);
         remove(rewrite_file_name);
 
-        std::vector<Minimax_AI> test_pool(10);
+        std::vector<Genetic_AI> test_pool(10);
         for(auto& ai : test_pool)
         {
             ai.mutate(100);
@@ -1263,7 +1263,7 @@ namespace
 
         const auto& test_ai = Random::random_element(test_pool);
         test_ai.print(write_file_name);
-        auto read_ai = Minimax_AI(pool_file_name, test_ai.id());
+        auto read_ai = Genetic_AI(pool_file_name, test_ai.id());
         read_ai.print(rewrite_file_name);
 
         if(test_result(tests_passed, files_are_identical(write_file_name, rewrite_file_name), "Genome loaded from gene pool file not preserved."))
@@ -1276,7 +1276,7 @@ namespace
 
     void self_swapped_minimax_ai_is_unchanged(bool& tests_passed)
     {
-        auto self_swap_ai = Minimax_AI();
+        auto self_swap_ai = Genetic_AI();
         self_swap_ai.mutate(100);
         const auto self_write_file_name = "self_original.txt";
         remove(self_write_file_name);
@@ -1296,7 +1296,7 @@ namespace
 
     void self_assigned_minimax_ai_is_unchanged(bool& tests_passed)
     {
-        auto self_assign_ai = Minimax_AI();
+        auto self_assign_ai = Genetic_AI();
         self_assign_ai.mutate(100);
         auto self_write_file_name = "self_assign_original.txt";
         remove(self_write_file_name);
