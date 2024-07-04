@@ -1,4 +1,4 @@
-#include "Players/Minimax_AI.h"
+#include "Players/Genetic_AI.h"
 
 #include <iostream>
 #include <string>

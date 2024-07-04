@@ -269,7 +269,7 @@
     <ClCompile Include="src\Players\Alpha_Beta_Value.cpp" />
     <ClCompile Include="src\players\Xboard_Mediator.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
-    <ClCompile Include="src\Players\Minimax_AI.cpp" />
+    <ClCompile Include="src\Players\Genetic_AI.cpp" />
     <ClCompile Include="src\players\Outside_Communicator.cpp" />
     <ClCompile Include="src\players\Player.cpp" />
     <ClCompile Include="src\Players\Proxy_Player.cpp" />
@@ -314,7 +314,7 @@
     <ClInclude Include="include\Players\Alpha_Beta_Value.h" />
     <ClInclude Include="include\players\Xboard_Mediator.h" />
     <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
-    <ClInclude Include="include\Players\Minimax_AI.h" />
+    <ClInclude Include="include\Players\Genetic_AI.h" />
     <ClInclude Include="include\players\Outside_Communicator.h" />
     <ClInclude Include="include\players\Player.h" />
     <ClInclude Include="include\Players\Proxy_Player.h" />

@@ -15,7 +15,7 @@
 #include "Game/Game_Result.h"
 #include "Game/Move.h"
 
-#include "Players/Minimax_AI.h"
+#include "Players/Genetic_AI.h"
 #include "Players/Random_AI.h"
 
 #include "Genes/Gene_Pool.h"

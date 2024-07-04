@@ -21,7 +21,7 @@ using namespace std::chrono_literals;
 #include "Game/Square.h"
 #include "Game/Move.h"
 
-#include "Players/Minimax_AI.h"
+#include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
 

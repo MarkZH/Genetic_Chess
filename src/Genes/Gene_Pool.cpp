@@ -20,7 +20,7 @@ using namespace std::chrono_literals;
 #include <sstream>
 #include <algorithm>
 
-#include "Players/Minimax_AI.h"
+#include "Players/Genetic_AI.h"
 
 #include "Game/Game.h"
 #include "Game/Board.h"
