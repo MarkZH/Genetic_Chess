@@ -138,7 +138,7 @@ namespace
         {
             for(int rank = base_rank; rank != no_normal_move_rank; rank += rank_change)
             {
-                add_legal_move<Move>(out, pawn, Move::pawn_move(Square{ file, rank }, color, Piece{}));
+                add_legal_move<Move>(out, pawn, Move::pawn_move(Square{file, rank}, color, Piece{}));
             }
         }
 

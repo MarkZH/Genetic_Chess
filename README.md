@@ -48,6 +48,6 @@ tends to be zero instead of the traditional one.
     * If compiling with Visual Studio, look in x86/Release or x64/Release
       for the compiled program.
 3. Every few hours or days, pause the gene pool with `Ctrl-Z` (Linux) or `Ctrl-C`
-   (on Windows) and run `python3 analysis/run_all_plots.py gene_pool_config_example.txt`
+   (on Windows) and run `python3 analysis/run_genetic_plots.py gene_pool_config_example.txt`
    to generate plots and other data showing the evolution and behavior of the specimens.
-   * This script requires `python3`, `numpy`, and `matplotlib` to run.
+   * This script requires Python 3.9 or later, `numpy`, and `matplotlib` to run.

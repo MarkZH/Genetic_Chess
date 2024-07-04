@@ -21,7 +21,7 @@ using namespace std::chrono_literals;
 #include <semaphore>
 #include <ranges>
 
-#include "Players/Minimax_AI.h"
+#include "Players/Genetic_AI.h"
 
 #include "Game/Game.h"
 #include "Game/Board.h"
@@ -47,23 +47,23 @@ namespace
     std::chrono::duration<double> get_duration(const std::string& parameter);
     std::string future_timestamp(const std::chrono::duration<double>& duration) noexcept;
 
-    std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file);
+    std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file);
     [[noreturn]] void throw_on_bad_still_alive_line(size_t line_number, const std::string& line);
 
-    void record_the_living(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name);
+    void record_the_living(const std::vector<Genetic_AI>& pool, const std::string& genome_file_name);
 
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
-    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate);
+    std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
     Game_Result pool_game(const Board& board,
                           const Clock::seconds game_time,
-                          Minimax_AI white,
-                          Minimax_AI black,
+                          Genetic_AI white,
+                          Genetic_AI black,
                           const std::string& game_record_file,
                           std::counting_semaphore<>& limiter) noexcept;
-    Minimax_AI best_living_ai(const std::vector<Minimax_AI>& pool) noexcept;
-    void record_best_ai(const std::vector<Minimax_AI>& pool, const std::string& best_file_name) noexcept;
-    void print_round_header(const std::vector<Minimax_AI>& pool,
+    Genetic_AI best_living_ai(const std::vector<Genetic_AI>& pool) noexcept;
+    void record_best_ai(const std::vector<Genetic_AI>& pool, const std::string& best_file_name) noexcept;
+    void print_round_header(const std::vector<Genetic_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins,
                             size_t round_count,
@@ -72,7 +72,7 @@ namespace
                             size_t mutation_rate,
                             Clock::seconds game_time,
                             const Clock& pool_time) noexcept;
-    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool);
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Genetic_AI>& pool);
 }
 
 void gene_pool(const std::string& config_file)
@@ -172,7 +172,7 @@ void gene_pool(const std::string& config_file)
             auto& winning_player = (mating_winner == Winner_Color::WHITE ? white : black);
             auto& losing_player = (winning_player.id() == white.id() ? black : white);
 
-            auto offspring = Minimax_AI(white, black);
+            auto offspring = Genetic_AI(white, black);
             offspring.mutate(mutation_rate);
             offspring.print(genome_file_name);
             losing_player = offspring;
@@ -217,7 +217,7 @@ namespace
         quit_after_round = true;
     }
 
-    std::vector<Minimax_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate)
+    std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate)
     {
         auto pool = load_gene_pool_file(genome_file_name);
         if(pool.size() != gene_pool_population)
@@ -236,7 +236,7 @@ namespace
         return pool;
     }
 
-    void record_the_living(const std::vector<Minimax_AI>& pool, const std::string& genome_file_name)
+    void record_the_living(const std::vector<Genetic_AI>& pool, const std::string& genome_file_name)
     {
         auto ofs = std::ofstream(genome_file_name, std::ios::app);
         if( ! ofs)
@@ -252,7 +252,7 @@ namespace
         ofs << "\n\n";
     }
 
-    void print_round_header(const std::vector<Minimax_AI>& pool,
+    void print_round_header(const std::vector<Genetic_AI>& pool,
                             const std::string& genome_file_name,
                             const std::array<size_t, 3>& color_wins,
                             const size_t round_count,
@@ -280,7 +280,7 @@ namespace
         std::cout << "Quit after this round: " << quit_key << "\n\n";
     }
 
-    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Minimax_AI>& pool)
+    void print_verbose_output(const std::stringstream& result_printer, const std::vector<Genetic_AI>& pool)
     {
         std::cout << result_printer.str();
 
@@ -347,25 +347,25 @@ namespace
 
     Game_Result pool_game(const Board& board,
                           const Clock::seconds game_time,
-                          Minimax_AI white,
-                          Minimax_AI black,
+                          Genetic_AI white,
+                          Genetic_AI black,
                           const std::string& game_record_file,
                           std::counting_semaphore<>& limiter) noexcept
     {
         limiter.acquire();
-        const auto result = play_game(board, Clock{ game_time }, white, black, "Gene pool", "Local computer", game_record_file, false);
+        const auto result = play_game(board, Clock{game_time}, white, black, "Gene pool", "Local computer", game_record_file, false);
         limiter.release();
         return result;
     }
 
-    void record_best_ai(const std::vector<Minimax_AI>& pool, const std::string& best_file_name) noexcept
+    void record_best_ai(const std::vector<Genetic_AI>& pool, const std::string& best_file_name) noexcept
     {
         const auto temp_best_file_name = best_file_name + ".tmp";
         best_living_ai(pool).print(temp_best_file_name);
         std::filesystem::rename(temp_best_file_name, best_file_name);
     }
 
-    Minimax_AI best_living_ai(const std::vector<Minimax_AI>& pool) noexcept
+    Genetic_AI best_living_ai(const std::vector<Genetic_AI>& pool) noexcept
     {
         return *std::max_element(pool.begin(), pool.end(),
                                  [](const auto& a, const auto& b)
@@ -441,7 +441,7 @@ namespace
         }
     }
 
-    std::vector<Minimax_AI> load_gene_pool_file(const std::string& load_file)
+    std::vector<Genetic_AI> load_gene_pool_file(const std::string& load_file)
     {
         std::ifstream ifs(load_file);
         if( ! ifs)
@@ -495,7 +495,7 @@ namespace
         auto sorted_ids = ids;
         std::ranges::sort(sorted_ids);
 
-        std::map<int, Minimax_AI> loaded_ais;
+        std::map<int, Genetic_AI> loaded_ais;
         for(auto id : sorted_ids)
         {
             while(true)
@@ -503,7 +503,7 @@ namespace
                 const auto search_started_from_beginning_of_file = ifs.tellg() == 0;
                 try
                 {
-                    loaded_ais.insert_or_assign(id, Minimax_AI{ifs, id});
+                    loaded_ais.insert_or_assign(id, Genetic_AI{ifs, id});
                     break;
                 }
                 catch(const Genome_Creation_Error& e)
@@ -521,7 +521,7 @@ namespace
             }
         }
 
-        std::vector<Minimax_AI> result;
+        std::vector<Genetic_AI> result;
         std::ranges::transform(ids, std::back_inserter(result), [&loaded_ais](const auto id) { return loaded_ais.at(id); });
 
         return result;
