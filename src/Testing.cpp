@@ -22,7 +22,7 @@ using namespace std::chrono_literals;
 #include "Game/Square.h"
 #include "Game/Move.h"
 
-#include "Players/Minimax_AI.h"
+#include "Players/Genetic_AI.h"
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
 
@@ -189,7 +189,7 @@ namespace
 
     bool files_are_identical(const std::string& file_name1, const std::string& file_name2) noexcept;
     size_t move_count(const Board& board, size_t maximum_depth) noexcept;
-    bool run_board_tests(const std::string& file_name);
+    bool run_board_tests(const std::string& file_name, int line_number = -1);
     bool all_moves_legal(Board& board, const std::vector<std::string>& moves) noexcept;
     bool move_is_illegal(const Board& board, const std::string& move) noexcept;
 
@@ -259,6 +259,7 @@ namespace
     void has_exactly_n_works_as_advertised(bool& tests_passed);
 
     void probability_check(bool& tests_passed);
+    void list_moves_on_board(const Board& board, std::vector<const Move*>& moves_played, size_t depth) noexcept;
 }
 
 bool run_tests()
@@ -300,11 +301,11 @@ bool run_tests()
     self_swapped_minimax_ai_is_unchanged(tests_passed);
     self_assigned_minimax_ai_is_unchanged(tests_passed);
 
-    function_should_not_throw(tests_passed, "Minimax_AI ctor",
+    function_should_not_throw(tests_passed, "Genetic_AI ctor",
                               []()
                               {
                                   const auto file_name = "genome_example.txt";
-                                  return Minimax_AI{file_name, find_last_id(file_name)};
+                                  return Genetic_AI{file_name, find_last_id(file_name)};
                               });
 
     castling_possible_gene_tests(tests_passed);
@@ -341,7 +342,7 @@ bool run_tests()
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, del_split, "..a..b..c..d..", "..", -1);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, del_split, "..a..b..c..d..", "..", 4);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, del_split, "..a..b..c..d..", "..", 5);
-    test_function(tests_passed, "Ellipses split", vs{ "", "a", ".b", "c", "d", "" }, del_split, "..a...b..c..d..", "..", -1);
+    test_function(tests_passed, "Ellipses split", vs{"", "a", ".b", "c", "d", ""}, del_split, "..a...b..c..d..", "..", -1);
     test_function(tests_passed, "Empty string split", vs{}, del_split, "", " ", 1000);
     test_function(tests_passed, "Missing delimiter split", vs{"abcdefg"}, del_split, "abcdefg", ",", 1000);
     split_and_join_are_inverse_operations(tests_passed);
@@ -621,6 +622,13 @@ bool run_perft_tests()
     return tests_failed.empty();
 }
 
+void list_moves(const size_t depth) noexcept
+{
+    std::vector<const Move*> moves_played;
+    Board board;
+    list_moves_on_board(board, moves_played, depth);
+}
+
 namespace
 {
     bool test_result(bool& all_tests_passed, const bool expected_result, const std::string& fail_message) noexcept
@@ -708,7 +716,7 @@ namespace
         return count;
     }
 
-    bool run_board_tests(const std::string& file_name)
+    bool run_board_tests(const std::string& file_name, const int line_number)
     {
         auto input = std::ifstream(file_name);
         if( ! input)
@@ -718,9 +726,19 @@ namespace
         }
 
         auto all_tests_passed = true;
+        int lines_read = 0;
+        if(line_number > 0)
+        {
+            std::cout << "Only performing test on line " << line_number << " in file " << file_name << ".\n";
+        }
 
         for(std::string line; std::getline(input, line);)
         {
+            ++lines_read;
+            if(line_number > 0 && line_number != lines_read)
+            {
+                continue;
+            }
             line = String::strip_comments(line, "#");
             if(line.empty())
             {
@@ -904,7 +922,7 @@ namespace
     bool move_is_illegal(const Board& board, const std::string& move) noexcept
     {
         bool result = true;
-        function_should_throw<Illegal_Move>(result, move + " should be illegal", [&](){ board.interpret_move(move); });
+        function_should_throw<Illegal_Move>(result, move + " should be illegal", [&]() { board.interpret_move(move); });
         return result;
     }
 
@@ -1250,7 +1268,7 @@ namespace
         remove(write_file_name);
         remove(rewrite_file_name);
 
-        std::vector<Minimax_AI> test_pool(10);
+        std::vector<Genetic_AI> test_pool(10);
         for(auto& ai : test_pool)
         {
             ai.mutate(100);
@@ -1259,7 +1277,7 @@ namespace
 
         const auto& test_ai = Random::random_element(test_pool);
         test_ai.print(write_file_name);
-        auto read_ai = Minimax_AI(pool_file_name, test_ai.id());
+        auto read_ai = Genetic_AI(pool_file_name, test_ai.id());
         read_ai.print(rewrite_file_name);
 
         if(test_result(tests_passed, files_are_identical(write_file_name, rewrite_file_name), "Genome loaded from gene pool file not preserved."))
@@ -1272,7 +1290,7 @@ namespace
 
     void self_swapped_minimax_ai_is_unchanged(bool& tests_passed)
     {
-        auto self_swap_ai = Minimax_AI();
+        auto self_swap_ai = Genetic_AI();
         self_swap_ai.mutate(100);
         const auto self_write_file_name = "self_original.txt";
         remove(self_write_file_name);
@@ -1292,7 +1310,7 @@ namespace
 
     void self_assigned_minimax_ai_is_unchanged(bool& tests_passed)
     {
-        auto self_assign_ai = Minimax_AI();
+        auto self_assign_ai = Genetic_AI();
         self_assign_ai.mutate(100);
         auto self_write_file_name = "self_assign_original.txt";
         remove(self_write_file_name);
@@ -1823,6 +1841,28 @@ namespace
                 << String::format_number(rational_success_count) << " / " << String::format_number(number_of_trials)
                 << "\nExpected sucesses: " << String::format_number(expected_successes) << " +/- " << String::format_number(maximum_deviation)
                 << std::endl;
+        }
+    }
+
+    void list_moves_on_board(const Board& board, std::vector<const Move*>& moves_played, size_t depth) noexcept
+    {
+        if(depth == 0 || board.legal_moves().empty())
+        {
+            for(const auto move : moves_played)
+            {
+                std::cout << move->coordinates() << ' ';
+            }
+            std::cout << '\n';
+            return;
+        }
+
+        for(const auto move : board.legal_moves())
+        {
+            moves_played.push_back(move);
+            auto new_board = board;
+            new_board.play_move(*move);
+            list_moves_on_board(new_board, moves_played, depth - 1);
+            moves_played.pop_back();
         }
     }
 }

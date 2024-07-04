@@ -25,39 +25,39 @@ class Game_Result;
 
 //! \file
 
-//! \brief This Player uses a variable-depth minimax algorithm with alpha-beta pruning.
+//! \brief This Player uses a variable-depth minimax algorithm with alpha-beta pruning. Scoring and time controlled are evolved via a genetic algorithm.
 //!
 //! Minimax algorithm: https://en.wikipedia.org/wiki/Minimax
 //! Alpha-beta pruning: https://en.wikipedia.org/wiki/Alpha%E2%80%93beta_pruning
-class Minimax_AI : public Player
+class Genetic_AI : public Player
 {
     public:
-        //! Default construct a Minimax_AI
-        Minimax_AI() noexcept = default;
+        //! Default construct a Genetic_AI
+        Genetic_AI() noexcept = default;
 
         //! Load an AI from a file.
         //!
         //! \param file_name The name of the file containing the AI.
         //! \param id The AI ID to search for in the file.
-        Minimax_AI(const std::string& file_name, int id);
+        Genetic_AI(const std::string& file_name, int id);
 
         //! Load an AI from an opened stream.
         //!
         //! \param is The already opened input stream.
         //! \param id The AI ID to search for in the stream.
-        Minimax_AI(std::istream& is, int id);
+        Genetic_AI(std::istream& is, int id);
 
         //! Load an AI from an opened stream.
         //!
         //! \param is The already opened input stream.
         //! \param id The AI ID to search for in the stream.
-        Minimax_AI(std::istream&& is, int id);
+        Genetic_AI(std::istream&& is, int id);
 
         //! Create a new AI by mating two existing ones.
         //!
         //! \param a The first AI.
         //! \param b The second AI.
-        Minimax_AI(const Minimax_AI& a, const Minimax_AI& b) noexcept;
+        Genetic_AI(const Genetic_AI& a, const Genetic_AI& b) noexcept;
 
         std::string name() const noexcept override;
         std::string author() const noexcept override;
@@ -65,7 +65,7 @@ class Minimax_AI : public Player
         //! A numeric identifier for this AI.
         int id() const noexcept;
 
-        //! \brief Minimax_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
+        //! \brief Genetic_AI uses a variable-depth minimax algorithm with alpha-beta pruning.
         //!
         //! The depth of the search is determined by how much time is available.
         //! At first, equal time is allocated to each legal move for examination. Time
@@ -104,12 +104,12 @@ class Minimax_AI : public Player
         //! \brief Ordering operator
         //!
         //! \param other The AI being compared to this one.
-        std::strong_ordering operator<=>(const Minimax_AI& other) const noexcept;
+        std::strong_ordering operator<=>(const Genetic_AI& other) const noexcept;
 
         //! \brief Equality operator
         //!
         //! \param other The AI being compared to this one.
-        bool operator==(const Minimax_AI& other) const noexcept;
+        bool operator==(const Genetic_AI& other) const noexcept;
 
     private:
         //! \brief The maximum depth to search to limit the size of the current_variation_store.
@@ -234,7 +234,7 @@ class Minimax_AI : public Player
 
         Game_Tree_Node_Result evaluate(const Game_Result& move_result,
                                        Board& next_board,
-                                       Minimax_AI::current_variation_store& current_variation,
+                                       Genetic_AI::current_variation_store& current_variation,
                                        Piece_Color perspective,
                                        std::chrono::steady_clock::time_point evaluate_start_time) const noexcept;
 
@@ -277,7 +277,7 @@ class Minimax_AI : public Player
 
         //! \brief Initial measurement of evaluation speed of the engine.
         //!
-        //! The method Minimax_AI::choose_move() keeps track of the time it takes
+        //! The method Genetic_AI::choose_move() keeps track of the time it takes
         //! and the number of positions it evaluates. But, it needs an accurate
         //! starting value for the first move search. So, this practice move will
         //! update the evaluation speed to a more reasonable starting value.

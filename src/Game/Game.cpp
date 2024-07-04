@@ -6,6 +6,8 @@
 #include <iostream>
 
 #include "Players/Player.h"
+#include "Players/Genetic_AI.h"
+#include "Players/Random_AI.h"
 #include "Players/Proxy_Player.h"
 #include "Players/Outside_Communicator.h"
 #include "Game/Board.h"
@@ -15,6 +17,7 @@
 #include "Game/Move.h"
 
 #include "Utility/String.h"
+#include "Utility/Main_Tools.h"
 
 Game_Result play_game(Board board,
                       Clock game_clock,
@@ -122,5 +125,134 @@ void play_game_with_outsider(const Player& player,
                                     location);
             print_game_record = false;
         }
+    }
+}
+
+void start_game(const std::vector<std::string>& options)
+{
+    // Use pointers since each player could be Genetic, Random, etc.
+    std::unique_ptr<Player> white;
+    std::unique_ptr<Player> black;
+
+    Clock::seconds game_time{};
+    size_t moves_per_reset = 0;
+    Clock::seconds increment_time{};
+    Board board;
+    std::string game_file_name;
+    std::string event_name;
+    std::string location;
+    auto thinking_output = Thinking_Output_Type::NO_THINKING;
+    auto print_board = false;
+    auto enable_logging = false;
+
+    for(size_t i = 0; i < options.size(); ++i)
+    {
+        const std::string opt = options[i];
+        std::unique_ptr<Player> latest;
+        if(opt == "-random")
+        {
+            latest = std::make_unique<Random_AI>();
+        }
+        else if(opt == "-genetic")
+        {
+            Main_Tools::argument_assert(i + 1 < options.size(), "Genome file needed for player");
+            std::string file_name = options[++i];
+
+            try
+            {
+                const auto id = i + 1 < options.size() ? options[i + 1] : std::string{};
+                latest = std::make_unique<Genetic_AI>(file_name, String::to_number<int>(id));
+                ++i;
+            }
+            catch(const std::invalid_argument&) // Could not convert id to an int.
+            {
+                latest = std::make_unique<Genetic_AI>(file_name, find_last_id(file_name));
+            }
+        }
+        else if(opt == "-time" && i + 1 < options.size())
+        {
+            game_time = String::to_duration<Clock::seconds>(options[++i]);
+        }
+        else if(opt == "-reset-moves" && i + 1 < options.size())
+        {
+            moves_per_reset = String::to_number<size_t>(options[++i]);
+        }
+        else if(opt == "-increment-time" && i + 1 < options.size())
+        {
+            increment_time = String::to_duration<Clock::seconds>(options[++i]);
+        }
+        else if(opt == "-board" && i + 1 < options.size())
+        {
+            board = Board(options[++i]);
+        }
+        else if(opt == "-game-file" && i + 1 < options.size())
+        {
+            game_file_name = options[++i];
+        }
+        else if(opt == "-event" && i + 1 < options.size())
+        {
+            event_name = options[++i];
+        }
+        else if(opt == "-location" && i + 1 < options.size())
+        {
+            location = options[++i];
+        }
+        else if(opt == "-xboard")
+        {
+            thinking_output = Thinking_Output_Type::XBOARD;
+        }
+        else if(opt == "-uci")
+        {
+            thinking_output = Thinking_Output_Type::UCI;
+        }
+        else if(opt == "-show-board")
+        {
+            print_board = true;
+        }
+        else if(opt == "-log-comms")
+        {
+            enable_logging = true;
+        }
+        else
+        {
+            throw std::invalid_argument("Invalid or incomplete game option: " + opt);
+        }
+
+        if(latest)
+        {
+            if(!white)
+            {
+                white = std::move(latest);
+            }
+            else if(!black)
+            {
+                black = std::move(latest);
+            }
+            else
+            {
+                throw std::invalid_argument("More than two players specified.");
+            }
+        }
+    }
+
+    if(!white)
+    {
+        throw std::invalid_argument("At least one player must be specified.");
+    }
+
+    if(!black)
+    {
+        play_game_with_outsider(*white, event_name, location, game_file_name, enable_logging);
+    }
+    else
+    {
+        Player::set_thinking_mode(thinking_output);
+        play_game(board,
+                  Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION),
+                  *white, *black,
+                  event_name,
+                  location,
+                  game_file_name,
+                  print_board);
     }
 }

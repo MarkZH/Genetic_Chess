@@ -1,6 +1,8 @@
 #ifndef TESTING_H
 #define TESTING_H
 
+#include <cstddef>
+
 //! \file
 
 //! \brief Run through a battery of tests to verify the operation of most of the program.
@@ -15,5 +17,11 @@ void run_speed_tests();
 //!
 //! \returns True if all tests pass.
 bool run_perft_tests();
+
+//! \brief List all move combinations to a given depth on a standard starting position.
+//! \param depth The maximum depth to search for moves.
+//!
+//! Prints results to stdout.
+void list_moves(size_t depth) noexcept;
 
 #endif // TESTING_H
