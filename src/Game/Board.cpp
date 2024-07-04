@@ -22,6 +22,7 @@ using namespace std::chrono_literals;
 #include "Game/Game_Result.h"
 #include "Game/Piece.h"
 #include "Game/Move.h"
+#include "Game/PGN.h"
 
 #include "Players/Player.h"
 
@@ -758,24 +759,6 @@ bool Board::no_legal_moves() const noexcept
     return legal_moves().empty();
 }
 
-namespace
-{
-    template<typename Output_Stream, typename Data_Type>
-    void print_game_header_line(Output_Stream& output, const std::string& heading, const Data_Type& data)
-    {
-        output << "[" << heading << " \"";
-        if constexpr (std::is_same_v<Data_Type, std::string>)
-        {
-            output << (data.empty() ? "?" : data);
-        }
-        else
-        {
-            output << data;
-        }
-        output << "\"]\n";
-    }
-}
-
 void Board::print_game_record(const std::vector<const Move*>& game_record_listing,
                               const Player& white,
                               const Player& black,
@@ -810,33 +793,33 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
     auto header_text = std::ostringstream();
 
-    print_game_header_line(header_text, "Event", event_name);
-    print_game_header_line(header_text, "Site", location);
-    print_game_header_line(header_text, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
-    print_game_header_line(header_text, "Round", game_number++);
-    print_game_header_line(header_text, "White", white.name());
-    print_game_header_line(header_text, "Black", black.name());
+    PGN::print_game_header_line(header_text, "Event", event_name);
+    PGN::print_game_header_line(header_text, "Site", location);
+    PGN::print_game_header_line(header_text, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
+    PGN::print_game_header_line(header_text, "Round", game_number++);
+    PGN::print_game_header_line(header_text, "White", white.name());
+    PGN::print_game_header_line(header_text, "Black", black.name());
 
     const auto last_move_result = move_result();
     const auto& actual_result = last_move_result.game_has_ended() ? last_move_result : result;
-    print_game_header_line(header_text, "Result", actual_result.game_ending_annotation());
+    PGN::print_game_header_line(header_text, "Result", actual_result.game_ending_annotation());
 
-    print_game_header_line(header_text, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
+    PGN::print_game_header_line(header_text, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
 
-    print_game_header_line(header_text, "TimeControl", game_clock.time_control_string());
-    print_game_header_line(header_text, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
-    print_game_header_line(header_text, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
+    PGN::print_game_header_line(header_text, "TimeControl", game_clock.time_control_string());
+    PGN::print_game_header_line(header_text, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
+    PGN::print_game_header_line(header_text, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
 
     if( ! actual_result.ending_reason().empty() && ! String::contains(actual_result.ending_reason(), "mates"))
     {
-        print_game_header_line(header_text, "Termination", actual_result.ending_reason());
+        PGN::print_game_header_line(header_text, "Termination", actual_result.ending_reason());
     }
 
     const auto starting_fen = original_fen();
     if(starting_fen != standard_starting_fen)
     {
-        print_game_header_line(header_text, "SetUp", 1);
-        print_game_header_line(header_text, "FEN", starting_fen);
+        PGN::print_game_header_line(header_text, "SetUp", 1);
+        PGN::print_game_header_line(header_text, "FEN", starting_fen);
     }
 
     auto game_text = std::ostringstream();

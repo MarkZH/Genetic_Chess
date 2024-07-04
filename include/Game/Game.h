@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <string>
+#include <vector>
 
 class Player;
 class Board;
@@ -43,5 +44,10 @@ void play_game_with_outsider(const Player& local_player,
                              const std::string& location,
                              const std::string& game_file_name,
                              bool enable_logging);
+
+//! \brief Starts a single game according to command line options.
+//!
+//! \param options Command line options standardized into a string vector.
+void start_game(const std::vector<std::string>& options);
 
 #endif // GAME_H

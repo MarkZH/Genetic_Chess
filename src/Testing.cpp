@@ -258,6 +258,7 @@ namespace
     void has_exactly_n_works_as_advertised(bool& tests_passed);
 
     void probability_check(bool& tests_passed);
+    void list_moves_on_board(const Board& board, std::vector<const Move*>& moves_played, size_t depth) noexcept;
 }
 
 bool run_tests()
@@ -618,6 +619,13 @@ bool run_perft_tests()
         std::cout << '\n';
     }
     return tests_failed.empty();
+}
+
+void list_moves(const size_t depth) noexcept
+{
+    std::vector<const Move*> moves_played;
+    Board board;
+    list_moves_on_board(board, moves_played, depth);
 }
 
 namespace
@@ -1824,6 +1832,28 @@ namespace
                 << String::format_integer(rational_success_count, ",") << " / " << String::format_integer(number_of_trials, ",")
                 << "\nExpected sucesses: " << String::format_integer(expected_successes, ",") << " +/- " << String::format_integer(maximum_deviation, ",")
                 << std::endl;
+        }
+    }
+
+    void list_moves_on_board(const Board& board, std::vector<const Move*>& moves_played, size_t depth) noexcept
+    {
+        if(depth == 0 || board.legal_moves().empty())
+        {
+            for(const auto move : moves_played)
+            {
+                std::cout << move->coordinates() << ' ';
+            }
+            std::cout << '\n';
+            return;
+        }
+
+        for(const auto move : board.legal_moves())
+        {
+            moves_played.push_back(move);
+            auto new_board = board;
+            new_board.play_move(*move);
+            list_moves_on_board(new_board, moves_played, depth - 1);
+            moves_played.pop_back();
         }
     }
 }

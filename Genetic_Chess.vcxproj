@@ -244,6 +244,7 @@
     <ClCompile Include="src\game\Game.cpp" />
     <ClCompile Include="src\game\Game_Result.cpp" />
     <ClCompile Include="src\Game\Move.cpp" />
+    <ClCompile Include="src\Game\PGN.cpp" />
     <ClCompile Include="src\Game\Piece.cpp" />
     <ClCompile Include="src\game\Square.cpp" />
     <ClCompile Include="src\genes\Castling_Possible_Gene.cpp" />
@@ -282,6 +283,7 @@
     <ClCompile Include="src\Utility\Random.cpp" />
     <ClCompile Include="src\Utility\String.cpp" />
     <ClCompile Include="src\Utility\Thread_Limiter.cpp" />
+    <ClCompile Include="src\Utility\Main_Tools.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\game\Board.h" />
@@ -290,6 +292,7 @@
     <ClInclude Include="include\game\Game.h" />
     <ClInclude Include="include\game\Game_Result.h" />
     <ClInclude Include="include\Game\Move.h" />
+    <ClInclude Include="include\Game\PGN.h" />
     <ClInclude Include="include\Game\Piece.h" />
     <ClInclude Include="include\game\Square.h" />
     <ClInclude Include="include\genes\Castling_Possible_Gene.h" />
@@ -331,6 +334,7 @@
     <ClInclude Include="include\Utility\Random.h" />
     <ClInclude Include="include\Utility\String.h" />
     <ClInclude Include="include\Utility\Thread_Limiter.h" />
+    <ClInclude Include="include\Utility\Main_Tools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
