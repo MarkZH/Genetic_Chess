@@ -153,7 +153,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             if(!check_rule_result("Header",
                                   "50-move draw",
                                   expect_fifty_move_draw,
-                                  String::contains(result.ending_reason(), "50"),
+                                  result.ending_reason().contains("50"),
                                   input))
             {
                 return false;
@@ -162,7 +162,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             if(!check_rule_result("Header",
                                   "threefold draw",
                                   expect_threefold_draw,
-                                  String::contains(result.ending_reason(), "fold"),
+                                  result.ending_reason().contains("fold"),
                                   input))
             {
                 return false;
@@ -171,7 +171,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             if(!check_rule_result("Header",
                                   "checkmate",
                                   expect_checkmate,
-                                  String::contains(result.ending_reason(), "mates"),
+                                  result.ending_reason().contains("mates"),
                                   input))
             {
                 return false;
@@ -285,11 +285,11 @@ bool PGN::confirm_game_record(const std::string& file_name)
         {
             const auto terminator = get_pgn_header_value(input);
             expect_checkmate = false;
-            if(String::contains(terminator, "fold"))
+            if(terminator.contains("fold"))
             {
                 expect_threefold_draw = true;
             }
-            else if(String::contains(terminator, "50"))
+            else if(terminator.contains("50"))
             {
                 expect_fifty_move_draw = true;
             }
@@ -336,7 +336,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 const auto& move_to_play = board.interpret_move(word);
                 if(!check_rule_result("Move: " + move_number + word + ")",
                                       "capture",
-                                      String::contains(word, 'x'),
+                                      word.contains('x'),
                                       board.move_captures(move_to_play),
                                       input))
                 {
@@ -347,7 +347,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
                 if(!check_rule_result("Move (" + move_number + word + ")",
                                       "check",
-                                      String::contains("+#", word.back()),
+                                      std::string_view("+#").contains(word.back()),
                                       board.king_is_in_check(),
                                       input))
                 {
