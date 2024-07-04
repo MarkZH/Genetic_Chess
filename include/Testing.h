@@ -1,6 +1,8 @@
 #ifndef TESTING_H
 #define TESTING_H
 
+#include <cstddef>
+
 //! \file
 
 //! \brief Run through a battery of tests to verify the operation of most of the program.
