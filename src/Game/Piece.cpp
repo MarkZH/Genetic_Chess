@@ -99,11 +99,10 @@ Piece::list_of_move_lists Piece::move_lists(const Square square) const noexcept
 {
     assert(*this);
     list_of_move_lists moves;
-    for(const auto& move : sliding_moves)
+    for(const auto& step : sliding_moves)
     {
         moves.emplace_back();
-        const auto step = move.movement();
-        for(auto target = square + step; target.inside_board(); target += step)
+        for(const auto target : Squares_in_a_Line(square, step))
         {
             moves.back().emplace_back(square, target);
         }

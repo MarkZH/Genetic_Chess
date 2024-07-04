@@ -5,9 +5,9 @@
 #include <vector>
 
 #include "Game/Color.h"
+#include "Game/Square.h"
 
 class Move;
-class Square;
 
 //! \file
 
@@ -98,7 +98,7 @@ class Piece
         piece_code_t piece_code;
 
         // Moves that can be repeated until reaching another piece or the end of the board
-        std::vector<Move> sliding_moves;
+        std::vector<Square_Difference> sliding_moves;
 
         // Moves that not ranged moves (like those of knights, pawns, and kings)
         std::vector<Move> non_sliding_moves;
