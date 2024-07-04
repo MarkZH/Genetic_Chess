@@ -6,9 +6,9 @@
 #include <limits>
 
 #include "Game/Color.h"
+#include "Game/Move.h"
 #include "Players/Alpha_Beta_Value.h"
 
-class Move;
 
 //! \brief A class representing the evaluation of a leaf of the Minimax search of the game tree.
 class Game_Tree_Node_Result
@@ -27,7 +27,7 @@ class Game_Tree_Node_Result
         //!        and a draw as 0. All other positions take on some finite value.
         //! \param perspective_in The perspective from which the score is calculated--for whom a higher score is better.
         //! \param variation_in The sequence of moves that lead to the board position being scored.
-        Game_Tree_Node_Result(double score_in, Piece_Color perspective_in, const std::vector<const Move*>& variation_in) noexcept;
+        Game_Tree_Node_Result(double score_in, Piece_Color perspective_in, const std::vector<Move>& variation_in) noexcept;
 
         Game_Tree_Node_Result() noexcept = default;
 
@@ -67,7 +67,7 @@ class Game_Tree_Node_Result
         std::pair<double, int> value(Piece_Color query) const noexcept;
 
         //! \brief The sequence of moves that lead to the board position being evaluated.
-        const std::vector<const Move*>& variation_line() const noexcept;
+        const std::vector<Move>& variation_line() const noexcept;
 
         //! \brief Returns the equivalent Alpha-Beta cutoff value.
         Alpha_Beta_Value alpha_beta_value() const noexcept;
@@ -75,7 +75,7 @@ class Game_Tree_Node_Result
     private:
         double score = 0.0;
         Piece_Color perspective = Piece_Color::WHITE;
-        std::vector<const Move*> variation;
+        std::vector<Move> variation;
 };
 
 #endif // GAME_TREE_NODE_RESULT_H

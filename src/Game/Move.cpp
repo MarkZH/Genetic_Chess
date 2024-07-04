@@ -67,7 +67,7 @@ bool Move::is_legal(const Board& board) const noexcept
 {
     assert(board.piece_on_square(start()));
     assert(board.piece_on_square(start()).color() == board.whose_turn());
-    assert(board.piece_on_square(start()).can_move(this));
+    assert(board.piece_on_square(start()).can_move(*this));
 
     if(const auto attacked_piece = board.piece_on_square(end()))
     {
@@ -131,21 +131,21 @@ std::string Move::algebraic_base(const Board& board) const noexcept
 
     auto record_file = original_piece.type() == Piece_Type::PAWN && board.move_captures(*this);
     auto record_rank = false;
-    for(auto other_move : board.legal_moves())
+    for(const auto& other_move : board.legal_moves())
     {
-        if(other_move->start() == start())
+        if(other_move.start() == start())
         {
             continue;
         }
 
-        const auto new_piece = board.piece_on_square(other_move->start());
-        if(original_piece == new_piece && end() == other_move->end())
+        const auto new_piece = board.piece_on_square(other_move.start());
+        if(original_piece == new_piece && end() == other_move.end())
         {
-            if(other_move->start().file() != start().file() && ! record_file)
+            if(other_move.start().file() != start().file() && ! record_file)
             {
                 record_file = true;
             }
-            else if(other_move->start().rank() != start().rank())
+            else if(other_move.start().rank() != start().rank())
             {
                 record_rank = true;
             }
@@ -272,6 +272,17 @@ char Move::promotion_piece_symbol() const noexcept
 size_t Move::attack_index() const noexcept
 {
     return attack_index(movement());
+}
+
+bool operator==(const Move& a, const Move& b) noexcept
+{
+    return a.origin == b.origin
+        && a.destination == b.destination
+        && a.able_to_capture == b.able_to_capture
+        && a.is_castling == b.is_castling
+        //&& a.extra_rule == b.extra_rule
+        //&& a.side_effect == b.side_effect
+        && a.pawn_promotion == b.pawn_promotion;
 }
 
 size_t Move::attack_index(const Square_Difference& move) noexcept

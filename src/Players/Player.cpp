@@ -2,6 +2,7 @@
 
 #include <string>
 #include <atomic>
+#include <optional>
 
 #include "Players/Thinking.h"
 
@@ -22,7 +23,7 @@ std::string Player::commentary_for_next_move(const Board&, size_t) const noexcep
     return {};
 }
 
-void Player::undo_move(const Move*) const noexcept
+void Player::undo_move(const std::optional<Move>&) const noexcept
 {
 }
 

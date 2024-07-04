@@ -9,9 +9,11 @@
 #include <utility>
 #include <string>
 #include <iosfwd>
+#include <optional>
 
 #include "Game/Color.h"
 #include "Game/Clock.h"
+#include "Game/Move.h"
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
@@ -19,7 +21,6 @@
 #include "Genes/Genome.h"
 
 class Board;
-class Move;
 class Game_Result;
 
 //! \file
@@ -72,7 +73,7 @@ class Genetic_AI : public Player
         //! due to search cutoffs due to alpha-beta pruning.
         //! \param board The current state of the game.
         //! \param clock The game clock telling how much time is left in the game.
-        const Move& choose_move(const Board& board, const Clock& clock) const noexcept override;
+        Move choose_move(const Board& board, const Clock& clock) const noexcept override;
 
         //! \brief Prints the expected future variation and score for the chosen move.
         //!
@@ -81,7 +82,7 @@ class Genetic_AI : public Player
         //!        game did not start with move 1.
         std::string commentary_for_next_move(const Board& board, size_t move_number) const noexcept override;
 
-        void undo_move(const Move* last_move) const noexcept override;
+        void undo_move(const std::optional<Move>& last_move) const noexcept override;
 
         void reset() const noexcept override;
 
@@ -118,7 +119,7 @@ class Genetic_AI : public Player
         const static size_t variation_store_size = maximum_variation_depth + maximum_quiescent_captures;
 
         //! A datatype for storing the moves that are played to reach the current board position during a search.
-        using current_variation_store = Fixed_Capacity_Vector<const Move*, variation_store_size>;
+        using current_variation_store = std::vector<Move>;
 
         //! \brief Recalculate values that will last the lifetime of the instance.
         //!
@@ -181,7 +182,7 @@ class Genetic_AI : public Player
                                                double progress_of_game,
                                                Alpha_Beta_Value alpha,
                                                const Alpha_Beta_Value& beta,
-                                               std::vector<const Move*>& principal_variation,
+                                               std::vector<Move>& principal_variation,
                                                current_variation_store& current_variation) const noexcept;
 
         // The brains of the Minimax algorithm that provides board evaluation and time management.
@@ -202,7 +203,7 @@ class Genetic_AI : public Player
         mutable std::chrono::steady_clock::time_point time_at_last_output;
 
         //! \brief Sort moves before searching further in the game tree.
-        //! \tparam Iter An iterator type that points to a const Move*.
+        //! \tparam Iter An iterator type that points to a Move.
         //! \param begin An iterator to the beginning of the move list to be sorted.
         //! \param end An iterator to the end of the move list to be sorted.
         //! \param board The board from which the move list is derived.
@@ -235,7 +236,7 @@ class Genetic_AI : public Player
         bool search_further(const Game_Result& move_result,
                             size_t depth,
                             const Board& next_board,
-                            const std::vector<const Move*>& principal_variation,
+                            const std::vector<Move>& principal_variation,
                             size_t minimum_search_depth,
                             size_t maximum_search_depth,
                             Clock::seconds time_allotted_for_this_move) const noexcept;
@@ -277,9 +278,9 @@ class Genetic_AI : public Player
         //! update the evaluation speed to a more reasonable starting value.
         void calibrate_thinking_speed() const noexcept;
 
-        const Move& choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
+        Move choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
 
-        std::vector<const Move*> get_legal_principal_variation(const Board& board) const noexcept;
+        std::vector<Move> get_legal_principal_variation(const Board& board) const noexcept;
 };
 
 //! \brief Find the last ID of a Genome in a gene pool file.

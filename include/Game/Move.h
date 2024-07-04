@@ -60,9 +60,6 @@ class Move
         //! \returns A move instance with proper pawn rules in place.
         static Move castle(Piece_Color king_color, Direction direction) noexcept;
 
-        //! \brief Since there's only one instance of every Move, assignment can only lose information.
-        Move& operator=(const Move&) = delete;
-
         //! \brief Further modifies the state of the board.
         //!
         //! Side effects are changes to the state of the board beyond the change
@@ -185,6 +182,10 @@ class Move
         void setup_pawn_promotion(Piece_Color pawn_color, Piece promote) noexcept;
         void setup_pawn_rules() noexcept;
         void setup_castling_rules(Direction direction) noexcept;
+
+        friend bool operator==(const Move& a, const Move& b) noexcept;
 };
+
+bool operator==(const Move& a, const Move& b) noexcept;
 
 #endif // MOVE_H

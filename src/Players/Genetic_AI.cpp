@@ -9,6 +9,7 @@ using namespace std::chrono_literals;
 #include <cmath>
 #include <limits>
 #include <fstream>
+#include <optional>
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
@@ -36,7 +37,7 @@ namespace
     //! \param score The score assigned to the resulting board after the sequence of moves.
         std::string variation_line(Board board,
                                    size_t move_number,
-                                   const std::vector<const Move*>& variation,
+                                   const std::vector<Move>& variation,
                                    double score) noexcept;
 }
 
@@ -85,13 +86,13 @@ int Genetic_AI::id() const noexcept
     return genome.id();
 }
 
-const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) const noexcept
+Move Genetic_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
     reset_search_stats(board);
     return choose_move_minimax(board, clock);
 }
 
-const Move& Genetic_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
+Move Genetic_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
 {
     auto principal_variation = get_legal_principal_variation(board);
     const auto progress_of_game = game_progress(board);
@@ -112,12 +113,12 @@ const Move& Genetic_AI::choose_move_minimax(const Board& board, const Clock& clo
 
     report_final_search_stats(result, board);
 
-    return *result.variation_line().front();
+    return result.variation_line().front();
 }
 
-std::vector<const Move*> Genetic_AI::get_legal_principal_variation(const Board& board) const noexcept
+std::vector<Move> Genetic_AI::get_legal_principal_variation(const Board& board) const noexcept
 {
-    const auto& principal_variation = commentary.empty() ? std::vector<const Move*>{} : commentary.back().variation_line();
+    const auto& principal_variation = commentary.empty() ? std::vector<Move>{} : commentary.back().variation_line();
 
     // If the principal_variation is long enough, then
     //   - principal_variation[0] contains this player's last chosen move, and
@@ -135,9 +136,9 @@ std::vector<const Move*> Genetic_AI::get_legal_principal_variation(const Board& 
     auto variation_board = board;
     for(size_t index = 2; index < principal_variation.size(); ++index)
     {
-        if(variation_board.is_in_legal_moves_list(*principal_variation[index]))
+        if(variation_board.is_in_legal_moves_list(principal_variation[index]))
         {
-            variation_board.play_move(*principal_variation[index]);
+            variation_board.play_move(principal_variation[index]);
         }
         else
         {
@@ -190,7 +191,7 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                                    const double progress_of_game,
                                                    Alpha_Beta_Value alpha,
                                                    const Alpha_Beta_Value& beta,
-                                                   std::vector<const Move*>& principal_variation,
+                                                   std::vector<Move>& principal_variation,
                                                    current_variation_store& current_variation) const noexcept
 {
     const auto time_end = std::chrono::steady_clock::now() + time_to_examine;
@@ -229,14 +230,14 @@ Game_Tree_Node_Result Genetic_AI::search_game_tree(const Board& board,
                                          {current_variation.empty() ? all_legal_moves.front() : current_variation.front()}};
 
     auto moves_left = all_legal_moves.size();
-    for(const auto move : all_legal_moves)
+    for(const auto& move : all_legal_moves)
     {
         const auto evaluate_start_time = std::chrono::steady_clock::now();
         ++nodes_searched;
 
         const auto variation_guard = Algorithm::scoped_push_back(current_variation, move);
         auto next_board = board;
-        auto move_result = next_board.play_move(*move);
+        auto move_result = next_board.play_move(move);
 
         if(move_result.winner() != Winner_Color::NONE)
         {
@@ -320,10 +321,10 @@ Game_Tree_Node_Result Genetic_AI::evaluate(const Game_Result& move_result,
     };
     const auto guard = evaluate_time_guard{total_evaluation_time, evaluate_start_time};
 
-    const auto quiescent_moves = move_result.game_has_ended() ? std::vector<const Move*>{} : next_board.quiescent(piece_values());
-    for(auto quiescent_move : quiescent_moves)
+    const auto quiescent_moves = move_result.game_has_ended() ? std::vector<Move>{} : next_board.quiescent(piece_values());
+    for(const auto& quiescent_move : quiescent_moves)
     {
-        next_board.play_move(*quiescent_move);
+        next_board.play_move(quiescent_move);
     }
     const auto quiescent_guard = Algorithm::scoped_push_back(current_variation, quiescent_moves.begin(), quiescent_moves.end());
     nodes_searched += quiescent_moves.size();
@@ -334,7 +335,7 @@ Game_Tree_Node_Result Genetic_AI::evaluate(const Game_Result& move_result,
 bool Genetic_AI::search_further(const Game_Result& move_result,
                                 const size_t depth,
                                 const Board& next_board,
-                                const std::vector<const Move*>& principal_variation,
+                                const std::vector<Move>& principal_variation,
                                 const size_t minimum_search_depth,
                                 const size_t maximum_search_depth,
                                 const Clock::seconds time_allotted_for_this_move) const noexcept
@@ -420,7 +421,7 @@ void Genetic_AI::output_thinking_xboard(const Game_Tree_Node_Result& thought,
     // Principal variation
     for(const auto& move : thought.variation_line())
     {
-        std::cout << move->coordinates() << ' ';
+        std::cout << move.coordinates() << ' ';
     }
 
     std::cout << std::endl;
@@ -438,7 +439,7 @@ void Genetic_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
               << " pv ";
     for(const auto& move : thought.variation_line())
     {
-        std::cout << move->coordinates() << " ";
+        std::cout << move.coordinates() << " ";
     }
     std::cout << "score ";
     if(thought.is_winning_for(perspective))
@@ -453,7 +454,7 @@ void Genetic_AI::output_thinking_uci(const Game_Tree_Node_Result& thought,
     {
         std::cout << "cp " << int(thought.corrected_score(perspective)/centipawn_value());
     }
-    std::cout << " currmove " << thought.variation_line().front()->coordinates();
+    std::cout << " currmove " << thought.variation_line().front().coordinates();
     std::cout << std::endl;
 }
 
@@ -557,8 +558,8 @@ void Genetic_AI::calculate_centipawn_value() const noexcept
         auto board_is_good = true;
         for(int move = 0; move < 40; ++move)
         {
-            const auto next_move = Random::random_element(board.legal_moves());
-            if(board.play_move(*next_move).game_has_ended() || board.fen().find_first_of("pP") == std::string::npos)
+            const auto& next_move = Random::random_element(board.legal_moves());
+            if(board.play_move(next_move).game_has_ended() || board.fen().find_first_of("pP") == std::string::npos)
             {
                 board_is_good = false;
                 break;
@@ -601,7 +602,7 @@ namespace
 {
     std::string variation_line(Board board,
                                const size_t move_number,
-                               const std::vector<const Move*>& variation,
+                               const std::vector<Move>& variation,
                                const double score) noexcept
     {
         Game_Result move_result;
@@ -610,8 +611,8 @@ namespace
         for(size_t i = 0; i < variation.size(); ++i)
         {
             const auto move_label = move_number + i/2 + move_label_offset;
-            result += (board.whose_turn() == Piece_Color::WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i]->algebraic(board) + " ";
-            move_result = board.play_move(*variation[i]);
+            result += (board.whose_turn() == Piece_Color::WHITE ? std::to_string(move_label) + ". " : std::string{}) + variation[i].algebraic(board) + " ";
+            move_result = board.play_move(variation[i]);
         }
 
         if( ! move_result.game_has_ended())
@@ -630,7 +631,7 @@ namespace
     }
 }
 
-void Genetic_AI::undo_move(const Move* const last_move) const noexcept
+void Genetic_AI::undo_move(const std::optional<Move>& last_move) const noexcept
 {
     if(commentary.empty() || commentary.back().variation_line().empty())
     {

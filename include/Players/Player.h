@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include <string>
+#include <optional>
 
 #include "Players/Thinking.h"
 
@@ -21,7 +22,7 @@ class Player
         //! choosing moves here.
         //! \param board The current board position. The players choose the move from board.legal_moves().
         //! \param clock The game clock--allowing the player to decide how much time to spend choosing a move.
-        virtual const Move& choose_move(const Board& board, const Clock& clock) const noexcept = 0;
+        virtual Move choose_move(const Board& board, const Clock& clock) const noexcept = 0;
 
         //! \brief Reset player internals (if any) for a new game
         virtual void reset() const noexcept;
@@ -46,7 +47,7 @@ class Player
         //! \brief Remove the data for the last move from the chess engine.
         //!
         //! \param last_move The last move made on the board for use by the internals of the chess engine.
-        virtual void undo_move(const Move* last_move) const noexcept;
+        virtual void undo_move(const std::optional<Move>& last_move) const noexcept;
 
         //! \brief Set the format an engine should output while picking a move.
         //!

@@ -28,7 +28,7 @@ Game_Result play_game(Board board,
                       const std::string& pgn_file_name,
                       const bool print_board) noexcept
 {
-    std::vector<const Move*> game_record;
+    std::vector<Move> game_record;
     Game_Result result;
 
     game_clock.start(board.whose_turn());
@@ -47,7 +47,7 @@ Game_Result play_game(Board board,
         if( ! result.game_has_ended())
         {
             result = board.play_move(move_chosen);
-            game_record.push_back(&move_chosen);
+            game_record.push_back(move_chosen);
             if(print_board)
             {
                 board.cli_print_game(white, black, game_clock);
@@ -80,7 +80,7 @@ void play_game_with_outsider(const Player& player,
     Board board;
     Clock clock;
     Game_Result game_result;
-    std::vector<const Move*> game_record;
+    std::vector<Move> game_record;
     auto player_color = Piece_Color::BLACK;
     auto print_game_record = false;
 

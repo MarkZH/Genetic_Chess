@@ -2,8 +2,7 @@
 #define PIECE_H
 
 #include <string>
-
-#include "Utility/Fixed_Capacity_Vector.h"
+#include <vector>
 
 #include "Game/Color.h"
 
@@ -32,7 +31,7 @@ class Piece
 {
     private:
         using piece_code_t = unsigned int;
-        using list_of_move_lists = Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>;
+        using list_of_move_lists = std::vector<std::vector<Move>>;
 
     public:
         //! \brief Create an invalid piece that can represent an unoccupied space on a Board.
@@ -80,23 +79,29 @@ class Piece
         //!
         //! \param move A pointer to a prospective move.
         //! \returns Whether or not the piece is allowed to move in the manner described by the parameter.
-        bool can_move(const Move* move) const noexcept;
+        bool can_move(const Move& move) const noexcept;
 
         //! \brief Get all possibly legal moves of a piece starting from a given square.
         //!
         //! \param square The square where the moves start.
         //! \returns A list of lists of legal moves starting from that square. The moves are grouped into
         //!          lists by direction and ordered by distance from the starting square.
-        const list_of_move_lists& move_lists(Square square) const noexcept;
+        list_of_move_lists move_lists(Square square) const noexcept;
 
         //! \brief Gives all moves that are allowed to capture other pieces.
         //!
         //! \param square The square where the attacking moves start.
         //! \returns A list of lists of moves grouped and ordered as in Piece::move_lists().
-        const list_of_move_lists& attacking_move_lists(Square square) const noexcept;
+        list_of_move_lists attacking_move_lists(Square square) const noexcept;
 
     private:
         piece_code_t piece_code;
+
+        // Moves that can be repeated until reaching another piece or the end of the board
+        std::vector<Move> sliding_moves;
+
+        // Moves that not ranged moves (like those of knights, pawns, and kings)
+        std::vector<Move> non_sliding_moves;
 };
 
 //! \brief Check two pieces for equality

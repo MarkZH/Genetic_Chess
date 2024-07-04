@@ -41,7 +41,7 @@ Xboard_Mediator::Xboard_Mediator(const Player& local_player)
     }
 }
 
-Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
+Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<Move>& move_list, const Player& player)
 {
     using centiseconds = std::chrono::duration<int, std::centi>;
 
@@ -104,11 +104,11 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                     }
                     else
                     {
-                        for(auto move : new_move_list)
+                        for(const auto& move : new_move_list)
                         {
-                            log("Derived move: " + move->coordinates());
-                            setup_result = board.play_move(*move);
-                            move_list.push_back(board.last_move());
+                            log("Derived move: " + move.coordinates());
+                            setup_result = board.play_move(move);
+                            move_list.push_back(*board.last_move());
                         }
                     }
                 }
@@ -124,7 +124,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                 {
                     log("Applying move: " + move);
                     setup_result = board.play_move(move);
-                    move_list.push_back(board.last_move());
+                    move_list.push_back(*board.last_move());
                     if(setup_result.game_has_ended())
                     {
                         report_end_of_game(setup_result);
@@ -232,7 +232,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                     log("Attempting to interpret as move: " + command);
                     setup_result = board.play_move(command);
                     log("Applied move: " + command);
-                    move_list.push_back(board.last_move());
+                    move_list.push_back(*board.last_move());
                     if(setup_result.game_has_ended())
                     {
                         report_end_of_game(setup_result);
@@ -268,7 +268,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
     return setup_result;
 }
 
-bool Xboard_Mediator::undo_move(std::vector<const Move*>& move_list, const std::string& command, Board& board, Clock& clock, const Player& player)
+bool Xboard_Mediator::undo_move(std::vector<Move>& move_list, const std::string& command, Board& board, Clock& clock, const Player& player)
 {
     if(move_list.empty())
     {
@@ -277,13 +277,13 @@ bool Xboard_Mediator::undo_move(std::vector<const Move*>& move_list, const std::
     }
     else
     {
-        log("Undoing move: " + move_list.back()->coordinates());
+        log("Undoing move: " + move_list.back().coordinates());
         player.undo_move(board.last_move());
         move_list.pop_back();
         auto new_board = Board(board.original_fen());
-        for(auto move : move_list)
+        for(const auto& move : move_list)
         {
-            new_board.play_move(*move);
+            new_board.play_move(move);
         }
         board = new_board;
         clock.unpunch();
@@ -291,7 +291,7 @@ bool Xboard_Mediator::undo_move(std::vector<const Move*>& move_list, const std::
     }
 }
 
-Game_Result Xboard_Mediator::handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const
+Game_Result Xboard_Mediator::handle_move(Board& board, const Move& move, std::vector<Move>& move_list) const
 {
     if(in_force_mode)
     {
@@ -301,7 +301,7 @@ Game_Result Xboard_Mediator::handle_move(Board& board, const Move& move, std::ve
     else
     {
         send_command("move " + move.coordinates());
-        move_list.push_back(&move);
+        move_list.push_back(move);
         const auto result = board.play_move(move);
         if(result.game_has_ended())
         {
