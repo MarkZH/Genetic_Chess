@@ -58,7 +58,7 @@ void Main_Tools::argument_assert(const bool condition, const std::string& failur
     }
 }
 
-std::vector<std::string> Main_Tools::standardize_option(int argc, char* argv[])
+std::vector<std::string> Main_Tools::standardize_options(int argc, char* argv[])
 {
     std::vector<std::string> options;
     for(int i = 1; i < argc; ++i)

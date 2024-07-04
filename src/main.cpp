@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 {
     try
     {
-        const auto options = Main_Tools::standardize_option(argc, argv);
+        const auto options = Main_Tools::standardize_options(argc, argv);
         const auto option = options.front();
         if(option == "-gene-pool")
         {
