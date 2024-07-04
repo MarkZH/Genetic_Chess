@@ -199,7 +199,7 @@ void Move::setup_pawn_rules() noexcept
 
     if(std::abs(rank_change()) == 2)
     {
-        const auto pawn_skipped_square = start() + Square_Difference{ 0, rank_change()/2 };
+        const auto pawn_skipped_square = start() + Square_Difference{0, rank_change()/2};
         side_effect = [=](Board& board) { board.make_en_passant_targetable(pawn_skipped_square); };
     }
     else if(promotion())
@@ -225,8 +225,8 @@ void Move::setup_castling_rules(const Direction direction) noexcept
                          && ! (last_empty_square.inside_board() && board.piece_on_square(last_empty_square));
                  };
 
-    const auto rook_move_start = Square{ direction == Direction::LEFT ? 'a' : 'h', start().rank() };
-    const auto rook_move_end = Square{ direction == Direction::LEFT ? 'd' : 'f', start().rank() };
+    const auto rook_move_start = Square{direction == Direction::LEFT ? 'a' : 'h', start().rank()};
+    const auto rook_move_end = Square{direction == Direction::LEFT ? 'd' : 'f', start().rank()};
     const auto file_move = file_change();
     side_effect = [=](Board& board)
                   {

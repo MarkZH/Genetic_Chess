@@ -164,7 +164,7 @@ namespace String
         {
             groups.push_back(std::to_string(n % 1000));
         }
-        auto pad_zeros = [](const auto& s){ return std::string(3 - s.size(), '0') + s; };
+        auto pad_zeros = [](const auto& s) { return std::string(3 - s.size(), '0') + s; };
         std::transform(std::next(groups.rbegin()), groups.rend(), std::next(groups.rbegin()), pad_zeros);
         return String::join(groups.rbegin(), groups.rend(), separator);
     }

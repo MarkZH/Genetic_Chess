@@ -343,7 +343,7 @@ namespace
                           Thread_Limiter& limiter) noexcept
     {
         limiter.ask();
-        const auto result = play_game(board, Clock{ game_time }, white, black, "Gene pool", "Local computer", game_record_file, false);
+        const auto result = play_game(board, Clock{game_time}, white, black, "Gene pool", "Local computer", game_record_file, false);
         limiter.done();
         return result;
     }
@@ -396,9 +396,9 @@ namespace
 
         const auto number = std::stod(time_spec[0]);
         const auto unit = time_spec[1];
-        const auto hour_names = { "hours", "hour", "hrs", "hr", "h" };
-        const auto minute_names = { "minutes", "minute", "mins", "min", "m" };
-        const auto second_names = { "seconds", "second", "secs", "sec", "s" };
+        const auto hour_names = {"hours", "hour", "hrs", "hr", "h"};
+        const auto minute_names = {"minutes", "minute", "mins", "min", "m"};
+        const auto second_names = {"seconds", "second", "secs", "sec", "s"};
 
         const auto contains = [](const auto& list, const auto& value)
             {

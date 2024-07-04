@@ -342,7 +342,7 @@ bool run_tests()
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, del_split, "..a..b..c..d..", "..", -1);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d.."}, del_split, "..a..b..c..d..", "..", 4);
     test_function(tests_passed, "Ellipses split", vs{"", "a", "b", "c", "d", ""}, del_split, "..a..b..c..d..", "..", 5);
-    test_function(tests_passed, "Ellipses split", vs{ "", "a", ".b", "c", "d", "" }, del_split, "..a...b..c..d..", "..", -1);
+    test_function(tests_passed, "Ellipses split", vs{"", "a", ".b", "c", "d", ""}, del_split, "..a...b..c..d..", "..", -1);
     test_function(tests_passed, "Empty string split", vs{}, del_split, "", " ", 1000);
     test_function(tests_passed, "Missing delimiter split", vs{"abcdefg"}, del_split, "abcdefg", ",", 1000);
     split_and_join_are_inverse_operations(tests_passed);
@@ -514,7 +514,7 @@ void run_speed_tests()
 
     std::sort(timing_results.begin(), timing_results.end());
     const auto name_width = int(std::max_element(timing_results.begin(), timing_results.end(),
-                                                 [](const auto& x, const auto& y){ return x.second.size() < y.second.size(); })->second.size());
+                                                 [](const auto& x, const auto& y) { return x.second.size() < y.second.size(); })->second.size());
     std::cout << "\n" << std::setw(name_width) << "Test Item" << "   " << "Time (" << time_unit << ")";
     std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------\n";
     for(const auto& [time, name] : timing_results)
@@ -908,7 +908,7 @@ namespace
     bool move_is_illegal(const Board& board, const std::string& move) noexcept
     {
         bool result = true;
-        function_should_throw<Illegal_Move>(result, move + " should be illegal", [&](){ board.interpret_move(move); });
+        function_should_throw<Illegal_Move>(result, move + " should be illegal", [&]() { board.interpret_move(move); });
         return result;
     }
 
