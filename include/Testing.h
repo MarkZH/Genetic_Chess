@@ -2,6 +2,7 @@
 #define TESTING_H
 
 #include <cstddef>
+#include <string>
 
 //! \file
 
@@ -22,6 +23,6 @@ bool run_perft_tests();
 //! \param depth The maximum depth to search for moves.
 //!
 //! Prints results to stdout.
-void list_moves(size_t depth) noexcept;
+void list_moves(const std::string& fen, size_t depth) noexcept;
 
 #endif // TESTING_H

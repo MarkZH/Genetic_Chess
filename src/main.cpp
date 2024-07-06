@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
         }
         else if(option == "-list")
         {
-            Main_Tools::argument_assert(options.size() >= 2, option + " requires a numeric argument.");
-            list_moves(String::to_number<size_t>(options[1]));
+            Main_Tools::argument_assert(options.size() >= 3, option + " requires a numeric argument and an FEN argument.");
+            list_moves(options[2], String::to_number<size_t>(options[1]));
         }
         else if(option == "-help")
         {

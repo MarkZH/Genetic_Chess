@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <array>
 
 #include "Game/Color.h"
 #include "Game/Square.h"
@@ -100,8 +101,11 @@ class Piece
         // Moves that can be repeated until reaching another piece or the end of the board
         std::vector<Square_Difference> sliding_moves;
 
-        // Moves that not ranged moves (like those of knights, pawns, and kings)
-        std::vector<Move> non_sliding_moves;
+        // Moves that not ranged moves (like those of knights and kings)
+        std::vector<Square_Difference> non_sliding_moves;
+
+        // Moves that have special rules or cannot be made on all squares (pawn moves and castling)
+        std::array<std::vector<std::vector<Move>>, 64> special_moves;
 };
 
 //! \brief Check two pieces for equality

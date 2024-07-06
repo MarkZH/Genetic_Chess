@@ -222,6 +222,7 @@ void Move::setup_castling_rules(const Direction direction) noexcept
                      return board.castle_is_legal(board.whose_turn(), direction)
                          && ! board.king_is_in_check()
                          && board.safe_for_king(king_crossing_square, board.whose_turn())
+                         && ! board.piece_on_square(king_crossing_square)
                          && ! (last_empty_square.inside_board() && board.piece_on_square(last_empty_square));
                  };
 

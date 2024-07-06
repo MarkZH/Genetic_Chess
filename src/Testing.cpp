@@ -621,10 +621,11 @@ bool run_perft_tests()
     return tests_failed.empty();
 }
 
-void list_moves(const size_t depth) noexcept
+void list_moves(const std::string& fen, const size_t depth) noexcept
 {
     std::vector<Move> moves_played;
-    Board board;
+    Board board(fen);
+    board.cli_print();
     list_moves_on_board(board, moves_played, depth);
 }
 
