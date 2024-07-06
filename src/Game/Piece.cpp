@@ -41,8 +41,8 @@ namespace
     }
 
     using SQ = Square_Difference;
-    static const auto bishop_moves = std::vector<SQ>({ SQ{-1, -1}, SQ{-1, 1}, SQ{1, -1}, SQ{1, 1} });
-    static const auto rook_moves = std::vector<SQ>({ SQ{-1, 0}, SQ{0, -1}, SQ{1,  0}, SQ{0, 1} });
+    static const auto bishop_moves = std::vector<SQ>({SQ{-1, -1}, SQ{-1, 1}, SQ{1, -1}, SQ{1, 1}});
+    static const auto rook_moves = std::vector<SQ>({SQ{-1, 0}, SQ{0, -1}, SQ{1,  0}, SQ{0, 1}});
     static const auto queen_moves = [=]()
         {
             auto result = rook_moves;
