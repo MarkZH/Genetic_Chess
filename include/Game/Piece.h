@@ -3,7 +3,6 @@
 
 #include <string>
 #include <vector>
-#include <array>
 
 #include "Game/Color.h"
 #include "Game/Square.h"
