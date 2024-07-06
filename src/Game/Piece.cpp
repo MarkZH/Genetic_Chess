@@ -50,7 +50,7 @@ namespace
             return result;
         }();
 
-    std::vector<Square_Difference> get_sliding_moves(const Piece_Type type) noexcept
+    std::vector<Square_Difference> sliding_moves(const Piece_Type type) noexcept
     {
         switch(type)
         {
@@ -63,10 +63,9 @@ namespace
             default:
                 return {};
         }
-
     }
 
-    std::vector<Square_Difference> get_non_sliding_moves(const Piece_Type type) noexcept
+    std::vector<Square_Difference> non_sliding_moves(const Piece_Type type) noexcept
     {
         using SQ = Square_Difference;
         switch(type)
@@ -80,7 +79,7 @@ namespace
         }
     }
 
-    std::array<std::vector<std::vector<Move>>, 64> all_pawn_moves(const Piece_Color pawn_color) noexcept
+    std::vector<std::vector<Move>> all_pawn_moves(const Piece_Color pawn_color, const Square square) noexcept
     {
         auto result = std::array<std::vector<std::vector<Move>>, 64>{};
         const auto base_rank = pawn_color == Piece_Color::WHITE ? 1 : 8;
@@ -88,68 +87,65 @@ namespace
         const auto last_rank = pawn_color == Piece_Color::WHITE ? 7 : 2;
         const auto far_rank = pawn_color == Piece_Color::WHITE ? 8 : 1;
         
-        for(const auto square : Square::all_squares())
+        auto move_list = std::vector<std::vector<Move>>{};
+        if(square.rank() == base_rank || square.rank() == far_rank)
         {
-            auto& move_list = result[square.index()];
-            if(square.rank() == base_rank || square.rank() == far_rank)
+            return move_list;
+        }
+        else if(square.rank() == last_rank)
+        {
+            for(const auto promote : {Piece_Type::QUEEN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP})
             {
-                continue;
-            }
-            else if(square.rank() == last_rank)
-            {
-                for(const auto promote : {Piece_Type::QUEEN, Piece_Type::ROOK, Piece_Type::KNIGHT, Piece_Type::BISHOP})
-                {
-                    const auto promotion = Piece{pawn_color, promote};
-                    move_list.push_back({Move::pawn_move(square, pawn_color, promotion)});
-                    for(const auto direction : {Direction::LEFT, Direction::RIGHT})
-                    {
-                        if((direction == Direction::LEFT && square.file() == 'a')
-                           || (direction == Direction::RIGHT && square.file() == 'h'))
-                        {
-                            continue;
-                        }
-                        move_list.push_back({Move::pawn_capture(square, direction, pawn_color, promotion)});
-                    }
-                }
-            }
-            else
-            {
-                move_list.push_back({Move::pawn_move(square, pawn_color, {})});
-                if(square.rank() == first_rank)
-                {
-                    move_list.back().push_back(Move::pawn_double_move(pawn_color, square.file()));
-                }
-
-                for(const auto direction : { Direction::LEFT, Direction::RIGHT })
+                const auto promotion = Piece{pawn_color, promote};
+                move_list.push_back({Move::pawn_move(square, pawn_color, promotion)});
+                for(const auto direction : {Direction::LEFT, Direction::RIGHT})
                 {
                     if((direction == Direction::LEFT && square.file() == 'a')
-                       || (direction == Direction::RIGHT && square.file() == 'h'))
+                        || (direction == Direction::RIGHT && square.file() == 'h'))
                     {
                         continue;
                     }
-                    move_list.push_back({Move::pawn_capture(square, direction, pawn_color, {})});
+                    move_list.push_back({Move::pawn_capture(square, direction, pawn_color, promotion)});
                 }
             }
         }
+        else
+        {
+            move_list.push_back({Move::pawn_move(square, pawn_color, {})});
+            if(square.rank() == first_rank)
+            {
+                move_list.back().push_back(Move::pawn_double_move(pawn_color, square.file()));
+            }
 
-        return result;
+            for(const auto direction : {Direction::LEFT, Direction::RIGHT})
+            {
+                if((direction == Direction::LEFT && square.file() == 'a')
+                    || (direction == Direction::RIGHT && square.file() == 'h'))
+                {
+                    continue;
+                }
+                move_list.push_back({Move::pawn_capture(square, direction, pawn_color, {})});
+            }
+        }
+
+        return move_list;
     }
 
-    std::array<std::vector<std::vector<Move>>, 64> get_special_moves(const Piece_Color color, const Piece_Type type) noexcept
+    std::vector<std::vector<Move>> special_moves(const Piece_Color color, const Piece_Type type, const Square square) noexcept
     {
-        if(type == Piece_Type::KING)
+        if(type == Piece_Type::KING && square.file() == 'e' && square.rank() == (color == Piece_Color::WHITE ? 1 : 8))
         {
-            auto result = std::array<std::vector<std::vector<Move>>, 64>{};
+            auto result = std::vector<std::vector<Move>>{};
             for(const auto direction : {Direction::LEFT, Direction::RIGHT})
             {
                 const auto move = Move::castle(color, direction);
-                result[move.start().index()].push_back({move});
+                result.push_back({move});
             }
             return result;
         }
         else if(type == Piece_Type::PAWN)
         {
-            return all_pawn_moves(color);
+            return all_pawn_moves(color, square);
 
         }
         else
@@ -164,10 +160,7 @@ Piece::Piece() noexcept : piece_code(invalid_code)
 }
 
 Piece::Piece(const Piece_Color color, const Piece_Type type) noexcept :
-    piece_code((static_cast<int>(type) << 1) | static_cast<int>(color)),
-    sliding_moves(get_sliding_moves(type)),
-    non_sliding_moves(get_non_sliding_moves(type)),
-    special_moves(get_special_moves(color, type))
+    piece_code((static_cast<int>(type) << 1) | static_cast<int>(color))
 {
     // piece_code layout: 4 bits
     // 3 most significant bits = Piece_Type (values 0-5)
@@ -220,7 +213,7 @@ Piece::list_of_move_lists Piece::move_lists(const Square square) const noexcept
 {
     assert(*this);
     list_of_move_lists moves;
-    for(const auto& step : sliding_moves)
+    for(const auto& step : sliding_moves(type()))
     {
         moves.emplace_back();
         for(const auto target : Squares_in_a_Line(square, step))
@@ -229,7 +222,7 @@ Piece::list_of_move_lists Piece::move_lists(const Square square) const noexcept
         }
     }
 
-    for(const auto& move : non_sliding_moves)
+    for(const auto& move : non_sliding_moves(type()))
     {
         const auto target = square + move;
         if(target.inside_board())
@@ -238,7 +231,7 @@ Piece::list_of_move_lists Piece::move_lists(const Square square) const noexcept
         }
     }
 
-    for(const auto& special_move_list : special_moves[square.index()])
+    for(const auto& special_move_list : special_moves(color(), type(), square))
     {
         moves.emplace_back();
         for(const auto& special_move : special_move_list)

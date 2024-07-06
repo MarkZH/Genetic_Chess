@@ -97,15 +97,6 @@ class Piece
 
     private:
         piece_code_t piece_code;
-
-        // Moves that can be repeated until reaching another piece or the end of the board
-        std::vector<Square_Difference> sliding_moves;
-
-        // Moves that not ranged moves (like those of knights and kings)
-        std::vector<Square_Difference> non_sliding_moves;
-
-        // Moves that have special rules or cannot be made on all squares (pawn moves and castling)
-        std::array<std::vector<std::vector<Move>>, 64> special_moves;
 };
 
 //! \brief Check two pieces for equality
