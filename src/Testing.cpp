@@ -1559,15 +1559,15 @@ namespace
     void specified_time_added_to_clock_after_specified_number_of_punches(bool& tests_passed)
     {
         const auto time = Clock::seconds{30};
-        Clock::seconds expected_time_after_reset = 2 * time;
-        size_t moves_to_reset = 40;
+        Clock::seconds expected_time_after_reset = 2*time;
+        const size_t moves_to_reset = 40;
+        const Board timing_board;
         auto clock = Clock(time, moves_to_reset);
         clock.start(Piece_Color::WHITE);
         for(size_t i = 0; i < 2 * moves_to_reset; ++i)
         {
             const auto pause_start = std::chrono::steady_clock::now();
             std::this_thread::sleep_for(5ms);
-            Board timing_board;
             clock.punch(timing_board);
             if(clock.running_for() == Piece_Color::WHITE)
             {
@@ -1584,14 +1584,14 @@ namespace
     void clock_with_increment_gets_time_added_on_every_punch(bool& tests_passed)
     {
         const auto increment = 5s;
+        const Board timing_board;
         auto clock2 = Clock(Clock::seconds{30}, 0, increment);
         clock2.start(Piece_Color::WHITE);
         auto expected_time = clock2.initial_time();
         for(size_t i = 0; i < 100; ++i)
         {
-            auto pause_start = std::chrono::steady_clock::now();
+            const auto pause_start = std::chrono::steady_clock::now();
             std::this_thread::sleep_for(5ms);
-            Board timing_board;
             clock2.punch(timing_board);
             if(clock2.running_for() == Piece_Color::WHITE)
             {
