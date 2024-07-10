@@ -49,6 +49,7 @@ namespace
             result.insert(result.end(), bishop_moves.begin(), bishop_moves.end());
             return result;
         }();
+    static const auto knight_moves = std::vector<SQ>{SQ{1, 2}, SQ{2, 1}, SQ{-1, 2}, SQ{2, -1}, SQ{1, -2}, SQ{-2, 1}, SQ{-1, -2}, SQ{-2, -1}};
 
     std::vector<Square_Difference> sliding_moves(const Piece_Type type) noexcept
     {
@@ -71,7 +72,7 @@ namespace
         switch(type)
         {
             case Piece_Type::KNIGHT:
-                return {SQ{1, 2}, SQ{2, 1}, SQ{-1, 2}, SQ{2, -1}, SQ{1, -2}, SQ{-2, 1}, SQ{-1, -2}, SQ{-2, -1}};
+                return knight_moves;
             case Piece_Type::KING:
                 return queen_moves;
             default:
@@ -98,33 +99,35 @@ namespace
             {
                 const auto promotion = Piece{pawn_color, promote};
                 move_list.push_back({Move::pawn_move(square, pawn_color, promotion)});
-                for(const auto direction : {Direction::LEFT, Direction::RIGHT})
+
+                if(square.file() != 'a')
                 {
-                    if((direction == Direction::LEFT && square.file() == 'a')
-                        || (direction == Direction::RIGHT && square.file() == 'h'))
-                    {
-                        continue;
-                    }
-                    move_list.push_back({Move::pawn_capture(square, direction, pawn_color, promotion)});
+                    move_list.push_back({Move::pawn_capture(square, Direction::LEFT, pawn_color, promotion)});
+                }
+
+                if(square.file() != 'h')
+                {
+                    move_list.push_back({Move::pawn_capture(square, Direction::RIGHT, pawn_color, promotion)});
                 }
             }
         }
         else
         {
             move_list.push_back({Move::pawn_move(square, pawn_color, {})});
+
             if(square.rank() == first_rank)
             {
                 move_list.back().push_back(Move::pawn_double_move(pawn_color, square.file()));
             }
 
-            for(const auto direction : {Direction::LEFT, Direction::RIGHT})
+            if(square.file() != 'a')
             {
-                if((direction == Direction::LEFT && square.file() == 'a')
-                    || (direction == Direction::RIGHT && square.file() == 'h'))
-                {
-                    continue;
-                }
-                move_list.push_back({Move::pawn_capture(square, direction, pawn_color, {})});
+                move_list.push_back({Move::pawn_capture(square, Direction::LEFT, pawn_color, {})});
+            }
+
+            if(square.file() != 'h')
+            {
+                move_list.push_back({Move::pawn_capture(square, Direction::RIGHT, pawn_color, {})});
             }
         }
 
@@ -135,18 +138,11 @@ namespace
     {
         if(type == Piece_Type::KING && square.file() == 'e' && square.rank() == (color == Piece_Color::WHITE ? 1 : 8))
         {
-            auto result = std::vector<std::vector<Move>>{};
-            for(const auto direction : {Direction::LEFT, Direction::RIGHT})
-            {
-                const auto move = Move::castle(color, direction);
-                result.push_back({move});
-            }
-            return result;
+            return {{Move::castle(color, Direction::LEFT), Move::castle(color, Direction::RIGHT)}};
         }
         else if(type == Piece_Type::PAWN)
         {
             return all_pawn_moves(color, square);
-
         }
         else
         {
