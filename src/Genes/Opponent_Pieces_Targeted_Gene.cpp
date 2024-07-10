@@ -1,5 +1,7 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 
+#include <cassert>
+
 #include "Game/Board.h"
 #include "Game/Piece.h"
 #include "Game/Color.h"
