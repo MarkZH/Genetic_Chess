@@ -8,6 +8,7 @@ from win_lose_draw_plotting import plot_endgames
 from opening_plotting import plot_all_openings
 from promotions import count_promotions
 from castling import count_all_castles
+from survival import plot_survival
 
 
 def get_config_value(config_file: str, parameter: str):
@@ -37,6 +38,7 @@ if __name__ == "__main__":
 
     with concurrent.futures.ProcessPoolExecutor() as executor:
         processes = [executor.submit(plot_genome, pool_file),
+                     executor.submit(plot_survival, pool_file),
                      executor.submit(plot_endgames, game_file),
                      executor.submit(plot_all_openings, game_file),
                      executor.submit(count_promotions, game_file),
