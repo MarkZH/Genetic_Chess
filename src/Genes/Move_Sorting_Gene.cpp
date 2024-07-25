@@ -30,11 +30,11 @@ Move_Sorter::Move_Sorter(const std::string& name_in, sorter_t&& sorter_in) noexc
 Move_Sorting_Gene::Move_Sorting_Gene() noexcept :
     Clonable_Gene("Move Sorting Gene"),
     move_sorters{{
-        {"Force Changers", [](const Move* move, const Board& board) { return board.move_changes_material(*move); }},
-        {"Attack Dodgers", [](const Move* move, const Board& board) { return board.attacked_by(move->start(), opposite(board.whose_turn())); }},
-        {"Pawn Pushers",   [](const Move* move, const Board& board) { return board.piece_on_square(move->start()).type() == Piece_Type::PAWN; }},
-        {"King Checkers",  [](const Move* move, const Board& board) { return board.move_checks_king(*move) || board.is_discovered_check(*move); }},
-        {"King Castlers",  [](const Move* move, const Board&)       { return move->is_castle(); }}
+        {"Force Changers", [](const Move& move, const Board& board) { return board.move_changes_material(move); }},
+        {"Attack Dodgers", [](const Move& move, const Board& board) { return board.attacked_by(move.start(), opposite(board.whose_turn())); }},
+        {"Pawn Pushers",   [](const Move& move, const Board& board) { return board.piece_on_square(move.start()).type() == Piece_Type::PAWN; }},
+        {"King Checkers",  [](const Move& move, const Board& board) { return board.move_checks_king(move) || board.is_discovered_check(move); }},
+        {"King Castlers",  [](const Move& move, const Board&)       { return move.is_castle(); }}
     }}
 {
 }

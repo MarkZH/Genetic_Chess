@@ -7,7 +7,7 @@
 #include "Utility/Math.h"
 #include "Players/Alpha_Beta_Value.h"
 
-Game_Tree_Node_Result::Game_Tree_Node_Result(const double score_in, const Piece_Color perspective_in, const std::vector<const Move*>& variation_in) noexcept :
+Game_Tree_Node_Result::Game_Tree_Node_Result(const double score_in, const Piece_Color perspective_in, const std::vector<Move>& variation_in) noexcept :
     score(score_in),
     perspective(perspective_in),
     variation(variation_in)
@@ -37,7 +37,7 @@ std::pair<double, int> Game_Tree_Node_Result::value(const Piece_Color query) con
     }
 }
 
-const std::vector<const Move*>& Game_Tree_Node_Result::variation_line() const noexcept
+const std::vector<Move>& Game_Tree_Node_Result::variation_line() const noexcept
 {
     return variation;
 }

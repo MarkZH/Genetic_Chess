@@ -24,11 +24,11 @@ class UCI_Mediator : public Outside_Communicator
 
         Game_Result setup_turn(Board& board,
                                Clock& clock,
-                               std::vector<const Move*>& move_list,
+                               std::vector<Move>& move_list,
                                const Player& player) override;
         Game_Result handle_move(Board& board,
                                 const Move& move,
-                                std::vector<const Move*>& move_list) const override;
+                                std::vector<Move>& move_list) const override;
 
     private:
         std::string listener(Clock& clock) override;

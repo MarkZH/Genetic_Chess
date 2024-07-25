@@ -23,7 +23,7 @@ UCI_Mediator::UCI_Mediator(const Player& player)
     send_command("uciok");
 }
 
-Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<const Move*>& move_list, const Player& player)
+Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<Move>& move_list, const Player& player)
 {
     Game_Result setup_result;
 
@@ -84,7 +84,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                                    [&board, &setup_result](const auto& move)
                                    {
                                        setup_result = board.play_move(move);
-                                       return board.last_move();
+                                       return board.last_move().value();
                                    });
                     log("All moves applied");
                     if(setup_result.game_has_ended())
@@ -106,7 +106,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 auto binc = clock.increment(Piece_Color::BLACK);
                 auto movestogo = size_t{0};
                 auto movetime = clock.initial_time();
-                auto search_moves = std::vector<const Move*>();
+                auto search_moves = std::vector<Move>();
 
                 std::string parameter;
                 for(const auto& token : String::split(command))
@@ -126,7 +126,7 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                     {
                         if(board.is_legal_move(token))
                         {
-                            search_moves.push_back(&board.interpret_move(token));
+                            search_moves.push_back(board.interpret_move(token));
                         }
                         else
                         {
@@ -234,10 +234,10 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
 
 Game_Result UCI_Mediator::handle_move(Board& board,
                                       const Move& move,
-                                      std::vector<const Move*>& move_list) const
+                                      std::vector<Move>& move_list) const
 {
     send_command("bestmove " + move.coordinates());
-    move_list.push_back(&move);
+    move_list.push_back(move);
     return board.play_move(move);
 }
 

@@ -16,6 +16,7 @@ using namespace std::chrono_literals;
 #include <type_traits>
 #include <functional>
 #include <sstream>
+#include <optional>
 
 #include "Game/Clock.h"
 #include "Game/Square.h"
@@ -214,7 +215,7 @@ Piece Board::piece_on_square(const Square square) const noexcept
 
 bool Board::is_in_legal_moves_list(const Move& move) const noexcept
 {
-    return std::find(legal_moves().begin(), legal_moves().end(), &move) != legal_moves().end();
+    return std::find(legal_moves().begin(), legal_moves().end(), move) != legal_moves().end();
 }
 
 std::string Board::fen() const noexcept
@@ -323,7 +324,7 @@ size_t Board::all_ply_count() const noexcept
     return plies_at_construction + played_ply_count();
 }
 
-std::vector<const Move*> Board::derive_moves(const Board& new_board) const noexcept
+std::vector<Move> Board::derive_moves(const Board& new_board) const noexcept
 {
     const size_t moves_to_derive_count = new_board.all_ply_count() - all_ply_count();;
     if(moves_to_derive_count > 2 || moves_to_derive_count < 1)
@@ -331,10 +332,10 @@ std::vector<const Move*> Board::derive_moves(const Board& new_board) const noexc
         return {};
     }
 
-    for(const auto first_move : legal_moves())
+    for(const auto& first_move : legal_moves())
     {
         auto first_move_board = *this;
-        first_move_board.play_move(*first_move);
+        first_move_board.play_move(first_move);
         if(moves_to_derive_count == 1)
         {
             if(first_move_board.fen() == new_board.fen())
@@ -412,7 +413,7 @@ void Board::update_board(const Move& move) noexcept
     assert(is_in_legal_moves_list(move));
 
     ++game_move_count;
-    previous_move = &move;
+    previous_move = move;
     if(move.is_en_passant(*this))
     {
         remove_piece({move.end().file(), move.start().rank()});
@@ -444,7 +445,7 @@ size_t Board::played_ply_count() const noexcept
     return game_move_count;
 }
 
-const Move* Board::last_move() const noexcept
+std::optional<Move> Board::last_move() const noexcept
 {
     return previous_move;
 }
@@ -462,12 +463,12 @@ const Move& Board::interpret_move(const std::string& move_text) const
     const auto move_iter = std::find_if(legal_moves().begin(), legal_moves().end(),
                                         [this, &raw_move_text, raw](auto move)
                                         {
-                                            return raw(move->algebraic(*this)) == raw_move_text ||
-                                                move->coordinates() == raw_move_text;
+                                            return raw(move.algebraic(*this)) == raw_move_text ||
+                                                move.coordinates() == raw_move_text;
                                         });
     if(move_iter != legal_moves().end())
     {
-        return **move_iter;
+        return *move_iter;
     }
     else
     {
@@ -515,7 +516,7 @@ Piece_Color Board::whose_turn() const noexcept
     return turn_color;
 }
 
-const std::vector<const Move*>& Board::legal_moves() const noexcept
+const std::vector<Move>& Board::legal_moves() const noexcept
 {
     return legal_moves_cache;
 }
@@ -585,12 +586,12 @@ void Board::modify_attacks(const Square square, const Piece piece, const bool ad
     const auto vulnerable_king = Piece{opposite(attacking_color), Piece_Type::KING};
     for(const auto& attack_move_list : piece.attacking_move_lists(square))
     {
-        for(const auto attack : attack_move_list)
+        for(const auto& attack : attack_move_list)
         {
-            const auto attacked_square = attack->end();
+            const auto attacked_square = attack.end();
             const auto attacked_index = attacked_square.index();
 
-            potential_attacks[static_cast<int>(attacking_color)][attacked_index][attack->attack_index()] = adding_attacks;
+            potential_attacks[static_cast<int>(attacking_color)][attacked_index][attack.attack_index()] = adding_attacks;
 
             const auto blocking_piece = piece_on_square(attacked_square);
             if(blocking_piece && blocking_piece != vulnerable_king)
@@ -741,13 +742,13 @@ bool Board::move_checks_king(const Move& move) const noexcept
                                                 move_list.end(),
                                                 [opponent_king_square](auto attack)
                                                 {
-                                                    return attack->end() == opponent_king_square;
+                                                    return attack.end() == opponent_king_square;
                                                 });
         if(checking_move != move_list.end())
         {
             const auto found_move = *checking_move;
-            return piece.type() == Piece_Type::KNIGHT || all_empty_between(found_move->start(),
-                                                                           found_move->end());
+            return piece.type() == Piece_Type::KNIGHT || all_empty_between(found_move.start(),
+                                                                           found_move.end());
         }
     }
 
@@ -759,7 +760,7 @@ bool Board::no_legal_moves() const noexcept
     return legal_moves().empty();
 }
 
-void Board::print_game_record(const std::vector<const Move*>& game_record_listing,
+void Board::print_game_record(const std::vector<Move>& game_record_listing,
                               const Player& white,
                               const Player& black,
                               const std::string& file_name,
@@ -825,7 +826,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     auto game_text = std::ostringstream();
     auto commentary_board = Board(starting_fen);
     auto previous_move_had_comment = false;
-    for(const auto next_move : game_record_listing)
+    for(const auto& next_move : game_record_listing)
     {
         const auto step = commentary_board.all_ply_count()/2 + 1;
         if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0 || previous_move_had_comment)
@@ -837,14 +838,14 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
             }
         }
 
-        game_text << " " << next_move->algebraic(commentary_board);
+        game_text << " " << next_move.algebraic(commentary_board);
         const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
         const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));
         if( ! commentary.empty())
         {
             game_text << " " << commentary;
         }
-        commentary_board.play_move(*next_move);
+        commentary_board.play_move(next_move);
         previous_move_had_comment = ! commentary.empty();
     }
     game_text << " " << actual_result.game_ending_annotation();
@@ -905,14 +906,14 @@ void Board::recreate_move_caches() noexcept
         {
             for(const auto& move_list : piece.move_lists(square))
             {
-                for(const auto move : move_list)
+                for(const auto& move : move_list)
                 {
-                    if(move->is_legal(*this))
+                    if(move.is_legal(*this))
                     {
                         legal_moves_cache.push_back(move);
                     }
 
-                    if(piece_on_square(move->end()))
+                    if(piece_on_square(move.end()))
                     {
                         break;
                     }
@@ -923,7 +924,7 @@ void Board::recreate_move_caches() noexcept
 
     if(en_passant_target.is_set() && std::none_of(legal_moves_cache.begin(),
                                                   legal_moves_cache.end(),
-                                                  [this](const auto move) { return move->is_en_passant(*this); }))
+                                                  [this](const auto move) { return move.is_en_passant(*this); }))
     {
         disable_en_passant_target();
     }
@@ -1164,7 +1165,7 @@ Board Board::without_random_pawn() const noexcept
     }
 }
 
-std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
+std::vector<Move> Board::quiescent(const std::array<double, 6>& piece_values) const noexcept
 {
     if( ! previous_move)
     {
@@ -1172,7 +1173,7 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
     }
 
     // The capture_move at index i results in the state_value at index i + 1
-    std::vector<const Move*> capture_moves;
+    std::vector<Move> capture_moves;
     std::vector<double> state_values = {0.0};
 
     const auto player_color = whose_turn();
@@ -1180,9 +1181,9 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
     const auto square = previous_move->end();
     while(current_board.attacked_by(square, current_board.whose_turn()))
     {
-        std::vector<const Move*> capturing_moves;
+        std::vector<Move> capturing_moves;
         std::copy_if(current_board.legal_moves().begin(), current_board.legal_moves().end(), std::back_inserter(capturing_moves),
-                        [square](auto move) { return move->end() == square; });
+                        [square](auto move) { return move.end() == square; });
 
         if(capturing_moves.empty())
         {
@@ -1193,16 +1194,16 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
 
         // Attack with the weakest piece first
         const auto move = *std::min_element(capturing_moves.begin(), capturing_moves.end(),
-                                            [&piece_values, &current_board](auto move1, auto move2)
+                                            [&piece_values, &current_board](const auto& move1, const auto& move2)
                                             {
-                                                return piece_values[static_cast<int>(current_board.piece_on_square(move1->start()).type())] <
-                                                    piece_values[static_cast<int>(current_board.piece_on_square(move2->start()).type())];
+                                                return piece_values[static_cast<int>(current_board.piece_on_square(move1.start()).type())] <
+                                                    piece_values[static_cast<int>(current_board.piece_on_square(move2.start()).type())];
                                             });
 
         // Make sure that an exchange does not lose material
-        const auto moving_piece = current_board.piece_on_square(move->start());
-        const auto attacked_piece = current_board.piece_on_square(move->end());
-        current_board.play_move(*move);
+        const auto moving_piece = current_board.piece_on_square(move.start());
+        const auto attacked_piece = current_board.piece_on_square(move.end());
+        current_board.play_move(move);
         capture_moves.push_back(move);
         state_values.push_back(state_values.back() + (moving_piece.color() == player_color ? +1 : -1)*piece_values[static_cast<int>(attacked_piece.type())]);
     }

@@ -369,9 +369,9 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 std::cerr << "Move (" << move_number << word << ") is illegal."
                     << " (line: " << line_count << ")\n";
                 std::cerr << "Legal moves: ";
-                for(const auto legal_move : board.legal_moves())
+                for(const auto& legal_move : board.legal_moves())
                 {
-                    std::cerr << legal_move->algebraic(board) << " ";
+                    std::cerr << legal_move.algebraic(board) << " ";
                 }
                 std::cerr << '\n' << board.fen() << '\n';
                 return false;

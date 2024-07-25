@@ -8,7 +8,7 @@
 //! \brief A class for tracking Alpha and Beta values through a minimax search.
 //!
 //! This class is lighter weight than a Game_Tree_Node_Result since it does
-//! not contain the std::vector<const Move*> of the variation.
+//! not contain the std::vector<Move> of the variation.
 class Alpha_Beta_Value
 {
     public:

@@ -32,7 +32,7 @@ class Piece
 {
     private:
         using piece_code_t = unsigned int;
-        using list_of_move_lists = Fixed_Capacity_Vector<Fixed_Capacity_Vector<const Move*, 7>, 12>;
+        using list_of_move_lists = Fixed_Capacity_Vector<Fixed_Capacity_Vector<Move, 7>, 12>;
 
     public:
         //! \brief Create an invalid piece that can represent an unoccupied space on a Board.
@@ -80,7 +80,7 @@ class Piece
         //!
         //! \param move A pointer to a prospective move.
         //! \returns Whether or not the piece is allowed to move in the manner described by the parameter.
-        bool can_move(const Move* move) const noexcept;
+        bool can_move(const Move& move) const noexcept;
 
         //! \brief Get all possibly legal moves of a piece starting from a given square.
         //!

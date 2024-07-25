@@ -67,7 +67,7 @@ bool Move::is_legal(const Board& board) const noexcept
 {
     assert(board.piece_on_square(start()));
     assert(board.piece_on_square(start()).color() == board.whose_turn());
-    assert(board.piece_on_square(start()).can_move(this));
+    assert(board.piece_on_square(start()).can_move(*this));
 
     if(const auto attacked_piece = board.piece_on_square(end()))
     {
@@ -131,21 +131,21 @@ std::string Move::algebraic_base(const Board& board) const noexcept
 
     auto record_file = original_piece.type() == Piece_Type::PAWN && board.move_captures(*this);
     auto record_rank = false;
-    for(auto other_move : board.legal_moves())
+    for(const auto& other_move : board.legal_moves())
     {
-        if(other_move->start() == start())
+        if(other_move.start() == start())
         {
             continue;
         }
 
-        const auto new_piece = board.piece_on_square(other_move->start());
-        if(original_piece == new_piece && end() == other_move->end())
+        const auto new_piece = board.piece_on_square(other_move.start());
+        if(original_piece == new_piece && end() == other_move.end())
         {
-            if(other_move->start().file() != start().file() && ! record_file)
+            if(other_move.start().file() != start().file() && ! record_file)
             {
                 record_file = true;
             }
-            else if(other_move->start().rank() != start().rank())
+            else if(other_move.start().rank() != start().rank())
             {
                 record_rank = true;
             }
@@ -311,6 +311,15 @@ Square_Difference Move::attack_direction_from_index(const size_t index) noexcept
     static constexpr int dx[] = {-1,  0,  1, -1,  1, -1,  0,  1,  1,  2,  2,  1, -1, -2, -2, -1};
     static constexpr int dy[] = { 1,  1,  1,  0,  0, -1, -1, -1,  2,  1, -1, -2, -2, -1,  1,  2};
     return {dx[index], dy[index]};
+}
+
+bool operator==(const Move& a, const Move& b) noexcept
+{
+    return a.origin == b.origin
+        && a.destination == b.destination
+        && a.able_to_capture == b.able_to_capture
+        && a.is_castling == b.is_castling
+        && a.pawn_promotion == b.pawn_promotion;
 }
 
 void Move::set_capturing_ability(const bool capturing_ability) noexcept

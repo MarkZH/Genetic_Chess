@@ -16,7 +16,7 @@ class Move;
 struct Move_Sorter
 {
     //! The type of function that sorts moves.
-    using sorter_t = std::function<bool(const Move*, const Board&)>;
+    using sorter_t = std::function<bool(const Move&, const Board&)>;
 
     //! \brief Constructor to disallow default construction.
     //! \param name Sorter name
@@ -45,7 +45,7 @@ class Move_Sorting_Gene : public Clonable_Gene<Move_Sorting_Gene>
         Move_Sorting_Gene() noexcept;
 
         //! \brief Sort moves before searching further in the game tree.
-        //! \tparam Iter An iterator type that points to a const Move*.
+        //! \tparam Iter An iterator type that points to a Move.
         //! \param begin An iterator to the beginning of the move list to be sorted.
         //! \param end An iterator to the end of the move list to be sorted.
         //! \param board The board from which the move list is derived.

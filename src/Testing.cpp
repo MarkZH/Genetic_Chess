@@ -258,7 +258,7 @@ namespace
     void has_exactly_n_works_as_advertised(bool& tests_passed);
 
     void probability_check(bool& tests_passed);
-    void list_moves_on_board(const Board& board, std::vector<const Move*>& moves_played, size_t depth) noexcept;
+    void list_moves_on_board(const Board& board, std::vector<Move>& moves_played, size_t depth) noexcept;
 }
 
 bool run_tests()
@@ -457,8 +457,8 @@ void run_speed_tests()
     const auto speed_board_spare = speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
-        const auto move = Random::random_element(speed_board.legal_moves());
-        const auto move_result = speed_board.play_move(*move);
+        const auto& move = Random::random_element(speed_board.legal_moves());
+        const auto move_result = speed_board.play_move(move);
         if(move_result.game_has_ended())
         {
             speed_board = speed_board_spare;
@@ -472,9 +472,9 @@ void run_speed_tests()
     Board copy_speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
     {
-        const auto move = Random::random_element(copy_speed_board.legal_moves());
+        const auto& move = Random::random_element(copy_speed_board.legal_moves());
         auto copy = copy_speed_board;
-        auto move_result = copy.play_move(*move);
+        auto move_result = copy.play_move(move);
         if(move_result.game_has_ended())
         {
             copy_speed_board = Board{};
@@ -494,14 +494,14 @@ void run_speed_tests()
     {
         while(true)
         {
-            const auto move = Random::random_element(quiescent_board.legal_moves());
-            const auto move_result = quiescent_board.play_move(*move);
+            const auto& move = Random::random_element(quiescent_board.legal_moves());
+            const auto move_result = quiescent_board.play_move(move);
             ++move_count;
             if(move_result.game_has_ended())
             {
                 quiescent_board = Board{};
             }
-            else if(quiescent_board.attacked_by(move->end(), quiescent_board.whose_turn()))
+            else if(quiescent_board.attacked_by(move.end(), quiescent_board.whose_turn()))
             {
                 break;
             }
@@ -623,7 +623,7 @@ bool run_perft_tests()
 
 void list_moves(const size_t depth) noexcept
 {
-    std::vector<const Move*> moves_played;
+    std::vector<Move> moves_played;
     Board board;
     list_moves_on_board(board, moves_played, depth);
 }
@@ -705,10 +705,10 @@ namespace
         }
 
         size_t count = 0;
-        for(const auto move : board.legal_moves())
+        for(const auto& move : board.legal_moves())
         {
             auto next_board = board;
-            next_board.play_move(*move);
+            next_board.play_move(move);
             count += move_count(next_board, maximum_depth - 1);
         }
 
@@ -856,9 +856,9 @@ namespace
                 const auto moves = String::split(specification.at(2));
                 test_result(test_passed, all_moves_legal(board, moves), "Bad test: Illegal moves");
                 auto actual_result_board = board;
-                for(const auto move : board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0}))
+                for(const auto& move : board.quiescent({1.0, 5.0, 3.0, 3.0, 8.0, 100.0}))
                 {
-                    actual_result_board.play_move(*move);
+                    actual_result_board.play_move(move);
                 }
                 for(const auto& quiescent_move : String::split(specification.at(3)))
                 {
@@ -1036,14 +1036,14 @@ namespace
     {
         const auto board = Board(fen);
         const auto& move_list = board.legal_moves();
-        const auto find_move_text = [&board, &move_text](const Move* const move) { return move->algebraic(board) == move_text; };
+        const auto find_move_text = [&board, &move_text](const Move& move) { return move.algebraic(board) == move_text; };
         const auto found_move = std::find_if(move_list.begin(), move_list.end(), find_move_text);
 
         test_result(tests_passed, found_move != move_list.end(), "Ambiguous move notation not found: " + move_text);
         if(found_move != move_list.end())
         {
-            test_result(tests_passed, (*found_move)->start().text() == start_square, move_text + " does not start on square " + start_square + ".");
-            test_result(tests_passed, (*found_move)->end().text() == end_square, move_text + " does not end on square " + end_square + ".");
+            test_result(tests_passed, found_move->start().text() == start_square, move_text + " does not start on square " + start_square + ".");
+            test_result(tests_passed, found_move->end().text() == end_square, move_text + " does not end on square " + end_square + ".");
             test_result(tests_passed, std::find_if(std::next(found_move), move_list.end(), find_move_text) == move_list.end(), "Multiple moves with algebraic text: " + move_text);
         }
     }
@@ -1085,20 +1085,20 @@ namespace
         for(int move_counter = 1; move_counter <= 100; ++move_counter)
         {
             auto move_chosen = false;
-            for(const auto move : fifty_move_board.legal_moves())
+            for(const auto& move : fifty_move_board.legal_moves())
             {
-                if(fifty_move_board.move_captures(*move))
+                if(fifty_move_board.move_captures(move))
                 {
                     continue;
                 }
 
-                if(std::as_const(fifty_move_board).piece_on_square(move->start()).type() == Piece_Type::PAWN)
+                if(std::as_const(fifty_move_board).piece_on_square(move.start()).type() == Piece_Type::PAWN)
                 {
                     continue;
                 }
 
                 auto next_board = fifty_move_board;
-                auto result = next_board.play_move(*move);
+                auto result = next_board.play_move(move);
 
                 if(result.winner() != Winner_Color::NONE)
                 {
@@ -1115,7 +1115,7 @@ namespace
                     test_result(tests_passed, move_counter == 100, "Fifty-move stalemate triggered early.");
                 }
 
-                fifty_move_result = fifty_move_board.play_move(*move);
+                fifty_move_result = fifty_move_board.play_move(move);
                 move_chosen = true;
                 break;
             }
@@ -1131,9 +1131,9 @@ namespace
         const auto goal_board = Board{"rnbqkbnr/pp1ppppp/2p5/8/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2"};
         const auto derived_moves = move_derivation_board.derive_moves(goal_board);
         test_result(tests_passed, derived_moves.size() == 2, "Wrong number of moves derived. Got " + std::to_string(derived_moves.size()));
-        for(const auto move : derived_moves)
+        for(const auto& move : derived_moves)
         {
-            move_derivation_board.play_move(*move);
+            move_derivation_board.play_move(move);
         }
         test_result(tests_passed, move_derivation_board.fen() == goal_board.fen(), "Wrong moves derived. " + move_derivation_board.fen() + " != " + goal_board.fen());
     }
@@ -1157,9 +1157,9 @@ namespace
                 moves = {};
             }
 
-            const auto move = Random::random_element(board.legal_moves());
-            moves.push_back(move->algebraic(board));
-            board.play_move(*move);
+            const auto& move = Random::random_element(board.legal_moves());
+            moves.push_back(move.algebraic(board));
+            board.play_move(move);
             const auto identical_board = Board(board.fen());
             if(board.board_hash() != identical_board.board_hash())
             {
@@ -1609,10 +1609,10 @@ namespace
     {
         const Game_Tree_Node_Result r1 = {10,
                                           Piece_Color::WHITE,
-                                          {nullptr, nullptr, nullptr}};
+                                          {Move(), Move(), Move()}};
         const Game_Tree_Node_Result r2 = {10,
                                           Piece_Color::BLACK,
-                                          {nullptr, nullptr, nullptr}};
+                                          {Move(), Move(), Move()}};
         test_result(tests_passed, r2.value(Piece_Color::WHITE) < r1.value(Piece_Color::WHITE), "1. Error in comparing Game Tree Node Results.");
         test_result(tests_passed, r1.value(Piece_Color::BLACK) < r2.value(Piece_Color::BLACK), "2. Error in comparing Game Tree Node Results.");
         test_result(tests_passed, r1.value(Piece_Color::WHITE) > r1.value(Piece_Color::BLACK), "1. Error in comparing Game Tree Node Results after color switch.");
@@ -1623,10 +1623,10 @@ namespace
     {
         const Game_Tree_Node_Result r1 = {10,
                                           Piece_Color::WHITE,
-                                          {nullptr, nullptr, nullptr}};
+                                          {Move(), Move(), Move()}};
         const Game_Tree_Node_Result r2 = {10,
                                           Piece_Color::BLACK,
-                                          {nullptr, nullptr, nullptr}};
+                                          {Move(), Move(), Move()}};
         const auto abv = r1.alpha_beta_value();
         test_result(tests_passed, abv.value(Piece_Color::WHITE) == r1.value(Piece_Color::WHITE), "1. Incorrect construction of Alpha-Beta Value");
         test_result(tests_passed, abv.value(Piece_Color::BLACK) == r2.value(Piece_Color::WHITE), "2. Incorrect construction of Alpha-Beta Value");
@@ -1657,21 +1657,21 @@ namespace
     {
         const Game_Tree_Node_Result white_win4 = {Game_Tree_Node_Result::win_score,
                                                   Piece_Color::WHITE,
-                                                  {nullptr, nullptr, nullptr,
-                                                   nullptr, nullptr}};
+                                                  {Move(), Move(), Move(),
+                                                   Move(), Move()}};
         const Game_Tree_Node_Result white_win6 = {Game_Tree_Node_Result::win_score,
                                                   Piece_Color::WHITE,
-                                                  {nullptr, nullptr, nullptr,
-                                                   nullptr, nullptr, nullptr,
-                                                   nullptr}};
+                                                  {Move(), Move(), Move(),
+                                                   Move(), Move(), Move(),
+                                                   Move()}};
         test_result(tests_passed, white_win6.value(Piece_Color::WHITE) < white_win4.value(Piece_Color::WHITE), "Later win preferred over earlier win.");
         test_result(tests_passed, white_win4.value(Piece_Color::BLACK) < white_win6.value(Piece_Color::BLACK), "Earlier loss preferred over later win.");
 
         const Game_Tree_Node_Result black_loss6 = {Game_Tree_Node_Result::lose_score,
                                                    Piece_Color::BLACK,
-                                                   {nullptr, nullptr, nullptr,
-                                                    nullptr, nullptr, nullptr,
-                                                    nullptr}};
+                                                   {Move(), Move(), Move(),
+                                                    Move(), Move(), Move(),
+                                                    Move()}};
         test_result(tests_passed, white_win6.value(Piece_Color::WHITE) == black_loss6.value(Piece_Color::WHITE), "1. White win in 6 not equal to black loss in 6.");
         test_result(tests_passed, white_win6.value(Piece_Color::BLACK) == black_loss6.value(Piece_Color::BLACK), "2. White win in 6 not equal to black loss in 6.");
 
@@ -1835,23 +1835,23 @@ namespace
         }
     }
 
-    void list_moves_on_board(const Board& board, std::vector<const Move*>& moves_played, size_t depth) noexcept
+    void list_moves_on_board(const Board& board, std::vector<Move>& moves_played, size_t depth) noexcept
     {
         if(depth == 0 || board.legal_moves().empty())
         {
-            for(const auto move : moves_played)
+            for(const auto& move : moves_played)
             {
-                std::cout << move->coordinates() << ' ';
+                std::cout << move.coordinates() << ' ';
             }
             std::cout << '\n';
             return;
         }
 
-        for(const auto move : board.legal_moves())
+        for(const auto& move : board.legal_moves())
         {
             moves_played.push_back(move);
             auto new_board = board;
-            new_board.play_move(*move);
+            new_board.play_move(move);
             list_moves_on_board(new_board, moves_played, depth - 1);
             moves_played.pop_back();
         }

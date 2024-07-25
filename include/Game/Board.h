@@ -5,10 +5,12 @@
 #include <string>
 #include <array>
 #include <bitset>
+#include <optional>
 
 #include "Game/Color.h"
 #include "Game/Square.h"
 #include "Game/Piece.h"
+#include "Game/Move.h"
 
 #include "Utility/Fixed_Capacity_Vector.h"
 
@@ -63,7 +65,7 @@ class Board
         //! \param new_board The new board state to be reached.
         //! \returns A list of moves that will result in the desired board state. An empty list will be returned
         //!          if no sequence of moves (maximum of 2) can be found.
-        std::vector<const Move*> derive_moves(const Board& new_board) const noexcept;
+        std::vector<Move> derive_moves(const Board& new_board) const noexcept;
 
         //! \brief Creates a Move instance given a text string representation.
         //!
@@ -115,7 +117,7 @@ class Board
         //! \brief Returns the last move made on this Board
         //!
         //! \returns A pointer representing the last move made.
-        const Move* last_move() const noexcept;
+        std::optional<Move> last_move() const noexcept;
 
         //! \brief The number of plies played on this Board.
         //!
@@ -152,7 +154,7 @@ class Board
         //! \param game_clock The game clock used during the game.
         //! \param event_name The name of the event where the game will take place. May be empty.
         //! \param location The name of the location of the game. May be empty.
-        void print_game_record(const std::vector<const Move*>& game_record_listing,
+        void print_game_record(const std::vector<Move>& game_record_listing,
                                const Player& white,
                                const Player& black,
                                const std::string& file_name,
@@ -171,7 +173,7 @@ class Board
         //!
         //! \returns A list of pointers to legal moves. Any call to Board::play_move() must take
         //!          its argument from this list.
-        const std::vector<const Move*>& legal_moves() const noexcept;
+        const std::vector<Move>& legal_moves() const noexcept;
 
         //! \brief Whether there are no legal moves for the current player.
         //!
@@ -314,7 +316,7 @@ class Board
         //! values array.
         //! \param piece_values An array indexed by Piece::type() that gives
         //!        the value of the piece.
-        std::vector<const Move*> quiescent(const std::array<double, 6>& piece_values) const noexcept;
+        std::vector<Move> quiescent(const std::array<double, 6>& piece_values) const noexcept;
 
         //! \brief Print data on why boards have different Zobrist hashes
         //!
@@ -326,7 +328,7 @@ class Board
         Fixed_Capacity_Vector<uint64_t, 101> repeat_count;
         Piece_Color turn_color = Piece_Color::WHITE;
         size_t game_move_count = 0;
-        const Move* previous_move = nullptr;
+        std::optional<Move> previous_move = std::nullopt;
         std::array<std::array<bool, 2>, 2> legal_castles{}; // indexed by [Piece_Color][Direction]
         Square en_passant_target;
         Square unused_en_passant_target;
@@ -356,7 +358,7 @@ class Board
         std::array<int, 2> castling_movement{0, 0};
 
         // Caches
-        std::vector<const Move*> legal_moves_cache;
+        std::vector<Move> legal_moves_cache;
         void recreate_move_caches() noexcept;
 
         Piece& piece_on_square(Square square) noexcept;

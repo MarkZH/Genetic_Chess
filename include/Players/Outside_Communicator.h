@@ -42,7 +42,7 @@ class Outside_Communicator
         //! \param player The local AI.
         virtual Game_Result setup_turn(Board& board,
                                        Clock& clock,
-                                       std::vector<const Move*>& move_list,
+                                       std::vector<Move>& move_list,
                                        const Player& player) = 0;
 
         //! \brief Start a separate thread to listen for commands while the local AI is thinking.
@@ -57,7 +57,7 @@ class Outside_Communicator
         //! \param move_list The list of moves in the game so far.
         virtual Game_Result handle_move(Board& board,
                                         const Move& move,
-                                        std::vector<const Move*>& move_list) const = 0;
+                                        std::vector<Move>& move_list) const = 0;
 
         //! \brief Create a player for the purposes of calling Board::print_game_record()
         Proxy_Player create_proxy_player() const noexcept;

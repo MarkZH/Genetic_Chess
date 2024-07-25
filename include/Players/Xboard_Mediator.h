@@ -26,18 +26,18 @@ class Xboard_Mediator : public Outside_Communicator
 
         Game_Result setup_turn(Board& board,
                                Clock& clock,
-                               std::vector<const Move*>& move_list,
+                               std::vector<Move>& move_list,
                                const Player& player) override;
         Game_Result handle_move(Board& board,
                                 const Move& move,
-                                std::vector<const Move*>& move_list) const override;
+                                std::vector<Move>& move_list) const override;
 
     private:
         bool in_force_mode = true;
         bool usermove_prefix = true;
 
         std::string receive_xboard_command(Clock& clock, bool while_listening);
-        bool undo_move(std::vector<const Move*>& move_list, const std::string& command, Board& board, Clock& clock, const Player& player);
+        bool undo_move(std::vector<Move>& move_list, const std::string& command, Board& board, Clock& clock, const Player& player);
         void send_error(const std::string& command, const std::string& reason) const noexcept;
         std::string listener(Clock& clock) override;
         void report_end_of_game(const Game_Result& ending) const noexcept;
