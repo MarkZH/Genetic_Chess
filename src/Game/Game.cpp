@@ -128,7 +128,7 @@ void play_game_with_outsider(const Player& player,
     }
 }
 
-void start_game(const std::vector<std::string>& options)
+void start_game(const std::vector<std::tuple<std::string, std::vector<std::string>>>& options)
 {
     // Use pointers since each player could be Genetic, Random, etc.
     std::unique_ptr<Player> white;
@@ -145,9 +145,8 @@ void start_game(const std::vector<std::string>& options)
     auto print_board = false;
     auto enable_logging = false;
 
-    for(size_t i = 0; i < options.size(); ++i)
+    for(const auto& [opt, values] : options)
     {
-        const std::string opt = options[i];
         std::unique_ptr<Player> latest;
         if(opt == "-random")
         {
@@ -155,47 +154,53 @@ void start_game(const std::vector<std::string>& options)
         }
         else if(opt == "-genetic")
         {
-            Main_Tools::argument_assert(i + 1 < options.size(), "Genome file needed for player");
-            std::string file_name = options[++i];
+            Main_Tools::argument_assert( ! values.empty(), "Genome file needed for player");
+            std::string file_name = values[0];
 
             try
             {
-                const auto id = i + 1 < options.size() ? options[i + 1] : std::string{};
+                const auto id = values.size() > 1 ? values[1] : std::string{};
                 latest = std::make_unique<Genetic_AI>(file_name, String::to_number<int>(id));
-                ++i;
             }
             catch(const std::invalid_argument&) // Could not convert id to an int.
             {
                 latest = std::make_unique<Genetic_AI>(file_name, find_last_id(file_name));
             }
         }
-        else if(opt == "-time" && i + 1 < options.size())
+        else if(opt == "-time")
         {
-            game_time = String::to_duration<Clock::seconds>(options[++i]);
+            Main_Tools::argument_assert( ! values.empty(), opt + " requires a numeric parameter.");
+            game_time = String::to_duration<Clock::seconds>(values[0]);
         }
-        else if(opt == "-reset-moves" && i + 1 < options.size())
+        else if(opt == "-reset-moves")
         {
-            moves_per_reset = String::to_number<size_t>(options[++i]);
+            Main_Tools::argument_assert( ! values.empty(), opt + " requires a whole number parameter.");
+            moves_per_reset = String::to_number<size_t>(values[0]);
         }
-        else if(opt == "-increment-time" && i + 1 < options.size())
+        else if(opt == "-increment-time")
         {
-            increment_time = String::to_duration<Clock::seconds>(options[++i]);
+            Main_Tools::argument_assert( ! values.empty(), opt + " requires a numeric parameter.");
+            increment_time = String::to_duration<Clock::seconds>(values[0]);
         }
-        else if(opt == "-board" && i + 1 < options.size())
+        else if(opt == "-board")
         {
-            board = Board(options[++i]);
+            Main_Tools::argument_assert( ! values.empty(), opt + " requires a quoted FEN text parameter.");
+            board = Board(values[0]);
         }
-        else if(opt == "-game-file" && i + 1 < options.size())
+        else if(opt == "-game-file")
         {
-            game_file_name = options[++i];
+            Main_Tools::argument_assert( ! values.empty(), opt + " requires a file name.");
+            game_file_name = values[0];
         }
-        else if(opt == "-event" && i + 1 < options.size())
+        else if(opt == "-event")
         {
-            event_name = options[++i];
+            Main_Tools::argument_assert( ! values.empty(), opt + " requires a text parameter.");
+            event_name = values[0];
         }
-        else if(opt == "-location" && i + 1 < options.size())
+        else if(opt == "-location")
         {
-            location = options[++i];
+            Main_Tools::argument_assert( ! values.empty(), opt + " requires a text parameter.");
+            location = values[0];
         }
         else if(opt == "-xboard")
         {
