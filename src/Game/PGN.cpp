@@ -141,7 +141,6 @@ bool PGN::confirm_game_record(const std::string& file_name)
     Game_Result result;
     while(true)
     {
-        const auto next_character = input.get();
         if(finished_game)
         {
             if(!check_rule_result("Header",
@@ -182,6 +181,21 @@ bool PGN::confirm_game_record(const std::string& file_name)
             board = Board();
             result = {};
             ++game_count;
+        }
+
+        const auto next_character = input.get();
+        if( ! input)
+        {
+            if(in_game)
+            {
+                std::cout << "File ended in middle of game.\n";
+            }
+            else
+            {
+                std::cout << "Found " << game_count << " games." << '\n';
+            }
+
+            return ! in_game;
         }
 
         if(std::isspace(next_character))
@@ -233,23 +247,16 @@ bool PGN::confirm_game_record(const std::string& file_name)
             return false;
         }
 
+        if(in_game && next_character == '[')
+        {
+            const auto line_count = line_number(input, input.tellg());
+            std::cerr << "Found header line in the middle of another game (line: " << line_count << ")\n";
+            return false;
+        }
+
         std::string word;
         input.unget();
         input >> word;
-        if(!input)
-        {
-            if(in_game)
-            {
-                std::cout << "File ended in middle of game.\n";
-                return false;
-            }
-            else
-            {
-                std::cout << "Found " << game_count << " games." << '\n';
-                return true;
-            }
-        }
-
         if(word == "[Result")
         {
             const auto result_tag = get_pgn_header_value(input);
