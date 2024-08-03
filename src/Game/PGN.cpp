@@ -15,7 +15,7 @@
 namespace
 {
     //! Print the line number of the input stream at the current position.
-    int line_number(std::istream& input) noexcept;
+    int line_number(std::istream& input, std::streampos error_position) noexcept;
 
     bool check_rule_result(const std::string& rule_source,
                            const std::string& rule_name,
@@ -26,7 +26,7 @@ namespace
         const auto pass = expected_ruling == actual_ruling;
         if(!pass)
         {
-            const auto line_count = line_number(input);
+            const auto line_count = line_number(input, input.tellg());
             std::cerr << rule_source << " indicates "
                 << (expected_ruling ? "" : "no ")
                 << rule_name << ", but last move did "
@@ -52,12 +52,13 @@ namespace
         input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
-    int line_number(std::istream& input) noexcept
+    int line_number(std::istream& input, const std::streampos error_position) noexcept
     {
-        auto position = input.tellg();
+        const auto position = input.tellg();
         input.seekg(0);
+        skip_rest_of_line(input);
         auto line_count = 1;
-        while(input && input.tellg() < position)
+        while(input && input.tellg() < error_position)
         {
             skip_rest_of_line(input);
             ++line_count;
@@ -71,10 +72,11 @@ namespace
     //! \param input A text input stream.
     bool skip_braced_comment(std::istream& input) noexcept
     {
+        const auto stream_position = input.tellg();
         input.ignore(std::numeric_limits<std::streamsize>::max(), '}');
         if(!input)
         {
-            const auto line_count = line_number(input);
+            const auto line_count = line_number(input, stream_position);
             std::cerr << "Reached end of input before closing curly brace: line " << line_count << ".\n";
             return false;
         }
@@ -89,10 +91,11 @@ namespace
     {
         while(true)
         {
+            const auto input_position = input.tellg();
             const auto c = input.get();
             if(!input)
             {
-                const auto line_count = line_number(input);
+                const auto line_count = line_number(input, input_position);
                 std::cerr << "Reached end of input before end of RAV: line " << line_count << ".\n";
                 return false;
             }
@@ -214,7 +217,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         if(next_character == '}')
         {
-            const auto line_count = line_number(input);
+            const auto line_count = line_number(input, input.tellg());
             std::cerr << "Found closing curly brace before opener (line: " << line_count << ")\n";
             return false;
         }
@@ -233,7 +236,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         if(next_character == ')')
         {
-            const auto line_count = line_number(input);
+            const auto line_count = line_number(input, input.tellg());
             std::cerr << "Found closing RAV parentheses before opener (line: " << line_count << ")\n";
             return false;
         }
@@ -276,7 +279,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             }
             else
             {
-                const auto line_count = line_number(input);
+                const auto line_count = line_number(input, input.tellg());
                 std::cerr << "Malformed Result: " << word << " " << result_tag << " (line: " << line_count << ")\n";
                 return false;
             }
@@ -321,7 +324,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
                (word == "0-1" && expected_winner != Winner_Color::BLACK) ||
                (word == "*" && expected_winner != Winner_Color::NONE))
             {
-                const auto line_count = line_number(input);
+                const auto line_count = line_number(input, input.tellg());
                 std::cerr << "Final result mark (" << word << ") does not match game result. (line: " << line_count << ")\n";
                 return false;
             }
@@ -365,7 +368,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             }
             catch(const Illegal_Move&)
             {
-                const auto line_count = line_number(input);
+                const auto line_count = line_number(input, input.tellg());
                 std::cerr << "Move (" << move_number << word << ") is illegal."
                     << " (line: " << line_count << ")\n";
                 std::cerr << "Legal moves: ";
