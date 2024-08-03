@@ -69,7 +69,7 @@ namespace
 
     //! \brief Skip to the end of the current curly-braced comment. Returns true if successful, and false if the end of the input stream is reached.
     //! 
-    //! \param input A text input stream.
+    //! \param input A text input stream. The position within the input stream should be passed the opening curly brace.
     bool skip_braced_comment(std::istream& input) noexcept
     {
         const auto stream_position = input.tellg();
@@ -86,7 +86,7 @@ namespace
 
     //! \brief Skip to the end of the current RAV section. Returns true if successful, and false if the end of the input stream is reached.
     //! 
-    //! \param input A text input stream. The opening parenthesis must be removed from the stream before calling.
+    //! \param input A text input stream. The position within the input stream should be passed the opening parenthesis.
     bool skip_rav(std::istream& input) noexcept
     {
         while(true)
