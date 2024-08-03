@@ -24,7 +24,7 @@ namespace
                            std::istream& input) noexcept
     {
         const auto pass = expected_ruling == actual_ruling;
-        if(!pass)
+        if( ! pass)
         {
             const auto line_count = line_number(input, input.tellg());
             std::cerr << rule_source << " indicates "
@@ -74,7 +74,7 @@ namespace
     {
         const auto stream_position = input.tellg();
         input.ignore(std::numeric_limits<std::streamsize>::max(), '}');
-        if(!input)
+        if( ! input)
         {
             const auto line_count = line_number(input, stream_position);
             std::cerr << "Reached end of input before closing curly brace: line " << line_count << ".\n";
@@ -93,7 +93,7 @@ namespace
         {
             const auto input_position = input.tellg();
             const auto c = input.get();
-            if(!input)
+            if( ! input)
             {
                 const auto line_count = line_number(input, input_position);
                 std::cerr << "Reached end of input before end of RAV: line " << line_count << ".\n";
@@ -123,7 +123,7 @@ namespace
 bool PGN::confirm_game_record(const std::string& file_name)
 {
     auto input = std::ifstream(file_name);
-    if(!input)
+    if( ! input)
     {
         throw std::runtime_error("Could not open file " + file_name + " for reading.");
     }
@@ -143,7 +143,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
     {
         if(finished_game)
         {
-            if(!check_rule_result("Header",
+            if( ! check_rule_result("Header",
                                   "50-move draw",
                                   expect_fifty_move_draw,
                                   String::contains(result.ending_reason(), "50"),
@@ -152,7 +152,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 return false;
             }
 
-            if(!check_rule_result("Header",
+            if( ! check_rule_result("Header",
                                   "threefold draw",
                                   expect_threefold_draw,
                                   String::contains(result.ending_reason(), "fold"),
@@ -161,7 +161,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 return false;
             }
 
-            if(!check_rule_result("Header",
+            if( ! check_rule_result("Header",
                                   "checkmate",
                                   expect_checkmate,
                                   String::contains(result.ending_reason(), "mates"),
@@ -337,7 +337,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             try
             {
                 const auto& move_to_play = board.interpret_move(word);
-                if(!check_rule_result("Move: " + move_number + word + ")",
+                if( ! check_rule_result("Move: " + move_number + word + ")",
                                       "capture",
                                       String::contains(word, 'x'),
                                       board.move_captures(move_to_play),
@@ -348,7 +348,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
                 result = board.play_move(move_to_play);
 
-                if(!check_rule_result("Move (" + move_number + word + ")",
+                if( ! check_rule_result("Move (" + move_number + word + ")",
                                       "check",
                                       String::contains("+#", word.back()),
                                       board.king_is_in_check(),
@@ -357,7 +357,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
                     return false;
                 }
 
-                if(!check_rule_result("Move (" + move_number + word + ")",
+                if( ! check_rule_result("Move (" + move_number + word + ")",
                                       "checkmate",
                                       word.back() == '#',
                                       result.game_has_ended() && result.winner() != Winner_Color::NONE,
