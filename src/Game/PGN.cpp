@@ -129,7 +129,6 @@ bool PGN::confirm_game_record(const std::string& file_name)
     }
 
     auto game_count = 0;
-    auto consecutive_newlines = 0;
     std::string move_number;
 
     auto expected_winner = Winner_Color::NONE;
@@ -137,21 +136,13 @@ bool PGN::confirm_game_record(const std::string& file_name)
     auto expect_fifty_move_draw = false;
     auto expect_threefold_draw = false;
     auto in_game = false;
+    auto finished_game = false;
     Board board;
     Game_Result result;
     while(true)
     {
         const auto next_character = input.get();
-        if(next_character == '\n')
-        {
-            ++consecutive_newlines;
-        }
-        else
-        {
-            consecutive_newlines = 0;
-        }
-
-        if(in_game && consecutive_newlines > 1)
+        if(finished_game)
         {
             if(!check_rule_result("Header",
                                   "50-move draw",
@@ -187,6 +178,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             expect_fifty_move_draw = false;
             expect_threefold_draw = false;
             in_game = false;
+            finished_game = false;
             board = Board();
             result = {};
             ++game_count;
@@ -331,6 +323,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
             if(word == "1/2-1/2" || word == "1-0" || word == "0-1" || word == "*")
             {
+                finished_game = true;
                 continue;
             }
 
