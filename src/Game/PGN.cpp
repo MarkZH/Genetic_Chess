@@ -62,13 +62,12 @@ namespace
         }
         const auto position = input.tellg();
         input.seekg(0);
-        skip_rest_of_line(input);
-        auto line_count = 1;
-        while(input && input.tellg() < error_position)
+        auto line_count = 0;
+        do
         {
             skip_rest_of_line(input);
             ++line_count;
-        }
+        } while(input && input.tellg() < error_position);
         input.seekg(position);
         return line_count;
     }
