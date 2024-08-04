@@ -288,7 +288,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 return false;
             }
         }
-        else if(word == "[Termination")
+        else if(word == "[GameEnding")
         {
             const auto terminator = get_pgn_header_value(input);
             expect_checkmate = false;
