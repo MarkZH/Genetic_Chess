@@ -144,28 +144,28 @@ bool PGN::confirm_game_record(const std::string& file_name)
         if(finished_game)
         {
             if( ! check_rule_result("Header",
-                                  "50-move draw",
-                                  expect_fifty_move_draw,
-                                  String::contains(result.ending_reason(), "50"),
-                                  input))
+                                    "50-move draw",
+                                    expect_fifty_move_draw,
+                                    String::contains(result.ending_reason(), "50"),
+                                    input))
             {
                 return false;
             }
 
             if( ! check_rule_result("Header",
-                                  "threefold draw",
-                                  expect_threefold_draw,
-                                  String::contains(result.ending_reason(), "fold"),
-                                  input))
+                                    "threefold draw",
+                                    expect_threefold_draw,
+                                    String::contains(result.ending_reason(), "fold"),
+                                    input))
             {
                 return false;
             }
 
             if( ! check_rule_result("Header",
-                                  "checkmate",
-                                  expect_checkmate,
-                                  String::contains(result.ending_reason(), "mates"),
-                                  input))
+                                    "checkmate",
+                                    expect_checkmate,
+                                    String::contains(result.ending_reason(), "mates"),
+                                    input))
             {
                 return false;
             }
@@ -192,7 +192,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             }
             else
             {
-                std::cout << "Found " << game_count << " games." << '\n';
+                std::cout << "Found " << game_count << " " << (game_count == 1 ? "game" : "games") << ".\n";
             }
 
             return ! in_game;
@@ -338,10 +338,10 @@ bool PGN::confirm_game_record(const std::string& file_name)
             {
                 const auto& move_to_play = board.interpret_move(word);
                 if( ! check_rule_result("Move: " + move_number + word + ")",
-                                      "capture",
-                                      String::contains(word, 'x'),
-                                      board.move_captures(move_to_play),
-                                      input))
+                                        "capture",
+                                        String::contains(word, 'x'),
+                                        board.move_captures(move_to_play),
+                                        input))
                 {
                     return false;
                 }
@@ -349,19 +349,19 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 result = board.play_move(move_to_play);
 
                 if( ! check_rule_result("Move (" + move_number + word + ")",
-                                      "check",
-                                      String::contains("+#", word.back()),
-                                      board.king_is_in_check(),
-                                      input))
+                                        "check",
+                                        String::contains("+#", word.back()),
+                                        board.king_is_in_check(),
+                                        input))
                 {
                     return false;
                 }
 
                 if( ! check_rule_result("Move (" + move_number + word + ")",
-                                      "checkmate",
-                                      word.back() == '#',
-                                      result.game_has_ended() && result.winner() != Winner_Color::NONE,
-                                      input))
+                                        "checkmate",
+                                        word.back() == '#',
+                                        result.game_has_ended() && result.winner() != Winner_Color::NONE,
+                                        input))
                 {
                     return false;
                 }
