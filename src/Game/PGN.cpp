@@ -52,8 +52,14 @@ namespace
         input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     }
 
-    int line_number(std::istream& input, const std::streampos error_position) noexcept
+    int line_number(std::istream& input, std::streampos error_position) noexcept
     {
+        if( ! input)
+        {
+            input.clear();
+            input.seekg(0, input.end);
+            error_position = input.tellg();
+        }
         const auto position = input.tellg();
         input.seekg(0);
         skip_rest_of_line(input);
