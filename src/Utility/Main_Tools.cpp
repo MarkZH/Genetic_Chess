@@ -7,6 +7,7 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <tuple>
 
 void Main_Tools::print_help()
 {
@@ -61,29 +62,47 @@ void Main_Tools::argument_assert(const bool condition, const std::string& failur
     }
 }
 
-std::vector<std::string> Main_Tools::standardize_options(int argc, char* argv[])
+std::vector<std::tuple<std::string, std::vector<std::string>>> Main_Tools::parse_options(int argc, char* argv[])
 {
-    std::vector<std::string> options;
-    for(int i = 1; i < argc; ++i)
+    std::vector<std::string> command_line;
+    for(auto i = 1; i < argc; ++i)
     {
-        if(String::starts_with(argv[i], "-"))
+        command_line.push_back(argv[i]);
+    }
+
+    std::vector<std::tuple<std::string, std::vector<std::string>>> options;
+    for(const auto& token : command_line)
+    {
+        if(String::starts_with(token, "-"))
         {
-            auto parts = String::split(argv[i], "=", 1);
+            auto parts = String::split(token, "=", 1);
             if(String::starts_with(parts.front(), "--"))
             {
                 parts.front() = parts.front().substr(1);
             }
-            options.insert(options.end(), parts.begin(), parts.end());
+
+            if(parts.size() == 1)
+            {
+                options.push_back({parts.front(), {}});
+            }
+            else
+            {
+                options.push_back({ parts.front(), {parts.back()} });
+            }
         }
         else
         {
-            options.push_back(argv[i]);
+            if(options.empty())
+            {
+                throw std::invalid_argument("Invalid option: " + token);
+            }
+            std::get<1>(options.back()).push_back(token);
         }
     }
 
     if(options.empty())
     {
-        options.push_back("-help");
+        return {{"-help", {}}};
     }
 
     return options;
