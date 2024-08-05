@@ -104,7 +104,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -122,7 +122,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -147,7 +147,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Win32'">
     <ClCompile>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -172,7 +172,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -197,7 +197,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OmitFramePointers>true</OmitFramePointers>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -218,7 +218,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Profile|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <OmitFramePointers>true</OmitFramePointers>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -286,55 +286,55 @@
     <ClCompile Include="src\Utility\Main_Tools.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\game\Board.h" />
-    <ClInclude Include="include\game\Clock.h" />
-    <ClInclude Include="include\game\Color.h" />
-    <ClInclude Include="include\game\Game.h" />
-    <ClInclude Include="include\game\Game_Result.h" />
-    <ClInclude Include="include\Game\Move.h" />
-    <ClInclude Include="include\Game\PGN.h" />
-    <ClInclude Include="include\Game\Piece.h" />
-    <ClInclude Include="include\game\Square.h" />
-    <ClInclude Include="include\genes\Castling_Possible_Gene.h" />
-    <ClInclude Include="include\Genes\Checkmate_Material_Gene.h" />
-    <ClInclude Include="include\genes\Freedom_To_Move_Gene.h" />
-    <ClInclude Include="include\genes\Gene.h" />
-    <ClInclude Include="include\Genes\Gene_Pool.h" />
-    <ClInclude Include="include\Genes\Gene_Value.h" />
-    <ClInclude Include="include\genes\Genome.h" />
-    <ClInclude Include="include\Genes\Interpolated_Gene_Value.h" />
-    <ClInclude Include="include\Genes\King_Confinement_Gene.h" />
-    <ClInclude Include="include\genes\King_Protection_Gene.h" />
-    <ClInclude Include="include\genes\Look_Ahead_Gene.h" />
-    <ClInclude Include="include\Genes\Move_Sorting_Gene.h" />
-    <ClInclude Include="include\genes\Opponent_Pieces_Targeted_Gene.h" />
-    <ClInclude Include="include\Genes\Passed_Pawn_Gene.h" />
-    <ClInclude Include="include\genes\Pawn_Advancement_Gene.h" />
-    <ClInclude Include="include\Genes\Pawn_Structure_Gene.h" />
-    <ClInclude Include="include\genes\Piece_Strength_Gene.h" />
-    <ClInclude Include="include\genes\Sphere_of_Influence_Gene.h" />
-    <ClInclude Include="include\genes\Total_Force_Gene.h" />
-    <ClInclude Include="include\Players\Alpha_Beta_Value.h" />
-    <ClInclude Include="include\players\Xboard_Mediator.h" />
-    <ClInclude Include="include\players\Game_Tree_Node_Result.h" />
-    <ClInclude Include="include\Players\Genetic_AI.h" />
-    <ClInclude Include="include\players\Outside_Communicator.h" />
-    <ClInclude Include="include\players\Player.h" />
-    <ClInclude Include="include\Players\Proxy_Player.h" />
-    <ClInclude Include="include\players\Random_AI.h" />
-    <ClInclude Include="include\players\Thinking.h" />
-    <ClInclude Include="include\Players\UCI_Mediator.h" />
-    <ClInclude Include="include\Testing.h" />
-    <ClInclude Include="include\Utility\Algorithm.h" />
-    <ClInclude Include="include\Utility\Configuration.h" />
-    <ClInclude Include="include\Utility\Exceptions.h" />
-    <ClInclude Include="include\Utility\Fixed_Capacity_Vector.h" />
-    <ClInclude Include="include\Utility\Help_Writer.h" />
-    <ClInclude Include="include\Utility\Math.h" />
-    <ClInclude Include="include\Utility\Random.h" />
-    <ClInclude Include="include\Utility\String.h" />
-    <ClInclude Include="include\Utility\Thread_Limiter.h" />
-    <ClInclude Include="include\Utility\Main_Tools.h" />
+    <ClInclude Include="src\Game\Board.h" />
+    <ClInclude Include="src\Game\Clock.h" />
+    <ClInclude Include="src\Game\Color.h" />
+    <ClInclude Include="src\Game\Game.h" />
+    <ClInclude Include="src\Game\Game_Result.h" />
+    <ClInclude Include="src\Game\Move.h" />
+    <ClInclude Include="src\Game\PGN.h" />
+    <ClInclude Include="src\Game\Piece.h" />
+    <ClInclude Include="src\Game\Square.h" />
+    <ClInclude Include="src\Genes\Castling_Possible_Gene.h" />
+    <ClInclude Include="src\Genes\Checkmate_Material_Gene.h" />
+    <ClInclude Include="src\Genes\Freedom_To_Move_Gene.h" />
+    <ClInclude Include="src\Genes\Gene.h" />
+    <ClInclude Include="src\Genes\Gene_Pool.h" />
+    <ClInclude Include="src\Genes\Gene_Value.h" />
+    <ClInclude Include="src\Genes\Genome.h" />
+    <ClInclude Include="src\Genes\Interpolated_Gene_Value.h" />
+    <ClInclude Include="src\Genes\King_Confinement_Gene.h" />
+    <ClInclude Include="src\Genes\King_Protection_Gene.h" />
+    <ClInclude Include="src\Genes\Look_Ahead_Gene.h" />
+    <ClInclude Include="src\Genes\Move_Sorting_Gene.h" />
+    <ClInclude Include="src\Genes\Opponent_Pieces_Targeted_Gene.h" />
+    <ClInclude Include="src\Genes\Passed_Pawn_Gene.h" />
+    <ClInclude Include="src\Genes\Pawn_Advancement_Gene.h" />
+    <ClInclude Include="src\Genes\Pawn_Structure_Gene.h" />
+    <ClInclude Include="src\Genes\Piece_Strength_Gene.h" />
+    <ClInclude Include="src\Genes\Sphere_of_Influence_Gene.h" />
+    <ClInclude Include="src\Genes\Total_Force_Gene.h" />
+    <ClInclude Include="src\Players\Alpha_Beta_Value.h" />
+    <ClInclude Include="src\Players\Game_Tree_Node_Result.h" />
+    <ClInclude Include="src\Players\Genetic_AI.h" />
+    <ClInclude Include="src\Players\Outside_Communicator.h" />
+    <ClInclude Include="src\Players\Player.h" />
+    <ClInclude Include="src\Players\Proxy_Player.h" />
+    <ClInclude Include="src\Players\Random_AI.h" />
+    <ClInclude Include="src\Players\Thinking.h" />
+    <ClInclude Include="src\Players\UCI_Mediator.h" />
+    <ClInclude Include="src\Players\Xboard_Mediator.h" />
+    <ClInclude Include="src\Testing.h" />
+    <ClInclude Include="src\Utility\Algorithm.h" />
+    <ClInclude Include="src\Utility\Configuration.h" />
+    <ClInclude Include="src\Utility\Exceptions.h" />
+    <ClInclude Include="src\Utility\Fixed_Capacity_Vector.h" />
+    <ClInclude Include="src\Utility\Help_Writer.h" />
+    <ClInclude Include="src\Utility\Main_Tools.h" />
+    <ClInclude Include="src\Utility\Math.h" />
+    <ClInclude Include="src\Utility\Random.h" />
+    <ClInclude Include="src\Utility\String.h" />
+    <ClInclude Include="src\Utility\Thread_Limiter.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
