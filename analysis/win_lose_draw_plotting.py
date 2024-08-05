@@ -38,7 +38,7 @@ def extract_game_endings(game_file_name: str):
             result_type = Game_Ending.BLACK_MATE
 
         try:
-            result_text = game.headers["Termination"]
+            result_text = game.headers["GameEnding"]
             if result_text.lower() == 'threefold repetition':
                 result_type = Game_Ending.THREEFOLD
             elif result_text.lower() == '50-move limit':
