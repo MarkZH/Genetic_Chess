@@ -119,7 +119,7 @@ base_options = [
         "-Wextra",
         "-Wall",
         "-Werror",
-        "-Iinclude"]
+        "-Isrc"]
 base_linker_options = ["-pthread"]
 linker_options['debug'] = []
 linker_options['release'] = ['-flto']
