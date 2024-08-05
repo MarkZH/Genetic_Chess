@@ -810,7 +810,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
     if( ! actual_result.ending_reason().empty() && ! actual_result.ending_reason().contains("mates"))
     {
-        PGN::print_game_header_line(header_text, "Termination", actual_result.ending_reason());
+        PGN::print_game_header_line(header_text, "GameEnding", actual_result.ending_reason());
     }
 
     const auto starting_fen = original_fen();

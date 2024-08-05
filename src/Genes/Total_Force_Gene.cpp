@@ -1,7 +1,7 @@
 #include "Genes/Total_Force_Gene.h"
 
 #include <numeric>
-#include <utility>
+#include <cassert>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"

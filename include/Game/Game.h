@@ -48,6 +48,6 @@ void play_game_with_outsider(const Player& local_player,
 //! \brief Starts a single game according to command line options.
 //!
 //! \param options Command line options standardized into a string vector.
-void start_game(const std::vector<std::string>& options);
+void start_game(const std::vector<std::tuple<std::string, std::vector<std::string>>>& options);
 
 #endif // GAME_H

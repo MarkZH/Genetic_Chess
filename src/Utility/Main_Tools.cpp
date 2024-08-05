@@ -8,6 +8,7 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <tuple>
 
 void Main_Tools::print_help()
 {
@@ -15,13 +16,16 @@ void Main_Tools::print_help()
     help.add_title("Genetic Chess");
     help.add_paragraph("Genetic Chess is a program that runs a chess engine to play games or run a gene pool for genetically optimizing the chess engine.");
     help.add_section_title("Command-line Arguments");
-    help.add_paragraph("For all arguments, all of the following forms are equivalent:");
+    help.add_paragraph("For arguments with parameters, all of the following forms are equivalent:");
     help.add_option("-arg param");
     help.add_option("-arg=param");
     help.add_option("--arg param");
     help.add_option("--arg=param");
     help.add_paragraph("where arg is the name of the argument and param is a single required parameter.");
-    help.add_paragraph("Parameters in [square brackets] are required, while parameters in <angle~brackets> are optional.");
+    help.add_paragraph("Parameters in [square~brackets] are required, while parameters in <angle~brackets> are optional.");
+    help.add_paragraph("For arguments without parameters, the following forms are equivalent:");
+    help.add_option("-arg");
+    help.add_option("--arg");
     help.add_section_title("Standalone functions");
     help.add_paragraph("These functions are for single program actions. If multiple of these options are specified, only first is run before exiting.");
     help.add_option("-help", "Print this help text and exit.");
@@ -29,7 +33,7 @@ void Main_Tools::print_help()
     help.add_option("-confirm", {"file name"}, "Check a file containing PGN game records for any illegal moves or mismarked checks or checkmates.");
     help.add_option("-test", "Run tests to ensure various parts of the program function correctly.");
     help.add_option("-speed", "Run a speed test for gene scoring and board move submission.");
-    help.add_option("-perft", "Run a legal move generation test.");
+    help.add_option("-perft", "Run a legal move generation speed test.");
     help.add_section_title("Player options");
     help.add_paragraph("The following options start a game with various players. If two players are specified, the first plays white and the second black. If only one player is specified, the program will wait for an Xboard or UCI command from a GUI to start playing.");
     help.add_option("-genetic", {"file name"}, {"ID number"}, "Select a minimaxing evolved player for a game and load data from the file. If there are multiple genomes in the file, specify an ID number to load, otherwise the last genome in the file will be used.");
@@ -59,29 +63,47 @@ void Main_Tools::argument_assert(const bool condition, const std::string& failur
     }
 }
 
-std::vector<std::string> Main_Tools::standardize_option(int argc, char* argv[])
+std::vector<std::tuple<std::string, std::vector<std::string>>> Main_Tools::parse_options(int argc, char* argv[])
 {
-    std::vector<std::string> options;
-    for(int i = 1; i < argc; ++i)
+    std::vector<std::string> command_line;
+    for(auto i = 1; i < argc; ++i)
     {
-        if(std::string_view(argv[i]).starts_with("-"))
+        command_line.push_back(argv[i]);
+    }
+
+    std::vector<std::tuple<std::string, std::vector<std::string>>> options;
+    for(const auto& token : command_line)
+    {
+        if(token.starts_with("-"))
         {
-            auto parts = String::split(argv[i], "=", 1);
-            if(std::string_view(parts.front()).starts_with("--"))
+            auto parts = String::split(token, "=", 1);
+            if(parts.front().starts_with("--"))
             {
                 parts.front() = parts.front().substr(1);
             }
-            options.insert(options.end(), parts.begin(), parts.end());
+
+            if(parts.size() == 1)
+            {
+                options.push_back({parts.front(), {}});
+            }
+            else
+            {
+                options.push_back({ parts.front(), {parts.back()} });
+            }
         }
         else
         {
-            options.push_back(argv[i]);
+            if(options.empty())
+            {
+                throw std::invalid_argument("Invalid option: " + token);
+            }
+            std::get<1>(options.back()).push_back(token);
         }
     }
 
     if(options.empty())
     {
-        options.push_back("-help");
+        return {{"-help", {}}};
     }
 
     return options;

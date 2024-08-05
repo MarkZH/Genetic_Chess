@@ -102,11 +102,12 @@ std::string String::round_to_decimals(const double x, const size_t decimal_place
 
 std::string String::word_wrap(const std::string& text, const size_t line_length, const size_t indent) noexcept
 {
+    const std::string space = " ";
+    const auto indent_space = std::string(indent, ' ');
+
     std::vector<std::string> lines;
     for(const auto& word : split(text))
     {
-        const auto indent_space = std::string(indent, ' ');
-        const std::string space = " ";
         if(lines.empty() || lines.back().size() + space.size() + word.size() > line_length)
         {
             lines.push_back(indent_space + word);

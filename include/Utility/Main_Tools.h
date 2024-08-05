@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <tuple>
 
 namespace Main_Tools
 {
@@ -15,7 +16,7 @@ namespace Main_Tools
     void argument_assert(bool condition, const std::string& failure_message);
 
     //! \brief Standardizes command line options into a vector of strings.
-    std::vector<std::string> standardize_option(int argc, char* argv[]);
+    std::vector<std::tuple<std::string, std::vector<std::string>>> parse_options(int argc, char* argv[]);
 }
 
 #endif // TOOLING_H

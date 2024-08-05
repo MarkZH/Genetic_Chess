@@ -1,6 +1,6 @@
 #include "Genes/Opponent_Pieces_Targeted_Gene.h"
 
-#include <utility>
+#include <cassert>
 
 #include "Game/Board.h"
 #include "Game/Piece.h"

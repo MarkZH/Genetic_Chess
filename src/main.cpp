@@ -25,17 +25,17 @@ int main(int argc, char *argv[])
 {
     try
     {
-        const auto options = Main_Tools::standardize_option(argc, argv);
-        const auto option = options.front();
+        const auto options = Main_Tools::parse_options(argc, argv);
+        const auto& [option, parameters] = options.front();
         if(option == "-gene-pool")
         {
-            Main_Tools::argument_assert(options.size() >= 2, "Specify a configuration file to run a gene pool.");
-            gene_pool(options[1]);
+            Main_Tools::argument_assert( ! parameters.empty(), "Specify a configuration file to run a gene pool.");
+            gene_pool(parameters[0]);
         }
         else if(option == "-confirm")
         {
-            Main_Tools::argument_assert(options.size() >= 2, "Provide a file containing a game to confirm has all legal moves.");
-            return PGN::confirm_game_record(options[1]) ? EXIT_SUCCESS : EXIT_FAILURE;
+            Main_Tools::argument_assert( ! parameters.empty(), "Provide a file containing games to confirm they have all legal moves.");
+            return PGN::confirm_game_record(parameters[0]) ? EXIT_SUCCESS : EXIT_FAILURE;
         }
         else if(option == "-test")
         {
@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
         }
         else if(option == "-list")
         {
-            Main_Tools::argument_assert(options.size() >= 2, option + " requires a numeric argument.");
-            list_moves(String::to_number<size_t>(options[1]));
+            Main_Tools::argument_assert( ! parameters.empty(), option + " requires a numeric argument.");
+            list_moves(String::to_number<size_t>(parameters[0]));
         }
         else if(option == "-help")
         {
