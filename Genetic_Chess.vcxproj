@@ -264,6 +264,7 @@
     <ClCompile Include="src\genes\Pawn_Advancement_Gene.cpp" />
     <ClCompile Include="src\Genes\Pawn_Structure_Gene.cpp" />
     <ClCompile Include="src\genes\Piece_Strength_Gene.cpp" />
+    <ClCompile Include="src\Genes\Resignation_Gene.cpp" />
     <ClCompile Include="src\genes\Sphere_of_Influence_Gene.cpp" />
     <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -312,6 +313,7 @@
     <ClInclude Include="src\Genes\Pawn_Advancement_Gene.h" />
     <ClInclude Include="src\Genes\Pawn_Structure_Gene.h" />
     <ClInclude Include="src\Genes\Piece_Strength_Gene.h" />
+    <ClInclude Include="src\Genes\Resignation_Gene.h" />
     <ClInclude Include="src\Genes\Sphere_of_Influence_Gene.h" />
     <ClInclude Include="src\Genes\Total_Force_Gene.h" />
     <ClInclude Include="src\Players\Alpha_Beta_Value.h" />

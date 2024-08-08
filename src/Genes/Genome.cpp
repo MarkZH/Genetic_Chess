@@ -30,6 +30,7 @@
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
 #include "Genes/Move_Sorting_Gene.h"
+#include "Genes/Resignation_Gene.h"
 
 namespace
 {
@@ -42,6 +43,7 @@ Genome::Genome() noexcept :
         std::make_unique<Piece_Strength_Gene>(),
         std::make_unique<Look_Ahead_Gene>(),
         std::make_unique<Move_Sorting_Gene>(),
+        std::make_unique<Resignation_Gene>(),
         std::make_unique<Total_Force_Gene>(nullptr),
         std::make_unique<Freedom_To_Move_Gene>(),
         std::make_unique<Pawn_Advancement_Gene>(),
@@ -60,6 +62,7 @@ Genome::Genome() noexcept :
     assert(gene_reference<Piece_Strength_Gene>().name() == "Piece Strength Gene");
     assert(gene_reference<Look_Ahead_Gene>().name() == "Look Ahead Gene");
     assert(gene_reference<Move_Sorting_Gene>().name() == "Move Sorting Gene");
+    assert(gene_reference<Resignation_Gene>().name() == "Resignation Gene");
 }
 
 Genome::Genome(const Genome& other) noexcept : id_number(other.id())
@@ -258,6 +261,11 @@ void Genome::print(std::ostream& os) const noexcept
         gene->print(os);
     }
     os << "END\n\n";
+}
+
+bool Genome::should_resign(const std::vector<Game_Tree_Node_Result>& commentary, const Piece_Color perspective) const noexcept
+{
+    return gene_reference<Resignation_Gene>().should_resign(commentary, perspective);
 }
 
 Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept

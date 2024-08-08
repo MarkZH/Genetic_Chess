@@ -14,6 +14,7 @@
 
 class Board;
 class Move;
+class Game_Tree_Node_Result;
 
 //! \brief A software analog to a biological chromosome containing a collection of Gene instances that control the chess player's behavior.
 class Genome
@@ -120,9 +121,11 @@ class Genome
         //! \param os The output stream.
         void print(std::ostream& os) const noexcept;
 
+        bool should_resign(const std::vector<Game_Tree_Node_Result>& commentary, const Piece_Color perspective) const noexcept;
+
     private:
         int id_number;
-        std::array<std::unique_ptr<Gene>, 14> genome;
+        std::array<std::unique_ptr<Gene>, 15> genome;
 
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept;
         void reset_piece_strength_gene() noexcept;

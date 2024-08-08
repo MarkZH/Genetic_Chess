@@ -111,7 +111,10 @@ const Move& Genetic_AI::choose_move_minimax(const Board& board, const Clock& clo
                                    current_variation);
 
     report_final_search_stats(result, board);
-
+    if(genome.should_resign(commentary, board.whose_turn()))
+    {
+        // Do something clever here
+    }
     return *result.variation_line().front();
 }
 
