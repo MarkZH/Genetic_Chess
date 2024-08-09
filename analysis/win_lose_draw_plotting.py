@@ -313,3 +313,14 @@ def plot_endgames(file_name: str):
 
     timeout_figure.savefig(f'{file_name}_moves_in_game_histogram_timeout.{pic_ext}', **common.picture_file_args)
     plt.close(timeout_figure)
+
+    resignation_games = (white_resignations | black_resignations)
+    resignation_counts, resignation_bins = np.histogram(moves_in_game[resignation_games], range(1, max(moves_in_game) + 1))
+    resignation_figure, resignation_axes = plt.subplots()
+    resignation_axes.bar(resignation_bins[0:-1], resignation_counts, width=1, facecolor=bar_color, edgecolor=bar_color, linewidth=bar_line_width)
+    resignation_axes.set_title("Resignation game lengths")
+    resignation_axes.set_xlabel("Moves in Game")
+    resignation_axes.set_ylabel(f"Counts (total = {sum(resignation_games)})")
+    resignation_axes.set_xlim(0, max_game_length_display)
+
+    resignation_figure.savefig(f"{file_name}_moves_in_game_histogram_resignation.{pic_ext}", **common.picture_file_args)
