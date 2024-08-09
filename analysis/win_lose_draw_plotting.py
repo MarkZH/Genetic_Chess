@@ -246,36 +246,38 @@ def plot_endgames(file_name: str):
     plt.close(move_count_histogram_figure)
 
     winning_games_lengths = moves_in_game[white_checkmates | black_checkmates]
-    winning_move_counts, winning_move_bins = np.histogram(winning_games_lengths, range(1, max(moves_in_game) + 1))
+    winning_move_counts, winning_move_bins = np.histogram(winning_games_lengths, range(max(moves_in_game) + 1))
     checkmate_figure, checkmate_axes = plt.subplots()
     checkmate_axes.bar(winning_move_bins[0:-1], winning_move_counts, width=1, facecolor=bar_color, edgecolor=bar_color, linewidth=bar_line_width, label='All checkmates')
     checkmate_axes.set_title('Checkmate game lengths')
     checkmate_axes.set_xlim(0, max_game_length_display)
 
-    # Log-normal fit
-    bins_fit = winning_move_bins[winning_move_bins > 0]
-    mean_log = np.mean(np.log(winning_games_lengths))
-    std_log = np.std(np.log(winning_games_lengths))
-    winning_games_count = len(winning_games_lengths)
-    fit = winning_games_count*np.exp(-.5*np.power((np.log(bins_fit) - mean_log)/std_log, 2))/(bins_fit*std_log*np.sqrt(2*np.pi))
-    checkmate_axes.plot(bins_fit, fit, linewidth=line_width, label='Log-normal fit')
+    def log_normal_fit(game_lengths, game_length_bins, axes):
+        game_lengths = game_lengths[game_lengths > 1]
+        bins_fit = game_length_bins[game_length_bins > 0]
+        mean_log = np.mean(np.log(game_lengths))
+        std_log = np.std(np.log(game_lengths))
+        games_count = len(game_lengths)
+        fit = games_count*np.exp(-.5*np.power((np.log(bins_fit) - mean_log)/std_log, 2))/(bins_fit*std_log*np.sqrt(2*np.pi))
+        axes.plot(bins_fit, fit, linewidth=line_width, label='Log-normal fit')
 
-    checkmate_axes.set_xlabel('Moves in Game')
-    checkmate_axes.set_ylabel(f'Counts (total = {winning_games_count})')
+        axes.set_xlabel('Moves in Game')
+        axes.set_ylabel(f'Counts (total = {games_count})')
 
-    stats = [f'Mean = {np.mean(winning_games_lengths):.2f}',
-             f'Median = {np.median(winning_games_lengths):.2f}',
-             f'Std. Dev. = {np.std(winning_games_lengths):.2f}',
-             f'Min = {min(winning_games_lengths)}',
-             f'Max = {max(winning_games_lengths)}',
-             '',
-             f'Log-Norm Peak = {np.exp(mean_log - np.power(std_log, 2)):.2f}',
-             f'Log-Norm Width = {std_log:.2f}']
+        stats = [f'Mean = {np.mean(game_lengths):.2f}',
+                f'Median = {np.median(game_lengths):.2f}',
+                f'Std. Dev. = {np.std(game_lengths):.2f}',
+                f'Min = {min(game_lengths)}',
+                f'Max = {max(game_lengths)}',
+                '',
+                f'Log-Norm Peak = {np.exp(mean_log - np.power(std_log, 2)):.2f}',
+                f'Log-Norm Width = {std_log:.2f}']
 
-    xl = checkmate_axes.get_xlim()
-    yl = checkmate_axes.get_ylim()
-    checkmate_axes.text(0.65*xl[1], 0.5*yl[1], '\n'.join(stats), fontsize=stat_text_size)
+        xl = axes.get_xlim()
+        yl = axes.get_ylim()
+        axes.text(0.65*xl[1], 0.5*yl[1], '\n'.join(stats), fontsize=stat_text_size)
 
+    log_normal_fit(winning_games_lengths, winning_move_bins, checkmate_axes)
     checkmate_axes.legend(fontsize=common.plot_params["legend text size"])
     checkmate_figure.savefig(f'{file_name}_moves_in_game_histogram_checkmate.{pic_ext}', **common.picture_file_args)
     plt.close(checkmate_figure)
@@ -315,12 +317,14 @@ def plot_endgames(file_name: str):
     plt.close(timeout_figure)
 
     resignation_games = (white_resignations | black_resignations)
-    resignation_counts, resignation_bins = np.histogram(moves_in_game[resignation_games], range(1, max(moves_in_game) + 1))
+    resignation_game_lengths = moves_in_game[resignation_games]
+    resignation_counts, resignation_bins = np.histogram(resignation_game_lengths, range(max(moves_in_game) + 1))
     resignation_figure, resignation_axes = plt.subplots()
     resignation_axes.bar(resignation_bins[0:-1], resignation_counts, width=1, facecolor=bar_color, edgecolor=bar_color, linewidth=bar_line_width)
     resignation_axes.set_title("Resignation game lengths")
     resignation_axes.set_xlabel("Moves in Game")
     resignation_axes.set_ylabel(f"Counts (total = {sum(resignation_games)})")
     resignation_axes.set_xlim(0, max_game_length_display)
+    log_normal_fit(resignation_game_lengths, resignation_bins, resignation_axes)
 
     resignation_figure.savefig(f"{file_name}_moves_in_game_histogram_resignation.{pic_ext}", **common.picture_file_args)
