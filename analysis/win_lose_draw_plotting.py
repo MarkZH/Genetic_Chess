@@ -16,6 +16,8 @@ class Game_Ending(Enum):
     MATERIAL_DRAW = auto()
     STALEMATE = auto()
     TIME_WITHOUT_MATERIAL = auto()
+    WHITE_RESIGNATION = auto()
+    BLACK_RESIGNATION = auto()
 
 
 def extract_game_endings(game_file_name: str):
@@ -51,6 +53,10 @@ def extract_game_endings(game_file_name: str):
                 result_type = Game_Ending.STALEMATE
             elif result_text.lower() == 'time expired with insufficient material':
                 result_type = Game_Ending.TIME_WITHOUT_MATERIAL
+            elif result_text.lower() ==  "white resigned":
+                result_type = Game_Ending.WHITE_RESIGNATION
+            elif result_text.lower() ==  "black resigned":
+                result_type = Game_Ending.BLACK_RESIGNATION
             else:
                 raise Exception('Unrecognized result type: ' + result_text)
         except KeyError:
@@ -119,6 +125,8 @@ def plot_endgames(file_name: str):
     material = result_type == Game_Ending.MATERIAL_DRAW
     no_legal = result_type == Game_Ending.STALEMATE
     time_and_material = result_type == Game_Ending.TIME_WITHOUT_MATERIAL
+    white_resignations = result_type == Game_Ending.WHITE_RESIGNATION
+    black_resignations = result_type == Game_Ending.BLACK_RESIGNATION
     number_of_games = len(game_number)
 
     outcome_figure, outcome_axes = plt.subplots()
@@ -138,6 +146,8 @@ def plot_endgames(file_name: str):
     draw_outcome_plot(material, "Material draw")
     draw_outcome_plot(no_legal, "Stalemate")
     draw_outcome_plot(time_and_material, "Time w/o material")
+    draw_outcome_plot(white_resignations, "White resigned")
+    draw_outcome_plot(black_resignations, "Black resigned")
 
     outcome_axes.set_xlabel('Games played')
     outcome_axes.set_ylabel('Percentage')
