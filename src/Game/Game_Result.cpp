@@ -64,6 +64,8 @@ std::string Game_Result::ending_reason() const noexcept
             return "Time forfeiture";
         case Game_Result_Type::TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL:
             return "Time expired with insufficient material";
+        case Game_Result_Type::RESIGNATION:
+            return color_text(opposite(static_cast<Piece_Color>(winner()))) + " resigned";
         case Game_Result_Type::OTHER:
             return alternate_reason;
         default:

@@ -11,6 +11,7 @@ class Player;
 class Board;
 class Clock;
 class Move;
+class Move_Decision;
 class Game_Result;
 
 //! \brief A class that mediates communication with a GUI via the UCI protocol.
@@ -26,9 +27,9 @@ class UCI_Mediator : public Outside_Communicator
                                Clock& clock,
                                std::vector<const Move*>& move_list,
                                const Player& player) override;
-        Game_Result handle_move(Board& board,
-                                const Move& move,
-                                std::vector<const Move*>& move_list) const override;
+        Game_Result handle_decision(Board& board,
+                                    const Move_Decision& decision,
+                                    std::vector<const Move*>& move_list) const override;
 
     private:
         std::string listener(Clock& clock) override;

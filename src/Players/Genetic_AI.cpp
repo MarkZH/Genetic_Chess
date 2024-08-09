@@ -13,6 +13,7 @@ using namespace std::chrono_literals;
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
 #include "Players/Thinking.h"
+#include "Players/Move_Decision.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
@@ -85,13 +86,13 @@ int Genetic_AI::id() const noexcept
     return genome.id();
 }
 
-const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) const noexcept
+Move_Decision Genetic_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
     reset_search_stats(board);
     return choose_move_minimax(board, clock);
 }
 
-const Move& Genetic_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
+Move_Decision Genetic_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
 {
     auto principal_variation = get_legal_principal_variation(board);
     const auto progress_of_game = game_progress(board);
@@ -111,11 +112,7 @@ const Move& Genetic_AI::choose_move_minimax(const Board& board, const Clock& clo
                                    current_variation);
 
     report_final_search_stats(result, board);
-    if(genome.should_resign(commentary, board.whose_turn()))
-    {
-        // Do something clever here
-    }
-    return *result.variation_line().front();
+    return {*result.variation_line().front(), genome.should_resign(commentary, board.whose_turn())};
 }
 
 std::vector<const Move*> Genetic_AI::get_legal_principal_variation(const Board& board) const noexcept

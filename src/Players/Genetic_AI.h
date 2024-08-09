@@ -15,6 +15,7 @@
 
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
+#include "Players/Move_Decision.h"
 #include "Utility/Fixed_Capacity_Vector.h"
 #include "Genes/Genome.h"
 
@@ -72,7 +73,7 @@ class Genetic_AI : public Player
         //! due to search cutoffs due to alpha-beta pruning.
         //! \param board The current state of the game.
         //! \param clock The game clock telling how much time is left in the game.
-        const Move& choose_move(const Board& board, const Clock& clock) const noexcept override;
+        Move_Decision choose_move(const Board& board, const Clock& clock) const noexcept override;
 
         //! \brief Prints the expected future variation and score for the chosen move.
         //!
@@ -277,7 +278,7 @@ class Genetic_AI : public Player
         //! update the evaluation speed to a more reasonable starting value.
         void calibrate_thinking_speed() const noexcept;
 
-        const Move& choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
+        Move_Decision choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
 
         std::vector<const Move*> get_legal_principal_variation(const Board& board) const noexcept;
 };

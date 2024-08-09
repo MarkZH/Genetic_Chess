@@ -11,6 +11,7 @@
 class Clock;
 class Board;
 class Move;
+class Move_Decision;
 class Player;
 class Proxy_Player;
 class Game_Result;
@@ -55,9 +56,9 @@ class Outside_Communicator
         //! \param board The Board used for the game.
         //! \param move The move picked by the local AI.
         //! \param move_list The list of moves in the game so far.
-        virtual Game_Result handle_move(Board& board,
-                                        const Move& move,
-                                        std::vector<const Move*>& move_list) const = 0;
+        virtual Game_Result handle_decision(Board& board,
+                                            const Move_Decision& decision,
+                                            std::vector<const Move*>& move_list) const = 0;
 
         //! \brief Create a player for the purposes of calling Board::print_game_record()
         Proxy_Player create_proxy_player() const noexcept;

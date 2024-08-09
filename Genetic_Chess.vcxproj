@@ -269,6 +269,7 @@
     <ClCompile Include="src\genes\Total_Force_Gene.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Players\Alpha_Beta_Value.cpp" />
+    <ClCompile Include="src\Players\Move_Decision.cpp" />
     <ClCompile Include="src\players\Xboard_Mediator.cpp" />
     <ClCompile Include="src\players\Game_Tree_Node_Result.cpp" />
     <ClCompile Include="src\Players\Genetic_AI.cpp" />
@@ -319,6 +320,7 @@
     <ClInclude Include="src\Players\Alpha_Beta_Value.h" />
     <ClInclude Include="src\Players\Game_Tree_Node_Result.h" />
     <ClInclude Include="src\Players\Genetic_AI.h" />
+    <ClInclude Include="src\Players\Move_Decision.h" />
     <ClInclude Include="src\Players\Outside_Communicator.h" />
     <ClInclude Include="src\Players\Player.h" />
     <ClInclude Include="src\Players\Proxy_Player.h" />
