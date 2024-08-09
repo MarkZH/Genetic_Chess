@@ -29,5 +29,4 @@ class Resignation_Gene : public Clonable_Gene<Resignation_Gene>
         double score_board(const Board& board, Piece_Color perspective, size_t depth) const noexcept override;
 };
 
-
 #endif // !RESIGNATION_GENE_h

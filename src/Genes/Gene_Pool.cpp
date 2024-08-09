@@ -161,8 +161,10 @@ void gene_pool(const std::string& config_file)
             const auto mating_winner = (winner == Winner_Color::NONE ? (Random::coin_flip() ? Winner_Color::WHITE : Winner_Color::BLACK) : winner);
             auto& winning_player = (mating_winner == Winner_Color::WHITE ? white : black);
             auto& losing_player = (winning_player.id() == white.id() ? black : white);
+            const auto loser_mates = winner == Winner_Color::NONE || String::contains(result.ending_reason(), "resign");
+            const auto& mating_player = (loser_mates ? losing_player : winning_player);
 
-            auto offspring = Genetic_AI(white, black);
+            auto offspring = Genetic_AI(winning_player, mating_player);
             offspring.mutate(mutation_rate);
             offspring.print(genome_file_name);
             losing_player = offspring;
