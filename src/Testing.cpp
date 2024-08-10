@@ -38,6 +38,7 @@ using namespace std::chrono_literals;
 #include "Genes/Checkmate_Material_Gene.h"
 #include "Genes/Pawn_Structure_Gene.h"
 #include "Genes/Move_Sorting_Gene.h"
+#include "Genes/Resignation_Gene.h"
 
 #include "Utility/String.h"
 #include "Utility/Random.h"
@@ -232,6 +233,7 @@ namespace
     void checkmate_material_gene_tests(bool& tests_passed);
     void sphere_of_influence_gene_tests(bool& tests_passed);
     void pawn_structure_gene_tests(bool& tests_passed);
+    void resignation_gene_tests(bool& tests_passed);
 
     void game_progress_on_new_board_is_zero(bool& tests_passed);
     void game_progress_where_one_side_has_only_king_is_one(bool& tests_passed);
@@ -1487,6 +1489,48 @@ namespace
         const auto board4 = Board("k7/r1p5/1P6/8/8/P7/8/7K w - - 0 1");
         pawn_structure_gene.test(tests_passed, board4, Piece_Color::WHITE, 0.0/8);
         pawn_structure_gene.test(tests_passed, board4, Piece_Color::BLACK, 0.4/8);
+    }
+
+    void resignation_gene_tests(bool& tests_passed)
+    {
+        auto resignation_gene = Resignation_Gene();
+        resignation_gene.read_from("testing/test_genome.txt");
+        std::vector<Game_Tree_Node_Result> commentary;
+        commentary.push_back({1.0, Piece_Color::WHITE, {}});
+        test_result(tests_passed, resignation_gene.should_resign(commentary, Piece_Color::WHITE) == false,
+                    "Resigns too early and with too high a score.");
+        
+        commentary.push_back({-6.0, Piece_Color::WHITE, {}});
+        commentary.push_back({-6.0, Piece_Color::WHITE, {}});
+        commentary.push_back({-6.0, Piece_Color::WHITE, {}});
+        test_result(tests_passed, resignation_gene.should_resign(commentary, Piece_Color::WHITE) == false, 
+                    "Resigns after too few low-scoring moves.");
+
+        commentary.push_back({-6.0, Piece_Color::WHITE, {}});
+        test_result(tests_passed, resignation_gene.should_resign(commentary, Piece_Color::WHITE) == true,
+                    "Does not resigns after sufficient low-scoring moves.");
+
+        resignation_gene.set_centipawn_value(0.1);
+        test_result(tests_passed, resignation_gene.should_resign(commentary, Piece_Color::WHITE) == false, 
+                    "Should not resign after rescaling value of pawn.");
+
+        commentary.push_back({-60.0, Piece_Color::WHITE, {}});
+        commentary.push_back({-60.0, Piece_Color::WHITE, {}});
+        commentary.push_back({-60.0, Piece_Color::WHITE, {}});
+        test_result(tests_passed, resignation_gene.should_resign(commentary, Piece_Color::WHITE) == false, 
+                    "Resigned after too few low-scoring moves (after rescaling).");
+
+        commentary.push_back({-60.0, Piece_Color::WHITE, {}});
+        test_result(tests_passed, resignation_gene.should_resign(commentary, Piece_Color::WHITE) == true, 
+                    "Did not resign after sufficient low-scoring moves (after rescaling).");
+        test_result(tests_passed, resignation_gene.should_resign(commentary, Piece_Color::BLACK) == false, 
+                    "Should not resign due to high scores (from Black's perspective).");
+
+        commentary.push_back({30.0, Piece_Color::BLACK, {}});
+        test_result(tests_passed, resignation_gene.should_resign(commentary, Piece_Color::WHITE) == false, 
+                    "Should not resign after a recent high score.");
+        test_result(tests_passed, resignation_gene.should_resign(commentary, Piece_Color::BLACK) == false, 
+                    "Should not resign after an insufficiently low score.");
     }
 
     void game_progress_on_new_board_is_zero(bool& tests_passed)
