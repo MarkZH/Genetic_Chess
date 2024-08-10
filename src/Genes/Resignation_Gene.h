@@ -20,7 +20,7 @@ class Resignation_Gene : public Clonable_Gene<Resignation_Gene>
         void set_centipawn_value(double centipawn_value) const noexcept;
 
     private:
-        Gene_Value board_score_floor{"Score Floor", 0.0, 1.0};
+        Gene_Value board_score_floor{"Score Floor", -10.0, 1.0};
         Gene_Value max_under_floor_streak{"Max Under Floor Streak", 20.0, 1.0};
         mutable double internal_score_floor = board_score_floor.value();
         
