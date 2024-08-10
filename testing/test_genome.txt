@@ -8,8 +8,8 @@ R: 8
 Q: 16
 
 Name: Resignation Gene
-Board Score Floor: -5.0
-Max Under Floor Streak = 4
+Score Floor: -5.0
+Max Under Floor Streak: 4
 
 Name: Sphere of Influence Gene
 Activation Begin: 0.0
