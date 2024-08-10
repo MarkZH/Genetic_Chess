@@ -14,7 +14,7 @@ bool Resignation_Gene::should_resign(const std::vector<Game_Tree_Node_Result>& c
     auto under_floor_streak = 0;
     for(auto it = commentary.rbegin(); it != commentary.rend(); ++it)
     {
-        if(it->corrected_score(perspective) < board_score_floor.value())
+        if(it->corrected_score(perspective) < internal_score_floor)
         {
             ++under_floor_streak;
             if(under_floor_streak > max_under_floor_streak.value())
@@ -29,6 +29,12 @@ bool Resignation_Gene::should_resign(const std::vector<Game_Tree_Node_Result>& c
     }
 
     return false;
+}
+
+void Resignation_Gene::set_centipawn_value(const double input_centipawn_value) const noexcept
+{
+    const auto pawn_value = input_centipawn_value*100.0;
+    internal_score_floor = board_score_floor.value()*pawn_value;
 }
 
 void Resignation_Gene::gene_specific_mutation() noexcept

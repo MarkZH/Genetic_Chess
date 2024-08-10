@@ -278,6 +278,8 @@ class Genetic_AI : public Player
         //! update the evaluation speed to a more reasonable starting value.
         void calibrate_thinking_speed() const noexcept;
 
+        void send_centipawn_value_to_genome() const noexcept;
+
         Move_Decision choose_move_minimax(const Board& board, const Clock& clock) const noexcept;
 
         std::vector<const Move*> get_legal_principal_variation(const Board& board) const noexcept;

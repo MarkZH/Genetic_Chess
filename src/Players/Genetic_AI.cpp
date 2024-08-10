@@ -482,6 +482,11 @@ void Genetic_AI::calibrate_thinking_speed() const noexcept
     reset();
 }
 
+void Genetic_AI::send_centipawn_value_to_genome() const noexcept
+{
+    genome.use_centipawn_value(centipawn_value());
+}
+
 double Genetic_AI::assign_score(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
 {
     if(move_result.game_has_ended())
@@ -647,6 +652,7 @@ void Genetic_AI::recalibrate_self() const noexcept
 {
     calibrate_thinking_speed();
     calculate_centipawn_value();
+    send_centipawn_value_to_genome();
 }
 
 void Genetic_AI::reset() const noexcept

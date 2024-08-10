@@ -268,6 +268,11 @@ bool Genome::should_resign(const std::vector<Game_Tree_Node_Result>& commentary,
     return gene_reference<Resignation_Gene>().should_resign(commentary, perspective);
 }
 
+void Genome::use_centipawn_value(const double centipawn_value) const noexcept
+{
+    gene_reference<Resignation_Gene>().set_centipawn_value(centipawn_value);
+}
+
 Clock::seconds Genome::time_to_examine(const Board& board, const Clock& clock) const noexcept
 {
     return gene_reference<Look_Ahead_Gene>().time_to_examine(board, clock);

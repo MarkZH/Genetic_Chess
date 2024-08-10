@@ -122,6 +122,7 @@ class Genome
         void print(std::ostream& os) const noexcept;
 
         bool should_resign(const std::vector<Game_Tree_Node_Result>& commentary, const Piece_Color perspective) const noexcept;
+        void use_centipawn_value(double centipawn_value) const noexcept;
 
     private:
         int id_number;
