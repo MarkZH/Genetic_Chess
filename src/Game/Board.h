@@ -100,7 +100,7 @@ class Board
         std::string fen() const noexcept;
 
         //! Print a representation of the board to the command line.
-        void cli_print() const noexcept;
+        void cli_print(std::ostream& output) const noexcept;
 
         //! Print a representation of a game to the command line.
         //!
