@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <print>
 
 namespace
 {
@@ -27,11 +28,12 @@ namespace
         if( ! pass)
         {
             const auto line_count = line_number(input, input.tellg());
-            std::cerr << rule_source << " indicates "
-                << (expected_ruling ? "" : "no ")
-                << rule_name << ", but last move did "
-                << (actual_ruling ? "" : "not ")
-                << "trigger rule (line: " << line_count << ").\n";
+            std::println(std::cerr, "{} indicates {}{}, but last move did {}trigger rule (line: {}).", 
+                         rule_source, 
+                         expected_ruling ? "" : "no ", 
+                         rule_name, 
+                         actual_ruling ? "" : "not ", 
+                         line_count);
         }
 
         return pass;
@@ -81,8 +83,7 @@ namespace
         input.ignore(std::numeric_limits<std::streamsize>::max(), '}');
         if( ! input)
         {
-            const auto line_count = line_number(input, stream_position);
-            std::cerr << "Reached end of input before closing curly brace: line " << line_count << ".\n";
+            std::println(std::cerr, "Reached end of input before closing curly brace: line {}.", line_number(input, stream_position));
             return false;
         }
 
@@ -100,8 +101,7 @@ namespace
             const auto c = input.get();
             if( ! input)
             {
-                const auto line_count = line_number(input, input_position);
-                std::cerr << "Reached end of input before end of RAV: line " << line_count << ".\n";
+                std::println(std::cerr, "Reached end of input before end of RAV: line {}.", line_number(input, input_position));
                 return false;
             }
 
@@ -193,11 +193,11 @@ bool PGN::confirm_game_record(const std::string& file_name)
         {
             if(in_game)
             {
-                std::cout << "File ended in middle of game.\n";
+                std::println("File ended in middle of game.");
             }
             else
             {
-                std::cout << "Found " << game_count << " " << (game_count == 1 ? "game" : "games") << ".\n";
+                std::println("Found {} game{}.", game_count, game_count == 1 ? "" : "s");
             }
 
             return ! in_game;
@@ -228,8 +228,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         if(next_character == '}')
         {
-            const auto line_count = line_number(input, input.tellg());
-            std::cerr << "Found closing curly brace before opener (line: " << line_count << ")\n";
+            std::println(std::cerr, "Found closing curly brace before opener (line: {})", line_number(input, input.tellg()));
             return false;
         }
 
@@ -247,15 +246,13 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         if(next_character == ')')
         {
-            const auto line_count = line_number(input, input.tellg());
-            std::cerr << "Found closing RAV parentheses before opener (line: " << line_count << ")\n";
+            std::println(std::cerr, "Found closing RAV parentheses before opener (line: {})", line_number(input, input.tellg()));
             return false;
         }
 
         if(in_game && next_character == '[')
         {
-            const auto line_count = line_number(input, input.tellg());
-            std::cerr << "Found header line in the middle of another game (line: " << line_count << ")\n";
+            std::println(std::cerr, "Found header line in the middle of another game (line: {})", line_number(input, input.tellg()));
             return false;
         }
 
@@ -284,7 +281,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             else
             {
                 const auto line_count = line_number(input, input.tellg());
-                std::cerr << "Malformed Result: " << word << " " << result_tag << " (line: " << line_count << ")\n";
+                std::println(std::cerr, "Malformed Result: {} {} (line: {})", word, result_tag, line_count);
                 return false;
             }
         }
@@ -328,8 +325,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
                (word == "0-1" && expected_winner != Winner_Color::BLACK) ||
                (word == "*" && expected_winner != Winner_Color::NONE))
             {
-                const auto line_count = line_number(input, input.tellg());
-                std::cerr << "Final result mark (" << word << ") does not match game result. (line: " << line_count << ")\n";
+                std::println(std::cerr, "Final result mark ({}) does not match game result. (line: {})", word, line_number(input, input.tellg()));
                 return false;
             }
 
@@ -374,14 +370,14 @@ bool PGN::confirm_game_record(const std::string& file_name)
             catch(const Illegal_Move&)
             {
                 const auto line_count = line_number(input, input.tellg());
-                std::cerr << "Move (" << move_number << word << ") is illegal" << " (line: " << line_count << ").\n";
+                std::println(std::cerr, "Move ({}{}) is illegal (line: {}).", move_number, word, line_count);
                 board.cli_print();
-                std::cerr << "\nLegal moves: ";
+                std::print(std::cerr, "\nLegal moves: ");
                 for(const auto legal_move : board.legal_moves())
                 {
-                    std::cerr << legal_move->algebraic(board) << " ";
+                    std::print(std::cerr, "{} ", legal_move->algebraic(board));
                 }
-                std::cerr << '\n' << board.fen() << '\n';
+                std::println(std::cerr, "\n{}", board.fen());
                 return false;
             }
         }

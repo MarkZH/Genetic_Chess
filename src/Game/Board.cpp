@@ -18,6 +18,7 @@ using namespace std::chrono_literals;
 #include <functional>
 #include <utility>
 #include <sstream>
+#include <print>
 
 #include "Game/Clock.h"
 #include "Game/Square.h"
@@ -271,26 +272,26 @@ void Board::cli_print() const noexcept
 {
     for(auto rank = 8; rank >= 1; --rank)
     {
-        std::cout << '\n';
+        std::print("\n");
         for(auto file = 'a'; file <= 'h'; ++file)
         {
             const auto piece = piece_on_square({file, rank});
-            std::cout << ' ' << (piece ? piece.fen_symbol() : '.');
+            std::print(" {}", piece ? piece.fen_symbol() : '.');
         }
     }
-    std::cout << "    " << color_text(whose_turn()) << " to move\n";
+    std::println("    {} to move", color_text(whose_turn()));
 }
 
 void Board::cli_print_game(const Player& white, const Player& black, const Clock& clock) const noexcept
 {
     const auto print_name = [&clock](const auto& player, const auto color)
                             {
-                                std::cout << '\n' << player.name() << " | " << clock.time_left(color).count() << " seconds\n";
+                                std::println("\n{} | {} seconds", player.name(), clock.time_left(color).count());
                             };
     print_name(black, Piece_Color::BLACK);
     cli_print();
     print_name(white, Piece_Color::WHITE);
-    std::cout <<  "\n     = = = =\n";
+    std::println("\n     = = = =");
 }
 
 std::string Board::original_fen() const noexcept
@@ -828,37 +829,28 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
         const auto step = commentary_board.all_ply_count()/2 + 1;
         if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0 || previous_move_had_comment)
         {
-            game_text << " " << step << ".";
+            std::print(game_text, " {}.", step);
             if(commentary_board.whose_turn() == Piece_Color::BLACK)
             {
-                game_text << "..";
+                std::print(game_text, "..");
             }
         }
 
-        game_text << " " << next_move->algebraic(commentary_board);
+        std::print(game_text, " {}", next_move->algebraic(commentary_board));
         const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
         const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));
         if( ! commentary.empty())
         {
-            game_text << " " << commentary;
+            std::print(game_text, " {}", commentary);
         }
         commentary_board.play_move(*next_move);
         previous_move_had_comment = ! commentary.empty();
     }
-    game_text << " " << actual_result.game_ending_annotation();
-
-    const auto pgn_text = header_text.str() + "\n" + String::word_wrap(game_text.str(), 80) + "\n\n\n";
+    std::print(game_text, " {}", actual_result.game_ending_annotation());
     
-    if(file_name.empty())
-    {
-        std::cout << pgn_text;
-    }
-    else
-    {
-        std::ofstream ofs(file_name, std::ios::app);
-        ofs << pgn_text;
-    }
-
+    auto file_output = std::ofstream(file_name, std::ios::app);
+    auto& output = file_output ? file_output : std::cout;
+    std::print(output, "{}\n{}\n\n\n", header_text.str(), String::word_wrap(game_text.str(), 80));
     assert(commentary_board.fen() == fen());
 }
 
@@ -1239,15 +1231,15 @@ std::vector<const Move*> Board::quiescent(const std::array<double, 6>& piece_val
 
 void Board::compare_hashes(const Board& other) const noexcept
 {
-    std::cerr << "Differing square hashes: ";
+    std::print(std::cerr, "Differing square hashes: ");
     for(const auto square : Square::all_squares())
     {
         if(square_hash(square) != other.square_hash(square))
         {
-            std::cerr << square.text() << ' ';
+            std::print(std::cerr, " {}", square.text());
         }
     }
-    std::cerr << '\n';
+    std::print(std::cerr, "\n");
     const auto hash_diff = (board_hash() ^ other.board_hash());
     const auto white = std::to_underlying(Piece_Color::WHITE);
     const auto black = std::to_underlying(Piece_Color::BLACK);
@@ -1257,35 +1249,34 @@ void Board::compare_hashes(const Board& other) const noexcept
     const auto both_black_castles = (castling_hash_values[black][right] ^ castling_hash_values[black][left]);
     if(en_passant_target.is_set() && hash_diff == en_passant_hash_values[en_passant_target.file() - 'a'])
     {
-        std::cerr << "en passant hash";
+        std::println(std::cerr, "en passant hash");
     }
     else if(hash_diff == both_white_castles)
     {
-        std::cerr << "both white castling";
+        std::println(std::cerr, "both white castling");
     }
     else if(hash_diff == both_black_castles)
     {
-        std::cerr << "both black castling";
+        std::println(std::cerr, "both black castling");
     }
     else if(hash_diff == castling_hash_values[black][right])
     {
-        std::cerr << "black kingside castle";
+        std::println(std::cerr, "black kingside castle");
     }
     else if(hash_diff == castling_hash_values[white][right])
     {
-        std::cerr << "white kingside castle";
+        std::println(std::cerr, "white kingside castle");
     }
     else if(hash_diff == castling_hash_values[white][left])
     {
-        std::cerr << "white queenside castle";
+        std::println(std::cerr, "white queenside castle");
     }
     else if(hash_diff == castling_hash_values[black][left])
     {
-        std::cerr << "black queenside castle";
+        std::println(std::cerr, "black queenside castle");
     }
     else
     {
-        std::cerr << "Something else";
+        std::println(std::cerr, "Something else");
     }
-    std::cerr << '\n';
 }

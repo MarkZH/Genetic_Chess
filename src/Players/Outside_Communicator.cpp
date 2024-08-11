@@ -7,6 +7,7 @@
 #include <chrono>
 #include <stdexcept>
 #include <future>
+#include <print>
 
 #include "Game/Color.h"
 #include "Players/Proxy_Player.h"
@@ -115,16 +116,15 @@ void Outside_Communicator::log(const std::string& data)
         throw std::runtime_error("Could not write to file: " + log_file_name);
     }
 
-    ofs << String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S")
-        << " -- "
-        << data
-        << std::endl;
+    std::println(ofs, "{} -- {}", String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S"), data);
+    ofs.flush();
 }
 
 void Outside_Communicator::send_command(const std::string& cmd) noexcept
 {
     log("SENDING: " + cmd);
-    std::cout << cmd << std::endl;
+    std::println("{}", cmd);
+    std::cout.flush();
 }
 
 void Outside_Communicator::listen(Clock& clock)

@@ -14,6 +14,8 @@
 using namespace std::chrono_literals;
 #include <string>
 #include <functional>
+#include <print>
+#include <format>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -55,12 +57,12 @@ namespace
 
     void print_argument_leader()
     {
-        std::cerr << "Argument: (";
+        std::print(std::cerr, "Argument: (");
     }
 
     void print_argument_trailer()
     {
-        std::cerr << ")\n";
+        std::println(std::cerr, ")");
     }
 
     void print_arguments() noexcept
@@ -72,14 +74,14 @@ namespace
     template<typename Argument_Type>
     void print_list(const Argument_Type& arg) noexcept
     {
-        std::cerr << "'" << arg << "'";
+        std::print(std::cerr, "'{}'", arg);
     }
 
     template<typename First_Argument_Type, typename ...Rest_Argument_Types>
     void print_list(const First_Argument_Type& first, const Rest_Argument_Types& ... rest) noexcept
     {
         print_list(first);
-        std::cerr << ", ";
+        std::print(std::cerr, ", ");
         print_list(rest ...);
     }
     template<typename ...Argument_Types>
@@ -93,7 +95,7 @@ namespace
     template<typename Result_Type>
     void print_result(const Result_Type& result)
     {
-        std::cerr << result;
+        std::print(std::cerr, "{}", result);
     }
 
     template<>
@@ -101,11 +103,11 @@ namespace
     {
         if(results.empty())
         {
-            std::cerr << "empty list";
+            std::print(std::cerr, "empty list");
         }
         else
         {
-            std::cerr << "{" << String::join(results, ", ") << "}";
+            std::print(std::cerr, "{{{}}}", String::join(results, ", "));
         }
     }
 
@@ -118,11 +120,11 @@ namespace
         const auto result = f(arguments...);
         if(result != expected_result)
         {
-            std::cerr << test_name << " failed. Expected result: '";
+            std::print(std::cerr, "{} failed. Expected result: '", test_name);
             print_result(expected_result);
-            std::cerr << "'; Got: '";
+            std::print(std::cerr, "'; Got: '");
             print_result(result);
-            std::cerr << "'\n";
+            std::println(std::cerr, "'");
             print_arguments(arguments...);
             tests_passed = false;
         }
@@ -139,8 +141,8 @@ namespace
         }
         catch(const std::exception& e)
         {
-            std::cerr << (test_name.empty() ? "Test" : test_name) << " failed. Function should not have thrown.\n";
-            std::cerr << e.what() << '\n';
+            std::println(std::cerr, "{} failed. Function should not have thrown.", test_name.empty() ? "Test" : test_name);
+            std::println(std::cerr, "{}", e.what());
             print_arguments(arguments...);
             tests_passed = false;
         }
@@ -157,7 +159,7 @@ namespace
         {
             f(arguments...);
 
-            std::cerr << test_title << " failed. Function should have thrown but did not.\n";
+            std::println(std::cerr, "{} failed. Function should have thrown but did not.", test_title);
         }
         catch(const Error&)
         {
@@ -165,8 +167,8 @@ namespace
         }
         catch(const std::exception& e)
         {
-            std::cerr << test_title << " failed. Wrong exception thrown." << '\n';
-            std::cerr << "Wrong error message: " << e.what() << '\n';
+            std::println(std::cerr, "{} failed. Wrong exception thrown.", test_title);
+            std::println(std::cerr, "Wrong error message: {}", e.what());
         }
 
         print_arguments(arguments...);
@@ -378,13 +380,13 @@ bool run_tests()
     probability_check(tests_passed);
 
 
-    std::cout << (tests_passed ? "All tests passed." : "Tests failed.") << '\n';
+    std::println("{}", tests_passed ? "All tests passed." : "Tests failed.");
     return tests_passed;
 }
 
 void run_speed_tests()
 {
-    std::cout << "Gene scoring speed ...\n";
+    std::println("Gene scoring speed ...");
     auto test_genes_file_name = "testing/test_genome.txt";
 
     auto castling_possible_gene = Castling_Possible_Gene();
@@ -451,7 +453,7 @@ void run_speed_tests()
     }
     timing_results.emplace_back(std::chrono::steady_clock::now() - all_genes_start, "Complete gene scoring");
 
-    std::cout << "Board::play_move() speed ...\n";
+    std::println("Board::play_move() speed ...");
     const auto game_time_start = std::chrono::steady_clock::now();
     Board speed_board;
     const auto speed_board_spare = speed_board;
@@ -467,7 +469,7 @@ void run_speed_tests()
     timing_results.emplace_back(std::chrono::steady_clock::now() - game_time_start, "Board::play_move()");
     const auto board_play_move_time = timing_results.back().first;
 
-    std::cout << "Board::play_move() with copy speed ...\n";
+    std::println("Board::play_move() with copy speed ...");
     const auto copy_game_start = std::chrono::steady_clock::now();
     Board copy_speed_board;
     for(auto i = 0; i < number_of_tests; ++i)
@@ -486,7 +488,8 @@ void run_speed_tests()
     }
     timing_results.emplace_back(std::chrono::steady_clock::now() - copy_game_start, "Board::play_move() with copy");
 
-    std::cout << "Board::quiescent() speed ... " << std::flush;
+    std::print("Board::quiescent() speed ... ");
+    std::cout.flush();
     const auto quiescent_time_start = std::chrono::steady_clock::now();
     Board quiescent_board;
     size_t move_count = 0;
@@ -511,17 +514,19 @@ void run_speed_tests()
     }
     const auto quiescent_time = std::chrono::steady_clock::now() - quiescent_time_start;
     timing_results.emplace_back(quiescent_time - (board_play_move_time*move_count)/number_of_tests, "Board::quiescent()");
-    std::cout << "(non-quiescent moves = " << String::format_number(move_count) << ")\n";
+    std::println("(non-quiescent moves = {})", String::format_number(move_count));
 
     std::ranges::sort(timing_results);
     const auto name_width =
         int(std::ranges::max_element(timing_results,
                                      [](const auto& x, const auto& y) { return x.second.size() < y.second.size(); })->second.size());
-    std::cout << "\n" << std::setw(name_width) << "Test Item" << "   " << "Time (" << time_unit << ")";
-    std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------\n";
+    std::println("");
+    const auto header_format = "{:{}}   {}";
+    std::println(header_format, "Test Item", name_width, std::format("Time ({})", + time_unit));
+    std::println(header_format, "---------", name_width, "---------");
     for(const auto& [time, name] : timing_results)
     {
-        std::cout << std::setw(name_width) << name << " = " << std::chrono::duration<double>(time).count() << '\n';
+        std::println("{:{}} = {}", name, name_width, std::chrono::duration<double>(time).count());
     }
 }
 
@@ -564,7 +569,11 @@ bool run_perft_tests()
         const auto time_at_start = std::chrono::steady_clock::now();
         const auto line_parts = String::split(line, ";");
         const auto fen = line_parts.front();
-        std::cout << '[' << std::setw(test_count_space) << std::right << ++test_number << '/' << lines.size() << "] " << std::setw(int(fen_space)) << std::left << fen << std::flush;
+        std::print("[{:{}}/{:{}}] {:{}}", 
+                   ++test_number, test_count_space, 
+                   lines.size(), test_count_space, 
+                   fen, fen_space);
+        std::cout.flush();
         const auto perft_board = Board(fen);
         const auto tests = std::vector<std::string>(line_parts.begin() + 1, line_parts.end());
         std::string test_results;
@@ -591,33 +600,33 @@ bool run_perft_tests()
             }
         }
 
-        std::cout << std::setw(int(test_space) + 1) << std::left << test_results;
+        std::print("{:{}}", test_results, test_space);
         if(test_results.back() == PASS)
         {
-            std::cout << "OK! ";
+            std::print("OK! ");
             const auto time_at_end = std::chrono::steady_clock::now();
             const auto time_for_test = time_at_end - time_at_start;
             const auto time_so_far = time_at_end - time_at_start_of_all;
-            std::cout << std::chrono::duration<double>(time_for_test).count() << " / " << std::chrono::duration<double>(time_so_far).count() << '\n';
+            std::println("{:.6f} / {:.6f}", std::chrono::duration<double>(time_for_test).count(), std::chrono::duration<double>(time_so_far).count());
         }
         else
         {
-            std::cout << "FAIL!\n";
+            std::println("FAIL!");
         }
     }
 
     const auto time = std::chrono::duration<double>(std::chrono::steady_clock::now() - time_at_start_of_all);
-    std::cout << "Perft time: " << time.count() << " seconds\n";
-    std::cout << "Legal moves counted: " << String::format_number(legal_moves_counted) << '\n';
-    std::cout << "Move generation rate: " << String::format_number(int(double(legal_moves_counted)/time.count())) << " moves/second.\n";
+    std::println("Perft time: {} seconds", time.count());
+    std::println("Legal moves counted: {}", String::format_number(legal_moves_counted));
+    std::println("Move generation rate: {} moves/second.", String::format_number(int(double(legal_moves_counted)/time.count())));
     if( ! tests_failed.empty())
     {
-        std::cout << "Tests failed (" << tests_failed.size() << "): ";
+        std::print("Tests failed ({}): ", tests_failed.size());
         for(auto t : tests_failed)
         {
-            std::cout << t << " ";
+            std::print("{} ", t);
         }
-        std::cout << '\n';
+        std::println("");
     }
     return tests_failed.empty();
 }
@@ -636,7 +645,7 @@ namespace
         if( ! expected_result)
         {
             all_tests_passed = false;
-            std::cerr << fail_message << '\n';
+            std::println(std::cerr, "{}", fail_message);
         }
 
         return expected_result;
@@ -672,21 +681,21 @@ namespace
                     }
                 }
 
-                std::cerr << "Mismatch at line " << line_count << ":\n";
-                std::cerr << line1 << " != " << line2 << "\n";
+                std::println(std::cerr, "Mismatch at line {}:", line_count);
+                std::println(std::cerr, "{} != {}", line1, line2);
                 return false;
             }
         }
 
         if(file1)
         {
-            std::cerr << file_name1 << " is longer than " << file_name2 << '\n';
+            std::println(std::cerr, "{} is longer than {}", file_name1, file_name2);
             return false;
         }
 
         if(file2)
         {
-            std::cerr << file_name2 << " is longer than " << file_name1 << '\n';
+            std::println(std::cerr, "{} is longer than {}", file_name2, file_name1);
             return false;
         }
 
@@ -721,7 +730,7 @@ namespace
         auto input = std::ifstream(file_name);
         if( ! input)
         {
-            std::cerr << "Could not open board test file.\n";
+            std::println(std::cerr, "Could not open board test file.");
             return false;
         }
 
@@ -729,7 +738,7 @@ namespace
         int lines_read = 0;
         if(line_number > 0)
         {
-            std::cout << "Only performing test on line " << line_number << " in file " << file_name << ".\n";
+            std::print("Only performing test on line {} in file {}.", line_number, file_name);
         }
 
         for(std::string line; std::getline(input, line);)
@@ -749,7 +758,7 @@ namespace
                                {
                                     if( ! expected)
                                     {
-                                        std::cerr << "Malformed test: " << line << '\n';
+                                        std::println(std::cerr, "Malformed test: {}", line);
                                         all_tests_passed = false;
                                     }
                                     return expected;
@@ -1170,10 +1179,14 @@ namespace
             if(board.board_hash() != identical_board.board_hash())
             {
                 tests_passed = false;
-                std::cerr << "Boards do not have equal hashes: " << board.fen() << "\n"
-                          << "                                 " << identical_board.fen() << "\n"
-                          << "Move count: " << move_count << '\n';
-                std::cerr << "Moves: " << String::join(moves, " ") << '\n';
+                std::println(std::cerr,
+                             "Boards do not have equal hashes: {}\n"
+                             "                                 {}\n"
+                             "Move count: {}",
+                             board.fen(),
+                             identical_board.fen(),
+                             move_count);
+                std::println(std::cerr, "Moves: {}", String::join(moves, " "));
                 board.compare_hashes(identical_board);
                 break;
             }
@@ -1734,7 +1747,7 @@ namespace
         Math::normalize(x, y);
         if(too_far(x, expected_x) || too_far(y, expected_y))
         {
-            std::cerr << "Normalizing (2.0, 8.0) should have given (" << expected_x << ", " << expected_y << ") .Got(" << x << ", " << y << ").\n";
+            std::println(std::cerr, "Normalizing (2.0, 8.0) should have given ({}, {}) .Got({}, {}).", expected_x, expected_y, x, y);
             tests_passed = false;
         }
 
@@ -1747,7 +1760,7 @@ namespace
         Math::normalize(a, b, c);
         if(too_far(a, expected_a) || too_far(b, expected_b) || too_far(c, expected_c))
         {
-            std::cerr << "Normalizing (2.0, 8.0, -10.0) should have given (" << expected_a << ", " << expected_b << ", " << expected_c << "). Got (" << a << ", " << b << ", " << c << ").\n";
+            std::println(std::cerr, "Normalizing (2.0, 8.0, -10.0) should have given ({}, {}, {}). Got ({}, {}, {}).", expected_a, expected_b, expected_c, a, b, c);
             tests_passed = false;
         }
     }
@@ -1837,10 +1850,10 @@ namespace
                           std::abs(rational_success_count - expected_successes) < maximum_deviation,
                           "Wrong number of successes with rational probability"))
         {
-            std::cout << "Rational success probability (" << probability_numerator << "/" << probability_denominator << ") --> "
-                << String::format_number(rational_success_count) << " / " << String::format_number(number_of_trials)
-                << "\nExpected sucesses: " << String::format_number(expected_successes) << " +/- " << String::format_number(maximum_deviation)
-                << std::endl;
+            std::println("Rational success probability ({}/{}) --> {} / {}\nExpected sucesses: {} +/- {}", 
+                         probability_numerator, probability_denominator,
+                         String::format_number(rational_success_count), String::format_number(number_of_trials),
+                         String::format_number(expected_successes), String::format_number(maximum_deviation));
         }
     }
 
@@ -1850,9 +1863,9 @@ namespace
         {
             for(const auto move : moves_played)
             {
-                std::cout << move->coordinates() << ' ';
+                std::print("{} ", move->coordinates());
             }
-            std::cout << '\n';
+            std::println("");
             return;
         }
 

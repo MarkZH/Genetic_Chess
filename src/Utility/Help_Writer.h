@@ -44,8 +44,7 @@ class Help_Writer
         void add_option(const std::string& name,
                         const std::string& description) noexcept;
 
-        //! \brief Output stream operator that prints the full text of the help file.
-        friend std::ostream& operator<<(std::ostream& os, const Help_Writer& help) noexcept;
+        std::string output() const noexcept;
 
     private:
         std::string text;
@@ -53,7 +52,5 @@ class Help_Writer
 
         void add_extra_space_after_option() noexcept;
 };
-
-std::ostream& operator<<(std::ostream& os, const Help_Writer& help) noexcept;
 
 #endif // HELP_WRITER_H

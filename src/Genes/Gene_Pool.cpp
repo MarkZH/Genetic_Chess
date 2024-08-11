@@ -20,6 +20,7 @@ using namespace std::chrono_literals;
 #include <sstream>
 #include <semaphore>
 #include <ranges>
+#include <print>
 
 #include "Players/Genetic_AI.h"
 
@@ -99,8 +100,8 @@ void gene_pool(const std::string& config_file)
     const auto maximum_game_time = config.as_positive_time_duration<Clock::seconds>("maximum game time");
     if(maximum_game_time < minimum_game_time)
     {
-        std::cerr << "Minimum game time = " << minimum_game_time.count() << "\n";
-        std::cerr << "Maximum game time = " << maximum_game_time.count() << "\n";
+        std::println(std::cerr, "Minimum game time = {}", minimum_game_time.count());
+        std::println(std::cerr, "Maximum game time = {}", maximum_game_time.count());
         throw std::invalid_argument("Maximum game time must be greater than the minimum game time.");
     }
     const auto game_time_increment = config.as_time_duration<Clock::seconds>("game time increment");
@@ -113,14 +114,15 @@ void gene_pool(const std::string& config_file)
     
     if(config.any_unused_parameters())
     {
-        std::cout << "There were unused parameters in the file: " << config_file << '\n';
+        std::println("There were unused parameters in the file: {}", config_file);
         config.print_unused_parameters();
         return;
     }
 
     if(start_delay > 0s)
     {
-        std::cout << "Gene pool will start at " << future_timestamp(start_delay) << std::endl;
+        std::println("Gene pool will start at {}", future_timestamp(start_delay));
+        std::cout.flush();
     }
     std::this_thread::sleep_for(start_delay);
 
@@ -152,9 +154,11 @@ void gene_pool(const std::string& config_file)
             const auto& white = players[0];
             const auto& black = players[1];
             results.emplace_back(std::async(std::launch::async, pool_game, std::cref(board), game_time, white, black, std::cref(game_record_file), std::ref(limiter)));
-            std::cout << '=' << std::flush;
+            std::print("=");
+            std::cout.flush();
         }
-        std::cout << std::endl;
+        std::println("");
+        std::cout.flush();
 
         std::stringstream result_printer;
         for(const auto& [future_result, players] : std::ranges::zip_view(results, pool | std::views::chunk(2)))
@@ -164,8 +168,9 @@ void gene_pool(const std::string& config_file)
 
             const auto result = future_result.get();
             const auto winner = result.winner();
-            result_printer << white.id() << " vs " << black.id() << ": " << color_text(winner) << " (" << result.ending_reason() << ")\n";
-            std::cout << '^' << std::flush;
+            std::println(result_printer, "{} vs {}: {} ({})", white.id(), black.id(), color_text(winner), result.ending_reason());
+            std::print("^");
+            std::cout.flush();
             ++space_counter;
 
             const auto mating_winner = (winner == Winner_Color::NONE ? (Random::coin_flip() ? Winner_Color::WHITE : Winner_Color::BLACK) : winner);
@@ -187,7 +192,8 @@ void gene_pool(const std::string& config_file)
                 winning_player.add_win();
             }
         }
-        std::cout << std::endl;
+        std::println("");
+        std::cout.flush();
         space_counter = 0;
 
         std::sort(pool.begin(), pool.end());
@@ -201,7 +207,7 @@ void gene_pool(const std::string& config_file)
 
         game_time = std::clamp(game_time + game_time_increment, minimum_game_time, maximum_game_time);
     }
-    std::cout << "Done.\n";
+    std::println("Done.");
 }
 
 namespace
@@ -213,7 +219,7 @@ namespace
 
     void quit_gene_pool(int)
     {
-        std::cout << "\nGetting to a good stopping point ...\n" << std::string(space_counter, ' ');
+        std::print("\nGetting to a good stopping point ...\n{}", std::string(space_counter, ' '));
         quit_after_round = true;
     }
 
@@ -244,12 +250,12 @@ namespace
             throw std::runtime_error("Could not open gene pool file for writing: " + genome_file_name);
         }
 
-        ofs << "Still Alive: ";
+        std::print(ofs, "Still Alive: ");
         for(const auto& ai : pool)
         {
-            ofs << ai.id() << " ";
+            std::print(ofs, "{} ", ai.id());
         }
-        ofs << "\n\n";
+        std::print(ofs, "\n\n");
     }
 
     void print_round_header(const std::vector<Genetic_AI>& pool,
@@ -262,46 +268,46 @@ namespace
                             const Clock::seconds game_time,
                             const Clock& pool_time) noexcept
     {
-        std::cout << "\n\nGene pool size: " << pool.size()
-                  << "  Gene pool file name: " << genome_file_name
-                  << "\nGames: " << std::accumulate(color_wins.begin(), color_wins.end(), size_t{0})
-                  << "  White wins: " << color_wins[std::to_underlying(Winner_Color::WHITE)]
-                  << "  Black wins: " << color_wins[std::to_underlying(Winner_Color::BLACK)]
-                  << "  Draws: " << color_wins[std::to_underlying(Winner_Color::NONE)]
-                  << "\nRounds: " << round_count
-                  << "  Mutation rate phase: " << round_count % (first_mutation_interval + second_mutation_interval)
-                  << " (" << first_mutation_interval << "/" << second_mutation_interval << ")"
-                  << "\nMutation rate: " << mutation_rate << "  Game time: " << game_time.count() << " sec"
-                  << "\nFinish time: " << future_timestamp(pool_time.running_time_left())  << "\n\n";
+        const auto games_played = std::accumulate(color_wins.begin(), color_wins.end(), size_t{0});
+        const auto white_wins = color_wins[std::to_underlying(Winner_Color::WHITE)];
+        const auto black_wins = color_wins[std::to_underlying(Winner_Color::BLACK)];
+        const auto draws = color_wins[std::to_underlying(Winner_Color::NONE)];
+        const auto mutation_phase = round_count % (first_mutation_interval + second_mutation_interval);
+        std::print("\n\nGene pool size: {}  Gene pool file name: {}"
+                   "\nGames: {}  White wins: {}  Black wins: {}  Draws: {}"
+                   "\nRounds: {}  Mutation rate phase: {} ({}/{})"
+                   "\nMutation rate: {}  Game time: {} sec"
+                   "\nFinish time: {}\n\n",
+                   pool.size(), genome_file_name,
+                   games_played, white_wins, black_wins, draws,
+                   round_count, mutation_phase, first_mutation_interval, second_mutation_interval,
+                   mutation_rate, game_time.count(),
+                   future_timestamp(pool_time.running_time_left()));
 
         const auto best_living = best_living_ai(pool);
 
-        std::cout << "Best living ID : " << best_living.id() << "    Wins: " << best_living.wins() << "\n\n";
-        std::cout << "Quit after this round: " << quit_key << "\n\n";
+        std::print("Best living ID : {}    Wins: {}\n\n", best_living.id(), best_living.wins());
+        std::print("Quit after this round: {}\n\n", quit_key);
     }
 
     void print_verbose_output(const std::stringstream& result_printer, const std::vector<Genetic_AI>& pool)
     {
-        std::cout << result_printer.str();
+        std::print("{}\n", result_printer.str());
 
         // widths of columns for stats printout
         const auto largest_id = std::ranges::max_element(pool)->id();
         const auto id_column_width = int(std::to_string(largest_id).size() + 1);
         const auto win_column_width = 7;
         const auto draw_column_width = 7;
+        const auto table_format = "{:>{}}{:>{}}{:>{}}";
 
         // Write stat headers
-        std::cout << "\n"
-                  << std::setw(id_column_width) << "ID"
-                  << std::setw(win_column_width) << "Wins"
-                  << std::setw(draw_column_width) << "Draws" << "\n";
+        std::println(table_format, "ID", id_column_width, "Wins", win_column_width, "Draws", draw_column_width);
 
         // Write stats for each specimen
         for(const auto& ai : pool)
         {
-            std::cout << std::setw(id_column_width) << ai.id()
-                      << std::setw(win_column_width) << ai.wins()
-                      << std::setw(draw_column_width) << ai.draws() << "\n";
+            std::println(table_format, ai.id(), id_column_width, ai.wins(), win_column_width, ai.draws(), draw_column_width);
         }
     }
 
@@ -314,7 +320,7 @@ namespace
         }
 
         // Use game time from last run of this gene pool
-        std::cout << "Searching " << game_record_file << " for last game time and stats ...\n";
+        std::println("Searching {} for last game time and stats ...", game_record_file);
         for(std::string line; std::getline(ifs, line);)
         {
             line = String::trim_outer_whitespace(line);
@@ -446,11 +452,11 @@ namespace
         std::ifstream ifs(load_file);
         if( ! ifs)
         {
-            std::cout << "Starting new gene pool and writing to: " << load_file << '\n';
+            std::println("Starting new gene pool and writing to: {}", load_file);
             return {};
         }
 
-        std::cout << "Loading gene pool file: " << load_file << " ...\n";
+        std::println("Loading gene pool file: {} ...", load_file);
         std::string still_alive;
         size_t pool_line_number = 0;
         std::string pool_line;
@@ -477,7 +483,7 @@ namespace
 
         if(pool_line.empty())
         {
-            std::cout << "No \"Still Alive\" lines found. Starting with empty gene pool.";
+            std::print("No \"Still Alive\" lines found. Starting with empty gene pool.");
             return {};
         }
 
@@ -510,7 +516,7 @@ namespace
                 {
                     if(search_started_from_beginning_of_file)
                     {
-                        std::cerr << e.what() << load_file << "\n";
+                        std::println("{}{}", e.what(), load_file);
                         throw_on_bad_still_alive_line(pool_line_number, pool_line);
                     }
                     else
@@ -540,7 +546,7 @@ namespace
             return 0;
         }
 
-        std::cout << "Counting number of previous rounds...\n";
+        std::println("Counting number of previous rounds...");
         size_t round_count = 0;
         for(std::string line; std::getline(genome_file, line);)
         {

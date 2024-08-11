@@ -15,7 +15,7 @@ namespace
 {
     void print_key_value_pair(std::ostream& os, const std::string& key, const std::string& value) noexcept
     {
-        os << std::quoted(key) << " --> " << std::quoted(value) << "\n";
+        std::println(os, "\"{}\" --> \"{}\"", key, value);
     }
 }
 

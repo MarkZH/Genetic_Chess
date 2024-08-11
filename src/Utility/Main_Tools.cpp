@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <tuple>
+#include <print>
 
 void Main_Tools::print_help()
 {
@@ -52,7 +53,7 @@ void Main_Tools::print_help()
     help.add_option("-log-comms", "Log UCI/Xboard communications (except engine thinking) to a file.");
     help.add_paragraph("All game options in this section can be overriden by GUI commands except -event, -location, and -game-file.");
 
-    std::cout << help;
+    std::print("{}", help.output());
 }
 
 void Main_Tools::argument_assert(const bool condition, const std::string& failure_message)

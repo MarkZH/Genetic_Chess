@@ -1,6 +1,7 @@
 #ifndef PGN_H
 
 #include <string>
+#include <print>
 
 namespace PGN
 {
@@ -19,18 +20,16 @@ namespace PGN
     template<typename Output_Stream, typename Data_Type>
     void print_game_header_line(Output_Stream& output, const std::string& heading, const Data_Type& data)
     {
-        output << "[" << heading << " \"";
+        const auto header_format = "[{} \"{}\"]";
         if constexpr(std::is_same_v<Data_Type, std::string>)
         {
-            output << (data.empty() ? "?" : data);
+            std::println(output, header_format, heading, data.empty() ? "?" : data);
         }
         else
         {
-            output << data;
+            std::println(output, header_format, heading, data);
         }
-        output << "\"]\n";
     }
 }
 
 #endif // !PGN_H
-

@@ -6,6 +6,7 @@ using namespace std::chrono_literals;
 #include <limits>
 #include <sstream>
 #include <utility>
+#include <print>
 
 #include "Game/Board.h"
 #include "Game/Game_Result.h"
@@ -191,17 +192,17 @@ std::string Clock::time_control_string() const noexcept
 
     if(moves_per_time_period() > 0)
     {
-        time_control_spec << moves_per_time_period() << '/';
+        std::print(time_control_spec, "{}/", moves_per_time_period());
     }
 
     if(initial_time() > 0s)
     {
-        time_control_spec << initial_time().count();
+        std::print(time_control_spec, "{}", initial_time().count());
     }
     
     if(increment(Piece_Color::WHITE) > 0.0s)
     {
-        time_control_spec << '+' << increment(Piece_Color::WHITE).count();
+        std::print(time_control_spec, "+{}", increment(Piece_Color::WHITE).count());
     }
     
     const auto time_spec = time_control_spec.str();
