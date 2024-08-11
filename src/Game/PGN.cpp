@@ -371,7 +371,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             {
                 const auto line_count = line_number(input, input.tellg());
                 std::println(std::cerr, "Move ({}{}) is illegal (line: {}).", move_number, word, line_count);
-                board.cli_print();
+                board.cli_print(std::cerr);
                 std::print(std::cerr, "\nLegal moves: ");
                 for(const auto legal_move : board.legal_moves())
                 {

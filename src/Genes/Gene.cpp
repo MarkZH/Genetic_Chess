@@ -280,7 +280,7 @@ void Gene::test(bool& test_variable, const Board& board, const Piece_Color persp
     if(std::abs(result - expected_score) > 1e-6)
     {
         std::println(std::cerr, "Error in {} Test #{}: Expected {}, Got: {}", name(), test_number, expected_score, result);
-        board.cli_print();
+        board.cli_print(std::cerr);
         test_variable = false;
     }
 }
