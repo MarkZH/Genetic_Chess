@@ -112,7 +112,7 @@ Move_Decision Genetic_AI::choose_move_minimax(const Board& board, const Clock& c
                                    current_variation);
 
     report_final_search_stats(result, board);
-    return {*result.variation_line().front(), genome.should_resign(commentary, board.whose_turn())};
+    return {*result.variation_line().front(), genome.should_resign(commentary, board.whose_turn()), result.is_losing_for(board.whose_turn())};
 }
 
 std::vector<const Move*> Genetic_AI::get_legal_principal_variation(const Board& board) const noexcept

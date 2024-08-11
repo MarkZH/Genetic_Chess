@@ -40,6 +40,10 @@ Game_Result play_game(Board board,
         if(decision.resigned())
         {
             result = Game_Result(opposite(board.whose_turn()), Game_Result_Type::RESIGNATION);
+            if(decision.resigned_due_to_checkmate())
+            {
+                result.set_resigned_on_checkmate();
+            }
             break;
         }
 
