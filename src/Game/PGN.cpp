@@ -11,6 +11,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <map>
 
 namespace
 {
@@ -37,11 +38,13 @@ namespace
         return pass;
     }
 
-    std::string get_pgn_header_value(std::istream& is) noexcept
+    //! \brief Skip passed the given character
+    //! 
+    //! \param input A text input stream.
+    //! \param stop_character The text character to search for and advance beyond.
+    void skip_passed_character(std::istream& input, const char stop_character) noexcept
     {
-        std::string rest;
-        std::getline(is, rest);
-        return String::extract_delimited_text(rest, '"', '"');
+        input.ignore(std::numeric_limits<std::streamsize>::max(), stop_character);
     }
 
     //! \brief Skip to the end of the current line.
@@ -49,7 +52,7 @@ namespace
     //! \param input A text input stream.
     void skip_rest_of_line(std::istream& input) noexcept
     {
-        input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        skip_passed_character(input, '\n');
     }
 
     int line_number(std::istream& input, std::streampos error_position) noexcept
@@ -78,7 +81,7 @@ namespace
     bool skip_braced_comment(std::istream& input) noexcept
     {
         const auto stream_position = input.tellg();
-        input.ignore(std::numeric_limits<std::streamsize>::max(), '}');
+        skip_passed_character(input, '}');
         if( ! input)
         {
             const auto line_count = line_number(input, stream_position);
@@ -123,6 +126,35 @@ namespace
             }
         }
     }
+
+    bool add_header_data(std::ifstream& input, std::map<std::string, std::string>& headers) noexcept
+    {
+        const auto brace_position = input.tellg();
+
+        std::string tag_name;
+        std::getline(input, tag_name, '"');
+        tag_name = String::trim_outer_whitespace(tag_name);
+        if(tag_name != String::remove_extra_whitespace(tag_name))
+        {
+            const auto line_count = line_number(input, brace_position);
+            std::cerr << "Header tag name cannot contain spaces (line: " << line_count << ")\n";
+            return false;
+        }
+
+        std::string tag_value;
+        std::getline(input, tag_value, '"');
+        headers[tag_name] = String::remove_extra_whitespace(tag_value);
+        skip_passed_character(input, ']');
+
+        if( ! input)
+        {
+            const auto line_count = line_number(input, brace_position);
+            std::cerr << "Malformed header tag (line: " << line_count << ")\n";
+            return false;
+        }
+
+        return true;
+    }
 }
 
 bool PGN::confirm_game_record(const std::string& file_name)
@@ -136,12 +168,14 @@ bool PGN::confirm_game_record(const std::string& file_name)
     auto game_count = 0;
     std::string move_number;
 
-    auto expected_winner = Winner_Color::NONE;
+    const auto valid_result_marks = {"1/2-1/2", "1-0", "0-1", "*"};
+
     auto expect_checkmate = true;
     auto expect_fifty_move_draw = false;
     auto expect_threefold_draw = false;
     auto in_game = false;
     auto finished_game = false;
+    std::map<std::string, std::string> headers;
     Board board;
     Game_Result result;
     while(true)
@@ -177,12 +211,12 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
             move_number = {};
 
-            expected_winner = Winner_Color::NONE;
             expect_checkmate = true;
             expect_fifty_move_draw = false;
             expect_threefold_draw = false;
             in_game = false;
             finished_game = false;
+            headers.clear();
             board = Board();
             result = {};
             ++game_count;
@@ -259,131 +293,134 @@ bool PGN::confirm_game_record(const std::string& file_name)
             return false;
         }
 
+        if(next_character == '[')
+        {
+            if( ! add_header_data(input, headers))
+            {
+                return false;
+            }
+
+            continue;
+        }
+
+        if( ! in_game)
+        {
+            const auto result_value = headers["Result"];
+            if(std::find(valid_result_marks.begin(), valid_result_marks.end(), result_value) == valid_result_marks.end())
+            {
+                const auto line_count = line_number(input, input.tellg());
+                std::cerr << "Malformed Result tag: " << result_value << " (headers end at line: " << line_count << ")\n";
+                return false;
+            }
+
+            if(result_value == "1/2-1/2" || result_value == "*")
+            {
+                expect_checkmate = false;
+            }
+
+            const auto terminator = headers["GameEnding"];
+            if( ! terminator.empty())
+            {
+                expect_checkmate = false;
+                if(String::contains(terminator, "fold"))
+                {
+                    expect_threefold_draw = true;
+                }
+                else if(String::contains(terminator, "50"))
+                {
+                    expect_fifty_move_draw = true;
+                }
+            }
+
+            const auto fen = headers["FEN"];
+            if( ! fen.empty())
+            {
+                board = Board(fen);
+            }
+        }
+
+        in_game = true;
+
         std::string word;
         input.unget();
         input >> word;
-        if(word == "[Result")
-        {
-            const auto result_tag = get_pgn_header_value(input);
-            if(result_tag == "1-0")
-            {
-                expected_winner = Winner_Color::WHITE;
-            }
-            else if(result_tag == "0-1")
-            {
-                expected_winner = Winner_Color::BLACK;
-            }
-            else if(result_tag == "1/2-1/2")
-            {
-                expect_checkmate = false;
-            }
-            else if(result_tag == "*")
-            {
-                expect_checkmate = false;
-            }
-            else
-            {
-                const auto line_count = line_number(input, input.tellg());
-                std::cerr << "Malformed Result: " << word << " " << result_tag << " (line: " << line_count << ")\n";
-                return false;
-            }
-        }
-        else if(word == "[GameEnding")
-        {
-            const auto terminator = get_pgn_header_value(input);
-            expect_checkmate = false;
-            if(String::contains(terminator, "fold"))
-            {
-                expect_threefold_draw = true;
-            }
-            else if(String::contains(terminator, "50"))
-            {
-                expect_fifty_move_draw = true;
-            }
-        }
-        else if(word == "[FEN")
-        {
-            board = Board(get_pgn_header_value(input));
-        }
-        else if(word[0] == '[')
-        {
-            skip_rest_of_line(input);
-        }
-        else // Line contains game moves
-        {
-            in_game = true;
-            if(word.back() == '.')
-            {
-                move_number = String::split(word, ".")[0] + ". ";
-                continue;
-            }
 
-            if(board.whose_turn() == Piece_Color::BLACK)
-            {
-                move_number += "... ";
-            }
+        if(word.back() == '.')
+        {
+            move_number = String::split(word, ".")[0] + ". ";
+            continue;
+        }
 
-            if((word == "1/2-1/2" && expected_winner != Winner_Color::NONE) ||
-               (word == "1-0" && expected_winner != Winner_Color::WHITE) ||
-               (word == "0-1" && expected_winner != Winner_Color::BLACK) ||
-               (word == "*" && expected_winner != Winner_Color::NONE))
+        if(board.whose_turn() == Piece_Color::BLACK)
+        {
+            move_number += "... ";
+        }
+
+        if(std::find(valid_result_marks.begin(), valid_result_marks.end(), word) != valid_result_marks.end())
+        {
+            const auto line_count = line_number(input, input.tellg());
+            if(word != headers["Result"])
             {
-                const auto line_count = line_number(input, input.tellg());
                 std::cerr << "Final result mark (" << word << ") does not match game result. (line: " << line_count << ")\n";
                 return false;
             }
 
-            if(word == "1/2-1/2" || word == "1-0" || word == "0-1" || word == "*")
+            const auto final_board_result = result.game_ending_annotation();
+            if(word != final_board_result)
             {
-                finished_game = true;
-                continue;
-            }
-
-            try
-            {
-                const auto& move_to_play = board.interpret_move(word);
-                if( ! check_rule_result("Move: " + move_number + word + ")",
-                                        "capture",
-                                        String::contains(word, 'x'),
-                                        board.move_captures(move_to_play),
-                                        input))
-                {
-                    return false;
-                }
-
-                result = board.play_move(move_to_play);
-
-                if( ! check_rule_result("Move (" + move_number + word + ")",
-                                        "check",
-                                        String::contains("+#", word.back()),
-                                        board.king_is_in_check(),
-                                        input))
-                {
-                    return false;
-                }
-
-                if( ! check_rule_result("Move (" + move_number + word + ")",
-                                        "checkmate",
-                                        word.back() == '#',
-                                        result.game_has_ended() && result.winner() != Winner_Color::NONE,
-                                        input))
-                {
-                    return false;
-                }
-            }
-            catch(const Illegal_Move&)
-            {
-                const auto line_count = line_number(input, input.tellg());
-                std::cerr << "Move (" << move_number << word << ") is illegal" << " (line: " << line_count << ").\n";
-                board.cli_print(std::cerr);
-                std::cerr << "\nLegal moves: ";
-                for(const auto legal_move : board.legal_moves())
-                {
-                    std::cerr << legal_move->algebraic(board) << " ";
-                }
-                std::cerr << '\n' << board.fen() << '\n';
+                std::cerr << "Last move result (" << final_board_result << ") on line " << line_count
+                          << " does not match the game-ending tag (" << word << ").\n";
                 return false;
             }
+
+            finished_game = true;
+            continue;
+        }
+
+        try
+        {
+            const auto& move_to_play = board.interpret_move(word);
+            if( ! check_rule_result("Move: " + move_number + word + ")",
+                                    "capture",
+                                    String::contains(word, 'x'),
+                                    board.move_captures(move_to_play),
+                                    input))
+            {
+                return false;
+            }
+
+            result = board.play_move(move_to_play);
+
+            if( ! check_rule_result("Move (" + move_number + word + ")",
+                                    "check",
+                                    String::contains("+#", word.back()),
+                                    board.king_is_in_check(),
+                                    input))
+            {
+                return false;
+            }
+
+            if( ! check_rule_result("Move (" + move_number + word + ")",
+                                    "checkmate",
+                                    word.back() == '#',
+                                    result.game_has_ended() && result.winner() != Winner_Color::NONE,
+                                    input))
+            {
+                return false;
+            }
+        }
+        catch(const Illegal_Move&)
+        {
+            const auto line_count = line_number(input, input.tellg());
+            std::cerr << "Move (" << move_number << word << ") is illegal" << " (line: " << line_count << ").\n";
+            board.cli_print(std::cerr);
+            std::cerr << "\nLegal moves: ";
+            for(const auto legal_move : board.legal_moves())
+            {
+                std::cerr << legal_move->algebraic(board) << " ";
+            }
+            std::cerr << '\n' << board.fen() << '\n';
+            return false;
         }
     }
 }
