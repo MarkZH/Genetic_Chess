@@ -95,12 +95,21 @@ namespace
     //! \brief Skip to the end of the current RAV section. Returns true if successful, and false if the end of the input stream is reached.
     //! 
     //! \param input A text input stream. The position within the input stream should be passed the opening parenthesis.
-    bool skip_rav(std::istream& input) noexcept
+    bool confirm_rav(std::istream& input, Board board) noexcept
     {
+        auto board_before_last_move = board;
+        std::string word;
+        std::string temporary_storage; // ugly, can't handle whitespace, should build up word one character at a time then process when complete
+
         while(true)
         {
             const auto input_position = input.tellg();
-            const auto c = input.get();
+            const auto c = temporary_storage.empty() ? char(input.get()) : temporary_storage.back();
+            if( ! temporary_storage.empty())
+            {
+                temporary_storage.pop_back();
+            }
+
             if( ! input)
             {
                 const auto line_count = line_number(input, input_position);
@@ -111,7 +120,10 @@ namespace
             switch(c)
             {
                 case '(':
-                    skip_rav(input);
+                    if( ! confirm_rav(input, board_before_last_move))
+                    {
+                        return false;
+                    }
                     break;
                 case ')':
                     return true;
@@ -121,8 +133,37 @@ namespace
                 case '{':
                     skip_braced_comment(input);
                     break;
+                case ' ':
+                case '\t':
+                case '\n':
+                    break;
                 default:
-                    continue;
+                    input >> word;
+                    word = c + word;
+                    if(String::contains(word, "."))
+                    {
+                        // Move number, i.e., 1.
+                        continue;
+                    }
+                    else
+                    {
+                        while( ! word.empty() && ! board.is_legal_move(word))
+                        {
+                            temporary_storage.push_back(word.back());
+                            word.pop_back();
+                        }
+
+                        if(word.empty())
+                        {
+                            const auto line_count = line_number(input, input.tellg());
+                            input >> word;
+                            std::cerr << "Could not inpterpret this word on line " << line_count << ": " << word << std::endl;
+                            return false;
+                        }
+
+                        board_before_last_move = board;
+                        board.play_move(word);
+                    }
             }
         }
     }
@@ -177,6 +218,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
     auto finished_game = false;
     std::map<std::string, std::string> headers;
     Board board;
+    Board board_before_last_move;
     Game_Result result;
     while(true)
     {
@@ -218,11 +260,13 @@ bool PGN::confirm_game_record(const std::string& file_name)
             finished_game = false;
             headers.clear();
             board = Board();
+            board_before_last_move = Board();
             result = {};
             ++game_count;
+            std::cout << "Games checked: " << game_count << std::endl;
         }
 
-        const auto next_character = input.get();
+        const auto next_character = char(input.get());
         if( ! input)
         {
             if(in_game)
@@ -269,7 +313,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         if(next_character == '(')
         {
-            if(skip_rav(input))
+            if(confirm_rav(input, board_before_last_move))
             {
                 continue;
             }
@@ -342,8 +386,8 @@ bool PGN::confirm_game_record(const std::string& file_name)
         in_game = true;
 
         std::string word;
-        input.unget();
         input >> word;
+        word = next_character + word;
 
         if(word.back() == '.')
         {
@@ -358,9 +402,9 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         if(std::find(valid_result_marks.begin(), valid_result_marks.end(), word) != valid_result_marks.end())
         {
-            const auto line_count = line_number(input, input.tellg());
             if(word != headers["Result"])
             {
+                const auto line_count = line_number(input, input.tellg());
                 std::cerr << "Final result mark (" << word << ") does not match game result. (line: " << line_count << ")\n";
                 return false;
             }
@@ -368,6 +412,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             const auto final_board_result = result.game_ending_annotation();
             if(word != final_board_result)
             {
+                const auto line_count = line_number(input, input.tellg());
                 std::cerr << "Last move result (" << final_board_result << ") on line " << line_count
                           << " does not match the game-ending tag (" << word << ").\n";
                 return false;
@@ -389,6 +434,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 return false;
             }
 
+            board_before_last_move = board;
             result = board.play_move(move_to_play);
 
             if( ! check_rule_result("Move (" + move_number + word + ")",
