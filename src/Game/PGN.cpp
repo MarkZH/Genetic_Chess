@@ -269,7 +269,6 @@ bool PGN::confirm_game_record(const std::string& file_name)
             board_before_last_move = Board();
             result = {};
             ++game_count;
-            std::cout << "Games checked: " << game_count << std::endl;
         }
 
         const auto next_character = char(input.get());
