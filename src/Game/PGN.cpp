@@ -276,7 +276,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
         {
             if(in_game)
             {
-                std::cout << "File ended in middle of game.\n";
+                std::cerr << "File ended in middle of game.\n";
             }
             else
             {
