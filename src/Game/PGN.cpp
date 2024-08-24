@@ -99,16 +99,11 @@ namespace
     {
         auto board_before_last_move = board;
         std::string word;
-        std::string temporary_storage; // ugly, can't handle whitespace, should build up word one character at a time then process when complete
 
         while(true)
         {
             const auto input_position = input.tellg();
-            const auto c = temporary_storage.empty() ? char(input.get()) : temporary_storage.back();
-            if( ! temporary_storage.empty())
-            {
-                temporary_storage.pop_back();
-            }
+            const auto c = char(input.get());
 
             if( ! input)
             {
@@ -116,6 +111,8 @@ namespace
                 std::cerr << "Reached end of input before end of RAV: line " << line_count << ".\n";
                 return false;
             }
+
+            const auto rav_is_complete = (c == ')');
 
             switch(c)
             {
@@ -125,46 +122,55 @@ namespace
                         return false;
                     }
                     break;
-                case ')':
-                    return true;
                 case ';':
                     skip_rest_of_line(input);
                     break;
                 case '{':
                     skip_braced_comment(input);
                     break;
+                case ')':
                 case ' ':
                 case '\t':
                 case '\n':
                     break;
                 default:
-                    input >> word;
-                    word = c + word;
-                    if(String::contains(word, "."))
-                    {
-                        // Move number, i.e., 1.
-                        continue;
-                    }
-                    else
-                    {
-                        while( ! word.empty() && ! board.is_legal_move(word))
-                        {
-                            temporary_storage.push_back(word.back());
-                            word.pop_back();
-                        }
-
-                        if(word.empty())
-                        {
-                            const auto line_count = line_number(input, input.tellg());
-                            input >> word;
-                            std::cerr << "Could not inpterpret this word on line " << line_count << ": " << word << std::endl;
-                            return false;
-                        }
-
-                        board_before_last_move = board;
-                        board.play_move(word);
-                    }
+                    word.push_back(c);
+                    continue;
             }
+
+            if(word.empty())
+            {
+                if(rav_is_complete)
+                {
+                    return true;
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            else if(String::contains(word, "."))
+            {
+                // Move number, i.e., 1.
+            }
+            else if(board.is_legal_move(word))
+            {
+                board_before_last_move = board;
+                board.play_move(word);
+            }
+            else
+            {
+                const auto line_count = line_number(input, input_position);
+                std::cerr << "Unable to parse token '" << word << "' in RAV starting at line " << line_count << ".";
+                return false;
+            }
+
+            if(rav_is_complete)
+            {
+                return true;
+            }
+
+            word.clear();
         }
     }
 
