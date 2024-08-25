@@ -101,10 +101,12 @@ namespace
         auto token_start = input.tellg();
         auto board_before_last_move = board;
         std::string word;
+        char saved_character = 0;
 
         while(true)
         {
-            const auto c = char(input.get());
+            const auto c = saved_character ? saved_character : char(input.get());
+            saved_character = 0;
 
             if( ! input)
             {
@@ -116,9 +118,16 @@ namespace
             switch(c)
             {
                 case '(':
-                    if( ! confirm_rav(input, board_before_last_move))
+                    if(word.empty())
                     {
-                        return false;
+                        if( ! confirm_rav(input, board_before_last_move))
+                        {
+                            return false;
+                        }
+                    }
+                    else
+                    {
+                        saved_character = c;
                     }
                     break;
                 case ';':
