@@ -150,7 +150,6 @@ namespace
                     continue;
             }
 
-            const auto rav_is_complete = (c == ')');
             if(word.empty() || String::contains(word, "."))
             {
                 // Do nothing (is empty or is a move number: 1.)
@@ -167,7 +166,7 @@ namespace
                 return false;
             }
 
-            if(rav_is_complete)
+            if(c == ')')
             {
                 return true;
             }
