@@ -201,6 +201,13 @@ namespace
             return false;
         }
 
+        if(headers.count(tag_name) != 0)
+        {
+            const auto line_count = line_number(input, brace_position);
+            std::cerr << "Duplicate header tag name: " << tag_name << " (line: " << line_count << ")\n";
+            return false;
+        }
+
         std::string tag_value;
         std::getline(input, tag_value, '"');
         headers[tag_name] = String::remove_extra_whitespace(tag_value);
