@@ -113,8 +113,6 @@ namespace
                 return false;
             }
 
-            const auto rav_is_complete = (c == ')');
-
             switch(c)
             {
                 case '(':
@@ -143,6 +141,7 @@ namespace
                     continue;
             }
 
+            const auto rav_is_complete = (c == ')');
             if(word.empty())
             {
                 if(rav_is_complete)
