@@ -97,18 +97,19 @@ namespace
     //! \param input A text input stream. The position within the input stream should be passed the opening parenthesis.
     bool confirm_rav(std::istream& input, Board board) noexcept
     {
+        const auto rav_start_position = input.tellg();
+        auto token_start = input.tellg();
         auto board_before_last_move = board;
         std::string word;
 
         while(true)
         {
-            const auto input_position = input.tellg();
             const auto c = char(input.get());
 
             if( ! input)
             {
-                const auto line_count = line_number(input, input_position);
-                std::cerr << "Reached end of input before end of RAV: line " << line_count << ".\n";
+                const auto line_count = line_number(input, rav_start_position);
+                std::cerr << "Reached end of input before end of RAV starting at line " << line_count << ".\n";
                 return false;
             }
 
@@ -134,6 +135,10 @@ namespace
                 case '\n':
                     break;
                 default:
+                    if(word.empty())
+                    {
+                        token_start = input.tellg();
+                    }
                     word.push_back(c);
                     continue;
             }
@@ -160,7 +165,7 @@ namespace
             }
             else
             {
-                const auto line_count = line_number(input, input_position);
+                const auto line_count = line_number(input, token_start);
                 std::cerr << "Unable to parse token '" << word << "' in RAV starting at line " << line_count << ".\n";
                 return false;
             }
