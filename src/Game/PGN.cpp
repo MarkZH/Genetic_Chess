@@ -194,10 +194,10 @@ namespace
         std::string tag_name;
         std::getline(input, tag_name, '"');
         tag_name = String::trim_outer_whitespace(tag_name);
-        if(tag_name != String::remove_extra_whitespace(tag_name))
+        if(std::any_of(tag_name.begin(), tag_name.end(), String::isspace))
         {
             const auto line_count = line_number(input, brace_position);
-            std::cerr << "Header tag name cannot contain spaces (line: " << line_count << ")\n";
+            std::cerr << "Header tag name cannot contain spaces: " << tag_name << " (line: " << line_count << ")\n";
             return false;
         }
 
