@@ -272,9 +272,6 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 return false;
             }
 
-            move_number.clear();
-            word.clear();
-
             expect_checkmate = true;
             expect_fifty_move_draw = false;
             expect_threefold_draw = false;
@@ -367,6 +364,8 @@ bool PGN::confirm_game_record(const std::string& file_name)
             continue;
         }
 
+        const auto token = word;
+        word.clear();
         if( ! in_game)
         {
             const auto result_value = headers["Result"];
@@ -405,10 +404,9 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         in_game = true;
 
-        if(word.back() == '.')
+        if(token.back() == '.')
         {
-            move_number = String::split(word, ".")[0] + ". ";
-            word.clear();
+            move_number = String::split(token, ".")[0] + ". ";
             continue;
         }
 
@@ -417,21 +415,21 @@ bool PGN::confirm_game_record(const std::string& file_name)
             move_number += "... ";
         }
 
-        if(std::find(valid_result_marks.begin(), valid_result_marks.end(), word) != valid_result_marks.end())
+        if(std::find(valid_result_marks.begin(), valid_result_marks.end(), token) != valid_result_marks.end())
         {
-            if(word != headers["Result"])
+            if(token != headers["Result"])
             {
                 const auto line_count = line_number(input, input.tellg());
-                std::cerr << "Final result mark (" << word << ") does not match game result. (line: " << line_count << ")\n";
+                std::cerr << "Final result mark (" << token << ") does not match game result. (line: " << line_count << ")\n";
                 return false;
             }
 
             const auto final_board_result = result.game_ending_annotation();
-            if(word != final_board_result)
+            if(token != final_board_result)
             {
                 const auto line_count = line_number(input, input.tellg());
                 std::cerr << "Last move result (" << final_board_result << ") on line " << line_count
-                          << " does not match the game-ending tag (" << word << ").\n";
+                          << " does not match the game-ending tag (" << token << ").\n";
                 return false;
             }
 
@@ -441,10 +439,10 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         try
         {
-            const auto& move_to_play = board.interpret_move(word);
-            if( ! check_rule_result("Move: " + move_number + word + ")",
+            const auto& move_to_play = board.interpret_move(token);
+            if( ! check_rule_result("Move: " + move_number + token + ")",
                                     "capture",
-                                    String::contains(word, 'x'),
+                                    String::contains(token, 'x'),
                                     board.move_captures(move_to_play),
                                     input))
             {
@@ -454,30 +452,28 @@ bool PGN::confirm_game_record(const std::string& file_name)
             board_before_last_move = board;
             result = board.play_move(move_to_play);
 
-            if( ! check_rule_result("Move (" + move_number + word + ")",
+            if( ! check_rule_result("Move (" + move_number + token + ")",
                                     "check",
-                                    String::contains("+#", word.back()),
+                                    String::contains("+#", token.back()),
                                     board.king_is_in_check(),
                                     input))
             {
                 return false;
             }
 
-            if( ! check_rule_result("Move (" + move_number + word + ")",
+            if( ! check_rule_result("Move (" + move_number + token + ")",
                                     "checkmate",
-                                    word.back() == '#',
+                                    token.back() == '#',
                                     result.game_has_ended() && result.winner() != Winner_Color::NONE,
                                     input))
             {
                 return false;
             }
-
-            word.clear();
         }
         catch(const Illegal_Move&)
         {
             const auto line_count = line_number(input, input.tellg());
-            std::cerr << "Move (" << move_number << word << ") is illegal" << " (line: " << line_count << ").\n";
+            std::cerr << "Move (" << move_number << token << ") is illegal" << " (line: " << line_count << ").\n";
             board.cli_print(std::cerr);
             std::cerr << "\nLegal moves: ";
             for(const auto legal_move : board.legal_moves())
