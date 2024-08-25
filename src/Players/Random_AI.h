@@ -8,6 +8,7 @@
 class Board;
 class Clock;
 class Move;
+class Move_Decision;
 
 //! \brief Plays a game by picking a random legal move during its turn.
 class Random_AI : public Player
@@ -17,7 +18,7 @@ class Random_AI : public Player
         //!
         //! \param board The current state of the board.
         //! \param clock The game clock.
-        const Move& choose_move(const Board& board, const Clock& clock) const noexcept override;
+        Move_Decision choose_move(const Board& board, const Clock& clock) const noexcept override;
         std::string name() const noexcept override;
         std::string author() const noexcept override;
 };

@@ -8,6 +8,7 @@
 class Board;
 class Clock;
 class Move;
+class Move_Decision;
 
 //! \brief This class represents chess players and encapsulates move-choosing methods.
 class Player
@@ -21,7 +22,7 @@ class Player
         //! choosing moves here.
         //! \param board The current board position. The players choose the move from board.legal_moves().
         //! \param clock The game clock--allowing the player to decide how much time to spend choosing a move.
-        virtual const Move& choose_move(const Board& board, const Clock& clock) const noexcept = 0;
+        virtual Move_Decision choose_move(const Board& board, const Clock& clock) const noexcept = 0;
 
         //! \brief Reset player internals (if any) for a new game
         virtual void reset() const noexcept;

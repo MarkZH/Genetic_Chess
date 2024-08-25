@@ -1,6 +1,7 @@
 #include "Game/Game_Result.h"
 
 #include <string>
+#include <cmath>
 
 #include "Game/Color.h"
 
@@ -64,6 +65,8 @@ std::string Game_Result::ending_reason() const noexcept
             return "Time forfeiture";
         case Game_Result_Type::TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL:
             return "Time expired with insufficient material";
+        case Game_Result_Type::RESIGNATION:
+            return color_text(opposite(static_cast<Piece_Color>(winner()))) + " resigned";
         case Game_Result_Type::OTHER:
             return alternate_reason;
         default:
@@ -82,6 +85,16 @@ std::string Game_Result::game_ending_annotation() const noexcept
         default:
             return game_has_ended_by_rule() ? "1/2-1/2" : "*";
     }
+}
+
+void Game_Result::set_resigned_on_checkmate() noexcept
+{
+    resigned_due_to_checkmate = true;
+}
+
+bool Game_Result::resigned_on_checkmate() const noexcept
+{
+    return resigned_due_to_checkmate;
 }
 
 bool Game_Result::game_has_ended_by_rule() const noexcept
