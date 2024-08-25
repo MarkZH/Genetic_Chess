@@ -151,20 +151,9 @@ namespace
             }
 
             const auto rav_is_complete = (c == ')');
-            if(word.empty())
+            if(word.empty() || String::contains(word, "."))
             {
-                if(rav_is_complete)
-                {
-                    return true;
-                }
-                else
-                {
-                    continue;
-                }
-            }
-            else if(String::contains(word, "."))
-            {
-                // Move number, i.e., 1.
+                // Do nothing (is empty or is a move number: 1.)
             }
             else if(board.is_legal_move(word))
             {
