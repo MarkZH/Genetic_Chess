@@ -161,7 +161,7 @@ namespace
             else
             {
                 const auto line_count = line_number(input, input_position);
-                std::cerr << "Unable to parse token '" << word << "' in RAV starting at line " << line_count << ".";
+                std::cerr << "Unable to parse token '" << word << "' in RAV starting at line " << line_count << ".\n";
                 return false;
             }
 
