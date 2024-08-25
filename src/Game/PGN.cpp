@@ -364,8 +364,6 @@ bool PGN::confirm_game_record(const std::string& file_name)
             continue;
         }
 
-        const auto token = word;
-        word.clear();
         if( ! in_game)
         {
             const auto result_value = headers["Result"];
@@ -403,6 +401,9 @@ bool PGN::confirm_game_record(const std::string& file_name)
         }
 
         in_game = true;
+
+        const auto token = word;
+        word.clear();
 
         if(token.back() == '.')
         {
