@@ -227,6 +227,8 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
     auto game_count = 0;
     std::string move_number;
+    std::string word;
+    char saved_character = 0;
 
     const auto valid_result_marks = {"1/2-1/2", "1-0", "0-1", "*"};
 
@@ -270,7 +272,8 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 return false;
             }
 
-            move_number = {};
+            move_number.clear();
+            word.clear();
 
             expect_checkmate = true;
             expect_fifty_move_draw = false;
@@ -284,8 +287,9 @@ bool PGN::confirm_game_record(const std::string& file_name)
             ++game_count;
         }
 
-        const auto next_character = char(input.get());
-        if( ! input)
+        const auto next_character = saved_character ? saved_character : char(input.get());
+        saved_character = 0;
+        if( ! input && word.empty())
         {
             if(in_game)
             {
@@ -301,67 +305,65 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         if(std::isspace(next_character))
         {
-            continue;
         }
-
-        if(next_character == ';')
+        else if(next_character == ';')
         {
             skip_rest_of_line(input);
-            continue;
         }
-
-        if(next_character == '{')
+        else if(next_character == '{')
         {
-            if(skip_braced_comment(input))
-            {
-                continue;
-            }
-            else
+            if( ! skip_braced_comment(input))
             {
                 return false;
             }
         }
-
-        if(next_character == '}')
+        else if(next_character == '}')
         {
             const auto line_count = line_number(input, input.tellg());
             std::cerr << "Found closing curly brace before opener (line: " << line_count << ")\n";
             return false;
         }
-
-        if(next_character == '(')
+        else if(next_character == '(')
         {
-            if(confirm_rav(input, board_before_last_move))
+            if(word.empty())
             {
-                continue;
+                if( ! confirm_rav(input, board_before_last_move))
+                {
+                    return false;
+                }
             }
             else
             {
-                return false;
+                saved_character = next_character;
             }
         }
-
-        if(next_character == ')')
+        else if(next_character == ')')
         {
             const auto line_count = line_number(input, input.tellg());
             std::cerr << "Found closing RAV parentheses before opener (line: " << line_count << ")\n";
             return false;
         }
-
-        if(in_game && next_character == '[')
+        else if(in_game && next_character == '[')
         {
             const auto line_count = line_number(input, input.tellg());
             std::cerr << "Found header line in the middle of another game (line: " << line_count << ")\n";
             return false;
         }
-
-        if(next_character == '[')
+        else if(next_character == '[')
         {
             if( ! add_header_data(input, headers))
             {
                 return false;
             }
+        }
+        else if(input)
+        {
+            word.push_back(next_character);
+            continue;
+        }
 
+        if(word.empty())
+        {
             continue;
         }
 
@@ -403,13 +405,10 @@ bool PGN::confirm_game_record(const std::string& file_name)
 
         in_game = true;
 
-        std::string word;
-        input >> word;
-        word = next_character + word;
-
         if(word.back() == '.')
         {
             move_number = String::split(word, ".")[0] + ". ";
+            word.clear();
             continue;
         }
 
@@ -472,6 +471,8 @@ bool PGN::confirm_game_record(const std::string& file_name)
             {
                 return false;
             }
+
+            word.clear();
         }
         catch(const Illegal_Move&)
         {
