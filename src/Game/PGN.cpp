@@ -231,54 +231,12 @@ bool PGN::confirm_game_record(const std::string& file_name)
     auto expect_fifty_move_draw = false;
     auto expect_threefold_draw = false;
     auto in_game = false;
-    auto finished_game = false;
     std::map<std::string, std::string> headers;
     Board board;
     Board board_before_last_move;
     Game_Result result;
     while(true)
     {
-        if(finished_game)
-        {
-            if( ! check_rule_result("Header",
-                                    "50-move draw",
-                                    expect_fifty_move_draw,
-                                    String::contains(result.ending_reason(), "50"),
-                                    input))
-            {
-                return false;
-            }
-
-            if( ! check_rule_result("Header",
-                                    "threefold draw",
-                                    expect_threefold_draw,
-                                    String::contains(result.ending_reason(), "fold"),
-                                    input))
-            {
-                return false;
-            }
-
-            if( ! check_rule_result("Header",
-                                    "checkmate",
-                                    expect_checkmate,
-                                    String::contains(result.ending_reason(), "mates"),
-                                    input))
-            {
-                return false;
-            }
-
-            expect_checkmate = true;
-            expect_fifty_move_draw = false;
-            expect_threefold_draw = false;
-            in_game = false;
-            finished_game = false;
-            headers.clear();
-            board = Board();
-            board_before_last_move = Board();
-            result = {};
-            ++game_count;
-        }
-
         const auto next_character = saved_character ? saved_character : char(input.get());
         saved_character = 0;
         if( ! input && word.empty())
@@ -429,7 +387,42 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 return false;
             }
 
-            finished_game = true;
+            if( ! check_rule_result("Header",
+                                    "50-move draw",
+                                    expect_fifty_move_draw,
+                                    String::contains(result.ending_reason(), "50"),
+                                    input))
+            {
+                return false;
+            }
+
+            if( ! check_rule_result("Header",
+                                    "threefold draw",
+                                    expect_threefold_draw,
+                                    String::contains(result.ending_reason(), "fold"),
+                                    input))
+            {
+                return false;
+            }
+
+            if( ! check_rule_result("Header",
+                                    "checkmate",
+                                    expect_checkmate,
+                                    String::contains(result.ending_reason(), "mates"),
+                                    input))
+            {
+                return false;
+            }
+
+            expect_checkmate = true;
+            expect_fifty_move_draw = false;
+            expect_threefold_draw = false;
+            in_game = false;
+            headers.clear();
+            board = Board();
+            board_before_last_move = Board();
+            result = {};
+            ++game_count;
             continue;
         }
 
