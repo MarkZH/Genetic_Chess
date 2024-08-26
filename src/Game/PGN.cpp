@@ -426,40 +426,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             continue;
         }
 
-        try
-        {
-            const auto& move_to_play = board.interpret_move(token);
-            if( ! check_rule_result("Move: " + move_number + token + ")",
-                                    "capture",
-                                    String::contains(token, 'x'),
-                                    board.move_captures(move_to_play),
-                                    input))
-            {
-                return false;
-            }
-
-            board_before_last_move = board;
-            result = board.play_move(move_to_play);
-
-            if( ! check_rule_result("Move (" + move_number + token + ")",
-                                    "check",
-                                    String::contains("+#", token.back()),
-                                    board.king_is_in_check(),
-                                    input))
-            {
-                return false;
-            }
-
-            if( ! check_rule_result("Move (" + move_number + token + ")",
-                                    "checkmate",
-                                    token.back() == '#',
-                                    result.game_has_ended() && result.winner() != Winner_Color::NONE,
-                                    input))
-            {
-                return false;
-            }
-        }
-        catch(const Illegal_Move&)
+        if( ! board.is_legal_move(token))
         {
             const auto line_count = line_number(input, input.tellg());
             std::cerr << "Move (" << move_number << token << ") is illegal" << " (line: " << line_count << ").\n";
@@ -470,6 +437,37 @@ bool PGN::confirm_game_record(const std::string& file_name)
                 std::cerr << legal_move->algebraic(board) << " ";
             }
             std::cerr << '\n' << board.fen() << '\n';
+            return false;
+        }
+
+        const auto& move_to_play = board.interpret_move(token);
+        if( ! check_rule_result("Move: " + move_number + token + ")",
+                                "capture",
+                                String::contains(token, 'x'),
+                                board.move_captures(move_to_play),
+                                input))
+        {
+            return false;
+        }
+
+        board_before_last_move = board;
+        result = board.play_move(move_to_play);
+
+        if( ! check_rule_result("Move (" + move_number + token + ")",
+                                "check",
+                                String::contains("+#", token.back()),
+                                board.king_is_in_check(),
+                                input))
+        {
+            return false;
+        }
+
+        if( ! check_rule_result("Move (" + move_number + token + ")",
+                                "checkmate",
+                                token.back() == '#',
+                                result.game_has_ended() && result.winner() != Winner_Color::NONE,
+                                input))
+        {
             return false;
         }
     }
