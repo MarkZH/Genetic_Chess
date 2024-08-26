@@ -358,17 +358,6 @@ bool PGN::confirm_game_record(const std::string& file_name)
         const auto token = word;
         word.clear();
 
-        if(token.back() == '.')
-        {
-            move_number = String::split(token, ".")[0] + ". ";
-            continue;
-        }
-
-        if(board.whose_turn() == Piece_Color::BLACK)
-        {
-            move_number += "... ";
-        }
-
         if(std::find(valid_result_marks.begin(), valid_result_marks.end(), token) != valid_result_marks.end())
         {
             if(token != headers["Result"])
@@ -424,6 +413,17 @@ bool PGN::confirm_game_record(const std::string& file_name)
             result = {};
             ++game_count;
             continue;
+        }
+
+        if(std::isdigit(token.front()))
+        {
+            move_number = String::split(token, ".")[0] + ". ";
+            continue;
+        }
+
+        if(board.whose_turn() == Piece_Color::BLACK)
+        {
+            move_number += "... ";
         }
 
         if( ! board.is_legal_move(token))
