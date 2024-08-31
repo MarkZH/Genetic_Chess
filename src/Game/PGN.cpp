@@ -150,9 +150,9 @@ namespace
                     continue;
             }
 
-            if(word.empty() || String::contains(word, "."))
+            if(word.empty() || std::isdigit(word.front()))
             {
-                // Do nothing (is empty or is a move number: 1.)
+                // Do nothing (is empty or is a move number)
             }
             else if(board.is_legal_move(word))
             {
