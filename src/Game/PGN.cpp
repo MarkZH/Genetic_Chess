@@ -182,7 +182,7 @@ namespace
         std::string tag_name;
         std::getline(input, tag_name, '"');
         tag_name = String::trim_outer_whitespace(tag_name);
-        if(std::any_of(tag_name.begin(), tag_name.end(), String::isspace))
+        if(std::ranges::any_of(tag_name, String::isspace))
         {
             const auto line_count = line_number(input, brace_position);
             std::cerr << "Header tag name cannot contain spaces: " << tag_name << " (line: " << line_count << ")\n";
@@ -320,7 +320,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
         if( ! in_game)
         {
             const auto result_value = headers["Result"];
-            if(std::find(valid_result_marks.begin(), valid_result_marks.end(), result_value) == valid_result_marks.end())
+            if(std::ranges::find(valid_result_marks, result_value) == valid_result_marks.end())
             {
                 const auto line_count = line_number(input, input.tellg());
                 std::cerr << "Malformed Result tag: " << result_value << " (headers end at line: " << line_count << ")\n";
@@ -358,7 +358,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
         const auto token = word;
         word.clear();
 
-        if(std::find(valid_result_marks.begin(), valid_result_marks.end(), token) != valid_result_marks.end())
+        if(std::ranges::find(valid_result_marks, token) != valid_result_marks.end())
         {
             if(token != headers["Result"])
             {
