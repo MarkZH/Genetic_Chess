@@ -163,7 +163,7 @@ namespace
             else
             {
                 const auto line_count = line_number(input, token_start);
-                std::cerr << "Unable to parse token '" << word << "' in RAV starting at line " << line_count << ".\n";
+                std::println(std::cerr, "Unable to parse token '{}' in RAV starting at line {}.", word , line_count);
                 return false;
             }
 
@@ -186,14 +186,14 @@ namespace
         if(std::ranges::any_of(tag_name, String::isspace))
         {
             const auto line_count = line_number(input, brace_position);
-            std::cerr << "Header tag name cannot contain spaces: " << tag_name << " (line: " << line_count << ")\n";
+            std::println(std::cerr, "Header tag name cannot contain spaces: {} (line: {}).", tag_name, line_count);
             return false;
         }
 
         if(headers.count(tag_name) != 0)
         {
             const auto line_count = line_number(input, brace_position);
-            std::cerr << "Duplicate header tag name: " << tag_name << " (line: " << line_count << ")\n";
+            std::println(std::cerr, "Duplicate header tag name: {} (line: {}).", tag_name, line_count);
             return false;
         }
 
@@ -205,7 +205,7 @@ namespace
         if( ! input)
         {
             const auto line_count = line_number(input, brace_position);
-            std::cerr << "Malformed header tag (line: " << line_count << ")\n";
+            std::println(std::cerr, "Malformed header tag (line: {})", line_count);
             return false;
         }
 
@@ -271,7 +271,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
         else if(next_character == '}')
         {
             const auto line_count = line_number(input, input.tellg());
-            std::cerr << "Found closing curly brace before opener (line: " << line_count << ")\n";
+            std::println(std::cerr, "Found closing curly brace before opener (line: {})", line_count);
             return false;
         }
         else if(next_character == '(')
@@ -291,13 +291,13 @@ bool PGN::confirm_game_record(const std::string& file_name)
         else if(next_character == ')')
         {
             const auto line_count = line_number(input, input.tellg());
-            std::cerr << "Found closing RAV parentheses before opener (line: " << line_count << ")\n";
+            std::println(std::cerr, "Found closing RAV parentheses before opener (line: {})", line_count);
             return false;
         }
         else if(in_game && next_character == '[')
         {
             const auto line_count = line_number(input, input.tellg());
-            std::cerr << "Found header line in the middle of another game (line: " << line_count << ")\n";
+            std::println(std::cerr, "Found header line in the middle of another game (line: {})", line_count);
             return false;
         }
         else if(next_character == '[')
@@ -324,7 +324,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             if(std::ranges::find(valid_result_marks, result_value) == valid_result_marks.end())
             {
                 const auto line_count = line_number(input, input.tellg());
-                std::cerr << "Malformed Result tag: " << result_value << " (headers end at line: " << line_count << ")\n";
+                std::println(std::cerr, "Malformed Result tag: {} (headers end at line: {})", result_value, line_count);
                 return false;
             }
 
@@ -364,7 +364,7 @@ bool PGN::confirm_game_record(const std::string& file_name)
             if(token != headers["Result"])
             {
                 const auto line_count = line_number(input, input.tellg());
-                std::cerr << "Final result mark (" << token << ") does not match game result. (line: " << line_count << ")\n";
+                std::println(std::cerr, "Final result mark ({}) does not match game result. (line: {})", token, line_count);
                 return false;
             }
 
@@ -372,8 +372,8 @@ bool PGN::confirm_game_record(const std::string& file_name)
             if(token != final_board_result)
             {
                 const auto line_count = line_number(input, input.tellg());
-                std::cerr << "Last move result (" << final_board_result << ") on line " << line_count
-                          << " does not match the game-ending tag (" << token << ").\n";
+                std::println(std::cerr, "Last move result ({}) on line {} does not match the game-ending tag ({}).",
+                             final_board_result, line_count, token);
                 return false;
             }
 
