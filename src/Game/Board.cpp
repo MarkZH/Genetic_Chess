@@ -452,7 +452,18 @@ int Board::castling_direction(Piece_Color player) const noexcept
 const Move& Board::interpret_move(const std::string& move_text) const
 {
     constexpr static auto end_marks = "+#?!";
-    const auto raw = [](const auto& text) { return text.substr(0, text.find_first_of(end_marks)); };
+    const auto raw = [](const auto& text)
+        {
+            const auto mark_location = text.find_first_of(end_marks);
+            if(mark_location >= text.size() - 1)
+            {
+                return text.substr(0, mark_location);
+            }
+            else
+            {
+                return text;
+            }
+        };
     const auto raw_move_text = raw(move_text);
     const auto move_iter =
         std::ranges::find_if(legal_moves(),
