@@ -5,6 +5,7 @@
 #include <string>
 #include <array>
 #include <bitset>
+#include <cstdint>
 
 #include "Game/Color.h"
 #include "Game/Square.h"
