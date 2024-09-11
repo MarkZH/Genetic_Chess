@@ -130,7 +130,7 @@ system = sys.argv[1]
 if system == 'gcc':
     compiler = 'g++'
     base_options.extend([
-        "-Wzero-as-null-pointer-constant",
+        # "-Wzero-as-null-pointer-constant",
         "-Wmain",
         "-Wno-maybe-uninitialized",
         "-Wconversion"])
