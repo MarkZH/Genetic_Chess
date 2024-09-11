@@ -63,6 +63,9 @@ class Move
         //! \brief Since there's only one instance of every Move, assignment can only lose information.
         Move& operator=(const Move&) = delete;
 
+        //! \brief Copy constructor so the functions that create the special moves can return a value.
+        Move(const Move& other) noexcept = default;
+
         //! \brief Further modifies the state of the board.
         //!
         //! Side effects are changes to the state of the board beyond the change
