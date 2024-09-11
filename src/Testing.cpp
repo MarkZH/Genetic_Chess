@@ -989,7 +989,7 @@ namespace
             {
                 const auto piece = Piece{color, type};
                 const auto piece2 = Piece(piece.fen_symbol());
-                test_result(tests_passed, piece == piece2, std::string("Inconsistent FEN construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
+                test_result(tests_passed, piece == piece2, std::string("Inconsistent FEN construction for ") + std::string(1, piece.fen_symbol()) + std::string(" --> ") + std::string(1, piece2.fen_symbol()));
             }
         }
     }
