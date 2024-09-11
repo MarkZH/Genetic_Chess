@@ -3,10 +3,10 @@
 #include <string>
 #include <array>
 #include <map>
+#include <cmath>
 
 #include "Genes/Gene_Value.h"
 
-#include "Utility/Math.h"
 #include "Utility/Random.h"
 
 Interpolated_Gene_Value::Interpolated_Gene_Value(const std::string& name,
@@ -20,7 +20,7 @@ Interpolated_Gene_Value::Interpolated_Gene_Value(const std::string& name,
 
 double Interpolated_Gene_Value::interpolate(double game_progress) const noexcept
 {
-    return Math::interpolate(opening_value(), endgame_value(), game_progress);
+    return std::lerp(opening_value(), endgame_value(), game_progress);
 }
 
 double Interpolated_Gene_Value::opening_value() const noexcept

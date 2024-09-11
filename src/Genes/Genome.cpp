@@ -67,7 +67,7 @@ Genome::Genome() noexcept :
 
 Genome::Genome(const Genome& other) noexcept : id_number(other.id())
 {
-    std::transform(other.genome.begin(), other.genome.end(), genome.begin(), std::mem_fn(&Gene::duplicate));
+    std::ranges::transform(other.genome, genome.begin(), std::mem_fn(&Gene::duplicate));
     reset_piece_strength_gene();
 }
 
@@ -87,7 +87,7 @@ Genome::Genome(std::istream& is, int id_in) : Genome()
     for(std::string line; std::getline(is, line);)
     {
         line = String::strip_comments(line, "#");
-        if( ! String::starts_with(line, "ID"))
+        if( ! line.starts_with("ID"))
         {
             continue;
         }
@@ -142,19 +142,19 @@ void Genome::reset_piece_strength_gene() noexcept
 Genome& Genome::operator=(const Genome& other) noexcept
 {
     id_number = other.id();
-    std::transform(other.genome.begin(), other.genome.end(), genome.begin(), std::mem_fn(&Gene::duplicate));
+    std::ranges::transform(other.genome, genome.begin(), std::mem_fn(&Gene::duplicate));
     reset_piece_strength_gene();
     return *this;
 }
 
 Genome::Genome(const Genome& A, const Genome& B) noexcept : id_number(next_id++)
 {
-    std::transform(A.genome.begin(), A.genome.end(), B.genome.begin(),
-                   genome.begin(),
-                   [](const auto& gene_a, const auto& gene_b)
-                   {
-                       return (Random::coin_flip() ? gene_a : gene_b)->duplicate();
-                   });
+    std::ranges::transform(A.genome, B.genome,
+                           genome.begin(),
+                           [](const auto& gene_a, const auto& gene_b)
+                           {
+                               return (Random::coin_flip() ? gene_a : gene_b)->duplicate();
+                           });
 
     reset_piece_strength_gene();
 }
@@ -184,11 +184,8 @@ void Genome::read_from(std::istream& is)
         if(String::trim_outer_whitespace(line_split[0]) == "Name")
         {
             const auto gene_name = String::remove_extra_whitespace(line_split[1]);
-            const auto found_gene = std::find_if(genome.begin(), genome.end(),
-                                                 [&gene_name](const auto& gene)
-                                                 {
-                                                     return gene->name() == gene_name;
-                                                 });
+            const auto found_gene =
+                std::ranges::find_if(genome, [&gene_name](const auto& gene) { return gene->name() == gene_name; });
             if(found_gene != genome.end())
             {
                 (*found_gene)->read_from(is);

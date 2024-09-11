@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <cassert>
 #include <string>
+#include <type_traits>
 
 //! \brief A collection of functions for dealing with randomness.
 namespace Random
@@ -28,7 +29,7 @@ namespace Random
     //! \param min The minimum number to return.
     //! \param max The maximum number to return.
     //! \returns A random number in the range [min, max].
-    template<typename Integer>
+    template<typename Integer> requires std::is_integral_v<Integer>
     Integer random_integer(const Integer min, const Integer max) noexcept
     {
         thread_local static auto generator = get_new_seeded_random_bit_source();

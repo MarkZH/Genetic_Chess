@@ -123,5 +123,5 @@ void Configuration::print_unused_parameters() const noexcept
 
 bool Configuration::any_unused_parameters() const noexcept
 {
-    return std::any_of(used.begin(), used.end(), [](const auto& key_value) { return ! key_value.second; });
+    return std::ranges::any_of(used, [](const auto& key_value) { return ! key_value.second; });
 }

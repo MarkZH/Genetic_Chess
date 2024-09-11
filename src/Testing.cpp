@@ -13,6 +13,7 @@
 #include <chrono>
 using namespace std::chrono_literals;
 #include <string>
+#include <functional>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -336,8 +337,6 @@ bool run_tests()
     test_function(tests_passed, "Delimited text extraction", "a(b", String::extract_delimited_text, "(a(b))", '(', ')');
 
     test_function(tests_passed, "Strip multicharacter comment", "a", String::strip_comments, "a // b", "//");
-    test_function(tests_passed, "String::starts_with()", true, String::starts_with, "abcdefg", "abc");
-    test_function(tests_passed, "String::starts_with()", false, String::starts_with, "abcdefg", "abd");
     test_function(tests_passed, "String::lowercase()", "abc def", String::lowercase, "AbC dEf");
 
     using vs = std::vector<std::string>;
@@ -351,9 +350,10 @@ bool run_tests()
     test_function(tests_passed, "Missing delimiter split", vs{"abcdefg"}, del_split, "abcdefg", ",", 1000);
     split_and_join_are_inverse_operations(tests_passed);
 
-    test_function(tests_passed, "Format integer (zero)",  "0", String::format_integer<int>,  0, ",");
-    test_function(tests_passed, "Format integer (-zero)", "0", String::format_integer<int>, -0, ",");
+    test_function(tests_passed, "Format integer (zero)",  "0", String::format_number<int>,  0);
+    test_function(tests_passed, "Format integer (-zero)", "0", String::format_number<int>, -0);
     commas_as_thousands_separators_correctly_placed(tests_passed);
+    test_function(tests_passed, "Floating point format", "12,345.0987654321", String::format_number<double>, 12345.0987654321);
 
     function_should_not_throw(tests_passed, "Non-throwing string to size_t", String::to_number<size_t>, "123");
     function_should_not_throw(tests_passed, "Non-throwing string to size_t with whitespace", String::to_number<size_t>, " 456  ");
@@ -514,11 +514,12 @@ void run_speed_tests()
     }
     const auto quiescent_time = std::chrono::steady_clock::now() - quiescent_time_start;
     timing_results.emplace_back(quiescent_time - (board_play_move_time*move_count)/number_of_tests, "Board::quiescent()");
-    std::cout << "(non-quiescent moves = " << String::format_integer(move_count, ",") << ")\n";
+    std::cout << "(non-quiescent moves = " << String::format_number(move_count) << ")\n";
 
-    std::sort(timing_results.begin(), timing_results.end());
-    const auto name_width = int(std::max_element(timing_results.begin(), timing_results.end(),
-                                                 [](const auto& x, const auto& y) { return x.second.size() < y.second.size(); })->second.size());
+    std::ranges::sort(timing_results);
+    const auto name_width =
+        int(std::ranges::max_element(timing_results,
+                                     [](const auto& x, const auto& y) { return x.second.size() < y.second.size(); })->second.size());
     std::cout << "\n" << std::setw(name_width) << "Test Item" << "   " << "Time (" << time_unit << ")";
     std::cout << "\n" << std::setw(name_width) << "---------" << "   " << "---------\n";
     for(const auto& [time, name] : timing_results)
@@ -540,12 +541,12 @@ bool run_perft_tests()
     {
         lines.push_back(input_line);
     }
-    std::sort(lines.begin(), lines.end(),
-              [](const auto& x, const auto& y)
-              {
-                  auto f = [](const auto& s) { return String::to_number<size_t>(String::split(s).back()); };
-                  return f(x) < f(y);
-              });
+    std::ranges::sort(lines,
+                      [](const auto& x, const auto& y)
+                      {
+                          auto f = [](const auto& s) { return String::to_number<size_t>(String::split(s).back()); };
+                          return f(x) < f(y);
+                      });
 
     auto test_number = 0;
     size_t legal_moves_counted = 0;
@@ -610,8 +611,8 @@ bool run_perft_tests()
 
     const auto time = std::chrono::duration<double>(std::chrono::steady_clock::now() - time_at_start_of_all);
     std::cout << "Perft time: " << time.count() << " seconds\n";
-    std::cout << "Legal moves counted: " << String::format_integer(legal_moves_counted, ",") << '\n';
-    std::cout << "Move generation rate: " << String::format_integer(int(double(legal_moves_counted)/time.count()), ",") << " moves/second." << '\n';
+    std::cout << "Legal moves counted: " << String::format_number(legal_moves_counted) << '\n';
+    std::cout << "Move generation rate: " << String::format_number(int(double(legal_moves_counted)/time.count())) << " moves/second.\n";
     if( ! tests_failed.empty())
     {
         std::cout << "Tests failed (" << tests_failed.size() << "): ";
@@ -757,13 +758,18 @@ namespace
                                     return expected;
                                 };
 
-            auto specification = String::split(line, "|");
-            if( ! test_assert(specification.size() >= 2)) { continue; }
+            const auto specification_input = String::split(line, "|");
+            if( ! test_assert(specification_input.size() >= 2)) { continue; }
 
-            std::transform(specification.begin(), specification.end(), specification.begin(), String::remove_extra_whitespace);
+            const auto specification = [&specification_input]()
+            { 
+                std::vector<std::string> result;
+                std::ranges::transform(specification_input, std::back_inserter(result), String::remove_extra_whitespace);
+                return result;
+            }();
 
             const auto test_type = String::lowercase(specification.at(0));
-            const auto board_fen = specification.at(1);
+            const auto& board_fen = specification.at(1);
             auto test_passed = true;
 
             if(test_type == "illegal position")
@@ -946,7 +952,7 @@ namespace
                 visited[square.index()] = true;
             }
         }
-        test_result(tests_passed, std::all_of(visited.begin(), visited.end(), [](auto x) { return x; }), "Not all indices visited by iterating through all squares.");
+        test_result(tests_passed, std::ranges::all_of(visited, std::identity()), "Not all indices visited by iterating through all squares.");
     }
 
     void constructed_squares_retain_coordinates(bool& tests_passed)
@@ -986,7 +992,7 @@ namespace
             {
                 const auto piece = Piece{color, type};
                 const auto piece2 = Piece(piece.fen_symbol());
-                test_result(tests_passed, piece == piece2, std::string("Inconsistent FEN construction for ") + piece.fen_symbol() + " --> " + piece2.fen_symbol());
+                test_result(tests_passed, piece == piece2, std::string("Inconsistent FEN construction for ") + std::string(1, piece.fen_symbol()) + std::string(" --> ") + std::string(1, piece2.fen_symbol()));
             }
         }
     }
@@ -1031,7 +1037,7 @@ namespace
             squares_visited[square.index()] = true;
         }
         test_result(tests_passed,
-                    std::all_of(squares_visited.begin(), squares_visited.end(), [](auto tf) { return tf; }),
+                    std::ranges::all_of(squares_visited, std::identity()),
                     "Square iterator missed some squares.");
     }
 
@@ -1040,7 +1046,7 @@ namespace
         const auto board = Board(fen);
         const auto& move_list = board.legal_moves();
         const auto find_move_text = [&board, &move_text](const Move* const move) { return move->algebraic(board) == move_text; };
-        const auto found_move = std::find_if(move_list.begin(), move_list.end(), find_move_text);
+        const auto found_move = std::ranges::find_if(move_list, find_move_text);
 
         test_result(tests_passed, found_move != move_list.end(), "Ambiguous move notation not found: " + move_text);
         if(found_move != move_list.end())
@@ -1578,8 +1584,11 @@ namespace
     {
         const auto split_join_input = "a/b/c/d";
         const auto splitter = "/";
-        const auto rejoin = String::join(String::split(split_join_input, splitter), splitter);
-        test_result(tests_passed, split_join_input == rejoin, std::string{"Split-join failed: "} + split_join_input + " --> " + rejoin);
+        const auto split = String::split(split_join_input, splitter);
+        const auto rejoin = String::join(split.begin(), split.end(), splitter);
+        test_result(tests_passed, split_join_input == rejoin, std::string{"Iterator Split-join failed: "} + split_join_input + " --> " + rejoin);
+        const auto rejoin2 = String::join(split, splitter);
+        test_result(tests_passed, split_join_input == rejoin2, std::string{"Container Split-join failed: "} + split_join_input + " --> " + rejoin2);
     }
 
     void commas_as_thousands_separators_correctly_placed(bool& tests_passed)
@@ -1597,9 +1606,9 @@ namespace
              {1000000000, "1,000,000,000"}};
         for(const auto& [number, text] : tests)
         {
-            test_function(tests_passed, "Format integer (size_t)", text, String::format_integer<size_t>, number, ",");
-            test_function(tests_passed, "Format integer (int)", text, String::format_integer<int>, number, ",");
-            test_function(tests_passed, "Format integer (negative int)", "-" + text, String::format_integer<int>, -number, ",");
+            test_function(tests_passed, "Format integer (size_t)", text, String::format_number<size_t>, number);
+            test_function(tests_passed, "Format integer (int)", text, String::format_number<int>, number);
+            test_function(tests_passed, "Format integer (negative int)", "-" + text, String::format_number<int>, -number);
         }
     }
 
@@ -1801,7 +1810,7 @@ namespace
                 const auto to_string_array = [](const data& data_list)
                     {
                         std::vector<std::string> entries;
-                        std::transform(data_list.begin(), data_list.end(), std::back_inserter(entries), [](auto d) { return std::to_string(d); });
+                        std::ranges::transform(data_list, std::back_inserter(entries), [](auto d) { return std::to_string(d); });
                         return "{" + String::join(entries, ", ") + "}";
                     };
 
@@ -1876,8 +1885,8 @@ namespace
                           "Wrong number of successes with rational probability"))
         {
             std::cout << "Rational success probability (" << probability_numerator << "/" << probability_denominator << ") --> "
-                << String::format_integer(rational_success_count, ",") << " / " << String::format_integer(number_of_trials, ",")
-                << "\nExpected sucesses: " << String::format_integer(expected_successes, ",") << " +/- " << String::format_integer(maximum_deviation, ",")
+                << String::format_number(rational_success_count) << " / " << String::format_number(number_of_trials)
+                << "\nExpected sucesses: " << String::format_number(expected_successes) << " +/- " << String::format_number(maximum_deviation)
                 << std::endl;
         }
     }

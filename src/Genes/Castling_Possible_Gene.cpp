@@ -2,6 +2,7 @@
 
 #include <string>
 #include <map>
+#include <cmath>
 
 #include "Genes/Gene.h"
 #include "Genes/Interpolated_Gene_Value.h"

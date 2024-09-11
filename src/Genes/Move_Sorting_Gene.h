@@ -6,6 +6,7 @@
 #include <array>
 #include <functional>
 #include <string>
+#include <algorithm>
 
 class Board;
 class Move;

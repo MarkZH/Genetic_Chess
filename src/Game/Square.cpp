@@ -26,7 +26,7 @@ All_Squares_Iterator All_Squares::begin() const noexcept
 
 All_Squares_Iterator All_Squares::end() const noexcept
 {
-    return All_Squares_Iterator({});
+    return All_Squares_Iterator(Square{});
 }
 
 namespace
@@ -124,11 +124,6 @@ bool operator==(const Square a, const Square b) noexcept
     return (a.index() == b.index()) || ( ! a.inside_board() && ! b.inside_board());
 }
 
-bool operator!=(const Square a, const Square b) noexcept
-{
-    return !(a == b);
-}
-
 Square operator+(Square square, const Square_Difference& diff) noexcept
 {
     return square += diff;
@@ -184,14 +179,14 @@ Square_Line_Iterator& Square_Line_Iterator::operator++() noexcept
     return *this;
 }
 
+void Square_Line_Iterator::operator++(int) noexcept
+{
+    current_square += step;
+}
+
 bool Square_Line_Iterator::operator==(const Square_Line_Iterator& other) const noexcept
 {
     return current_square == other.current_square;
-}
-
-bool Square_Line_Iterator::operator!=(const Square_Line_Iterator& other) const noexcept
-{
-    return ! (*this == other);
 }
 
 Square Square_Line_Iterator::operator*() const noexcept
@@ -233,14 +228,9 @@ All_Squares_Iterator& All_Squares_Iterator::operator++() noexcept
     return *this;
 }
 
-bool All_Squares_Iterator::operator==(const All_Squares_Iterator& other) const noexcept
+void All_Squares_Iterator::operator++(int) noexcept
 {
-    return current_square == other.current_square;
-}
-
-bool All_Squares_Iterator::operator!=(const All_Squares_Iterator& other) const noexcept
-{
-    return ! (*this == other);
+    ++current_square;
 }
 
 Square All_Squares_Iterator::operator*() const noexcept

@@ -18,6 +18,7 @@ using namespace std::chrono_literals;
 #include <string>
 #include <numeric>
 #include <sstream>
+#include <semaphore>
 #include <algorithm>
 
 #include "Players/Genetic_AI.h"
@@ -31,7 +32,6 @@ using namespace std::chrono_literals;
 #include "Utility/Configuration.h"
 #include "Utility/Random.h"
 #include "Utility/Exceptions.h"
-#include "Utility/Thread_Limiter.h"
 
 namespace
 {
@@ -55,7 +55,12 @@ namespace
     size_t count_still_alive_lines(const std::string& genome_file_name) noexcept;
     std::vector<Genetic_AI> fill_pool(const std::string& genome_file_name, size_t gene_pool_population, size_t mutation_rate);
     void load_previous_game_stats(const std::string& game_record_file, Clock::seconds& game_time, std::array<size_t, 3>& color_wins);
-    Game_Result pool_game(const Board& board, const Clock::seconds game_time, Genetic_AI white, Genetic_AI black, const std::string& game_record_file, Thread_Limiter& limiter) noexcept;
+    Game_Result pool_game(const Board& board,
+                          const Clock::seconds game_time,
+                          Genetic_AI white,
+                          Genetic_AI black,
+                          const std::string& game_record_file,
+                          std::counting_semaphore<>& limiter) noexcept;
     Genetic_AI best_living_ai(const std::vector<Genetic_AI>& pool) noexcept;
     void record_best_ai(const std::vector<Genetic_AI>& pool, const std::string& best_file_name) noexcept;
     void print_round_header(const std::vector<Genetic_AI>& pool,
@@ -137,7 +142,7 @@ void gene_pool(const std::string& config_file)
 
         Random::shuffle(pool);
         std::vector<std::future<Game_Result>> results;
-        auto limiter = Thread_Limiter(maximum_simultaneous_games);
+        auto limiter = std::counting_semaphore(maximum_simultaneous_games);
         for(size_t index = 0; index < gene_pool_population; index += 2)
         {
             const auto& white = pool[index];
@@ -279,7 +284,7 @@ namespace
         std::cout << result_printer.str();
 
         // widths of columns for stats printout
-        const auto largest_id = std::max_element(pool.begin(), pool.end())->id();
+        const auto largest_id = std::ranges::max_element(pool)->id();
         const auto id_column_width = int(std::to_string(largest_id).size() + 1);
         const auto win_column_width = 7;
         const auto draw_column_width = 7;
@@ -312,11 +317,11 @@ namespace
         for(std::string line; std::getline(ifs, line);)
         {
             line = String::trim_outer_whitespace(line);
-            if(String::starts_with(line, "[TimeControl"))
+            if(line.starts_with("[TimeControl"))
             {
                 game_time = String::to_duration<Clock::seconds>(String::extract_delimited_text(line, '"', '"'));
             }
-            else if(String::starts_with(line, "[Result"))
+            else if(line.starts_with("[Result"))
             {
                 auto result = String::extract_delimited_text(line, '"', '"');
                 if(result == "1-0")
@@ -344,11 +349,11 @@ namespace
                           Genetic_AI white,
                           Genetic_AI black,
                           const std::string& game_record_file,
-                          Thread_Limiter& limiter) noexcept
+                          std::counting_semaphore<>& limiter) noexcept
     {
-        limiter.ask();
+        limiter.acquire();
         const auto result = play_game(board, Clock{game_time}, white, black, "Gene pool", "Local computer", game_record_file, false);
-        limiter.done();
+        limiter.release();
         return result;
     }
 
@@ -406,7 +411,7 @@ namespace
 
         const auto contains = [](const auto& list, const auto& value)
             {
-                return std::find(list.begin(), list.end(), value) != list.end();
+                return std::ranges::find(list, value) != list.end();
             };
 
         if(contains(hour_names, unit))
@@ -484,10 +489,7 @@ namespace
         std::vector<int> ids;
         try
         {
-            std::transform(id_strings.begin(),
-                           id_strings.end(),
-                           std::back_inserter(ids),
-                           String::to_number<int>);
+            std::ranges::transform(id_strings, std::back_inserter(ids), String::to_number<int>);
         }
         catch(...)
         {
@@ -495,7 +497,7 @@ namespace
         }
 
         auto sorted_ids = ids;
-        std::sort(sorted_ids.begin(), sorted_ids.end());
+        std::ranges::sort(sorted_ids);
 
         std::map<int, Genetic_AI> loaded_ais;
         for(auto id : sorted_ids)
@@ -524,7 +526,7 @@ namespace
         }
 
         std::vector<Genetic_AI> result;
-        std::transform(ids.begin(), ids.end(), std::back_inserter(result), [&loaded_ais](const auto id) { return loaded_ais.at(id); });
+        std::ranges::transform(ids, std::back_inserter(result), [&loaded_ais](const auto id) { return loaded_ais.at(id); });
 
         return result;
     }
@@ -546,7 +548,7 @@ namespace
         size_t round_count = 0;
         for(std::string line; std::getline(genome_file, line);)
         {
-            if(String::starts_with(line, "Still Alive"))
+            if(line.starts_with("Still Alive"))
             {
                 ++round_count;
             }

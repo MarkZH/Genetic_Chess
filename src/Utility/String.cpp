@@ -5,31 +5,30 @@
 #include <stdexcept>
 #include <algorithm>
 #include <cctype>
-#include <chrono>
-#include <iomanip>
-#include <sstream>
 #include <cmath>
+#include <format>
 #include <cctype>
-#include <iterator>
+#include <ranges>
 
 std::vector<std::string> String::split(const std::string& s, const std::string& delim, const size_t count) noexcept
 {
     std::vector<std::string> result;
-    auto word_start = s.begin();
-    for(size_t split_count = 0; word_start != s.end() && split_count < count; ++split_count)
+    const auto initial_take = std::min(count, s.size());
+    auto splitted = std::views::split(s, delim);
+    for(const auto& token : splitted | std::views::take(initial_take))
     {
-        const auto word_end = std::search(word_start, s.end(), delim.begin(), delim.end());
-        result.emplace_back(word_start, word_end);
-        word_start = word_end == s.end() ? s.end() : std::next(word_end, delim.size());
+        result.emplace_back(token.begin(), token.end());
     }
 
-    if(word_start != s.end())
+    std::vector<std::string> remainder;
+    for(const auto& token : splitted | std::views::drop(initial_take))
     {
-        result.emplace_back(word_start, s.end());
+        remainder.emplace_back(token.begin(), token.end());
     }
-    else if(String::ends_with(s, delim))
+
+    if( ! remainder.empty())
     {
-        result.emplace_back();
+        result.push_back(join(remainder, delim));
     }
 
     return result;
@@ -38,35 +37,24 @@ std::vector<std::string> String::split(const std::string& s, const std::string& 
 std::vector<std::string> String::split(const std::string& s) noexcept
 {
     std::vector<std::string> result;
-    auto word_start = std::find_if_not(s.begin(), s.end(), isspace);
-    while(word_start != s.end())
+    for(const auto& part : s | std::views::transform([](auto c) { return isspace(c) ? ' ' : c; })
+                             | std::views::split(' ')
+                             | std::views::filter([](const auto& ss) { return ! ss.empty(); }))
     {
-        const auto word_end = std::find_if(word_start, s.end(), isspace);
-        result.emplace_back(word_start, word_end);
-        word_start = std::find_if_not(word_end, s.end(), isspace);
+        result.emplace_back(part.begin(), part.end());
     }
     return result;
 }
 
-bool String::starts_with(const std::string& s, const std::string& beginning) noexcept
-{
-    return std::mismatch(beginning.begin(), beginning.end(), s.begin(), s.end()).first == beginning.end();
-}
-
-bool String::ends_with(const std::string& s, const std::string& beginning) noexcept
-{
-    return std::mismatch(beginning.rbegin(), beginning.rend(), s.rbegin(), s.rend()).first == beginning.rend();
-}
-
 std::string String::trim_outer_whitespace(const std::string& s) noexcept
 {
-    const auto text_start = std::find_if_not(s.begin(), s.end(), String::isspace);
+    const auto text_start = std::ranges::find_if_not(s, String::isspace);
     if(text_start == s.end())
     {
         return {};
     }
 
-    const auto text_end = std::find_if_not(s.rbegin(), s.rend(), String::isspace).base();
+    const auto text_end = std::ranges::find_if_not(std::ranges::reverse_view(s), String::isspace).base();
     return std::string(text_start, text_end);
 }
 
@@ -111,7 +99,7 @@ char String::toupper(const char letter) noexcept
 
 std::string String::lowercase(std::string s) noexcept
 {
-    std::transform(s.begin(), s.end(), s.begin(), String::tolower);
+    std::ranges::transform(s, s.begin(), String::tolower);
     return s;
 }
 
@@ -122,24 +110,7 @@ bool String::isspace(char c) noexcept
 
 std::string String::round_to_decimals(const double x, const size_t decimal_places) noexcept
 {
-    auto result = std::ostringstream();
-    result << std::fixed << std::setprecision(int(decimal_places)) << x;
-    return result.str();
-}
-
-std::string String::date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
-                                         const std::string& format) noexcept
-{
-    const auto time_c = std::chrono::system_clock::to_time_t(point_in_time);
-    std::tm time_out;
-#ifdef _WIN32
-    localtime_s(&time_out, &time_c);
-#elif defined(__linux__)
-    localtime_r(&time_c, &time_out);
-#endif
-    auto ss = std::ostringstream{};
-    ss << std::put_time(&time_out, format.c_str());
-    return ss.str();
+    return std::format("{:.{}f}", x, decimal_places);
 }
 
 std::string String::word_wrap(const std::string& text, const size_t line_length, const size_t indent) noexcept
@@ -161,6 +132,6 @@ std::string String::word_wrap(const std::string& text, const size_t line_length,
     }
 
     auto wrapped = join(lines, "\n");
-    std::replace(wrapped.begin(), wrapped.end(), '~', ' ');
+    std::ranges::replace(wrapped, '~', ' ');
     return wrapped;
 }

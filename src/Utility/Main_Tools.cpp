@@ -4,6 +4,7 @@
 #include "Utility/Help_Writer.h"
 
 #include <string>
+#include <string_view>
 #include <vector>
 #include <stdexcept>
 #include <iostream>
@@ -73,10 +74,10 @@ std::vector<std::tuple<std::string, std::vector<std::string>>> Main_Tools::parse
     std::vector<std::tuple<std::string, std::vector<std::string>>> options;
     for(const auto& token : command_line)
     {
-        if(String::starts_with(token, "-"))
+        if(token.starts_with("-"))
         {
             auto parts = String::split(token, "=", 1);
-            if(String::starts_with(parts.front(), "--"))
+            if(parts.front().starts_with("--"))
             {
                 parts.front() = parts.front().substr(1);
             }

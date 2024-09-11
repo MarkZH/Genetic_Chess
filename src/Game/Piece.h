@@ -94,23 +94,16 @@ class Piece
         //! \param square The square where the attacking moves start.
         //! \returns A list of lists of moves grouped and ordered as in Piece::move_lists().
         const list_of_move_lists& attacking_move_lists(Square square) const noexcept;
+        
+        //! \brief Check two pieces for equality
+        //!
+        //! \param a A piece.
+        //! \param b Another piece.
+        //! \returns Whether the two pieces are the same type and color
+        friend bool operator==(Piece a, Piece b) noexcept = default;
 
     private:
         piece_code_t piece_code;
 };
-
-//! \brief Check two pieces for equality
-//!
-//! \param a A piece.
-//! \param b Another piece.
-//! \returns Whether the two pieces are the same type and color
-bool operator==(Piece a, Piece b) noexcept;
-
-//! \brief Check two pieces for inequality
-//!
-//! \param a A piece.
-//! \param b Another piece.
-//! \returns Whether the two pieces have different types or colors.
-bool operator!=(Piece a, Piece b) noexcept;
 
 #endif // PIECE_H

@@ -31,6 +31,12 @@ struct All_Squares;
 class Squares_in_a_Line;
 class All_Squares_Iterator;
 class Square_Line_Iterator;
+class Square;
+
+//! \brief Check if two squares are the same.
+//!
+//! \returns Whether two squares have the same file and rank or are both outside the board.
+bool operator==(Square a, Square b) noexcept;
 
 //! \brief This class represents a location on the board.
 //!
@@ -158,16 +164,6 @@ class Square
         friend class Square_Line_Iterator;
 };
 
-//! \brief Check if two squares are the same.
-//!
-//! \returns Whether two squares have the same file and rank or are both outside the board.
-bool operator==(Square a, Square b) noexcept;
-
-//! \brief Check if two squares are not the same.
-//!
-//! \returns Whether two squares differ in their file or rank.
-bool operator!=(Square a, Square b) noexcept;
-
 
 //! \brief Add an offset to a square, returning a new Square.
 //!
@@ -247,14 +243,17 @@ class All_Squares_Iterator
         //! \param start The square the iterator will refer to.
         explicit All_Squares_Iterator(Square start) noexcept;
 
+        //! \brief Create an iterator pointing to an invalid square
+        All_Squares_Iterator() noexcept = default;
+
         //! \brief Go to the next Square along the line.
         All_Squares_Iterator& operator++() noexcept;
 
-        //! \brief Iterators are equal when they refer to the same Square.
-        bool operator==(const All_Squares_Iterator& other) const noexcept;
+        //! \brief Go to the next Square along the line.
+        void operator++(int) noexcept;
 
-        //! \brief Iterators are unequal when they refer to different Squares.
-        bool operator!=(const All_Squares_Iterator& other) const noexcept;
+        //! \brief Iterators are equal when they refer to the same Square.
+        bool operator==(const All_Squares_Iterator& other) const noexcept = default;
 
         //! \brief Get the Square referred to by the iterator.
         Square operator*() const noexcept;
@@ -297,14 +296,17 @@ class Square_Line_Iterator
         //! \param square_step The direction of the line extending away from start.
         Square_Line_Iterator(Square start, const Square_Difference& square_step) noexcept;
 
+        //! \brief Default constructor that makes a useless iterator
+        Square_Line_Iterator() noexcept = default;
+
         //! \brief Advance the iterator to the next Square in the line.
         Square_Line_Iterator& operator++() noexcept;
 
+        //! \brief Advance the iterator to the next Square in the line.
+        void operator++(int) noexcept;
+
         //! \brief Iterators are equal if they refer to the same square.
         bool operator==(const Square_Line_Iterator& other) const noexcept;
-
-        //! \brief Iterators are different if they refer to different squares.
-        bool operator!=(const Square_Line_Iterator& other) const noexcept;
 
         //! \brief Get the Square referred to by the iterator.
         Square operator*() const noexcept;

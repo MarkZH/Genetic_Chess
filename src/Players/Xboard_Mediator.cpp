@@ -58,7 +58,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
 
             Player::pick_move_now(); // Stop pondering
 
-            if(String::starts_with(command, "ping "))
+            if(command.starts_with("ping "))
             {
                 send_command("pong " + String::split(command).back());
             }
@@ -80,13 +80,13 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                 player.reset();
                 in_force_mode = false;
             }
-            else if(String::starts_with(command, "name "))
+            else if(command.starts_with("name "))
             {
                 const auto name = String::split(command, " ", 1).back();
                 log("Getting other player's name: " + name);
                 record_opponent_name(name);
             }
-            else if(String::starts_with(command, "setboard "))
+            else if(command.starts_with("setboard "))
             {
                 try
                 {
@@ -118,7 +118,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                     send_error(command, "Bad FEN");
                 }
             }
-            else if(String::starts_with(command, "usermove "))
+            else if(command.starts_with("usermove "))
             {
                 const auto move = String::split(command).back();
                 try
@@ -142,7 +142,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                     send_command("Illegal move: " + move);
                 }
             }
-            else if(String::starts_with(command, "level "))
+            else if(command.starts_with("level "))
             {
                 log("got time specs: " + command);
                 const auto split = String::split(command);
@@ -172,7 +172,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                 own_time_left.reset();
                 opponent_time_left.reset();
             }
-            else if(String::starts_with(command, "st "))
+            else if(command.starts_with("st "))
             {
                 log("got time specs: " + command + " seconds");
                 const auto split = String::split(command);
@@ -186,12 +186,12 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                 own_time_left.reset();
                 opponent_time_left.reset();
             }
-            else if(String::starts_with(command, "time "))
+            else if(command.starts_with("time "))
             {
                 own_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
                 log("Will set own time to " + std::to_string(own_time_left->count()) + " seconds.");
             }
-            else if(String::starts_with(command, "otim "))
+            else if(command.starts_with("otim "))
             {
                 opponent_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
                 log("Will set opponent's time to " + std::to_string(opponent_time_left->count()) + " seconds.");
@@ -209,7 +209,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                 }
                 setup_result = {};
             }
-            else if(String::starts_with(command, "result "))
+            else if(command.starts_with("result "))
             {
                 const auto result = String::split(command).at(1);
                 const auto reason = String::extract_delimited_text(command, '{', '}');
@@ -375,7 +375,7 @@ std::string Xboard_Mediator::listener(Clock& clock)
                 log("Forcing local AI to pick move and accepting it");
                 Player::pick_move_now();
             }
-            else if(String::starts_with(command, "result "))
+            else if(command.starts_with("result "))
             {
                 log("Stopped thinking about move by: " + command);
                 Player::pick_move_now();

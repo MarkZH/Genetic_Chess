@@ -320,7 +320,7 @@ bool Piece::can_move(const Move* const move) const noexcept
     assert(*this);
     for(const auto& moves : move_lists(move->start()))
     {
-        if(std::find(moves.begin(), moves.end(), move) != moves.end())
+        if(std::ranges::find(moves, move) != moves.end())
         {
             return true;
         }
@@ -355,14 +355,4 @@ const Piece::list_of_move_lists& Piece::attacking_move_lists(const Square square
 {
     assert(*this);
     return attack_moves[index()][square.index()];
-}
-
-bool operator==(const Piece a, const Piece b) noexcept
-{
-    return a.index() == b.index();
-}
-
-bool operator!=(const Piece a, const Piece b) noexcept
-{
-    return ! (a == b);
 }

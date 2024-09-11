@@ -6,8 +6,14 @@
 #include <chrono>
 #include <type_traits>
 #include <algorithm>
+#include <concepts>
+#include <locale>
 #include <charconv>
 #include <stdexcept>
+#include <format>
+#include <ranges>
+#include <iostream>
+#include <memory>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
@@ -32,6 +38,28 @@ namespace String
 
     //! \brief Join a sequence of strings into a single string with joiner strings in between.
     //!
+    //! \tparam Container A container with ordered contents.
+    //! \param container A container of items convertible to std::string.
+    //! \param joiner A string that will be placed between every string in the sequence.
+    template<typename Container>
+    std::string join(const Container& container, const std::string& joiner) noexcept
+    {
+        if(container.empty())
+        {
+            return {};
+        }
+
+        std::string result = container.front();
+        for(const auto& piece : container | std::views::drop(1))
+        {
+            result += joiner;
+            result += piece;
+        }
+        return result;
+    }
+
+    //! \brief Join a sequence of strings into a single string with joiner strings in between.
+    //!
     //! \tparam Iter An iterator type.
     //! \param begin An iterator to the first string in the sequence.
     //! \param end An iterator past the end of the sequence.
@@ -39,30 +67,7 @@ namespace String
     template<typename Iter>
     std::string join(const Iter begin, const Iter end, const std::string& joiner) noexcept
     {
-        if(begin == end)
-        {
-            return {};
-        }
-
-        auto result = *begin;
-        std::for_each(std::next(begin), end,
-                      [&joiner, &result](const auto& token)
-                      {
-                          result += joiner;
-                          result += token;
-                      });
-        return result;
-    }
-
-    //! \brief Join a sequence of strings into a single string with joiner strings in between.
-    //!
-    //! \tparam Container A container with ordered contents.
-    //! \param container A container of items convertible to std::string.
-    //! \param joiner A string that will be placed between every string in the sequence.
-    template<typename Container>
-    std::string join(const Container& container, const std::string& joiner) noexcept
-    {
-        return join(std::begin(container), std::end(container), joiner);
+        return join(std::ranges::subrange(begin, end), joiner);
     }
 
     //! \brief Determine whether a string exists inside another string.
@@ -75,20 +80,6 @@ namespace String
     {
         return container.find(target) != std::string::npos;
     }
-
-    //! \brief Determine whether a strings has another string as a prefix.
-    //!
-    //! \param s The string to check.
-    //! \param beginning The prefix to find.
-    //! \returns True if the string starts with the beginning string.
-    bool starts_with(const std::string& s, const std::string& beginning) noexcept;
-
-    //! \brief Determine whether a strings has another string as a prefix.
-    //!
-    //! \param s The string to check.
-    //! \param beginning The prefix to find.
-    //! \returns True if the string starts with the beginning string.
-    bool ends_with(const std::string& s, const std::string& beginning) noexcept;
 
     //! \brief Remove leading and trailing whitespace from a string.
     //!
@@ -145,28 +136,21 @@ namespace String
     //! This is useful with std:: algorithms since std::isspace takes an int as a parameter.
     bool isspace(char c) noexcept;
 
-    //! \brief Returns a text version of an integer with thousands separators
+    //! \brief Returns a text version of an integer with thousands separators (US-style)
     //!
     //! \param n The integer.
-    //! \param separator The separator between groups of thousands.
     //! \returns A text string with thousands separators.
-    template<typename Integer>
-    std::enable_if_t<std::is_integral_v<Integer>, std::string> format_integer(Integer n, const std::string& separator) noexcept
+    template<typename Number> requires std::is_arithmetic_v<Number>
+    std::string format_number(Number n) noexcept
     {
-        if(n == 0) { return "0"; }
-        if constexpr(std::is_signed_v<Integer>)
+        struct thousands_separator : std::numpunct<char>
         {
-            if(n < 0) { return '-' + format_integer(-n, separator); }
-        }
+            char do_thousands_sep() const override { return ','; }
+            std::string do_grouping() const override { return "\3"; }
+        };
 
-        std::vector<std::string> groups;
-        for( ; n > 0; n /= 1000)
-        {
-            groups.push_back(std::to_string(n % 1000));
-        }
-        auto pad_zeros = [](const auto& s) { return std::string(3 - s.size(), '0') + s; };
-        std::transform(std::next(groups.rbegin()), groups.rend(), std::next(groups.rbegin()), pad_zeros);
-        return String::join(groups.rbegin(), groups.rend(), separator);
+        auto formatter = std::make_unique<thousands_separator>();
+        return std::format(std::locale(std::cout.getloc(), formatter.release()), "{:L}", n);
     }
 
     //! \brief Round a number to the specified precision
@@ -183,8 +167,8 @@ namespace String
     //! \returns A number of type Number.
     //! \exception std::invalid_argument if no conversion could be made or if there are extra characters
     //!         that cannot be converted to a number.
-    template<typename Number>
-    std::enable_if_t<std::is_arithmetic_v<Number>, Number> to_number(const std::string& s)
+    template<typename Number> requires std::is_arithmetic_v<Number>
+    Number to_number(const std::string& s)
     {
         const auto trimmed = trim_outer_whitespace(s);
         const auto string_end = trimmed.data() + trimmed.size();
@@ -217,9 +201,17 @@ namespace String
     //!
     //! \param point_in_time The time point to convert.
     //! \param format The format of the date/time data (see docs for std::put_time).
+    //! \tparam Precision A std::chrono::duration type that indicates how precise the time should be printed.
+    //! \tparam Time_Point The std::chrono::time_point type.
     //! \returns A formatted text string of the date and/or time.
-    std::string date_and_time_format(const std::chrono::system_clock::time_point& point_in_time,
-                                     const std::string& format) noexcept;
+    template<typename Precision = std::chrono::seconds, typename Time_Point>
+    std::string date_and_time_format(const Time_Point& point_in_time,
+                                     const std::string& format) noexcept
+    {
+        const auto point_with_tz = std::chrono::zoned_time(std::chrono::current_zone(),
+                                                           std::chrono::time_point_cast<Precision>(point_in_time));
+        return std::vformat("{:" + format + "}", std::make_format_args(point_with_tz));
+    }
 
     //! \brief Create a strings with added line breaks so no line is longer than a limit.
     //!

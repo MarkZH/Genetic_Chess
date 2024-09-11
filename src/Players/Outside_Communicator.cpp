@@ -115,7 +115,7 @@ void Outside_Communicator::log(const std::string& data)
         throw std::runtime_error("Could not write to file: " + log_file_name);
     }
 
-    ofs << String::date_and_time_format(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S")
+    ofs << String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S")
         << " -- "
         << data
         << std::endl;

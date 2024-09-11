@@ -1,6 +1,7 @@
 #include "Genes/Pawn_Structure_Gene.h"
 
 #include <string>
+#include <cmath>
 
 #include "Genes/Gene.h"
 #include "Genes/Interpolated_Gene_Value.h"
