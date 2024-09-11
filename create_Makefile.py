@@ -109,7 +109,6 @@ linker_options = dict()
 base_options = [
         "-std=c++20",
         "-lstdc++fs",
-        "-fno-rtti",
         "-Wshadow",
         "-Wcast-align",
         "-Wundef",
