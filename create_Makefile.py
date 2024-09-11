@@ -108,7 +108,6 @@ options_list = dict()
 linker_options = dict()
 base_options = [
         "-lstdc++fs",
-        "-fno-rtti",
         "-Wshadow",
         "-Wcast-align",
         "-Wundef",
@@ -130,7 +129,7 @@ if system == 'gcc':
     compiler = 'g++'
     base_options.extend([
         "-std=c++23",
-        "-Wzero-as-null-pointer-constant",
+        # "-Wzero-as-null-pointer-constant",
         "-Wmain",
         "-Wno-maybe-uninitialized",
         "-Wconversion"])

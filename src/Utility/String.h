@@ -12,6 +12,8 @@
 #include <stdexcept>
 #include <format>
 #include <ranges>
+#include <iostream>
+#include <memory>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
@@ -119,7 +121,14 @@ namespace String
     template<typename Number> requires std::is_arithmetic_v<Number>
     std::string format_number(Number n) noexcept
     {
-        return std::format(std::locale("en_US.UTF-8"), "{:L}", n);
+        struct thousands_separator : std::numpunct<char>
+        {
+            char do_thousands_sep() const override { return ','; }
+            std::string do_grouping() const override { return "\3"; }
+        };
+
+        auto formatter = std::make_unique<thousands_separator>();
+        return std::format(std::locale(std::cout.getloc(), formatter.release()), "{:L}", n);
     }
 
     //! \brief Round a number to the specified precision
