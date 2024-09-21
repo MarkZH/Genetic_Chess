@@ -394,7 +394,7 @@ namespace
     std::chrono::duration<double> get_start_delay(const Configuration& config)
     {
         const auto start_delay = "start delay";
-        if(!config.has_parameter(start_delay))
+        if( ! config.has_parameter(start_delay))
         {
             return {};
         }
