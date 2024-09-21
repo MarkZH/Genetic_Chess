@@ -297,9 +297,9 @@ namespace
         // widths of columns for stats printout
         const auto largest_id = std::ranges::max_element(pool)->id();
         const auto id_column_width = int(std::to_string(largest_id).size() + 1);
-        const auto win_column_width = 7;
-        const auto draw_column_width = 7;
-        const auto table_format = "{:>{}}{:>{}}{:>{}}";
+        constexpr auto win_column_width = 7;
+        constexpr auto draw_column_width = 7;
+        constexpr auto table_format = "{:>{}}{:>{}}{:>{}}";
 
         // Write stat headers
         std::println(table_format, "ID", id_column_width, "Wins", win_column_width, "Draws", draw_column_width);
