@@ -131,10 +131,24 @@ namespace
                     }
                     break;
                 case ';':
-                    skip_rest_of_line(input);
+                    if(word.empty())
+                    {
+                        skip_rest_of_line(input);
+                    }
+                    else
+                    {
+                        saved_character = c;
+                    }
                     break;
                 case '{':
-                    skip_braced_comment(input);
+                    if(word.empty())
+                    {
+                        skip_braced_comment(input);
+                    }
+                    else
+                    {
+                        saved_character = c;
+                    }
                     break;
                 case ')':
                 case ' ':
@@ -258,13 +272,27 @@ bool PGN::confirm_game_record(const std::string& file_name)
         }
         else if(next_character == ';')
         {
-            skip_rest_of_line(input);
+            if(word.empty())
+            {
+                skip_rest_of_line(input);
+            }
+            else
+            {
+                saved_character = next_character;
+            }
         }
         else if(next_character == '{')
         {
-            if( ! skip_braced_comment(input))
+            if(word.empty())
             {
-                return false;
+                if( ! skip_braced_comment(input))
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                saved_character = next_character;
             }
         }
         else if(next_character == '}')
