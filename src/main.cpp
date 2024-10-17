@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
         else if(option == "-confirm")
         {
             Main_Tools::argument_assert( ! parameters.empty(), "Provide a file containing games to confirm they have all legal moves.");
-            return PGN::confirm_game_record(parameters[0]) ? EXIT_SUCCESS : EXIT_FAILURE;
+            PGN::confirm_game_record(parameters[0]);
         }
         else if(option == "-test")
         {
