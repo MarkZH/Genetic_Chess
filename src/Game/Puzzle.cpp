@@ -9,6 +9,7 @@
 #include <iostream>
 #include <chrono>
 using namespace std::chrono_literals;
+#include <optional>
 
 #include "Game/Board.h"
 #include "Game/Clock.h"
@@ -48,7 +49,7 @@ namespace Puzzle
             }
         }
 
-        Genetic_AI solver;
+        std::optional<Genetic_AI> solver_choice;
         for(const auto& [opt, values] : options)
         {
             if(opt == "-genetic")
@@ -59,18 +60,25 @@ namespace Puzzle
                 try
                 {
                     const auto id = values.size() > 1 ? values[1] : std::string{};
-                    solver = Genetic_AI(file_name, String::to_number<int>(id));
+                    solver_choice = Genetic_AI(file_name, String::to_number<int>(id));
                 }
                 catch(const std::invalid_argument&) // Could not convert id to an int.
                 {
-                    solver = Genetic_AI(file_name, find_last_id(file_name));
+                    solver_choice = Genetic_AI(file_name, find_last_id(file_name));
                 }
+
+                break;
             }
+        }
+
+        if( ! solver_choice.has_value())
+        {
+            throw std::invalid_argument("Puzzle solver needs a Genetic AI loaded.");
         }
 
         for(const auto& puzzle : puzzles_to_solve)
         {
-            solver.reset();
+            const auto solver = *solver_choice;
             std::cout << "\n=============\n\n" << puzzle << std::endl;
             const auto board = Board{ puzzle };
             board.cli_print(std::cout);
