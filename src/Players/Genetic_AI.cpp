@@ -611,7 +611,7 @@ namespace
 
         if( ! move_result.game_has_ended())
         {
-            return result + "{" + String::round_to_decimals(score, 2) + "})";
+            return result + std::format("{{{:.2f}}})", score);
         }
         else if(variation.size() == 1)
         {
