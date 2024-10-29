@@ -246,6 +246,7 @@
     <ClCompile Include="src\Game\Move.cpp" />
     <ClCompile Include="src\Game\PGN.cpp" />
     <ClCompile Include="src\Game\Piece.cpp" />
+    <ClCompile Include="src\Game\Puzzle.cpp" />
     <ClCompile Include="src\game\Square.cpp" />
     <ClCompile Include="src\genes\Castling_Possible_Gene.cpp" />
     <ClCompile Include="src\Genes\Checkmate_Material_Gene.cpp" />
@@ -293,6 +294,7 @@
     <ClInclude Include="src\Game\Move.h" />
     <ClInclude Include="src\Game\PGN.h" />
     <ClInclude Include="src\Game\Piece.h" />
+    <ClInclude Include="src\Game\Puzzle.h" />
     <ClInclude Include="src\Game\Square.h" />
     <ClInclude Include="src\Genes\Castling_Possible_Gene.h" />
     <ClInclude Include="src\Genes\Checkmate_Material_Gene.h" />

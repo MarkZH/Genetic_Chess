@@ -5,6 +5,7 @@
 
 #include "Game/Game.h"
 #include "Game/PGN.h"
+#include "Game/Puzzle.h"
 
 #include "Genes/Gene_Pool.h"
 
@@ -53,6 +54,11 @@ int main(int argc, char *argv[])
         {
             Main_Tools::argument_assert( ! parameters.empty(), option + " requires a numeric argument.");
             list_moves(String::to_number<size_t>(parameters[0]));
+        }
+        else if(option == "-solve")
+        {
+            Main_Tools::argument_assert( ! parameters.empty(), "Add an argument that is either an FEN to solve or a file name with a list of FENs to solve.");
+            Puzzle::solve(parameters, options);
         }
         else if(option == "-help")
         {
