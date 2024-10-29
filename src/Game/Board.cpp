@@ -835,9 +835,9 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
     auto previous_move_had_comment = false;
     for(const auto next_move : game_record_listing)
     {
-        const auto step = commentary_board.all_ply_count()/2 + 1;
         if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0 || previous_move_had_comment)
         {
+            const auto step = commentary_board.all_ply_count() / 2 + 1;
             game_text << " " << step << ".";
             if(commentary_board.whose_turn() == Piece_Color::BLACK)
             {
@@ -847,7 +847,7 @@ void Board::print_game_record(const std::vector<const Move*>& game_record_listin
 
         game_text << " " << next_move->algebraic(commentary_board);
         const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
-        const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));
+        const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board));
         if( ! commentary.empty())
         {
             game_text << " " << commentary;

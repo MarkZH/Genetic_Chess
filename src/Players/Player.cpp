@@ -17,7 +17,7 @@ void Player::reset() const noexcept
 {
 }
 
-std::string Player::commentary_for_next_move(const Board&, size_t) const noexcept
+std::string Player::commentary_for_next_move(const Board&) const noexcept
 {
     return {};
 }
