@@ -208,7 +208,8 @@ namespace String
     {
         const auto point_with_tz = std::chrono::zoned_time(std::chrono::current_zone(),
                                                            std::chrono::time_point_cast<Precision>(point_in_time));
-        return std::vformat("{:" + format + "}", std::make_format_args(point_with_tz));
+        return std::vformat(std::format("{{:{}}}", format), 
+                            std::make_format_args(point_with_tz));
     }
 
     //! \brief Create a strings with added line breaks so no line is longer than a limit.
