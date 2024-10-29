@@ -8,7 +8,10 @@ namespace PGN
     //! \brief Confirm that all moves in a PGN game record are legal moves.
     //!
     //! \param file_name The name of the file with the PGN game records. All games will be examined.
-    bool confirm_game_record(const std::string& file_name);
+    //! 
+    //! If there is an error in a game record, an exception will be thrown. Otherwise, the number of
+    //! games read will be printed to the console.
+    void confirm_game_record(const std::string& file_name);
 
     //! \brief Format and print a header line for a PGN game.
     //! 
