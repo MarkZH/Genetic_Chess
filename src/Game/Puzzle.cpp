@@ -40,7 +40,7 @@ namespace Puzzle
 
                 std::cout << std::format("Reading from file: {}", fen_or_file_name) << std::endl;
                 std::string line;
-                while(std::getline(file_input, line));
+                while(std::getline(file_input, line))
                 {
                     const auto parse_board = Board{ line };
                     puzzles_to_solve.push_back(parse_board.fen());
