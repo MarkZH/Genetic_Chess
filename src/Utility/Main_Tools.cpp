@@ -71,6 +71,11 @@ std::vector<std::tuple<std::string, std::vector<std::string>>> Main_Tools::parse
         command_line.push_back(argv[i]);
     }
 
+    if(command_line.empty())
+    {
+        return {{"-help", {}}};
+    }
+
     std::vector<std::tuple<std::string, std::vector<std::string>>> options;
     for(const auto& token : command_line)
     {
@@ -99,11 +104,6 @@ std::vector<std::tuple<std::string, std::vector<std::string>>> Main_Tools::parse
             }
             std::get<1>(options.back()).push_back(token);
         }
-    }
-
-    if(options.empty())
-    {
-        return {{"-help", {}}};
     }
 
     return options;
