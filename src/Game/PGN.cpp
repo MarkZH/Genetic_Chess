@@ -4,6 +4,9 @@
 #include "Game/Move.h"
 #include "Game/Game_Result.h"
 #include "Game/Color.h"
+#include "Game/Clock.h"
+
+#include "Players/Player.h"
 
 #include "Utility/Exceptions.h"
 #include "Utility/String.h"
@@ -13,6 +16,7 @@
 #include <string>
 #include <map>
 #include <sstream>
+#include <mutex>
 
 namespace
 {
@@ -452,4 +456,110 @@ void PGN::confirm_game_record(const std::string& file_name)
                           result.game_has_ended() && result.winner() != Winner_Color::NONE,
                           input);
     }
+}
+
+void PGN::print_game_record(const Board& board,
+                            const std::vector<const Move*>& game_record_listing,
+                            const Player& white,
+                            const Player& black,
+                            const std::string& file_name,
+                            const Game_Result& result,
+                            const Clock& game_clock,
+                            const std::string& event_name,
+                            const std::string& location) noexcept
+{
+    static std::mutex write_lock;
+    const auto write_lock_guard = std::lock_guard(write_lock);
+
+    static int game_number = 0;
+    static std::string last_used_file_name;
+    if(game_number == 0 || file_name != last_used_file_name)
+    {
+        game_number = 1;
+        last_used_file_name = file_name;
+        std::ifstream ifs(file_name);
+        for(std::string line; std::getline(ifs, line);)
+        {
+            if(line.starts_with("[Round"))
+            {
+                const auto round_number = String::to_number<int>(String::extract_delimited_text(line, '"', '"'));
+                if(round_number >= game_number)
+                {
+                    game_number = round_number + 1;
+                }
+            }
+        }
+    }
+
+    auto header_text = std::ostringstream();
+
+    PGN::print_game_header_line(header_text, "Event", event_name);
+    PGN::print_game_header_line(header_text, "Site", location);
+    PGN::print_game_header_line(header_text, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
+    PGN::print_game_header_line(header_text, "Round", game_number++);
+    PGN::print_game_header_line(header_text, "White", white.name());
+    PGN::print_game_header_line(header_text, "Black", black.name());
+
+    const auto last_move_result = board.move_result();
+    const auto& actual_result = last_move_result.game_has_ended() ? last_move_result : result;
+    PGN::print_game_header_line(header_text, "Result", actual_result.game_ending_annotation());
+
+    PGN::print_game_header_line(header_text, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
+
+    PGN::print_game_header_line(header_text, "TimeControl", game_clock.time_control_string());
+    PGN::print_game_header_line(header_text, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
+    PGN::print_game_header_line(header_text, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
+
+    if(!actual_result.ending_reason().empty() && !String::contains(actual_result.ending_reason(), "mates"))
+    {
+        PGN::print_game_header_line(header_text, "GameEnding", actual_result.ending_reason());
+    }
+
+    const auto starting_fen = board.original_fen();
+    if(starting_fen != Board().fen())
+    {
+        PGN::print_game_header_line(header_text, "SetUp", 1);
+        PGN::print_game_header_line(header_text, "FEN", starting_fen);
+    }
+
+    auto game_text = std::ostringstream();
+    auto commentary_board = Board(starting_fen);
+    auto previous_move_had_comment = false;
+    for(const auto next_move : game_record_listing)
+    {
+        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0 || previous_move_had_comment)
+        {
+            const auto step = commentary_board.all_ply_count() / 2 + 1;
+            game_text << " " << step << ".";
+            if(commentary_board.whose_turn() == Piece_Color::BLACK)
+            {
+                game_text << "..";
+            }
+        }
+
+        game_text << " " << next_move->algebraic(commentary_board);
+        const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
+        const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board));
+        if(!commentary.empty())
+        {
+            game_text << " " << commentary;
+        }
+        commentary_board.play_move(*next_move);
+        previous_move_had_comment = !commentary.empty();
+    }
+    game_text << " " << actual_result.game_ending_annotation();
+
+    const auto pgn_text = header_text.str() + "\n" + String::word_wrap(game_text.str(), 80) + "\n\n\n";
+
+    if(file_name.empty())
+    {
+        std::cout << pgn_text;
+    }
+    else
+    {
+        std::ofstream ofs(file_name, std::ios::app);
+        ofs << pgn_text;
+    }
+
+    assert(commentary_board.fen() == board.fen());
 }
