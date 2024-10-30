@@ -11,11 +11,13 @@
 #include "Players/Random_AI.h"
 #include "Players/Proxy_Player.h"
 #include "Players/Outside_Communicator.h"
+
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Color.h"
 #include "Game/Game_Result.h"
 #include "Game/Move.h"
+#include "Game/PGN.h"
 
 #include "Utility/String.h"
 #include "Utility/Main_Tools.h"
@@ -57,14 +59,15 @@ Game_Result play_game(Board board,
     }
 
     game_clock.stop();
-    board.print_game_record(game_record,
-                            white,
-                            black,
-                            pgn_file_name,
-                            result,
-                            game_clock,
-                            event_name,
-                            location);
+    PGN::print_game_record(board,
+                           game_record,
+                           white,
+                           black,
+                           pgn_file_name,
+                           result,
+                           game_clock,
+                           event_name,
+                           location);
     return result;
 }
 
@@ -117,13 +120,14 @@ void play_game_with_outsider(const Player& player,
             const auto opponent_proxy = outsider->create_proxy_player();
             const Player& white = (player_color == Piece_Color::WHITE ? player : opponent_proxy);
             const Player& black = (player_color == Piece_Color::BLACK ? player : opponent_proxy);
-            board.print_game_record(game_record,
-                                    white, black,
-                                    game_file_name,
-                                    game_result,
-                                    clock,
-                                    event_name,
-                                    location);
+            PGN::print_game_record(board,
+                                   game_record,
+                                   white, black,
+                                   game_file_name,
+                                   game_result,
+                                   clock,
+                                   event_name,
+                                   location);
             print_game_record = false;
         }
     }

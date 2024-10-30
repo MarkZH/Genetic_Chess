@@ -70,8 +70,29 @@ namespace
     }();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    std::recursive_mutex starting_fen_map_lock;
-    std::map<uint64_t, std::string> starting_fen_from_starting_hash;
+
+    //! \brief An anonymous class for storing FENs by associating them with the Zobrist hash of the board created by the FEN.
+    //! 
+    //! The purpose of this class is to store FEN strings outside of the Board class so that they are not uselessly copied during games.
+    class
+    {
+        public:
+            void add(uint64_t board_hash, const std::string& fen) noexcept
+            {
+                const auto map_lock = std::lock_guard(starting_fen_map_lock);
+                starting_fen_from_starting_hash[board_hash] = String::remove_extra_whitespace(fen);
+            }
+
+            std::string retreive(uint64_t board_hash) const noexcept
+            {
+                const auto map_lock = std::lock_guard(starting_fen_map_lock);
+                return starting_fen_from_starting_hash.at(board_hash);
+            }
+
+        private:
+            mutable std::mutex starting_fen_map_lock;
+            std::map<uint64_t, std::string> starting_fen_from_starting_hash;
+    } fen_cache;
 }
 
 Board::Board() noexcept : Board(standard_starting_fen)
@@ -185,9 +206,7 @@ Board::Board(const std::string& input_fen)
     recreate_move_caches();
 
     starting_hash = board_hash();
-    const auto map_lock = std::lock_guard(starting_fen_map_lock);
-    starting_fen_from_starting_hash[starting_hash] = String::remove_extra_whitespace(input_fen);
-
+    fen_cache.add(starting_hash, fen());
     fen_parse_assert(fen() == original_fen(), input_fen, "Result: " + fen());
 }
 
@@ -296,8 +315,7 @@ void Board::cli_print_game(const Player& white, const Player& black, const Clock
 
 std::string Board::original_fen() const noexcept
 {
-    const auto map_lock = std::lock_guard(starting_fen_map_lock);
-    return starting_fen_from_starting_hash[starting_hash];
+    return fen_cache.retreive(starting_hash);
 }
 
 Game_Result Board::play_move(const Move& move) noexcept
@@ -767,102 +785,6 @@ bool Board::move_checks_king(const Move& move) const noexcept
 bool Board::no_legal_moves() const noexcept
 {
     return legal_moves().empty();
-}
-
-void Board::print_game_record(const std::vector<const Move*>& game_record_listing,
-                              const Player& white,
-                              const Player& black,
-                              const std::string& file_name,
-                              const Game_Result& result,
-                              const Clock& game_clock,
-                              const std::string& event_name,
-                              const std::string& location) const noexcept
-{
-    static std::mutex write_lock;
-    const auto write_lock_guard = std::lock_guard(write_lock);
-
-    static int game_number = 0;
-    static std::string last_used_file_name;
-    if(game_number == 0 || file_name != last_used_file_name)
-    {
-        game_number = 1;
-        last_used_file_name = file_name;
-        std::ifstream ifs(file_name);
-        for(std::string line; std::getline(ifs, line);)
-        {
-            if(line.starts_with("[Round"))
-            {
-                const auto round_number = String::to_number<int>(String::extract_delimited_text(line, '"', '"'));
-                if(round_number >= game_number)
-                {
-                    game_number = round_number + 1;
-                }
-            }
-        }
-    }
-
-    auto header_text = std::ostringstream();
-
-    PGN::print_game_header_line(header_text, "Event", event_name);
-    PGN::print_game_header_line(header_text, "Site", location);
-    PGN::print_game_header_line(header_text, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
-    PGN::print_game_header_line(header_text, "Round", game_number++);
-    PGN::print_game_header_line(header_text, "White", white.name());
-    PGN::print_game_header_line(header_text, "Black", black.name());
-
-    const auto last_move_result = move_result();
-    const auto& actual_result = last_move_result.game_has_ended() ? last_move_result : result;
-    PGN::print_game_header_line(header_text, "Result", actual_result.game_ending_annotation());
-
-    PGN::print_game_header_line(header_text, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
-
-    PGN::print_game_header_line(header_text, "TimeControl", game_clock.time_control_string());
-    PGN::print_game_header_line(header_text, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
-    PGN::print_game_header_line(header_text, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
-
-    if( ! actual_result.ending_reason().empty() && ! actual_result.ending_reason().contains("mates"))
-    {
-        PGN::print_game_header_line(header_text, "GameEnding", actual_result.ending_reason());
-    }
-
-    const auto starting_fen = original_fen();
-    if(starting_fen != standard_starting_fen)
-    {
-        PGN::print_game_header_line(header_text, "SetUp", 1);
-        PGN::print_game_header_line(header_text, "FEN", starting_fen);
-    }
-
-    auto game_text = std::ostringstream();
-    auto commentary_board = Board(starting_fen);
-    auto previous_move_had_comment = false;
-    for(const auto next_move : game_record_listing)
-    {
-        const auto step = commentary_board.all_ply_count()/2 + 1;
-        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0 || previous_move_had_comment)
-        {
-            std::print(game_text, " {}.", step);
-            if(commentary_board.whose_turn() == Piece_Color::BLACK)
-            {
-                std::print(game_text, "..");
-            }
-        }
-
-        std::print(game_text, " {}", next_move->algebraic(commentary_board));
-        const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
-        const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));
-        if( ! commentary.empty())
-        {
-            std::print(game_text, " {}", commentary);
-        }
-        commentary_board.play_move(*next_move);
-        previous_move_had_comment = ! commentary.empty();
-    }
-    std::print(game_text, " {}", actual_result.game_ending_annotation());
-    
-    auto file_output = std::ofstream(file_name, std::ios::app);
-    auto& output = file_output ? file_output : std::cout;
-    std::print(output, "{}\n{}\n\n\n", header_text.str(), String::word_wrap(game_text.str(), 80));
-    assert(commentary_board.fen() == fen());
 }
 
 void Board::make_en_passant_targetable(const Square square) noexcept

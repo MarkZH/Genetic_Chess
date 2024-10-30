@@ -13,7 +13,6 @@
 #include <format>
 #include <ranges>
 #include <iostream>
-#include <memory>
 
 //! \brief A collection of useful functions for dealing with text strings.
 namespace String
@@ -127,16 +126,8 @@ namespace String
             std::string do_grouping() const override { return "\3"; }
         };
 
-        auto formatter = std::make_unique<thousands_separator>();
-        return std::format(std::locale(std::cout.getloc(), formatter.release()), "{:L}", n);
+        return std::format(std::locale(std::cout.getloc(), new thousands_separator), "{:L}", n);
     }
-
-    //! \brief Round a number to the specified precision
-    //!
-    //! \param x The number to be rounded.
-    //! \param decimal_places The number of digits to include after the decimal point.
-    //! \returns A string representation of the rounded number.
-    std::string round_to_decimals(double x, size_t decimal_places) noexcept;
 
     //! \brief Convert a std::string to a numeric type.
     //!
@@ -188,7 +179,8 @@ namespace String
     {
         const auto point_with_tz = std::chrono::zoned_time(std::chrono::current_zone(),
                                                            std::chrono::time_point_cast<Precision>(point_in_time));
-        return std::vformat("{:" + format + "}", std::make_format_args(point_with_tz));
+        return std::vformat(std::format("{{:{}}}", format), 
+                            std::make_format_args(point_with_tz));
     }
 
     //! \brief Create a strings with added line breaks so no line is longer than a limit.

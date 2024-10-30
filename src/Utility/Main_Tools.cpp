@@ -35,6 +35,7 @@ void Main_Tools::print_help()
     help.add_option("-test", "Run tests to ensure various parts of the program function correctly.");
     help.add_option("-speed", "Run a speed test for gene scoring and board move submission.");
     help.add_option("-perft", "Run a legal move generation speed test.");
+    help.add_option("-solve", {"FEN or file name"}, {"fen or file name ..."}, "Solve a set of chess puzzles given by FENs on the command line or file names with one FEN per line (or a mix of both). A player to do the solving must also be specified. The player has up to two minutes to solve it.");
     help.add_section_title("Player options");
     help.add_paragraph("The following options start a game with various players. If two players are specified, the first plays white and the second black. If only one player is specified, the program will wait for an Xboard or UCI command from a GUI to start playing.");
     help.add_option("-genetic", {"file name"}, {"ID number"}, "Select a minimaxing evolved player for a game and load data from the file. If there are multiple genomes in the file, specify an ID number to load, otherwise the last genome in the file will be used.");
@@ -72,6 +73,11 @@ std::vector<std::tuple<std::string, std::vector<std::string>>> Main_Tools::parse
         command_line.push_back(argv[i]);
     }
 
+    if(command_line.empty())
+    {
+        return {{"-help", {}}};
+    }
+
     std::vector<std::tuple<std::string, std::vector<std::string>>> options;
     for(const auto& token : command_line)
     {
@@ -100,11 +106,6 @@ std::vector<std::tuple<std::string, std::vector<std::string>>> Main_Tools::parse
             }
             std::get<1>(options.back()).push_back(token);
         }
-    }
-
-    if(options.empty())
-    {
-        return {{"-help", {}}};
     }
 
     return options;

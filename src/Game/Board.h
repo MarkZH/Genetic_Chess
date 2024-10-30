@@ -59,6 +59,9 @@ class Board
         //! \exception Illegal_Move if the text represents an illegal or ambiguous move. The Board is unchanged in this event.
         Game_Result play_move(const std::string& move);
 
+        //! \brief Returns the result of the previous move.
+        Game_Result move_result() const noexcept;
+
         //! \brief Figure out a move sequence to get from the current board state to the new state given by the parameter.
         //!
         //! \param new_board The new board state to be reached.
@@ -141,26 +144,6 @@ class Board
         //!          (positive for kingside, negative for queenside, zero
         //!          for no castling yet).
         int castling_direction(Piece_Color player) const noexcept;
-
-        //! \brief Prints the PGN game record with commentary from Players.
-        //!
-        //! \param game_record_listing A list of Moves. This must be a legal sequence of moves starting from
-        //!        the state of the Board at its creation and resulting in the current state of the Board.
-        //! \param white Pointer to Player playing white to provide commentary for moves. Can be nullptr.
-        //! \param black Pointer to Player playing black to provide commentary for moves. Can be nullptr.
-        //! \param file_name Name of the text file where the game will be printed. If empty, print to stdout.
-        //! \param result The result of the last action (move, clock punch, or outside intervention) in the game.
-        //! \param game_clock The game clock used during the game.
-        //! \param event_name The name of the event where the game will take place. May be empty.
-        //! \param location The name of the location of the game. May be empty.
-        void print_game_record(const std::vector<const Move*>& game_record_listing,
-                               const Player& white,
-                               const Player& black,
-                               const std::string& file_name,
-                               const Game_Result& result,
-                               const Clock& game_clock,
-                               const std::string& event_name,
-                               const std::string& location) const noexcept;
 
         //! \brief Get the piece on the square indicated by coordinates.
         //!
@@ -372,7 +355,6 @@ class Board
         bool all_empty_between(Square start, Square end) const noexcept;
         void update_board(const Move& move) noexcept;
         void switch_turn() noexcept;
-        Game_Result move_result() const noexcept;
         void make_castle_legal(Piece_Color color, Direction direction) noexcept;
         void make_castle_illegal(Piece_Color color, Direction direction) noexcept;
         bool piece_is_pinned_to_king(Piece_Color king_color, Square square) const noexcept;

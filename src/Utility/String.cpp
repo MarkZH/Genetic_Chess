@@ -95,11 +95,6 @@ bool String::isspace(char c) noexcept
     return std::isspace(c);
 }
 
-std::string String::round_to_decimals(const double x, const size_t decimal_places) noexcept
-{
-    return std::format("{:.{}f}", x, decimal_places);
-}
-
 std::string String::word_wrap(const std::string& text, const size_t line_length, const size_t indent) noexcept
 {
     const std::string space = " ";
