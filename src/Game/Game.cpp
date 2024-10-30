@@ -112,7 +112,7 @@ void play_game_with_outsider(const Player& player,
             game_result = outsider->handle_move(board, chosen_move, game_record);
         } while( ! game_result.game_has_ended());
 
-        outsider->log("Game ended with: " + game_result.ending_reason());
+        outsider->log("Game ended with: {}", game_result.ending_reason());
         if(print_game_record && ! game_file_name.empty())
         {
             clock.stop();

@@ -5,8 +5,14 @@
 #include <memory>
 #include <vector>
 #include <future>
+#include <fstream>
+#include <chrono>
+#include <format>
 
 #include "Game/Color.h"
+
+#include "Utility/String.h"
+#include "Utility/Random.h"
 
 class Clock;
 class Board;
@@ -31,6 +37,8 @@ std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player, b
 class Outside_Communicator
 {
     public:
+        Outside_Communicator(bool enable_logging);
+
         //! \brief Records that the communication channel is shutting down.
         virtual ~Outside_Communicator();
 
@@ -65,7 +73,49 @@ class Outside_Communicator
         //! \brief Log data to a local text file.
         //!
         //! \param data A text string to write.
-        static void log(const std::string& data);
+        template<typename... Format_Args>
+        void log(const std::string& data, Format_Args... args) const
+        {
+            if( ! ofs)
+            {
+                return;
+            }
+
+            flush_log_queue();
+            
+            std::string message;
+            if constexpr (sizeof...(args) == 0)
+            {
+                message = data;
+            }
+            else
+            {
+                message = std::vformat(data, std::make_format_args(args...));
+            }
+
+            ofs << String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S")
+                << " -- "
+                << message
+                << std::endl;
+        }
+
+        void flush_log_queue() const;
+
+        //! \brief Log data to a local text file.
+        //!
+        //! \param data A text string to write.
+        template<typename... Format_Args>
+        static void queue_log(const std::string& data, Format_Args... args)
+        {
+            if constexpr (sizeof...(args) == 0)
+            {
+                log_queue.push_back(data);
+            }
+            else
+            {
+                log_queue.push_back(std::vformat(data, std::make_format_args(args...)));
+            }
+        }
 
     protected:
         //! \brief Constructor is protected so that it is only called by connect_to_outside().
@@ -98,6 +148,9 @@ class Outside_Communicator
         friend std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player, bool enable_logging);
 
     private:
+        mutable std::ofstream ofs;
+        static std::vector<std::string> log_queue;
+        static bool flushing;
         std::string remote_opponent_name;
         std::future<std::string> last_listening_result;
 
