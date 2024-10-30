@@ -68,8 +68,29 @@ namespace
     }();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    std::recursive_mutex starting_fen_map_lock;
-    std::map<uint64_t, std::string> starting_fen_from_starting_hash;
+
+    //! \brief An anonymous class for storing FENs by associating them with the Zobrist hash of the board created by the FEN.
+    //! 
+    //! The purpose of this class is to store FEN strings outside of the Board class so that they are not uselessly copied during games.
+    class
+    {
+        public:
+            void add(uint64_t board_hash, const std::string& fen) noexcept
+            {
+                const auto map_lock = std::lock_guard(starting_fen_map_lock);
+                starting_fen_from_starting_hash[board_hash] = String::remove_extra_whitespace(fen);
+            }
+
+            std::string retreive(uint64_t board_hash) const noexcept
+            {
+                const auto map_lock = std::lock_guard(starting_fen_map_lock);
+                return starting_fen_from_starting_hash.at(board_hash);
+            }
+
+        private:
+            mutable std::mutex starting_fen_map_lock;
+            std::map<uint64_t, std::string> starting_fen_from_starting_hash;
+    } fen_cache;
 }
 
 Board::Board() noexcept : Board(standard_starting_fen)
@@ -183,9 +204,7 @@ Board::Board(const std::string& input_fen)
     recreate_move_caches();
 
     starting_hash = board_hash();
-    const auto map_lock = std::lock_guard(starting_fen_map_lock);
-    starting_fen_from_starting_hash[starting_hash] = String::remove_extra_whitespace(input_fen);
-
+    fen_cache.add(starting_hash, fen());
     fen_parse_assert(fen() == original_fen(), input_fen, "Result: " + fen());
 }
 
@@ -294,8 +313,7 @@ void Board::cli_print_game(const Player& white, const Player& black, const Clock
 
 std::string Board::original_fen() const noexcept
 {
-    const auto map_lock = std::lock_guard(starting_fen_map_lock);
-    return starting_fen_from_starting_hash[starting_hash];
+    return fen_cache.retreive(starting_hash);
 }
 
 Game_Result Board::play_move(const Move& move) noexcept
