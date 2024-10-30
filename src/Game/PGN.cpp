@@ -253,7 +253,7 @@ void PGN::confirm_game_record(const std::string& file_name)
             }
             else
             {
-                std::cout << "Found " << game_count << " " << (game_count == 1 ? "game" : "games") << ".\n";
+                std::println("Found {} game{}.", game_count, game_count == 1 ? "" : "s");
                 return;
             }
         }
@@ -425,14 +425,14 @@ void PGN::confirm_game_record(const std::string& file_name)
         {
             const auto line_count = line_number(input, input.tellg());
             auto message = std::ostringstream();
-            message << "Move (" << move_number << token << ") is illegal" << " (line: " << line_count << ").\n";
+            std::println(message, "Move ({}{}) is illegal (line: {}).", move_number, token, line_count);
             board.cli_print(message);
-            message << "\nLegal moves: ";
+            std::print(message, "\nLegal moves: ");
             for(const auto legal_move : board.legal_moves())
             {
-                message << legal_move->algebraic(board) << " ";
+                std::print(message, "{} ", legal_move->algebraic(board));
             }
-            message << '\n' << board.fen() << '\n';
+            std::println(message, "\n{}", board.fen());
             throw PGN_Error(message.str());
         }
 
@@ -532,35 +532,35 @@ void PGN::print_game_record(const Board& board,
         if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0 || previous_move_had_comment)
         {
             const auto step = commentary_board.all_ply_count() / 2 + 1;
-            game_text << " " << step << ".";
+            std::print(game_text, " {}.", step);
             if(commentary_board.whose_turn() == Piece_Color::BLACK)
             {
-                game_text << "..";
+                std::print(game_text, "..");
             }
         }
 
-        game_text << " " << next_move->algebraic(commentary_board);
+        std::print(game_text, " {}", next_move->algebraic(commentary_board));
         const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
         const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board));
-        if(!commentary.empty())
+        if( ! commentary.empty())
         {
-            game_text << " " << commentary;
+            std::print(game_text, " {}", commentary);
         }
         commentary_board.play_move(*next_move);
         previous_move_had_comment = !commentary.empty();
     }
-    game_text << " " << actual_result.game_ending_annotation();
+    std::print(game_text, " {}", actual_result.game_ending_annotation());
 
-    const auto pgn_text = header_text.str() + "\n" + String::word_wrap(game_text.str(), 80) + "\n\n\n";
+    const auto pgn_text = std::format("{}\n{}\n\n\n", header_text.str(), String::word_wrap(game_text.str(), 80));
 
     if(file_name.empty())
     {
-        std::cout << pgn_text;
+        std::print("{}", pgn_text);
     }
     else
     {
         std::ofstream ofs(file_name, std::ios::app);
-        ofs << pgn_text;
+        std::print(ofs, "{}", pgn_text);
     }
 
     assert(commentary_board.fen() == board.fen());
