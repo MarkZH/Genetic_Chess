@@ -93,10 +93,9 @@ class Outside_Communicator
                 message = std::vformat(data, std::make_format_args(args...));
             }
 
-            ofs << String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S")
-                << " -- "
-                << message
-                << std::endl;
+            const auto timestamp = String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S");
+            std::println(ofs, "{} -- {}", timestamp, message);
+            ofs.flush();
         }
 
         void flush_log_queue() const;
