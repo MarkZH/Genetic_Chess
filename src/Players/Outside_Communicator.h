@@ -150,7 +150,6 @@ class Outside_Communicator
     private:
         mutable std::ofstream ofs;
         static std::vector<std::string> log_queue;
-        static bool flushing;
         std::string remote_opponent_name;
         std::future<std::string> last_listening_result;
 
