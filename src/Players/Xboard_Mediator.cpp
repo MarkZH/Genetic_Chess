@@ -17,7 +17,7 @@ using namespace std::chrono_literals;
 #include "Utility/Exceptions.h"
 #include "Utility/String.h"
 
-Xboard_Mediator::Xboard_Mediator(const Player& local_player)
+Xboard_Mediator::Xboard_Mediator(const Player& local_player, const bool enable_logging_in) : Outside_Communicator(enable_logging_in)
 {
     const std::string expected = "protover 2";
     const auto command = receive_command();
@@ -36,7 +36,7 @@ Xboard_Mediator::Xboard_Mediator(const Player& local_player)
     }
     else
     {
-        log("ERROR: Expected \"" + expected + "\"");
+        log("ERROR: Expected \"{}\"", expected);
         throw std::runtime_error("Error in communicating with Xboard program. Expected \"" + expected + "\", got \"" + command + "\".");
     }
 }
@@ -82,7 +82,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
             else if(command.starts_with("name "))
             {
                 const auto name = String::split(command, " ", 1).back();
-                log("Getting other player's name: " + name);
+                log("Getting other player's name: {}", name);
                 record_opponent_name(name);
             }
             else if(command.starts_with("setboard "))
@@ -97,7 +97,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                     const auto new_move_list = board.derive_moves(new_board);
                     if(new_move_list.empty())
                     {
-                        log("Rearranging board to: " + fen);
+                        log("Rearranging board to: {}", fen);
                         board = new_board;
                         move_list.clear();
                         setup_result = {};
@@ -106,7 +106,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                     {
                         for(auto move : new_move_list)
                         {
-                            log("Derived move: " + move->coordinates());
+                            log("Derived move: {}", move->coordinates());
                             setup_result = board.play_move(*move);
                             move_list.push_back(board.last_move());
                         }
@@ -122,7 +122,7 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
                 const auto move = String::split(command).back();
                 try
                 {
-                    log("Applying move: " + move);
+                    log("Applying move: {}", move);
                     setup_result = board.play_move(move);
                     move_list.push_back(board.last_move());
                     if(setup_result.game_has_ended())
@@ -143,25 +143,25 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
             }
             else if(command.starts_with("level "))
             {
-                log("got time specs: " + command);
+                log("got time specs: {}", command);
                 const auto split = String::split(command);
 
-                log("moves to reset clock = " + split[1]);
+                log("moves to reset clock = {}", split[1]);
                 const auto reset_moves = String::to_number<size_t>(split[1]);
                 const auto time_split = String::split(split[2], ":");
                 auto game_time = 0s;
                 if(time_split.size() == 1)
                 {
-                    log("game time = " + time_split[0] + " minutes");
+                    log("game time = {} minutes", time_split[0]);
                     game_time = String::to_duration<std::chrono::minutes>(time_split[0]);
                 }
                 else
                 {
-                    log("game time = " + time_split[0] + " minutes and " + time_split[1] + " seconds");
+                    log("game time = {} minutes and {} seconds", time_split[0], time_split[1]);
                     game_time = String::to_duration<std::chrono::minutes>(time_split[0]) + String::to_duration<std::chrono::seconds>(time_split[1]);
                 }
 
-                log("increment = " + split[3]);
+                log("increment = {}", split[3]);
                 const auto increment = String::to_duration<Clock::seconds>(split[3]);
                 clock = Clock(game_time,
                               reset_moves,
@@ -173,10 +173,10 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
             }
             else if(command.starts_with("st "))
             {
-                log("got time specs: " + command + " seconds");
+                log("got time specs: {} seconds", command);
                 const auto split = String::split(command);
                 const auto time_per_move = String::to_duration<Clock::seconds>(split[1]);
-                log("game time per move = " + std::to_string(time_per_move.count()) + " seconds");
+                log("game time per move = {} seconds", time_per_move.count());
                 clock = Clock(time_per_move,
                               1,
                               0.0s,
@@ -188,12 +188,12 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
             else if(command.starts_with("time "))
             {
                 own_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
-                log("Will set own time to " + std::to_string(own_time_left->count()) + " seconds.");
+                log("Will set own time to {} seconds.", own_time_left->count());
             }
             else if(command.starts_with("otim "))
             {
                 opponent_time_left = String::to_duration<centiseconds>(String::split(command, " ")[1]);
-                log("Will set opponent's time to " + std::to_string(opponent_time_left->count()) + " seconds.");
+                log("Will set opponent's time to {} seconds.", opponent_time_left->count());
             }
             else if(command == "undo")
             {
@@ -229,9 +229,9 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
             {
                 try
                 {
-                    log("Attempting to interpret as move: " + command);
+                    log("Attempting to interpret as move: {}", command);
                     setup_result = board.play_move(command);
-                    log("Applied move: " + command);
+                    log("Applied move: {}", command);
                     move_list.push_back(board.last_move());
                     if(setup_result.game_has_ended())
                     {
@@ -257,11 +257,11 @@ Game_Result Xboard_Mediator::setup_turn(Board& board, Clock& clock, std::vector<
     }
 
     const auto own_time = own_time_left.value_or(clock.time_left(board.whose_turn()));
-    log("Setting own time (" + color_text(board.whose_turn()) + ") to " + std::to_string(own_time.count()) + " seconds.");
+    log("Setting own time ({}) to {} seconds.", color_text(board.whose_turn()), own_time.count());
     clock.set_time(board.whose_turn(), own_time);
 
     const auto opponent_time = opponent_time_left.value_or(clock.time_left(opposite(board.whose_turn())));
-    log("Setting opponent's time (" + color_text(opposite(board.whose_turn())) + ") to " + std::to_string(opponent_time.count()) + " seconds.");
+    log("Setting opponent's time ({}) to {} seconds.", color_text(opposite(board.whose_turn())), opponent_time.count());
     clock.set_time(opposite(board.whose_turn()), opponent_time);
 
     Player::choose_move_at_leisure();
@@ -277,7 +277,7 @@ bool Xboard_Mediator::undo_move(std::vector<const Move*>& move_list, const std::
     }
     else
     {
-        log("Undoing move: " + move_list.back()->coordinates());
+        log("Undoing move: {}", move_list.back()->coordinates());
         player.undo_move(board.last_move());
         move_list.pop_back();
         auto new_board = Board(board.original_fen());
@@ -295,7 +295,7 @@ Game_Result Xboard_Mediator::handle_move(Board& board, const Move& move, std::ve
 {
     if(in_force_mode)
     {
-        log("Ignoring move: " + move.coordinates());
+        log("Ignoring move: {}", move.coordinates());
         return {};
     }
     else
@@ -366,7 +366,7 @@ std::string Xboard_Mediator::listener(Clock& clock)
             }
             else if(command.starts_with("result "))
             {
-                log("Stopped thinking about move by: " + command);
+                log("Stopped thinking about move by: {}", command);
                 Player::pick_move_now();
                 return command;
             }
