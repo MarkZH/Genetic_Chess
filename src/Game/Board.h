@@ -374,8 +374,6 @@ class Board
 
         bool king_multiply_checked() const noexcept;
 
-        static void fen_parse_assert(bool assertion, const std::string& input_fen, const std::string& failure_message);
-
         // To implement side effects beyond moving and capturing pieces
         friend class Move;
 

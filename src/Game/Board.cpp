@@ -93,6 +93,16 @@ namespace
             mutable std::mutex starting_fen_map_lock;
             std::map<uint64_t, std::string> starting_fen_from_starting_hash;
     } fen_cache;
+
+    template<typename... Format_Args>
+    void fen_parse_assert(bool assertion, const std::string& input_fen, const std::string& failure_message_template, Format_Args... args)
+    {
+        if( ! assertion)
+        {
+            throw std::invalid_argument(std::format("Bad FEN input: {}\n{}", input_fen,
+                                                    std::vformat(failure_message_template, std::make_format_args(args...))));
+        }
+    }
 }
 
 Board::Board() noexcept : Board(standard_starting_fen)
@@ -115,28 +125,29 @@ Board::Board(const std::string& input_fen)
             if(std::isdigit(symbol))
             {
                 file += char(symbol - '0');
-                fen_parse_assert(file <= 'h' + 1, input_fen, "Too many squares in rank " + std::to_string(rank));
+                fen_parse_assert(file <= 'h' + 1, input_fen, "Too many squares in rank {}", rank);
             }
             else
             {
-                fen_parse_assert(file <= 'h', input_fen, "Too many squares in rank " + std::to_string(rank));
+                fen_parse_assert(file <= 'h', input_fen, "Too many squares in rank {}", rank);
                 const auto piece = Piece{symbol};
                 fen_parse_assert(piece.type() != Piece_Type::PAWN || (rank != 1 && rank != 8), input_fen, "Pawns cannot be placed on the home ranks.");
-                fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), input_fen, "More than one " + color_text(piece.color()) + " king.");
+                fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), input_fen, 
+                                 "More than one {} king.", String::lowercase(color_text(piece.color())));
 
                 place_piece(piece, {file, rank});
                 ++file;
             }
         }
 
-        fen_parse_assert(file == 'h' + 1, input_fen, "Too few squares in rank " + std::to_string(rank));
+        fen_parse_assert(file == 'h' + 1, input_fen, "Too few squares in rank {}", rank);
     }
 
     fen_parse_assert(find_king(Piece_Color::WHITE).is_set(), input_fen, "White king not in FEN string");
     fen_parse_assert(find_king(Piece_Color::BLACK).is_set(), input_fen, "Black king not in FEN string");
 
     const auto first_turn = fen_parse.at(1);
-    fen_parse_assert(first_turn == "w" || first_turn == "b", input_fen, "Invalid character for whose turn: " + first_turn);
+    fen_parse_assert(first_turn == "w" || first_turn == "b", input_fen, "Invalid character for whose turn: {}", first_turn);
     if(first_turn == "b")
     {
         switch_turn();
@@ -144,16 +155,14 @@ Board::Board(const std::string& input_fen)
 
     const auto non_turn_color = opposite(whose_turn());
     fen_parse_assert(safe_for_king(find_king(non_turn_color), non_turn_color), input_fen,
-                     color_text(non_turn_color) +
-                     " is in check but it is " +
-                     color_text(whose_turn()) + "'s turn.");
+                     "{} is in check but it is {}'s turn.", color_text(non_turn_color), color_text(whose_turn()));
 
     const auto castling_parse = fen_parse.at(2);
     if(castling_parse != "-")
     {
         for(const auto c : castling_parse)
         {
-            fen_parse_assert(std::string{"KQkq"}.contains(c), input_fen, std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
+            fen_parse_assert(std::string_view{"KQkq"}.contains(c), input_fen, "Illegal character in castling section: {} ({})", c, castling_parse);
 
             const auto piece_color = std::isupper(c) ? Piece_Color::WHITE : Piece_Color::BLACK;
             const auto rook_square = Square{std::toupper(c) == 'K' ? 'h' : 'a', std::isupper(c) ? 1 : 8};
@@ -165,11 +174,11 @@ Board::Board(const std::string& input_fen)
             const auto king = Piece{piece_color, Piece_Type::KING};
 
             fen_parse_assert(piece_on_square(rook_square) == rook, input_fen,
-                             "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.text() + " to castle " + side + "side.");
+                             "There must be a {} rook on {} to castle {}side.", String::lowercase(color_text(piece_color)), rook_square.text(), side);
             fen_parse_assert(piece_on_square(king_square) == king, input_fen,
-                             "There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.text() + " to castle.");
+                             "There must be a {} king on {} to castle.", String::lowercase(color_text(piece_color)), king_square.text());
             fen_parse_assert( ! castle_is_legal(piece_color, castling_side), input_fen,
-                             "There are repeated characters in the castling text: " + castling_parse);
+                             "There are repeated characters in the castling text: {}", castling_parse);
 
             make_castle_legal(piece_color, castling_side);
         }
@@ -207,15 +216,7 @@ Board::Board(const std::string& input_fen)
 
     starting_hash = board_hash();
     fen_cache.add(starting_hash, fen());
-    fen_parse_assert(fen() == original_fen(), input_fen, "Result: " + fen());
-}
-
-void Board::fen_parse_assert(const bool condition, const std::string& input_fen, const std::string& failure_message)
-{
-    if( ! condition)
-    {
-        throw std::invalid_argument("Bad FEN input: " + input_fen + "\n" + failure_message);
-    }
+    fen_parse_assert(fen() == original_fen(), input_fen, "Result: {}", fen());
 }
 
 Piece& Board::piece_on_square(const Square square) noexcept
@@ -498,7 +499,7 @@ const Move& Board::interpret_move(const std::string& move_text) const
     }
     else
     {
-        throw Illegal_Move("The move text is not a valid or legal move: " + move_text);
+        throw Illegal_Move(std::format("The move text is not a valid or legal move: {}", move_text));
     }
 }
 
