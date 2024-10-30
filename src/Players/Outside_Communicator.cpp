@@ -33,7 +33,6 @@ std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player, c
 }
 
 std::vector<std::string> Outside_Communicator::log_queue{};
-bool Outside_Communicator::flushing = false;
 
 Outside_Communicator::Outside_Communicator(const bool enable_logging)
 {
@@ -122,6 +121,7 @@ void Outside_Communicator::listen(Clock& clock)
 
 void Outside_Communicator::flush_log_queue() const
 {
+    static bool flushing = false;
     if( ! flushing)
     {
         flushing = true;
