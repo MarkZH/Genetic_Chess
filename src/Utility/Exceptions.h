@@ -41,4 +41,10 @@ class Illegal_Move : public std::runtime_error
     using std::runtime_error::runtime_error;
 };
 
+//! \brief An exception thrown when an error in a PGN text is found.
+class PGN_Error : public std::runtime_error
+{
+    using std::runtime_error::runtime_error;
+};
+
 #endif // EXCEPTIONS_H

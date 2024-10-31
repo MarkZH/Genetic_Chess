@@ -31,12 +31,9 @@ namespace
     //! \brief Create a PGN variation string.
     //!
     //! \param board The board state just before any of the variation moves are played.
-    //! \param move_number The index of the game move (0 for the first player's first move,
-    //!        1 for first move by that player's opponent, etc.).
     //! \param variation A sequence of moves from the current board position.
     //! \param score The score assigned to the resulting board after the sequence of moves.
         std::string variation_line(Board board,
-                                   size_t move_number,
                                    const std::vector<const Move*>& variation,
                                    double score) noexcept;
 }
@@ -586,7 +583,7 @@ void Genetic_AI::calculate_centipawn_value() const noexcept
     value_of_centipawn = sum_of_diffs/count/100;
 }
 
-std::string Genetic_AI::commentary_for_next_move(const Board& board, const size_t move_number) const noexcept
+std::string Genetic_AI::commentary_for_next_move(const Board& board) const noexcept
 {
     const auto comment_index = board.played_ply_count()/2;
     if(comment_index >= commentary.size() || commentary.at(comment_index).variation_line().empty())
@@ -597,18 +594,18 @@ std::string Genetic_AI::commentary_for_next_move(const Board& board, const size_
     const auto& comment = commentary.at(comment_index);
     const auto variation = comment.variation_line();
     const auto score = comment.corrected_score(board.whose_turn())/centipawn_value()/100.0;
-    return variation_line(board, move_number, variation, score);
+    return variation_line(board, variation, score);
 }
 
 namespace
 {
     std::string variation_line(Board board,
-                               const size_t move_number,
                                const std::vector<const Move*>& variation,
                                const double score) noexcept
     {
         Game_Result move_result;
         const auto move_label_offset = (board.whose_turn() == Piece_Color::WHITE ? 0 : 1);
+        const auto move_number = board.all_ply_count()/2 + 1;
         std::string result = "(" + (board.whose_turn() == Piece_Color::BLACK ? std::to_string(move_number) + "... " : std::string{});
         for(size_t i = 0; i < variation.size(); ++i)
         {
@@ -619,7 +616,7 @@ namespace
 
         if( ! move_result.game_has_ended())
         {
-            return result + "{" + String::round_to_decimals(score, 2) + "})";
+            return result + std::format("{{{:.2f}}})", score);
         }
         else if(variation.size() == 1)
         {

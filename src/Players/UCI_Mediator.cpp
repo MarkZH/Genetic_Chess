@@ -16,7 +16,7 @@ using namespace std::chrono_literals;
 #include "Utility/String.h"
 #include "Utility/Exceptions.h"
 
-UCI_Mediator::UCI_Mediator(const Player& player)
+UCI_Mediator::UCI_Mediator(const Player& player, const bool enable_logging) : Outside_Communicator(enable_logging)
 {
     send_command("id name " + player.name());
     send_command("id author " + player.author());
@@ -50,17 +50,17 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                 const auto opponent_split = String::split(command, " ", 7);
                 if(opponent_split.size() != 8)
                 {
-                    log("Malformed UCI_Opponent line: " + command);
+                    log("Malformed UCI_Opponent line: {}", command);
                 }
                 else
                 {
                     const auto& title = opponent_split[4];
-                    log("Opponent title: " + title);
-                    log("Opponent rating: " + opponent_split[5]);
-                    log("Opponent type: " + opponent_split[6]);
+                    log("Opponent title: {}", title);
+                    log("Opponent rating: {}", opponent_split[5]);
+                    log("Opponent type: {}", opponent_split[6]);
                     const auto& name = opponent_split[7];
                     record_opponent_name(name, title);
-                    log("Opponent's name: " + name);
+                    log("Opponent's name: {}", name);
                 }
             }
             else if(command.starts_with("position "))
@@ -139,43 +139,43 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
                     const auto number = String::to_number<int>(token);
                     if(parameter == "wtime")
                     {
-                        log("Setting White's time to " + std::to_string(number) + " ms");
+                        log("Setting White's time to {} ms", number);
                         wtime = std::chrono::milliseconds{number};
                         new_mode = Time_Reset_Method::ADDITION;
                     }
                     else if(parameter == "btime")
                     {
-                        log("Setting Black's time to " + std::to_string(number) + " ms");
+                        log("Setting Black's time to {} ms", number);
                         btime = std::chrono::milliseconds{number};
                         new_mode = Time_Reset_Method::ADDITION;
                     }
                     else if(parameter == "winc")
                     {
-                        log("Setting White's increment time to " + std::to_string(number) + " ms");
+                        log("Setting White's increment time to {} ms", number);
                         winc = std::chrono::milliseconds{number};
                         new_mode = Time_Reset_Method::ADDITION;
                     }
                     else if(parameter == "binc")
                     {
-                        log("Setting Black's increment time to " + std::to_string(number) + " ms");
+                        log("Setting Black's increment time to {} ms", number);
                         binc = std::chrono::milliseconds{number};
                         new_mode = Time_Reset_Method::ADDITION;
                     }
                     else if(parameter == "movestogo")
                     {
-                        log("Next time control in " + std::to_string(number) + " moves");
+                        log("Next time control in {} moves", number);
                         movestogo = number;
                         new_mode = Time_Reset_Method::ADDITION;
                     }
                     else if(parameter == "movetime")
                     {
-                        log("Setting clock to " + std::to_string(number) + " ms per move");
+                        log("Setting clock to {} ms per move", number);
                         movetime = std::chrono::milliseconds{number};
                         new_mode = Time_Reset_Method::SET_TO_ORIGINAL;
                     }
                     else
                     {
-                        log("Ignoring go command: " + parameter);
+                        log("Ignoring go command: {}", parameter);
                     }
 
                     parameter.clear();

@@ -4,20 +4,91 @@
 #include <vector>
 #include <csignal>
 #include <iostream>
+#include <memory>
 
 #include "Players/Player.h"
 #include "Players/Genetic_AI.h"
 #include "Players/Random_AI.h"
 #include "Players/Proxy_Player.h"
 #include "Players/Outside_Communicator.h"
+
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Color.h"
 #include "Game/Game_Result.h"
 #include "Game/Move.h"
+#include "Game/PGN.h"
 
 #include "Utility/String.h"
 #include "Utility/Main_Tools.h"
+
+std::vector<std::unique_ptr<Player>> get_players(Main_Tools::command_line_options& options)
+{
+    Main_Tools::command_line_options remaining_options;
+    std::vector<std::unique_ptr<Player>> players;
+    for(const auto& [opt, values] : options)
+    {
+        if(opt == "-random")
+        {
+            players.push_back(std::make_unique<Random_AI>());
+        }
+        else if(opt == "-genetic")
+        {
+            Main_Tools::argument_assert(!values.empty(), "Genome file needed for player");
+            std::string file_name = values[0];
+
+            try
+            {
+                const auto id = values.size() > 1 ? values[1] : std::string{};
+                players.push_back(std::make_unique<Genetic_AI>(file_name, String::to_number<int>(id)));
+            }
+            catch(const std::invalid_argument&) // Could not convert id to an int.
+            {
+                players.push_back(std::make_unique<Genetic_AI>(file_name, find_last_id(file_name)));
+            }
+        }
+        else
+        {
+            remaining_options.emplace_back(opt, values);
+        }
+    }
+
+    options = remaining_options;
+    return players;
+}
+
+Clock get_clock(Main_Tools::command_line_options& options)
+{
+    Main_Tools::command_line_options remaining_options;
+    Clock::seconds game_time{};
+    size_t moves_per_reset = 0;
+    Clock::seconds increment_time{};
+    for(const auto& [opt, values] : options)
+    {
+        if(opt == "-time")
+        {
+            Main_Tools::argument_assert(!values.empty(), opt + " requires a numeric parameter.");
+            game_time = String::to_duration<Clock::seconds>(values[0]);
+        }
+        else if(opt == "-reset-moves")
+        {
+            Main_Tools::argument_assert(!values.empty(), opt + " requires a whole number parameter.");
+            moves_per_reset = String::to_number<size_t>(values[0]);
+        }
+        else if(opt == "-increment-time")
+        {
+            Main_Tools::argument_assert(!values.empty(), opt + " requires a numeric parameter.");
+            increment_time = String::to_duration<Clock::seconds>(values[0]);
+        }
+        else
+        {
+            remaining_options.emplace_back(opt, values);
+        }
+    }
+
+    options = remaining_options;
+    return Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION);
+}
 
 Game_Result play_game(Board board,
                       Clock game_clock,
@@ -66,14 +137,15 @@ Game_Result play_game(Board board,
     }
 
     game_clock.stop();
-    board.print_game_record(game_record,
-                            white,
-                            black,
-                            pgn_file_name,
-                            result,
-                            game_clock,
-                            event_name,
-                            location);
+    PGN::print_game_record(board,
+                           game_record,
+                           white,
+                           black,
+                           pgn_file_name,
+                           result,
+                           game_clock,
+                           event_name,
+                           location);
     return result;
 }
 
@@ -119,34 +191,28 @@ void play_game_with_outsider(const Player& player,
             game_result = outsider->handle_decision(board, decision, game_record);
         } while( ! game_result.game_has_ended());
 
-        outsider->log("Game ended with: " + game_result.ending_reason());
+        outsider->log("Game ended with: {}", game_result.ending_reason());
         if(print_game_record && ! game_file_name.empty())
         {
             clock.stop();
             const auto opponent_proxy = outsider->create_proxy_player();
             const Player& white = (player_color == Piece_Color::WHITE ? player : opponent_proxy);
             const Player& black = (player_color == Piece_Color::BLACK ? player : opponent_proxy);
-            board.print_game_record(game_record,
-                                    white, black,
-                                    game_file_name,
-                                    game_result,
-                                    clock,
-                                    event_name,
-                                    location);
+            PGN::print_game_record(board,
+                                   game_record,
+                                   white, black,
+                                   game_file_name,
+                                   game_result,
+                                   clock,
+                                   event_name,
+                                   location);
             print_game_record = false;
         }
     }
 }
 
-void start_game(const std::vector<std::tuple<std::string, std::vector<std::string>>>& options)
+void start_game(Main_Tools::command_line_options options)
 {
-    // Use pointers since each player could be Genetic, Random, etc.
-    std::unique_ptr<Player> white;
-    std::unique_ptr<Player> black;
-
-    Clock::seconds game_time{};
-    size_t moves_per_reset = 0;
-    Clock::seconds increment_time{};
     Board board;
     std::string game_file_name;
     std::string event_name;
@@ -155,44 +221,12 @@ void start_game(const std::vector<std::tuple<std::string, std::vector<std::strin
     auto print_board = false;
     auto enable_logging = false;
 
+    const auto players = get_players(options);
+    const auto clock = get_clock(options);
+
     for(const auto& [opt, values] : options)
     {
-        std::unique_ptr<Player> latest;
-        if(opt == "-random")
-        {
-            latest = std::make_unique<Random_AI>();
-        }
-        else if(opt == "-genetic")
-        {
-            Main_Tools::argument_assert( ! values.empty(), "Genome file needed for player");
-            std::string file_name = values[0];
-
-            try
-            {
-                const auto id = values.size() > 1 ? values[1] : std::string{};
-                latest = std::make_unique<Genetic_AI>(file_name, String::to_number<int>(id));
-            }
-            catch(const std::invalid_argument&) // Could not convert id to an int.
-            {
-                latest = std::make_unique<Genetic_AI>(file_name, find_last_id(file_name));
-            }
-        }
-        else if(opt == "-time")
-        {
-            Main_Tools::argument_assert( ! values.empty(), opt + " requires a numeric parameter.");
-            game_time = String::to_duration<Clock::seconds>(values[0]);
-        }
-        else if(opt == "-reset-moves")
-        {
-            Main_Tools::argument_assert( ! values.empty(), opt + " requires a whole number parameter.");
-            moves_per_reset = String::to_number<size_t>(values[0]);
-        }
-        else if(opt == "-increment-time")
-        {
-            Main_Tools::argument_assert( ! values.empty(), opt + " requires a numeric parameter.");
-            increment_time = String::to_duration<Clock::seconds>(values[0]);
-        }
-        else if(opt == "-board")
+        if(opt == "-board")
         {
             Main_Tools::argument_assert( ! values.empty(), opt + " requires a quoted FEN text parameter.");
             board = Board(values[0]);
@@ -232,42 +266,30 @@ void start_game(const std::vector<std::tuple<std::string, std::vector<std::strin
         {
             throw std::invalid_argument("Invalid or incomplete game option: " + opt);
         }
-
-        if(latest)
-        {
-            if(!white)
-            {
-                white = std::move(latest);
-            }
-            else if(!black)
-            {
-                black = std::move(latest);
-            }
-            else
-            {
-                throw std::invalid_argument("More than two players specified.");
-            }
-        }
     }
 
-    if(!white)
+    if(players.empty())
     {
         throw std::invalid_argument("At least one player must be specified.");
     }
-
-    if(!black)
+    else if(players.size() == 1)
     {
-        play_game_with_outsider(*white, event_name, location, game_file_name, enable_logging);
+        play_game_with_outsider(*players.front(), event_name, location, game_file_name, enable_logging);
     }
-    else
+    else if(players.size() == 2)
     {
         Player::set_thinking_mode(thinking_output);
         play_game(board,
-                  Clock(game_time, moves_per_reset, increment_time, Time_Reset_Method::ADDITION),
-                  *white, *black,
+                  clock,
+                  *players.front(),
+                  *players.back(),
                   event_name,
                   location,
                   game_file_name,
                   print_board);
+    }
+    else
+    {
+        throw std::invalid_argument("More than two players specified.");
     }
 }

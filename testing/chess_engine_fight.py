@@ -34,7 +34,7 @@ while True:
         print(out.stderr)
         break
 
-    result = subprocess.run([checker, '-confirm', game_file])
+    result = subprocess.run([checker, '-confirm', game_file], stdout=subprocess.DEVNULL)
     if result.returncode != 0:
         print('Found discrepancy. See ' + game_file)
         print('generator = ' + generator)

@@ -68,8 +68,39 @@ namespace
     }();
 
     const std::string standard_starting_fen = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-    std::recursive_mutex starting_fen_map_lock;
-    std::map<uint64_t, std::string> starting_fen_from_starting_hash;
+
+    //! \brief An anonymous class for storing FENs by associating them with the Zobrist hash of the board created by the FEN.
+    //! 
+    //! The purpose of this class is to store FEN strings outside of the Board class so that they are not uselessly copied during games.
+    class
+    {
+        public:
+            void add(uint64_t board_hash, const std::string& fen) noexcept
+            {
+                const auto map_lock = std::lock_guard(starting_fen_map_lock);
+                starting_fen_from_starting_hash[board_hash] = String::remove_extra_whitespace(fen);
+            }
+
+            std::string retreive(uint64_t board_hash) const noexcept
+            {
+                const auto map_lock = std::lock_guard(starting_fen_map_lock);
+                return starting_fen_from_starting_hash.at(board_hash);
+            }
+
+        private:
+            mutable std::mutex starting_fen_map_lock;
+            std::map<uint64_t, std::string> starting_fen_from_starting_hash;
+    } fen_cache;
+
+    template<typename... Format_Args>
+    void fen_parse_assert(bool assertion, const std::string& input_fen, const std::string& failure_message_template, Format_Args... args)
+    {
+        if( ! assertion)
+        {
+            throw std::invalid_argument(std::format("Bad FEN input: {}\n{}", input_fen,
+                                                    std::vformat(failure_message_template, std::make_format_args(args...))));
+        }
+    }
 }
 
 Board::Board() noexcept : Board(standard_starting_fen)
@@ -92,28 +123,29 @@ Board::Board(const std::string& input_fen)
             if(std::isdigit(symbol))
             {
                 file += char(symbol - '0');
-                fen_parse_assert(file <= 'h' + 1, input_fen, "Too many squares in rank " + std::to_string(rank));
+                fen_parse_assert(file <= 'h' + 1, input_fen, "Too many squares in rank {}", rank);
             }
             else
             {
-                fen_parse_assert(file <= 'h', input_fen, "Too many squares in rank " + std::to_string(rank));
+                fen_parse_assert(file <= 'h', input_fen, "Too many squares in rank {}", rank);
                 const auto piece = Piece{symbol};
                 fen_parse_assert(piece.type() != Piece_Type::PAWN || (rank != 1 && rank != 8), input_fen, "Pawns cannot be placed on the home ranks.");
-                fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), input_fen, "More than one " + color_text(piece.color()) + " king.");
+                fen_parse_assert(piece.type() != Piece_Type::KING || ! find_king(piece.color()).is_set(), input_fen, 
+                                 "More than one {} king.", String::lowercase(color_text(piece.color())));
 
                 place_piece(piece, {file, rank});
                 ++file;
             }
         }
 
-        fen_parse_assert(file == 'h' + 1, input_fen, "Too few squares in rank " + std::to_string(rank));
+        fen_parse_assert(file == 'h' + 1, input_fen, "Too few squares in rank {}", rank);
     }
 
     fen_parse_assert(find_king(Piece_Color::WHITE).is_set(), input_fen, "White king not in FEN string");
     fen_parse_assert(find_king(Piece_Color::BLACK).is_set(), input_fen, "Black king not in FEN string");
 
     const auto first_turn = fen_parse.at(1);
-    fen_parse_assert(first_turn == "w" || first_turn == "b", input_fen, "Invalid character for whose turn: " + first_turn);
+    fen_parse_assert(first_turn == "w" || first_turn == "b", input_fen, "Invalid character for whose turn: {}", first_turn);
     if(first_turn == "b")
     {
         switch_turn();
@@ -121,16 +153,14 @@ Board::Board(const std::string& input_fen)
 
     const auto non_turn_color = opposite(whose_turn());
     fen_parse_assert(safe_for_king(find_king(non_turn_color), non_turn_color), input_fen,
-                     color_text(non_turn_color) +
-                     " is in check but it is " +
-                     color_text(whose_turn()) + "'s turn.");
+                     "{} is in check but it is {}'s turn.", color_text(non_turn_color), color_text(whose_turn()));
 
     const auto castling_parse = fen_parse.at(2);
     if(castling_parse != "-")
     {
         for(const auto c : castling_parse)
         {
-            fen_parse_assert(String::contains("KQkq", c), input_fen, std::string("Illegal character in castling section: ") + c + "(" + castling_parse + ")");
+            fen_parse_assert(String::contains("KQkq", c), input_fen, "Illegal character in castling section: {} ({})", c, castling_parse);
 
             const auto piece_color = std::isupper(c) ? Piece_Color::WHITE : Piece_Color::BLACK;
             const auto rook_square = Square{std::toupper(c) == 'K' ? 'h' : 'a', std::isupper(c) ? 1 : 8};
@@ -142,11 +172,11 @@ Board::Board(const std::string& input_fen)
             const auto king = Piece{piece_color, Piece_Type::KING};
 
             fen_parse_assert(piece_on_square(rook_square) == rook, input_fen,
-                             "There must be a " + String::lowercase(color_text(piece_color)) + " rook on " + rook_square.text() + " to castle " + side + "side.");
+                             "There must be a {} rook on {} to castle {}side.", String::lowercase(color_text(piece_color)), rook_square.text(), side);
             fen_parse_assert(piece_on_square(king_square) == king, input_fen,
-                             "There must be a " + String::lowercase(color_text(piece_color)) + " king on " + king_square.text() + " to castle.");
+                             "There must be a {} king on {} to castle.", String::lowercase(color_text(piece_color)), king_square.text());
             fen_parse_assert( ! castle_is_legal(piece_color, castling_side), input_fen,
-                             "There are repeated characters in the castling text: " + castling_parse);
+                             "There are repeated characters in the castling text: {}", castling_parse);
 
             make_castle_legal(piece_color, castling_side);
         }
@@ -183,18 +213,8 @@ Board::Board(const std::string& input_fen)
     recreate_move_caches();
 
     starting_hash = board_hash();
-    const auto map_lock = std::lock_guard(starting_fen_map_lock);
-    starting_fen_from_starting_hash[starting_hash] = String::remove_extra_whitespace(input_fen);
-
-    fen_parse_assert(fen() == original_fen(), input_fen, "Result: " + fen());
-}
-
-void Board::fen_parse_assert(const bool condition, const std::string& input_fen, const std::string& failure_message)
-{
-    if( ! condition)
-    {
-        throw std::invalid_argument("Bad FEN input: " + input_fen + "\n" + failure_message);
-    }
+    fen_cache.add(starting_hash, fen());
+    fen_parse_assert(fen() == original_fen(), input_fen, "Result: {}", fen());
 }
 
 Piece& Board::piece_on_square(const Square square) noexcept
@@ -294,8 +314,7 @@ void Board::cli_print_game(const Player& white, const Player& black, const Clock
 
 std::string Board::original_fen() const noexcept
 {
-    const auto map_lock = std::lock_guard(starting_fen_map_lock);
-    return starting_fen_from_starting_hash[starting_hash];
+    return fen_cache.retreive(starting_hash);
 }
 
 Game_Result Board::play_move(const Move& move) noexcept
@@ -478,7 +497,7 @@ const Move& Board::interpret_move(const std::string& move_text) const
     }
     else
     {
-        throw Illegal_Move("The move text is not a valid or legal move: " + move_text);
+        throw Illegal_Move(std::format("The move text is not a valid or legal move: {}", move_text));
     }
 }
 
@@ -765,111 +784,6 @@ bool Board::move_checks_king(const Move& move) const noexcept
 bool Board::no_legal_moves() const noexcept
 {
     return legal_moves().empty();
-}
-
-void Board::print_game_record(const std::vector<const Move*>& game_record_listing,
-                              const Player& white,
-                              const Player& black,
-                              const std::string& file_name,
-                              const Game_Result& result,
-                              const Clock& game_clock,
-                              const std::string& event_name,
-                              const std::string& location) const noexcept
-{
-    static std::mutex write_lock;
-    const auto write_lock_guard = std::lock_guard(write_lock);
-
-    static int game_number = 0;
-    static std::string last_used_file_name;
-    if(game_number == 0 || file_name != last_used_file_name)
-    {
-        game_number = 1;
-        last_used_file_name = file_name;
-        std::ifstream ifs(file_name);
-        for(std::string line; std::getline(ifs, line);)
-        {
-            if(line.starts_with("[Round"))
-            {
-                const auto round_number = String::to_number<int>(String::extract_delimited_text(line, '"', '"'));
-                if(round_number >= game_number)
-                {
-                    game_number = round_number + 1;
-                }
-            }
-        }
-    }
-
-    auto header_text = std::ostringstream();
-
-    PGN::print_game_header_line(header_text, "Event", event_name);
-    PGN::print_game_header_line(header_text, "Site", location);
-    PGN::print_game_header_line(header_text, "Date", String::date_and_time_format(game_clock.game_start_date_and_time(), "%Y.%m.%d"));
-    PGN::print_game_header_line(header_text, "Round", game_number++);
-    PGN::print_game_header_line(header_text, "White", white.name());
-    PGN::print_game_header_line(header_text, "Black", black.name());
-
-    const auto last_move_result = move_result();
-    const auto& actual_result = last_move_result.game_has_ended() ? last_move_result : result;
-    PGN::print_game_header_line(header_text, "Result", actual_result.game_ending_annotation());
-
-    PGN::print_game_header_line(header_text, "Time", String::date_and_time_format(game_clock.game_start_date_and_time(), "%H:%M:%S"));
-
-    PGN::print_game_header_line(header_text, "TimeControl", game_clock.time_control_string());
-    PGN::print_game_header_line(header_text, "TimeLeftWhite", game_clock.time_left(Piece_Color::WHITE).count());
-    PGN::print_game_header_line(header_text, "TimeLeftBlack", game_clock.time_left(Piece_Color::BLACK).count());
-
-    if( ! actual_result.ending_reason().empty() && ! String::contains(actual_result.ending_reason(), "mates"))
-    {
-        PGN::print_game_header_line(header_text, "GameEnding", actual_result.ending_reason());
-    }
-
-    const auto starting_fen = original_fen();
-    if(starting_fen != standard_starting_fen)
-    {
-        PGN::print_game_header_line(header_text, "SetUp", 1);
-        PGN::print_game_header_line(header_text, "FEN", starting_fen);
-    }
-
-    auto game_text = std::ostringstream();
-    auto commentary_board = Board(starting_fen);
-    auto previous_move_had_comment = false;
-    for(const auto next_move : game_record_listing)
-    {
-        const auto step = commentary_board.all_ply_count()/2 + 1;
-        if(commentary_board.whose_turn() == Piece_Color::WHITE || commentary_board.played_ply_count() == 0 || previous_move_had_comment)
-        {
-            game_text << " " << step << ".";
-            if(commentary_board.whose_turn() == Piece_Color::BLACK)
-            {
-                game_text << "..";
-            }
-        }
-
-        game_text << " " << next_move->algebraic(commentary_board);
-        const auto& current_player = (commentary_board.whose_turn() == Piece_Color::WHITE ? white : black);
-        const auto commentary = String::trim_outer_whitespace(current_player.commentary_for_next_move(commentary_board, step));
-        if( ! commentary.empty())
-        {
-            game_text << " " << commentary;
-        }
-        commentary_board.play_move(*next_move);
-        previous_move_had_comment = ! commentary.empty();
-    }
-    game_text << " " << actual_result.game_ending_annotation();
-
-    const auto pgn_text = header_text.str() + "\n" + String::word_wrap(game_text.str(), 80) + "\n\n\n";
-    
-    if(file_name.empty())
-    {
-        std::cout << pgn_text;
-    }
-    else
-    {
-        std::ofstream ofs(file_name, std::ios::app);
-        ofs << pgn_text;
-    }
-
-    assert(commentary_board.fen() == fen());
 }
 
 void Board::make_en_passant_targetable(const Square square) noexcept
