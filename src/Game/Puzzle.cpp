@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <tuple>
 #include <stdexcept>
 #include <fstream>
 #include <format>
