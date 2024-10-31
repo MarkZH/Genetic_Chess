@@ -13,6 +13,7 @@ using namespace std::chrono_literals;
 #include "Game/Move.h"
 
 #include "Players/Player.h"
+#include "Players/Move_Decision.h"
 
 #include "Utility/Exceptions.h"
 #include "Utility/String.h"
@@ -291,23 +292,33 @@ bool Xboard_Mediator::undo_move(std::vector<const Move*>& move_list, const std::
     }
 }
 
-Game_Result Xboard_Mediator::handle_move(Board& board, const Move& move, std::vector<const Move*>& move_list) const
+Game_Result Xboard_Mediator::handle_decision(Board& board, const Move_Decision& decision, std::vector<const Move*>& move_list) const
 {
     if(in_force_mode)
     {
-        log("Ignoring move: {}", move.coordinates());
+        log("Ignoring move: {}{}", decision.move().coordinates(), decision.resigned() ? " resigned" : "");
         return {};
     }
     else
     {
-        send_command("move " + move.coordinates());
-        move_list.push_back(&move);
-        const auto result = board.play_move(move);
-        if(result.game_has_ended())
+        if(decision.resigned())
         {
+            const auto result = Game_Result(opposite(board.whose_turn()), Game_Result_Type::RESIGNATION);
             report_end_of_game(result);
+            return result;
         }
-        return result;
+        else
+        {
+            const auto& move = decision.move();
+            send_command("move " + move.coordinates());
+            move_list.push_back(&move);
+            const auto result = board.play_move(move);
+            if(result.game_has_ended())
+            {
+                report_end_of_game(result);
+            }
+            return result;
+        }
     }
 }
 

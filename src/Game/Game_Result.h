@@ -20,6 +20,7 @@ enum class Game_Result_Type
     INSUFFICIENT_MATERIAL,
     TIME_FORFEIT,
     TIME_EXPIRED_WITH_INSUFFICIENT_MATERIAL,
+    RESIGNATION,
     OTHER
 };
 
@@ -65,6 +66,9 @@ class Game_Result
         //! \brief Returns the part of the PGN move annotation that goes after the # (checkmate) or + (check).
         std::string game_ending_annotation() const noexcept;
 
+        void set_resigned_on_checkmate() noexcept;
+        bool resigned_on_checkmate() const noexcept;
+
         //! \brief Returns whether or not the program should shutdown after getting this result.
         bool exit_program() const noexcept;
 
@@ -72,6 +76,7 @@ class Game_Result
         Winner_Color victor;
         Game_Result_Type cause;
         std::string alternate_reason;
+        bool resigned_due_to_checkmate = false;
         bool shutdown_program;
 
         bool game_has_ended_by_rule() const noexcept;

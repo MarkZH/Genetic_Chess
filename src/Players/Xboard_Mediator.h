@@ -10,6 +10,7 @@
 class Board;
 class Clock;
 class Move;
+class Move_Decision;
 class Player;
 class Game_Result;
 
@@ -28,9 +29,9 @@ class Xboard_Mediator : public Outside_Communicator
                                Clock& clock,
                                std::vector<const Move*>& move_list,
                                const Player& player) override;
-        Game_Result handle_move(Board& board,
-                                const Move& move,
-                                std::vector<const Move*>& move_list) const override;
+        Game_Result handle_decision(Board& board,
+                                    const Move_Decision& decision,
+                                    std::vector<const Move*>& move_list) const override;
 
     private:
         bool in_force_mode = true;

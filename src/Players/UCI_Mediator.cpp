@@ -7,6 +7,7 @@
 using namespace std::chrono_literals;
 
 #include "Players/Player.h"
+#include "Players//Move_Decision.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
@@ -232,13 +233,13 @@ Game_Result UCI_Mediator::setup_turn(Board& board, Clock& clock, std::vector<con
     }
 }
 
-Game_Result UCI_Mediator::handle_move(Board& board,
-                                      const Move& move,
-                                      std::vector<const Move*>& move_list) const
+Game_Result UCI_Mediator::handle_decision(Board& board,
+                                          const Move_Decision& decision,
+                                          std::vector<const Move*>& move_list) const
 {
-    send_command("bestmove " + move.coordinates());
-    move_list.push_back(&move);
-    return board.play_move(move);
+    send_command("bestmove " + decision.move().coordinates());
+    move_list.push_back(&decision.move());
+    return board.play_move(decision.move());
 }
 
 std::string UCI_Mediator::listener(Clock&)

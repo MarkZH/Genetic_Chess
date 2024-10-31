@@ -107,8 +107,18 @@ Game_Result play_game(Board board,
     while( ! result.game_has_ended())
     {
         const auto& player = board.whose_turn() == Piece_Color::WHITE ? white : black;
-        const auto& move_chosen = player.choose_move(board, game_clock);
+        const auto decision = player.choose_move(board, game_clock);
+        if(decision.resigned())
+        {
+            result = Game_Result(opposite(board.whose_turn()), Game_Result_Type::RESIGNATION);
+            if(decision.resigned_due_to_checkmate())
+            {
+                result.set_resigned_on_checkmate();
+            }
+            break;
+        }
 
+        const auto& move_chosen = decision.move();
         if(Player::thinking_mode() != Thinking_Output_Type::NO_THINKING)
         {
             std::cout << player.name() << " chose " << move_chosen.algebraic(board) << '\n';
@@ -175,10 +185,10 @@ void play_game_with_outsider(const Player& player,
             print_game_record = true;
 
             player_color = board.whose_turn();
-            const auto& chosen_move = player.choose_move(board, clock);
+            const auto& decision = player.choose_move(board, clock);
             clock.punch(board);
 
-            game_result = outsider->handle_move(board, chosen_move, game_record);
+            game_result = outsider->handle_decision(board, decision, game_record);
         } while( ! game_result.game_has_ended());
 
         outsider->log("Game ended with: {}", game_result.ending_reason());

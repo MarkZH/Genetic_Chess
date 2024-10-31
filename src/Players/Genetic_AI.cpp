@@ -13,6 +13,7 @@ using namespace std::chrono_literals;
 #include "Players/Game_Tree_Node_Result.h"
 #include "Players/Alpha_Beta_Value.h"
 #include "Players/Thinking.h"
+#include "Players/Move_Decision.h"
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Game_Result.h"
@@ -82,13 +83,13 @@ int Genetic_AI::id() const noexcept
     return genome.id();
 }
 
-const Move& Genetic_AI::choose_move(const Board& board, const Clock& clock) const noexcept
+Move_Decision Genetic_AI::choose_move(const Board& board, const Clock& clock) const noexcept
 {
     reset_search_stats(board);
     return choose_move_minimax(board, clock);
 }
 
-const Move& Genetic_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
+Move_Decision Genetic_AI::choose_move_minimax(const Board& board, const Clock& clock) const noexcept
 {
     auto principal_variation = get_legal_principal_variation(board);
     const auto progress_of_game = game_progress(board);
@@ -108,8 +109,7 @@ const Move& Genetic_AI::choose_move_minimax(const Board& board, const Clock& clo
                                    current_variation);
 
     report_final_search_stats(result, board);
-
-    return *result.variation_line().front();
+    return {*result.variation_line().front(), genome.should_resign(commentary, board.whose_turn()), result.is_losing_for(board.whose_turn())};
 }
 
 std::vector<const Move*> Genetic_AI::get_legal_principal_variation(const Board& board) const noexcept
@@ -477,6 +477,11 @@ void Genetic_AI::calibrate_thinking_speed() const noexcept
     reset();
 }
 
+void Genetic_AI::send_centipawn_value_to_genome() const noexcept
+{
+    genome.use_centipawn_value(centipawn_value());
+}
+
 double Genetic_AI::assign_score(const Board& board, const Game_Result& move_result, Piece_Color perspective, size_t depth) const noexcept
 {
     if(move_result.game_has_ended())
@@ -642,6 +647,7 @@ void Genetic_AI::recalibrate_self() const noexcept
 {
     calibrate_thinking_speed();
     calculate_centipawn_value();
+    send_centipawn_value_to_genome();
 }
 
 void Genetic_AI::reset() const noexcept
