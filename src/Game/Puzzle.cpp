@@ -2,7 +2,6 @@
 
 #include <vector>
 #include <string>
-#include <tuple>
 #include <stdexcept>
 #include <fstream>
 #include <format>
@@ -15,6 +14,7 @@ using namespace std::chrono_literals;
 #include "Game/Board.h"
 #include "Game/Clock.h"
 #include "Game/Move.h"
+#include "Game/Game.h"
 #include "Players/Genetic_AI.h"
 #include "Utility/Main_Tools.h"
 #include "Utility/String.h"
@@ -22,7 +22,7 @@ using namespace std::chrono_literals;
 //! \file
 namespace Puzzle
 {
-    void solve(const std::vector<std::string>& fens_or_file_names, const std::vector<std::tuple<std::string, std::vector<std::string>>>& options)
+    void solve(const std::vector<std::string>& fens_or_file_names, std::vector<std::tuple<std::string, std::vector<std::string>>> options)
     {
         auto puzzles_to_solve = std::vector<std::string>{};
         for(const auto& fen_or_file_name : fens_or_file_names)
@@ -44,48 +44,33 @@ namespace Puzzle
                 std::string line;
                 while(std::getline(file_input, line))
                 {
-                    const auto parse_board = Board{ line };
+                    const auto parse_board = Board{line};
                     puzzles_to_solve.push_back(parse_board.fen());
                 }
             }
         }
 
-        std::optional<Genetic_AI> solver_choice;
-        for(const auto& [opt, values] : options)
-        {
-            if(opt == "-genetic")
-            {
-                Main_Tools::argument_assert(!values.empty(), "Genome file needed for player");
-                std::string file_name = values[0];
+        const auto solver_choice = get_players(options);
 
-                try
-                {
-                    const auto id = values.size() > 1 ? values[1] : std::string{};
-                    solver_choice = Genetic_AI(file_name, String::to_number<int>(id));
-                }
-                catch(const std::invalid_argument&) // Could not convert id to an int.
-                {
-                    solver_choice = Genetic_AI(file_name, find_last_id(file_name));
-                }
-
-                break;
-            }
-        }
-
-        if( ! solver_choice.has_value())
+        if(solver_choice.empty())
         {
             throw std::invalid_argument("Puzzle solver needs a Genetic AI loaded.");
         }
+        else if(solver_choice.size() > 1)
+        {
+            throw std::invalid_argument("Puzzle solver only needs one Genetic AI loaded.");
+        }
 
+        const auto solver = solver_choice.front().get();
         for(const auto& puzzle : puzzles_to_solve)
         {
-            const auto solver = *solver_choice;
+            solver->reset();
             std::println("\n=============\n\n{}", puzzle);
             const auto board = Board{ puzzle };
             board.cli_print(std::cout);
             const auto clock = Clock(120s, 1);
-            solver.choose_move(board, clock);
-            const auto result = solver.commentary_for_next_move(board);
+            solver->choose_move(board, clock);
+            const auto result = solver->commentary_for_next_move(board);
             std::println("\n{}", String::extract_delimited_text(result, '(', ')'));
         }
     }
