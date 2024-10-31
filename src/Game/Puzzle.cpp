@@ -59,6 +59,10 @@ namespace Puzzle
         {
             throw std::invalid_argument("Puzzle solver only needs one Genetic AI loaded.");
         }
+        else if(solver_choice.front()->name() == "Random AI")
+        {
+            throw std::invalid_argument("Random AI will not solve puzzles.");
+        }
 
         const auto solver = solver_choice.front().get();
         for(const auto& puzzle : puzzles_to_solve)
