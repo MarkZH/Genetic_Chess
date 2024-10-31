@@ -3,6 +3,9 @@
 
 #include <string>
 #include <vector>
+#include <memory>
+
+#include "Utility/Main_Tools.h"
 
 class Player;
 class Board;
@@ -48,6 +51,11 @@ void play_game_with_outsider(const Player& local_player,
 //! \brief Starts a single game according to command line options.
 //!
 //! \param options Command line options standardized into a string vector.
-void start_game(const std::vector<std::tuple<std::string, std::vector<std::string>>>& options);
+void start_game(Main_Tools::command_line_options options);
+
+std::vector<std::unique_ptr<Player>> get_players(Main_Tools::command_line_options& options);
+
+Clock get_clock(Main_Tools::command_line_options& options);
+
 
 #endif // GAME_H

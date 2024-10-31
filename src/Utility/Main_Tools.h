@@ -6,6 +6,8 @@
 
 namespace Main_Tools
 {
+    using command_line_options = std::vector<std::tuple<std::string, std::vector<std::string>>>;
+
     //! \brief Print the command-line options for this program.
     void print_help();
 
@@ -16,7 +18,7 @@ namespace Main_Tools
     void argument_assert(bool condition, const std::string& failure_message);
 
     //! \brief Standardizes command line options into a vector of strings.
-    std::vector<std::tuple<std::string, std::vector<std::string>>> parse_options(int argc, char* argv[]);
+    command_line_options parse_options(int argc, char* argv[]);
 }
 
 #endif // TOOLING_H
