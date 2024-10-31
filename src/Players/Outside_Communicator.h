@@ -82,38 +82,10 @@ class Outside_Communicator
             }
 
             flush_log_queue();
-            
-            std::string message;
-            if constexpr (sizeof...(args) == 0)
-            {
-                message = data;
-            }
-            else
-            {
-                message = std::vformat(data, std::make_format_args(args...));
-            }
 
             const auto timestamp = String::date_and_time_format<std::chrono::milliseconds>(std::chrono::system_clock::now(), "%Y.%m.%d %H:%M:%S");
-            std::println(ofs, "{} -- {}", timestamp, message);
+            std::println(ofs, "{} -- {}", timestamp, format_log_message(data, args...));
             ofs.flush();
-        }
-
-        void flush_log_queue() const;
-
-        //! \brief Log data to a local text file.
-        //!
-        //! \param data A text string to write.
-        template<typename... Format_Args>
-        static void queue_log(const std::string& data, Format_Args... args)
-        {
-            if constexpr (sizeof...(args) == 0)
-            {
-                log_queue.push_back(data);
-            }
-            else
-            {
-                log_queue.push_back(std::vformat(data, std::make_format_args(args...)));
-            }
         }
 
     protected:
@@ -153,6 +125,30 @@ class Outside_Communicator
         std::future<std::string> last_listening_result;
 
         virtual std::string listener(Clock& clock) = 0;
+
+        void flush_log_queue() const;
+
+        //! \brief Log data to a local text file.
+        //!
+        //! \param data A text string to write.
+        template<typename... Format_Args>
+        static void queue_log(const std::string& data, Format_Args... args)
+        {
+            log_queue.push_back(format_log_message(data, args...));
+        }
+
+        template<typename ...Format_Args>
+        static std::string format_log_message(const std::string& data, const Format_Args&... args)
+        {
+            if constexpr(sizeof...(args) == 0)
+            {
+                return data;
+            }
+            else
+            {
+                return std::vformat(data, std::make_format_args(args...));
+            }
+        }
 };
 
 #endif // OUTSIDE_PLAYER_H
