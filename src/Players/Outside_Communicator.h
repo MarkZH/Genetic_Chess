@@ -37,6 +37,9 @@ std::unique_ptr<Outside_Communicator> connect_to_outside(const Player& player, b
 class Outside_Communicator
 {
     public:
+        //! \brief Outside communicator constructor.
+        //! 
+        //! \param enable_logging Whether to log the communication with the GUI to a file.
         Outside_Communicator(bool enable_logging);
 
         //! \brief Records that the communication channel is shutting down.
@@ -72,7 +75,9 @@ class Outside_Communicator
 
         //! \brief Log data to a local text file.
         //!
-        //! \param data A text string to write.
+        //! \tparam Format_Args A parameter pack for all variables that will be substituted into the format string.
+        //! \param data A text string to write in the form of a format string. The string {} will be replaced by the contents of args.
+        //! \param args The variables that will provide the information to be inserted into the data string.
         template<typename... Format_Args>
         void log(const std::string& data, Format_Args... args) const
         {

@@ -37,13 +37,19 @@ std::vector<std::unique_ptr<Player>> get_players(Main_Tools::command_line_option
         {
             Main_Tools::argument_assert(!values.empty(), "Genome file needed for player");
             std::string file_name = values[0];
-
-            try
+            if(values.size() > 1)
             {
-                const auto id = values.size() > 1 ? values[1] : std::string{};
-                players.push_back(std::make_unique<Genetic_AI>(file_name, String::to_number<int>(id)));
+                try
+                {
+                    const auto id = String::to_number<int>(values[1]);
+                    players.push_back(std::make_unique<Genetic_AI>(file_name, id));
+                }
+                catch(const std::invalid_argument&) // Could not convert id to an int.
+                {
+                    throw std::invalid_argument(std::format("The given Genetic AI ID, \"{}\", is not an integer.", values[1]));
+                }
             }
-            catch(const std::invalid_argument&) // Could not convert id to an int.
+            else
             {
                 players.push_back(std::make_unique<Genetic_AI>(file_name, find_last_id(file_name)));
             }

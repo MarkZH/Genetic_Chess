@@ -22,6 +22,7 @@ class Xboard_Mediator : public Outside_Communicator
         //! \brief Set up the connection to the outside interface and send configuration data.
         //!
         //! \param local_player The player on the machine. The name of the player gets sent to the interface.
+        //! \param enable_logging Whether to log communication with the UCI GUI to a file.
         explicit Xboard_Mediator(const Player& local_player, bool enable_logging);
 
         Game_Result setup_turn(Board& board,
