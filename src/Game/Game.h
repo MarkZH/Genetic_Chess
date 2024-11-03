@@ -53,8 +53,20 @@ void play_game_with_outsider(const Player& local_player,
 //! \param options Command line options standardized into a string vector.
 void start_game(Main_Tools::command_line_options options);
 
+//! \brief Create a list of players from the command line options.
+//! 
+//! \param options A parsed list of command line options and their values.
+//! \returns A list of pointers to players so that mixed types can be accomodated (i.e., Genetic AI and Random).
+//! 
+//! The input options are modified by removing all player specifications.
 std::vector<std::unique_ptr<Player>> get_players(Main_Tools::command_line_options& options);
 
+//! \brief Create a game clock from the command line options.
+//! 
+//! \param options A parsed list of command line options and their values.
+//! \returns A game clock.
+//! 
+//! The input options are modified by removing all clock specifications.
 Clock get_clock(Main_Tools::command_line_options& options);
 
 
