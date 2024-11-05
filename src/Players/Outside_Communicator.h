@@ -95,9 +95,6 @@ class Outside_Communicator
         }
 
     protected:
-        //! \brief Constructor is protected so that it is only called by connect_to_outside().
-        Outside_Communicator() = default;
-
         //! \brief Record the opponent's name when told by GUI or internet mediator.
         //!
         //! \param name The received name
