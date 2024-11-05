@@ -545,7 +545,7 @@ void PGN::print_game_record(const Board& board,
             game_text << " " << commentary;
         }
         commentary_board.play_move(*next_move);
-        previous_move_had_comment = !commentary.empty();
+        previous_move_had_comment = ! commentary.empty();
     }
     game_text << " " << actual_result.game_ending_annotation();
 
