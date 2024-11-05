@@ -17,6 +17,7 @@
 #include <map>
 #include <sstream>
 #include <mutex>
+#include <format>
 
 namespace
 {
@@ -221,7 +222,7 @@ void PGN::confirm_game_record(const std::string& file_name)
     auto input = std::ifstream(file_name);
     if( ! input)
     {
-        throw std::runtime_error("Could not open file " + file_name + " for reading.");
+        throw std::runtime_error(std::format("Could not open file {} for reading.", file_name));
     }
 
     auto game_count = 0;
@@ -410,7 +411,7 @@ void PGN::confirm_game_record(const std::string& file_name)
 
         if(std::isdigit(token.front()))
         {
-            move_number = String::split(token, ".")[0] + ". ";
+            move_number = std::format("{}. ", String::split(token, ".")[0]);
             continue;
         }
 
@@ -435,7 +436,8 @@ void PGN::confirm_game_record(const std::string& file_name)
         }
 
         const auto& move_to_play = board.interpret_move(token);
-        check_rule_result("Move: " + move_number + token + ")",
+        const auto pgn_location = std::format("Move ({}{})", move_number, token);
+        check_rule_result(pgn_location,
                           "capture",
                           String::contains(token, 'x'),
                           board.move_captures(move_to_play),
@@ -444,13 +446,13 @@ void PGN::confirm_game_record(const std::string& file_name)
         board_before_last_move = board;
         result = board.play_move(move_to_play);
 
-        check_rule_result("Move (" + move_number + token + ")",
+        check_rule_result(pgn_location,
                           "check",
                           String::contains("+#", token.back()),
                           board.king_is_in_check(),
                           input);
 
-        check_rule_result("Move (" + move_number + token + ")",
+        check_rule_result(pgn_location,
                           "checkmate",
                           token.back() == '#',
                           result.game_has_ended() && result.winner() != Winner_Color::NONE,
@@ -549,7 +551,7 @@ void PGN::print_game_record(const Board& board,
     }
     game_text << " " << actual_result.game_ending_annotation();
 
-    const auto pgn_text = header_text.str() + "\n" + String::word_wrap(game_text.str(), 80) + "\n\n\n";
+    const auto pgn_text = std::format("{}\n{}\n\n\n", header_text.str(), String::word_wrap(game_text.str(), 80));
 
     if(file_name.empty())
     {
