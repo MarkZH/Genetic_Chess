@@ -1,5 +1,5 @@
-#ifndef TOOLING_H
-#define TOOLING_H
+#ifndef MAIN_TOOL_H
+#define MAIN_TOOL_H
 
 #include <string>
 #include <vector>
@@ -22,4 +22,4 @@ namespace Main_Tools
     command_line_options parse_options(int argc, char* argv[]);
 }
 
-#endif // TOOLING_H
+#endif // MAIN_TOOL_H
