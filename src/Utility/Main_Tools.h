@@ -1,4 +1,5 @@
 #ifndef TOOLING_H
+#define TOOLING_H
 
 #include <string>
 #include <vector>
