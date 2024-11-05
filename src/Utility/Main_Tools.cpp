@@ -56,14 +56,6 @@ void Main_Tools::print_help()
     std::cout << help;
 }
 
-void Main_Tools::argument_assert(const bool condition, const std::string& failure_message)
-{
-    if( ! condition)
-    {
-        throw std::invalid_argument(failure_message);
-    }
-}
-
 Main_Tools::command_line_options Main_Tools::parse_options(int argc, char* argv[])
 {
     std::vector<std::string> command_line;

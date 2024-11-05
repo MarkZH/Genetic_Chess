@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <stdexcept>
+#include <format>
 
 namespace Main_Tools
 {
@@ -16,7 +18,21 @@ namespace Main_Tools
     //!
     //! \param condition A condition that must be true to continue.
     //! \param failure_message A message to display if the assertion fails.
-    void argument_assert(bool condition, const std::string& failure_message);
+    template<typename ...Format_Args>
+    void argument_assert(bool condition, const std::string& failure_template, const Format_Args&... args)
+    {
+        if( ! condition)
+        {
+            if constexpr(sizeof...(args) > 0)
+            {
+                throw std::invalid_argument(std::vformat(failure_template, std::make_format_args(args...)));
+            }
+            else
+            {
+                throw std::invalid_argument(failure_template);
+            }
+        }
+    }
 
     //! \brief Standardizes command line options into a vector of strings.
     command_line_options parse_options(int argc, char* argv[]);

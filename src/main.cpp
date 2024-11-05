@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
         }
         else if(option == "-list")
         {
-            Main_Tools::argument_assert( ! parameters.empty(), option + " requires a numeric argument.");
+            Main_Tools::argument_assert( ! parameters.empty(), "{} requires a numeric argument.", option);
             list_moves(String::to_number<size_t>(parameters[0]));
         }
         else if(option == "-solve")
